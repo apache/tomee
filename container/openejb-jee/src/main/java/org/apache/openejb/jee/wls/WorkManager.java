@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for work-manager complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="work-manager">
  *   &lt;complexContent>
@@ -65,8 +65,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "work-manager", propOrder = {
@@ -118,11 +116,9 @@ public class WorkManager {
 
     /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getName() {
         return name;
@@ -130,23 +126,19 @@ public class WorkManager {
 
     /**
      * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
     /**
      * Gets the value of the responseTimeRequestClass property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ResponseTimeRequestClass }
-     *     
+     *
+     * @return possible object is
+     * {@link ResponseTimeRequestClass }
      */
     public ResponseTimeRequestClass getResponseTimeRequestClass() {
         return responseTimeRequestClass;
@@ -154,23 +146,19 @@ public class WorkManager {
 
     /**
      * Sets the value of the responseTimeRequestClass property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ResponseTimeRequestClass }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ResponseTimeRequestClass }
      */
-    public void setResponseTimeRequestClass(ResponseTimeRequestClass value) {
+    public void setResponseTimeRequestClass(final ResponseTimeRequestClass value) {
         this.responseTimeRequestClass = value;
     }
 
     /**
      * Gets the value of the fairShareRequestClass property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FairShareRequestClass }
-     *     
+     *
+     * @return possible object is
+     * {@link FairShareRequestClass }
      */
     public FairShareRequestClass getFairShareRequestClass() {
         return fairShareRequestClass;
@@ -178,23 +166,19 @@ public class WorkManager {
 
     /**
      * Sets the value of the fairShareRequestClass property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FairShareRequestClass }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link FairShareRequestClass }
      */
-    public void setFairShareRequestClass(FairShareRequestClass value) {
+    public void setFairShareRequestClass(final FairShareRequestClass value) {
         this.fairShareRequestClass = value;
     }
 
     /**
      * Gets the value of the contextRequestClass property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ContextRequestClass }
-     *     
+     *
+     * @return possible object is
+     * {@link ContextRequestClass }
      */
     public ContextRequestClass getContextRequestClass() {
         return contextRequestClass;
@@ -202,23 +186,19 @@ public class WorkManager {
 
     /**
      * Sets the value of the contextRequestClass property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ContextRequestClass }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ContextRequestClass }
      */
-    public void setContextRequestClass(ContextRequestClass value) {
+    public void setContextRequestClass(final ContextRequestClass value) {
         this.contextRequestClass = value;
     }
 
     /**
      * Gets the value of the requestClassName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getRequestClassName() {
         return requestClassName;
@@ -226,23 +206,19 @@ public class WorkManager {
 
     /**
      * Sets the value of the requestClassName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setRequestClassName(String value) {
+    public void setRequestClassName(final String value) {
         this.requestClassName = value;
     }
 
     /**
      * Gets the value of the minThreadsConstraint property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link MinThreadsConstraint }
-     *     
+     *
+     * @return possible object is
+     * {@link MinThreadsConstraint }
      */
     public MinThreadsConstraint getMinThreadsConstraint() {
         return minThreadsConstraint;
@@ -250,23 +226,19 @@ public class WorkManager {
 
     /**
      * Sets the value of the minThreadsConstraint property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link MinThreadsConstraint }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link MinThreadsConstraint }
      */
-    public void setMinThreadsConstraint(MinThreadsConstraint value) {
+    public void setMinThreadsConstraint(final MinThreadsConstraint value) {
         this.minThreadsConstraint = value;
     }
 
     /**
      * Gets the value of the minThreadsConstraintName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getMinThreadsConstraintName() {
         return minThreadsConstraintName;
@@ -274,23 +246,19 @@ public class WorkManager {
 
     /**
      * Sets the value of the minThreadsConstraintName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setMinThreadsConstraintName(String value) {
+    public void setMinThreadsConstraintName(final String value) {
         this.minThreadsConstraintName = value;
     }
 
     /**
      * Gets the value of the maxThreadsConstraint property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link MaxThreadsConstraint }
-     *     
+     *
+     * @return possible object is
+     * {@link MaxThreadsConstraint }
      */
     public MaxThreadsConstraint getMaxThreadsConstraint() {
         return maxThreadsConstraint;
@@ -298,23 +266,19 @@ public class WorkManager {
 
     /**
      * Sets the value of the maxThreadsConstraint property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link MaxThreadsConstraint }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link MaxThreadsConstraint }
      */
-    public void setMaxThreadsConstraint(MaxThreadsConstraint value) {
+    public void setMaxThreadsConstraint(final MaxThreadsConstraint value) {
         this.maxThreadsConstraint = value;
     }
 
     /**
      * Gets the value of the maxThreadsConstraintName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getMaxThreadsConstraintName() {
         return maxThreadsConstraintName;
@@ -322,23 +286,19 @@ public class WorkManager {
 
     /**
      * Sets the value of the maxThreadsConstraintName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setMaxThreadsConstraintName(String value) {
+    public void setMaxThreadsConstraintName(final String value) {
         this.maxThreadsConstraintName = value;
     }
 
     /**
      * Gets the value of the capacity property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Capacity }
-     *     
+     *
+     * @return possible object is
+     * {@link Capacity }
      */
     public Capacity getCapacity() {
         return capacity;
@@ -346,23 +306,19 @@ public class WorkManager {
 
     /**
      * Sets the value of the capacity property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Capacity }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Capacity }
      */
-    public void setCapacity(Capacity value) {
+    public void setCapacity(final Capacity value) {
         this.capacity = value;
     }
 
     /**
      * Gets the value of the capacityName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getCapacityName() {
         return capacityName;
@@ -370,23 +326,19 @@ public class WorkManager {
 
     /**
      * Sets the value of the capacityName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setCapacityName(String value) {
+    public void setCapacityName(final String value) {
         this.capacityName = value;
     }
 
     /**
      * Gets the value of the workManagerShutdownTrigger property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link WorkManagerShutdownTrigger }
-     *     
+     *
+     * @return possible object is
+     * {@link WorkManagerShutdownTrigger }
      */
     public WorkManagerShutdownTrigger getWorkManagerShutdownTrigger() {
         return workManagerShutdownTrigger;
@@ -394,23 +346,19 @@ public class WorkManager {
 
     /**
      * Sets the value of the workManagerShutdownTrigger property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link WorkManagerShutdownTrigger }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link WorkManagerShutdownTrigger }
      */
-    public void setWorkManagerShutdownTrigger(WorkManagerShutdownTrigger value) {
+    public void setWorkManagerShutdownTrigger(final WorkManagerShutdownTrigger value) {
         this.workManagerShutdownTrigger = value;
     }
 
     /**
      * Gets the value of the ignoreStuckThreads property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean isIgnoreStuckThreads() {
         return ignoreStuckThreads;
@@ -418,23 +366,19 @@ public class WorkManager {
 
     /**
      * Sets the value of the ignoreStuckThreads property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setIgnoreStuckThreads(Boolean value) {
+    public void setIgnoreStuckThreads(final Boolean value) {
         this.ignoreStuckThreads = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getId() {
         return id;
@@ -442,13 +386,11 @@ public class WorkManager {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

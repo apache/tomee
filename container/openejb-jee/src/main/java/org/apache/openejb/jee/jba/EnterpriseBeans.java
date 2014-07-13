@@ -43,27 +43,25 @@ public class EnterpriseBeans {
 
     /**
      * Gets the value of the sessionOrEntityOrMessageDriven property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the sessionOrEntityOrMessageDriven property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getSessionOrEntityOrMessageDriven().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link Session }
      * {@link Entity }
      * {@link MessageDriven }
-     * 
-     * 
      */
     public List<Object> getSessionOrEntityOrMessageDriven() {
         if (sessionOrEntityOrMessageDriven == null) {

@@ -26,17 +26,19 @@ import javax.annotation.security.RolesAllowed;
 
 @RunWith(ValidationRunner.class)
 public class CheckInvalidSecurityAnnotationsTest {
-    @Keys( { @Key("conflictingSecurityAnnotations"),@Key("permitAllAndRolesAllowedOnClass") })
+    @Keys({@Key("conflictingSecurityAnnotations"), @Key("permitAllAndRolesAllowedOnClass")})
     public EjbJar test() throws Exception {
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(FooBean.class));
         return ejbJar;
     }
+
     @PermitAll
-    @RolesAllowed(value = { "" })
+    @RolesAllowed(value = {""})
     public static class FooBean {
         @PermitAll
         @DenyAll
-        public void foo() {}
+        public void foo() {
+        }
     }
 }

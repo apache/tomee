@@ -486,22 +486,22 @@ public class JndiEncBuilder {
 
             if (!client) {
                 final Reference reference = new JaxWsServiceReference(referenceInfo.id,
-                        referenceInfo.serviceQName,
-                        serviceClass, referenceInfo.portQName,
-                        referenceClass,
-                        wsdlUrl,
-                        portRefs,
-                        handlerChains,
-                        injections);
+                    referenceInfo.serviceQName,
+                    serviceClass, referenceInfo.portQName,
+                    referenceClass,
+                    wsdlUrl,
+                    portRefs,
+                    handlerChains,
+                    injections);
                 bindings.put(normalize(referenceInfo.referenceName), reference);
             } else {
                 final ServiceRefData serviceRefData = new ServiceRefData(referenceInfo.id,
-                        referenceInfo.serviceQName,
-                        serviceClass, referenceInfo.portQName,
-                        referenceClass,
-                        wsdlUrl,
-                        handlerChains,
-                        portRefs);
+                    referenceInfo.serviceQName,
+                    serviceClass, referenceInfo.portQName,
+                    referenceClass,
+                    wsdlUrl,
+                    handlerChains,
+                    portRefs);
                 bindings.put(normalize(referenceInfo.referenceName), serviceRefData);
             }
         }
@@ -528,7 +528,7 @@ public class JndiEncBuilder {
     // if the datasource if defined globally in the currently deployed app originAppname hould not be null
     private boolean isNotGobalOrIsHoldByThisApp(final ResourceInfo info, final JndiScope scope) {
         return !info.jndiName.startsWith("global/")
-                || info.originAppName != null && info.originAppName.equals(moduleId) && JndiScope.global.equals(scope);
+            || info.originAppName != null && info.originAppName.equals(moduleId) && JndiScope.global.equals(scope);
     }
 
     private void addSpecialCompBindings(final Map<String, Object> bindings) {

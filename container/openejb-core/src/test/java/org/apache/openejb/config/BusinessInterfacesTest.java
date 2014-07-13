@@ -45,7 +45,7 @@ public class BusinessInterfacesTest extends TestCase {
 
     @Override
     protected void setUp() throws Exception {
-        Assembler assembler = new Assembler();
+        final Assembler assembler = new Assembler();
         config = new ConfigurationFactory();
 
         ejbModule = new EjbModule(new EjbJar());
@@ -55,20 +55,20 @@ public class BusinessInterfacesTest extends TestCase {
         strict(false);
     }
 
-    private void strict(boolean b) {
-        ejbModule.getOpenejbJar().getProperties().setProperty("openejb.strict.interface.declaration", b +"");
+    private void strict(final boolean b) {
+        ejbModule.getOpenejbJar().getProperties().setProperty("openejb.strict.interface.declaration", b + "");
     }
 
-    private Map<String, EnterpriseBeanInfo> deploy(Class<?>... beans) throws OpenEJBException {
-        for (Class<?> bean : beans) {
+    private Map<String, EnterpriseBeanInfo> deploy(final Class<?>... beans) throws OpenEJBException {
+        for (final Class<?> bean : beans) {
             addBean(bean);
         }
-        EjbJarInfo ejbJarInfo = config.configureApplication(ejbModule);
+        final EjbJarInfo ejbJarInfo = config.configureApplication(ejbModule);
 
         return asMap(ejbJarInfo.enterpriseBeans);
     }
 
-    private StatelessBean addBean(Class<?> orangeBeanClass) {
+    private StatelessBean addBean(final Class<?> orangeBeanClass) {
         return ejbJar.addEnterpriseBean(new StatelessBean(orangeBeanClass));
     }
 
@@ -127,11 +127,11 @@ public class BusinessInterfacesTest extends TestCase {
 
     public void testYellow() throws Exception {
         // Results should be the same with strict on or off
-        for (boolean strict : Arrays.asList(false, true)) {
+        for (final boolean strict : Arrays.asList(false, true)) {
             setUp();
             strict(strict);
 
-            Map<String, EnterpriseBeanInfo> beans = deploy(YellowOneBean.class, YellowTwoBean.class, YellowThreeBean.class, YellowFourBean.class, YellowFiveBean.class, YellowSixBean.class);
+            final Map<String, EnterpriseBeanInfo> beans = deploy(YellowOneBean.class, YellowTwoBean.class, YellowThreeBean.class, YellowFourBean.class, YellowFiveBean.class, YellowSixBean.class);
 
             EnterpriseBeanInfo beanInfo;
 
@@ -200,7 +200,7 @@ public class BusinessInterfacesTest extends TestCase {
         setUp();
         strict(false);
 
-        Map<String, EnterpriseBeanInfo> beans = deploy(LemonOneBean.class, LemonTwoBean.class, LemonThreeBean.class, LemonFourBean.class, LemonFiveBean.class, LemonSixBean.class);
+        final Map<String, EnterpriseBeanInfo> beans = deploy(LemonOneBean.class, LemonTwoBean.class, LemonThreeBean.class, LemonFourBean.class, LemonFiveBean.class, LemonSixBean.class);
 
         EnterpriseBeanInfo beanInfo;
 
@@ -246,7 +246,7 @@ public class BusinessInterfacesTest extends TestCase {
         setUp();
         strict(true);
 
-        Map<String, EnterpriseBeanInfo> beans = deploy(LemonOneBean.class, LemonTwoBean.class, LemonThreeBean.class, LemonFourBean.class, LemonFiveBean.class, LemonSixBean.class);
+        final Map<String, EnterpriseBeanInfo> beans = deploy(LemonOneBean.class, LemonTwoBean.class, LemonThreeBean.class, LemonFourBean.class, LemonFiveBean.class, LemonSixBean.class);
 
         EnterpriseBeanInfo beanInfo;
 
@@ -341,11 +341,11 @@ public class BusinessInterfacesTest extends TestCase {
 
     public void testMagenta() throws Exception {
         // Results should be the same with strict on or off
-        for (boolean strict : Arrays.asList(false, true)) {
+        for (final boolean strict : Arrays.asList(false, true)) {
             setUp();
             strict(strict);
 
-            Map<String, EnterpriseBeanInfo> beans = deploy(MagentaOneBean.class, MagentaTwoBean.class, MagentaThreeBean.class, MagentaFourBean.class, MagentaFiveBean.class);
+            final Map<String, EnterpriseBeanInfo> beans = deploy(MagentaOneBean.class, MagentaTwoBean.class, MagentaThreeBean.class, MagentaFourBean.class, MagentaFiveBean.class);
 
             EnterpriseBeanInfo beanInfo;
 
@@ -424,11 +424,11 @@ public class BusinessInterfacesTest extends TestCase {
     // we really need to fix that
     public void _testInvalidYellow() throws Exception {
         // Results should be the same with strict on or off
-        for (boolean strict : Arrays.asList(false, true)) {
+        for (final boolean strict : Arrays.asList(false, true)) {
             setUp();
             strict(strict);
 
-            List<String> expectedKeys = new ArrayList<String>();
+            final List<String> expectedKeys = new ArrayList<String>();
             expectedKeys.add("ann.local.noAttributes");
             expectedKeys.add("ann.remote.noAttributes");
             expectedKeys.add("noInterfaceDeclared.session");
@@ -436,7 +436,7 @@ public class BusinessInterfacesTest extends TestCase {
 
             try {
                 deploy(InvalidYellowOneBean.class, InvalidYellowTwoBean.class, InvalidYellowThreeBean.class);
-            } catch (ValidationFailedException e) {
+            } catch (final ValidationFailedException e) {
                 ValidationAssertions.assertFailures(expectedKeys, e);
             }
         }
@@ -475,11 +475,11 @@ public class BusinessInterfacesTest extends TestCase {
 
     public void testGreen() throws Exception {
         // Results should be the same with strict on or off
-        for (boolean strict : Arrays.asList(false, true)) {
+        for (final boolean strict : Arrays.asList(false, true)) {
             setUp();
             strict(strict);
 
-            Map<String, EnterpriseBeanInfo> beans = deploy(GreenOneBean.class, GreenTwoBean.class);
+            final Map<String, EnterpriseBeanInfo> beans = deploy(GreenOneBean.class, GreenTwoBean.class);
 
             EnterpriseBeanInfo beanInfo;
 
@@ -540,7 +540,7 @@ public class BusinessInterfacesTest extends TestCase {
     public void testOrangeNotStrict() throws Exception {
         strict(false);
 
-        Map<String, EnterpriseBeanInfo> beans = deploy(OrangeOneBean.class, OrangeTwoBean.class);
+        final Map<String, EnterpriseBeanInfo> beans = deploy(OrangeOneBean.class, OrangeTwoBean.class);
 
         EnterpriseBeanInfo beanInfo = beans.get("OrangeOneBean");
 
@@ -556,13 +556,13 @@ public class BusinessInterfacesTest extends TestCase {
     public void testOrangeStrict() throws Exception {
         strict(true);
 
-        List<String> expectedKeys = new ArrayList<String>();
+        final List<String> expectedKeys = new ArrayList<String>();
         expectedKeys.add("ann.localRemote.conflict");
         expectedKeys.add("ann.localRemote.conflict");
 
         try {
             deploy(OrangeOneBean.class, OrangeTwoBean.class);
-        } catch (ValidationFailedException e) {
+        } catch (final ValidationFailedException e) {
             ValidationAssertions.assertFailures(expectedKeys, e);
         }
     }
@@ -611,13 +611,14 @@ public class BusinessInterfacesTest extends TestCase {
     }
 
     /**
-     * Definition in the bean class wins over the 
+     * Definition in the bean class wins over the
+     *
      * @throws Exception
      */
     public void testRedNotStrict() throws Exception {
         strict(false);
 
-        Map<String, EnterpriseBeanInfo> beans = deploy(RedOneBean.class, RedTwoBean.class);
+        final Map<String, EnterpriseBeanInfo> beans = deploy(RedOneBean.class, RedTwoBean.class);
 
         EnterpriseBeanInfo beanInfo = beans.get("RedOneBean");
 
@@ -632,13 +633,13 @@ public class BusinessInterfacesTest extends TestCase {
 
     /**
      * Test results should be the same as above.
-     * 
+     *
      * @throws Exception
      */
     public void testRedStrict() throws Exception {
         strict(true);
 
-        Map<String, EnterpriseBeanInfo> beans = deploy(RedOneBean.class, RedTwoBean.class);
+        final Map<String, EnterpriseBeanInfo> beans = deploy(RedOneBean.class, RedTwoBean.class);
 
         EnterpriseBeanInfo beanInfo = beans.get("RedOneBean");
 
@@ -653,26 +654,27 @@ public class BusinessInterfacesTest extends TestCase {
 
     public static class CrimsonOneBean extends RedOneBean {
     }
-    
+
     public static class CrimsonTwoBean extends RedTwoBean {
     }
-    
+
 
     /**
-     * Super class definitions are retrieved 
+     * Super class definitions are retrieved
+     *
      * @throws Exception
      */
     public void testCrimsonNotStrict() throws Exception {
         strict(false);
 
-        Map<String, EnterpriseBeanInfo> beans = deploy(CrimsonOneBean.class, CrimsonTwoBean.class);
+        final Map<String, EnterpriseBeanInfo> beans = deploy(CrimsonOneBean.class, CrimsonTwoBean.class);
 
         EnterpriseBeanInfo beanInfo = beans.get("CrimsonOneBean");
 
         assertEquals(list(RedOneLocal.class), sort(beanInfo.businessLocal));
         assertEquals(list(RedOneRemote.class, RedOneOverridden.class), sort(beanInfo.businessRemote));
         assertTrue(beanInfo.localbean);
-        
+
         beanInfo = beans.get("CrimsonTwoBean");
 
         assertEquals(list(RedTwoLocal.class, RedTwoOverridden.class), sort(beanInfo.businessLocal));
@@ -682,13 +684,13 @@ public class BusinessInterfacesTest extends TestCase {
 
     /**
      * Test results should NOT be the same as above. Super class should not be consulted
-     * 
+     *
      * @throws Exception
      */
     public void testCrimsonStrict() throws Exception {
         strict(true);
 
-        Map<String, EnterpriseBeanInfo> beans = deploy(CrimsonOneBean.class, CrimsonTwoBean.class);
+        final Map<String, EnterpriseBeanInfo> beans = deploy(CrimsonOneBean.class, CrimsonTwoBean.class);
 
         EnterpriseBeanInfo beanInfo = beans.get("CrimsonOneBean");
 
@@ -703,25 +705,24 @@ public class BusinessInterfacesTest extends TestCase {
         assertTrue(beanInfo.localbean);
     }
 
-    
-    
-    private <T extends Comparable<? super T>> List<T> sort(List<T> list) {
+
+    private <T extends Comparable<? super T>> List<T> sort(final List<T> list) {
         Collections.sort(list);
         return list;
     }
 
-    private Map<String, EnterpriseBeanInfo> asMap(List<EnterpriseBeanInfo> enterpriseBeans) {
-        Map<String, EnterpriseBeanInfo> map = new HashMap<String, EnterpriseBeanInfo>();
-        for (EnterpriseBeanInfo bean : enterpriseBeans) {
+    private Map<String, EnterpriseBeanInfo> asMap(final List<EnterpriseBeanInfo> enterpriseBeans) {
+        final Map<String, EnterpriseBeanInfo> map = new HashMap<String, EnterpriseBeanInfo>();
+        for (final EnterpriseBeanInfo bean : enterpriseBeans) {
             map.put(bean.ejbName, bean);
         }
 
         return map;
     }
 
-    private List<String> list(Class... classes) {
-        ArrayList<String> list = new ArrayList<String>();
-        for (Class clazz : classes) {
+    private List<String> list(final Class... classes) {
+        final ArrayList<String> list = new ArrayList<String>();
+        for (final Class clazz : classes) {
             list.add(clazz.getName());
         }
         return sort(list);

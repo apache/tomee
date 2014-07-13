@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for gbean-locatorType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="gbean-locatorType">
  *   &lt;complexContent>
@@ -42,8 +42,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "gbean-locatorType", propOrder = {
@@ -58,11 +56,9 @@ public class GbeanLocatorType {
 
     /**
      * Gets the value of the pattern property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PatternType }
-     *     
+     *
+     * @return possible object is
+     * {@link PatternType }
      */
     public PatternType getPattern() {
         return pattern;
@@ -70,23 +66,19 @@ public class GbeanLocatorType {
 
     /**
      * Sets the value of the pattern property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PatternType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PatternType }
      */
-    public void setPattern(PatternType value) {
+    public void setPattern(final PatternType value) {
         this.pattern = value;
     }
 
     /**
      * Gets the value of the gbeanLink property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getGbeanLink() {
         return gbeanLink;
@@ -94,13 +86,11 @@ public class GbeanLocatorType {
 
     /**
      * Sets the value of the gbeanLink property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setGbeanLink(String value) {
+    public void setGbeanLink(final String value) {
         this.gbeanLink = value;
     }
 

@@ -60,7 +60,7 @@ public class EjbRefTest extends TestCase {
     }
 
     protected void tearDown() throws Exception {
-        for (AppInfo appInfo : assembler.getDeployedApplications()) {
+        for (final AppInfo appInfo : assembler.getDeployedApplications()) {
             assembler.destroyApplication(appInfo.path);
         }
         SystemInstance.get().setComponent(Assembler.class, null);
@@ -71,10 +71,10 @@ public class EjbRefTest extends TestCase {
     public void testInterfaceOnlyRefs() throws Exception {
         ear(ejbjar(Apple.class, AmbiguousFruitRef.class));
 
-        Fruit apple = get(Apple.class, Fruit.class);
+        final Fruit apple = get(Apple.class, Fruit.class);
         assertNotNull(apple);
 
-        FruitRef fruitRef = get(AmbiguousFruitRef.class, FruitRef.class);
+        final FruitRef fruitRef = get(AmbiguousFruitRef.class, FruitRef.class);
         assertNotNull(fruitRef);
 
         assertEquals(fruitRef.getFruit(), apple);
@@ -83,13 +83,13 @@ public class EjbRefTest extends TestCase {
     public void testBeanNameRef() throws Exception {
         ear(ejbjar(Apple.class, OrangeFruitRef.class, Orange.class));
 
-        Fruit apple = get(Apple.class, Fruit.class);
+        final Fruit apple = get(Apple.class, Fruit.class);
         assertNotNull(apple);
 
-        Fruit orange = get(Orange.class, Fruit.class);
+        final Fruit orange = get(Orange.class, Fruit.class);
         assertNotNull(orange);
 
-        FruitRef fruitRef = get(OrangeFruitRef.class, FruitRef.class);
+        final FruitRef fruitRef = get(OrangeFruitRef.class, FruitRef.class);
         assertNotNull(fruitRef);
 
         assertEquals(fruitRef.getFruit(), orange);
@@ -98,13 +98,13 @@ public class EjbRefTest extends TestCase {
     public void testMappedNameRef() throws Exception {
         ear(ejbjar(Apple.class, AppleFruitRef.class, Orange.class));
 
-        Fruit apple = get(Apple.class, Fruit.class);
+        final Fruit apple = get(Apple.class, Fruit.class);
         assertNotNull(apple);
 
-        Fruit orange = get(Orange.class, Fruit.class);
+        final Fruit orange = get(Orange.class, Fruit.class);
         assertNotNull(orange);
 
-        FruitRef fruitRef = get(AppleFruitRef.class, FruitRef.class);
+        final FruitRef fruitRef = get(AppleFruitRef.class, FruitRef.class);
         assertNotNull(fruitRef);
 
         assertEquals(fruitRef.getFruit(), apple);
@@ -113,10 +113,10 @@ public class EjbRefTest extends TestCase {
     public void testIntraEarInterfaceRef1() throws Exception {
         ear(ejbjar(Apple.class), ejbjar(AmbiguousFruitRef.class));
 
-        Fruit apple = get(Apple.class, Fruit.class);
+        final Fruit apple = get(Apple.class, Fruit.class);
         assertNotNull(apple);
 
-        FruitRef fruitRef = get(AmbiguousFruitRef.class, FruitRef.class);
+        final FruitRef fruitRef = get(AmbiguousFruitRef.class, FruitRef.class);
         assertNotNull(fruitRef);
 
         assertEquals(fruitRef.getFruit(), apple);
@@ -125,13 +125,13 @@ public class EjbRefTest extends TestCase {
     public void testIntraEarInterfaceRef() throws Exception {
         ear(ejbjar(Apple.class, AmbiguousFruitRef.class), ejbjar(Orange.class));
 
-        Fruit apple = get(Apple.class, Fruit.class);
+        final Fruit apple = get(Apple.class, Fruit.class);
         assertNotNull(apple);
 
-        Fruit orange = get(Orange.class, Fruit.class);
+        final Fruit orange = get(Orange.class, Fruit.class);
         assertNotNull(orange);
 
-        FruitRef fruitRef = get(AmbiguousFruitRef.class, FruitRef.class);
+        final FruitRef fruitRef = get(AmbiguousFruitRef.class, FruitRef.class);
         assertNotNull(fruitRef);
 
         assertEquals(fruitRef.getFruit(), apple);
@@ -140,13 +140,13 @@ public class EjbRefTest extends TestCase {
     public void testIntraEarBeanNameRef1() throws Exception {
         ear(ejbjar(Apple.class), ejbjar(OrangeFruitRef.class), ejbjar(Orange.class));
 
-        Fruit apple = get(Apple.class, Fruit.class);
+        final Fruit apple = get(Apple.class, Fruit.class);
         assertNotNull(apple);
 
-        Fruit orange = get(Orange.class, Fruit.class);
+        final Fruit orange = get(Orange.class, Fruit.class);
         assertNotNull(orange);
 
-        FruitRef fruitRef = get(OrangeFruitRef.class, FruitRef.class);
+        final FruitRef fruitRef = get(OrangeFruitRef.class, FruitRef.class);
         assertNotNull(fruitRef);
 
         assertEquals(fruitRef.getFruit(), orange);
@@ -155,13 +155,13 @@ public class EjbRefTest extends TestCase {
     public void testIntraEarBeanNameRef2() throws Exception {
         ear(ejbjar(Apple.class, OrangeFruitRef.class), ejbjar(Orange.class));
 
-        Fruit apple = get(Apple.class, Fruit.class);
+        final Fruit apple = get(Apple.class, Fruit.class);
         assertNotNull(apple);
 
-        Fruit orange = get(Orange.class, Fruit.class);
+        final Fruit orange = get(Orange.class, Fruit.class);
         assertNotNull(orange);
 
-        FruitRef fruitRef = get(OrangeFruitRef.class, FruitRef.class);
+        final FruitRef fruitRef = get(OrangeFruitRef.class, FruitRef.class);
         assertNotNull(fruitRef);
 
         assertEquals(fruitRef.getFruit(), orange);
@@ -171,10 +171,10 @@ public class EjbRefTest extends TestCase {
         ear(ejbjar(Apple.class));
         ear(ejbjar(AmbiguousFruitRef.class));
 
-        Fruit apple = get(Apple.class, Fruit.class);
+        final Fruit apple = get(Apple.class, Fruit.class);
         assertNotNull(apple);
 
-        FruitRef fruitRef = get(AmbiguousFruitRef.class, FruitRef.class);
+        final FruitRef fruitRef = get(AmbiguousFruitRef.class, FruitRef.class);
         assertNotNull(fruitRef);
 
         assertEquals(fruitRef.getFruit(), apple);
@@ -184,13 +184,13 @@ public class EjbRefTest extends TestCase {
         ear(ejbjar(Apple.class), ejbjar(AmbiguousFruitRef.class));
         ear(ejbjar(Orange.class));
 
-        Fruit apple = get(Apple.class, Fruit.class);
+        final Fruit apple = get(Apple.class, Fruit.class);
         assertNotNull(apple);
 
-        Fruit orange = get(Orange.class, Fruit.class);
+        final Fruit orange = get(Orange.class, Fruit.class);
         assertNotNull(orange);
 
-        FruitRef fruitRef = get(AmbiguousFruitRef.class, FruitRef.class);
+        final FruitRef fruitRef = get(AmbiguousFruitRef.class, FruitRef.class);
         assertNotNull(fruitRef);
 
         assertEquals(fruitRef.getFruit(), apple);
@@ -200,13 +200,13 @@ public class EjbRefTest extends TestCase {
         ear(ejbjar(Orange.class));
         ear(ejbjar(Apple.class, OrangeFruitRef.class));
 
-        Fruit apple = get(Apple.class, Fruit.class);
+        final Fruit apple = get(Apple.class, Fruit.class);
         assertNotNull(apple);
 
-        Fruit orange = get(Orange.class, Fruit.class);
+        final Fruit orange = get(Orange.class, Fruit.class);
         assertNotNull(orange);
 
-        FruitRef fruitRef = get(OrangeFruitRef.class, FruitRef.class);
+        final FruitRef fruitRef = get(OrangeFruitRef.class, FruitRef.class);
         assertNotNull(fruitRef);
 
         assertEquals(fruitRef.getFruit(), orange);
@@ -217,13 +217,13 @@ public class EjbRefTest extends TestCase {
         ear(ejbjar(Apple.class));
         ear(ejbjar(OrangeFruitRef.class));
 
-        Fruit apple = get(Apple.class, Fruit.class);
+        final Fruit apple = get(Apple.class, Fruit.class);
         assertNotNull(apple);
 
-        Fruit orange = get(Orange.class, Fruit.class);
+        final Fruit orange = get(Orange.class, Fruit.class);
         assertNotNull(orange);
 
-        FruitRef fruitRef = get(OrangeFruitRef.class, FruitRef.class);
+        final FruitRef fruitRef = get(OrangeFruitRef.class, FruitRef.class);
         assertNotNull(fruitRef);
 
         assertEquals(fruitRef.getFruit(), orange);
@@ -233,10 +233,10 @@ public class EjbRefTest extends TestCase {
         ear(ejbjar(AmbiguousFruitRef.class));
         ear(ejbjar(Apple.class));
 
-        Fruit apple = get(Apple.class, Fruit.class);
+        final Fruit apple = get(Apple.class, Fruit.class);
         assertNotNull(apple);
 
-        FruitRef fruitRef = get(AmbiguousFruitRef.class, FruitRef.class);
+        final FruitRef fruitRef = get(AmbiguousFruitRef.class, FruitRef.class);
         assertNotNull(fruitRef);
 
         assertEquals(fruitRef.getFruit(), apple);
@@ -246,13 +246,13 @@ public class EjbRefTest extends TestCase {
         ear(ejbjar(Apple.class, OrangeFruitRef.class));
         ear(ejbjar(Orange.class));
 
-        Fruit apple = get(Apple.class, Fruit.class);
+        final Fruit apple = get(Apple.class, Fruit.class);
         assertNotNull(apple);
 
-        Fruit orange = get(Orange.class, Fruit.class);
+        final Fruit orange = get(Orange.class, Fruit.class);
         assertNotNull(orange);
 
-        FruitRef fruitRef = get(OrangeFruitRef.class, FruitRef.class);
+        final FruitRef fruitRef = get(OrangeFruitRef.class, FruitRef.class);
         assertNotNull(fruitRef);
 
         assertEquals(fruitRef.getFruit(), orange);
@@ -263,13 +263,13 @@ public class EjbRefTest extends TestCase {
         ear(ejbjar(Apple.class));
         ear(ejbjar(Orange.class));
 
-        Fruit apple = get(Apple.class, Fruit.class);
+        final Fruit apple = get(Apple.class, Fruit.class);
         assertNotNull(apple);
 
-        Fruit orange = get(Orange.class, Fruit.class);
+        final Fruit orange = get(Orange.class, Fruit.class);
         assertNotNull(orange);
 
-        FruitRef fruitRef = get(OrangeFruitRef.class, FruitRef.class);
+        final FruitRef fruitRef = get(OrangeFruitRef.class, FruitRef.class);
         assertNotNull(fruitRef);
 
         assertEquals(fruitRef.getFruit(), orange);
@@ -279,8 +279,8 @@ public class EjbRefTest extends TestCase {
         ear(ejbjar(BlueBean.class));
         ear(ejbjar(WhiteBean.class));
 
-        Blue blue = get(BlueBean.class, Blue.class);
-        White white = get(WhiteBean.class, White.class);
+        final Blue blue = get(BlueBean.class, Blue.class);
+        final White white = get(WhiteBean.class, White.class);
 
         assertNotNull(blue);
         assertNotNull(blue.getWhite());
@@ -296,8 +296,8 @@ public class EjbRefTest extends TestCase {
         ear(ejbjar(RedBean.class));
         ear(ejbjar(BlackBean.class));
 
-        Red red = get(RedBean.class, Red.class);
-        Black black = get(BlackBean.class, Black.class);
+        final Red red = get(RedBean.class, Red.class);
+        final Black black = get(BlackBean.class, Black.class);
 
         assertNotNull(red);
         assertNotNull(red.getBlack());
@@ -312,7 +312,7 @@ public class EjbRefTest extends TestCase {
     public void testSameInterfaceDifferentName() throws Exception {
         ear(ejbjar(Yellow.class, Green.class, YellowGreenBean.class));
 
-        YellowGreen bean = get(YellowGreenBean.class, YellowGreen.class);
+        final YellowGreen bean = get(YellowGreenBean.class, YellowGreen.class);
 
         assertNotNull(bean);
         assertEquals("Yellow", bean.getYellow());
@@ -320,31 +320,31 @@ public class EjbRefTest extends TestCase {
     }
 
 
-    public void ear(Class... beans) throws Exception {
-        EjbJar ejbJar = ejbjar(beans);
+    public void ear(final Class... beans) throws Exception {
+        final EjbJar ejbJar = ejbjar(beans);
         ear(ejbJar);
     }
 
-    private void ear(EjbJar... ejbJars) throws OpenEJBException, NamingException, IOException {
-        AppModule app = new AppModule(this.getClass().getClassLoader(), "classpath-" + ejbJars.hashCode());
-        for (EjbJar ejbJar : ejbJars) {
+    private void ear(final EjbJar... ejbJars) throws OpenEJBException, NamingException, IOException {
+        final AppModule app = new AppModule(this.getClass().getClassLoader(), "classpath-" + ejbJars.hashCode());
+        for (final EjbJar ejbJar : ejbJars) {
             app.getEjbModules().add(new EjbModule(ejbJar));
         }
         assembler.createApplication(config.configureApplication(app));
     }
 
-    private EjbJar ejbjar(Class... beans) {
-        EjbJar ejbJar = new EjbJar();
-        for (Class bean : beans) {
+    private EjbJar ejbjar(final Class... beans) {
+        final EjbJar ejbJar = new EjbJar();
+        for (final Class bean : beans) {
             ejbJar.addEnterpriseBean(new StatelessBean(bean));
         }
         return ejbJar;
     }
 
-    public <T> T get(Class bean, Class<T> intrface) {
+    public <T> T get(final Class bean, final Class<T> intrface) {
         try {
             return (T) context.lookup(bean.getSimpleName() + "Local");
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             throw new IllegalStateException(e);
         }
     }

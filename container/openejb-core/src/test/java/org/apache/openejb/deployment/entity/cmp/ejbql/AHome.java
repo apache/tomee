@@ -25,17 +25,18 @@ import java.rmi.RemoteException;
 
 
 /**
- *
  * @version $Revision$ $Date$
  */
 public interface AHome extends EJBHome {
 
     // Create
     public ARemote create(Integer field1) throws CreateException, RemoteException;
+
     public ARemote create(CompoundPK primaryKey) throws CreateException, RemoteException;
 
     // Finder
     public ARemote findByPrimaryKey(Integer primaryKey) throws FinderException, RemoteException;
+
     public ARemote findTest(String value) throws FinderException, RemoteException;
-    
+
 }

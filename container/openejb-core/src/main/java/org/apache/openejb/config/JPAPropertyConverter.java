@@ -27,8 +27,8 @@ public final class JPAPropertyConverter {
     }
 
     public static class Pair {
-        private String key;
-        private String value;
+        private final String key;
+        private final String value;
 
         public Pair(final String key, final String value) {
             this.key = key;

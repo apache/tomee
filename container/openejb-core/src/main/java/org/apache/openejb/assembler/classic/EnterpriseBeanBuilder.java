@@ -114,8 +114,8 @@ class EnterpriseBeanBuilder {
         }
 
         Class serviceEndpoint = null;
-        if (BeanType.STATELESS == ejbType || BeanType.SINGLETON == ejbType ){
-            if(bean.serviceEndpoint != null){
+        if (BeanType.STATELESS == ejbType || BeanType.SINGLETON == ejbType) {
+            if (bean.serviceEndpoint != null) {
                 serviceEndpoint = loadClass(bean.serviceEndpoint, "classNotFound.sei");
             }
         }
@@ -138,7 +138,7 @@ class EnterpriseBeanBuilder {
             c = c.getSuperclass();
         } while (c != null && c != Object.class);
 
-        for (final Injection injection: moduleInjections) {
+        for (final Injection injection : moduleInjections) {
             if (relevantClasses.contains(injection.getTarget())) {
                 injections.add(injection);
             }
@@ -203,14 +203,14 @@ class EnterpriseBeanBuilder {
                         continue;
                     }
 
-                    if (paramsMatch(beanMethod, homeMethod)){
+                    if (paramsMatch(beanMethod, homeMethod)) {
                         deployment.mapMethods(homeMethod, beanMethod);
                     }
                 }
             }
 
             for (final RemoveMethodInfo removeMethod : statefulBeanInfo.removeMethods) {
-                
+
                 if (removeMethod.beanMethod.methodParams == null) {
 
                     final MethodInfo methodInfo = new MethodInfo();
@@ -229,7 +229,7 @@ class EnterpriseBeanBuilder {
                     deployment.getRemoveMethods().add(method);
                     deployment.setRetainIfExeption(method, removeMethod.retainIfException);
                 }
-                
+
             }
 
             final Map<EntityManagerFactory, Map> extendedEntityManagerFactories = new HashMap<EntityManagerFactory, Map>();
@@ -322,7 +322,7 @@ class EnterpriseBeanBuilder {
         for (final SecurityRoleReferenceInfo securityRoleReference : bean.securityRoleReferences) {
             deployment.addSecurityRoleReference(securityRoleReference.roleName, securityRoleReference.roleLink);
         }
-        
+
         return deployment;
     }
 
@@ -342,7 +342,7 @@ class EnterpriseBeanBuilder {
     }
 
     public static boolean paramsMatch(final Method methodA, final Method methodB) {
-        if (methodA.getParameterTypes().length != methodB.getParameterTypes().length){
+        if (methodA.getParameterTypes().length != methodB.getParameterTypes().length) {
             return false;
         }
 
@@ -365,7 +365,7 @@ class EnterpriseBeanBuilder {
         try {
             if (TimedObject.class.isAssignableFrom(ejbClass)) {
                 timeout = ejbClass.getMethod("ejbTimeout", Timer.class);
-            } else if (info != null){
+            } else if (info != null) {
                 try {
                     timeout = MethodInfoUtil.toMethod(ejbClass, info);
                 } catch (final IllegalStateException e) {

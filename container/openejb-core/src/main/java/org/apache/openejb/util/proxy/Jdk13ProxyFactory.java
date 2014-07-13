@@ -118,7 +118,7 @@ public class Jdk13ProxyFactory implements ProxyFactory {
     }
 
     private static class MultipleClassLoadersClassLoader extends ClassLoader {
-        private ClassLoader[] delegatingClassloaders;
+        private final ClassLoader[] delegatingClassloaders;
 
         public MultipleClassLoadersClassLoader(final ClassLoader[] classLoaders) {
             super(classLoaders[0]);

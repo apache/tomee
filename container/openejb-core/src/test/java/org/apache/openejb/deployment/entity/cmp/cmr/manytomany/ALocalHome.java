@@ -23,17 +23,18 @@ import javax.ejb.EJBLocalHome;
 import javax.ejb.FinderException;
 
 /**
- *
  * @version $Revision$ $Date$
  */
 public interface ALocalHome extends EJBLocalHome {
 
     // Create
     public ALocal create(Integer field1) throws CreateException;
+
     public ALocal create(CompoundPK primaryKey) throws CreateException;
 
     // Finder
     public ALocal findByPrimaryKey(Integer primaryKey) throws FinderException;
+
     public ALocal findByPrimaryKey(CompoundPK primaryKey) throws FinderException;
 
 }

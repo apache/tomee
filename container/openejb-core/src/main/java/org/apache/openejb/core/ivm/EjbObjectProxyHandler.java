@@ -243,19 +243,19 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
 
         if (beanContext.isAsynchronous(method)) {
             return beanContext.getModuleContext()
-                    .getAppContext()
-                    .getAsynchronousPool()
-                    .invoke(new CUCallable<Object>(new Callable<Object>() {
-                        @Override
-                        public Object call() throws Exception {
-                            try {
-                                return synchronizedBusinessMethod(interfce, method, args);
-                            } catch (final ApplicationException ae) {
-                                logger.error("EjbObjectProxyHandler: Asynchronous call to '" + interfce.getSimpleName() + "' on '" + method.getName() + "' failed", ae);
-                                throw ae;
-                            }
+                .getAppContext()
+                .getAsynchronousPool()
+                .invoke(new CUCallable<Object>(new Callable<Object>() {
+                    @Override
+                    public Object call() throws Exception {
+                        try {
+                            return synchronizedBusinessMethod(interfce, method, args);
+                        } catch (final ApplicationException ae) {
+                            logger.error("EjbObjectProxyHandler: Asynchronous call to '" + interfce.getSimpleName() + "' on '" + method.getName() + "' failed", ae);
+                            throw ae;
                         }
-                    }), method.getReturnType() == Void.TYPE);
+                    }
+                }), method.getReturnType() == Void.TYPE);
         } else {
             return synchronizedBusinessMethod(interfce, method, args);
         }

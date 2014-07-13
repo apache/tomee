@@ -32,11 +32,11 @@ import javax.xml.namespace.QName;
 
 /**
  * javaee_web_services_client_1_3.xsd
- *
+ * <p/>
  * <p>Java class for handler-chainType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="handler-chainType">
  *   &lt;complexContent>
@@ -54,8 +54,6 @@ import javax.xml.namespace.QName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "handler-chainType", propOrder = {
@@ -85,7 +83,7 @@ public class HandlerChain {
         return serviceNamePattern;
     }
 
-    public void setServiceNamePattern(QName value) {
+    public void setServiceNamePattern(final QName value) {
         this.serviceNamePattern = value;
     }
 
@@ -93,7 +91,7 @@ public class HandlerChain {
         return portNamePattern;
     }
 
-    public void setPortNamePattern(QName value) {
+    public void setPortNamePattern(final QName value) {
         this.portNamePattern = value;
     }
 
@@ -115,7 +113,7 @@ public class HandlerChain {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 }

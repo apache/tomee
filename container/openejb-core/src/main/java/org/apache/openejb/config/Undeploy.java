@@ -47,7 +47,7 @@ import static org.apache.openejb.util.JarExtractor.delete;
  */
 public class Undeploy {
 
-    private static Messages messages = new Messages(Undeploy.class);
+    private static final Messages messages = new Messages(Undeploy.class);
 
     private static final String defaultServerUrl = "ejbd://localhost:4201";
 
@@ -123,7 +123,7 @@ public class Undeploy {
             }
         }
 
-        if (exitCode != 0){
+        if (exitCode != 0) {
             throw new SystemExitException(exitCode);
         }
     }
@@ -147,7 +147,7 @@ public class Undeploy {
                 deployer.undeploy(path);
                 undeployed = true;
                 moduleId = path;
-                if (!delete(file)){
+                if (!delete(file)) {
                     throw new DeploymentTerminatedException(messages.format("cmd.undeploy.cantDelete", file.getAbsolutePath()));
                 }
             } catch (final NoSuchApplicationException e) {
@@ -167,7 +167,7 @@ public class Undeploy {
 
     private static void help(final Options options) {
         final HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp("undeploy [options] <file> [<file>...]", "\n"+ Undeploy.i18n("cmd.undeploy.description"), options, "\n");
+        formatter.printHelp("undeploy [options] <file> [<file>...]", "\n" + Undeploy.i18n("cmd.undeploy.description"), options, "\n");
     }
 
     private static Option option(final String shortOpt, final String longOpt, final String description) {

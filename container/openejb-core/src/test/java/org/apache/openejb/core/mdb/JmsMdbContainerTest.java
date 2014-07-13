@@ -70,9 +70,9 @@ public class JmsMdbContainerTest extends TestCase {
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
         assembler.createResource(config.configureService(ResourceInfo.class, "Default Unmanaged JDBC Database",
-                new Properties(), "Default Unmanaged JDBC Database", "DataSource"));
+            new Properties(), "Default Unmanaged JDBC Database", "DataSource"));
         assembler.createResource(config.configureService(ResourceInfo.class, "Default JMS Resource Adapter",
-                props, "Default JMS Resource Adapter", "ActiveMQResourceAdapter"));
+            props, "Default JMS Resource Adapter", "ActiveMQResourceAdapter"));
 
         // Setup the descriptor information
 
@@ -134,7 +134,7 @@ public class JmsMdbContainerTest extends TestCase {
         public static Lock lock = new ReentrantLock();
         public static Condition messageRecieved = lock.newCondition();
 
-        private static Stack<Lifecycle> lifecycle = new Stack<Lifecycle>();
+        private static final Stack<Lifecycle> lifecycle = new Stack<Lifecycle>();
 
         @Resource
         ConnectionFactory connectionFactory;

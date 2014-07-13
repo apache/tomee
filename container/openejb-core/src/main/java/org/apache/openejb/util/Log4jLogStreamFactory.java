@@ -69,7 +69,7 @@ public class Log4jLogStreamFactory implements LogStreamFactory {
         final boolean embedded = SystemInstance.get().getOptions().get("openejb.logging.embedded", false);
 
         File confDir = SystemInstance.get().getConf(null);
-        if (confDir ==  null) {
+        if (confDir == null) {
             confDir = SystemInstance.get().getBase().getDirectory("conf");
         }
 

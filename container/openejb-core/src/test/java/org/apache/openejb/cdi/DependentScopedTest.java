@@ -65,7 +65,7 @@ public class DependentScopedTest extends TestCase {
 
     }
 
-    private <T> Bean<T> getBean(Class<T> beanType) {
+    private <T> Bean<T> getBean(final Class<T> beanType) {
         return (Bean<T>) beanManager.getBeans(beanType).iterator().next();
     }
 
@@ -97,35 +97,35 @@ public class DependentScopedTest extends TestCase {
 
     public static class ColorWheel implements ColorWheelLocal {
 
-        private List<Color> colors = new ArrayList<Color>();
+        private final List<Color> colors = new ArrayList<Color>();
 
         @Inject
-        public void set(Red color) {
+        public void set(final Red color) {
             colors.add(color);
         }
 
         @Inject
-        public void set(Orange color) {
+        public void set(final Orange color) {
             colors.add(color);
         }
 
         @Inject
-        public void set(Yellow color) {
+        public void set(final Yellow color) {
             colors.add(color);
         }
 
         @Inject
-        public void set(Green color) {
+        public void set(final Green color) {
             colors.add(color);
         }
 
         @Inject
-        public void set(Blue color) {
+        public void set(final Blue color) {
             colors.add(color);
         }
 
         @Inject
-        public void set(Violet color) {
+        public void set(final Violet color) {
             colors.add(color);
         }
 

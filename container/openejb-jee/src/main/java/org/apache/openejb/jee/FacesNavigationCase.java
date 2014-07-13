@@ -34,11 +34,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * web-facesconfig_2_0.xsd
- *
+ * <p/>
  * <p>Java class for faces-config-navigation-caseType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="faces-config-navigation-caseType">
  *   &lt;complexContent>
@@ -56,8 +56,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- 48 *
- * 
+ * 48 *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "faces-config-navigation-caseType", propOrder = {
@@ -66,7 +65,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "icon",
     "fromAction",
     "fromOutcome",
-        "_if",
+    "_if",
     "toViewId",
     "redirect"
 })
@@ -99,7 +98,7 @@ public class FacesNavigationCase {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -112,7 +111,7 @@ public class FacesNavigationCase {
         return displayName.toArray();
     }
 
-    public void setDisplayNames(Text[] text) {
+    public void setDisplayNames(final Text[] text) {
         displayName.set(text);
     }
 
@@ -127,7 +126,7 @@ public class FacesNavigationCase {
         return icon;
     }
 
-    public Map<String,Icon> getIconMap() {
+    public Map<String, Icon> getIconMap() {
         if (icon == null) {
             icon = new LocalCollection<Icon>();
         }
@@ -140,11 +139,9 @@ public class FacesNavigationCase {
 
     /**
      * Gets the value of the fromAction property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FacesFromAction }
-     *     
+     *
+     * @return possible object is
+     * {@link FacesFromAction }
      */
     public FacesFromAction getFromAction() {
         return fromAction;
@@ -152,23 +149,19 @@ public class FacesNavigationCase {
 
     /**
      * Sets the value of the fromAction property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FacesFromAction }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link FacesFromAction }
      */
-    public void setFromAction(FacesFromAction value) {
+    public void setFromAction(final FacesFromAction value) {
         this.fromAction = value;
     }
 
     /**
      * Gets the value of the fromOutcome property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getFromOutcome() {
         return fromOutcome;
@@ -176,23 +169,19 @@ public class FacesNavigationCase {
 
     /**
      * Sets the value of the fromOutcome property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setFromOutcome(java.lang.String value) {
+    public void setFromOutcome(final java.lang.String value) {
         this.fromOutcome = value;
     }
 
     /**
      * Gets the value of the if property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
+     * @return possible object is
+     * {@link String }
      */
     public String getIf() {
         return _if;
@@ -201,22 +190,18 @@ public class FacesNavigationCase {
     /**
      * Sets the value of the if property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setIf(String value) {
+    public void setIf(final String value) {
         this._if = value;
     }
 
     /**
      * Gets the value of the toViewId property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getToViewId() {
         return toViewId;
@@ -224,23 +209,19 @@ public class FacesNavigationCase {
 
     /**
      * Sets the value of the toViewId property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setToViewId(java.lang.String value) {
+    public void setToViewId(final java.lang.String value) {
         this.toViewId = value;
     }
 
     /**
      * Gets the value of the redirect property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FacesRedirect }
-     *     
+     *
+     * @return possible object is
+     * {@link FacesRedirect }
      */
     public FacesRedirect getRedirect() {
         return redirect;
@@ -248,23 +229,19 @@ public class FacesNavigationCase {
 
     /**
      * Sets the value of the redirect property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FacesRedirect }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link FacesRedirect }
      */
-    public void setRedirect(FacesRedirect value) {
+    public void setRedirect(final FacesRedirect value) {
         this.redirect = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getId() {
         return id;
@@ -272,13 +249,11 @@ public class FacesNavigationCase {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setId(java.lang.String value) {
+    public void setId(final java.lang.String value) {
         this.id = value;
     }
 

@@ -30,31 +30,27 @@ import java.util.List;
 
 
 /**
- * 
- * 
- *         
- * 
  * <p class="changed_added_2_2">Define a switch node in a flow graph.</p>
- * 
+ * <p/>
  * <div class="changed_added_2_2">
- * 
+ * <p/>
  * <p>This element must contain one or more
  * <code>&lt;case&gt;</code> elements.  When control passes to the
  * <code>&lt;switch&gt;</code> node, each of the cases must be considered
  * in order and control must past to the <code>&lt;from-outcome&gt;</code>
- * of the first one whose <code>&lt;if&gt;</code> expression evaluates to 
+ * of the first one whose <code>&lt;if&gt;</code> expression evaluates to
  * <code>true</code>.</p>
- * 
+ * <p/>
  * </div>
- * 
- * 
- * 
- *       
- * 
+ * <p/>
+ * <p/>
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for faces-config-flow-definition-switchType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="faces-config-flow-definition-switchType">
  *   &lt;complexContent>
@@ -68,8 +64,6 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "faces-config-flow-definition-switchType", propOrder = {
@@ -90,25 +84,23 @@ public class FacesConfigFlowDefinitionSwitch {
 
     /**
      * Gets the value of the case property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the case property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getCase().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link FacesConfigFlowDefinitionSwitchCase }
-     * 
-     * 
      */
     public List<FacesConfigFlowDefinitionSwitchCase> getCase() {
         if (_case == null) {
@@ -119,11 +111,9 @@ public class FacesConfigFlowDefinitionSwitch {
 
     /**
      * Gets the value of the defaultOutcome property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link XmlString }
-     *     
+     *
+     * @return possible object is
+     * {@link XmlString }
      */
     public XmlString getDefaultOutcome() {
         return defaultOutcome;
@@ -131,23 +121,19 @@ public class FacesConfigFlowDefinitionSwitch {
 
     /**
      * Sets the value of the defaultOutcome property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link XmlString }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link XmlString }
      */
-    public void setDefaultOutcome(XmlString value) {
+    public void setDefaultOutcome(final XmlString value) {
         this.defaultOutcome = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getId() {
         return id;
@@ -155,13 +141,11 @@ public class FacesConfigFlowDefinitionSwitch {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setId(java.lang.String value) {
+    public void setId(final java.lang.String value) {
         this.id = value;
     }
 

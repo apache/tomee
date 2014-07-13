@@ -17,7 +17,7 @@
 package org.apache.openejb.observer;
 
 @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
-@java.lang.annotation.Target({ java.lang.annotation.ElementType.METHOD })
+@java.lang.annotation.Target({java.lang.annotation.ElementType.METHOD})
 public @interface Assert {
     String[] value();
 }

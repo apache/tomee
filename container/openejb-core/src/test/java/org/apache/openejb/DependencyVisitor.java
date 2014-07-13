@@ -82,17 +82,17 @@ public class DependencyVisitor extends EmptyVisitor {
     // ClassVisitor
 
     public void visit(
-            final int version,
-            final int access,
-            final String name,
-            final String signature,
-            final String superName,
-            final String[] interfaces) {
+        final int version,
+        final int access,
+        final String name,
+        final String signature,
+        final String superName,
+        final String[] interfaces) {
 
         if (name.startsWith("org/apache/openejb/OpenEjbContainer")) {
             current = new HashMap<String, Integer>();
         } else {
-            String p = getGroupKey(name);
+            final String p = getGroupKey(name);
             current = groups.get(p);
             if (current == null) {
                 current = new HashMap<String, Integer>();
@@ -110,8 +110,8 @@ public class DependencyVisitor extends EmptyVisitor {
     }
 
     public AnnotationVisitor visitAnnotation(
-            final String desc,
-            final boolean visible) {
+        final String desc,
+        final boolean visible) {
         addDesc(desc);
         return super.visitAnnotation(desc, visible);
     }
@@ -120,11 +120,11 @@ public class DependencyVisitor extends EmptyVisitor {
     }
 
     public FieldVisitor visitField(
-            final int access,
-            final String name,
-            final String desc,
-            final String signature,
-            final Object value) {
+        final int access,
+        final String name,
+        final String desc,
+        final String signature,
+        final Object value) {
         if (signature == null) {
             addDesc(desc);
         } else {
@@ -137,11 +137,11 @@ public class DependencyVisitor extends EmptyVisitor {
     }
 
     public MethodVisitor visitMethod(
-            final int access,
-            final String name,
-            final String desc,
-            final String signature,
-            final String[] exceptions) {
+        final int access,
+        final String name,
+        final String desc,
+        final String signature,
+        final String[] exceptions) {
         if (signature == null) {
             addMethodDesc(desc);
         } else {
@@ -152,18 +152,18 @@ public class DependencyVisitor extends EmptyVisitor {
     }
 
     public void visitInnerClass(
-            final String name,
-            final String outerName,
-            final String innerName,
-            final int access) {
+        final String name,
+        final String outerName,
+        final String innerName,
+        final int access) {
         // addName( outerName);
         // addName( innerName);
     }
 
     public void visitOuterClass(
-            final String owner,
-            final String name,
-            final String desc) {
+        final String owner,
+        final String name,
+        final String desc) {
         // addName(owner);
         // addMethodDesc(desc);
     }
@@ -171,9 +171,9 @@ public class DependencyVisitor extends EmptyVisitor {
     // MethodVisitor
 
     public AnnotationVisitor visitParameterAnnotation(
-            final int parameter,
-            final String desc,
-            final boolean visible) {
+        final int parameter,
+        final String desc,
+        final boolean visible) {
         addDesc(desc);
         return super.visitParameterAnnotation(parameter, desc, visible);
     }
@@ -187,29 +187,29 @@ public class DependencyVisitor extends EmptyVisitor {
     }
 
     public void visitFieldInsn(
-            final int opcode,
-            final String owner,
-            final String name,
-            final String desc) {
+        final int opcode,
+        final String owner,
+        final String name,
+        final String desc) {
         addName(owner);
         addDesc(desc);
     }
 
     public void visitMethodInsn(
-            final int opcode,
-            final String owner,
-            final String name,
-            final String desc) {
+        final int opcode,
+        final String owner,
+        final String name,
+        final String desc) {
         addName(owner);
         addMethodDesc(desc);
     }
 
     public void visitMethodInsn(
-            final int opcode,
-            final String owner,
-            final String name,
-            final String desc,
-            final boolean itf) {
+        final int opcode,
+        final String owner,
+        final String name,
+        final String desc,
+        final boolean itf) {
         addName(owner);
         addMethodDesc(desc);
     }
@@ -225,12 +225,12 @@ public class DependencyVisitor extends EmptyVisitor {
     }
 
     public void visitLocalVariable(
-            final String name,
-            final String desc,
-            final String signature,
-            final Label start,
-            final Label end,
-            final int index) {
+        final String name,
+        final String desc,
+        final String signature,
+        final Label start,
+        final Label end,
+        final int index) {
         addTypeSignature(signature);
     }
 
@@ -238,11 +238,11 @@ public class DependencyVisitor extends EmptyVisitor {
     }
 
     public void visitFrame(
-            final int type,
-            final int nLocal,
-            final Object[] local,
-            final int nStack,
-            final Object[] stack) {
+        final int type,
+        final int nLocal,
+        final Object[] local,
+        final int nStack,
+        final Object[] stack) {
     }
 
     public void visitInsn(final int opcode) {
@@ -264,23 +264,23 @@ public class DependencyVisitor extends EmptyVisitor {
     }
 
     public void visitTableSwitchInsn(
-            final int min,
-            final int max,
-            final Label dflt,
-            final Label[] labels) {
+        final int min,
+        final int max,
+        final Label dflt,
+        final Label[] labels) {
     }
 
     public void visitLookupSwitchInsn(
-            final Label dflt,
-            final int[] keys,
-            final Label[] labels) {
+        final Label dflt,
+        final int[] keys,
+        final Label[] labels) {
     }
 
     public void visitTryCatchBlock(
-            final Label start,
-            final Label end,
-            final Label handler,
-            final String type) {
+        final Label start,
+        final Label end,
+        final Label handler,
+        final String type) {
         addName(type);
     }
 
@@ -299,15 +299,15 @@ public class DependencyVisitor extends EmptyVisitor {
     }
 
     public void visitEnum(
-            final String name,
-            final String desc,
-            final String value) {
+        final String name,
+        final String desc,
+        final String value) {
         addDesc(desc);
     }
 
     public AnnotationVisitor visitAnnotation(
-            final String name,
-            final String desc) {
+        final String name,
+        final String desc) {
         addDesc(desc);
         return super.visitAnnotation(name, desc);
     }
@@ -335,11 +335,11 @@ public class DependencyVisitor extends EmptyVisitor {
     // ---------------------------------------------
 
     private String getGroupKey(String name) {
-        int n = name.lastIndexOf('/');
+        final int n = name.lastIndexOf('/');
         if (n > -1) {
             name = name.substring(0, n);
         }
-        name = name.replace('/','.');
+        name = name.replace('/', '.');
         packages.add(name);
         return name;
     }
@@ -348,7 +348,7 @@ public class DependencyVisitor extends EmptyVisitor {
         if (name == null) {
             return;
         }
-        String p = getGroupKey(name);
+        final String p = getGroupKey(name);
         if (current.containsKey(p)) {
             current.put(p, current.get(p) + 1);
         } else {
@@ -368,7 +368,7 @@ public class DependencyVisitor extends EmptyVisitor {
 
     private void addMethodDesc(final String desc) {
         addType(Type.getReturnType(desc));
-        Type[] types = Type.getArgumentTypes(desc);
+        final Type[] types = Type.getArgumentTypes(desc);
         for (int i = 0; i < types.length; i++) {
             addType(types[i]);
         }
@@ -406,7 +406,7 @@ public class DependencyVisitor extends EmptyVisitor {
         }
 
         @Override
-        public void visitFormalTypeParameter(String name) {
+        public void visitFormalTypeParameter(final String name) {
             //delegate.visitFormalTypeParameter(name);
         }
 
@@ -446,12 +446,12 @@ public class DependencyVisitor extends EmptyVisitor {
         }
 
         @Override
-        public void visitBaseType(char descriptor) {
+        public void visitBaseType(final char descriptor) {
             delegate.visitBaseType(descriptor);
         }
 
         @Override
-        public void visitTypeVariable(String name) {
+        public void visitTypeVariable(final String name) {
             delegate.visitTypeVariable(name);
         }
 
@@ -461,12 +461,12 @@ public class DependencyVisitor extends EmptyVisitor {
         }
 
         @Override
-        public void visitClassType(String name) {
+        public void visitClassType(final String name) {
             delegate.visitClassType(name);
         }
 
         @Override
-        public void visitInnerClassType(String name) {
+        public void visitInnerClassType(final String name) {
             delegate.visitInnerClassType(name);
         }
 
@@ -476,7 +476,7 @@ public class DependencyVisitor extends EmptyVisitor {
         }
 
         @Override
-        public SignatureVisitor visitTypeArgument(char wildcard) {
+        public SignatureVisitor visitTypeArgument(final char wildcard) {
             return this; //delegate.visitTypeArgument(wildcard);
         }
 

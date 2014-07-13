@@ -190,8 +190,8 @@ public class CheckClassLoading extends ValidationBase {
 
     public static class DiffItem {
         private Collection<String> files = new ArrayList<String>();
-        private String file1;
-        private String file2;
+        private final String file1;
+        private final String file2;
 
         public DiffItem(final Collection<String> files, final String file1, final String file2) {
             this.files = files;
@@ -209,7 +209,7 @@ public class CheckClassLoading extends ValidationBase {
 
         public String toScreen() {
             final String str = "both files " + file1 + '\''
-                    + " and " + file2 + '\'';
+                + " and " + file2 + '\'';
             if (SystemInstance.get().getOptions().get(OPENEJB_CHECK_CLASSLOADER_VERBOSE, false)) {
                 return str + " contains files=" + files;
             }

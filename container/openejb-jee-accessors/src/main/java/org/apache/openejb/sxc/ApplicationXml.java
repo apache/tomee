@@ -32,11 +32,11 @@ import java.net.URL;
  */
 public class ApplicationXml {
 
-    public static Application unmarshal(InputStream inputStream) throws Exception {
+    public static Application unmarshal(final InputStream inputStream) throws Exception {
         return Sxc.unmarshalJavaee(new Application$JAXB(), inputStream);
     }
 
-    public static Application unmarshal(URL url) throws Exception {
+    public static Application unmarshal(final URL url) throws Exception {
         final InputStream inputStream = IO.read(url);
         try {
             return Sxc.unmarshalJavaee(new Application$JAXB(), inputStream);
@@ -45,7 +45,7 @@ public class ApplicationXml {
         }
     }
 
-    public static void marshal(Application application, OutputStream outputStream) throws Exception {
+    public static void marshal(final Application application, final OutputStream outputStream) throws Exception {
         Sxc.marshal(new Application$JAXB(), application, new StreamResult(outputStream));
     }
 }

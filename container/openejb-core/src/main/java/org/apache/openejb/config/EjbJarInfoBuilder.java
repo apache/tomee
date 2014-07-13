@@ -124,11 +124,11 @@ public class EjbJarInfoBuilder {
         final Map<String, EjbDeployment> ejbds = jar.getOpenejbJar().getDeploymentsByEjbName();
         final int beansDeployed = jar.getOpenejbJar().getEjbDeploymentCount();
         final int beansInEjbJar = jar.getEjbJar().getEnterpriseBeans().length;
-        
+
         if (beansInEjbJar != beansDeployed) {
- 
+
             for (final EnterpriseBean bean : jar.getEjbJar().getEnterpriseBeans()) {
-                if (!ejbds.containsKey(bean.getEjbName())){
+                if (!ejbds.containsKey(bean.getEjbName())) {
                     ConfigUtils.logger.warning("conf.0018", bean.getEjbName(), jar.getJarLocation());
                 }
             }
@@ -137,7 +137,7 @@ public class EjbJarInfoBuilder {
             logger.warning(message);
             throw new OpenEJBException(message);
         }
-        
+
         final Map<String, EnterpriseBeanInfo> infos = new HashMap<String, EnterpriseBeanInfo>();
         final Map<String, EnterpriseBean> items = new HashMap<String, EnterpriseBean>();
 
@@ -165,7 +165,7 @@ public class EjbJarInfoBuilder {
             } else if (bean instanceof MessageDrivenBean) {
                 beanInfo = initMessageBean((MessageDrivenBean) bean, ejbds);
             } else {
-                throw new OpenEJBException("Unknown bean type: "+bean.getClass().getName());
+                throw new OpenEJBException("Unknown bean type: " + bean.getClass().getName());
             }
             ejbJar.enterpriseBeans.add(beanInfo);
 
@@ -392,23 +392,23 @@ public class EjbJarInfoBuilder {
             }
             info.accessTimeout = toInfo(att.getAccessTimeout());
 
-            info.methods.addAll(getMethodInfos(att.getMethod(), ejbds));           
+            info.methods.addAll(getMethodInfos(att.getMethod(), ejbds));
             ejbJarInfo.methodConcurrency.add(info);
         }
     }
-    
+
     private void copyConcurrentMethods(final SessionBean bean, final EjbJarInfo ejbJarInfo, final Map ejbds) {
         for (final ConcurrentMethod method : bean.getConcurrentMethod()) {
             final MethodConcurrencyInfo info = new MethodConcurrencyInfo();
-            
+
             if (method.getLock() != null) {
                 info.concurrencyAttribute = method.getLock().toString();
             }
             info.accessTimeout = toInfo(method.getAccessTimeout());
-            
+
             final Method m = new Method(bean.getEjbName(), null, method.getMethod().getMethodName());
-            m.setMethodParams(method.getMethod().getMethodParams());            
-            info.methods.add(getMethodInfo(m, ejbds));            
+            m.setMethodParams(method.getMethod().getMethodParams());
+            info.methods.add(getMethodInfo(m, ejbds));
             ejbJarInfo.methodConcurrency.add(info);
         }
     }
@@ -550,15 +550,15 @@ public class EjbJarInfoBuilder {
         final EjbDeployment d = (EjbDeployment) ejbds.get(method.getEjbName());
 
         methodInfo.description = method.getDescription();
-        methodInfo.ejbDeploymentId = d == null ?null:d.getDeploymentId();
+        methodInfo.ejbDeploymentId = d == null ? null : d.getDeploymentId();
         methodInfo.ejbName = method.getEjbName();
         methodInfo.methodIntf = method.getMethodIntf() == null ? null : method.getMethodIntf().toString();
         methodInfo.methodName = method.getMethodName();
-        if (methodInfo.methodName == null || methodInfo.methodName.equals("")){
+        if (methodInfo.methodName == null || methodInfo.methodName.equals("")) {
             methodInfo.methodName = "*";
         }
         methodInfo.className = method.getClassName();
-        if (methodInfo.className == null || methodInfo.className.equals("")){
+        if (methodInfo.className == null || methodInfo.className.equals("")) {
             methodInfo.className = "*";
         }
 
@@ -596,7 +596,7 @@ public class EjbJarInfoBuilder {
                 remove.retainIfException = removeMethod.getRetainIfException();
                 stateful.removeMethods.add(remove);
             }
-            
+
             copyConcurrentMethods(s, ejbJar, m);
 
         } else if (s.getSessionType() == SessionType.MANAGED) {
@@ -624,11 +624,11 @@ public class EjbJarInfoBuilder {
             bean.concurrencyType = type != null ? type.toString() : ConcurrencyManagementType.CONTAINER.toString();
             bean.loadOnStartup = s.getInitOnStartup();
 
-            copyCallbacks(s.getAroundTimeout(),bean.aroundTimeout);
+            copyCallbacks(s.getAroundTimeout(), bean.aroundTimeout);
             copySchedules(s.getTimer(), bean.methodScheduleInfos);
             // See JndiEncInfoBuilder.buildDependsOnRefs for processing of DependsOn
             // bean.dependsOn.addAll(s.getDependsOn());
-            
+
             copyConcurrentMethods(s, ejbJar, m);
         } else {
             bean = new StatelessBeanInfo();
@@ -636,7 +636,7 @@ public class EjbJarInfoBuilder {
         }
 
         if (s.getSessionType() != SessionType.STATEFUL) {
-            copyCallbacks(s.getAroundTimeout(),bean.aroundTimeout);
+            copyCallbacks(s.getAroundTimeout(), bean.aroundTimeout);
         }
 
         bean.localbean = s.getLocalBean() != null;
@@ -655,8 +655,8 @@ public class EjbJarInfoBuilder {
         final EjbDeployment d = (EjbDeployment) m.get(s.getEjbName());
         if (d == null) {
             throw new OpenEJBException("No deployment information in openejb-jar.xml for bean "
-                    + s.getEjbName()
-                    + ". Please redeploy the jar");
+                + s.getEjbName()
+                + ". Please redeploy the jar");
         }
         bean.ejbDeploymentId = d.getDeploymentId();
         bean.containerId = d.getContainerId();
@@ -677,7 +677,7 @@ public class EjbJarInfoBuilder {
         bean.businessLocal.addAll(s.getBusinessLocal());
         bean.businessRemote.addAll(s.getBusinessRemote());
         final TransactionType txType = s.getTransactionType();
-        bean.transactionType = txType != null ?txType.toString(): TransactionType.CONTAINER.toString();
+        bean.transactionType = txType != null ? txType.toString() : TransactionType.CONTAINER.toString();
         bean.serviceEndpoint = s.getServiceEndpoint();
         bean.properties.putAll(d.getProperties());
 
@@ -703,18 +703,18 @@ public class EjbJarInfoBuilder {
         if (timeout == null) {
             return null;
         }
-        
+
         final TimeoutInfo accessTimeout = new TimeoutInfo();
         accessTimeout.time = timeout.getTimeout();
         accessTimeout.unit = timeout.getUnit().toString();
         return accessTimeout;
     }
-    
+
     private EnterpriseBeanInfo initMessageBean(final MessageDrivenBean mdb, final Map m) throws OpenEJBException {
         final MessageDrivenBeanInfo bean = new MessageDrivenBeanInfo();
 
         bean.timeoutMethod = toInfo(mdb.getTimeoutMethod());
-        copyCallbacks(mdb.getAroundTimeout(),bean.aroundTimeout);
+        copyCallbacks(mdb.getAroundTimeout(), bean.aroundTimeout);
 
         copyCallbacks(mdb.getAroundInvoke(), bean.aroundInvoke);
         copyCallbacks(mdb.getPostConstruct(), bean.postConstruct);
@@ -725,8 +725,8 @@ public class EjbJarInfoBuilder {
         final EjbDeployment d = (EjbDeployment) m.get(mdb.getEjbName());
         if (d == null) {
             throw new OpenEJBException("No deployment information in openejb-jar.xml for bean "
-                    + mdb.getEjbName()
-                    + ". Please redeploy the jar");
+                + mdb.getEjbName()
+                + ". Please redeploy the jar");
         }
         bean.ejbDeploymentId = d.getDeploymentId();
         bean.containerId = d.getContainerId();
@@ -739,7 +739,7 @@ public class EjbJarInfoBuilder {
         bean.ejbClass = mdb.getEjbClass();
         bean.ejbName = mdb.getEjbName();
         final TransactionType txType = mdb.getTransactionType();
-        bean.transactionType = txType != null ?txType.toString(): TransactionType.CONTAINER.toString();
+        bean.transactionType = txType != null ? txType.toString() : TransactionType.CONTAINER.toString();
         bean.properties.putAll(d.getProperties());
 
         if (mdb.getMessagingType() != null) {
@@ -800,8 +800,8 @@ public class EjbJarInfoBuilder {
         final EjbDeployment d = (EjbDeployment) m.get(e.getEjbName());
         if (d == null) {
             throw new OpenEJBException("No deployment information in openejb-jar.xml for bean "
-                    + e.getEjbName()
-                    + ". Please redeploy the jar");
+                + e.getEjbName()
+                + ". Please redeploy the jar");
         }
         bean.ejbDeploymentId = d.getDeploymentId();
         bean.containerId = d.getContainerId();
@@ -828,7 +828,7 @@ public class EjbJarInfoBuilder {
 
         final CmpVersion cmpVersion = e.getCmpVersion();
         if (e.getPersistenceType() == PersistenceType.CONTAINER) {
-            if (cmpVersion != null && cmpVersion == CmpVersion.CMP1){
+            if (cmpVersion != null && cmpVersion == CmpVersion.CMP1) {
                 bean.cmpVersion = 1;
             } else {
                 bean.cmpVersion = 2;
@@ -881,5 +881,5 @@ public class EjbJarInfoBuilder {
         }
         return bean;
     }
-    
+
 }

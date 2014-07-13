@@ -29,11 +29,11 @@ import java.util.List;
 
 /**
  * connector_1_6.xsd
- * 
+ * <p/>
  * <p>Java class for messageadapterType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="messageadapterType">
  *   &lt;complexContent>
@@ -46,13 +46,11 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "messageadapterType", propOrder = {
-        "messageListener"
+    "messageListener"
 })
 public class MessageAdapter {
 
@@ -70,16 +68,16 @@ public class MessageAdapter {
         return this.messageListener;
     }
 
-    public MessageListener addMessageListener(MessageListener listener){
+    public MessageListener addMessageListener(final MessageListener listener) {
         getMessageListener().add(listener);
         return listener;
     }
-    
+
     public String getId() {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

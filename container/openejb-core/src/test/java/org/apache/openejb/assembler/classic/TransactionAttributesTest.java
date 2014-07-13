@@ -55,19 +55,19 @@ public class TransactionAttributesTest extends TestCase {
     private Object bean;
 
     public void test() throws Exception {
-        Assembler assembler = new Assembler();
-        ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
 
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(Color.class));
         ejbJar.addEnterpriseBean(new StatelessBean(Red.class));
         ejbJar.addEnterpriseBean(new StatelessBean(Crimson.class));
         ejbJar.addEnterpriseBean(new StatelessBean(Scarlet.class));
-        List<ContainerTransaction> declared = ejbJar.getAssemblyDescriptor().getContainerTransaction();
+        final List<ContainerTransaction> declared = ejbJar.getAssemblyDescriptor().getContainerTransaction();
 
         declared.add(new ContainerTransaction(TransAttribute.REQUIRED, "*", "*", "*"));
         declared.add(new ContainerTransaction(TransAttribute.SUPPORTS, "*", "Crimson", "*"));
@@ -77,7 +77,7 @@ public class TransactionAttributesTest extends TestCase {
 
         ejbJar.getAssemblyDescriptor().addInterceptorBinding(new InterceptorBinding("*", AttributeInterceptor.class.getName()));
 
-        EjbJarInfo ejbJarInfo = config.configureApplication(ejbJar);
+        final EjbJarInfo ejbJarInfo = config.configureApplication(ejbJar);
         assembler.createApplication(ejbJarInfo);
 
         loadAttributes(ejbJarInfo, "Color");
@@ -127,23 +127,23 @@ public class TransactionAttributesTest extends TestCase {
 
     }
 
-    private void loadAttributes(EjbJarInfo ejbJarInfo, String deploymentId) {
-        ContainerSystem system = SystemInstance.get().getComponent(ContainerSystem.class);
-        BeanContext beanContext = system.getBeanContext(deploymentId);
-        List<MethodTransactionInfo> infos = normalize(ejbJarInfo.methodTransactions);
+    private void loadAttributes(final EjbJarInfo ejbJarInfo, final String deploymentId) {
+        final ContainerSystem system = SystemInstance.get().getComponent(ContainerSystem.class);
+        final BeanContext beanContext = system.getBeanContext(deploymentId);
+        final List<MethodTransactionInfo> infos = normalize(ejbJarInfo.methodTransactions);
         attributes = resolveAttributes(infos, beanContext);
         bean = system.getBeanContext(deploymentId).getBusinessLocalBeanHome().create();
     }
 
-    private void assertAttribute(String attribute, Method method) throws Exception {
-        MethodTransactionInfo info = (MethodTransactionInfo) attributes.get(method);
+    private void assertAttribute(final String attribute, final Method method) throws Exception {
+        final MethodTransactionInfo info = (MethodTransactionInfo) attributes.get(method);
         assertEquals(method.toString(), attribute, info.transAttribute);
 
         try {
             final Object[] args = new Object[method.getParameterTypes().length];
             final Object result = method.invoke(bean, args);
             assertEquals(attribute, result);
-        } catch (InvocationTargetException e) {
+        } catch (final InvocationTargetException e) {
             assertEquals(attribute, "Mandatory");
             assertTrue(e.getTargetException() instanceof EJBTransactionRequiredException);
         }
@@ -152,7 +152,7 @@ public class TransactionAttributesTest extends TestCase {
     public static class AttributeInterceptor {
 
         @AroundInvoke
-        public Object invoke(InvocationContext context) throws Exception {
+        public Object invoke(final InvocationContext context) throws Exception {
             return ThreadContext.getThreadContext().getTransactionPolicy().getClass().getSimpleName().replace("Tx", "");
         }
     }
@@ -171,27 +171,48 @@ public class TransactionAttributesTest extends TestCase {
 
 
         @TransactionAttribute(NEVER)
-        public String color(){return null;}
+        public String color() {
+            return null;
+        }
 
 
         @TransactionAttribute(REQUIRES_NEW)
-        public String color(Object o){return null;}
+        public String color(final Object o) {
+            return null;
+        }
 
-        public String color(String s){return null;}
-        public String color(Boolean b){return null;}
-        public String color(Integer i){return null;}
+        public String color(final String s) {
+            return null;
+        }
+
+        public String color(final Boolean b) {
+            return null;
+        }
+
+        public String color(final Integer i) {
+            return null;
+        }
     }
 
 
     public static class Red extends Color {
 
-        public String color(Object o){return super.color(o);}
+        public String color(final Object o) {
+            return super.color(o);
+        }
 
         @TransactionAttribute(REQUIRES_NEW)
-        public String red(){return null;}
+        public String red() {
+            return null;
+        }
 
-        public String red(Object o){return null;}
-        public String red(String s){return null;}
+        public String red(final Object o) {
+            return null;
+        }
+
+        public String red(final String s) {
+            return null;
+        }
 
     }
 
@@ -199,22 +220,35 @@ public class TransactionAttributesTest extends TestCase {
     public static class Crimson extends Red {
 
 
-        public String color(){return null;}
-        public String color(String s){return null;}
+        public String color() {
+            return null;
+        }
+
+        public String color(final String s) {
+            return null;
+        }
 
         @TransactionAttribute(REQUIRES_NEW)
-        public String crimson(){return null;}
+        public String crimson() {
+            return null;
+        }
 
-        public String crimson(String s){return null;}
+        public String crimson(final String s) {
+            return null;
+        }
     }
 
     @TransactionAttribute(NOT_SUPPORTED)
     public static class Scarlet extends Red {
 
         @TransactionAttribute(REQUIRES_NEW)
-        public String scarlet(){return null;}
+        public String scarlet() {
+            return null;
+        }
 
-        public String scarlet(String s){return null;}
+        public String scarlet(final String s) {
+            return null;
+        }
     }
 
 }

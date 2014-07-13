@@ -28,8 +28,8 @@ public class OpenEJBServerPlatform extends JMXServerPlatformBase {
         super(newDatabaseSession);
         try {
             mBeanServer = MBeanServer.class.cast(
-                    OpenEJBServerPlatform.class.getClassLoader().loadClass("org.apache.openejb.monitoring")
-                        .getMethod("get").invoke(null));
+                OpenEJBServerPlatform.class.getClassLoader().loadClass("org.apache.openejb.monitoring")
+                    .getMethod("get").invoke(null));
         } catch (final Exception e) {
             // no-op
         }
@@ -49,8 +49,8 @@ public class OpenEJBServerPlatform extends JMXServerPlatformBase {
         @Override
         protected TransactionManager acquireTransactionManager() throws Exception {
             return TransactionManager.class.cast(
-                    OpenEJBJTATransactionController.class.getClassLoader().loadClass("org.apache.openejb.OpenEJB")
-                            .getDeclaredMethod("getTransactionManager").invoke(null));
+                OpenEJBJTATransactionController.class.getClassLoader().loadClass("org.apache.openejb.OpenEJB")
+                    .getDeclaredMethod("getTransactionManager").invoke(null));
         }
     }
 }

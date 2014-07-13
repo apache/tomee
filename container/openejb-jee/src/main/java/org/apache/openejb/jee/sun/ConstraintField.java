@@ -49,7 +49,7 @@ public class ConstraintField {
         return name;
     }
 
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -61,7 +61,7 @@ public class ConstraintField {
         }
     }
 
-    public void setScope(String value) {
+    public void setScope(final String value) {
         this.scope = value;
     }
 
@@ -73,7 +73,7 @@ public class ConstraintField {
         }
     }
 
-    public void setCacheOnMatch(String value) {
+    public void setCacheOnMatch(final String value) {
         this.cacheOnMatch = value;
     }
 
@@ -85,7 +85,7 @@ public class ConstraintField {
         }
     }
 
-    public void setCacheOnMatchFailure(String value) {
+    public void setCacheOnMatchFailure(final String value) {
         this.cacheOnMatchFailure = value;
     }
 

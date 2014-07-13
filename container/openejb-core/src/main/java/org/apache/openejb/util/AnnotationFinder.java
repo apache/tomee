@@ -64,7 +64,7 @@ public class AnnotationFinder {
 
     private final ClassLoader classLoader;
     private final List<String> classesNotLoaded = new ArrayList<String>();
-    private List<String> classNames;
+    private final List<String> classNames;
 
     /**
      * Creates a ClassFinder that will search the urls in the specified classloader
@@ -323,7 +323,7 @@ public class AnnotationFinder {
     public class Visitor extends ClassVisitor {
 
         private NotFoundException notFoundException;
-        private FoundException foundException;
+        private final FoundException foundException;
         private final Filter filter;
 
         public Visitor(final Filter filter) {

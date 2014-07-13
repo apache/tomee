@@ -27,7 +27,7 @@ import javax.transaction.UserTransaction;
 import java.rmi.RemoteException;
 
 public class TxBeanManaged extends JtaTransactionPolicy implements BeanTransactionPolicy {
-    private Transaction clientTx;
+    private final Transaction clientTx;
 
     public TxBeanManaged(final TransactionManager transactionManager) throws SystemException {
         super(TransactionType.BeanManaged, transactionManager);
@@ -69,7 +69,7 @@ public class TxBeanManaged extends JtaTransactionPolicy implements BeanTransacti
         if (suspendedTransaction == null) {
             throw new NullPointerException("suspendedTransaction is null");
         }
-        
+
         final Transaction beanTransaction = ((JtaSuspendedTransaction) suspendedTransaction).transaction;
         if (beanTransaction == null) {
             throw new SystemException("Bean transaction has already been resumed or destroyed");

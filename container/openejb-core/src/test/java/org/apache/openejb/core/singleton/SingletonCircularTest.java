@@ -47,8 +47,8 @@ public class SingletonCircularTest extends TestCase {
 
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
-        Assembler assembler = new Assembler();
-        ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
 
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
@@ -59,7 +59,7 @@ public class SingletonCircularTest extends TestCase {
 
         actual.clear();
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
 
         ejbJar.addEnterpriseBean(new SingletonBean(Two.class));
         ejbJar.addEnterpriseBean(new SingletonBean(One.class));

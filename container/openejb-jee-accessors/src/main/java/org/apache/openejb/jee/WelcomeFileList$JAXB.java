@@ -30,33 +30,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class WelcomeFileList$JAXB
-        extends JAXBObject<WelcomeFileList> {
+    extends JAXBObject<WelcomeFileList> {
 
 
     public WelcomeFileList$JAXB() {
         super(WelcomeFileList.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "welcome-file-listType".intern()));
     }
 
-    public static WelcomeFileList readWelcomeFileList(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static WelcomeFileList readWelcomeFileList(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeWelcomeFileList(XoXMLStreamWriter writer, WelcomeFileList welcomeFileList, RuntimeContext context)
-            throws Exception {
+    public static void writeWelcomeFileList(final XoXMLStreamWriter writer, final WelcomeFileList welcomeFileList, final RuntimeContext context)
+        throws Exception {
         _write(writer, welcomeFileList, context);
     }
 
-    public void write(XoXMLStreamWriter writer, WelcomeFileList welcomeFileList, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final WelcomeFileList welcomeFileList, final RuntimeContext context)
+        throws Exception {
         _write(writer, welcomeFileList, context);
     }
 
-    public final static WelcomeFileList _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static WelcomeFileList _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -67,13 +67,13 @@ public class WelcomeFileList$JAXB
             context = new RuntimeContext();
         }
 
-        WelcomeFileList welcomeFileList = new WelcomeFileList();
+        final WelcomeFileList welcomeFileList = new WelcomeFileList();
         context.beforeUnmarshal(welcomeFileList, LifecycleCallback.NONE);
 
         List<String> welcomeFile = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("welcome-file-listType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, WelcomeFileList.class);
@@ -81,10 +81,10 @@ public class WelcomeFileList$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, welcomeFileList);
                 welcomeFileList.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -93,15 +93,15 @@ public class WelcomeFileList$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("welcome-file" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: welcomeFile
-                String welcomeFileItemRaw = elementReader.getElementAsString();
+                final String welcomeFileItemRaw = elementReader.getElementAsString();
 
-                String welcomeFileItem;
+                final String welcomeFileItem;
                 try {
                     welcomeFileItem = Adapters.collapsedStringAdapterAdapter.unmarshal(welcomeFileItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -128,13 +128,13 @@ public class WelcomeFileList$JAXB
         return welcomeFileList;
     }
 
-    public final WelcomeFileList read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final WelcomeFileList read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, WelcomeFileList welcomeFileList, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final WelcomeFileList welcomeFileList, RuntimeContext context)
+        throws Exception {
         if (welcomeFileList == null) {
             writer.writeXsiNil();
             return;
@@ -153,25 +153,25 @@ public class WelcomeFileList$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = welcomeFileList.id;
+        final String idRaw = welcomeFileList.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(welcomeFileList, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: welcomeFile
-        List<String> welcomeFileRaw = welcomeFileList.welcomeFile;
+        final List<String> welcomeFileRaw = welcomeFileList.welcomeFile;
         if (welcomeFileRaw != null) {
-            for (String welcomeFileItem : welcomeFileRaw) {
+            for (final String welcomeFileItem : welcomeFileRaw) {
                 String welcomeFile = null;
                 try {
                     welcomeFile = Adapters.collapsedStringAdapterAdapter.marshal(welcomeFileItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(welcomeFileList, "welcomeFile", CollapsedStringAdapter.class, List.class, List.class, e);
                 }
                 if (welcomeFile != null) {

@@ -37,7 +37,7 @@ public class ResponseProtection {
         return authSource;
     }
 
-    public void setAuthSource(String value) {
+    public void setAuthSource(final String value) {
         this.authSource = value;
     }
 
@@ -45,7 +45,7 @@ public class ResponseProtection {
         return authRecipient;
     }
 
-    public void setAuthRecipient(String value) {
+    public void setAuthRecipient(final String value) {
         this.authRecipient = value;
     }
 }

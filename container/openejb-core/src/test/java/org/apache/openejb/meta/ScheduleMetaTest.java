@@ -42,8 +42,9 @@ public class ScheduleMetaTest {
         public static class $ {
 
             @Daily
-            @Schedule(second="0", minute="0", hour="0", month="*", dayOfWeek="*", year="*")
-            public void method(){}
+            @Schedule(second = "0", minute = "0", hour = "0", month = "*", dayOfWeek = "*", year = "*")
+            public void method() {
+            }
         }
     }
 
@@ -52,7 +53,7 @@ public class ScheduleMetaTest {
      */
     public static class ExpectedBean implements Bean {
 
-        @Schedule(second="0", minute="0", hour="0", month="*", dayOfWeek="*", year="*")
+        @Schedule(second = "0", minute = "0", hour = "0", month = "*", dayOfWeek = "*", year = "*")
         public void method() {
         }
     }

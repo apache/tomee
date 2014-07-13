@@ -33,11 +33,11 @@ import java.util.List;
 
 /**
  * ejb-jar_3_1.xsd
- *
+ * <p/>
  * <p>Java class for cmp-fieldType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="cmp-fieldType">
  *   &lt;complexContent>
@@ -51,14 +51,12 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "cmp-fieldType", propOrder = {
-        "descriptions",
-        "fieldName"
-        })
+    "descriptions",
+    "fieldName"
+})
 public class CmpField {
 
     @XmlTransient
@@ -73,7 +71,7 @@ public class CmpField {
     public CmpField() {
     }
 
-    public CmpField(String fieldName) {
+    public CmpField(final String fieldName) {
         this.fieldName = fieldName;
     }
 
@@ -82,7 +80,7 @@ public class CmpField {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -94,7 +92,7 @@ public class CmpField {
         return fieldName;
     }
 
-    public void setFieldName(String value) {
+    public void setFieldName(final String value) {
         this.fieldName = value;
     }
 
@@ -102,7 +100,7 @@ public class CmpField {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

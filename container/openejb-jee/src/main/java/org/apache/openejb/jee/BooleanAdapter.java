@@ -34,7 +34,7 @@ public class BooleanAdapter extends XmlAdapter<String, Boolean> {
         }
     }
 
-    public String marshal(Boolean value) throws Exception {
+    public String marshal(final Boolean value) throws Exception {
         if (value == null) {
             return null;
         }

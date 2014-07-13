@@ -19,13 +19,14 @@
 package org.apache.openejb.jee;
 
 import javax.xml.bind.annotation.XmlEnumValue;
+
 /**
  * ejb-jar_3_1.xsd
- *
+ * <p/>
  * <p>Java class for session-typeType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="session-typeType">
  *   &lt;simpleContent>
@@ -34,22 +35,20 @@ import javax.xml.bind.annotation.XmlEnumValue;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 public enum SessionType {
-    @XmlEnumValue("Stateful") STATEFUL("Stateful"),
-    @XmlEnumValue("Stateless") STATELESS("Stateless"),
-    @XmlEnumValue("Singleton") SINGLETON("Singleton"),
+    @XmlEnumValue("Stateful")STATEFUL("Stateful"),
+    @XmlEnumValue("Stateless")STATELESS("Stateless"),
+    @XmlEnumValue("Singleton")SINGLETON("Singleton"),
     //Managed is not specified in the schema as an allowable value
-    @XmlEnumValue("Managed") MANAGED("Managed");
+    @XmlEnumValue("Managed")MANAGED("Managed");
 
     private final String name;
 
-    SessionType(String name) {
-       this.name = name;
-   }
+    SessionType(final String name) {
+        this.name = name;
+    }
 
     public String getName() {
         return name;

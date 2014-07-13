@@ -28,10 +28,10 @@ public class ServiceUtilsTest extends TestCase {
     public void testImplies() throws Exception {
 
         final Properties properties = new Properties();
-        properties.put("color","blue");
-        properties.put("size","10");
-        properties.put("weight","100");
-        properties.put("shape","round");
+        properties.put("color", "blue");
+        properties.put("size", "10");
+        properties.put("weight", "100");
+        properties.put("shape", "round");
 
         final Properties required = new Properties();
         required.put("color", "BLUE");

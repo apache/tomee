@@ -5,9 +5,9 @@
  *   The ASF licenses this file to You under the Apache License, Version 2.0
  *   (the "License"); you may not use this file except in compliance with
  *   the License.  You may obtain a copy of the License at
- *  
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  *    Unless required by applicable law or agreed to in writing, software
  *    distributed under the License is distributed on an "AS IS" BASIS,
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,14 +20,14 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 
 /**
- * <p>
+ * <p/>
  * Java class for EnvEntryType.
- * 
- * <p>
+ * <p/>
+ * <p/>
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p>
- * 
+ * <p/>
+ * <p/>
  * <pre>
  * &lt;simpleType name="EnvEntryType">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}NCName">
@@ -43,38 +43,37 @@ import javax.xml.bind.annotation.XmlEnumValue;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
  */
 @XmlEnum
 public enum EnvEntryEnum {
 
-	@XmlEnumValue("String")
-	STRING("String"), @XmlEnumValue("Integer")
-	INTEGER("Integer"), @XmlEnumValue("Boolean")
-	BOOLEAN("Boolean"), @XmlEnumValue("Double")
-	DOUBLE("Double"), @XmlEnumValue("Byte")
-	BYTE("Byte"), @XmlEnumValue("Short")
-	SHORT("Short"), @XmlEnumValue("Long")
-	LONG("Long"), @XmlEnumValue("Float")
-	FLOAT("Float"), @XmlEnumValue("Character")
-	CHARACTER("Character");
-	private final String value;
+    @XmlEnumValue("String")
+    STRING("String"), @XmlEnumValue("Integer")
+    INTEGER("Integer"), @XmlEnumValue("Boolean")
+    BOOLEAN("Boolean"), @XmlEnumValue("Double")
+    DOUBLE("Double"), @XmlEnumValue("Byte")
+    BYTE("Byte"), @XmlEnumValue("Short")
+    SHORT("Short"), @XmlEnumValue("Long")
+    LONG("Long"), @XmlEnumValue("Float")
+    FLOAT("Float"), @XmlEnumValue("Character")
+    CHARACTER("Character");
+    private final String value;
 
-	EnvEntryEnum(String v) {
-		value = v;
-	}
+    EnvEntryEnum(final String v) {
+        value = v;
+    }
 
-	public String value() {
-		return value;
-	}
+    public String value() {
+        return value;
+    }
 
-	public static EnvEntryEnum fromValue(String v) {
-		for (EnvEntryEnum c : EnvEntryEnum.values()) {
-			if (c.value.equals(v)) {
-				return c;
-			}
-		}
-		throw new IllegalArgumentException(v.toString());
-	}
+    public static EnvEntryEnum fromValue(final String v) {
+        for (final EnvEntryEnum c : EnvEntryEnum.values()) {
+            if (c.value.equals(v)) {
+                return c;
+            }
+        }
+        throw new IllegalArgumentException(v.toString());
+    }
 
 }

@@ -51,7 +51,7 @@ public class PackageMapping implements Keyable<String> {
         return packageType;
     }
 
-    public void setPackageType(String value) {
+    public void setPackageType(final String value) {
         this.packageType = value;
     }
 
@@ -59,7 +59,7 @@ public class PackageMapping implements Keyable<String> {
         return namespaceURI;
     }
 
-    public void setNamespaceURI(String value) {
+    public void setNamespaceURI(final String value) {
         this.namespaceURI = value;
     }
 
@@ -67,7 +67,7 @@ public class PackageMapping implements Keyable<String> {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 }

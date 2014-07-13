@@ -39,7 +39,7 @@ public class ResourceRef {
         return resRefName;
     }
 
-    public void setResRefName(String value) {
+    public void setResRefName(final String value) {
         this.resRefName = value;
     }
 
@@ -47,7 +47,7 @@ public class ResourceRef {
         return jndiName;
     }
 
-    public void setJndiName(String value) {
+    public void setJndiName(final String value) {
         this.jndiName = value;
     }
 
@@ -55,7 +55,7 @@ public class ResourceRef {
         return defaultResourcePrincipal;
     }
 
-    public void setDefaultResourcePrincipal(DefaultResourcePrincipal value) {
+    public void setDefaultResourcePrincipal(final DefaultResourcePrincipal value) {
         this.defaultResourcePrincipal = value;
     }
 }

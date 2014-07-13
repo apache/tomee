@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for transport-requirements complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="transport-requirements">
  *   &lt;complexContent>
@@ -45,8 +45,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "transport-requirements", propOrder = {
@@ -67,11 +65,9 @@ public class TransportRequirements {
 
     /**
      * Gets the value of the integrity property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getIntegrity() {
         return integrity;
@@ -79,23 +75,19 @@ public class TransportRequirements {
 
     /**
      * Sets the value of the integrity property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setIntegrity(String value) {
+    public void setIntegrity(final String value) {
         this.integrity = value;
     }
 
     /**
      * Gets the value of the confidentiality property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getConfidentiality() {
         return confidentiality;
@@ -103,23 +95,19 @@ public class TransportRequirements {
 
     /**
      * Sets the value of the confidentiality property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setConfidentiality(String value) {
+    public void setConfidentiality(final String value) {
         this.confidentiality = value;
     }
 
     /**
      * Gets the value of the clientCertAuthentication property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getClientCertAuthentication() {
         return clientCertAuthentication;
@@ -127,23 +115,19 @@ public class TransportRequirements {
 
     /**
      * Sets the value of the clientCertAuthentication property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setClientCertAuthentication(String value) {
+    public void setClientCertAuthentication(final String value) {
         this.clientCertAuthentication = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getId() {
         return id;
@@ -151,13 +135,11 @@ public class TransportRequirements {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

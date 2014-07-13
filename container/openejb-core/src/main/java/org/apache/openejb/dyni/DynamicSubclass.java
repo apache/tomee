@@ -76,8 +76,7 @@ public class DynamicSubclass implements Opcodes {
                 // no-op
             }
 
-            final byte[] bytes = generateBytes(abstractClass);
-            return LocalBeanProxyFactory.Unsafe.defineClass(abstractClass, proxyName, bytes);
+            return LocalBeanProxyFactory.Unsafe.defineClass(abstractClass, proxyName, generateBytes(abstractClass));
 
         } catch (final Exception e) {
             throw new InternalError(DynamicSubclass.class.getSimpleName() + ".createSubclass: " + Debug.printStackTrace(e));
@@ -88,7 +87,7 @@ public class DynamicSubclass implements Opcodes {
 
     private static byte[] generateBytes(final Class<?> classToProxy) throws ProxyGenerationException {
 
-        final Map<String, MethodVisitor> visitors = new HashMap<String, MethodVisitor>();
+        final Map<String, MethodVisitor> visitors = new HashMap<>();
 
         final ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
 
@@ -111,7 +110,7 @@ public class DynamicSubclass implements Opcodes {
             visitors.put("<init>" + Type.getConstructorDescriptor(constructor), mv);
         }
 
-        final Map<String, List<Method>> methodMap = new HashMap<String, List<Method>>();
+        final Map<String, List<Method>> methodMap = new HashMap<>();
 
         getNonPrivateMethods(classToProxy, methodMap);
 
@@ -176,20 +175,18 @@ public class DynamicSubclass implements Opcodes {
                 final int modifiers = method.getModifiers();
 
                 if (Modifier.isFinal(modifiers)
-                        || Modifier.isPrivate(modifiers)
-                        || Modifier.isStatic(modifiers)) {
+                    || Modifier.isPrivate(modifiers)
+                    || Modifier.isStatic(modifiers)) {
                     continue;
                 }
 
                 List<Method> methods = methodMap.get(method.getName());
                 if (methods == null) {
-                    methods = new ArrayList<Method>();
+                    methods = new ArrayList<>();
                     methods.add(method);
                     methodMap.put(method.getName(), methods);
                 } else {
-                    if (isOverridden(methods, method)) { //NOPMD
-                        // method is overridden in superclass, so do nothing
-                    } else {
+                    if (!isOverridden(methods, method)) {
                         // method is not overridden, so add it
                         methods.add(method);
                     }
@@ -268,7 +265,7 @@ public class DynamicSubclass implements Opcodes {
 
     public static class MoveAnnotationsVisitor extends MethodVisitor {
 
-        private MethodVisitor newMethod;
+        private final MethodVisitor newMethod;
 
         public MoveAnnotationsVisitor(final MethodVisitor movedMethod, final MethodVisitor newMethod) {
             super(Opcodes.ASM5, movedMethod);

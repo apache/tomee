@@ -23,9 +23,9 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 /**
  * <p>Java class for auth-methodType.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p>
+ * <p/>
  * <pre>
  * &lt;simpleType name="auth-methodType">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -36,7 +36,6 @@ import javax.xml.bind.annotation.XmlEnumValue;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
  */
 @XmlEnum
 public enum AuthMethodType {
@@ -50,7 +49,7 @@ public enum AuthMethodType {
     NONE("NONE");
     private final String value;
 
-    AuthMethodType(String v) {
+    AuthMethodType(final String v) {
         value = v;
     }
 
@@ -58,8 +57,8 @@ public enum AuthMethodType {
         return value;
     }
 
-    public static AuthMethodType fromValue(String v) {
-        for (AuthMethodType c: AuthMethodType.values()) {
+    public static AuthMethodType fromValue(final String v) {
+        for (final AuthMethodType c : AuthMethodType.values()) {
             if (c.value.equals(v)) {
                 return c;
             }

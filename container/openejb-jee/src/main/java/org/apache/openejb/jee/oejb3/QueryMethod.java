@@ -40,7 +40,7 @@ public class QueryMethod {
         return methodName;
     }
 
-    public void setMethodName(String value) {
+    public void setMethodName(final String value) {
         this.methodName = value;
     }
 
@@ -48,7 +48,7 @@ public class QueryMethod {
         return methodParams;
     }
 
-    public void setMethodParams(MethodParams value) {
+    public void setMethodParams(final MethodParams value) {
         this.methodParams = value;
     }
 

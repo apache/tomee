@@ -27,14 +27,14 @@ import java.io.Serializable;
  * Computes the Kurtosis of the available values.
  * <p>
  * We use the following (unbiased) formula to define kurtosis:</p>
- *  <p>
- *  kurtosis = { [n(n+1) / (n -1)(n - 2)(n-3)] sum[(x_i - mean)^4] / std^4 } - [3(n-1)^2 / (n-2)(n-3)]
- *  </p><p>
- *  where n is the number of values, mean is the {@link Mean} and std is the
+ * <p>
+ * kurtosis = { [n(n+1) / (n -1)(n - 2)(n-3)] sum[(x_i - mean)^4] / std^4 } - [3(n-1)^2 / (n-2)(n-3)]
+ * </p><p>
+ * where n is the number of values, mean is the {@link Mean} and std is the
  * {@link org.apache.commons.math.stat.descriptive.moment.StandardDeviation}</p>
  * <p>
- *  Note that this statistic is undefined for n < 4.  <code>Double.Nan</code>
- *  is returned when there is not sufficient data to compute the statistic.</p>
+ * Note that this statistic is undefined for n < 4.  <code>Double.Nan</code>
+ * is returned when there is not sufficient data to compute the statistic.</p>
  * <p>
  * <strong>Note that this implementation is not synchronized.</strong> If
  * multiple threads access an instance of this class concurrently, and at least
@@ -45,10 +45,14 @@ import java.io.Serializable;
  */
 public class Kurtosis extends AbstractStorelessUnivariateStatistic implements Serializable {
 
-    /** Serializable version identifier */
+    /**
+     * Serializable version identifier
+     */
     private static final long serialVersionUID = 1234465764798260919L;
 
-    /**Fourth Moment on which this statistic is based */
+    /**
+     * Fourth Moment on which this statistic is based
+     */
     protected FourthMoment moment;
 
     /**
@@ -56,7 +60,7 @@ public class Kurtosis extends AbstractStorelessUnivariateStatistic implements Se
      * <p>
      * Statistics based on (constructed from) external moments cannot
      * be incremented or cleared.</p>
-    */
+     */
     protected boolean incMoment;
 
     /**
@@ -94,9 +98,9 @@ public class Kurtosis extends AbstractStorelessUnivariateStatistic implements Se
     public void increment(final double d) {
         if (incMoment) {
             moment.increment(d);
-        }  else  {
+        } else {
             throw MathRuntimeException.createIllegalStateException(
-                    "statistics constructed from external moments cannot be incremented");
+                "statistics constructed from external moments cannot be incremented");
         }
     }
 
@@ -108,15 +112,15 @@ public class Kurtosis extends AbstractStorelessUnivariateStatistic implements Se
         double kurtosis = Double.NaN;
         if (moment.getN() > 3) {
             final double variance = moment.m2 / (moment.n - 1);
-                if (moment.n <= 3 || variance < 10E-20) {
-                    kurtosis = 0.0;
-                } else {
-                    final double n = moment.n;
-                    kurtosis =
-                        (n * (n + 1) * moment.m4 -
-                                3 * moment.m2 * moment.m2 * (n - 1)) /
-                                ((n - 1) * (n -2) * (n -3) * variance * variance);
-                }
+            if (moment.n <= 3 || variance < 10E-20) {
+                kurtosis = 0.0;
+            } else {
+                final double n = moment.n;
+                kurtosis =
+                    (n * (n + 1) * moment.m4 -
+                        3 * moment.m2 * moment.m2 * (n - 1)) /
+                        ((n - 1) * (n - 2) * (n - 3) * variance * variance);
+            }
         }
         return kurtosis;
     }
@@ -128,9 +132,9 @@ public class Kurtosis extends AbstractStorelessUnivariateStatistic implements Se
     public void clear() {
         if (incMoment) {
             moment.clear();
-        } else  {
+        } else {
             throw MathRuntimeException.createIllegalStateException(
-                    "statistics constructed from external moments cannot be cleared");
+                "statistics constructed from external moments cannot be cleared");
         }
     }
 
@@ -152,15 +156,15 @@ public class Kurtosis extends AbstractStorelessUnivariateStatistic implements Se
      * Throws <code>IllegalArgumentException</code> if the array is null.</p>
      *
      * @param values the input array
-     * @param begin index of the first array element to include
+     * @param begin  index of the first array element to include
      * @param length the number of elements to include
      * @return the kurtosis of the values or Double.NaN if length is less than
      * 4
      * @throws IllegalArgumentException if the input array is null or the array
-     * index parameters are not valid
+     *                                  index parameters are not valid
      */
     @Override
-    public double evaluate(final double[] values,final int begin, final int length) {
+    public double evaluate(final double[] values, final int begin, final int length) {
         // Initialize the kurtosis
         double kurt = Double.NaN;
 
@@ -209,7 +213,7 @@ public class Kurtosis extends AbstractStorelessUnivariateStatistic implements Se
      * <p>Neither source nor dest can be null.</p>
      *
      * @param source Kurtosis to copy
-     * @param dest Kurtosis to copy to
+     * @param dest   Kurtosis to copy to
      * @throws NullPointerException if either source or dest is null
      */
     public static void copy(final Kurtosis source, final Kurtosis dest) {

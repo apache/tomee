@@ -30,11 +30,11 @@ import java.util.List;
 
 /**
  * connector_1_6.xsd
- * 
+ * <p/>
  * <p>Java class for licenseType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="licenseType">
  *   &lt;complexContent>
@@ -48,13 +48,11 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "licenseType", propOrder = {
-        "descriptions",
-        "licenseRequired"
+    "descriptions",
+    "licenseRequired"
 })
 public class License {
 
@@ -72,7 +70,7 @@ public class License {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -90,7 +88,7 @@ public class License {
     /**
      * Sets the value of the licenseRequired property.
      */
-    public void setLicenseRequired(boolean value) {
+    public void setLicenseRequired(final boolean value) {
         this.licenseRequired = value;
     }
 
@@ -98,7 +96,7 @@ public class License {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

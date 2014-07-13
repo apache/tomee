@@ -38,49 +38,50 @@ public class CheckAnnotationTest {
 
     @Keys({@Key(value = "annotation.invalid.stateful.webservice", type = KeyType.WARNING)})
     public AppModule testWebServiceWithStateful() {
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatefulBean(Green.class));
-        EjbModule ejbModule = new EjbModule(ejbJar);
+        final EjbModule ejbModule = new EjbModule(ejbJar);
         ejbModule.setFinder(new AnnotationFinder(new ClassesArchive(Green.class)).link());
 
-        AppModule appModule = new AppModule(ejbModule);
+        final AppModule appModule = new AppModule(ejbModule);
         return appModule;
     }
 
     @Keys({@Key(value = "annotation.invalid.messagedriven.webservice", type = KeyType.WARNING)})
     public AppModule testWebServiceWithMessageDriven() {
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new MessageDrivenBean(Yellow.class));
-        EjbModule ejbModule = new EjbModule(ejbJar);
+        final EjbModule ejbModule = new EjbModule(ejbJar);
         ejbModule.setFinder(new AnnotationFinder(new ClassesArchive(Yellow.class)).link());
 
-        AppModule appModule = new AppModule(ejbModule);
+        final AppModule appModule = new AppModule(ejbModule);
         return appModule;
     }
 
 
     @Keys({@Key(value = "annotation.invalid.managedbean.webservice", type = KeyType.WARNING)})
     public AppModule testWebServiceWithManagedBean() {
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new ManagedBean(Red.class));
-        EjbModule ejbModule = new EjbModule(ejbJar);
+        final EjbModule ejbModule = new EjbModule(ejbJar);
         ejbModule.setFinder(new AnnotationFinder(new ClassesArchive(Red.class)).link());
 
-        AppModule appModule = new AppModule(ejbModule);
+        final AppModule appModule = new AppModule(ejbModule);
         return appModule;
     }
 
     @Keys({@Key(value = "ann.local.forLocalBean", type = KeyType.WARNING)})
     public EjbModule shouldWarnForLocalAnnotationOnBeanWithNoInterface() {
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(EjbWithoutInterface.class));
-        EjbModule ejbModule = new EjbModule(ejbJar);
+        final EjbModule ejbModule = new EjbModule(ejbJar);
         ejbModule.setFinder(new AnnotationFinder(new ClassesArchive(EjbWithoutInterface.class)).link());
         return ejbModule;
     }
 
     @Local
     @Stateless
-    public static class EjbWithoutInterface {}
+    public static class EjbWithoutInterface {
+    }
 
 }

@@ -20,8 +20,8 @@ package org.apache.openejb.cdi;
 import javax.enterprise.context.spi.CreationalContext;
 
 /**
-* @version $Rev$ $Date$
-*/
+ * @version $Rev$ $Date$
+ */
 public final class CurrentCreationalContext<T> {
     private final ThreadLocal<CreationalContext<T>> creationalContext = new ThreadLocal<CreationalContext<T>>();
 

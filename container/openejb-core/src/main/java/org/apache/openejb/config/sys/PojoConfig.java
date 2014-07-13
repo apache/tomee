@@ -24,7 +24,7 @@ import java.util.Properties;
 // exactly the PojoConfiguration today
 // but let use a different format/info between module tree and config file
 public class PojoConfig {
-    private Properties properties = new SuperProperties().caseInsensitive(true);
+    private final Properties properties = new SuperProperties().caseInsensitive(true);
 
     public Properties getProperties() {
         return properties;

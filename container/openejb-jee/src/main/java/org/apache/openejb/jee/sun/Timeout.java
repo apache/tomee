@@ -41,7 +41,7 @@ public class Timeout {
         return name;
     }
 
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -53,7 +53,7 @@ public class Timeout {
         }
     }
 
-    public void setScope(String value) {
+    public void setScope(final String value) {
         this.scope = value;
     }
 
@@ -61,7 +61,7 @@ public class Timeout {
         return value;
     }
 
-    public void setvalue(String value) {
+    public void setvalue(final String value) {
         this.value = value;
     }
 }

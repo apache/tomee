@@ -36,7 +36,7 @@ public class WsdlPort {
         return namespaceURI;
     }
 
-    public void setNamespaceURI(String value) {
+    public void setNamespaceURI(final String value) {
         this.namespaceURI = value;
     }
 
@@ -44,7 +44,7 @@ public class WsdlPort {
         return localpart;
     }
 
-    public void setLocalpart(String value) {
+    public void setLocalpart(final String value) {
         this.localpart = value;
     }
 }

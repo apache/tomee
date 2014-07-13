@@ -39,7 +39,7 @@ public enum Operation {
     LOAD(true),
     STORE(true);
 
-    private boolean callback;
+    private final boolean callback;
 
 
     Operation(final boolean callback) {

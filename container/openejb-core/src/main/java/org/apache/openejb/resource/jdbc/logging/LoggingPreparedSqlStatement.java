@@ -50,9 +50,9 @@ public class LoggingPreparedSqlStatement implements InvocationHandler {
         final boolean execute = mtdName.startsWith("execute");
 
         final boolean debug = false;
-        if (debug){
+        if (debug) {
             LOGGER.info(String.format("PreparedStatement.%s(%s)", method.getName(),
-                    (args == null)?"":
+                (args == null) ? "" :
                     Join.join(", ", args)
             ));
             if (execute) {
@@ -128,7 +128,7 @@ public class LoggingPreparedSqlStatement implements InvocationHandler {
 
     private void logDebug() {
         try {
-            LOGGER.info("SQL " +sql);
+            LOGGER.info("SQL " + sql);
             for (final Parameter parameter : parameters) {
                 logParam(parameter);
             }
@@ -144,14 +144,14 @@ public class LoggingPreparedSqlStatement implements InvocationHandler {
     private void logParam(final ParameterMetaData md, final Parameter parameter) throws SQLException {
         final int i = parameter.key;
         final String format = String.format(" - PARAM  index=%s, type%s, typeName=%s, className=%s, nullable=%s, mode=%s, precision=%s, value=%s",
-                i,
-                md.getParameterType(i),
-                md.getParameterTypeName(i),
-                md.getParameterClassName(i),
-                md.isNullable(i),
-                md.getParameterMode(i),
-                md.getPrecision(i),
-                parameter.value
+            i,
+            md.getParameterType(i),
+            md.getParameterTypeName(i),
+            md.getParameterClassName(i),
+            md.isNullable(i),
+            md.getParameterMode(i),
+            md.getPrecision(i),
+            parameter.value
         );
 
         LOGGER.info(format);

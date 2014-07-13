@@ -24,7 +24,7 @@ public class DerbyDataSourcePlugin extends AbstractDataSourcePlugin {
     public String updatedUrl(final String dataSourceUrl) {
 
         System.setProperty("derby.system.home"
-                , SystemInstance.get().getProperty("derby.system.home", SystemInstance.get().getBase().getDirectory().getAbsolutePath()));
+            , SystemInstance.get().getProperty("derby.system.home", SystemInstance.get().getBase().getDirectory().getAbsolutePath()));
         return dataSourceUrl;
     }
 

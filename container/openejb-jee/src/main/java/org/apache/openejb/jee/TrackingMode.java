@@ -24,11 +24,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * web-common_3_0.xsd
- *
+ * <p/>
  * <p>Java class for tracking-modeType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="tracking-modeType">
  *   &lt;simpleContent>
@@ -37,8 +37,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "tracking-modeType")
@@ -53,7 +51,7 @@ public enum TrackingMode {
         return name();
     }
 
-    public static TrackingMode fromValue(java.lang.String v) {
+    public static TrackingMode fromValue(final java.lang.String v) {
         return valueOf(v);
     }
 

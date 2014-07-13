@@ -32,11 +32,11 @@ import java.util.List;
 
 /**
  * ejb-jar_3_1.xsd
- *
+ * <p/>
  * <p>Java class for cmr-fieldType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="cmr-fieldType">
  *   &lt;complexContent>
@@ -51,16 +51,14 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "cmr-fieldType", propOrder = {
-        "descriptions",
-        "cmrFieldName",
-        "cmrFieldType"
-        })
+    "descriptions",
+    "cmrFieldName",
+    "cmrFieldType"
+})
 public class CmrField {
 
     @XmlTransient
@@ -77,7 +75,7 @@ public class CmrField {
     public CmrField() {
     }
 
-    public CmrField(String cmrFieldName, CmrFieldType cmrFieldType) {
+    public CmrField(final String cmrFieldName, final CmrFieldType cmrFieldType) {
         this.cmrFieldName = cmrFieldName;
         this.cmrFieldType = cmrFieldType;
     }
@@ -87,7 +85,7 @@ public class CmrField {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -99,7 +97,7 @@ public class CmrField {
         return cmrFieldName;
     }
 
-    public void setCmrFieldName(String value) {
+    public void setCmrFieldName(final String value) {
         this.cmrFieldName = value;
     }
 
@@ -107,7 +105,7 @@ public class CmrField {
         return cmrFieldType;
     }
 
-    public void setCmrFieldType(CmrFieldType value) {
+    public void setCmrFieldType(final CmrFieldType value) {
         this.cmrFieldType = value;
     }
 
@@ -115,7 +113,7 @@ public class CmrField {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

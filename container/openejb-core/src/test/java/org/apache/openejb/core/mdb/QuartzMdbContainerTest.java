@@ -58,8 +58,8 @@ public class QuartzMdbContainerTest extends TestCase {
     public void test() throws Exception {
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
-        ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
 
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
@@ -69,30 +69,30 @@ public class QuartzMdbContainerTest extends TestCase {
         CronBean.lifecycle.clear();
 
 
-        AppModule app = new AppModule(this.getClass().getClassLoader(), "testapp");
+        final AppModule app = new AppModule(this.getClass().getClassLoader(), "testapp");
 
-        Connector connector = new Connector("email-ra");
-        ResourceAdapter adapter = new ResourceAdapter(QuartzResourceAdapter.class);
+        final Connector connector = new Connector("email-ra");
+        final ResourceAdapter adapter = new ResourceAdapter(QuartzResourceAdapter.class);
         connector.setResourceAdapter(adapter);
-        InboundResourceadapter inbound = adapter.setInboundResourceAdapter(new InboundResourceadapter());
-        MessageAdapter messageAdapter = inbound.setMessageAdapter(new MessageAdapter());
-        MessageListener listener = messageAdapter.addMessageListener(new MessageListener(Job.class, JobSpec.class));
+        final InboundResourceadapter inbound = adapter.setInboundResourceAdapter(new InboundResourceadapter());
+        final MessageAdapter messageAdapter = inbound.setMessageAdapter(new MessageAdapter());
+        final MessageListener listener = messageAdapter.addMessageListener(new MessageListener(Job.class, JobSpec.class));
         listener.getActivationSpec().addRequiredConfigProperty("cronExpression");
         app.getConnectorModules().add(new ConnectorModule(connector));
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new MessageDrivenBean(CronBean.class));
         app.getEjbModules().add(new EjbModule(ejbJar));
 
-        AppInfo appInfo = config.configureApplication(app);
+        final AppInfo appInfo = config.configureApplication(app);
         assembler.createApplication(appInfo);
 
 
         assertTrue(CronBean.latch.await(5, TimeUnit.SECONDS));
 
-        Stack<Lifecycle> lifecycle = CronBean.lifecycle;
+        final Stack<Lifecycle> lifecycle = CronBean.lifecycle;
 
-        List expected = Arrays.asList(Lifecycle.values());
+        final List expected = Arrays.asList(Lifecycle.values());
 
         Assert.assertEquals(expected.get(0), lifecycle.get(0));
         Assert.assertEquals(expected.get(1), lifecycle.get(1));
@@ -103,19 +103,19 @@ public class QuartzMdbContainerTest extends TestCase {
         CONSTRUCTOR, INJECTION, POST_CONSTRUCT, ON_MESSAGE
     }
 
-    @MessageDriven(activationConfig = {@ActivationConfigProperty(propertyName = "cronExpression", propertyValue = "* * * * * ?" )})
+    @MessageDriven(activationConfig = {@ActivationConfigProperty(propertyName = "cronExpression", propertyValue = "* * * * * ?")})
     public static class CronBean implements Job {
 
         public static CountDownLatch latch = new CountDownLatch(1);
 
-        private static Stack<Lifecycle> lifecycle = new Stack<Lifecycle>();
+        private static final Stack<Lifecycle> lifecycle = new Stack<Lifecycle>();
 
         public CronBean() {
             lifecycle.push(Lifecycle.CONSTRUCTOR);
         }
 
         @Resource
-        public void setMessageDrivenContext(MessageDrivenContext messageDrivenContext) {
+        public void setMessageDrivenContext(final MessageDrivenContext messageDrivenContext) {
             lifecycle.push(Lifecycle.INJECTION);
         }
 
@@ -124,7 +124,7 @@ public class QuartzMdbContainerTest extends TestCase {
             lifecycle.push(Lifecycle.POST_CONSTRUCT);
         }
 
-        public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+        public void execute(final JobExecutionContext jobExecutionContext) throws JobExecutionException {
             lifecycle.push(Lifecycle.ON_MESSAGE);
             latch.countDown();
         }

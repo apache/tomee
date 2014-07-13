@@ -30,13 +30,13 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * ejb-jar_3_1.xsd
- *
+ * <p/>
  * class that combines the access-timeoutType and session-timeoutType xml types which have the same structure.
- *
+ * <p/>
  * <p>Java class for access-timeoutType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="access-timeoutType">
  *   &lt;complexContent>
@@ -50,12 +50,12 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
+ * <p/>
+ * <p/>
  * <p>Java class for stateful-timeoutType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="stateful-timeoutType">
  *   &lt;complexContent>
@@ -69,7 +69,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -94,7 +93,7 @@ public class Timeout {
         return timeout;
     }
 
-    public void setTimeout(long value) {
+    public void setTimeout(final long value) {
         this.timeout = value;
     }
 
@@ -102,7 +101,7 @@ public class Timeout {
         return unit;
     }
 
-    public void setUnit(TimeUnit value) {
+    public void setUnit(final TimeUnit value) {
         this.unit = value;
     }
 
@@ -110,7 +109,7 @@ public class Timeout {
         return id;
     }
 
-    public void setId(java.lang.String value) {
+    public void setId(final java.lang.String value) {
         this.id = value;
     }
 

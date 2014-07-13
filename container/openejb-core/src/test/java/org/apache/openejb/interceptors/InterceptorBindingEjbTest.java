@@ -84,7 +84,7 @@ public class InterceptorBindingEjbTest {
         public static final Collection<String> CLASSES = new ArrayList<String>();
 
         @AroundInvoke
-        public Object intercept(InvocationContext invocationContext) throws Exception {
+        public Object intercept(final InvocationContext invocationContext) throws Exception {
             CLASSES.add(invocationContext.getTarget().getClass().getSimpleName());
             return invocationContext.proceed();
         }
@@ -101,7 +101,8 @@ public class InterceptorBindingEjbTest {
         private EJB1 ejb1;
 
         @Interception
-        public void notCalled() {}
+        public void notCalled() {
+        }
 
         public String foo() {
             ejb1.foo();

@@ -44,10 +44,11 @@ public class SchedulesMetaTest {
 
             @BiMonthly
             @Schedules({
-                @Schedule(second = "0", minute="0", hour="0", month="*", dayOfMonth="15", year="*"),
-                @Schedule(second = "59", minute="59", hour="23", month="*", dayOfMonth="Last", year="*")
+                @Schedule(second = "0", minute = "0", hour = "0", month = "*", dayOfMonth = "15", year = "*"),
+                @Schedule(second = "59", minute = "59", hour = "23", month = "*", dayOfMonth = "Last", year = "*")
             })
-            public void method(){}
+            public void method() {
+            }
         }
     }
 
@@ -57,8 +58,8 @@ public class SchedulesMetaTest {
     public static class ExpectedBean implements Bean {
 
         @Schedules({
-            @Schedule(second = "0", minute="0", hour="0", month="*", dayOfMonth="15", year="*"),
-            @Schedule(second = "59", minute="59", hour="23", month="*", dayOfMonth="Last", year="*")
+            @Schedule(second = "0", minute = "0", hour = "0", month = "*", dayOfMonth = "15", year = "*"),
+            @Schedule(second = "59", minute = "59", hour = "23", month = "*", dayOfMonth = "Last", year = "*")
         })
         public void method() {
         }

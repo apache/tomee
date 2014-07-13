@@ -30,17 +30,15 @@ import java.util.List;
 
 
 /**
- * 
- * 
- *        <p> Extension element for navigation-rule.  It may contain
- *         implementation specific content.</p>
- *         
- *       
- * 
+ * <p> Extension element for navigation-rule.  It may contain
+ * implementation specific content.</p>
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for faces-config-navigation-rule-extensionType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="faces-config-navigation-rule-extensionType">
  *   &lt;complexContent>
@@ -53,8 +51,6 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "faces-config-navigation-rule-extensionType", propOrder = {
@@ -72,26 +68,24 @@ public class FacesConfigNavigationRuleExtension {
 
     /**
      * Gets the value of the any property.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the any property.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAny().add(newItem);
      * </pre>
-     *
-     *
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
      * {@link org.w3c.dom.Element }
-     *
-     *
      */
     public List<Object> getAny() {
         if (any == null) {
@@ -103,10 +97,8 @@ public class FacesConfigNavigationRuleExtension {
     /**
      * Gets the value of the id property.
      *
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getId() {
         return id;
@@ -115,12 +107,10 @@ public class FacesConfigNavigationRuleExtension {
     /**
      * Sets the value of the id property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setId(java.lang.String value) {
+    public void setId(final java.lang.String value) {
         this.id = value;
     }
 

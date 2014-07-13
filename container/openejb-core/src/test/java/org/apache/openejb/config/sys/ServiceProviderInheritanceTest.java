@@ -45,11 +45,11 @@ public class ServiceProviderInheritanceTest extends TestCase {
             final ProviderLoader loader = new ServiceJarXmlLoader();
 
             @Override
-            public ServiceProvider load(ID id) {
+            public ServiceProvider load(final ID id) {
 
                 { // try the regular loader
                     final ServiceProvider provider = loader.load(id);
-                    if (provider !=null) return provider;
+                    if (provider != null) return provider;
                 }
 
                 if ("color".equalsIgnoreCase(id.getName())) {
@@ -81,7 +81,7 @@ public class ServiceProviderInheritanceTest extends TestCase {
             }
 
             @Override
-            public List<ServiceProvider> load(String namespace) {
+            public List<ServiceProvider> load(final String namespace) {
                 final List<ServiceProvider> list = loader.load(namespace);
 
                 list.add(load(new ID(namespace, "color")));
@@ -127,9 +127,6 @@ public class ServiceProviderInheritanceTest extends TestCase {
     }
 
 
-
-
-
     public static class Color {
         private int red;
         private int green;
@@ -142,7 +139,7 @@ public class ServiceProviderInheritanceTest extends TestCase {
             return red;
         }
 
-        public void setRed(int red) {
+        public void setRed(final int red) {
             this.red = red;
         }
 
@@ -150,7 +147,7 @@ public class ServiceProviderInheritanceTest extends TestCase {
             return green;
         }
 
-        public void setGreen(int green) {
+        public void setGreen(final int green) {
             this.green = green;
         }
 
@@ -158,7 +155,7 @@ public class ServiceProviderInheritanceTest extends TestCase {
             return blue;
         }
 
-        public void setBlue(int blue) {
+        public void setBlue(final int blue) {
             this.blue = blue;
         }
     }

@@ -61,7 +61,7 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
             throw new IllegalStateException("No running method");
         }
         if (di.isAsynchronous(runningMethod)) {
-            if(runningMethod.getReturnType() == void.class) {
+            if (runningMethod.getReturnType() == void.class) {
                 throw new IllegalStateException("Current running method " + runningMethod.getName() + " is an asynchronous method, but its return type is void :" + di.getDestinationId());
             }
             return ThreadContext.isAsynchronousCancelled();
@@ -114,7 +114,7 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
         final InterfaceType interfaceType = di.getInterfaceType(interfce);
         final BeanType type = di.getComponentType();
 
-        if (interfaceType == null){
+        if (interfaceType == null) {
             throw new IllegalStateException("Component has no such interface: " + interfce.getName());
         }
 
@@ -124,7 +124,7 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
 
         try {
             final EjbObjectProxyHandler handler;
-            switch(di.getComponentType()){
+            switch (di.getComponentType()) {
                 case STATEFUL: {
                     handler = new StatefulEjbObjectHandler(di, threadContext.getPrimaryKey(), interfaceType, new ArrayList<Class>(), interfce);
                     break;
@@ -141,7 +141,8 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
                     handler = new ManagedObjectHandler(di, threadContext.getPrimaryKey(), interfaceType, new ArrayList<Class>(), interfce);
                     break;
                 }
-                default: throw new IllegalStateException("Bean is not a session bean: "+di.getComponentType());
+                default:
+                    throw new IllegalStateException("Bean is not a session bean: " + di.getComponentType());
             }
 
             if (InterfaceType.LOCALBEAN.equals(interfaceType)) {
@@ -170,7 +171,7 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
             throw new IllegalStateException("The EJB spec requires us to cripple the use of this method for anything but business interface proxy.  But FYI, your invoked interface is: " + invokedInterface.getName());
         }
 
-        if (invokedInterface == null){
+        if (invokedInterface == null) {
             throw new IllegalStateException("Business interface not set into ThreadContext.");
         }
         return invokedInterface;

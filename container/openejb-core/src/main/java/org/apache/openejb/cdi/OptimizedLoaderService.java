@@ -85,11 +85,11 @@ public class OptimizedLoaderService implements LoaderService {
 
     private <T> List<T> loadWebBeansPlugins(final ClassLoader loader) {
         final String[] knownPlugins = {
-                "org.apache.openejb.cdi.CdiPlugin",
-                "org.apache.geronimo.openejb.cdi.GeronimoWebBeansPlugin"
+            "org.apache.openejb.cdi.CdiPlugin",
+            "org.apache.geronimo.openejb.cdi.GeronimoWebBeansPlugin"
         };
         final String[] loaderAwareKnownPlugins = {
-                "org.apache.webbeans.jsf.plugin.OpenWebBeansJsfPlugin"
+            "org.apache.webbeans.jsf.plugin.OpenWebBeansJsfPlugin"
         };
 
         final List<T> list = new ArrayList<T>();
@@ -118,7 +118,7 @@ public class OptimizedLoaderService implements LoaderService {
             }
 
             try {
-                list.add((T) Proxy.newProxyInstance(loader, new Class<?>[]{ OpenWebBeansPlugin.class }, new ClassLoaderAwareHandler(clazz.getSimpleName(), clazz.newInstance(), loader)));
+                list.add((T) Proxy.newProxyInstance(loader, new Class<?>[]{OpenWebBeansPlugin.class}, new ClassLoaderAwareHandler(clazz.getSimpleName(), clazz.newInstance(), loader)));
             } catch (final Exception e) {
                 log.error("Unable to load OpenWebBeansPlugin: " + name);
             }

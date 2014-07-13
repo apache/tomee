@@ -28,8 +28,8 @@ import javax.persistence.EntityManagerFactory;
 
 @RunWith(ValidationRunner.class)
 public class MistakenResourceRefUsageTest {
-    @Keys( { @Key(value = "resourceRef.onEntityManagerFactory", count = 2), @Key(value = "resourceRef.onEntityManager", count = 2),
-            @Key(value = "resourceAnnotation.onClassWithNoName", count = 2) })
+    @Keys({@Key(value = "resourceRef.onEntityManagerFactory", count = 2), @Key(value = "resourceRef.onEntityManager", count = 2),
+        @Key(value = "resourceAnnotation.onClassWithNoName", count = 2)})
     public EjbJar wrongUsage() throws OpenEJBException {
         final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(FooStateless.class));

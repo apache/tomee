@@ -81,14 +81,14 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
     public static final String OPENEJB_JPA_CRITERIA_LOG_JPQL = "openejb.jpa.criteria.log.jpql";
     public static final String OPENEJB_JPA_CRITERIA_LOG_JPQL_LEVEL = "openejb.jpa.criteria.log.jpql.level";
 
-    private PersistenceUnitInfoImpl unitInfoImpl;
+    private final PersistenceUnitInfoImpl unitInfoImpl;
     private ClassLoader classLoader;
     private EntityManagerFactory delegate;
-    private EntityManagerFactoryCallable entityManagerFactoryCallable;
+    private final EntityManagerFactoryCallable entityManagerFactoryCallable;
     private ObjectName objectName;
 
-    private boolean logCriteriaJpql;
-    private String logCriteriaJpqlLevel;
+    private final boolean logCriteriaJpql;
+    private final String logCriteriaJpqlLevel;
 
     public ReloadableEntityManagerFactory(final ClassLoader cl, final EntityManagerFactoryCallable callable, final PersistenceUnitInfoImpl unitInfo) {
         classLoader = cl;
@@ -135,7 +135,7 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
 
     private boolean logCriteriaQueryJpql(final Properties prop) {
         return SystemInstance.get().getOptions().get(OPENEJB_JPA_CRITERIA_LOG_JPQL, Boolean.parseBoolean(prop.getProperty(OPENEJB_JPA_CRITERIA_LOG_JPQL, "false")))
-                || SystemInstance.get().getOptions().get(OPENEJB_JPA_CRITERIA_LOG_JPQL_LEVEL, prop.getProperty(OPENEJB_JPA_CRITERIA_LOG_JPQL_LEVEL, null)) != null;
+            || SystemInstance.get().getOptions().get(OPENEJB_JPA_CRITERIA_LOG_JPQL_LEVEL, prop.getProperty(OPENEJB_JPA_CRITERIA_LOG_JPQL_LEVEL, null)) != null;
     }
 
     @Override
@@ -425,7 +425,7 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
     @Internal
     @Description("represents a persistence unit managed by OpenEJB")
     public static class JMXReloadableEntityManagerFactory {
-        private ReloadableEntityManagerFactory reloadableEntityManagerFactory;
+        private final ReloadableEntityManagerFactory reloadableEntityManagerFactory;
 
         public JMXReloadableEntityManagerFactory(final ReloadableEntityManagerFactory remf) {
             reloadableEntityManagerFactory = remf;
@@ -587,29 +587,29 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
         @Description("get all properties")
         public TabularData getProperties() {
             return tabularData("properties", "properties type",
-                    "Property of " + reloadableEntityManagerFactory.getPUname(),
-                    reloadableEntityManagerFactory.getUnitProperties());
+                "Property of " + reloadableEntityManagerFactory.getPUname(),
+                reloadableEntityManagerFactory.getUnitProperties());
         }
 
         @ManagedAttribute
         @Description("get all mapping files")
         public TabularData getMappingFiles() {
             return buildTabularData("mappingfile", "mapping file type",
-                    reloadableEntityManagerFactory.getMappingFiles(), Info.FILE);
+                reloadableEntityManagerFactory.getMappingFiles(), Info.FILE);
         }
 
         @ManagedAttribute
         @Description("get all jar files")
         public TabularData getJarFiles() {
             return buildTabularData("jarfile", "jar file type",
-                    reloadableEntityManagerFactory.getJarFileUrls(), Info.URL);
+                reloadableEntityManagerFactory.getJarFileUrls(), Info.URL);
         }
 
         @ManagedAttribute
         @Description("get all managed classes")
         public TabularData getManagedClasses() {
             return buildTabularData("managedclass", "managed class type",
-                    reloadableEntityManagerFactory.getManagedClasses(), Info.CLASS);
+                reloadableEntityManagerFactory.getManagedClasses(), Info.CLASS);
         }
 
         private TabularData buildTabularData(final String typeName, final String typeDescription, final List<?> list, final Info info) {
@@ -665,7 +665,7 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
     }
 
     private static final class SerializableEm implements Serializable {
-        private String jndiName;
+        private final String jndiName;
 
         private SerializableEm(final String jndiName) {
             this.jndiName = jndiName;

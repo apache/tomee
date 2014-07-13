@@ -18,26 +18,27 @@ package org.apache.openejb.jee;
 
 /**
  * Not in schema
+ *
  * @version $Revision: 605052 $ $Date: 2007-12-17 16:24:24 -0800 (Mon, 17 Dec 2007) $
  */
 public class SingletonBean extends SessionBean {
-    public SingletonBean(String ejbName, String ejbClass) {
+    public SingletonBean(final String ejbName, final String ejbClass) {
         super(ejbName, ejbClass, SessionType.SINGLETON);
     }
 
-    public SingletonBean(Class<?> ejbClass) {
+    public SingletonBean(final Class<?> ejbClass) {
         this(ejbClass.getSimpleName(), ejbClass.getName());
     }
 
-    public SingletonBean(String name, Class<?> ejbClass) {
+    public SingletonBean(final String name, final Class<?> ejbClass) {
         this(name, ejbClass.getName());
     }
 
     public SingletonBean() {
-        this(null, (String)null);
+        this(null, (String) null);
     }
 
-    public void setSessionType(SessionType value) {
+    public void setSessionType(final SessionType value) {
     }
 
 }

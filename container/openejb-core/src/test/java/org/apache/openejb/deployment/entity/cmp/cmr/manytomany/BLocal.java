@@ -20,23 +20,26 @@ import javax.ejb.EJBLocalObject;
 import java.util.Set;
 
 /**
- *
  * @version $Revision$ $Date$
  */
 public interface BLocal extends EJBLocalObject {
 
     // CMP
     public Integer getField1();
+
     public void setField1(Integer field1);
 
     public String getField2();
+
     public void setField2(String field2);
 
     public Integer getField3();
+
     public void setField3(Integer field3);
 
     // CMR
     public Set getA();
+
     public void setA(Set aSet);
-    
+
 }

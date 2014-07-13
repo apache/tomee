@@ -28,33 +28,33 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.namespace.QName;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class AroundTimeout$JAXB
-        extends JAXBObject<AroundTimeout> {
+    extends JAXBObject<AroundTimeout> {
 
 
     public AroundTimeout$JAXB() {
         super(AroundTimeout.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "around-timeoutType".intern()));
     }
 
-    public static AroundTimeout readAroundTimeout(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static AroundTimeout readAroundTimeout(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeAroundTimeout(XoXMLStreamWriter writer, AroundTimeout aroundTimeout, RuntimeContext context)
-            throws Exception {
+    public static void writeAroundTimeout(final XoXMLStreamWriter writer, final AroundTimeout aroundTimeout, final RuntimeContext context)
+        throws Exception {
         _write(writer, aroundTimeout, context);
     }
 
-    public void write(XoXMLStreamWriter writer, AroundTimeout aroundTimeout, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final AroundTimeout aroundTimeout, final RuntimeContext context)
+        throws Exception {
         _write(writer, aroundTimeout, context);
     }
 
-    public final static AroundTimeout _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static AroundTimeout _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -65,12 +65,12 @@ public class AroundTimeout$JAXB
             context = new RuntimeContext();
         }
 
-        AroundTimeout aroundTimeout = new AroundTimeout();
+        final AroundTimeout aroundTimeout = new AroundTimeout();
         context.beforeUnmarshal(aroundTimeout, LifecycleCallback.NONE);
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("around-timeoutType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, AroundTimeout.class);
@@ -78,22 +78,22 @@ public class AroundTimeout$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
                 context.unexpectedAttribute(attribute);
             }
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: clazz
-                String clazzRaw = elementReader.getElementAsString();
+                final String clazzRaw = elementReader.getElementAsString();
 
-                String clazz;
+                final String clazz;
                 try {
                     clazz = Adapters.collapsedStringAdapterAdapter.unmarshal(clazzRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -101,12 +101,12 @@ public class AroundTimeout$JAXB
                 aroundTimeout.clazz = clazz;
             } else if (("method-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: methodName
-                String methodNameRaw = elementReader.getElementAsString();
+                final String methodNameRaw = elementReader.getElementAsString();
 
-                String methodName;
+                final String methodName;
                 try {
                     methodName = Adapters.collapsedStringAdapterAdapter.unmarshal(methodNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -122,13 +122,13 @@ public class AroundTimeout$JAXB
         return aroundTimeout;
     }
 
-    public final AroundTimeout read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final AroundTimeout read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, AroundTimeout aroundTimeout, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final AroundTimeout aroundTimeout, RuntimeContext context)
+        throws Exception {
         if (aroundTimeout == null) {
             writer.writeXsiNil();
             return;
@@ -138,7 +138,7 @@ public class AroundTimeout$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (AroundTimeout.class != aroundTimeout.getClass()) {
             context.unexpectedSubclass(writer, aroundTimeout, AroundTimeout.class);
             return;
@@ -148,11 +148,11 @@ public class AroundTimeout$JAXB
 
 
         // ELEMENT: clazz
-        String clazzRaw = aroundTimeout.clazz;
+        final String clazzRaw = aroundTimeout.clazz;
         String clazz = null;
         try {
             clazz = Adapters.collapsedStringAdapterAdapter.marshal(clazzRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(aroundTimeout, "clazz", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (clazz != null) {
@@ -162,11 +162,11 @@ public class AroundTimeout$JAXB
         }
 
         // ELEMENT: methodName
-        String methodNameRaw = aroundTimeout.methodName;
+        final String methodNameRaw = aroundTimeout.methodName;
         String methodName = null;
         try {
             methodName = Adapters.collapsedStringAdapterAdapter.marshal(methodNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(aroundTimeout, "methodName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (methodName != null) {

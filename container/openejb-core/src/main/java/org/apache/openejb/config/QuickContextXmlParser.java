@@ -49,7 +49,7 @@ public class QuickContextXmlParser extends DefaultHandler {
             final String className = attributes.getValue("className");
             if (className != null) {
                 if ("org.apache.catalina.loader.VirtualWebappLoader".equals(className)
-                        || "org.apache.tomee.catalina.ProvisioningWebappLoader".equals(className)) {
+                    || "org.apache.tomee.catalina.ProvisioningWebappLoader".equals(className)) {
                     virtualClasspath = attributes.getValue("virtualClasspath");
                 }
             }

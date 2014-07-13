@@ -39,7 +39,7 @@ public class EmptyEjbJar extends EjbJar {
     }
 
     @Override
-    public <T extends EnterpriseBean> T addEnterpriseBean(final T bean){
+    public <T extends EnterpriseBean> T addEnterpriseBean(final T bean) {
         if (CompManagedBean.class.isInstance(bean)) {
             super.addEnterpriseBean(bean);
         }

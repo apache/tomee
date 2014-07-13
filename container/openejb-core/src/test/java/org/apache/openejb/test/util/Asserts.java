@@ -25,7 +25,7 @@ import java.util.Map;
  * @version $Rev$ $Date$
  */
 public class Asserts {
-    public static void assertEquals(Iterable<?> expectedList, Iterable<?> actualList) {
+    public static void assertEquals(final Iterable<?> expectedList, final Iterable<?> actualList) {
         final Iterator<?> expected = expectedList.iterator();
         final Iterator<?> actual = actualList.iterator();
 
@@ -36,7 +36,7 @@ public class Asserts {
         Assert.assertEquals(expected.hasNext(), actual.hasNext());
     }
 
-    public static void assertEquals(Map<?, ?> expectedMap, Map<?, ?> actualMap, double delta) {
+    public static void assertEquals(final Map<?, ?> expectedMap, final Map<?, ?> actualMap, final double delta) {
         final Iterator<? extends Map.Entry<?, ?>> expectedIt = expectedMap.entrySet().iterator();
         final Iterator<? extends Map.Entry<?, ?>> actualIt = actualMap.entrySet().iterator();
 
@@ -58,7 +58,7 @@ public class Asserts {
         Assert.assertEquals(expectedIt.hasNext(), actualIt.hasNext());
     }
 
-    public static void assertEquals(Map<?, ?> expectedMap, Map<?, ?> actualMap) {
+    public static void assertEquals(final Map<?, ?> expectedMap, final Map<?, ?> actualMap) {
         assertEquals(expectedMap, actualMap, 0.0);
     }
 

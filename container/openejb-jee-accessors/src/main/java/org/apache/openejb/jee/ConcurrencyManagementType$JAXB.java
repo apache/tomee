@@ -23,25 +23,25 @@ import org.metatype.sxc.util.XoXMLStreamReader;
 import javax.xml.namespace.QName;
 
 public class ConcurrencyManagementType$JAXB
-        extends JAXBEnum<ConcurrencyManagementType> {
+    extends JAXBEnum<ConcurrencyManagementType> {
 
 
     public ConcurrencyManagementType$JAXB() {
         super(ConcurrencyManagementType.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "concurrency-management-typeType".intern()));
     }
 
-    public ConcurrencyManagementType parse(XoXMLStreamReader reader, RuntimeContext context, String value)
-            throws Exception {
+    public ConcurrencyManagementType parse(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
+        throws Exception {
         return parseConcurrencyManagementType(reader, context, value);
     }
 
-    public String toString(Object bean, String parameterName, RuntimeContext context, ConcurrencyManagementType concurrencyManagementType)
-            throws Exception {
+    public String toString(final Object bean, final String parameterName, final RuntimeContext context, final ConcurrencyManagementType concurrencyManagementType)
+        throws Exception {
         return toStringConcurrencyManagementType(bean, parameterName, context, concurrencyManagementType);
     }
 
-    public static ConcurrencyManagementType parseConcurrencyManagementType(XoXMLStreamReader reader, RuntimeContext context, String value)
-            throws Exception {
+    public static ConcurrencyManagementType parseConcurrencyManagementType(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
+        throws Exception {
         if ("Bean".equals(value)) {
             return ConcurrencyManagementType.BEAN;
         } else if ("Container".equals(value)) {
@@ -52,8 +52,8 @@ public class ConcurrencyManagementType$JAXB
         }
     }
 
-    public static String toStringConcurrencyManagementType(Object bean, String parameterName, RuntimeContext context, ConcurrencyManagementType concurrencyManagementType)
-            throws Exception {
+    public static String toStringConcurrencyManagementType(final Object bean, final String parameterName, final RuntimeContext context, final ConcurrencyManagementType concurrencyManagementType)
+        throws Exception {
         if (ConcurrencyManagementType.BEAN == concurrencyManagementType) {
             return "Bean";
         } else if (ConcurrencyManagementType.CONTAINER == concurrencyManagementType) {

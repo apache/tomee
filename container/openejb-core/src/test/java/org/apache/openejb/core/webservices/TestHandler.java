@@ -20,14 +20,14 @@ import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.MessageContext;
 
 public class TestHandler implements Handler {
-    public void close(MessageContext messageContext) {
+    public void close(final MessageContext messageContext) {
     }
 
-    public boolean handleFault(MessageContext messageContext) {
+    public boolean handleFault(final MessageContext messageContext) {
         return false;
     }
 
-    public boolean handleMessage(MessageContext messageContext) {
+    public boolean handleMessage(final MessageContext messageContext) {
         return false;
     }
 }

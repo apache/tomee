@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for entity-clustering complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="entity-clustering">
  *   &lt;complexContent>
@@ -46,8 +46,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "entity-clustering", propOrder = {
@@ -75,11 +73,9 @@ public class EntityClustering {
 
     /**
      * Gets the value of the homeIsClusterable property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getHomeIsClusterable() {
         return homeIsClusterable;
@@ -87,23 +83,19 @@ public class EntityClustering {
 
     /**
      * Sets the value of the homeIsClusterable property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setHomeIsClusterable(Boolean value) {
+    public void setHomeIsClusterable(final Boolean value) {
         this.homeIsClusterable = value;
     }
 
     /**
      * Gets the value of the homeLoadAlgorithm property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getHomeLoadAlgorithm() {
         return homeLoadAlgorithm;
@@ -111,23 +103,19 @@ public class EntityClustering {
 
     /**
      * Sets the value of the homeLoadAlgorithm property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setHomeLoadAlgorithm(String value) {
+    public void setHomeLoadAlgorithm(final String value) {
         this.homeLoadAlgorithm = value;
     }
 
     /**
      * Gets the value of the homeCallRouterClassName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getHomeCallRouterClassName() {
         return homeCallRouterClassName;
@@ -135,23 +123,19 @@ public class EntityClustering {
 
     /**
      * Sets the value of the homeCallRouterClassName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setHomeCallRouterClassName(String value) {
+    public void setHomeCallRouterClassName(final String value) {
         this.homeCallRouterClassName = value;
     }
 
     /**
      * Gets the value of the useServersideStubs property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getUseServersideStubs() {
         return useServersideStubs;
@@ -159,23 +143,19 @@ public class EntityClustering {
 
     /**
      * Sets the value of the useServersideStubs property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setUseServersideStubs(Boolean value) {
+    public void setUseServersideStubs(final Boolean value) {
         this.useServersideStubs = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getId() {
         return id;
@@ -183,13 +163,11 @@ public class EntityClustering {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

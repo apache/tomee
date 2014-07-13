@@ -30,7 +30,7 @@ public final class OpenEJB {
         return org.apache.openejb.OpenEJB.getApplicationServer();
     }
 
-    public static TransactionManager getTransactionManager(){
+    public static TransactionManager getTransactionManager() {
         return org.apache.openejb.OpenEJB.getTransactionManager();
     }
 

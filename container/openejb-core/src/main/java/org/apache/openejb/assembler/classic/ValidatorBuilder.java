@@ -103,7 +103,7 @@ public final class ValidatorBuilder {
 
         if (providerClassName != null) {
             try {
-                @SuppressWarnings({"unchecked","rawtypes"}) final
+                @SuppressWarnings({"unchecked", "rawtypes"}) final
                 Class clazz = classLoader.loadClass(providerClassName);
                 target = Validation.byProvider(clazz).configure();
                 logger.info("Using " + providerClassName + " as validation provider.");
@@ -111,8 +111,8 @@ public final class ValidatorBuilder {
                 logger.warning("Unable to load provider class " + providerClassName, e);
             } catch (final ValidationException ve) {
                 logger.warning("Unable create validator factory with provider " + providerClassName
-                        + " (" + ve.getMessage() + ")."
-                        + " Default one will be used.");
+                    + " (" + ve.getMessage() + ")."
+                    + " Default one will be used.");
             }
         }
         if (target == null) {
@@ -131,7 +131,7 @@ public final class ValidatorBuilder {
                 Class<MessageInterpolator> clazz = (Class<MessageInterpolator>) classLoader.loadClass(messageInterpolatorClass);
                 target.messageInterpolator(clazz.newInstance());
             } catch (final Exception e) {
-                logger.warning("Unable to set "+messageInterpolatorClass+ " as message interpolator.", e);
+                logger.warning("Unable to set " + messageInterpolatorClass + " as message interpolator.", e);
             }
             logger.info("Using " + messageInterpolatorClass + " as message interpolator.");
         }
@@ -142,7 +142,7 @@ public final class ValidatorBuilder {
                 Class<TraversableResolver> clazz = (Class<TraversableResolver>) classLoader.loadClass(traversableResolverClass);
                 target.traversableResolver(clazz.newInstance());
             } catch (final Exception e) {
-                logger.warning("Unable to set "+traversableResolverClass+ " as traversable resolver.", e);
+                logger.warning("Unable to set " + traversableResolverClass + " as traversable resolver.", e);
             }
             logger.info("Using " + traversableResolverClass + " as traversable resolver.");
         }
@@ -153,7 +153,7 @@ public final class ValidatorBuilder {
                 Class<ConstraintValidatorFactory> clazz = (Class<ConstraintValidatorFactory>) classLoader.loadClass(constraintFactoryClass);
                 target.constraintValidatorFactory(clazz.newInstance());
             } catch (final Exception e) {
-                logger.warning("Unable to set "+constraintFactoryClass+ " as constraint factory.", e);
+                logger.warning("Unable to set " + constraintFactoryClass + " as constraint factory.", e);
             }
             logger.info("Using " + constraintFactoryClass + " as constraint factory.");
         }

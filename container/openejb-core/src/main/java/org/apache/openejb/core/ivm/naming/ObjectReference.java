@@ -21,7 +21,7 @@ import javax.naming.NamingException;
 
 public class ObjectReference extends Reference {
 
-    private Object obj;
+    private final Object obj;
 
     public ObjectReference(final Object obj) {
         this.obj = obj;

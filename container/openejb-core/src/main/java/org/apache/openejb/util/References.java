@@ -112,9 +112,9 @@ public class References {
             }
         }
 
-        final List  sortedList= new ArrayList(nodes.size());
+        final List sortedList = new ArrayList(nodes.size());
         Node currentNode = rootNode.next;
-        while(currentNode != rootNode) {
+        while (currentNode != rootNode) {
             sortedList.add(currentNode.object);
             currentNode = currentNode.next;
         }
@@ -139,8 +139,8 @@ public class References {
 
     private static void swap(final Node shouldAfterNode, final Node shouldBeforeNode, final Node rootNode) {
         Node currentNode = shouldBeforeNode;
-        while(currentNode.next != rootNode) {
-            if(currentNode.next == shouldAfterNode) {
+        while (currentNode.next != rootNode) {
+            if (currentNode.next == shouldAfterNode) {
                 return;
             }
             currentNode = currentNode.next;
@@ -190,7 +190,7 @@ public class References {
 
     private static class Node implements Comparable<Node> {
         private final String name;
-        private Object object;
+        private final Object object;
         private final List<Node> initialReferences = new ArrayList<Node>();
         private final Set<Node> references = new HashSet<Node>();
         private Node next;
@@ -235,7 +235,7 @@ public class References {
         public Circuit(final List<Node> nodes) {
             this.nodes = nodes;
             atomic = new ArrayList<Node>(nodes);
-            atomic.remove(atomic.size()-1);
+            atomic.remove(atomic.size() - 1);
             Collections.sort(atomic);
         }
 

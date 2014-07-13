@@ -30,11 +30,11 @@ import java.util.List;
 
 /**
  * web-common_3_0.xsd
- *
+ * <p/>
  * <p>Java class for filter-mappingType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="filter-mappingType">
  *   &lt;complexContent>
@@ -52,15 +52,13 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "filter-mappingType", propOrder = {
-        "filterName",
-        "urlPattern",
-        "servletName",
-        "dispatcher"
+    "filterName",
+    "urlPattern",
+    "servletName",
+    "dispatcher"
 })
 public class FilterMapping {
 
@@ -81,7 +79,7 @@ public class FilterMapping {
         return filterName;
     }
 
-    public void setFilterName(String value) {
+    public void setFilterName(final String value) {
         this.filterName = value;
     }
 
@@ -110,7 +108,7 @@ public class FilterMapping {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

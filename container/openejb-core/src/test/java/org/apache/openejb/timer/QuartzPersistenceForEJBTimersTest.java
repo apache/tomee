@@ -61,7 +61,7 @@ public class QuartzPersistenceForEJBTimersTest {
         while (!bean.awaitTimeout()) {
             try {
                 Thread.sleep(100);
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 // no-op
             }
         }
@@ -109,7 +109,7 @@ public class QuartzPersistenceForEJBTimersTest {
             .p("QuartzPersistenceForEJBTimersDB.UserName", "SA")
             .p("QuartzPersistenceForEJBTimersDB.Password", "")
 
-            // see src/test/resources/import-QuartzPersistenceForEJBTimersDBNoTx-.sql for the init script
+                // see src/test/resources/import-QuartzPersistenceForEJBTimersDBNoTx-.sql for the init script
             .p("QuartzPersistenceForEJBTimersDBNoTx", "new://Resource?type=DataSource")
             .p("QuartzPersistenceForEJBTimersDBNoTx.JtaManaged", "false")
             .p("QuartzPersistenceForEJBTimersDBNoTx.JdbcUrl", "jdbc:hsqldb:mem:QuartzPersistenceForEJBTimersDB")
@@ -124,7 +124,7 @@ public class QuartzPersistenceForEJBTimersTest {
         private TimerService timerService;
 
         private Timer timer = null;
-        private Semaphore sema = new Semaphore(0);
+        private final Semaphore sema = new Semaphore(0);
 
         @Timeout
         public void timeout(final Timer timer) {

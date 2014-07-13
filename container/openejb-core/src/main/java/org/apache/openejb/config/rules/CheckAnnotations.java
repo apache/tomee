@@ -46,7 +46,7 @@ public class CheckAnnotations extends ValidationBase {
                 module = webModule;
                 findClassesAnnotatedWithWebService(webModule);
             }
-            
+
         } catch (final Exception e) {
             logger.error("Error while validating @WebService annotation", e);
         }
@@ -55,15 +55,19 @@ public class CheckAnnotations extends ValidationBase {
     }
 
     private void findClassesAnnotatedWithWebService(final EjbModule ejbModule) {
-                                                            
+
         final IAnnotationFinder finder = ejbModule.getFinder();
-        if (finder != null) {findIncorrectAnnotationAndWarn(finder,ejbModule.toString());}
+        if (finder != null) {
+            findIncorrectAnnotationAndWarn(finder, ejbModule.toString());
+        }
     }
 
 
     private void findClassesAnnotatedWithWebService(final WebModule webModule) {
         final IAnnotationFinder finder = webModule.getFinder();
-        if (finder != null) {findIncorrectAnnotationAndWarn(finder,webModule.toString());}
+        if (finder != null) {
+            findIncorrectAnnotationAndWarn(finder, webModule.toString());
+        }
 
     }
 
@@ -87,8 +91,6 @@ public class CheckAnnotations extends ValidationBase {
             }
         }
     }
-
-
 
 
 }

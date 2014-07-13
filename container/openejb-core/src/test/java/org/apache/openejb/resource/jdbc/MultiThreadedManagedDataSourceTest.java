@@ -93,7 +93,7 @@ public class MultiThreadedManagedDataSourceTest {
     @Module
     public EjbJar app() throws Exception {
         return new EjbJar()
-                .enterpriseBean(new SingletonBean(Persister.class).localBean());
+            .enterpriseBean(new SingletonBean(Persister.class).localBean());
     }
 
     @LocalBean
@@ -108,13 +108,13 @@ public class MultiThreadedManagedDataSourceTest {
         private EJBContext context;
 
         public int save() throws SQLException {
-            int id = ID.getAndIncrement();
+            final int id = ID.getAndIncrement();
             MultiThreadedManagedDataSourceTest.save(ds, id);
             return id;
         }
 
-        public int saveRollback(boolean ok) throws SQLException {
-            int id = ID.getAndIncrement();
+        public int saveRollback(final boolean ok) throws SQLException {
+            final int id = ID.getAndIncrement();
             MultiThreadedManagedDataSourceTest.save(ds, id);
             if (!ok) {
                 context.setRollbackOnly();
@@ -134,14 +134,14 @@ public class MultiThreadedManagedDataSourceTest {
                 int id = -1;
                 try {
                     id = persistManager.save();
-                } catch (SQLException e) {
+                } catch (final SQLException e) {
                     errors.incrementAndGet();
                 }
                 try {
                     if (!exists(id)) {
                         fail.incrementAndGet();
                     }
-                } catch (SQLException e) {
+                } catch (final SQLException e) {
                     errors.incrementAndGet();
                 }
             }
@@ -161,14 +161,14 @@ public class MultiThreadedManagedDataSourceTest {
         run(new Runnable() {
             @Override
             public void run() {
-                boolean rollback = Math.random() > 0.5;
+                final boolean rollback = Math.random() > 0.5;
                 if (!rollback) {
                     ok.incrementAndGet();
                 }
                 int id = -1;
                 try {
                     id = persistManager.saveRollback(!rollback);
-                } catch (SQLException e) {
+                } catch (final SQLException e) {
                     errors.incrementAndGet();
                     ex.add(e);
                 }
@@ -177,14 +177,14 @@ public class MultiThreadedManagedDataSourceTest {
                         if (!exists(id)) {
                             fail.incrementAndGet();
                         }
-                    } catch (SQLException e) {
+                    } catch (final SQLException e) {
                         errors.incrementAndGet();
                         ex.add(e);
                     }
                 }
             }
         });
-        for (Exception e : ex) {
+        for (final Exception e : ex) {
             e.printStackTrace(System.err);
         }
         assertEquals(0, errors.get());
@@ -196,16 +196,16 @@ public class MultiThreadedManagedDataSourceTest {
     public void checkTxMapIsEmpty() throws Exception { // avoid memory leak
         final Field map = ManagedConnection.class.getDeclaredField("CONNECTION_BY_TX_BY_DS");
         map.setAccessible(true);
-        final Map<DataSource, Map<Transaction, Connection>>  instance = (Map<DataSource, Map<Transaction, Connection>> ) map.get(null);
+        final Map<DataSource, Map<Transaction, Connection>> instance = (Map<DataSource, Map<Transaction, Connection>>) map.get(null);
         assertEquals(1, instance.size());
         assertEquals(0, instance.values().iterator().next().size());
     }
 
-    private static boolean exists(int id) throws SQLException {
+    private static boolean exists(final int id) throws SQLException {
         return count(" WHERE ID = " + id) == 1;
     }
 
-    private static int count(String where) throws SQLException {
+    private static int count(final String where) throws SQLException {
         final Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
         final Statement statement = connection.createStatement();
         final ResultSet result = statement.executeQuery("SELECT count(*) AS NB FROM " + TABLE + where);
@@ -218,7 +218,7 @@ public class MultiThreadedManagedDataSourceTest {
         }
     }
 
-    private static void save(final DataSource ds, int id) throws SQLException {
+    private static void save(final DataSource ds, final int id) throws SQLException {
         execute(ds, "INSERT INTO " + TABLE + "(ID) VALUES(" + id + ")");
     }
 
@@ -250,7 +250,7 @@ public class MultiThreadedManagedDataSourceTest {
         es.shutdown();
         try {
             es.awaitTermination(5, TimeUnit.MINUTES);
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             fail();
         }
     }

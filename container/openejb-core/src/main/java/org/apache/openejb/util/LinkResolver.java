@@ -66,7 +66,7 @@ public class LinkResolver<E> {
 
     public Collection<E> values(final String shortName) {
         final Collection<E> es = byShortName.get(shortName);
-        return es != null? es: Collections.EMPTY_LIST;
+        return es != null ? es : Collections.EMPTY_LIST;
     }
 
     public E resolveLink(final String link, final String modulePackageName) {

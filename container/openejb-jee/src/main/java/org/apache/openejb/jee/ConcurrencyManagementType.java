@@ -24,11 +24,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * ejb-jar_3_1.xsd
- *
+ * <p/>
  * <p>Java class for concurrency-management-typeType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="concurrency-management-typeType">
  *   &lt;simpleContent>
@@ -37,8 +37,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -46,14 +44,14 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum ConcurrencyManagementType {
 
-    @XmlEnumValue("Bean") BEAN,
-    @XmlEnumValue("Container") CONTAINER;
+    @XmlEnumValue("Bean")BEAN,
+    @XmlEnumValue("Container")CONTAINER;
 
     public java.lang.String value() {
         return name();
     }
 
-    public static ConcurrencyManagementType fromValue(java.lang.String v) {
+    public static ConcurrencyManagementType fromValue(final java.lang.String v) {
         return valueOf(v);
     }
 

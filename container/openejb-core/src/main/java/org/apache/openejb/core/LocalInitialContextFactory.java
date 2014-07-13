@@ -131,7 +131,7 @@ public class LocalInitialContextFactory implements InitialContextFactory {
                 throw (NamingException) e;
             }
             throw (NamingException) new NamingException("Cannot instantiate a LocalInitialContext. Exception: "
-                                                                     + e.getClass().getName() + " " + e.getMessage()).initCause(e);
+                + e.getClass().getName() + " " + e.getMessage()).initCause(e);
         }
 
         return context;

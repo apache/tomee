@@ -43,7 +43,7 @@ public class iTest extends org.apache.openejb.test.TestSuite {
     protected void setUp() throws Exception {
         try {
             tearDown();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // do nothing - exception ignored
         }
         System.setProperty("openejb.test.server", org.apache.openejb.test.IvmTestServer.class.getName());

@@ -28,11 +28,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * ejb-jar_3_1.xsd
- *
+ * <p/>
  * <p>Java class for timer-scheduleType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="timer-scheduleType">
  *   &lt;complexContent>
@@ -51,8 +51,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "timer-scheduleType", propOrder = {
@@ -85,7 +83,7 @@ public class TimerSchedule {
         return second;
     }
 
-    public void setSecond(String value) {
+    public void setSecond(final String value) {
         this.second = value;
     }
 
@@ -93,7 +91,7 @@ public class TimerSchedule {
         return minute;
     }
 
-    public void setMinute(String value) {
+    public void setMinute(final String value) {
         this.minute = value;
     }
 
@@ -101,7 +99,7 @@ public class TimerSchedule {
         return hour;
     }
 
-    public void setHour(String value) {
+    public void setHour(final String value) {
         this.hour = value;
     }
 
@@ -109,7 +107,7 @@ public class TimerSchedule {
         return dayOfMonth;
     }
 
-    public void setDayOfMonth(String value) {
+    public void setDayOfMonth(final String value) {
         this.dayOfMonth = value;
     }
 
@@ -117,7 +115,7 @@ public class TimerSchedule {
         return month;
     }
 
-    public void setMonth(String value) {
+    public void setMonth(final String value) {
         this.month = value;
     }
 
@@ -125,7 +123,7 @@ public class TimerSchedule {
         return dayOfWeek;
     }
 
-    public void setDayOfWeek(String value) {
+    public void setDayOfWeek(final String value) {
         this.dayOfWeek = value;
     }
 
@@ -133,7 +131,7 @@ public class TimerSchedule {
         return year;
     }
 
-    public void setYear(String value) {
+    public void setYear(final String value) {
         this.year = value;
     }
 
@@ -141,7 +139,7 @@ public class TimerSchedule {
         return id;
     }
 
-    public void setId(java.lang.String value) {
+    public void setId(final java.lang.String value) {
         this.id = value;
     }
 }

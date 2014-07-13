@@ -90,7 +90,7 @@ public class Instance implements Serializable, Cache.TimeOut {
     public Duration getTimeOut() {
         return beanContext.getStatefulTimeout();
     }
-    
+
     public synchronized boolean isInUse() {
         return inUse;
     }
@@ -108,7 +108,7 @@ public class Instance implements Serializable, Cache.TimeOut {
     }
 
     public synchronized Transaction getTransaction() {
-        return transaction.size() > 0 ? transaction.peek(): null;
+        return transaction.size() > 0 ? transaction.peek() : null;
     }
 
     public LockFactory.StatefulLock getLock() {
@@ -122,7 +122,7 @@ public class Instance implements Serializable, Cache.TimeOut {
         } else if (this.transaction.size() != 0 && transaction == null) {
             this.transaction.pop();
             lock.unlock();
-        } else if (transaction != null){
+        } else if (transaction != null) {
             this.transaction.push(transaction);
         }
     }
@@ -132,7 +132,7 @@ public class Instance implements Serializable, Cache.TimeOut {
             lock.unlock();
         }
     }
-    
+
     public synchronized Map<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker> getEntityManagers(final Index<EntityManagerFactory, Map> factories) {
         if (entityManagers == null && entityManagerArray != null) {
             entityManagers = new HashMap<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker>();
@@ -199,17 +199,17 @@ public class Instance implements Serializable, Cache.TimeOut {
                 return new PojoSerialization(obj);
             }
         }
-        
+
         protected Object readResolve() throws ObjectStreamException {
             // Anything wrapped with PojoSerialization will have been automatically
             // unwrapped via it's own readResolve so passing in the raw bean
             // and interceptors variables is totally fine.
             final StatefulContainer statefulContainer = StatefulContainer.class.cast(SystemInstance.get().getComponent(ContainerSystem.class).getContainer(containerId));
             return new Instance(
-                    deploymentId, primaryKey, containerId,
-                    bean, creationalContext,
-                    interceptors, entityManagerArray,
-                    statefulContainer.getLockFactory().newLock(deploymentId.toString()));
+                deploymentId, primaryKey, containerId,
+                bean, creationalContext,
+                interceptors, entityManagerArray,
+                statefulContainer.getLockFactory().newLock(deploymentId.toString()));
         }
     }
 }

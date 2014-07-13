@@ -28,33 +28,33 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.namespace.QName;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class FacesClientBehaviorRenderer$JAXB
-        extends JAXBObject<FacesClientBehaviorRenderer> {
+    extends JAXBObject<FacesClientBehaviorRenderer> {
 
 
     public FacesClientBehaviorRenderer$JAXB() {
         super(FacesClientBehaviorRenderer.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "faces-config-client-behavior-rendererType".intern()));
     }
 
-    public static FacesClientBehaviorRenderer readFacesClientBehaviorRenderer(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static FacesClientBehaviorRenderer readFacesClientBehaviorRenderer(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeFacesClientBehaviorRenderer(XoXMLStreamWriter writer, FacesClientBehaviorRenderer facesClientBehaviorRenderer, RuntimeContext context)
-            throws Exception {
+    public static void writeFacesClientBehaviorRenderer(final XoXMLStreamWriter writer, final FacesClientBehaviorRenderer facesClientBehaviorRenderer, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesClientBehaviorRenderer, context);
     }
 
-    public void write(XoXMLStreamWriter writer, FacesClientBehaviorRenderer facesClientBehaviorRenderer, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final FacesClientBehaviorRenderer facesClientBehaviorRenderer, final RuntimeContext context)
+        throws Exception {
         _write(writer, facesClientBehaviorRenderer, context);
     }
 
-    public final static FacesClientBehaviorRenderer _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static FacesClientBehaviorRenderer _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -65,12 +65,12 @@ public class FacesClientBehaviorRenderer$JAXB
             context = new RuntimeContext();
         }
 
-        FacesClientBehaviorRenderer facesClientBehaviorRenderer = new FacesClientBehaviorRenderer();
+        final FacesClientBehaviorRenderer facesClientBehaviorRenderer = new FacesClientBehaviorRenderer();
         context.beforeUnmarshal(facesClientBehaviorRenderer, LifecycleCallback.NONE);
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("faces-config-client-behavior-rendererType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, FacesClientBehaviorRenderer.class);
@@ -78,22 +78,22 @@ public class FacesClientBehaviorRenderer$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
                 context.unexpectedAttribute(attribute);
             }
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("client-behavior-renderer-type" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: clientBehaviorRendererType
-                String clientBehaviorRendererTypeRaw = elementReader.getElementAsString();
+                final String clientBehaviorRendererTypeRaw = elementReader.getElementAsString();
 
-                String clientBehaviorRendererType;
+                final String clientBehaviorRendererType;
                 try {
                     clientBehaviorRendererType = Adapters.collapsedStringAdapterAdapter.unmarshal(clientBehaviorRendererTypeRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -101,12 +101,12 @@ public class FacesClientBehaviorRenderer$JAXB
                 facesClientBehaviorRenderer.clientBehaviorRendererType = clientBehaviorRendererType;
             } else if (("client-behavior-renderer-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: clientBehaviorRendererClass
-                String clientBehaviorRendererClassRaw = elementReader.getElementAsString();
+                final String clientBehaviorRendererClassRaw = elementReader.getElementAsString();
 
-                String clientBehaviorRendererClass;
+                final String clientBehaviorRendererClass;
                 try {
                     clientBehaviorRendererClass = Adapters.collapsedStringAdapterAdapter.unmarshal(clientBehaviorRendererClassRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -122,13 +122,13 @@ public class FacesClientBehaviorRenderer$JAXB
         return facesClientBehaviorRenderer;
     }
 
-    public final FacesClientBehaviorRenderer read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final FacesClientBehaviorRenderer read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, FacesClientBehaviorRenderer facesClientBehaviorRenderer, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final FacesClientBehaviorRenderer facesClientBehaviorRenderer, RuntimeContext context)
+        throws Exception {
         if (facesClientBehaviorRenderer == null) {
             writer.writeXsiNil();
             return;
@@ -138,7 +138,7 @@ public class FacesClientBehaviorRenderer$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (FacesClientBehaviorRenderer.class != facesClientBehaviorRenderer.getClass()) {
             context.unexpectedSubclass(writer, facesClientBehaviorRenderer, FacesClientBehaviorRenderer.class);
             return;
@@ -148,11 +148,11 @@ public class FacesClientBehaviorRenderer$JAXB
 
 
         // ELEMENT: clientBehaviorRendererType
-        String clientBehaviorRendererTypeRaw = facesClientBehaviorRenderer.clientBehaviorRendererType;
+        final String clientBehaviorRendererTypeRaw = facesClientBehaviorRenderer.clientBehaviorRendererType;
         String clientBehaviorRendererType = null;
         try {
             clientBehaviorRendererType = Adapters.collapsedStringAdapterAdapter.marshal(clientBehaviorRendererTypeRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(facesClientBehaviorRenderer, "clientBehaviorRendererType", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (clientBehaviorRendererType != null) {
@@ -164,11 +164,11 @@ public class FacesClientBehaviorRenderer$JAXB
         }
 
         // ELEMENT: clientBehaviorRendererClass
-        String clientBehaviorRendererClassRaw = facesClientBehaviorRenderer.clientBehaviorRendererClass;
+        final String clientBehaviorRendererClassRaw = facesClientBehaviorRenderer.clientBehaviorRendererClass;
         String clientBehaviorRendererClass = null;
         try {
             clientBehaviorRendererClass = Adapters.collapsedStringAdapterAdapter.marshal(clientBehaviorRendererClassRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(facesClientBehaviorRenderer, "clientBehaviorRendererClass", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (clientBehaviorRendererClass != null) {

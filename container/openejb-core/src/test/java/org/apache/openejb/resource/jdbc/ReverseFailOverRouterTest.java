@@ -54,14 +54,14 @@ public class ReverseFailOverRouterTest {
     public Properties configuration() {
         return datasource(datasource(new PropertiesBuilder(), "fo1"), "fo2")
 
-                .property("router", "new://Resource?class-name=" + FailOverRouter.class.getName())
-                .property("router.datasourceNames", "fo1,fo2")
-                .property("router.strategy", "reverse")
+            .property("router", "new://Resource?class-name=" + FailOverRouter.class.getName())
+            .property("router.datasourceNames", "fo1,fo2")
+            .property("router.strategy", "reverse")
 
-                .property("routedDs", "new://Resource?provider=RoutedDataSource&type=DataSource")
-                .property("routedDs.router", "router")
+            .property("routedDs", "new://Resource?provider=RoutedDataSource&type=DataSource")
+            .property("routedDs.router", "router")
 
-                .build();
+            .build();
     }
 
     @Module

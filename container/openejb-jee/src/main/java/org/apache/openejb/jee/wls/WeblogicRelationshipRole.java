@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for weblogic-relationship-role complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="weblogic-relationship-role">
  *   &lt;complexContent>
@@ -47,8 +47,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "weblogic-relationship-role", propOrder = {
@@ -78,11 +76,9 @@ public class WeblogicRelationshipRole {
 
     /**
      * Gets the value of the relationshipRoleName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getRelationshipRoleName() {
         return relationshipRoleName;
@@ -90,23 +86,19 @@ public class WeblogicRelationshipRole {
 
     /**
      * Sets the value of the relationshipRoleName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setRelationshipRoleName(String value) {
+    public void setRelationshipRoleName(final String value) {
         this.relationshipRoleName = value;
     }
 
     /**
      * Gets the value of the groupName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getGroupName() {
         return groupName;
@@ -114,23 +106,19 @@ public class WeblogicRelationshipRole {
 
     /**
      * Sets the value of the groupName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setGroupName(String value) {
+    public void setGroupName(final String value) {
         this.groupName = value;
     }
 
     /**
      * Gets the value of the relationshipRoleMap property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link RelationshipRoleMap }
-     *     
+     *
+     * @return possible object is
+     * {@link RelationshipRoleMap }
      */
     public RelationshipRoleMap getRelationshipRoleMap() {
         return relationshipRoleMap;
@@ -138,23 +126,19 @@ public class WeblogicRelationshipRole {
 
     /**
      * Sets the value of the relationshipRoleMap property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link RelationshipRoleMap }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link RelationshipRoleMap }
      */
-    public void setRelationshipRoleMap(RelationshipRoleMap value) {
+    public void setRelationshipRoleMap(final RelationshipRoleMap value) {
         this.relationshipRoleMap = value;
     }
 
     /**
      * Gets the value of the dbCascadeDelete property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Empty }
-     *     
+     *
+     * @return possible object is
+     * {@link Empty }
      */
     public Empty getDbCascadeDelete() {
         return dbCascadeDelete;
@@ -162,23 +146,19 @@ public class WeblogicRelationshipRole {
 
     /**
      * Sets the value of the dbCascadeDelete property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Empty }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Empty }
      */
-    public void setDbCascadeDelete(Empty value) {
+    public void setDbCascadeDelete(final Empty value) {
         this.dbCascadeDelete = value;
     }
 
     /**
      * Gets the value of the enableQueryCaching property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getEnableQueryCaching() {
         return enableQueryCaching;
@@ -186,23 +166,19 @@ public class WeblogicRelationshipRole {
 
     /**
      * Sets the value of the enableQueryCaching property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setEnableQueryCaching(Boolean value) {
+    public void setEnableQueryCaching(final Boolean value) {
         this.enableQueryCaching = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getId() {
         return id;
@@ -210,13 +186,11 @@ public class WeblogicRelationshipRole {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

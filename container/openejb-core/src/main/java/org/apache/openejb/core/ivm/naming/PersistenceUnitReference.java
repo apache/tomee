@@ -25,7 +25,7 @@ import javax.persistence.EntityManagerFactory;
  */
 public class PersistenceUnitReference extends Reference {
 
-    private EntityManagerFactory emf;
+    private final EntityManagerFactory emf;
 
     public PersistenceUnitReference(final EntityManagerFactory emf) {
         this.emf = emf;

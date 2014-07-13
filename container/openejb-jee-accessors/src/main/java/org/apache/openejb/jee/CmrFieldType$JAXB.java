@@ -23,25 +23,25 @@ import org.metatype.sxc.util.XoXMLStreamReader;
 import javax.xml.namespace.QName;
 
 public class CmrFieldType$JAXB
-        extends JAXBEnum<CmrFieldType> {
+    extends JAXBEnum<CmrFieldType> {
 
 
     public CmrFieldType$JAXB() {
         super(CmrFieldType.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "cmrFieldType".intern()));
     }
 
-    public CmrFieldType parse(XoXMLStreamReader reader, RuntimeContext context, String value)
-            throws Exception {
+    public CmrFieldType parse(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
+        throws Exception {
         return parseCmrFieldType(reader, context, value);
     }
 
-    public String toString(Object bean, String parameterName, RuntimeContext context, CmrFieldType cmrFieldType)
-            throws Exception {
+    public String toString(final Object bean, final String parameterName, final RuntimeContext context, final CmrFieldType cmrFieldType)
+        throws Exception {
         return toStringCmrFieldType(bean, parameterName, context, cmrFieldType);
     }
 
-    public static CmrFieldType parseCmrFieldType(XoXMLStreamReader reader, RuntimeContext context, String value)
-            throws Exception {
+    public static CmrFieldType parseCmrFieldType(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
+        throws Exception {
         if ("java.util.Collection".equals(value)) {
             return CmrFieldType.COLLECTION;
         } else if ("java.util.Set".equals(value)) {
@@ -52,8 +52,8 @@ public class CmrFieldType$JAXB
         }
     }
 
-    public static String toStringCmrFieldType(Object bean, String parameterName, RuntimeContext context, CmrFieldType cmrFieldType)
-            throws Exception {
+    public static String toStringCmrFieldType(final Object bean, final String parameterName, final RuntimeContext context, final CmrFieldType cmrFieldType)
+        throws Exception {
         if (CmrFieldType.COLLECTION == cmrFieldType) {
             return "java.util.Collection";
         } else if (CmrFieldType.SET == cmrFieldType) {

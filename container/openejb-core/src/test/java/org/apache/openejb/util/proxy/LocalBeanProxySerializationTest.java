@@ -45,17 +45,17 @@ public class LocalBeanProxySerializationTest {
         return bean;
     }
 
-	@Test
-	public void testSerialization() throws Exception {
+    @Test
+    public void testSerialization() throws Exception {
         assertNotNull(bean);
 
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	    final ObjectOutputStream oos = new ObjectOutputStream(baos);
+        final ObjectOutputStream oos = new ObjectOutputStream(baos);
         oos.writeObject(bean);
 
         final ByteArrayInputStream bis = new ByteArrayInputStream(baos.toByteArray());
         final ObjectInputStream ois = new ObjectInputStream(bis);
         final SampleLocalBean deserialized = (SampleLocalBean) ois.readObject();
         assertEquals(5, deserialized.add(2, 3));
-	}
+    }
 }

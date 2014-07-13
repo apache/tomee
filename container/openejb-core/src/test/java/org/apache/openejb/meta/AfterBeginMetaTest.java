@@ -43,7 +43,8 @@ public class AfterBeginMetaTest {
 
             @TransactionJoined
             @AfterBegin
-            public void method(){}
+            public void method() {
+            }
         }
     }
 

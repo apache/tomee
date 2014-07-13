@@ -31,35 +31,35 @@ public class JndiEncInfoBuilderInsertTest {
     final List<InjectableInfo> module = new ArrayList<InjectableInfo>();
     final List<InjectableInfo> comp = new ArrayList<InjectableInfo>();
 
-    private void insert(String referenceName) {
+    private void insert(final String referenceName) {
         final InjectableInfo injectableInfo = new InjectableInfo();
         injectableInfo.referenceName = referenceName;
         this.builder.insert(injectableInfo, this.global, this.app, this.module, this.comp);
     }
 
-    private String[] getNames(List<InjectableInfo> infoList) {
+    private String[] getNames(final List<InjectableInfo> infoList) {
         final List<String> names = new ArrayList<String>();
-        for (InjectableInfo info : infoList) {
+        for (final InjectableInfo info : infoList) {
             names.add(info.referenceName);
         }
         return names.toArray(new String[names.size()]);
     }
 
-    private String[] getSafeArray(String[] arr) {
+    private String[] getSafeArray(final String[] arr) {
         if (arr == null) {
             return new String[0];
         }
         return arr;
     }
 
-    private void assertIsEqual(String[] globalRefs, String[] appRefs, String[] moduleRefs, String[] compRefs) {
+    private void assertIsEqual(final String[] globalRefs, final String[] appRefs, final String[] moduleRefs, final String[] compRefs) {
         Assert.assertArrayEquals(getSafeArray(globalRefs), getNames(this.global));
         Assert.assertArrayEquals(getSafeArray(appRefs), getNames(this.app));
         Assert.assertArrayEquals(getSafeArray(moduleRefs), getNames(this.module));
         Assert.assertArrayEquals(getSafeArray(compRefs), getNames(this.comp));
     }
 
-    String[] getArray(String... strings) {
+    String[] getArray(final String... strings) {
         return strings;
     }
 
@@ -67,50 +67,50 @@ public class JndiEncInfoBuilderInsertTest {
     public void test() throws Exception {
         insert("MyCompReference");
         assertIsEqual(
-                null,
-                null,
-                null,
-                getArray("comp/env/MyCompReference")
+            null,
+            null,
+            null,
+            getArray("comp/env/MyCompReference")
         );
 
         insert("java:global/MyGlobalReference");
         assertIsEqual(
-                getArray("global/MyGlobalReference"),
-                null,
-                null,
-                getArray("comp/env/MyCompReference")
+            getArray("global/MyGlobalReference"),
+            null,
+            null,
+            getArray("comp/env/MyCompReference")
         );
 
         insert("java:app/MyAppReference");
         assertIsEqual(
-                getArray("global/MyGlobalReference"),
-                getArray("app/MyAppReference"),
-                null,
-                getArray("comp/env/MyCompReference")
+            getArray("global/MyGlobalReference"),
+            getArray("app/MyAppReference"),
+            null,
+            getArray("comp/env/MyCompReference")
         );
 
         insert("java:module/MyModuleReference");
         assertIsEqual(
-                getArray("global/MyGlobalReference"),
-                getArray("app/MyAppReference"),
-                getArray("module/MyModuleReference"),
-                getArray("comp/env/MyCompReference")
+            getArray("global/MyGlobalReference"),
+            getArray("app/MyAppReference"),
+            getArray("module/MyModuleReference"),
+            getArray("comp/env/MyCompReference")
         );
 
         insert("java:comp/MyCompReference2");
         assertIsEqual(
-                getArray("global/MyGlobalReference"),
-                getArray("app/MyAppReference"),
-                getArray("module/MyModuleReference"),
-                getArray("comp/env/MyCompReference", "comp/MyCompReference2")
+            getArray("global/MyGlobalReference"),
+            getArray("app/MyAppReference"),
+            getArray("module/MyModuleReference"),
+            getArray("comp/env/MyCompReference", "comp/MyCompReference2")
         );
 
         insert("java:unknown/MyUnknownReference");
         assertIsEqual(
-                getArray("global/MyGlobalReference"),
-                getArray("app/MyAppReference"),
-                getArray("module/MyModuleReference"),
-                getArray("comp/env/MyCompReference", "comp/MyCompReference2")
+            getArray("global/MyGlobalReference"),
+            getArray("app/MyAppReference"),
+            getArray("module/MyModuleReference"),
+            getArray("comp/env/MyCompReference", "comp/MyCompReference2")
         );
     }
 }

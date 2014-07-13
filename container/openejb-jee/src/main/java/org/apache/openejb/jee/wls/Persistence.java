@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for persistence complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="persistence">
  *   &lt;complexContent>
@@ -46,8 +46,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "persistence", propOrder = {
@@ -75,11 +73,9 @@ public class Persistence {
 
     /**
      * Gets the value of the isModifiedMethodName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getIsModifiedMethodName() {
         return isModifiedMethodName;
@@ -87,23 +83,19 @@ public class Persistence {
 
     /**
      * Sets the value of the isModifiedMethodName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setIsModifiedMethodName(String value) {
+    public void setIsModifiedMethodName(final String value) {
         this.isModifiedMethodName = value;
     }
 
     /**
      * Gets the value of the delayUpdatesUntilEndOfTx property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getDelayUpdatesUntilEndOfTx() {
         return delayUpdatesUntilEndOfTx;
@@ -111,23 +103,19 @@ public class Persistence {
 
     /**
      * Sets the value of the delayUpdatesUntilEndOfTx property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setDelayUpdatesUntilEndOfTx(Boolean value) {
+    public void setDelayUpdatesUntilEndOfTx(final Boolean value) {
         this.delayUpdatesUntilEndOfTx = value;
     }
 
     /**
      * Gets the value of the findersLoadBean property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getFindersLoadBean() {
         return findersLoadBean;
@@ -135,23 +123,19 @@ public class Persistence {
 
     /**
      * Sets the value of the findersLoadBean property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setFindersLoadBean(Boolean value) {
+    public void setFindersLoadBean(final Boolean value) {
         this.findersLoadBean = value;
     }
 
     /**
      * Gets the value of the persistenceUse property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PersistenceUse }
-     *     
+     *
+     * @return possible object is
+     * {@link PersistenceUse }
      */
     public PersistenceUse getPersistenceUse() {
         return persistenceUse;
@@ -159,23 +143,19 @@ public class Persistence {
 
     /**
      * Sets the value of the persistenceUse property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PersistenceUse }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PersistenceUse }
      */
-    public void setPersistenceUse(PersistenceUse value) {
+    public void setPersistenceUse(final PersistenceUse value) {
         this.persistenceUse = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getId() {
         return id;
@@ -183,13 +163,11 @@ public class Persistence {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

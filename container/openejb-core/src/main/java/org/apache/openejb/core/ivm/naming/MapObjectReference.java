@@ -22,8 +22,8 @@ import java.util.Map;
 
 public class MapObjectReference extends Reference {
 
-    private ThreadLocal<Map<String, Object>> obj;
-    private String key;
+    private final ThreadLocal<Map<String, Object>> obj;
+    private final String key;
 
     public MapObjectReference(final ThreadLocal<Map<String, Object>> obj, final String key) {
         this.obj = obj;

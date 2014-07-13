@@ -24,22 +24,21 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- *                 Handles the case where an arbitrary SQL statement is executed,
- *                 and the JDBC driver returns a new automatically generated ID.
- *                 This should not be used when the destination table itself
- *                 generates the ID (see database-generatedType), but it could be
- *                 used for a web session ID or something where there is no
- *                 naturally matching database table (but you could create one
- *                 with an AUTO_INCREMENT key, specify an insert statement here,
- *                 and then capture the newly returned ID and use it as your
- *                 web session ID).
- *             
- * 
+ * Handles the case where an arbitrary SQL statement is executed,
+ * and the JDBC driver returns a new automatically generated ID.
+ * This should not be used when the destination table itself
+ * generates the ID (see database-generatedType), but it could be
+ * used for a web session ID or something where there is no
+ * naturally matching database table (but you could create one
+ * with an AUTO_INCREMENT key, specify an insert statement here,
+ * and then capture the newly returned ID and use it as your
+ * web session ID).
+ * <p/>
+ * <p/>
  * <p>Java class for auto-increment-tableType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="auto-increment-tableType">
  *   &lt;complexContent>
@@ -52,8 +51,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "auto-increment-tableType", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1", propOrder = {
@@ -62,18 +59,16 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class AutoIncrementTableType {
 
-    @XmlElement(name="sql", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1", required = true)
+    @XmlElement(name = "sql", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1", required = true)
     protected String sql;
     @XmlElement(name = "return-type", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1", required = true)
     protected String returnType;
 
     /**
      * Gets the value of the sql property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getSql() {
         return sql;
@@ -81,23 +76,19 @@ public class AutoIncrementTableType {
 
     /**
      * Sets the value of the sql property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setSql(String value) {
+    public void setSql(final String value) {
         this.sql = value;
     }
 
     /**
      * Gets the value of the returnType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getReturnType() {
         return returnType;
@@ -105,13 +96,11 @@ public class AutoIncrementTableType {
 
     /**
      * Sets the value of the returnType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setReturnType(String value) {
+    public void setReturnType(final String value) {
         this.returnType = value;
     }
 

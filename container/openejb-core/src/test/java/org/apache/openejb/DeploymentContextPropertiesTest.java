@@ -98,7 +98,7 @@ public class DeploymentContextPropertiesTest extends TestCase {
 
 
             final EjbJarInfo moduleInfo = config.configureApplication(ejbModule);
-            assertProperty(moduleInfo.properties, "color" , "orange");
+            assertProperty(moduleInfo.properties, "color", "orange");
 
             assembler.createApplication(moduleInfo);
         }
@@ -133,7 +133,7 @@ public class DeploymentContextPropertiesTest extends TestCase {
 
             final AppInfo appInfo = config.configureApplication(appModule);
 
-            assertProperty(appInfo.properties, "color" , "orange");
+            assertProperty(appInfo.properties, "color", "orange");
 
             assembler.createApplication(appInfo);
         }
@@ -146,7 +146,7 @@ public class DeploymentContextPropertiesTest extends TestCase {
         assertProperty(properties, "color", "orange");
     }
 
-    private void assertProperty(Properties properties, final String key, final String value) {
+    private void assertProperty(final Properties properties, final String key, final String value) {
         assertTrue(properties.containsKey(key));
         assertEquals(value, properties.getProperty(key));
     }

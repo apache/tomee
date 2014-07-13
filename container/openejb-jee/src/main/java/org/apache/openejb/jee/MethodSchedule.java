@@ -31,11 +31,11 @@ import java.util.ArrayList;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "method-scheduleType", propOrder = {
-        "descriptions",
-        "ejbName",
-        "schedule",
-        "method"
-        })
+    "descriptions",
+    "ejbName",
+    "schedule",
+    "method"
+})
 public class MethodSchedule {
 
     @XmlTransient
@@ -58,18 +58,18 @@ public class MethodSchedule {
     public MethodSchedule() {
     }
 
-    public MethodSchedule(String className, String ejbName, String methodName, TimerSchedule... schedules) {
+    public MethodSchedule(final String className, final String ejbName, final String methodName, final TimerSchedule... schedules) {
         this(ejbName, new NamedMethod(className, methodName), schedules);
     }
 
-    public MethodSchedule(String ejbName, java.lang.reflect.Method method, TimerSchedule... schedules) {
+    public MethodSchedule(final String ejbName, final java.lang.reflect.Method method, final TimerSchedule... schedules) {
         this(ejbName, new NamedMethod(method), schedules);
     }
 
-    public MethodSchedule(String ejbName, NamedMethod method, TimerSchedule... schedules) {
+    public MethodSchedule(final String ejbName, final NamedMethod method, final TimerSchedule... schedules) {
         this.method = method;
         this.ejbName = ejbName;
-        for (TimerSchedule schedule : schedules) {
+        for (final TimerSchedule schedule : schedules) {
             getSchedule().add(schedule);
         }
     }
@@ -79,7 +79,7 @@ public class MethodSchedule {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -98,7 +98,7 @@ public class MethodSchedule {
         return ejbName;
     }
 
-    public void setEjbName(String ejbName) {
+    public void setEjbName(final String ejbName) {
         this.ejbName = ejbName;
     }
 
@@ -106,7 +106,7 @@ public class MethodSchedule {
         return method;
     }
 
-    public void setMethod(NamedMethod method) {
+    public void setMethod(final NamedMethod method) {
         this.method = method;
     }
 
@@ -114,7 +114,7 @@ public class MethodSchedule {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

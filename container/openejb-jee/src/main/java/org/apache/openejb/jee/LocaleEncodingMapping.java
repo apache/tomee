@@ -28,11 +28,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * web-common_3_0.xsd
- * 
+ * <p/>
  * <p>Java class for locale-encoding-mappingType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="locale-encoding-mappingType">
  *   &lt;complexContent>
@@ -46,14 +46,12 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "locale-encoding-mappingType", propOrder = {
-        "locale",
-        "encoding"
+    "locale",
+    "encoding"
 })
 public class LocaleEncodingMapping {
 
@@ -70,7 +68,7 @@ public class LocaleEncodingMapping {
         return locale;
     }
 
-    public void setLocale(String value) {
+    public void setLocale(final String value) {
         this.locale = value;
     }
 
@@ -78,7 +76,7 @@ public class LocaleEncodingMapping {
         return encoding;
     }
 
-    public void setEncoding(String value) {
+    public void setEncoding(final String value) {
         this.encoding = value;
     }
 
@@ -86,7 +84,7 @@ public class LocaleEncodingMapping {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

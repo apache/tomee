@@ -37,7 +37,7 @@ public class IdempotentUrlPattern {
         return urlPattern;
     }
 
-    public void setUrlPattern(String value) {
+    public void setUrlPattern(final String value) {
         this.urlPattern = value;
     }
 
@@ -49,7 +49,7 @@ public class IdempotentUrlPattern {
         }
     }
 
-    public void setNumOfRetries(String value) {
+    public void setNumOfRetries(final String value) {
         this.numOfRetries = value;
     }
 }

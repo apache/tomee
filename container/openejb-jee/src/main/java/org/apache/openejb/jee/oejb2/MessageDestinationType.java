@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for message-destinationType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="message-destinationType">
  *   &lt;complexContent>
@@ -46,8 +46,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "message-destinationType", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", propOrder = {
@@ -68,11 +66,9 @@ public class MessageDestinationType {
 
     /**
      * Gets the value of the messageDestinationName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getMessageDestinationName() {
         return messageDestinationName;
@@ -80,23 +76,19 @@ public class MessageDestinationType {
 
     /**
      * Sets the value of the messageDestinationName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setMessageDestinationName(String value) {
+    public void setMessageDestinationName(final String value) {
         this.messageDestinationName = value;
     }
 
     /**
      * Gets the value of the pattern property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PatternType }
-     *     
+     *
+     * @return possible object is
+     * {@link PatternType }
      */
     public PatternType getPattern() {
         return pattern;
@@ -104,23 +96,19 @@ public class MessageDestinationType {
 
     /**
      * Sets the value of the pattern property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PatternType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PatternType }
      */
-    public void setPattern(PatternType value) {
+    public void setPattern(final PatternType value) {
         this.pattern = value;
     }
 
     /**
      * Gets the value of the adminObjectModule property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getAdminObjectModule() {
         return adminObjectModule;
@@ -128,23 +116,19 @@ public class MessageDestinationType {
 
     /**
      * Sets the value of the adminObjectModule property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setAdminObjectModule(String value) {
+    public void setAdminObjectModule(final String value) {
         this.adminObjectModule = value;
     }
 
     /**
      * Gets the value of the adminObjectLink property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getAdminObjectLink() {
         return adminObjectLink;
@@ -152,13 +136,11 @@ public class MessageDestinationType {
 
     /**
      * Sets the value of the adminObjectLink property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setAdminObjectLink(String value) {
+    public void setAdminObjectLink(final String value) {
         this.adminObjectLink = value;
     }
 

@@ -37,8 +37,8 @@ import javax.resource.spi.ManagedConnectionFactory;
  * @org.apache.xbean.XBean element="connectorRef"
  */
 public class ConnectorReference extends Reference {
-    private ConnectionManager conMngr;
-    private ManagedConnectionFactory mngedConFactory;
+    private final ConnectionManager conMngr;
+    private final ManagedConnectionFactory mngedConFactory;
 
     public ConnectorReference(final ConnectionManager manager, final ManagedConnectionFactory factory) {
         conMngr = manager;

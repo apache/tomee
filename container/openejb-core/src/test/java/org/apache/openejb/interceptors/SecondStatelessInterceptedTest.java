@@ -42,11 +42,11 @@ public class SecondStatelessInterceptedTest extends TestCase {
 
     @Module
     public EjbJar module() {
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
 
-        StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean(SecondStatelessInterceptedBean.class));
+        final StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean(SecondStatelessInterceptedBean.class));
 
-        AssemblyDescriptor assembly = ejbJar.getAssemblyDescriptor();
+        final AssemblyDescriptor assembly = ejbJar.getAssemblyDescriptor();
 
         assembly.addInterceptorBinding(new InterceptorBinding("*", new Interceptor(DefaultInterceptorOne.class)));
         assembly.addInterceptorBinding(new InterceptorBinding("*", new Interceptor(DefaultInterceptorTwo.class)));
@@ -60,7 +60,7 @@ public class SecondStatelessInterceptedTest extends TestCase {
 
         assert bean != null;
 
-        List<String> expected = new ArrayList<String>();
+        final List<String> expected = new ArrayList<String>();
         expected.add("ClassLevelInterceptorOne");
         expected.add("ClassLevelInterceptorTwo");
         expected.add("MethodLevelInterceptorOne");
@@ -68,7 +68,7 @@ public class SecondStatelessInterceptedTest extends TestCase {
         expected.add("SecondStatelessInterceptedBean");
         expected.add("methodWithDefaultInterceptorsExcluded");
 
-        List<String> actual = bean.methodWithDefaultInterceptorsExcluded();
+        final List<String> actual = bean.methodWithDefaultInterceptorsExcluded();
         assert expected.equals(actual) : "Expected " + expected + ", but got " + actual;
     }
 }

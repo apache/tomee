@@ -101,7 +101,7 @@ public class BeanContext extends DeploymentContext {
     public static final String USER_INTERCEPTOR_KEY = "org.apache.openejb.default.system.interceptors";
     public static final String USER_INTERCEPTOR_SEPARATOR = ",| |;";
 
-    private boolean isPassivatingScope = true;
+    private final boolean isPassivatingScope = true;
     private ConstructorInjectionBean<Object> constructorInjectionBean;
 
     public boolean isDynamicallyImplemented() {
@@ -237,8 +237,8 @@ public class BeanContext extends DeploymentContext {
     private final boolean localbean;
     private Duration accessTimeout;
 
-    private Set<Class<?>> asynchronousClasses = new HashSet<Class<?>>();
-    private Set<String> asynchronousMethodSignatures = new HashSet<String>();
+    private final Set<Class<?>> asynchronousClasses = new HashSet<Class<?>>();
+    private final Set<String> asynchronousMethodSignatures = new HashSet<String>();
     private Class<?> proxyClass;
 
     private Mdb mdb;
@@ -246,7 +246,7 @@ public class BeanContext extends DeploymentContext {
     private Stateful stateful;
     private Cmp cmp;
     private LegacyView legacyView;
-    
+
     private final Map<String, String> securityRoleReferences = new HashMap<String, String>();
 
     /**
@@ -1634,8 +1634,8 @@ public class BeanContext extends DeploymentContext {
         synchronized (this) { // concurrentmodificationexception because of annotatedtype internals otherwise
             if (constructorInjectionBean == null) {
                 constructorInjectionBean = new ConstructorInjectionBean<Object>(
-                                                webBeansContext, getManagedClass(),
-                                                webBeansContext.getAnnotatedElementFactory().newAnnotatedType(getManagedClass()));
+                    webBeansContext, getManagedClass(),
+                    webBeansContext.getAnnotatedElementFactory().newAnnotatedType(getManagedClass()));
             }
         }
         return constructorInjectionBean;
@@ -1720,7 +1720,7 @@ public class BeanContext extends DeploymentContext {
         return proxyClass;
     }
 
-    public boolean isCdiCompatible(){
+    public boolean isCdiCompatible() {
         return componentType.isCdiCompatible() && !Comp.class.equals(beanClass);
     }
 
@@ -1775,11 +1775,11 @@ public class BeanContext extends DeploymentContext {
             ((EjbTimerServiceImpl) ejbTimerService).stop();
         }
     }
-    
+
     public void addSecurityRoleReference(final String roleName, final String roleLink) {
         securityRoleReferences.put(roleName, roleLink);
     }
-    
+
     public String getSecurityRoleReference(final String roleName) {
         final String roleLink = securityRoleReferences.get(roleName);
         return roleLink != null ? roleLink : roleName;
@@ -1793,7 +1793,7 @@ public class BeanContext extends DeploymentContext {
         private Class cmpImplClass;
         private String abstractSchemaName;
         private Class pkClass;
-        private Set<String> remoteQueryResults = new TreeSet<String>();
+        private final Set<String> remoteQueryResults = new TreeSet<String>();
         private boolean isReentrant;
         private final Map<Method, Method> postCreateMethodMap = new HashMap<Method, Method>();
     }
@@ -1838,9 +1838,9 @@ public class BeanContext extends DeploymentContext {
             Class<?> clazz;
             try {
                 clazz = LocalBeanProxyFactory.createProxy(
-                        beanContext.getBeanClass(),
-                        beanContext.getClassLoader(),
-                        interfaces);
+                    beanContext.getBeanClass(),
+                    beanContext.getClassLoader(),
+                    interfaces);
             } catch (final Throwable e) { // VerifyError
                 logger.debug(beanContext.getBeanClass().getName() + " is not proxiable", e);
                 clazz = null;

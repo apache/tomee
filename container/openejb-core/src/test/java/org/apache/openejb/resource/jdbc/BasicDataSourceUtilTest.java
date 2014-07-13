@@ -62,8 +62,8 @@ public class BasicDataSourceUtilTest extends TestCase {
         assertNull(BasicDataSourceUtil.getDataSourcePlugin(""));
     }
 
-    private void assertPluginClass(String jdbcUrl, Class<? extends DataSourcePlugin> pluginClass) throws SQLException {
-        DataSourcePlugin plugin = BasicDataSourceUtil.getDataSourcePlugin(jdbcUrl);
+    private void assertPluginClass(final String jdbcUrl, final Class<? extends DataSourcePlugin> pluginClass) throws SQLException {
+        final DataSourcePlugin plugin = BasicDataSourceUtil.getDataSourcePlugin(jdbcUrl);
         assertNotNull(plugin);
         assertSame(pluginClass, plugin.getClass());
     }

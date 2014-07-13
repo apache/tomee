@@ -24,8 +24,8 @@ import java.io.PrintWriter;
 
 public class OpenEJBErrorHandler {
 
-    private static Logger _logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
-    private static Messages _messages = new Messages("org.apache.openejb.util.resources");
+    private static final Logger _logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
+    private static final Messages _messages = new Messages("org.apache.openejb.util.resources");
 
     public static void handleUnknownError(final Throwable error, final String systemLocation) {
 
@@ -89,7 +89,7 @@ public class OpenEJBErrorHandler {
     }
 
     public static void classNotIntantiateableFromCodebaseForUnknownReason(final String systemLocation, final String className, final String codebase, final String exceptionClassName, final String message)
-            throws OpenEJBException {
+        throws OpenEJBException {
         throw new OpenEJBException(_messages.format("ge0012", systemLocation, className, codebase, exceptionClassName, message));
     }
 

@@ -28,37 +28,35 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- * 
- *         <p>The "if" element defines a condition that must resolve
- *         to true in order for the navigation case on which it is
- *         defined to be matched, with the existing match criteria
- *         (action method and outcome) as a prerequiste, if present.
- *         The condition is defined declaratively using a value
- *         expression in the body of this element. The expression is
- *         evaluated at the time the navigation case is being matched.
- *         If the "from-outcome" is omitted and this element is
- *         present, the navigation handler will match a null outcome
- *         and use the condition return value to determine if the
- *         case should be considered a match.</p>
- * 
+ * <p>The "if" element defines a condition that must resolve
+ * to true in order for the navigation case on which it is
+ * defined to be matched, with the existing match criteria
+ * (action method and outcome) as a prerequiste, if present.
+ * The condition is defined declaratively using a value
+ * expression in the body of this element. The expression is
+ * evaluated at the time the navigation case is being matched.
+ * If the "from-outcome" is omitted and this element is
+ * present, the navigation handler will match a null outcome
+ * and use the condition return value to determine if the
+ * case should be considered a match.</p>
+ * <p/>
  * <div class="changed_added_2_2">
- * 
+ * <p/>
  * <p>When used in a <code>&lt;switch&gt;</code> within a flow, if the
  * expresion returns <code>true</code>, the
  * <code>&lt;from-outcome&gt;</code> sibling element's outcome is used as
  * the id of the node in the flow graph to which control must be
  * passed.</p>
- * 
+ * <p/>
  * </div>
- *         
- *         
- *       
- * 
+ * <p/>
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for faces-config-ifType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="faces-config-ifType">
  *   &lt;simpleContent>
@@ -68,8 +66,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "faces-config-ifType", propOrder = {
@@ -86,18 +82,12 @@ public class FacesConfigIf {
     protected java.lang.String id;
 
     /**
+     * <p> EL expressions present within a faces config file
+     * must start with the character sequence of '#{' and
+     * end with '}'.</p>
      *
-     *
-     *        <p> EL expressions present within a faces config file
-     *         must start with the character sequence of '#{' and
-     *         end with '}'.</p>
-     *
-     *
-     *
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getValue() {
         return value;
@@ -106,22 +96,18 @@ public class FacesConfigIf {
     /**
      * Sets the value of the value property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setValue(java.lang.String value) {
+    public void setValue(final java.lang.String value) {
         this.value = value;
     }
 
     /**
      * Gets the value of the id property.
      *
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getId() {
         return id;
@@ -130,12 +116,10 @@ public class FacesConfigIf {
     /**
      * Sets the value of the id property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setId(java.lang.String value) {
+    public void setId(final java.lang.String value) {
         this.id = value;
     }
 

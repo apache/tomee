@@ -20,13 +20,18 @@ import java.util.concurrent.TimeUnit;
 
 public interface LockFactory {
     StatefulLock newLock(String beanId);
+
     void setContainer(StatefulContainer statefulContainer);
 
     interface StatefulLock {
         void lock();
+
         void unlock();
+
         boolean isHeldByCurrentThread();
+
         boolean tryLock();
+
         boolean tryLock(long time, TimeUnit unit) throws InterruptedException;
     }
 }

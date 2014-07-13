@@ -23,8 +23,8 @@ import java.util.Iterator;
 import java.util.List;
 
 public class Lines {
-    private List<Line> lines = new ArrayList<Line>();
-    private String cr;
+    private final List<Line> lines = new ArrayList<Line>();
+    private final String cr;
 
     public Lines() {
         this(System.getProperty("line.separator"));

@@ -24,11 +24,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * javaee_web_services_client_1_3.xsd
- *
+ * <p/>
  * <p>Java class for addressing-responsesType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="addressing-responsesType">
  *   &lt;simpleContent>
@@ -37,21 +37,18 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "addressing-responsesType")
 @XmlEnum
-public enum AddressingResponses
-{
-        @XmlEnumValue("ANONYMOUS")
-        ANONYMOUS,
-        @XmlEnumValue("NON_ANONYMOUS")
-        NON_ANONYMOUS,
-        @XmlEnumValue("ALL")
-        ALL;
+public enum AddressingResponses {
+    @XmlEnumValue("ANONYMOUS")
+    ANONYMOUS,
+    @XmlEnumValue("NON_ANONYMOUS")
+    NON_ANONYMOUS,
+    @XmlEnumValue("ALL")
+    ALL;
 
 
 }

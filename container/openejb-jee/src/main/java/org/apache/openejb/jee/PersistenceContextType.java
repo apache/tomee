@@ -23,11 +23,11 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 /**
  * javaee6.xsd
- *
+ * <p/>
  * <p>Java class for persistence-context-typeType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="persistence-context-typeType">
  *   &lt;simpleContent>
@@ -36,10 +36,8 @@ import javax.xml.bind.annotation.XmlEnumValue;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 public enum PersistenceContextType {
-    @XmlEnumValue("Transaction") TRANSACTION,
-    @XmlEnumValue("Extended") EXTENDED;
+    @XmlEnumValue("Transaction")TRANSACTION,
+    @XmlEnumValue("Extended")EXTENDED;
 }

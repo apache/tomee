@@ -32,11 +32,11 @@ import java.util.List;
 
 /**
  * web-common_3_0.xsd
- *
+ * <p/>
  * <p>Java class for session-configType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="session-configType">
  *   &lt;complexContent>
@@ -51,8 +51,6 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -79,7 +77,7 @@ public class SessionConfig {
         return sessionTimeout;
     }
 
-    public void setSessionTimeout(Integer value) {
+    public void setSessionTimeout(final Integer value) {
         this.sessionTimeout = value;
     }
 
@@ -87,7 +85,7 @@ public class SessionConfig {
         return cookieConfig;
     }
 
-    public void setCookieConfig(CookieConfig value) {
+    public void setCookieConfig(final CookieConfig value) {
         this.cookieConfig = value;
     }
 
@@ -102,7 +100,7 @@ public class SessionConfig {
         return id;
     }
 
-    public void setId(java.lang.String value) {
+    public void setId(final java.lang.String value) {
         this.id = value;
     }
 

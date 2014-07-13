@@ -31,21 +31,21 @@ import java.util.List;
 public class MappedNameBuilderTest extends TestCase {
     public void testShouldCreateJndiEntryForBeanWithMappedName() throws Exception {
         AppModule appModule = new AppModule(new FakeClassLoader(), "");
-        EjbJar ejbJar = new EjbJar();
-        OpenejbJar openejbJar = new OpenejbJar();
+        final EjbJar ejbJar = new EjbJar();
+        final OpenejbJar openejbJar = new OpenejbJar();
 
-        SessionBean sessionBean = new SessionBean("SessionBean", "org.superbiz.SessionBean", SessionType.STATELESS);
+        final SessionBean sessionBean = new SessionBean("SessionBean", "org.superbiz.SessionBean", SessionType.STATELESS);
         sessionBean.setMappedName("MappedName");
         ejbJar.addEnterpriseBean(sessionBean);
 
-        EjbDeployment ejbDeployment = new EjbDeployment("containerId","deploymentId", "SessionBean");
+        final EjbDeployment ejbDeployment = new EjbDeployment("containerId", "deploymentId", "SessionBean");
         openejbJar.addEjbDeployment(ejbDeployment);
         appModule.getEjbModules().add(new EjbModule(ejbJar, openejbJar));
 
         appModule = new MappedNameBuilder().deploy(appModule);
 
-        EjbDeployment retrievedDeployment = appModule.getEjbModules().get(0).getOpenejbJar().getDeploymentsByEjbName().get("SessionBean");
-        List<Jndi> jndiList = retrievedDeployment.getJndi();
+        final EjbDeployment retrievedDeployment = appModule.getEjbModules().get(0).getOpenejbJar().getDeploymentsByEjbName().get("SessionBean");
+        final List<Jndi> jndiList = retrievedDeployment.getJndi();
 
         assertNotNull(jndiList);
         assertEquals(1, jndiList.size());
@@ -55,37 +55,37 @@ public class MappedNameBuilderTest extends TestCase {
 
     public void testIgnoreMappedNameIfOpenejbJarModuleDoesntExist() throws Exception {
         AppModule appModule = new AppModule(new FakeClassLoader(), "");
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
 
-        SessionBean sessionBean = new SessionBean("SessionBean", "org.superbiz.SessionBean", SessionType.STATELESS);
+        final SessionBean sessionBean = new SessionBean("SessionBean", "org.superbiz.SessionBean", SessionType.STATELESS);
         sessionBean.setMappedName("MappedName");
         ejbJar.addEnterpriseBean(sessionBean);
 
         appModule.getEjbModules().add(new EjbModule(ejbJar, null));
         appModule = new MappedNameBuilder().deploy(appModule);
 
-        OpenejbJar openejbJar = appModule.getEjbModules().get(0).getOpenejbJar();
+        final OpenejbJar openejbJar = appModule.getEjbModules().get(0).getOpenejbJar();
         assertNull(openejbJar);
     }
 
     public void testShouldIgnoreMappedNameIfDeploymentDoesntExist() throws Exception {
         AppModule appModule = new AppModule(new FakeClassLoader(), "");
-        EjbJar ejbJar = new EjbJar();
-        OpenejbJar openejbJar = new OpenejbJar();
+        final EjbJar ejbJar = new EjbJar();
+        final OpenejbJar openejbJar = new OpenejbJar();
 
-        SessionBean sessionBean = new SessionBean("SessionBean", "org.superbiz.SessionBean", SessionType.STATELESS);
+        final SessionBean sessionBean = new SessionBean("SessionBean", "org.superbiz.SessionBean", SessionType.STATELESS);
         sessionBean.setMappedName("MappedName");
         ejbJar.addEnterpriseBean(sessionBean);
 
         appModule.getEjbModules().add(new EjbModule(ejbJar, openejbJar));
         appModule = new MappedNameBuilder().deploy(appModule);
 
-        EjbDeployment deployment = appModule.getEjbModules().get(0).getOpenejbJar().getDeploymentsByEjbName().get("SessionBean");
+        final EjbDeployment deployment = appModule.getEjbModules().get(0).getOpenejbJar().getDeploymentsByEjbName().get("SessionBean");
         assertNull(deployment);
     }
 
     private class FakeClassLoader extends ClassLoader {
-        protected synchronized Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+        protected synchronized Class<?> loadClass(final String name, final boolean resolve) throws ClassNotFoundException {
             return Object.class;
         }
     }

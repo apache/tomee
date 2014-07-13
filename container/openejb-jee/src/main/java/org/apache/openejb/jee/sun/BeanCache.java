@@ -48,7 +48,7 @@ public class BeanCache {
         return maxCacheSize;
     }
 
-    public void setMaxCacheSize(String value) {
+    public void setMaxCacheSize(final String value) {
         this.maxCacheSize = value;
     }
 
@@ -56,7 +56,7 @@ public class BeanCache {
         return resizeQuantity;
     }
 
-    public void setResizeQuantity(String value) {
+    public void setResizeQuantity(final String value) {
         this.resizeQuantity = value;
     }
 
@@ -64,7 +64,7 @@ public class BeanCache {
         return isCacheOverflowAllowed;
     }
 
-    public void setIsCacheOverflowAllowed(String value) {
+    public void setIsCacheOverflowAllowed(final String value) {
         this.isCacheOverflowAllowed = value;
     }
 
@@ -72,7 +72,7 @@ public class BeanCache {
         return cacheIdleTimeoutInSeconds;
     }
 
-    public void setCacheIdleTimeoutInSeconds(String value) {
+    public void setCacheIdleTimeoutInSeconds(final String value) {
         this.cacheIdleTimeoutInSeconds = value;
     }
 
@@ -80,7 +80,7 @@ public class BeanCache {
         return removalTimeoutInSeconds;
     }
 
-    public void setRemovalTimeoutInSeconds(String value) {
+    public void setRemovalTimeoutInSeconds(final String value) {
         this.removalTimeoutInSeconds = value;
     }
 
@@ -88,7 +88,7 @@ public class BeanCache {
         return victimSelectionPolicy;
     }
 
-    public void setVictimSelectionPolicy(String value) {
+    public void setVictimSelectionPolicy(final String value) {
         this.victimSelectionPolicy = value;
     }
 }

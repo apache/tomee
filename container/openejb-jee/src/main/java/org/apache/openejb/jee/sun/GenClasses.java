@@ -42,7 +42,7 @@ public class GenClasses {
         return remoteImpl;
     }
 
-    public void setRemoteImpl(String value) {
+    public void setRemoteImpl(final String value) {
         this.remoteImpl = value;
     }
 
@@ -50,7 +50,7 @@ public class GenClasses {
         return localImpl;
     }
 
-    public void setLocalImpl(String value) {
+    public void setLocalImpl(final String value) {
         this.localImpl = value;
     }
 
@@ -58,7 +58,7 @@ public class GenClasses {
         return remoteHomeImpl;
     }
 
-    public void setRemoteHomeImpl(String value) {
+    public void setRemoteHomeImpl(final String value) {
         this.remoteHomeImpl = value;
     }
 
@@ -66,7 +66,7 @@ public class GenClasses {
         return localHomeImpl;
     }
 
-    public void setLocalHomeImpl(String value) {
+    public void setLocalHomeImpl(final String value) {
         this.localHomeImpl = value;
     }
 }

@@ -25,7 +25,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public class MultivaluedMapWithCaseInsensitiveKeySet<V> implements MultivaluedMap<String, V> {
-    private MultivaluedMap<String, V> delegate;
+    private final MultivaluedMap<String, V> delegate;
 
     public MultivaluedMapWithCaseInsensitiveKeySet(final MultivaluedMap<String, V> map) {
         delegate = map;

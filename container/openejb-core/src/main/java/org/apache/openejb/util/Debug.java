@@ -52,13 +52,13 @@ public class Debug {
         return new String(baos.toByteArray());
     }
 
-    public static Map<String,Object> contextToMap(final Context context) throws NamingException {
+    public static Map<String, Object> contextToMap(final Context context) throws NamingException {
         final Map<String, Object> map = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
         contextToMap(context, "", map);
         return map;
     }
 
-    public static void contextToMap(final Context context, final String baseName, final Map<String,Object> results) throws NamingException {
+    public static void contextToMap(final Context context, final String baseName, final Map<String, Object> results) throws NamingException {
         final NamingEnumeration<Binding> namingEnumeration = context.listBindings("");
         while (namingEnumeration.hasMoreElements()) {
             final Binding binding = namingEnumeration.nextElement();
@@ -72,11 +72,11 @@ public class Debug {
         }
     }
 
-    public static Map<String,Object> printContext(final Context context) throws NamingException {
+    public static Map<String, Object> printContext(final Context context) throws NamingException {
         return printContext(context, System.out);
     }
 
-    public static Map<String,Object> printContext(final Context context, final PrintStream out) throws NamingException {
+    public static Map<String, Object> printContext(final Context context, final PrintStream out) throws NamingException {
         final Map<String, Object> map = contextToMap(context);
         for (final Entry<String, Object> entry : map.entrySet()) {
             out.println(entry.getKey() + "=" + entry.getValue().getClass().getName());
@@ -84,11 +84,11 @@ public class Debug {
         return map;
     }
 
-    public static Map<String,Object> printContextValues(final Context context) throws NamingException {
+    public static Map<String, Object> printContextValues(final Context context) throws NamingException {
         return printContextValues(context, System.out);
     }
 
-    public static Map<String,Object> printContextValues(final Context context, final PrintStream out) throws NamingException {
+    public static Map<String, Object> printContextValues(final Context context, final PrintStream out) throws NamingException {
         final Map<String, Object> map = contextToMap(context);
         for (final Entry<String, Object> entry : map.entrySet()) {
             out.println(entry.getKey() + "=" + entry.getValue());
@@ -96,7 +96,7 @@ public class Debug {
         return map;
     }
 
-    public static List<Field> getFields(final Class clazz){
+    public static List<Field> getFields(final Class clazz) {
         if (clazz == null) {
             return Collections.EMPTY_LIST;
         }
@@ -130,9 +130,9 @@ public class Debug {
             @Override
             public String toString() {
                 return "<li>" +
-                        "time=" + time +
-                        ", elements=" + elements +
-                        "</li>";
+                    "time=" + time +
+                    ", elements=" + elements +
+                    "</li>";
             }
         }
 
@@ -204,7 +204,7 @@ public class Debug {
             final StackTraceElement e = node.getElement();
             out.printf("<b>%s</b> <i>%s <font color='gray'>(%s)</font></i>\n", escape(e.getMethodName()), reverse(e.getClassName()), e.getLineNumber());
 
-            if (node.children.size()> 0) {
+            if (node.children.size() > 0) {
                 out.println("<ul>");
                 for (final Node child : node.children) {
                     print(seen, out, child, s);
@@ -216,7 +216,7 @@ public class Debug {
         }
 
         private String escape(final String methodName) {
-            return methodName.replace("<","&lt;").replace(">","&gt;");
+            return methodName.replace("<", "&lt;").replace(">", "&gt;");
         }
 
         private void printTxt(final Set<Node> seen, final PrintStream out, final Node node, String s) {
@@ -238,12 +238,12 @@ public class Debug {
             Collections.reverse(list);
 
             String string = Join.join(".", list);
-            string = string.replaceAll("(.*?)(\\..*)","$1<font color=\"gray\">$2</font>");
+            string = string.replaceAll("(.*?)(\\..*)", "$1<font color=\"gray\">$2</font>");
             return string;
         }
 
         private String reverse(String string) {
-            string = string.replaceAll("(.*)\\.([^.]+)","$2 <font color=\"gray\">$1</font>");
+            string = string.replaceAll("(.*)\\.([^.]+)", "$2 <font color=\"gray\">$1</font>");
             return string;
         }
 

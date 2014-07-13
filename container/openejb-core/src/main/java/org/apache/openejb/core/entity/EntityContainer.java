@@ -71,7 +71,7 @@ public class EntityContainer implements RpcContainer {
 
     private final Map<String, BeanContext> deploymentRegistry = new HashMap<String, BeanContext>();
 
-    private Object containerID;
+    private final Object containerID;
 
     public static Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
     private final SecurityService securityService;
@@ -478,7 +478,7 @@ public class EntityContainer implements RpcContainer {
                     instanceManager.discardInstance(callContext, bean);
                 } catch (final SystemException e1) {
                     logger.error("The instance manager encountered an unkown system exception while trying to discard the entity instance with primary key " +
-                                 callContext.getPrimaryKey());
+                        callContext.getPrimaryKey());
                 }
             }
             handleSystemException(txPolicy, e, callContext);

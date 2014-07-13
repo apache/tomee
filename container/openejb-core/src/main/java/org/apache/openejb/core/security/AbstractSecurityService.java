@@ -148,7 +148,7 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
 
         final ProvidedSecurityContext providedSecurityContext = newContext.get(ProvidedSecurityContext.class);
         SecurityContext securityContext = oldContext != null ? oldContext.get(SecurityContext.class) :
-                (providedSecurityContext != null ? providedSecurityContext.context : null);
+            (providedSecurityContext != null ? providedSecurityContext.context : null);
         if (providedSecurityContext == null) {
             if (runAsSubject != null) {
 
@@ -289,8 +289,8 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
             }
             final Identity currentIdentity = clientIdentity.get();
             final SecurityContext securityContext;
-            if(currentIdentity == null) {
-                securityContext= threadContext.get(SecurityContext.class);
+            if (currentIdentity == null) {
+                securityContext = threadContext.get(SecurityContext.class);
             } else {
                 securityContext = new SecurityContext(currentIdentity.getSubject());
             }

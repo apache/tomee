@@ -27,12 +27,12 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  */
 public class TrimStringAdapter extends XmlAdapter<String, String> {
     @Override
-    public String unmarshal(String s) throws Exception {
-        return s == null? null: s.trim();
+    public String unmarshal(final String s) throws Exception {
+        return s == null ? null : s.trim();
     }
 
     @Override
-    public String marshal(String s) throws Exception {
+    public String marshal(final String s) throws Exception {
         return s;
     }
 }

@@ -30,11 +30,11 @@ import java.util.Map;
 
 /**
  * javaee_web_services_1_3.xsd
- * 
+ * <p/>
  * <p>Java class for webservice-descriptionType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="webservice-descriptionType">
  *   &lt;complexContent>
@@ -53,8 +53,6 @@ import java.util.Map;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "webservice-descriptionType", propOrder = {
@@ -149,14 +147,14 @@ public class WebserviceDescription implements Keyable<String> {
 
     public Collection<PortComponent> getPortComponent() {
         if (portComponent == null) {
-            portComponent = new KeyedCollection<String,PortComponent>();
+            portComponent = new KeyedCollection<String, PortComponent>();
         }
         return this.portComponent;
     }
 
-    public Map<String,PortComponent> getPortComponentMap() {
+    public Map<String, PortComponent> getPortComponentMap() {
         if (portComponent == null) {
-            portComponent = new KeyedCollection<String,PortComponent>();
+            portComponent = new KeyedCollection<String, PortComponent>();
         }
         return this.portComponent.toMap();
     }

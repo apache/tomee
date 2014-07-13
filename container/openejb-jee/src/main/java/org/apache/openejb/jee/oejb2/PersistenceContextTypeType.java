@@ -23,9 +23,9 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 /**
  * <p>Java class for persistence-context-typeType.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p>
+ * <p/>
  * <pre>
  * &lt;simpleType name="persistence-context-typeType">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -34,7 +34,6 @@ import javax.xml.bind.annotation.XmlEnumValue;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
  */
 @XmlEnum
 public enum PersistenceContextTypeType {
@@ -45,7 +44,7 @@ public enum PersistenceContextTypeType {
     EXTENDED("extended");
     private final String value;
 
-    PersistenceContextTypeType(String v) {
+    PersistenceContextTypeType(final String v) {
         value = v;
     }
 
@@ -53,8 +52,8 @@ public enum PersistenceContextTypeType {
         return value;
     }
 
-    public static PersistenceContextTypeType fromValue(String v) {
-        for (PersistenceContextTypeType c: PersistenceContextTypeType.values()) {
+    public static PersistenceContextTypeType fromValue(final String v) {
+        for (final PersistenceContextTypeType c : PersistenceContextTypeType.values()) {
             if (c.value.equals(v)) {
                 return c;
             }

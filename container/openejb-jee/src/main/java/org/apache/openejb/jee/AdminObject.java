@@ -29,11 +29,11 @@ import java.util.List;
 
 /**
  * connector_1_6.xsd
- *
+ * <p/>
  * <p>Java class for adminobjectType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="adminobjectType">
  *   &lt;complexContent>
@@ -48,15 +48,13 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "adminobjectType", propOrder = {
-        "adminObjectInterface",
-        "adminObjectClass",
-        "configProperty"
+    "adminObjectInterface",
+    "adminObjectClass",
+    "configProperty"
 })
 public class AdminObject {
 
@@ -75,7 +73,7 @@ public class AdminObject {
         return adminObjectInterface;
     }
 
-    public void setAdminObjectInterface(String value) {
+    public void setAdminObjectInterface(final String value) {
         this.adminObjectInterface = value;
     }
 
@@ -83,7 +81,7 @@ public class AdminObject {
         return adminObjectClass;
     }
 
-    public void setAdminObjectClass(String value) {
+    public void setAdminObjectClass(final String value) {
         this.adminObjectClass = value;
     }
 
@@ -98,7 +96,7 @@ public class AdminObject {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

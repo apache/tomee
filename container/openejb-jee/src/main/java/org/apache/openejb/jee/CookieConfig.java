@@ -28,11 +28,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * web-common_3_0.xsd
- *
+ * <p/>
  * <p>Java class for cookie-configType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="cookie-configType">
  *   &lt;complexContent>
@@ -51,8 +51,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -86,7 +84,7 @@ public class CookieConfig {
         return name;
     }
 
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -94,7 +92,7 @@ public class CookieConfig {
         return domain;
     }
 
-    public void setDomain(String value) {
+    public void setDomain(final String value) {
         this.domain = value;
     }
 
@@ -102,7 +100,7 @@ public class CookieConfig {
         return path;
     }
 
-    public void setPath(String value) {
+    public void setPath(final String value) {
         this.path = value;
     }
 
@@ -110,7 +108,7 @@ public class CookieConfig {
         return comment;
     }
 
-    public void setComment(String value) {
+    public void setComment(final String value) {
         this.comment = value;
     }
 
@@ -118,7 +116,7 @@ public class CookieConfig {
         return httpOnly;
     }
 
-    public void setHttpOnly(Boolean value) {
+    public void setHttpOnly(final Boolean value) {
         this.httpOnly = value;
     }
 
@@ -126,7 +124,7 @@ public class CookieConfig {
         return secure;
     }
 
-    public void setSecure(Boolean value) {
+    public void setSecure(final Boolean value) {
         this.secure = value;
     }
 
@@ -134,7 +132,7 @@ public class CookieConfig {
         return maxAge;
     }
 
-    public void setMaxAge(Integer value) {
+    public void setMaxAge(final Integer value) {
         this.maxAge = value;
     }
 
@@ -142,7 +140,7 @@ public class CookieConfig {
         return id;
     }
 
-    public void setId(java.lang.String value) {
+    public void setId(final java.lang.String value) {
         this.id = value;
     }
 

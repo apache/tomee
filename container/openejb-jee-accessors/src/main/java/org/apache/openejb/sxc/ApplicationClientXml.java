@@ -30,11 +30,11 @@ import java.net.URL;
  */
 public class ApplicationClientXml {
 
-    public static ApplicationClient unmarshal(InputStream inputStream) throws Exception {
+    public static ApplicationClient unmarshal(final InputStream inputStream) throws Exception {
         return Sxc.unmarshalJavaee(new ApplicationClient$JAXB(), inputStream);
     }
 
-    public static ApplicationClient unmarshal(URL url) throws Exception {
+    public static ApplicationClient unmarshal(final URL url) throws Exception {
         final InputStream inputStream = IO.read(url);
         try {
             return Sxc.unmarshalJavaee(new ApplicationClient$JAXB(), inputStream);
@@ -43,7 +43,7 @@ public class ApplicationClientXml {
         }
     }
 
-    public static void marshal(ApplicationClient applicationClient, OutputStream outputStream) throws Exception {
+    public static void marshal(final ApplicationClient applicationClient, final OutputStream outputStream) throws Exception {
         Sxc.marshal(new ApplicationClient$JAXB(), applicationClient, new StreamResult(outputStream));
     }
 }

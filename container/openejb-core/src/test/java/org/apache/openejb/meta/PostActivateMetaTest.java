@@ -43,7 +43,8 @@ public class PostActivateMetaTest {
 
             @Deserialized
             @PostActivate
-            public void method(){}
+            public void method() {
+            }
         }
     }
 

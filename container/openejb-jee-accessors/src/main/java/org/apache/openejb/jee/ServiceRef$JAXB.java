@@ -45,33 +45,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class ServiceRef$JAXB
-        extends JAXBObject<ServiceRef> {
+    extends JAXBObject<ServiceRef> {
 
 
     public ServiceRef$JAXB() {
         super(ServiceRef.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "service-refType".intern()), Text$JAXB.class, Icon$JAXB.class, PortComponentRef$JAXB.class, Handler$JAXB.class, HandlerChains$JAXB.class, InjectionTarget$JAXB.class);
     }
 
-    public static ServiceRef readServiceRef(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static ServiceRef readServiceRef(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeServiceRef(XoXMLStreamWriter writer, ServiceRef serviceRef, RuntimeContext context)
-            throws Exception {
+    public static void writeServiceRef(final XoXMLStreamWriter writer, final ServiceRef serviceRef, final RuntimeContext context)
+        throws Exception {
         _write(writer, serviceRef, context);
     }
 
-    public void write(XoXMLStreamWriter writer, ServiceRef serviceRef, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final ServiceRef serviceRef, final RuntimeContext context)
+        throws Exception {
         _write(writer, serviceRef, context);
     }
 
-    public final static ServiceRef _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static ServiceRef _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -82,7 +82,7 @@ public class ServiceRef$JAXB
             context = new RuntimeContext();
         }
 
-        ServiceRef serviceRef = new ServiceRef();
+        final ServiceRef serviceRef = new ServiceRef();
         context.beforeUnmarshal(serviceRef, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -93,7 +93,7 @@ public class ServiceRef$JAXB
         Set<InjectionTarget> injectionTarget = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("service-refType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, ServiceRef.class);
@@ -101,10 +101,10 @@ public class ServiceRef$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, serviceRef);
                 serviceRef.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -113,24 +113,24 @@ public class ServiceRef$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
                 descriptions.add(descriptionsItem);
             } else if (("display-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: displayNames
-                Text displayNamesItem = readText(elementReader, context);
+                final Text displayNamesItem = readText(elementReader, context);
                 if (displayNames == null) {
                     displayNames = new ArrayList<Text>();
                 }
                 displayNames.add(displayNamesItem);
             } else if (("icon" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: icon
-                Icon iconItem = readIcon(elementReader, context);
+                final Icon iconItem = readIcon(elementReader, context);
                 if (icon == null) {
                     icon = serviceRef.icon;
                     if (icon != null) {
@@ -142,12 +142,12 @@ public class ServiceRef$JAXB
                 icon.add(iconItem);
             } else if (("service-ref-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: serviceRefName
-                String serviceRefNameRaw = elementReader.getElementAsString();
+                final String serviceRefNameRaw = elementReader.getElementAsString();
 
-                String serviceRefName;
+                final String serviceRefName;
                 try {
                     serviceRefName = Adapters.collapsedStringAdapterAdapter.unmarshal(serviceRefNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -155,12 +155,12 @@ public class ServiceRef$JAXB
                 serviceRef.serviceRefName = serviceRefName;
             } else if (("service-interface" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: serviceInterface
-                String serviceInterfaceRaw = elementReader.getElementAsString();
+                final String serviceInterfaceRaw = elementReader.getElementAsString();
 
-                String serviceInterface;
+                final String serviceInterface;
                 try {
                     serviceInterface = Adapters.collapsedStringAdapterAdapter.unmarshal(serviceInterfaceRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -168,12 +168,12 @@ public class ServiceRef$JAXB
                 serviceRef.serviceInterface = serviceInterface;
             } else if (("service-ref-type" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: serviceRefType
-                String serviceRefTypeRaw = elementReader.getElementAsString();
+                final String serviceRefTypeRaw = elementReader.getElementAsString();
 
-                String serviceRefType;
+                final String serviceRefType;
                 try {
                     serviceRefType = Adapters.collapsedStringAdapterAdapter.unmarshal(serviceRefTypeRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -181,12 +181,12 @@ public class ServiceRef$JAXB
                 serviceRef.serviceRefType = serviceRefType;
             } else if (("wsdl-file" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: wsdlFile
-                String wsdlFileRaw = elementReader.getElementAsString();
+                final String wsdlFileRaw = elementReader.getElementAsString();
 
-                String wsdlFile;
+                final String wsdlFile;
                 try {
                     wsdlFile = Adapters.collapsedStringAdapterAdapter.unmarshal(wsdlFileRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -194,12 +194,12 @@ public class ServiceRef$JAXB
                 serviceRef.wsdlFile = wsdlFile;
             } else if (("jaxrpc-mapping-file" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: jaxrpcMappingFile
-                String jaxrpcMappingFileRaw = elementReader.getElementAsString();
+                final String jaxrpcMappingFileRaw = elementReader.getElementAsString();
 
-                String jaxrpcMappingFile;
+                final String jaxrpcMappingFile;
                 try {
                     jaxrpcMappingFile = Adapters.collapsedStringAdapterAdapter.unmarshal(jaxrpcMappingFileRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -207,11 +207,11 @@ public class ServiceRef$JAXB
                 serviceRef.jaxrpcMappingFile = jaxrpcMappingFile;
             } else if (("service-qname" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: serviceQname
-                QName serviceQname = elementReader.getElementAsQName();
+                final QName serviceQname = elementReader.getElementAsQName();
                 serviceRef.serviceQname = serviceQname;
             } else if (("port-component-ref" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: portComponentRef
-                PortComponentRef portComponentRefItem = readPortComponentRef(elementReader, context);
+                final PortComponentRef portComponentRefItem = readPortComponentRef(elementReader, context);
                 if (portComponentRef == null) {
                     portComponentRef = serviceRef.portComponentRef;
                     if (portComponentRef != null) {
@@ -223,7 +223,7 @@ public class ServiceRef$JAXB
                 portComponentRef.add(portComponentRefItem);
             } else if (("handler" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: handler
-                Handler handlerItem = readHandler(elementReader, context);
+                final Handler handlerItem = readHandler(elementReader, context);
                 if (handler == null) {
                     handler = serviceRef.handler;
                     if (handler != null) {
@@ -235,16 +235,16 @@ public class ServiceRef$JAXB
                 handler.add(handlerItem);
             } else if (("handler-chains" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: handlerChains
-                HandlerChains handlerChains = readHandlerChains(elementReader, context);
+                final HandlerChains handlerChains = readHandlerChains(elementReader, context);
                 serviceRef.handlerChains = handlerChains;
             } else if (("mapped-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: mappedName
-                String mappedNameRaw = elementReader.getElementAsString();
+                final String mappedNameRaw = elementReader.getElementAsString();
 
-                String mappedName;
+                final String mappedName;
                 try {
                     mappedName = Adapters.collapsedStringAdapterAdapter.unmarshal(mappedNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -252,7 +252,7 @@ public class ServiceRef$JAXB
                 serviceRef.mappedName = mappedName;
             } else if (("injection-target" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: injectionTarget
-                InjectionTarget injectionTargetItem = readInjectionTarget(elementReader, context);
+                final InjectionTarget injectionTargetItem = readInjectionTarget(elementReader, context);
                 if (injectionTarget == null) {
                     injectionTarget = serviceRef.injectionTarget;
                     if (injectionTarget != null) {
@@ -264,12 +264,12 @@ public class ServiceRef$JAXB
                 injectionTarget.add(injectionTargetItem);
             } else if (("lookup-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: lookupName
-                String lookupNameRaw = elementReader.getElementAsString();
+                final String lookupNameRaw = elementReader.getElementAsString();
 
-                String lookupName;
+                final String lookupName;
                 try {
                     lookupName = Adapters.collapsedStringAdapterAdapter.unmarshal(lookupNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -282,14 +282,14 @@ public class ServiceRef$JAXB
         if (descriptions != null) {
             try {
                 serviceRef.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, ServiceRef.class, "setDescriptions", Text[].class, e);
             }
         }
         if (displayNames != null) {
             try {
                 serviceRef.setDisplayNames(displayNames.toArray(new Text[displayNames.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, ServiceRef.class, "setDisplayNames", Text[].class, e);
             }
         }
@@ -311,13 +311,13 @@ public class ServiceRef$JAXB
         return serviceRef;
     }
 
-    public final ServiceRef read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final ServiceRef read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, ServiceRef serviceRef, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final ServiceRef serviceRef, RuntimeContext context)
+        throws Exception {
         if (serviceRef == null) {
             writer.writeXsiNil();
             return;
@@ -327,7 +327,7 @@ public class ServiceRef$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (ServiceRef.class != serviceRef.getClass()) {
             context.unexpectedSubclass(writer, serviceRef, ServiceRef.class);
             return;
@@ -337,12 +337,12 @@ public class ServiceRef$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = serviceRef.id;
+        final String idRaw = serviceRef.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(serviceRef, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -352,11 +352,11 @@ public class ServiceRef$JAXB
         Text[] descriptions = null;
         try {
             descriptions = serviceRef.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(serviceRef, "descriptions", ServiceRef.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -371,11 +371,11 @@ public class ServiceRef$JAXB
         Text[] displayNames = null;
         try {
             displayNames = serviceRef.getDisplayNames();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(serviceRef, "displayNames", ServiceRef.class, "getDisplayNames", e);
         }
         if (displayNames != null) {
-            for (Text displayNamesItem : displayNames) {
+            for (final Text displayNamesItem : displayNames) {
                 if (displayNamesItem != null) {
                     writer.writeStartElement(prefix, "display-name", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, displayNamesItem, context);
@@ -387,9 +387,9 @@ public class ServiceRef$JAXB
         }
 
         // ELEMENT: icon
-        LocalCollection<Icon> icon = serviceRef.icon;
+        final LocalCollection<Icon> icon = serviceRef.icon;
         if (icon != null) {
-            for (Icon iconItem : icon) {
+            for (final Icon iconItem : icon) {
                 if (iconItem != null) {
                     writer.writeStartElement(prefix, "icon", "http://java.sun.com/xml/ns/javaee");
                     writeIcon(writer, iconItem, context);
@@ -401,11 +401,11 @@ public class ServiceRef$JAXB
         }
 
         // ELEMENT: serviceRefName
-        String serviceRefNameRaw = serviceRef.serviceRefName;
+        final String serviceRefNameRaw = serviceRef.serviceRefName;
         String serviceRefName = null;
         try {
             serviceRefName = Adapters.collapsedStringAdapterAdapter.marshal(serviceRefNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(serviceRef, "serviceRefName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (serviceRefName != null) {
@@ -417,11 +417,11 @@ public class ServiceRef$JAXB
         }
 
         // ELEMENT: serviceInterface
-        String serviceInterfaceRaw = serviceRef.serviceInterface;
+        final String serviceInterfaceRaw = serviceRef.serviceInterface;
         String serviceInterface = null;
         try {
             serviceInterface = Adapters.collapsedStringAdapterAdapter.marshal(serviceInterfaceRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(serviceRef, "serviceInterface", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (serviceInterface != null) {
@@ -433,11 +433,11 @@ public class ServiceRef$JAXB
         }
 
         // ELEMENT: serviceRefType
-        String serviceRefTypeRaw = serviceRef.serviceRefType;
+        final String serviceRefTypeRaw = serviceRef.serviceRefType;
         String serviceRefType = null;
         try {
             serviceRefType = Adapters.collapsedStringAdapterAdapter.marshal(serviceRefTypeRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(serviceRef, "serviceRefType", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (serviceRefType != null) {
@@ -447,11 +447,11 @@ public class ServiceRef$JAXB
         }
 
         // ELEMENT: wsdlFile
-        String wsdlFileRaw = serviceRef.wsdlFile;
+        final String wsdlFileRaw = serviceRef.wsdlFile;
         String wsdlFile = null;
         try {
             wsdlFile = Adapters.collapsedStringAdapterAdapter.marshal(wsdlFileRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(serviceRef, "wsdlFile", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (wsdlFile != null) {
@@ -461,11 +461,11 @@ public class ServiceRef$JAXB
         }
 
         // ELEMENT: jaxrpcMappingFile
-        String jaxrpcMappingFileRaw = serviceRef.jaxrpcMappingFile;
+        final String jaxrpcMappingFileRaw = serviceRef.jaxrpcMappingFile;
         String jaxrpcMappingFile = null;
         try {
             jaxrpcMappingFile = Adapters.collapsedStringAdapterAdapter.marshal(jaxrpcMappingFileRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(serviceRef, "jaxrpcMappingFile", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (jaxrpcMappingFile != null) {
@@ -475,7 +475,7 @@ public class ServiceRef$JAXB
         }
 
         // ELEMENT: serviceQname
-        QName serviceQname = serviceRef.serviceQname;
+        final QName serviceQname = serviceRef.serviceQname;
         if (serviceQname != null) {
             writer.writeStartElement(prefix, "service-qname", "http://java.sun.com/xml/ns/javaee");
             writer.writeQName(serviceQname);
@@ -483,9 +483,9 @@ public class ServiceRef$JAXB
         }
 
         // ELEMENT: portComponentRef
-        List<PortComponentRef> portComponentRef = serviceRef.portComponentRef;
+        final List<PortComponentRef> portComponentRef = serviceRef.portComponentRef;
         if (portComponentRef != null) {
-            for (PortComponentRef portComponentRefItem : portComponentRef) {
+            for (final PortComponentRef portComponentRefItem : portComponentRef) {
                 if (portComponentRefItem != null) {
                     writer.writeStartElement(prefix, "port-component-ref", "http://java.sun.com/xml/ns/javaee");
                     writePortComponentRef(writer, portComponentRefItem, context);
@@ -497,9 +497,9 @@ public class ServiceRef$JAXB
         }
 
         // ELEMENT: handler
-        List<Handler> handler = serviceRef.handler;
+        final List<Handler> handler = serviceRef.handler;
         if (handler != null) {
-            for (Handler handlerItem : handler) {
+            for (final Handler handlerItem : handler) {
                 if (handlerItem != null) {
                     writer.writeStartElement(prefix, "handler", "http://java.sun.com/xml/ns/javaee");
                     writeHandler(writer, handlerItem, context);
@@ -511,7 +511,7 @@ public class ServiceRef$JAXB
         }
 
         // ELEMENT: handlerChains
-        HandlerChains handlerChains = serviceRef.handlerChains;
+        final HandlerChains handlerChains = serviceRef.handlerChains;
         if (handlerChains != null) {
             writer.writeStartElement(prefix, "handler-chains", "http://java.sun.com/xml/ns/javaee");
             writeHandlerChains(writer, handlerChains, context);
@@ -519,11 +519,11 @@ public class ServiceRef$JAXB
         }
 
         // ELEMENT: mappedName
-        String mappedNameRaw = serviceRef.mappedName;
+        final String mappedNameRaw = serviceRef.mappedName;
         String mappedName = null;
         try {
             mappedName = Adapters.collapsedStringAdapterAdapter.marshal(mappedNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(serviceRef, "mappedName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (mappedName != null) {
@@ -533,9 +533,9 @@ public class ServiceRef$JAXB
         }
 
         // ELEMENT: injectionTarget
-        Set<InjectionTarget> injectionTarget = serviceRef.injectionTarget;
+        final Set<InjectionTarget> injectionTarget = serviceRef.injectionTarget;
         if (injectionTarget != null) {
-            for (InjectionTarget injectionTargetItem : injectionTarget) {
+            for (final InjectionTarget injectionTargetItem : injectionTarget) {
                 if (injectionTargetItem != null) {
                     writer.writeStartElement(prefix, "injection-target", "http://java.sun.com/xml/ns/javaee");
                     writeInjectionTarget(writer, injectionTargetItem, context);
@@ -547,11 +547,11 @@ public class ServiceRef$JAXB
         }
 
         // ELEMENT: lookupName
-        String lookupNameRaw = serviceRef.lookupName;
+        final String lookupNameRaw = serviceRef.lookupName;
         String lookupName = null;
         try {
             lookupName = Adapters.collapsedStringAdapterAdapter.marshal(lookupNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(serviceRef, "lookupName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (lookupName != null) {

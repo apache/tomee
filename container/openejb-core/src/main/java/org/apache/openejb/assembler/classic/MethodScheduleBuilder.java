@@ -32,15 +32,15 @@ public class MethodScheduleBuilder {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, MethodScheduleBuilder.class.getPackage().getName());
 
     public void build(final BeanContext beanContext, final EnterpriseBeanInfo beanInfo) {
-        
+
         final Class<?> clazz = beanContext.getBeanClass();
-        
+
         for (final MethodScheduleInfo info : beanInfo.methodScheduleInfos) {
-            
+
             Method timeoutMethodOfSchedule = null;
-            
+
             if (info.method.methodParams == null) {
-                
+
                 logger.info("Schedule timeout method with 'null' method parameters is invalid: " + info.method.methodName);
 
             } else {
@@ -54,28 +54,28 @@ public class MethodScheduleBuilder {
                 }
 
             }
-            
+
             MethodContext methodContext = null;
-            
+
             if (timeoutMethodOfSchedule == null && beanContext.getEjbTimeout() != null) {
                 methodContext = beanContext.getMethodContext(beanContext.getEjbTimeout());
             } else if (info.method.className == null
-                    || timeoutMethodOfSchedule.getDeclaringClass().getName().equals(info.method.className)) {
+                || timeoutMethodOfSchedule.getDeclaringClass().getName().equals(info.method.className)) {
 
                 methodContext = beanContext.getMethodContext(timeoutMethodOfSchedule);
 
             }
-            
+
             this.addSchedulesToMethod(methodContext, info);
         }
     }
-    
-    private void addSchedulesToMethod(final MethodContext methodContext, final MethodScheduleInfo info){
-        
+
+    private void addSchedulesToMethod(final MethodContext methodContext, final MethodScheduleInfo info) {
+
         if (methodContext == null) {
             return;
         }
-        
+
         for (final ScheduleInfo scheduleInfo : info.schedules) {
 
             final ScheduleExpression expr = new ScheduleExpression();
@@ -96,7 +96,7 @@ public class MethodScheduleBuilder {
 
             methodContext.getSchedules().add(new ScheduleData(config, expr));
         }
-        
+
     }
 
 

@@ -30,12 +30,14 @@ public @interface EjbDeployment {
 
     /**
      * The Deployment ID for this bean
+     *
      * @return
      */
     java.lang.String id() default "";
 
     /**
      * The Container ID where the bean should be deployed
+     *
      * @return
      */
     java.lang.String container() default "";

@@ -23,25 +23,25 @@ import org.metatype.sxc.util.XoXMLStreamReader;
 import javax.xml.namespace.QName;
 
 public class IsolationLevel$JAXB
-        extends JAXBEnum<IsolationLevel> {
+    extends JAXBEnum<IsolationLevel> {
 
 
     public IsolationLevel$JAXB() {
         super(IsolationLevel.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "isolation-levelType".intern()));
     }
 
-    public IsolationLevel parse(XoXMLStreamReader reader, RuntimeContext context, String value)
-            throws Exception {
+    public IsolationLevel parse(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
+        throws Exception {
         return parseIsolationLevel(reader, context, value);
     }
 
-    public String toString(Object bean, String parameterName, RuntimeContext context, IsolationLevel isolationLevel)
-            throws Exception {
+    public String toString(final Object bean, final String parameterName, final RuntimeContext context, final IsolationLevel isolationLevel)
+        throws Exception {
         return toStringIsolationLevel(bean, parameterName, context, isolationLevel);
     }
 
-    public static IsolationLevel parseIsolationLevel(XoXMLStreamReader reader, RuntimeContext context, String value)
-            throws Exception {
+    public static IsolationLevel parseIsolationLevel(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
+        throws Exception {
         if ("TRANSACTION_READ_UNCOMMITTED".equals(value)) {
             return IsolationLevel.TRANSACTION_READ_UNCOMMITTED;
         } else if ("TRANSACTION_READ_COMMITTED".equals(value)) {
@@ -56,8 +56,8 @@ public class IsolationLevel$JAXB
         }
     }
 
-    public static String toStringIsolationLevel(Object bean, String parameterName, RuntimeContext context, IsolationLevel isolationLevel)
-            throws Exception {
+    public static String toStringIsolationLevel(final Object bean, final String parameterName, final RuntimeContext context, final IsolationLevel isolationLevel)
+        throws Exception {
         if (IsolationLevel.TRANSACTION_READ_UNCOMMITTED == isolationLevel) {
             return "TRANSACTION_READ_UNCOMMITTED";
         } else if (IsolationLevel.TRANSACTION_READ_COMMITTED == isolationLevel) {

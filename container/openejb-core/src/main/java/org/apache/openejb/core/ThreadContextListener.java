@@ -20,6 +20,7 @@ package org.apache.openejb.core;
 public interface ThreadContextListener {
     /**
      * A new context has been entered.  The new context is already associated with the thread.
+     *
      * @param oldContext the old context that was associated with the thread
      * @param newContext the new context that is now associated with the thread
      */
@@ -27,7 +28,8 @@ public interface ThreadContextListener {
 
     /**
      * A context has exited.  The reentered context is already associated with the thread.
-     * @param exitedContext the context that was exited
+     *
+     * @param exitedContext    the context that was exited
      * @param reenteredContext the context that is not associated with the thread
      */
     void contextExited(ThreadContext exitedContext, ThreadContext reenteredContext);

@@ -28,33 +28,33 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.namespace.QName;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class MimeMapping$JAXB
-        extends JAXBObject<MimeMapping> {
+    extends JAXBObject<MimeMapping> {
 
 
     public MimeMapping$JAXB() {
         super(MimeMapping.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "mime-mappingType".intern()));
     }
 
-    public static MimeMapping readMimeMapping(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static MimeMapping readMimeMapping(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeMimeMapping(XoXMLStreamWriter writer, MimeMapping mimeMapping, RuntimeContext context)
-            throws Exception {
+    public static void writeMimeMapping(final XoXMLStreamWriter writer, final MimeMapping mimeMapping, final RuntimeContext context)
+        throws Exception {
         _write(writer, mimeMapping, context);
     }
 
-    public void write(XoXMLStreamWriter writer, MimeMapping mimeMapping, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final MimeMapping mimeMapping, final RuntimeContext context)
+        throws Exception {
         _write(writer, mimeMapping, context);
     }
 
-    public final static MimeMapping _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static MimeMapping _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -65,12 +65,12 @@ public class MimeMapping$JAXB
             context = new RuntimeContext();
         }
 
-        MimeMapping mimeMapping = new MimeMapping();
+        final MimeMapping mimeMapping = new MimeMapping();
         context.beforeUnmarshal(mimeMapping, LifecycleCallback.NONE);
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("mime-mappingType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, MimeMapping.class);
@@ -78,10 +78,10 @@ public class MimeMapping$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, mimeMapping);
                 mimeMapping.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -90,15 +90,15 @@ public class MimeMapping$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("extension" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: extension
-                String extensionRaw = elementReader.getElementAsString();
+                final String extensionRaw = elementReader.getElementAsString();
 
-                String extension;
+                final String extension;
                 try {
                     extension = Adapters.collapsedStringAdapterAdapter.unmarshal(extensionRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -106,12 +106,12 @@ public class MimeMapping$JAXB
                 mimeMapping.extension = extension;
             } else if (("mime-type" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: mimeType
-                String mimeTypeRaw = elementReader.getElementAsString();
+                final String mimeTypeRaw = elementReader.getElementAsString();
 
-                String mimeType;
+                final String mimeType;
                 try {
                     mimeType = Adapters.collapsedStringAdapterAdapter.unmarshal(mimeTypeRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -127,13 +127,13 @@ public class MimeMapping$JAXB
         return mimeMapping;
     }
 
-    public final MimeMapping read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final MimeMapping read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, MimeMapping mimeMapping, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final MimeMapping mimeMapping, RuntimeContext context)
+        throws Exception {
         if (mimeMapping == null) {
             writer.writeXsiNil();
             return;
@@ -143,7 +143,7 @@ public class MimeMapping$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (MimeMapping.class != mimeMapping.getClass()) {
             context.unexpectedSubclass(writer, mimeMapping, MimeMapping.class);
             return;
@@ -153,23 +153,23 @@ public class MimeMapping$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = mimeMapping.id;
+        final String idRaw = mimeMapping.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(mimeMapping, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: extension
-        String extensionRaw = mimeMapping.extension;
+        final String extensionRaw = mimeMapping.extension;
         String extension = null;
         try {
             extension = Adapters.collapsedStringAdapterAdapter.marshal(extensionRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(mimeMapping, "extension", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (extension != null) {
@@ -181,11 +181,11 @@ public class MimeMapping$JAXB
         }
 
         // ELEMENT: mimeType
-        String mimeTypeRaw = mimeMapping.mimeType;
+        final String mimeTypeRaw = mimeMapping.mimeType;
         String mimeType = null;
         try {
             mimeType = Adapters.collapsedStringAdapterAdapter.marshal(mimeTypeRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(mimeMapping, "mimeType", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (mimeType != null) {

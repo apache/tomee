@@ -42,9 +42,9 @@ public class TransactionRollbackCauseTest extends TestCase {
 
     @Resource
     private UserTransaction userTransaction;
-    
+
     public void test() throws Exception {
-        Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<String, Object>();
         map.put(EJBContainer.MODULES, new SingletonBean(Orange.class));
         EJBContainer.createEJBContainer(map).getContext().bind("inject", this);
 
@@ -55,7 +55,7 @@ public class TransactionRollbackCauseTest extends TestCase {
         try {
             userTransaction.commit();
             fail("transaction should have been rolled back");
-        } catch (RollbackException e) {
+        } catch (final RollbackException e) {
             final Throwable throwable = e.getCause();
             assertTrue(throwable instanceof UserException);
         }
@@ -76,7 +76,7 @@ public class TransactionRollbackCauseTest extends TestCase {
         public void exceptionRollback() {
             try {
                 orange.throwException();
-            } catch (Exception e) {
+            } catch (final Exception e) {
             }
         }
 
@@ -86,7 +86,7 @@ public class TransactionRollbackCauseTest extends TestCase {
     }
 
     public static class UserException extends RuntimeException {
-        public UserException(String message) {
+        public UserException(final String message) {
             super(message);
         }
     }

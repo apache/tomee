@@ -79,7 +79,7 @@ public class ConfigurableClasspathArchive extends CompositeArchive implements Sc
         final ClassLoader loader = module.getClassLoader();
         final String name = "META-INF/" + name();
         try {
-            final URL scanXml = new URLClassLoader(new URL[] { location }, new EmptyResourcesClassLoader()).getResource(name);
+            final URL scanXml = new URLClassLoader(new URL[]{location}, new EmptyResourcesClassLoader()).getResource(name);
             if (scanXml == null && !forceDescriptor) {
                 return ClasspathArchive.archive(loader, location);
             } else if (scanXml == null) {
@@ -94,7 +94,7 @@ public class ConfigurableClasspathArchive extends CompositeArchive implements Sc
             if (packageArchive != null && classesArchive != null) {
                 return new CompositeArchive(classesArchive, packageArchive);
             } else if (packageArchive != null) {
-                return  packageArchive;
+                return packageArchive;
             }
             return classesArchive;
         } catch (final IOException e) {
@@ -163,7 +163,7 @@ public class ConfigurableClasspathArchive extends CompositeArchive implements Sc
             this(loader, null);
         }
 
-        public FakeModule(final ClassLoader loader, final Map<String, Object> altDD)  {
+        public FakeModule(final ClassLoader loader, final Map<String, Object> altDD) {
             this(loader, altDD, name());
         }
 

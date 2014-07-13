@@ -29,8 +29,7 @@ import java.security.Principal;
  * by the SecurityService internally and need not be a publicly usable class
  * type.  No part of the outlying system will make any assumptions as to the
  * type of the object.  The use of a java generic type is to express the
- * required symmetry in the interface.  
- *
+ * required symmetry in the interface.
  */
 public interface SecurityService<T> extends Service {
     /**
@@ -63,7 +62,7 @@ public interface SecurityService<T> extends Service {
     /**
      * Implementors are encouraged to return a java.security.Principal
      * object that implements org.apache.openejb.spi.CallerPrincipal
-     *
+     * <p/>
      * JAAS LoginModule implementors are encouraged to use the CallerPrincipal
      * interface to denote the best fitting Principal for getCallerPrincipal.
      */
@@ -76,5 +75,6 @@ public interface SecurityService<T> extends Service {
 
     // mainly for asynch handling
     void setState(Object o);
+
     Object currentState();
 }

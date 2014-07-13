@@ -60,43 +60,43 @@ public class EjbSecurityRoleRefTest extends TestCase {
     }
 
     protected void tearDown() throws Exception {
-        for (AppInfo appInfo : assembler.getDeployedApplications()) {
+        for (final AppInfo appInfo : assembler.getDeployedApplications()) {
             assembler.destroyApplication(appInfo.path);
         }
         SystemInstance.get().setComponent(Assembler.class, null);
         SystemInstance.get().setComponent(ContainerSystem.class, null);
         super.tearDown();
     }
-    
+
     public void testShouldCheckUserRole() throws Exception {
-    	EjbJar ejbJar = new EjbJar();
-    	StatelessBean statelessBean = new StatelessBean(UserBean.class);
-    	SecurityRoleRef securityRoleRef = new SecurityRoleRef();
-    	securityRoleRef.setRoleName("TEST");
-    	securityRoleRef.setRoleLink("committer");
-		statelessBean.getSecurityRoleRef().add(securityRoleRef);
-		ejbJar.addEnterpriseBean(statelessBean);
-    	
-    	AppModule app = new AppModule(this.getClass().getClassLoader(), "classpath-" + ejbJar.hashCode());
-    	app.getEjbModules().add(new EjbModule(ejbJar));
-		assembler.createApplication(config.configureApplication(app));
-		
-		User user = (User) context.lookup("UserBeanLocal");
-		assertTrue(user.isUserInRole());
+        final EjbJar ejbJar = new EjbJar();
+        final StatelessBean statelessBean = new StatelessBean(UserBean.class);
+        final SecurityRoleRef securityRoleRef = new SecurityRoleRef();
+        securityRoleRef.setRoleName("TEST");
+        securityRoleRef.setRoleLink("committer");
+        statelessBean.getSecurityRoleRef().add(securityRoleRef);
+        ejbJar.addEnterpriseBean(statelessBean);
+
+        final AppModule app = new AppModule(this.getClass().getClassLoader(), "classpath-" + ejbJar.hashCode());
+        app.getEjbModules().add(new EjbModule(ejbJar));
+        assembler.createApplication(config.configureApplication(app));
+
+        final User user = (User) context.lookup("UserBeanLocal");
+        assertTrue(user.isUserInRole());
     }
 
     public static interface User {
-    	public boolean isUserInRole();
+        public boolean isUserInRole();
     }
 
     public static class UserBean implements User {
 
-    	@Resource
+        @Resource
         private SessionContext context;
-    	
-		@Override
-		public boolean isUserInRole() {
-			return context.isCallerInRole("TEST");
-		}
+
+        @Override
+        public boolean isUserInRole() {
+            return context.isCallerInRole("TEST");
+        }
     }
 }

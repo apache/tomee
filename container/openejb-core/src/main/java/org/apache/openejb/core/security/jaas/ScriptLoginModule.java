@@ -48,7 +48,7 @@ import java.util.Scanner;
 import java.util.Set;
 
 public class ScriptLoginModule implements LoginModule {
-    private static Logger log = Logger.getInstance(LogCategory.OPENEJB_SECURITY, "org.apache.openejb.util.resources");
+    private static final Logger log = Logger.getInstance(LogCategory.OPENEJB_SECURITY, "org.apache.openejb.util.resources");
 
     private Subject subject;
     private CallbackHandler callbackHandler;
@@ -103,7 +103,7 @@ public class ScriptLoginModule implements LoginModule {
     }
 
     private File getScriptFile(final String path) {
-        if (path == null  || "".equals(path)) {
+        if (path == null || "".equals(path)) {
             final File result = new File(System.getProperty("openejb.home"), "conf/loginscript.js");
             if (result.exists()) {
                 return result;

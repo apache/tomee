@@ -31,7 +31,7 @@ public class StatefulContainerFactory {
     private Object id;
     private SecurityService securityService;
     private Cache<Object, Instance> cache;
-    private Properties properties = new SuperProperties().caseInsensitive(false);
+    private final Properties properties = new SuperProperties().caseInsensitive(false);
     private Duration accessTimeout = new Duration(0, TimeUnit.MILLISECONDS);
 
     public Object getId() {
@@ -109,10 +109,10 @@ public class StatefulContainerFactory {
         }
         cache.init();
         return new StatefulContainer(
-                id, securityService,
-                cache, accessTimeout,
-                "true".equalsIgnoreCase(properties.getProperty("PreventExtendedEntityManagerSerialization", "false").trim()),
-                createLockFactory());
+            id, securityService,
+            cache, accessTimeout,
+            "true".equalsIgnoreCase(properties.getProperty("PreventExtendedEntityManagerSerialization", "false").trim()),
+            createLockFactory());
     }
 
     private LockFactory createLockFactory() {

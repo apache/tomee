@@ -42,11 +42,9 @@ public class AsContext {
 
     /**
      * Gets the value of the authMethod property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getAuthMethod() {
         return authMethod;
@@ -54,23 +52,19 @@ public class AsContext {
 
     /**
      * Sets the value of the authMethod property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setAuthMethod(String value) {
+    public void setAuthMethod(final String value) {
         this.authMethod = value;
     }
 
     /**
      * Gets the value of the realm property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getRealm() {
         return realm;
@@ -78,23 +72,19 @@ public class AsContext {
 
     /**
      * Sets the value of the realm property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setRealm(String value) {
+    public void setRealm(final String value) {
         this.realm = value;
     }
 
     /**
      * Gets the value of the required property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getRequired() {
         return required;
@@ -102,13 +92,11 @@ public class AsContext {
 
     /**
      * Sets the value of the required property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setRequired(String value) {
+    public void setRequired(final String value) {
         this.required = value;
     }
 

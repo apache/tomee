@@ -28,33 +28,33 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.namespace.QName;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class Taglib$JAXB
-        extends JAXBObject<Taglib> {
+    extends JAXBObject<Taglib> {
 
 
     public Taglib$JAXB() {
         super(Taglib.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "taglibType".intern()));
     }
 
-    public static Taglib readTaglib(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static Taglib readTaglib(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeTaglib(XoXMLStreamWriter writer, Taglib taglib, RuntimeContext context)
-            throws Exception {
+    public static void writeTaglib(final XoXMLStreamWriter writer, final Taglib taglib, final RuntimeContext context)
+        throws Exception {
         _write(writer, taglib, context);
     }
 
-    public void write(XoXMLStreamWriter writer, Taglib taglib, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final Taglib taglib, final RuntimeContext context)
+        throws Exception {
         _write(writer, taglib, context);
     }
 
-    public final static Taglib _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static Taglib _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -65,12 +65,12 @@ public class Taglib$JAXB
             context = new RuntimeContext();
         }
 
-        Taglib taglib = new Taglib();
+        final Taglib taglib = new Taglib();
         context.beforeUnmarshal(taglib, LifecycleCallback.NONE);
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("taglibType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, Taglib.class);
@@ -78,10 +78,10 @@ public class Taglib$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, taglib);
                 taglib.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -90,15 +90,15 @@ public class Taglib$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("taglib-uri" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: taglibUri
-                String taglibUriRaw = elementReader.getElementAsString();
+                final String taglibUriRaw = elementReader.getElementAsString();
 
-                String taglibUri;
+                final String taglibUri;
                 try {
                     taglibUri = Adapters.collapsedStringAdapterAdapter.unmarshal(taglibUriRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -106,12 +106,12 @@ public class Taglib$JAXB
                 taglib.taglibUri = taglibUri;
             } else if (("taglib-location" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: taglibLocation
-                String taglibLocationRaw = elementReader.getElementAsString();
+                final String taglibLocationRaw = elementReader.getElementAsString();
 
-                String taglibLocation;
+                final String taglibLocation;
                 try {
                     taglibLocation = Adapters.collapsedStringAdapterAdapter.unmarshal(taglibLocationRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -127,13 +127,13 @@ public class Taglib$JAXB
         return taglib;
     }
 
-    public final Taglib read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final Taglib read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, Taglib taglib, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final Taglib taglib, RuntimeContext context)
+        throws Exception {
         if (taglib == null) {
             writer.writeXsiNil();
             return;
@@ -143,7 +143,7 @@ public class Taglib$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (Taglib.class != taglib.getClass()) {
             context.unexpectedSubclass(writer, taglib, Taglib.class);
             return;
@@ -153,23 +153,23 @@ public class Taglib$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = taglib.id;
+        final String idRaw = taglib.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(taglib, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: taglibUri
-        String taglibUriRaw = taglib.taglibUri;
+        final String taglibUriRaw = taglib.taglibUri;
         String taglibUri = null;
         try {
             taglibUri = Adapters.collapsedStringAdapterAdapter.marshal(taglibUriRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(taglib, "taglibUri", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (taglibUri != null) {
@@ -181,11 +181,11 @@ public class Taglib$JAXB
         }
 
         // ELEMENT: taglibLocation
-        String taglibLocationRaw = taglib.taglibLocation;
+        final String taglibLocationRaw = taglib.taglibLocation;
         String taglibLocation = null;
         try {
             taglibLocation = Adapters.collapsedStringAdapterAdapter.marshal(taglibLocationRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(taglib, "taglibLocation", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (taglibLocation != null) {

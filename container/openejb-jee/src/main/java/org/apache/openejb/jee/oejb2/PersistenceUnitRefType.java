@@ -30,8 +30,7 @@ import javax.xml.bind.annotation.XmlType;
     "pattern"
 })
 public class PersistenceUnitRefType
-    extends AbstractNamingEntryType
-{
+    extends AbstractNamingEntryType {
 
     @XmlElement(name = "persistence-unit-ref-name", required = true)
     protected String persistenceUnitRefName;
@@ -41,11 +40,9 @@ public class PersistenceUnitRefType
 
     /**
      * Gets the value of the entityManagerFactoryRefName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getPersistenceUnitRefName() {
         return persistenceUnitRefName;
@@ -53,23 +50,19 @@ public class PersistenceUnitRefType
 
     /**
      * Sets the value of the entityManagerFactoryRefName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setPersistenceUnitRefName(String value) {
+    public void setPersistenceUnitRefName(final String value) {
         this.persistenceUnitRefName = value;
     }
 
     /**
      * Gets the value of the persistenceUnitName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getPersistenceUnitName() {
         return persistenceUnitName;
@@ -77,23 +70,19 @@ public class PersistenceUnitRefType
 
     /**
      * Sets the value of the persistenceUnitName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setPersistenceUnitName(String value) {
+    public void setPersistenceUnitName(final String value) {
         this.persistenceUnitName = value;
     }
 
     /**
      * Gets the value of the pattern property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PatternType }
-     *     
+     *
+     * @return possible object is
+     * {@link PatternType }
      */
     public PatternType getPattern() {
         return pattern;
@@ -101,13 +90,11 @@ public class PersistenceUnitRefType
 
     /**
      * Sets the value of the pattern property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PatternType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PatternType }
      */
-    public void setPattern(PatternType value) {
+    public void setPattern(final PatternType value) {
         this.pattern = value;
     }
 

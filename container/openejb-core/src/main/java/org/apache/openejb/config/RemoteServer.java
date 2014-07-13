@@ -53,7 +53,7 @@ public class RemoteServer {
     public static final String START = "start";
     public static final String STOP = "stop";
 
-    private boolean debug = options.get(OPENEJB_SERVER_DEBUG, false);
+    private final boolean debug = options.get(OPENEJB_SERVER_DEBUG, false);
     private final boolean profile = options.get("openejb.server.profile", false);
     private final boolean tomcat;
     private final String javaOpts = System.getProperty("java.opts");

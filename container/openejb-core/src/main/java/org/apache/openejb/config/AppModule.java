@@ -352,8 +352,8 @@ public class AppModule implements DeploymentModule {
     @Override
     public String toString() {
         return "AppModule{" +
-               "moduleId='" + id.getName() + '\'' +
-               '}';
+            "moduleId='" + id.getName() + '\'' +
+            '}';
     }
 
     public void setStandloneWebModule() {

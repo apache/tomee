@@ -32,7 +32,7 @@ public class EmbeddedBill {
         return pk;
     }
 
-    public void setPk(EmbeddedBillPk key) {
+    public void setPk(final EmbeddedBillPk key) {
         pk = key;
     }
 
@@ -40,7 +40,7 @@ public class EmbeddedBill {
         return billDescription;
     }
 
-    public void setBillDescription(String description) {
+    public void setBillDescription(final String description) {
         billDescription = description;
     }
 }

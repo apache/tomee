@@ -35,33 +35,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class JspPropertyGroup$JAXB
-        extends JAXBObject<JspPropertyGroup> {
+    extends JAXBObject<JspPropertyGroup> {
 
 
     public JspPropertyGroup$JAXB() {
         super(JspPropertyGroup.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "jsp-property-groupType".intern()), Text$JAXB.class, Icon$JAXB.class);
     }
 
-    public static JspPropertyGroup readJspPropertyGroup(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static JspPropertyGroup readJspPropertyGroup(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeJspPropertyGroup(XoXMLStreamWriter writer, JspPropertyGroup jspPropertyGroup, RuntimeContext context)
-            throws Exception {
+    public static void writeJspPropertyGroup(final XoXMLStreamWriter writer, final JspPropertyGroup jspPropertyGroup, final RuntimeContext context)
+        throws Exception {
         _write(writer, jspPropertyGroup, context);
     }
 
-    public void write(XoXMLStreamWriter writer, JspPropertyGroup jspPropertyGroup, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final JspPropertyGroup jspPropertyGroup, final RuntimeContext context)
+        throws Exception {
         _write(writer, jspPropertyGroup, context);
     }
 
-    public final static JspPropertyGroup _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static JspPropertyGroup _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -72,7 +72,7 @@ public class JspPropertyGroup$JAXB
             context = new RuntimeContext();
         }
 
-        JspPropertyGroup jspPropertyGroup = new JspPropertyGroup();
+        final JspPropertyGroup jspPropertyGroup = new JspPropertyGroup();
         context.beforeUnmarshal(jspPropertyGroup, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -83,7 +83,7 @@ public class JspPropertyGroup$JAXB
         List<String> includeCoda = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("jsp-property-groupType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, JspPropertyGroup.class);
@@ -91,10 +91,10 @@ public class JspPropertyGroup$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, jspPropertyGroup);
                 jspPropertyGroup.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -103,24 +103,24 @@ public class JspPropertyGroup$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
                 descriptions.add(descriptionsItem);
             } else if (("display-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: displayNames
-                Text displayNamesItem = readText(elementReader, context);
+                final Text displayNamesItem = readText(elementReader, context);
                 if (displayNames == null) {
                     displayNames = new ArrayList<Text>();
                 }
                 displayNames.add(displayNamesItem);
             } else if (("icon" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: icon
-                Icon iconItem = readIcon(elementReader, context);
+                final Icon iconItem = readIcon(elementReader, context);
                 if (icon == null) {
                     icon = jspPropertyGroup.icon;
                     if (icon != null) {
@@ -132,12 +132,12 @@ public class JspPropertyGroup$JAXB
                 icon.add(iconItem);
             } else if (("url-pattern" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: urlPattern
-                String urlPatternItemRaw = elementReader.getElementAsString();
+                final String urlPatternItemRaw = elementReader.getElementAsString();
 
-                String urlPatternItem;
+                final String urlPatternItem;
                 try {
                     urlPatternItem = Adapters.trimStringAdapterAdapter.unmarshal(urlPatternItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, TrimStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -153,16 +153,16 @@ public class JspPropertyGroup$JAXB
                 urlPattern.add(urlPatternItem);
             } else if (("el-ignored" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: elIgnored
-                Boolean elIgnored = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
+                final Boolean elIgnored = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
                 jspPropertyGroup.elIgnored = elIgnored;
             } else if (("page-encoding" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: pageEncoding
-                String pageEncodingRaw = elementReader.getElementAsString();
+                final String pageEncodingRaw = elementReader.getElementAsString();
 
-                String pageEncoding;
+                final String pageEncoding;
                 try {
                     pageEncoding = Adapters.collapsedStringAdapterAdapter.unmarshal(pageEncodingRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -170,20 +170,20 @@ public class JspPropertyGroup$JAXB
                 jspPropertyGroup.pageEncoding = pageEncoding;
             } else if (("scripting-invalid" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: scriptingInvalid
-                Boolean scriptingInvalid = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
+                final Boolean scriptingInvalid = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
                 jspPropertyGroup.scriptingInvalid = scriptingInvalid;
             } else if (("is-xml" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: isXml
-                Boolean isXml = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
+                final Boolean isXml = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
                 jspPropertyGroup.isXml = isXml;
             } else if (("include-prelude" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: includePrelude
-                String includePreludeItemRaw = elementReader.getElementAsString();
+                final String includePreludeItemRaw = elementReader.getElementAsString();
 
-                String includePreludeItem;
+                final String includePreludeItem;
                 try {
                     includePreludeItem = Adapters.collapsedStringAdapterAdapter.unmarshal(includePreludeItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -199,12 +199,12 @@ public class JspPropertyGroup$JAXB
                 includePrelude.add(includePreludeItem);
             } else if (("include-coda" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: includeCoda
-                String includeCodaItemRaw = elementReader.getElementAsString();
+                final String includeCodaItemRaw = elementReader.getElementAsString();
 
-                String includeCodaItem;
+                final String includeCodaItem;
                 try {
                     includeCodaItem = Adapters.collapsedStringAdapterAdapter.unmarshal(includeCodaItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -220,20 +220,20 @@ public class JspPropertyGroup$JAXB
                 includeCoda.add(includeCodaItem);
             } else if (("deferred-syntax-allowed-as-literal" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: deferredSyntaxAllowedAsLiteral
-                Boolean deferredSyntaxAllowedAsLiteral = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
+                final Boolean deferredSyntaxAllowedAsLiteral = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
                 jspPropertyGroup.deferredSyntaxAllowedAsLiteral = deferredSyntaxAllowedAsLiteral;
             } else if (("trim-directive-whitespaces" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: trimDirectiveWhitespaces
-                Boolean trimDirectiveWhitespaces = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
+                final Boolean trimDirectiveWhitespaces = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
                 jspPropertyGroup.trimDirectiveWhitespaces = trimDirectiveWhitespaces;
             } else if (("default-content-type" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: defaultContentType
-                String defaultContentTypeRaw = elementReader.getElementAsString();
+                final String defaultContentTypeRaw = elementReader.getElementAsString();
 
-                String defaultContentType;
+                final String defaultContentType;
                 try {
                     defaultContentType = Adapters.collapsedStringAdapterAdapter.unmarshal(defaultContentTypeRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -241,12 +241,12 @@ public class JspPropertyGroup$JAXB
                 jspPropertyGroup.defaultContentType = defaultContentType;
             } else if (("buffer" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: buffer
-                String bufferRaw = elementReader.getElementAsString();
+                final String bufferRaw = elementReader.getElementAsString();
 
-                String buffer;
+                final String buffer;
                 try {
                     buffer = Adapters.collapsedStringAdapterAdapter.unmarshal(bufferRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -254,7 +254,7 @@ public class JspPropertyGroup$JAXB
                 jspPropertyGroup.buffer = buffer;
             } else if (("error-on-undeclared-namespace" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: errorOnUndeclaredNamespace
-                Boolean errorOnUndeclaredNamespace = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
+                final Boolean errorOnUndeclaredNamespace = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
                 jspPropertyGroup.errorOnUndeclaredNamespace = errorOnUndeclaredNamespace;
             } else {
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "description"), new QName("http://java.sun.com/xml/ns/javaee", "display-name"), new QName("http://java.sun.com/xml/ns/javaee", "icon"), new QName("http://java.sun.com/xml/ns/javaee", "url-pattern"), new QName("http://java.sun.com/xml/ns/javaee", "el-ignored"), new QName("http://java.sun.com/xml/ns/javaee", "page-encoding"), new QName("http://java.sun.com/xml/ns/javaee", "scripting-invalid"), new QName("http://java.sun.com/xml/ns/javaee", "is-xml"), new QName("http://java.sun.com/xml/ns/javaee", "include-prelude"), new QName("http://java.sun.com/xml/ns/javaee", "include-coda"), new QName("http://java.sun.com/xml/ns/javaee", "deferred-syntax-allowed-as-literal"), new QName("http://java.sun.com/xml/ns/javaee", "trim-directive-whitespaces"), new QName("http://java.sun.com/xml/ns/javaee", "default-content-type"), new QName("http://java.sun.com/xml/ns/javaee", "buffer"), new QName("http://java.sun.com/xml/ns/javaee", "error-on-undeclared-namespace"));
@@ -263,14 +263,14 @@ public class JspPropertyGroup$JAXB
         if (descriptions != null) {
             try {
                 jspPropertyGroup.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, JspPropertyGroup.class, "setDescriptions", Text[].class, e);
             }
         }
         if (displayNames != null) {
             try {
                 jspPropertyGroup.setDisplayNames(displayNames.toArray(new Text[displayNames.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, JspPropertyGroup.class, "setDisplayNames", Text[].class, e);
             }
         }
@@ -292,13 +292,13 @@ public class JspPropertyGroup$JAXB
         return jspPropertyGroup;
     }
 
-    public final JspPropertyGroup read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final JspPropertyGroup read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, JspPropertyGroup jspPropertyGroup, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final JspPropertyGroup jspPropertyGroup, RuntimeContext context)
+        throws Exception {
         if (jspPropertyGroup == null) {
             writer.writeXsiNil();
             return;
@@ -308,7 +308,7 @@ public class JspPropertyGroup$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (JspPropertyGroup.class != jspPropertyGroup.getClass()) {
             context.unexpectedSubclass(writer, jspPropertyGroup, JspPropertyGroup.class);
             return;
@@ -318,12 +318,12 @@ public class JspPropertyGroup$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = jspPropertyGroup.id;
+        final String idRaw = jspPropertyGroup.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(jspPropertyGroup, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -333,11 +333,11 @@ public class JspPropertyGroup$JAXB
         Text[] descriptions = null;
         try {
             descriptions = jspPropertyGroup.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(jspPropertyGroup, "descriptions", JspPropertyGroup.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -352,11 +352,11 @@ public class JspPropertyGroup$JAXB
         Text[] displayNames = null;
         try {
             displayNames = jspPropertyGroup.getDisplayNames();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(jspPropertyGroup, "displayNames", JspPropertyGroup.class, "getDisplayNames", e);
         }
         if (displayNames != null) {
-            for (Text displayNamesItem : displayNames) {
+            for (final Text displayNamesItem : displayNames) {
                 if (displayNamesItem != null) {
                     writer.writeStartElement(prefix, "display-name", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, displayNamesItem, context);
@@ -368,9 +368,9 @@ public class JspPropertyGroup$JAXB
         }
 
         // ELEMENT: icon
-        LocalCollection<Icon> icon = jspPropertyGroup.icon;
+        final LocalCollection<Icon> icon = jspPropertyGroup.icon;
         if (icon != null) {
-            for (Icon iconItem : icon) {
+            for (final Icon iconItem : icon) {
                 if (iconItem != null) {
                     writer.writeStartElement(prefix, "icon", "http://java.sun.com/xml/ns/javaee");
                     writeIcon(writer, iconItem, context);
@@ -382,13 +382,13 @@ public class JspPropertyGroup$JAXB
         }
 
         // ELEMENT: urlPattern
-        List<String> urlPatternRaw = jspPropertyGroup.urlPattern;
+        final List<String> urlPatternRaw = jspPropertyGroup.urlPattern;
         if (urlPatternRaw != null) {
-            for (String urlPatternItem : urlPatternRaw) {
+            for (final String urlPatternItem : urlPatternRaw) {
                 String urlPattern = null;
                 try {
                     urlPattern = Adapters.trimStringAdapterAdapter.marshal(urlPatternItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(jspPropertyGroup, "urlPattern", TrimStringAdapter.class, List.class, List.class, e);
                 }
                 if (urlPattern != null) {
@@ -402,7 +402,7 @@ public class JspPropertyGroup$JAXB
         }
 
         // ELEMENT: elIgnored
-        Boolean elIgnored = jspPropertyGroup.elIgnored;
+        final Boolean elIgnored = jspPropertyGroup.elIgnored;
         if (elIgnored != null) {
             writer.writeStartElement(prefix, "el-ignored", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(Boolean.toString(elIgnored));
@@ -410,11 +410,11 @@ public class JspPropertyGroup$JAXB
         }
 
         // ELEMENT: pageEncoding
-        String pageEncodingRaw = jspPropertyGroup.pageEncoding;
+        final String pageEncodingRaw = jspPropertyGroup.pageEncoding;
         String pageEncoding = null;
         try {
             pageEncoding = Adapters.collapsedStringAdapterAdapter.marshal(pageEncodingRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(jspPropertyGroup, "pageEncoding", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (pageEncoding != null) {
@@ -424,7 +424,7 @@ public class JspPropertyGroup$JAXB
         }
 
         // ELEMENT: scriptingInvalid
-        Boolean scriptingInvalid = jspPropertyGroup.scriptingInvalid;
+        final Boolean scriptingInvalid = jspPropertyGroup.scriptingInvalid;
         if (scriptingInvalid != null) {
             writer.writeStartElement(prefix, "scripting-invalid", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(Boolean.toString(scriptingInvalid));
@@ -432,7 +432,7 @@ public class JspPropertyGroup$JAXB
         }
 
         // ELEMENT: isXml
-        Boolean isXml = jspPropertyGroup.isXml;
+        final Boolean isXml = jspPropertyGroup.isXml;
         if (isXml != null) {
             writer.writeStartElement(prefix, "is-xml", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(Boolean.toString(isXml));
@@ -440,13 +440,13 @@ public class JspPropertyGroup$JAXB
         }
 
         // ELEMENT: includePrelude
-        List<String> includePreludeRaw = jspPropertyGroup.includePrelude;
+        final List<String> includePreludeRaw = jspPropertyGroup.includePrelude;
         if (includePreludeRaw != null) {
-            for (String includePreludeItem : includePreludeRaw) {
+            for (final String includePreludeItem : includePreludeRaw) {
                 String includePrelude = null;
                 try {
                     includePrelude = Adapters.collapsedStringAdapterAdapter.marshal(includePreludeItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(jspPropertyGroup, "includePrelude", CollapsedStringAdapter.class, List.class, List.class, e);
                 }
                 if (includePrelude != null) {
@@ -458,13 +458,13 @@ public class JspPropertyGroup$JAXB
         }
 
         // ELEMENT: includeCoda
-        List<String> includeCodaRaw = jspPropertyGroup.includeCoda;
+        final List<String> includeCodaRaw = jspPropertyGroup.includeCoda;
         if (includeCodaRaw != null) {
-            for (String includeCodaItem : includeCodaRaw) {
+            for (final String includeCodaItem : includeCodaRaw) {
                 String includeCoda = null;
                 try {
                     includeCoda = Adapters.collapsedStringAdapterAdapter.marshal(includeCodaItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(jspPropertyGroup, "includeCoda", CollapsedStringAdapter.class, List.class, List.class, e);
                 }
                 if (includeCoda != null) {
@@ -476,7 +476,7 @@ public class JspPropertyGroup$JAXB
         }
 
         // ELEMENT: deferredSyntaxAllowedAsLiteral
-        Boolean deferredSyntaxAllowedAsLiteral = jspPropertyGroup.deferredSyntaxAllowedAsLiteral;
+        final Boolean deferredSyntaxAllowedAsLiteral = jspPropertyGroup.deferredSyntaxAllowedAsLiteral;
         if (deferredSyntaxAllowedAsLiteral != null) {
             writer.writeStartElement(prefix, "deferred-syntax-allowed-as-literal", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(Boolean.toString(deferredSyntaxAllowedAsLiteral));
@@ -484,7 +484,7 @@ public class JspPropertyGroup$JAXB
         }
 
         // ELEMENT: trimDirectiveWhitespaces
-        Boolean trimDirectiveWhitespaces = jspPropertyGroup.trimDirectiveWhitespaces;
+        final Boolean trimDirectiveWhitespaces = jspPropertyGroup.trimDirectiveWhitespaces;
         if (trimDirectiveWhitespaces != null) {
             writer.writeStartElement(prefix, "trim-directive-whitespaces", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(Boolean.toString(trimDirectiveWhitespaces));
@@ -492,11 +492,11 @@ public class JspPropertyGroup$JAXB
         }
 
         // ELEMENT: defaultContentType
-        String defaultContentTypeRaw = jspPropertyGroup.defaultContentType;
+        final String defaultContentTypeRaw = jspPropertyGroup.defaultContentType;
         String defaultContentType = null;
         try {
             defaultContentType = Adapters.collapsedStringAdapterAdapter.marshal(defaultContentTypeRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(jspPropertyGroup, "defaultContentType", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (defaultContentType != null) {
@@ -506,11 +506,11 @@ public class JspPropertyGroup$JAXB
         }
 
         // ELEMENT: buffer
-        String bufferRaw = jspPropertyGroup.buffer;
+        final String bufferRaw = jspPropertyGroup.buffer;
         String buffer = null;
         try {
             buffer = Adapters.collapsedStringAdapterAdapter.marshal(bufferRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(jspPropertyGroup, "buffer", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (buffer != null) {
@@ -520,7 +520,7 @@ public class JspPropertyGroup$JAXB
         }
 
         // ELEMENT: errorOnUndeclaredNamespace
-        Boolean errorOnUndeclaredNamespace = jspPropertyGroup.errorOnUndeclaredNamespace;
+        final Boolean errorOnUndeclaredNamespace = jspPropertyGroup.errorOnUndeclaredNamespace;
         if (errorOnUndeclaredNamespace != null) {
             writer.writeStartElement(prefix, "error-on-undeclared-namespace", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(Boolean.toString(errorOnUndeclaredNamespace));

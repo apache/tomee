@@ -45,11 +45,9 @@ public class InvokerProxyBinding {
 
     /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getName() {
         return name;
@@ -57,23 +55,19 @@ public class InvokerProxyBinding {
 
     /**
      * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
     /**
      * Gets the value of the invokerMbean property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getInvokerMbean() {
         return invokerMbean;
@@ -81,23 +75,19 @@ public class InvokerProxyBinding {
 
     /**
      * Sets the value of the invokerMbean property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setInvokerMbean(String value) {
+    public void setInvokerMbean(final String value) {
         this.invokerMbean = value;
     }
 
     /**
      * Gets the value of the proxyFactory property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getProxyFactory() {
         return proxyFactory;
@@ -105,23 +95,19 @@ public class InvokerProxyBinding {
 
     /**
      * Sets the value of the proxyFactory property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setProxyFactory(String value) {
+    public void setProxyFactory(final String value) {
         this.proxyFactory = value;
     }
 
     /**
      * Gets the value of the proxyFactoryConfig property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ProxyFactoryConfig }
-     *     
+     *
+     * @return possible object is
+     * {@link ProxyFactoryConfig }
      */
     public ProxyFactoryConfig getProxyFactoryConfig() {
         return proxyFactoryConfig;
@@ -129,13 +115,11 @@ public class InvokerProxyBinding {
 
     /**
      * Sets the value of the proxyFactoryConfig property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ProxyFactoryConfig }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ProxyFactoryConfig }
      */
-    public void setProxyFactoryConfig(ProxyFactoryConfig value) {
+    public void setProxyFactoryConfig(final ProxyFactoryConfig value) {
         this.proxyFactoryConfig = value;
     }
 

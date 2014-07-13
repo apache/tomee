@@ -31,33 +31,33 @@ import static org.apache.openejb.jee.NamedMethod$JAXB.readNamedMethod;
 import static org.apache.openejb.jee.NamedMethod$JAXB.writeNamedMethod;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class InitMethod$JAXB
-        extends JAXBObject<InitMethod> {
+    extends JAXBObject<InitMethod> {
 
 
     public InitMethod$JAXB() {
         super(InitMethod.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "init-methodType".intern()), NamedMethod$JAXB.class);
     }
 
-    public static InitMethod readInitMethod(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static InitMethod readInitMethod(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeInitMethod(XoXMLStreamWriter writer, InitMethod initMethod, RuntimeContext context)
-            throws Exception {
+    public static void writeInitMethod(final XoXMLStreamWriter writer, final InitMethod initMethod, final RuntimeContext context)
+        throws Exception {
         _write(writer, initMethod, context);
     }
 
-    public void write(XoXMLStreamWriter writer, InitMethod initMethod, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final InitMethod initMethod, final RuntimeContext context)
+        throws Exception {
         _write(writer, initMethod, context);
     }
 
-    public final static InitMethod _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static InitMethod _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -68,12 +68,12 @@ public class InitMethod$JAXB
             context = new RuntimeContext();
         }
 
-        InitMethod initMethod = new InitMethod();
+        final InitMethod initMethod = new InitMethod();
         context.beforeUnmarshal(initMethod, LifecycleCallback.NONE);
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("init-methodType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, InitMethod.class);
@@ -81,10 +81,10 @@ public class InitMethod$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, initMethod);
                 initMethod.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -93,14 +93,14 @@ public class InitMethod$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("create-method" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: createMethod
-                NamedMethod createMethod = readNamedMethod(elementReader, context);
+                final NamedMethod createMethod = readNamedMethod(elementReader, context);
                 initMethod.createMethod = createMethod;
             } else if (("bean-method" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: beanMethod
-                NamedMethod beanMethod = readNamedMethod(elementReader, context);
+                final NamedMethod beanMethod = readNamedMethod(elementReader, context);
                 initMethod.beanMethod = beanMethod;
             } else {
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "create-method"), new QName("http://java.sun.com/xml/ns/javaee", "bean-method"));
@@ -112,13 +112,13 @@ public class InitMethod$JAXB
         return initMethod;
     }
 
-    public final InitMethod read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final InitMethod read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, InitMethod initMethod, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final InitMethod initMethod, RuntimeContext context)
+        throws Exception {
         if (initMethod == null) {
             writer.writeXsiNil();
             return;
@@ -128,7 +128,7 @@ public class InitMethod$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (InitMethod.class != initMethod.getClass()) {
             context.unexpectedSubclass(writer, initMethod, InitMethod.class);
             return;
@@ -138,19 +138,19 @@ public class InitMethod$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = initMethod.id;
+        final String idRaw = initMethod.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(initMethod, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: createMethod
-        NamedMethod createMethod = initMethod.createMethod;
+        final NamedMethod createMethod = initMethod.createMethod;
         if (createMethod != null) {
             writer.writeStartElement(prefix, "create-method", "http://java.sun.com/xml/ns/javaee");
             writeNamedMethod(writer, createMethod, context);
@@ -160,7 +160,7 @@ public class InitMethod$JAXB
         }
 
         // ELEMENT: beanMethod
-        NamedMethod beanMethod = initMethod.beanMethod;
+        final NamedMethod beanMethod = initMethod.beanMethod;
         if (beanMethod != null) {
             writer.writeStartElement(prefix, "bean-method", "http://java.sun.com/xml/ns/javaee");
             writeNamedMethod(writer, beanMethod, context);

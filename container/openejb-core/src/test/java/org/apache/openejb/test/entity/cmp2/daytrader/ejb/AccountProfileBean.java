@@ -35,7 +35,7 @@ public abstract class AccountProfileBean implements EntityBean {
     public void ejbPostCreate() throws CreateException {
     }
 
-    public void setEntityContext(EntityContext c) {
+    public void setEntityContext(final EntityContext c) {
         context = c;
     }
 

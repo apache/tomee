@@ -76,15 +76,15 @@ public class QuartzResourceAdapter implements ResourceAdapter {
 
         //Allow org.apache.openejb.quartz.InterruptableJob implementors to be interrupted on shutdown
         System.setProperty(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN
-                              , System.getProperty(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN, "true"));
+            , System.getProperty(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN, "true"));
         System.setProperty(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN_WITH_WAIT
-                              , System.getProperty(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN_WITH_WAIT, "true"));
+            , System.getProperty(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN_WITH_WAIT, "true"));
 
         //Let the user enable this if they really want it
         System.setProperty(StdSchedulerFactory.PROP_SCHED_SKIP_UPDATE_CHECK
-                              , System.getProperty(StdSchedulerFactory.PROP_SCHED_SKIP_UPDATE_CHECK, "true"));
+            , System.getProperty(StdSchedulerFactory.PROP_SCHED_SKIP_UPDATE_CHECK, "true"));
         System.setProperty("org.terracotta.quartz.skipUpdateCheck"
-                              , System.getProperty("org.terracotta.quartz.skipUpdateCheck", "true"));
+            , System.getProperty("org.terracotta.quartz.skipUpdateCheck", "true"));
 
         startThread.set(new Thread("Quartz Scheduler Start") {
 

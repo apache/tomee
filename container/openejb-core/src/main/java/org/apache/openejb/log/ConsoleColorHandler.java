@@ -26,7 +26,7 @@ import java.util.logging.ConsoleHandler;
 import static org.apache.openejb.log.JULUtil.level;
 
 public class ConsoleColorHandler extends ConsoleHandler {
-    private static boolean wrapped;
+    private static final boolean wrapped;
 
     static {
         // mess output with maven on linux and not really mandatory in linux

@@ -43,7 +43,8 @@ public class PreDestroyMetaTest {
 
             @Stopping
             @PreDestroy
-            public void method(){}
+            public void method() {
+            }
         }
     }
 

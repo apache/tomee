@@ -60,7 +60,7 @@ public class CoreUserTransaction implements UserTransaction, Serializable {
 
     @Override
     public void commit() throws RollbackException, HeuristicMixedException, HeuristicRollbackException,
-            SecurityException, IllegalStateException, SystemException {
+        SecurityException, IllegalStateException, SystemException {
         if (transactionLogger.isDebugEnabled()) {
             transactionLogger.debug("Committing user transaction " + transactionManager().getTransaction());
         }

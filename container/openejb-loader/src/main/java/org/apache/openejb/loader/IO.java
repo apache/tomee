@@ -50,11 +50,12 @@ import java.util.zip.ZipOutputStream;
 
 /**
  * @version $Revision$ $Date$
- *
- * NOTE: CHECK ExecMojo before adding dependency or inner class to it please
+ *          <p/>
+ *          NOTE: CHECK ExecMojo before adding dependency or inner class to it please
  */
 public class IO {
     private static final int MAX_TIMEOUT;
+
     static {
         int timeout = 5000;
         try {

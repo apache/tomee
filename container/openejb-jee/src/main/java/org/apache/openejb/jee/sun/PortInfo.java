@@ -47,7 +47,7 @@ public class PortInfo {
         return serviceEndpointInterface;
     }
 
-    public void setServiceEndpointInterface(String value) {
+    public void setServiceEndpointInterface(final String value) {
         this.serviceEndpointInterface = value;
     }
 
@@ -55,7 +55,7 @@ public class PortInfo {
         return wsdlPort;
     }
 
-    public void setWsdlPort(WsdlPort value) {
+    public void setWsdlPort(final WsdlPort value) {
         this.wsdlPort = value;
     }
 
@@ -77,7 +77,7 @@ public class PortInfo {
         return messageSecurityBinding;
     }
 
-    public void setMessageSecurityBinding(MessageSecurityBinding value) {
+    public void setMessageSecurityBinding(final MessageSecurityBinding value) {
         this.messageSecurityBinding = value;
     }
 }

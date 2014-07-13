@@ -30,11 +30,11 @@ import java.util.List;
 
 /**
  * jsp_2_2.xsd
- *
+ * <p/>
  * <p>Java class for jsp-configType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="jsp-configType">
  *   &lt;complexContent>
@@ -48,14 +48,12 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "jsp-configType", propOrder = {
-        "taglib",
-        "jspPropertyGroup"
+    "taglib",
+    "jspPropertyGroup"
 })
 public class JspConfig {
 
@@ -85,7 +83,7 @@ public class JspConfig {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

@@ -55,20 +55,20 @@ public class DataSourceDefinitionJndiTest {
 
 
     @DataSourceDefinitions({
-            @DataSourceDefinition(
-                    name = "java:global/foo",
-                    className = "org.hsqldb.jdbc.JDBCDataSource",
-                    user = "sa",
-                    password = "",
-                    url = "jdbc:hsqldb:mem:dsdjt1"
-            ),
-            @DataSourceDefinition(
-                    name = "java:app/foo",
-                    className = "org.hsqldb.jdbc.JDBCDataSource",
-                    user = "sa",
-                    password = "",
-                    url = "jdbc:hsqldb:mem:dsdjt2"
-            )
+        @DataSourceDefinition(
+            name = "java:global/foo",
+            className = "org.hsqldb.jdbc.JDBCDataSource",
+            user = "sa",
+            password = "",
+            url = "jdbc:hsqldb:mem:dsdjt1"
+        ),
+        @DataSourceDefinition(
+            name = "java:app/foo",
+            className = "org.hsqldb.jdbc.JDBCDataSource",
+            user = "sa",
+            password = "",
+            url = "jdbc:hsqldb:mem:dsdjt2"
+        )
     })
     @Stateless
     public static class DatasourceDefinitionsBean {

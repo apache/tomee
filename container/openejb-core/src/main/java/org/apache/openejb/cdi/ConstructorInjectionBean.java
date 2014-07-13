@@ -35,9 +35,10 @@ import java.util.Set;
  * NOTE: think to cache this object to avoid concurrent issues.
  *
  * @version $Rev$ $Date$
-*/
+ */
 public class ConstructorInjectionBean<T> extends InjectionTargetBean<T> { // TODO: see InjectableConstructor
     private static final Field INJECTION_TARGET_FIELD;
+
     static {
         try {
             INJECTION_TARGET_FIELD = InjectionTargetBean.class.getDeclaredField("injectionTarget");
@@ -49,11 +50,11 @@ public class ConstructorInjectionBean<T> extends InjectionTargetBean<T> { // TOD
 
     private final boolean passivationCapable;
 
-    public ConstructorInjectionBean(final WebBeansContext webBeansContext, final Class<T> returnType, final AnnotatedType<T>  at) {
+    public ConstructorInjectionBean(final WebBeansContext webBeansContext, final Class<T> returnType, final AnnotatedType<T> at) {
         this(webBeansContext, returnType, at, null);
     }
 
-    public ConstructorInjectionBean(final WebBeansContext webBeansContext, final Class<T> returnType, final AnnotatedType<T>  at, final Boolean passivationCapable) {
+    public ConstructorInjectionBean(final WebBeansContext webBeansContext, final Class<T> returnType, final AnnotatedType<T> at, final Boolean passivationCapable) {
         super(webBeansContext, WebBeansType.DEPENDENT, at, BeanAttributesBuilder.forContext(webBeansContext).newBeanAttibutes(at).build(), returnType);
         try {
             INJECTION_TARGET_FIELD.set(this, new ConstructorInjectionTarget<T>(getAnnotatedType(), getInjectionPoints(), getWebBeansContext()));

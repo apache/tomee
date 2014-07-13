@@ -43,7 +43,7 @@ public class MessageSecurityBinding {
         return authLayer;
     }
 
-    public void setAuthLayer(String value) {
+    public void setAuthLayer(final String value) {
         this.authLayer = value;
     }
 
@@ -51,7 +51,7 @@ public class MessageSecurityBinding {
         return providerId;
     }
 
-    public void setProviderId(String value) {
+    public void setProviderId(final String value) {
         this.providerId = value;
     }
 

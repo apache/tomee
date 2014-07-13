@@ -185,23 +185,23 @@ public final class JobSpec implements ActivationSpec {
     private Date parse(final String value) {
 
         final String[] formats = {
-                                     "EEE MMM d HH:mm:ss z yyyy",
-                                     "EEE, d MMM yyyy HH:mm:ss Z",
-                                     "yyyy-MM-dd HH:mm:ss.S",
-                                     "yyyy-MM-dd HH:mm:ss.SZ",
-                                     "yyyy-MM-dd HH:mm:ss.S",
-                                     "yyyy-MM-dd HH:mm:ssZ",
-                                     "yyyy-MM-dd HH:mm:ss",
-                                     "yyyy-MM-dd HH:mmZ",
-                                     "yyyy-MM-dd HH:mm",
-                                     "yyyy-MM-dd'T'HH:mm:ss.SZ",
-                                     "yyyy-MM-dd'T'HH:mm:ss.S",
-                                     "yyyy-MM-dd'T'HH:mm:ssZ",
-                                     "yyyy-MM-dd'T'HH:mm:ss",
-                                     "yyyy-MM-dd'T'HH:mmZ",
-                                     "yyyy-MM-dd'T'HH:mm",
-                                     "yyyy-MM-dd",
-                                     "yyyyMMdd"
+            "EEE MMM d HH:mm:ss z yyyy",
+            "EEE, d MMM yyyy HH:mm:ss Z",
+            "yyyy-MM-dd HH:mm:ss.S",
+            "yyyy-MM-dd HH:mm:ss.SZ",
+            "yyyy-MM-dd HH:mm:ss.S",
+            "yyyy-MM-dd HH:mm:ssZ",
+            "yyyy-MM-dd HH:mm:ss",
+            "yyyy-MM-dd HH:mmZ",
+            "yyyy-MM-dd HH:mm",
+            "yyyy-MM-dd'T'HH:mm:ss.SZ",
+            "yyyy-MM-dd'T'HH:mm:ss.S",
+            "yyyy-MM-dd'T'HH:mm:ssZ",
+            "yyyy-MM-dd'T'HH:mm:ss",
+            "yyyy-MM-dd'T'HH:mmZ",
+            "yyyy-MM-dd'T'HH:mm",
+            "yyyy-MM-dd",
+            "yyyyMMdd"
         };
 
         for (final String format : formats) {
@@ -228,15 +228,15 @@ public final class JobSpec implements ActivationSpec {
 
         final int i = hashCode();
         detail = JobBuilder.newJob(QuartzResourceAdapter.JobEndpoint.class)
-                           .withIdentity("Job" + i, Scheduler.DEFAULT_GROUP)
-                           .withDescription(description)
-                           .requestRecovery(recoverable)
-                           .storeDurably(durable)
-                           .build();
+            .withIdentity("Job" + i, Scheduler.DEFAULT_GROUP)
+            .withDescription(description)
+            .requestRecovery(recoverable)
+            .storeDurably(durable)
+            .build();
         final TriggerBuilder tb = TriggerBuilder.newTrigger()
-                                                .forJob(detail)
-                                                .withIdentity("Trigger" + i, Scheduler.DEFAULT_GROUP)
-                                                .withDescription(description);
+            .forJob(detail)
+            .withIdentity("Trigger" + i, Scheduler.DEFAULT_GROUP)
+            .withDescription(description);
         if (startTime != null) {
             tb.startAt(parse(startTime));
         }

@@ -32,7 +32,7 @@ import java.util.Stack;
 public class CrossClassLoaderProxyTestObject extends TestCase {
     public static final Class widgetClass = CrossClassLoaderProxyTest.Widget.class;
     public static final Class widgetHomeClass = CrossClassLoaderProxyTest.WidgetHome.class;
-    public static final Class widgetRemoteClass =  CrossClassLoaderProxyTest.WidgetRemote.class;
+    public static final Class widgetRemoteClass = CrossClassLoaderProxyTest.WidgetRemote.class;
     public static CrossClassLoaderProxyTest.WidgetHome widgetHome;
 
     public void testRemoteInterface() throws Exception {
@@ -40,37 +40,37 @@ public class CrossClassLoaderProxyTestObject extends TestCase {
 //        assertTrue("home should be an instance of WidgetHome", home instanceof CrossClassLoaderProxyTest.WidgetHome);
 //        CrossClassLoaderProxyTest.WidgetHome widgetHome = (CrossClassLoaderProxyTest.WidgetHome)home;
 
-        Object object = widgetHome.create();
+        final Object object = widgetHome.create();
         assertNotNull("widgetHome.create()", object);
 
         assertTrue("object should be an instance of WidgetRemote", object instanceof CrossClassLoaderProxyTest.WidgetRemote);
-        CrossClassLoaderProxyTest.WidgetRemote widget = (CrossClassLoaderProxyTest.WidgetRemote)object;
+        final CrossClassLoaderProxyTest.WidgetRemote widget = (CrossClassLoaderProxyTest.WidgetRemote) object;
 
         // Do a business method...
-        Stack<CrossClassLoaderProxyTest.Lifecycle> lifecycle = widget.getLifecycle();
-        assertNotNull("lifecycle",lifecycle);
+        final Stack<CrossClassLoaderProxyTest.Lifecycle> lifecycle = widget.getLifecycle();
+        assertNotNull("lifecycle", lifecycle);
         assertNotSame("is copy", lifecycle, CrossClassLoaderProxyTest.WidgetBean.lifecycle);
 
         // Check the lifecycle of the bean
-        List expected = Arrays.asList(CrossClassLoaderProxyTest.Lifecycle.values());
+        final List expected = Arrays.asList(CrossClassLoaderProxyTest.Lifecycle.values());
 
-        assertEquals(join("\n", expected) , join("\n", lifecycle));
+        assertEquals(join("\n", expected), join("\n", lifecycle));
 
         // verify home ejb meta data
-        EJBMetaData metaData = widgetHome.getEJBMetaData();
+        final EJBMetaData metaData = widgetHome.getEJBMetaData();
         assertTrue("metaData.getEJBHome() should be an instance of WidgetHome", metaData.getEJBHome() instanceof CrossClassLoaderProxyTest.WidgetHome);
         assertEquals(CrossClassLoaderProxyTest.WidgetHome.class, metaData.getHomeInterfaceClass());
         assertEquals(CrossClassLoaderProxyTest.WidgetRemote.class, metaData.getRemoteInterfaceClass());
 
         // verify home handle
-        HomeHandle homeHandle = widgetHome.getHomeHandle();
+        final HomeHandle homeHandle = widgetHome.getHomeHandle();
         assertTrue("homeHandle.getEJBHome() should be an instance of WidgetHome", homeHandle.getEJBHome() instanceof CrossClassLoaderProxyTest.WidgetHome);
 
         // verify ejb object getHome
         assertTrue("widget.getEJBHome() should be an instance of WidgetHome", widget.getEJBHome() instanceof CrossClassLoaderProxyTest.WidgetHome);
 
         // verify ejb object handle
-        Handle objectHandle = widget.getHandle();
+        final Handle objectHandle = widget.getHandle();
         assertTrue("objectHandle.getEJBObject() should be an instance of WidgetHome", objectHandle.getEJBObject() instanceof CrossClassLoaderProxyTest.WidgetRemote);
     }
 
@@ -131,9 +131,9 @@ public class CrossClassLoaderProxyTestObject extends TestCase {
 //        }
 //    }
 
-    private static String join(String delimeter, List items) {
-        StringBuffer sb = new StringBuffer();
-        for (Object item : items) {
+    private static String join(final String delimeter, final List items) {
+        final StringBuffer sb = new StringBuffer();
+        for (final Object item : items) {
             sb.append(item.toString()).append(delimeter);
         }
         return sb.toString();

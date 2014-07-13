@@ -182,9 +182,9 @@ public class ValidationKeysAuditorTest {
         final int tested = total - untested;
         final double coverage = (((tested + 0.0) / (total + 0.0)) * 100);
         output.append("{warning:title=Warning}This page is auto-generated. Any manual changes would be over-written the next time this page is regenerated{warning}").append(
-                newLine);
+            newLine);
         output.append("{info:title=Audit Result}h2.Out of a total of ").append(total).append(" keys, ").append(tested).append(" have been tested. Test coverage for keys is ").append(coverage).append(" %.{info}")
-                .append(newLine);
+            .append(newLine);
     }
 
     private void generateReport(final File file, final KeysAnnotationVisitor visitor) throws IOException {

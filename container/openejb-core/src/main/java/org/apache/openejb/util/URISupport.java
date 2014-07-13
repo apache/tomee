@@ -32,7 +32,7 @@ import java.util.Map;
 
 /**
  * Swiped verbatim from ActiveMQ... the URI kings.
- *
+ * <p/>
  * URI relativize(URI, URI) added afterwards to deal with the
  * non-functional URI.relativize(URI) method
  */
@@ -41,11 +41,11 @@ public class URISupport {
     /**
      * URI absoluteA = new URI("/Users/dblevins/work/openejb3/container/openejb-jee/apple/");
      * URI absoluteB = new URI("/Users/dblevins/work/openejb3/container/openejb-core/foo.jar");
-     *
+     * <p/>
      * URI relativeB = URISupport.relativize(absoluteA, absoluteB);
-     *
+     * <p/>
      * assertEquals("../../openejb-core/foo.jar", relativeB.toString());
-     *
+     * <p/>
      * URI resolvedB = absoluteA.resolve(relativeB);
      * assertTrue(resolvedB.equals(absoluteB));
      *
@@ -109,35 +109,40 @@ public class URISupport {
         public URI[] getComponents() {
             return components;
         }
+
         public String getFragment() {
             return fragment;
         }
+
         public Map getParameters() {
             return parameters;
         }
+
         public String getScheme() {
             return scheme;
         }
+
         public String getPath() {
             return path;
         }
+
         public String getHost() {
             return host;
         }
 
         public URI toURI() throws URISyntaxException {
             final StringBuilder sb = new StringBuilder();
-            if( scheme!=null ) {
+            if (scheme != null) {
                 sb.append(scheme);
                 sb.append(':');
             }
 
-            if( host!=null && host.length()!=0 ) {
+            if (host != null && host.length() != 0) {
                 sb.append(host);
             } else {
                 sb.append('(');
                 for (int i = 0; i < components.length; i++) {
-                    if( i!=0 ) {
+                    if (i != 0) {
                         sb.append(',');
                     }
                     sb.append(components[i].toString());
@@ -145,15 +150,15 @@ public class URISupport {
                 sb.append(')');
             }
 
-            if( path !=null ) {
+            if (path != null) {
                 sb.append('/');
                 sb.append(path);
             }
-            if(!parameters.isEmpty()) {
+            if (!parameters.isEmpty()) {
                 sb.append("?");
                 sb.append(createQueryString(parameters));
             }
-            if( fragment!=null ) {
+            if (fragment != null) {
                 sb.append("#");
                 sb.append(fragment);
             }
@@ -161,30 +166,30 @@ public class URISupport {
         }
     }
 
-    public static Map<String, String> parseQuery(final String uri) throws URISyntaxException{
-        try{
-            final Map<String, String> rc = new LinkedHashMap<String,String>();
-            if(uri!=null){
-                final String[] parameters=uri.split("&");
-                for(int i=0;i<parameters.length;i++){
-                    final int p=parameters[i].indexOf("=");
-                    if(p>=0){
-                        final String name= URLDecoder.decode(parameters[i].substring(0,p),"UTF-8");
-                        final String value=URLDecoder.decode(parameters[i].substring(p+1),"UTF-8");
-                        rc.put(name,value);
-                    }else{
-                        rc.put(parameters[i],null);
+    public static Map<String, String> parseQuery(final String uri) throws URISyntaxException {
+        try {
+            final Map<String, String> rc = new LinkedHashMap<String, String>();
+            if (uri != null) {
+                final String[] parameters = uri.split("&");
+                for (int i = 0; i < parameters.length; i++) {
+                    final int p = parameters[i].indexOf("=");
+                    if (p >= 0) {
+                        final String name = URLDecoder.decode(parameters[i].substring(0, p), "UTF-8");
+                        final String value = URLDecoder.decode(parameters[i].substring(p + 1), "UTF-8");
+                        rc.put(name, value);
+                    } else {
+                        rc.put(parameters[i], null);
                     }
                 }
             }
             return rc;
-        }catch(final UnsupportedEncodingException e){
-            throw (URISyntaxException) new URISyntaxException(e.toString(),"Invalid encoding").initCause(e);
+        } catch (final UnsupportedEncodingException e) {
+            throw (URISyntaxException) new URISyntaxException(e.toString(), "Invalid encoding").initCause(e);
         }
     }
 
     public static Map<String, String> parseParamters(final URI uri) throws URISyntaxException {
-        return uri.getQuery()==null ? Collections.EMPTY_MAP : parseQuery(stripPrefix(uri.getQuery(), "?"));
+        return uri.getQuery() == null ? Collections.EMPTY_MAP : parseQuery(stripPrefix(uri.getQuery(), "?"));
     }
 
     /**
@@ -217,42 +222,42 @@ public class URISupport {
         final String componentString;
         final String params;
 
-        if(!checkParenthesis(ssp)){
+        if (!checkParenthesis(ssp)) {
             throw new URISyntaxException(uri.toString(), "Not a matching number of '(' and ')' parenthesis");
         }
 
         int p;
         final int intialParen = ssp.indexOf("(");
-        if( intialParen==0 ) {
+        if (intialParen == 0) {
             rc.host = ssp.substring(0, intialParen);
             p = rc.host.indexOf("/");
-            if( p >= 0 ) {
+            if (p >= 0) {
                 rc.path = rc.host.substring(p);
-                rc.host = rc.host.substring(0,p);
+                rc.host = rc.host.substring(0, p);
             }
             p = ssp.lastIndexOf(")");
-            componentString = ssp.substring(intialParen+1,p);
-            params = ssp.substring(p+1).trim();
+            componentString = ssp.substring(intialParen + 1, p);
+            params = ssp.substring(p + 1).trim();
 
         } else {
             componentString = ssp;
-            params="";
+            params = "";
         }
 
         final String[] components = splitComponents(componentString);
-        rc.components=new URI[components.length];
+        rc.components = new URI[components.length];
         for (int i = 0; i < components.length; i++) {
             rc.components[i] = new URI(components[i].trim());
         }
 
         p = params.indexOf("?");
-        if( p >= 0 ) {
-            if( p > 0) {
+        if (p >= 0) {
+            if (p > 0) {
                 rc.path = stripPrefix(params.substring(0, p), "/");
             }
-            rc.parameters = parseQuery(params.substring(p+1));
+            rc.parameters = parseQuery(params.substring(p + 1));
         } else {
-            if( params.length() > 0 ) {
+            if (params.length() > 0) {
                 rc.path = stripPrefix(params, "/");
             }
             rc.parameters = new LinkedHashMap();
@@ -262,28 +267,28 @@ public class URISupport {
     private static String[] splitComponents(final String str) {
         final ArrayList<String> l = new ArrayList<String>();
 
-        int last=0;
+        int last = 0;
         int depth = 0;
         final char[] chars = str.toCharArray();
-        for( int i=0; i < chars.length; i ++ ) {
-            switch( chars[i] ) {
-            case '(':
-                depth++;
-                break;
-            case ')':
-                depth--;
-                break;
-            case ',':
-                if( depth == 0 ) {
-                    final String s = str.substring(last, i);
-                    l.add(s);
-                    last=i+1;
-                }
+        for (int i = 0; i < chars.length; i++) {
+            switch (chars[i]) {
+                case '(':
+                    depth++;
+                    break;
+                case ')':
+                    depth--;
+                    break;
+                case ',':
+                    if (depth == 0) {
+                        final String s = str.substring(last, i);
+                        l.add(s);
+                        last = i + 1;
+                    }
             }
         }
 
         final String s = str.substring(last);
-        if( s.length() !=0 ) {
+        if (s.length() != 0) {
             l.add(s);
         }
 
@@ -293,7 +298,7 @@ public class URISupport {
     }
 
     public static String stripPrefix(final String value, final String prefix) {
-        if( value.startsWith(prefix) ) {
+        if (value.startsWith(prefix)) {
             return value.substring(prefix.length());
         }
         return value;
@@ -305,18 +310,18 @@ public class URISupport {
 
     public static String createQueryString(final Map options) throws URISyntaxException {
         try {
-            if(options.size()>0) {
+            if (options.size() > 0) {
                 final StringBuilder rc = new StringBuilder();
-                boolean first=true;
-                for (final Iterator iter = options.keySet().iterator(); iter.hasNext();) {
-                    if( first ) {
+                boolean first = true;
+                for (final Iterator iter = options.keySet().iterator(); iter.hasNext(); ) {
+                    if (first) {
                         first = false;
                     } else {
                         rc.append("&");
                     }
 
                     final String key = (String) iter.next();
-                    final String value = (String)options.get(key);
+                    final String value = (String) options.get(key);
                     rc.append(URLEncoder.encode(key, "UTF-8"));
                     rc.append("=");
                     rc.append(URLEncoder.encode(value, "UTF-8"));
@@ -326,17 +331,18 @@ public class URISupport {
                 return "";
             }
         } catch (final UnsupportedEncodingException e) {
-            throw (URISyntaxException)new URISyntaxException(e.toString(), "Invalid encoding").initCause(e);
+            throw (URISyntaxException) new URISyntaxException(e.toString(), "Invalid encoding").initCause(e);
         }
     }
 
     /**
      * Creates a URI from the original URI and the remaining paramaters
+     *
      * @throws URISyntaxException
      */
     public static URI createRemainingURI(final URI originalURI, final Map params) throws URISyntaxException {
         String s = createQueryString(params);
-        if( s.length()==0 ) {
+        if (s.length() == 0) {
             s = null;
         }
         return createURIWithQuery(originalURI, s);
@@ -346,19 +352,19 @@ public class URISupport {
         return new URI(scheme, bindAddr.getUserInfo(), bindAddr.getHost(), bindAddr.getPort(), bindAddr.getPath(), bindAddr.getQuery(), bindAddr.getFragment());
     }
 
-    public static boolean checkParenthesis(final String str){
-        boolean result=true;
-        if(str!=null){
-            int open=0;
-            int closed=0;
+    public static boolean checkParenthesis(final String str) {
+        boolean result = true;
+        if (str != null) {
+            int open = 0;
+            int closed = 0;
 
-            int i=0;
-            while((i=str.indexOf('(',i)) >=0 ){
+            int i = 0;
+            while ((i = str.indexOf('(', i)) >= 0) {
                 i++;
                 open++;
             }
-            i=0;
-            while((i=str.indexOf(')',i)) >=0 ){
+            i = 0;
+            while ((i = str.indexOf(')', i)) >= 0) {
                 i++;
                 closed++;
             }
@@ -367,7 +373,7 @@ public class URISupport {
         return result;
     }
 
-    public int indexOfParenthesisMatch(final String str){
+    public int indexOfParenthesisMatch(final String str) {
         final int result = -1;
 
         return result;

@@ -30,7 +30,7 @@ import static org.junit.Assert.assertEquals;
 public class PostConstructOnPrivateMethodTest {
     @Module
     public Class<?>[] cdi() {
-        return new Class<?>[] { CdiPrivatePostConstruct.class };
+        return new Class<?>[]{CdiPrivatePostConstruct.class};
     }
 
     @Inject

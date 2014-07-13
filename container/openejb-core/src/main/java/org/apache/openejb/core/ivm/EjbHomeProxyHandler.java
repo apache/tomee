@@ -307,19 +307,19 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
 
         if (beanContext.isAsynchronous(method)) {
             return beanContext.getModuleContext()
-                    .getAppContext()
-                    .getAsynchronousPool()
-                    .invoke(new CUCallable<Object>(new Callable<Object>() {
-                        @Override
-                        public Object call() throws Exception {
-                            try {
-                                return homeMethodInvoke(interfce, method, args);
-                            } catch (final ApplicationException ae) {
-                                logger.error("EjbHomeProxyHandler: Asynchronous call to '" + interfce.getSimpleName() + "' on '" + method.getName() + "' failed", ae);
-                                throw ae;
-                            }
+                .getAppContext()
+                .getAsynchronousPool()
+                .invoke(new CUCallable<Object>(new Callable<Object>() {
+                    @Override
+                    public Object call() throws Exception {
+                        try {
+                            return homeMethodInvoke(interfce, method, args);
+                        } catch (final ApplicationException ae) {
+                            logger.error("EjbHomeProxyHandler: Asynchronous call to '" + interfce.getSimpleName() + "' on '" + method.getName() + "' failed", ae);
+                            throw ae;
                         }
-                    }), method.getReturnType() == Void.TYPE);
+                    }
+                }), method.getReturnType() == Void.TYPE);
         } else {
             return homeMethodInvoke(interfce, method, args);
         }
@@ -354,9 +354,9 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
     protected Object getEJBMetaData(final Method method, final Object[] args, final Object proxy) throws Throwable {
         checkAuthorization(method);
         final IntraVmMetaData metaData = new IntraVmMetaData(getBeanContext().getHomeInterface(),
-                                                             getBeanContext().getRemoteInterface(),
-                                                             getBeanContext().getPrimaryKeyClass(),
-                                                             getBeanContext().getComponentType());
+            getBeanContext().getRemoteInterface(),
+            getBeanContext().getPrimaryKeyClass(),
+            getBeanContext().getComponentType());
         metaData.setEJBHome((EJBHome) proxy);
         return metaData;
     }

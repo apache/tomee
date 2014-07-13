@@ -65,7 +65,7 @@ public class JndiBuilder {
     final boolean embeddedEjbContainerApi;
 
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, JndiBuilder.class.getPackage().getName());
-    private static boolean USE_OLD_JNDI_NAMES = SystemInstance.get().getOptions().get("openejb.use-old-jndi-names", false);
+    private static final boolean USE_OLD_JNDI_NAMES = SystemInstance.get().getOptions().get("openejb.use-old-jndi-names", false);
 
     private final Context openejbContext;
     private static final String JNDINAME_STRATEGY_CLASS = "openejb.jndiname.strategy.class";
@@ -184,8 +184,8 @@ public class JndiBuilder {
     public static class TemplatedStrategy implements JndiNameStrategy {
         private static final String JNDINAME_FORMAT = "openejb.jndiname.format";
         private static final String KEYS = "default,local,global,app";
-        private StringTemplate template;
-        private HashMap<String, EnterpriseBeanInfo> beanInfos;
+        private final StringTemplate template;
+        private final HashMap<String, EnterpriseBeanInfo> beanInfos;
 
         // Set in begin()
         private BeanContext bean;
@@ -631,8 +631,8 @@ public class JndiBuilder {
                     beanInfo.jndiNamess.add(nameInfo);
 
                     if (!embeddedEjbContainerApi
-                            // filtering internal bean
-                            && !(beanInfo instanceof ManagedBeanInfo && ((ManagedBeanInfo) beanInfo).hidden)) {
+                        // filtering internal bean
+                        && !(beanInfo instanceof ManagedBeanInfo && ((ManagedBeanInfo) beanInfo).hidden)) {
                         logger.info("Jndi(name=" + externalName + ") --> Ejb(deployment-id=" + beanInfo.ejbDeploymentId + ")");
                     }
                 }
@@ -698,7 +698,7 @@ public class JndiBuilder {
             final String globalName = "global/" + appName + moduleName + beanName;
 
             if (embeddedEjbContainerApi
-                    && !(beanInfo instanceof ManagedBeanInfo && ((ManagedBeanInfo) beanInfo).hidden)) {
+                && !(beanInfo instanceof ManagedBeanInfo && ((ManagedBeanInfo) beanInfo).hidden)) {
                 logger.info(String.format("Jndi(name=\"java:%s\")", globalName));
             }
             globalContext.bind(globalName, ref);

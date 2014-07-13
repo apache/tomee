@@ -36,24 +36,24 @@ public class CheckMissingClassTest {
     @Keys(@Key(value = "missing.class", count = 16))
     public EjbJar wrongClassType() throws OpenEJBException {
         System.setProperty("openejb.validation.output.level", "VERBOSE");
-        EjbJar ejbJar = new EjbJar();
-        StatelessBean stateless = new StatelessBean(FooStateless.class);
+        final EjbJar ejbJar = new EjbJar();
+        final StatelessBean stateless = new StatelessBean(FooStateless.class);
         stateless.setHomeAndRemote("WrongHome", "WrongRemote");
         stateless.setLocal("WrongLocal");
         stateless.setLocalHome("WrongLocalHome");
         ejbJar.addEnterpriseBean(stateless);
-        StatefulBean stateful = new StatefulBean(FooStateful.class);
+        final StatefulBean stateful = new StatefulBean(FooStateful.class);
         stateful.setHomeAndRemote("WrongHome", "WrongRemote");
         stateful.setLocal("WrongLocal");
         stateful.setLocalHome("WrongLocalHome");
         ejbJar.addEnterpriseBean(stateful);
-        EntityBean bmpEntityBean = new EntityBean(FooEntityBMP.class, PersistenceType.BEAN);
+        final EntityBean bmpEntityBean = new EntityBean(FooEntityBMP.class, PersistenceType.BEAN);
         bmpEntityBean.setHome("WrongHome");
         bmpEntityBean.setLocalHome("WrongLocalHome");
         bmpEntityBean.setRemote("WrongRemote");
         bmpEntityBean.setLocal("WrongLocal");
         ejbJar.addEnterpriseBean(bmpEntityBean);
-        EntityBean cmpEntityBean = new EntityBean(FooEntityCMP.class, PersistenceType.CONTAINER);
+        final EntityBean cmpEntityBean = new EntityBean(FooEntityCMP.class, PersistenceType.CONTAINER);
         cmpEntityBean.setHome("WrongHome");
         cmpEntityBean.setLocalHome("WrongLocalHome");
         cmpEntityBean.setRemote("WrongRemote");
@@ -63,92 +63,122 @@ public class CheckMissingClassTest {
     }
 
     private static class FooStateless implements SessionBean {
-        public void ejbCreate() {}
+        public void ejbCreate() {
+        }
 
         @Override
-        public void ejbActivate() throws EJBException, RemoteException {}
+        public void ejbActivate() throws EJBException, RemoteException {
+        }
 
         @Override
-        public void ejbPassivate() throws EJBException, RemoteException {}
+        public void ejbPassivate() throws EJBException, RemoteException {
+        }
 
         @Override
-        public void ejbRemove() throws EJBException, RemoteException {}
+        public void ejbRemove() throws EJBException, RemoteException {
+        }
 
         @Override
-        public void setSessionContext(SessionContext arg0) throws EJBException, RemoteException {}
+        public void setSessionContext(final SessionContext arg0) throws EJBException, RemoteException {
+        }
     }
 
     private static class FooStateful implements SessionBean {
-        public void ejbCreate() {}
+        public void ejbCreate() {
+        }
 
         @Override
-        public void ejbActivate() throws EJBException, RemoteException {}
+        public void ejbActivate() throws EJBException, RemoteException {
+        }
 
         @Override
-        public void ejbPassivate() throws EJBException, RemoteException {}
+        public void ejbPassivate() throws EJBException, RemoteException {
+        }
 
         @Override
-        public void ejbRemove() throws EJBException, RemoteException {}
+        public void ejbRemove() throws EJBException, RemoteException {
+        }
 
         @Override
-        public void setSessionContext(SessionContext arg0) throws EJBException, RemoteException {}
+        public void setSessionContext(final SessionContext arg0) throws EJBException, RemoteException {
+        }
     }
 
     private static class FooEntityBMP implements javax.ejb.EntityBean {
-        public String ejbCreate(String id) {
+        public String ejbCreate(final String id) {
             return null;
         }
 
-        public void ejbPostCreate(String id) {};
+        public void ejbPostCreate(final String id) {
+        }
+
+        ;
 
         @Override
-        public void ejbActivate() throws EJBException, RemoteException {}
+        public void ejbActivate() throws EJBException, RemoteException {
+        }
 
         @Override
-        public void ejbLoad() throws EJBException, RemoteException {}
+        public void ejbLoad() throws EJBException, RemoteException {
+        }
 
         @Override
-        public void ejbPassivate() throws EJBException, RemoteException {}
+        public void ejbPassivate() throws EJBException, RemoteException {
+        }
 
         @Override
-        public void ejbRemove() throws RemoveException, EJBException, RemoteException {}
+        public void ejbRemove() throws RemoveException, EJBException, RemoteException {
+        }
 
         @Override
-        public void ejbStore() throws EJBException, RemoteException {}
+        public void ejbStore() throws EJBException, RemoteException {
+        }
 
         @Override
-        public void setEntityContext(EntityContext arg0) throws EJBException, RemoteException {}
+        public void setEntityContext(final EntityContext arg0) throws EJBException, RemoteException {
+        }
 
         @Override
-        public void unsetEntityContext() throws EJBException, RemoteException {}
+        public void unsetEntityContext() throws EJBException, RemoteException {
+        }
     }
 
     private static class FooEntityCMP implements javax.ejb.EntityBean {
-        public String ejbCreate(String id) {
+        public String ejbCreate(final String id) {
             return null;
         }
 
-        public void ejbPostCreate(String id) {};
+        public void ejbPostCreate(final String id) {
+        }
+
+        ;
 
         @Override
-        public void ejbActivate() throws EJBException, RemoteException {}
+        public void ejbActivate() throws EJBException, RemoteException {
+        }
 
         @Override
-        public void ejbLoad() throws EJBException, RemoteException {}
+        public void ejbLoad() throws EJBException, RemoteException {
+        }
 
         @Override
-        public void ejbPassivate() throws EJBException, RemoteException {}
+        public void ejbPassivate() throws EJBException, RemoteException {
+        }
 
         @Override
-        public void ejbRemove() throws RemoveException, EJBException, RemoteException {}
+        public void ejbRemove() throws RemoveException, EJBException, RemoteException {
+        }
 
         @Override
-        public void ejbStore() throws EJBException, RemoteException {}
+        public void ejbStore() throws EJBException, RemoteException {
+        }
 
         @Override
-        public void setEntityContext(EntityContext arg0) throws EJBException, RemoteException {}
+        public void setEntityContext(final EntityContext arg0) throws EJBException, RemoteException {
+        }
 
         @Override
-        public void unsetEntityContext() throws EJBException, RemoteException {}
+        public void unsetEntityContext() throws EJBException, RemoteException {
+        }
     }
 }

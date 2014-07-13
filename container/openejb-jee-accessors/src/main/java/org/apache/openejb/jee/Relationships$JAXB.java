@@ -35,33 +35,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class Relationships$JAXB
-        extends JAXBObject<Relationships> {
+    extends JAXBObject<Relationships> {
 
 
     public Relationships$JAXB() {
         super(Relationships.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "relationshipsType".intern()), Text$JAXB.class, EjbRelation$JAXB.class);
     }
 
-    public static Relationships readRelationships(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static Relationships readRelationships(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeRelationships(XoXMLStreamWriter writer, Relationships relationships, RuntimeContext context)
-            throws Exception {
+    public static void writeRelationships(final XoXMLStreamWriter writer, final Relationships relationships, final RuntimeContext context)
+        throws Exception {
         _write(writer, relationships, context);
     }
 
-    public void write(XoXMLStreamWriter writer, Relationships relationships, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final Relationships relationships, final RuntimeContext context)
+        throws Exception {
         _write(writer, relationships, context);
     }
 
-    public final static Relationships _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static Relationships _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -72,14 +72,14 @@ public class Relationships$JAXB
             context = new RuntimeContext();
         }
 
-        Relationships relationships = new Relationships();
+        final Relationships relationships = new Relationships();
         context.beforeUnmarshal(relationships, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
         List<EjbRelation> ejbRelation = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("relationshipsType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, Relationships.class);
@@ -87,10 +87,10 @@ public class Relationships$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, relationships);
                 relationships.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -99,17 +99,17 @@ public class Relationships$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
                 descriptions.add(descriptionsItem);
             } else if (("ejb-relation" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: ejbRelation
-                EjbRelation ejbRelationItem = readEjbRelation(elementReader, context);
+                final EjbRelation ejbRelationItem = readEjbRelation(elementReader, context);
                 if (ejbRelation == null) {
                     ejbRelation = relationships.ejbRelation;
                     if (ejbRelation != null) {
@@ -126,7 +126,7 @@ public class Relationships$JAXB
         if (descriptions != null) {
             try {
                 relationships.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, Relationships.class, "setDescriptions", Text[].class, e);
             }
         }
@@ -139,13 +139,13 @@ public class Relationships$JAXB
         return relationships;
     }
 
-    public final Relationships read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final Relationships read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, Relationships relationships, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final Relationships relationships, RuntimeContext context)
+        throws Exception {
         if (relationships == null) {
             writer.writeXsiNil();
             return;
@@ -155,7 +155,7 @@ public class Relationships$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (Relationships.class != relationships.getClass()) {
             context.unexpectedSubclass(writer, relationships, Relationships.class);
             return;
@@ -165,12 +165,12 @@ public class Relationships$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = relationships.id;
+        final String idRaw = relationships.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(relationships, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -180,11 +180,11 @@ public class Relationships$JAXB
         Text[] descriptions = null;
         try {
             descriptions = relationships.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(relationships, "descriptions", Relationships.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -196,9 +196,9 @@ public class Relationships$JAXB
         }
 
         // ELEMENT: ejbRelation
-        List<EjbRelation> ejbRelation = relationships.ejbRelation;
+        final List<EjbRelation> ejbRelation = relationships.ejbRelation;
         if (ejbRelation != null) {
-            for (EjbRelation ejbRelationItem : ejbRelation) {
+            for (final EjbRelation ejbRelationItem : ejbRelation) {
                 if (ejbRelationItem != null) {
                     writer.writeStartElement(prefix, "ejb-relation", "http://java.sun.com/xml/ns/javaee");
                     writeEjbRelation(writer, ejbRelationItem, context);

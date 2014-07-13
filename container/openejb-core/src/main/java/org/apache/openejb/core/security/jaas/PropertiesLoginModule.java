@@ -48,7 +48,7 @@ public class PropertiesLoginModule implements LoginModule {
     private static final String USER_FILE = "UsersFile";
     private static final String GROUP_FILE = "GroupsFile";
 
-    private static Logger log = Logger.getInstance(LogCategory.OPENEJB_SECURITY, "org.apache.openejb.util.resources");
+    private static final Logger log = Logger.getInstance(LogCategory.OPENEJB_SECURITY, "org.apache.openejb.util.resources");
 
     private Subject subject;
     private CallbackHandler callbackHandler;
@@ -57,7 +57,7 @@ public class PropertiesLoginModule implements LoginModule {
     private Properties users = new Properties();
     private Properties groups = new Properties();
     private String user;
-    private Set principals = new LinkedHashSet();
+    private final Set principals = new LinkedHashSet();
 
     private URL usersUrl;
     private URL groupsUrl;
@@ -73,7 +73,7 @@ public class PropertiesLoginModule implements LoginModule {
         usersUrl = ConfUtils.getConfResource(usersFile);
         groupsUrl = ConfUtils.getConfResource(groupsFile);
 
-        if (debug){
+        if (debug) {
             log.debug("Users file: " + usersUrl.toExternalForm());
             log.debug("Groups file: " + groupsUrl.toExternalForm());
         }
@@ -122,7 +122,7 @@ public class PropertiesLoginModule implements LoginModule {
         users.clear();
 
         if (debug) {
-            log.debug("Logged in as '" + user+"'");
+            log.debug("Logged in as '" + user + "'");
         }
         return true;
     }
@@ -130,7 +130,7 @@ public class PropertiesLoginModule implements LoginModule {
     public boolean commit() throws LoginException {
         principals.add(new UserPrincipal(user));
 
-        for (final Enumeration enumeration = groups.keys(); enumeration.hasMoreElements();) {
+        for (final Enumeration enumeration = groups.keys(); enumeration.hasMoreElements(); ) {
             final String name = (String) enumeration.nextElement();
             final String[] userList = String.valueOf(groups.getProperty(name)).split(",");
             for (int i = 0; i < userList.length; i++) {

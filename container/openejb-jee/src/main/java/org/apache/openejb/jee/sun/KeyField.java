@@ -38,7 +38,7 @@ public class KeyField {
         return name;
     }
 
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -50,7 +50,7 @@ public class KeyField {
         }
     }
 
-    public void setScope(String value) {
+    public void setScope(final String value) {
         this.scope = value;
     }
 }

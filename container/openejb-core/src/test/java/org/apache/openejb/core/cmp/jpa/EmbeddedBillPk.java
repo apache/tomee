@@ -30,47 +30,47 @@ public class EmbeddedBillPk {
 
     }
 
-    public EmbeddedBillPk(long number, long version, long revision) {
+    public EmbeddedBillPk(final long number, final long version, final long revision) {
         this.billNumber = number;
         this.billVersion = version;
         this.billRevision = revision;
     }
 
-    @Column(name="billNumber")
+    @Column(name = "billNumber")
     public long getBillNumber() {
         return this.billNumber;
     }
 
-    public void setBillNumber(long number) {
+    public void setBillNumber(final long number) {
         this.billNumber = number;
     }
 
-    @Column(name="billVersion")
+    @Column(name = "billVersion")
     public long getBillVersion() {
         return this.billVersion;
     }
 
-    public void setBillVersion(long version) {
+    public void setBillVersion(final long version) {
         this.billVersion = version;
     }
 
-    @Column(name="billRevision")
+    @Column(name = "billRevision")
     public long getBillRevision() {
         return this.billRevision;
     }
 
-    public void setBillRevision(long revision) {
+    public void setBillRevision(final long revision) {
         this.billRevision = revision;
     }
 
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == this)
             return true;
 
         if (!(obj instanceof EmbeddedBillPk))
             return false;
 
-        EmbeddedBillPk pk = (EmbeddedBillPk)obj;
+        final EmbeddedBillPk pk = (EmbeddedBillPk) obj;
 
         if (billNumber != pk.billNumber)
             return false;

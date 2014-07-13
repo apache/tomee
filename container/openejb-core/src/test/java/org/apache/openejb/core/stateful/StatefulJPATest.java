@@ -115,7 +115,7 @@ public class StatefulJPATest {
             return id;
         }
 
-        public void setId(long i) {
+        public void setId(final long i) {
             id = i;
         }
 
@@ -123,7 +123,7 @@ public class StatefulJPATest {
             return name;
         }
 
-        public void setName(String n) {
+        public void setName(final String n) {
             name = n;
         }
     }

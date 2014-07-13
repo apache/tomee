@@ -48,7 +48,7 @@ public class MethodParamPartsMapping {
         return paramPosition;
     }
 
-    public void setParamPosition(BigInteger value) {
+    public void setParamPosition(final BigInteger value) {
         this.paramPosition = value;
     }
 
@@ -56,7 +56,7 @@ public class MethodParamPartsMapping {
         return paramType;
     }
 
-    public void setParamType(String value) {
+    public void setParamType(final String value) {
         this.paramType = value;
     }
 
@@ -64,7 +64,7 @@ public class MethodParamPartsMapping {
         return wsdlMessageMapping;
     }
 
-    public void setWsdlMessageMapping(WsdlMessageMapping value) {
+    public void setWsdlMessageMapping(final WsdlMessageMapping value) {
         this.wsdlMessageMapping = value;
     }
 
@@ -72,7 +72,7 @@ public class MethodParamPartsMapping {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 }

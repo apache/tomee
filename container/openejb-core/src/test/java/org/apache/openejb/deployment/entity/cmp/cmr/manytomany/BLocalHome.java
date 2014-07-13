@@ -22,7 +22,6 @@ import javax.ejb.FinderException;
 
 
 /**
- *
  * @version $Revision$ $Date$
  */
 public interface BLocalHome extends EJBLocalHome {

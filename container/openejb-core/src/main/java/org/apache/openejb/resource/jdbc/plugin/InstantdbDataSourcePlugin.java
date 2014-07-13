@@ -31,7 +31,7 @@ public class InstantdbDataSourcePlugin extends AbstractDataSourcePlugin {
         // jdbc:idb:conf/instantdb.properties
         final String prefix = "jdbc:idb:";
         final int index = jdbcUrl.indexOf(prefix);
-        if (index == -1){
+        if (index == -1) {
             return jdbcUrl;
         }
 
@@ -46,7 +46,7 @@ public class InstantdbDataSourcePlugin extends AbstractDataSourcePlugin {
             return jdbcUrl;
         }
 
-        if (!file.getParentFile().exists()){
+        if (!file.getParentFile().exists()) {
             // The directory the instantdb properties file should live in
             // doesn't exist, don't bother
             return jdbcUrl;

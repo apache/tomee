@@ -28,33 +28,33 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.namespace.QName;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class PortMapping$JAXB
-        extends JAXBObject<PortMapping> {
+    extends JAXBObject<PortMapping> {
 
 
     public PortMapping$JAXB() {
         super(PortMapping.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "port-mappingType".intern()));
     }
 
-    public static PortMapping readPortMapping(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static PortMapping readPortMapping(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writePortMapping(XoXMLStreamWriter writer, PortMapping portMapping, RuntimeContext context)
-            throws Exception {
+    public static void writePortMapping(final XoXMLStreamWriter writer, final PortMapping portMapping, final RuntimeContext context)
+        throws Exception {
         _write(writer, portMapping, context);
     }
 
-    public void write(XoXMLStreamWriter writer, PortMapping portMapping, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final PortMapping portMapping, final RuntimeContext context)
+        throws Exception {
         _write(writer, portMapping, context);
     }
 
-    public final static PortMapping _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static PortMapping _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -65,12 +65,12 @@ public class PortMapping$JAXB
             context = new RuntimeContext();
         }
 
-        PortMapping portMapping = new PortMapping();
+        final PortMapping portMapping = new PortMapping();
         context.beforeUnmarshal(portMapping, LifecycleCallback.NONE);
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("port-mappingType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, PortMapping.class);
@@ -78,10 +78,10 @@ public class PortMapping$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, portMapping);
                 portMapping.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -90,15 +90,15 @@ public class PortMapping$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("port-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: portName
-                String portNameRaw = elementReader.getElementAsString();
+                final String portNameRaw = elementReader.getElementAsString();
 
-                String portName;
+                final String portName;
                 try {
                     portName = Adapters.collapsedStringAdapterAdapter.unmarshal(portNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -106,12 +106,12 @@ public class PortMapping$JAXB
                 portMapping.portName = portName;
             } else if (("java-port-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: javaPortName
-                String javaPortNameRaw = elementReader.getElementAsString();
+                final String javaPortNameRaw = elementReader.getElementAsString();
 
-                String javaPortName;
+                final String javaPortName;
                 try {
                     javaPortName = Adapters.collapsedStringAdapterAdapter.unmarshal(javaPortNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -127,13 +127,13 @@ public class PortMapping$JAXB
         return portMapping;
     }
 
-    public final PortMapping read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final PortMapping read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, PortMapping portMapping, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final PortMapping portMapping, RuntimeContext context)
+        throws Exception {
         if (portMapping == null) {
             writer.writeXsiNil();
             return;
@@ -143,7 +143,7 @@ public class PortMapping$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (PortMapping.class != portMapping.getClass()) {
             context.unexpectedSubclass(writer, portMapping, PortMapping.class);
             return;
@@ -153,23 +153,23 @@ public class PortMapping$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = portMapping.id;
+        final String idRaw = portMapping.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(portMapping, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: portName
-        String portNameRaw = portMapping.portName;
+        final String portNameRaw = portMapping.portName;
         String portName = null;
         try {
             portName = Adapters.collapsedStringAdapterAdapter.marshal(portNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(portMapping, "portName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (portName != null) {
@@ -181,11 +181,11 @@ public class PortMapping$JAXB
         }
 
         // ELEMENT: javaPortName
-        String javaPortNameRaw = portMapping.javaPortName;
+        final String javaPortNameRaw = portMapping.javaPortName;
         String javaPortName = null;
         try {
             javaPortName = Adapters.collapsedStringAdapterAdapter.marshal(javaPortNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(portMapping, "javaPortName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (javaPortName != null) {

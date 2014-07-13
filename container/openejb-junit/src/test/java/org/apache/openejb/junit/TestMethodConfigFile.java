@@ -20,9 +20,11 @@ package org.apache.openejb.junit;
 import org.apache.openejb.junit.ContextConfig;
 import org.apache.openejb.junit.TestResource;
 import org.apache.openejb.junit.TestResourceTypes;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -44,7 +46,7 @@ public class TestMethodConfigFile {
 
     @Test
     @ContextConfig(
-            configFile = "/META-INF/test-config.properties"
+        configFile = "/META-INF/test-config.properties"
     )
     public void testConfig() {
         assertNotNull(contextConfig);
@@ -59,8 +61,8 @@ public class TestMethodConfigFile {
         assertNull(contextConfig.get(CHECK_PROPERTY));
     }
 
-    private void checkProperty(String key, String expected) {
-        String value = contextConfig.get(key);
+    private void checkProperty(final String key, final String expected) {
+        final String value = contextConfig.get(key);
         assertEquals(expected, value);
     }
 }

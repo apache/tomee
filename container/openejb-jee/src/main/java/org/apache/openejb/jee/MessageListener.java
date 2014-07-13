@@ -34,8 +34,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "messagelistenerType", propOrder = {
-        "messageListenerType",
-        "activationSpec"
+    "messageListenerType",
+    "activationSpec"
 })
 public class MessageListener {
 
@@ -51,12 +51,12 @@ public class MessageListener {
     public MessageListener() {
     }
 
-    public MessageListener(String messageListenerType, String activationSpecClass) {
+    public MessageListener(final String messageListenerType, final String activationSpecClass) {
         this.messageListenerType = messageListenerType;
         this.activationSpec = new ActivationSpec(activationSpecClass);
     }
 
-    public MessageListener(Class messageListenerType, Class activationSpecClass) {
+    public MessageListener(final Class messageListenerType, final Class activationSpecClass) {
         this(messageListenerType.getName(), activationSpecClass.getName());
     }
 
@@ -64,7 +64,7 @@ public class MessageListener {
         return messageListenerType;
     }
 
-    public void setMessageListenerType(String value) {
+    public void setMessageListenerType(final String value) {
         this.messageListenerType = value;
     }
 
@@ -72,7 +72,7 @@ public class MessageListener {
         return activationSpec;
     }
 
-    public void setActivationSpec(ActivationSpec value) {
+    public void setActivationSpec(final ActivationSpec value) {
         this.activationSpec = value;
     }
 
@@ -80,7 +80,7 @@ public class MessageListener {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

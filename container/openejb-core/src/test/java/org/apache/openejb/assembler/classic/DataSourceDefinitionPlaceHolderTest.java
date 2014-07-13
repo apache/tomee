@@ -62,11 +62,11 @@ public class DataSourceDefinitionPlaceHolderTest {
     }
 
     @DataSourceDefinition(
-            name = "${jndi}",
-            className = "${driver}",
-            user = "${user}",
-            password = "${pwd}",
-            url = "${url}"
+        name = "${jndi}",
+        className = "${driver}",
+        user = "${user}",
+        password = "${pwd}",
+        url = "${url}"
     )
 
     @Singleton

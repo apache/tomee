@@ -51,7 +51,8 @@ public class AutoConfigMdbContainerTest extends TestCase {
     private ConfigurationFactory config;
     private Assembler assembler;
 
-    public void test(){}
+    public void test() {
+    }
 
     protected void _setUp() throws Exception {
         config = new ConfigurationFactory();
@@ -60,28 +61,28 @@ public class AutoConfigMdbContainerTest extends TestCase {
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
-        ServiceProvider provider = new ServiceProvider(EmailResourceAdapter.class, EmailResourceAdapter.class.getSimpleName(), "Resource");
+        final ServiceProvider provider = new ServiceProvider(EmailResourceAdapter.class, EmailResourceAdapter.class.getSimpleName(), "Resource");
         provider.getTypes().add(EmailResourceAdapter.class.getName());
         ServiceUtils.getServiceProviders().add(provider);
     }
 
     public void _testJmsMdbNoContainerConfigured() throws Exception {
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new MessageDrivenBean(JmsBean.class));
-        EjbJarInfo info = config.configureApplication(ejbJar);
+        final EjbJarInfo info = config.configureApplication(ejbJar);
 //        assembler.createApplication(info);
     }
 
     public void _testConfiguredContainerSelection() throws Exception {
 
         // Create a JMS MDB Container
-        MdbContainerInfo info = config.configureService(MdbContainerInfo.class);
+        final MdbContainerInfo info = config.configureService(MdbContainerInfo.class);
         assertEquals(MessageListener.class.getName(), info.properties.get("MessageListenerInterface"));
         assembler.createContainer(info);
 
         // Create an Email MDB Container
-        Container container = new Container("EmailContainer", "MESSAGE", null);
-        Properties properties = container.getProperties();
+        final Container container = new Container("EmailContainer", "MESSAGE", null);
+        final Properties properties = container.getProperties();
         properties.setProperty("ResourceAdapter", EmailResourceAdapter.class.getSimpleName());
         properties.setProperty("MessageListenerInterface", EmailConsumer.class.getName());
         properties.setProperty("ActivationSpecClass", EmailAccountInfo.class.getName());
@@ -92,19 +93,19 @@ public class AutoConfigMdbContainerTest extends TestCase {
 
 
     @MessageDriven(activationConfig = {
-            @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
-            @ActivationConfigProperty(propertyName = "destination", propertyValue = "FooQueue")})
+        @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
+        @ActivationConfigProperty(propertyName = "destination", propertyValue = "FooQueue")})
     public static class JmsBean implements MessageListener {
 
-        public void onMessage(Message message) {
+        public void onMessage(final Message message) {
         }
     }
 
     @MessageDriven(activationConfig = {
-            @ActivationConfigProperty(propertyName = "address", propertyValue = "dblevins@apache.org")})
+        @ActivationConfigProperty(propertyName = "address", propertyValue = "dblevins@apache.org")})
     public static class EmailBean implements EmailConsumer {
 
-        public void receiveEmail(Properties headers, String body) {
+        public void receiveEmail(final Properties headers, final String body) {
         }
     }
 
@@ -117,39 +118,39 @@ public class AutoConfigMdbContainerTest extends TestCase {
 
         private final Map<String, EmailConsumer> consumers = new HashMap<String, EmailConsumer>();
 
-        public void start(BootstrapContext bootstrapContext) throws ResourceAdapterInternalException {
+        public void start(final BootstrapContext bootstrapContext) throws ResourceAdapterInternalException {
         }
 
         public void stop() {
         }
 
-        public void endpointActivation(MessageEndpointFactory messageEndpointFactory, ActivationSpec activationSpec) throws ResourceException {
-            EmailAccountInfo accountInfo = (EmailAccountInfo) activationSpec;
+        public void endpointActivation(final MessageEndpointFactory messageEndpointFactory, final ActivationSpec activationSpec) throws ResourceException {
+            final EmailAccountInfo accountInfo = (EmailAccountInfo) activationSpec;
 
-            EmailConsumer emailConsumer = (EmailConsumer) messageEndpointFactory.createEndpoint(null);
+            final EmailConsumer emailConsumer = (EmailConsumer) messageEndpointFactory.createEndpoint(null);
             consumers.put(accountInfo.getAddress(), emailConsumer);
         }
 
-        public void endpointDeactivation(MessageEndpointFactory messageEndpointFactory, ActivationSpec activationSpec) {
-            EmailAccountInfo accountInfo = (EmailAccountInfo) activationSpec;
+        public void endpointDeactivation(final MessageEndpointFactory messageEndpointFactory, final ActivationSpec activationSpec) {
+            final EmailAccountInfo accountInfo = (EmailAccountInfo) activationSpec;
 
-            EmailConsumer emailConsumer = consumers.remove(accountInfo.getAddress());
-            MessageEndpoint endpoint = (MessageEndpoint) emailConsumer;
+            final EmailConsumer emailConsumer = consumers.remove(accountInfo.getAddress());
+            final MessageEndpoint endpoint = (MessageEndpoint) emailConsumer;
             endpoint.release();
         }
 
-        public XAResource[] getXAResources(ActivationSpec[] activationSpecs) throws ResourceException {
+        public XAResource[] getXAResources(final ActivationSpec[] activationSpecs) throws ResourceException {
             return new XAResource[0];
         }
 
-        public void deliverEmail(Properties headers, String body) throws Exception {
-            String to = headers.getProperty("To");
+        public void deliverEmail(final Properties headers, final String body) throws Exception {
+            final String to = headers.getProperty("To");
 
-            EmailConsumer emailConsumer = consumers.get(to);
+            final EmailConsumer emailConsumer = consumers.get(to);
 
             if (emailConsumer == null) throw new Exception("No such account");
 
-            MessageEndpoint endpoint = (MessageEndpoint) emailConsumer;
+            final MessageEndpoint endpoint = (MessageEndpoint) emailConsumer;
 
             endpoint.beforeDelivery(EmailConsumer.class.getMethod("receiveEmail", Properties.class, String.class));
             emailConsumer.receiveEmail(headers, body);
@@ -169,7 +170,7 @@ public class AutoConfigMdbContainerTest extends TestCase {
             return address;
         }
 
-        public void setAddress(String address) {
+        public void setAddress(final String address) {
             this.address = address;
         }
 
@@ -177,7 +178,7 @@ public class AutoConfigMdbContainerTest extends TestCase {
             return emailResourceAdapter;
         }
 
-        public void setResourceAdapter(javax.resource.spi.ResourceAdapter resourceAdapter) {
+        public void setResourceAdapter(final javax.resource.spi.ResourceAdapter resourceAdapter) {
             this.emailResourceAdapter = (EmailResourceAdapter) resourceAdapter;
         }
     }

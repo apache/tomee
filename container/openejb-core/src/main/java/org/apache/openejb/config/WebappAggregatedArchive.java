@@ -37,7 +37,7 @@ public class WebappAggregatedArchive implements Archive, ScanConstants {
     private final Map<URL, List<String>> map = new HashMap<URL, List<String>>();
     private ScanUtil.ScanHandler handler;
     private boolean scanXmlExists; // faster than using an empty handler
-    private Archive archive;
+    private final Archive archive;
 
     public WebappAggregatedArchive(final Module module, final Iterable<URL> urls) {
         final List<Archive> archives = new ArrayList<Archive>();
@@ -86,7 +86,7 @@ public class WebappAggregatedArchive implements Archive, ScanConstants {
     }
 
     public static class ScanXmlSaverFilter implements Filter {
-        private boolean scanXmlExists;
+        private final boolean scanXmlExists;
         private final ScanUtil.ScanHandler handler;
         private final List<String> classes;
 

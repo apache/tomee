@@ -44,11 +44,11 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask {
         }
         final ThreadContext threadContext = ThreadContext.getThreadContext();
         initialContext = new Context(
-                associate, stateTmp, threadContext == null ? null : threadContext.get(AbstractSecurityService.SecurityContext.class),
-                threadContext, Thread.currentThread().getContextClassLoader());
+            associate, stateTmp, threadContext == null ? null : threadContext.get(AbstractSecurityService.SecurityContext.class),
+            threadContext, Thread.currentThread().getContextClassLoader());
     }
 
-    protected T invoke(final Callable<T> call) throws Exception{
+    protected T invoke(final Callable<T> call) throws Exception {
         initialContext.enter();
 
         Throwable throwable = null;

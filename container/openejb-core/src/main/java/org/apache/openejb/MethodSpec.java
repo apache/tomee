@@ -93,8 +93,8 @@ public class MethodSpec implements Comparable, Serializable {
 
         final MethodSpec methodSpec = (MethodSpec) obj;
         return methodIntf.equals(methodSpec.methodIntf) &&
-                methodName.equals(methodSpec.methodName) &&
-                Arrays.equals(parameterTypes, methodSpec.parameterTypes);
+            methodName.equals(methodSpec.methodName) &&
+            Arrays.equals(parameterTypes, methodSpec.parameterTypes);
     }
 
     public String toString() {

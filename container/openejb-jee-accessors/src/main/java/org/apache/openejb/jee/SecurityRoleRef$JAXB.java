@@ -32,33 +32,33 @@ import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class SecurityRoleRef$JAXB
-        extends JAXBObject<SecurityRoleRef> {
+    extends JAXBObject<SecurityRoleRef> {
 
 
     public SecurityRoleRef$JAXB() {
         super(SecurityRoleRef.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "security-role-refType".intern()), Text$JAXB.class);
     }
 
-    public static SecurityRoleRef readSecurityRoleRef(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static SecurityRoleRef readSecurityRoleRef(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeSecurityRoleRef(XoXMLStreamWriter writer, SecurityRoleRef securityRoleRef, RuntimeContext context)
-            throws Exception {
+    public static void writeSecurityRoleRef(final XoXMLStreamWriter writer, final SecurityRoleRef securityRoleRef, final RuntimeContext context)
+        throws Exception {
         _write(writer, securityRoleRef, context);
     }
 
-    public void write(XoXMLStreamWriter writer, SecurityRoleRef securityRoleRef, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final SecurityRoleRef securityRoleRef, final RuntimeContext context)
+        throws Exception {
         _write(writer, securityRoleRef, context);
     }
 
-    public final static SecurityRoleRef _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static SecurityRoleRef _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -69,13 +69,13 @@ public class SecurityRoleRef$JAXB
             context = new RuntimeContext();
         }
 
-        SecurityRoleRef securityRoleRef = new SecurityRoleRef();
+        final SecurityRoleRef securityRoleRef = new SecurityRoleRef();
         context.beforeUnmarshal(securityRoleRef, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("security-role-refType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, SecurityRoleRef.class);
@@ -83,10 +83,10 @@ public class SecurityRoleRef$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, securityRoleRef);
                 securityRoleRef.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -95,22 +95,22 @@ public class SecurityRoleRef$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
                 descriptions.add(descriptionsItem);
             } else if (("role-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: roleName
-                String roleNameRaw = elementReader.getElementAsString();
+                final String roleNameRaw = elementReader.getElementAsString();
 
-                String roleName;
+                final String roleName;
                 try {
                     roleName = Adapters.collapsedStringAdapterAdapter.unmarshal(roleNameRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -118,12 +118,12 @@ public class SecurityRoleRef$JAXB
                 securityRoleRef.roleName = roleName;
             } else if (("role-link" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: roleLink
-                String roleLinkRaw = elementReader.getElementAsString();
+                final String roleLinkRaw = elementReader.getElementAsString();
 
-                String roleLink;
+                final String roleLink;
                 try {
                     roleLink = Adapters.collapsedStringAdapterAdapter.unmarshal(roleLinkRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -136,7 +136,7 @@ public class SecurityRoleRef$JAXB
         if (descriptions != null) {
             try {
                 securityRoleRef.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, SecurityRoleRef.class, "setDescriptions", Text[].class, e);
             }
         }
@@ -146,13 +146,13 @@ public class SecurityRoleRef$JAXB
         return securityRoleRef;
     }
 
-    public final SecurityRoleRef read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final SecurityRoleRef read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, SecurityRoleRef securityRoleRef, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final SecurityRoleRef securityRoleRef, RuntimeContext context)
+        throws Exception {
         if (securityRoleRef == null) {
             writer.writeXsiNil();
             return;
@@ -162,7 +162,7 @@ public class SecurityRoleRef$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (SecurityRoleRef.class != securityRoleRef.getClass()) {
             context.unexpectedSubclass(writer, securityRoleRef, SecurityRoleRef.class);
             return;
@@ -172,12 +172,12 @@ public class SecurityRoleRef$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = securityRoleRef.id;
+        final String idRaw = securityRoleRef.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(securityRoleRef, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -187,11 +187,11 @@ public class SecurityRoleRef$JAXB
         Text[] descriptions = null;
         try {
             descriptions = securityRoleRef.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(securityRoleRef, "descriptions", SecurityRoleRef.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -203,11 +203,11 @@ public class SecurityRoleRef$JAXB
         }
 
         // ELEMENT: roleName
-        String roleNameRaw = securityRoleRef.roleName;
+        final String roleNameRaw = securityRoleRef.roleName;
         String roleName = null;
         try {
             roleName = Adapters.collapsedStringAdapterAdapter.marshal(roleNameRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(securityRoleRef, "roleName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (roleName != null) {
@@ -219,11 +219,11 @@ public class SecurityRoleRef$JAXB
         }
 
         // ELEMENT: roleLink
-        String roleLinkRaw = securityRoleRef.roleLink;
+        final String roleLinkRaw = securityRoleRef.roleLink;
         String roleLink = null;
         try {
             roleLink = Adapters.collapsedStringAdapterAdapter.marshal(roleLinkRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(securityRoleRef, "roleLink", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (roleLink != null) {

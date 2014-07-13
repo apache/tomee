@@ -71,7 +71,7 @@ public class SecurityPropagationTest {
     public static class RunnableTest implements Runnable {
         private Principal expectedPrincipal;
 
-        public void setExpectedPrincipal(Principal expectedPrincipal) {
+        public void setExpectedPrincipal(final Principal expectedPrincipal) {
             this.expectedPrincipal = expectedPrincipal;
         }
 
@@ -79,20 +79,20 @@ public class SecurityPropagationTest {
         public void run() {
             try {
                 Thread.sleep(200);
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 Thread.interrupted();
             }
 
             final InitialContext initialContext;
             try {
                 initialContext = new InitialContext();
-            } catch (NamingException e) {
+            } catch (final NamingException e) {
                 throw new RuntimeException(e);
             }
             final EJBContext ejbContext;
             try {
                 ejbContext = (SessionContext) initialContext.lookup("java:comp/EJBContext");
-            } catch (NamingException e) {
+            } catch (final NamingException e) {
                 throw new RuntimeException(e);
             }
 

@@ -48,7 +48,7 @@ public class ThisInConstructorTest {
 
     @Stateless
     public static class AStatelessWithAConstructor {
-        private AStatelessWithAConstructor that;
+        private final AStatelessWithAConstructor that;
 
         public AStatelessWithAConstructor() {
             that = this;

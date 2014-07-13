@@ -49,7 +49,7 @@ public class EntityMapping {
         return ejbName;
     }
 
-    public void setEjbName(String value) {
+    public void setEjbName(final String value) {
         this.ejbName = value;
     }
 
@@ -57,7 +57,7 @@ public class EntityMapping {
         return tableName;
     }
 
-    public void setTableName(String value) {
+    public void setTableName(final String value) {
         this.tableName = value;
     }
 
@@ -86,7 +86,7 @@ public class EntityMapping {
         return consistency;
     }
 
-    public void setConsistency(Consistency value) {
+    public void setConsistency(final Consistency value) {
         this.consistency = value;
     }
 }

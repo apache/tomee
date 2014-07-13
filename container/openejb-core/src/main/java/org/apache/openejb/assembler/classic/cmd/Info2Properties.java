@@ -52,7 +52,7 @@ import java.util.Properties;
  * @version $Rev$ $Date$
  */
 public class Info2Properties {
-    private static Messages messages = new Messages(Info2Properties.class);
+    private static final Messages messages = new Messages(Info2Properties.class);
 
     private static final String defaultServerUrl = "ejbd://localhost:4201";
 

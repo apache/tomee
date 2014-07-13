@@ -30,33 +30,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class ConstructorParameterOrder$JAXB
-        extends JAXBObject<ConstructorParameterOrder> {
+    extends JAXBObject<ConstructorParameterOrder> {
 
 
     public ConstructorParameterOrder$JAXB() {
         super(ConstructorParameterOrder.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "constructor-parameter-orderType".intern()));
     }
 
-    public static ConstructorParameterOrder readConstructorParameterOrder(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static ConstructorParameterOrder readConstructorParameterOrder(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeConstructorParameterOrder(XoXMLStreamWriter writer, ConstructorParameterOrder constructorParameterOrder, RuntimeContext context)
-            throws Exception {
+    public static void writeConstructorParameterOrder(final XoXMLStreamWriter writer, final ConstructorParameterOrder constructorParameterOrder, final RuntimeContext context)
+        throws Exception {
         _write(writer, constructorParameterOrder, context);
     }
 
-    public void write(XoXMLStreamWriter writer, ConstructorParameterOrder constructorParameterOrder, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final ConstructorParameterOrder constructorParameterOrder, final RuntimeContext context)
+        throws Exception {
         _write(writer, constructorParameterOrder, context);
     }
 
-    public final static ConstructorParameterOrder _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static ConstructorParameterOrder _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -67,13 +67,13 @@ public class ConstructorParameterOrder$JAXB
             context = new RuntimeContext();
         }
 
-        ConstructorParameterOrder constructorParameterOrder = new ConstructorParameterOrder();
+        final ConstructorParameterOrder constructorParameterOrder = new ConstructorParameterOrder();
         context.beforeUnmarshal(constructorParameterOrder, LifecycleCallback.NONE);
 
         List<String> elementName = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("constructor-parameter-orderType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, ConstructorParameterOrder.class);
@@ -81,10 +81,10 @@ public class ConstructorParameterOrder$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, constructorParameterOrder);
                 constructorParameterOrder.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -93,15 +93,15 @@ public class ConstructorParameterOrder$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("element-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: elementName
-                String elementNameItemRaw = elementReader.getElementAsString();
+                final String elementNameItemRaw = elementReader.getElementAsString();
 
-                String elementNameItem;
+                final String elementNameItem;
                 try {
                     elementNameItem = Adapters.collapsedStringAdapterAdapter.unmarshal(elementNameItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -128,13 +128,13 @@ public class ConstructorParameterOrder$JAXB
         return constructorParameterOrder;
     }
 
-    public final ConstructorParameterOrder read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final ConstructorParameterOrder read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, ConstructorParameterOrder constructorParameterOrder, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final ConstructorParameterOrder constructorParameterOrder, RuntimeContext context)
+        throws Exception {
         if (constructorParameterOrder == null) {
             writer.writeXsiNil();
             return;
@@ -153,25 +153,25 @@ public class ConstructorParameterOrder$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = constructorParameterOrder.id;
+        final String idRaw = constructorParameterOrder.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(constructorParameterOrder, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: elementName
-        List<String> elementNameRaw = constructorParameterOrder.elementName;
+        final List<String> elementNameRaw = constructorParameterOrder.elementName;
         if (elementNameRaw != null) {
-            for (String elementNameItem : elementNameRaw) {
+            for (final String elementNameItem : elementNameRaw) {
                 String elementName = null;
                 try {
                     elementName = Adapters.collapsedStringAdapterAdapter.marshal(elementNameItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(constructorParameterOrder, "elementName", CollapsedStringAdapter.class, List.class, List.class, e);
                 }
                 if (elementName != null) {

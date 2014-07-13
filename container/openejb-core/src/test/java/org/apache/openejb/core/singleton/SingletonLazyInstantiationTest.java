@@ -48,11 +48,11 @@ public class SingletonLazyInstantiationTest extends TestCase {
     protected void setUp() throws Exception {
         exception.set(false);
         MySingleton.instances.set(0);
-        
+
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
-        ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
 
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
@@ -62,21 +62,21 @@ public class SingletonLazyInstantiationTest extends TestCase {
 
         // Setup the descriptor information
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new SingletonBean(MySingleton.class));
 
         assembler.createApplication(config.configureApplication(ejbJar));
     }
 
     public void testSuccess() throws Exception {
-        Context context = new InitialContext();
+        final Context context = new InitialContext();
 
-        int threads = 200;
-        CyclicBarrier start = new CyclicBarrier(threads + 1);
-        CountDownLatch finish = new CountDownLatch(threads);
+        final int threads = 200;
+        final CyclicBarrier start = new CyclicBarrier(threads + 1);
+        final CountDownLatch finish = new CountDownLatch(threads);
 
         for (int i = threads; i > 0; i--) {
-            Thread thread = new Thread(new Client(context, start, finish));
+            final Thread thread = new Thread(new Client(context, start, finish));
             thread.setDaemon(true);
             thread.start();
         }
@@ -84,31 +84,31 @@ public class SingletonLazyInstantiationTest extends TestCase {
         start.await(30, TimeUnit.SECONDS);
 
         assertFalse("All threads did not start", start.isBroken());
-        
+
         assertTrue("Client threads did not complete", finish.await(30, TimeUnit.SECONDS));
 
         assertEquals("incorrect number of instances", 1, MySingleton.instances.get());
 
         // Invoke a business method just to be sure
-        MySingletonLocal singletonLocal = (MySingletonLocal) context.lookup("MySingletonLocal");
+        final MySingletonLocal singletonLocal = (MySingletonLocal) context.lookup("MySingletonLocal");
         assertEquals(1, singletonLocal.getId());
     }
 
     public void testFailure() throws Throwable {
 
-        Exception exception1 = new Exception("Inner exception");
+        final Exception exception1 = new Exception("Inner exception");
         exception1.fillInStackTrace();
 
         exception.set(true);
 
-        Context context = new InitialContext();
+        final Context context = new InitialContext();
 
-        int threads = 200;
-        CyclicBarrier start = new CyclicBarrier(threads + 1);
-        CountDownLatch finish = new CountDownLatch(threads);
+        final int threads = 200;
+        final CyclicBarrier start = new CyclicBarrier(threads + 1);
+        final CountDownLatch finish = new CountDownLatch(threads);
 
         for (int i = threads; i > 0; i--) {
-            Thread thread = new Thread(new Client(context, start, finish));
+            final Thread thread = new Thread(new Client(context, start, finish));
             thread.setDaemon(true);
             thread.start();
         }
@@ -116,17 +116,17 @@ public class SingletonLazyInstantiationTest extends TestCase {
         start.await(30, TimeUnit.SECONDS);
 
         assertFalse("All threads did not start", start.isBroken());
-        
+
         assertTrue("Client threads did not complete", finish.await(30, TimeUnit.SECONDS));
 
         assertEquals("incorrect number of instances", 1, MySingleton.instances.get());
 
         // Invoke a business method just to be sure
-        MySingletonLocal singletonLocal = (MySingletonLocal) context.lookup("MySingletonLocal");
+        final MySingletonLocal singletonLocal = (MySingletonLocal) context.lookup("MySingletonLocal");
         try {
             assertEquals(1, singletonLocal.getId());
             fail("Expected NoSuchEJBException");
-        } catch (NoSuchEJBException e) {
+        } catch (final NoSuchEJBException e) {
             // pass
         }
     }
@@ -136,7 +136,7 @@ public class SingletonLazyInstantiationTest extends TestCase {
         private final CountDownLatch finish;
         private final Context context;
 
-        public Client(Context context, CyclicBarrier start, CountDownLatch finish) {
+        public Client(final Context context, final CyclicBarrier start, final CountDownLatch finish) {
             this.context = context;
             this.start = start;
             this.finish = finish;
@@ -150,13 +150,13 @@ public class SingletonLazyInstantiationTest extends TestCase {
 
                 log("looking up the singleton");
 
-                MySingletonLocal singletonLocal = (MySingletonLocal) context.lookup("MySingletonLocal");
+                final MySingletonLocal singletonLocal = (MySingletonLocal) context.lookup("MySingletonLocal");
 
                 // Have to invoke a method to ensure creation
                 singletonLocal.getId();
 
                 log("singleton retrieved " + singletonLocal);
-            } catch (NoSuchEJBException e) {
+            } catch (final NoSuchEJBException e) {
                 if (!exception.get()) {
                     synchronized (System.out) {
                         log("exception");
@@ -164,7 +164,7 @@ public class SingletonLazyInstantiationTest extends TestCase {
                     }
                     throw new RuntimeException(e);
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 synchronized (System.out) {
                     log("exception");
                     e.printStackTrace(System.out);
@@ -178,7 +178,7 @@ public class SingletonLazyInstantiationTest extends TestCase {
 
     }
 
-    public static void log(String s) {
+    public static void log(final String s) {
 //        System.out.println(Thread.currentThread().getName() + " : " + s);
     }
 

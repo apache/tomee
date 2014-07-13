@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -49,8 +49,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -84,11 +82,9 @@ public class RelationTableMapping {
 
     /**
      * Gets the value of the tableName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link TableName }
-     *     
+     *
+     * @return possible object is
+     * {@link TableName }
      */
     public TableName getTableName() {
         return tableName;
@@ -96,23 +92,19 @@ public class RelationTableMapping {
 
     /**
      * Sets the value of the tableName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link TableName }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link TableName }
      */
-    public void setTableName(TableName value) {
+    public void setTableName(final TableName value) {
         this.tableName = value;
     }
 
     /**
      * Gets the value of the datasource property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Datasource }
-     *     
+     *
+     * @return possible object is
+     * {@link Datasource }
      */
     public Datasource getDatasource() {
         return datasource;
@@ -120,23 +112,19 @@ public class RelationTableMapping {
 
     /**
      * Sets the value of the datasource property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Datasource }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Datasource }
      */
-    public void setDatasource(Datasource value) {
+    public void setDatasource(final Datasource value) {
         this.datasource = value;
     }
 
     /**
      * Gets the value of the datasourceMapping property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link DatasourceMapping }
-     *     
+     *
+     * @return possible object is
+     * {@link DatasourceMapping }
      */
     public DatasourceMapping getDatasourceMapping() {
         return datasourceMapping;
@@ -144,23 +132,19 @@ public class RelationTableMapping {
 
     /**
      * Sets the value of the datasourceMapping property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link DatasourceMapping }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link DatasourceMapping }
      */
-    public void setDatasourceMapping(DatasourceMapping value) {
+    public void setDatasourceMapping(final DatasourceMapping value) {
         this.datasourceMapping = value;
     }
 
     /**
      * Gets the value of the createTable property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link CreateTable }
-     *     
+     *
+     * @return possible object is
+     * {@link CreateTable }
      */
     public CreateTable getCreateTable() {
         return createTable;
@@ -168,23 +152,19 @@ public class RelationTableMapping {
 
     /**
      * Sets the value of the createTable property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link CreateTable }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link CreateTable }
      */
-    public void setCreateTable(CreateTable value) {
+    public void setCreateTable(final CreateTable value) {
         this.createTable = value;
     }
 
     /**
      * Gets the value of the removeTable property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link RemoveTable }
-     *     
+     *
+     * @return possible object is
+     * {@link RemoveTable }
      */
     public RemoveTable getRemoveTable() {
         return removeTable;
@@ -192,23 +172,19 @@ public class RelationTableMapping {
 
     /**
      * Sets the value of the removeTable property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link RemoveTable }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link RemoveTable }
      */
-    public void setRemoveTable(RemoveTable value) {
+    public void setRemoveTable(final RemoveTable value) {
         this.removeTable = value;
     }
 
     /**
      * Gets the value of the postTableCreate property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PostTableCreate }
-     *     
+     *
+     * @return possible object is
+     * {@link PostTableCreate }
      */
     public PostTableCreate getPostTableCreate() {
         return postTableCreate;
@@ -216,23 +192,19 @@ public class RelationTableMapping {
 
     /**
      * Sets the value of the postTableCreate property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PostTableCreate }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PostTableCreate }
      */
-    public void setPostTableCreate(PostTableCreate value) {
+    public void setPostTableCreate(final PostTableCreate value) {
         this.postTableCreate = value;
     }
 
     /**
      * Gets the value of the rowLocking property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link RowLocking }
-     *     
+     *
+     * @return possible object is
+     * {@link RowLocking }
      */
     public RowLocking getRowLocking() {
         return rowLocking;
@@ -240,23 +212,19 @@ public class RelationTableMapping {
 
     /**
      * Sets the value of the rowLocking property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link RowLocking }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link RowLocking }
      */
-    public void setRowLocking(RowLocking value) {
+    public void setRowLocking(final RowLocking value) {
         this.rowLocking = value;
     }
 
     /**
      * Gets the value of the pkConstraint property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PkConstraint }
-     *     
+     *
+     * @return possible object is
+     * {@link PkConstraint }
      */
     public PkConstraint getPkConstraint() {
         return pkConstraint;
@@ -264,13 +232,11 @@ public class RelationTableMapping {
 
     /**
      * Sets the value of the pkConstraint property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PkConstraint }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PkConstraint }
      */
-    public void setPkConstraint(PkConstraint value) {
+    public void setPkConstraint(final PkConstraint value) {
         this.pkConstraint = value;
     }
 

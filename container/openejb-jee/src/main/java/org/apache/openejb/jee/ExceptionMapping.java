@@ -55,7 +55,7 @@ public class ExceptionMapping implements Keyable<QName> {
         return exceptionType;
     }
 
-    public void setExceptionType(String value) {
+    public void setExceptionType(final String value) {
         this.exceptionType = value;
     }
 
@@ -63,7 +63,7 @@ public class ExceptionMapping implements Keyable<QName> {
         return wsdlMessage;
     }
 
-    public void setWsdlMessage(QName value) {
+    public void setWsdlMessage(final QName value) {
         this.wsdlMessage = value;
     }
 
@@ -71,7 +71,7 @@ public class ExceptionMapping implements Keyable<QName> {
         return wsdlMessagePartName;
     }
 
-    public void setWsdlMessagePartName(String value) {
+    public void setWsdlMessagePartName(final String value) {
         this.wsdlMessagePartName = value;
     }
 
@@ -79,7 +79,7 @@ public class ExceptionMapping implements Keyable<QName> {
         return constructorParameterOrder;
     }
 
-    public void setConstructorParameterOrder(ConstructorParameterOrder value) {
+    public void setConstructorParameterOrder(final ConstructorParameterOrder value) {
         this.constructorParameterOrder = value;
     }
 
@@ -87,7 +87,7 @@ public class ExceptionMapping implements Keyable<QName> {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 }

@@ -32,8 +32,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 @Properties({
-        @Property(key = DeploymentFilterable.CLASSPATH_EXCLUDE, value = "jar:.*"),
-        @Property(key = DeploymentFilterable.CLASSPATH_INCLUDE, value = ".*openejb-junit.*")
+    @Property(key = DeploymentFilterable.CLASSPATH_EXCLUDE, value = "jar:.*"),
+    @Property(key = DeploymentFilterable.CLASSPATH_INCLUDE, value = ".*openejb-junit.*")
 })
 public class TestEJBContainerRuleSimpleRule {
     @Rule

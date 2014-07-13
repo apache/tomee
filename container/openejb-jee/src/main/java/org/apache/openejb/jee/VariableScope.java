@@ -20,11 +20,11 @@ import javax.xml.bind.annotation.XmlEnum;
 
 /**
  * web-jsptaglibrary_2_1.xsd
- *
+ * <p/>
  * <p>Java class for variable-scopeType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="variable-scopeType">
  *   &lt;simpleContent>
@@ -33,8 +33,6 @@ import javax.xml.bind.annotation.XmlEnum;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 
 @XmlEnum
@@ -47,7 +45,7 @@ public enum VariableScope {
         return name();
     }
 
-    public static VariableScope fromValue(String v) {
+    public static VariableScope fromValue(final String v) {
         return valueOf(v);
     }
 

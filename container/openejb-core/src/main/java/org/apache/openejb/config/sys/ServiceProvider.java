@@ -126,7 +126,7 @@ public class ServiceProvider {
      * Gets the value of the className property.
      *
      * @return possible object is
-     *         {@link String }
+     * {@link String }
      */
     public String getClassName() {
         return className;
@@ -146,7 +146,7 @@ public class ServiceProvider {
      * Gets the value of the constructor property.
      *
      * @return possible object is
-     *         {@link String }
+     * {@link String }
      */
     public String getConstructor() {
         return constructor;
@@ -166,7 +166,7 @@ public class ServiceProvider {
      * Gets the value of the description property.
      *
      * @return possible object is
-     *         {@link String }
+     * {@link String }
      */
     public String getDescription() {
         return description;
@@ -186,7 +186,7 @@ public class ServiceProvider {
      * Gets the value of the displayName property.
      *
      * @return possible object is
-     *         {@link String }
+     * {@link String }
      */
     public String getDisplayName() {
         return displayName;
@@ -206,7 +206,7 @@ public class ServiceProvider {
      * Gets the value of the factoryName property.
      *
      * @return possible object is
-     *         {@link String }
+     * {@link String }
      */
     public String getFactoryName() {
         return factoryName;
@@ -226,7 +226,7 @@ public class ServiceProvider {
      * Gets the value of the id property.
      *
      * @return possible object is
-     *         {@link String }
+     * {@link String }
      */
     public String getId() {
         return id;
@@ -246,7 +246,7 @@ public class ServiceProvider {
      * Gets the value of the providerType property.
      *
      * @return possible object is
-     *         {@link String }
+     * {@link String }
      */
     public String getService() {
         return service;
@@ -264,7 +264,7 @@ public class ServiceProvider {
 
     @SuppressWarnings({"unchecked"})
     public List<String> getTypes() {
-        if (types == null){
+        if (types == null) {
             types = new ArrayList<String>();
         }
         return (List<String>) types;
@@ -281,8 +281,8 @@ public class ServiceProvider {
     @Override
     public String toString() {
         return "ServiceProvider{" +
-                "id='" + id + '\'' +
-                ", service='" + service + '\'' +
-                '}';
+            "id='" + id + '\'' +
+            ", service='" + service + '\'' +
+            '}';
     }
 }

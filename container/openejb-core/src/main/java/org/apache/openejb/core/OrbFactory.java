@@ -24,9 +24,9 @@ public class OrbFactory {
     public ORB create() {
         ORB orb = SystemInstance.get().getComponent(ORB.class);
         if (orb == null) {
-           // todo add support for args and properties
-           orb = ORB.init();
-           SystemInstance.get().setComponent(ORB.class, orb);
+            // todo add support for args and properties
+            orb = ORB.init();
+            SystemInstance.get().setComponent(ORB.class, orb);
         }
         return orb;
     }

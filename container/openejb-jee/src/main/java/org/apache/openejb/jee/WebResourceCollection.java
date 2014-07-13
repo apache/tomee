@@ -32,11 +32,11 @@ import java.util.List;
 
 /**
  * web-common_3_0.xsd
- * 
+ * <p/>
  * <p>Java class for web-resource-collectionType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="web-resource-collectionType">
  *   &lt;complexContent>
@@ -55,16 +55,14 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "web-resource-collectionType", propOrder = {
-        "webResourceName",
-        "descriptions",
-        "urlPattern",
-        "httpMethod",
-        "httpMethodOmission"
+    "webResourceName",
+    "descriptions",
+    "urlPattern",
+    "httpMethod",
+    "httpMethodOmission"
 })
 public class WebResourceCollection {
 
@@ -91,7 +89,7 @@ public class WebResourceCollection {
         return webResourceName;
     }
 
-    public void setWebResourceName(String value) {
+    public void setWebResourceName(final String value) {
         this.webResourceName = value;
     }
 
@@ -100,7 +98,7 @@ public class WebResourceCollection {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -133,7 +131,7 @@ public class WebResourceCollection {
         return id;
     }
 
-    public void setId(java.lang.String value) {
+    public void setId(final java.lang.String value) {
         this.id = value;
     }
 

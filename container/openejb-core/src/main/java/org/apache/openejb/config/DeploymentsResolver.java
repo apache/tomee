@@ -282,16 +282,16 @@ public class DeploymentsResolver implements DeploymentFilterable {
 
                 if (size < 50 && willScrape) {
                     logger.info("Inspecting classpath for applications: " +
-                                urls.size() +
-                                " urls. Consider adjusting your exclude/include.  Current settings: " +
-                                CLASSPATH_EXCLUDE +
-                                "='" +
-                                exclude +
-                                "', " +
-                                CLASSPATH_INCLUDE +
-                                "='" +
-                                include +
-                                "'");
+                        urls.size() +
+                        " urls. Consider adjusting your exclude/include.  Current settings: " +
+                        CLASSPATH_EXCLUDE +
+                        "='" +
+                        exclude +
+                        "', " +
+                        CLASSPATH_INCLUDE +
+                        "='" +
+                        include +
+                        "'");
                 } else if (willScrape) {
                     logger.warning("Inspecting classpath for applications: " + urls.size() + " urls.");
                     logger.warning("ADJUST THE EXCLUDE/INCLUDE!!!.  Current settings: " + CLASSPATH_EXCLUDE + "='" + exclude + "', " + CLASSPATH_INCLUDE + "='" + include + "'");
@@ -335,14 +335,14 @@ public class DeploymentsResolver implements DeploymentFilterable {
             } else if (time < 10000) {
                 logger.warning("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + time / urls.size() + " milliseconds per url.");
                 logger.warning("Consider adjusting your " +
-                               CLASSPATH_EXCLUDE +
-                               " and " +
-                               CLASSPATH_INCLUDE +
-                               " settings.  Current settings: exclude='" +
-                               exclude +
-                               "', include='" +
-                               include +
-                               "'");
+                    CLASSPATH_EXCLUDE +
+                    " and " +
+                    CLASSPATH_INCLUDE +
+                    " settings.  Current settings: exclude='" +
+                    exclude +
+                    "', include='" +
+                    include +
+                    "'");
             } else {
                 logger.fatal("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + time / urls.size() + " milliseconds per url.  TOO LONG!");
                 logger.fatal("ADJUST THE EXCLUDE/INCLUDE!!!.  Current settings: " + CLASSPATH_EXCLUDE + "='" + exclude + "', " + CLASSPATH_INCLUDE + "='" + include + "'");

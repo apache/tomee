@@ -33,11 +33,11 @@ public class UnenhancedUnits extends Assert {
     private EntityManager entityManager;
     private EntityTransaction transaction;
 
-    public void setTransactionManager(TransactionManager transactionManager) {
+    public void setTransactionManager(final TransactionManager transactionManager) {
         this.transactionManager = transactionManager;
     }
 
-    public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
+    public void setEntityManagerFactory(final EntityManagerFactory entityManagerFactory) {
         this.entityManagerFactory = entityManagerFactory;
     }
 
@@ -53,7 +53,7 @@ public class UnenhancedUnits extends Assert {
                     } else {
                         transaction.commit();
                     }
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     e.printStackTrace();
                 }
             } else {
@@ -61,7 +61,7 @@ public class UnenhancedUnits extends Assert {
                     if (transactionManager.getStatus() != Status.STATUS_NO_TRANSACTION) {
                         transactionManager.rollback();
                     }
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -77,7 +77,7 @@ public class UnenhancedUnits extends Assert {
         beginTx();
 
         // constructor
-        ComplexStandalone complex = new ComplexStandalone("first", "second");
+        final ComplexStandalone complex = new ComplexStandalone("first", "second");
 
         // em should not know about our entity
         assertFalse(entityManager.contains(complex));
@@ -95,7 +95,7 @@ public class UnenhancedUnits extends Assert {
         beginTx();
 
         // create entity
-        ComplexSuperclass complex = new ComplexSubclass();
+        final ComplexSuperclass complex = new ComplexSubclass();
         complex.firstId = "first";
         complex.secondId = "second";
 
@@ -115,7 +115,7 @@ public class UnenhancedUnits extends Assert {
         beginTx();
 
         // constructor
-        GeneratedStandalone generated = new GeneratedStandalone();
+        final GeneratedStandalone generated = new GeneratedStandalone();
 
         // entity should not have an id yet
         assertNull("generated.getId() is not null", generated.getId());
@@ -140,7 +140,7 @@ public class UnenhancedUnits extends Assert {
         beginTx();
 
         // constructor
-        GeneratedSuperclass generated = new GeneratedSubclass();
+        final GeneratedSuperclass generated = new GeneratedSubclass();
 
         // entity should not have an id yet
         assertNull("generated.getId() is not null", generated.getId());
@@ -212,7 +212,7 @@ public class UnenhancedUnits extends Assert {
 
         // verify one.getMany()
         assertNotNull("one.getMany() is null", one.getMany());
-        Collection<ManyStandalone> many = one.getMany();
+        final Collection<ManyStandalone> many = one.getMany();
         assertEquals(3, many.size());
 
         // reload the many
@@ -244,7 +244,7 @@ public class UnenhancedUnits extends Assert {
 
         try {
             transaction = entityManager.getTransaction();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // must be JTA
         }
 
@@ -274,7 +274,7 @@ public class UnenhancedUnits extends Assert {
         }
     }
 
-    public void log(String msg) {
+    public void log(final String msg) {
 //        System.out.println(msg);
     }
 }

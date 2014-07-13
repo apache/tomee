@@ -42,7 +42,7 @@ public class SecurityRoleMapping {
         return roleName;
     }
 
-    public void setRoleName(String value) {
+    public void setRoleName(final String value) {
         this.roleName = value;
     }
 

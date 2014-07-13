@@ -28,23 +28,19 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- * 
- *         
- * 
  * <p class="changed_added_2_2">Define a view node in a flow graph.</p>
- * 
+ * <p/>
  * <p>This element must contain exactly one
  * <code>&lt;vdl-document&gt;</code> element.</p>
- * 
- * 
- * 
- *       
- * 
+ * <p/>
+ * <p/>
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for faces-config-flow-definition-viewType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="faces-config-flow-definition-viewType">
  *   &lt;complexContent>
@@ -57,8 +53,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "faces-config-flow-definition-viewType", propOrder = {
@@ -77,10 +71,8 @@ public class FacesConfigFlowDefinitionView {
     /**
      * Gets the value of the vdlDocument property.
      *
-     * @return
-     *     possible object is
-     *     {@link JavaIdentifier }
-     *
+     * @return possible object is
+     * {@link JavaIdentifier }
      */
     public JavaIdentifier getVdlDocument() {
         return vdlDocument;
@@ -89,22 +81,18 @@ public class FacesConfigFlowDefinitionView {
     /**
      * Sets the value of the vdlDocument property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link JavaIdentifier }
-     *
+     * @param value allowed object is
+     *              {@link JavaIdentifier }
      */
-    public void setVdlDocument(JavaIdentifier value) {
+    public void setVdlDocument(final JavaIdentifier value) {
         this.vdlDocument = value;
     }
 
     /**
      * Gets the value of the id property.
      *
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getId() {
         return id;
@@ -113,12 +101,10 @@ public class FacesConfigFlowDefinitionView {
     /**
      * Sets the value of the id property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
-    public void setId(java.lang.String value) {
+    public void setId(final java.lang.String value) {
         this.id = value;
     }
 

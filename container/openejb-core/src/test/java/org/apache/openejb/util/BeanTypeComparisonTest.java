@@ -25,14 +25,11 @@ import static org.junit.Assert.assertFalse;
 public class BeanTypeComparisonTest {
 
     @Test
-    public void testEqualsMethodForDifferentClassTypes()
-    {
-        BeanType beanType= BeanType.STATELESS;
-        SessionType sessionType = SessionType.STATELESS;
+    public void testEqualsMethodForDifferentClassTypes() {
+        final BeanType beanType = BeanType.STATELESS;
+        final SessionType sessionType = SessionType.STATELESS;
         assertFalse(beanType.equals(sessionType));
     }
-
-
 
 
 }

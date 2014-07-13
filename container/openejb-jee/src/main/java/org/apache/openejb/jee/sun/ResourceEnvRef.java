@@ -33,7 +33,7 @@ public class ResourceEnvRef {
         return resourceEnvRefName;
     }
 
-    public void setResourceEnvRefName(String value) {
+    public void setResourceEnvRefName(final String value) {
         this.resourceEnvRefName = value;
     }
 
@@ -41,7 +41,7 @@ public class ResourceEnvRef {
         return jndiName;
     }
 
-    public void setJndiName(String value) {
+    public void setJndiName(final String value) {
         this.jndiName = value;
     }
 }

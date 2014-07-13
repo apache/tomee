@@ -108,8 +108,8 @@ public class FailOverRouter extends AbstractRouter {
         }
 
         facade.set(DataSource.class.cast(Proxy.newProxyInstance(
-                Thread.currentThread().getContextClassLoader(),
-                new Class<?>[]{ clazz }, new FacadeHandler(dataSources, strategy))));
+            Thread.currentThread().getContextClassLoader(),
+            new Class<?>[]{clazz}, new FacadeHandler(dataSources, strategy))));
     }
 
     public Collection<DataSource> getDataSources() {

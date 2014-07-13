@@ -97,7 +97,7 @@ public class SunApplicationClient {
         return javaWebStartAccess;
     }
 
-    public void setJavaWebStartAccess(JavaWebStartAccess value) {
+    public void setJavaWebStartAccess(final JavaWebStartAccess value) {
         this.javaWebStartAccess = value;
     }
 }

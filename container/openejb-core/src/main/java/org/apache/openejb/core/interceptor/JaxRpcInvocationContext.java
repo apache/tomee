@@ -27,7 +27,7 @@ import java.util.List;
  * We could really get by with usinga plain ReflectionInvocationContext
  * but just in case we need to or want to add something special, we can
  * use this subclass.  At the very least it matches JaxWsInvocationContext
- * 
+ *
  * @version $Rev$ $Date$
  */
 public class JaxRpcInvocationContext extends ReflectionInvocationContext {

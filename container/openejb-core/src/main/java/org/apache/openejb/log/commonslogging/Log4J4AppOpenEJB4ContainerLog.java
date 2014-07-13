@@ -27,8 +27,8 @@ import java.io.Serializable;
 // totally done by reflection to avoid conflict between Log from container and app classloaders
 public class Log4J4AppOpenEJB4ContainerLog implements Log, Serializable {
     private static final Class<?>[] NO_PARAM = new Class<?>[0];
-    private static final Class<?>[] OBJECT_PARAM = new Class<?>[] { Object.class };
-    private static final Class<?>[] OBJECT_THROWABLE_PARAM = new Class<?>[] { Object.class, Throwable.class };
+    private static final Class<?>[] OBJECT_PARAM = new Class<?>[]{Object.class};
+    private static final Class<?>[] OBJECT_THROWABLE_PARAM = new Class<?>[]{Object.class, Throwable.class};
     private static final Object[] NO_ARGS = new Object[0];
 
     private Object delegate;
@@ -40,8 +40,8 @@ public class Log4J4AppOpenEJB4ContainerLog implements Log, Serializable {
             final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
             try { // need to be done with TCCL
                 delegate = contextClassLoader
-                        .loadClass("org.apache.commons.logging.impl.Log4JLogger")
-                        .getConstructor(String.class).newInstance(category);
+                    .loadClass("org.apache.commons.logging.impl.Log4JLogger")
+                    .getConstructor(String.class).newInstance(category);
             } catch (final Exception ex) {
                 delegate = new Jdk14Logger(category);
             }
@@ -80,7 +80,7 @@ public class Log4J4AppOpenEJB4ContainerLog implements Log, Serializable {
 
     @Override
     public void trace(final Object message) {
-        Reflections.invokeByReflection(delegate, "trace", OBJECT_PARAM, new Object[]{ message });
+        Reflections.invokeByReflection(delegate, "trace", OBJECT_PARAM, new Object[]{message});
     }
 
     @Override

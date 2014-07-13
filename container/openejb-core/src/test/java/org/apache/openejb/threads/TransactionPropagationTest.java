@@ -42,7 +42,7 @@ import static org.junit.Assert.fail;
 public class TransactionPropagationTest {
     @Module
     public Class<?>[] classes() {
-        return new Class<?>[] { Starter.class };
+        return new Class<?>[]{Starter.class};
     }
 
     @EJB

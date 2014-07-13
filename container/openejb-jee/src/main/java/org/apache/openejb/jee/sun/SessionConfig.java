@@ -39,7 +39,7 @@ public class SessionConfig {
         return sessionManager;
     }
 
-    public void setSessionManager(SessionManager value) {
+    public void setSessionManager(final SessionManager value) {
         this.sessionManager = value;
     }
 
@@ -47,7 +47,7 @@ public class SessionConfig {
         return sessionProperties;
     }
 
-    public void setSessionProperties(SessionProperties value) {
+    public void setSessionProperties(final SessionProperties value) {
         this.sessionProperties = value;
     }
 
@@ -55,7 +55,7 @@ public class SessionConfig {
         return cookieProperties;
     }
 
-    public void setCookieProperties(CookieProperties value) {
+    public void setCookieProperties(final CookieProperties value) {
         this.cookieProperties = value;
     }
 }

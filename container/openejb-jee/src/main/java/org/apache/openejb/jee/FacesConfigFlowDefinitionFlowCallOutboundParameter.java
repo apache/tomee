@@ -23,22 +23,18 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- *         
- * 
- *          <p class="changed_added_2_2">A named parameter whose value will be 
- *          passed to a correspondingly named parameter within an "inbound-parameter" element
- *          on the target flow.<p>
- * 
- * 
- * 
- *       
- * 
+ * <p class="changed_added_2_2">A named parameter whose value will be
+ * passed to a correspondingly named parameter within an "inbound-parameter" element
+ * on the target flow.<p>
+ * <p/>
+ * <p/>
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for faces-config-flow-definition-flow-call-outbound-parameterType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="faces-config-flow-definition-flow-call-outbound-parameterType">
  *   &lt;complexContent>
@@ -51,8 +47,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "faces-config-flow-definition-flow-call-outbound-parameterType", propOrder = {
@@ -68,11 +62,9 @@ public class FacesConfigFlowDefinitionFlowCallOutboundParameter {
 
     /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link JavaIdentifier }
-     *     
+     *
+     * @return possible object is
+     * {@link JavaIdentifier }
      */
     public JavaIdentifier getName() {
         return name;
@@ -80,23 +72,19 @@ public class FacesConfigFlowDefinitionFlowCallOutboundParameter {
 
     /**
      * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link JavaIdentifier }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link JavaIdentifier }
      */
-    public void setName(JavaIdentifier value) {
+    public void setName(final JavaIdentifier value) {
         this.name = value;
     }
 
     /**
      * Gets the value of the value property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FacesConfigFlowDefinitionParameterValue }
-     *     
+     *
+     * @return possible object is
+     * {@link FacesConfigFlowDefinitionParameterValue }
      */
     public FacesConfigFlowDefinitionParameterValue getValue() {
         return value;
@@ -104,13 +92,11 @@ public class FacesConfigFlowDefinitionFlowCallOutboundParameter {
 
     /**
      * Sets the value of the value property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FacesConfigFlowDefinitionParameterValue }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link FacesConfigFlowDefinitionParameterValue }
      */
-    public void setValue(FacesConfigFlowDefinitionParameterValue value) {
+    public void setValue(final FacesConfigFlowDefinitionParameterValue value) {
         this.value = value;
     }
 

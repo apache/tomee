@@ -28,7 +28,7 @@ public class PolicyContext {
 
     private final PermissionCollection excludedPermissions = new DelegatePermissionCollection();
     private final PermissionCollection uncheckedPermissions = new DelegatePermissionCollection();
-    private final Map<String,PermissionCollection> rolePermissions = new HashMap<String,PermissionCollection>();
+    private final Map<String, PermissionCollection> rolePermissions = new HashMap<String, PermissionCollection>();
     private final String contextId;
 
     public PolicyContext(final String contextId) {
@@ -43,7 +43,7 @@ public class PolicyContext {
         return uncheckedPermissions;
     }
 
-    public Map<String,PermissionCollection> getRolePermissions() {
+    public Map<String, PermissionCollection> getRolePermissions() {
         return rolePermissions;
     }
 

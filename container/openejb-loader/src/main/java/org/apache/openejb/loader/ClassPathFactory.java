@@ -25,7 +25,7 @@ public class ClassPathFactory {
         if (name.equalsIgnoreCase("tomcat-webapp")) return new WebAppClassPath();
         if (name.equalsIgnoreCase("bootstrap")) return new SystemClassPath();
         if (name.equalsIgnoreCase("system")) return new SystemClassPath();
-        if (name.equalsIgnoreCase("thread"))  return new ContextClassPath();
+        if (name.equalsIgnoreCase("thread")) return new ContextClassPath();
         if (name.equalsIgnoreCase("context")) return new ContextClassPath();
         return new ContextClassPath();
     }

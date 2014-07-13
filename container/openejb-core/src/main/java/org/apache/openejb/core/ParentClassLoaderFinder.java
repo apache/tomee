@@ -21,7 +21,8 @@ import org.apache.openejb.OpenEJB;
 import org.apache.openejb.loader.SystemInstance;
 
 public interface ParentClassLoaderFinder {
-    ClassLoader FALLBACK = OpenEJB.class.getClassLoader();;
+    ClassLoader FALLBACK = OpenEJB.class.getClassLoader();
+    ;
 
     ClassLoader getParentClassLoader(final ClassLoader fallback);
 
@@ -29,7 +30,7 @@ public interface ParentClassLoaderFinder {
         public static ClassLoader get() {
             final ParentClassLoaderFinder parentFinder = SystemInstance.get().getComponent(ParentClassLoaderFinder.class);
             if (parentFinder != null) {
-                return  parentFinder.getParentClassLoader(FALLBACK);
+                return parentFinder.getParentClassLoader(FALLBACK);
             }
             return FALLBACK;
         }

@@ -68,34 +68,34 @@ public class JTADataSourceWrapperFactoryTest {
     @Configuration
     public Properties configuration() {
         return new PropertiesBuilder()
-                .p("raw", "new://Resource?class-name=" + MyDataSourceFactory.class.getName() + "&factory-name=create")
+            .p("raw", "new://Resource?class-name=" + MyDataSourceFactory.class.getName() + "&factory-name=create")
 
-                .p("jta", "new://Resource?type=DataSource&class-name=org.apache.openejb.resource.jdbc.managed.JTADataSourceWrapperFactory&factory-name=create")
-                .p("jta.delegate", "raw")
-                .build();
+            .p("jta", "new://Resource?type=DataSource&class-name=org.apache.openejb.resource.jdbc.managed.JTADataSourceWrapperFactory&factory-name=create")
+            .p("jta.delegate", "raw")
+            .build();
     }
 
     @Module
     public Class<?>[] classes() {
-        return new Class<?>[] {};
+        return new Class<?>[]{};
     }
 
     public static class MyDataSourceFactory {
         public DataSource create() {
             return DataSource.class.cast(
-                    Proxy.newProxyInstance(
-                            Thread.currentThread().getContextClassLoader(),
-                            new Class<?>[] { DataSource.class},
-                            new InvocationHandler() {
-                                @Override
-                                public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-                                    if ("hashCode".equals(method.getName())) {
-                                        return 0;
-                                    }
-                                    return null;
-                                }
+                Proxy.newProxyInstance(
+                    Thread.currentThread().getContextClassLoader(),
+                    new Class<?>[]{DataSource.class},
+                    new InvocationHandler() {
+                        @Override
+                        public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+                            if ("hashCode".equals(method.getName())) {
+                                return 0;
                             }
-                    )
+                            return null;
+                        }
+                    }
+                )
             );
         }
     }

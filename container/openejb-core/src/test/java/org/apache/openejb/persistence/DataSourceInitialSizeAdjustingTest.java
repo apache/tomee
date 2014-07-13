@@ -57,7 +57,7 @@ public class DataSourceInitialSizeAdjustingTest {
     @Test
     public void checkNonJtaPoolSizeWasCorrected() {
         final String prefix = getClass().getSimpleName();
-        for (ResourceInfo info : SystemInstance.get().getComponent(OpenEjbConfiguration.class).facilities.resources) {
+        for (final ResourceInfo info : SystemInstance.get().getComponent(OpenEjbConfiguration.class).facilities.resources) {
             if ((prefix + "NonJta").equals(info.id)) {
                 assertEquals("5", info.properties.getProperty("InitialSize"));
                 return;

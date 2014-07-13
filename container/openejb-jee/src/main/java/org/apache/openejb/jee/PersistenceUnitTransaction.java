@@ -22,11 +22,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * persistence_2_0.xsd
- * 
+ * <p/>
  * <p>Java class for persistence-unit-transaction-type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p>
+ * <p/>
  * <pre>
  * &lt;simpleType name="persistence-unit-transaction-type">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}token">
@@ -35,7 +35,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- *
  */
 @XmlType(name = "persistence-unit-transaction-type", namespace = "http://java.sun.com/xml/ns/persistence")
 @XmlEnum
@@ -48,7 +47,7 @@ public enum PersistenceUnitTransaction {
         return name();
     }
 
-    public static PersistenceUnitTransaction fromValue(java.lang.String v) {
+    public static PersistenceUnitTransaction fromValue(final java.lang.String v) {
         return valueOf(v);
     }
 

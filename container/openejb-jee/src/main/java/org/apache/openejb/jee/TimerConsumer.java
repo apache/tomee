@@ -26,7 +26,7 @@ public interface TimerConsumer {
     NamedMethod getTimeoutMethod();
 
     void setTimeoutMethod(NamedMethod value);
-    
+
     String getTimerConsumerName();
 
     List<Timer> getTimer();

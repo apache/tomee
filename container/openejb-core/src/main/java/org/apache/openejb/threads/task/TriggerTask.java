@@ -94,7 +94,7 @@ public abstract class TriggerTask<T> extends CUTask<T> {
         return next.getTime() - ManagedScheduledExecutorServiceImpl.nowMs();
     }
 
-    protected abstract T doInvoke() throws Exception ;
+    protected abstract T doInvoke() throws Exception;
 
     public String getId() {
         return id;
@@ -164,12 +164,12 @@ public abstract class TriggerTask<T> extends CUTask<T> {
         @Override
         public String toString() {
             return "LastExecutionImpl{" +
-                    (identityName != null ? "identityName='" + identityName + "\', " : "") +
-                    "result=" + result +
-                    ", scheduledStart=" + scheduledStart +
-                    ", runStart=" + runStart +
-                    ", runEnd=" + runEnd +
-                    '}';
+                (identityName != null ? "identityName='" + identityName + "\', " : "") +
+                "result=" + result +
+                ", scheduledStart=" + scheduledStart +
+                ", runStart=" + runStart +
+                ", runEnd=" + runEnd +
+                '}';
         }
     }
 

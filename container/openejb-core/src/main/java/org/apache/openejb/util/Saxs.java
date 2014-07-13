@@ -22,6 +22,7 @@ import javax.xml.parsers.SAXParserFactory;
 public final class Saxs {
     private static final SAXParserFactory FACTORY = SAXParserFactory.newInstance();
     private static final SAXParserFactory NAMESPACE_AWARE_FACTORY = SAXParserFactory.newInstance();
+
     static {
         FACTORY.setNamespaceAware(true);
         FACTORY.setValidating(false);

@@ -67,10 +67,14 @@ import java.io.Serializable;
  */
 public class Variance extends AbstractStorelessUnivariateStatistic implements Serializable, WeightedEvaluation {
 
-    /** Serializable version identifier */
+    /**
+     * Serializable version identifier
+     */
     private static final long serialVersionUID = -1231962718267217978L;
 
-    /** SecondMoment is used in incremental calculation of Variance*/
+    /**
+     * SecondMoment is used in incremental calculation of Variance
+     */
     protected SecondMoment moment;
 
     /**
@@ -99,7 +103,7 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
      * Constructs a Variance based on an external second moment.
      *
      * @param m2 the SecondMoment (Third or Fourth moments work
-     * here as well.)
+     *           here as well.)
      */
     public Variance(final SecondMoment m2) {
         incMoment = false;
@@ -110,9 +114,9 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
      * Constructs a Variance with the specified <code>isBiasCorrected</code>
      * property
      *
-     * @param isBiasCorrected  setting for bias correction - true means
-     * bias will be corrected and is equivalent to using the argumentless
-     * constructor
+     * @param isBiasCorrected setting for bias correction - true means
+     *                        bias will be corrected and is equivalent to using the argumentless
+     *                        constructor
      */
     public Variance(final boolean isBiasCorrected) {
         moment = new SecondMoment();
@@ -123,10 +127,10 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
      * Constructs a Variance with the specified <code>isBiasCorrected</code>
      * property and the supplied external second moment.
      *
-     * @param isBiasCorrected  setting for bias correction - true means
-     * bias will be corrected
-     * @param m2 the SecondMoment (Third or Fourth moments work
-     * here as well.)
+     * @param isBiasCorrected setting for bias correction - true means
+     *                        bias will be corrected
+     * @param m2              the SecondMoment (Third or Fourth moments work
+     *                        here as well.)
      */
     public Variance(final boolean isBiasCorrected, final SecondMoment m2) {
         incMoment = false;
@@ -165,17 +169,17 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
      */
     @Override
     public double getResult() {
-            if (moment.n == 0) {
-                return Double.NaN;
-            } else if (moment.n == 1) {
-                return 0d;
+        if (moment.n == 0) {
+            return Double.NaN;
+        } else if (moment.n == 1) {
+            return 0d;
+        } else {
+            if (isBiasCorrected) {
+                return moment.m2 / (moment.n - 1d);
             } else {
-                if (isBiasCorrected) {
-                    return moment.m2 / (moment.n - 1d);
-                } else {
-                    return moment.m2 / moment.n;
-                }
+                return moment.m2 / moment.n;
             }
+        }
     }
 
     /**
@@ -233,11 +237,11 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
      * Throws <code>IllegalArgumentException</code> if the array is null.</p>
      *
      * @param values the input array
-     * @param begin index of the first array element to include
+     * @param begin  index of the first array element to include
      * @param length the number of elements to include
      * @return the variance of the values or Double.NaN if length = 0
      * @throws IllegalArgumentException if the array is null or the array index
-     *  parameters are not valid
+     *                                  parameters are not valid
      */
     @Override
     public double evaluate(final double[] values, final int begin, final int length) {
@@ -279,22 +283,22 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
      * <p>
      * Throws <code>IllegalArgumentException</code> if any of the following are true:
      * <ul><li>the values array is null</li>
-     *     <li>the weights array is null</li>
-     *     <li>the weights array does not have the same length as the values array</li>
-     *     <li>the weights array contains one or more infinite values</li>
-     *     <li>the weights array contains one or more NaN values</li>
-     *     <li>the weights array contains negative values</li>
-     *     <li>the start and length arguments do not determine a valid array</li>
+     * <li>the weights array is null</li>
+     * <li>the weights array does not have the same length as the values array</li>
+     * <li>the weights array contains one or more infinite values</li>
+     * <li>the weights array contains one or more NaN values</li>
+     * <li>the weights array contains negative values</li>
+     * <li>the start and length arguments do not determine a valid array</li>
      * </ul></p>
      * <p>
      * Does not change the internal state of the statistic.</p>
      * <p>
      * Throws <code>IllegalArgumentException</code> if either array is null.</p>
      *
-     * @param values the input array
+     * @param values  the input array
      * @param weights the weights array
-     * @param begin index of the first array element to include
-     * @param length the number of elements to include
+     * @param begin   index of the first array element to include
+     * @param length  the number of elements to include
      * @return the weighted variance of the values or Double.NaN if length = 0
      * @throws IllegalArgumentException if the parameters are not valid
      * @since 2.1
@@ -304,7 +308,7 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
 
         double var = Double.NaN;
 
-        if (test(values, weights,begin, length)) {
+        if (test(values, weights, begin, length)) {
             clear();
             if (length == 1) {
                 var = 0.0;
@@ -338,18 +342,18 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
      * <p>
      * Throws <code>IllegalArgumentException</code> if any of the following are true:
      * <ul><li>the values array is null</li>
-     *     <li>the weights array is null</li>
-     *     <li>the weights array does not have the same length as the values array</li>
-     *     <li>the weights array contains one or more infinite values</li>
-     *     <li>the weights array contains one or more NaN values</li>
-     *     <li>the weights array contains negative values</li>
+     * <li>the weights array is null</li>
+     * <li>the weights array does not have the same length as the values array</li>
+     * <li>the weights array contains one or more infinite values</li>
+     * <li>the weights array contains one or more NaN values</li>
+     * <li>the weights array contains negative values</li>
      * </ul></p>
      * <p>
      * Does not change the internal state of the statistic.</p>
      * <p>
      * Throws <code>IllegalArgumentException</code> if either array is null.</p>
      *
-     * @param values the input array
+     * @param values  the input array
      * @param weights the weights array
      * @return the weighted variance of the values
      * @throws IllegalArgumentException if the parameters are not valid
@@ -378,15 +382,15 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
      * Does not change the internal state of the statistic.</p>
      *
      * @param values the input array
-     * @param mean the precomputed mean value
-     * @param begin index of the first array element to include
+     * @param mean   the precomputed mean value
+     * @param begin  index of the first array element to include
      * @param length the number of elements to include
      * @return the variance of the values or Double.NaN if length = 0
      * @throws IllegalArgumentException if the array is null or the array index
-     *  parameters are not valid
+     *                                  parameters are not valid
      */
     public double evaluate(final double[] values, final double mean,
-            final int begin, final int length) {
+                           final int begin, final int length) {
 
         double var = Double.NaN;
 
@@ -434,7 +438,7 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
      * Does not change the internal state of the statistic.</p>
      *
      * @param values the input array
-     * @param mean the precomputed mean value
+     * @param mean   the precomputed mean value
      * @return the variance of the values or Double.NaN if the array is empty
      * @throws IllegalArgumentException if the array is null
      */
@@ -468,21 +472,21 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
      * <p>
      * Throws <code>IllegalArgumentException</code> if any of the following are true:
      * <ul><li>the values array is null</li>
-     *     <li>the weights array is null</li>
-     *     <li>the weights array does not have the same length as the values array</li>
-     *     <li>the weights array contains one or more infinite values</li>
-     *     <li>the weights array contains one or more NaN values</li>
-     *     <li>the weights array contains negative values</li>
-     *     <li>the start and length arguments do not determine a valid array</li>
+     * <li>the weights array is null</li>
+     * <li>the weights array does not have the same length as the values array</li>
+     * <li>the weights array contains one or more infinite values</li>
+     * <li>the weights array contains one or more NaN values</li>
+     * <li>the weights array contains negative values</li>
+     * <li>the start and length arguments do not determine a valid array</li>
      * </ul></p>
      * <p>
      * Does not change the internal state of the statistic.</p>
      *
-     * @param values the input array
+     * @param values  the input array
      * @param weights the weights array
-     * @param mean the precomputed weighted mean value
-     * @param begin index of the first array element to include
-     * @param length the number of elements to include
+     * @param mean    the precomputed weighted mean value
+     * @param begin   index of the first array element to include
+     * @param length  the number of elements to include
      * @return the variance of the values or Double.NaN if length = 0
      * @throws IllegalArgumentException if the parameters are not valid
      * @since 2.1
@@ -545,18 +549,18 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
      * <p>
      * Throws <code>IllegalArgumentException</code> if any of the following are true:
      * <ul><li>the values array is null</li>
-     *     <li>the weights array is null</li>
-     *     <li>the weights array does not have the same length as the values array</li>
-     *     <li>the weights array contains one or more infinite values</li>
-     *     <li>the weights array contains one or more NaN values</li>
-     *     <li>the weights array contains negative values</li>
+     * <li>the weights array is null</li>
+     * <li>the weights array does not have the same length as the values array</li>
+     * <li>the weights array contains one or more infinite values</li>
+     * <li>the weights array contains one or more NaN values</li>
+     * <li>the weights array contains negative values</li>
      * </ul></p>
      * <p>
      * Does not change the internal state of the statistic.</p>
      *
-     * @param values the input array
+     * @param values  the input array
      * @param weights the weights array
-     * @param mean the precomputed weighted mean value
+     * @param mean    the precomputed weighted mean value
      * @return the variance of the values or Double.NaN if length = 0
      * @throws IllegalArgumentException if the parameters are not valid
      * @since 2.1
@@ -595,7 +599,7 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
      * <p>Neither source nor dest can be null.</p>
      *
      * @param source Variance to copy
-     * @param dest Variance to copy to
+     * @param dest   Variance to copy to
      * @throws NullPointerException if either source or dest is null
      */
     public static void copy(final Variance source, final Variance dest) {

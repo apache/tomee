@@ -39,11 +39,9 @@ public class ResourceEnvRef {
 
     /**
      * Gets the value of the resourceEnvRefName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getResourceEnvRefName() {
         return resourceEnvRefName;
@@ -51,23 +49,19 @@ public class ResourceEnvRef {
 
     /**
      * Sets the value of the resourceEnvRefName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setResourceEnvRefName(String value) {
+    public void setResourceEnvRefName(final String value) {
         this.resourceEnvRefName = value;
     }
 
     /**
      * Gets the value of the jndiName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link JndiName }
-     *     
+     *
+     * @return possible object is
+     * {@link JndiName }
      */
     public JndiName getJndiName() {
         return jndiName;
@@ -75,13 +69,11 @@ public class ResourceEnvRef {
 
     /**
      * Sets the value of the jndiName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link JndiName }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link JndiName }
      */
-    public void setJndiName(JndiName value) {
+    public void setJndiName(final JndiName value) {
         this.jndiName = value;
     }
 

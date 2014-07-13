@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for entity-descriptor complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="entity-descriptor">
  *   &lt;complexContent>
@@ -52,8 +52,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "entity-descriptor", propOrder = {
@@ -90,11 +88,9 @@ public class EntityDescriptor {
 
     /**
      * Gets the value of the pool property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Pool }
-     *     
+     *
+     * @return possible object is
+     * {@link Pool }
      */
     public Pool getPool() {
         return pool;
@@ -102,23 +98,19 @@ public class EntityDescriptor {
 
     /**
      * Sets the value of the pool property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Pool }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Pool }
      */
-    public void setPool(Pool value) {
+    public void setPool(final Pool value) {
         this.pool = value;
     }
 
     /**
      * Gets the value of the timerDescriptor property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link TimerDescriptor }
-     *     
+     *
+     * @return possible object is
+     * {@link TimerDescriptor }
      */
     public TimerDescriptor getTimerDescriptor() {
         return timerDescriptor;
@@ -126,23 +118,19 @@ public class EntityDescriptor {
 
     /**
      * Sets the value of the timerDescriptor property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link TimerDescriptor }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link TimerDescriptor }
      */
-    public void setTimerDescriptor(TimerDescriptor value) {
+    public void setTimerDescriptor(final TimerDescriptor value) {
         this.timerDescriptor = value;
     }
 
     /**
      * Gets the value of the entityCache property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EntityCache }
-     *     
+     *
+     * @return possible object is
+     * {@link EntityCache }
      */
     public EntityCache getEntityCache() {
         return entityCache;
@@ -150,23 +138,19 @@ public class EntityDescriptor {
 
     /**
      * Sets the value of the entityCache property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EntityCache }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link EntityCache }
      */
-    public void setEntityCache(EntityCache value) {
+    public void setEntityCache(final EntityCache value) {
         this.entityCache = value;
     }
 
     /**
      * Gets the value of the entityCacheRef property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EntityCacheRef }
-     *     
+     *
+     * @return possible object is
+     * {@link EntityCacheRef }
      */
     public EntityCacheRef getEntityCacheRef() {
         return entityCacheRef;
@@ -174,23 +158,19 @@ public class EntityDescriptor {
 
     /**
      * Sets the value of the entityCacheRef property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EntityCacheRef }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link EntityCacheRef }
      */
-    public void setEntityCacheRef(EntityCacheRef value) {
+    public void setEntityCacheRef(final EntityCacheRef value) {
         this.entityCacheRef = value;
     }
 
     /**
      * Gets the value of the persistence property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Persistence }
-     *     
+     *
+     * @return possible object is
+     * {@link Persistence }
      */
     public Persistence getPersistence() {
         return persistence;
@@ -198,23 +178,19 @@ public class EntityDescriptor {
 
     /**
      * Sets the value of the persistence property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Persistence }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Persistence }
      */
-    public void setPersistence(Persistence value) {
+    public void setPersistence(final Persistence value) {
         this.persistence = value;
     }
 
     /**
      * Gets the value of the entityClustering property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EntityClustering }
-     *     
+     *
+     * @return possible object is
+     * {@link EntityClustering }
      */
     public EntityClustering getEntityClustering() {
         return entityClustering;
@@ -222,23 +198,19 @@ public class EntityDescriptor {
 
     /**
      * Sets the value of the entityClustering property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EntityClustering }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link EntityClustering }
      */
-    public void setEntityClustering(EntityClustering value) {
+    public void setEntityClustering(final EntityClustering value) {
         this.entityClustering = value;
     }
 
     /**
      * Gets the value of the invalidationTarget property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link InvalidationTarget }
-     *     
+     *
+     * @return possible object is
+     * {@link InvalidationTarget }
      */
     public InvalidationTarget getInvalidationTarget() {
         return invalidationTarget;
@@ -246,23 +218,19 @@ public class EntityDescriptor {
 
     /**
      * Sets the value of the invalidationTarget property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link InvalidationTarget }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link InvalidationTarget }
      */
-    public void setInvalidationTarget(InvalidationTarget value) {
+    public void setInvalidationTarget(final InvalidationTarget value) {
         this.invalidationTarget = value;
     }
 
     /**
      * Gets the value of the enableDynamicQueries property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getEnableDynamicQueries() {
         return enableDynamicQueries;
@@ -270,23 +238,19 @@ public class EntityDescriptor {
 
     /**
      * Sets the value of the enableDynamicQueries property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setEnableDynamicQueries(Boolean value) {
+    public void setEnableDynamicQueries(final Boolean value) {
         this.enableDynamicQueries = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getId() {
         return id;
@@ -294,13 +258,11 @@ public class EntityDescriptor {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

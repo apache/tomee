@@ -40,10 +40,10 @@ import java.util.List;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "security-identityType", propOrder = {
-        "descriptions",
-        "useCallerIdentity",
-        "runAs"
-        })
+    "descriptions",
+    "useCallerIdentity",
+    "runAs"
+})
 public class SecurityIdentity {
 
     @XmlTransient
@@ -62,7 +62,7 @@ public class SecurityIdentity {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -74,19 +74,19 @@ public class SecurityIdentity {
         return useCallerIdentity;
     }
 
-    public void setUseCallerIdentity(Empty value) {
+    public void setUseCallerIdentity(final Empty value) {
         this.useCallerIdentity = value;
     }
 
     public String getRunAs() {
-        return runAs == null ? null: runAs.getRoleName();
+        return runAs == null ? null : runAs.getRoleName();
     }
 
-    public void setRunAs(RunAs value) {
+    public void setRunAs(final RunAs value) {
         this.runAs = value;
     }
 
-    public void setRunAs(String value) {
+    public void setRunAs(final String value) {
         this.runAs = new RunAs(value);
     }
 
@@ -94,7 +94,7 @@ public class SecurityIdentity {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

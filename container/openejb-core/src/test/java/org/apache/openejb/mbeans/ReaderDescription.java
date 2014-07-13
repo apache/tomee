@@ -23,8 +23,10 @@ import javax.management.ManagedAttribute;
 @MBean
 @Description("descr ;)")
 public class ReaderDescription {
-	@ManagedAttribute @Description("just a value") public int getValue() {
-		return 2;
-	}
+    @ManagedAttribute
+    @Description("just a value")
+    public int getValue() {
+        return 2;
+    }
 
 }

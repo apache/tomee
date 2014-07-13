@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for persistence-use complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="persistence-use">
  *   &lt;complexContent>
@@ -45,8 +45,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "persistence-use", propOrder = {
@@ -69,11 +67,9 @@ public class PersistenceUse {
 
     /**
      * Gets the value of the typeIdentifier property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getTypeIdentifier() {
         return typeIdentifier;
@@ -81,23 +77,19 @@ public class PersistenceUse {
 
     /**
      * Sets the value of the typeIdentifier property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setTypeIdentifier(String value) {
+    public void setTypeIdentifier(final String value) {
         this.typeIdentifier = value;
     }
 
     /**
      * Gets the value of the typeVersion property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getTypeVersion() {
         return typeVersion;
@@ -105,23 +97,19 @@ public class PersistenceUse {
 
     /**
      * Sets the value of the typeVersion property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setTypeVersion(String value) {
+    public void setTypeVersion(final String value) {
         this.typeVersion = value;
     }
 
     /**
      * Gets the value of the typeStorage property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getTypeStorage() {
         return typeStorage;
@@ -129,23 +117,19 @@ public class PersistenceUse {
 
     /**
      * Sets the value of the typeStorage property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setTypeStorage(String value) {
+    public void setTypeStorage(final String value) {
         this.typeStorage = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getId() {
         return id;
@@ -153,13 +137,11 @@ public class PersistenceUse {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

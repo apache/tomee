@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for weblogic-compatibility complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="weblogic-compatibility">
  *   &lt;complexContent>
@@ -43,8 +43,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "weblogic-compatibility", propOrder = {
@@ -62,11 +60,9 @@ public class WeblogicCompatibility {
 
     /**
      * Gets the value of the entityAlwaysUsesTransaction property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Boolean }
      */
     public Boolean getEntityAlwaysUsesTransaction() {
         return entityAlwaysUsesTransaction;
@@ -74,23 +70,19 @@ public class WeblogicCompatibility {
 
     /**
      * Sets the value of the entityAlwaysUsesTransaction property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
-    public void setEntityAlwaysUsesTransaction(Boolean value) {
+    public void setEntityAlwaysUsesTransaction(final Boolean value) {
         this.entityAlwaysUsesTransaction = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getId() {
         return id;
@@ -98,13 +90,11 @@ public class WeblogicCompatibility {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

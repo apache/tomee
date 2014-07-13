@@ -28,33 +28,33 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.namespace.QName;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class Icon$JAXB
-        extends JAXBObject<Icon> {
+    extends JAXBObject<Icon> {
 
 
     public Icon$JAXB() {
         super(Icon.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "iconType".intern()));
     }
 
-    public static Icon readIcon(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static Icon readIcon(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeIcon(XoXMLStreamWriter writer, Icon icon, RuntimeContext context)
-            throws Exception {
+    public static void writeIcon(final XoXMLStreamWriter writer, final Icon icon, final RuntimeContext context)
+        throws Exception {
         _write(writer, icon, context);
     }
 
-    public void write(XoXMLStreamWriter writer, Icon icon, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final Icon icon, final RuntimeContext context)
+        throws Exception {
         _write(writer, icon, context);
     }
 
-    public final static Icon _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static Icon _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -65,12 +65,12 @@ public class Icon$JAXB
             context = new RuntimeContext();
         }
 
-        Icon icon = new Icon();
+        final Icon icon = new Icon();
         context.beforeUnmarshal(icon, LifecycleCallback.NONE);
 
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("iconType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, Icon.class);
@@ -78,10 +78,10 @@ public class Icon$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, icon);
                 icon.id = id;
             } else if (("lang" == attribute.getLocalName()) && ("http://www.w3.org/XML/1998/namespace" == attribute.getNamespace())) {
@@ -93,15 +93,15 @@ public class Icon$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("small-icon" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: smallIcon
-                String smallIconRaw = elementReader.getElementAsString();
+                final String smallIconRaw = elementReader.getElementAsString();
 
-                String smallIcon;
+                final String smallIcon;
                 try {
                     smallIcon = Adapters.collapsedStringAdapterAdapter.unmarshal(smallIconRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -109,12 +109,12 @@ public class Icon$JAXB
                 icon.smallIcon = smallIcon;
             } else if (("large-icon" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: largeIcon
-                String largeIconRaw = elementReader.getElementAsString();
+                final String largeIconRaw = elementReader.getElementAsString();
 
-                String largeIcon;
+                final String largeIcon;
                 try {
                     largeIcon = Adapters.collapsedStringAdapterAdapter.unmarshal(largeIconRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -130,13 +130,13 @@ public class Icon$JAXB
         return icon;
     }
 
-    public final Icon read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final Icon read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, Icon icon, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final Icon icon, RuntimeContext context)
+        throws Exception {
         if (icon == null) {
             writer.writeXsiNil();
             return;
@@ -146,7 +146,7 @@ public class Icon$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (Icon.class != icon.getClass()) {
             context.unexpectedSubclass(writer, icon, Icon.class);
             return;
@@ -156,35 +156,35 @@ public class Icon$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = icon.id;
+        final String idRaw = icon.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(icon, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ATTRIBUTE: lang
-        String langRaw = icon.lang;
+        final String langRaw = icon.lang;
         if (langRaw != null) {
             String lang = null;
             try {
                 lang = Adapters.collapsedStringAdapterAdapter.marshal(langRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(icon, "lang", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("xml", "http://www.w3.org/XML/1998/namespace", "lang", lang);
         }
 
         // ELEMENT: smallIcon
-        String smallIconRaw = icon.smallIcon;
+        final String smallIconRaw = icon.smallIcon;
         String smallIcon = null;
         try {
             smallIcon = Adapters.collapsedStringAdapterAdapter.marshal(smallIconRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(icon, "smallIcon", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (smallIcon != null) {
@@ -194,11 +194,11 @@ public class Icon$JAXB
         }
 
         // ELEMENT: largeIcon
-        String largeIconRaw = icon.largeIcon;
+        final String largeIconRaw = icon.largeIcon;
         String largeIcon = null;
         try {
             largeIcon = Adapters.collapsedStringAdapterAdapter.marshal(largeIconRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(icon, "largeIcon", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (largeIcon != null) {

@@ -39,7 +39,7 @@ public class ResourceLink {
         return resId;
     }
 
-    public void setResId(String value) {
+    public void setResId(final String value) {
         this.resId = value;
     }
 
@@ -47,7 +47,7 @@ public class ResourceLink {
         return resRefName;
     }
 
-    public void setResRefName(String value) {
+    public void setResRefName(final String value) {
         this.resRefName = value;
     }
 

@@ -173,7 +173,7 @@ public class StatelessPoolStatsTest extends TestCase {
         for (final MBeanAttributeInfo info : poolMBeanInfo.getAttributes()) {
             actualAttributes.add(info);
             if (!info.getName().endsWith(".Latest") && !info.getName().endsWith(".LatestTime")
-                    && !info.getName().equals("Sweeps")) {
+                && !info.getName().equals("Sweeps")) {
                 actualAttributesValue.put(info.getName(), server.getAttribute(objectName, info.getName()));
             }
         }
@@ -183,13 +183,13 @@ public class StatelessPoolStatsTest extends TestCase {
 
         // Grab pool mbean operations
         final MBeanParameterInfo[] operations = {
-                new MBeanParameterInfo("excludeRegex", "java.lang.String", "\"\""),
-                new MBeanParameterInfo("includeRegex", "java.lang.String", "\"\"")};
+            new MBeanParameterInfo("excludeRegex", "java.lang.String", "\"\""),
+            new MBeanParameterInfo("includeRegex", "java.lang.String", "\"\"")};
         final List<MBeanOperationInfo> expectedOperations = new ArrayList<MBeanOperationInfo>();
         expectedOperations.add(new MBeanOperationInfo(
-                "FilterAttributes",
-                "Filters the attributes that show up in the MBeanInfo.  The exclude is applied first, then any attributes that match the include are re-added.  It may be required to disconnect and reconnect the JMX console to force a refresh of the MBeanInfo",
-                operations, "void", MBeanOperationInfo.UNKNOWN));
+            "FilterAttributes",
+            "Filters the attributes that show up in the MBeanInfo.  The exclude is applied first, then any attributes that match the include are re-added.  It may be required to disconnect and reconnect the JMX console to force a refresh of the MBeanInfo",
+            operations, "void", MBeanOperationInfo.UNKNOWN));
 
         final List<MBeanOperationInfo> actualOperations = new ArrayList<MBeanOperationInfo>();
         actualOperations.addAll(Arrays.asList(poolMBeanInfo.getOperations()));
@@ -462,7 +462,7 @@ public class StatelessPoolStatsTest extends TestCase {
             try {
                 bean.doSomething();
                 fail("ConcurrentAccessException should have been thrown");
-            } catch (ConcurrentAccessException expected) {
+            } catch (final ConcurrentAccessException expected) {
             }
         }
 
@@ -651,7 +651,7 @@ public class StatelessPoolStatsTest extends TestCase {
             try {
                 startingPistol.countDown();
                 return finishLine.await(60, TimeUnit.SECONDS);
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 Thread.interrupted();
                 return false;
             }
@@ -684,7 +684,7 @@ public class StatelessPoolStatsTest extends TestCase {
             try {
                 startingLine.countDown();
                 startPistol.await(60, TimeUnit.SECONDS);
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 Thread.interrupted();
                 throw new RuntimeException(e);
             }

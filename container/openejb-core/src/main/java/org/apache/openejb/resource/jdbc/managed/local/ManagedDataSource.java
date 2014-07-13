@@ -30,7 +30,7 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.logging.Logger;
 
 public class ManagedDataSource implements DataSource {
-    private static final Class<?>[] CONNECTION_CLASS = new Class<?>[] { Connection.class };
+    private static final Class<?>[] CONNECTION_CLASS = new Class<?>[]{Connection.class};
 
     protected final DataSource delegate;
     protected final TransactionManager transactionManager;

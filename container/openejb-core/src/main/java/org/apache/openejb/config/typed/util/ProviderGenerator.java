@@ -68,21 +68,21 @@ public class ProviderGenerator extends Resource {
             final PrintStream out = new PrintStream(write);
 
             out.println("/*\n" +
-                    " * Licensed to the Apache Software Foundation (ASF) under one or more\n" +
-                    " * contributor license agreements.  See the NOTICE file distributed with\n" +
-                    " * this work for additional information regarding copyright ownership.\n" +
-                    " * The ASF licenses this file to You under the Apache License, Version 2.0\n" +
-                    " * (the \"License\"); you may not use this file except in compliance with\n" +
-                    " * the License.  You may obtain a copy of the License at\n" +
-                    " *\n" +
-                    " *     http://www.apache.org/licenses/LICENSE-2.0\n" +
-                    " *\n" +
-                    " *  Unless required by applicable law or agreed to in writing, software\n" +
-                    " *  distributed under the License is distributed on an \"AS IS\" BASIS,\n" +
-                    " *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n" +
-                    " *  See the License for the specific language governing permissions and\n" +
-                    " *  limitations under the License.\n" +
-                    " */");
+                " * Licensed to the Apache Software Foundation (ASF) under one or more\n" +
+                " * contributor license agreements.  See the NOTICE file distributed with\n" +
+                " * this work for additional information regarding copyright ownership.\n" +
+                " * The ASF licenses this file to You under the Apache License, Version 2.0\n" +
+                " * (the \"License\"); you may not use this file except in compliance with\n" +
+                " * the License.  You may obtain a copy of the License at\n" +
+                " *\n" +
+                " *     http://www.apache.org/licenses/LICENSE-2.0\n" +
+                " *\n" +
+                " *  Unless required by applicable law or agreed to in writing, software\n" +
+                " *  distributed under the License is distributed on an \"AS IS\" BASIS,\n" +
+                " *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n" +
+                " *  See the License for the specific language governing permissions and\n" +
+                " *  limitations under the License.\n" +
+                " */");
             out.println("package org.apache.openejb.config.typed;");
             out.println();
             out.println("import org.apache.openejb.config.typed.util.*;");
@@ -96,13 +96,13 @@ public class ProviderGenerator extends Resource {
 
             out.println(template(
                     "@XmlAccessorType(XmlAccessType.FIELD)\n" +
-                    "@XmlRootElement(name = \"${name}\")\n" +
-                            "public class ${builder} extends ${service} {\n"
-            )
+                        "@XmlRootElement(name = \"${name}\")\n" +
+                        "public class ${builder} extends ${service} {\n"
+                )
                     .apply(
-                            "builder", builder,
-                            "service", service,
-                            "name", name
+                        "builder", builder,
+                        "service", service,
+                        "name", name
                     )
             );
 
@@ -118,15 +118,15 @@ public class ProviderGenerator extends Resource {
                     out.println("    @XmlJavaTypeAdapter(DurationAdapter.class)");
                 }
                 out.println(
-                        template(
-                                "    @XmlAttribute\n" +
-                                "    private ${type} ${key} = ${value};"
-                        ).apply(
-                                "builder", builder,
-                                "key", key,
-                                "value", asValue(type, value),
-                                "type", type
-                        )
+                    template(
+                        "    @XmlAttribute\n" +
+                            "    private ${type} ${key} = ${value};"
+                    ).apply(
+                        "builder", builder,
+                        "key", key,
+                        "value", asValue(type, value),
+                        "type", type
+                    )
                 );
 
             }
@@ -137,33 +137,33 @@ public class ProviderGenerator extends Resource {
 
             out.println(template(
                     "    public ${builder}() {\n" +
-                            "        setClassName(\"${className}\");\n" +
-                            "        setType(\"${type}\");\n" +
-                            "        setId(\"${name}\");\n"
-            )
+                        "        setClassName(\"${className}\");\n" +
+                        "        setType(\"${type}\");\n" +
+                        "        setId(\"${name}\");\n"
+                )
                     .apply(
-                            "builder", builder,
-                            "className", String.valueOf(provider.getClassName()),
-                            "type", types.get(0),
-                            "name", name
+                        "builder", builder,
+                        "className", String.valueOf(provider.getClassName()),
+                        "type", types.get(0),
+                        "name", name
                     )
             );
 
             if (provider.getConstructor() != null) {
                 out.println(template(
-                        "        setConstructor(\"${constructor}\");\n")
-                        .apply(
-                                "constructor", fixConstructor(provider)
-                        ));
+                    "        setConstructor(\"${constructor}\");\n")
+                    .apply(
+                        "constructor", fixConstructor(provider)
+                    ));
             }
 
 
             if (provider.getFactoryName() != null) {
                 out.println(template(
-                        "        setFactoryName(\"${factoryName}\");\n")
-                        .apply(
-                                "factoryName", provider.getFactoryName()
-                        ));
+                    "        setFactoryName(\"${factoryName}\");\n")
+                    .apply(
+                        "factoryName", provider.getFactoryName()
+                    ));
             }
 
             out.println("    }\n");
@@ -172,9 +172,9 @@ public class ProviderGenerator extends Resource {
 
             out.println(template(
                     "    public ${builder} id(String id) {\n" +
-                            "        setId(id);\n" +
-                            "        return this;\n" +
-                            "    }\n").apply("builder", builder)
+                        "        setId(id);\n" +
+                        "        return this;\n" +
+                        "    }\n").apply("builder", builder)
             );
 
             for (final Map.Entry<Object, Object> entry : provider.getProperties().entrySet()) {
@@ -188,15 +188,15 @@ public class ProviderGenerator extends Resource {
 
                 out.println(template(
                         "    public ${builder} with${Key}(${type} ${key}) {\n" +
-                                "        this.${key} = ${key};\n" +
-                                "        return this;\n" +
-                                "    }\n")
+                            "        this.${key} = ${key};\n" +
+                            "        return this;\n" +
+                            "    }\n")
                         .apply(
-                                "builder", builder,
-                                "key", lcFirstKey,
-                                "Key", ucFirstKey,
-                                "value", value,
-                                "type", type
+                            "builder", builder,
+                            "key", lcFirstKey,
+                            "Key", ucFirstKey,
+                            "value", value,
+                            "type", type
                         )
                 );
 
@@ -204,52 +204,52 @@ public class ProviderGenerator extends Resource {
                 // setter
                 out.println(template(
                         "    public void set${Key}(${type} ${key}) {\n" +
-                                "        this.${key} = ${key};\n" +
-                                "    }\n")
+                            "        this.${key} = ${key};\n" +
+                            "    }\n")
                         .apply(
-                                "key", lcFirstKey,
-                                "Key", ucFirstKey,
-                                "value", value,
-                                "type", type
+                            "key", lcFirstKey,
+                            "Key", ucFirstKey,
+                            "value", value,
+                            "type", type
                         )
                 );
 
                 // getter
                 out.println(template(
-                                "    public ${type} get${Key}() {\n" +
-                                "        return ${key};\n" +
-                                "    }\n")
+                        "    public ${type} get${Key}() {\n" +
+                            "        return ${key};\n" +
+                            "    }\n")
                         .apply(
-                                "key", lcFirstKey,
-                                "Key", ucFirstKey,
-                                "value", value,
-                                "type", type
+                            "key", lcFirstKey,
+                            "Key", ucFirstKey,
+                            "value", value,
+                            "type", type
                         )
                 );
 
                 if (Duration.class.getName().equals(type)) {
                     out.println(template(
                             "    public ${builder} with${Key}(long time, TimeUnit unit) {\n" +
-                                    "        return with${Key}(new Duration(time, unit));\n" +
-                                    "    }\n")
+                                "        return with${Key}(new Duration(time, unit));\n" +
+                                "    }\n")
                             .apply(
-                                    "builder", builder,
-                                    "key", lcFirstKey,
-                                    "Key", ucFirstKey,
-                                    "value", value,
-                                    "type", type
+                                "builder", builder,
+                                "key", lcFirstKey,
+                                "Key", ucFirstKey,
+                                "value", value,
+                                "type", type
                             )
                     );
 
                     out.println(template(
                             "    public void set${Key}(long time, TimeUnit unit) {\n" +
-                                    "        set${Key}(new Duration(time, unit));\n" +
-                                    "    }\n")
+                                "        set${Key}(new Duration(time, unit));\n" +
+                                "    }\n")
                             .apply(
-                                    "key", lcFirstKey,
-                                    "Key", ucFirstKey,
-                                    "value", value,
-                                    "type", type
+                                "key", lcFirstKey,
+                                "Key", ucFirstKey,
+                                "value", value,
+                                "type", type
                             )
                     );
                 }
@@ -279,41 +279,41 @@ public class ProviderGenerator extends Resource {
 
                     out.println(template(
                             "    public ${builder} with${Key2}(long time, TimeUnit unit) {\n" +
-                                    "        return with${Key}(TimeUnit.${unit}.convert(time, unit));\n" +
-                                    "    }\n")
+                                "        return with${Key}(TimeUnit.${unit}.convert(time, unit));\n" +
+                                "    }\n")
                             .apply(
-                                    "builder", builder,
-                                    "key2", lcFirstKey2,
-                                    "Key2", ucFirstKey2,
-                                    "key", lcFirstKey,
-                                    "Key", ucFirstKey,
-                                    "value", value,
-                                    "unit", unit.name(),
-                                    "type", type
+                                "builder", builder,
+                                "key2", lcFirstKey2,
+                                "Key2", ucFirstKey2,
+                                "key", lcFirstKey,
+                                "Key", ucFirstKey,
+                                "value", value,
+                                "unit", unit.name(),
+                                "type", type
                             )
                     );
 
                     out.println(template(
                             "    public void set${Key2}(long time, TimeUnit unit) {\n" +
-                                    "        set${Key}(TimeUnit.${unit}.convert(time, unit));\n" +
-                                    "    }\n")
+                                "        set${Key}(TimeUnit.${unit}.convert(time, unit));\n" +
+                                "    }\n")
                             .apply(
-                                    "key2", lcFirstKey2,
-                                    "Key2", ucFirstKey2,
-                                    "key", lcFirstKey,
-                                    "Key", ucFirstKey,
-                                    "value", value,
-                                    "unit", unit.name(),
-                                    "type", type
+                                "key2", lcFirstKey2,
+                                "Key2", ucFirstKey2,
+                                "key", lcFirstKey,
+                                "Key", ucFirstKey,
+                                "value", value,
+                                "unit", unit.name(),
+                                "type", type
                             )
                     );
                 }
             }
 
             out.println(
-                    "    public Properties getProperties() {\n" +
-                            "        return Builders.getProperties(this);\n" +
-                            "    }\n"
+                "    public Properties getProperties() {\n" +
+                    "        return Builders.getProperties(this);\n" +
+                    "    }\n"
             );
 
 

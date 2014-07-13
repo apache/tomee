@@ -115,11 +115,11 @@ public final class OpenEjbContainer extends EJBContainer {
     private static Logger logger; // initialized lazily to get the logging config from properties
 
     private ServiceManagerProxy serviceManager;
-    private Options options;
-    private OpenEjbContainer.GlobalContext globalJndiContext;
-    private WebBeansContext webBeanContext;
-    private ServletContext servletContext;
-    private HttpSession session;
+    private final Options options;
+    private final OpenEjbContainer.GlobalContext globalJndiContext;
+    private final WebBeansContext webBeanContext;
+    private final ServletContext servletContext;
+    private final HttpSession session;
 
     private OpenEjbContainer(final Map<?, ?> map, final AppContext appContext) {
         webBeanContext = appContext.getWebBeansContext();

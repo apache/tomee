@@ -69,11 +69,9 @@ public class Jboss {
 
     /**
      * Gets the value of the loaderRepository property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link LoaderRepository }
-     *     
+     *
+     * @return possible object is
+     * {@link LoaderRepository }
      */
     public LoaderRepository getLoaderRepository() {
         return loaderRepository;
@@ -81,23 +79,19 @@ public class Jboss {
 
     /**
      * Sets the value of the loaderRepository property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link LoaderRepository }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link LoaderRepository }
      */
-    public void setLoaderRepository(LoaderRepository value) {
+    public void setLoaderRepository(final LoaderRepository value) {
         this.loaderRepository = value;
     }
 
     /**
      * Gets the value of the jmxName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getJmxName() {
         return jmxName;
@@ -105,23 +99,19 @@ public class Jboss {
 
     /**
      * Sets the value of the jmxName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setJmxName(String value) {
+    public void setJmxName(final String value) {
         this.jmxName = value;
     }
 
     /**
      * Gets the value of the enforceEjbRestrictions property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getEnforceEjbRestrictions() {
         return enforceEjbRestrictions;
@@ -129,23 +119,19 @@ public class Jboss {
 
     /**
      * Sets the value of the enforceEjbRestrictions property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setEnforceEjbRestrictions(String value) {
+    public void setEnforceEjbRestrictions(final String value) {
         this.enforceEjbRestrictions = value;
     }
 
     /**
      * Gets the value of the securityDomain property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getSecurityDomain() {
         return securityDomain;
@@ -153,23 +139,19 @@ public class Jboss {
 
     /**
      * Sets the value of the securityDomain property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setSecurityDomain(String value) {
+    public void setSecurityDomain(final String value) {
         this.securityDomain = value;
     }
 
     /**
      * Gets the value of the missingMethodPermissionsExcludedMode property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getMissingMethodPermissionsExcludedMode() {
         return missingMethodPermissionsExcludedMode;
@@ -177,23 +159,19 @@ public class Jboss {
 
     /**
      * Sets the value of the missingMethodPermissionsExcludedMode property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setMissingMethodPermissionsExcludedMode(String value) {
+    public void setMissingMethodPermissionsExcludedMode(final String value) {
         this.missingMethodPermissionsExcludedMode = value;
     }
 
     /**
      * Gets the value of the unauthenticatedPrincipal property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getUnauthenticatedPrincipal() {
         return unauthenticatedPrincipal;
@@ -201,23 +179,19 @@ public class Jboss {
 
     /**
      * Sets the value of the unauthenticatedPrincipal property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setUnauthenticatedPrincipal(String value) {
+    public void setUnauthenticatedPrincipal(final String value) {
         this.unauthenticatedPrincipal = value;
     }
 
     /**
      * Gets the value of the exceptionOnRollback property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getExceptionOnRollback() {
         return exceptionOnRollback;
@@ -225,23 +199,19 @@ public class Jboss {
 
     /**
      * Sets the value of the exceptionOnRollback property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setExceptionOnRollback(String value) {
+    public void setExceptionOnRollback(final String value) {
         this.exceptionOnRollback = value;
     }
 
     /**
      * Gets the value of the enterpriseBeans property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EnterpriseBeans }
-     *     
+     *
+     * @return possible object is
+     * {@link EnterpriseBeans }
      */
     public EnterpriseBeans getEnterpriseBeans() {
         return enterpriseBeans;
@@ -249,23 +219,19 @@ public class Jboss {
 
     /**
      * Sets the value of the enterpriseBeans property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EnterpriseBeans }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link EnterpriseBeans }
      */
-    public void setEnterpriseBeans(EnterpriseBeans value) {
+    public void setEnterpriseBeans(final EnterpriseBeans value) {
         this.enterpriseBeans = value;
     }
 
     /**
      * Gets the value of the assemblyDescriptor property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link AssemblyDescriptor }
-     *     
+     *
+     * @return possible object is
+     * {@link AssemblyDescriptor }
      */
     public AssemblyDescriptor getAssemblyDescriptor() {
         return assemblyDescriptor;
@@ -273,23 +239,19 @@ public class Jboss {
 
     /**
      * Sets the value of the assemblyDescriptor property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link AssemblyDescriptor }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link AssemblyDescriptor }
      */
-    public void setAssemblyDescriptor(AssemblyDescriptor value) {
+    public void setAssemblyDescriptor(final AssemblyDescriptor value) {
         this.assemblyDescriptor = value;
     }
 
     /**
      * Gets the value of the resourceManagers property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ResourceManagers }
-     *     
+     *
+     * @return possible object is
+     * {@link ResourceManagers }
      */
     public ResourceManagers getResourceManagers() {
         return resourceManagers;
@@ -297,23 +259,19 @@ public class Jboss {
 
     /**
      * Sets the value of the resourceManagers property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ResourceManagers }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ResourceManagers }
      */
-    public void setResourceManagers(ResourceManagers value) {
+    public void setResourceManagers(final ResourceManagers value) {
         this.resourceManagers = value;
     }
 
     /**
      * Gets the value of the invokerProxyBindings property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link InvokerProxyBindings }
-     *     
+     *
+     * @return possible object is
+     * {@link InvokerProxyBindings }
      */
     public InvokerProxyBindings getInvokerProxyBindings() {
         return invokerProxyBindings;
@@ -321,23 +279,19 @@ public class Jboss {
 
     /**
      * Sets the value of the invokerProxyBindings property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link InvokerProxyBindings }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link InvokerProxyBindings }
      */
-    public void setInvokerProxyBindings(InvokerProxyBindings value) {
+    public void setInvokerProxyBindings(final InvokerProxyBindings value) {
         this.invokerProxyBindings = value;
     }
 
     /**
      * Gets the value of the containerConfigurations property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ContainerConfigurations }
-     *     
+     *
+     * @return possible object is
+     * {@link ContainerConfigurations }
      */
     public ContainerConfigurations getContainerConfigurations() {
         return containerConfigurations;
@@ -345,13 +299,11 @@ public class Jboss {
 
     /**
      * Sets the value of the containerConfigurations property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ContainerConfigurations }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ContainerConfigurations }
      */
-    public void setContainerConfigurations(ContainerConfigurations value) {
+    public void setContainerConfigurations(final ContainerConfigurations value) {
         this.containerConfigurations = value;
     }
 

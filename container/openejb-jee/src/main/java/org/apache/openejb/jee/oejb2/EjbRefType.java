@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ejb-refType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="ejb-refType">
  *   &lt;complexContent>
@@ -44,8 +44,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ejb-refType", propOrder = {
@@ -76,11 +74,9 @@ public class EjbRefType {
 
     /**
      * Gets the value of the refName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getRefName() {
         return refName;
@@ -88,23 +84,19 @@ public class EjbRefType {
 
     /**
      * Sets the value of the refName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setRefName(String value) {
+    public void setRefName(final String value) {
         this.refName = value;
     }
 
     /**
      * Gets the value of the pattern property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PatternType }
-     *     
+     *
+     * @return possible object is
+     * {@link PatternType }
      */
     public PatternType getPattern() {
         return pattern;
@@ -112,23 +104,19 @@ public class EjbRefType {
 
     /**
      * Sets the value of the pattern property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PatternType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PatternType }
      */
-    public void setPattern(PatternType value) {
+    public void setPattern(final PatternType value) {
         this.pattern = value;
     }
 
     /**
      * Gets the value of the nsCorbaloc property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getNsCorbaloc() {
         return nsCorbaloc;
@@ -136,23 +124,19 @@ public class EjbRefType {
 
     /**
      * Sets the value of the nsCorbaloc property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setNsCorbaloc(String value) {
+    public void setNsCorbaloc(final String value) {
         this.nsCorbaloc = value;
     }
 
     /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getName() {
         return name;
@@ -160,23 +144,19 @@ public class EjbRefType {
 
     /**
      * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
     /**
      * Gets the value of the css property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PatternType }
-     *     
+     *
+     * @return possible object is
+     * {@link PatternType }
      */
     public PatternType getCss() {
         return css;
@@ -184,23 +164,19 @@ public class EjbRefType {
 
     /**
      * Sets the value of the css property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PatternType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PatternType }
      */
-    public void setCss(PatternType value) {
+    public void setCss(final PatternType value) {
         this.css = value;
     }
 
     /**
      * Gets the value of the cssLink property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getCssLink() {
         return cssLink;
@@ -208,23 +184,19 @@ public class EjbRefType {
 
     /**
      * Sets the value of the cssLink property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setCssLink(String value) {
+    public void setCssLink(final String value) {
         this.cssLink = value;
     }
 
     /**
      * Gets the value of the ejbLink property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getEjbLink() {
         return ejbLink;
@@ -232,13 +204,11 @@ public class EjbRefType {
 
     /**
      * Sets the value of the ejbLink property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setEjbLink(String value) {
+    public void setEjbLink(final String value) {
         this.ejbLink = value;
     }
 

@@ -28,10 +28,10 @@ import java.util.Set;
 import java.util.TreeMap;
 
 public class PortAddressRegistryImpl implements PortAddressRegistry {
-    private Map<String, PortAddress> portsById = new TreeMap<String, PortAddress>();
-    private Map<String, Map<String, PortAddress>> portsByInterface = new TreeMap<String, Map<String, PortAddress>>();
-    private Map<String, Map<String, PortAddress>> portsByServiceId = new TreeMap<String, Map<String, PortAddress>>();
-    private Map<QName, Map<String, PortAddress>> portsByServiceQName = new HashMap<QName, Map<String, PortAddress>>();
+    private final Map<String, PortAddress> portsById = new TreeMap<String, PortAddress>();
+    private final Map<String, Map<String, PortAddress>> portsByInterface = new TreeMap<String, Map<String, PortAddress>>();
+    private final Map<String, Map<String, PortAddress>> portsByServiceId = new TreeMap<String, Map<String, PortAddress>>();
+    private final Map<QName, Map<String, PortAddress>> portsByServiceQName = new HashMap<QName, Map<String, PortAddress>>();
 
     public synchronized void addPort(final String serviceId, final QName serviceQName, final String portId, final QName portQName, final String portInterface, final String address) throws OpenEJBException {
         if (serviceId == null) {

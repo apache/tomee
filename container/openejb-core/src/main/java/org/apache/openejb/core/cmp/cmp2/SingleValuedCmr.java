@@ -49,7 +49,7 @@ public class SingleValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObje
     public Proxy get(final Bean entity) throws EJBException {
         if (sourceProperty == null) {
             throw new EJBException("Internal error: this container managed relationship is unidirectional and, " +
-                    "this entity does not have a cmr field for the relationship");
+                "this entity does not have a cmr field for the relationship");
         }
 
         if (entity == null) {

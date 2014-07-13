@@ -35,11 +35,11 @@ import java.util.Map;
 
 /**
  * application-client_6.xsd
- *
+ * <p/>
  * <p>Java class for application-clientType complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="application-clientType">
  *   &lt;complexContent>
@@ -67,30 +67,28 @@ import java.util.Map;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
 @XmlRootElement(name = "application-client")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "application-clientType", propOrder = {
-        "moduleName",
-        "descriptions",
-        "displayNames",
-        "icon",
-        "envEntry",
-        "ejbRef",
-        "ejbLocalRef",
-        "serviceRef",
-        "resourceRef",
-        "resourceEnvRef",
-        "messageDestinationRef",
-        "persistenceContextRef",
-        "persistenceUnitRef",
-        "postConstruct",
-        "preDestroy",
-        "callbackHandler",
-        "messageDestination",
-        "dataSource"
+    "moduleName",
+    "descriptions",
+    "displayNames",
+    "icon",
+    "envEntry",
+    "ejbRef",
+    "ejbLocalRef",
+    "serviceRef",
+    "resourceRef",
+    "resourceEnvRef",
+    "messageDestinationRef",
+    "persistenceContextRef",
+    "persistenceUnitRef",
+    "postConstruct",
+    "preDestroy",
+    "callbackHandler",
+    "messageDestination",
+    "dataSource"
 
 })
 public class ApplicationClient implements JndiConsumer, Lifecycle, NamedModule {
@@ -105,23 +103,23 @@ public class ApplicationClient implements JndiConsumer, Lifecycle, NamedModule {
     protected LocalCollection<Icon> icon = new LocalCollection<Icon>();
 
     @XmlElement(name = "env-entry", required = true)
-    protected KeyedCollection<String,EnvEntry> envEntry;
+    protected KeyedCollection<String, EnvEntry> envEntry;
     @XmlElement(name = "ejb-ref", required = true)
-    protected KeyedCollection<String,EjbRef> ejbRef;
+    protected KeyedCollection<String, EjbRef> ejbRef;
     @XmlElement(name = "ejb-local-ref", required = true)
-    protected KeyedCollection<String,EjbLocalRef> ejbLocalRef;
+    protected KeyedCollection<String, EjbLocalRef> ejbLocalRef;
     @XmlElement(name = "service-ref", required = true)
-    protected KeyedCollection<String,ServiceRef> serviceRef;
+    protected KeyedCollection<String, ServiceRef> serviceRef;
     @XmlElement(name = "resource-ref", required = true)
-    protected KeyedCollection<String,ResourceRef> resourceRef;
+    protected KeyedCollection<String, ResourceRef> resourceRef;
     @XmlElement(name = "resource-env-ref", required = true)
-    protected KeyedCollection<String,ResourceEnvRef> resourceEnvRef;
+    protected KeyedCollection<String, ResourceEnvRef> resourceEnvRef;
     @XmlElement(name = "message-destination-ref", required = true)
-    protected KeyedCollection<String,MessageDestinationRef> messageDestinationRef;
+    protected KeyedCollection<String, MessageDestinationRef> messageDestinationRef;
     @XmlElement(name = "persistence-context-ref", required = true)
-    protected KeyedCollection<String,PersistenceContextRef> persistenceContextRef;
+    protected KeyedCollection<String, PersistenceContextRef> persistenceContextRef;
     @XmlElement(name = "persistence-unit-ref", required = true)
-    protected KeyedCollection<String,PersistenceUnitRef> persistenceUnitRef;
+    protected KeyedCollection<String, PersistenceUnitRef> persistenceUnitRef;
     @XmlElement(name = "post-construct", required = true)
     protected List<LifecycleCallback> postConstruct;
     @XmlElement(name = "pre-destroy", required = true)
@@ -129,10 +127,10 @@ public class ApplicationClient implements JndiConsumer, Lifecycle, NamedModule {
     @XmlElement(name = "callback-handler")
     protected String callbackHandler;
     @XmlElement(name = "message-destination", required = true)
-    protected KeyedCollection<String,MessageDestination> messageDestination;
+    protected KeyedCollection<String, MessageDestination> messageDestination;
     @XmlElement(name = "data-source")
-    protected KeyedCollection<String,DataSource> dataSource;
- 
+    protected KeyedCollection<String, DataSource> dataSource;
+
 
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -155,14 +153,14 @@ public class ApplicationClient implements JndiConsumer, Lifecycle, NamedModule {
         if (mainClass == null) {
             return null;
         }
-        return mainClass.replaceAll(".*\\.","");
+        return mainClass.replaceAll(".*\\.", "");
     }
 
     public String getModuleName() {
         return moduleName;
     }
 
-    public void setModuleName(String moduleName) {
+    public void setModuleName(final String moduleName) {
         this.moduleName = moduleName;
     }
 
@@ -171,7 +169,7 @@ public class ApplicationClient implements JndiConsumer, Lifecycle, NamedModule {
         return description.toArray();
     }
 
-    public void setDescriptions(Text[] text) {
+    public void setDescriptions(final Text[] text) {
         description.set(text);
     }
 
@@ -184,7 +182,7 @@ public class ApplicationClient implements JndiConsumer, Lifecycle, NamedModule {
         return displayName.toArray();
     }
 
-    public void setDisplayNames(Text[] text) {
+    public void setDisplayNames(final Text[] text) {
         displayName.set(text);
     }
 
@@ -199,7 +197,7 @@ public class ApplicationClient implements JndiConsumer, Lifecycle, NamedModule {
         return icon;
     }
 
-    public Map<String,Icon> getIconMap() {
+    public Map<String, Icon> getIconMap() {
         if (icon == null) {
             icon = new LocalCollection<Icon>();
         }
@@ -212,140 +210,140 @@ public class ApplicationClient implements JndiConsumer, Lifecycle, NamedModule {
 
     public Collection<EnvEntry> getEnvEntry() {
         if (envEntry == null) {
-            envEntry = new KeyedCollection<String,EnvEntry>();
+            envEntry = new KeyedCollection<String, EnvEntry>();
         }
         return this.envEntry;
     }
 
-    public Map<String,EnvEntry> getEnvEntryMap() {
+    public Map<String, EnvEntry> getEnvEntryMap() {
         if (envEntry == null) {
-            envEntry = new KeyedCollection<String,EnvEntry>();
+            envEntry = new KeyedCollection<String, EnvEntry>();
         }
         return this.envEntry.toMap();
     }
 
     public Collection<EjbRef> getEjbRef() {
         if (ejbRef == null) {
-            ejbRef = new KeyedCollection<String,EjbRef>();
+            ejbRef = new KeyedCollection<String, EjbRef>();
         }
         return this.ejbRef;
     }
 
-    public Map<String,EjbRef> getEjbRefMap() {
+    public Map<String, EjbRef> getEjbRefMap() {
         if (ejbRef == null) {
-            ejbRef = new KeyedCollection<String,EjbRef>();
+            ejbRef = new KeyedCollection<String, EjbRef>();
         }
         return this.ejbRef.toMap();
     }
 
     public Collection<EjbLocalRef> getEjbLocalRef() {
         if (ejbLocalRef == null) {
-            ejbLocalRef = new KeyedCollection<String,EjbLocalRef>();
+            ejbLocalRef = new KeyedCollection<String, EjbLocalRef>();
         }
         return this.ejbLocalRef;
     }
 
-    public Map<String,EjbLocalRef> getEjbLocalRefMap() {
+    public Map<String, EjbLocalRef> getEjbLocalRefMap() {
         if (ejbLocalRef == null) {
-            ejbLocalRef = new KeyedCollection<String,EjbLocalRef>();
+            ejbLocalRef = new KeyedCollection<String, EjbLocalRef>();
         }
         return this.ejbLocalRef.toMap();
     }
 
     public Collection<ServiceRef> getServiceRef() {
         if (serviceRef == null) {
-            serviceRef = new KeyedCollection<String,ServiceRef>();
+            serviceRef = new KeyedCollection<String, ServiceRef>();
         }
         return this.serviceRef;
     }
 
-    public Map<String,ServiceRef> getServiceRefMap() {
+    public Map<String, ServiceRef> getServiceRefMap() {
         if (serviceRef == null) {
-            serviceRef = new KeyedCollection<String,ServiceRef>();
+            serviceRef = new KeyedCollection<String, ServiceRef>();
         }
         return this.serviceRef.toMap();
     }
 
     public Collection<ResourceRef> getResourceRef() {
         if (resourceRef == null) {
-            resourceRef = new KeyedCollection<String,ResourceRef>();
+            resourceRef = new KeyedCollection<String, ResourceRef>();
         }
         return this.resourceRef;
     }
 
-    public Map<String,ResourceRef> getResourceRefMap() {
+    public Map<String, ResourceRef> getResourceRefMap() {
         if (resourceRef == null) {
-            resourceRef = new KeyedCollection<String,ResourceRef>();
+            resourceRef = new KeyedCollection<String, ResourceRef>();
         }
         return this.resourceRef.toMap();
     }
 
     public Collection<ResourceEnvRef> getResourceEnvRef() {
         if (resourceEnvRef == null) {
-            resourceEnvRef = new KeyedCollection<String,ResourceEnvRef>();
+            resourceEnvRef = new KeyedCollection<String, ResourceEnvRef>();
         }
         return this.resourceEnvRef;
     }
 
-    public Map<String,ResourceEnvRef> getResourceEnvRefMap() {
+    public Map<String, ResourceEnvRef> getResourceEnvRefMap() {
         if (resourceEnvRef == null) {
-            resourceEnvRef = new KeyedCollection<String,ResourceEnvRef>();
+            resourceEnvRef = new KeyedCollection<String, ResourceEnvRef>();
         }
         return this.resourceEnvRef.toMap();
     }
 
     public Collection<MessageDestinationRef> getMessageDestinationRef() {
         if (messageDestinationRef == null) {
-            messageDestinationRef = new KeyedCollection<String,MessageDestinationRef>();
+            messageDestinationRef = new KeyedCollection<String, MessageDestinationRef>();
         }
         return this.messageDestinationRef;
     }
 
-    public Map<String,MessageDestinationRef> getMessageDestinationRefMap() {
+    public Map<String, MessageDestinationRef> getMessageDestinationRefMap() {
         if (messageDestinationRef == null) {
-            messageDestinationRef = new KeyedCollection<String,MessageDestinationRef>();
+            messageDestinationRef = new KeyedCollection<String, MessageDestinationRef>();
         }
         return this.messageDestinationRef.toMap();
     }
 
     public Collection<PersistenceContextRef> getPersistenceContextRef() {
         if (persistenceContextRef == null) {
-            persistenceContextRef = new KeyedCollection<String,PersistenceContextRef>();
+            persistenceContextRef = new KeyedCollection<String, PersistenceContextRef>();
         }
         return this.persistenceContextRef;
     }
 
-    public Map<String,PersistenceContextRef> getPersistenceContextRefMap() {
+    public Map<String, PersistenceContextRef> getPersistenceContextRefMap() {
         if (persistenceContextRef == null) {
-            persistenceContextRef = new KeyedCollection<String,PersistenceContextRef>();
+            persistenceContextRef = new KeyedCollection<String, PersistenceContextRef>();
         }
         return this.persistenceContextRef.toMap();
     }
 
     public Collection<PersistenceUnitRef> getPersistenceUnitRef() {
         if (persistenceUnitRef == null) {
-            persistenceUnitRef = new KeyedCollection<String,PersistenceUnitRef>();
+            persistenceUnitRef = new KeyedCollection<String, PersistenceUnitRef>();
         }
         return this.persistenceUnitRef;
     }
 
-    public Map<String,PersistenceUnitRef> getPersistenceUnitRefMap() {
+    public Map<String, PersistenceUnitRef> getPersistenceUnitRefMap() {
         if (persistenceUnitRef == null) {
-            persistenceUnitRef = new KeyedCollection<String,PersistenceUnitRef>();
+            persistenceUnitRef = new KeyedCollection<String, PersistenceUnitRef>();
         }
         return this.persistenceUnitRef.toMap();
     }
 
     public Collection<DataSource> getDataSource() {
         if (dataSource == null) {
-            dataSource = new KeyedCollection<String,DataSource>();
+            dataSource = new KeyedCollection<String, DataSource>();
         }
         return this.dataSource;
     }
 
-    public Map<String,DataSource> getDataSourceMap() {
+    public Map<String, DataSource> getDataSourceMap() {
         if (dataSource == null) {
-            dataSource = new KeyedCollection<String,DataSource>();
+            dataSource = new KeyedCollection<String, DataSource>();
         }
         return this.dataSource.toMap();
     }
@@ -364,13 +362,13 @@ public class ApplicationClient implements JndiConsumer, Lifecycle, NamedModule {
         return this.preDestroy;
     }
 
-    public void addPostConstruct(String method) {
-        assert mainClass != null: "Set the mainClass before calling this method";
+    public void addPostConstruct(final String method) {
+        assert mainClass != null : "Set the mainClass before calling this method";
         getPostConstruct().add(new LifecycleCallback(mainClass, method));
     }
 
-    public void addPreDestroy(String method) {
-        assert mainClass != null: "Set the mainClass before calling this method";
+    public void addPreDestroy(final String method) {
+        assert mainClass != null : "Set the mainClass before calling this method";
         getPreDestroy().add(new LifecycleCallback(mainClass, method));
     }
 
@@ -378,13 +376,13 @@ public class ApplicationClient implements JndiConsumer, Lifecycle, NamedModule {
         return callbackHandler;
     }
 
-    public void setCallbackHandler(String callbackHandler) {
+    public void setCallbackHandler(final String callbackHandler) {
         this.callbackHandler = callbackHandler;
     }
 
     public Collection<MessageDestination> getMessageDestination() {
         if (messageDestination == null) {
-            messageDestination = new KeyedCollection<String,MessageDestination>();
+            messageDestination = new KeyedCollection<String, MessageDestination>();
         }
         return this.messageDestination;
     }
@@ -393,7 +391,7 @@ public class ApplicationClient implements JndiConsumer, Lifecycle, NamedModule {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
@@ -401,7 +399,7 @@ public class ApplicationClient implements JndiConsumer, Lifecycle, NamedModule {
         return metadataComplete != null && metadataComplete;
     }
 
-    public void setMetadataComplete(Boolean value) {
+    public void setMetadataComplete(final Boolean value) {
         this.metadataComplete = value;
     }
 
@@ -413,7 +411,7 @@ public class ApplicationClient implements JndiConsumer, Lifecycle, NamedModule {
         }
     }
 
-    public void setVersion(String value) {
+    public void setVersion(final String value) {
         this.version = value;
     }
 
@@ -421,7 +419,7 @@ public class ApplicationClient implements JndiConsumer, Lifecycle, NamedModule {
         return mainClass;
     }
 
-    public void setMainClass(String mainClass) {
+    public void setMainClass(final String mainClass) {
         this.mainClass = mainClass;
     }
 }

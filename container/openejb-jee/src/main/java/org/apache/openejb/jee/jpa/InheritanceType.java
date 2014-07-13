@@ -23,9 +23,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for inheritance-type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p>
+ * <p/>
  * <pre>
  * &lt;simpleType name="inheritance-type">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}token">
@@ -35,7 +35,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
  */
 @XmlType(name = "inheritance-type")
 @XmlEnum
@@ -49,7 +48,7 @@ public enum InheritanceType {
         return name();
     }
 
-    public static InheritanceType fromValue(String v) {
+    public static InheritanceType fromValue(final String v) {
         return valueOf(v);
     }
 

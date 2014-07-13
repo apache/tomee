@@ -35,22 +35,22 @@ public class ThirdSLSBean implements ThirdSLSBeanLocal {
 
     @Interceptors({MethodLevelInterceptorOne.class, MethodLevelInterceptorTwo.class})
     public List<String> businessMethod() {
-        List<String> list = new ArrayList<String>();
+        final List<String> list = new ArrayList<String>();
         list.add("businessMethod");
         return list;
     }
 
-    @Interceptors({MethodLevelInterceptorOne.class, MethodLevelInterceptorTwo.class})    
+    @Interceptors({MethodLevelInterceptorOne.class, MethodLevelInterceptorTwo.class})
     @ExcludeClassInterceptors
     public List<String> anotherBusinessMethod() {
-        List<String> list = new ArrayList<String>();
+        final List<String> list = new ArrayList<String>();
         list.add("anotherBusinessMethod");
         return list;
     }
 
 
     @AroundInvoke
-    protected Object beanClassBusinessMethodInterceptor(InvocationContext ic) throws Exception {
+    protected Object beanClassBusinessMethodInterceptor(final InvocationContext ic) throws Exception {
         return Utils.addClassSimpleName(ic, this.getClass().getSimpleName());
-    }    
+    }
 }

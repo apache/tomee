@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -44,8 +44,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -71,11 +69,9 @@ public class Mapping {
 
     /**
      * Gets the value of the javaType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link JavaType }
-     *     
+     *
+     * @return possible object is
+     * {@link JavaType }
      */
     public JavaType getJavaType() {
         return javaType;
@@ -83,23 +79,19 @@ public class Mapping {
 
     /**
      * Sets the value of the javaType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link JavaType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link JavaType }
      */
-    public void setJavaType(JavaType value) {
+    public void setJavaType(final JavaType value) {
         this.javaType = value;
     }
 
     /**
      * Gets the value of the jdbcType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link JdbcType }
-     *     
+     *
+     * @return possible object is
+     * {@link JdbcType }
      */
     public JdbcType getJdbcType() {
         return jdbcType;
@@ -107,23 +99,19 @@ public class Mapping {
 
     /**
      * Sets the value of the jdbcType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link JdbcType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link JdbcType }
      */
-    public void setJdbcType(JdbcType value) {
+    public void setJdbcType(final JdbcType value) {
         this.jdbcType = value;
     }
 
     /**
      * Gets the value of the sqlType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link SqlType }
-     *     
+     *
+     * @return possible object is
+     * {@link SqlType }
      */
     public SqlType getSqlType() {
         return sqlType;
@@ -131,23 +119,19 @@ public class Mapping {
 
     /**
      * Sets the value of the sqlType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link SqlType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link SqlType }
      */
-    public void setSqlType(SqlType value) {
+    public void setSqlType(final SqlType value) {
         this.sqlType = value;
     }
 
     /**
      * Gets the value of the paramSetter property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ParamSetter }
-     *     
+     *
+     * @return possible object is
+     * {@link ParamSetter }
      */
     public ParamSetter getParamSetter() {
         return paramSetter;
@@ -155,23 +139,19 @@ public class Mapping {
 
     /**
      * Sets the value of the paramSetter property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ParamSetter }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ParamSetter }
      */
-    public void setParamSetter(ParamSetter value) {
+    public void setParamSetter(final ParamSetter value) {
         this.paramSetter = value;
     }
 
     /**
      * Gets the value of the resultReader property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ResultReader }
-     *     
+     *
+     * @return possible object is
+     * {@link ResultReader }
      */
     public ResultReader getResultReader() {
         return resultReader;
@@ -179,13 +159,11 @@ public class Mapping {
 
     /**
      * Sets the value of the resultReader property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ResultReader }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link ResultReader }
      */
-    public void setResultReader(ResultReader value) {
+    public void setResultReader(final ResultReader value) {
         this.resultReader = value;
     }
 

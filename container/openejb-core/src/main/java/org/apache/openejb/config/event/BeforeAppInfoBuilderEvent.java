@@ -36,7 +36,7 @@ public class BeforeAppInfoBuilderEvent {
     @Override
     public String toString() {
         return "BeforeAppInfoBuilderEvent{" +
-                "appModule=" + appModule +
-                '}';
+            "appModule=" + appModule +
+            '}';
     }
 }

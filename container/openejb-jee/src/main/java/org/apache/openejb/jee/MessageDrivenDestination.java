@@ -49,11 +49,9 @@ public class MessageDrivenDestination {
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getId() {
         return id;
@@ -61,23 +59,19 @@ public class MessageDrivenDestination {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
     /**
      * Gets the value of the destinationType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link DestinationType }
-     *     
+     *
+     * @return possible object is
+     * {@link DestinationType }
      */
     public DestinationType getDestinationType() {
         return destinationType;
@@ -85,23 +79,19 @@ public class MessageDrivenDestination {
 
     /**
      * Sets the value of the destinationType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link DestinationType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link DestinationType }
      */
-    public void setDestinationType(DestinationType value) {
+    public void setDestinationType(final DestinationType value) {
         this.destinationType = value;
     }
 
     /**
      * Gets the value of the subscriptionDurability property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link SubscriptionDurability }
-     *     
+     *
+     * @return possible object is
+     * {@link SubscriptionDurability }
      */
     public SubscriptionDurability getSubscriptionDurability() {
         return subscriptionDurability;
@@ -109,13 +99,11 @@ public class MessageDrivenDestination {
 
     /**
      * Sets the value of the subscriptionDurability property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link SubscriptionDurability }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link SubscriptionDurability }
      */
-    public void setSubscriptionDurability(SubscriptionDurability value) {
+    public void setSubscriptionDurability(final SubscriptionDurability value) {
         this.subscriptionDurability = value;
     }
 }

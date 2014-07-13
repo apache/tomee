@@ -5,9 +5,9 @@
  *   The ASF licenses this file to You under the Apache License, Version 2.0
  *   (the "License"); you may not use this file except in compliance with
  *   the License.  You may obtain a copy of the License at
- *  
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  *    Unless required by applicable law or agreed to in writing, software
  *    distributed under the License is distributed on an "AS IS" BASIS,
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,17 +22,16 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * 
  * Binding information for MessageDrivenBeans.
- * 
- * 
- * <p>
+ * <p/>
+ * <p/>
+ * <p/>
  * Java class for MessageDrivenBeanBinding complex type.
- * 
- * <p>
+ * <p/>
+ * <p/>
  * The following schema fragment specifies the expected content contained within
  * this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="MessageDrivenBeanBinding">
  *   &lt;complexContent>
@@ -45,104 +44,90 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MessageDrivenBeanBinding")
 public class MessageDrivenBeanBinding extends EnterpriseBeanBinding {
 
-	@XmlAttribute
-	protected String activationSpecAuthAlias;
-	@XmlAttribute
-	protected String activationSpecJndiName;
-	@XmlAttribute
-	protected String destinationJndiName;
-	@XmlAttribute
-	protected String listenerInputPortName;
+    @XmlAttribute
+    protected String activationSpecAuthAlias;
+    @XmlAttribute
+    protected String activationSpecJndiName;
+    @XmlAttribute
+    protected String destinationJndiName;
+    @XmlAttribute
+    protected String listenerInputPortName;
 
-	/**
-	 * Gets the value of the activationSpecAuthAlias property.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getActivationSpecAuthAlias() {
-		return activationSpecAuthAlias;
-	}
+    /**
+     * Gets the value of the activationSpecAuthAlias property.
+     *
+     * @return possible object is {@link String }
+     */
+    public String getActivationSpecAuthAlias() {
+        return activationSpecAuthAlias;
+    }
 
-	/**
-	 * Sets the value of the activationSpecAuthAlias property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setActivationSpecAuthAlias(String value) {
-		this.activationSpecAuthAlias = value;
-	}
+    /**
+     * Sets the value of the activationSpecAuthAlias property.
+     *
+     * @param value allowed object is {@link String }
+     */
+    public void setActivationSpecAuthAlias(final String value) {
+        this.activationSpecAuthAlias = value;
+    }
 
-	/**
-	 * Gets the value of the activationSpecJndiName property.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getActivationSpecJndiName() {
-		return activationSpecJndiName;
-	}
+    /**
+     * Gets the value of the activationSpecJndiName property.
+     *
+     * @return possible object is {@link String }
+     */
+    public String getActivationSpecJndiName() {
+        return activationSpecJndiName;
+    }
 
-	/**
-	 * Sets the value of the activationSpecJndiName property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setActivationSpecJndiName(String value) {
-		this.activationSpecJndiName = value;
-	}
+    /**
+     * Sets the value of the activationSpecJndiName property.
+     *
+     * @param value allowed object is {@link String }
+     */
+    public void setActivationSpecJndiName(final String value) {
+        this.activationSpecJndiName = value;
+    }
 
-	/**
-	 * Gets the value of the destinationJndiName property.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getDestinationJndiName() {
-		return destinationJndiName;
-	}
+    /**
+     * Gets the value of the destinationJndiName property.
+     *
+     * @return possible object is {@link String }
+     */
+    public String getDestinationJndiName() {
+        return destinationJndiName;
+    }
 
-	/**
-	 * Sets the value of the destinationJndiName property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setDestinationJndiName(String value) {
-		this.destinationJndiName = value;
-	}
+    /**
+     * Sets the value of the destinationJndiName property.
+     *
+     * @param value allowed object is {@link String }
+     */
+    public void setDestinationJndiName(final String value) {
+        this.destinationJndiName = value;
+    }
 
-	/**
-	 * Gets the value of the listenerInputPortName property.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getListenerInputPortName() {
-		return listenerInputPortName;
-	}
+    /**
+     * Gets the value of the listenerInputPortName property.
+     *
+     * @return possible object is {@link String }
+     */
+    public String getListenerInputPortName() {
+        return listenerInputPortName;
+    }
 
-	/**
-	 * Sets the value of the listenerInputPortName property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setListenerInputPortName(String value) {
-		this.listenerInputPortName = value;
-	}
+    /**
+     * Sets the value of the listenerInputPortName property.
+     *
+     * @param value allowed object is {@link String }
+     */
+    public void setListenerInputPortName(final String value) {
+        this.listenerInputPortName = value;
+    }
 
 }

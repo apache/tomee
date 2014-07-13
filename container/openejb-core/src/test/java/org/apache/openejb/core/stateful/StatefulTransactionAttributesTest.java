@@ -89,20 +89,20 @@ public class StatefulTransactionAttributesTest extends TestCase {
             final ColorLocal color = (ColorLocal) context.lookup("ColorLocal");
 
             assertEquals("Never", color.color());
-            assertEquals("RequiresNew", color.color((Object)null));
-            assertEquals("Supports", color.color((String)null));
-            assertEquals("Supports", color.color((Boolean)null));
-            assertEquals("Supports", color.color((Integer)null));
+            assertEquals("RequiresNew", color.color((Object) null));
+            assertEquals("Supports", color.color((String) null));
+            assertEquals("Supports", color.color((Boolean) null));
+            assertEquals("Supports", color.color((Integer) null));
         }
 
         {
             final ColorRemote color = (ColorRemote) context.lookup("ColorRemote");
 
             assertEquals("Never", color.color());
-            assertEquals("RequiresNew", color.color((Object)null));
-            assertEquals("Supports", color.color((String)null));
-            assertEquals("Supports", color.color((Boolean)null));
-            assertEquals("Supports", color.color((Integer)null));
+            assertEquals("RequiresNew", color.color((Object) null));
+            assertEquals("Supports", color.color((String) null));
+            assertEquals("Supports", color.color((Boolean) null));
+            assertEquals("Supports", color.color((Integer) null));
         }
 
         {
@@ -110,10 +110,10 @@ public class StatefulTransactionAttributesTest extends TestCase {
             final ColorEjbLocalObject color = home.create("Supports");
 
             assertEquals("Never", color.color());
-            assertEquals("RequiresNew", color.color((Object)null));
-            assertEquals("Supports", color.color((String)null));
-            assertEquals("Supports", color.color((Boolean)null));
-            assertEquals("Supports", color.color((Integer)null));
+            assertEquals("RequiresNew", color.color((Object) null));
+            assertEquals("Supports", color.color((String) null));
+            assertEquals("Supports", color.color((Boolean) null));
+            assertEquals("Supports", color.color((Integer) null));
 
             expected.set("Supports");
             color.remove();
@@ -124,10 +124,10 @@ public class StatefulTransactionAttributesTest extends TestCase {
             final ColorEjbObject color = home.create("Supports");
 
             assertEquals("Never", color.color());
-            assertEquals("RequiresNew", color.color((Object)null));
-            assertEquals("Supports", color.color((String)null));
-            assertEquals("Supports", color.color((Boolean)null));
-            assertEquals("Supports", color.color((Integer)null));
+            assertEquals("RequiresNew", color.color((Object) null));
+            assertEquals("Supports", color.color((String) null));
+            assertEquals("Supports", color.color((Boolean) null));
+            assertEquals("Supports", color.color((Integer) null));
 
             expected.set("Supports");
             color.remove();
@@ -137,38 +137,38 @@ public class StatefulTransactionAttributesTest extends TestCase {
         {
             final RedLocal red = (RedLocal) context.lookup("RedLocal");
             assertEquals("Never", red.color());
-            assertEquals("Required", red.color((Object)null));
-            assertEquals("Supports", red.color((String)null));
-            assertEquals("Supports", red.color((Boolean)null));
-            assertEquals("Supports", red.color((Integer)null));
+            assertEquals("Required", red.color((Object) null));
+            assertEquals("Supports", red.color((String) null));
+            assertEquals("Supports", red.color((Boolean) null));
+            assertEquals("Supports", red.color((Integer) null));
             assertEquals("RequiresNew", red.red());
-            assertEquals("Required", red.red((Object)null));
-            assertEquals("Required", red.red((String)null));
+            assertEquals("Required", red.red((Object) null));
+            assertEquals("Required", red.red((String) null));
         }
 
         {
             final RedRemote red = (RedRemote) context.lookup("RedRemote");
             assertEquals("Never", red.color());
-            assertEquals("Required", red.color((Object)null));
-            assertEquals("Supports", red.color((String)null));
-            assertEquals("Supports", red.color((Boolean)null));
-            assertEquals("Supports", red.color((Integer)null));
+            assertEquals("Required", red.color((Object) null));
+            assertEquals("Supports", red.color((String) null));
+            assertEquals("Supports", red.color((Boolean) null));
+            assertEquals("Supports", red.color((Integer) null));
             assertEquals("RequiresNew", red.red());
-            assertEquals("Required", red.red((Object)null));
-            assertEquals("Required", red.red((String)null));
+            assertEquals("Required", red.red((Object) null));
+            assertEquals("Required", red.red((String) null));
         }
 
         {
             final RedEjbLocalHome home = (RedEjbLocalHome) context.lookup("RedLocalHome");
             final RedEjbLocalObject red = home.create("Supports");
             assertEquals("Never", red.color());
-            assertEquals("Required", red.color((Object)null));
-            assertEquals("Supports", red.color((String)null));
-            assertEquals("Supports", red.color((Boolean)null));
-            assertEquals("Supports", red.color((Integer)null));
+            assertEquals("Required", red.color((Object) null));
+            assertEquals("Supports", red.color((String) null));
+            assertEquals("Supports", red.color((Boolean) null));
+            assertEquals("Supports", red.color((Integer) null));
             assertEquals("RequiresNew", red.red());
-            assertEquals("Required", red.red((Object)null));
-            assertEquals("Required", red.red((String)null));
+            assertEquals("Required", red.red((Object) null));
+            assertEquals("Required", red.red((String) null));
 
             expected.set("Supports");
             red.remove();
@@ -178,13 +178,13 @@ public class StatefulTransactionAttributesTest extends TestCase {
             final RedEjbHome home = (RedEjbHome) context.lookup("RedRemoteHome");
             final RedEjbObject red = home.create("Supports");
             assertEquals("Never", red.color());
-            assertEquals("Required", red.color((Object)null));
-            assertEquals("Supports", red.color((String)null));
-            assertEquals("Supports", red.color((Boolean)null));
-            assertEquals("Supports", red.color((Integer)null));
+            assertEquals("Required", red.color((Object) null));
+            assertEquals("Supports", red.color((String) null));
+            assertEquals("Supports", red.color((Boolean) null));
+            assertEquals("Supports", red.color((Integer) null));
             assertEquals("RequiresNew", red.red());
-            assertEquals("Required", red.red((Object)null));
-            assertEquals("Required", red.red((String)null));
+            assertEquals("Required", red.red((Object) null));
+            assertEquals("Required", red.red((String) null));
 
             expected.set("Supports");
             red.remove();
@@ -193,44 +193,44 @@ public class StatefulTransactionAttributesTest extends TestCase {
         {
             final CrimsonLocal crimson = (CrimsonLocal) context.lookup("CrimsonLocal");
             assertEquals("Required", crimson.color());
-            assertEquals("Required", crimson.color((Object)null));
-            assertEquals("Required", crimson.color((String)null));
-            assertEquals("Required", crimson.color((Boolean)null));
-            assertEquals("Required", crimson.color((Integer)null));
+            assertEquals("Required", crimson.color((Object) null));
+            assertEquals("Required", crimson.color((String) null));
+            assertEquals("Required", crimson.color((Boolean) null));
+            assertEquals("Required", crimson.color((Integer) null));
             assertEquals("RequiresNew", crimson.red());
-            assertEquals("Required", crimson.red((Object)null));
-            assertEquals("Required", crimson.red((String)null));
+            assertEquals("Required", crimson.red((Object) null));
+            assertEquals("Required", crimson.red((String) null));
             assertEquals("RequiresNew", crimson.crimson());
-            assertEquals("Required", crimson.crimson((String)null));
+            assertEquals("Required", crimson.crimson((String) null));
         }
 
         {
             final CrimsonRemote crimson = (CrimsonRemote) context.lookup("CrimsonRemote");
             assertEquals("Required", crimson.color());
-            assertEquals("Required", crimson.color((Object)null));
-            assertEquals("Required", crimson.color((String)null));
-            assertEquals("Required", crimson.color((Boolean)null));
-            assertEquals("Required", crimson.color((Integer)null));
+            assertEquals("Required", crimson.color((Object) null));
+            assertEquals("Required", crimson.color((String) null));
+            assertEquals("Required", crimson.color((Boolean) null));
+            assertEquals("Required", crimson.color((Integer) null));
             assertEquals("RequiresNew", crimson.red());
-            assertEquals("Required", crimson.red((Object)null));
-            assertEquals("Required", crimson.red((String)null));
+            assertEquals("Required", crimson.red((Object) null));
+            assertEquals("Required", crimson.red((String) null));
             assertEquals("RequiresNew", crimson.crimson());
-            assertEquals("Required", crimson.crimson((String)null));
+            assertEquals("Required", crimson.crimson((String) null));
         }
 
         {
             final CrimsonEjbLocalHome home = (CrimsonEjbLocalHome) context.lookup("CrimsonLocalHome");
             final CrimsonEjbLocalObject crimson = home.create("RequiresNew");
             assertEquals("Required", crimson.color());
-            assertEquals("Required", crimson.color((Object)null));
-            assertEquals("Required", crimson.color((String)null));
-            assertEquals("Required", crimson.color((Boolean)null));
-            assertEquals("Required", crimson.color((Integer)null));
+            assertEquals("Required", crimson.color((Object) null));
+            assertEquals("Required", crimson.color((String) null));
+            assertEquals("Required", crimson.color((Boolean) null));
+            assertEquals("Required", crimson.color((Integer) null));
             assertEquals("RequiresNew", crimson.red());
-            assertEquals("Required", crimson.red((Object)null));
-            assertEquals("Required", crimson.red((String)null));
+            assertEquals("Required", crimson.red((Object) null));
+            assertEquals("Required", crimson.red((String) null));
             assertEquals("RequiresNew", crimson.crimson());
-            assertEquals("Required", crimson.crimson((String)null));
+            assertEquals("Required", crimson.crimson((String) null));
             expected.set("RequiresNew");
             crimson.remove();
         }
@@ -239,15 +239,15 @@ public class StatefulTransactionAttributesTest extends TestCase {
             final CrimsonEjbHome home = (CrimsonEjbHome) context.lookup("CrimsonRemoteHome");
             final CrimsonEjbObject crimson = home.create("Supports");
             assertEquals("Required", crimson.color());
-            assertEquals("Required", crimson.color((Object)null));
-            assertEquals("Required", crimson.color((String)null));
-            assertEquals("Required", crimson.color((Boolean)null));
-            assertEquals("Required", crimson.color((Integer)null));
+            assertEquals("Required", crimson.color((Object) null));
+            assertEquals("Required", crimson.color((String) null));
+            assertEquals("Required", crimson.color((Boolean) null));
+            assertEquals("Required", crimson.color((Integer) null));
             assertEquals("RequiresNew", crimson.red());
-            assertEquals("Required", crimson.red((Object)null));
-            assertEquals("Required", crimson.red((String)null));
+            assertEquals("Required", crimson.red((Object) null));
+            assertEquals("Required", crimson.red((String) null));
             assertEquals("RequiresNew", crimson.crimson());
-            assertEquals("Required", crimson.crimson((String)null));
+            assertEquals("Required", crimson.crimson((String) null));
             expected.set("RequiresNew");
             crimson.remove();
         }
@@ -255,59 +255,59 @@ public class StatefulTransactionAttributesTest extends TestCase {
         {
             final ScarletLocal scarlet = (ScarletLocal) context.lookup("ScarletLocal");
             assertEquals("Never", scarlet.color());
-            assertEquals("Required", scarlet.color((Object)null));
-            assertEquals("RequiresNew", scarlet.color((String)null));
-            assertEquals("RequiresNew", scarlet.color((Boolean)null));
-            assertEquals("RequiresNew", scarlet.color((Integer)null));
+            assertEquals("Required", scarlet.color((Object) null));
+            assertEquals("RequiresNew", scarlet.color((String) null));
+            assertEquals("RequiresNew", scarlet.color((Boolean) null));
+            assertEquals("RequiresNew", scarlet.color((Integer) null));
             assertEquals("RequiresNew", scarlet.red());
-            assertEquals("Never", scarlet.red((Object)null));
-            assertEquals("Never", scarlet.red((String)null));
+            assertEquals("Never", scarlet.red((Object) null));
+            assertEquals("Never", scarlet.red((String) null));
             assertEquals("Required", scarlet.scarlet());
-            assertEquals("NotSupported", scarlet.scarlet((String)null));
+            assertEquals("NotSupported", scarlet.scarlet((String) null));
         }
 
         {
             final ScarletRemote scarlet = (ScarletRemote) context.lookup("ScarletRemote");
             assertEquals("Never", scarlet.color());
-            assertEquals("Required", scarlet.color((Object)null));
-            assertEquals("RequiresNew", scarlet.color((String)null));
-            assertEquals("RequiresNew", scarlet.color((Boolean)null));
-            assertEquals("RequiresNew", scarlet.color((Integer)null));
+            assertEquals("Required", scarlet.color((Object) null));
+            assertEquals("RequiresNew", scarlet.color((String) null));
+            assertEquals("RequiresNew", scarlet.color((Boolean) null));
+            assertEquals("RequiresNew", scarlet.color((Integer) null));
             assertEquals("RequiresNew", scarlet.red());
-            assertEquals("Never", scarlet.red((Object)null));
-            assertEquals("Never", scarlet.red((String)null));
+            assertEquals("Never", scarlet.red((Object) null));
+            assertEquals("Never", scarlet.red((String) null));
             assertEquals("Required", scarlet.scarlet());
-            assertEquals("NotSupported", scarlet.scarlet((String)null));
+            assertEquals("NotSupported", scarlet.scarlet((String) null));
         }
 
         {
             final ScarletEjbLocalHome home = (ScarletEjbLocalHome) context.lookup("ScarletLocalHome");
             final ScarletEjbLocalObject scarlet = home.create("RequiresNew");
             assertEquals("Never", scarlet.color());
-            assertEquals("Required", scarlet.color((Object)null));
-            assertEquals("RequiresNew", scarlet.color((String)null));
-            assertEquals("RequiresNew", scarlet.color((Boolean)null));
-            assertEquals("RequiresNew", scarlet.color((Integer)null));
+            assertEquals("Required", scarlet.color((Object) null));
+            assertEquals("RequiresNew", scarlet.color((String) null));
+            assertEquals("RequiresNew", scarlet.color((Boolean) null));
+            assertEquals("RequiresNew", scarlet.color((Integer) null));
             assertEquals("RequiresNew", scarlet.red());
-            assertEquals("Never", scarlet.red((Object)null));
-            assertEquals("Never", scarlet.red((String)null));
+            assertEquals("Never", scarlet.red((Object) null));
+            assertEquals("Never", scarlet.red((String) null));
             assertEquals("Required", scarlet.scarlet());
-            assertEquals("NotSupported", scarlet.scarlet((String)null));
+            assertEquals("NotSupported", scarlet.scarlet((String) null));
         }
 
         {
             final ScarletEjbHome home = (ScarletEjbHome) context.lookup("ScarletRemoteHome");
             final ScarletEjbObject scarlet = home.create("RequiresNew");
             assertEquals("Never", scarlet.color());
-            assertEquals("Required", scarlet.color((Object)null));
-            assertEquals("RequiresNew", scarlet.color((String)null));
-            assertEquals("RequiresNew", scarlet.color((Boolean)null));
-            assertEquals("RequiresNew", scarlet.color((Integer)null));
+            assertEquals("Required", scarlet.color((Object) null));
+            assertEquals("RequiresNew", scarlet.color((String) null));
+            assertEquals("RequiresNew", scarlet.color((Boolean) null));
+            assertEquals("RequiresNew", scarlet.color((Integer) null));
             assertEquals("RequiresNew", scarlet.red());
-            assertEquals("Never", scarlet.red((Object)null));
-            assertEquals("Never", scarlet.red((String)null));
+            assertEquals("Never", scarlet.red((Object) null));
+            assertEquals("Never", scarlet.red((String) null));
             assertEquals("Required", scarlet.scarlet());
-            assertEquals("NotSupported", scarlet.scarlet((String)null));
+            assertEquals("NotSupported", scarlet.scarlet((String) null));
         }
 
     }
@@ -325,12 +325,12 @@ public class StatefulTransactionAttributesTest extends TestCase {
         }
 
         @Init
-        public void ejbCreate(final String s){
+        public void ejbCreate(final String s) {
             assertEquals(s, attribute());
         }
 
         @Remove
-        public void ejbRemove(){
+        public void ejbRemove() {
             assertEquals(expected.get(), attribute());
         }
 
@@ -420,7 +420,6 @@ public class StatefulTransactionAttributesTest extends TestCase {
             return attribute();
         }
     }
-
 
 
     @Local
@@ -526,12 +525,14 @@ public class StatefulTransactionAttributesTest extends TestCase {
     @Local
     public static interface CrimsonLocal extends RedLocal {
         public String crimson();
+
         public String crimson(String s);
     }
 
     @Remote
     public static interface CrimsonRemote extends RedRemote {
         public String crimson();
+
         public String crimson(String s);
     }
 
@@ -541,6 +542,7 @@ public class StatefulTransactionAttributesTest extends TestCase {
 
     public static interface CrimsonEjbObject extends RedEjbObject {
         public String crimson() throws RemoteException;
+
         public String crimson(String s) throws RemoteException;
     }
 
@@ -550,18 +552,21 @@ public class StatefulTransactionAttributesTest extends TestCase {
 
     public static interface CrimsonEjbLocalObject extends RedEjbLocalObject {
         public String crimson();
+
         public String crimson(String s);
     }
 
     @Local
     public static interface ScarletLocal extends RedLocal {
         public String scarlet();
+
         public String scarlet(String s);
     }
 
     @Remote
     public static interface ScarletRemote extends RedRemote {
         public String scarlet();
+
         public String scarlet(String s);
     }
 
@@ -571,6 +576,7 @@ public class StatefulTransactionAttributesTest extends TestCase {
 
     public static interface ScarletEjbObject extends RedEjbObject {
         public String scarlet() throws RemoteException;
+
         public String scarlet(String s) throws RemoteException;
     }
 
@@ -580,6 +586,7 @@ public class StatefulTransactionAttributesTest extends TestCase {
 
     public static interface ScarletEjbLocalObject extends RedEjbLocalObject {
         public String scarlet();
+
         public String scarlet(String s);
     }
 

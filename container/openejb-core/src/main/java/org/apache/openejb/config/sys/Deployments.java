@@ -68,7 +68,7 @@ public class Deployments {
      * Gets the value of the dir property.
      *
      * @return possible object is
-     *         {@link String }
+     * {@link String }
      */
     public String getDir() {
         return dir;
@@ -94,7 +94,7 @@ public class Deployments {
      * Gets the value of the jar property.
      *
      * @return possible object is
-     *         {@link String }
+     * {@link String }
      */
     public String getFile() {
         return file;

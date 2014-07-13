@@ -128,7 +128,7 @@ public final class JAXBContextFactory {
             final String fastBoot = setFastBoot();
             try {
                 return JAXBContext.newInstance(classes);
-            } catch (LinkageError ignore) {
+            } catch (final LinkageError ignore) {
                 return JAXBContext.newInstance(classes);
             } finally {
                 resetFastBoot(fastBoot);

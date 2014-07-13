@@ -42,18 +42,18 @@ public class UberInterfaceTest extends TestCase {
     public void test() throws Exception {
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
 
-        ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
 
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
-        EjbJar ejbJar = new EjbJar();
-        StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean(SuperBean.class));
+        final EjbJar ejbJar = new EjbJar();
+        final StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean(SuperBean.class));
 
-        EjbJarInfo ejbJarInfo = config.configureApplication(ejbJar);
+        final EjbJarInfo ejbJarInfo = config.configureApplication(ejbJar);
 
-        EnterpriseBeanInfo beanInfo = ejbJarInfo.enterpriseBeans.get(0);
+        final EnterpriseBeanInfo beanInfo = ejbJarInfo.enterpriseBeans.get(0);
 
         assertEquals(asList(Everything.class.getName()), beanInfo.businessLocal);
         assertEquals(asList(Everything.class.getName()), beanInfo.businessRemote);
@@ -61,19 +61,19 @@ public class UberInterfaceTest extends TestCase {
 
         assembler.createApplication(ejbJarInfo);
 
-        ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-        BeanContext deployment = containerSystem.getBeanContext(beanInfo.ejbDeploymentId);
+        final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+        final BeanContext deployment = containerSystem.getBeanContext(beanInfo.ejbDeploymentId);
 
         assertEquals(asList(Everything.class), deployment.getBusinessLocalInterfaces());
         assertEquals(asList(Everything.class), deployment.getBusinessRemoteInterfaces());
         assertEquals(Everything.class, deployment.getServiceEndpointInterface());
 
-        InitialContext context = new InitialContext();
+        final InitialContext context = new InitialContext();
 
-        Everything local = (Everything) context.lookup("SuperBeanLocal");
-        Everything remote = (Everything) context.lookup("SuperBeanRemote");
+        final Everything local = (Everything) context.lookup("SuperBeanLocal");
+        final Everything remote = (Everything) context.lookup("SuperBeanRemote");
 
-        Reference reference = new Reference("test");
+        final Reference reference = new Reference("test");
 
         assertEquals(reference, local.echo(reference));
         assertSame(reference, local.echo(reference)); // pass by reference
@@ -91,7 +91,7 @@ public class UberInterfaceTest extends TestCase {
     }
 
     public static class SuperBean implements Everything {
-        public Object echo(Object o) {
+        public Object echo(final Object o) {
             return o;
         }
     }
@@ -99,16 +99,16 @@ public class UberInterfaceTest extends TestCase {
     public static class Reference implements Serializable {
         private final String value;
 
-        public Reference(String value) {
+        public Reference(final String value) {
             this.value = value;
         }
 
         @Override
-        public boolean equals(Object o) {
+        public boolean equals(final Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
 
-            Reference value1 = (Reference) o;
+            final Reference value1 = (Reference) o;
 
             if (!value.equals(value1.value)) return false;
 

@@ -39,11 +39,9 @@ public class ActivationConfigProperty {
 
     /**
      * Gets the value of the activationConfigPropertyName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getActivationConfigPropertyName() {
         return activationConfigPropertyName;
@@ -51,23 +49,19 @@ public class ActivationConfigProperty {
 
     /**
      * Sets the value of the activationConfigPropertyName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setActivationConfigPropertyName(String value) {
+    public void setActivationConfigPropertyName(final String value) {
         this.activationConfigPropertyName = value;
     }
 
     /**
      * Gets the value of the activationConfigPropertyValue property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getActivationConfigPropertyValue() {
         return activationConfigPropertyValue;
@@ -75,13 +69,11 @@ public class ActivationConfigProperty {
 
     /**
      * Sets the value of the activationConfigPropertyValue property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setActivationConfigPropertyValue(String value) {
+    public void setActivationConfigPropertyValue(final String value) {
         this.activationConfigPropertyValue = value;
     }
 

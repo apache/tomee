@@ -36,7 +36,7 @@ public class EjbLink {
     public EjbLink() {
     }
 
-    public EjbLink(String ejbRefName, String deployentId) {
+    public EjbLink(final String ejbRefName, final String deployentId) {
         this.ejbRefName = ejbRefName;
         this.deployentId = deployentId;
     }
@@ -45,7 +45,7 @@ public class EjbLink {
         return deployentId;
     }
 
-    public void setDeployentId(String value) {
+    public void setDeployentId(final String value) {
         this.deployentId = value;
     }
 
@@ -53,7 +53,7 @@ public class EjbLink {
         return ejbRefName;
     }
 
-    public void setEjbRefName(String value) {
+    public void setEjbRefName(final String value) {
         this.ejbRefName = value;
     }
 

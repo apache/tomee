@@ -105,8 +105,8 @@ public class StatefulEjbObjectHandler extends EjbObjectProxyHandler {
             final RegistryId that = (RegistryId) o;
 
             return containerId.equals(that.containerId) &&
-                    deploymentId.equals(that.deploymentId) &&
-                    !(primaryKey != null ? !primaryKey.equals(that.primaryKey) : that.primaryKey != null);
+                deploymentId.equals(that.deploymentId) &&
+                !(primaryKey != null ? !primaryKey.equals(that.primaryKey) : that.primaryKey != null);
         }
 
         public int hashCode() {
@@ -121,9 +121,9 @@ public class StatefulEjbObjectHandler extends EjbObjectProxyHandler {
         public String toString() {
             return "[" + containerId + ", " + deploymentId + ", " + primaryKey + "]";
         }
-        
+
         public Object getPrimaryKey() {
-            return primaryKey; 
+            return primaryKey;
         }
     }
 }

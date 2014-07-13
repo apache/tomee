@@ -68,11 +68,15 @@ import java.util.Arrays;
  */
 public class Percentile extends AbstractUnivariateStatistic implements Serializable {
 
-    /** Serializable version identifier */
+    /**
+     * Serializable version identifier
+     */
     private static final long serialVersionUID = -1231216485095130416L;
 
-    /** Determines what percentile is computed when evaluate() is activated
-     * with no quantile argument */
+    /**
+     * Determines what percentile is computed when evaluate() is activated
+     * with no quantile argument
+     */
     private double quantile;
 
     /**
@@ -85,9 +89,10 @@ public class Percentile extends AbstractUnivariateStatistic implements Serializa
 
     /**
      * Constructs a Percentile with the specific quantile value.
+     *
      * @param p the quantile
-     * @throws IllegalArgumentException  if p is not greater than 0 and less
-     * than or equal to 100
+     * @throws IllegalArgumentException if p is not greater than 0 and less
+     *                                  than or equal to 100
      */
     public Percentile(final double p) {
         setQuantile(p);
@@ -114,7 +119,7 @@ public class Percentile extends AbstractUnivariateStatistic implements Serializa
      * <li>Returns <code>Double.NaN</code> if <code>values</code> has length
      * <code>0</code></li>
      * <li>Returns (for any value of <code>p</code>) <code>values[0]</code>
-     *  if <code>values</code> has length <code>1</code></li>
+     * if <code>values</code> has length <code>1</code></li>
      * <li>Throws <code>IllegalArgumentException</code> if <code>values</code>
      * is null or p is not a valid quantile value (p must be greater than 0
      * and less than or equal to 100) </li>
@@ -124,10 +129,10 @@ public class Percentile extends AbstractUnivariateStatistic implements Serializa
      * algorithm used.</p>
      *
      * @param values input array of values
-     * @param p the percentile value to compute
+     * @param p      the percentile value to compute
      * @return the percentile value or Double.NaN if the array is empty
      * @throws IllegalArgumentException if <code>values</code> is null
-     *     or p is invalid
+     *                                  or p is invalid
      */
     public double evaluate(final double[] values, final double p) {
         test(values, 0, 0);
@@ -152,18 +157,17 @@ public class Percentile extends AbstractUnivariateStatistic implements Serializa
      * algorithm used.</p>
      *
      * @param values the input array
-     * @param start index of the first array element to include
+     * @param start  index of the first array element to include
      * @param length the number of elements to include
      * @return the percentile value
      * @throws IllegalArgumentException if the parameters are not valid
-     *
      */
     @Override
-    public double evaluate( final double[] values, final int start, final int length) {
+    public double evaluate(final double[] values, final int start, final int length) {
         return evaluate(values, start, length, quantile);
     }
 
-     /**
+    /**
      * Returns an estimate of the <code>p</code>th percentile of the values
      * in the <code>values</code> array, starting with the element in (0-based)
      * position <code>begin</code> in the array and including <code>length</code>
@@ -175,9 +179,9 @@ public class Percentile extends AbstractUnivariateStatistic implements Serializa
      * <ul>
      * <li>Returns <code>Double.NaN</code> if <code>length = 0</code></li>
      * <li>Returns (for any value of <code>p</code>) <code>values[begin]</code>
-     *  if <code>length = 1 </code></li>
+     * if <code>length = 1 </code></li>
      * <li>Throws <code>IllegalArgumentException</code> if <code>values</code>
-     *  is null , <code>begin</code> or <code>length</code> is invalid, or
+     * is null , <code>begin</code> or <code>length</code> is invalid, or
      * <code>p</code> is not a valid quantile value (p must be greater than 0
      * and less than or equal to 100)</li>
      * </ul></p>
@@ -186,21 +190,21 @@ public class Percentile extends AbstractUnivariateStatistic implements Serializa
      * algorithm used.</p>
      *
      * @param values array of input values
-     * @param p  the percentile to compute
+     * @param p      the percentile to compute
      * @param begin  the first (0-based) element to include in the computation
-     * @param length  the number of array elements to include
-     * @return  the percentile value
+     * @param length the number of array elements to include
+     * @return the percentile value
      * @throws IllegalArgumentException if the parameters are not valid or the
-     * input array is null
+     *                                  input array is null
      */
     public double evaluate(final double[] values, final int begin,
-            final int length, final double p) {
+                           final int length, final double p) {
 
         test(values, begin, length);
 
         if (p > 100 || p <= 0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "out of bounds quantile value: {0}, must be in (0, 100]", p);
+                "out of bounds quantile value: {0}, must be in (0, 100]", p);
         }
         if (length == 0) {
             return Double.NaN;
@@ -243,13 +247,13 @@ public class Percentile extends AbstractUnivariateStatistic implements Serializa
      * computed when evaluate() is called with no quantile argument).
      *
      * @param p a value between 0 < p <= 100
-     * @throws IllegalArgumentException  if p is not greater than 0 and less
-     * than or equal to 100
+     * @throws IllegalArgumentException if p is not greater than 0 and less
+     *                                  than or equal to 100
      */
     public void setQuantile(final double p) {
         if (p <= 0 || p > 100) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "out of bounds quantile value: {0}, must be in (0, 100]", p);
+                "out of bounds quantile value: {0}, must be in (0, 100]", p);
         }
         quantile = p;
     }
@@ -269,7 +273,7 @@ public class Percentile extends AbstractUnivariateStatistic implements Serializa
      * <p>Neither source nor dest can be null.</p>
      *
      * @param source Percentile to copy
-     * @param dest Percentile to copy to
+     * @param dest   Percentile to copy to
      * @throws NullPointerException if either source or dest is null
      */
     public static void copy(final Percentile source, final Percentile dest) {

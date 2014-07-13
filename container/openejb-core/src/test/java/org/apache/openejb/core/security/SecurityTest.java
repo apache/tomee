@@ -99,7 +99,7 @@ public class SecurityTest extends TestCase {
         try {
             foo.deleteProject("");
             fail("Should not be allowed");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // good.
         }
 
@@ -149,7 +149,7 @@ public class SecurityTest extends TestCase {
         try {
             foo.svnCommit("");
             fail("Should not be allowed");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // good.
         }
 
@@ -178,7 +178,7 @@ public class SecurityTest extends TestCase {
         try {
             foo.svnCommit("");
             fail("Should not be allowed");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // good.
         }
 

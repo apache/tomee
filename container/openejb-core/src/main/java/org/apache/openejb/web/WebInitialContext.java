@@ -27,7 +27,7 @@ import java.lang.reflect.Proxy;
 import java.util.Map;
 
 public class WebInitialContext implements InvocationHandler {
-    private static final Class<?>[] INTERFACES = new Class<?>[]{ Context.class };
+    private static final Class<?>[] INTERFACES = new Class<?>[]{Context.class};
 
     private final Map<String, Object> bindings;
     private final Context delegate;

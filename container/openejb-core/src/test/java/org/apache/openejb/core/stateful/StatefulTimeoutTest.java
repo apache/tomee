@@ -41,7 +41,7 @@ public class StatefulTimeoutTest extends TestCase {
         super.setUp();
 
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY,
-                LocalInitialContextFactory.class.getName());
+            LocalInitialContextFactory.class.getName());
 
         final ConfigurationFactory config = new ConfigurationFactory();
         final Assembler assembler = new Assembler();
@@ -51,32 +51,32 @@ public class StatefulTimeoutTest extends TestCase {
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
         final StatefulSessionContainerInfo statefulContainerInfo = config
-                .configureService(StatefulSessionContainerInfo.class);
+            .configureService(StatefulSessionContainerInfo.class);
         statefulContainerInfo.properties.setProperty("BulkPassivate", "1");
         // clear cache every 3 seconds
         statefulContainerInfo.properties.setProperty("Frequency", "3");
         assembler.createContainer(statefulContainerInfo);
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         Timeout timeout;
-        
-        StatefulBean bean1 = new StatefulBean("BeanNegative", MyLocalBeanImpl.class);
+
+        final StatefulBean bean1 = new StatefulBean("BeanNegative", MyLocalBeanImpl.class);
         timeout = new Timeout();
         timeout.setTimeout(-1);
         timeout.setUnit(TimeUnit.SECONDS);
         bean1.setStatefulTimeout(timeout);
-        
-        StatefulBean bean0 = new StatefulBean("BeanZero", MyLocalBeanImpl.class);
+
+        final StatefulBean bean0 = new StatefulBean("BeanZero", MyLocalBeanImpl.class);
         timeout = new Timeout();
         timeout.setTimeout(0);
         timeout.setUnit(TimeUnit.SECONDS);
         bean0.setStatefulTimeout(timeout);
-        
-        StatefulBean bean5 = new StatefulBean("Bean", MyLocalBeanImpl.class);
+
+        final StatefulBean bean5 = new StatefulBean("Bean", MyLocalBeanImpl.class);
         timeout = new Timeout();
         timeout.setTimeout(5);
         timeout.setUnit(TimeUnit.SECONDS);
-        bean5.setStatefulTimeout(timeout);       
+        bean5.setStatefulTimeout(timeout);
 
         ejbJar.addEnterpriseBean(bean1);
         ejbJar.addEnterpriseBean(bean0);
@@ -86,57 +86,57 @@ public class StatefulTimeoutTest extends TestCase {
     }
 
     public void testZeroTimeout() throws Exception {
-        InitialContext ctx = new InitialContext();
-        MyLocalBean bean;
+        final InitialContext ctx = new InitialContext();
+        final MyLocalBean bean;
 
         // cache is cleared ever 3 seconds and bean timeout is 0 seconds
-        bean = (MyLocalBean) ctx.lookup("BeanZeroLocal");        
+        bean = (MyLocalBean) ctx.lookup("BeanZeroLocal");
         bean.doNothing(0);
-        
+
         // cache should be cleared by now and the bean should be removed
-        Thread.sleep(5 * 1000);        
+        Thread.sleep(5 * 1000);
         try {
             bean.doNothing(0);
             fail("Did not throw expected exception");
-        } catch (NoSuchEJBException e) {
+        } catch (final NoSuchEJBException e) {
             // that's what we expect
         }
     }
-    
+
     public void testTimeout() throws Exception {
-        InitialContext ctx = new InitialContext();
-        MyLocalBean bean;
+        final InitialContext ctx = new InitialContext();
+        final MyLocalBean bean;
 
         // cache is cleared ever 3 seconds and bean timeout is 5 seconds
-        bean = (MyLocalBean) ctx.lookup("BeanLocal");        
+        bean = (MyLocalBean) ctx.lookup("BeanLocal");
         bean.doNothing(0);
-        
+
         // cache should be cleared once by now but the bean is not expired yet
-        Thread.sleep(5 * 1000);        
+        Thread.sleep(5 * 1000);
         bean.doNothing(0);
-        
+
         // cache should be cleared again and our bean should be removed
         // since the bean was idle for more than 5 seconds.
-        Thread.sleep(10 * 1000);        
+        Thread.sleep(10 * 1000);
         try {
             bean.doNothing(0);
             fail("Did not throw expected exception");
-        } catch (NoSuchEJBException e) {
+        } catch (final NoSuchEJBException e) {
             // that's what we expect
         }
     }
-    
+
     public void testNegativeTimeout() throws Exception {
-        InitialContext ctx = new InitialContext();
-        MyLocalBean bean;
+        final InitialContext ctx = new InitialContext();
+        final MyLocalBean bean;
 
         // cache is cleared ever 3 seconds and bean timeout is -1 seconds
-        bean = (MyLocalBean) ctx.lookup("BeanNegativeLocal");        
+        bean = (MyLocalBean) ctx.lookup("BeanNegativeLocal");
         bean.doNothing(0);
-        
+
         // cache should be cleared by now a few times but bean should remain
         // available.
-        Thread.sleep(10 * 1000);        
+        Thread.sleep(10 * 1000);
         bean.doNothing(0);
     }
 
@@ -147,10 +147,10 @@ public class StatefulTimeoutTest extends TestCase {
 
     @Stateful
     public static class MyLocalBeanImpl implements MyLocalBean {
-        public void doNothing(long sleep) {
+        public void doNothing(final long sleep) {
             try {
                 Thread.sleep(sleep);
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }

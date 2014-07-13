@@ -30,11 +30,11 @@ import java.net.URL;
  */
 public class WebXml {
 
-    public static WebApp unmarshal(InputStream inputStream) throws Exception {
+    public static WebApp unmarshal(final InputStream inputStream) throws Exception {
         return Sxc.unmarshalJavaee(new WebApp$JAXB(), inputStream);
     }
 
-    public static WebApp unmarshal(URL url) throws Exception {
+    public static WebApp unmarshal(final URL url) throws Exception {
         final InputStream inputStream = IO.read(url);
         try {
             return Sxc.unmarshalJavaee(new WebApp$JAXB(), inputStream);
@@ -43,7 +43,7 @@ public class WebXml {
         }
     }
 
-    public static void marshal(WebApp webApp, OutputStream outputStream) throws Exception {
+    public static void marshal(final WebApp webApp, final OutputStream outputStream) throws Exception {
         Sxc.marshal(new WebApp$JAXB(), webApp, new StreamResult(outputStream));
     }
 }

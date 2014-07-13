@@ -39,7 +39,7 @@ public class WebServiceLocalBeanTest {
 
     @Module
     public Class<?>[] classes() {
-        return new Class<?>[] { WSLocal.class, WebServiceLocal.class, WebServiceImplicitLocalBean.class };
+        return new Class<?>[]{WSLocal.class, WebServiceLocal.class, WebServiceImplicitLocalBean.class};
     }
 
     @Test

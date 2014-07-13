@@ -38,10 +38,10 @@ public class ConnectorModule extends Module implements DeploymentModule {
     private final List<URL> libraries = new ArrayList<URL>();
     private final Set<String> watchedResources = new TreeSet<String>();
 
-    private ID id;
+    private final ID id;
 
     private IAnnotationFinder finder;
-    
+
     public ConnectorModule(final Connector connector) {
         this(connector, Thread.currentThread().getContextClassLoader(), null, null);
     }
@@ -99,8 +99,8 @@ public class ConnectorModule extends Module implements DeploymentModule {
     @Override
     public String toString() {
         return "ConnectorModule{" +
-                "moduleId='" + id.getName() + '\'' +
-                '}';
+            "moduleId='" + id.getName() + '\'' +
+            '}';
     }
 
     public IAnnotationFinder getFinder() {

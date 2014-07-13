@@ -30,33 +30,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class TldExtension$JAXB
-        extends JAXBObject<TldExtension> {
+    extends JAXBObject<TldExtension> {
 
 
     public TldExtension$JAXB() {
         super(TldExtension.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "tld-extensionType".intern()));
     }
 
-    public static TldExtension readTldExtension(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static TldExtension readTldExtension(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeTldExtension(XoXMLStreamWriter writer, TldExtension tldExtension, RuntimeContext context)
-            throws Exception {
+    public static void writeTldExtension(final XoXMLStreamWriter writer, final TldExtension tldExtension, final RuntimeContext context)
+        throws Exception {
         _write(writer, tldExtension, context);
     }
 
-    public void write(XoXMLStreamWriter writer, TldExtension tldExtension, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final TldExtension tldExtension, final RuntimeContext context)
+        throws Exception {
         _write(writer, tldExtension, context);
     }
 
-    public final static TldExtension _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static TldExtension _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -67,13 +67,13 @@ public class TldExtension$JAXB
             context = new RuntimeContext();
         }
 
-        TldExtension tldExtension = new TldExtension();
+        final TldExtension tldExtension = new TldExtension();
         context.beforeUnmarshal(tldExtension, LifecycleCallback.NONE);
 
         List<String> extensionElement = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("tld-extensionType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, TldExtension.class);
@@ -81,10 +81,10 @@ public class TldExtension$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, tldExtension);
                 tldExtension.id = id;
             } else if (("namespace" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
@@ -96,15 +96,15 @@ public class TldExtension$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("extension-element" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: extensionElement
-                String extensionElementItemRaw = elementReader.getElementAsString();
+                final String extensionElementItemRaw = elementReader.getElementAsString();
 
-                String extensionElementItem;
+                final String extensionElementItem;
                 try {
                     extensionElementItem = Adapters.collapsedStringAdapterAdapter.unmarshal(extensionElementItemRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -131,13 +131,13 @@ public class TldExtension$JAXB
         return tldExtension;
     }
 
-    public final TldExtension read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final TldExtension read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, TldExtension tldExtension, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final TldExtension tldExtension, RuntimeContext context)
+        throws Exception {
         if (tldExtension == null) {
             writer.writeXsiNil();
             return;
@@ -156,37 +156,37 @@ public class TldExtension$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = tldExtension.id;
+        final String idRaw = tldExtension.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(tldExtension, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ATTRIBUTE: namespace
-        String namespaceRaw = tldExtension.namespace;
+        final String namespaceRaw = tldExtension.namespace;
         if (namespaceRaw != null) {
             String namespace = null;
             try {
                 namespace = Adapters.collapsedStringAdapterAdapter.marshal(namespaceRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(tldExtension, "namespace", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "namespace", namespace);
         }
 
         // ELEMENT: extensionElement
-        List<String> extensionElementRaw = tldExtension.extensionElement;
+        final List<String> extensionElementRaw = tldExtension.extensionElement;
         if (extensionElementRaw != null) {
-            for (String extensionElementItem : extensionElementRaw) {
+            for (final String extensionElementItem : extensionElementRaw) {
                 String extensionElement = null;
                 try {
                     extensionElement = Adapters.collapsedStringAdapterAdapter.marshal(extensionElementItem);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(tldExtension, "extensionElement", CollapsedStringAdapter.class, List.class, List.class, e);
                 }
                 if (extensionElement != null) {

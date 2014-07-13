@@ -39,17 +39,17 @@ import static org.apache.openejb.jee.TimerSchedule$JAXB.readTimerSchedule;
 import static org.apache.openejb.jee.TimerSchedule$JAXB.writeTimerSchedule;
 
 @SuppressWarnings({
-        "StringEquality"
+    "StringEquality"
 })
 public class Timer$JAXB
-        extends JAXBObject<Timer> {
+    extends JAXBObject<Timer> {
 
     private final static DatatypeFactory datatypeFactory;
 
     static {
         try {
             datatypeFactory = DatatypeFactory.newInstance();
-        } catch (DatatypeConfigurationException e) {
+        } catch (final DatatypeConfigurationException e) {
             throw new RuntimeException("Unable to initialize DatatypeFactory", e);
         }
     }
@@ -58,23 +58,23 @@ public class Timer$JAXB
         super(Timer.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "timerType".intern()), Text$JAXB.class, TimerSchedule$JAXB.class, NamedMethod$JAXB.class);
     }
 
-    public static Timer readTimer(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public static Timer readTimer(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public static void writeTimer(XoXMLStreamWriter writer, Timer timer, RuntimeContext context)
-            throws Exception {
+    public static void writeTimer(final XoXMLStreamWriter writer, final Timer timer, final RuntimeContext context)
+        throws Exception {
         _write(writer, timer, context);
     }
 
-    public void write(XoXMLStreamWriter writer, Timer timer, RuntimeContext context)
-            throws Exception {
+    public void write(final XoXMLStreamWriter writer, final Timer timer, final RuntimeContext context)
+        throws Exception {
         _write(writer, timer, context);
     }
 
-    public final static Timer _read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final static Timer _read(final XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -85,13 +85,13 @@ public class Timer$JAXB
             context = new RuntimeContext();
         }
 
-        Timer timer = new Timer();
+        final Timer timer = new Timer();
         context.beforeUnmarshal(timer, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
 
         // Check xsi:type
-        QName xsiType = reader.getXsiType();
+        final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
             if (("timerType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, Timer.class);
@@ -99,10 +99,10 @@ public class Timer$JAXB
         }
 
         // Read attributes
-        for (Attribute attribute : reader.getAttributes()) {
+        for (final Attribute attribute : reader.getAttributes()) {
             if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, timer);
                 timer.id = id;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
@@ -111,42 +111,42 @@ public class Timer$JAXB
         }
 
         // Read elements
-        for (XoXMLStreamReader elementReader : reader.getChildElements()) {
+        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
             if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                Text descriptionsItem = readText(elementReader, context);
+                final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
                 descriptions.add(descriptionsItem);
             } else if (("schedule" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: schedule
-                TimerSchedule schedule = readTimerSchedule(elementReader, context);
+                final TimerSchedule schedule = readTimerSchedule(elementReader, context);
                 timer.schedule = schedule;
             } else if (("start" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: start
-                XMLGregorianCalendar start = datatypeFactory.newXMLGregorianCalendar(elementReader.getElementAsString());
+                final XMLGregorianCalendar start = datatypeFactory.newXMLGregorianCalendar(elementReader.getElementAsString());
                 timer.start = start;
             } else if (("end" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: end
-                XMLGregorianCalendar end = datatypeFactory.newXMLGregorianCalendar(elementReader.getElementAsString());
+                final XMLGregorianCalendar end = datatypeFactory.newXMLGregorianCalendar(elementReader.getElementAsString());
                 timer.end = end;
             } else if (("timeout-method" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: timeoutMethod
-                NamedMethod timeoutMethod = readNamedMethod(elementReader, context);
+                final NamedMethod timeoutMethod = readNamedMethod(elementReader, context);
                 timer.timeoutMethod = timeoutMethod;
             } else if (("persistent" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: persistent
-                Boolean persistent = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
+                final Boolean persistent = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
                 timer.persistent = persistent;
             } else if (("timezone" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: timezone
-                String timezoneRaw = elementReader.getElementAsString();
+                final String timezoneRaw = elementReader.getElementAsString();
 
-                String timezone;
+                final String timezone;
                 try {
                     timezone = Adapters.collapsedStringAdapterAdapter.unmarshal(timezoneRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -154,12 +154,12 @@ public class Timer$JAXB
                 timer.timezone = timezone;
             } else if (("info" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: info
-                String infoRaw = elementReader.getElementAsString();
+                final String infoRaw = elementReader.getElementAsString();
 
-                String info;
+                final String info;
                 try {
                     info = Adapters.collapsedStringAdapterAdapter.unmarshal(infoRaw);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
@@ -172,7 +172,7 @@ public class Timer$JAXB
         if (descriptions != null) {
             try {
                 timer.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.setterError(reader, Timer.class, "setDescriptions", Text[].class, e);
             }
         }
@@ -182,13 +182,13 @@ public class Timer$JAXB
         return timer;
     }
 
-    public final Timer read(XoXMLStreamReader reader, RuntimeContext context)
-            throws Exception {
+    public final Timer read(final XoXMLStreamReader reader, final RuntimeContext context)
+        throws Exception {
         return _read(reader, context);
     }
 
-    public final static void _write(XoXMLStreamWriter writer, Timer timer, RuntimeContext context)
-            throws Exception {
+    public final static void _write(final XoXMLStreamWriter writer, final Timer timer, RuntimeContext context)
+        throws Exception {
         if (timer == null) {
             writer.writeXsiNil();
             return;
@@ -198,7 +198,7 @@ public class Timer$JAXB
             context = new RuntimeContext();
         }
 
-        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (Timer.class != timer.getClass()) {
             context.unexpectedSubclass(writer, timer, Timer.class);
             return;
@@ -208,12 +208,12 @@ public class Timer$JAXB
 
 
         // ATTRIBUTE: id
-        String idRaw = timer.id;
+        final String idRaw = timer.id;
         if (idRaw != null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.xmlAdapterError(timer, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -223,11 +223,11 @@ public class Timer$JAXB
         Text[] descriptions = null;
         try {
             descriptions = timer.getDescriptions();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.getterError(timer, "descriptions", Timer.class, "getDescriptions", e);
         }
         if (descriptions != null) {
-            for (Text descriptionsItem : descriptions) {
+            for (final Text descriptionsItem : descriptions) {
                 if (descriptionsItem != null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
@@ -239,7 +239,7 @@ public class Timer$JAXB
         }
 
         // ELEMENT: schedule
-        TimerSchedule schedule = timer.schedule;
+        final TimerSchedule schedule = timer.schedule;
         if (schedule != null) {
             writer.writeStartElement(prefix, "schedule", "http://java.sun.com/xml/ns/javaee");
             writeTimerSchedule(writer, schedule, context);
@@ -249,7 +249,7 @@ public class Timer$JAXB
         }
 
         // ELEMENT: start
-        XMLGregorianCalendar start = timer.start;
+        final XMLGregorianCalendar start = timer.start;
         if (start != null) {
             writer.writeStartElement(prefix, "start", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(start.toXMLFormat());
@@ -257,7 +257,7 @@ public class Timer$JAXB
         }
 
         // ELEMENT: end
-        XMLGregorianCalendar end = timer.end;
+        final XMLGregorianCalendar end = timer.end;
         if (end != null) {
             writer.writeStartElement(prefix, "end", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(end.toXMLFormat());
@@ -265,7 +265,7 @@ public class Timer$JAXB
         }
 
         // ELEMENT: timeoutMethod
-        NamedMethod timeoutMethod = timer.timeoutMethod;
+        final NamedMethod timeoutMethod = timer.timeoutMethod;
         if (timeoutMethod != null) {
             writer.writeStartElement(prefix, "timeout-method", "http://java.sun.com/xml/ns/javaee");
             writeNamedMethod(writer, timeoutMethod, context);
@@ -275,7 +275,7 @@ public class Timer$JAXB
         }
 
         // ELEMENT: persistent
-        Boolean persistent = timer.persistent;
+        final Boolean persistent = timer.persistent;
         if (persistent != null) {
             writer.writeStartElement(prefix, "persistent", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(Boolean.toString(persistent));
@@ -283,11 +283,11 @@ public class Timer$JAXB
         }
 
         // ELEMENT: timezone
-        String timezoneRaw = timer.timezone;
+        final String timezoneRaw = timer.timezone;
         String timezone = null;
         try {
             timezone = Adapters.collapsedStringAdapterAdapter.marshal(timezoneRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(timer, "timezone", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (timezone != null) {
@@ -297,11 +297,11 @@ public class Timer$JAXB
         }
 
         // ELEMENT: info
-        String infoRaw = timer.info;
+        final String infoRaw = timer.info;
         String info = null;
         try {
             info = Adapters.collapsedStringAdapterAdapter.marshal(infoRaw);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             context.xmlAdapterError(timer, "info", CollapsedStringAdapter.class, String.class, String.class, e);
         }
         if (info != null) {

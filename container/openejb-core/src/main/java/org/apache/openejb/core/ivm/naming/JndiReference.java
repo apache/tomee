@@ -29,7 +29,7 @@ public class JndiReference extends Reference {
 
     private Context context;
     private Hashtable envProperties;
-    private String jndiName;
+    private final String jndiName;
     private String contextJndiName;
 
     /*
