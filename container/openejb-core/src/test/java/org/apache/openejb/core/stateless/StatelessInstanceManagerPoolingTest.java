@@ -18,6 +18,7 @@
 package org.apache.openejb.core.stateless;
 
 import junit.framework.TestCase;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
@@ -221,6 +222,10 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
         assembler.createApplication(config.configureApplication(ejbJar));
     }
 
+    @Override
+    protected void tearDown() throws Exception {
+        OpenEJB.destroy();
+    }
 
     public static interface Counter {
         int count();
