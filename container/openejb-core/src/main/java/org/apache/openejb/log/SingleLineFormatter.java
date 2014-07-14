@@ -31,7 +31,7 @@ public class SingleLineFormatter extends Formatter {
         final StringBuilder sbuf = new StringBuilder();
         sbuf.append(record.getLevel().getLocalizedName());
         sbuf.append(" - ");
-        sbuf.append(formatMessage(record));
+        sbuf.append(this.formatMessage(record));
         sbuf.append(SEP);
         if (exception) {
             try {
