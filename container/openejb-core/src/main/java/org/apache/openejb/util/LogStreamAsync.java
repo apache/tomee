@@ -20,11 +20,13 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class LogStreamAsync implements LogStream, Closeable {
 
     private static final LinkedBlockingQueue<Message> log = new LinkedBlockingQueue<Message>();
     private static final Thread t = new Thread(new Consumer(LogStreamAsync.log), "LogStreamAsync.Thread");
+    private static final AtomicBoolean started = new AtomicBoolean(false);
     private final LogStream ls;
 
     private enum level {
@@ -39,7 +41,7 @@ public class LogStreamAsync implements LogStream, Closeable {
     public LogStreamAsync(final LogStream ls) {
         this.ls = ls;
 
-        if (!t.isAlive()) {
+        if (!started.getAndSet(true)) {
             t.setDaemon(true);
             t.start();
         }
