@@ -142,7 +142,7 @@ public class LogStreamAsync implements LogStream, Closeable {
         }
     }
 
-    private static class Message {
+    private static final class Message {
 
         private final LogStream ls;
         private final level l;
@@ -161,7 +161,7 @@ public class LogStreamAsync implements LogStream, Closeable {
         }
     }
 
-    private static class Consumer implements Runnable {
+    private static final class Consumer implements Runnable {
 
         private final BlockingQueue<Message> queue;
 
