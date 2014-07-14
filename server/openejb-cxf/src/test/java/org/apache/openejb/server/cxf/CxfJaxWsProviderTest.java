@@ -38,8 +38,8 @@ public class CxfJaxWsProviderTest extends TestCase {
 
     //START SNIPPET: setup	
     private InitialContext initialContext;
-	
-	//Random port to avoid test conflicts
+
+    //Random port to avoid test conflicts
     private static final int port = Integer.parseInt(System.getProperty("httpejbd.port", "" + org.apache.openejb.util.NetworkUtil.getNextAvailablePort()));
 
     protected void setUp() throws Exception {
@@ -47,9 +47,9 @@ public class CxfJaxWsProviderTest extends TestCase {
         properties.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*openejb-cxf.*");
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
         properties.setProperty("openejb.embedded.remotable", "true");
-		
-		//Just for this test we change the default port from 4204 to avoid conflicts
-		properties.setProperty("httpejbd.port", "" + port);
+
+        //Just for this test we change the default port from 4204 to avoid conflicts
+        properties.setProperty("httpejbd.port", "" + port);
 
         initialContext = new InitialContext(properties);
     }

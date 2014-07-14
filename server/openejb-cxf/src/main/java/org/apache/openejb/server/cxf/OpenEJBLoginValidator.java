@@ -38,7 +38,7 @@ public class OpenEJBLoginValidator extends UsernameTokenValidator {
 
         // get the plain text password
         final WSPasswordCallback pwCb = new WSPasswordCallback(usernameToken.getName(),
-                                                               null, usernameToken.getPasswordType(), WSPasswordCallback.USERNAME_TOKEN, data);
+            null, usernameToken.getPasswordType(), WSPasswordCallback.USERNAME_TOKEN, data);
         try {
             data.getCallbackHandler().handle(new Callback[]{pwCb});
         } catch (Exception e) {

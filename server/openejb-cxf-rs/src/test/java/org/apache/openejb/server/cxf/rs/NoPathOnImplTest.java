@@ -36,7 +36,7 @@ import static org.junit.Assert.assertEquals;
 @RunWith(ApplicationComposer.class)
 public class NoPathOnImplTest {
     @Module
-    @Classes({ API.class, Impl.class })
+    @Classes({API.class, Impl.class})
     public static WebApp service() throws Exception {
         return new WebApp().contextRoot("app");
     }

@@ -44,7 +44,7 @@ public class RetryingRequest {
     @Override
     public String toString() {
         return "RetryingRequest{" +
-               "server=" + serverMetaData.getLocation() +
-               "} " + request;
+            "server=" + serverMetaData.getLocation() +
+            "} " + request;
     }
 }

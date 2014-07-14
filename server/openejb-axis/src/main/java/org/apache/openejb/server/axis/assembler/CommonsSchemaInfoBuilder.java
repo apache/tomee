@@ -95,13 +95,13 @@ public class CommonsSchemaInfoBuilder {
     private void buildXmlTypeInfos() {
         for (XmlSchema schema : xmlSchemaCollection.getXmlSchemas()) {
             // Global Elements
-            for (Iterator iterator = schema.getElements().getValues(); iterator.hasNext();) {
+            for (Iterator iterator = schema.getElements().getValues(); iterator.hasNext(); ) {
                 XmlSchemaElement globalElement = (XmlSchemaElement) iterator.next();
                 addGlobalElement(globalElement);
             }
 
             // Global Types
-            for (Iterator iterator = schema.getSchemaTypes().getValues(); iterator.hasNext();) {
+            for (Iterator iterator = schema.getSchemaTypes().getValues(); iterator.hasNext(); ) {
                 XmlSchemaType globalType = (XmlSchemaType) iterator.next();
                 addType(globalType.getQName(), globalType);
             }
@@ -220,12 +220,12 @@ public class CommonsSchemaInfoBuilder {
 
                 // this is a list
                 typeInfo.listType = true;
-            } else if(content instanceof XmlSchemaSimpleTypeRestriction) {
+            } else if (content instanceof XmlSchemaSimpleTypeRestriction) {
                 XmlSchemaSimpleTypeRestriction restriction = (XmlSchemaSimpleTypeRestriction) content;
                 typeInfo.simpleBaseType = restriction.getBaseTypeName();
 
                 // is this an enumeration?
-                for (Iterator iterator = restriction.getFacets().getIterator(); iterator.hasNext();) {
+                for (Iterator iterator = restriction.getFacets().getIterator(); iterator.hasNext(); ) {
                     if (iterator.next() instanceof XmlSchemaEnumerationFacet) {
                         typeInfo.enumType = true;
                         break;
@@ -242,7 +242,7 @@ public class CommonsSchemaInfoBuilder {
             // process attributes (skip soap arrays which have non-mappable attributes)
             if (!isSoapArray(complexType)) {
                 XmlSchemaObjectCollection attributes = complexType.getAttributes();
-                for (Iterator iterator = attributes.getIterator(); iterator.hasNext();) {
+                for (Iterator iterator = attributes.getIterator(); iterator.hasNext(); ) {
                     Object item = iterator.next();
                     if (item instanceof XmlSchemaAttribute) {
                         XmlSchemaAttribute attribute = (XmlSchemaAttribute) item;
@@ -277,6 +277,7 @@ public class CommonsSchemaInfoBuilder {
 
     /**
      * Extract the nested component type of an Array from the XML Schema Type.
+     *
      * @return the QName of the nested component type or null if the schema type can not be determined
      * @throws org.apache.openejb.OpenEJBException if the XML Schema Type can not represent an Array @param complexType
      */
@@ -297,7 +298,7 @@ public class CommonsSchemaInfoBuilder {
         //     </complexContent>
         // </complexType>
         XmlSchemaObjectCollection attributes = restriction.getAttributes();
-        for (Iterator iterator = attributes.getIterator(); iterator.hasNext();) {
+        for (Iterator iterator = attributes.getIterator(); iterator.hasNext(); ) {
             Object item = iterator.next();
             if (item instanceof XmlSchemaAttribute) {
                 XmlSchemaAttribute attribute = (XmlSchemaAttribute) item;
@@ -391,7 +392,7 @@ public class CommonsSchemaInfoBuilder {
             elements.add(element);
         } else if (particle instanceof XmlSchemaGroupBase && !(particle instanceof XmlSchemaChoice)) {
             XmlSchemaGroupBase groupBase = (XmlSchemaGroupBase) particle;
-            for (Iterator iterator = groupBase.getItems().getIterator(); iterator.hasNext();) {
+            for (Iterator iterator = groupBase.getItems().getIterator(); iterator.hasNext(); ) {
                 XmlSchemaParticle child = (XmlSchemaParticle) iterator.next();
                 if (child instanceof XmlSchemaElement) {
                     XmlSchemaElement element = (XmlSchemaElement) child;

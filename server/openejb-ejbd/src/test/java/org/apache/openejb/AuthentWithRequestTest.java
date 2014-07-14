@@ -84,13 +84,13 @@ public class AuthentWithRequestTest {
         try {
 
             final Context context = new InitialContext(new PropertiesBuilder()
-                                                           .p(Context.INITIAL_CONTEXT_FACTORY, RemoteInitialContextFactory.class.getName())
-                                                           .p(Context.PROVIDER_URL, "ejbd://127.0.0.1:" + port)
-                                                           .p(JNDIContext.AUTHENTICATE_WITH_THE_REQUEST, "true")
-                                                           .p("java.naming.security.principal", "foo")
-                                                           .p("java.naming.security.credentials", "bar")
-                                                           .p("openejb.authentication.realmName", "LM")
-                                                           .build());
+                .p(Context.INITIAL_CONTEXT_FACTORY, RemoteInitialContextFactory.class.getName())
+                .p(Context.PROVIDER_URL, "ejbd://127.0.0.1:" + port)
+                .p(JNDIContext.AUTHENTICATE_WITH_THE_REQUEST, "true")
+                .p("java.naming.security.principal", "foo")
+                .p("java.naming.security.credentials", "bar")
+                .p("openejb.authentication.realmName", "LM")
+                .build());
             final AnInterfaceRemote client = AnInterfaceRemote.class.cast(context.lookup("RemoteWithSecurityRemote"));
             assertNotNull(client);
 

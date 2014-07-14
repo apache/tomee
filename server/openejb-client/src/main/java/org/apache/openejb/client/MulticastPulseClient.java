@@ -109,10 +109,10 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
             //This is here just as a brake to prevent DOS or OOME.
             //There is no way we should have more than this number of unique MutliPulse URI's in a LAN
             throw new IllegalArgumentException("Unique MultiPulse URI limit of " +
-                                               LIMIT +
-                                               " reached. Increase using the system property '" +
-                                               ORG_APACHE_OPENEJB_MULTIPULSE_URI_LIMIT +
-                                               "'");
+                LIMIT +
+                " reached. Increase using the system property '" +
+                ORG_APACHE_OPENEJB_MULTIPULSE_URI_LIMIT +
+                "'");
         }
 
         Set<URI> uriSet = knownUris.get(uri);

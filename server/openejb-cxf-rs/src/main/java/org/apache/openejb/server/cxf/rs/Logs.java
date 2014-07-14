@@ -52,7 +52,7 @@ public class Logs {
             if (typeparms.length > 0) {
                 boolean first = true;
                 sb.append("<");
-                for(Type typeparm: typeparms) {
+                for (Type typeparm : typeparms) {
                     if (!first) {
                         sb.append(",");
                     }
@@ -91,7 +91,7 @@ public class Logs {
 
     public static String name(final Type type) {
         if (type instanceof Class<?>) {
-            return ((Class) type).getSimpleName() .replace("java.lang.", "").replace("java.util", "");
+            return ((Class) type).getSimpleName().replace("java.lang.", "").replace("java.util", "");
         } else if (type instanceof ParameterizedType) {
             final ParameterizedType pt = (ParameterizedType) type;
             final StringBuilder builder = new StringBuilder();

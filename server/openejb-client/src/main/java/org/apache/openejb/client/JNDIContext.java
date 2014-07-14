@@ -81,6 +81,7 @@ public class JNDIContext implements InitialContextFactory, Context {
     private ClientInstance clientIdentity;
 
     private static final ThreadPoolExecutor GLOBAL_CLIENT_POOL = newExecutor(10, null);
+
     static {
         ClassLoader classLoader = Client.class.getClassLoader();
         Class<?> container;
@@ -90,7 +91,7 @@ public class JNDIContext implements InitialContextFactory, Context {
             container = null;
         }
         if (classLoader == ClassLoader.getSystemClassLoader() || Boolean.getBoolean("openejb.client.flus-tasks")
-                || (container != null && container.getClassLoader() == classLoader)) {
+            || (container != null && container.getClassLoader() == classLoader)) {
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 @Override
                 public void run() {
@@ -128,8 +129,7 @@ public class JNDIContext implements InitialContextFactory, Context {
         return executorService;
     }
 
-    public static ThreadPoolExecutor newExecutor(final int threads, final BlockingQueue<Runnable> blockingQueue)
-    {
+    public static ThreadPoolExecutor newExecutor(final int threads, final BlockingQueue<Runnable> blockingQueue) {
         /**
          This thread pool starts with 3 core threads and can grow to the limit defined by 'threads'.
          If a pool thread is idle for more than 1 minute it will be discarded, unless the core size is reached.
@@ -240,11 +240,11 @@ public class JNDIContext implements InitialContextFactory, Context {
             location = new URI(providerUrl);
         } catch (URISyntaxException e) {
             throw (ConfigurationException) new ConfigurationException("Property value for " +
-                                                                      Context.PROVIDER_URL +
-                                                                      " invalid: " +
-                                                                      providerUrl +
-                                                                      " - " +
-                                                                      e.getMessage()).initCause(e);
+                Context.PROVIDER_URL +
+                " invalid: " +
+                providerUrl +
+                " - " +
+                e.getMessage()).initCause(e);
         }
         this.server = new ServerMetaData(location);
 
@@ -284,8 +284,7 @@ public class JNDIContext implements InitialContextFactory, Context {
         return this;
     }
 
-    private static String getProperty(final Hashtable env, final String key, final String defaultValue)
-    {
+    private static String getProperty(final Hashtable env, final String key, final String defaultValue) {
         Object value = env == null ? null : env.get(key);
         if (value != null) {
             return value.toString();
@@ -711,8 +710,7 @@ public class JNDIContext implements InitialContextFactory, Context {
         waitEndOfTasks(executorService);
     }
 
-    private static void waitEndOfTasks(final ExecutorService executor)
-    {
+    private static void waitEndOfTasks(final ExecutorService executor) {
         if (executor == null) {
             return;
         }

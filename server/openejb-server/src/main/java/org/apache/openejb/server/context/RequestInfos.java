@@ -105,10 +105,10 @@ public final class RequestInfos {
         @Override
         public String toString() {
             return "RequestInfo{"
-                   + "ip='" + ip + '\''
-                   + ", request-size=" + (inputStream != null ? inputStream.getCount() : "unknown")
-                   + ", response-size=" + (outputStream != null ? outputStream.getCount() : "unknown")
-                   + '}';
+                + "ip='" + ip + '\''
+                + ", request-size=" + (inputStream != null ? inputStream.getCount() : "unknown")
+                + ", response-size=" + (outputStream != null ? outputStream.getCount() : "unknown")
+                + '}';
         }
     }
 }

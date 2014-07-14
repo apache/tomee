@@ -30,8 +30,8 @@ import java.util.logging.Logger;
 public class HessianServer {
     public static final String CONTENT_TYPE_HESSIAN = "application/x-hessian";
 
-    private static final Class<?>[] BOOLEAN_PARAM = new Class<?>[]{ boolean.class };
-    private static final Object[] TRUE_PARAM = new Object[]{ true };
+    private static final Class<?>[] BOOLEAN_PARAM = new Class<?>[]{boolean.class};
+    private static final Object[] TRUE_PARAM = new Object[]{true};
 
     private final ClassLoader loader;
     private final Class<?> serializerFactoryClass;
@@ -58,7 +58,7 @@ public class HessianServer {
     }
 
     public HessianServer sendCollectionType(final boolean sendCollectionType) {
-        Reflections.invokeByReflection(serializerFactory, "setSendCollectionType", BOOLEAN_PARAM, new Object[]{ sendCollectionType });
+        Reflections.invokeByReflection(serializerFactory, "setSendCollectionType", BOOLEAN_PARAM, new Object[]{sendCollectionType});
         return this;
     }
 
@@ -126,11 +126,11 @@ public class HessianServer {
             throw new IOException("Expected 'H'/'C' (Hessian 2.0) or 'c' (Hessian 1.0) in hessian input at " + code);
         }
 
-        Reflections.invokeByReflection(in, "setSerializerFactory", new Class<?>[] { serializerFactoryClass }, new Object[] { serializerFactory });
-        Reflections.invokeByReflection(out, "setSerializerFactory", new Class<?>[] { serializerFactoryClass }, new Object[] { serializerFactory });
+        Reflections.invokeByReflection(in, "setSerializerFactory", new Class<?>[]{serializerFactoryClass}, new Object[]{serializerFactory});
+        Reflections.invokeByReflection(out, "setSerializerFactory", new Class<?>[]{serializerFactoryClass}, new Object[]{serializerFactory});
 
         try {
-            Reflections.invokeByReflection(skeleton, "invoke", new Class<?>[] { loader.loadClass("com.caucho.hessian.io.AbstractHessianInput"), loader.loadClass("com.caucho.hessian.io.AbstractHessianOutput") }, new Object[] { in, out });
+            Reflections.invokeByReflection(skeleton, "invoke", new Class<?>[]{loader.loadClass("com.caucho.hessian.io.AbstractHessianInput"), loader.loadClass("com.caucho.hessian.io.AbstractHessianOutput")}, new Object[]{in, out});
         } finally {
             try {
                 Reflections.invokeByReflection(in, "close", new Class<?>[0], null);

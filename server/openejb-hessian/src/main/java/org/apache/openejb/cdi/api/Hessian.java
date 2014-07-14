@@ -27,6 +27,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Hessian {
     String path() default "";
+
     boolean sendCollectionType() default true;
+
     Class<?> serializerFactory() default Object.class;
 }

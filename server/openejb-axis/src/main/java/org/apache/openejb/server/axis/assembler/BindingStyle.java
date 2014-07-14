@@ -56,7 +56,7 @@ public enum BindingStyle {
 
     public static BindingStyle getBindingStyle(String style, String use) {
         if ("rpc".equalsIgnoreCase(style)) {
-            if (use == null ||"encoded".equalsIgnoreCase(use)) {
+            if (use == null || "encoded".equalsIgnoreCase(use)) {
                 return RPC_ENCODED;
             } else if ("literal".equalsIgnoreCase(use)) {
                 return RPC_LITERAL;

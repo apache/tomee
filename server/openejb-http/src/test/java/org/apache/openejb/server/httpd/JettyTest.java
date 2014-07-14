@@ -20,11 +20,11 @@ package org.apache.openejb.server.httpd;
 import junit.framework.TestCase;
 
 public class JettyTest extends TestCase {
-	
-	public void testDummy() {
-		assertTrue(true);
-	}
-	
+
+    public void testDummy() {
+        assertTrue(true);
+    }
+
 //    public void testJettyImpl() throws Exception {
 //        SystemInstance.get().setComponent(ContainerSystem.class, new CoreContainerSystem());
 //

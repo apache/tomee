@@ -102,7 +102,7 @@ public class AxisServiceReference extends Reference {
         }
 
         if (initialize) {
-            for (Iterator iterator = seiPortNameToFactoryMap.values().iterator(); iterator.hasNext();) {
+            for (Iterator iterator = seiPortNameToFactoryMap.values().iterator(); iterator.hasNext(); ) {
                 SeiFactoryImpl seiFactory = (SeiFactoryImpl) iterator.next();
                 try {
                     seiFactory.initialize(serviceInstance, classLoader);

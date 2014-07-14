@@ -43,8 +43,8 @@ import java.util.Map;
 
 /**
  * @version $Rev$ $Date$
- *
- * Used as a stack executed at the end of the request too. Avoid multiple (useless) listeners.
+ *          <p/>
+ *          Used as a stack executed at the end of the request too. Avoid multiple (useless) listeners.
  */
 public class EndWebBeansListener implements ServletContextListener, ServletRequestListener, HttpSessionListener, HttpSessionActivationListener {
 
@@ -78,7 +78,7 @@ public class EndWebBeansListener implements ServletContextListener, ServletReque
             this.contextKey = "org.apache.tomee.catalina.WebBeansListener@" + webBeansContext.hashCode();
         } else {
             this.contextKey = "notused";
-            this.contextsService= null;
+            this.contextsService = null;
         }
     }
 

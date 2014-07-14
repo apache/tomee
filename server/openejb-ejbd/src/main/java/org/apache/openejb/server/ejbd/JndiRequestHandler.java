@@ -214,8 +214,8 @@ class JndiRequestHandler extends RequestHandler {
         final CountingOutputStream cos = info.getOutputStream();
 
         logger.debug("JNDI REQUEST: " + req + " (size = " + (null != cis ? cis.getCount() : 0)
-                     + "b, remote-ip =" + info.ip
-                     + ") -- RESPONSE: " + res + " (size = " + (null != cos ? cos.getCount() : 0) + "b)");
+            + "b, remote-ip =" + info.ip
+            + ") -- RESPONSE: " + res + " (size = " + (null != cos ? cos.getCount() : 0) + "b)");
     }
 
     private String getPrefix(final JNDIRequest req) throws NamingException {
@@ -445,9 +445,9 @@ class JndiRequestHandler extends RequestHandler {
                 } else {
                     res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
                     final NamingException namingException = new NamingException("Expected an ejb proxy, found unknown object: type=" +
-                                                                                object.getClass().getName() +
-                                                                                ", toString=" +
-                                                                                object);
+                        object.getClass().getName() +
+                        ", toString=" +
+                        object);
                     res.setResult(new ThrowableArtifact(namingException));
                     return;
                 }
@@ -464,14 +464,14 @@ class JndiRequestHandler extends RequestHandler {
             case EJB_HOME: {
                 res.setResponseCode(ResponseCodes.JNDI_EJBHOME);
                 final EJBMetaDataImpl metaData = new EJBMetaDataImpl(beanContext.getHomeInterface(),
-                                                                     beanContext.getRemoteInterface(),
-                                                                     beanContext.getPrimaryKeyClass(),
-                                                                     beanContext.getComponentType().toString(),
-                                                                     deploymentID,
-                                                                     -1,
-                                                                     convert(proxyInfo.getInterfaceType()),
-                                                                     null,
-                                                                     beanContext.getAsynchronousMethodSignatures());
+                    beanContext.getRemoteInterface(),
+                    beanContext.getPrimaryKeyClass(),
+                    beanContext.getComponentType().toString(),
+                    deploymentID,
+                    -1,
+                    convert(proxyInfo.getInterfaceType()),
+                    null,
+                    beanContext.getAsynchronousMethodSignatures());
                 metaData.loadProperties(beanContext.getProperties());
                 log(metaData);
                 res.setResult(metaData);
@@ -480,22 +480,22 @@ class JndiRequestHandler extends RequestHandler {
             case EJB_LOCAL_HOME: {
                 res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
                 final NamingException namingException = new NamingException("Not remotable: '" +
-                                                                            name +
-                                                                            "'. EJBLocalHome interfaces are not remotable as per the EJB specification.");
+                    name +
+                    "'. EJBLocalHome interfaces are not remotable as per the EJB specification.");
                 res.setResult(new ThrowableArtifact(namingException));
                 break;
             }
             case BUSINESS_REMOTE: {
                 res.setResponseCode(ResponseCodes.JNDI_BUSINESS_OBJECT);
                 final EJBMetaDataImpl metaData = new EJBMetaDataImpl(null,
-                                                                     null,
-                                                                     beanContext.getPrimaryKeyClass(),
-                                                                     beanContext.getComponentType().toString(),
-                                                                     deploymentID,
-                                                                     -1,
-                                                                     convert(proxyInfo.getInterfaceType()),
-                                                                     proxyInfo.getInterfaces(),
-                                                                     beanContext.getAsynchronousMethodSignatures());
+                    null,
+                    beanContext.getPrimaryKeyClass(),
+                    beanContext.getComponentType().toString(),
+                    deploymentID,
+                    -1,
+                    convert(proxyInfo.getInterfaceType()),
+                    proxyInfo.getInterfaces(),
+                    beanContext.getAsynchronousMethodSignatures());
                 metaData.setPrimaryKey(proxyInfo.getPrimaryKey());
                 metaData.loadProperties(beanContext.getProperties());
 
@@ -506,8 +506,8 @@ class JndiRequestHandler extends RequestHandler {
             case BUSINESS_LOCAL: {
                 res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
                 final NamingException namingException = new NamingException("Not remotable: '" +
-                                                                            name +
-                                                                            "'. Business Local interfaces are not remotable as per the EJB specification.  To disable this restriction, set the system property 'openejb.remotable.businessLocals=true' in the server.");
+                    name +
+                    "'. Business Local interfaces are not remotable as per the EJB specification.  To disable this restriction, set the system property 'openejb.remotable.businessLocals=true' in the server.");
                 res.setResult(new ThrowableArtifact(namingException));
                 break;
             }

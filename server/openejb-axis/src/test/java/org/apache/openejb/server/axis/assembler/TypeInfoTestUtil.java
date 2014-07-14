@@ -74,7 +74,7 @@ public final class TypeInfoTestUtil {
         }
     }
 
-    private static void diffMap(String name, Map<Object,Object> expected, Map<Object,Object> actual, List<String> message) throws Exception {
+    private static void diffMap(String name, Map<Object, Object> expected, Map<Object, Object> actual, List<String> message) throws Exception {
         // Added
         Set<Object> keys = new HashSet<Object>(actual.keySet());
         keys.removeAll(expected.keySet());
@@ -137,7 +137,7 @@ public final class TypeInfoTestUtil {
         }
     }
 
-    private static void dumpMap(String name, Map<Object,Object> map) throws Exception {
+    private static void dumpMap(String name, Map<Object, Object> map) throws Exception {
         for (Map.Entry<Object, Object> entry : map.entrySet()) {
             Object key = entry.getKey();
             Object value = entry.getValue();
@@ -169,11 +169,12 @@ public final class TypeInfoTestUtil {
     }
 
     private static boolean isSimpleValue(Object value) {
-        return value == null || value instanceof Boolean || value instanceof Number || value instanceof String|| value instanceof QName;
+        return value == null || value instanceof Boolean || value instanceof Number || value instanceof String || value instanceof QName;
     }
 
     private static String getSimpleValue(Object value) {
-        if (!isSimpleValue(value)) throw new IllegalArgumentException("Value is not a simple type " + value.getClass().getName());
+        if (!isSimpleValue(value))
+            throw new IllegalArgumentException("Value is not a simple type " + value.getClass().getName());
 
         String stringValue;
         if (value == null) {
@@ -198,9 +199,9 @@ public final class TypeInfoTestUtil {
 
     private static int getIndentSize(String name) {
         for (int i = 0; i < name.length(); i++) {
-             if (name.charAt(i) != ' ') {
-                 return i;
-             }
+            if (name.charAt(i) != ' ') {
+                return i;
+            }
         }
         return 0;
     }

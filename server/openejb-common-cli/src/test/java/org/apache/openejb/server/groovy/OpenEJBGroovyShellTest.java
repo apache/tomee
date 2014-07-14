@@ -19,6 +19,7 @@ package org.apache.openejb.server.groovy;
 import java.util.Properties;
 import javax.ejb.embeddable.EJBContainer;
 import javax.script.ScriptException;
+
 import org.apache.openejb.util.OpenEJBScripter;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

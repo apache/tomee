@@ -146,13 +146,13 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
         }
         final ClientMetaData cMetaData = new ClientMetaData(securityIdentity);
         final EJBMetaDataImpl eMetaData = new EJBMetaDataImpl(null, null,
-                                                              beanContext.getPrimaryKeyClass(),
-                                                              beanContext.getComponentType().toString(),
-                                                              beanContext.getDeploymentID().toString(),
-                                                              idCode,
-                                                              convert(info.getInterfaceType()),
-                                                              info.getInterfaces(),
-                                                              beanContext.getAsynchronousMethodSignatures());
+            beanContext.getPrimaryKeyClass(),
+            beanContext.getComponentType().toString(),
+            beanContext.getDeploymentID().toString(),
+            idCode,
+            convert(info.getInterfaceType()),
+            info.getInterfaces(),
+            beanContext.getAsynchronousMethodSignatures());
         eMetaData.loadProperties(beanContext.getProperties());
 
         final Object primKey = info.getPrimaryKey();
@@ -207,14 +207,14 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
 
     private EJBMetaDataImpl buildEjbMetaData(final ProxyInfo info, final BeanContext beanContext, final int idCode) {
         final EJBMetaDataImpl eMetaData = new EJBMetaDataImpl(beanContext.getHomeInterface(),
-                                                              beanContext.getRemoteInterface(),
-                                                              beanContext.getPrimaryKeyClass(),
-                                                              beanContext.getComponentType().toString(),
-                                                              beanContext.getDeploymentID().toString(),
-                                                              idCode,
-                                                              convert(info.getInterfaceType()),
-                                                              info.getInterfaces(),
-                                                              beanContext.getAsynchronousMethodSignatures());
+            beanContext.getRemoteInterface(),
+            beanContext.getPrimaryKeyClass(),
+            beanContext.getComponentType().toString(),
+            beanContext.getDeploymentID().toString(),
+            idCode,
+            convert(info.getInterfaceType()),
+            info.getInterfaces(),
+            beanContext.getAsynchronousMethodSignatures());
         eMetaData.loadProperties(beanContext.getProperties());
         return eMetaData;
     }

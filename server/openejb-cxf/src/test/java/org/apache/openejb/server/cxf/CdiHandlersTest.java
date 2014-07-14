@@ -39,7 +39,7 @@ import org.junit.runner.RunWith;
 @RunWith(ApplicationComposer.class)
 public class CdiHandlersTest {
     @Module
-    @Classes(value = { MyHandledWebservice.class, ACdiSimpleTaste.class, SimpleHandler.class }, cdi = true)
+    @Classes(value = {MyHandledWebservice.class, ACdiSimpleTaste.class, SimpleHandler.class}, cdi = true)
     public WebApp module() {
         return new WebApp().contextRoot("/test").addServlet("ws", MyHandledWebservice.class.getName(), "/ws");
     }
@@ -48,14 +48,14 @@ public class CdiHandlersTest {
     public void checkHandlersAreCDIBeans() throws MalformedURLException {
         SimpleHandler.reset();
         Service.create(new URL("http://localhost:4204/test/ws?wsdl"),
-                       new QName("http://cxf.server.openejb.apache.org/", "MyHandledWebserviceService"))
-                .getPort(MyHandledWsApi.class).test();
+            new QName("http://cxf.server.openejb.apache.org/", "MyHandledWebserviceService"))
+            .getPort(MyHandledWsApi.class).test();
         assertTrue(SimpleHandler.close);
         assertTrue(SimpleHandler.handled);
         assertTrue(SimpleHandler.pre);
         assertTrue(SimpleHandler.post);
     }
- 
+
     public static class ACdiSimpleTaste {
         public String ok() {
             return "ok";

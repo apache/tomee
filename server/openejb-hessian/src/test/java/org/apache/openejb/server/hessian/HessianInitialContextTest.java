@@ -33,22 +33,22 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-@EnableServices({ "hessian", "httpejbd" })
+@EnableServices({"hessian", "httpejbd"})
 @RunWith(ApplicationComposer.class)
 public class HessianInitialContextTest {
     @Module
     public Class<?>[] classes() {
-        return new Class<?>[] { Server.class };
+        return new Class<?>[]{Server.class};
     }
 
     @Test
     public void client() throws Exception {
         final MyApi client = MyApi.class.cast(
-                new InitialContext(new PropertiesBuilder()
-                        .p(Context.INITIAL_CONTEXT_FACTORY, HessianInitialContextFactory.class.getName())
-                        .p(Context.PROVIDER_URL, "http://127.0.0.1:4204/HessianInitialContextTest/hessian/")
-                        .build())
-                    .lookup("Server"));
+            new InitialContext(new PropertiesBuilder()
+                .p(Context.INITIAL_CONTEXT_FACTORY, HessianInitialContextFactory.class.getName())
+                .p(Context.PROVIDER_URL, "http://127.0.0.1:4204/HessianInitialContextTest/hessian/")
+                .build())
+                .lookup("Server"));
 
         final Out out = client.call(new In("test"));
         assertThat(out, instanceOf(Out.class));

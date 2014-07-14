@@ -17,6 +17,7 @@
 package org.apache.openejb.server.axis;
 
 import javax.servlet.ServletInputStream;
+
 import org.apache.openejb.server.httpd.HttpRequest;
 import org.apache.openejb.server.httpd.HttpRequestImpl;
 import org.apache.openejb.server.httpd.HttpSession;
@@ -36,13 +37,13 @@ public class AxisRequest extends HttpRequestImpl {
 
     private Method method;
 
-    private Map<String,String> parameters;
+    private Map<String, String> parameters;
 
-    private Map<String,String> headers;
+    private Map<String, String> headers;
 
     private String remoteAddress;
 
-    public AxisRequest(int contentLength, String contentType, ServletInputStream in, Method method, Map<String,String> parameters, URI uri, Map<String,String> headers, String remoteAddress) {
+    public AxisRequest(int contentLength, String contentType, ServletInputStream in, Method method, Map<String, String> parameters, URI uri, Map<String, String> headers, String remoteAddress) {
         super(uri);
         this.contentLength = contentLength;
         this.contentType = contentType;

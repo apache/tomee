@@ -66,9 +66,9 @@ public class ClientVersion {
     @Override
     public String toString() {
         return "ClientVersion{" +
-               "version='" + version + '\'' +
-               ", date='" + date + '\'' +
-               ", time='" + time + '\'' +
-               '}';
+            "version='" + version + '\'' +
+            ", date='" + date + '\'' +
+            ", time='" + time + '\'' +
+            '}';
     }
 }

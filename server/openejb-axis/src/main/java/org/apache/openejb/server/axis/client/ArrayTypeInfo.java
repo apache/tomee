@@ -29,13 +29,13 @@ public class ArrayTypeInfo extends TypeInfo {
     private final QName componentQName;
 
     public ArrayTypeInfo(Class clazz,
-            QName qName,
-            Class serializerClass,
-            Class deserializerClass,
-            boolean canSearchParents,
-            FieldDesc[] fields,
-            QName componentType,
-            QName componentQName) {
+                         QName qName,
+                         Class serializerClass,
+                         Class deserializerClass,
+                         boolean canSearchParents,
+                         FieldDesc[] fields,
+                         QName componentType,
+                         QName componentQName) {
         super(clazz, qName, serializerClass, deserializerClass, canSearchParents, fields);
         this.componentType = componentType;
         this.componentQName = componentQName;

@@ -198,7 +198,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
 
             if (bytes.length > 2048) {
                 log.warning("MultiPulse packet is larger than 2048 bytes, clients will not be able to read the packet" +
-                            "\n - You should define the 'ignore' property to filter out unreachable addresses: " + sb);
+                    "\n - You should define the 'ignore' property to filter out unreachable addresses: " + sb);
             }
         } finally {
             l.unlock();
@@ -350,7 +350,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
                                                         MulticastPulseAgent.this.fireEvent(URI.create("OpenEJB" + BADURI + badUri), false);
 
                                                         log.warning("This server has removed the unreachable host '" + badUri + "' from discovery, you should consider adding" +
-                                                                    " this to the 'ignore' property in the multipulse.properties file");
+                                                            " this to the 'ignore' property in the multipulse.properties file");
                                                     }
 
                                                 } finally {
@@ -365,8 +365,8 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
                                                     //We only have local services, so make sure the request is from a local source else ignore it
                                                     if (log.isDebugEnabled()) {
                                                         log.debug(String.format("Ignoring remote client %1$s pulse request for group: %2$s - No remote services available",
-                                                                                client,
-                                                                                req));
+                                                            client,
+                                                            req));
                                                     }
                                                 } else {
 

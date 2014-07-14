@@ -97,7 +97,7 @@ public class HsqlService implements ServerService, SelfManaging {
                 property.startsWith(sc_key_database + ".")) {
 
                 throw new ServiceException("Databases cannot be declared in the hsql.properties.  " +
-                                           "Instead declare a database connection in the openejb.conf file");
+                    "Instead declare a database connection in the openejb.conf file");
             }
 
             if ("port".equals(property)) {

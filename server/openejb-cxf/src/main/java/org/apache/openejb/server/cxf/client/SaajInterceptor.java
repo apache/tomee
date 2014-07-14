@@ -32,7 +32,7 @@ public abstract class SaajInterceptor extends AbstractPhaseInterceptor<Message> 
         super(phase);
         this.universe = universe;
     }
-    
+
     public static synchronized void registerInterceptors() {
         if (!interceptorsRegistered) {
             final Bus bus = CxfUtil.getBus();

@@ -167,7 +167,7 @@ public class AxisWsContainer implements HttpListener {
                 for (final Iterator i = responseMimeHeaders.getAllHeaders(); i.hasNext(); ) {
                     final MimeHeader responseMimeHeader = (MimeHeader) i.next();
                     res.setHeader(responseMimeHeader.getName(),
-                            responseMimeHeader.getValue());
+                        responseMimeHeader.getValue());
                 }
                 //TODO discuss this with dims.
 //                // synchronize the character encoding of request and response
@@ -183,7 +183,7 @@ public class AxisWsContainer implements HttpListener {
 //                }
                 //determine content type from message response
                 contentType = responseMessage.getContentType(messageContext.
-                        getSOAPConstants());
+                    getSOAPConstants());
                 responseMessage.writeTo(res.getOutputStream());
             } catch (final Exception e) {
                 logger.warning(Messages.getMessage("exception00"), e);
@@ -228,8 +228,8 @@ public class AxisWsContainer implements HttpListener {
         }
 
         final int status = fault.getFaultCode().getLocalPart().startsWith("Server.Unauth")
-                ? HttpServletResponse.SC_UNAUTHORIZED
-                : HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+            ? HttpServletResponse.SC_UNAUTHORIZED
+            : HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
         if (status == HttpServletResponse.SC_UNAUTHORIZED) {
             // unauth access results in authentication request
             // TODO: less generic realm choice?
@@ -263,12 +263,12 @@ public class AxisWsContainer implements HttpListener {
             throw new IllegalStateException("No wsdl or schema known at location: " + locationKey);
         }
         final URI updated = new URI(realLocation.getScheme(),
-                realLocation.getUserInfo(),
-                realLocation.getHost(),
-                realLocation.getPort(),
-                null, //try null for no path
-                null,
-                null);
+            realLocation.getUserInfo(),
+            realLocation.getHost(),
+            realLocation.getPort(),
+            null, //try null for no path
+            null,
+            null);
         final String replaced = ((String) wsdl).replaceAll(WsConstants.LOCATION_REPLACEMENT_TOKEN, updated.toString());
         response.getOutputStream().write(replaced.getBytes());
         response.getOutputStream().flush();
@@ -287,14 +287,14 @@ public class AxisWsContainer implements HttpListener {
     private void printServiceInfo(final HttpResponse response, final String serviceName) throws IOException {
         response.setContentType("text/html; charset=utf-8");
         final StringBuffer output = new StringBuffer("<h1>")
-                .append(serviceName).append("</h1>\n");
+            .append(serviceName).append("</h1>\n");
 
         output.append("<p>").append(Messages.getMessage("axisService00"))
-                .append("</p>\n");
+            .append("</p>\n");
         output.append(
-                "<i>").append(
-                Messages.getMessage("perhaps00")).append(
-                "</i>\n");
+            "<i>").append(
+            Messages.getMessage("perhaps00")).append(
+            "</i>\n");
         response.getOutputStream().write(output.toString().getBytes());
     }
 

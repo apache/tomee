@@ -39,7 +39,7 @@ import static org.junit.Assert.assertEquals;
 @RunWith(ApplicationComposer.class)
 public class ProvidersShouldBeScannedTest {
     @Module
-    @Classes({ NeedAProvider.class, DontLetResourcesFail.class })
+    @Classes({NeedAProvider.class, DontLetResourcesFail.class})
     public static WebApp service() throws Exception {
         return new WebApp().contextRoot("app");
     }

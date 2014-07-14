@@ -41,7 +41,7 @@ import java.security.Principal;
 public class WsServlet implements Servlet {
     public static final String POJO_CLASS = WsServlet.class.getName() + "@pojoClassName";
     public static final String WEBSERVICE_CONTAINER = WsServlet.class.getName() + "@WebServiceContainer";
-    
+
     private static final DefaultContext DEFAULT_CONTEXT = new DefaultContext();
     private static final ThreadLocal<ServletEndpointContext> endpointContext = new ThreadLocal<ServletEndpointContext>();
 

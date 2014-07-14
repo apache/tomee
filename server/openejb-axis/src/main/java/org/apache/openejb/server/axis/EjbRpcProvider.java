@@ -250,7 +250,7 @@ public class EjbRpcProvider extends RPCProvider {
             Object result = null;
 
             if (bodyEl instanceof RPCElement) {
-                RPCElement body = (RPCElement)bodyEl;
+                RPCElement body = (RPCElement) bodyEl;
                 body.setNeedDeser(true);
                 Vector args = null;
                 try {
@@ -318,7 +318,7 @@ public class EjbRpcProvider extends RPCProvider {
 
             AxisFault axisFault = null;
             if (exception instanceof Exception) {
-                axisFault = AxisFault.makeFault((Exception)exception);
+                axisFault = AxisFault.makeFault((Exception) exception);
                 axisFault.setFaultCodeAsString(Constants.FAULT_SERVER_GENERAL);
             } else {
                 axisFault = new AxisFault("Server", "Server Error", null, null);

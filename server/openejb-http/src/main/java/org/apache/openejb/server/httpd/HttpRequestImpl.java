@@ -96,29 +96,29 @@ public class HttpRequestImpl implements HttpRequest {
     /**
      * the headers for this page
      */
-    private final Map<String,String> headers = new HashMap<String,String>();
+    private final Map<String, String> headers = new HashMap<String, String>();
 
     /**
      * the form parameters for this page
      */
-    private final Map<String,String> formParams = new HashMap<String,String>();
+    private final Map<String, String> formParams = new HashMap<String, String>();
 
     /**
      * the URL (or query) parameters for this page
      */
-    private final Map<String,String> queryParams = new HashMap<String,String>();
+    private final Map<String, String> queryParams = new HashMap<String, String>();
 
     /**
      * All form and query parameters.  Query parameters override form parameters.
      */
-    private final Map<String,String> parameters = new HashMap<String,String>();
+    private final Map<String, String> parameters = new HashMap<String, String>();
 
     private final Map<String, Part> parts = new HashMap<String, Part>();
 
     /**
      * Cookies sent from the client
      */
-    private Map<String,String> cookies;
+    private Map<String, String> cookies;
 
     /**
      * the content of the body of the request
@@ -136,7 +136,7 @@ public class HttpRequestImpl implements HttpRequest {
     /**
      * Request scoped data which is set and used by application code.
      */
-    private final Map<String,Object> attributes = new HashMap<String,Object>();
+    private final Map<String, Object> attributes = new HashMap<String, Object>();
 
     private String path = "/";
     private Locale locale = Locale.getDefault();
@@ -185,12 +185,12 @@ public class HttpRequestImpl implements HttpRequest {
         return formParams.get(name);
     }
 
-    public Map<String,String> getFormParameters() {
-        return new HashMap<String,String>(formParams);
+    public Map<String, String> getFormParameters() {
+        return new HashMap<String, String>(formParams);
     }
 
-    public Map<String,String> getQueryParameters() {
-        return new HashMap<String,String>(queryParams);
+    public Map<String, String> getQueryParameters() {
+        return new HashMap<String, String>(queryParams);
     }
 
     /**
@@ -205,6 +205,7 @@ public class HttpRequestImpl implements HttpRequest {
 
     /**
      * Gets the request method.
+     *
      * @return the request method
      */
     public String getMethod() {
@@ -336,6 +337,7 @@ public class HttpRequestImpl implements HttpRequest {
     /*------------------------------------------------------------*/
     /*  Methods for reading in and parsing a request              */
     /*------------------------------------------------------------*/
+
     /**
      * parses the request into the 3 different parts, request, headers, and body
      *
@@ -400,9 +402,9 @@ public class HttpRequestImpl implements HttpRequest {
 //            System.out.println(line);
         } catch (Exception e) {
             throw new IOException("Could not read the HTTP Request Line :"
-                    + e.getClass().getName()
-                    + " : "
-                    + e.getMessage());
+                + e.getClass().getName()
+                + " : "
+                + e.getMessage());
         }
 
         StringTokenizer lineParts = new StringTokenizer(line, " ");
@@ -424,9 +426,9 @@ public class HttpRequestImpl implements HttpRequest {
             token = lineParts.nextToken();
         } catch (final Exception e) {
             throw new IOException("Could not parse the HTTP Request Method :"
-                    + e.getClass().getName()
-                    + " : "
-                    + e.getMessage());
+                + e.getClass().getName()
+                + " : "
+                + e.getMessage());
         }
 
         // in JAXRS you can create your own method
@@ -469,13 +471,13 @@ public class HttpRequestImpl implements HttpRequest {
             token = lineParts.nextToken();
         } catch (Exception e) {
             throw new IOException("Could not parse the HTTP Request Method :"
-                    + e.getClass().getName()
-                    + " : "
-                    + e.getMessage());
+                + e.getClass().getName()
+                + " : "
+                + e.getMessage());
         }
 
         try {
-            uri = new URI(socketURI.toString()+token);
+            uri = new URI(socketURI.toString() + token);
         } catch (URISyntaxException e) {
             throw new IOException("Malformed URI :" + token + " Exception: " + e.getMessage());
         }
@@ -505,7 +507,7 @@ public class HttpRequestImpl implements HttpRequest {
 
             String value;
             /* [2] Parse the Value */
-            if (!param.hasMoreTokens()){
+            if (!param.hasMoreTokens()) {
                 value = "";
             } else {
                 value = URLDecoder.decode(param.nextToken());
@@ -533,9 +535,9 @@ public class HttpRequestImpl implements HttpRequest {
                 //System.out.println(hf);
             } catch (Exception e) {
                 throw new IOException("Could not read the HTTP Request Header Field :"
-                        + e.getClass().getName()
-                        + " : "
-                        + e.getMessage());
+                    + e.getClass().getName()
+                    + " : "
+                    + e.getMessage());
             }
 
             if (hf == null || hf.equals("")) {
@@ -555,33 +557,32 @@ public class HttpRequestImpl implements HttpRequest {
             value = value.trim();
             headers.put(name, value);
         }
-        
+
         // Update the URI to be what the client sees the the server as.
         String host = headers.get("Host");
-        if( host!=null ) {
+        if (host != null) {
             String hostName;
             int port = uri.getPort();
             int idx = host.indexOf(":");
-            if( idx >= 0 ) {
+            if (idx >= 0) {
                 hostName = host.substring(0, idx);
                 try {
-                    port = Integer.parseInt(host.substring(idx+1));
-                }
-                catch (NumberFormatException ignore) {
+                    port = Integer.parseInt(host.substring(idx + 1));
+                } catch (NumberFormatException ignore) {
                 }
             } else {
                 hostName = host;
             }
-            
+
             try {
                 uri = new URI(uri.getScheme(),
-                        uri.getUserInfo(), hostName, port,
-                        uri.getPath(), uri.getQuery(),
-                        uri.getFragment());                
+                    uri.getUserInfo(), hostName, port,
+                    uri.getPath(), uri.getQuery(),
+                    uri.getFragment());
             } catch (URISyntaxException ignore) {
-            }            
+            }
         }
-        
+
         //temp-debug-------------------------------------------
         //java.util.Iterator myKeys = headers.keySet().iterator();
         //String temp = null;
@@ -596,6 +597,7 @@ public class HttpRequestImpl implements HttpRequest {
         return !method.equals(Method.GET.name()) && !method.equals(Method.DELETE.name())
             && !method.equals(Method.HEAD.name()) && !method.equals(Method.OPTIONS.name());
     }
+
     /**
      * reads the body from the data input passed in
      *
@@ -619,7 +621,7 @@ public class HttpRequestImpl implements HttpRequest {
                 this.in = new ServletByteArrayIntputStream(body);
                 rawParams = new String(body);
             } catch (Exception e) {
-                throw (IOException)new IOException("Could not read the HTTP Request Body: " + e.getMessage()).initCause(e);
+                throw (IOException) new IOException("Could not read the HTTP Request Body: " + e.getMessage()).initCause(e);
             }
 
             StringTokenizer parameters = new StringTokenizer(rawParams, "&");
@@ -645,7 +647,7 @@ public class HttpRequestImpl implements HttpRequest {
                     value = "";
 
                 formParams.put(name, value);
-                    //System.out.println(name + ": " + value);
+                //System.out.println(name + ": " + value);
             }
         } else if (hasBody && CHUNKED.equals(headers.get(TRANSFER_ENCODING))) {
             try {
@@ -669,9 +671,9 @@ public class HttpRequestImpl implements HttpRequest {
                 body = out.toByteArray();
                 this.in = new ServletByteArrayIntputStream(body);
             } catch (Exception e) {
-                throw (IOException)new IOException("Unable to read chunked body").initCause(e);
+                throw (IOException) new IOException("Unable to read chunked body").initCause(e);
             }
-        } else if (hasBody){
+        } else if (hasBody) {
             // TODO This really is terrible
             body = readContent(in);
             this.in = new ServletByteArrayIntputStream(body);
@@ -770,7 +772,7 @@ public class HttpRequestImpl implements HttpRequest {
     public Cookie[] getCookies() {
         if (cookies != null) return toCookies(cookies);
 
-        cookies = new HashMap<String,String>();
+        cookies = new HashMap<String, String>();
 
         String cookieHeader = getHeader(HEADER_COOKIE);
         if (cookieHeader == null) return toCookies(cookies);
@@ -788,7 +790,7 @@ public class HttpRequestImpl implements HttpRequest {
     protected Map<?, ?> getInternalCookies() {
         if (cookies != null) return cookies;
 
-        cookies = new HashMap<String,String>();
+        cookies = new HashMap<String, String>();
 
         String cookieHeader = getHeader(HEADER_COOKIE);
         if (cookieHeader == null) return cookies;
@@ -904,7 +906,7 @@ public class HttpRequestImpl implements HttpRequest {
         return encoding;
     }
 
-    public void setAttribute(String name, Object value){
+    public void setAttribute(String name, Object value) {
         attributes.put(name, value);
     }
 
@@ -931,7 +933,7 @@ public class HttpRequestImpl implements HttpRequest {
     public Map<String, String[]> getParameterMap() {
         Map<String, String[]> params = new HashMap<String, String[]>();
         for (Map.Entry<String, String> p : parameters.entrySet()) {
-            params.put(p.getKey(), new String[] { p.getValue() });
+            params.put(p.getKey(), new String[]{p.getValue()});
         }
         return params;
     }
@@ -943,7 +945,7 @@ public class HttpRequestImpl implements HttpRequest {
 
     @Override
     public String[] getParameterValues(String s) {
-        return new String[] { parameters.get(s) };
+        return new String[]{parameters.get(s)};
     }
 
     @Override
@@ -961,8 +963,8 @@ public class HttpRequestImpl implements HttpRequest {
         return path;
     }
 
-    public Map<String,String> getParameters() {
-        return new HashMap<String,String>(parameters);
+    public Map<String, String> getParameters() {
+        return new HashMap<String, String>(parameters);
     }
 
     public String getRemoteAddr() {
@@ -1004,7 +1006,7 @@ public class HttpRequestImpl implements HttpRequest {
     public ServletContext getServletContext() { // we need a not null value but it is not intended to be used in standalone for now
         if (context == null) {
             context = (ServletContext) Proxy.newProxyInstance(
-                    Thread.currentThread().getContextClassLoader(), SERVLET_CONTEXT_INTERFACES, SERVLET_CONTEXT_HANDLER);
+                Thread.currentThread().getContextClassLoader(), SERVLET_CONTEXT_INTERFACES, SERVLET_CONTEXT_HANDLER);
         }
         return context;
     }

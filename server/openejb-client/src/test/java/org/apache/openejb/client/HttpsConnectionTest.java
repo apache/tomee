@@ -38,28 +38,28 @@ public class HttpsConnectionTest {
     private final String SERVER = "localhost";
     private final int SERVER_PORT = 12345;
     private HttpsSimpleServer httpsSimpleServer;
-    static final String STORE_PATH="target/keystore";
-    static final String STORE_PWD="changeit";
+    static final String STORE_PATH = "target/keystore";
+    static final String STORE_PWD = "changeit";
 
     @Before
     public void init() throws IOException, NoSuchAlgorithmException, KeyManagementException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         //create key
         createKeyStore();
         //start web server
-        httpsSimpleServer = new HttpsSimpleServer(SERVER_PORT,STORE_PATH, STORE_PWD);
+        httpsSimpleServer = new HttpsSimpleServer(SERVER_PORT, STORE_PATH, STORE_PWD);
     }
 
     @After
-    public void close(){
+    public void close() {
         httpsSimpleServer = null;
         dropKeyStore();
     }
 
     @Test
     public void testHttps() throws URISyntaxException, IOException {
-        String url = "https://"+SERVER+":" + SERVER_PORT +"/secure"+
-                "?sslKeyStore=" +STORE_PATH+"&sslKeyStorePassword=" +STORE_PWD+"&sslKeyStoreProvider=SunX509&sslKeyStoreType=jks"+
-                "&sslTrustStore="+STORE_PATH+"&sslTrustStorePassword="+STORE_PWD+"&readTimeout=500";
+        String url = "https://" + SERVER + ":" + SERVER_PORT + "/secure" +
+            "?sslKeyStore=" + STORE_PATH + "&sslKeyStorePassword=" + STORE_PWD + "&sslKeyStoreProvider=SunX509&sslKeyStoreType=jks" +
+            "&sslTrustStore=" + STORE_PATH + "&sslTrustStorePassword=" + STORE_PWD + "&readTimeout=500";
         Connection connection = new HttpConnectionFactory().getConnection(new URI(url));
 
         BufferedReader br = null;
@@ -82,7 +82,7 @@ public class HttpsConnectionTest {
             }
         }
 
-        Assert.assertTrue("should contain",sb.toString().contains("secure"));
+        Assert.assertTrue("should contain", sb.toString().contains("secure"));
     }
 
     private File createKeyStore() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
@@ -102,13 +102,13 @@ public class HttpsConnectionTest {
         }
 
         final String[] args = {
-                "-genkey",
-                "-alias", SERVER,
-                "-keypass", STORE_PWD,
-                "-keystore", keyStore.getAbsolutePath(),
-                "-storepass", STORE_PWD,
-                "-dname", "cn="+SERVER,
-                "-keyalg", "RSA"
+            "-genkey",
+            "-alias", SERVER,
+            "-keypass", STORE_PWD,
+            "-keystore", keyStore.getAbsolutePath(),
+            "-storepass", STORE_PWD,
+            "-dname", "cn=" + SERVER,
+            "-keyalg", "RSA"
         };
         keyToolClass.getMethod("main", String[].class).invoke(null, new Object[]{args});
 
@@ -117,7 +117,7 @@ public class HttpsConnectionTest {
 
     private void dropKeyStore() {
         File keyStore = new File(STORE_PATH);
-        if (keyStore.exists()){
+        if (keyStore.exists()) {
             keyStore.delete();
         }
     }

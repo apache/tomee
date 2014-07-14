@@ -116,9 +116,9 @@ public class HessianExtension implements Extension {
             final String appName = findAppName(bm);
             try {
                 LOGGER.info("Hessian(url=" + registry.deploy(deployment.itf.getClassLoader(), server,
-                        service.getVirtualHost(), appName,
-                        service.getAuthMethod(), service.getTransportGuarantee(),
-                        service.getRealmName(), name) + ", interface=" + name + ")");
+                    service.getVirtualHost(), appName,
+                    service.getAuthMethod(), service.getTransportGuarantee(),
+                    service.getRealmName(), name) + ", interface=" + name + ")");
                 deployed.add(new DeployedEndpoint(appName, name));
             } catch (final URISyntaxException e) {
                 throw new OpenEJBRuntimeException(e);
@@ -154,7 +154,7 @@ public class HessianExtension implements Extension {
 
     private static boolean isSameContext(final BeanManager bm, WebBeansContext app) {
         return InjectableBeanManager.class.isInstance(bm) && app == InjectableBeanManager.class.cast(bm).getWebBeansContext()
-                || BeanManagerImpl.class.isInstance(bm) && app == BeanManagerImpl.class.cast(bm).getWebBeansContext();
+            || BeanManagerImpl.class.isInstance(bm) && app == BeanManagerImpl.class.cast(bm).getWebBeansContext();
     }
 
     protected void shutdown(final @Observes BeforeShutdown unused) {

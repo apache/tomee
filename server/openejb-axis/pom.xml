@@ -19,7 +19,8 @@
 
 <!-- $Rev$ $Date$ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>server</artifactId>
     <groupId>org.apache.openejb</groupId>
@@ -32,10 +33,10 @@
 
   <properties>
     <openejb.osgi.import.pkg>
-     !org.apache.openejb.server.httpd,
-     !org.apache.openejb.server.webservices,
-     !org.apache.openejb.server.webservices.saaj,
-     *
+      !org.apache.openejb.server.httpd,
+      !org.apache.openejb.server.webservices,
+      !org.apache.openejb.server.webservices.saaj,
+      *
     </openejb.osgi.import.pkg>
     <openejb.osgi.dynamic.import.pkg>
       org.apache.openejb.server.httpd,org.apache.openejb.server.webservices,org.apache.openejb.server.webservices.saaj
@@ -81,7 +82,7 @@
       <artifactId>cglib-nodep</artifactId>
       <version>2.1_3</version>
     </dependency>
- 
+
     <!-- For schema processing -->
     <dependency>
       <groupId>org.apache.ws.commons.schema</groupId>

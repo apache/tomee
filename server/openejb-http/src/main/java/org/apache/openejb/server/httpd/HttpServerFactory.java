@@ -28,7 +28,7 @@ public class HttpServerFactory {
         } catch (Throwable e) {
             // We don't have jetty
         }
-        
+
         return new OpenEJBHttpEjbServer();
     }
 }

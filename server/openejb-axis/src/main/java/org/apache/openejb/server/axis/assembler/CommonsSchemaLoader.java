@@ -91,7 +91,7 @@ public class CommonsSchemaLoader {
         }
 
         //noinspection unchecked
-        Map<String,List<Import>> imports = definition.getImports();
+        Map<String, List<Import>> imports = definition.getImports();
         if (imports != null) {
             for (Map.Entry<String, List<Import>> entry : imports.entrySet()) {
                 String namespaceURI = entry.getKey();
@@ -122,25 +122,25 @@ public class CommonsSchemaLoader {
         wsdlReaderNoImport.setFeature("javax.wsdl.importDocuments", false);
         ExtensionRegistry extensionRegistry = new PopulatedExtensionRegistry();
         extensionRegistry.mapExtensionTypes(Types.class, SchemaConstants.Q_ELEM_XSD_1999,
-                UnknownExtensibilityElement.class);
+            UnknownExtensibilityElement.class);
         extensionRegistry.registerDeserializer(Types.class, SchemaConstants.Q_ELEM_XSD_1999,
-                extensionRegistry.getDefaultDeserializer());
+            extensionRegistry.getDefaultDeserializer());
         extensionRegistry.registerSerializer(Types.class, SchemaConstants.Q_ELEM_XSD_1999,
-                extensionRegistry.getDefaultSerializer());
+            extensionRegistry.getDefaultSerializer());
 
         extensionRegistry.mapExtensionTypes(Types.class, SchemaConstants.Q_ELEM_XSD_2000,
-                UnknownExtensibilityElement.class);
+            UnknownExtensibilityElement.class);
         extensionRegistry.registerDeserializer(Types.class, SchemaConstants.Q_ELEM_XSD_2000,
-                extensionRegistry.getDefaultDeserializer());
+            extensionRegistry.getDefaultDeserializer());
         extensionRegistry.registerSerializer(Types.class, SchemaConstants.Q_ELEM_XSD_2000,
-                extensionRegistry.getDefaultSerializer());
+            extensionRegistry.getDefaultSerializer());
 
         extensionRegistry.mapExtensionTypes(Types.class, SchemaConstants.Q_ELEM_XSD_2001,
-                UnknownExtensibilityElement.class);
+            UnknownExtensibilityElement.class);
         extensionRegistry.registerDeserializer(Types.class, SchemaConstants.Q_ELEM_XSD_2001,
-                extensionRegistry.getDefaultDeserializer());
+            extensionRegistry.getDefaultDeserializer());
         extensionRegistry.registerSerializer(Types.class, SchemaConstants.Q_ELEM_XSD_2001,
-                extensionRegistry.getDefaultSerializer());
+            extensionRegistry.getDefaultSerializer());
         wsdlReaderNoImport.setExtensionRegistry(extensionRegistry);
 
         JarWSDLLocator wsdlLocator = new JarWSDLLocator(wsdlURI);
@@ -176,8 +176,8 @@ public class CommonsSchemaLoader {
 
         public InputSource getBaseInputSource() {
             ZipEntry entry = moduleFile.getEntry(wsdlURI.toString());
-            if(entry == null){
-                throw new ServerRuntimeException("The webservices.xml file points to a non-existant WSDL file "+wsdlURI.toString());
+            if (entry == null) {
+                throw new ServerRuntimeException("The webservices.xml file points to a non-existant WSDL file " + wsdlURI.toString());
             }
 
             InputStream wsdlInputStream;

@@ -38,7 +38,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.Assert.assertEquals;
 
-@EnableServices({ "httpejbd" })
+@EnableServices({"httpejbd"})
 @RunWith(ApplicationComposer.class)
 public class CustomHttpMethodTest {
     private int nextAvailablePort = -1;

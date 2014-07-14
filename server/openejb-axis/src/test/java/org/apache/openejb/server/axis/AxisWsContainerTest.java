@@ -85,7 +85,7 @@ public class AxisWsContainerTest extends AbstractTestCase {
         RPCProvider provider = new PojoProvider();
         SOAPService service = new SOAPService(null, provider, null);
         service.setServiceDescription(sd);
-        service.setOption("className","org.apache.openejb.server.axis.EchoBean");
+        service.setOption("className", "org.apache.openejb.server.axis.EchoBean");
         URL wsdlURL = new URL("http://fake/echo.wsdl");
         URI location = new URI(serviceDesc.getEndpointURL());
         Map wsdlMap = new HashMap();
@@ -101,16 +101,16 @@ public class AxisWsContainerTest extends AbstractTestCase {
                     "text/xml; charset=utf-8",
                     new ServletIntputStreamAdapter(in),
                     HttpRequest.Method.GET,
-                    new HashMap<String,String>(),
+                    new HashMap<String, String>(),
                     location,
-                    new HashMap<String,String>(),
+                    new HashMap<String, String>(),
                     "127.0.0.1");
-            
+
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             AxisResponse res = new AxisResponse("text/xml; charset=utf-8", "127.0.0.1", null, null, 8080, new ServletOutputStreamAdapter(out));
             req.setAttribute(WsConstants.POJO_INSTANCE, pojoClass.newInstance());
             container.onMessage(req, res);
-            
+
             out.flush();
 //            log.debug(new String(out.toByteArray()));
         } finally {

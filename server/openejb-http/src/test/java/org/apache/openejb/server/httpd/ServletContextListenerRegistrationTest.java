@@ -29,14 +29,14 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertTrue;
 
-@EnableServices({ "httpejbd" })
+@EnableServices({"httpejbd"})
 @RunWith(ApplicationComposer.class)
 public class ServletContextListenerRegistrationTest {
     @Module
     public WebApp app() {
         return new WebApp()
-                .contextRoot("init")
-                .addListener(Initializer.class.getName());
+            .contextRoot("init")
+            .addListener(Initializer.class.getName());
     }
 
     @Test

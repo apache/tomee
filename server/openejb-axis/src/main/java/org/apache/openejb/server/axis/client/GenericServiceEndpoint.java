@@ -35,7 +35,7 @@ public class GenericServiceEndpoint extends org.apache.axis.client.Stub {
     Call createCall() throws java.rmi.RemoteException {
         try {
             org.apache.axis.client.Call _call =
-                    (org.apache.axis.client.Call) service.createCall();
+                (org.apache.axis.client.Call) service.createCall();
             if (super.maintainSessionSet) {
                 _call.setMaintainSession(super.maintainSession);
             }

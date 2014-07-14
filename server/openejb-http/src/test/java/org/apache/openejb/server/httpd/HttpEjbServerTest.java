@@ -36,7 +36,7 @@ import org.apache.openejb.test.stateless.StatelessTestSuite;
 
 /**
  * To run from intellij or another IDE add
- *
+ * <p/>
  * -Dopenejb.home=/Users/dblevins/work/openejb3/server/openejb-httpd/target/test-classes
  *
  * @version $Revision$ $Date$
@@ -47,7 +47,7 @@ public class HttpEjbServerTest extends org.apache.openejb.test.TestSuite {
         System.setProperty("openejb.test.server", HttpEjbTestServer.class.getName());
 //        System.setProperty("openejb.test.database", org.apache.openejb.test.DerbyTestDatabase.class.getName());
         System.setProperty("openejb.test.database", org.apache.openejb.test.HsqldbTestDatabase.class.getName());
-        
+
         // Copied from org.apache.openejb.server.httpd.SomeoneBrokeSurefireAndThisIsADirtyHackForItTest which is now gone
         System.setProperty("openejb.assembler", org.apache.openejb.assembler.classic.Assembler.class.getName());
         System.setProperty("openejb.deployments.classpath.include", ".*openejb-itests-beans.*");
@@ -74,7 +74,7 @@ public class HttpEjbServerTest extends org.apache.openejb.test.TestSuite {
 
     public static class HttpEjbTestServer implements org.apache.openejb.test.TestServer {
         private ServiceDaemon serviceDaemon;
-    	HttpServer httpServer;
+        HttpServer httpServer;
         private int port;
 
         public void init(Properties props) {
@@ -86,7 +86,7 @@ public class HttpEjbServerTest extends org.apache.openejb.test.TestSuite {
                 props.put("openejb.deployments.classpath", "true");
                 OpenEJB.init(props, new ServerFederation());
                 ejbServer.init(props);
-                
+
                 httpServer.init(props);
 
                 // Binding to port 0 means that the OS will
@@ -114,7 +114,7 @@ public class HttpEjbServerTest extends org.apache.openejb.test.TestSuite {
         public void stop() {
             try {
                 serviceDaemon.stop();
-            	httpServer.stop();
+                httpServer.stop();
             } catch (ServiceException e) {
                 throw new RuntimeException("Unable to stop Test Server.", e);
             }
@@ -123,7 +123,7 @@ public class HttpEjbServerTest extends org.apache.openejb.test.TestSuite {
         public Properties getContextEnvironment() {
             Properties props = new Properties();
             props.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
-            props.put("java.naming.provider.url", "http://127.0.0.1:"+port+"/rjp");
+            props.put("java.naming.provider.url", "http://127.0.0.1:" + port + "/rjp");
             return props;
         }
     }

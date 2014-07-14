@@ -65,7 +65,7 @@ public class EchoBean implements Echo {
     public EchoStruct echoStruct(EchoStruct in) {
         return in;
     }
-    
+
 //	public EchoStruct[] echoAStruct(EchoStruct[] in){
 //		return in;
 //	}

@@ -56,32 +56,32 @@ public class WsdlVisitor {
         begin();
         try {
             visit(definition);
-            for (Iterator iterator = definition.getImports().entrySet().iterator(); iterator.hasNext();) {
+            for (Iterator iterator = definition.getImports().entrySet().iterator(); iterator.hasNext(); ) {
                 Map.Entry entry = (Map.Entry) iterator.next();
                 String namespaceURI = (String) entry.getKey();
                 List importsForNamespace = (List) entry.getValue();
-                for (Iterator iterator1 = importsForNamespace.iterator(); iterator1.hasNext();) {
+                for (Iterator iterator1 = importsForNamespace.iterator(); iterator1.hasNext(); ) {
                     Import anImport = (Import) iterator1.next();
                     visit(anImport);
                 }
             }
             visit(definition.getTypes());
             Collection messages = definition.getMessages().values();
-            for (Iterator iterator = messages.iterator(); iterator.hasNext();) {
+            for (Iterator iterator = messages.iterator(); iterator.hasNext(); ) {
                 Message message = (Message) iterator.next();
                 visit(message);
                 Collection parts = message.getParts().values();
-                for (Iterator iterator2 = parts.iterator(); iterator2.hasNext();) {
+                for (Iterator iterator2 = parts.iterator(); iterator2.hasNext(); ) {
                     Part part = (Part) iterator2.next();
                     visit(part);
                 }
             }
             Collection services = definition.getServices().values();
-            for (Iterator iterator = services.iterator(); iterator.hasNext();) {
+            for (Iterator iterator = services.iterator(); iterator.hasNext(); ) {
                 Service service = (Service) iterator.next();
                 visit(service);
                 Collection ports = service.getPorts().values();
-                for (Iterator iterator1 = ports.iterator(); iterator1.hasNext();) {
+                for (Iterator iterator1 = ports.iterator(); iterator1.hasNext(); ) {
                     Port port = (Port) iterator1.next();
                     visit(port);
                     Binding binding = port.getBinding();
@@ -93,7 +93,7 @@ public class WsdlVisitor {
                         visit(bindingOperation.getBindingInput());
                         visit(bindingOperation.getBindingOutput());
                         Collection bindingFaults = bindingOperation.getBindingFaults().values();
-                        for (Iterator iterator2 = bindingFaults.iterator(); iterator2.hasNext();) {
+                        for (Iterator iterator2 = bindingFaults.iterator(); iterator2.hasNext(); ) {
                             BindingFault bindingFault = (BindingFault) iterator2.next();
                             visit(bindingFault);
                         }
@@ -114,7 +114,7 @@ public class WsdlVisitor {
                             visit(output);
                         }
                         Collection faults = operation.getFaults().values();
-                        for (Iterator iterator2 = faults.iterator(); iterator2.hasNext();) {
+                        for (Iterator iterator2 = faults.iterator(); iterator2.hasNext(); ) {
                             Fault fault = (Fault) iterator2.next();
                             visit(fault);
                         }
@@ -122,7 +122,7 @@ public class WsdlVisitor {
                     }
                 }
             }
-        } catch(Exception e){
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
         } finally {
             end();

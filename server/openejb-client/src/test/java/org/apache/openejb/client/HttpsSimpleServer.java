@@ -32,12 +32,12 @@ import java.util.concurrent.Executors;
 public class HttpsSimpleServer {
 
     public HttpsSimpleServer(int serverPort, final String storePath, final String storePassword) throws IOException, KeyManagementException, NoSuchAlgorithmException {
-        final Map<String, String> params = new HashMap<String, String>(){
+        final Map<String, String> params = new HashMap<String, String>() {
             {
-                put("sslKeyStore",storePath);
-                put("sslKeyStorePassword",storePassword);
-                put("sslTrustStore",storePath);
-                put("sslTrustStorePassword",storePassword);
+                put("sslKeyStore", storePath);
+                put("sslKeyStorePassword", storePassword);
+                put("sslTrustStore", storePath);
+                put("sslTrustStorePassword", storePassword);
             }
         };
 

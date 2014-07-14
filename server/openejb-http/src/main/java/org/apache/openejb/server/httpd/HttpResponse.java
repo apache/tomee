@@ -27,18 +27,21 @@ import java.io.IOException;
 public interface HttpResponse extends java.io.Serializable, HttpServletResponse {
     /**
      * Gets the content type that will be sent to the browser.
+     *
      * @return the content type (i.e. "text/html")
      */
     public String getContentType();
 
     /**
      * Sets the content type to be sent back to the browser.
+     *
      * @param type the type to be sent to the browser (i.e. "text/html")
      */
     public void setContentType(String type);
 
     /**
      * Sets the response string to be sent to the browser
+     *
      * @param responseString the response string
      */
     void setStatusMessage(String responseString);

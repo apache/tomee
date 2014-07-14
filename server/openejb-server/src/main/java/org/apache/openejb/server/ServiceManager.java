@@ -226,9 +226,9 @@ public abstract class ServiceManager {
                     public boolean accept(final File dir, String name) {
                         name = name.toLowerCase();
                         return name.equals("ejbd.properties")
-                               || name.equals("ejbds.properties")
-                               || name.equals("admin.properties")
-                               || name.equals("httpejbd.properties");
+                            || name.equals("ejbds.properties")
+                            || name.equals("admin.properties")
+                            || name.equals("httpejbd.properties");
                     }
                 });
 

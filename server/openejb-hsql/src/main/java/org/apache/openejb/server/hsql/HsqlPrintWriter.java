@@ -22,23 +22,25 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
 public class HsqlPrintWriter extends PrintWriter {
-	private Logger logger;
-	private boolean errorWriter;
-	private StringBuffer text  = new StringBuffer("");
-	public HsqlPrintWriter(boolean errorWriter){
-		super(System.err);
-		logger = Logger.getInstance(LogCategory.OPENEJB_HSQL,HsqlPrintWriter.class);
-		this.errorWriter = errorWriter;
-	}
+    private Logger logger;
+    private boolean errorWriter;
+    private StringBuffer text = new StringBuffer("");
+
+    public HsqlPrintWriter(boolean errorWriter) {
+        super(System.err);
+        logger = Logger.getInstance(LogCategory.OPENEJB_HSQL, HsqlPrintWriter.class);
+        this.errorWriter = errorWriter;
+    }
+
     public void close() {
         flush();
     }
 
     private void flushLine() {
-        if(!errorWriter)
-        	logger.info(text.toString());
+        if (!errorWriter)
+            logger.info(text.toString());
         else
-        	logger.error(text.toString());
+            logger.error(text.toString());
         text.setLength(0);
     }
 

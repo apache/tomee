@@ -37,11 +37,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-@EnableServices({ "hessian", "httpejbd" })
+@EnableServices({"hessian", "httpejbd"})
 @RunWith(ApplicationComposer.class)
 public class HessianCdiTest {
     @Module
-    @Classes(cdi = true, value = { MyCdiHessianService.class, CdiBean.class })
+    @Classes(cdi = true, value = {MyCdiHessianService.class, CdiBean.class})
     public WebApp webApp() {
         return new WebApp().contextRoot("web");
     }

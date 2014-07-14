@@ -72,8 +72,8 @@ public class MultipointDiscoveryAgentTest extends TestCase {
         final int PEERS = names.length;
 
         final CountDownLatch[] latches = {
-                new CountDownLatch(PEERS + 1),
-                new CountDownLatch(PEERS + 1)
+            new CountDownLatch(PEERS + 1),
+            new CountDownLatch(PEERS + 1)
         };
 
         final DiscoveryListener listener = new DiscoveryListener() {
@@ -152,7 +152,7 @@ public class MultipointDiscoveryAgentTest extends TestCase {
     }
 
     private Node launch(final Node green, final String color, final int port) throws Exception {
-        final URI orangeService = new URI(color + "://localhost:"+ port);
+        final URI orangeService = new URI(color + "://localhost:" + port);
         final Node orange = new Node(port, new Listener(color), color, green.getURI());
         orange.getRegistry().registerService(orangeService);
         Thread.sleep(100);
@@ -172,7 +172,7 @@ public class MultipointDiscoveryAgentTest extends TestCase {
             this.agent = new MultipointDiscoveryAgent(debug, name);
             this.name = name;
             final Properties props = new Properties();
-            props.put("port", p+"");
+            props.put("port", p + "");
 
             props.put("initialServers", Join.join(",", uris));
             props.put("max_missed_heartbeats", "1");

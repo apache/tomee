@@ -252,7 +252,7 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
                             final String message = e.getMessage();
                             if (null != message && message.toLowerCase().contains("operation not permitted")) {
                                 log.error("The 'Operation not permitted' error has been know to be caused by improper firewall/network setup.  "
-                                          + "Please make sure that the OS is properly configured to allow multicast traffic over: " + multicast.getLocalAddress());
+                                    + "Please make sure that the OS is properly configured to allow multicast traffic over: " + multicast.getLocalAddress());
                             }
                         }
                     }

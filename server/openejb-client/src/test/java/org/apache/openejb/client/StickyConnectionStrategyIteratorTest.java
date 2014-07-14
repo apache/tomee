@@ -30,10 +30,10 @@ public class StickyConnectionStrategyIteratorTest {
     @Test
     public void testRandom() throws Exception {
         final URI[] uris = uris(
-                                   "one://localhost:1243",
-                                   "two://localhost:1243",
-                                   "three://localhost:1243",
-                                   "four://localhost:1243");
+            "one://localhost:1243",
+            "two://localhost:1243",
+            "three://localhost:1243",
+            "four://localhost:1243");
 
         ClusterMetaData cluster = new ClusterMetaData(System.currentTimeMillis(), uris);
         Iterable<URI> iterable = new StickyConnectionStrategy(new RandomConnectionStrategy()).createIterable(cluster);

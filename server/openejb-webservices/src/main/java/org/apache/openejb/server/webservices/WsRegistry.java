@@ -23,9 +23,9 @@ import java.util.List;
 
 public interface WsRegistry {
     List<String> setWsContainer(HttpListener httpListener,
-                                    ClassLoader classLoader,
-                                    String context, String virtualHost, ServletInfo servletInfo,
-                                    String realmName, String transportGuarantee, String authMethod) throws Exception;
+                                ClassLoader classLoader,
+                                String context, String virtualHost, ServletInfo servletInfo,
+                                String realmName, String transportGuarantee, String authMethod) throws Exception;
 
     void clearWsContainer(String context, String virtualHost, ServletInfo servletInfo);
 

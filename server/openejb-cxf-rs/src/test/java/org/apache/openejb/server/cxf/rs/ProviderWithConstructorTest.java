@@ -48,12 +48,12 @@ import static org.junit.Assert.assertEquals;
 @RunWith(ApplicationComposer.class)
 public class ProviderWithConstructorTest {
     @Module
-    @Classes(value = { AnEndpointToCheckAProvider.class })
+    @Classes(value = {AnEndpointToCheckAProvider.class})
     public WebApp war() {
         return new WebApp()
-                .contextRoot("app")
-                .addServlet("REST Application", Application.class.getName())
-                .addInitParam("REST Application", "javax.ws.rs.Application", ApplicationWithProvider.class.getName());
+            .contextRoot("app")
+            .addServlet("REST Application", Application.class.getName())
+            .addInitParam("REST Application", "javax.ws.rs.Application", ApplicationWithProvider.class.getName());
     }
 
     @Test
@@ -63,7 +63,8 @@ public class ProviderWithConstructorTest {
 
     @Path("/foo")
     public static class AnEndpointToCheckAProvider {
-        @GET @Produces("openejb/constructor")
+        @GET
+        @Produces("openejb/constructor")
         public String bar() {
             return "bar"; // whatever the value is the provider will return the context path
         }

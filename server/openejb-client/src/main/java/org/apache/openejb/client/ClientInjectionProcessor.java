@@ -95,11 +95,11 @@ public class ClientInjectionProcessor<T> {
                 values.put(injection, object);
             } catch (NamingException e) {
                 logger.warning("Injection data not found in JNDI context: jndiName='" +
-                               injection.getJndiName() +
-                               "', target=" +
-                               injection.getTargetClass() +
-                               "/" +
-                               injection.getName());
+                    injection.getJndiName() +
+                    "', target=" +
+                    injection.getTargetClass() +
+                    "/" +
+                    injection.getName());
             }
         }
 
@@ -383,7 +383,7 @@ public class ClientInjectionProcessor<T> {
      *
      * @param type The target object class of the property.
      * @return The resolved editor, if any.  Returns null if a suitable editor
-     *         could not be located.
+     * could not be located.
      */
     private static PropertyEditor findEditor(final Class type) {
         if (type == null) {

@@ -121,11 +121,11 @@ public class ProxyManager {
 
     public static ClassLoader getContextClassLoader() {
         return (ClassLoader) java.security.AccessController.doPrivileged(new java.security.PrivilegedAction() {
-            @Override
-            public Object run() {
-                return Thread.currentThread().getContextClassLoader();
-            }
-        }
-                                                                        );
+                                                                             @Override
+                                                                             public Object run() {
+                                                                                 return Thread.currentThread().getContextClassLoader();
+                                                                             }
+                                                                         }
+        );
     }
 }

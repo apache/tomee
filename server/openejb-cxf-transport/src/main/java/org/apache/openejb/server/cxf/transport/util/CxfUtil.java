@@ -95,7 +95,7 @@ public final class CxfUtil {
             }
 
             // ensure client proxies can use app classes
-            CXFBusFactory.setDefaultBus(Bus.class.cast(Proxy.newProxyInstance(CxfUtil.class.getClassLoader(), new Class<?>[]{ Bus.class }, new ClientAwareBusHandler())));
+            CXFBusFactory.setDefaultBus(Bus.class.cast(Proxy.newProxyInstance(CxfUtil.class.getClassLoader(), new Class<?>[]{Bus.class}, new ClientAwareBusHandler())));
 
             return bus; // we keep as internal the real bus and just expose to cxf the client aware bus to be able to cast it easily
         } finally {
@@ -126,7 +126,7 @@ public final class CxfUtil {
     public static void clearBusLoader(final ClassLoader old) {
         final ClassLoader loader = CxfUtil.getBus().getExtension(ClassLoader.class);
         if (loader != null && CxfContainerClassLoader.class.isInstance(loader)
-                && (old == null || !CxfContainerClassLoader.class.isInstance(old))) {
+            && (old == null || !CxfContainerClassLoader.class.isInstance(old))) {
             CxfContainerClassLoader.class.cast(loader).clear();
         }
         Thread.currentThread().setContextClassLoader(old);
@@ -174,7 +174,7 @@ public final class CxfUtil {
 
             if (!DataBinding.class.isInstance(instance)) {
                 throw new OpenEJBRuntimeException(instance + " is not a " + DataBinding.class.getName()
-                        + ", please check configuration of service [id=" + databinding + "]");
+                    + ", please check configuration of service [id=" + databinding + "]");
             }
             svrFactory.setDataBinding((DataBinding) instance);
         }
@@ -260,7 +260,7 @@ public final class CxfUtil {
 
         if (bus instanceof CXFBusImpl) {
             final ServiceConfiguration configuration = new ServiceConfiguration(SystemInstance.get().getProperties(),
-                    SystemInstance.get().getComponent(OpenEjbConfiguration.class).facilities.services);
+                SystemInstance.get().getComponent(OpenEjbConfiguration.class).facilities.services);
 
             final CXFBusImpl busImpl = (CXFBusImpl) bus;
             final Collection<ServiceInfo> serviceInfos = configuration.getAvailableServices();

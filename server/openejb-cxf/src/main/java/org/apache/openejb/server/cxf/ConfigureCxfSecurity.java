@@ -73,7 +73,8 @@ public class ConfigureCxfSecurity {
                 } catch (Exception e) {
                     LOGGER.warning("validator not found " + val, e);
                 }
-            } if (key.startsWith(processorPrefix)) {
+            }
+            if (key.startsWith(processorPrefix)) {
                 SplitInfo infos = new SplitInfo(key, val);
                 processorMap.put(infos.qname, infos.value);
             } else if (key.startsWith(pattern)) {
