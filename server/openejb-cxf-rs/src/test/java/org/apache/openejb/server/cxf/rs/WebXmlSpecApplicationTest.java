@@ -43,8 +43,8 @@ public class WebXmlSpecApplicationTest {
     @Classes(Resource.class)
     public WebApp war() {
         return new WebApp()
-                .contextRoot("foo")
-                .addServlet(Application.class.getName(), null, "/resources/*");
+            .contextRoot("foo")
+            .addServlet(Application.class.getName(), null, "/resources/*");
     }
 
     @Test

@@ -136,6 +136,7 @@ public class BoneCPDataSourceCreator extends PoolDataSourceCreator {
 
     private static final class BoneCPDataSourceProvidedPool extends BoneCPDataSource {
         private static final Field POOL_FIELD;
+
         static {
             try {
                 POOL_FIELD = BoneCPDataSource.class.getDeclaredField("pool");

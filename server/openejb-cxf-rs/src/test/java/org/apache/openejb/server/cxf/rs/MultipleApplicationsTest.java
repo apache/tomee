@@ -38,7 +38,7 @@ import static org.junit.Assert.assertEquals;
 @RunWith(ApplicationComposer.class)
 public class MultipleApplicationsTest {
     @Module
-    @Classes(cdi = true, value = { Application1.class, Application2.class, MyFirstRestClass.class })
+    @Classes(cdi = true, value = {Application1.class, Application2.class, MyFirstRestClass.class})
     public WebApp war() {
         return new WebApp().contextRoot("foo");
     }

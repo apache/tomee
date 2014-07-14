@@ -40,7 +40,7 @@ public class FilteredServiceManagerDefaultsTest {
     }
 
     @Test
-    public void numberOfServices () {
+    public void numberOfServices() {
         // when using @EnableServices with the application composer
         // the return value should be a FilteredServiceManager
         assertEquals(FilteredServiceManager.class, ServiceManager.get().getClass());

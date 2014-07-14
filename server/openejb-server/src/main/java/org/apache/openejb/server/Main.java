@@ -39,7 +39,7 @@ import org.apache.xbean.finder.ResourceFinder;
 
 /**
  * Assemble OpenEJB instance and boot it up
- * 
+ *
  * @version $Rev$ $Date$
  */
 public class Main {

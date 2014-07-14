@@ -26,11 +26,11 @@ public class SaajOutInterceptor extends SaajInterceptor {
     public SaajOutInterceptor(SaajUniverse universe) {
         super(Phase.SETUP, universe);
     }
-    
+
     public void handleMessage(Message msg) throws Fault {
         this.universe.set(SaajUniverse.DEFAULT);
     }
-    
+
     public void handleFault(Message msg) {
         this.universe.unset();
     }

@@ -23,6 +23,7 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.jee.JavaWsdlMapping;
 import org.apache.openejb.jee.JavaXmlTypeMapping;
 import org.apache.openejb.jee.VariableMapping;
+
 import static org.apache.openejb.server.axis.assembler.JaxRpcTypeInfo.SerializerType;
 
 import javax.xml.namespace.QName;
@@ -63,7 +64,7 @@ public class HeavyweightTypeInfoBuilder {
         this.hasEncoded = hasEncoded;
     }
 
-    public List<JaxRpcTypeInfo>  buildTypeInfo() throws OpenEJBException {
+    public List<JaxRpcTypeInfo> buildTypeInfo() throws OpenEJBException {
         List<JaxRpcTypeInfo> typeInfos = new ArrayList<JaxRpcTypeInfo>();
 
         Set<QName> mappedTypeQNames = new HashSet<QName>();
@@ -163,9 +164,9 @@ public class HeavyweightTypeInfoBuilder {
 
                 // skip types that have already been mapped or are built in types
                 if (xmlType == null ||
-                        mappedTypeQNames.contains(xmlType) ||
-                        xmlType.getNamespaceURI().equals(XML_SCHEMA_NS) ||
-                        xmlType.getNamespaceURI().equals(SOAP_ENCODING_NS)) {
+                    mappedTypeQNames.contains(xmlType) ||
+                    xmlType.getNamespaceURI().equals(XML_SCHEMA_NS) ||
+                    xmlType.getNamespaceURI().equals(SOAP_ENCODING_NS)) {
                     continue;
                 }
 
@@ -205,8 +206,9 @@ public class HeavyweightTypeInfoBuilder {
 
     /**
      * Creates a JaxRpcTypeInfo based on the information contained in the XML Schema Type and Java Class.
+     *
      * @param xmlTypeInfo the xml schema for the type
-     * @param clazz the java class for the type
+     * @param clazz       the java class for the type
      * @return the JaxRpcTypeInfo object
      * @throws OpenEJBException if the schema is invalid
      */
@@ -238,10 +240,11 @@ public class HeavyweightTypeInfoBuilder {
 
     /**
      * Map the (nested) fields of a XML Schema Type to Java Beans properties or public fields of the specified Java Class.
-     * @param javaClass the java class to map
-     * @param xmlTypeInfo the xml schema for the type
+     *
+     * @param javaClass          the java class to map
+     * @param xmlTypeInfo        the xml schema for the type
      * @param javaXmlTypeMapping the java to xml type mapping metadata
-     * @param typeInfo the JaxRpcTypeInfo for this type
+     * @param typeInfo           the JaxRpcTypeInfo for this type
      * @throws OpenEJBException if the XML Schema Type can not be mapped to the Java Class
      */
     private void mapFields(Class javaClass, XmlTypeInfo xmlTypeInfo, JavaXmlTypeMapping javaXmlTypeMapping, JaxRpcTypeInfo typeInfo) throws OpenEJBException {
@@ -255,7 +258,7 @@ public class HeavyweightTypeInfoBuilder {
         }
 
         // Index Java bean properties by name
-        Map<String,Class> properties = new HashMap<String,Class>();
+        Map<String, Class> properties = new HashMap<String, Class>();
         try {
             PropertyDescriptor[] propertyDescriptors = Introspector.getBeanInfo(javaClass).getPropertyDescriptors();
             for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
@@ -326,10 +329,10 @@ public class HeavyweightTypeInfoBuilder {
                     QName anonymousName;
                     if (xmlTypeInfo.anonymous) {
                         anonymousName = new QName(xmlTypeInfo.qname.getNamespaceURI(), xmlTypeInfo.qname.getLocalPart() +
-                                ">" + nestedElement.qname.getLocalPart());
+                            ">" + nestedElement.qname.getLocalPart());
                     } else {
                         anonymousName = new QName(xmlTypeInfo.qname.getNamespaceURI(),
-                                ">" + xmlTypeInfo.qname.getLocalPart() + ">" + nestedElement.qname.getLocalPart());
+                            ">" + xmlTypeInfo.qname.getLocalPart() + ">" + nestedElement.qname.getLocalPart());
                     }
                     fieldInfo.xmlType = anonymousName;
                 }
@@ -348,12 +351,12 @@ public class HeavyweightTypeInfoBuilder {
      * All of the known built in XML Schemas used by webservices.  This is used to supress unknown type exceptions
      */
     private static final Set<String> WebserviceNameSpaces = Collections.unmodifiableSet(new LinkedHashSet<String>(Arrays.asList(
-            "http://schemas.xmlsoap.org/soap/encoding/", // SOAP 1.1
-            "http://www.w3.org/2003/05/soap-encoding",   // SOAP 1.2
-            "http://xml.apache.org/xml-soap",            // Apache XMLSOAP
-            "http://www.w3.org/1999/XMLSchema",          // XSD 1999
-            "http://www.w3.org/2000/10/XMLSchema",       // XSD 2000
-            "http://www.w3.org/2001/XMLSchema",          // XSD 2001
-            "http://www.w3.org/XML/1998/namespace"       // XML (for xml-any)
+        "http://schemas.xmlsoap.org/soap/encoding/", // SOAP 1.1
+        "http://www.w3.org/2003/05/soap-encoding",   // SOAP 1.2
+        "http://xml.apache.org/xml-soap",            // Apache XMLSOAP
+        "http://www.w3.org/1999/XMLSchema",          // XSD 1999
+        "http://www.w3.org/2000/10/XMLSchema",       // XSD 2000
+        "http://www.w3.org/2001/XMLSchema",          // XSD 2001
+        "http://www.w3.org/XML/1998/namespace"       // XML (for xml-any)
     )));
 }

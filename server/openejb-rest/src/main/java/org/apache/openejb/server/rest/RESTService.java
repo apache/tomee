@@ -374,7 +374,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
                 } else {
                     pojoConfigurations = PojoUtil.findPojoConfig(pojoConfigurations, appInfo, webApp);
                     deploySingleton(webApp.contextRoot, appPrefix, o, appInstance, classLoader, additionalProviders,
-                            new ServiceConfiguration(PojoUtil.findConfiguration(pojoConfigurations, o.getClass().getName()), appInfo.services));
+                        new ServiceConfiguration(PojoUtil.findConfiguration(pojoConfigurations, o.getClass().getName()), appInfo.services));
                 }
             }
 
@@ -388,7 +388,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
                 } else {
                     pojoConfigurations = PojoUtil.findPojoConfig(pojoConfigurations, appInfo, webApp);
                     deployPojo(webApp.contextRoot, appPrefix, clazz, appInstance, classLoader, injections, context, owbCtx, additionalProviders,
-                            new ServiceConfiguration(PojoUtil.findConfiguration(pojoConfigurations, clazz.getName()), appInfo.services));
+                        new ServiceConfiguration(PojoUtil.findConfiguration(pojoConfigurations, clazz.getName()), appInfo.services));
                 }
             }
 
@@ -411,15 +411,15 @@ public abstract class RESTService implements ServerService, SelfManaging {
                         deployEJB(webApp.contextRoot, appPrefix, restEjbs.get(clazz).context, additionalProviders, appInfo.services);
                     } else {
                         deployPojo(webApp.contextRoot, appPrefix, ctx.getBeanClass(), null, ctx.getClassLoader(), ctx.getInjections(), context,
-                                owbCtx, additionalProviders, new ServiceConfiguration(ctx.getProperties(), appInfo.services));
+                            owbCtx, additionalProviders, new ServiceConfiguration(ctx.getProperties(), appInfo.services));
                     }
                 } else {
                     try {
                         final Class<?> loadedClazz = classLoader.loadClass(clazz);
                         pojoConfigurations = PojoUtil.findPojoConfig(pojoConfigurations, appInfo, webApp);
                         deployPojo(webApp.contextRoot, appPrefix, loadedClazz, null, classLoader, injections, context, owbCtx,
-                                additionalProviders,
-                                new ServiceConfiguration(PojoUtil.findConfiguration(pojoConfigurations, loadedClazz.getName()), appInfo.services));
+                            additionalProviders,
+                            new ServiceConfiguration(PojoUtil.findConfiguration(pojoConfigurations, loadedClazz.getName()), appInfo.services));
                     } catch (final ClassNotFoundException e) {
                         throw new OpenEJBRestRuntimeException("can't find class " + clazz, e);
                     }
@@ -462,8 +462,8 @@ public abstract class RESTService implements ServerService, SelfManaging {
 
         services.add(new DeployedService(address.complete, contextRoot, application.getClass().getName()));
         listener.deployApplication(application, address.complete.substring(0, address.complete.length() - wildcard.length()), nopath.substring(NOPATH_PREFIX.length(), nopath.length() - wildcard.length()), additionalProviders, restEjbs, // app config
-                classLoader, injections, context, owbCtx, // injection/webapp context
-                new ServiceConfiguration(configuration, appInfo.services)); // deployment config
+            classLoader, injections, context, owbCtx, // injection/webapp context
+            new ServiceConfiguration(configuration, appInfo.services)); // deployment config
     }
 
     private static String appPrefix(final WebAppInfo info, final Class<?> appClazz) {
@@ -620,16 +620,16 @@ public abstract class RESTService implements ServerService, SelfManaging {
                         }
 
                         deployApplication(appInfo, next.getValue().path, restEjbs, comp.getClassLoader(), comp.getInjections(),
-                                containerSystem.getAppContext(appInfo.appId).getWebBeansContext(), comp.getJndiContext(),
-                                providers, pojoConfigurations, application, wildcard);
+                            containerSystem.getAppContext(appInfo.appId).getWebBeansContext(), comp.getJndiContext(),
+                            providers, pojoConfigurations, application, wildcard);
                     } else {
                         for (final Map.Entry<String, EJBRestServiceInfo> ejb : restEjbs.entrySet()) {
                             final BeanContext ctx = ejb.getValue().context;
                             if (BeanType.MANAGED.equals(ctx.getComponentType())) {
                                 deployPojo("", ejb.getValue().path, ctx.getBeanClass(), null, ctx.getClassLoader(), ctx.getInjections(),
-                                        ctx.getJndiContext(),
-                                        containerSystem.getAppContext(appInfo.appId).getWebBeansContext(),
-                                        providers, new ServiceConfiguration(ctx.getProperties(), appInfo.services));
+                                    ctx.getJndiContext(),
+                                    containerSystem.getAppContext(appInfo.appId).getWebBeansContext(),
+                                    providers, new ServiceConfiguration(ctx.getProperties(), appInfo.services));
                             } else {
                                 deployEJB("", ejb.getValue().path, ctx, providers, appInfo.services);
                             }
@@ -743,7 +743,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
 
         services.add(new DeployedService(address.complete, contextRoot, loadedClazz.getName()));
         listener.deployPojo(classLoader, contextRoot, getFullContext(address.base, contextRoot), loadedClazz, app, injections, context, owbCtx,
-                additionalProviders, config);
+            additionalProviders, config);
 
         LOGGER.info("REST Service: " + address.complete + "  -> Pojo " + loadedClazz.getName());
     }
@@ -755,7 +755,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
 
         services.add(new DeployedService(address.complete, context, beanContext.getBeanClass().getName()));
         listener.deployEJB(context, getFullContext(address.base, context), beanContext,
-                additionalProviders, new ServiceConfiguration(beanContext.getProperties(), serviceInfos));
+            additionalProviders, new ServiceConfiguration(beanContext.getProperties(), serviceInfos));
 
         LOGGER.info("REST Service: " + address.complete + "  -> EJB " + beanContext.getEjbName());
     }

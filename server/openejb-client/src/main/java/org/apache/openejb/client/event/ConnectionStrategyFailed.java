@@ -57,9 +57,9 @@ public class ConnectionStrategyFailed {
     @Override
     public String toString() {
         return "ConnectionStrategyFailed{" +
-               "strategy=" + strategy.getClass().getSimpleName() +
-               ", cluster=" + cluster +
-               ", server=" + server.getLocation() +
-               '}';
+            "strategy=" + strategy.getClass().getSimpleName() +
+            ", cluster=" + cluster +
+            ", server=" + server.getLocation() +
+            '}';
     }
 }

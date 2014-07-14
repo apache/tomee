@@ -35,7 +35,7 @@ public class LightweightOperationInfoBuilder {
 
     private JaxRpcOperationInfo operationInfo;
 
-    public LightweightOperationInfoBuilder(BindingOperation bindingOperation, Method method) throws OpenEJBException{
+    public LightweightOperationInfoBuilder(BindingOperation bindingOperation, Method method) throws OpenEJBException {
         if (bindingOperation == null) {
             throw new OpenEJBException("No BindingOperation supplied for method " + method.getName());
         }

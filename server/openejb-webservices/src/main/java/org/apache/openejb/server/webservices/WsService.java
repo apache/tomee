@@ -391,8 +391,8 @@ public abstract class WsService implements ServerService, SelfManaging {
                 pojoConfiguration = PojoUtil.findPojoConfig(pojoConfiguration, appInfo, webApp);
 
                 final HttpListener container = createPojoWsContainer(classLoader, moduleBaseUrl, port, portInfo.serviceLink,
-                        target, context, webApp.contextRoot, bindings,
-                        new ServiceConfiguration(PojoUtil.findConfiguration(pojoConfiguration, target.getName()), appInfo.services));
+                    target, context, webApp.contextRoot, bindings,
+                    new ServiceConfiguration(PojoUtil.findConfiguration(pojoConfiguration, target.getName()), appInfo.services));
 
                 if (wsRegistry != null) {
                     String auth = authMethod;

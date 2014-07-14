@@ -106,8 +106,8 @@ public class ServiceAccessController extends ServerServiceFilter {
     }
 
     private void addIPAddressPermissions(
-            final LinkedList<IPAddressPermission> permissions, final String hostname)
-            throws ServiceException {
+        final LinkedList<IPAddressPermission> permissions, final String hostname)
+        throws ServiceException {
         try {
             final InetAddress[] localIps = InetAddress.getAllByName(hostname);
             for (final InetAddress localIp : localIps) {

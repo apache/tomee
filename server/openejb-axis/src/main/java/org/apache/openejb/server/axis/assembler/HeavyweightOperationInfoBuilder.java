@@ -27,6 +27,7 @@ import org.apache.openejb.jee.PackageMapping;
 import org.apache.openejb.jee.ServiceEndpointMethodMapping;
 import org.apache.openejb.jee.WsdlMessageMapping;
 import org.apache.openejb.jee.WsdlReturnValueMapping;
+
 import static org.apache.openejb.server.axis.assembler.JaxRpcParameterInfo.Mode;
 
 import javax.wsdl.BindingInput;
@@ -73,7 +74,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class HeavyweightOperationInfoBuilder{
+public class HeavyweightOperationInfoBuilder {
     private final JavaWsdlMapping mapping;
     private final ServiceEndpointMethodMapping methodMapping;
 
@@ -291,7 +292,7 @@ public class HeavyweightOperationInfoBuilder{
             //
             if (!wsdlMessageQName.equals(inputMessage.getQName())) {
                 throw new OpenEJBException("QName of input message: " + inputMessage.getQName() +
-                        " does not match mapping message QName: " + wsdlMessageQName + " for operation " + operationName);
+                    " does not match mapping message QName: " + wsdlMessageQName + " for operation " + operationName);
             }
 
             Part part = null;
@@ -303,7 +304,7 @@ public class HeavyweightOperationInfoBuilder{
                 QName name = inPart.getElementName();
                 if (!name.getLocalPart().equals(operationName)) {
                     throw new OpenEJBException("message " + inputMessage.getQName() + " refers to a global element named " +
-                            name.getLocalPart() + ", which is not equal to the operation name " + operationName);
+                        name.getLocalPart() + ", which is not equal to the operation name " + operationName);
                 }
                 inParameter = getWrapperChild(inPart, wsdlMessagePartName);
 
@@ -316,7 +317,7 @@ public class HeavyweightOperationInfoBuilder{
                 }
 
                 paramQName = new QName("", part.getName());
-                
+
                 // RPC can only use type
                 paramXmlType = part.getTypeName();
             } else {
@@ -374,7 +375,7 @@ public class HeavyweightOperationInfoBuilder{
             //
             if (!wsdlMessageQName.equals(outputMessage.getQName())) {
                 throw new OpenEJBException("QName of output message: " + outputMessage.getQName() +
-                        " does not match mapping message QName: " + wsdlMessageQName + " for operation " + operationName);
+                    " does not match mapping message QName: " + wsdlMessageQName + " for operation " + operationName);
             }
 
             if (bindingStyle.isWrapped()) {
@@ -627,8 +628,8 @@ public class HeavyweightOperationInfoBuilder{
         Collection parts = message.getParts().values();
         if (parts.size() != 1) {
             throw new OpenEJBException("message " + message.getQName() + " has " + parts.size() +
-                    " parts and should only have one as wrapper style mapping is specified for operation " +
-                    operationName);
+                " parts and should only have one as wrapper style mapping is specified for operation " +
+                operationName);
         }
         return (Part) parts.iterator().next();
     }
@@ -689,9 +690,9 @@ public class HeavyweightOperationInfoBuilder{
 
     /**
      * Supporting the Document/Literal Wrapped pattern
-     *
+     * <p/>
      * See http://www-106.ibm.com/developerworks/webservices/library/ws-whichwsdl/ for a nice explanation and example
-     *
+     * <p/>
      * wrapped-element tag is used
      * WSDL message with a single part
      * part uses the 'element' attribute to point to an elemement in the types section
@@ -699,7 +700,7 @@ public class HeavyweightOperationInfoBuilder{
      */
 
     // standard holder classes by type
-    private static final Map<String,String> rpcHolderClasses = new HashMap<String, String>();
+    private static final Map<String, String> rpcHolderClasses = new HashMap<String, String>();
 
     static {
         rpcHolderClasses.put(BigDecimal.class.getName(), BigDecimalHolder.class.getName());

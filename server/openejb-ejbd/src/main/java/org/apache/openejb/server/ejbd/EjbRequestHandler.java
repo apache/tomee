@@ -368,12 +368,12 @@ class EjbRequestHandler extends RequestHandler {
             }
 
             Object result = c.invoke(
-                                        req.getDeploymentId(),
-                                        InterfaceType.EJB_OBJECT,
-                                        req.getInterfaceClass(),
-                                        req.getMethodInstance(),
-                                        req.getMethodParameters(),
-                                        req.getPrimaryKey());
+                req.getDeploymentId(),
+                InterfaceType.EJB_OBJECT,
+                req.getInterfaceClass(),
+                req.getMethodInstance(),
+                req.getMethodParameters(),
+                req.getPrimaryKey());
 
             //Pass the internal value to the remote client, as AsyncResult is not serializable
             if (result != null && asynchronous) {
@@ -401,13 +401,13 @@ class EjbRequestHandler extends RequestHandler {
         final RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
 
         final Object result = c.invoke(
-                                          req.getDeploymentId(),
-                                          InterfaceType.EJB_HOME,
-                                          req.getInterfaceClass(),
-                                          req.getMethodInstance(),
-                                          req.getMethodParameters(),
-                                          req.getPrimaryKey()
-                                      );
+            req.getDeploymentId(),
+            InterfaceType.EJB_HOME,
+            req.getInterfaceClass(),
+            req.getMethodInstance(),
+            req.getMethodParameters(),
+            req.getPrimaryKey()
+        );
 
         res.setResponse(req.getVersion(), ResponseCodes.EJB_OK, result);
     }
@@ -418,13 +418,13 @@ class EjbRequestHandler extends RequestHandler {
         final RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
 
         Object result = c.invoke(
-                                    req.getDeploymentId(),
-                                    InterfaceType.EJB_HOME,
-                                    req.getInterfaceClass(),
-                                    req.getMethodInstance(),
-                                    req.getMethodParameters(),
-                                    req.getPrimaryKey()
-                                );
+            req.getDeploymentId(),
+            InterfaceType.EJB_HOME,
+            req.getInterfaceClass(),
+            req.getMethodInstance(),
+            req.getMethodParameters(),
+            req.getPrimaryKey()
+        );
 
         if (result instanceof ProxyInfo) {
             final ProxyInfo info = (ProxyInfo) result;
@@ -443,13 +443,13 @@ class EjbRequestHandler extends RequestHandler {
         final RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
 
         Object result = c.invoke(
-                                    req.getDeploymentId(),
-                                    InterfaceType.EJB_HOME,
-                                    req.getInterfaceClass(),
-                                    req.getMethodInstance(),
-                                    req.getMethodParameters(),
-                                    req.getPrimaryKey()
-                                );
+            req.getDeploymentId(),
+            InterfaceType.EJB_HOME,
+            req.getInterfaceClass(),
+            req.getMethodInstance(),
+            req.getMethodParameters(),
+            req.getPrimaryKey()
+        );
 
         /* Multiple instances found */
         if (result instanceof Collection) {
@@ -491,9 +491,9 @@ class EjbRequestHandler extends RequestHandler {
         } else {
 
             final String message = "The bean is not EJB compliant. " +
-                                   "The finder method [" + req.getMethodInstance().getName() + "] is declared " +
-                                   "to return neither Collection nor the Remote Interface, " +
-                                   "but [" + result.getClass().getName() + "]";
+                "The finder method [" + req.getMethodInstance().getName() + "] is declared " +
+                "to return neither Collection nor the Remote Interface, " +
+                "but [" + result.getClass().getName() + "]";
             result = new RemoteException(message);
             logger.error(req + " " + message);
             res.setResponse(req.getVersion(), ResponseCodes.EJB_SYS_EXCEPTION, result);
@@ -522,13 +522,13 @@ class EjbRequestHandler extends RequestHandler {
         final RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
 
         c.invoke(
-                    req.getDeploymentId(),
-                    InterfaceType.EJB_OBJECT,
-                    req.getInterfaceClass(),
-                    req.getMethodInstance(),
-                    req.getMethodParameters(),
-                    req.getPrimaryKey()
-                );
+            req.getDeploymentId(),
+            InterfaceType.EJB_OBJECT,
+            req.getInterfaceClass(),
+            req.getMethodInstance(),
+            req.getMethodParameters(),
+            req.getPrimaryKey()
+        );
 
         res.setResponse(req.getVersion(), ResponseCodes.EJB_OK, null);
     }
@@ -547,13 +547,13 @@ class EjbRequestHandler extends RequestHandler {
         final RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
 
         c.invoke(
-                    req.getDeploymentId(),
-                    InterfaceType.EJB_HOME,
-                    req.getInterfaceClass(),
-                    req.getMethodInstance(),
-                    req.getMethodParameters(),
-                    req.getPrimaryKey()
-                );
+            req.getDeploymentId(),
+            InterfaceType.EJB_HOME,
+            req.getInterfaceClass(),
+            req.getMethodInstance(),
+            req.getMethodParameters(),
+            req.getPrimaryKey()
+        );
 
         res.setResponse(req.getVersion(), ResponseCodes.EJB_OK, null);
     }
@@ -564,13 +564,13 @@ class EjbRequestHandler extends RequestHandler {
         final RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
 
         c.invoke(
-                    req.getDeploymentId(),
-                    InterfaceType.EJB_HOME,
-                    req.getInterfaceClass(),
-                    req.getMethodInstance(),
-                    req.getMethodParameters(),
-                    req.getPrimaryKey()
-                );
+            req.getDeploymentId(),
+            InterfaceType.EJB_HOME,
+            req.getInterfaceClass(),
+            req.getMethodInstance(),
+            req.getMethodParameters(),
+            req.getPrimaryKey()
+        );
 
         res.setResponse(req.getVersion(), ResponseCodes.EJB_OK, null);
     }

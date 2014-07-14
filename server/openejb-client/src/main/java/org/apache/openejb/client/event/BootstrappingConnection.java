@@ -33,7 +33,7 @@ public class BootstrappingConnection {
     @Override
     public String toString() {
         return "BootstrappingConnection{" +
-               "provider=" + provider +
-               '}';
+            "provider=" + provider +
+            '}';
     }
 }

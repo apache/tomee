@@ -17,6 +17,7 @@
 package org.apache.openejb.server.axis;
 
 import javax.servlet.ServletOutputStream;
+
 import org.apache.openejb.server.httpd.HttpResponseImpl;
 
 import java.io.IOException;
@@ -31,22 +32,22 @@ public class AxisResponse extends HttpResponseImpl {
     private String host;
     private ServletOutputStream out;
     private int method;
-    private Map<String,String> parameters;
+    private Map<String, String> parameters;
     private String path;
     private URL uri;
     private int port;
-    private Map<String,String> headers;
+    private Map<String, String> headers;
     private int statusCode;
     private String statusMessage;
 
     public AxisResponse(String contentType, String host, String path, URL uri, int port, ServletOutputStream out) {
         this.contentType = contentType;
         this.host = host;
-        this.parameters = new HashMap<String,String>();
+        this.parameters = new HashMap<String, String>();
         this.path = path;
         this.uri = uri;
         this.port = port;
-        this.headers = new HashMap<String,String>();
+        this.headers = new HashMap<String, String>();
         this.out = out;
     }
 
@@ -115,7 +116,7 @@ public class AxisResponse extends HttpResponseImpl {
         method = i;
     }
 
-    public void setParameters(Map<String,String> map) {
+    public void setParameters(Map<String, String> map) {
         parameters = map;
     }
 

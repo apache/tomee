@@ -42,12 +42,12 @@ import org.junit.runner.RunWith;
 @RunWith(ApplicationComposer.class)
 public class CdiConstructorInjectionTest {
     @Module
-    @Classes(value = { FullCDI.class, Service.class, CDIAndContext.class }, cdi = true)
+    @Classes(value = {FullCDI.class, Service.class, CDIAndContext.class}, cdi = true)
     public WebApp war() {
         return new WebApp()
-                .contextRoot("app")
-                .addServlet("REST Application", Application.class.getName())
-                .addInitParam("REST Application", "javax.ws.rs.Application", ConstructorApplication.class.getName());
+            .contextRoot("app")
+            .addServlet("REST Application", Application.class.getName())
+            .addInitParam("REST Application", "javax.ws.rs.Application", ConstructorApplication.class.getName());
     }
 
     @Test

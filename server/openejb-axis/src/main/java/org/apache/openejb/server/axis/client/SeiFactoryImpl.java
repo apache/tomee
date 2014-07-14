@@ -64,13 +64,13 @@ public class SeiFactoryImpl implements SeiFactory {
     private Class serviceEndpointClass;
 
     public SeiFactoryImpl(QName serviceName,
-            String portName,
-            String serviceEndpointClassName,
-            OperationInfo[] operationInfos,
-            List typeInfo,
-            URL location,
-            List handlerInfos,
-            String credentialsName) {
+                          String portName,
+                          String serviceEndpointClassName,
+                          OperationInfo[] operationInfos,
+                          List typeInfo,
+                          URL location,
+                          List handlerInfos,
+                          String credentialsName) {
         this.serviceName = serviceName;
         this.portQName = new QName("", portName);
         this.serviceEndpointClassName = serviceEndpointClassName;
@@ -111,7 +111,7 @@ public class SeiFactoryImpl implements SeiFactory {
         typeMapping.register(BigInteger.class, Constants.XSD_UNSIGNEDLONG, new SimpleSerializerFactory(BigInteger.class, Constants.XSD_UNSIGNEDLONG), new SimpleDeserializerFactory(BigInteger.class, Constants.XSD_UNSIGNEDLONG));
         typeMapping.register(URI.class, Constants.XSD_ANYURI, new SimpleSerializerFactory(URI.class, Constants.XSD_ANYURI), new SimpleDeserializerFactory(URI.class, Constants.XSD_ANYURI));
         //It is essential that the types be registered before the typeInfos create the serializer/deserializers.
-        for (Iterator iter = typeInfo.iterator(); iter.hasNext();) {
+        for (Iterator iter = typeInfo.iterator(); iter.hasNext(); ) {
             TypeInfo info = (TypeInfo) iter.next();
             TypeDesc.registerTypeDescForClass(info.getClazz(), info.buildTypeDesc());
         }

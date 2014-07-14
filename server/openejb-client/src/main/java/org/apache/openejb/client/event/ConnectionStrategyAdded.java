@@ -43,8 +43,8 @@ public class ConnectionStrategyAdded {
     @Override
     public String toString() {
         return "ConnectionStrategyAdded{" +
-               "scheme='" + scheme + '\'' +
-               ", strategy=" + strategy.getClass().getName() +
-               '}';
+            "scheme='" + scheme + '\'' +
+            ", strategy=" + strategy.getClass().getName() +
+            '}';
     }
 }

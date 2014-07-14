@@ -225,9 +225,9 @@ public class MulticastPulseAgentTest {
                                     final String[] hosts = s.split(",");
 
                                     System.out.println(String.format("\n" + name + " received Server pulse:\n\tGroup: %1$s\n\tServices: %2$s\n\tServer: %3$s\n",
-                                                                     group,
-                                                                     services,
-                                                                     s));
+                                        group,
+                                        services,
+                                        s));
 
                                     for (final String svc : serviceList) {
 

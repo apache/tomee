@@ -91,8 +91,8 @@ public class JAXRSContextExtension implements Extension {
         public ContextBean(final Class<T> type, final AbstractRestThreadLocalProxy<T> proxy) {
             this.type = type;
             this.proxy =
-                    (T) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[] { type, Serializable.class },
-                            new DelegateHandler(proxy));
+                (T) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[]{type, Serializable.class},
+                    new DelegateHandler(proxy));
             this.types = new HashSet<Type>(asList(Object.class, type));
             this.qualifiers = new HashSet<Annotation>(asList(ContextLiteral.INSTANCE, AnyLiteral.INSTANCE));
         }
@@ -164,8 +164,7 @@ public class JAXRSContextExtension implements Extension {
         public Object invoke(final Object ignored, final Method method, final Object[] args) throws Throwable {
             try {
                 return method.invoke(proxy.get(), args);
-            }
-            catch (final InvocationTargetException ite) {
+            } catch (final InvocationTargetException ite) {
                 throw ite.getCause();
             }
         }

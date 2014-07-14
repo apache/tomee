@@ -36,7 +36,7 @@ public abstract class PathCommand extends AbstractCommand {
 
         if (path.startsWith(HOME)) {
             return new File(path.replace(HOME, SystemInstance.get().getHome().getDirectory().getAbsolutePath()));
-        } else  if(path.startsWith(BASE)) {
+        } else if (path.startsWith(BASE)) {
             return new File(path.replace(BASE, SystemInstance.get().getBase().getDirectory().getAbsolutePath()));
         }
         return new File(SystemInstance.get().getBase().getDirectory().getAbsolutePath(), path);

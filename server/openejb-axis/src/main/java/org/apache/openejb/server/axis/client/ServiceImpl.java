@@ -32,7 +32,7 @@ import java.rmi.Remote;
 import java.util.Iterator;
 import java.util.Map;
 
-public class ServiceImpl implements javax.xml.rpc.Service{
+public class ServiceImpl implements javax.xml.rpc.Service {
     private final Service delegate;
     private final Map seiClassNameToFactoryMap;
     private final Map portToImplementationMap;

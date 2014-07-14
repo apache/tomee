@@ -32,12 +32,12 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-@EnableServices({ "hessian", "httpejbd" })
+@EnableServices({"hessian", "httpejbd"})
 @RunWith(ApplicationComposer.class)
 public class HessianServiceTest {
     @Module
     public Class<?>[] classes() {
-        return new Class<?>[] { MyHessianWebService.class };
+        return new Class<?>[]{MyHessianWebService.class};
     }
 
     @Test
@@ -56,7 +56,7 @@ public class HessianServiceTest {
 
     @Remote
     public static interface HessianWebService {
-        Out call(In  in);
+        Out call(In in);
     }
 
     @Singleton

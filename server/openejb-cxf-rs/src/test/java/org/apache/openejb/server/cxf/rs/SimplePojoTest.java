@@ -50,7 +50,7 @@ public class SimplePojoTest {
     }
 
     @Module
-    @Classes(cdi = true, value = { MyFirstRestClass.class })
+    @Classes(cdi = true, value = {MyFirstRestClass.class})
     public WebModule war() {
         final WebModule webModule = new WebModule(new WebApp(), "/foo", Thread.currentThread().getContextClassLoader(), "", "foo");
         webModule.getRestClasses().add(MyFirstRestClass.class.getName());

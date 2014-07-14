@@ -44,7 +44,7 @@ import static org.junit.Assert.assertEquals;
 @RunWith(ApplicationComposer.class)
 public class CheckedExceptionMapperTest {
     @Module
-    @Classes({ ExampleExceptionMapper.class })
+    @Classes({ExampleExceptionMapper.class})
     public EjbModule module() {
         final SingletonBean bean = new SingletonBean(ExampleRest.class);
         bean.setRestService(true);

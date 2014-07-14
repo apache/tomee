@@ -224,7 +224,7 @@ public class JavaServiceDescBuilder {
         byte mode = ParameterDesc.modeFromString(parameterInfo.mode.toString());
 
         boolean inHeader = parameterInfo.soapHeader && parameterInfo.mode.isIn();
-        boolean outHeader = parameterInfo.soapHeader  && parameterInfo.mode.isOut();
+        boolean outHeader = parameterInfo.soapHeader && parameterInfo.mode.isOut();
 
         Class<?> javaType;
         try {

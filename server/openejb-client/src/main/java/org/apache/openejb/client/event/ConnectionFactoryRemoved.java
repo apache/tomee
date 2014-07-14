@@ -43,8 +43,8 @@ public class ConnectionFactoryRemoved {
     @Override
     public String toString() {
         return "ConnectionFactoryRemoved{" +
-               "scheme='" + scheme + '\'' +
-               ", factory=" + factory.getClass().getName() +
-               '}';
+            "scheme='" + scheme + '\'' +
+            ", factory=" + factory.getClass().getName() +
+            '}';
     }
 }

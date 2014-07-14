@@ -38,11 +38,11 @@ import static org.junit.Assert.assertEquals;
 @RunWith(ApplicationComposer.class)
 public class JndiForPojoEndpointsTest {
     @Module
-    @Classes(cdi = true, value = { JndiEndpoint.class })
+    @Classes(cdi = true, value = {JndiEndpoint.class})
     public WebApp war() {
         return new WebApp()
-                .contextRoot("foo")
-                .addServlet(Application.class.getName(), null, "/api/*");
+            .contextRoot("foo")
+            .addServlet(Application.class.getName(), null, "/api/*");
     }
 
     @Test

@@ -57,7 +57,7 @@ public class EchoNet {
 
         // get out of the 1000 port range
         servers += base;
-        
+
         MultipointServer lastServer = null;
         for (int i = base; i < servers; i++) {
             MultipointServer newServer = new MultipointServer(multiple * i, new Tracker.Builder().build()).start();
@@ -80,7 +80,7 @@ public class EchoNet {
 
             for (int i = 1; i <= x; i++) {
                 for (int j = 1; j <= x; j++) {
-                    if (i==j) continue;
+                    if (i == j) continue;
 
                     Item item = new Item(i, j);
                     boolean b = set.add(item);

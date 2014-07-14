@@ -42,7 +42,7 @@ import static org.junit.Assert.assertTrue;
 @RunWith(ApplicationComposer.class)
 public class CdiPojoTest {
     @Module
-    @Classes(value = { MyWebservice.class, ACdiTaste.class }, cdi = true)
+    @Classes(value = {MyWebservice.class, ACdiTaste.class}, cdi = true)
     public WebApp module() {
         return new WebApp().contextRoot("/test").addServlet("ws", MyWebservice.class.getName(), "/ws");
     }
@@ -50,8 +50,8 @@ public class CdiPojoTest {
     @Test
     public void checkInjection() throws MalformedURLException {
         final MyWsApi api = Service.create(new URL("http://localhost:4204/test/ws?wsdl"),
-                                           new QName("http://cxf.server.openejb.apache.org/", "MyWebserviceService"))
-                .getPort(MyWsApi.class);
+            new QName("http://cxf.server.openejb.apache.org/", "MyWebserviceService"))
+            .getPort(MyWsApi.class);
         assertEquals("ok", api.test());
     }
 

@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServlet;
 
 /**
  * Nothing to do, cf AnnotationDeployer.deploy().
- *
  */
 public class OpenEJBRestServlet extends HttpServlet {
 }

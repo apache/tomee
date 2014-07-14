@@ -404,11 +404,11 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
                         return false;
                     }
                     final EJBRequest req = new EJBRequest(RequestMethodCode.FUTURE_CANCEL,
-                                                          ejb,
-                                                          CANCEL,
-                                                          new Object[]{Boolean.valueOf(mayInterruptIfRunning)},
-                                                          primaryKey,
-                                                          client.getSerializer());
+                        ejb,
+                        CANCEL,
+                        new Object[]{Boolean.valueOf(mayInterruptIfRunning)},
+                        primaryKey,
+                        client.getSerializer());
                     req.getBody().setRequestId(requestId);
                     try {
                         final EJBResponse res = request(req);

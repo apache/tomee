@@ -312,19 +312,19 @@ public class SocketConnectionFactory implements ConnectionFactory {
 
             } catch (SecurityException e) {
                 throw this.failure("Cannot access server: '" +
-                                   uri.toString() +
-                                   "' due to security restrictions in the current VM: " +
-                                   e.getClass().getName() +
-                                   " : " +
-                                   e.getMessage(), e);
+                    uri.toString() +
+                    "' due to security restrictions in the current VM: " +
+                    e.getClass().getName() +
+                    " : " +
+                    e.getMessage(), e);
 
             } catch (Throwable e) {
                 throw this.failure("Cannot  connect to server: '" +
-                                   uri.toString() +
-                                   "' due to an unknown exception in the OpenEJB client: " +
-                                   e.getClass().getName() +
-                                   " : " +
-                                   e.getMessage(), e);
+                    uri.toString() +
+                    "' due to an unknown exception in the OpenEJB client: " +
+                    e.getClass().getName() +
+                    " : " +
+                    e.getMessage(), e);
             }
 
         }
@@ -474,10 +474,10 @@ public class SocketConnectionFactory implements ConnectionFactory {
             }
 
             final ConnectionPoolTimeoutException exception = new ConnectionPoolTimeoutException("No connections available in pool (size " +
-                                                                                                this.size +
-                                                                                                ").  Waited for " +
-                                                                                                this.timeout +
-                                                                                                " milliseconds for a connection.");
+                this.size +
+                ").  Waited for " +
+                this.timeout +
+                " milliseconds for a connection.");
             exception.fillInStackTrace();
             Client.fireEvent(new ConnectionPoolTimeout(this.uri, this.size, this.timeout, this.timeUnit, exception));
             throw exception;
@@ -491,10 +491,10 @@ public class SocketConnectionFactory implements ConnectionFactory {
         @Override
         public String toString() {
             return "Pool{" +
-                   "size=" + this.size +
-                   ", available=" + this.semaphore.availablePermits() +
-                   ", uri=" + this.uri +
-                   '}';
+                "size=" + this.size +
+                ", available=" + this.semaphore.availablePermits() +
+                ", uri=" + this.uri +
+                '}';
         }
     }
 }

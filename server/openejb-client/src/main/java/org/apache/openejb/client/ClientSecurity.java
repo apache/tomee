@@ -166,8 +166,8 @@ public class ClientSecurity {
                 // verify the interface
                 if (!IdentityResolver.class.isAssignableFrom(identityResolverClass)) {
                     throw new IllegalArgumentException("Client identity strategy '" + strategy + "' " +
-                                                       "class '" + identityResolverClass.getName() + "' does not implement the " +
-                                                       "interface '" + IdentityResolver.class.getSimpleName() + "'");
+                        "class '" + identityResolverClass.getName() + "' does not implement the " +
+                        "interface '" + IdentityResolver.class.getSimpleName() + "'");
                 }
 
                 // create the class
@@ -175,7 +175,7 @@ public class ClientSecurity {
                     identityResolver = (IdentityResolver) identityResolverClass.newInstance();
                 } catch (Exception e) {
                     throw new IllegalArgumentException("Unable to create client identity strategy '" + strategy + "' " +
-                                                       "class '" + identityResolverClass.getName() + "'", e);
+                        "class '" + identityResolverClass.getName() + "'", e);
                 }
             }
 

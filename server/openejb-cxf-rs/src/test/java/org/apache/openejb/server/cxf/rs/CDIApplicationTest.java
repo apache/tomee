@@ -38,12 +38,12 @@ import static org.junit.Assert.assertTrue;
 @RunWith(ApplicationComposer.class)
 public class CDIApplicationTest {
     @Module
-    @Classes(cdi = true, value = { MyCdiRESTApplication.class, MyFirstRestClass.class,  ACdiBeanInjectedInApp.class })
+    @Classes(cdi = true, value = {MyCdiRESTApplication.class, MyFirstRestClass.class, ACdiBeanInjectedInApp.class})
     public WebApp war() {
         return new WebApp()
-                .contextRoot("foo")
-                .addServlet("REST Application", Application.class.getName())
-                .addInitParam("REST Application", "javax.ws.rs.Application", MyCdiRESTApplication.class.getName());
+            .contextRoot("foo")
+            .addServlet("REST Application", Application.class.getName())
+            .addInitParam("REST Application", "javax.ws.rs.Application", MyCdiRESTApplication.class.getName());
     }
 
     @Test
@@ -52,7 +52,8 @@ public class CDIApplicationTest {
         assertEquals("Hi from REST World!", WebClient.create("http://localhost:4204/foo/").path("/first/hi").get(String.class));
     }
 
-    public static class ACdiBeanInjectedInApp {}
+    public static class ACdiBeanInjectedInApp {
+    }
 
     public static class MyCdiRESTApplication extends Application {
         public static boolean injection = false;

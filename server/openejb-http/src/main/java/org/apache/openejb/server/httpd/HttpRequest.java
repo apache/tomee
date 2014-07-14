@@ -21,9 +21,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 
-/** An interface to take care of HTTP Requests.  It parses headers, content, form and url
- *  parameters.
- *
+/**
+ * An interface to take care of HTTP Requests.  It parses headers, content, form and url
+ * parameters.
  */
 public interface HttpRequest extends java.io.Serializable, HttpServletRequest {
 
@@ -38,27 +38,49 @@ public interface HttpRequest extends java.io.Serializable, HttpServletRequest {
     //
     // Header variables
     //
-    /** the Accept header */
+    /**
+     * the Accept header
+     */
     public static final String HEADER_ACCEPT = "Accept";
-    /** the Accept-Encoding header */
+    /**
+     * the Accept-Encoding header
+     */
     public static final String HEADER_ACCEPT_ENCODING = "Accept-Encoding";
-    /** the Accept-Language header */
+    /**
+     * the Accept-Language header
+     */
     public static final String HEADER_ACCEPT_LANGUAGE = "Accept-Language";
-    /** the Content-Type header */
+    /**
+     * the Content-Type header
+     */
     public static final String HEADER_CONTENT_TYPE = "Content-Type";
-    /** the Content-Length header */
+    /**
+     * the Content-Length header
+     */
     public static final String HEADER_CONTENT_LENGTH = "Content-Length";
-    /** the Connection header */
+    /**
+     * the Connection header
+     */
     public static final String HEADER_CONNECTION = "Connection";
-    /** the Cache-Control header */
+    /**
+     * the Cache-Control header
+     */
     public static final String HEADER_CACHE_CONTROL = "Cache-Control";
-    /** the Host header */
+    /**
+     * the Host header
+     */
     public static final String HEADER_HOST = "Host";
-    /** the User-Agent header */
+    /**
+     * the User-Agent header
+     */
     public static final String HEADER_USER_AGENT = "User-Agent";
-    /** the Set-Cookie header */
+    /**
+     * the Set-Cookie header
+     */
     public static final String HEADER_SET_COOKIE = "Set-Cookie";
-    /** the Cookie header */
+    /**
+     * the Cookie header
+     */
     public static final String HEADER_COOKIE = "Cookie";
 
     //
@@ -86,18 +108,22 @@ public interface HttpRequest extends java.io.Serializable, HttpServletRequest {
 
     /**
      * Gets a form or URL query parameter based on the name passed in.
+     *
      * @param name
      */
     String getParameter(String name);
 
     /**
      * Gets all the form and URL query parameters
+     *
      * @return All the form and URL query parameters
      */
     Map getParameters();
 
 
-    /** Gets the URI for the current URL page.
+    /**
+     * Gets the URI for the current URL page.
+     *
      * @return The URI
      */
     public java.net.URI getURI();

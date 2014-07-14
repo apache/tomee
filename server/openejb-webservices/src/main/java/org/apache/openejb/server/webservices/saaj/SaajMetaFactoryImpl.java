@@ -27,24 +27,24 @@ import javax.xml.soap.SOAPFactory;
 public class SaajMetaFactoryImpl extends SAAJMetaFactory {
 
     protected MessageFactory newMessageFactory(String arg0) throws SOAPException {
-        return (MessageFactory)callFactoryMethod("newMessageFactory", arg0);
+        return (MessageFactory) callFactoryMethod("newMessageFactory", arg0);
     }
 
     protected SOAPFactory newSOAPFactory(String arg0) throws SOAPException {
-        return (SOAPFactory)callFactoryMethod("newSOAPFactory", arg0);
+        return (SOAPFactory) callFactoryMethod("newSOAPFactory", arg0);
     }
 
     private Object callFactoryMethod(String methodName, String arg) throws SOAPException {
-        SAAJMetaFactory factory = 
+        SAAJMetaFactory factory =
             (SAAJMetaFactory) SaajFactoryFinder.find("javax.xml.soap.MetaFactory");
 
         try {
-            Method method = 
-                factory.getClass().getDeclaredMethod(methodName, new Class[] { String.class });
+            Method method =
+                factory.getClass().getDeclaredMethod(methodName, new Class[]{String.class});
             boolean accessibility = method.isAccessible();
             try {
                 method.setAccessible(true);
-                Object result = method.invoke(factory, new Object[] { arg });                
+                Object result = method.invoke(factory, new Object[]{arg});
                 return result;
             } catch (InvocationTargetException e) {
                 if (e.getTargetException() instanceof SOAPException) {

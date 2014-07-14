@@ -259,7 +259,7 @@ public class CxfRsHttpListener implements RsHttpListener {
                            final Collection<Object> additionalProviders,
                            final ServiceConfiguration configuration) {
         deploy(contextRoot, loadedClazz, fullContext, new OpenEJBPerRequestPojoResourceProvider(loader, loadedClazz, injections, context, owbCtx),
-                null, app, null, additionalProviders, configuration);
+            null, app, null, additionalProviders, configuration);
     }
 
     @Override
@@ -526,29 +526,29 @@ public class CxfRsHttpListener implements RsHttpListener {
 
             // Init and register MBeans
             final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management")
-                    .set("j2eeType", "JAX-RS")
-                    .set("J2EEServer", "openejb")
-                    .set("J2EEApplication", base)
-                    .set("EndpointType", resource.type)
-                    .set("name", resource.classname);
+                .set("j2eeType", "JAX-RS")
+                .set("J2EEServer", "openejb")
+                .set("J2EEApplication", base)
+                .set("EndpointType", resource.type)
+                .set("name", resource.classname);
 
             final ObjectName jmxObjectName = jmxName.build();
             LocalMBeanServer.registerDynamicWrapperSilently(
-                    new RestServiceMBean(resource),
-                    jmxObjectName);
+                new RestServiceMBean(resource),
+                jmxObjectName);
 
             jmxNames.add(jmxObjectName);
 
             LOGGER.info("     Service URI: "
-                    + Logs.forceLength(resource.address, addressSize, true) + " -> "
-                    + Logs.forceLength(resource.type, 4, false) + " "
-                    + Logs.forceLength(resource.classname, classSize, true));
+                + Logs.forceLength(resource.address, addressSize, true) + " -> "
+                + Logs.forceLength(resource.type, 4, false) + " "
+                + Logs.forceLength(resource.classname, classSize, true));
 
             for (final Logs.LogOperationEndpointInfo log : resource.operations) {
                 LOGGER.info("          "
-                        + Logs.forceLength(log.http, resource.methodSize, false) + " "
-                        + Logs.forceLength(log.address, addressSize, true) + " ->      "
-                        + Logs.forceLength(log.method, resource.methodStrSize, true));
+                    + Logs.forceLength(log.http, resource.methodSize, false) + " "
+                    + Logs.forceLength(log.address, addressSize, true) + " ->      "
+                    + Logs.forceLength(log.method, resource.methodStrSize, true));
             }
 
             resource.operations.clear();
@@ -581,7 +581,7 @@ public class CxfRsHttpListener implements RsHttpListener {
                 ResourceComparator instance = (ResourceComparator) ServiceInfos.resolve(services, resourceComparator);
                 if (instance == null) {
                     instance = (ResourceComparator) Thread.currentThread().getContextClassLoader()
-                            .loadClass(resourceComparator).newInstance();
+                        .loadClass(resourceComparator).newInstance();
                 }
                 factory.setResourceComparator(instance);
             } catch (final Exception e) {

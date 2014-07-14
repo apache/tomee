@@ -41,13 +41,13 @@ public class Jdk13ProxyFactory implements ProxyFactory {
 
         if (version.contains(badVersion)) {
             final String message = "" +
-                                   "INCOMPATIBLE VM: \n\n" +
-                                   "The Java Virtual Machine you are using contains a bug\n" +
-                                   "in the proxy generation logic.  This bug has been    \n" +
-                                   "documented by Sun and has been fixed in later VMs.   \n" +
-                                   "Please download the latest 1.3 Virtual Machine.      \n" +
-                                   "For more details see:                                \n" +
-                                   "http://developer.java.sun.com/developer/bugParade/bugs/4346224.html\n  ";
+                "INCOMPATIBLE VM: \n\n" +
+                "The Java Virtual Machine you are using contains a bug\n" +
+                "in the proxy generation logic.  This bug has been    \n" +
+                "documented by Sun and has been fixed in later VMs.   \n" +
+                "Please download the latest 1.3 Virtual Machine.      \n" +
+                "For more details see:                                \n" +
+                "http://developer.java.sun.com/developer/bugParade/bugs/4346224.html\n  ";
             throw new ClientRuntimeException(message);
         }
     }

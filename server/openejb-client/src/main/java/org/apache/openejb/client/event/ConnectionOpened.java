@@ -37,7 +37,7 @@ public class ConnectionOpened {
     @Override
     public String toString() {
         return "ConnectionOpened{" +
-               "uri=" + uri +
-               '}';
+            "uri=" + uri +
+            '}';
     }
 }

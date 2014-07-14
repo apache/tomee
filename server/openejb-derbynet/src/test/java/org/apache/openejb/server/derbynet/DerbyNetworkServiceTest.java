@@ -94,8 +94,8 @@ public class DerbyNetworkServiceTest {
                 properties.setProperty("disabled", "false");
                 properties.put(ServerService.class, DerbyNetworkService.class);
                 properties.put(
-                        "derby.system.home",
-                        new File(SystemInstance.get().getBase().getDirectory(), "target").getAbsolutePath()
+                    "derby.system.home",
+                    new File(SystemInstance.get().getBase().getDirectory(), "target").getAbsolutePath()
                 );
                 final Map<String, Properties> services = new HashMap<String, Properties>();
                 services.put("derbynet", properties);

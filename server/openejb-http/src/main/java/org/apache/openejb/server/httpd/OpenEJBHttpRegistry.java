@@ -87,7 +87,7 @@ public class OpenEJBHttpRegistry {
             final URI address = uri.resolve(suffix);
             addresses.add(address.toString());
         }
-        return  addresses;
+        return addresses;
     }
 
     protected static class ClassLoaderHttpListener implements HttpListener {

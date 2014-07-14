@@ -25,13 +25,14 @@ import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPFault;
 
 public class SoapFactoryImpl extends SOAPFactory {
-    
+
     private SOAPFactory getSOAPFactory() throws SOAPException {
-        SOAPFactory factory = 
+        SOAPFactory factory =
             (SOAPFactory) SaajFactoryFinder.find("javax.xml.soap.SOAPFactory");
         return factory;
-        
+
     }
+
     public Detail createDetail() throws SOAPException {
         return getSOAPFactory().createDetail();
     }
@@ -63,5 +64,5 @@ public class SoapFactoryImpl extends SOAPFactory {
     public Name createName(String arg0, String arg1, String arg2) throws SOAPException {
         return getSOAPFactory().createName(arg0, arg1, arg2);
     }
-      
+
 }

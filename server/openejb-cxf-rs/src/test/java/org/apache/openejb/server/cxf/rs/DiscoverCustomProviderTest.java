@@ -65,8 +65,8 @@ public class DiscoverCustomProviderTest {
     @Test
     public void customProvider() {
         final String response = WebClient.create("http://localhost:4204/openejb-cxf-rs")
-                .accept("discover/reverse")
-                .path("the/service").get(String.class);
+            .accept("discover/reverse")
+            .path("the/service").get(String.class);
         assertEquals("it rocks", response);
     }
 

@@ -27,18 +27,19 @@ import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.RuntimeMBeanException;
+
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.xbean.propertyeditor.PropertyEditors;
 
 // TODO: maybe find a better way to invoker get/set/invoke because currently we limit a bit possible values
 @Command(name = "jmx", description = "consult/update a jmx information", usage = "jmx <operation> <options>. " +
-        "\n\t\tOperation can be set|get|invoke.\n\t\tLast value is always the object name canonical path." +
-        "\n\t\tSet takes the new value as last value and the name of the attribute as second parameter." +
-        "\n\t\tInvoke takes the method invocation as second parameter." +
-        "\n\t\tSamples:" +
-        "\n\t\t\tjmx get MyAttributeName foo:type=bar" +
-        "\n\t\t\tjmx set MyAttributeName foo:type=bar NewValue" +
-        "\n\t\t\tjmx invoke myMethod(arg1,arg2) foo:type=bar")
+    "\n\t\tOperation can be set|get|invoke.\n\t\tLast value is always the object name canonical path." +
+    "\n\t\tSet takes the new value as last value and the name of the attribute as second parameter." +
+    "\n\t\tInvoke takes the method invocation as second parameter." +
+    "\n\t\tSamples:" +
+    "\n\t\t\tjmx get MyAttributeName foo:type=bar" +
+    "\n\t\t\tjmx set MyAttributeName foo:type=bar NewValue" +
+    "\n\t\t\tjmx invoke myMethod(arg1,arg2) foo:type=bar")
 public class LocalJMXCommand extends AbstractCommand {
     @Override
     public void execute(final String cmd) {
@@ -228,8 +229,8 @@ public class LocalJMXCommand extends AbstractCommand {
                     }
 
                     if (attName.indexOf("=") >= 0 ||
-                            attName.indexOf(":") >= 0 ||
-                            attName.indexOf(" ") >= 0) {
+                        attName.indexOf(":") >= 0 ||
+                        attName.indexOf(" ") >= 0) {
                         continue;
                     }
 

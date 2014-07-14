@@ -68,8 +68,8 @@ public class DerbyNetworkService implements ServerService, SelfManaging {
         this.verbose = options.get("verbose", false);
         this.host = InetAddress.getByName("0.0.0.0");
         System.setProperty(
-                "derby.system.home",
-                options.get("derby.system.home", SystemInstance.get().getBase().getDirectory().getAbsolutePath())
+            "derby.system.home",
+            options.get("derby.system.home", SystemInstance.get().getBase().getDirectory().getAbsolutePath())
         );
     }
 

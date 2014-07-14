@@ -25,12 +25,14 @@ import java.io.IOException;
 public interface DiscoveryAgent {
     /**
      * Sets the discovery listener
+     *
      * @param listener
      */
     void setDiscoveryListener(DiscoveryListener listener);
 
     /**
      * register a service
+     *
      * @param serviceUri
      * @param details
      */
@@ -38,6 +40,7 @@ public interface DiscoveryAgent {
 
     /**
      * register a service
+     *
      * @param serviceUri
      * @param details
      */

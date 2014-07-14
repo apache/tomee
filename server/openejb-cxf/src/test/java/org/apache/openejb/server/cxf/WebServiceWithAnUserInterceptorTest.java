@@ -57,9 +57,9 @@ public class WebServiceWithAnUserInterceptorTest {
     @Test
     public void test() throws Exception {
         Foo foo = Service.create(
-                new URL("http://localhost:4204/openejb-cxf/FooImpl?wsdl"),
-                new QName("http://cxf.server.openejb.apache.org/", "FooImplService"))
-                .getPort(Foo.class);
+            new URL("http://localhost:4204/openejb-cxf/FooImpl?wsdl"),
+            new QName("http://cxf.server.openejb.apache.org/", "FooImplService"))
+            .getPort(Foo.class);
         assertNotNull(foo);
         assertEquals("bar", foo.hi());
     }

@@ -90,10 +90,10 @@ public class StreamManager {
         if (!out.getClass().getName().startsWith("java")) {
             try {
                 return new GsonBuilder().setPrettyPrinting().create().toJson(out)
-                                        .replace(OS_LINE_SEP, lineSep);
+                    .replace(OS_LINE_SEP, lineSep);
             } catch (RuntimeException re) {
                 return ToStringBuilder.reflectionToString(out, ToStringStyle.SHORT_PREFIX_STYLE)
-                                      .replace(OS_LINE_SEP, lineSep);
+                    .replace(OS_LINE_SEP, lineSep);
             }
         }
         return out.toString();

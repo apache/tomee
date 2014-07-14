@@ -39,13 +39,13 @@ public class ApplicationFromWebXmlTest {
     public static final String BASE_URL = "http://localhost:4204/foo/bar";
 
     @Module
-    @Classes(value = { MyFirstRestClass.class }, cdi = true)
+    @Classes(value = {MyFirstRestClass.class}, cdi = true)
     public WebApp war() {
         return new WebApp()
-                .contextRoot("foo")
-                .addServlet("REST Application", Application.class.getName())
-                .addInitParam("REST Application", "javax.ws.rs.Application", XmlApplication.class.getName())
-                .addServletMapping("REST Application", "/bar/*");
+            .contextRoot("foo")
+            .addServlet("REST Application", Application.class.getName())
+            .addInitParam("REST Application", "javax.ws.rs.Application", XmlApplication.class.getName())
+            .addServletMapping("REST Application", "/bar/*");
     }
 
     @Test

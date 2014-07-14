@@ -76,7 +76,7 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
     }
 
     public void destroy() {
-        for (Iterator iterator = invokedHandlers.iterator(); iterator.hasNext();) {
+        for (Iterator iterator = invokedHandlers.iterator(); iterator.hasNext(); ) {
             Handler handler = (Handler) iterator.next();
             handler.destroy();
         }
@@ -111,7 +111,7 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
     public boolean handleResponse(MessageContext context) {
         MessageSnapshot snapshot = new MessageSnapshot(context);
         try {
-            for (Iterator iterator = invokedHandlers.iterator(); iterator.hasNext();) {
+            for (Iterator iterator = invokedHandlers.iterator(); iterator.hasNext(); ) {
                 Handler handler = (Handler) iterator.next();
                 if (!handler.handleResponse(context)) {
                     return false;
@@ -129,7 +129,7 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
     public boolean handleFault(MessageContext context) {
         MessageSnapshot snapshot = new MessageSnapshot(context);
         try {
-            for (Iterator iterator = invokedHandlers.iterator(); iterator.hasNext();) {
+            for (Iterator iterator = invokedHandlers.iterator(); iterator.hasNext(); ) {
                 Handler handler = (Handler) iterator.next();
                 if (!handler.handleFault(context)) {
                     return false;
@@ -180,7 +180,7 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
                 this.operationName = operation.getElementName().toString();
 
                 this.parameterNames = new ArrayList<String>();
-                for (Iterator i = operation.getChildElements(); i.hasNext();) {
+                for (Iterator i = operation.getChildElements(); i.hasNext(); ) {
                     SOAPElement parameter = (SOAPElement) i.next();
                     String element = parameter.getElementName().toString();
                     parameterNames.add(element);
@@ -216,7 +216,7 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
             }
 
             Iterator parameters = operation.getChildElements();
-            for (Iterator i = parameterNames.iterator(); i.hasNext();) {
+            for (Iterator i = parameterNames.iterator(); i.hasNext(); ) {
                 // Handlers can't remove parameters
                 if (!parameters.hasNext()) {
                     return false;

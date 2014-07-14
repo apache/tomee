@@ -64,7 +64,7 @@ public class CustomProviderWithConfigTest {
     @Test
     public void config() {
         final String response = WebClient.create("http://localhost:4204/openejb-cxf-rs").accept("openejb/conf")
-                .path("/customized/").get(String.class);
+            .path("/customized/").get(String.class);
         assertEquals("done!", response);
     }
 

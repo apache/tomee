@@ -92,7 +92,7 @@ public class HessianService implements ServerService, SelfManaging {
                     server.sendCollectionType(sendCollectionType);
                 }
 
-                server.createSkeleton(ProxyEJB.simpleProxy(beanContext, new Class<?>[]{ remoteItf }), remoteItf);
+                server.createSkeleton(ProxyEJB.simpleProxy(beanContext, new Class<?>[]{remoteItf}), remoteItf);
 
                 try {
                     LOGGER.info("Hessian(url=" + registry.deploy(classLoader, server, virtualHost, appName(app, beanContext), authMethod, transportGuarantee, realmName, String.class.cast(beanContext.getDeploymentID())) + ", interface=" + remoteItf.getName() + ")");

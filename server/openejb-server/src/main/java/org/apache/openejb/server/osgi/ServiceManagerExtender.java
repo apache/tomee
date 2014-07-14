@@ -171,8 +171,8 @@ public class ServiceManagerExtender extends ServiceManager {
 
                 final BundleContext context = bundle.getBundleContext();
                 registration = context.registerService(ServerService.class.getName(),
-                                                       server,
-                                                       getServiceProperties());
+                    server,
+                    getServiceProperties());
             }
         }
 

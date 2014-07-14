@@ -227,7 +227,7 @@ public class TomcatHessianRegistry implements HessianRegistry {
 
     private static String contextName(final String app) {
         if (!app.startsWith("/") && !app.isEmpty()) {
-            return  "/" + app;
+            return "/" + app;
         }
         return app;
     }

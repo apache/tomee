@@ -28,7 +28,7 @@ public class Activator implements BundleActivator {
 
     private ServiceManagerExtender manager;
     private ServiceRegistration registration;
-    
+
     public void start(BundleContext bundleContext) throws Exception {
         manager = new ServiceManagerExtender(bundleContext);
         registration = bundleContext.registerService(ServiceManager.class.getName(), manager, null);
@@ -42,5 +42,5 @@ public class Activator implements BundleActivator {
             registration.unregister();
         }
     }
-        
+
 }

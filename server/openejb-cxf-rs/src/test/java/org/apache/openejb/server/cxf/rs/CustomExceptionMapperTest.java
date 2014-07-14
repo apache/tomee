@@ -57,7 +57,7 @@ public class CustomExceptionMapperTest {
     @Test
     public void exceptionMapper() {
         final String response = WebClient.create("http://localhost:4204/openejb-cxf-rs")
-                .path("/exception-mapper/throw").get(String.class);
+            .path("/exception-mapper/throw").get(String.class);
         assertEquals(FooException.class.getName(), response);
     }
 

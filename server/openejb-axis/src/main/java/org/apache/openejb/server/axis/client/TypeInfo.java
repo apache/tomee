@@ -37,7 +37,7 @@ public class TypeInfo {
     private final FieldDesc[] fields;
 
     public static void register(List typeInfo, TypeMapping typeMapping) {
-        for (Iterator iter = typeInfo.iterator(); iter.hasNext();) {
+        for (Iterator iter = typeInfo.iterator(); iter.hasNext(); ) {
             TypeInfo info = (TypeInfo) iter.next();
             info.register(typeMapping);
         }

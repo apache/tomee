@@ -31,7 +31,7 @@ import java.util.Collection;
 import java.util.List;
 
 public final class HttpUtil {
-    private static  final String WILDCARD = SystemInstance.get().getProperty("openejb.http.wildcard", ".*");
+    private static final String WILDCARD = SystemInstance.get().getProperty("openejb.http.wildcard", ".*");
 
     private HttpUtil() {
         // no-op
