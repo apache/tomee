@@ -40,6 +40,7 @@ public class Logger {
     }
 
     // don't return the instance since it needs to stay private but export which one is used to allow integration with other libs (as tomcat ;))
+    @SuppressWarnings("UnusedDeclaration")
     public static String delegateClass() {
         if (logStreamFactory == null) {
             throw new IllegalStateException("Call this method after having configured the logger");
@@ -271,8 +272,8 @@ public class Logger {
 
     public Logger(final LogCategory category, final LogStream logStream, final String baseName) {
         this.category = category;
-        this.logStream = logStream;
         this.baseName = baseName;
+        this.logStream = new LogStreamAsync(logStream);
     }
 
     public static Logger getInstance(final LogCategory category, final Class clazz) {
@@ -388,6 +389,7 @@ public class Logger {
         return logStream.isWarnEnabled();
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     public boolean isLevelEnable(final String level) {
         if ("info".equals(level.toLowerCase())) {
             return isInfoEnabled();

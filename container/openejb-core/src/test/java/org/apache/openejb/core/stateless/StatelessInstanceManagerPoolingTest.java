@@ -93,8 +93,7 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
 
     public void testStatelessBeanRelease() throws Exception {
 
-
-        final int count = 10; //Strict pool can starve on more than 10
+        final int count = 60;
         final CountDownLatch invocations = new CountDownLatch(count);
         final InitialContext ctx = new InitialContext();
         final Runnable counterBeanLocal = new Runnable() {
@@ -122,9 +121,11 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
             thread.start();
         }
 
-        final boolean success = invocations.await(20000, TimeUnit.MILLISECONDS);
+        final boolean success = invocations.await(30000, TimeUnit.MILLISECONDS);
 
         assertTrue("invocations timeout -> invocations.getCount() == " + invocations.getCount(), success);
+
+        Thread.sleep(2000);
 
         assertEquals(count, discardedInstances.get());
 
@@ -243,8 +244,6 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
     @Stateless
     public static class CounterBean implements Counter, RemoteCounter {
 
-
-
         private final int count;
 
         public CounterBean() {
@@ -262,7 +261,7 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
         public void explode(final CountDownLatch latch) {
             discardedInstances.incrementAndGet();
             try {
-                throw new NullPointerException("Test expected this null pointer");
+                throw new NullPointerException("Test expected this null pointer: " + latch.getCount());
             } finally {
                 latch.countDown();
             }
