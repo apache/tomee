@@ -711,6 +711,7 @@
               <argLine>"-javaagent:${basedir}/target/openejb-javaagent-${project.version}.jar" -Xdebug
                 -Xnoagent -Djava.compiler=NONE
                 -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005
+                -Xms512m -Xmx1024m -XX:PermSize=256m -XX:MaxPermSize=512m
               </argLine>
               <runOrder>alphabetical</runOrder> <!-- make local/buildbot runs deterministic and the same -->
               <workingDirectory>${basedir}/target</workingDirectory>
