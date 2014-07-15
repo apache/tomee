@@ -17,6 +17,7 @@
 package org.apache.openejb.core.security;
 
 import junit.framework.TestCase;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
@@ -27,6 +28,7 @@ import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
+import org.junit.AfterClass;
 
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
@@ -44,6 +46,11 @@ import java.util.Properties;
  * @version $Rev$ $Date$
  */
 public class SecurityTest extends TestCase {
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        OpenEJB.destroy();
+    }
 
     private Assembler configureAssembler(final String defaultUser) throws Exception {
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());

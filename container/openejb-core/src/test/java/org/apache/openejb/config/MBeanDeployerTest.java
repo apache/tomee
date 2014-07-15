@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.config;
 
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
@@ -34,6 +35,7 @@ import org.apache.openejb.mbeans.ReaderDescription;
 import org.apache.openejb.mbeans.ReaderWriter;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -88,6 +90,11 @@ public class MBeanDeployerTest {
         System.clearProperty(LocalMBeanServer.OPENEJB_JMX_ACTIVE);
         assembler.destroy();
         SystemInstance.reset();
+    }
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        OpenEJB.destroy();
     }
 
     @Test

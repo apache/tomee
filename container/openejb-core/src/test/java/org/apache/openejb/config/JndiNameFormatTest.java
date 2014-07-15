@@ -18,6 +18,7 @@
 package org.apache.openejb.config;
 
 import junit.framework.TestCase;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
@@ -25,6 +26,7 @@ import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.loader.SystemInstance;
+import org.junit.AfterClass;
 
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
@@ -35,6 +37,16 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class JndiNameFormatTest extends TestCase {
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        OpenEJB.destroy();
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        OpenEJB.destroy();
+    }
 
     private Assembler assembler;
 

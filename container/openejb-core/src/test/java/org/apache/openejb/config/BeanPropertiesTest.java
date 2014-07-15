@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.ModuleContext;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
@@ -27,6 +28,7 @@ import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.Archives;
+import org.junit.AfterClass;
 
 import javax.ejb.Singleton;
 import java.io.File;
@@ -38,6 +40,16 @@ import java.util.Properties;
  * @version $Rev$ $Date$
  */
 public class BeanPropertiesTest extends TestCase {
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        OpenEJB.destroy();
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        OpenEJB.destroy();
+    }
 
     public void testFile() throws Exception {
         final ConfigurationFactory config = new ConfigurationFactory();

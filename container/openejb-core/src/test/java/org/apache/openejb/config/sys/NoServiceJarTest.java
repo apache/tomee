@@ -18,6 +18,7 @@ package org.apache.openejb.config.sys;
 
 import junit.framework.TestCase;
 import org.apache.openejb.AppContext;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ResourceInfo;
@@ -27,11 +28,17 @@ import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SingletonBean;
+import org.junit.AfterClass;
 
 /**
  * @version $Rev$ $Date$
  */
 public class NoServiceJarTest extends TestCase {
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        OpenEJB.destroy();
+    }
 
     public void test() throws Exception {
         final ConfigurationFactory factory = new ConfigurationFactory();

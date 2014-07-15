@@ -18,6 +18,7 @@ package org.apache.openejb.core.mdb;
 
 import org.junit.Assert;
 import junit.framework.TestCase;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
@@ -39,6 +40,10 @@ import org.apache.openejb.resource.quartz.QuartzResourceAdapter;
 import org.apache.openejb.quartz.Job;
 import org.apache.openejb.quartz.JobExecutionContext;
 import org.apache.openejb.quartz.JobExecutionException;
+import org.apache.openejb.resource.quartz.JobSpec;
+import org.apache.openejb.resource.quartz.QuartzResourceAdapter;
+import org.junit.AfterClass;
+import org.junit.Assert;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -55,6 +60,12 @@ import java.util.concurrent.TimeUnit;
  * @version $Rev$ $Date$
  */
 public class QuartzMdbContainerTest extends TestCase {
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        OpenEJB.destroy();
+    }
+
     public void test() throws Exception {
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 

@@ -18,12 +18,13 @@
 package org.apache.openejb.config;
 
 import junit.framework.TestCase;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
-import org.apache.openejb.core.ivm.naming.InitContextFactory;
+import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.InjectionTarget;
@@ -73,7 +74,7 @@ public class InjectionTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
+        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
 
         final ConfigurationFactory config = new ConfigurationFactory();
         final Assembler assembler = new Assembler();
@@ -119,6 +120,11 @@ public class InjectionTest extends TestCase {
         bean.getResourceEnvRef().add(resourceEnvRef);
 
         assembler.createApplication(config.configureApplication(ejbJar));
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        OpenEJB.destroy();
     }
 
     private String name(final String name) {
