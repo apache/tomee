@@ -18,6 +18,7 @@ package org.apache.openejb.assembler.classic;
 
 import junit.framework.TestCase;
 import org.apache.openejb.BeanContext;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.jee.ContainerTransaction;
@@ -27,6 +28,7 @@ import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.jee.TransAttribute;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
+import org.junit.AfterClass;
 
 import javax.ejb.EJBTransactionRequiredException;
 import javax.ejb.Local;
@@ -53,6 +55,16 @@ import static org.apache.openejb.assembler.classic.MethodTransactionBuilder.norm
 public class TransactionAttributesTest extends TestCase {
     private Map<Method, MethodAttributeInfo> attributes;
     private Object bean;
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        OpenEJB.destroy();
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        OpenEJB.destroy();
+    }
 
     public void test() throws Exception {
         final Assembler assembler = new Assembler();

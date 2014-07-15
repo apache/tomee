@@ -17,6 +17,7 @@
 package org.apache.openejb.core.stateful;
 
 import junit.framework.TestCase;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
@@ -83,6 +84,11 @@ public class StatefulTimeoutTest extends TestCase {
         ejbJar.addEnterpriseBean(bean5);
 
         assembler.createApplication(config.configureApplication(ejbJar));
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        OpenEJB.destroy();
     }
 
     public void testZeroTimeout() throws Exception {

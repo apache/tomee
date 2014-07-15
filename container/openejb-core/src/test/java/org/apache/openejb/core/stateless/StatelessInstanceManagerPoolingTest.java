@@ -18,6 +18,7 @@
 package org.apache.openejb.core.stateless;
 
 import junit.framework.TestCase;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
@@ -93,7 +94,7 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
 
     public void testStatelessBeanRelease() throws Exception {
 
-        final int count = 20;
+        final int count = 30;
         final CountDownLatch invocations = new CountDownLatch(count);
         final InitialContext ctx = new InitialContext();
         final Runnable counterBeanLocal = new Runnable() {
@@ -121,7 +122,7 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
             thread.start();
         }
 
-        final boolean success = invocations.await(20000, TimeUnit.MILLISECONDS);
+        final boolean success = invocations.await(30, TimeUnit.SECONDS);
 
         assertTrue("invocations timeout -> invocations.getCount() == " + invocations.getCount(), success);
 
@@ -221,6 +222,10 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
         assembler.createApplication(config.configureApplication(ejbJar));
     }
 
+    @Override
+    protected void tearDown() throws Exception {
+        OpenEJB.destroy();
+    }
 
     public static interface Counter {
         int count();

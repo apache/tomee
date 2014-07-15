@@ -32,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 public class OpenEJBJUnitDebugListener extends RunListener {
     private static final String OS = System.getProperty("os.name", "unknown");
     private static final boolean UNIX = !OS.toLowerCase(Locale.ENGLISH).startsWith("windows");
+
     static {
         System.out.println(">>OpenEJBJUnitDebugListener> will debug - unix? " + UNIX + " (" + OS + ")");
     }
@@ -109,7 +110,7 @@ public class OpenEJBJUnitDebugListener extends RunListener {
             while (!done) {
                 try {
                     sleep(50);
-                } catch (InterruptedException e) {
+                } catch (final InterruptedException e) {
                     Thread.interrupted();
                     break;
                 }

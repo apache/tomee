@@ -17,6 +17,7 @@
 package org.apache.openejb.core.stateless;
 
 import junit.framework.TestCase;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.api.Monitor;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
@@ -26,6 +27,7 @@ import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.monitoring.LocalMBeanServer;
+import org.junit.AfterClass;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -109,6 +111,11 @@ public class StatelessInvocationStatsTest extends TestCase {
     @Override
     public void tearDown() {
         System.clearProperty(LocalMBeanServer.OPENEJB_JMX_ACTIVE);
+    }
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        OpenEJB.destroy();
     }
 
     /**

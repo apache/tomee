@@ -48,6 +48,6 @@ public class BeanContextsInitializedEvent {
 
     @Override
     public String toString() {
-        return "BeanContextsInitializedEvent{app=" + app.appId +"}";
+        return "BeanContextsInitializedEvent{app=" + app.appId + "}";
     }
 }

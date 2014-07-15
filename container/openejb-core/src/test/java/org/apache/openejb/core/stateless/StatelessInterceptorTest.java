@@ -17,6 +17,7 @@
 package org.apache.openejb.core.stateless;
 
 import junit.framework.TestCase;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
@@ -83,6 +84,11 @@ public class StatelessInterceptorTest extends TestCase {
         final Properties properties = new Properties(System.getProperties());
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
         ctx = new InitialContext(properties);
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        OpenEJB.destroy();
     }
 
     public void test() throws Exception {

@@ -17,6 +17,7 @@
 package org.apache.openejb.core.singleton;
 
 import junit.framework.TestCase;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
@@ -130,6 +131,11 @@ public class SingletonContainerTest extends TestCase {
 
     }
 
+    @Override
+    protected void tearDown() throws Exception {
+        OpenEJB.destroy();
+    }
+
     private static String join(final String delimeter, final List items) {
         final StringBuilder sb = new StringBuilder();
         for (final Object item : items) {
@@ -152,7 +158,7 @@ public class SingletonContainerTest extends TestCase {
 
     public static class WidgetBean implements Widget, RemoteWidget {
 
-        private static Stack<Lifecycle> lifecycle = new Stack<Lifecycle>();
+        private static final Stack<Lifecycle> lifecycle = new Stack<Lifecycle>();
 
         public WidgetBean() {
             WidgetBean.lifecycle.push(Lifecycle.CONSTRUCTOR);

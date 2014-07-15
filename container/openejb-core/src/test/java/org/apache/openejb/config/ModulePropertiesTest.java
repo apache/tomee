@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.ModuleContext;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
@@ -44,6 +45,11 @@ public class ModulePropertiesTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         SystemInstance.reset();
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        OpenEJB.destroy();
     }
 
     public void testFile() throws Exception {

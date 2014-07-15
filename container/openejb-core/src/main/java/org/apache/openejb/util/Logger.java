@@ -273,7 +273,7 @@ public class Logger {
     public Logger(final LogCategory category, final LogStream logStream, final String baseName) {
         this.category = category;
         this.baseName = baseName;
-        this.logStream = new LogStreamAsync(logStream);
+        this.logStream = ("true".equals(SystemInstance.get().getProperty("openejb.log.async", "false")) ? new LogStreamAsync(logStream) : logStream);
     }
 
     public static Logger getInstance(final LogCategory category, final Class clazz) {

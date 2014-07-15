@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.core.stateful;
 
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
@@ -23,6 +24,7 @@ import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatefulBean;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -66,6 +68,11 @@ public class StatefulBeanManagedTest {
         ejbJar.addEnterpriseBean(new StatefulBean(MyBean.class));
 
         assembler.createApplication(config.configureApplication(ejbJar));
+    }
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        OpenEJB.destroy();
     }
 
     @Test

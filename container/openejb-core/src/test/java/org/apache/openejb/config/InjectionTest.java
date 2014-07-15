@@ -18,12 +18,13 @@
 package org.apache.openejb.config;
 
 import junit.framework.TestCase;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
-import org.apache.openejb.core.ivm.naming.InitContextFactory;
+import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.InjectionTarget;
@@ -73,7 +74,7 @@ public class InjectionTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
+        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
 
         final ConfigurationFactory config = new ConfigurationFactory();
         final Assembler assembler = new Assembler();
@@ -121,6 +122,11 @@ public class InjectionTest extends TestCase {
         assembler.createApplication(config.configureApplication(ejbJar));
     }
 
+    @Override
+    protected void tearDown() throws Exception {
+        OpenEJB.destroy();
+    }
+
     private String name(final String name) {
         return "java:comp/env/" + WidgetBean.class.getName() + "/" + name;
     }
@@ -164,40 +170,40 @@ public class InjectionTest extends TestCase {
         private SessionContext sessionContext;
 
         @Resource
-        private String myString = "1";
+        private final String myString = "1";
 
         @Resource
-        private Double myDouble = 1.0D;
+        private final Double myDouble = 1.0D;
 
         @Resource
-        private Long myLong = 1L;
+        private final Long myLong = 1L;
 
         @Resource
-        private Float myFloat = 1.0F;
+        private final Float myFloat = 1.0F;
 
         @Resource
-        private Integer myInteger = 1;
+        private final Integer myInteger = 1;
 
         @Resource
-        private Short myShort = (short) 1;
+        private final Short myShort = (short) 1;
 
         @Resource
-        private Boolean myBoolean = true;
+        private final Boolean myBoolean = true;
 
         @Resource
-        private Byte myByte = (byte) 1;
+        private final Byte myByte = (byte) 1;
 
         @Resource
-        private Character myCharacter = '1';
+        private final Character myCharacter = '1';
 
         @Resource
-        private Class myClass = Object.class;
+        private final Class myClass = Object.class;
 
         @Resource
-        private TimeUnit myTimeUnit = TimeUnit.DAYS;
+        private final TimeUnit myTimeUnit = TimeUnit.DAYS;
 
         // injected via DD
-        private boolean injectedBoolean = false;
+        private final boolean injectedBoolean = false;
 
         // injected via DD
         private EJBContext injectedContext;

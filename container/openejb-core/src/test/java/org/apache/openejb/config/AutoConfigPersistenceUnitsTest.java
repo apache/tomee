@@ -18,6 +18,7 @@ package org.apache.openejb.config;
 
 import junit.framework.TestCase;
 import org.apache.openejb.Core;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
@@ -73,6 +74,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
     @Override
     public void tearDown() {
         System.getProperties().remove(LocalMBeanServer.OPENEJB_JMX_ACTIVE);
+        OpenEJB.destroy();
     }
 
     /**
