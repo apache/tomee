@@ -208,7 +208,7 @@ public final class SystemInstance {
      * associated with that.  Theoretically, you can't lookup things that you can't already see
      * in your classloader.
      *
-     * @param type
+     * @param type Class
      * @return the object associated with the class type or null
      * @throws IllegalStateException of the component isn't found
      */
