@@ -68,7 +68,7 @@ import static org.junit.Assert.assertEquals;
 public class DynamicDataSourceTest {
 
     @After
-    protected void tearDown() throws Exception {
+    public void tearDown() throws Exception {
         OpenEJB.destroy();
     }
 

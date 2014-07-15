@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.meta;
 
+import org.apache.openejb.OpenEJB;
+import org.junit.AfterClass;
 import org.junit.runner.RunWith;
 
 import javax.ejb.MessageDriven;
@@ -32,6 +34,11 @@ import java.lang.annotation.Target;
 
 @RunWith(MetaRunner.class)
 public class MessageDrivenMetaTest {
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        OpenEJB.destroy();
+    }
 
     @MetaTest(expected = ExpectedBean.class, actual = ActualBean.class)
     public void test() {
