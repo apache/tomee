@@ -262,9 +262,9 @@ public class RemoteServer {
                     final File endorsed = new File(home, "endorsed");
                     final File temp = new File(home, "temp");
 
-                    if (!addedArgs.containsKey("-Dcom.sun.management.jmxremote")) {
-                        argsList.add("-Dcom.sun.management.jmxremote");
-                    }
+//                    if (!addedArgs.containsKey("-Dcom.sun.management.jmxremote")) {
+//                        argsList.add("-Dcom.sun.management.jmxremote");
+//                    }
                     if (!addedArgs.containsKey("-Djava.util.logging.manager")) {
                         argsList.add("-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager");
                     }
