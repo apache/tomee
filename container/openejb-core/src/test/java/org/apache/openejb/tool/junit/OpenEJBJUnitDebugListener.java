@@ -34,7 +34,7 @@ public class OpenEJBJUnitDebugListener extends RunListener {
     private static final boolean UNIX = !OS.toLowerCase(Locale.ENGLISH).startsWith("windows");
 
     static {
-        System.out.println(">>OpenEJBJUnitDebugListener> will debug - unix? " + UNIX + " (" + OS + ")");
+        //System.out.println(">>OpenEJBJUnitDebugListener> will debug - unix? " + UNIX + " (" + OS + ")");
     }
 
     private MonitoringThread thread;
@@ -75,7 +75,10 @@ public class OpenEJBJUnitDebugListener extends RunListener {
     @Override
     public void testFailure(final Failure failure) throws Exception {
         if (failure != null) {
-            System.out.println(">>OpenEJBJUnitDebugListener> got failure " + failure.getTestHeader());
+            System.out.println(">>OpenEJBJUnitDebugListener> FAILURE on " + failure.getTestHeader());
+            System.out.println(">>OpenEJBJUnitDebugListener> : " + failure.getDescription());
+            System.out.println(">>OpenEJBJUnitDebugListener> : " + failure.getException());
+            System.out.println(">>OpenEJBJUnitDebugListener> : " + failure.getTrace());
         }
         doStop();
     }
