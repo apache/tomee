@@ -29,22 +29,22 @@ import org.apache.openejb.test.singleton.SingletonTestSuite;
 
 public class ClientTestSuite extends junit.framework.TestCase {
 
-    public ClientTestSuite(String name){
+    public ClientTestSuite(final String name) {
         super(name);
     }
 
     public static junit.framework.Test suite() {
-        TestSuite suite = new TestSuite();
+        final TestSuite suite = new TestSuite();
         if (Boolean.getBoolean("openejb.test.servlets")) {
             suite.addTest(ServletTestSuite.suite());
         }
-        suite.addTest( SingletonTestSuite.suite() );
-        suite.addTest( StatelessTestSuite.suite() );
-        suite.addTest( StatefulTestSuite.suite() );
-        suite.addTest( BmpTestSuite.suite() );
-        suite.addTest( CmpTestSuite.suite() );
-        suite.addTest( Cmp2TestSuite.suite() );
-        suite.addTest( MdbTestSuite.suite() );
+        suite.addTest(SingletonTestSuite.suite());
+        suite.addTest(StatelessTestSuite.suite());
+        suite.addTest(StatefulTestSuite.suite());
+        suite.addTest(BmpTestSuite.suite());
+        suite.addTest(CmpTestSuite.suite());
+        suite.addTest(Cmp2TestSuite.suite());
+        suite.addTest(MdbTestSuite.suite());
         return suite;
     }
 }

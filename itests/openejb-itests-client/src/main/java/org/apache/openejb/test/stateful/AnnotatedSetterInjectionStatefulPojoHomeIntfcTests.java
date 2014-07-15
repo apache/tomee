@@ -21,8 +21,7 @@ import javax.ejb.EJB;
 
 /**
  * [2] Should be run as the second test suite of the BasicStatelessTestClients
- * 
- * 
+ *
  * @version $Rev$ $Date$
  */
 public class AnnotatedSetterInjectionStatefulPojoHomeIntfcTests extends AnnotatedSetterInjectionStatefulTestClient {
@@ -30,26 +29,26 @@ public class AnnotatedSetterInjectionStatefulPojoHomeIntfcTests extends Annotate
     public AnnotatedSetterInjectionStatefulPojoHomeIntfcTests() {
         super("AnnotatedSetterInjectionStatefulHomeIntfc.");
     }
-    
-    protected void setUp() throws Exception{
+
+    protected void setUp() throws Exception {
         super.setUp();
     }
-    
-    @EJB(name="client/tests/stateful/BasicStatefulPojoHome",
-   	     beanInterface=BasicStatefulHome.class)
-    public void setEjbHome(BasicStatefulHome bsEjbHome) {
-    	ejbHome = bsEjbHome;
+
+    @EJB(name = "client/tests/stateful/BasicStatefulPojoHome",
+        beanInterface = BasicStatefulHome.class)
+    public void setEjbHome(final BasicStatefulHome bsEjbHome) {
+        ejbHome = bsEjbHome;
     }
-    
+
     //===============================
     // Test home interface methods
     //
-    public void test01_create(){
-        try{
+    public void test01_create() {
+        try {
             ejbObject = ejbHome.createObject("BasicStatefulObject");
-            assertNotNull( "The EJBObject is null", ejbObject );
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            assertNotNull("The EJBObject is null", ejbObject);
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
     //

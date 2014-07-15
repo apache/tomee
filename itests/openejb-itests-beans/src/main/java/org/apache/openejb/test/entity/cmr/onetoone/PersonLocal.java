@@ -19,18 +19,20 @@ package org.apache.openejb.test.entity.cmr.onetoone;
 import javax.ejb.EJBLocalObject;
 
 /**
- *
  * @version $Revision$ $Date$
  */
 public interface PersonLocal extends EJBLocalObject {
     // CMP
     public Integer getId();
+
     public void setId(Integer field1);
 
     public String getName();
+
     public void setName(String field2);
-    
+
     // CMR
     public LicenseLocal getLicense();
+
     public void setLicense(LicenseLocal license);
 }

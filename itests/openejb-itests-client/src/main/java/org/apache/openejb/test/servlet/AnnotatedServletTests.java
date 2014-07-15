@@ -19,11 +19,11 @@ package org.apache.openejb.test.servlet;
 public class AnnotatedServletTests extends ServletTestClient {
     protected JndiTestServlet testServlet;
 
-    public AnnotatedServletTests(){
+    public AnnotatedServletTests() {
         super("AnnotatedServlet");
     }
 
-    protected void setUp() throws Exception{
+    protected void setUp() throws Exception {
         super.setUp();
         testServlet = newServletProxy(JndiTestServlet.class);
     }

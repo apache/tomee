@@ -19,16 +19,16 @@ package org.apache.openejb.test.stateful;
 import org.apache.openejb.test.TestManager;
 import org.apache.openejb.test.TestFailureException;
 
-public class StatefulPersistenceContextTests extends StatefulTestClient{
+public class StatefulPersistenceContextTests extends StatefulTestClient {
 
     protected PersistenceContextStatefulObject ejbObject;
     protected PersistenceContextStatefulHome ejbHome;
 
-    public StatefulPersistenceContextTests(){
+    public StatefulPersistenceContextTests() {
         super("PERSISTENCE_CONTEXT.");
     }
 
-    protected void setUp() throws Exception{
+    protected void setUp() throws Exception {
         super.setUp();
         ejbHome = (PersistenceContextStatefulHome) initialContext.lookup("client/tests/stateful/PersistenceContextStatefulBean");
         ejbObject = ejbHome.create();
@@ -45,7 +45,7 @@ public class StatefulPersistenceContextTests extends StatefulTestClient{
         try {
             /*[1] Drop database table */
             TestManager.getDatabase().dropEntityTable();
-        } catch (Exception e){
+        } catch (final Exception e) {
             throw e;
         } finally {
             super.tearDown();
@@ -53,42 +53,42 @@ public class StatefulPersistenceContextTests extends StatefulTestClient{
     }
 
     public void test01_persistenceContext() {
-        try{
+        try {
             ejbObject.testPersistenceContext();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
     public void test02_extendedPersistenceContext() {
-        try{
+        try {
             ejbObject.testExtendedPersistenceContext();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
     public void test03_propagatedPersistenceContext() {
-        try{
+        try {
             ejbObject.testPropagatedPersistenceContext();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
     public void test04_propogation() {
-        try{
+        try {
             ejbObject.testPropgation();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 }

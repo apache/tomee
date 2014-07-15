@@ -22,7 +22,6 @@ import javax.ejb.EJBObject;
 
 /**
  * [7] Should be run as the seventh test suite of the UnknownCmpTestClients
- *
  */
 public class UnknownHandleTests extends UnknownCmpTestClient {
 
@@ -32,7 +31,7 @@ public class UnknownHandleTests extends UnknownCmpTestClient {
 
     protected void setUp() throws Exception {
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/entity/cmp/UnknownCmpHome");
+        final Object obj = initialContext.lookup("client/tests/entity/cmp/UnknownCmpHome");
         ejbHome = (UnknownCmpHome) PortableRemoteObject.narrow(obj, UnknownCmpHome.class);
         ejbObject = ejbHome.createObject("Fifth Bean");
         ejbHandle = ejbObject.getHandle();
@@ -49,11 +48,11 @@ public class UnknownHandleTests extends UnknownCmpTestClient {
     public void test01_getEJBObject() {
 
         try {
-            EJBObject object = ejbHandle.getEJBObject();
+            final EJBObject object = ejbHandle.getEJBObject();
             assertNotNull("The EJBObject is null", object);
             // Wait until isIdentical is working.
             //assertTrue("EJBObjects are not identical", object.isIdentical(ejbObject));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
@@ -69,10 +68,10 @@ public class UnknownHandleTests extends UnknownCmpTestClient {
             try {
                 ejbObject.businessMethod("Should throw an exception");
                 assertTrue("Calling business method after removing the EJBObject does not throw an exception", false);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 assertTrue(true);
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         } finally {
             ejbObject = null;

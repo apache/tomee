@@ -19,24 +19,23 @@ package org.apache.openejb.test.singleton;
 import javax.ejb.EJB;
 
 /**
- * 
  * @version $Rev: 525022 $ $Date: 2007-04-02 21:19:21 -0700 (Mon, 02 Apr 2007) $
  */
 public abstract class BasicSingletonLocalTestClient extends SingletonTestClient {
 
-	@EJB(name="client/tests/singleton/BasicSingletonPojoHomeLocal",
-		 beanInterface = BasicSingletonLocalHome.class)
-	protected BasicSingletonLocalHome ejbLocalHome = null;
+    @EJB(name = "client/tests/singleton/BasicSingletonPojoHomeLocal",
+        beanInterface = BasicSingletonLocalHome.class)
+    protected BasicSingletonLocalHome ejbLocalHome = null;
     protected BasicSingletonLocalObject ejbLocalObject = null;
 
-    public BasicSingletonLocalTestClient(String name){
+    public BasicSingletonLocalTestClient(final String name) {
         super(name);
     }
-    
-    protected Object cast(Object object, Class type) {
-    	return type.cast(object);
+
+    protected Object cast(final Object object, final Class type) {
+        return type.cast(object);
     }
-    
+
 }
 
 

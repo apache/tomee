@@ -19,26 +19,26 @@ package org.apache.openejb.test.stateful;
 
 public class StatefulPojoLocalIntfcTests extends BasicStatefulLocalTestClient {
 
-    public StatefulPojoLocalIntfcTests(){
+    public StatefulPojoLocalIntfcTests() {
         super("PojoLocalIntfc.");
     }
-    
-    protected void setUp() throws Exception{
+
+    protected void setUp() throws Exception {
         super.setUp();
         ejbLocalHome = (BasicStatefulLocalHome) initialContext.lookup("client/tests/stateful/BasicStatefulPojoHomeLocal");
         ejbLocalObject = ejbLocalHome.create("Third Bean");
     }
-    
-   
+
+
     //
     // Test local interface methods of ejb3 stateful bean
     //===============================
-    public void test01_isIdentical(){
-        try{            
-            String str = ejbLocalObject.businessMethod("Hello");
-            assertTrue( "The Strings are not equal", str.equals("olleH") );
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+    public void test01_isIdentical() {
+        try {
+            final String str = ejbLocalObject.businessMethod("Hello");
+            assertTrue("The Strings are not equal", str.equals("olleH"));
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 

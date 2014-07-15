@@ -16,12 +16,12 @@
  */
 package org.apache.openejb.test.entity.bmp;
 
-public abstract class BasicBmpTestClient extends BmpTestClient{
-    
-    protected BasicBmpHome   ejbHome;
+public abstract class BasicBmpTestClient extends BmpTestClient {
+
+    protected BasicBmpHome ejbHome;
     protected BasicBmpObject ejbObject;
 
-    public BasicBmpTestClient(String name){
+    public BasicBmpTestClient(final String name) {
         super(name);
     }
 }

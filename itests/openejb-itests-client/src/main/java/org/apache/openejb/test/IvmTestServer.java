@@ -23,50 +23,49 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 
 /**
- * 
- * @version $Rev$ $Date$ 
+ * @version $Rev$ $Date$
  */
 public class IvmTestServer implements TestServer {
 
     private Properties properties;
 
-    public void init(Properties props){
-        
+    public void init(final Properties props) {
+
         properties = props;
-        
-        try{
+
+        try {
             props.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
 
             props.put("Default JDBC Database", "new://Resource?type=DataSource");
             props.put("Default JDBC Database.JdbcUrl", "jdbc:hsqldb:mem:" + IvmTestServer.class.getSimpleName() + new Random().nextInt(250) + ";shutdown=true");
 
-            Properties p = new Properties();
+            final Properties p = new Properties();
             p.putAll(props);
             p.put("openejb.loader", "embed");
-            new InitialContext( p );    // initialize openejb via constructing jndi tree
-            
-        //OpenEJB.init(properties);
-        }catch(Exception oe){
+            new InitialContext(p);    // initialize openejb via constructing jndi tree
+
+            //OpenEJB.init(properties);
+        } catch (final Exception oe) {
             System.out.println("=========================");
-            System.out.println(""+oe.getMessage());
+            System.out.println("" + oe.getMessage());
             System.out.println("=========================");
             oe.printStackTrace();
             throw new RuntimeException("OpenEJB could not be initiated");
         }
     }
 
-    public void destroy(){
+    public void destroy() {
     }
 
-    public void start(){
+    public void start() {
     }
 
-    public void stop(){
+    public void stop() {
 
     }
 
-    public Properties getContextEnvironment(){
-        return (Properties)properties.clone();
+    public Properties getContextEnvironment() {
+        return (Properties) properties.clone();
     }
 
 }

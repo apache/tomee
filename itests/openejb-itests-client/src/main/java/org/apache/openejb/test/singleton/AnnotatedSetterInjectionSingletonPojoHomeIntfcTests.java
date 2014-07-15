@@ -21,8 +21,7 @@ import javax.ejb.EJB;
 
 /**
  * [2] Should be run as the second test suite of the BasicSingletonTestClients
- * 
- * 
+ *
  * @version $Rev: 607077 $ $Date: 2007-12-27 06:55:23 -0800 (Thu, 27 Dec 2007) $
  */
 public class AnnotatedSetterInjectionSingletonPojoHomeIntfcTests extends AnnotatedSetterInjectionSingletonTestClient {
@@ -30,26 +29,26 @@ public class AnnotatedSetterInjectionSingletonPojoHomeIntfcTests extends Annotat
     public AnnotatedSetterInjectionSingletonPojoHomeIntfcTests() {
         super("AnnotatedSetterInjectionSingletonHomeIntfc.");
     }
-    
-    protected void setUp() throws Exception{
+
+    protected void setUp() throws Exception {
         super.setUp();
     }
-    
-    @EJB(name="client/tests/singleton/BasicSingletonPojoHome",
-   	     beanInterface=BasicSingletonHome.class)
-    public void setEjbHome(BasicSingletonHome bsEjbHome) {
-    	ejbHome = bsEjbHome;
+
+    @EJB(name = "client/tests/singleton/BasicSingletonPojoHome",
+        beanInterface = BasicSingletonHome.class)
+    public void setEjbHome(final BasicSingletonHome bsEjbHome) {
+        ejbHome = bsEjbHome;
     }
-    
+
     //===============================
     // Test home interface methods
     //
-    public void test01_create(){
-        try{
+    public void test01_create() {
+        try {
             ejbObject = ejbHome.createObject();
-            assertNotNull( "The EJBObject is null", ejbObject );
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            assertNotNull("The EJBObject is null", ejbObject);
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
     //

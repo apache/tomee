@@ -21,33 +21,34 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 import javax.transaction.UserTransaction;
-public class Transaction implements java.io.Externalizable{
-    
+
+public class Transaction implements java.io.Externalizable {
+
     private String instance;
 
-    public Transaction(UserTransaction obj){
+    public Transaction(final UserTransaction obj) {
         instance = obj.getClass().getName() + "@" + Integer.toHexString(obj.hashCode());
     }
 
-    public Transaction(){
+    public Transaction() {
     }
 
-    public boolean equals(Object object){
-        if ( !(object instanceof Transaction ) ) return false;
+    public boolean equals(final Object object) {
+        if (!(object instanceof Transaction)) return false;
 
-        Transaction that = (Transaction)object;
+        final Transaction that = (Transaction) object;
         return this.instance.equals(that.instance);
     }
 
-    public void writeExternal(ObjectOutput out) throws IOException {
+    public void writeExternal(final ObjectOutput out) throws IOException {
         out.writeUTF(instance);
     }
-    
-    public void readExternal(ObjectInput in) throws IOException,ClassNotFoundException {
+
+    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
         instance = in.readUTF();
     }
 
-    public String toString(){
+    public String toString() {
         return instance;
     }
 }

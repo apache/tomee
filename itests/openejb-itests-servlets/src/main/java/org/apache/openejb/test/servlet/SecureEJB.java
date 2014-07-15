@@ -35,7 +35,7 @@ public class SecureEJB implements SecureEJBLocal {
         return context.getCallerPrincipal();
     }
 
-    public boolean isCallerInRole(String role) {
+    public boolean isCallerInRole(final String role) {
         return context.isCallerInRole(role);
     }
 

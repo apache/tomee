@@ -18,20 +18,19 @@ package org.apache.openejb.test.singleton;
 
 /**
  * [2] Should be run as the second test suite of the BasicSingletonTestClients
- * 
- * 
+ *
  * @version $Rev: 607077 $ $Date: 2007-12-27 06:55:23 -0800 (Thu, 27 Dec 2007) $
  */
 public abstract class AnnotatedSetterInjectionSingletonTestClient extends BasicSingletonTestClient {
 
-    public AnnotatedSetterInjectionSingletonTestClient(String name) {
+    public AnnotatedSetterInjectionSingletonTestClient(final String name) {
         super("AnnotatedSetterInjectionSingletonTestClient." + name);
     }
-    
-    protected void setUp() throws Exception{
+
+    protected void setUp() throws Exception {
         super.setUp();
         processSetterInjections();
     }
-    
+
 }
 

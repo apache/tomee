@@ -34,7 +34,6 @@ public interface BasicStatefulBusinessRemote {
 
     /**
      * Throws an ApplicationException when invoked
-     *
      */
     public void throwApplicationException() throws ApplicationException;
 
@@ -43,7 +42,6 @@ public interface BasicStatefulBusinessRemote {
      * This is a system exception and should result in the
      * destruction of the instance and invalidation of the
      * remote reference.
-     *
      */
     public void throwSystemException_NullPointer();
 
@@ -63,9 +61,9 @@ public interface BasicStatefulBusinessRemote {
      * @return operations policy
      */
     public OperationsPolicy getAllowedOperationsReport(String methodName);
-    
+
     /**
      * Verify if we can invoke remove() on a stateful session bean as a business method
-     */    
+     */
     public Object remove();
 }

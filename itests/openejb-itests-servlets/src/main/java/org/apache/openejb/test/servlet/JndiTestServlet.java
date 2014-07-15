@@ -19,27 +19,42 @@ package org.apache.openejb.test.servlet;
 
 public interface JndiTestServlet {
     public void lookupStatelessBean();
+
     public void lookupStatelessBusinessLocal();
+
     public void lookupStatelessBusinessRemote();
 
     public void lookupStatefulBean();
+
     public void lookupStatefulBusinessLocal();
+
     public void lookupStatefulBusinessRemote();
 
     public void lookupEntityBean();
 
     public void lookupResource();
+
     public void lookupJMSConnectionFactory();
+
     public void lookupPersistenceUnit();
+
     public void lookupPersistenceContext();
 
     public void lookupStringEntry();
+
     public void lookupDoubleEntry();
+
     public void lookupLongEntry();
+
     public void lookupFloatEntry();
+
     public void lookupIntegerEntry();
+
     public void lookupShortEntry();
+
     public void lookupBooleanEntry();
+
     public void lookupByteEntry();
+
     public void lookupCharacterEntry();
 }

@@ -28,7 +28,7 @@ public class ManyOwningSideBean_ManyOwningSideBean extends ManyOwningSideBean {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(final Integer id) {
         this.id = id;
     }
 
@@ -36,7 +36,7 @@ public class ManyOwningSideBean_ManyOwningSideBean extends ManyOwningSideBean {
         return field1;
     }
 
-    public void setField1(Integer field1) {
+    public void setField1(final Integer field1) {
         this.field1 = field1;
     }
 
@@ -44,11 +44,11 @@ public class ManyOwningSideBean_ManyOwningSideBean extends ManyOwningSideBean {
         return oneInverseSide;
     }
 
-    public void setOneInverseSide(OneInverseSideLocal oneInverseSide) {
+    public void setOneInverseSide(final OneInverseSideLocal oneInverseSide) {
         this.oneInverseSide = oneInverseSide;
     }
 
-    public OneInverseSideLocal ejbSelectSomething(Integer id) throws FinderException {
+    public OneInverseSideLocal ejbSelectSomething(final Integer id) throws FinderException {
         return null;
     }
 }

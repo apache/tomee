@@ -19,24 +19,23 @@ package org.apache.openejb.test.stateless;
 import javax.ejb.EJB;
 
 /**
- * 
  * @version $Rev$ $Date$
  */
 public abstract class BasicStatelessLocalTestClient extends StatelessTestClient {
 
-	@EJB(name="client/tests/stateless/BasicStatelessPojoHomeLocal",
-		 beanInterface = BasicStatelessLocalHome.class)
-	protected BasicStatelessLocalHome ejbLocalHome = null;
+    @EJB(name = "client/tests/stateless/BasicStatelessPojoHomeLocal",
+        beanInterface = BasicStatelessLocalHome.class)
+    protected BasicStatelessLocalHome ejbLocalHome = null;
     protected BasicStatelessLocalObject ejbLocalObject = null;
 
-    public BasicStatelessLocalTestClient(String name){
+    public BasicStatelessLocalTestClient(final String name) {
         super(name);
     }
-    
-    protected Object cast(Object object, Class type) {
-    	return type.cast(object);
+
+    protected Object cast(final Object object, final Class type) {
+        return type.cast(object);
     }
-    
+
 }
 
 

@@ -22,14 +22,14 @@ import javax.ejb.EJBObject;
 
 public class StatefulPojoHandleTests extends BasicStatefulTestClient {
 
-	public StatefulPojoHandleTests() {
-	     super("PojoHandle.");
+    public StatefulPojoHandleTests() {
+        super("PojoHandle.");
     }
 
-    protected void setUp() throws Exception{
+    protected void setUp() throws Exception {
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/stateful/BasicStatefulPojoHome");
-        ejbHome = (BasicStatefulHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicStatefulHome.class);
+        final Object obj = initialContext.lookup("client/tests/stateful/BasicStatefulPojoHome");
+        ejbHome = (BasicStatefulHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicStatefulHome.class);
         ejbObject = ejbHome.createObject("StatefulPojoHandleTests Bean");
         ejbHandle = ejbObject.getHandle();
     }
@@ -37,33 +37,34 @@ public class StatefulPojoHandleTests extends BasicStatefulTestClient {
     //=================================
     // Test handle methods
     //
-    public void test01_getEJBObject(){
+    public void test01_getEJBObject() {
 
-        try{
-            EJBObject object = ejbHandle.getEJBObject();
-            assertNotNull( "The EJBObject is null", object );            
+        try {
+            final EJBObject object = ejbHandle.getEJBObject();
+            assertNotNull("The EJBObject is null", object);
             assertTrue("EJBObjects are not identical", object.isIdentical(ejbObject));
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
+
     /**
      * This remove method of the EJBHome is placed here as it
      * is more a test on the handle then on the remove method
      * itself.
      */
-    public void test02_EJBHome_remove(){
-        try{
+    public void test02_EJBHome_remove() {
+        try {
             ejbHome.remove(ejbHandle);
-            try{
+            try {
                 ejbObject.businessMethod("Should throw an exception");
-                assertTrue( "Calling business method after removing the EJBObject does not throw an exception", false );
-            } catch (NoSuchObjectException e){
-                assertTrue( true );
+                assertTrue("Calling business method after removing the EJBObject does not throw an exception", false);
+            } catch (final NoSuchObjectException e) {
+                assertTrue(true);
                 return;
             }
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
     //

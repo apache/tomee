@@ -23,7 +23,6 @@ import javax.rmi.PortableRemoteObject;
 
 /**
  * [4] Should be run as the fourth test suite of the ComplexCmpTestClients
- *
  */
 public class ComplexEjbObjectTests extends ComplexCmpTestClient {
 
@@ -33,7 +32,7 @@ public class ComplexEjbObjectTests extends ComplexCmpTestClient {
 
     protected void setUp() throws Exception {
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/entity/cmp/ComplexCmpHome");
+        final Object obj = initialContext.lookup("client/tests/entity/cmp/ComplexCmpHome");
         ejbHome = (ComplexCmpHome) PortableRemoteObject.narrow(obj, ComplexCmpHome.class);
         ejbObject = ejbHome.createObject("Third Bean");
     }
@@ -43,7 +42,7 @@ public class ComplexEjbObjectTests extends ComplexCmpTestClient {
         if (ejbObject != null) {
             try {
                 ejbObject.remove();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw e;
             }
         }
@@ -57,7 +56,7 @@ public class ComplexEjbObjectTests extends ComplexCmpTestClient {
         try {
             ejbHandle = ejbObject.getHandle();
             assertNotNull("The Handle is null", ejbHandle);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
@@ -67,7 +66,7 @@ public class ComplexEjbObjectTests extends ComplexCmpTestClient {
             ejbPrimaryKey = ejbObject.getPrimaryKey();
             assertNotNull("The primary key is null", ejbPrimaryKey);
             assertTrue("Expected (ejbPrimaryKey instanceof ComplexCmpBeanPk) but was instanceof " + ejbPrimaryKey.getClass().getName(), ejbPrimaryKey instanceof ComplexCmpBeanPk);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
@@ -76,22 +75,22 @@ public class ComplexEjbObjectTests extends ComplexCmpTestClient {
     public void test03_isIdentical() {
         try {
             assertTrue("The EJBObjects are not equal", ejbObject.isIdentical(ejbObject));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
     public void test04_getEjbHome() {
         try {
-            EJBHome home = ejbObject.getEJBHome();
+            final EJBHome home = ejbObject.getEJBHome();
             assertNotNull("The EJBHome is null", home);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
-    public void test05_remove(){
-        try{
+    public void test05_remove() {
+        try {
             // remove the ejb
             ejbObject.remove();
 
@@ -99,18 +98,18 @@ public class ComplexEjbObjectTests extends ComplexCmpTestClient {
             try {
                 ejbHome.findByPrimaryKey((ComplexCmpBeanPk) ejbPrimaryKey);
                 fail("Entity was not actually removed");
-            } catch (ObjectNotFoundException e) {
+            } catch (final ObjectNotFoundException e) {
             }
 
             // verify the proxy is dead
-            try{
+            try {
                 ejbObject.businessMethod("Should throw an exception");
-                assertTrue( "Calling business method after removing the EJBObject does not throw an exception", false );
-            } catch (Exception e){
+                assertTrue("Calling business method after removing the EJBObject does not throw an exception", false);
+            } catch (final Exception e) {
             }
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
-        } finally{
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
+        } finally {
             ejbObject = null;
         }
     }

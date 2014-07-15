@@ -18,14 +18,14 @@ package org.apache.openejb.test.stateless;
 
 import javax.ejb.EJB;
 
-public abstract class BasicStatelessTestClient extends StatelessTestClient{
-    
-	@EJB(name="client/tests/stateless/BasicStatelessPojoHome",
-	     beanInterface=BasicStatelessHome.class)
+public abstract class BasicStatelessTestClient extends StatelessTestClient {
+
+    @EJB(name = "client/tests/stateless/BasicStatelessPojoHome",
+        beanInterface = BasicStatelessHome.class)
     protected BasicStatelessHome ejbHome = null;
     protected BasicStatelessObject ejbObject = null;
 
-    public BasicStatelessTestClient(String name){
+    public BasicStatelessTestClient(final String name) {
         super(name);
     }
 }

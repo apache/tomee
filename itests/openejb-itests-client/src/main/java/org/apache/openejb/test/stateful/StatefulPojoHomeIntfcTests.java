@@ -19,29 +19,28 @@ package org.apache.openejb.test.stateful;
 
 /**
  * [2] Should be run as the second test suite of the BasicStatefulTestClients
- * 
  */
 public class StatefulPojoHomeIntfcTests extends BasicStatefulTestClient {
 
-    public StatefulPojoHomeIntfcTests(){
+    public StatefulPojoHomeIntfcTests() {
         super("PojoHomeIntfc.");
     }
-    
-    protected void setUp() throws Exception{
+
+    protected void setUp() throws Exception {
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/stateful/BasicStatefulPojoHome");
-        ejbHome = (BasicStatefulHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicStatefulHome.class);
+        final Object obj = initialContext.lookup("client/tests/stateful/BasicStatefulPojoHome");
+        ejbHome = (BasicStatefulHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicStatefulHome.class);
     }
-    
+
     //===============================
     // Test home interface methods
     //
-    public void test01_create(){
-        try{
+    public void test01_create() {
+        try {
             ejbObject = ejbHome.createObject("First Bean");
             assertNotNull("The EJBObject is null", ejbObject);
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
     //

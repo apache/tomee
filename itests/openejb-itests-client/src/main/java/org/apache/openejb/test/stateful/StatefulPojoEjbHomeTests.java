@@ -21,38 +21,37 @@ import javax.ejb.RemoveException;
 
 /**
  * [3] Should be run as the third test suite of the BasicStatefulTestClients
- *
  */
 public class StatefulPojoEjbHomeTests extends BasicStatefulTestClient {
 
-    public StatefulPojoEjbHomeTests(){
+    public StatefulPojoEjbHomeTests() {
         super("EJBHome.");
     }
 
-    protected void setUp() throws Exception{
+    protected void setUp() throws Exception {
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/stateful/BasicStatefulPojoHome");
-        ejbHome = (BasicStatefulHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicStatefulHome.class);
+        final Object obj = initialContext.lookup("client/tests/stateful/BasicStatefulPojoHome");
+        ejbHome = (BasicStatefulHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicStatefulHome.class);
     }
 
     //===============================
     // Test ejb home methods
     //
-    public void test01_getEJBMetaData(){
-        try{
-        	EJBMetaData ejbMetaData = ejbHome.getEJBMetaData();
-        	assertNotNull( "The EJBMetaData is null", ejbMetaData );
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+    public void test01_getEJBMetaData() {
+        try {
+            final EJBMetaData ejbMetaData = ejbHome.getEJBMetaData();
+            assertNotNull("The EJBMetaData is null", ejbMetaData);
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
-    public void test02_getHomeHandle(){
-        try{
+    public void test02_getHomeHandle() {
+        try {
             ejbHomeHandle = ejbHome.getHomeHandle();
-            assertNotNull( "The HomeHandle is null", ejbHomeHandle );
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            assertNotNull("The HomeHandle is null", ejbHomeHandle);
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
@@ -61,14 +60,14 @@ public class StatefulPojoEjbHomeTests extends BasicStatefulTestClient {
      * 5.3.2 Removing a session object
      * A client may remove a session object using the remove() method on the javax.ejb.EJBObject
      * interface, or the remove(Handle handle) method of the javax.ejb.EJBHome interface.
-     *
+     * <p/>
      * Because session objects do not have primary keys that are accessible to clients, invoking the
      * javax.ejb.EJBHome.remove(Object primaryKey) method on a session results in the
      * javax.ejb.RemoveException.
-     *
+     * <p/>
      * ------------------------------------
      * 5.5 Session object identity
-     *
+     * <p/>
      * Session objects are intended to be private resources used only by the
      * client that created them. For this reason, session objects, from the
      * client's perspective, appear anonymous. In contrast to entity objects,
@@ -79,25 +78,25 @@ public class StatefulPojoEjbHomeTests extends BasicStatefulTestClient {
      * method is invoked on a EJBMetaData object for a Session bean, the method throws
      * the java.lang.RuntimeException.
      * ------------------------------------
-     *
+     * <p/>
      * Sections 5.3.2 and 5.5 conflict.  5.3.2 says to throw javax.ejb.RemoveException, 5.5 says to
      * throw java.rmi.RemoteException.
-     *
+     * <p/>
      * For now, we are going with java.rmi.RemoteException.
      * =====================================================================================================
      * TODO - MNour: Please add related sections from EJB3.0 Core contracts and requirements specification
-     * 		(Sections: 3.6.2.2, 3.6.3.2 and 3.6.5)
-     */ 
-    public void test03_removeByPrimaryKey(){
-        try{
+     * (Sections: 3.6.2.2, 3.6.3.2 and 3.6.5)
+     */
+    public void test03_removeByPrimaryKey() {
+        try {
             ejbHome.remove("primaryKey");
-        } catch (RemoveException e){
-            assertTrue( true );
+        } catch (final RemoveException e) {
+            assertTrue(true);
             return;
-        } catch (Exception e){
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " instead of javax.ejb.RemoveException : " + e.getMessage());
         }
-        assertTrue("javax.ejb.RemoveException should have been thrown", false );
+        assertTrue("javax.ejb.RemoveException should have been thrown", false);
     }
     //
     // Test ejb home methods

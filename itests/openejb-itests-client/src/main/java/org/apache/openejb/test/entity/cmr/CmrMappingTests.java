@@ -74,13 +74,13 @@ public class CmrMappingTests extends AbstractCMRTest {
         beginTransaction();
         try {
 
-            OneInverseSideLocal inverseLocal = createOneInverseSide(compoundPK_20_10_field1);
-            OneOwningSideLocal owningLocal = createOneOwningSide(compoundPK_20_10, compoundPK_20_10_field1);
+            final OneInverseSideLocal inverseLocal = createOneInverseSide(compoundPK_20_10_field1);
+            final OneOwningSideLocal owningLocal = createOneOwningSide(compoundPK_20_10, compoundPK_20_10_field1);
             owningLocal.setOneInverseSide(inverseLocal);
             completeTransaction();
 
             validateOneToOneRelationship();
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             e.printStackTrace();
             throw new TestFailureException(new AssertionFailedError("Received Exception " + e.getClass() + " : " + e.getMessage()));
         } finally {
@@ -90,43 +90,43 @@ public class CmrMappingTests extends AbstractCMRTest {
     }
 
     private void cleanDb() {
-        for (Integer id : oneOwningCreated) {
+        for (final Integer id : oneOwningCreated) {
             try {
 
                 findOneOwningSide(id).remove();
-            } catch (Exception e) {
+            } catch (final Exception e) {
             } finally {
                 try {
                     completeTransaction();
-                } catch (Exception ignored) {
+                } catch (final Exception ignored) {
                 }
             }
         }
         oneOwningCreated.clear();
 
-        for (Integer id : oneInverseCreated) {
+        for (final Integer id : oneInverseCreated) {
             try {
 
                 findOneInverseSide(id).remove();
-            } catch (Exception e) {
+            } catch (final Exception e) {
             } finally {
                 try {
                     completeTransaction();
-                } catch (Exception ignored) {
+                } catch (final Exception ignored) {
                 }
             }
         }
         oneInverseCreated.clear();
 
-        for (Integer id : manyCreated) {
+        for (final Integer id : manyCreated) {
             try {
 
                 findManyOwningSide(id).remove();
-            } catch (Exception e) {
+            } catch (final Exception e) {
             } finally {
                 try {
                     completeTransaction();
-                } catch (Exception ignored) {
+                } catch (final Exception ignored) {
                 }
             }
         }
@@ -137,18 +137,18 @@ public class CmrMappingTests extends AbstractCMRTest {
         beginTransaction();
         try {
 
-            OneInverseSideLocal inverseLocal = createOneInverseSide(compoundPK_20_10_field1);
-            OneOwningSideLocal owningLocal = createOneOwningSide(compoundPK_20_20, compoundPK_20_20_field1);
+            final OneInverseSideLocal inverseLocal = createOneInverseSide(compoundPK_20_10_field1);
+            final OneOwningSideLocal owningLocal = createOneOwningSide(compoundPK_20_20, compoundPK_20_20_field1);
             owningLocal.setOneInverseSide(inverseLocal);
 // todo should fail when we have fk as part of pk
 //            Assert.fail();
             completeTransaction();
-        } catch (TransactionRolledbackLocalException e) {
+        } catch (final TransactionRolledbackLocalException e) {
             if (!(e.getCause() instanceof IllegalStateException)) {
                 e.printStackTrace();
                 throw new TestFailureException(new AssertionFailedError("Received Exception " + e.getClass() + " : " + e.getMessage()));
             }
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             e.printStackTrace();
             throw new TestFailureException(new AssertionFailedError("Received Exception " + e.getClass() + " : " + e.getMessage()));
         } finally {
@@ -161,13 +161,13 @@ public class CmrMappingTests extends AbstractCMRTest {
         beginTransaction();
         try {
 
-            OneInverseSideLocal inverseLocal = createOneInverseSide(compoundPK_20_10_field1);
-            OneOwningSideLocal owningLocal = createOneOwningSide(compoundPK_20_10, compoundPK_20_10_field1);
+            final OneInverseSideLocal inverseLocal = createOneInverseSide(compoundPK_20_10_field1);
+            final OneOwningSideLocal owningLocal = createOneOwningSide(compoundPK_20_10, compoundPK_20_10_field1);
             inverseLocal.setOneOwningSide(owningLocal);
             completeTransaction();
 
             validateOneToOneRelationship();
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             e.printStackTrace();
             throw new TestFailureException(new AssertionFailedError("Received Exception " + e.getClass() + " : " + e.getMessage()));
         } finally {
@@ -180,18 +180,18 @@ public class CmrMappingTests extends AbstractCMRTest {
         beginTransaction();
         try {
 
-            OneInverseSideLocal inverseLocal = createOneInverseSide(compoundPK_20_10_field1);
-            OneOwningSideLocal owningLocal = createOneOwningSide(compoundPK_20_20, compoundPK_20_20_field1);
+            final OneInverseSideLocal inverseLocal = createOneInverseSide(compoundPK_20_10_field1);
+            final OneOwningSideLocal owningLocal = createOneOwningSide(compoundPK_20_20, compoundPK_20_20_field1);
             inverseLocal.setOneOwningSide(owningLocal);
 // todo should fail when we have fk as part of pk
 //            Assert.fail();
             completeTransaction();
-        } catch (TransactionRolledbackLocalException e) {
+        } catch (final TransactionRolledbackLocalException e) {
             if (!(e.getCause() instanceof IllegalStateException)) {
                 e.printStackTrace();
                 throw new TestFailureException(new AssertionFailedError("Received Exception " + e.getClass() + " : " + e.getMessage()));
             }
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             e.printStackTrace();
             throw new TestFailureException(new AssertionFailedError("Received Exception " + e.getClass() + " : " + e.getMessage()));
         } finally {
@@ -209,8 +209,8 @@ public class CmrMappingTests extends AbstractCMRTest {
 // todo should fail when we have fk as part of pk
 //            Assert.fail();
             completeTransaction();
-        } catch (IllegalStateException e) {
-        } catch (Throwable e) {
+        } catch (final IllegalStateException e) {
+        } catch (final Throwable e) {
             e.printStackTrace();
             throw new TestFailureException(new AssertionFailedError("Received Exception " + e.getClass() + " : " + e.getMessage()));
         } finally {
@@ -223,13 +223,13 @@ public class CmrMappingTests extends AbstractCMRTest {
         beginTransaction();
         try {
 
-            OneInverseSideLocal inverseLocal = createOneInverseSide(compoundPK_20_10_field1);
-            ManyOwningSideLocal owningLocal = createManyOwningSide(compoundPK_20_10, compoundPK_20_10_field1);
+            final OneInverseSideLocal inverseLocal = createOneInverseSide(compoundPK_20_10_field1);
+            final ManyOwningSideLocal owningLocal = createManyOwningSide(compoundPK_20_10, compoundPK_20_10_field1);
             owningLocal.setOneInverseSide(inverseLocal);
             completeTransaction();
 
             validateOneToManyRelationship();
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             e.printStackTrace();
             throw new TestFailureException(new AssertionFailedError("Received Exception " + e.getClass() + " : " + e.getMessage()));
         } finally {
@@ -242,13 +242,13 @@ public class CmrMappingTests extends AbstractCMRTest {
         beginTransaction();
         try {
 
-            OneInverseSideLocal inverseLocal = createOneInverseSide(compoundPK_20_10_field1);
-            ManyOwningSideLocal owningLocal = createManyOwningSide(compoundPK_20_10, compoundPK_20_10_field1);
+            final OneInverseSideLocal inverseLocal = createOneInverseSide(compoundPK_20_10_field1);
+            final ManyOwningSideLocal owningLocal = createManyOwningSide(compoundPK_20_10, compoundPK_20_10_field1);
             owningLocal.setOneInverseSide(inverseLocal);
             completeTransaction();
 
             owningLocal.testEJBSelect();
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             e.printStackTrace();
             throw new TestFailureException(new AssertionFailedError("Received Exception " + e.getClass() + " : " + e.getMessage()));
         } finally {
@@ -261,18 +261,18 @@ public class CmrMappingTests extends AbstractCMRTest {
         beginTransaction();
         try {
 
-            OneInverseSideLocal inverseLocal = createOneInverseSide(compoundPK_20_10_field1);
-            ManyOwningSideLocal owningLocal = createManyOwningSide(compoundPK_20_20, compoundPK_20_20_field1);
+            final OneInverseSideLocal inverseLocal = createOneInverseSide(compoundPK_20_10_field1);
+            final ManyOwningSideLocal owningLocal = createManyOwningSide(compoundPK_20_20, compoundPK_20_20_field1);
             owningLocal.setOneInverseSide(inverseLocal);
 // todo should fail when we have fk as part of pk
 //            Assert.fail();
             completeTransaction();
-        } catch (TransactionRolledbackLocalException e) {
+        } catch (final TransactionRolledbackLocalException e) {
             if (!(e.getCause() instanceof IllegalStateException)) {
                 e.printStackTrace();
                 throw new TestFailureException(new AssertionFailedError("Received Exception " + e.getClass() + " : " + e.getMessage()));
             }
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             e.printStackTrace();
             throw new TestFailureException(new AssertionFailedError("Received Exception " + e.getClass() + " : " + e.getMessage()));
         } finally {
@@ -285,13 +285,13 @@ public class CmrMappingTests extends AbstractCMRTest {
         beginTransaction();
         try {
 
-            OneInverseSideLocal inverseLocal = createOneInverseSide(compoundPK_20_10_field1);
-            ManyOwningSideLocal owningLocal = createManyOwningSide(compoundPK_20_10, compoundPK_20_10_field1);
+            final OneInverseSideLocal inverseLocal = createOneInverseSide(compoundPK_20_10_field1);
+            final ManyOwningSideLocal owningLocal = createManyOwningSide(compoundPK_20_10, compoundPK_20_10_field1);
             inverseLocal.setManyOwningSide(Collections.singleton(owningLocal));
             completeTransaction();
 
             validateOneToManyRelationship();
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             e.printStackTrace();
             throw new TestFailureException(new AssertionFailedError("Received Exception " + e.getClass() + " : " + e.getMessage()));
         } finally {
@@ -304,18 +304,18 @@ public class CmrMappingTests extends AbstractCMRTest {
         beginTransaction();
         try {
 
-            OneInverseSideLocal inverseLocal = createOneInverseSide(compoundPK_20_10_field1);
-            ManyOwningSideLocal owningLocal = createManyOwningSide(compoundPK_20_20, compoundPK_20_20_field1);
+            final OneInverseSideLocal inverseLocal = createOneInverseSide(compoundPK_20_10_field1);
+            final ManyOwningSideLocal owningLocal = createManyOwningSide(compoundPK_20_20, compoundPK_20_20_field1);
             inverseLocal.setManyOwningSide(Collections.singleton(owningLocal));
 // todo should fail when we have fk as part of pk
 //            Assert.fail();
             completeTransaction();
-        } catch (TransactionRolledbackLocalException e) {
+        } catch (final TransactionRolledbackLocalException e) {
             if (!(e.getCause() instanceof IllegalStateException)) {
                 e.printStackTrace();
                 throw new TestFailureException(new AssertionFailedError("Received Exception " + e.getClass() + " : " + e.getMessage()));
             }
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             e.printStackTrace();
             throw new TestFailureException(new AssertionFailedError("Received Exception " + e.getClass() + " : " + e.getMessage()));
         } finally {
@@ -333,8 +333,8 @@ public class CmrMappingTests extends AbstractCMRTest {
 // todo should fail when we have fk as part of pk
 //            Assert.fail();
             completeTransaction();
-        } catch (IllegalStateException e) {
-        } catch (Throwable e) {
+        } catch (final IllegalStateException e) {
+        } catch (final Throwable e) {
             e.printStackTrace();
             throw new TestFailureException(new AssertionFailedError("Received Exception " + e.getClass() + " : " + e.getMessage()));
         } finally {
@@ -343,27 +343,27 @@ public class CmrMappingTests extends AbstractCMRTest {
         }
     }
 
-    private OneInverseSideLocal createOneInverseSide(Integer id) throws Exception {
-        OneInverseSideLocalHome home = oneInverseHome;
-        OneInverseSideLocal oneInverseSideLocal = home.create(id);
+    private OneInverseSideLocal createOneInverseSide(final Integer id) throws Exception {
+        final OneInverseSideLocalHome home = oneInverseHome;
+        final OneInverseSideLocal oneInverseSideLocal = home.create(id);
         oneInverseCreated.add(id);
         return oneInverseSideLocal;
     }
 
-    private OneInverseSideLocal findOneInverseSide(Integer id) throws Exception {
-        OneInverseSideLocalHome home = oneInverseHome;
+    private OneInverseSideLocal findOneInverseSide(final Integer id) throws Exception {
+        final OneInverseSideLocalHome home = oneInverseHome;
         return home.findByPrimaryKey(id);
     }
 
     private void validateOneToOneRelationship() throws Exception {
         try {
-            OneInverseSideLocal inverseLocal = findOneInverseSide(compoundPK_20_10_field1);
+            final OneInverseSideLocal inverseLocal = findOneInverseSide(compoundPK_20_10_field1);
 
-            OneOwningSideLocal oneOwningSide = inverseLocal.getOneOwningSide();
+            final OneOwningSideLocal oneOwningSide = inverseLocal.getOneOwningSide();
             Assert.assertNotNull(oneOwningSide);
             Assert.assertEquals(compoundPK_20_10, oneOwningSide.getPrimaryKey());
 
-            OneInverseSideLocal inverseBackRef = oneOwningSide.getOneInverseSide();
+            final OneInverseSideLocal inverseBackRef = oneOwningSide.getOneInverseSide();
             Assert.assertNotNull(inverseBackRef);
             Assert.assertEquals(compoundPK_20_10_field1, inverseBackRef.getPrimaryKey());
             completeTransaction();
@@ -372,43 +372,43 @@ public class CmrMappingTests extends AbstractCMRTest {
         }
     }
 
-    private OneOwningSideLocal createOneOwningSide(Integer id, Integer field1) throws Exception {
-        OneOwningSideLocalHome home = oneOwningHome;
-        OneOwningSideLocal oneOwningSideLocal = home.create(id, field1);
+    private OneOwningSideLocal createOneOwningSide(final Integer id, final Integer field1) throws Exception {
+        final OneOwningSideLocalHome home = oneOwningHome;
+        final OneOwningSideLocal oneOwningSideLocal = home.create(id, field1);
         oneOwningCreated.add(id);
         return oneOwningSideLocal;
     }
 
-    private OneOwningSideLocal findOneOwningSide(Integer id) throws Exception {
-        OneOwningSideLocalHome home = oneOwningHome;
+    private OneOwningSideLocal findOneOwningSide(final Integer id) throws Exception {
+        final OneOwningSideLocalHome home = oneOwningHome;
         return home.findByPrimaryKey(id);
     }
 
-    private ManyOwningSideLocal createManyOwningSide(Integer id, Integer field1) throws Exception {
-        ManyOwningSideLocalHome home = manyHome;
-        ManyOwningSideLocal manyOwningSideLocal = home.create(id, field1);
+    private ManyOwningSideLocal createManyOwningSide(final Integer id, final Integer field1) throws Exception {
+        final ManyOwningSideLocalHome home = manyHome;
+        final ManyOwningSideLocal manyOwningSideLocal = home.create(id, field1);
         manyCreated.add(id);
         return manyOwningSideLocal;
     }
 
-    private ManyOwningSideLocal findManyOwningSide(Integer id) throws Exception {
-        ManyOwningSideLocalHome home = manyHome;
+    private ManyOwningSideLocal findManyOwningSide(final Integer id) throws Exception {
+        final ManyOwningSideLocalHome home = manyHome;
         return home.findByPrimaryKey(id);
     }
 
     private void validateOneToManyRelationship() throws NotSupportedException, SystemException, Exception, HeuristicMixedException, HeuristicRollbackException, RollbackException {
         try {
-            OneInverseSideLocal inverseLocal = findOneInverseSide(compoundPK_20_10_field1);
+            final OneInverseSideLocal inverseLocal = findOneInverseSide(compoundPK_20_10_field1);
 
 
             // verify one side has a set containing the many bean
-            Set set = inverseLocal.getManyOwningSide();
+            final Set set = inverseLocal.getManyOwningSide();
             Assert.assertEquals(1, set.size());
-            ManyOwningSideLocal owningLocal = (ManyOwningSideLocal) set.iterator().next();
+            final ManyOwningSideLocal owningLocal = (ManyOwningSideLocal) set.iterator().next();
             Assert.assertEquals(compoundPK_20_10, owningLocal.getPrimaryKey());
 
             // verify the many bean has a back reference to the one
-            OneInverseSideLocal oneInverseSide = owningLocal.getOneInverseSide();
+            final OneInverseSideLocal oneInverseSide = owningLocal.getOneInverseSide();
             Assert.assertNotNull(oneInverseSide);
             Assert.assertEquals(compoundPK_20_10_field1, oneInverseSide.getPrimaryKey());
 

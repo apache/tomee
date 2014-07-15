@@ -26,11 +26,11 @@ public interface BasicCmpHome extends javax.ejb.EJBHome {
     BasicCmpObject createObject(String name) throws CreateException, RemoteException;
 
     BasicCmpObject findByPrimaryKey(Integer primarykey) throws FinderException, RemoteException;
-    
+
     Collection findEmptyCollection() throws FinderException, RemoteException;
-    
+
     Collection findByLastName(String lastName) throws FinderException, RemoteException;
-    
+
     int sum(int x, int y) throws RemoteException;
 
     void voidSelect() throws FinderException, RemoteException;

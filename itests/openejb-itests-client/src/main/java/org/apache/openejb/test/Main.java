@@ -18,7 +18,7 @@ package org.apache.openejb.test;
 
 public class Main {
 
-    public static void main(String args[]) {
+    public static void main(final String[] args) {
 //        try{
 //            File directory = SystemInstance.get().getHome().getDirectory("lib");
 //            SystemInstance.get().getClassPath().addJarsToPath(directory);

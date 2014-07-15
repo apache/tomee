@@ -26,6 +26,6 @@ import javax.ejb.FinderException;
  */
 public interface OneInverseSideLocalHome extends EJBLocalHome {
     public OneInverseSideLocal create(Integer id) throws CreateException;
-    
+
     public OneInverseSideLocal findByPrimaryKey(Integer id) throws FinderException;
 }

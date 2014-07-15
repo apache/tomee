@@ -19,10 +19,10 @@ package org.apache.openejb.test;
 import java.util.Properties;
 
 public class CorbaTestServer implements TestServer {
-        
+
     Properties props;
 
-    public void init(Properties props){
+    public void init(final Properties props) {
         /* TO DO:
          * Perform some test to see if the OpenEJB CORBA Server
          * is started.  If not, display the followding message
@@ -41,22 +41,23 @@ public class CorbaTestServer implements TestServer {
 
         this.props = props;
     }
-    
-    public void log(String s){
-        System.out.println("[NOTE] "+s);
-    }
-    public void destroy(){
-    }
-    
-    public void start(){
+
+    public void log(final String s) {
+        System.out.println("[NOTE] " + s);
     }
 
-    public void stop(){
-       
+    public void destroy() {
     }
 
-    public Properties getContextEnvironment(){
-        return (Properties)props.clone();
+    public void start() {
+    }
+
+    public void stop() {
+
+    }
+
+    public Properties getContextEnvironment() {
+        return (Properties) props.clone();
     }
 
 }

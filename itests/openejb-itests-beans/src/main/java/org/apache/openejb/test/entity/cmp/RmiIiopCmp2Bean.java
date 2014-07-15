@@ -53,15 +53,15 @@ public abstract class RmiIiopCmp2Bean implements EntityBean {
     /**
      * Maps to RmiIiopCmpHome.create
      */
-    public Integer ejbCreate(String name) throws CreateException {
+    public Integer ejbCreate(final String name) throws CreateException {
         setId(nextId++);
-        StringTokenizer st = new StringTokenizer(name, " ");
+        final StringTokenizer st = new StringTokenizer(name, " ");
         setFirstName(st.nextToken());
         setLastName(st.nextToken());
         return null;
     }
 
-    public void ejbPostCreate(String name) {
+    public void ejbPostCreate(final String name) {
     }
 
 
@@ -77,11 +77,11 @@ public abstract class RmiIiopCmp2Bean implements EntityBean {
     /*  String                                         */
     /*-------------------------------------------------*/
 
-    public String returnStringObject(String data) {
+    public String returnStringObject(final String data) {
         return data;
     }
 
-    public String[] returnStringObjectArray(String[] data) {
+    public String[] returnStringObjectArray(final String[] data) {
         return data;
     }
 
@@ -89,19 +89,19 @@ public abstract class RmiIiopCmp2Bean implements EntityBean {
     /*  Character                                      */
     /*-------------------------------------------------*/
 
-    public Character returnCharacterObject(Character data) {
+    public Character returnCharacterObject(final Character data) {
         return data;
     }
 
-    public char returnCharacterPrimitive(char data) {
+    public char returnCharacterPrimitive(final char data) {
         return data;
     }
 
-    public Character[] returnCharacterObjectArray(Character[] data) {
+    public Character[] returnCharacterObjectArray(final Character[] data) {
         return data;
     }
 
-    public char[] returnCharacterPrimitiveArray(char[] data) {
+    public char[] returnCharacterPrimitiveArray(final char[] data) {
         return data;
     }
 
@@ -109,19 +109,19 @@ public abstract class RmiIiopCmp2Bean implements EntityBean {
     /*  Boolean                                        */
     /*-------------------------------------------------*/
 
-    public Boolean returnBooleanObject(Boolean data) {
+    public Boolean returnBooleanObject(final Boolean data) {
         return data;
     }
 
-    public boolean returnBooleanPrimitive(boolean data) {
+    public boolean returnBooleanPrimitive(final boolean data) {
         return data;
     }
 
-    public Boolean[] returnBooleanObjectArray(Boolean[] data) {
+    public Boolean[] returnBooleanObjectArray(final Boolean[] data) {
         return data;
     }
 
-    public boolean[] returnBooleanPrimitiveArray(boolean[] data) {
+    public boolean[] returnBooleanPrimitiveArray(final boolean[] data) {
         return data;
     }
 
@@ -129,19 +129,19 @@ public abstract class RmiIiopCmp2Bean implements EntityBean {
     /*  Byte                                           */
     /*-------------------------------------------------*/
 
-    public Byte returnByteObject(Byte data) {
+    public Byte returnByteObject(final Byte data) {
         return data;
     }
 
-    public byte returnBytePrimitive(byte data) {
+    public byte returnBytePrimitive(final byte data) {
         return data;
     }
 
-    public Byte[] returnByteObjectArray(Byte[] data) {
+    public Byte[] returnByteObjectArray(final Byte[] data) {
         return data;
     }
 
-    public byte[] returnBytePrimitiveArray(byte[] data) {
+    public byte[] returnBytePrimitiveArray(final byte[] data) {
         return data;
     }
 
@@ -149,19 +149,19 @@ public abstract class RmiIiopCmp2Bean implements EntityBean {
     /*  Short                                          */
     /*-------------------------------------------------*/
 
-    public Short returnShortObject(Short data) {
+    public Short returnShortObject(final Short data) {
         return data;
     }
 
-    public short returnShortPrimitive(short data) {
+    public short returnShortPrimitive(final short data) {
         return data;
     }
 
-    public Short[] returnShortObjectArray(Short[] data) {
+    public Short[] returnShortObjectArray(final Short[] data) {
         return data;
     }
 
-    public short[] returnShortPrimitiveArray(short[] data) {
+    public short[] returnShortPrimitiveArray(final short[] data) {
         return data;
     }
 
@@ -169,19 +169,19 @@ public abstract class RmiIiopCmp2Bean implements EntityBean {
     /*  Integer                                        */
     /*-------------------------------------------------*/
 
-    public Integer returnIntegerObject(Integer data) {
+    public Integer returnIntegerObject(final Integer data) {
         return data;
     }
 
-    public int returnIntegerPrimitive(int data) {
+    public int returnIntegerPrimitive(final int data) {
         return data;
     }
 
-    public Integer[] returnIntegerObjectArray(Integer[] data) {
+    public Integer[] returnIntegerObjectArray(final Integer[] data) {
         return data;
     }
 
-    public int[] returnIntegerPrimitiveArray(int[] data) {
+    public int[] returnIntegerPrimitiveArray(final int[] data) {
         return data;
     }
 
@@ -189,19 +189,19 @@ public abstract class RmiIiopCmp2Bean implements EntityBean {
     /*  Long                                           */
     /*-------------------------------------------------*/
 
-    public Long returnLongObject(Long data) {
+    public Long returnLongObject(final Long data) {
         return data;
     }
 
-    public long returnLongPrimitive(long data) {
+    public long returnLongPrimitive(final long data) {
         return data;
     }
 
-    public Long[] returnLongObjectArray(Long[] data) {
+    public Long[] returnLongObjectArray(final Long[] data) {
         return data;
     }
 
-    public long[] returnLongPrimitiveArray(long[] data) {
+    public long[] returnLongPrimitiveArray(final long[] data) {
         return data;
     }
 
@@ -209,19 +209,19 @@ public abstract class RmiIiopCmp2Bean implements EntityBean {
     /*  Float                                          */
     /*-------------------------------------------------*/
 
-    public Float returnFloatObject(Float data) {
+    public Float returnFloatObject(final Float data) {
         return data;
     }
 
-    public float returnFloatPrimitive(float data) {
+    public float returnFloatPrimitive(final float data) {
         return data;
     }
 
-    public Float[] returnFloatObjectArray(Float[] data) {
+    public Float[] returnFloatObjectArray(final Float[] data) {
         return data;
     }
 
-    public float[] returnFloatPrimitiveArray(float[] data) {
+    public float[] returnFloatPrimitiveArray(final float[] data) {
         return data;
     }
 
@@ -229,19 +229,19 @@ public abstract class RmiIiopCmp2Bean implements EntityBean {
     /*  Double                                         */
     /*-------------------------------------------------*/
 
-    public Double returnDoubleObject(Double data) {
+    public Double returnDoubleObject(final Double data) {
         return data;
     }
 
-    public double returnDoublePrimitive(double data) {
+    public double returnDoublePrimitive(final double data) {
         return data;
     }
 
-    public Double[] returnDoubleObjectArray(Double[] data) {
+    public Double[] returnDoubleObjectArray(final Double[] data) {
         return data;
     }
 
-    public double[] returnDoublePrimitiveArray(double[] data) {
+    public double[] returnDoublePrimitiveArray(final double[] data) {
         return data;
     }
 
@@ -250,7 +250,7 @@ public abstract class RmiIiopCmp2Bean implements EntityBean {
     /*  EJBHome                                         */
     /*-------------------------------------------------*/
 
-    public EJBHome returnEJBHome(EJBHome data) {
+    public EJBHome returnEJBHome(final EJBHome data) {
         return data;
     }
 
@@ -258,11 +258,11 @@ public abstract class RmiIiopCmp2Bean implements EntityBean {
         EJBHome data = null;
 
         try {
-            InitialContext ctx = new InitialContext();
+            final InitialContext ctx = new InitialContext();
 
             data = (EJBHome) ctx.lookup("java:comp/env/cmp/rmi-iiop/home");
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             throw new EJBException(e);
         }
@@ -273,18 +273,18 @@ public abstract class RmiIiopCmp2Bean implements EntityBean {
         ObjectGraph data = null;
 
         try {
-            InitialContext ctx = new InitialContext();
+            final InitialContext ctx = new InitialContext();
 
-            Object object = ctx.lookup("java:comp/env/cmp/rmi-iiop/home");
+            final Object object = ctx.lookup("java:comp/env/cmp/rmi-iiop/home");
             data = new ObjectGraph(object);
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new EJBException(e);
         }
         return data;
     }
 
-    public EJBHome[] returnEJBHomeArray(EJBHome[] data) {
+    public EJBHome[] returnEJBHomeArray(final EJBHome[] data) {
         return data;
     }
 
@@ -292,7 +292,7 @@ public abstract class RmiIiopCmp2Bean implements EntityBean {
     /*  EJBObject                                      */
     /*-------------------------------------------------*/
 
-    public EJBObject returnEJBObject(EJBObject data) {
+    public EJBObject returnEJBObject(final EJBObject data) {
         return data;
     }
 
@@ -300,12 +300,12 @@ public abstract class RmiIiopCmp2Bean implements EntityBean {
         EncCmpObject data = null;
 
         try {
-            InitialContext ctx = new InitialContext();
+            final InitialContext ctx = new InitialContext();
 
-            EncCmpHome home = (EncCmpHome) ctx.lookup("java:comp/env/cmp/rmi-iiop/home");
+            final EncCmpHome home = (EncCmpHome) ctx.lookup("java:comp/env/cmp/rmi-iiop/home");
             data = home.create("Test01 CmpBean");
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new EJBException(e);
         }
         return data;
@@ -315,19 +315,19 @@ public abstract class RmiIiopCmp2Bean implements EntityBean {
         ObjectGraph data = null;
 
         try {
-            InitialContext ctx = new InitialContext();
+            final InitialContext ctx = new InitialContext();
 
-            EncCmpHome home = (EncCmpHome) ctx.lookup("java:comp/env/cmp/rmi-iiop/home");
-            EncCmpObject object = home.create("Test02 CmpBean");
+            final EncCmpHome home = (EncCmpHome) ctx.lookup("java:comp/env/cmp/rmi-iiop/home");
+            final EncCmpObject object = home.create("Test02 CmpBean");
             data = new ObjectGraph(object);
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new EJBException(e);
         }
         return data;
     }
 
-    public EJBObject[] returnEJBObjectArray(EJBObject[] data) {
+    public EJBObject[] returnEJBObjectArray(final EJBObject[] data) {
         return data;
     }
 
@@ -335,7 +335,7 @@ public abstract class RmiIiopCmp2Bean implements EntityBean {
     /*  EJBMetaData                                         */
     /*-------------------------------------------------*/
 
-    public EJBMetaData returnEJBMetaData(EJBMetaData data) {
+    public EJBMetaData returnEJBMetaData(final EJBMetaData data) {
         return data;
     }
 
@@ -343,12 +343,12 @@ public abstract class RmiIiopCmp2Bean implements EntityBean {
         EJBMetaData data = null;
 
         try {
-            InitialContext ctx = new InitialContext();
+            final InitialContext ctx = new InitialContext();
 
-            EncCmpHome home = (EncCmpHome) ctx.lookup("java:comp/env/cmp/rmi-iiop/home");
+            final EncCmpHome home = (EncCmpHome) ctx.lookup("java:comp/env/cmp/rmi-iiop/home");
             data = home.getEJBMetaData();
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new EJBException(e);
         }
         return data;
@@ -358,19 +358,19 @@ public abstract class RmiIiopCmp2Bean implements EntityBean {
         ObjectGraph data = null;
 
         try {
-            InitialContext ctx = new InitialContext();
+            final InitialContext ctx = new InitialContext();
 
-            EncCmpHome home = (EncCmpHome) ctx.lookup("java:comp/env/cmp/rmi-iiop/home");
-            EJBMetaData object = home.getEJBMetaData();
+            final EncCmpHome home = (EncCmpHome) ctx.lookup("java:comp/env/cmp/rmi-iiop/home");
+            final EJBMetaData object = home.getEJBMetaData();
             data = new ObjectGraph(object);
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new EJBException(e);
         }
         return data;
     }
 
-    public EJBMetaData[] returnEJBMetaDataArray(EJBMetaData[] data) {
+    public EJBMetaData[] returnEJBMetaDataArray(final EJBMetaData[] data) {
         return data;
     }
 
@@ -378,7 +378,7 @@ public abstract class RmiIiopCmp2Bean implements EntityBean {
     /*  Handle                                         */
     /*-------------------------------------------------*/
 
-    public Handle returnHandle(Handle data) {
+    public Handle returnHandle(final Handle data) {
         return data;
     }
 
@@ -386,13 +386,13 @@ public abstract class RmiIiopCmp2Bean implements EntityBean {
         Handle data = null;
 
         try {
-            InitialContext ctx = new InitialContext();
+            final InitialContext ctx = new InitialContext();
 
-            EncCmpHome home = (EncCmpHome) ctx.lookup("java:comp/env/cmp/rmi-iiop/home");
-            EncCmpObject object = home.create("Test03 CmpBean");
+            final EncCmpHome home = (EncCmpHome) ctx.lookup("java:comp/env/cmp/rmi-iiop/home");
+            final EncCmpObject object = home.create("Test03 CmpBean");
             data = object.getHandle();
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new EJBException(e);
         }
         return data;
@@ -402,19 +402,19 @@ public abstract class RmiIiopCmp2Bean implements EntityBean {
         ObjectGraph data = null;
 
         try {
-            InitialContext ctx = new InitialContext();
+            final InitialContext ctx = new InitialContext();
 
-            EncCmpHome home = (EncCmpHome) ctx.lookup("java:comp/env/cmp/rmi-iiop/home");
-            EncCmpObject object = home.create("Test04 CmpBean");
+            final EncCmpHome home = (EncCmpHome) ctx.lookup("java:comp/env/cmp/rmi-iiop/home");
+            final EncCmpObject object = home.create("Test04 CmpBean");
             data = new ObjectGraph(object.getHandle());
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new EJBException(e);
         }
         return data;
     }
 
-    public Handle[] returnHandleArray(Handle[] data) {
+    public Handle[] returnHandleArray(final Handle[] data) {
         return data;
     }
 
@@ -423,11 +423,11 @@ public abstract class RmiIiopCmp2Bean implements EntityBean {
     /*  Class                                         */
     /*-------------------------------------------------*/
 
-    public Class returnClass(Class data) {
+    public Class returnClass(final Class data) {
         return data;
     }
 
-    public Class[] returnClassArray(Class[] data) {
+    public Class[] returnClassArray(final Class[] data) {
         return data;
     }
 
@@ -435,11 +435,11 @@ public abstract class RmiIiopCmp2Bean implements EntityBean {
     /*  ObjectGraph                                         */
     /*-------------------------------------------------*/
 
-    public ObjectGraph returnObjectGraph(ObjectGraph data) {
+    public ObjectGraph returnObjectGraph(final ObjectGraph data) {
         return data;
     }
 
-    public ObjectGraph[] returnObjectGraphArray(ObjectGraph[] data) {
+    public ObjectGraph[] returnObjectGraphArray(final ObjectGraph[] data) {
         return data;
     }
     //
@@ -463,7 +463,7 @@ public abstract class RmiIiopCmp2Bean implements EntityBean {
      * Set the associated entity context. The container invokes this method
      * on an instance after the instance has been created.
      */
-    public void setEntityContext(EntityContext ctx) {
+    public void setEntityContext(final EntityContext ctx) {
         ejbContext = ctx;
     }
 

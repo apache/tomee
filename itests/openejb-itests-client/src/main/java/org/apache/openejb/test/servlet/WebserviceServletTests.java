@@ -18,7 +18,7 @@
 package org.apache.openejb.test.servlet;
 
 public class WebserviceServletTests extends ServletTestClient {
-    public WebserviceServletTests(){
+    public WebserviceServletTests() {
         super("WebserviceServlet");
     }
 

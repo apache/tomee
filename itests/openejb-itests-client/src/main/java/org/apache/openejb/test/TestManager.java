@@ -23,11 +23,10 @@ import java.security.PrivilegedAction;
 import java.security.AccessController;
 
 /**
- * 
  * @version $Rev$ $Date$
  */
 public class TestManager {
-    
+
     private static TestServer server;
     private static TestDatabase database;
     private static TestJms jms;
@@ -39,76 +38,80 @@ public class TestManager {
     final static String TEST_DATABASE_CLASSNAME = "openejb.test.database";
     final static String TEST_JMS_CLASSNAME = "openejb.test.jms";
 
-    public static void init(String propertiesFileName) throws Exception{
+    public static void init(String propertiesFileName) throws Exception {
         Properties props = null;
 
-        try{
+        try {
             props = new Properties(System.getProperties());
             warn = props.getProperty("openejb.test.nowarn") == null;
-        } catch (final SecurityException e){
-            throw new IllegalArgumentException("Cannot access the system properties: "+e.getClass().getName()+" "+e.getMessage());
+        } catch (final SecurityException e) {
+            throw new IllegalArgumentException("Cannot access the system properties: " + e.getClass().getName() + " " + e.getMessage());
         }
-        
+
         if (propertiesFileName == null) {
-            try{
+            try {
                 propertiesFileName = System.getProperty(TESTSUITE_PROPERTY_FILENAME);
                 if (propertiesFileName != null) {
-                    props.putAll( getProperties( propertiesFileName ) );
+                    props.putAll(getProperties(propertiesFileName));
                 }
 
-            } catch (SecurityException e){
-                throw new IllegalArgumentException("Cannot access the system property \"" + TESTSUITE_PROPERTY_FILENAME + "\": "+e.getClass().getName()+" "+e.getMessage());
+            } catch (final SecurityException e) {
+                throw new IllegalArgumentException("Cannot access the system property \"" + TESTSUITE_PROPERTY_FILENAME + "\": " + e.getClass().getName() + " " + e.getMessage());
             }
         } else {
-            props.putAll( getProperties( propertiesFileName ) );
+            props.putAll(getProperties(propertiesFileName));
         }
         initServer(props);
         initDatabase(props);
         initJms(props);
     }
-    
-    public static void start() throws Exception{
-        try{
+
+    public static void start() throws Exception {
+        try {
             if (server != null) {
                 server.start();
             }
-        } catch (final Exception e){
-            if (warn) System.out.println("Cannot start the test server: "+e.getClass().getName()+" "+e.getMessage());
+        } catch (final Exception e) {
+            if (warn)
+                System.out.println("Cannot start the test server: " + e.getClass().getName() + " " + e.getMessage());
             throw e;
         }
-        try{
+        try {
             if (database != null) {
                 database.start();
             }
-        } catch (final Exception e){
-            if (warn) System.out.println("Cannot start the test database: "+e.getClass().getName()+" "+e.getMessage());
+        } catch (final Exception e) {
+            if (warn)
+                System.out.println("Cannot start the test database: " + e.getClass().getName() + " " + e.getMessage());
             throw e;
         }
     }
 
-    public static void stop() throws Exception{
-        try{
+    public static void stop() throws Exception {
+        try {
             if (database != null) {
                 database.stop();
             }
-        } catch (final Exception e){
-            if (warn) System.out.println("Cannot stop the test database: "+e.getClass().getName()+" "+e.getMessage());
+        } catch (final Exception e) {
+            if (warn)
+                System.out.println("Cannot stop the test database: " + e.getClass().getName() + " " + e.getMessage());
             throw e;
         }
-        try{
+        try {
             if (server != null) {
                 server.stop();
             }
-        } catch (Exception e){
-            if (warn) System.out.println("Cannot stop the test server 2: "+e.getClass().getName()+" "+e.getMessage());
+        } catch (final Exception e) {
+            if (warn)
+                System.out.println("Cannot stop the test server 2: " + e.getClass().getName() + " " + e.getMessage());
             throw e;
         }
     }
-            
-    private static Properties getProperties(final String fileName) throws Exception{
+
+    private static Properties getProperties(final String fileName) throws Exception {
         File file = new File(fileName);
         file = file.getAbsoluteFile();
-        Properties props = (Properties)System.getProperties().clone();
+        final Properties props = (Properties) System.getProperties().clone();
         props.load(new FileInputStream(file));
         return props;
     }
@@ -121,59 +124,63 @@ public class TestManager {
         });
     }
 
-    private static void initServer(final Properties props){
-        try{
+    private static void initServer(final Properties props) {
+        try {
 
-            String className = props.getProperty(TEST_SERVER_CLASSNAME);
+            final String className = props.getProperty(TEST_SERVER_CLASSNAME);
             if (className == null) {
                 throw new IllegalArgumentException(
-                        "Must specify a test server by setting its class name using the system property \"" + TEST_SERVER_CLASSNAME + "\"");
+                    "Must specify a test server by setting its class name using the system property \"" + TEST_SERVER_CLASSNAME + "\"");
             }
-            ClassLoader cl = getContextClassLoader();
-            Class<?> testServerClass = Class.forName( className, true, cl );
-            server = (TestServer)testServerClass.newInstance();
-            server.init( props );
-        } catch (Exception e){
+            final ClassLoader cl = getContextClassLoader();
+            final Class<?> testServerClass = Class.forName(className, true, cl);
+            server = (TestServer) testServerClass.newInstance();
+            server.init(props);
+        } catch (final Exception e) {
             if (warn) e.printStackTrace();
-            if (warn) System.out.println("Cannot instantiate or initialize the test server: "+e.getClass().getName()+" "+e.getMessage());
-            throw new RuntimeException("Cannot instantiate or initialize the test server: "+e.getClass().getName()+" "+e.getMessage(),e);
+            if (warn)
+                System.out.println("Cannot instantiate or initialize the test server: " + e.getClass().getName() + " " + e.getMessage());
+            throw new RuntimeException("Cannot instantiate or initialize the test server: " + e.getClass().getName() + " " + e.getMessage(), e);
         }
     }
 
-    private static void initDatabase(final Properties props){
-        try{
+    private static void initDatabase(final Properties props) {
+        try {
             final String className = props.getProperty(TEST_DATABASE_CLASSNAME);
-            if (className == null) throw new IllegalArgumentException("Must specify a test database by setting its class name  using the system property \"" + TEST_DATABASE_CLASSNAME + "\"");
-            ClassLoader cl = getContextClassLoader();
-            Class<?> testDatabaseClass = Class.forName( className , true, cl);
-            database = (TestDatabase)testDatabaseClass.newInstance();
-            database.init( props );
-        } catch (Exception e){
-            if (warn) System.out.println("Cannot instantiate or initialize the test database: "+e.getClass().getName()+" "+e.getMessage());
-            throw new RuntimeException("Cannot instantiate or initialize the test database: "+e.getClass().getName()+" "+e.getMessage(),e);
+            if (className == null)
+                throw new IllegalArgumentException("Must specify a test database by setting its class name  using the system property \"" + TEST_DATABASE_CLASSNAME + "\"");
+            final ClassLoader cl = getContextClassLoader();
+            final Class<?> testDatabaseClass = Class.forName(className, true, cl);
+            database = (TestDatabase) testDatabaseClass.newInstance();
+            database.init(props);
+        } catch (final Exception e) {
+            if (warn)
+                System.out.println("Cannot instantiate or initialize the test database: " + e.getClass().getName() + " " + e.getMessage());
+            throw new RuntimeException("Cannot instantiate or initialize the test database: " + e.getClass().getName() + " " + e.getMessage(), e);
         }
     }
 
-    private static void initJms(final Properties props){
-        try{
+    private static void initJms(final Properties props) {
+        try {
             String className = props.getProperty(TEST_JMS_CLASSNAME);
             if (className == null) className = "org.apache.openejb.test.ActiveMqTestJms";
             final ClassLoader cl = getContextClassLoader();
-            final Class<?> testJmsClass = Class.forName( className , true, cl);
-            jms = (TestJms)testJmsClass.newInstance();
-            jms.init( props );
-        } catch (final Exception e){
-            if (warn) System.out.println("Cannot instantiate or initialize the test jms: "+e.getClass().getName()+" "+e.getMessage());
-            throw new RuntimeException("Cannot instantiate or initialize the test jms: "+e.getClass().getName()+" "+e.getMessage(),e);
+            final Class<?> testJmsClass = Class.forName(className, true, cl);
+            jms = (TestJms) testJmsClass.newInstance();
+            jms.init(props);
+        } catch (final Exception e) {
+            if (warn)
+                System.out.println("Cannot instantiate or initialize the test jms: " + e.getClass().getName() + " " + e.getMessage());
+            throw new RuntimeException("Cannot instantiate or initialize the test jms: " + e.getClass().getName() + " " + e.getMessage(), e);
         }
     }
 
 
-    public static TestServer getServer(){
+    public static TestServer getServer() {
         return server;
     }
 
-    public static TestDatabase getDatabase(){
+    public static TestDatabase getDatabase() {
         return database;
     }
 
@@ -181,7 +188,7 @@ public class TestManager {
         return jms;
     }
 
-    public static Properties getContextEnvironment(){
+    public static Properties getContextEnvironment() {
         return server.getContextEnvironment();
     }
 }

@@ -24,48 +24,53 @@ import javax.ejb.RemoveException;
 import org.apache.openejb.test.entity.cmr.CompoundPK;
 
 /**
- *
  * @version $Revision$ $Date$
  */
 public abstract class SongBean implements EntityBean {
     // CMP
     public abstract Integer getId();
+
     public abstract void setId(Integer id);
 
     public abstract String getName();
+
     public abstract void setName(String name);
 
     public abstract Integer getBpm();
+
     public abstract void setBpm(Integer bpm);
 
     public abstract String getDescription();
+
     public abstract void setDescription(String description);
 
     // CMR
     public abstract ArtistLocal getPerformer();
+
     public abstract void setPerformer(ArtistLocal performer);
 
     public abstract ArtistLocal getComposer();
+
     public abstract void setComposer(ArtistLocal composer);
-    
-    public Integer ejbCreate(Integer id)  throws CreateException {
+
+    public Integer ejbCreate(final Integer id) throws CreateException {
         setId(id);
         return null;
     }
 
-    public void ejbPostCreate(Integer id) {
+    public void ejbPostCreate(final Integer id) {
     }
 
-    public CompoundPK ejbCreate(SongPk primaryKey)  throws CreateException {
+    public CompoundPK ejbCreate(final SongPk primaryKey) throws CreateException {
         setId(primaryKey.id);
         setName(primaryKey.name);
         return null;
     }
 
-    public void ejbPostCreate(SongPk primaryKey) {
+    public void ejbPostCreate(final SongPk primaryKey) {
     }
-    
-    public void setEntityContext(EntityContext ctx) {
+
+    public void setEntityContext(final EntityContext ctx) {
     }
 
     public void unsetEntityContext() {

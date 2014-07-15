@@ -18,20 +18,19 @@ package org.apache.openejb.test.stateful;
 
 /**
  * [2] Should be run as the second test suite of the BasicStatelessTestClients
- * 
- * 
+ *
  * @version $Rev$ $Date$
  */
 public abstract class AnnotatedFieldInjectionStatefulTestClient extends BasicStatefulTestClient {
 
-    public AnnotatedFieldInjectionStatefulTestClient(String name) {
+    public AnnotatedFieldInjectionStatefulTestClient(final String name) {
         super("AnnotatedFieldInjectionStatefulTestClient." + name);
     }
-    
-    protected void setUp() throws Exception{
+
+    protected void setUp() throws Exception {
         super.setUp();
         processFieldInjections();
     }
-    
+
 }
 

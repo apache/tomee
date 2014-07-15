@@ -18,14 +18,14 @@ package org.apache.openejb.test.singleton;
 
 import javax.ejb.EJB;
 
-public abstract class BasicSingletonTestClient extends SingletonTestClient{
-    
-	@EJB(name="client/tests/singleton/BasicSingletonPojoHome",
-	     beanInterface=BasicSingletonHome.class)
+public abstract class BasicSingletonTestClient extends SingletonTestClient {
+
+    @EJB(name = "client/tests/singleton/BasicSingletonPojoHome",
+        beanInterface = BasicSingletonHome.class)
     protected BasicSingletonHome ejbHome = null;
     protected BasicSingletonObject ejbObject = null;
 
-    public BasicSingletonTestClient(String name){
+    public BasicSingletonTestClient(final String name) {
         super(name);
     }
 }

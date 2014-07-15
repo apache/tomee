@@ -21,12 +21,12 @@ import javax.ejb.Stateless;
 import javax.jws.WebService;
 
 @WebService(
-    portName="HelloEjbPort",
-    serviceName="HelloEjbService",
-    targetNamespace="http://examples.org/wsdl",
-    endpointInterface="org.apache.openejb.test.servlet.HelloEjb"
+    portName = "HelloEjbPort",
+    serviceName = "HelloEjbService",
+    targetNamespace = "http://examples.org/wsdl",
+    endpointInterface = "org.apache.openejb.test.servlet.HelloEjb"
 )
-@Stateless (name = "TestHelloEjbService")
+@Stateless(name = "TestHelloEjbService")
 public class HelloEjbService implements HelloEjb {
     public String hello(String name) {
         if (name == null) name = "World";

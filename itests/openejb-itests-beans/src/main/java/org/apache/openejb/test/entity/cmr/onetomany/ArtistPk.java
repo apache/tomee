@@ -25,16 +25,16 @@ public class ArtistPk {
     }
 
 
-    public ArtistPk(Integer id, String name) {
+    public ArtistPk(final Integer id, final String name) {
         this.id = id;
         this.name = name;
     }
 
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ArtistPk artistPk = (ArtistPk) o;
+        final ArtistPk artistPk = (ArtistPk) o;
 
         return id.equals(artistPk.id) && name.equals(artistPk.name);
     }

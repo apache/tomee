@@ -20,57 +20,55 @@ import org.apache.openejb.test.object.OperationsPolicy;
 import org.apache.openejb.test.beans.TimerSync;
 
 /**
- * 
  * [10] Should be run as the nineth test suite of the BasicSingletonTestClients
- * 
+ * <p/>
  * <PRE>
  * =========================================================================
- * Operations allowed in the methods of a singleton SessionBean with 
+ * Operations allowed in the methods of a singleton SessionBean with
  * bean-managed transaction demarcation
  * =========================================================================
- * 
+ * <p/>
  * Bean method           | Bean method can perform the following operations
  * ______________________|__________________________________________________
- *                       |
+ * |
  * constructor           | -
  * ______________________|__________________________________________________
- *                       |
+ * |
  * setSessionContext     |  SessionContext methods:
- *                       |     - getEJBHome
- *                       |  JNDI access to java:comp/env
+ * |     - getEJBHome
+ * |  JNDI access to java:comp/env
  * ______________________|__________________________________________________
- *                       |
+ * |
  * ejbCreate             |  SessionContext methods:
  * ejbRemove             |     - getEJBHome
- *                       |     - getEJBObject
- *                       |     - getUserTransaction
- *                       |  JNDI access to java:comp/env
+ * |     - getEJBObject
+ * |     - getUserTransaction
+ * |  JNDI access to java:comp/env
  * ______________________|__________________________________________________
- *                       |
+ * |
  * business method       |  SessionContext methods:
- * from remote interface |     - getEJBHome        
- *                       |     - getCallerPrincipal
- *                       |     - isCallerInRole    
- *                       |     - getEJBObject      
- *                       |     - getUserTransaction
- *                       |  JNDI access to java:comp/env
- *                       |  Resource manager access
- *                       |  Enterprise bean access
+ * from remote interface |     - getEJBHome
+ * |     - getCallerPrincipal
+ * |     - isCallerInRole
+ * |     - getEJBObject
+ * |     - getUserTransaction
+ * |  JNDI access to java:comp/env
+ * |  Resource manager access
+ * |  Enterprise bean access
  * ______________________|__________________________________________________
  * </PRE>
- * 
  */
-public class BMTSingletonAllowedOperationsTests extends BasicSingletonTestClient{
+public class BMTSingletonAllowedOperationsTests extends BasicSingletonTestClient {
     protected TimerSync timerSync;
 
-    public BMTSingletonAllowedOperationsTests(){
+    public BMTSingletonAllowedOperationsTests() {
         super("BMTAllowedOperations.");
     }
 
-    protected void setUp() throws Exception{
+    protected void setUp() throws Exception {
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/singleton/BeanManagedBasicSingletonHome");
-        ejbHome = (BasicSingletonHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicSingletonHome.class);
+        final Object obj = initialContext.lookup("client/tests/singleton/BeanManagedBasicSingletonHome");
+        ejbHome = (BasicSingletonHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicSingletonHome.class);
         ejbObject = ejbHome.createObject();
         ejbHandle = ejbObject.getHandle();
         timerSync = (TimerSync) initialContext.lookup("TimerSyncBeanBusinessRemote");
@@ -85,11 +83,11 @@ public class BMTSingletonAllowedOperationsTests extends BasicSingletonTestClient
         */
         ejbObject.businessMethod("let's go!");
     }
-    
-    protected void tearDown() throws Exception{
+
+    protected void tearDown() throws Exception {
         try {
             ejbObject.remove();
-        } catch (Exception e){
+        } catch (final Exception e) {
             throw e;
         } finally {
             super.tearDown();
@@ -99,167 +97,170 @@ public class BMTSingletonAllowedOperationsTests extends BasicSingletonTestClient
     //=====================================
     // Test EJBContext allowed operations       
     //
+
     /**
      * <PRE>
      * Bean method           | Bean method can perform the following operations
      * ______________________|__________________________________________________
-     *                       |
+     * |
      * setSessionContext     |  SessionContext methods:
-     *                       |     - getEJBHome
-     *                       |     - lookup
-     *                       |  JNDI access to java:comp/env
+     * |     - getEJBHome
+     * |     - lookup
+     * |  JNDI access to java:comp/env
      * ______________________|__________________________________________________
      * </PRE>
      */
-    public void test01_setSessionContext(){         
-        try{
-            OperationsPolicy policy = new OperationsPolicy();
-            policy.allow( policy.Context_getEJBHome );
-            policy.allow( policy.Context_lookup );
-            policy.allow( policy.JNDI_access_to_java_comp_env );
-            
-            Object expected = policy;
-            Object actual = ejbObject.getAllowedOperationsReport("setSessionContext");
-            
-            assertNotNull("The OperationsPolicy is null", actual );
-            assertEquals( expected, actual );
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
-        }
-    }
-    /**
-     * <PRE>
-     * Bean method           | Bean method can perform the following operations
-     * ______________________|__________________________________________________
-     *                       |
-     * ejbCreate             |  SessionContext methods:
-     * ejbRemove             |     - getEJBHome
-     *                       |     - getEJBObject
-     *                       |     - getUserTransaction
-     *                       |     - getTimerService
-     *                       |     - lookup
-     *                       |  JNDI access to java:comp/env
-     * ______________________|__________________________________________________
-     * </PRE>
-     */
-    public void test02_ejbCreate(){             
-        try{
-            OperationsPolicy policy = new OperationsPolicy();
-            policy.allow( policy.Context_getEJBHome );
-            policy.allow( policy.Context_getEJBObject );
-            policy.allow( policy.Context_getUserTransaction );
-            policy.allow( policy.Context_getTimerService );
-            policy.allow( policy.Context_lookup );
-            policy.allow( policy.JNDI_access_to_java_comp_env );
-            
-            Object expected = policy;
-            Object actual = ejbObject.getAllowedOperationsReport("ejbCreate");
-            
-            assertNotNull("The OperationsPolicy is null", actual );
-            assertEquals( expected, actual );
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
-        }
-    }
-    /**
-     * <PRE>
-     * Bean method           | Bean method can perform the following operations
-     * ______________________|__________________________________________________
-     *                       |
-     * ejbCreate             |  SessionContext methods:
-     * ejbRemove             |     - getEJBHome
-     *                       |     - getEJBObject
-     *                       |     - getUserTransaction
-     *                       |     - getTimerService
-     *                       |     - lookup
-     *                       |  JNDI access to java:comp/env
-     * ______________________|__________________________________________________
-     * </PRE>
-     */
-    public void TODO_test03_ejbRemove(){             
-        try{
-            /* TO DO:  This test needs unique functionality to work */
-            OperationsPolicy policy = new OperationsPolicy();
-            policy.allow( policy.Context_getEJBHome );
-            policy.allow( policy.Context_getEJBObject );
-            policy.allow( policy.Context_getUserTransaction );
-            policy.allow( policy.Context_getTimerService );
-            policy.allow( policy.Context_lookup );
-            policy.allow( policy.JNDI_access_to_java_comp_env );
-        
-            Object expected = policy;
-            Object actual = ejbObject.getAllowedOperationsReport("ejbRemove");
-        
-            assertNotNull("The OperationsPolicy is null", actual );
-            assertEquals( expected, actual );
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
-        }
-    }
-    
-    /**
-     * <PRE>
-     * Bean method           | Bean method can perform the following operations
-     * ______________________|__________________________________________________
-     *                       |
-     * business method       |  SessionContext methods:
-     * from remote interface |     - getEJBHome
-     *                       |     - getCallerPrincipal
-     *                       |     - isCallerInRole
-     *                       |     - getEJBObject
-     *                       |     - getUserTransaction
-     *                       |     - getTimerService
-     *                       |     - lookup
-     *                       |  JNDI access to java:comp/env
-     *                       |  Resource manager access
-     *                       |  Enterprise bean access
-     * ______________________|__________________________________________________
-     * </PRE>
-     */
-    public void test04_businessMethod(){
-        try{
-            OperationsPolicy policy = new OperationsPolicy();
-            policy.allow( policy.Context_getEJBHome );
-            policy.allow( policy.Context_getCallerPrincipal );
-            policy.allow( policy.Context_isCallerInRole );
-            policy.allow( policy.Context_getEJBObject );
-            policy.allow( policy.Context_getUserTransaction );
-            policy.allow( policy.Context_getTimerService );
-            policy.allow( policy.Context_lookup );
-            policy.allow( policy.JNDI_access_to_java_comp_env );
-        
-            Object expected = policy;
-            Object actual = ejbObject.getAllowedOperationsReport("businessMethod");
-        
-            assertNotNull("The OperationsPolicy is null", actual );
-            assertEquals( expected, actual );
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+    public void test01_setSessionContext() {
+        try {
+            final OperationsPolicy policy = new OperationsPolicy();
+            policy.allow(policy.Context_getEJBHome);
+            policy.allow(policy.Context_lookup);
+            policy.allow(policy.JNDI_access_to_java_comp_env);
+
+            final Object expected = policy;
+            final Object actual = ejbObject.getAllowedOperationsReport("setSessionContext");
+
+            assertNotNull("The OperationsPolicy is null", actual);
+            assertEquals(expected, actual);
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
-    public void _test05_ejbTimeout(){
+    /**
+     * <PRE>
+     * Bean method           | Bean method can perform the following operations
+     * ______________________|__________________________________________________
+     * |
+     * ejbCreate             |  SessionContext methods:
+     * ejbRemove             |     - getEJBHome
+     * |     - getEJBObject
+     * |     - getUserTransaction
+     * |     - getTimerService
+     * |     - lookup
+     * |  JNDI access to java:comp/env
+     * ______________________|__________________________________________________
+     * </PRE>
+     */
+    public void test02_ejbCreate() {
+        try {
+            final OperationsPolicy policy = new OperationsPolicy();
+            policy.allow(policy.Context_getEJBHome);
+            policy.allow(policy.Context_getEJBObject);
+            policy.allow(policy.Context_getUserTransaction);
+            policy.allow(policy.Context_getTimerService);
+            policy.allow(policy.Context_lookup);
+            policy.allow(policy.JNDI_access_to_java_comp_env);
+
+            final Object expected = policy;
+            final Object actual = ejbObject.getAllowedOperationsReport("ejbCreate");
+
+            assertNotNull("The OperationsPolicy is null", actual);
+            assertEquals(expected, actual);
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
+        }
+    }
+
+    /**
+     * <PRE>
+     * Bean method           | Bean method can perform the following operations
+     * ______________________|__________________________________________________
+     * |
+     * ejbCreate             |  SessionContext methods:
+     * ejbRemove             |     - getEJBHome
+     * |     - getEJBObject
+     * |     - getUserTransaction
+     * |     - getTimerService
+     * |     - lookup
+     * |  JNDI access to java:comp/env
+     * ______________________|__________________________________________________
+     * </PRE>
+     */
+    public void TODO_test03_ejbRemove() {
+        try {
+            /* TO DO:  This test needs unique functionality to work */
+            final OperationsPolicy policy = new OperationsPolicy();
+            policy.allow(policy.Context_getEJBHome);
+            policy.allow(policy.Context_getEJBObject);
+            policy.allow(policy.Context_getUserTransaction);
+            policy.allow(policy.Context_getTimerService);
+            policy.allow(policy.Context_lookup);
+            policy.allow(policy.JNDI_access_to_java_comp_env);
+
+            final Object expected = policy;
+            final Object actual = ejbObject.getAllowedOperationsReport("ejbRemove");
+
+            assertNotNull("The OperationsPolicy is null", actual);
+            assertEquals(expected, actual);
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
+        }
+    }
+
+    /**
+     * <PRE>
+     * Bean method           | Bean method can perform the following operations
+     * ______________________|__________________________________________________
+     * |
+     * business method       |  SessionContext methods:
+     * from remote interface |     - getEJBHome
+     * |     - getCallerPrincipal
+     * |     - isCallerInRole
+     * |     - getEJBObject
+     * |     - getUserTransaction
+     * |     - getTimerService
+     * |     - lookup
+     * |  JNDI access to java:comp/env
+     * |  Resource manager access
+     * |  Enterprise bean access
+     * ______________________|__________________________________________________
+     * </PRE>
+     */
+    public void test04_businessMethod() {
+        try {
+            final OperationsPolicy policy = new OperationsPolicy();
+            policy.allow(policy.Context_getEJBHome);
+            policy.allow(policy.Context_getCallerPrincipal);
+            policy.allow(policy.Context_isCallerInRole);
+            policy.allow(policy.Context_getEJBObject);
+            policy.allow(policy.Context_getUserTransaction);
+            policy.allow(policy.Context_getTimerService);
+            policy.allow(policy.Context_lookup);
+            policy.allow(policy.JNDI_access_to_java_comp_env);
+
+            final Object expected = policy;
+            final Object actual = ejbObject.getAllowedOperationsReport("businessMethod");
+
+            assertNotNull("The OperationsPolicy is null", actual);
+            assertEquals(expected, actual);
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
+        }
+    }
+
+    public void _test05_ejbTimeout() {
         try {
             ejbObject.scheduleTimer("BmtSingletonAllowedOperationsTests");
             timerSync.waitFor("BmtSingletonAllowedOperationsTests");
 
-            OperationsPolicy policy = new OperationsPolicy();
-            policy.allow( policy.Context_getEJBHome );
-            policy.allow( policy.Context_getCallerPrincipal );
-            policy.allow( policy.Context_isCallerInRole );
-            policy.allow( policy.Context_getEJBObject );
-            policy.allow( policy.Context_getUserTransaction );
-            policy.allow( policy.Context_getTimerService );
-            policy.allow( policy.Context_lookup );
-            policy.allow( policy.JNDI_access_to_java_comp_env );
+            final OperationsPolicy policy = new OperationsPolicy();
+            policy.allow(policy.Context_getEJBHome);
+            policy.allow(policy.Context_getCallerPrincipal);
+            policy.allow(policy.Context_isCallerInRole);
+            policy.allow(policy.Context_getEJBObject);
+            policy.allow(policy.Context_getUserTransaction);
+            policy.allow(policy.Context_getTimerService);
+            policy.allow(policy.Context_lookup);
+            policy.allow(policy.JNDI_access_to_java_comp_env);
 
-            Object expected = policy;
-            Object actual = ejbObject.getAllowedOperationsReport("ejbTimeout");
+            final Object expected = policy;
+            final Object actual = ejbObject.getAllowedOperationsReport("ejbTimeout");
 
-            assertNotNull("The OperationsPolicy is null", actual );
-            assertEquals( expected, actual );
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            assertNotNull("The OperationsPolicy is null", actual);
+            assertEquals(expected, actual);
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
     //

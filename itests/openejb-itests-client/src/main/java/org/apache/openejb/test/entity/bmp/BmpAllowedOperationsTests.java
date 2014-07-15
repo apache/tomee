@@ -22,129 +22,128 @@ import javax.rmi.PortableRemoteObject;
 
 /**
  * [9] Should be run as the nineth test suite of the BasicBmpTestClients
- *
+ * <p/>
  * <PRE>
  * =========================================================================
  * Operations allowed in the methods of an entity bean
  * =========================================================================
- *
+ * <p/>
  * Bean method           | Bean method can perform the following operations
  * ______________________|__________________________________________________
- *                       |
+ * |
  * constructor           | -
  * ______________________|__________________________________________________
- *                       |
+ * |
  * setEntityContext      |  EntityContext methods:
  * unsetEntityContext    |     - getEJBHome
- *                       |  JNDI access to java:comp/env
+ * |  JNDI access to java:comp/env
  * ______________________|__________________________________________________
- *                       |
+ * |
  * ejbCreate             |  EntityContext methods:
- *                       |     - getEJBHome
- *                       |     - getCallerPrincipal
- *                       |     - getRollbackOnly
- *                       |     - isCallerInRole
- *                       |     - setRollbackOnly
- *                       |  JNDI access to java:comp/env
- *                       |  Resource manager access
- *                       |  Enterprise bean access
+ * |     - getEJBHome
+ * |     - getCallerPrincipal
+ * |     - getRollbackOnly
+ * |     - isCallerInRole
+ * |     - setRollbackOnly
+ * |  JNDI access to java:comp/env
+ * |  Resource manager access
+ * |  Enterprise bean access
  * ______________________|__________________________________________________
- *                       |
+ * |
  * ejbPostCreate         |  EntityContext methods:
- *                       |     - getEJBHome
- *                       |     - getCallerPrincipal
- *                       |     - getRollbackOnly
- *                       |     - isCallerInRole
- *                       |     - setRollbackOnly
- *                       |     - getEJBObject
- *                       |     - getPrimaryKey
- *                       |  JNDI access to java:comp/env
- *                       |  Resource manager access
- *                       |  Enterprise bean access
+ * |     - getEJBHome
+ * |     - getCallerPrincipal
+ * |     - getRollbackOnly
+ * |     - isCallerInRole
+ * |     - setRollbackOnly
+ * |     - getEJBObject
+ * |     - getPrimaryKey
+ * |  JNDI access to java:comp/env
+ * |  Resource manager access
+ * |  Enterprise bean access
  * ______________________|__________________________________________________
- *                       |
+ * |
  * ejbRemove             |  EntityContext methods:
- *                       |     - getEJBHome
- *                       |     - getCallerPrincipal
- *                       |     - getRollbackOnly
- *                       |     - isCallerInRole
- *                       |     - setRollbackOnly
- *                       |     - getEJBObject
- *                       |     - getPrimaryKey
- *                       |  JNDI access to java:comp/env
- *                       |  Resource manager access
- *                       |  Enterprise bean access
+ * |     - getEJBHome
+ * |     - getCallerPrincipal
+ * |     - getRollbackOnly
+ * |     - isCallerInRole
+ * |     - setRollbackOnly
+ * |     - getEJBObject
+ * |     - getPrimaryKey
+ * |  JNDI access to java:comp/env
+ * |  Resource manager access
+ * |  Enterprise bean access
  * ______________________|__________________________________________________
- *                       |
+ * |
  * ejbFind*              |  EntityContext methods:
  * ejbSelect*            |     - getEJBHome
  * ejbHome               |     - getCallerPrincipal
- *                       |     - getRollbackOnly
- *                       |     - isCallerInRole
- *                       |     - setRollbackOnly
- *                       |  JNDI access to java:comp/env
- *                       |  Resource manager access
- *                       |  Enterprise bean access
+ * |     - getRollbackOnly
+ * |     - isCallerInRole
+ * |     - setRollbackOnly
+ * |  JNDI access to java:comp/env
+ * |  Resource manager access
+ * |  Enterprise bean access
  * ______________________|__________________________________________________
- *                       |
+ * |
  * ejbSelectInEntity*    |  EntityContext methods:
- *                       |     - getEJBHome
- *                       |     - getCallerPrincipal
- *                       |     - getRollbackOnly
- *                       |     - isCallerInRole
- *                       |     - setRollbackOnly
- *                       |     - getEJBObject
- *                       |     - getPrimaryKey
- *                       |  JNDI access to java:comp/env
- *                       |  Resource manager access
- *                       |  Enterprise bean access
+ * |     - getEJBHome
+ * |     - getCallerPrincipal
+ * |     - getRollbackOnly
+ * |     - isCallerInRole
+ * |     - setRollbackOnly
+ * |     - getEJBObject
+ * |     - getPrimaryKey
+ * |  JNDI access to java:comp/env
+ * |  Resource manager access
+ * |  Enterprise bean access
  * ______________________|__________________________________________________
- *                       |
+ * |
  * ejbActivate           |  EntityContext methods:
  * ejbPassivate          |     - getEJBHome
- *                       |     - getEJBObject
- *                       |     - getPrimaryKey
- *                       |  JNDI access to java:comp/env
+ * |     - getEJBObject
+ * |     - getPrimaryKey
+ * |  JNDI access to java:comp/env
  * ______________________|__________________________________________________
- *                       |
+ * |
  * ejbLoad               |  EntityContext methods:
  * ejbStore              |     - getEJBHome
- *                       |     - getCallerPrincipal
- *                       |     - getRollbackOnly
- *                       |     - isCallerInRole
- *                       |     - setRollbackOnly
- *                       |     - getEJBObject
- *                       |     - getPrimaryKey
- *                       |  JNDI access to java:comp/env
- *                       |  Resource manager access
- *                       |  Enterprise bean access
+ * |     - getCallerPrincipal
+ * |     - getRollbackOnly
+ * |     - isCallerInRole
+ * |     - setRollbackOnly
+ * |     - getEJBObject
+ * |     - getPrimaryKey
+ * |  JNDI access to java:comp/env
+ * |  Resource manager access
+ * |  Enterprise bean access
  * ______________________|__________________________________________________
- *                       |
+ * |
  * business method       |  EntityContext methods:
  * from remote interface |     - getEJBHome
- *                       |     - getCallerPrincipal
- *                       |     - getRollbackOnly
- *                       |     - isCallerInRole
- *                       |     - setRollbackOnly
- *                       |     - getEJBObject
- *                       |     - getPrimaryKey
- *                       |  JNDI access to java:comp/env
- *                       |  Resource manager access
- *                       |  Enterprise bean access
+ * |     - getCallerPrincipal
+ * |     - getRollbackOnly
+ * |     - isCallerInRole
+ * |     - setRollbackOnly
+ * |     - getEJBObject
+ * |     - getPrimaryKey
+ * |  JNDI access to java:comp/env
+ * |  Resource manager access
+ * |  Enterprise bean access
  * ______________________|__________________________________________________
  * </PRE>
- *
  */
-public class BmpAllowedOperationsTests extends BasicBmpTestClient{
+public class BmpAllowedOperationsTests extends BasicBmpTestClient {
 
-    public BmpAllowedOperationsTests(){
+    public BmpAllowedOperationsTests() {
         super("AllowedOperations.");
     }
 
-    protected void setUp() throws Exception{
+    protected void setUp() throws Exception {
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/entity/bmp/allowed_operations/EntityHome");
-        ejbHome = (BasicBmpHome) PortableRemoteObject.narrow( obj, BasicBmpHome.class);
+        final Object obj = initialContext.lookup("client/tests/entity/bmp/allowed_operations/EntityHome");
+        ejbHome = (BasicBmpHome) PortableRemoteObject.narrow(obj, BasicBmpHome.class);
         ejbObject = ejbHome.createObject("Fourth Bean");
         ejbHandle = ejbObject.getHandle();
         /* These tests will only work if the specified
@@ -155,12 +154,12 @@ public class BmpAllowedOperationsTests extends BasicBmpTestClient{
          * that all methods tested for below have been called
          * by the container.
          */
-         doScenario();
+        doScenario();
 
 
     }
 
-    protected void tearDown() throws Exception{
+    protected void tearDown() throws Exception {
         ejbObject.remove();
         super.tearDown();
     }
@@ -168,244 +167,249 @@ public class BmpAllowedOperationsTests extends BasicBmpTestClient{
     /**
      * This method ensures that all thee bean methods have been invoked for correct behaviour
      * of the tests.
-     *
      */
-    private void doScenario() throws Exception{
+    private void doScenario() throws Exception {
 
-      // Call the business method
-      ejbObject.businessMethod("Reverse Me");
+        // Call the business method
+        ejbObject.businessMethod("Reverse Me");
 
-      ejbHome.findByPrimaryKey(null);
+        ejbHome.findByPrimaryKey(null);
 
-      ejbHome.sum(1, 2);
+        ejbHome.sum(1, 2);
 
-      ejbObject = (BasicBmpObject) PortableRemoteObject.narrow(ejbHandle.getEJBObject(), BasicBmpObject.class);
+        ejbObject = (BasicBmpObject) PortableRemoteObject.narrow(ejbHandle.getEJBObject(), BasicBmpObject.class);
 
-      ejbHome.findByPrimaryKey((Integer)ejbObject.getPrimaryKey());
-      ejbHome.remove(ejbObject.getPrimaryKey());
+        ejbHome.findByPrimaryKey((Integer) ejbObject.getPrimaryKey());
+        ejbHome.remove(ejbObject.getPrimaryKey());
 
-      ejbObject = ejbHome.createObject("Fourth Bean");
-      ejbHome.findEmptyCollection();
+        ejbObject = ejbHome.createObject("Fourth Bean");
+        ejbHome.findEmptyCollection();
     }
 
     //=====================================
     // Test EJBContext allowed operations       
     //
+
     /**
      * <PRE>
      * Bean method           | Bean method can perform the following operations
      * ______________________|__________________________________________________
-     *                       |
+     * |
      * setEntityContext      |  EntityContext methods:
      * unsetEntityContext    |     - getEJBHome
-     *                       |  JNDI access to java:comp/env
+     * |  JNDI access to java:comp/env
      * ______________________|__________________________________________________
      * </PRE>
      */
-    public void test01_setEntityContext(){
-        try{
+    public void test01_setEntityContext() {
+        try {
 
-        OperationsPolicy policy = new OperationsPolicy();
-        policy.allow( OperationsPolicy.Context_getEJBHome );
-        policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );
+            final OperationsPolicy policy = new OperationsPolicy();
+            policy.allow(OperationsPolicy.Context_getEJBHome);
+            policy.allow(OperationsPolicy.JNDI_access_to_java_comp_env);
 
-        Object expected = policy;
-        Object actual = ejbObject.getAllowedOperationsReport("setEntityContext");
+            final Object expected = policy;
+            final Object actual = ejbObject.getAllowedOperationsReport("setEntityContext");
 
-        assertNotNull("The OpperationsPolicy is null", actual );
-        assertEquals( expected, actual );
+            assertNotNull("The OpperationsPolicy is null", actual);
+            assertEquals(expected, actual);
 
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
+
     /**
      * <PRE>
      * Bean method           | Bean method can perform the following operations
      * ______________________|__________________________________________________
-     *                       |
+     * |
      * setEntityContext      |  EntityContext methods:
      * unsetEntityContext    |     - getEJBHome
-     *                       |  JNDI access to java:comp/env
+     * |  JNDI access to java:comp/env
      * ______________________|__________________________________________________
      * </PRE>
      */
-    public void TODO_test02_unsetEntityContext(){
-        try{
+    public void TODO_test02_unsetEntityContext() {
+        try {
 
         /* TO DO:  This test needs unique functionality to work */
-        OperationsPolicy policy = new OperationsPolicy();
-        policy.allow( OperationsPolicy.Context_getEJBHome );
-        policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );
+            final OperationsPolicy policy = new OperationsPolicy();
+            policy.allow(OperationsPolicy.Context_getEJBHome);
+            policy.allow(OperationsPolicy.JNDI_access_to_java_comp_env);
 
-        Object expected = policy;
-        Object actual = ejbObject.getAllowedOperationsReport("unsetEntityContext");
+            final Object expected = policy;
+            final Object actual = ejbObject.getAllowedOperationsReport("unsetEntityContext");
 
-        assertNotNull("The OpperationsPolicy is null", actual );
-        assertEquals( expected, actual );
+            assertNotNull("The OpperationsPolicy is null", actual);
+            assertEquals(expected, actual);
 
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
+
     /**
      * <PRE>
      * Bean method           | Bean method can perform the following operations
      * ______________________|__________________________________________________
-     *                       |
+     * |
      * ejbCreate             |  EntityContext methods:
-     *                       |     - getEJBHome
-     *                       |     - getCallerPrincipal
-     *                       |     - getRollbackOnly
-     *                       |     - isCallerInRole
-     *                       |     - setRollbackOnly
-     *                       |  JNDI access to java:comp/env
-     *                       |  Resource manager access
-     *                       |  Enterprise bean access
+     * |     - getEJBHome
+     * |     - getCallerPrincipal
+     * |     - getRollbackOnly
+     * |     - isCallerInRole
+     * |     - setRollbackOnly
+     * |  JNDI access to java:comp/env
+     * |  Resource manager access
+     * |  Enterprise bean access
      * ______________________|__________________________________________________
      * </PRE>
      */
-    public void test03_ejbCreate(){
-        try{
+    public void test03_ejbCreate() {
+        try {
 
-        OperationsPolicy policy = new OperationsPolicy();
-        policy.allow( OperationsPolicy.Context_getEJBHome );
-        policy.allow( OperationsPolicy.Context_getCallerPrincipal );
-        //TODO:0:policy.allow( OperationsPolicy.Context_getRollbackOnly );
-        policy.allow( OperationsPolicy.Context_isCallerInRole );
-        //TODO:0:policy.allow( OperationsPolicy.Context_setRollbackOnly );
-        policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );
+            final OperationsPolicy policy = new OperationsPolicy();
+            policy.allow(OperationsPolicy.Context_getEJBHome);
+            policy.allow(OperationsPolicy.Context_getCallerPrincipal);
+            //TODO:0:policy.allow( OperationsPolicy.Context_getRollbackOnly );
+            policy.allow(OperationsPolicy.Context_isCallerInRole);
+            //TODO:0:policy.allow( OperationsPolicy.Context_setRollbackOnly );
+            policy.allow(OperationsPolicy.JNDI_access_to_java_comp_env);
 
-        Object expected = policy;
-        Object actual = ejbObject.getAllowedOperationsReport("ejbCreate");
+            final Object expected = policy;
+            final Object actual = ejbObject.getAllowedOperationsReport("ejbCreate");
 
-        assertNotNull("The OpperationsPolicy is null", actual );
-        assertEquals( expected, actual );
+            assertNotNull("The OpperationsPolicy is null", actual);
+            assertEquals(expected, actual);
 
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
+
     /**
      * <PRE>
      * Bean method           | Bean method can perform the following operations
      * ______________________|__________________________________________________
-     *                       |
+     * |
      * ejbPostCreate         |  EntityContext methods:
-     *                       |     - getEJBHome
-     *                       |     - getCallerPrincipal
-     *                       |     - getRollbackOnly
-     *                       |     - isCallerInRole
-     *                       |     - setRollbackOnly
-     *                       |     - getEJBObject
-     *                       |     - getPrimaryKey
-     *                       |  JNDI access to java:comp/env
-     *                       |  Resource manager access
-     *                       |  Enterprise bean access
+     * |     - getEJBHome
+     * |     - getCallerPrincipal
+     * |     - getRollbackOnly
+     * |     - isCallerInRole
+     * |     - setRollbackOnly
+     * |     - getEJBObject
+     * |     - getPrimaryKey
+     * |  JNDI access to java:comp/env
+     * |  Resource manager access
+     * |  Enterprise bean access
      * ______________________|__________________________________________________
      * </PRE>
      */
-    public void test04_ejbPostCreate(){
-        try{
+    public void test04_ejbPostCreate() {
+        try {
 
-        OperationsPolicy policy = new OperationsPolicy();
-        policy.allow( OperationsPolicy.Context_getEJBHome );
-        policy.allow( OperationsPolicy.Context_getCallerPrincipal );
-        //TODO:0:policy.allow( OperationsPolicy.Context_getRollbackOnly );
-        policy.allow( OperationsPolicy.Context_isCallerInRole );
-        //TODO:0:policy.allow( OperationsPolicy.Context_setRollbackOnly );
-        policy.allow( OperationsPolicy.Context_getEJBObject );
-        policy.allow( OperationsPolicy.Context_getPrimaryKey );
-        policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );
+            final OperationsPolicy policy = new OperationsPolicy();
+            policy.allow(OperationsPolicy.Context_getEJBHome);
+            policy.allow(OperationsPolicy.Context_getCallerPrincipal);
+            //TODO:0:policy.allow( OperationsPolicy.Context_getRollbackOnly );
+            policy.allow(OperationsPolicy.Context_isCallerInRole);
+            //TODO:0:policy.allow( OperationsPolicy.Context_setRollbackOnly );
+            policy.allow(OperationsPolicy.Context_getEJBObject);
+            policy.allow(OperationsPolicy.Context_getPrimaryKey);
+            policy.allow(OperationsPolicy.JNDI_access_to_java_comp_env);
 
-        Object expected = policy;
-        Object actual = ejbObject.getAllowedOperationsReport("ejbPostCreate");
+            final Object expected = policy;
+            final Object actual = ejbObject.getAllowedOperationsReport("ejbPostCreate");
 
-        assertNotNull("The OpperationsPolicy is null", actual );
-        assertEquals( expected, actual );
+            assertNotNull("The OpperationsPolicy is null", actual);
+            assertEquals(expected, actual);
 
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
+
     /**
      * <PRE>
      * Bean method           | Bean method can perform the following operations
      * ______________________|__________________________________________________
-     *                       |
+     * |
      * ejbRemove             |  EntityContext methods:
-     *                       |     - getEJBHome
-     *                       |     - getCallerPrincipal
-     *                       |     - getRollbackOnly
-     *                       |     - isCallerInRole
-     *                       |     - setRollbackOnly
-     *                       |     - getEJBObject
-     *                       |     - getPrimaryKey
-     *                       |  JNDI access to java:comp/env
-     *                       |  Resource manager access
-     *                       |  Enterprise bean access
+     * |     - getEJBHome
+     * |     - getCallerPrincipal
+     * |     - getRollbackOnly
+     * |     - isCallerInRole
+     * |     - setRollbackOnly
+     * |     - getEJBObject
+     * |     - getPrimaryKey
+     * |  JNDI access to java:comp/env
+     * |  Resource manager access
+     * |  Enterprise bean access
      * ______________________|__________________________________________________
      * </PRE>
      */
-    public void test05_ejbRemove(){
-        try{
+    public void test05_ejbRemove() {
+        try {
 
-        OperationsPolicy policy = new OperationsPolicy();
-        policy.allow( OperationsPolicy.Context_getEJBHome );
-        policy.allow( OperationsPolicy.Context_getCallerPrincipal );
-        //TODO:0:policy.allow( OperationsPolicy.Context_getRollbackOnly );
-        policy.allow( OperationsPolicy.Context_isCallerInRole );
-        //TODO:0:policy.allow( OperationsPolicy.Context_setRollbackOnly );
-        policy.allow( OperationsPolicy.Context_getEJBObject );
-        policy.allow( OperationsPolicy.Context_getPrimaryKey );
-        policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );
+            final OperationsPolicy policy = new OperationsPolicy();
+            policy.allow(OperationsPolicy.Context_getEJBHome);
+            policy.allow(OperationsPolicy.Context_getCallerPrincipal);
+            //TODO:0:policy.allow( OperationsPolicy.Context_getRollbackOnly );
+            policy.allow(OperationsPolicy.Context_isCallerInRole);
+            //TODO:0:policy.allow( OperationsPolicy.Context_setRollbackOnly );
+            policy.allow(OperationsPolicy.Context_getEJBObject);
+            policy.allow(OperationsPolicy.Context_getPrimaryKey);
+            policy.allow(OperationsPolicy.JNDI_access_to_java_comp_env);
 
-        Object expected = policy;
-        Object actual = ejbObject.getAllowedOperationsReport("ejbRemove");
+            final Object expected = policy;
+            final Object actual = ejbObject.getAllowedOperationsReport("ejbRemove");
 
-        assertNotNull("The OpperationsPolicy is null", actual );
-        assertEquals( expected, actual );
+            assertNotNull("The OpperationsPolicy is null", actual);
+            assertEquals(expected, actual);
 
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
+
     /**
      * <PRE>
      * Bean method           | Bean method can perform the following operations
      * ______________________|__________________________________________________
-     *                       |
+     * |
      * ejbFind*              |  EntityContext methods:
      * ejbSelect*            |     - getEJBHome
      * ejbHome               |     - getCallerPrincipal
-     *                       |     - getRollbackOnly
-     *                       |     - isCallerInRole
-     *                       |     - setRollbackOnly
-     *                       |  JNDI access to java:comp/env
-     *                       |  Resource manager access
-     *                       |  Enterprise bean access
+     * |     - getRollbackOnly
+     * |     - isCallerInRole
+     * |     - setRollbackOnly
+     * |  JNDI access to java:comp/env
+     * |  Resource manager access
+     * |  Enterprise bean access
      * ______________________|__________________________________________________
      * </PRE>
      */
-    public void test06_ejbFind(){
-        try{
+    public void test06_ejbFind() {
+        try {
 
-        OperationsPolicy policy = new OperationsPolicy();
-        policy.allow( OperationsPolicy.Context_getEJBHome );
-        policy.allow( OperationsPolicy.Context_getCallerPrincipal );
-        //TODO:0:policy.allow( OperationsPolicy.Context_getRollbackOnly );
-        policy.allow( OperationsPolicy.Context_isCallerInRole );
-        //TODO:0:policy.allow( OperationsPolicy.Context_setRollbackOnly );
-        policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );
+            final OperationsPolicy policy = new OperationsPolicy();
+            policy.allow(OperationsPolicy.Context_getEJBHome);
+            policy.allow(OperationsPolicy.Context_getCallerPrincipal);
+            //TODO:0:policy.allow( OperationsPolicy.Context_getRollbackOnly );
+            policy.allow(OperationsPolicy.Context_isCallerInRole);
+            //TODO:0:policy.allow( OperationsPolicy.Context_setRollbackOnly );
+            policy.allow(OperationsPolicy.JNDI_access_to_java_comp_env);
 
-        Object expected = policy;
-        Object actual = ejbObject.getAllowedOperationsReport("ejbFind");
+            final Object expected = policy;
+            final Object actual = ejbObject.getAllowedOperationsReport("ejbFind");
 
-        assertNotNull("The OpperationsPolicy is null", actual );
-        assertEquals( expected, actual );
+            assertNotNull("The OpperationsPolicy is null", actual);
+            assertEquals(expected, actual);
 
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
@@ -413,228 +417,233 @@ public class BmpAllowedOperationsTests extends BasicBmpTestClient{
      * <PRE>
      * Bean method           | Bean method can perform the following operations
      * ______________________|__________________________________________________
-     *                       |
+     * |
      * ejbFind*              |  EntityContext methods:
      * ejbSelect*            |     - getEJBHome
      * ejbHome               |     - getCallerPrincipal
-     *                       |     - getRollbackOnly
-     *                       |     - isCallerInRole
-     *                       |     - setRollbackOnly
-     *                       |  JNDI access to java:comp/env
-     *                       |  Resource manager access
-     *                       |  Enterprise bean access
+     * |     - getRollbackOnly
+     * |     - isCallerInRole
+     * |     - setRollbackOnly
+     * |  JNDI access to java:comp/env
+     * |  Resource manager access
+     * |  Enterprise bean access
      * ______________________|__________________________________________________
      * </PRE>
      */
-    public void test08_ejbHome(){   
-        try{
+    public void test08_ejbHome() {
+        try {
 
-        OperationsPolicy policy = new OperationsPolicy();
-        policy.allow( OperationsPolicy.Context_getEJBHome );
-        policy.allow( OperationsPolicy.Context_getCallerPrincipal );
-        //TODO:0:policy.allow( OperationsPolicy.Context_getRollbackOnly );
-        policy.allow( OperationsPolicy.Context_isCallerInRole );
-        //TODO:0:policy.allow( OperationsPolicy.Context_setRollbackOnly );
-        policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );
+            final OperationsPolicy policy = new OperationsPolicy();
+            policy.allow(OperationsPolicy.Context_getEJBHome);
+            policy.allow(OperationsPolicy.Context_getCallerPrincipal);
+            //TODO:0:policy.allow( OperationsPolicy.Context_getRollbackOnly );
+            policy.allow(OperationsPolicy.Context_isCallerInRole);
+            //TODO:0:policy.allow( OperationsPolicy.Context_setRollbackOnly );
+            policy.allow(OperationsPolicy.JNDI_access_to_java_comp_env);
 
-        Object expected = policy;
-        Object actual = ejbObject.getAllowedOperationsReport("ejbHome");
+            final Object expected = policy;
+            final Object actual = ejbObject.getAllowedOperationsReport("ejbHome");
 
-        assertNotNull("The OpperationsPolicy is null", actual );
-        assertEquals( expected, actual );
+            assertNotNull("The OpperationsPolicy is null", actual);
+            assertEquals(expected, actual);
 
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
+
     /**
      * <PRE>
      * Bean method           | Bean method can perform the following operations
      * ______________________|__________________________________________________
-     *                       |
+     * |
      * ejbActivate           |  EntityContext methods:
      * ejbPassivate          |     - getEJBHome
-     *                       |     - getEJBObject
-     *                       |     - getPrimaryKey
-     *                       |  JNDI access to java:comp/env
+     * |     - getEJBObject
+     * |     - getPrimaryKey
+     * |  JNDI access to java:comp/env
      * ______________________|__________________________________________________
      * </PRE>
      */
-    public void test10_ejbActivate(){
-        try{
+    public void test10_ejbActivate() {
+        try {
 
-        OperationsPolicy policy = new OperationsPolicy();
-        policy.allow( OperationsPolicy.Context_getEJBHome );
-        policy.allow( OperationsPolicy.Context_getEJBObject );
-        policy.allow( OperationsPolicy.Context_getPrimaryKey );
-        policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );
+            final OperationsPolicy policy = new OperationsPolicy();
+            policy.allow(OperationsPolicy.Context_getEJBHome);
+            policy.allow(OperationsPolicy.Context_getEJBObject);
+            policy.allow(OperationsPolicy.Context_getPrimaryKey);
+            policy.allow(OperationsPolicy.JNDI_access_to_java_comp_env);
 
-        Object expected = policy;
-        Object actual = ejbObject.getAllowedOperationsReport("ejbActivate");
+            final Object expected = policy;
+            final Object actual = ejbObject.getAllowedOperationsReport("ejbActivate");
 
-        assertNotNull("The OpperationsPolicy is null", actual );
-        assertEquals( expected, actual );
+            assertNotNull("The OpperationsPolicy is null", actual);
+            assertEquals(expected, actual);
 
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
+
     /**
      * <PRE>
      * Bean method           | Bean method can perform the following operations
      * ______________________|__________________________________________________
-     *                       |
+     * |
      * ejbActivate           |  EntityContext methods:
      * ejbPassivate          |     - getEJBHome
-     *                       |     - getEJBObject
-     *                       |     - getPrimaryKey
-     *                       |  JNDI access to java:comp/env
+     * |     - getEJBObject
+     * |     - getPrimaryKey
+     * |  JNDI access to java:comp/env
      * ______________________|__________________________________________________
      * </PRE>
      */
-    public void test11_ejbPassivate(){
-        try{
+    public void test11_ejbPassivate() {
+        try {
 
-        OperationsPolicy policy = new OperationsPolicy();
-        policy.allow( OperationsPolicy.Context_getEJBHome );
-        policy.allow( OperationsPolicy.Context_getEJBObject );
-        policy.allow( OperationsPolicy.Context_getPrimaryKey );
-        policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );
+            final OperationsPolicy policy = new OperationsPolicy();
+            policy.allow(OperationsPolicy.Context_getEJBHome);
+            policy.allow(OperationsPolicy.Context_getEJBObject);
+            policy.allow(OperationsPolicy.Context_getPrimaryKey);
+            policy.allow(OperationsPolicy.JNDI_access_to_java_comp_env);
 
-        Object expected = policy;
-        Object actual = ejbObject.getAllowedOperationsReport("ejbPassivate");
+            final Object expected = policy;
+            final Object actual = ejbObject.getAllowedOperationsReport("ejbPassivate");
 
-        assertNotNull("The OpperationsPolicy is null", actual );
-        assertEquals( expected, actual );
+            assertNotNull("The OpperationsPolicy is null", actual);
+            assertEquals(expected, actual);
 
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
+
     /**
      * <PRE>
      * Bean method           | Bean method can perform the following operations
      * ______________________|__________________________________________________
-     *                       |
+     * |
      * ejbLoad               |  EntityContext methods:
      * ejbStore              |     - getEJBHome
-     *                       |     - getCallerPrincipal
-     *                       |     - getRollbackOnly
-     *                       |     - isCallerInRole
-     *                       |     - setRollbackOnly
-     *                       |     - getEJBObject
-     *                       |     - getPrimaryKey
-     *                       |  JNDI access to java:comp/env
-     *                       |  Resource manager access
-     *                       |  Enterprise bean access
+     * |     - getCallerPrincipal
+     * |     - getRollbackOnly
+     * |     - isCallerInRole
+     * |     - setRollbackOnly
+     * |     - getEJBObject
+     * |     - getPrimaryKey
+     * |  JNDI access to java:comp/env
+     * |  Resource manager access
+     * |  Enterprise bean access
      * ______________________|__________________________________________________
      * </PRE>
      */
-    public void test12_ejbLoad(){
-        try{
+    public void test12_ejbLoad() {
+        try {
 
-        OperationsPolicy policy = new OperationsPolicy();
-        policy.allow( OperationsPolicy.Context_getEJBHome );
-        policy.allow( OperationsPolicy.Context_getCallerPrincipal );
-        //TODO:0:policy.allow( OperationsPolicy.Context_getRollbackOnly );
-        policy.allow( OperationsPolicy.Context_isCallerInRole );
-        //TODO:0:policy.allow( OperationsPolicy.Context_setRollbackOnly );
-        policy.allow( OperationsPolicy.Context_getEJBObject );
-        policy.allow( OperationsPolicy.Context_getPrimaryKey );
-        policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );
+            final OperationsPolicy policy = new OperationsPolicy();
+            policy.allow(OperationsPolicy.Context_getEJBHome);
+            policy.allow(OperationsPolicy.Context_getCallerPrincipal);
+            //TODO:0:policy.allow( OperationsPolicy.Context_getRollbackOnly );
+            policy.allow(OperationsPolicy.Context_isCallerInRole);
+            //TODO:0:policy.allow( OperationsPolicy.Context_setRollbackOnly );
+            policy.allow(OperationsPolicy.Context_getEJBObject);
+            policy.allow(OperationsPolicy.Context_getPrimaryKey);
+            policy.allow(OperationsPolicy.JNDI_access_to_java_comp_env);
 
-        Object expected = policy;
-        Object actual = ejbObject.getAllowedOperationsReport("ejbLoad");
+            final Object expected = policy;
+            final Object actual = ejbObject.getAllowedOperationsReport("ejbLoad");
 
-        assertNotNull("The OpperationsPolicy is null", actual );
-        assertEquals( expected, actual );
+            assertNotNull("The OpperationsPolicy is null", actual);
+            assertEquals(expected, actual);
 
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
+
     /**
      * <PRE>
      * Bean method           | Bean method can perform the following operations
      * ______________________|__________________________________________________
-     *                       |
+     * |
      * ejbLoad               |  EntityContext methods:
      * ejbStore              |     - getEJBHome
-     *                       |     - getCallerPrincipal
-     *                       |     - getRollbackOnly
-     *                       |     - isCallerInRole
-     *                       |     - setRollbackOnly
-     *                       |     - getEJBObject
-     *                       |     - getPrimaryKey
-     *                       |  JNDI access to java:comp/env
-     *                       |  Resource manager access
-     *                       |  Enterprise bean access
+     * |     - getCallerPrincipal
+     * |     - getRollbackOnly
+     * |     - isCallerInRole
+     * |     - setRollbackOnly
+     * |     - getEJBObject
+     * |     - getPrimaryKey
+     * |  JNDI access to java:comp/env
+     * |  Resource manager access
+     * |  Enterprise bean access
      * ______________________|__________________________________________________
      * </PRE>
      */
-    public void test13_ejbStore(){
-        try{
+    public void test13_ejbStore() {
+        try {
 
-        OperationsPolicy policy = new OperationsPolicy();
-        policy.allow( OperationsPolicy.Context_getEJBHome );
-        policy.allow( OperationsPolicy.Context_getCallerPrincipal );
-        //TODO:0:policy.allow( OperationsPolicy.Context_getRollbackOnly );
-        policy.allow( OperationsPolicy.Context_isCallerInRole );
-        //TODO:0:policy.allow( OperationsPolicy.Context_setRollbackOnly );
-        policy.allow( OperationsPolicy.Context_getEJBObject );
-        policy.allow( OperationsPolicy.Context_getPrimaryKey );
-        policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );
+            final OperationsPolicy policy = new OperationsPolicy();
+            policy.allow(OperationsPolicy.Context_getEJBHome);
+            policy.allow(OperationsPolicy.Context_getCallerPrincipal);
+            //TODO:0:policy.allow( OperationsPolicy.Context_getRollbackOnly );
+            policy.allow(OperationsPolicy.Context_isCallerInRole);
+            //TODO:0:policy.allow( OperationsPolicy.Context_setRollbackOnly );
+            policy.allow(OperationsPolicy.Context_getEJBObject);
+            policy.allow(OperationsPolicy.Context_getPrimaryKey);
+            policy.allow(OperationsPolicy.JNDI_access_to_java_comp_env);
 
-        Object expected = policy;
-        Object actual = ejbObject.getAllowedOperationsReport("ejbStore");
+            final Object expected = policy;
+            final Object actual = ejbObject.getAllowedOperationsReport("ejbStore");
 
-        assertNotNull( "The OperationsPolicy returned is null", actual);
-        assertEquals( expected, actual );
+            assertNotNull("The OperationsPolicy returned is null", actual);
+            assertEquals(expected, actual);
 
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
+
     /**
      * <PRE>
      * Bean method           | Bean method can perform the following operations
      * ______________________|__________________________________________________
-     *                       |
+     * |
      * business method       |  EntityContext methods:
      * from remote interface |     - getEJBHome
-     *                       |     - getCallerPrincipal
-     *                       |     - getRollbackOnly
-     *                       |     - isCallerInRole
-     *                       |     - setRollbackOnly
-     *                       |     - getEJBObject
-     *                       |     - getPrimaryKey
-     *                       |  JNDI access to java:comp/env
-     *                       |  Resource manager access
-     *                       |  Enterprise bean access
+     * |     - getCallerPrincipal
+     * |     - getRollbackOnly
+     * |     - isCallerInRole
+     * |     - setRollbackOnly
+     * |     - getEJBObject
+     * |     - getPrimaryKey
+     * |  JNDI access to java:comp/env
+     * |  Resource manager access
+     * |  Enterprise bean access
      * ______________________|__________________________________________________
      * </PRE>
      */
-    public void test14_businessMethod(){
-        try{
+    public void test14_businessMethod() {
+        try {
 
-        OperationsPolicy policy = new OperationsPolicy();
-        policy.allow( OperationsPolicy.Context_getEJBHome );
-        policy.allow( OperationsPolicy.Context_getCallerPrincipal );
-        //TODO:0:policy.allow( OperationsPolicy.Context_getRollbackOnly );
-        policy.allow( OperationsPolicy.Context_isCallerInRole );
-        //TODO:0:policy.allow( OperationsPolicy.Context_setRollbackOnly );
-        policy.allow( OperationsPolicy.Context_getEJBObject );
-        policy.allow( OperationsPolicy.Context_getPrimaryKey );
-        policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );
+            final OperationsPolicy policy = new OperationsPolicy();
+            policy.allow(OperationsPolicy.Context_getEJBHome);
+            policy.allow(OperationsPolicy.Context_getCallerPrincipal);
+            //TODO:0:policy.allow( OperationsPolicy.Context_getRollbackOnly );
+            policy.allow(OperationsPolicy.Context_isCallerInRole);
+            //TODO:0:policy.allow( OperationsPolicy.Context_setRollbackOnly );
+            policy.allow(OperationsPolicy.Context_getEJBObject);
+            policy.allow(OperationsPolicy.Context_getPrimaryKey);
+            policy.allow(OperationsPolicy.JNDI_access_to_java_comp_env);
 
-        Object expected = policy;
-        Object actual = ejbObject.getAllowedOperationsReport("businessMethod");
+            final Object expected = policy;
+            final Object actual = ejbObject.getAllowedOperationsReport("businessMethod");
 
-        assertNotNull("The OpperationsPolicy is null", actual );
-        assertEquals( expected, actual );
+            assertNotNull("The OpperationsPolicy is null", actual);
+            assertEquals(expected, actual);
 
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
     //

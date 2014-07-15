@@ -19,79 +19,78 @@ package org.apache.openejb.test.entity.cmp;
 
 /**
  * [2] Should be run as the second test suite of the BasicCmpTestClients
- * 
  */
-public class CmpHomeIntfcTests extends BasicCmpTestClient{
+public class CmpHomeIntfcTests extends BasicCmpTestClient {
 
-    public CmpHomeIntfcTests(){
+    public CmpHomeIntfcTests() {
         super("HomeIntfc.");
     }
-    
-    protected void setUp() throws Exception{
+
+    protected void setUp() throws Exception {
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/entity/cmp/BasicCmpHome");
-        ejbHome = (BasicCmpHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicCmpHome.class);
+        final Object obj = initialContext.lookup("client/tests/entity/cmp/BasicCmpHome");
+        ejbHome = (BasicCmpHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicCmpHome.class);
     }
-    
+
     //===============================
     // Test home interface methods
     //
-    public void test01_create(){
-        try{
+    public void test01_create() {
+        try {
             ejbObject = ejbHome.createObject("First Bean");
             assertNotNull("The EJBObject is null", ejbObject);
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
-    
-    public void test02_findByPrimaryKey(){
-        try{
+
+    public void test02_findByPrimaryKey() {
+        try {
             ejbPrimaryKey = ejbObject.getPrimaryKey();
-            ejbObject = ejbHome.findByPrimaryKey((Integer)ejbPrimaryKey);
+            ejbObject = ejbHome.findByPrimaryKey((Integer) ejbPrimaryKey);
             assertNotNull("The EJBObject is null", ejbObject);
-        } catch (Exception e){
+        } catch (final Exception e) {
             e.printStackTrace();
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
-    
-    public void test03_findByLastName(){
-        Integer[] keys = new Integer[3];
-        try{
+
+    public void test03_findByLastName() {
+        final Integer[] keys = new Integer[3];
+        try {
             ejbObject = ejbHome.createObject("David Blevins");
-            keys[0] = (Integer)ejbObject.getPrimaryKey();
-            
+            keys[0] = (Integer) ejbObject.getPrimaryKey();
+
             ejbObject = ejbHome.createObject("Dennis Blevins");
-            keys[1] = (Integer)ejbObject.getPrimaryKey();
-            
+            keys[1] = (Integer) ejbObject.getPrimaryKey();
+
             ejbObject = ejbHome.createObject("Claude Blevins");
-            keys[2] = (Integer)ejbObject.getPrimaryKey();
-        } catch (Exception e){
-            fail("Received exception while preparing the test: "+e.getClass()+ " : "+e.getMessage());
+            keys[2] = (Integer) ejbObject.getPrimaryKey();
+        } catch (final Exception e) {
+            fail("Received exception while preparing the test: " + e.getClass() + " : " + e.getMessage());
         }
-        
-        try{
-            java.util.Collection objects = ejbHome.findByLastName("Blevins");
+
+        try {
+            final java.util.Collection objects = ejbHome.findByLastName("Blevins");
             assertNotNull("The Collection is null", objects);
-            assertEquals("The Collection is not the right size.", keys.length, objects.size() );
-            Object[] objs = objects.toArray();
-            for (int i=0; i < objs.length; i++){
-                ejbObject = (BasicCmpObject)javax.rmi.PortableRemoteObject.narrow(objs[i], BasicCmpObject.class);
+            assertEquals("The Collection is not the right size.", keys.length, objects.size());
+            final Object[] objs = objects.toArray();
+            for (int i = 0; i < objs.length; i++) {
+                ejbObject = (BasicCmpObject) javax.rmi.PortableRemoteObject.narrow(objs[i], BasicCmpObject.class);
                 // This could be problematic, it assumes the order of the collection.
                 assertEquals("The primary keys are not equal.", keys[i], ejbObject.getPrimaryKey());
             }
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
     public void test04_homeMethod() {
         try {
-            int expected = 8;
-            int actual = ejbHome.sum(5, 3);
+            final int expected = 8;
+            final int actual = ejbHome.sum(5, 3);
             assertEquals("home method returned wrong result", expected, actual);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }

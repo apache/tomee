@@ -22,7 +22,7 @@ import javax.ejb.Stateless;
 public class CalculatorBean implements Calculator {
 
     @Override
-    public int sum(int a, int b) {
+    public int sum(final int a, final int b) {
         return a + b;
     }
 

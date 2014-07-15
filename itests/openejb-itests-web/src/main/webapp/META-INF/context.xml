@@ -22,5 +22,5 @@
 <Context>
   <!-- This only works if the context is installed under the correct name -->
   <Realm className="org.apache.catalina.realm.MemoryRealm"
-      pathname="webapps/itests/WEB-INF/tomcat-users.xml"/>
+         pathname="webapps/itests/WEB-INF/tomcat-users.xml"/>
 </Context>

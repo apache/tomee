@@ -22,25 +22,24 @@ import javax.ejb.EJBHome;
 
 /**
  * [4] Should be run as the fourth test suite of the BasicSingletonTestClients
- *
  */
-public class SingletonEjbObjectTests extends BasicSingletonTestClient{
+public class SingletonEjbObjectTests extends BasicSingletonTestClient {
 
-    public SingletonEjbObjectTests(){
+    public SingletonEjbObjectTests() {
         super("EJBObject.");
     }
 
-    protected void setUp() throws Exception{
+    protected void setUp() throws Exception {
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/singleton/BasicSingletonHome");
-        ejbHome = (BasicSingletonHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicSingletonHome.class);
+        final Object obj = initialContext.lookup("client/tests/singleton/BasicSingletonHome");
+        ejbHome = (BasicSingletonHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicSingletonHome.class);
         ejbObject = ejbHome.createObject();
     }
 
     protected void tearDown() throws Exception {
         try {
             //ejbObject.remove();
-        } catch (Exception e){
+        } catch (final Exception e) {
             throw e;
         } finally {
             super.tearDown();
@@ -50,35 +49,35 @@ public class SingletonEjbObjectTests extends BasicSingletonTestClient{
     //===============================
     // Test ejb object methods
     //
-    public void test01_getHandle(){
-        try{
+    public void test01_getHandle() {
+        try {
             ejbHandle = ejbObject.getHandle();
-            assertNotNull( "The Handle is null", ejbHandle );
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            assertNotNull("The Handle is null", ejbHandle);
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
-    public void test02_isIdentical(){
-        try{
-            assertTrue( "The EJBObjects are not identical", ejbObject.isIdentical(ejbObject) );
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+    public void test02_isIdentical() {
+        try {
+            assertTrue("The EJBObjects are not identical", ejbObject.isIdentical(ejbObject));
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
-    public void test03_getEjbHome(){
-        try{
-            EJBHome home = ejbObject.getEJBHome();
-            assertNotNull( "The EJBHome is null", home );
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+    public void test03_getEjbHome() {
+        try {
+            final EJBHome home = ejbObject.getEJBHome();
+            assertNotNull("The EJBHome is null", home);
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
     /**
      * 5.5 Session object identity
-     *
+     * <p/>
      * Session objects are intended to be private resources used only by the
      * client that created them. For this reason, session objects, from the
      * client's perspective, appear anonymous. In contrast to entity objects,
@@ -89,38 +88,39 @@ public class SingletonEjbObjectTests extends BasicSingletonTestClient{
      * method is invoked on a EJBMetaData object for a Session bean, the method throws
      * the java.lang.RuntimeException.
      */
-    public void test04_getPrimaryKey(){
-        try{
-            Object key = ejbObject.getPrimaryKey();
-        } catch (java.rmi.RemoteException e){
+    public void test04_getPrimaryKey() {
+        try {
+            final Object key = ejbObject.getPrimaryKey();
+        } catch (final java.rmi.RemoteException e) {
             assertTrue(true);
             return;
-        } catch (Exception e){
-            fail("A RuntimeException should have been thrown.  Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("A RuntimeException should have been thrown.  Received Exception " + e.getClass() + " : " + e.getMessage());
         }
         fail("A RuntimeException should have been thrown.");
     }
 
-    public void test05_remove(){
-        try{
+    public void test05_remove() {
+        try {
             ejbObject.remove();
             // you can't really remove a singleton handle
             ejbObject.businessMethod("Should not throw an exception");
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
+
     //
     // Test ejb object methods
     //===============================
-    public void test06_remove(){
+    public void test06_remove() {
         String str = null;
         try {
             str = ejbObject.remove("Hello");
-        } catch (RemoteException e) {
+        } catch (final RemoteException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        assertEquals("Hello",str);
+        assertEquals("Hello", str);
     }
 }

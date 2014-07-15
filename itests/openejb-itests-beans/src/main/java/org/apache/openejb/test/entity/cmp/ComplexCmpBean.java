@@ -51,7 +51,7 @@ public class ComplexCmpBean implements EntityBean {
      * @return x + y
      * @see org.apache.openejb.test.entity.cmp.BasicCmpHome#sum
      */
-    public int ejbHomeSum(int x, int y) {
+    public int ejbHomeSum(final int x, final int y) {
         testAllowedOperations("ejbHome");
         return x + y;
     }
@@ -59,14 +59,14 @@ public class ComplexCmpBean implements EntityBean {
     /**
      * Maps to BasicCmpHome.create
      */
-    public ComplexCmpBeanPk ejbCreateObject(String name) throws CreateException {
-        StringTokenizer st = new StringTokenizer(name, " ");
+    public ComplexCmpBeanPk ejbCreateObject(final String name) throws CreateException {
+        final StringTokenizer st = new StringTokenizer(name, " ");
         firstName = st.nextToken();
         lastName = st.nextToken();
         return null;
     }
 
-    public void ejbPostCreateObject(String name) throws CreateException {
+    public void ejbPostCreateObject(final String name) throws CreateException {
     }
 
     public ComplexCmpBeanPk getPrimaryKey() {
@@ -94,9 +94,9 @@ public class ComplexCmpBean implements EntityBean {
      * @return
      * @see org.apache.openejb.test.entity.cmp.BasicCmpObject#businessMethod
      */
-    public String businessMethod(String text) {
+    public String businessMethod(final String text) {
         testAllowedOperations("businessMethod");
-        StringBuffer b = new StringBuffer(text);
+        final StringBuffer b = new StringBuffer(text);
         return b.reverse().toString();
     }
 
@@ -143,7 +143,7 @@ public class ComplexCmpBean implements EntityBean {
      * @return
      * @see org.apache.openejb.test.entity.cmp.BasicCmpObject#getAllowedOperationsReport
      */
-    public OperationsPolicy getAllowedOperationsReport(String methodName) {
+    public OperationsPolicy getAllowedOperationsReport(final String methodName) {
         return allowedOperationsTable.get(methodName);
     }
 
@@ -167,7 +167,7 @@ public class ComplexCmpBean implements EntityBean {
      * Set the associated entity context. The container invokes this method
      * on an instance after the instance has been created.
      */
-    public void setEntityContext(EntityContext ctx) throws EJBException, RemoteException {
+    public void setEntityContext(final EntityContext ctx) throws EJBException, RemoteException {
         ejbContext = ctx;
         testAllowedOperations("setEntityContext");
     }
@@ -222,63 +222,63 @@ public class ComplexCmpBean implements EntityBean {
     // EntityBean interface methods
     //================================
 
-    protected void testAllowedOperations(String methodName) {
-        OperationsPolicy policy = new OperationsPolicy();
+    protected void testAllowedOperations(final String methodName) {
+        final OperationsPolicy policy = new OperationsPolicy();
 
         /*[1] Test getEJBHome /////////////////*/
         try {
             ejbContext.getEJBHome();
             policy.allow(OperationsPolicy.Context_getEJBHome);
-        } catch (IllegalStateException ise) {
+        } catch (final IllegalStateException ise) {
         }
 
         /*[2] Test getCallerPrincipal /////////*/
         try {
             ejbContext.getCallerPrincipal();
             policy.allow(OperationsPolicy.Context_getCallerPrincipal);
-        } catch (IllegalStateException ise) {
+        } catch (final IllegalStateException ise) {
         }
 
         /*[3] Test isCallerInRole /////////////*/
         try {
             ejbContext.isCallerInRole("TheMan");
             policy.allow(OperationsPolicy.Context_isCallerInRole);
-        } catch (IllegalStateException ise) {
+        } catch (final IllegalStateException ise) {
         }
 
         /*[4] Test getRollbackOnly ////////////*/
         try {
             ejbContext.getRollbackOnly();
             policy.allow(OperationsPolicy.Context_getRollbackOnly);
-        } catch (IllegalStateException ise) {
+        } catch (final IllegalStateException ise) {
         }
 
         /*[5] Test setRollbackOnly ////////////*/
         try {
             ejbContext.setRollbackOnly();
             policy.allow(OperationsPolicy.Context_setRollbackOnly);
-        } catch (IllegalStateException ise) {
+        } catch (final IllegalStateException ise) {
         }
 
         /*[6] Test getUserTransaction /////////*/
         try {
             ejbContext.getUserTransaction();
             policy.allow(OperationsPolicy.Context_getUserTransaction);
-        } catch (Exception e) {
+        } catch (final Exception e) {
         }
 
         /*[7] Test getEJBObject ///////////////*/
         try {
             ejbContext.getEJBObject();
             policy.allow(OperationsPolicy.Context_getEJBObject);
-        } catch (IllegalStateException ise) {
+        } catch (final IllegalStateException ise) {
         }
 
         /*[8] Test getPrimaryKey //////////////*/
         try {
             ejbContext.getPrimaryKey();
             policy.allow(OperationsPolicy.Context_getPrimaryKey);
-        } catch (IllegalStateException ise) {
+        } catch (final IllegalStateException ise) {
         }
 
         /* TO DO:

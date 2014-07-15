@@ -26,37 +26,36 @@ import javax.naming.InitialContext;
 
 import org.apache.openejb.test.TestManager;
 
-public abstract class CmpTestClient extends org.apache.openejb.test.NamedTestCase{
-    
-    protected InitialContext initialContext;
-    
-    protected EJBMetaData       ejbMetaData;
-    protected HomeHandle        ejbHomeHandle;
-    protected Handle            ejbHandle;
-    protected Object            ejbPrimaryKey;
+public abstract class CmpTestClient extends org.apache.openejb.test.NamedTestCase {
 
-    public CmpTestClient(String name){
-        super("Entity.CMP."+name);
+    protected InitialContext initialContext;
+
+    protected EJBMetaData ejbMetaData;
+    protected HomeHandle ejbHomeHandle;
+    protected Handle ejbHandle;
+    protected Object ejbPrimaryKey;
+
+    public CmpTestClient(final String name) {
+        super("Entity.CMP." + name);
     }
-    
+
     /**
      * Sets up the fixture, for example, open a network connection.
      * This method is called before a test is executed.
      */
     protected void setUp() throws Exception {
-        
-        Properties properties = TestManager.getServer().getContextEnvironment();
+
+        final Properties properties = TestManager.getServer().getContextEnvironment();
         //properties.put(Context.SECURITY_PRINCIPAL, "ENTITY_TEST_CLIENT");
         //properties.put(Context.SECURITY_CREDENTIALS, "ENTITY_TEST_CLIENT");
-        
+
         initialContext = new InitialContext(properties);
-                
+
     }
+
     protected void tearDown() throws Exception {
-        
+
     }
-    
-    
-    
-    
+
+
 }

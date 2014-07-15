@@ -26,27 +26,31 @@ public abstract class ManyOwningSideBean extends AbstractEntityBean {
 
     // CMP
     public abstract Integer getId();
+
     public abstract void setId(Integer primaryKey);
 
     public abstract Integer getField1();
+
     public abstract void setField1(Integer field1);
 
     // CMR
     public abstract OneInverseSideLocal getOneInverseSide();
+
     public abstract void setOneInverseSide(OneInverseSideLocal oneInverseSideLocal);
 
     // EJB Select
     public abstract OneInverseSideLocal ejbSelectSomething(Integer id) throws FinderException;
+
     public void testEJBSelect() throws FinderException {
         ejbSelectSomething(getId());
     }
 
-    public Integer ejbCreate(Integer id, Integer field1) throws CreateException {
+    public Integer ejbCreate(final Integer id, final Integer field1) throws CreateException {
         setId(id);
         setField1(field1);
         return null;
     }
 
-    public void ejbPostCreate(Integer id, Integer field1) {
+    public void ejbPostCreate(final Integer id, final Integer field1) {
     }
 }

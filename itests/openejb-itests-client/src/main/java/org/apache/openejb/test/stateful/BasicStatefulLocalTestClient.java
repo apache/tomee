@@ -19,17 +19,16 @@ package org.apache.openejb.test.stateful;
 import javax.ejb.EJB;
 
 /**
- * 
  * @version $Rev$ $Date$
  */
 public abstract class BasicStatefulLocalTestClient extends StatefulTestClient {
-    
-	@EJB(name="client/tests/stateful/BasicStatefulPojoHomeLocal",
-	     beanInterface = BasicStatefulLocalHome.class)
-	protected BasicStatefulLocalHome ejbLocalHome = null;
-	protected BasicStatefulLocalObject ejbLocalObject = null;
 
-    public BasicStatefulLocalTestClient(String name){
+    @EJB(name = "client/tests/stateful/BasicStatefulPojoHomeLocal",
+        beanInterface = BasicStatefulLocalHome.class)
+    protected BasicStatefulLocalHome ejbLocalHome = null;
+    protected BasicStatefulLocalObject ejbLocalObject = null;
+
+    public BasicStatefulLocalTestClient(final String name) {
         super(name);
     }
 }

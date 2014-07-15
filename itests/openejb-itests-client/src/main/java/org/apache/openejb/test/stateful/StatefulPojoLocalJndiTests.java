@@ -19,23 +19,22 @@ package org.apache.openejb.test.stateful;
 
 /**
  * [1] Should be run as the first test suite of the BasicStatefulTestClients
- * 
- * 
+ *
  * @version $Rev$ $Date$
  */
 public class StatefulPojoLocalJndiTests extends BasicStatefulLocalTestClient {
 
-    public StatefulPojoLocalJndiTests(){
+    public StatefulPojoLocalJndiTests() {
         super("LocalJNDI.");
     }
 
-    public void test01_Jndi_lookupHome(){
-        try{
-        	// Here we use the Java casting as what is done while looking-up a local bean
-        	ejbLocalHome = (BasicStatefulLocalHome) initialContext.lookup("client/tests/stateful/BasicStatefulPojoHomeLocal");
+    public void test01_Jndi_lookupHome() {
+        try {
+            // Here we use the Java casting as what is done while looking-up a local bean
+            ejbLocalHome = (BasicStatefulLocalHome) initialContext.lookup("client/tests/stateful/BasicStatefulPojoHomeLocal");
             assertNotNull("The EJBLocalHome is null", ejbLocalHome);
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 

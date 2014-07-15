@@ -20,30 +20,29 @@ import javax.ejb.EJBHome;
 
 /**
  * [6] Should be run as the sixth test suite of the BasicCmpTestClients
- * 
  */
-public class CmpHomeHandleTests extends BasicCmpTestClient{
+public class CmpHomeHandleTests extends BasicCmpTestClient {
 
-    public CmpHomeHandleTests(){
+    public CmpHomeHandleTests() {
         super("HomeHandle.");
     }
 
-    protected void setUp() throws Exception{
+    protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/entity/cmp/BasicCmpHome");
-        ejbHome = (BasicCmpHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicCmpHome.class);
+        ejbHome = (BasicCmpHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicCmpHome.class);
         ejbHomeHandle = ejbHome.getHomeHandle();
     }
-        
+
     //=================================
     // Test home handle methods
     //
-    public void test01_getEJBHome(){
-        try{
+    public void test01_getEJBHome() {
+        try {
             final EJBHome home = ejbHomeHandle.getEJBHome();
-            assertNotNull( "The EJBHome is null", home );
-        } catch (final Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            assertNotNull("The EJBHome is null", home);
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
     //

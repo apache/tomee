@@ -25,7 +25,6 @@ import java.util.Set;
 
 /**
  * [2] Should be run as the second test suite of the ComplexCmpTestClients
- *
  */
 public class ComplexHomeIntfcTests extends ComplexCmpTestClient {
 
@@ -35,7 +34,7 @@ public class ComplexHomeIntfcTests extends ComplexCmpTestClient {
 
     protected void setUp() throws Exception {
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/entity/cmp/ComplexCmpHome");
+        final Object obj = initialContext.lookup("client/tests/entity/cmp/ComplexCmpHome");
         ejbHome = (ComplexCmpHome) PortableRemoteObject.narrow(obj, ComplexCmpHome.class);
     }
 
@@ -46,7 +45,7 @@ public class ComplexHomeIntfcTests extends ComplexCmpTestClient {
         try {
             ejbObject = ejbHome.createObject("First Bean");
             assertNotNull("The EJBObject is null", ejbObject);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
@@ -57,14 +56,14 @@ public class ComplexHomeIntfcTests extends ComplexCmpTestClient {
             assertTrue("Expected (ejbPrimaryKey instanceof ComplexCmpBeanPk) but was instanceof " + ejbPrimaryKey.getClass().getName(), ejbPrimaryKey instanceof ComplexCmpBeanPk);
             ejbObject = ejbHome.findByPrimaryKey((ComplexCmpBeanPk) ejbPrimaryKey);
             assertNotNull("The EJBObject is null", ejbObject);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
     public void test03_findByLastName() {
-        Set<ComplexCmpBeanPk> keys = new HashSet<ComplexCmpBeanPk>();
+        final Set<ComplexCmpBeanPk> keys = new HashSet<ComplexCmpBeanPk>();
         try {
             ejbObject = ejbHome.createObject("David Blevins");
             ejbPrimaryKey = ejbObject.getPrimaryKey();
@@ -80,27 +79,27 @@ public class ComplexHomeIntfcTests extends ComplexCmpTestClient {
             ejbPrimaryKey = ejbObject.getPrimaryKey();
             assertTrue("Expected (ejbPrimaryKey instanceof ComplexCmpBeanPk) but was instanceof " + ejbPrimaryKey.getClass().getName(), ejbPrimaryKey instanceof ComplexCmpBeanPk);
             keys.add((ComplexCmpBeanPk) ejbObject.getPrimaryKey());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received exception while preparing the test: " + e.getClass() + " : " + e.getMessage());
         }
 
         try {
-            Collection objects = ejbHome.findByLastName("Blevins");
-            Set<ComplexCmpBeanPk> foundKeys = new HashSet<ComplexCmpBeanPk>();
+            final Collection objects = ejbHome.findByLastName("Blevins");
+            final Set<ComplexCmpBeanPk> foundKeys = new HashSet<ComplexCmpBeanPk>();
             assertNotNull("The Collection is null", objects);
             assertEquals("The Collection is not the right size.", keys.size(), objects.size());
-            for (Object object : objects) {
+            for (final Object object : objects) {
                 ejbObject = (ComplexCmpObject) PortableRemoteObject.narrow(object, ComplexCmpObject.class);
 
                 // This could be problematic, it assumes the order of the collection.
-                ComplexCmpBeanPk foundKey = (ComplexCmpBeanPk) ejbObject.getPrimaryKey();
+                final ComplexCmpBeanPk foundKey = (ComplexCmpBeanPk) ejbObject.getPrimaryKey();
                 assertTrue("Extra ejb found " + ejbObject.getPrimaryKey(), keys.contains(foundKey));
                 foundKeys.add(foundKey);
             }
 
             keys.removeAll(foundKeys);
             assertEquals("Some keys were not found", Collections.EMPTY_SET, keys);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
@@ -108,10 +107,10 @@ public class ComplexHomeIntfcTests extends ComplexCmpTestClient {
 
     public void test04_homeMethod() {
         try {
-            int expected = 8;
-            int actual = ejbHome.sum(5, 3);
+            final int expected = 8;
+            final int actual = ejbHome.sum(5, 3);
             assertEquals("home method returned wrong result", expected, actual);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }

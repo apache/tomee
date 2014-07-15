@@ -19,21 +19,20 @@ package org.apache.openejb.test.entity.bmp;
 
 /**
  * [1] Should be run as the first test suite of the BasicBmpTestClients
- * 
  */
-public class BmpJndiTests extends BasicBmpTestClient{
+public class BmpJndiTests extends BasicBmpTestClient {
 
-    public BmpJndiTests(){
+    public BmpJndiTests() {
         super("JNDI.");
     }
 
-    public void test01_Jndi_lookupHome(){
-        try{
-            Object obj = initialContext.lookup("client/tests/entity/bmp/BasicBmpHome");
-            ejbHome = (BasicBmpHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicBmpHome.class);
+    public void test01_Jndi_lookupHome() {
+        try {
+            final Object obj = initialContext.lookup("client/tests/entity/bmp/BasicBmpHome");
+            ejbHome = (BasicBmpHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicBmpHome.class);
             assertNotNull("The EJBHome is null", ejbHome);
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 

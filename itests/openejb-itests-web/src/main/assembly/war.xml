@@ -27,7 +27,7 @@
   <includeBaseDirectory>false</includeBaseDirectory>
   <fileSets>
     <fileSet>
-        <directory>${basedir}</directory>
+      <directory>${basedir}</directory>
       <includes>
         <include>README.txt</include>
       </includes>
@@ -49,9 +49,9 @@
     <dependencySet>
       <outputDirectory>WEB-INF/lib</outputDirectory>
       <includes>
-          <include>junit:junit</include>
-          <include>org.apache.openejb:openejb-itests-beans</include>
-          <include>org.apache.openejb:openejb-itests-servlets</include>
+        <include>junit:junit</include>
+        <include>org.apache.openejb:openejb-itests-beans</include>
+        <include>org.apache.openejb:openejb-itests-servlets</include>
       </includes>
       <scope>test</scope>
     </dependencySet>

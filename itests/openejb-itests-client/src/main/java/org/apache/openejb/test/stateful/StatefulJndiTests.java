@@ -19,21 +19,20 @@ package org.apache.openejb.test.stateful;
 
 /**
  * [1] Should be run as the first test suite of the BasicStatefulTestClients
- * 
  */
-public class StatefulJndiTests extends BasicStatefulTestClient{
+public class StatefulJndiTests extends BasicStatefulTestClient {
 
-    public StatefulJndiTests(){
+    public StatefulJndiTests() {
         super("JNDI.");
     }
 
-    public void test01_Jndi_lookupHome(){
-        try{
-            Object obj = initialContext.lookup("client/tests/stateful/BasicStatefulHome");
-            ejbHome = (BasicStatefulHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicStatefulHome.class);
+    public void test01_Jndi_lookupHome() {
+        try {
+            final Object obj = initialContext.lookup("client/tests/stateful/BasicStatefulHome");
+            ejbHome = (BasicStatefulHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicStatefulHome.class);
             assertNotNull("The EJBHome is null", ejbHome);
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 

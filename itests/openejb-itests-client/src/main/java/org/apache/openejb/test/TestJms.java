@@ -25,5 +25,6 @@ import java.util.Properties;
  */
 public interface TestJms {
     void init(Properties props);
+
     ConnectionFactory getConnectionFactory();
 }

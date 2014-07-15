@@ -29,39 +29,44 @@ import org.apache.openejb.test.entity.cmr.CompoundPK;
 public abstract class LicenseBean implements EntityBean {
     // CMP
     public abstract Integer getId();
+
     public abstract void setId(Integer id);
 
     public abstract String getNumber();
+
     public abstract void setNumber(String number);
 
     public abstract Integer getPoints();
+
     public abstract void setPoints(Integer points);
 
     public abstract String getNotes();
+
     public abstract void setNotes(String notes);
 
     // CMR
     public abstract PersonLocal getPerson();
+
     public abstract void setPerson(PersonLocal personLocal);
-    
-    public Integer ejbCreate(Integer id)  throws CreateException {
+
+    public Integer ejbCreate(final Integer id) throws CreateException {
         setId(id);
         return null;
     }
 
-    public void ejbPostCreate(Integer id) {
+    public void ejbPostCreate(final Integer id) {
     }
 
-    public CompoundPK ejbCreate(LicensePk primaryKey)  throws CreateException {
+    public CompoundPK ejbCreate(final LicensePk primaryKey) throws CreateException {
         setId(primaryKey.id);
         setNumber(primaryKey.number);
         return null;
     }
 
-    public void ejbPostCreate(LicensePk primaryKey) {
+    public void ejbPostCreate(final LicensePk primaryKey) {
     }
 
-    public void setEntityContext(EntityContext ctx) {
+    public void setEntityContext(final EntityContext ctx) {
     }
 
     public void unsetEntityContext() {

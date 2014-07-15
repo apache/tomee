@@ -19,13 +19,12 @@ package org.apache.openejb.test;
 import java.util.Properties;
 
 /**
- * 
  * @version $Rev$ $Date$
  */
 public interface TestServer {
 
     public void init(Properties props);
-    
+
     public void start();
 
     public void stop();

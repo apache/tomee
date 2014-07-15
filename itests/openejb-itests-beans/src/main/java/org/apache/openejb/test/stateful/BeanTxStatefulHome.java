@@ -20,5 +20,5 @@ package org.apache.openejb.test.stateful;
 public interface BeanTxStatefulHome extends javax.ejb.EJBHome {
 
     public BeanTxStatefulObject create(String name)
-    throws javax.ejb.CreateException, java.rmi.RemoteException;
+        throws javax.ejb.CreateException, java.rmi.RemoteException;
 }

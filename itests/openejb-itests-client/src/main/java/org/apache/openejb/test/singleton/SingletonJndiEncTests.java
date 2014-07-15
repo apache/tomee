@@ -21,29 +21,28 @@ import org.apache.openejb.test.TestManager;
 
 /**
  * [4] Should be run as the fourth test suite of the EncSingletonTestClients
- * 
  *
  * @version $Rev: 532866 $ $Date: 2007-04-26 14:14:11 -0700 (Thu, 26 Apr 2007) $
  */
-public class SingletonJndiEncTests extends SingletonTestClient{
+public class SingletonJndiEncTests extends SingletonTestClient {
 
-    protected EncSingletonHome   ejbHome;
+    protected EncSingletonHome ejbHome;
     protected EncSingletonObject ejbObject;
-    
-    public SingletonJndiEncTests(){
+
+    public SingletonJndiEncTests() {
         super("JNDI_ENC.");
     }
 
-    protected void setUp() throws Exception{
+    protected void setUp() throws Exception {
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/singleton/EncBean");
-        ejbHome = (EncSingletonHome)javax.rmi.PortableRemoteObject.narrow( obj, EncSingletonHome.class);
+        final Object obj = initialContext.lookup("client/tests/singleton/EncBean");
+        ejbHome = (EncSingletonHome) javax.rmi.PortableRemoteObject.narrow(obj, EncSingletonHome.class);
         ejbObject = ejbHome.create();
         
         /*[2] Create database table */
         TestManager.getDatabase().createEntityTable();
     }
-    
+
     /**
      * Tears down the fixture, for example, close a network connection.
      * This method is called after a test is executed.
@@ -52,249 +51,250 @@ public class SingletonJndiEncTests extends SingletonTestClient{
         try {
             /*[1] Drop database table */
             TestManager.getDatabase().dropEntityTable();
-        } catch (Exception e){
+        } catch (final Exception e) {
             throw e;
         } finally {
             super.tearDown();
         }
     }
-    
+
     public void test01_lookupStringEntry() {
-        try{
+        try {
             ejbObject.lookupStringEntry();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
-    
-    public void test02_lookupDoubleEntry() { 
-        try{
+
+    public void test02_lookupDoubleEntry() {
+        try {
             ejbObject.lookupDoubleEntry();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
-    
-    public void test03_lookupLongEntry() {   
-        try{
+
+    public void test03_lookupLongEntry() {
+        try {
             ejbObject.lookupLongEntry();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
-    
-    public void test04_lookupFloatEntry() {  
-        try{
+
+    public void test04_lookupFloatEntry() {
+        try {
             ejbObject.lookupFloatEntry();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
-    
+
     public void test05_lookupIntegerEntry() {
-        try{
+        try {
             ejbObject.lookupIntegerEntry();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
-    
-    public void test06_lookupShortEntry() {  
-        try{
+
+    public void test06_lookupShortEntry() {
+        try {
             ejbObject.lookupShortEntry();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
-    
+
     public void test07_lookupBooleanEntry() {
-        try{
+        try {
             ejbObject.lookupBooleanEntry();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
-    
-    public void test08_lookupByteEntry() {   
-        try{
+
+    public void test08_lookupByteEntry() {
+        try {
             ejbObject.lookupByteEntry();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
-    
+
     public void test09_lookupCharacterEntry() {
-        try{
+        try {
             ejbObject.lookupCharacterEntry();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
     public void test10_lookupEntityBean() {
-        try{
+        try {
             ejbObject.lookupEntityBean();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
-    
+
     public void test11_lookupStatefulBean() {
-        try{
+        try {
             ejbObject.lookupStatefulBean();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
-    
+
     public void test12_lookupSingletonBean() {
-        try{
+        try {
             ejbObject.lookupSingletonBean();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
-    
+
     public void test13_lookupResource() {
-        try{
+        try {
             ejbObject.lookupResource();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
-    
+
     public void test14_lookupPersistenceUnit() {
-        try{
+        try {
             ejbObject.lookupPersistenceUnit();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
     public void test15_lookupSessionContext() {
-        try{
+        try {
             ejbObject.lookupSessionContext();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
+
     public void test16_lookupPersistenceContext() {
-        try{
+        try {
             ejbObject.lookupPersistenceContext();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
     public void test18_lookupSessionContext() {
-        try{
+        try {
             ejbObject.lookupSessionContext();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
     public void test19_lookupSingletonBusinessLocal() {
-        try{
+        try {
             ejbObject.lookupSingletonBusinessLocal();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
     public void test20_lookupSingletonBusinessRemote() {
-        try{
+        try {
             ejbObject.lookupSingletonBusinessRemote();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
     public void test21_lookupStatefulBusinessLocal() {
-        try{
+        try {
             ejbObject.lookupStatefulBusinessLocal();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
     public void test22_lookupStatefulBusinessRemote() {
-        try{
+        try {
             ejbObject.lookupStatefulBusinessRemote();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
     public void test23_lookupJMSConnectionFactory() {
-        try{
+        try {
             ejbObject.lookupJMSConnectionFactory();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
     public void test24_lookupStatefulBusinessLocalBean() {
-        try{
+        try {
             ejbObject.lookupStatefulBusinessLocal();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
     public void test25_lookupSingletonBusinessLocalBean() {
-        try{
+        try {
             ejbObject.lookupSingletonBusinessLocalBean();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 

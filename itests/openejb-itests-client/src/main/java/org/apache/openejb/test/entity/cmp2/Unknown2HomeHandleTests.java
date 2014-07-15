@@ -38,7 +38,7 @@ public class Unknown2HomeHandleTests extends UnknownCmp2TestClient {
 
     protected void setUp() throws Exception {
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/entity/cmp2/UnknownCmpHome");
+        final Object obj = initialContext.lookup("client/tests/entity/cmp2/UnknownCmpHome");
         ejbHome = (UnknownCmpHome) javax.rmi.PortableRemoteObject.narrow(obj, UnknownCmpHome.class);
         ejbHomeHandle = ejbHome.getHomeHandle();
     }
@@ -48,41 +48,41 @@ public class Unknown2HomeHandleTests extends UnknownCmp2TestClient {
     //
     public void test01_getEJBHome() {
         try {
-            EJBHome home = ejbHomeHandle.getEJBHome();
+            final EJBHome home = ejbHomeHandle.getEJBHome();
             assertNotNull("The EJBHome is null", home);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
     public void Xtest02_copyHandleByMarshalledObject() {
         try {
-            MarshalledObject obj = new MarshalledObject(ejbHomeHandle);
-            HomeHandle copy = (HomeHandle) obj.get();
+            final MarshalledObject obj = new MarshalledObject(ejbHomeHandle);
+            final HomeHandle copy = (HomeHandle) obj.get();
 
             assertNotNull("The HomeHandle copy is null", copy);
-            EJBHome home = copy.getEJBHome();
+            final EJBHome home = copy.getEJBHome();
             assertNotNull("The EJBHome is null", home);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
     public void Xtest03_copyHandleBySerialize() {
         try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(baos);
+            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            final ObjectOutputStream oos = new ObjectOutputStream(baos);
             oos.writeObject(ejbHomeHandle);
             oos.flush();
             oos.close();
-            ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-            ObjectInputStream ois = new ObjectInputStream(bais);
-            HomeHandle copy = (HomeHandle) ois.readObject();
+            final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+            final ObjectInputStream ois = new ObjectInputStream(bais);
+            final HomeHandle copy = (HomeHandle) ois.readObject();
 
             assertNotNull("The HomeHandle copy is null", copy);
-            EJBHome home = copy.getEJBHome();
+            final EJBHome home = copy.getEJBHome();
             assertNotNull("The EJBHome is null", home);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }

@@ -19,33 +19,32 @@ package org.apache.openejb.test.singleton;
 
 /**
  * [1] Should be run as the first test suite of the BasicSingletonTestClients
- * 
- * 
+ *
  * @version $Rev: 481764 $ $Date: 2006-12-03 04:25:05 -0800 (Sun, 03 Dec 2006) $
  */
-public class SingletonJndiTests extends BasicSingletonTestClient{
+public class SingletonJndiTests extends BasicSingletonTestClient {
 
-    public SingletonJndiTests(){
+    public SingletonJndiTests() {
         super("JNDI.");
     }
 
-    public void test01_initialContext(){
-        try{
+    public void test01_initialContext() {
+        try {
             assertNotNull("The InitialContext reference is null.", initialContext);
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
-    
-    public void test02_Jndi_lookupHome(){
-        try{
-            Object obj = initialContext.lookup("client/tests/singleton/BasicSingletonHome");
+
+    public void test02_Jndi_lookupHome() {
+        try {
+            final Object obj = initialContext.lookup("client/tests/singleton/BasicSingletonHome");
             assertNotNull("The EJBHome looked up from JNDI is null", obj);
-            ejbHome = (BasicSingletonHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicSingletonHome.class);
+            ejbHome = (BasicSingletonHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicSingletonHome.class);
             assertNotNull("The EJBHome is null after PortableRemoteObject.narrow", ejbHome);
-        } catch (Exception e){
+        } catch (final Exception e) {
             e.printStackTrace();
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
     

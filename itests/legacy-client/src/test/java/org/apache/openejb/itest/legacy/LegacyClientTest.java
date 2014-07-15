@@ -108,20 +108,20 @@ public class LegacyClientTest {
 
         root = new StandaloneServer(roothome, roothome);
 
-            root.killOnExit();
-            root.getJvmOpts().add("-Dopenejb.classloader.forced-load=org.apache.openejb");
-            root.ignoreOut();
+        root.killOnExit();
+        root.getJvmOpts().add("-Dopenejb.classloader.forced-load=org.apache.openejb");
+        root.ignoreOut();
         root.setProperty("name", rootname);
-            root.setProperty("openejb.extract.configuration", "false");
+        root.setProperty("openejb.extract.configuration", "false");
 
         StandaloneServer.ServerService multipoint = root.getServerService("multipoint");
-            multipoint.setBind("localhost");
-            multipoint.setPort(getNextAvailablePort());
-            multipoint.setDisabled(false);
+        multipoint.setBind("localhost");
+        multipoint.setPort(getNextAvailablePort());
+        multipoint.setDisabled(false);
         multipoint.set("discoveryName", rootname);
 
-            logger.info("Starting Root server");
-            root.start();
+        logger.info("Starting Root server");
+        root.start();
 
 
         final Services services = new Services();
@@ -203,7 +203,7 @@ public class LegacyClientTest {
 
             final String name = bean.name();
             Assert.fail("Server should be destroyed: " + name);
-        } catch (EJBException e) {
+        } catch (final EJBException e) {
             logger.info(String.format("Pass.  Request resulted in %s: %s", e.getCause().getClass().getSimpleName(), e.getMessage()));
             // good
         }
@@ -321,7 +321,7 @@ public class LegacyClientTest {
             client.start();
             try {
                 Assert.assertTrue(String.format("services failed to come online: waited %s %s", timeout, unit), await(timeout, unit));
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 Thread.interrupted();
                 Assert.fail("Interrupted");
             } finally {
