@@ -16,10 +16,12 @@
  */
 package org.apache.openejb.core.singleton;
 
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Module;
+import org.junit.AfterClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -38,6 +40,12 @@ import static org.testng.Assert.assertTrue;
 
 @RunWith(ApplicationComposer.class)
 public class AsyncPostContructTest {
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        OpenEJB.destroy();
+    }
+
     @EJB
     private BuildMeAsync buildMeAsync;
 
@@ -50,9 +58,9 @@ public class AsyncPostContructTest {
 
     @Test
     public void postConstructShouldEndsBeforeAsyncCall() {
-        final long start = buildMeAsync.getStartEnd();
+        final long constructed = buildMeAsync.getStartEnd();
         final long async = buildMeAsync.getAsyncStart();
-        assertTrue(async > start);
+        assertTrue(async >= constructed);
         assertSame(buildMeAsync.getAsyncInstance(), buildMeAsync.getAsyncInstance());
     }
 
@@ -77,12 +85,12 @@ public class AsyncPostContructTest {
             } catch (final InterruptedException e) {
                 // no-op
             }
-            startEnd = System.currentTimeMillis();
+            startEnd = System.nanoTime();
         }
 
         @Asynchronous
         public Future<Boolean> async() {
-            asyncStart = System.currentTimeMillis();
+            asyncStart = System.nanoTime();
             asyncInstance = this;
             return new AsyncResult<Boolean>(true);
         }
