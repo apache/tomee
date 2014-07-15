@@ -48,11 +48,11 @@ public abstract class AbstractCMRTest extends org.apache.openejb.test.NamedTestC
         super("Entity.CMR."+name);
     }
 
-    protected void beginTransaction() throws Exception {
+    protected synchronized void beginTransaction() throws Exception {
         transactionManager.begin();
     }
 
-    protected void completeTransaction() throws SystemException, HeuristicMixedException, HeuristicRollbackException, RollbackException {
+    protected synchronized void completeTransaction() throws SystemException, HeuristicMixedException, HeuristicRollbackException, RollbackException {
         int status = transactionManager.getStatus();
         if (status == Status.STATUS_ACTIVE) {
             transactionManager.commit();
@@ -67,7 +67,7 @@ public abstract class AbstractCMRTest extends org.apache.openejb.test.NamedTestC
      * Sets up the fixture, for example, open a network connection.
      * This method is called before a test is executed.
      */
-    protected void setUp() throws Exception {
+    protected synchronized void setUp() throws Exception {
         super.setUp();
 
         Properties properties = TestManager.getServer().getContextEnvironment();
