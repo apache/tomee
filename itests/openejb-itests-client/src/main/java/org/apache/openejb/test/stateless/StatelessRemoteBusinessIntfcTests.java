@@ -19,11 +19,11 @@ package org.apache.openejb.test.stateless;
 public class StatelessRemoteBusinessIntfcTests extends StatelessTestClient {
     private BasicStatelessBusinessRemote businessRemote;
 
-    public StatelessRemoteBusinessIntfcTests(){
+    public StatelessRemoteBusinessIntfcTests() {
         super("RemoteBusinessIntfc.");
     }
 
-    protected void setUp() throws Exception{
+    protected void setUp() throws Exception {
         super.setUp();
     }
 
@@ -37,22 +37,22 @@ public class StatelessRemoteBusinessIntfcTests extends StatelessTestClient {
         businessRemote = (BasicStatelessBusinessRemote) obj;
     }
 
-    public void test01_businessMethod(){
-        try{
+    public void test01_businessMethod() {
+        try {
             final String expected = "Success";
-            String actual = businessRemote.businessMethod("sseccuS");
+            final String actual = businessRemote.businessMethod("sseccuS");
             assertEquals(expected, actual);
-        } catch (final Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
 
-        try{
-            Integer expected = new Integer(42);
+        try {
+            final Integer expected = new Integer(42);
             final Object actual = businessRemote.echo(expected);
             assertEquals(expected, actual);
             assertNotSame("pass by value", expected, actual);
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
@@ -60,14 +60,14 @@ public class StatelessRemoteBusinessIntfcTests extends StatelessTestClient {
      * Throw an application exception and make sure the exception
      * reaches the bean nicely.
      */
-    public void test02_throwApplicationException(){
-        try{
+    public void test02_throwApplicationException() {
+        try {
             businessRemote.throwApplicationException();
-        } catch (final org.apache.openejb.test.ApplicationException e){
+        } catch (final org.apache.openejb.test.ApplicationException e) {
             //Good.  This is the correct behaviour
             return;
-        } catch (final Throwable e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Throwable e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
         fail("An ApplicationException should have been thrown.");
     }
@@ -76,28 +76,28 @@ public class StatelessRemoteBusinessIntfcTests extends StatelessTestClient {
      * After an application exception we should still be able to
      * use our bean
      */
-    public void test03_invokeAfterApplicationException(){
-        try{
+    public void test03_invokeAfterApplicationException() {
+        try {
             final String expected = "Success";
-            String actual   = businessRemote.businessMethod("sseccuS");
+            final String actual = businessRemote.businessMethod("sseccuS");
             assertEquals(expected, actual);
-        } catch (Throwable e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Throwable e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
     // TODO: check which exception should be thrown
-    public void _test04_throwSystemException(){
-        try{
+    public void _test04_throwSystemException() {
+        try {
             businessRemote.throwSystemException_NullPointer();
-        } catch (final Exception e){
+        } catch (final Exception e) {
             //Good, so far.
             final Throwable n = e.getCause();
-            assertNotNull("Nested exception should not be is null", n );
-            assertTrue("Nested exception should be an instance of NullPointerException, but exception is "+n.getClass().getName(), (n instanceof NullPointerException));
+            assertNotNull("Nested exception should not be is null", n);
+            assertTrue("Nested exception should be an instance of NullPointerException, but exception is " + n.getClass().getName(), (n instanceof NullPointerException));
             return;
-        } catch (final Throwable e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Throwable e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
         fail("A NullPointerException should have been thrown.");
     }
@@ -105,11 +105,11 @@ public class StatelessRemoteBusinessIntfcTests extends StatelessTestClient {
     /**
      * After a system exception the intance should be garbage collected
      * and the remote reference should be invalidated.
-     *
+     * <p/>
      * This one seems to fail. we should double-check the spec on this.
      */
     //TODO: implement
-    public void TODO_test05_invokeAfterSystemException(){
+    public void TODO_test05_invokeAfterSystemException() {
 //        try{
 //        businessRemote.businessMethod("This refernce is invalid");
 //        fail("A java.rmi.NoSuchObjectException should have been thrown.");
@@ -122,9 +122,9 @@ public class StatelessRemoteBusinessIntfcTests extends StatelessTestClient {
     //
     // Test remote interface methods
     //=================================
-    
-    public void test06_testRemove(){
-        final Object obj =businessRemote.remove();
+
+    public void test06_testRemove() {
+        final Object obj = businessRemote.remove();
         assertNotNull(obj);
     }
 

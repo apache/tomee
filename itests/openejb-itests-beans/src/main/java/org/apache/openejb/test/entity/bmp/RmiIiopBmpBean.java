@@ -29,65 +29,65 @@ import javax.naming.InitialContext;
 
 import org.apache.openejb.test.object.ObjectGraph;
 
-public class RmiIiopBmpBean implements javax.ejb.EntityBean{
+public class RmiIiopBmpBean implements javax.ejb.EntityBean {
     private int primaryKey;
     private String firstName;
     private String lastName;
     private EntityContext ejbContext;
-    
-    
+
+
     //=============================
     // Home interface methods
     //    
-    
+
     /**
      * Maps to RmiIiopBmpHome.findEmptyCollection
-     * 
+     *
      * @param primaryKey
-     * @return 
-     * @exception javax.ejb.FinderException
+     * @return
+     * @throws javax.ejb.FinderException
      * @see RmiIiopBmpHome#sum
      */
     public java.util.Collection ejbFindEmptyCollection()
-    throws javax.ejb.FinderException, java.rmi.RemoteException {
+        throws javax.ejb.FinderException, java.rmi.RemoteException {
         return new java.util.Vector();
     }
 
     /**
      * Maps to RmiIiopBmpHome.findByPrimaryKey
-     * 
+     *
      * @param primaryKey
-     * @return 
-     * @exception javax.ejb.FinderException
+     * @return
+     * @throws javax.ejb.FinderException
      * @see RmiIiopBmpHome#sum
      */
-    public Integer ejbFindByPrimaryKey(Integer primaryKey)
-    throws javax.ejb.FinderException{
+    public Integer ejbFindByPrimaryKey(final Integer primaryKey)
+        throws javax.ejb.FinderException {
         return new Integer(-1);
     }
 
     /**
      * Maps to RmiIiopBmpHome.create
-     * 
+     *
      * @param name
-     * @return 
-     * @exception javax.ejb.CreateException
+     * @return
+     * @throws javax.ejb.CreateException
      * @see RmiIiopBmpHome#create
      */
-    public Integer ejbCreate(String name)
-    throws javax.ejb.CreateException{
+    public Integer ejbCreate(final String name)
+        throws javax.ejb.CreateException {
         return new Integer(-1);
     }
-    
-    public void ejbPostCreate(String name)
-    throws javax.ejb.CreateException{
+
+    public void ejbPostCreate(final String name)
+        throws javax.ejb.CreateException {
     }
-    
-    
+
+
     //    
     // Home interface methods
     //=============================
-    
+
 
     //=============================
     // Remote interface methods
@@ -95,172 +95,172 @@ public class RmiIiopBmpBean implements javax.ejb.EntityBean{
     /*-------------------------------------------------*/
     /*  String                                         */  
     /*-------------------------------------------------*/
-    
-    public String returnStringObject(String data) {
+
+    public String returnStringObject(final String data) {
         return data;
     }
-    
-    public String[] returnStringObjectArray(String[] data) {
+
+    public String[] returnStringObjectArray(final String[] data) {
         return data;
     }
     
     /*-------------------------------------------------*/
     /*  Character                                      */  
     /*-------------------------------------------------*/
-    
-    public Character returnCharacterObject(Character data) {
+
+    public Character returnCharacterObject(final Character data) {
         return data;
     }
-    
-    public char returnCharacterPrimitive(char data) {
+
+    public char returnCharacterPrimitive(final char data) {
         return data;
     }
-    
-    public Character[] returnCharacterObjectArray(Character[] data) {
+
+    public Character[] returnCharacterObjectArray(final Character[] data) {
         return data;
     }
-    
-    public char[] returnCharacterPrimitiveArray(char[] data) {
+
+    public char[] returnCharacterPrimitiveArray(final char[] data) {
         return data;
     }
 
     /*-------------------------------------------------*/
     /*  Boolean                                        */  
     /*-------------------------------------------------*/
-    
-    public Boolean returnBooleanObject(Boolean data) {
+
+    public Boolean returnBooleanObject(final Boolean data) {
         return data;
     }
-    
-    public boolean returnBooleanPrimitive(boolean data) {
+
+    public boolean returnBooleanPrimitive(final boolean data) {
         return data;
     }
-    
-    public Boolean[] returnBooleanObjectArray(Boolean[] data) {
+
+    public Boolean[] returnBooleanObjectArray(final Boolean[] data) {
         return data;
     }
-    
-    public boolean[] returnBooleanPrimitiveArray(boolean[] data) {
+
+    public boolean[] returnBooleanPrimitiveArray(final boolean[] data) {
         return data;
     }
     
     /*-------------------------------------------------*/
     /*  Byte                                           */  
     /*-------------------------------------------------*/
-    
-    public Byte returnByteObject(Byte data) {
+
+    public Byte returnByteObject(final Byte data) {
         return data;
     }
-    
-    public byte returnBytePrimitive(byte data) {
+
+    public byte returnBytePrimitive(final byte data) {
         return data;
     }
-    
-    public Byte[] returnByteObjectArray(Byte[] data) {
+
+    public Byte[] returnByteObjectArray(final Byte[] data) {
         return data;
     }
-    
-    public byte[] returnBytePrimitiveArray(byte[] data) {
+
+    public byte[] returnBytePrimitiveArray(final byte[] data) {
         return data;
     }
     
     /*-------------------------------------------------*/
     /*  Short                                          */  
     /*-------------------------------------------------*/
-    
-    public Short returnShortObject(Short data) {
+
+    public Short returnShortObject(final Short data) {
         return data;
     }
-    
-    public short returnShortPrimitive(short data) {
+
+    public short returnShortPrimitive(final short data) {
         return data;
     }
-    
-    public Short[] returnShortObjectArray(Short[] data) {
+
+    public Short[] returnShortObjectArray(final Short[] data) {
         return data;
     }
-    
-    public short[] returnShortPrimitiveArray(short[] data) {
+
+    public short[] returnShortPrimitiveArray(final short[] data) {
         return data;
     }
     
     /*-------------------------------------------------*/
     /*  Integer                                        */  
     /*-------------------------------------------------*/
-    
-    public Integer returnIntegerObject(Integer data) {
+
+    public Integer returnIntegerObject(final Integer data) {
         return data;
     }
-    
-    public int returnIntegerPrimitive(int data) {
+
+    public int returnIntegerPrimitive(final int data) {
         return data;
     }
-    
-    public Integer[] returnIntegerObjectArray(Integer[] data) {
+
+    public Integer[] returnIntegerObjectArray(final Integer[] data) {
         return data;
     }
-    
-    public int[] returnIntegerPrimitiveArray(int[] data) {
+
+    public int[] returnIntegerPrimitiveArray(final int[] data) {
         return data;
     }
     
     /*-------------------------------------------------*/
     /*  Long                                           */  
     /*-------------------------------------------------*/
-    
-    public Long returnLongObject(Long data) {
+
+    public Long returnLongObject(final Long data) {
         return data;
     }
-    
-    public long returnLongPrimitive(long data) {
+
+    public long returnLongPrimitive(final long data) {
         return data;
     }
-    
-    public Long[] returnLongObjectArray(Long[] data) {
+
+    public Long[] returnLongObjectArray(final Long[] data) {
         return data;
     }
-    
-    public long[] returnLongPrimitiveArray(long[] data) {
+
+    public long[] returnLongPrimitiveArray(final long[] data) {
         return data;
     }
     
     /*-------------------------------------------------*/
     /*  Float                                          */  
     /*-------------------------------------------------*/
-    
-    public Float returnFloatObject(Float data) {
+
+    public Float returnFloatObject(final Float data) {
         return data;
     }
-    
-    public float returnFloatPrimitive(float data) {
+
+    public float returnFloatPrimitive(final float data) {
         return data;
     }
-    
-    public Float[] returnFloatObjectArray(Float[] data) {
+
+    public Float[] returnFloatObjectArray(final Float[] data) {
         return data;
     }
-    
-    public float[] returnFloatPrimitiveArray(float[] data) {
+
+    public float[] returnFloatPrimitiveArray(final float[] data) {
         return data;
     }
     
     /*-------------------------------------------------*/
     /*  Double                                         */  
     /*-------------------------------------------------*/
-    
-    public Double returnDoubleObject(Double data) {
+
+    public Double returnDoubleObject(final Double data) {
         return data;
     }
-    
-    public double returnDoublePrimitive(double data) {
+
+    public double returnDoublePrimitive(final double data) {
         return data;
     }
-    
-    public Double[] returnDoubleObjectArray(Double[] data) {
+
+    public Double[] returnDoubleObjectArray(final Double[] data) {
         return data;
     }
-    
-    public double[] returnDoublePrimitiveArray(double[] data) {
+
+    public double[] returnDoublePrimitiveArray(final double[] data) {
         return data;
     }
     
@@ -268,172 +268,172 @@ public class RmiIiopBmpBean implements javax.ejb.EntityBean{
     /*-------------------------------------------------*/
     /*  EJBHome                                         */  
     /*-------------------------------------------------*/
-    
-    public EJBHome returnEJBHome(EJBHome data) {
+
+    public EJBHome returnEJBHome(final EJBHome data) {
         return data;
     }
-    
-    public EJBHome returnEJBHome() throws javax.ejb.EJBException{
+
+    public EJBHome returnEJBHome() throws javax.ejb.EJBException {
         EJBHome data = null;
 
-        try{
-        InitialContext ctx = new InitialContext();
+        try {
+            final InitialContext ctx = new InitialContext();
 
-        data = (EJBHome)ctx.lookup("java:comp/env/bmp/rmi-iiop/home");
+            data = (EJBHome) ctx.lookup("java:comp/env/bmp/rmi-iiop/home");
 
-        } catch (Exception e){
+        } catch (final Exception e) {
             e.printStackTrace();
             throw new javax.ejb.EJBException(e);
         }
         return data;
     }
 
-    public ObjectGraph returnNestedEJBHome() throws javax.ejb.EJBException{
-        ObjectGraph data = null; 
+    public ObjectGraph returnNestedEJBHome() throws javax.ejb.EJBException {
+        ObjectGraph data = null;
 
-        try{
-        InitialContext ctx = new InitialContext();
+        try {
+            final InitialContext ctx = new InitialContext();
 
-        Object object = ctx.lookup("java:comp/env/bmp/rmi-iiop/home");
-        data = new ObjectGraph(object);
+            final Object object = ctx.lookup("java:comp/env/bmp/rmi-iiop/home");
+            data = new ObjectGraph(object);
 
-        } catch (Exception e){
+        } catch (final Exception e) {
             throw new javax.ejb.EJBException(e);
         }
         return data;
     }
 
-    public EJBHome[] returnEJBHomeArray(EJBHome[] data) {
+    public EJBHome[] returnEJBHomeArray(final EJBHome[] data) {
         return data;
     }
     
     /*-------------------------------------------------*/
     /*  EJBObject                                      */  
     /*-------------------------------------------------*/
-    
-    public EJBObject returnEJBObject(EJBObject data) {
+
+    public EJBObject returnEJBObject(final EJBObject data) {
         return data;
     }
-    
-    public EJBObject returnEJBObject() throws javax.ejb.EJBException{
+
+    public EJBObject returnEJBObject() throws javax.ejb.EJBException {
         EncBmpObject data = null;
 
-        try{
-        InitialContext ctx = new InitialContext();
+        try {
+            final InitialContext ctx = new InitialContext();
 
-        EncBmpHome home = (EncBmpHome)ctx.lookup("java:comp/env/bmp/rmi-iiop/home");
-        data = home.create("Test01 BmpBean");
+            final EncBmpHome home = (EncBmpHome) ctx.lookup("java:comp/env/bmp/rmi-iiop/home");
+            data = home.create("Test01 BmpBean");
 
-        } catch (Exception e){
+        } catch (final Exception e) {
             throw new javax.ejb.EJBException(e);
         }
         return data;
     }
-    
-    public ObjectGraph returnNestedEJBObject() throws javax.ejb.EJBException{
+
+    public ObjectGraph returnNestedEJBObject() throws javax.ejb.EJBException {
         ObjectGraph data = null;
 
-        try{
-        InitialContext ctx = new InitialContext();
+        try {
+            final InitialContext ctx = new InitialContext();
 
-        EncBmpHome home = (EncBmpHome)ctx.lookup("java:comp/env/bmp/rmi-iiop/home");
-        EncBmpObject object = home.create("Test02 BmpBean");
-        data = new ObjectGraph(object);
+            final EncBmpHome home = (EncBmpHome) ctx.lookup("java:comp/env/bmp/rmi-iiop/home");
+            final EncBmpObject object = home.create("Test02 BmpBean");
+            data = new ObjectGraph(object);
 
-        } catch (Exception e){
+        } catch (final Exception e) {
             throw new javax.ejb.EJBException(e);
         }
         return data;
     }
-    
-    public EJBObject[] returnEJBObjectArray(EJBObject[] data) {
+
+    public EJBObject[] returnEJBObjectArray(final EJBObject[] data) {
         return data;
     }
     
     /*-------------------------------------------------*/
     /*  EJBMetaData                                         */  
     /*-------------------------------------------------*/
-    
-    public EJBMetaData returnEJBMetaData(EJBMetaData data) {
+
+    public EJBMetaData returnEJBMetaData(final EJBMetaData data) {
         return data;
     }
-    
-    public EJBMetaData returnEJBMetaData() throws javax.ejb.EJBException{
+
+    public EJBMetaData returnEJBMetaData() throws javax.ejb.EJBException {
         EJBMetaData data = null;
 
-        try{
-        InitialContext ctx = new InitialContext();
+        try {
+            final InitialContext ctx = new InitialContext();
 
-        EncBmpHome home = (EncBmpHome)ctx.lookup("java:comp/env/bmp/rmi-iiop/home");
-        data = home.getEJBMetaData();
+            final EncBmpHome home = (EncBmpHome) ctx.lookup("java:comp/env/bmp/rmi-iiop/home");
+            data = home.getEJBMetaData();
 
-        } catch (Exception e){
+        } catch (final Exception e) {
             throw new javax.ejb.EJBException(e);
         }
         return data;
     }
-    
-    public ObjectGraph returnNestedEJBMetaData() throws javax.ejb.EJBException{
+
+    public ObjectGraph returnNestedEJBMetaData() throws javax.ejb.EJBException {
         ObjectGraph data = null;
 
-        try{
-        InitialContext ctx = new InitialContext();
+        try {
+            final InitialContext ctx = new InitialContext();
 
-        EncBmpHome home = (EncBmpHome)ctx.lookup("java:comp/env/bmp/rmi-iiop/home");
-        EJBMetaData object = home.getEJBMetaData();
-        data = new ObjectGraph(object);
+            final EncBmpHome home = (EncBmpHome) ctx.lookup("java:comp/env/bmp/rmi-iiop/home");
+            final EJBMetaData object = home.getEJBMetaData();
+            data = new ObjectGraph(object);
 
-        } catch (Exception e){
+        } catch (final Exception e) {
             throw new javax.ejb.EJBException(e);
         }
         return data;
     }
-    
-    public EJBMetaData[] returnEJBMetaDataArray(EJBMetaData[] data) {
+
+    public EJBMetaData[] returnEJBMetaDataArray(final EJBMetaData[] data) {
         return data;
     }
     
     /*-------------------------------------------------*/
     /*  Handle                                         */  
     /*-------------------------------------------------*/
-    
-    public Handle returnHandle(Handle data) {
+
+    public Handle returnHandle(final Handle data) {
         return data;
     }
-    
-    public Handle returnHandle() throws javax.ejb.EJBException{
+
+    public Handle returnHandle() throws javax.ejb.EJBException {
         Handle data = null;
 
-        try{
-        InitialContext ctx = new InitialContext();
+        try {
+            final InitialContext ctx = new InitialContext();
 
-        EncBmpHome home = (EncBmpHome)ctx.lookup("java:comp/env/bmp/rmi-iiop/home");
-        EncBmpObject object = home.create("Test03 BmpBean");
-        data = object.getHandle();
+            final EncBmpHome home = (EncBmpHome) ctx.lookup("java:comp/env/bmp/rmi-iiop/home");
+            final EncBmpObject object = home.create("Test03 BmpBean");
+            data = object.getHandle();
 
-        } catch (Exception e){
+        } catch (final Exception e) {
             throw new javax.ejb.EJBException(e);
         }
         return data;
     }
-    
-    public ObjectGraph returnNestedHandle() throws javax.ejb.EJBException{
+
+    public ObjectGraph returnNestedHandle() throws javax.ejb.EJBException {
         ObjectGraph data = null;
 
-        try{
-        InitialContext ctx = new InitialContext();
+        try {
+            final InitialContext ctx = new InitialContext();
 
-        EncBmpHome home = (EncBmpHome)ctx.lookup("java:comp/env/bmp/rmi-iiop/home");
-        EncBmpObject object = home.create("Test04 BmpBean");
-        data = new ObjectGraph(object.getHandle());
+            final EncBmpHome home = (EncBmpHome) ctx.lookup("java:comp/env/bmp/rmi-iiop/home");
+            final EncBmpObject object = home.create("Test04 BmpBean");
+            data = new ObjectGraph(object.getHandle());
 
-        } catch (Exception e){
+        } catch (final Exception e) {
             throw new javax.ejb.EJBException(e);
         }
         return data;
     }
-    
-    public Handle[] returnHandleArray(Handle[] data) {
+
+    public Handle[] returnHandleArray(final Handle[] data) {
         return data;
     }
     
@@ -442,23 +442,23 @@ public class RmiIiopBmpBean implements javax.ejb.EntityBean{
     /*  Class                                         */
     /*-------------------------------------------------*/
 
-    public Class returnClass(Class data) {
+    public Class returnClass(final Class data) {
         return data;
     }
 
-    public Class[] returnClassArray(Class[] data) {
+    public Class[] returnClassArray(final Class[] data) {
         return data;
     }
 
     /*-------------------------------------------------*/
     /*  ObjectGraph                                         */  
     /*-------------------------------------------------*/
-    
-    public ObjectGraph returnObjectGraph(ObjectGraph data) {
+
+    public ObjectGraph returnObjectGraph(final ObjectGraph data) {
         return data;
     }
-    
-    public ObjectGraph[] returnObjectGraphArray(ObjectGraph[] data) {
+
+    public ObjectGraph[] returnObjectGraphArray(final ObjectGraph[] data) {
         return data;
     }
     //    
@@ -469,38 +469,38 @@ public class RmiIiopBmpBean implements javax.ejb.EntityBean{
     //================================
     // EntityBean interface methods
     //    
-    
+
     /**
      * A container invokes this method to instruct the
      * instance to synchronize its state by loading it state from the
      * underlying database.
      */
-    public void ejbLoad() throws EJBException,RemoteException {
+    public void ejbLoad() throws EJBException, RemoteException {
     }
-    
+
     /**
      * Set the associated entity context. The container invokes this method
      * on an instance after the instance has been created.
      */
-    public void setEntityContext(EntityContext ctx) throws EJBException,RemoteException {
+    public void setEntityContext(final EntityContext ctx) throws EJBException, RemoteException {
         ejbContext = ctx;
     }
-    
+
     /**
      * Unset the associated entity context. The container calls this method
      * before removing the instance.
      */
-    public void unsetEntityContext() throws EJBException,RemoteException {
+    public void unsetEntityContext() throws EJBException, RemoteException {
     }
-    
+
     /**
      * A container invokes this method to instruct the
      * instance to synchronize its state by storing it to the underlying
      * database.
      */
-    public void ejbStore() throws EJBException,RemoteException {
+    public void ejbStore() throws EJBException, RemoteException {
     }
-    
+
     /**
      * A container invokes this method before it removes the EJB object
      * that is currently associated with the instance. This method
@@ -509,25 +509,25 @@ public class RmiIiopBmpBean implements javax.ejb.EntityBean{
      * This method transitions the instance from the ready state to the pool
      * of available instances.
      */
-    public void ejbRemove() throws RemoveException,EJBException,RemoteException {
+    public void ejbRemove() throws RemoveException, EJBException, RemoteException {
     }
-    
+
     /**
      * A container invokes this method when the instance
      * is taken out of the pool of available instances to become associated
      * with a specific EJB object. This method transitions the instance to
      * the ready state.
      */
-    public void ejbActivate() throws EJBException,RemoteException {
+    public void ejbActivate() throws EJBException, RemoteException {
     }
-    
+
     /**
      * A container invokes this method on an instance before the instance
      * becomes disassociated with a specific EJB object. After this method
      * completes, the container will place the instance into the pool of
      * available instances.
      */
-    public void ejbPassivate() throws EJBException,RemoteException {
+    public void ejbPassivate() throws EJBException, RemoteException {
     }
 
     //    

@@ -20,26 +20,26 @@ import javax.ejb.EJBHome;
 
 public class SingletonPojoHomeHandleTests extends BasicSingletonTestClient {
 
-	public SingletonPojoHomeHandleTests() {
-		 super("PojoHomeHandle.");
+    public SingletonPojoHomeHandleTests() {
+        super("PojoHomeHandle.");
     }
 
-    protected void setUp() throws Exception{
+    protected void setUp() throws Exception {
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/singleton/BasicSingletonPojoHome");
-        ejbHome = (BasicSingletonHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicSingletonHome.class);
+        final Object obj = initialContext.lookup("client/tests/singleton/BasicSingletonPojoHome");
+        ejbHome = (BasicSingletonHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicSingletonHome.class);
         ejbHomeHandle = ejbHome.getHomeHandle();
     }
-        
+
     //=================================
     // Test home handle methods
     //
-    public void test01_getEJBHome(){
-        try{
-            EJBHome home = ejbHomeHandle.getEJBHome();
-            assertNotNull( "The EJBHome is null", home );
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+    public void test01_getEJBHome() {
+        try {
+            final EJBHome home = ejbHomeHandle.getEJBHome();
+            assertNotNull("The EJBHome is null", home);
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
     //

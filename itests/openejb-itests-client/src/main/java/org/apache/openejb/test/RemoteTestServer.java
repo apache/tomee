@@ -119,7 +119,7 @@ public class RemoteTestServer implements org.apache.openejb.test.TestServer {
 
                 out.write("Stop".getBytes());
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 e.printStackTrace();
             }
         }
@@ -148,14 +148,14 @@ public class RemoteTestServer implements org.apache.openejb.test.TestServer {
         try {
             final Socket socket = new Socket("localhost", 4200);
             out = socket.getOutputStream();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             //System.out.println(e.getMessage());
             if (tries < 2) {
                 return false;
             } else {
                 try {
                     Thread.sleep(2000);
-                } catch (Exception e2) {
+                } catch (final Exception e2) {
                     e.printStackTrace();
                 }
                 return connect(--tries);
@@ -164,7 +164,7 @@ public class RemoteTestServer implements org.apache.openejb.test.TestServer {
             if (null != out) {
                 try {
                     out.close();
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     //Ignore
                 }
             }
@@ -194,7 +194,7 @@ public class RemoteTestServer implements org.apache.openejb.test.TestServer {
                     out.write(i);
                 }
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 e.printStackTrace();
             }
         }

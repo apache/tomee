@@ -19,29 +19,28 @@ package org.apache.openejb.test.singleton;
 
 /**
  * [2] Should be run as the second test suite of the BasicSingletonTestClients
- * 
  */
-public class SingletonHomeIntfcTests extends BasicSingletonTestClient{
+public class SingletonHomeIntfcTests extends BasicSingletonTestClient {
 
-    public SingletonHomeIntfcTests(){
+    public SingletonHomeIntfcTests() {
         super("HomeIntfc.");
     }
-    
-    protected void setUp() throws Exception{
+
+    protected void setUp() throws Exception {
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/singleton/BasicSingletonHome");
-        ejbHome = (BasicSingletonHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicSingletonHome.class);
+        final Object obj = initialContext.lookup("client/tests/singleton/BasicSingletonHome");
+        ejbHome = (BasicSingletonHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicSingletonHome.class);
     }
-    
+
     //===============================
     // Test home interface methods
     //
-    public void test01_create(){
-        try{
+    public void test01_create() {
+        try {
             ejbObject = ejbHome.createObject();
-            assertNotNull( "The EJBObject is null", ejbObject );
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            assertNotNull("The EJBObject is null", ejbObject);
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
     //

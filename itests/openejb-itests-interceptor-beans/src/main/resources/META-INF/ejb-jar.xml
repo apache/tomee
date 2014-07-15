@@ -30,20 +30,20 @@
     part of employee self-service application.
   </description>
   <interceptors>
-  	<interceptor>
-  		<interceptor-class>
-  			org.apache.openejb.test.interceptor.DefaultInterceptor
-  		</interceptor-class>
-  	</interceptor>
-  </interceptors> 
+    <interceptor>
+      <interceptor-class>
+        org.apache.openejb.test.interceptor.DefaultInterceptor
+      </interceptor-class>
+    </interceptor>
+  </interceptors>
   <assembly-descriptor>
     <interceptor-binding>
-    	<ejb-name>*</ejb-name>
-    	<interceptor-class>
-    		org.apache.openejb.test.interceptor.DefaultInterceptor
-    	</interceptor-class>
+      <ejb-name>*</ejb-name>
+      <interceptor-class>
+        org.apache.openejb.test.interceptor.DefaultInterceptor
+      </interceptor-class>
     </interceptor-binding>
-    
+
     <!--<interceptor-binding>
     	<ejb-name>SecondStatelessIntercepted</ejb-name>
     	<exclude-default-interceptors>
@@ -82,6 +82,6 @@
     	</method>
     </interceptor-binding>
     -->
-    
+
   </assembly-descriptor>
 </ejb-jar>

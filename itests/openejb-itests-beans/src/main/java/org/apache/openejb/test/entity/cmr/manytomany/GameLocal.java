@@ -25,15 +25,19 @@ import javax.ejb.EJBLocalObject;
 public interface GameLocal extends EJBLocalObject {
     // CMP
     public Integer getId();
+
     public void setId(Integer id);
 
     public String getName();
+
     public void setName(String name);
 
     public Integer getRating();
+
     public void setRating(Integer rating);
 
     // CMR
     public Set<PlatformLocal> getPlatforms();
+
     public void setPlatforms(Set<PlatformLocal> platforms);
 }

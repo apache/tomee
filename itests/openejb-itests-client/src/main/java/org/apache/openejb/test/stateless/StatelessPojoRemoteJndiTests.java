@@ -18,25 +18,25 @@ package org.apache.openejb.test.stateless;
 
 public class StatelessPojoRemoteJndiTests extends BasicStatelessTestClient {
 
-    public StatelessPojoRemoteJndiTests(){
+    public StatelessPojoRemoteJndiTests() {
         super("JNDI.");
     }
 
-    public void test01_initialContext(){
-        try{
+    public void test01_initialContext() {
+        try {
             assertNotNull("The InitialContext reference is null.", initialContext);
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
-    public void test02_Jndi_lookupHome(){
-        try{
-            Object obj = initialContext.lookup("client/tests/stateless/BasicStatelessPojoHome");
-            ejbHome = (BasicStatelessHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicStatelessHome.class);
+    public void test02_Jndi_lookupHome() {
+        try {
+            final Object obj = initialContext.lookup("client/tests/stateless/BasicStatelessPojoHome");
+            ejbHome = (BasicStatelessHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicStatelessHome.class);
             assertNotNull("The EJBHome is null", ejbHome);
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 

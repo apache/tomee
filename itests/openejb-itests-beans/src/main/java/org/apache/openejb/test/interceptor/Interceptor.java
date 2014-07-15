@@ -25,26 +25,25 @@ import javax.interceptor.InvocationContext;
 import org.apache.openejb.test.SuperInterceptedBean;
 
 /**
- *
  * @version $Rev$ $Date$
  */
 public class Interceptor {
     
     /*@Resource
     static SessionContext sessionContext;*/
-    
+
     /**
      * This interceptor creates/updates an inner map for every method that it intercepts.
      * The inner map contains the array of method parameters in the key PARAMETERS.
      * The inner map contains the list of interceptor methods in the key INTERCEPTORS.
      * The inner map is put back into the contextData against the method name as the key.
-     * 
-     * @param ctx - InvocationContext
+     *
+     * @param ctx             - InvocationContext
      * @param interceptorName name of the interceptor
      * @return contextData - the contextData which now has been filled with a hashmap of hashmap.
      */
     @SuppressWarnings("unchecked")
-    public static Map<String, Object> profile(InvocationContext ctx, String interceptorName) {
+    public static Map<String, Object> profile(final InvocationContext ctx, final String interceptorName) {
         /*if (sessionContext != null) {
             System.out.println(sessionContext.lookup("java:comp/env"));        
         }
@@ -53,44 +52,43 @@ public class Interceptor {
         }*/
 
 
-        Map<String, Object> ctxData = ctx.getContextData();
+        final Map<String, Object> ctxData = ctx.getContextData();
 
-        String KEY;
+        final String KEY;
         if (ctx.getMethod() != null) {
-            KEY = ctx.getMethod().getName();    
-        }        
-        else {
+            KEY = ctx.getMethod().getName();
+        } else {
             KEY = (ctx.getTarget()).getClass().getSimpleName();
         }
-        
+
         Map<String, Object> innerMap = (HashMap<String, Object>) ctxData.get(KEY);
         innerMap = updateInterceptorsList(innerMap, interceptorName);
 
         // don't try to get parameters for call back methods (you'll get an IllegalStateException)
         if (ctx.getMethod() != null) {
-            Object[] params = ctx.getParameters();
+            final Object[] params = ctx.getParameters();
             innerMap.put("PARAMETERS", params);
         }
 
         ctxData.put(KEY, innerMap);
-        
-        return ctxData; 
+
+        return ctxData;
     }
 
     /**
      * This is invoked by the lifecycle interceptor callback methods that are defined inside a bean.
      */
     @SuppressWarnings("unchecked")
-    public static Map<String, Object> profile(SuperInterceptedBean bean, String interceptorName) {
-        Map<String, Object> ctxData = new HashMap<String, Object>();
-        
-        String KEY = bean.getClass().getSimpleName();
-        
+    public static Map<String, Object> profile(final SuperInterceptedBean bean, final String interceptorName) {
+        final Map<String, Object> ctxData = new HashMap<String, Object>();
+
+        final String KEY = bean.getClass().getSimpleName();
+
         Map<String, Object> innerMap = (HashMap<String, Object>) ctxData.get(KEY);
         innerMap = updateInterceptorsList(innerMap, interceptorName);
-        
+
         ctxData.put(KEY, innerMap);
-        return ctxData;        
+        return ctxData;
     }
 
     /**
@@ -99,18 +97,18 @@ public class Interceptor {
      * @return innerMap
      */
     @SuppressWarnings("unchecked")
-    private static Map<String, Object> updateInterceptorsList(Map<String, Object> innerMap, String interceptorName) {
-        if(innerMap == null) {
+    private static Map<String, Object> updateInterceptorsList(Map<String, Object> innerMap, final String interceptorName) {
+        if (innerMap == null) {
             innerMap = new HashMap<String, Object>();
-        }        
-        
+        }
+
         ArrayList<String> interceptorsList = (ArrayList<String>) innerMap.get("INTERCEPTORS");
-        if(interceptorsList == null) {
-            interceptorsList = new ArrayList<String>();            
+        if (interceptorsList == null) {
+            interceptorsList = new ArrayList<String>();
         }
         interceptorsList.add(interceptorName);
         innerMap.put("INTERCEPTORS", interceptorsList);
-        
+
         return innerMap;
     }
 

@@ -44,23 +44,22 @@ public class MdbInterceptor {
 
 
     @AroundInvoke
-    public Object mdbInterceptor(InvocationContext ctx) throws Exception
-    {
-       Object[] objArr = ctx.getParameters();
-       Message msg = (Message)objArr[0];
-       msg.clearProperties();
-       msg.setBooleanProperty("ClassLevelBusinessMethodInterception",true);
-       ctx.setParameters(objArr);
-       return ctx.proceed();
+    public Object mdbInterceptor(final InvocationContext ctx) throws Exception {
+        final Object[] objArr = ctx.getParameters();
+        final Message msg = (Message) objArr[0];
+        msg.clearProperties();
+        msg.setBooleanProperty("ClassLevelBusinessMethodInterception", true);
+        ctx.setParameters(objArr);
+        return ctx.proceed();
     }
 
     @PreDestroy
-    public void interceptRemove(InvocationContext ctx) throws Exception {
+    public void interceptRemove(final InvocationContext ctx) throws Exception {
         ctx.proceed();
     }
 
     @PostConstruct
-    public void postConstruct(InvocationContext ctx) throws Exception {
+    public void postConstruct(final InvocationContext ctx) throws Exception {
         InterceptorMdbBean.classLevelCreateMethodInterception = true;
         ctx.proceed();
     }

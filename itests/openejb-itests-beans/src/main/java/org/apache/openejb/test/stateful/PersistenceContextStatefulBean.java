@@ -39,32 +39,32 @@ public class PersistenceContextStatefulBean {
     private SessionContext ejbContext;
 
     @Resource
-    public void setSessionContext(SessionContext ctx) {
+    public void setSessionContext(final SessionContext ctx) {
         ejbContext = ctx;
     }
 
     @Remove
-    public void remove(){
+    public void remove() {
     }
-    
-    public String remove(String arg) {
+
+    public String remove(final String arg) {
         return arg;
     }
-    
+
     public void testPersistenceContext() throws TestFailureException {
-        try{
-            try{
-                InitialContext ctx = new InitialContext();
+        try {
+            try {
+                final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
-                EntityManager em = (EntityManager)ctx.lookup("java:comp/env/persistence/TestContext");
+                final EntityManager em = (EntityManager) ctx.lookup("java:comp/env/persistence/TestContext");
                 Assert.assertNotNull("The EntityManager is null", em);
 
                 // call a do nothing method to assure entity manager actually exists
                 em.getFlushMode();
-            } catch (Exception e){
-                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            } catch (final Exception e) {
+                Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe){
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -72,9 +72,9 @@ public class PersistenceContextStatefulBean {
     public void testExtendedPersistenceContext() throws TestFailureException {
         try {
             try {
-                InitialContext ctx = new InitialContext();
+                final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
-                EntityManager em = (EntityManager) ctx.lookup("java:comp/env/persistence/ExtendedTestContext");
+                final EntityManager em = (EntityManager) ctx.lookup("java:comp/env/persistence/ExtendedTestContext");
                 Assert.assertNotNull("The EntityManager is null", em);
 
                 // call a do nothing method to assure entity manager actually exists
@@ -82,26 +82,26 @@ public class PersistenceContextStatefulBean {
 
                 if (extendedEntityManager != null) {
                     Assert.assertSame("Extended entity manager should be the same instance that was found last time",
-                            extendedEntityManager,
-                            em);
+                        extendedEntityManager,
+                        em);
                     Assert.assertSame("Extended entity manager delegate should be the same instance that was found last time",
-                            extendedEntityManager.getDelegate(),
-                            em.getDelegate());
+                        extendedEntityManager.getDelegate(),
+                        em.getDelegate());
                 }
                 extendedEntityManager = em;
 
-                UserTransaction userTransaction = ejbContext.getUserTransaction();
+                final UserTransaction userTransaction = ejbContext.getUserTransaction();
                 userTransaction.begin();
                 try {
                     em.getFlushMode();
                 } finally {
                     userTransaction.commit();
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 e.printStackTrace();
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -109,9 +109,9 @@ public class PersistenceContextStatefulBean {
     public void testPropagatedPersistenceContext() throws TestFailureException {
         try {
             try {
-                InitialContext ctx = new InitialContext();
+                final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
-                EntityManager em = (EntityManager) ctx.lookup("java:comp/env/persistence/ExtendedTestContext");
+                final EntityManager em = (EntityManager) ctx.lookup("java:comp/env/persistence/ExtendedTestContext");
                 Assert.assertNotNull("The EntityManager is null", em);
 
                 // call a do nothing method to assure entity manager actually exists
@@ -121,13 +121,13 @@ public class PersistenceContextStatefulBean {
                 inheritedDelegate = (EntityManager) em.getDelegate();
 
                 // The extended entity manager is not propigated to a non-extended entity manager unless there is a transaction
-                EntityManager nonExtendedEm = (EntityManager) ctx.lookup("java:comp/env/persistence/TestContext");
+                final EntityManager nonExtendedEm = (EntityManager) ctx.lookup("java:comp/env/persistence/TestContext");
                 nonExtendedEm.getFlushMode();
-                EntityManager nonExtendedDelegate = ((EntityManager) nonExtendedEm.getDelegate());
+                final EntityManager nonExtendedDelegate = ((EntityManager) nonExtendedEm.getDelegate());
                 Assert.assertTrue("non-extended entity manager should be open", nonExtendedDelegate.isOpen());
                 Assert.assertNotSame("Extended non-extended entity manager shound not be the same instance as extendend entity manager when accessed out side of a transactions",
-                        inheritedDelegate,
-                        nonExtendedDelegate);
+                    inheritedDelegate,
+                    nonExtendedDelegate);
 
                 // When the non-extended entity manager is accessed within a transaction is should see the stateful extended context.
                 //
@@ -135,12 +135,12 @@ public class PersistenceContextStatefulBean {
                 // container associates the persistence context with the JTA transaction and calls EntityManager.joinTransaction."
                 // If our the extended entity manager were not associted with the transaction, the non-extended entity manager would
                 // not see it.
-                UserTransaction userTransaction = ejbContext.getUserTransaction();
+                final UserTransaction userTransaction = ejbContext.getUserTransaction();
                 userTransaction.begin();
                 try {
                     Assert.assertSame("Extended non-extended entity manager to be same instance as extendend entity manager",
-                            inheritedDelegate,
-                            nonExtendedEm.getDelegate());
+                        inheritedDelegate,
+                        nonExtendedEm.getDelegate());
                 } finally {
                     userTransaction.commit();
                 }
@@ -148,18 +148,18 @@ public class PersistenceContextStatefulBean {
                 // When a stateful bean with an extended entity manager creates another stateful bean, the new bean will
                 // inherit the extended entity manager (assuming it contains an extended entity manager for the same persistence
                 // unit).
-                PersistenceContextStatefulHome home = (PersistenceContextStatefulHome) ejbContext.getEJBHome();
-                PersistenceContextStatefulObject object = home.create();
+                final PersistenceContextStatefulHome home = (PersistenceContextStatefulHome) ejbContext.getEJBHome();
+                final PersistenceContextStatefulObject object = home.create();
 
                 // test the new stateful bean recieved the context
                 object.testPropgation();
 
                 // remove the bean
                 object.remove();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -168,23 +168,23 @@ public class PersistenceContextStatefulBean {
         if (inheritedDelegate == null) return;
         try {
             try {
-                InitialContext ctx = new InitialContext();
+                final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
-                EntityManager em = (EntityManager) ctx.lookup("java:comp/env/persistence/ExtendedTestContext");
+                final EntityManager em = (EntityManager) ctx.lookup("java:comp/env/persistence/ExtendedTestContext");
                 Assert.assertNotNull("The EntityManager is null", em);
 
                 // call a do nothing method to assure entity manager actually exists
                 em.getFlushMode();
 
-                EntityManager delegate = (EntityManager) em.getDelegate();
+                final EntityManager delegate = (EntityManager) em.getDelegate();
                 Assert.assertSame("Extended entity manager delegate should be the same instance that was found last time",
-                        inheritedDelegate,
-                        delegate);
-            } catch (Exception e) {
+                    inheritedDelegate,
+                    delegate);
+            } catch (final Exception e) {
                 e.printStackTrace();
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }

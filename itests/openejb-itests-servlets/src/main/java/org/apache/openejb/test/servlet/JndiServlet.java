@@ -32,20 +32,20 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class JndiServlet extends HttpServlet {
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/plain");
-        ServletOutputStream out = response.getOutputStream();
+        final ServletOutputStream out = response.getOutputStream();
 
-        Map<String, Object> bindings = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
+        final Map<String, Object> bindings = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
         try {
-            Context context = (Context) new InitialContext().lookup("java:comp/");
+            final Context context = (Context) new InitialContext().lookup("java:comp/");
             addBindings("", bindings, context);
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             throw new ServletException(e);
         }
 
         out.println("JNDI Context:");
-        for (Map.Entry<String, Object> entry : bindings.entrySet()) {
+        for (final Map.Entry<String, Object> entry : bindings.entrySet()) {
             if (entry.getValue() != null) {
                 out.println("  " + entry.getKey() + "=" + entry.getValue());
             } else {
@@ -54,30 +54,30 @@ public class JndiServlet extends HttpServlet {
         }
     }
 
-    private void addBindings(String path, Map<String, Object> bindings, Context context) {
+    private void addBindings(final String path, final Map<String, Object> bindings, final Context context) {
         try {
-            for (NameClassPair pair : Collections.list(context.list(""))) {
-                String name = pair.getName();
-                String className = pair.getClassName();
+            for (final NameClassPair pair : Collections.list(context.list(""))) {
+                final String name = pair.getName();
+                final String className = pair.getClassName();
                 if ("org.apache.naming.resources.FileDirContext$FileResource".equals(className)) {
                     bindings.put(path + name, "<file>");
                 } else {
                     try {
-                        Object value = context.lookup(name);
+                        final Object value = context.lookup(name);
                         if (value instanceof Context) {
-                            Context nextedContext = (Context) value;
+                            final Context nextedContext = (Context) value;
                             bindings.put(path + name, "");
                             addBindings(path + name + "/", bindings, nextedContext);
                         } else {
                             bindings.put(path + name, value);
                         }
-                    } catch (NamingException e) {
+                    } catch (final NamingException e) {
                         // lookup failed
                         bindings.put(path + name, "ERROR: " + e.getMessage());
                     }
                 }
             }
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             bindings.put(path, "ERROR: list bindings threw an exception: " + e.getMessage());
         }
     }

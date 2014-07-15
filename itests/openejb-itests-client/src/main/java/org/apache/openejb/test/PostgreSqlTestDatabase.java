@@ -44,22 +44,22 @@ public class PostgreSqlTestDatabase implements TestDatabase {
     public void createEntityTable() throws java.sql.SQLException {
         try {
             database.execute("DROP SEQUENCE entity_id_seq");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // not concerned
         }
         try {
             database.execute(_dropEntity);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // not concerned
         }
         try {
             database.execute("CREATE SEQUENCE entity_id_seq");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // not concerned
         }
         try {
             database.execute(_createEntity);
-        } catch (RemoteException re) {
+        } catch (final RemoteException re) {
             if (re.detail != null && re.detail instanceof java.sql.SQLException) {
                 throw (java.sql.SQLException) re.detail;
             } else {
@@ -71,12 +71,12 @@ public class PostgreSqlTestDatabase implements TestDatabase {
     public void dropEntityTable() throws java.sql.SQLException {
         try {
             database.execute("DROP SEQUENCE entity_id_seq");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // not concerned
         }
         try {
             database.execute(_dropEntity);
-        } catch (RemoteException re) {
+        } catch (final RemoteException re) {
             if (re.detail != null && re.detail instanceof java.sql.SQLException) {
                 throw (java.sql.SQLException) re.detail;
             } else {
@@ -89,22 +89,22 @@ public class PostgreSqlTestDatabase implements TestDatabase {
     public void createAccountTable() throws java.sql.SQLException {
         try {
             database.execute("DROP SEQUENCE account_id_seq");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // not concerned
         }
         try {
             database.execute("DROP TABLE account");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // not concerned
         }
         try {
             database.execute("CREATE SEQUENCE account_id_seq");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // not concerned
         }
         try {
             database.execute(_createAccount);
-        } catch (RemoteException re) {
+        } catch (final RemoteException re) {
             if (re.detail != null && re.detail instanceof java.sql.SQLException) {
                 throw (java.sql.SQLException) re.detail;
             } else {
@@ -117,11 +117,11 @@ public class PostgreSqlTestDatabase implements TestDatabase {
         try {
             try {
                 database.execute("DROP SEQUENCE account_id_seq");
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // not concerned
             }
             database.execute(_dropAccount);
-        } catch (RemoteException re) {
+        } catch (final RemoteException re) {
             if (re.detail != null && re.detail instanceof java.sql.SQLException) {
                 throw (java.sql.SQLException) re.detail;
             } else {
@@ -132,14 +132,14 @@ public class PostgreSqlTestDatabase implements TestDatabase {
 
     public void start() throws IllegalStateException {
         try {
-            Properties properties = TestManager.getServer().getContextEnvironment();
+            final Properties properties = TestManager.getServer().getContextEnvironment();
             initialContext = new InitialContext(properties);
 
             /* Create database */
-            Object obj = initialContext.lookup("client/tools/DatabaseHome");
-            DatabaseHome databaseHome = (DatabaseHome) javax.rmi.PortableRemoteObject.narrow(obj, DatabaseHome.class);
+            final Object obj = initialContext.lookup("client/tools/DatabaseHome");
+            final DatabaseHome databaseHome = (DatabaseHome) javax.rmi.PortableRemoteObject.narrow(obj, DatabaseHome.class);
             database = databaseHome.create();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException("Cannot start database: " + e.getClass().getName() + " " + e.getMessage());
         }
     }
@@ -147,19 +147,19 @@ public class PostgreSqlTestDatabase implements TestDatabase {
     public void stop() throws IllegalStateException {
     }
 
-    public void init(Properties props) throws IllegalStateException {
+    public void init(final Properties props) throws IllegalStateException {
     }
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         System.out.println("Checking if driver is registered with DriverManager.");
         try {
-            ClassLoader cl = (ClassLoader) java.security.AccessController.doPrivileged(new java.security.PrivilegedAction() {
+            final ClassLoader cl = (ClassLoader) java.security.AccessController.doPrivileged(new java.security.PrivilegedAction() {
                 public Object run() {
                     return Thread.currentThread().getContextClassLoader();
                 }
             });
             Class.forName("org.postgresql.Driver", true, cl);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             System.out.println("Couldn't find the driver!");
             e.printStackTrace();
             System.exit(1);
@@ -171,7 +171,7 @@ public class PostgreSqlTestDatabase implements TestDatabase {
 
         try {
             conn = DriverManager.getConnection("jdbc:postgresql://localhost/openejbtest", "openejbuser", "javaone");
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             System.out.println("Couldn't connect.");
             e.printStackTrace();
             System.exit(1);
@@ -185,23 +185,23 @@ public class PostgreSqlTestDatabase implements TestDatabase {
 
         try {
             stmt = conn.createStatement();
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             System.out.println("Couldn't create a statement.");
             e.printStackTrace();
             System.exit(1);
         }
 
-        ResultSet rs = null;
+        final ResultSet rs = null;
 
         try {
             stmt.execute("DROP TABLE entity");
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
         }
 
         System.out.println("Creating entity table.");
         try {
             stmt.execute(_createEntity);
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             System.out.println("Couldn't create the entity table");
             e.printStackTrace();
             System.exit(1);
@@ -209,12 +209,12 @@ public class PostgreSqlTestDatabase implements TestDatabase {
 
         System.out.println("Inserting record.");
         try {
-            PreparedStatement pstmt = conn.prepareStatement("insert into entity (id, first_name, last_name) values (?,?,?)");
+            final PreparedStatement pstmt = conn.prepareStatement("insert into entity (id, first_name, last_name) values (?,?,?)");
             pstmt.setInt(1, 101);
             pstmt.setString(2, "Bunson");
             pstmt.setString(3, "Honeydew");
             pstmt.executeUpdate();
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             System.out.println("Couldn't create the entity table");
             e.printStackTrace();
             System.exit(1);
@@ -222,11 +222,11 @@ public class PostgreSqlTestDatabase implements TestDatabase {
 
         System.out.println("Selecting the record.");
         try {
-            PreparedStatement pstmt = conn.prepareStatement("select id from entity where first_name = ? AND last_name = ?");
+            final PreparedStatement pstmt = conn.prepareStatement("select id from entity where first_name = ? AND last_name = ?");
             pstmt.setString(1, "Bunson");
             pstmt.setString(2, "Honeydew");
-            ResultSet set = pstmt.executeQuery();
-        } catch (SQLException e) {
+            final ResultSet set = pstmt.executeQuery();
+        } catch (final SQLException e) {
             System.out.println("Couldn't select the entry");
             e.printStackTrace();
             System.exit(1);
@@ -236,7 +236,7 @@ public class PostgreSqlTestDatabase implements TestDatabase {
         System.out.println("Dropping the entity table.");
         try {
             stmt.execute(_dropEntity);
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             System.out.println("Couldn't drop the entity table");
             e.printStackTrace();
             System.exit(1);
@@ -244,7 +244,7 @@ public class PostgreSqlTestDatabase implements TestDatabase {
 
         try {
             conn.close();
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             System.out.println("Couldn't create the sequense");
             e.printStackTrace();
             System.exit(1);

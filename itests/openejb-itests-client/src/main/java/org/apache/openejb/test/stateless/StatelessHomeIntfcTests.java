@@ -19,29 +19,28 @@ package org.apache.openejb.test.stateless;
 
 /**
  * [2] Should be run as the second test suite of the BasicStatelessTestClients
- * 
  */
-public class StatelessHomeIntfcTests extends BasicStatelessTestClient{
+public class StatelessHomeIntfcTests extends BasicStatelessTestClient {
 
-    public StatelessHomeIntfcTests(){
+    public StatelessHomeIntfcTests() {
         super("HomeIntfc.");
     }
-    
-    protected void setUp() throws Exception{
+
+    protected void setUp() throws Exception {
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/stateless/BasicStatelessHome");
-        ejbHome = (BasicStatelessHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicStatelessHome.class);
+        final Object obj = initialContext.lookup("client/tests/stateless/BasicStatelessHome");
+        ejbHome = (BasicStatelessHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicStatelessHome.class);
     }
-    
+
     //===============================
     // Test home interface methods
     //
-    public void test01_create(){
-        try{
+    public void test01_create() {
+        try {
             ejbObject = ejbHome.createObject();
-            assertNotNull( "The EJBObject is null", ejbObject );
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            assertNotNull("The EJBObject is null", ejbObject);
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
     //

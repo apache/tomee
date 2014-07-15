@@ -19,21 +19,20 @@ package org.apache.openejb.test.entity.cmp;
 
 /**
  * [1] Should be run as the first test suite of the BasicCmpTestClients
- * 
  */
-public class CmpJndiTests extends BasicCmpTestClient{
+public class CmpJndiTests extends BasicCmpTestClient {
 
-    public CmpJndiTests(){
+    public CmpJndiTests() {
         super("JNDI.");
     }
 
-    public void test01_Jndi_lookupHome(){
-        try{
-            Object obj = initialContext.lookup("client/tests/entity/cmp/BasicCmpHome");
-            ejbHome = (BasicCmpHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicCmpHome.class);
+    public void test01_Jndi_lookupHome() {
+        try {
+            final Object obj = initialContext.lookup("client/tests/entity/cmp/BasicCmpHome");
+            ejbHome = (BasicCmpHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicCmpHome.class);
             assertNotNull("The EJBHome is null", ejbHome);
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 

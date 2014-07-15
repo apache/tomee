@@ -29,13 +29,13 @@ public class MdbInterceptorTests extends MdbTestClient {
         super("MDBInterceptor.");
         // TODO Auto-generated constructor stub
     }
-    protected InterceptorMdbObject ejbObject;
 
+    protected InterceptorMdbObject ejbObject;
 
 
     protected void setUp() throws Exception {
         super.setUp();
-        Destination destination = (Destination) initialContext.lookup("InterceptorMdbBean");
+        final Destination destination = (Destination) initialContext.lookup("InterceptorMdbBean");
         ejbObject = MdbProxy.newProxyInstance(InterceptorMdbObject.class, connectionFactory, destination);
         TestManager.getDatabase().createEntityTable();
     }
@@ -44,7 +44,7 @@ public class MdbInterceptorTests extends MdbTestClient {
         MdbProxy.destroyProxy(ejbObject);
         try {
             TestManager.getDatabase().dropEntityTable();
-        } catch (Exception e){
+        } catch (final Exception e) {
             throw e;
         } finally {
             super.tearDown();
@@ -52,42 +52,42 @@ public class MdbInterceptorTests extends MdbTestClient {
     }
 
     public void test01_checkClassLevelBusinessMethodInterception() {
-        try{
+        try {
             ejbObject.checkClassLevelBusinessMethodInterception();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
     public void test02_checkMethodLevelBusinessMethodInterception() {
-        try{
+        try {
             ejbObject.checkMethodLevelBusinessMethodInterception();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
     public void test03_checkClassLevelCreateMethodInterception() {
-        try{
+        try {
             ejbObject.checkClassLevelCreateMethodInterception();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
     public void test04_checkMethodLevelCreateMethodInterception() {
-        try{
+        try {
             ejbObject.checkMethodLevelCreateMethodInterception();
-        } catch (TestFailureException e){
+        } catch (final TestFailureException e) {
             throw e.error;
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 

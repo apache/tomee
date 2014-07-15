@@ -21,23 +21,23 @@ import java.util.Properties;
 
 import org.apache.openejb.test.object.OperationsPolicy;
 
-public interface BasicBmp2DataSourcesObject extends javax.ejb.EJBObject{
-    
+public interface BasicBmp2DataSourcesObject extends javax.ejb.EJBObject {
+
     /**
      * Reverses the string passed in then returns it
      */
     public String businessMethod(String text) throws RemoteException;
-    
+
     /**
-     * Returns a report of the bean's 
+     * Returns a report of the bean's
      * runtime permissions
      */
     public Properties getPermissionsReport() throws RemoteException;
-    
+
     /**
      * Returns a report of the allowed opperations
      * for one of the bean's methods.
-     * 
+     *
      * @param methodName The method for which to get the allowed opperations report
      */
     public OperationsPolicy getAllowedOperationsReport(String methodName) throws RemoteException;

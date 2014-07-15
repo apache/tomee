@@ -18,27 +18,27 @@ package org.apache.openejb.test.object;
 
 import java.io.Serializable;
 
-public class ObjectGraph implements Serializable{
-    
+public class ObjectGraph implements Serializable {
+
     private Serializable object;
 
-    public ObjectGraph(Object obj){
-        this.object = (Serializable)obj;
+    public ObjectGraph(final Object obj) {
+        this.object = (Serializable) obj;
     }
 
-    public ObjectGraph(){
+    public ObjectGraph() {
     }
 
-    public void setObject(Object obj){
-        this.object = (Serializable)obj;
+    public void setObject(final Object obj) {
+        this.object = (Serializable) obj;
     }
 
-    public Object getObject(){
+    public Object getObject() {
         return object;
     }
 
-    public String toString(){
-        return ((Object)object).toString();
+    public String toString() {
+        return ((Object) object).toString();
     }
 }
 

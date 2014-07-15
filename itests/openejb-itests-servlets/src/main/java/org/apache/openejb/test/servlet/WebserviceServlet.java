@@ -36,19 +36,19 @@ public class WebserviceServlet extends HttpServlet {
     @WebServiceRef
     private HelloEjb helloEjb;
 
-    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/plain");
-        ServletOutputStream out = response.getOutputStream();
-        PrintStream printStream = new PrintStream(out);
+        final ServletOutputStream out = response.getOutputStream();
+        final PrintStream printStream = new PrintStream(out);
 
-        String methodName = request.getParameter("method");
+        final String methodName = request.getParameter("method");
         if (methodName == null) {
             testAll(printStream);
         } else {
             try {
-                Method method = getClass().getMethod(methodName);
+                final Method method = getClass().getMethod(methodName);
                 method.invoke(this);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 // response.setStatus(580);
                 printStream.println("FAILED");
                 e.printStackTrace(printStream);
@@ -57,14 +57,14 @@ public class WebserviceServlet extends HttpServlet {
         printStream.flush();
     }
 
-    public void testAll(PrintStream printStream) {
-        for (Method method : EjbServlet.class.getMethods()) {
+    public void testAll(final PrintStream printStream) {
+        for (final Method method : EjbServlet.class.getMethods()) {
             if (!method.getName().startsWith("invoke")) continue;
 
             try {
                 method.invoke(this);
                 printStream.println(method.getName() + " PASSED");
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 printStream.println(method.getName() + " FAILED");
                 e.printStackTrace(printStream);
                 printStream.flush();

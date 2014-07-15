@@ -23,47 +23,42 @@ import org.apache.openejb.test.object.OperationsPolicy;
 
 /**
  * The local interface for BasicStatefulPojoBean.
- * 
- * 
+ *
  * @version $Rev$ $Date$
  */
 public interface BasicStatefulLocalObject extends javax.ejb.EJBLocalObject {
-    
+
     /**
      * Reverses the string passed in then returns it
-     * 
      */
     public String businessMethod(String text);
-    
+
     /**
      * Throws an ApplicationException when invoked
-     * 
      */
     public void throwApplicationException() throws ApplicationException;
-    
+
     /**
      * Throws a java.lang.NullPointerException when invoked
-     * This is a system exception and should result in the 
+     * This is a system exception and should result in the
      * destruction of the instance and invalidation of the
      * remote reference.
-     * 
      */
     public void throwSystemException_NullPointer();
-    
+
     /**
-     * Returns a report of the bean's 
+     * Returns a report of the bean's
      * runtime permissions
-     * 
      */
     public Properties getPermissionsReport();
-    
+
     /**
      * Returns a report of the allowed opperations
      * for one of the bean's methods.
-     * 
+     *
      * @param methodName The method for which to get the allowed opperations report
      */
     public OperationsPolicy getAllowedOperationsReport(String methodName);
-    
+
     public String remove(String obj);
 }

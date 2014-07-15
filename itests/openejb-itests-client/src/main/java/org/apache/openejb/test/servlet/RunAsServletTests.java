@@ -18,7 +18,7 @@
 package org.apache.openejb.test.servlet;
 
 public class RunAsServletTests extends ServletTestClient {
-    public RunAsServletTests(){
+    public RunAsServletTests() {
         super("RunAsServlet");
     }
 

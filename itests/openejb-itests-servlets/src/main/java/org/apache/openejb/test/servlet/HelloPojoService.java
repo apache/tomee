@@ -20,10 +20,10 @@ package org.apache.openejb.test.servlet;
 import javax.jws.WebService;
 
 @WebService(
-    portName="HelloPojoPort",
-    serviceName="HelloPojoService",
-    targetNamespace="http://examples.org/wsdl",
-    endpointInterface="org.apache.openejb.test.servlet.HelloPojo"
+    portName = "HelloPojoPort",
+    serviceName = "HelloPojoService",
+    targetNamespace = "http://examples.org/wsdl",
+    endpointInterface = "org.apache.openejb.test.servlet.HelloPojo"
 )
 public class HelloPojoService implements HelloPojo {
     public String hello(String name) {

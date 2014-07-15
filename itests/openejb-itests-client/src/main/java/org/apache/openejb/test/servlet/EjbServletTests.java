@@ -18,7 +18,7 @@
 package org.apache.openejb.test.servlet;
 
 public class EjbServletTests extends ServletTestClient {
-    public EjbServletTests(){
+    public EjbServletTests() {
         super("EjbServlet");
     }
 

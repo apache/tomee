@@ -57,7 +57,7 @@ public class DiscoveryHostTest {
 
         final List<String> initialServers = new ArrayList<String>();
 
-        for (String name : new String[]{"red", "green", "blue"}) {
+        for (final String name : new String[]{"red", "green", "blue"}) {
             final File home = new File(dir, name);
             Files.mkdir(home);
             Zips.unzip(zip, home, true);
@@ -93,12 +93,12 @@ public class DiscoveryHostTest {
 
         servers.get(0).setOut(System.out);
 
-        for (StandaloneServer server : servers) {
+        for (final StandaloneServer server : servers) {
             final StandaloneServer.ServerService multipoint = server.getServerService("multipoint");
             multipoint.set("initialServers", Join.join(",", initialServers));
         }
 
-        for (StandaloneServer server : servers) {
+        for (final StandaloneServer server : servers) {
             server.start(1, TimeUnit.MINUTES);
         }
 
@@ -113,7 +113,7 @@ public class DiscoveryHostTest {
         final InitialContext context = new InitialContext(environment);
         final Calculator bean = (Calculator) context.lookup("CalculatorBeanRemote");
 
-        for (StandaloneServer server : servers) {
+        for (final StandaloneServer server : servers) {
             System.out.println(String.format("Average invocation time %s microseconds", invoke(bean, 10000)));
             server.kill();
         }
@@ -123,11 +123,11 @@ public class DiscoveryHostTest {
         try {
             System.out.println(String.format("Average invocation time %s microseconds", invoke(bean, 10000)));
             Assert.fail("Server should be destroyed");
-        } catch (EJBException e) {
+        } catch (final EJBException e) {
             // good
         }
 
-        for (StandaloneServer server : servers) {
+        for (final StandaloneServer server : servers) {
             server.start(1, TimeUnit.MINUTES);
             System.out.println(String.format("Average invocation time %s microseconds", invoke(bean, 10000)));
         }
@@ -135,13 +135,13 @@ public class DiscoveryHostTest {
         System.out.println("DONE");
     }
 
-    private long invoke(Calculator bean, int max, String expectedName) {
+    private long invoke(final Calculator bean, final int max, final String expectedName) {
 
         long total = 0;
 
         for (int i = 0; i < max; i++) {
             final long start = System.nanoTime();
-            String name = bean.name();
+            final String name = bean.name();
             System.out.println(name);
             Assert.assertEquals(expectedName, name);
             total += System.nanoTime() - start;
@@ -150,7 +150,7 @@ public class DiscoveryHostTest {
         return TimeUnit.NANOSECONDS.toMicros(total / max);
     }
 
-    private long invoke(Calculator bean, int max) {
+    private long invoke(final Calculator bean, final int max) {
 
         long total = 0;
 

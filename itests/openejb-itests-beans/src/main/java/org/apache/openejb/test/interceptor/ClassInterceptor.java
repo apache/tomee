@@ -25,88 +25,81 @@ import javax.interceptor.InvocationContext;
 
 
 /**
- *
  * @version $Rev$ $Date$
  */
 public class ClassInterceptor extends SuperClassInterceptor {
-    
-    
+
+
     /**
-     * The interceptor method. 
+     * The interceptor method.
      * This should intercept all business methods in this bean class
      * except those annotated with <code>@ExcludeClassInterceptors</code>
-     * 
+     *
      * @param ctx - InvocationContext
-     * 
-     * @return - the result of the next method invoked. If a method returns void, proceed returns null. 
-     * For lifecycle callback interceptor methods, if there is no callback method defined on the bean class, 
-     * the invocation of proceed in the last interceptor method in the chain is a no-op, and null is returned. 
+     * @return - the result of the next method invoked. If a method returns void, proceed returns null.
+     * For lifecycle callback interceptor methods, if there is no callback method defined on the bean class,
+     * the invocation of proceed in the last interceptor method in the chain is a no-op, and null is returned.
      * If there is more than one such interceptor method, the invocation of proceed causes the container to execute those methods in order.
-     * 
      * @throws runtime exceptions or application exceptions that are allowed in the throws clause of the business method.
-     */    
+     */
     @AroundInvoke
-    public Object classInterceptor(InvocationContext ctx) throws Exception {        
+    public Object classInterceptor(final InvocationContext ctx) throws Exception {
         Interceptor.profile(ctx, "classInterceptor");
         return ctx.proceed();
     }
-    
+
     /**
-     * The interceptor method. 
+     * The interceptor method.
      * This should intercept postConstruct of the bean
-     * 
+     *
      * @param ctx - InvocationContext
-     * 
      * @throws runtime exceptions.
-     */    
+     */
     @PostConstruct
-    public void classInterceptorPostConstruct(InvocationContext ctx) throws Exception {
+    public void classInterceptorPostConstruct(final InvocationContext ctx) throws Exception {
         Interceptor.profile(ctx, "classInterceptorPostConstruct");
         ctx.proceed();
         return;
     }
-    
-    
+
+
     /**
-     * The interceptor method. 
+     * The interceptor method.
      * This should intercept postActivate of the bean
-     * 
+     *
      * @param ctx - InvocationContext
-     * 
      * @throws runtime exceptions.
-     */    
+     */
     @PostActivate
-    public void classInterceptorPostActivate(InvocationContext ctx) throws Exception {
+    public void classInterceptorPostActivate(final InvocationContext ctx) throws Exception {
         Interceptor.profile(ctx, "classInterceptorPostActivate");
         ctx.proceed();
         return;
     }
-    
+
     /**
-     * The interceptor method. 
+     * The interceptor method.
      * This should intercept prePassivate of the bean.
-     * 
+     *
      * @param ctx - InvocationContext
-     * 
      * @throws runtime exceptions.
-     */    
+     */
     @PrePassivate
-    public void classInterceptorPrePassivate(InvocationContext ctx) throws Exception {
+    public void classInterceptorPrePassivate(final InvocationContext ctx) throws Exception {
         Interceptor.profile(ctx, "classInterceptorPrePassivate");
         ctx.proceed();
         return;
     }
-    
+
     /**
-     * The interceptor method. 
+     * The interceptor method.
      * This should intercept preDestroy of the bean.
-     * 
+     *
      * @param ctx - InvocationContext
-     * 
      * @throws runtime exceptions.
-     */    
+     */
     @PreDestroy
-    public void classInterceptorPreDestroy(InvocationContext ctx) throws Exception {
+    public void classInterceptorPreDestroy(final InvocationContext ctx) throws Exception {
         Interceptor.profile(ctx, "classInterceptorPreDestroy");
         ctx.proceed();
         return;

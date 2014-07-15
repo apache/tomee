@@ -21,30 +21,29 @@ import javax.ejb.EJB;
 
 /**
  * [2] Should be run as the second test suite of the BasicSingletonTestClients
- * 
- * 
+ *
  * @version $Rev: 607077 $ $Date: 2007-12-27 06:55:23 -0800 (Thu, 27 Dec 2007) $
  */
 public class AnnotatedFieldInjectionSingletonPojoLocalHomeIntfcTests extends AnnotatedFieldInjectionSingletonLocalTestClient {
 
-    public AnnotatedFieldInjectionSingletonPojoLocalHomeIntfcTests(){
+    public AnnotatedFieldInjectionSingletonPojoLocalHomeIntfcTests() {
         super("AnnotatedFieldInjectionSingletonLocalHomeIntfc.");
     }
-    
-    protected void setUp() throws Exception{
+
+    protected void setUp() throws Exception {
         super.setUp();
     }
-    
+
     //===============================
     // Test home interface methods
     //
-    public void test01_create(){
-        try{
+    public void test01_create() {
+        try {
             ejbLocalObject = ejbLocalHome.create();
-            assertNotNull( "The EJBObject is null", ejbLocalObject );
-        } catch (Exception e){
+            assertNotNull("The EJBObject is null", ejbLocalObject);
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
-        }        
+        }
     }
     //
     // Test home interface methods

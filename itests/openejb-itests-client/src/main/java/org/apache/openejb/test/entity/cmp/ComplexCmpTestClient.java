@@ -17,12 +17,12 @@
  */
 package org.apache.openejb.test.entity.cmp;
 
-public abstract class ComplexCmpTestClient extends CmpTestClient{
+public abstract class ComplexCmpTestClient extends CmpTestClient {
 
-    protected ComplexCmpHome   ejbHome;
+    protected ComplexCmpHome ejbHome;
     protected ComplexCmpObject ejbObject;
 
-    public ComplexCmpTestClient(String name){
+    public ComplexCmpTestClient(final String name) {
         super(name);
     }
 }

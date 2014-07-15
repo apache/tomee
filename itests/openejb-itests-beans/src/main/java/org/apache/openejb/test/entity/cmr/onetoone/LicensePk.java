@@ -24,16 +24,16 @@ public class LicensePk {
     public LicensePk() {
     }
 
-    public LicensePk(Integer id, String name) {
+    public LicensePk(final Integer id, final String name) {
         this.id = id;
         this.number = name;
     }
 
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        LicensePk personPk = (LicensePk) o;
+        final LicensePk personPk = (LicensePk) o;
 
         return id.equals(personPk.id) && number.equals(personPk.number);
     }

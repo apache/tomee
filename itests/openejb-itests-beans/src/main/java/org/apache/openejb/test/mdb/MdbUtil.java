@@ -44,7 +44,7 @@ public class MdbUtil {
         if (closeable != null) {
             try {
                 closeable.close();
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 //Ignore
             }
         }
@@ -54,7 +54,7 @@ public class MdbUtil {
         if (closeable != null) {
             try {
                 closeable.close();
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 //Ignore
             }
         }
@@ -64,7 +64,7 @@ public class MdbUtil {
         if (closeable != null) {
             try {
                 closeable.close();
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 //Ignore
             }
         }
@@ -75,13 +75,13 @@ public class MdbUtil {
 
             try {
                 closeable.stop();
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 //Ignore
             }
 
             try {
                 closeable.close();
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 //Ignore
             }
         }

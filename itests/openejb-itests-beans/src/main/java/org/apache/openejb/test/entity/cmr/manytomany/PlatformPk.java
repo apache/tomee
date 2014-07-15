@@ -25,16 +25,16 @@ public class PlatformPk {
     public PlatformPk() {
     }
 
-    public PlatformPk(Integer id, String name) {
+    public PlatformPk(final Integer id, final String name) {
         this.id = id;
         this.name = name;
     }
 
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        PlatformPk that = (PlatformPk) o;
+        final PlatformPk that = (PlatformPk) o;
 
         return id.equals(that.id) && name.equals(that.name);
     }

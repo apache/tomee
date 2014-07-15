@@ -24,12 +24,12 @@ import org.apache.openejb.test.FilteredTestSuite;
  */
 public class StatelessLocalTestSuite extends junit.framework.TestCase {
 
-    public StatelessLocalTestSuite(String name) {
+    public StatelessLocalTestSuite(final String name) {
         super(name);
     }
 
     public static junit.framework.Test suite() {
-        TestSuite suite = new FilteredTestSuite();
+        final TestSuite suite = new FilteredTestSuite();
         suite.addTest(new StatelessJndiTests());
         suite.addTest(new StatelessPojoLocalJndiTests());
 

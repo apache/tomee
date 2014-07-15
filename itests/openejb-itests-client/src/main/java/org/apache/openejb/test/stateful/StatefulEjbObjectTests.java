@@ -22,18 +22,17 @@ import javax.ejb.EJBHome;
 
 /**
  * [4] Should be run as the fourth test suite of the BasicStatefulTestClients
- *
  */
-public class StatefulEjbObjectTests extends BasicStatefulTestClient{
+public class StatefulEjbObjectTests extends BasicStatefulTestClient {
 
-    public StatefulEjbObjectTests(){
+    public StatefulEjbObjectTests() {
         super("EJBObject.");
     }
 
-    protected void setUp() throws Exception{
+    protected void setUp() throws Exception {
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/stateful/BasicStatefulHome");
-        ejbHome = (BasicStatefulHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicStatefulHome.class);
+        final Object obj = initialContext.lookup("client/tests/stateful/BasicStatefulHome");
+        ejbHome = (BasicStatefulHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicStatefulHome.class);
         ejbObject = ejbHome.createObject("Second Bean");
     }
 
@@ -45,35 +44,35 @@ public class StatefulEjbObjectTests extends BasicStatefulTestClient{
     //===============================
     // Test ejb object methods
     //
-    public void test01_getHandle(){
-        try{
+    public void test01_getHandle() {
+        try {
             ejbHandle = ejbObject.getHandle();
-            assertNotNull( "The Handle is null", ejbHandle );
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            assertNotNull("The Handle is null", ejbHandle);
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
-    public void test02_isIdentical(){
-        try{
-            assertTrue( "The EJBObjects are not equal", ejbObject.isIdentical(ejbObject) );
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+    public void test02_isIdentical() {
+        try {
+            assertTrue("The EJBObjects are not equal", ejbObject.isIdentical(ejbObject));
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
-    public void test03_getEjbHome(){
-        try{
-            EJBHome home = ejbObject.getEJBHome();
-            assertNotNull( "The EJBHome is null", home );
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+    public void test03_getEjbHome() {
+        try {
+            final EJBHome home = ejbObject.getEJBHome();
+            assertNotNull("The EJBHome is null", home);
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
     /**
      * 5.5 Session object identity
-     *
+     * <p/>
      * Session objects are intended to be private resources used only by the
      * client that created them. For this reason, session objects, from the
      * client's perspective, appear anonymous. In contrast to entity objects,
@@ -84,14 +83,14 @@ public class StatefulEjbObjectTests extends BasicStatefulTestClient{
      * method is invoked on a EJBMetaData object for a Session bean, the method throws
      * the java.lang.RuntimeException.
      */
-    public void test04_getPrimaryKey(){
-        try{
-            Object key = ejbObject.getPrimaryKey();
-        } catch (java.rmi.RemoteException e){
+    public void test04_getPrimaryKey() {
+        try {
+            final Object key = ejbObject.getPrimaryKey();
+        } catch (final java.rmi.RemoteException e) {
             assertTrue(true);
             return;
-        } catch (Exception e){
-            fail("A RuntimeException should have been thrown.  Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("A RuntimeException should have been thrown.  Received Exception " + e.getClass() + " : " + e.getMessage());
         }
         fail("A RuntimeException should have been thrown.");
     }
@@ -99,31 +98,31 @@ public class StatefulEjbObjectTests extends BasicStatefulTestClient{
     //
     // Test ejb  remoce methods
     //===============================
-    public void test05_remove(){
+    public void test05_remove() {
         String str = null;
         try {
             str = ejbObject.remove("Hello");
-        } catch (RemoteException e) {
+        } catch (final RemoteException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        assertEquals("Hello",str);
+        assertEquals("Hello", str);
     }
 
-    public void test06_remove(){
-        try{
+    public void test06_remove() {
+        try {
             ejbObject.remove();
-            try{
+            try {
                 ejbObject.businessMethod("Should throw an exception");
-                assertTrue( "Calling business method after removing the EJBObject does not throw an exception", false );
-            } catch (Exception e){
-                assertTrue( true );
+                assertTrue("Calling business method after removing the EJBObject does not throw an exception", false);
+            } catch (final Exception e) {
+                assertTrue(true);
                 return;
             }
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
-    
+
 
 }

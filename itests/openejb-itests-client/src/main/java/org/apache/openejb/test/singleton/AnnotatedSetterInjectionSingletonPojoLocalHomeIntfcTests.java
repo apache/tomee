@@ -21,36 +21,35 @@ import javax.ejb.EJB;
 
 /**
  * [2] Should be run as the second test suite of the BasicSingletonTestClients
- * 
- * 
+ *
  * @version $Rev: 607077 $ $Date: 2007-12-27 06:55:23 -0800 (Thu, 27 Dec 2007) $
  */
 public class AnnotatedSetterInjectionSingletonPojoLocalHomeIntfcTests extends AnnotatedSetterInjectionSingletonLocalTestClient {
 
-    public AnnotatedSetterInjectionSingletonPojoLocalHomeIntfcTests(){
+    public AnnotatedSetterInjectionSingletonPojoLocalHomeIntfcTests() {
         super("AnnotatedSetterInjectionLocalHomeIntfc.");
     }
-    
-    protected void setUp() throws Exception{
+
+    protected void setUp() throws Exception {
         super.setUp();
     }
-    
-	@EJB(name="client/tests/singleton/BasicSingletonPojoHomeLocal",
-		 beanInterface = BasicSingletonLocalHome.class)
-    public void setEjbLocalHome(BasicSingletonLocalHome bslEjbHome) {
-    	ejbLocalHome = bslEjbHome;
+
+    @EJB(name = "client/tests/singleton/BasicSingletonPojoHomeLocal",
+        beanInterface = BasicSingletonLocalHome.class)
+    public void setEjbLocalHome(final BasicSingletonLocalHome bslEjbHome) {
+        ejbLocalHome = bslEjbHome;
     }
-    
+
     //===============================
     // Test home interface methods
     //
-    public void test01_create(){
-        try{
+    public void test01_create() {
+        try {
             ejbLocalObject = ejbLocalHome.create();
-            assertNotNull( "The EJBObject is null", ejbLocalObject );
-        } catch (Exception e){
+            assertNotNull("The EJBObject is null", ejbLocalObject);
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
-        }        
+        }
     }
     //
     // Test home interface methods

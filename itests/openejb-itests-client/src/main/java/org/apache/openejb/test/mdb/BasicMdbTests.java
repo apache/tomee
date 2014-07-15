@@ -21,18 +21,17 @@ import javax.jms.Destination;
 
 /**
  * [5] Should be run as the fifth test suite of the BasicStatelessTestClients
- *
  */
 public class BasicMdbTests extends MdbTestClient {
     protected BasicMdbObject basicMdbObject;
 
-    public BasicMdbTests(){
+    public BasicMdbTests() {
         super("BasicMdb.");
     }
 
     protected void setUp() throws Exception {
         super.setUp();
-        Destination destination = (Destination) initialContext.lookup("client/tests/messagedriven/mdb/BasicMdb");
+        final Destination destination = (Destination) initialContext.lookup("client/tests/messagedriven/mdb/BasicMdb");
         basicMdbObject = MdbProxy.newProxyInstance(BasicMdbObject.class, connectionFactory, destination);
     }
 
@@ -45,14 +44,14 @@ public class BasicMdbTests extends MdbTestClient {
     //=================================
     // Test remote interface methods
     //
-    public void test01_businessMethod(){
-        try{
-            String expected = "Success";
-            String actual = basicMdbObject.businessMethod("sseccuS");
+    public void test01_businessMethod() {
+        try {
+            final String expected = "Success";
+            final String actual = basicMdbObject.businessMethod("sseccuS");
             assertEquals(expected, actual);
-        } catch (Exception e){
+        } catch (final Exception e) {
             e.printStackTrace();
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
@@ -60,14 +59,14 @@ public class BasicMdbTests extends MdbTestClient {
      * Throw an application exception and make sure the exception
      * reaches the bean nicely.
      */
-    public void Xtest02_throwApplicationException(){
-        try{
+    public void Xtest02_throwApplicationException() {
+        try {
             basicMdbObject.throwApplicationException();
-        } catch (org.apache.openejb.test.ApplicationException e){
+        } catch (final org.apache.openejb.test.ApplicationException e) {
             //Good.  This is the correct behaviour
             return;
-        } catch (Throwable e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Throwable e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
         fail("An ApplicationException should have been thrown.");
     }
@@ -76,28 +75,28 @@ public class BasicMdbTests extends MdbTestClient {
      * After an application exception we should still be able to
      * use our bean
      */
-    public void test03_invokeAfterApplicationException(){
-        try{
-        String expected = "Success";
-        String actual   = basicMdbObject.businessMethod("sseccuS");
-        assertEquals(expected, actual);
-        } catch (Throwable e){
+    public void test03_invokeAfterApplicationException() {
+        try {
+            final String expected = "Success";
+            final String actual = basicMdbObject.businessMethod("sseccuS");
+            assertEquals(expected, actual);
+        } catch (final Throwable e) {
             e.printStackTrace();
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
-    public void Xtest04_throwSystemException(){
-        try{
+    public void Xtest04_throwSystemException() {
+        try {
             basicMdbObject.throwSystemException_NullPointer();
-        } catch (Exception e){
+        } catch (final Exception e) {
             //Good, so far.
-            Throwable n = e.getCause();
-            assertNotNull("Nested exception should not be is null", n );
-            assertTrue("Nested exception should be an instance of NullPointerException, but exception is "+n.getClass().getName(), (n instanceof NullPointerException));
+            final Throwable n = e.getCause();
+            assertNotNull("Nested exception should not be is null", n);
+            assertTrue("Nested exception should be an instance of NullPointerException, but exception is " + n.getClass().getName(), (n instanceof NullPointerException));
             return;
-        } catch (Throwable e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Throwable e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
         fail("A NullPointerException should have been thrown.");
     }
@@ -105,17 +104,17 @@ public class BasicMdbTests extends MdbTestClient {
     /**
      * After a system exception the intance should be garbage collected
      * and the remote reference should be invalidated.
-     *
+     * <p/>
      * This one seems to fail. we should double-check the spec on this.
      */
-    public void TODO_test05_invokeAfterSystemException(){
-        try{
-        basicMdbObject.businessMethod("This refernce is invalid");
-        fail("A java.rmi.NoSuchObjectException should have been thrown.");
-        } catch (Exception e){
+    public void TODO_test05_invokeAfterSystemException() {
+        try {
+            basicMdbObject.businessMethod("This refernce is invalid");
+            fail("A java.rmi.NoSuchObjectException should have been thrown.");
+        } catch (final Exception e) {
             // Good.
-        } catch (Throwable e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Throwable e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
     //

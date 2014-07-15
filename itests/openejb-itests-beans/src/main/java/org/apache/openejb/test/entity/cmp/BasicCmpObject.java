@@ -24,35 +24,35 @@ import org.apache.openejb.test.object.OperationsPolicy;
 
 import javax.ejb.EJBObject;
 
-public interface BasicCmpObject extends EJBObject{
+public interface BasicCmpObject extends EJBObject {
     /**
      * Reverses the string passed in then returns it
      */
     String businessMethod(String text) throws RemoteException;
-    
+
     /**
      * Throws an ApplicationException when invoked
      */
     void throwApplicationException() throws RemoteException, ApplicationException;
-    
+
     /**
      * Throws a java.lang.NullPointerException when invoked
-     * This is a system exception and should result in the 
+     * This is a system exception and should result in the
      * destruction of the instance and invalidation of the
      * remote reference.
      */
     void throwSystemException_NullPointer() throws RemoteException;
-    
+
     /**
-     * Returns a report of the bean's 
+     * Returns a report of the bean's
      * runtime permissions
      */
     Properties getPermissionsReport() throws RemoteException;
-    
+
     /**
      * Returns a report of the allowed opperations
      * for one of the bean's methods.
-     * 
+     *
      * @param methodName The method for which to get the allowed opperations report
      */
     OperationsPolicy getAllowedOperationsReport(String methodName) throws RemoteException;

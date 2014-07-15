@@ -23,5 +23,6 @@ import java.rmi.RemoteException;
 
 public interface QueryDataHome extends EJBHome {
     public QueryDataRemote create(int value) throws FinderException, RemoteException;
+
     public QueryDataRemote findByPrimaryKey(Integer primaryKey) throws FinderException, RemoteException;
 }

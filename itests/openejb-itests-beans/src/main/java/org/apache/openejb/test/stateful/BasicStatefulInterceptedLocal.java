@@ -19,16 +19,14 @@ package org.apache.openejb.test.stateful;
 import java.util.Map;
 
 /**
- * 
- *
  * @version $Rev$ $Date$
  */
 public interface BasicStatefulInterceptedLocal {
-    
+
     public String reverse(String str);
-    
+
     public String concat(String str1, String str2);
-    
+
     public Map<String, Object> getContextData();
 
 }

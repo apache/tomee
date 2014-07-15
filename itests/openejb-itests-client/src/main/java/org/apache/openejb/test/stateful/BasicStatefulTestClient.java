@@ -19,18 +19,16 @@ package org.apache.openejb.test.stateful;
 import javax.ejb.EJB;
 
 /**
- * 
- * 
  * @version $Rev$ $Date$
  */
 public abstract class BasicStatefulTestClient extends StatefulTestClient {
-    
-	@EJB(name="client/tests/stateful/BasicStatefulPojoHome",
-		 beanInterface=BasicStatefulHome.class)
-	protected BasicStatefulHome ejbHome = null;
-	protected BasicStatefulObject ejbObject = null;
 
-    public BasicStatefulTestClient(String name){
+    @EJB(name = "client/tests/stateful/BasicStatefulPojoHome",
+        beanInterface = BasicStatefulHome.class)
+    protected BasicStatefulHome ejbHome = null;
+    protected BasicStatefulObject ejbObject = null;
+
+    public BasicStatefulTestClient(final String name) {
         super(name);
     }
 }

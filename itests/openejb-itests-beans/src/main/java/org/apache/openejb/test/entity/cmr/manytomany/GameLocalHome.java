@@ -26,9 +26,11 @@ import javax.ejb.FinderException;
 public interface GameLocalHome extends EJBLocalHome {
     // Create
     public GameLocal create(Integer primaryKey) throws CreateException;
+
     public GameLocal create(GamePk primaryKey) throws CreateException;
 
     // Finder
     public GameLocal findByPrimaryKey(Integer primaryKey) throws FinderException;
+
     public GameLocal findByPrimaryKey(GamePk primaryKey) throws FinderException;
 }

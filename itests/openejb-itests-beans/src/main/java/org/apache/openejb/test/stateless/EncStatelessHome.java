@@ -20,5 +20,5 @@ package org.apache.openejb.test.stateless;
 public interface EncStatelessHome extends javax.ejb.EJBHome {
 
     public EncStatelessObject create()
-    throws javax.ejb.CreateException, java.rmi.RemoteException;
+        throws javax.ejb.CreateException, java.rmi.RemoteException;
 }

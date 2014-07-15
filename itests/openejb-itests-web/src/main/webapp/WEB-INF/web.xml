@@ -20,10 +20,10 @@
 <!-- $Rev: 634170 $ $Date: 2008-03-05 21:30:10 -0800 (Wed, 05 Mar 2008) $ -->
 
 <web-app xmlns="http://java.sun.com/xml/ns/javaee"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-        metadata-complete="false"
-        version="2.5">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         metadata-complete="false"
+         version="2.5">
 
   <display-name>OpenEJB Servlet Examples</display-name>
 
@@ -252,7 +252,7 @@
     <servlet-name>JndiServlet</servlet-name>
     <servlet-class>org.apache.openejb.test.servlet.JndiServlet</servlet-class>
   </servlet>
-   <servlet-mapping>
+  <servlet-mapping>
     <servlet-name>JndiServlet</servlet-name>
     <url-pattern>/JndiServlet/*</url-pattern>
   </servlet-mapping>

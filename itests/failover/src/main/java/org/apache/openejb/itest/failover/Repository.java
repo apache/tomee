@@ -34,7 +34,7 @@ public final class Repository {
         final String path;
         try {
             path = RESOLVER.resolve("mvn:" + groupId + ":" + artifactId + ":" + guessVersion(groupId, artifactId) + ":" + type);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException(e);
         } finally {
             if (oldCache == null) {
@@ -48,7 +48,7 @@ public final class Repository {
     }
 
     public static String guessVersion(final String groupId, final String artifactId) {
-        final String[] keys = { artifactId + ".version", groupId + ".version", "version" };
+        final String[] keys = {artifactId + ".version", groupId + ".version", "version"};
         for (final String key : keys) {
             final String value = System.getProperty(key);
             if (value != null) {

@@ -19,13 +19,12 @@ package org.apache.openejb.test.stateful;
 
 /**
  * The local home interface for BasicStatefulPojoBean.
- * 
- * 
+ *
  * @version $Rev$ $Date$
  */
 public interface BasicStatefulLocalHome extends javax.ejb.EJBLocalHome {
 
     public BasicStatefulLocalObject create(String name) throws javax.ejb.CreateException;
-    
+
 }
 

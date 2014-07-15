@@ -17,31 +17,30 @@
 package org.apache.openejb.test.singleton;
 
 /**
- * 
  * @version $Rev: 450640 $ $Date: 2006-09-27 16:58:13 -0700 (Wed, 27 Sep 2006) $
  */
 public class SingletonPojoLocalJndiTests extends BasicSingletonLocalTestClient {
 
-	
-    public SingletonPojoLocalJndiTests(){
+
+    public SingletonPojoLocalJndiTests() {
         super("LocalJNDI.");
     }
 
-    public void test01_initialContext(){
-        try{
+    public void test01_initialContext() {
+        try {
             assertNotNull("The InitialContext reference is null.", initialContext);
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
-    public void test02_Jndi_lookupHome(){
-        try{
-        	// Here we use the Java casting as what is done while looking-up a local bean
-        	ejbLocalHome = (BasicSingletonLocalHome) initialContext.lookup("client/tests/singleton/BasicSingletonPojoHomeLocal");
+    public void test02_Jndi_lookupHome() {
+        try {
+            // Here we use the Java casting as what is done while looking-up a local bean
+            ejbLocalHome = (BasicSingletonLocalHome) initialContext.lookup("client/tests/singleton/BasicSingletonPojoHomeLocal");
             assertNotNull("The EJBLocalHome is null", ejbLocalHome);
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 

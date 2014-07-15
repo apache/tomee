@@ -20,26 +20,25 @@ import javax.ejb.EJBObject;
 
 /**
  * [7] Should be run as the seventh test suite of the BasicStatelessTestClients
- *
  */
-public class StatelessHandleTests extends BasicStatelessTestClient{
+public class StatelessHandleTests extends BasicStatelessTestClient {
 
-    public StatelessHandleTests(){
+    public StatelessHandleTests() {
         super("Handle.");
     }
 
-    protected void setUp() throws Exception{
+    protected void setUp() throws Exception {
         super.setUp();
-        Object obj = initialContext.lookup("client/tests/stateless/BasicStatelessHome");
-        ejbHome = (BasicStatelessHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicStatelessHome.class);
+        final Object obj = initialContext.lookup("client/tests/stateless/BasicStatelessHome");
+        ejbHome = (BasicStatelessHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicStatelessHome.class);
         ejbObject = ejbHome.createObject();
         ejbHandle = ejbObject.getHandle();
     }
 
-    protected void tearDown() throws Exception{
+    protected void tearDown() throws Exception {
         try {
             //ejbObject.remove();
-        } catch (Exception e){
+        } catch (final Exception e) {
             throw e;
         } finally {
             super.tearDown();
@@ -49,39 +48,39 @@ public class StatelessHandleTests extends BasicStatelessTestClient{
     //=================================
     // Test handle methods
     //
-    public void test01_getEJBObject(){
+    public void test01_getEJBObject() {
 
-        try{
-            EJBObject object = ejbHandle.getEJBObject();
-            assertNotNull( "The EJBObject is null", object );
+        try {
+            final EJBObject object = ejbHandle.getEJBObject();
+            assertNotNull("The EJBObject is null", object);
             // Wait until isIdentical is working.
             //assertTrue("EJBObjects are not identical", object.isIdentical(ejbObject));
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
     /**
      * <B>5.6 Client view of session object's life cycle</B>
-     * <P>
+     * <p/>
      * ....It is invalid to reference a session object that does
      * not exist. Attempted invocations on a session object
      * that does not exist result in java.rmi.NoSuchObjectException.
      * </P>
-     *
-     * <P>
+     * <p/>
+     * <p/>
      * This remove method of the EJBHome is placed hear as it
      * is more a test on the handle then on the remove method
      * itself.
      * </P>
      */
-    public void test02_EJBHome_remove(){
-        try{
+    public void test02_EJBHome_remove() {
+        try {
             ejbHome.remove(ejbHandle);
             // you can't really remove a stateless handle
             ejbObject.businessMethod("Should not throw an exception");
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (final Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
     //

@@ -24,10 +24,9 @@ import java.rmi.RemoteException;
 import java.util.Properties;
 
 /**
- *
- * @version $Rev$ $Date$ 
+ * @version $Rev$ $Date$
  */
-public class DerbyTestDatabase implements TestDatabase{
+public class DerbyTestDatabase implements TestDatabase {
 
     protected Database database;
     protected InitialContext initialContext;
@@ -40,53 +39,54 @@ public class DerbyTestDatabase implements TestDatabase{
 
     private static String _dropEntity = "DROP TABLE entity";
 
-    static{
+    static {
         System.setProperty("noBanner", "true");
     }
 
 
     public void createEntityTable() throws java.sql.SQLException {
-        try{
-            try{
+        try {
+            try {
                 database.execute(DerbyTestDatabase._dropEntity);
-            } catch (Exception e){
+            } catch (final Exception e) {
                 // not concerned
             }
             database.execute(DerbyTestDatabase._createEntity);
-        } catch (RemoteException re){
+        } catch (final RemoteException re) {
             if (re.detail != null && re.detail instanceof java.sql.SQLException) {
-                throw (java.sql.SQLException)re.detail;
+                throw (java.sql.SQLException) re.detail;
             } else {
-                throw new java.sql.SQLException("Cannot create entity table: "+re.getMessage(), DerbyTestDatabase._createEntity);
+                throw new java.sql.SQLException("Cannot create entity table: " + re.getMessage(), DerbyTestDatabase._createEntity);
             }
         }
     }
+
     public void dropEntityTable() throws java.sql.SQLException {
         try {
             database.execute(DerbyTestDatabase._dropEntity);
-        } catch (RemoteException re){
+        } catch (final RemoteException re) {
             if (re.detail != null && re.detail instanceof java.sql.SQLException) {
-                throw (java.sql.SQLException)re.detail;
+                throw (java.sql.SQLException) re.detail;
             } else {
-                throw new java.sql.SQLException("Unable to drop entity table: "+re.getMessage(), DerbyTestDatabase._dropEntity);
+                throw new java.sql.SQLException("Unable to drop entity table: " + re.getMessage(), DerbyTestDatabase._dropEntity);
             }
         }
     }
 
 
     public void createAccountTable() throws java.sql.SQLException {
-        try{
-            try{
+        try {
+            try {
                 database.execute(DerbyTestDatabase._dropAccount);
-            } catch (Exception e){
+            } catch (final Exception e) {
                 // not concerned
             }
             database.execute(DerbyTestDatabase._createAccount);
-        } catch (RemoteException re){
+        } catch (final RemoteException re) {
             if (re.detail != null && re.detail instanceof java.sql.SQLException) {
-                throw (java.sql.SQLException)re.detail;
+                throw (java.sql.SQLException) re.detail;
             } else {
-                throw new java.sql.SQLException("Cannot create account table: "+re.getMessage(), DerbyTestDatabase._createAccount);
+                throw new java.sql.SQLException("Cannot create account table: " + re.getMessage(), DerbyTestDatabase._createAccount);
             }
         }
     }
@@ -94,36 +94,36 @@ public class DerbyTestDatabase implements TestDatabase{
     public void dropAccountTable() throws java.sql.SQLException {
         try {
             database.execute(DerbyTestDatabase._dropAccount);
-        } catch (RemoteException re){
+        } catch (final RemoteException re) {
             if (re.detail != null && re.detail instanceof java.sql.SQLException) {
-                throw (java.sql.SQLException)re.detail;
+                throw (java.sql.SQLException) re.detail;
             } else {
-                throw new java.sql.SQLException("Cannot drop account table: "+re.getMessage(), DerbyTestDatabase._dropAccount);
+                throw new java.sql.SQLException("Cannot drop account table: " + re.getMessage(), DerbyTestDatabase._dropAccount);
             }
         }
     }
 
     public void start() throws IllegalStateException {
         try {
-            Properties properties = TestManager.getServer().getContextEnvironment();
+            final Properties properties = TestManager.getServer().getContextEnvironment();
             initialContext = new InitialContext(properties);
-        } catch (Exception e){
-            throw (IllegalStateException) new IllegalStateException("Cannot create initial context: "+e.getClass().getName()+" "+e.getMessage()).initCause(e);
+        } catch (final Exception e) {
+            throw (IllegalStateException) new IllegalStateException("Cannot create initial context: " + e.getClass().getName() + " " + e.getMessage()).initCause(e);
         }
 
-    Object obj =null;
-    DatabaseHome databaseHome =null;
+        Object obj = null;
+        DatabaseHome databaseHome = null;
         try {
             /* Create database */
             obj = initialContext.lookup("client/tools/DatabaseHome");
-            databaseHome = (DatabaseHome)javax.rmi.PortableRemoteObject.narrow( obj, DatabaseHome.class);
-        } catch (Exception e){
-            throw new IllegalStateException("Cannot find 'client/tools/DatabaseHome': "+e.getClass().getName()+" "+e.getMessage());
+            databaseHome = (DatabaseHome) javax.rmi.PortableRemoteObject.narrow(obj, DatabaseHome.class);
+        } catch (final Exception e) {
+            throw new IllegalStateException("Cannot find 'client/tools/DatabaseHome': " + e.getClass().getName() + " " + e.getMessage());
         }
         try {
             database = databaseHome.create();
-        } catch (Exception e){
-            throw new IllegalStateException("Cannot start database: "+e.getClass().getName()+" "+e.getMessage());
+        } catch (final Exception e) {
+            throw new IllegalStateException("Cannot start database: " + e.getClass().getName() + " " + e.getMessage());
         }
     }
 
@@ -131,6 +131,6 @@ public class DerbyTestDatabase implements TestDatabase{
     public void stop() throws IllegalStateException {
     }
 
-    public void init(Properties props) throws IllegalStateException {
+    public void init(final Properties props) throws IllegalStateException {
     }
 }

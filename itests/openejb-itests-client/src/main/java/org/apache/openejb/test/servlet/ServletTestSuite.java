@@ -21,12 +21,12 @@ import junit.framework.TestSuite;
 import org.apache.openejb.test.FilteredTestSuite;
 
 public class ServletTestSuite extends junit.framework.TestCase {
-    public ServletTestSuite(String name) {
+    public ServletTestSuite(final String name) {
         super(name);
     }
 
     public static junit.framework.Test suite() {
-        TestSuite suite = new FilteredTestSuite();
+        final TestSuite suite = new FilteredTestSuite();
         suite.addTest(new AnnotatedServletTests());
         suite.addTest(new EjbServletTests());
         suite.addTest(new SecureServletTests());

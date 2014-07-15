@@ -22,26 +22,31 @@ import javax.persistence.Entity;
 @Entity
 public class Customer {
 
-	private String customerName;
-	private int customerAge;
-	private int id;
-	
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
-	}
-	public int getCustomerAge() {
-		return customerAge;
-	}
-	public void setCustomerAge(int customerAge) {
-		this.customerAge = customerAge;
-	}
-	public String getCustomerName() {
-		return customerName;
-	}
-	public void setCustomerName(String customerName) {
-		this.customerName = customerName;
-	}
+    private String customerName;
+    private int customerAge;
+    private int id;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(final int id) {
+        this.id = id;
+    }
+
+    public int getCustomerAge() {
+        return customerAge;
+    }
+
+    public void setCustomerAge(final int customerAge) {
+        this.customerAge = customerAge;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(final String customerName) {
+        this.customerName = customerName;
+    }
 }

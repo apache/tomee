@@ -18,7 +18,7 @@
 package org.apache.openejb.test.servlet;
 
 public class SecureServletTests extends ServletTestClient {
-    public SecureServletTests(){
+    public SecureServletTests() {
         super("SecureServlet");
     }
 

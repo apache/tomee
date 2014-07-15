@@ -21,36 +21,35 @@ import javax.ejb.EJB;
 
 /**
  * [2] Should be run as the second test suite of the BasicStatelessTestClients
- * 
- * 
+ *
  * @version $Rev$ $Date$
  */
 public class AnnotatedSetterInjectionStatelessPojoLocalHomeIntfcTests extends AnnotatedSetterInjectionStatelessLocalTestClient {
 
-    public AnnotatedSetterInjectionStatelessPojoLocalHomeIntfcTests(){
+    public AnnotatedSetterInjectionStatelessPojoLocalHomeIntfcTests() {
         super("AnnotatedSetterInjectionLocalHomeIntfc.");
     }
-    
-    protected void setUp() throws Exception{
+
+    protected void setUp() throws Exception {
         super.setUp();
     }
-    
-	@EJB(name="client/tests/stateless/BasicStatelessPojoHomeLocal",
-		 beanInterface = BasicStatelessLocalHome.class)
-    public void setEjbLocalHome(BasicStatelessLocalHome bslEjbHome) {
-    	ejbLocalHome = bslEjbHome;
+
+    @EJB(name = "client/tests/stateless/BasicStatelessPojoHomeLocal",
+        beanInterface = BasicStatelessLocalHome.class)
+    public void setEjbLocalHome(final BasicStatelessLocalHome bslEjbHome) {
+        ejbLocalHome = bslEjbHome;
     }
-    
+
     //===============================
     // Test home interface methods
     //
-    public void test01_create(){
-        try{
+    public void test01_create() {
+        try {
             ejbLocalObject = ejbLocalHome.create();
-            assertNotNull( "The EJBObject is null", ejbLocalObject );
-        } catch (Exception e){
+            assertNotNull("The EJBObject is null", ejbLocalObject);
+        } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
-        }        
+        }
     }
     //
     // Test home interface methods

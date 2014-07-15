@@ -120,50 +120,50 @@ public class FieldInjectionStatefulBean implements SessionBean {
         }
     }
 
-    public void lookupStatelessBusinessLocal() throws TestFailureException{
-        try{
-            Assert.assertNotNull("The EJB BusinessLocal is null", statelessBusinessLocal );
-        } catch (final AssertionFailedError afe){
+    public void lookupStatelessBusinessLocal() throws TestFailureException {
+        try {
+            Assert.assertNotNull("The EJB BusinessLocal is null", statelessBusinessLocal);
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    public void lookupStatelessBusinessLocalBean() throws TestFailureException{
-        try{
-            Assert.assertNotNull("The EJB BusinessLocalBean is null", statelessBusinessLocalBean );
-        } catch (final AssertionFailedError afe){
+    public void lookupStatelessBusinessLocalBean() throws TestFailureException {
+        try {
+            Assert.assertNotNull("The EJB BusinessLocalBean is null", statelessBusinessLocalBean);
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    public void lookupStatelessBusinessRemote() throws TestFailureException{
-        try{
-            Assert.assertNotNull("The EJB BusinessRemote is null", statelessBusinessRemote );
-        } catch (final AssertionFailedError afe){
+    public void lookupStatelessBusinessRemote() throws TestFailureException {
+        try {
+            Assert.assertNotNull("The EJB BusinessRemote is null", statelessBusinessRemote);
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    public void lookupStatefulBusinessLocal() throws TestFailureException{
-        try{
-            Assert.assertNotNull("The EJB BusinessLocal is null", statefulBusinessLocal );
-        } catch (final AssertionFailedError afe){
+    public void lookupStatefulBusinessLocal() throws TestFailureException {
+        try {
+            Assert.assertNotNull("The EJB BusinessLocal is null", statefulBusinessLocal);
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    public void lookupStatefulBusinessLocalBean() throws TestFailureException{
-        try{
-            Assert.assertNotNull("The EJB BusinessLocalBean is null", statefulBusinessLocalBean );
-        } catch (final AssertionFailedError afe){
+    public void lookupStatefulBusinessLocalBean() throws TestFailureException {
+        try {
+            Assert.assertNotNull("The EJB BusinessLocalBean is null", statefulBusinessLocalBean);
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
-    public void lookupStatefulBusinessRemote() throws TestFailureException{
-        try{
-            Assert.assertNotNull("The EJB BusinessRemote is null", statefulBusinessRemote );
-        } catch (final AssertionFailedError afe){
+    public void lookupStatefulBusinessRemote() throws TestFailureException {
+        try {
+            Assert.assertNotNull("The EJB BusinessRemote is null", statefulBusinessRemote);
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -173,7 +173,7 @@ public class FieldInjectionStatefulBean implements SessionBean {
             final String expected = new String("1");
             Assert.assertNotNull("The String looked up is null", striing);
             Assert.assertEquals(expected, striing);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -196,7 +196,7 @@ public class FieldInjectionStatefulBean implements SessionBean {
 
             Assert.assertNotNull("The Long looked up is null", loong);
             Assert.assertEquals(expected, loong);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -207,7 +207,7 @@ public class FieldInjectionStatefulBean implements SessionBean {
 
             Assert.assertNotNull("The Float looked up is null", flooat);
             Assert.assertEquals(expected, flooat);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -219,7 +219,7 @@ public class FieldInjectionStatefulBean implements SessionBean {
             Assert.assertNotNull("The Integer looked up is null", inteeger);
             Assert.assertEquals(expected, inteeger);
 
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -230,7 +230,7 @@ public class FieldInjectionStatefulBean implements SessionBean {
 
             Assert.assertNotNull("The Short looked up is null", shoort);
             Assert.assertEquals(expected, shoort);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -252,7 +252,7 @@ public class FieldInjectionStatefulBean implements SessionBean {
 
             Assert.assertNotNull("The Byte looked up is null", byyte);
             Assert.assertEquals(expected, byyte);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -263,7 +263,7 @@ public class FieldInjectionStatefulBean implements SessionBean {
 
             Assert.assertNotNull("The Character looked up is null", chaaracter);
             Assert.assertEquals(expected, chaaracter);
-        } catch (AssertionFailedError afe) {
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
@@ -276,25 +276,25 @@ public class FieldInjectionStatefulBean implements SessionBean {
         }
     }
 
-    public void lookupJMSConnectionFactory() throws TestFailureException{
-        try{
-            try{
+    public void lookupJMSConnectionFactory() throws TestFailureException {
+        try {
+            try {
                 testJmsConnection(coonnectionFactory.createConnection());
                 testJmsConnection(queueCoonnectionFactory.createConnection());
                 testJmsConnection(topicCoonnectionFactory.createConnection());
-            } catch (final Exception e){
+            } catch (final Exception e) {
                 e.printStackTrace();
-                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+                Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
             }
-        } catch (AssertionFailedError afe){
+        } catch (final AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
     }
 
     private void testJmsConnection(final javax.jms.Connection connection) throws JMSException {
-        Session session = connection.createSession(false, Session.DUPS_OK_ACKNOWLEDGE);
+        final Session session = connection.createSession(false, Session.DUPS_OK_ACKNOWLEDGE);
         final Topic topic = session.createTopic("test");
-        MessageProducer producer = session.createProducer(topic);
+        final MessageProducer producer = session.createProducer(topic);
         producer.send(session.createMessage());
         producer.close();
         session.close();
@@ -345,7 +345,7 @@ public class FieldInjectionStatefulBean implements SessionBean {
 
     public void setSessionContext(final SessionContext sessionContext) throws EJBException, RemoteException {
     }
-    
+
     public String remove(final String arg) {
         return arg;
     }
