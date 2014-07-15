@@ -18,6 +18,7 @@ package org.apache.openejb.config;
 
 import junit.framework.TestCase;
 import org.apache.openejb.BeanContext;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
@@ -28,6 +29,7 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
+import org.junit.AfterClass;
 
 import javax.ejb.Local;
 import javax.ejb.Remote;
@@ -38,6 +40,11 @@ import java.io.Serializable;
 import static java.util.Arrays.asList;
 
 public class UberInterfaceTest extends TestCase {
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        OpenEJB.destroy();
+    }
 
     public void test() throws Exception {
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());

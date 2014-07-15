@@ -18,15 +18,16 @@
 package org.apache.openejb.core.stateless;
 
 import junit.framework.TestCase;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.core.ivm.EjbObjectInputStream;
 import org.apache.openejb.core.ivm.IntraVmCopyMonitor;
-import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
 
@@ -179,10 +180,10 @@ public class CrossClassLoaderProxyTest extends TestCase {
             final ByteArrayOutputStream bout = new ByteArrayOutputStream(8 * 1024);
 
             // copy the input stream into a byte array
-            byte[] bytes = new byte[0];
+            final byte[] bytes;
             try {
                 final byte[] buf = new byte[4 * 1024];
-                for (int count = -1; (count = in.read(buf)) >= 0; ) {
+                for (int count; (count = in.read(buf)) >= 0; ) {
                     bout.write(buf, 0, count);
                 }
                 bytes = bout.toByteArray();
@@ -215,7 +216,7 @@ public class CrossClassLoaderProxyTest extends TestCase {
 
     protected void setUp() throws Exception {
         super.setUp();
-        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
+        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
 
         final ConfigurationFactory config = new ConfigurationFactory();
         final Assembler assembler = new Assembler();
@@ -248,8 +249,13 @@ public class CrossClassLoaderProxyTest extends TestCase {
         WidgetBean.lifecycle.clear();
     }
 
+    @Override
+    protected void tearDown() throws Exception {
+        OpenEJB.destroy();
+    }
+
     private static String join(final String delimeter, final List items) {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         for (final Object item : items) {
             sb.append(item.toString()).append(delimeter);
         }

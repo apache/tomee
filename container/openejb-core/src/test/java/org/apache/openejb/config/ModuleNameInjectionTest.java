@@ -18,6 +18,7 @@
 package org.apache.openejb.config;
 
 import junit.framework.TestCase;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
@@ -98,6 +99,11 @@ public class ModuleNameInjectionTest extends TestCase {
         app.getEjbModules().add(new EjbModule(ejbJar));
 
         assembler.createApplication(config.configureApplication(app));
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        OpenEJB.destroy();
     }
 
     public static interface Widget {

@@ -17,6 +17,7 @@
 package org.apache.openejb.config;
 
 import junit.framework.TestCase;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
@@ -64,6 +65,11 @@ public class LocalClientNoInjectionTest extends TestCase {
         app.getClientModules().add(clientModule);
 
         assembler.createApplication(config.configureApplication(app));
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        OpenEJB.destroy();
     }
 
     public void test() throws Exception {

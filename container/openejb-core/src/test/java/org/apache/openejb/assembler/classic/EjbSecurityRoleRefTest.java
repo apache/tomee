@@ -24,7 +24,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 
 import junit.framework.TestCase;
-
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.EjbModule;
@@ -34,6 +34,7 @@ import org.apache.openejb.jee.SecurityRoleRef;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
+import org.junit.AfterClass;
 
 /**
  * Test to ensure that the role-name/role-link elements in security-role-ref work correctly
@@ -66,6 +67,11 @@ public class EjbSecurityRoleRefTest extends TestCase {
         SystemInstance.get().setComponent(Assembler.class, null);
         SystemInstance.get().setComponent(ContainerSystem.class, null);
         super.tearDown();
+    }
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        OpenEJB.destroy();
     }
 
     public void testShouldCheckUserRole() throws Exception {

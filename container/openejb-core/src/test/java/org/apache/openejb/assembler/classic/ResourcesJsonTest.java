@@ -77,8 +77,8 @@ public class ResourcesJsonTest {
     public void close() throws NamingException {
         if (context != null) {
             context.close();
-            OpenEJB.destroy(); // has to be called manually since we start openejb in a custom way
         }
+        OpenEJB.destroy();
     }
 
     @Test

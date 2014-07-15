@@ -19,6 +19,7 @@ package org.apache.openejb.core.stateless;
 import junit.framework.TestCase;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.InterfaceType;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
@@ -33,6 +34,7 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
+import org.junit.AfterClass;
 
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;
@@ -61,6 +63,12 @@ import java.util.List;
  * @version $Rev$ $Date$
  */
 public class JaxRpcInvocationTest extends TestCase {
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        OpenEJB.destroy();
+    }
+
     public void testWebServiceInvocations() throws Exception {
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
@@ -205,7 +213,7 @@ public class JaxRpcInvocationTest extends TestCase {
 
 
     private static String join(final String delimeter, final List items) {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         for (final Object item : items) {
             sb.append(item.toString()).append(delimeter);
         }
