@@ -313,7 +313,6 @@
             -Dopenejb.classloader.forced-load=org.apache.openejb
             -enableassertions
             -Dopenejb.descriptors.output.folder=./dump/
-            -Xmx512m
           </argLine>
           <workingDirectory>${basedir}/target</workingDirectory>
           <systemPropertyVariables>
