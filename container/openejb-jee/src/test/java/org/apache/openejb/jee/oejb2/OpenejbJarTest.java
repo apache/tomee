@@ -102,7 +102,7 @@ public class OpenejbJarTest extends TestCase {
     }
 
     private String readContent(InputStream in) throws IOException {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         in = new BufferedInputStream(in);
         int i = in.read();
         while (i != -1) {

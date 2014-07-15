@@ -213,7 +213,7 @@ public class JaxRpcInvocationTest extends TestCase {
 
 
     private static String join(final String delimeter, final List items) {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         for (final Object item : items) {
             sb.append(item.toString()).append(delimeter);
         }

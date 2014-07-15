@@ -26,7 +26,7 @@ import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.EjbModule;
-import org.apache.openejb.core.ivm.naming.InitContextFactory;
+import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.jee.AssemblyDescriptor;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EnterpriseBean;
@@ -34,7 +34,6 @@ import org.apache.openejb.jee.Interceptor;
 import org.apache.openejb.jee.InterceptorBinding;
 import org.apache.openejb.jee.NamedMethod;
 import org.apache.openejb.jee.StatelessBean;
-import org.junit.Test;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJBException;
@@ -58,14 +57,9 @@ import java.util.Properties;
 public class StatelessInterceptorTest extends TestCase {
 
     private static InitialContext ctx;
-    private static boolean init = false;
 
 
     public void setUp() throws Exception {
-        if (init) {
-            return;
-        }
-        init = true;
 
         final ConfigurationFactory config = new ConfigurationFactory();
         final Assembler assembler = new Assembler();
@@ -82,7 +76,7 @@ public class StatelessInterceptorTest extends TestCase {
         assembler.createApplication(ejbJar);
 
         final Properties properties = new Properties(System.getProperties());
-        properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
+        properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
         ctx = new InitialContext(properties);
     }
 
@@ -177,7 +171,6 @@ public class StatelessInterceptorTest extends TestCase {
         calls.clear();
     }
 
-    @Test
     public void testExcludeClassAndDefaultInterceptors() throws Exception {
 
         // 1. Look up the bean it's to be tested against
@@ -383,6 +376,7 @@ public class StatelessInterceptorTest extends TestCase {
 
     public static class SysException extends RuntimeException {
         public SysException() {
+            super("This is a test exception");
         }
     }
 
@@ -464,7 +458,7 @@ public class StatelessInterceptorTest extends TestCase {
 
 
     private static String join(final String delimeter, final List items) {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         for (final Object item : items) {
             sb.append(item.toString()).append(delimeter);
         }
