@@ -44,17 +44,18 @@
 
         <executions>
           <execution>
-            <id>enhancer-</id>
+            <id>enhancer-main</id>
             <phase>process-classes</phase>
             <goals>
               <goal>enhance</goal>
             </goals>
           </execution>
+
           <execution>
-            <id>enhancer</id>
+            <id>enhancer-test</id>
             <phase>process-test-classes</phase>
             <goals>
-              <goal>enhance</goal>
+              <goal>test-enhance</goal>
             </goals>
           </execution>
         </executions>
