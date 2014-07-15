@@ -164,46 +164,47 @@ public class InjectionTest extends TestCase {
     public static interface RemoteWidget extends Widget {
     }
 
+    @SuppressWarnings("FieldMayBeFinal")
     @Stateless
     public static class WidgetBean implements Widget, RemoteWidget {
 
         private SessionContext sessionContext;
 
         @Resource
-        private final String myString = "1";
+        private String myString = "1";
 
         @Resource
-        private final Double myDouble = 1.0D;
+        private Double myDouble = 1.0D;
 
         @Resource
-        private final Long myLong = 1L;
+        private Long myLong = 1L;
 
         @Resource
-        private final Float myFloat = 1.0F;
+        private Float myFloat = 1.0F;
 
         @Resource
-        private final Integer myInteger = 1;
+        private Integer myInteger = 1;
 
         @Resource
-        private final Short myShort = (short) 1;
+        private Short myShort = (short) 1;
 
         @Resource
-        private final Boolean myBoolean = true;
+        private Boolean myBoolean = true;
 
         @Resource
-        private final Byte myByte = (byte) 1;
+        private Byte myByte = (byte) 1;
 
         @Resource
-        private final Character myCharacter = '1';
+        private Character myCharacter = '1';
 
         @Resource
-        private final Class myClass = Object.class;
+        private Class myClass = Object.class;
 
         @Resource
-        private final TimeUnit myTimeUnit = TimeUnit.DAYS;
+        private TimeUnit myTimeUnit = TimeUnit.DAYS;
 
         // injected via DD
-        private final boolean injectedBoolean = false;
+        private boolean injectedBoolean = false;
 
         // injected via DD
         private EJBContext injectedContext;
