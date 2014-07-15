@@ -35,6 +35,13 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>openjpa-maven-plugin</artifactId>
         <version>1.2</version>
+
+        <configuration>
+          <includes>org/apache/openejb/test/entity/**/*.class</includes>
+          <addDefaultConstructor>true</addDefaultConstructor>
+          <enforcePropertyRestrictions>true</enforcePropertyRestrictions>
+        </configuration>
+
         <executions>
           <execution>
             <id>enhancer-</id>
