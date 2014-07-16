@@ -137,7 +137,7 @@ public class TomcatClassPath extends BasicURLClassPath {
             classLoader = serverLoader;
         }
 
-        addRepositoryMethod.invoke(classLoader, jar.toExternalForm());
+        addRepositoryMethod.invoke(classLoader, jar);
     }
 
     private boolean useServerClassLoader(final URL jar) {
@@ -158,7 +158,7 @@ public class TomcatClassPath extends BasicURLClassPath {
                 try {
                     final Object cp = getURLClassPath((URLClassLoader) getClassLoader());
                     final Class<?> clazz = cp.getClass();
-                    return clazz.getDeclaredMethod("getURLs", URL.class);
+                    return clazz.getDeclaredMethod("addURL", URL.class);
                 } catch (final Exception e) {
                     throw new LoaderRuntimeException(e);
                 }
@@ -214,11 +214,11 @@ public class TomcatClassPath extends BasicURLClassPath {
         return AccessController.doPrivileged(new PrivilegedAction<Method>() {
             @Override
             public Method run() {
-                final Method method;
                 try {
-                    final Class clazz = getClassLoader().getClass();
-                    method = clazz.getDeclaredMethod("addRepository", String.class);
-                    method.setAccessible(true);
+                    final Method method = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+                    if (!method.isAccessible()) {
+                        method.setAccessible(true);
+                    }
                     return method;
                 } catch (final Exception e2) {
                     throw (IllegalStateException) new IllegalStateException("Unable to find or access the addRepository method in StandardClassLoader").initCause(e2);

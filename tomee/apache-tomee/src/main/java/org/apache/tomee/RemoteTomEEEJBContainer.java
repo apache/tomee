@@ -88,6 +88,7 @@ public class RemoteTomEEEJBContainer extends EJBContainer {
 
             final QuickServerXmlParser parser = QuickServerXmlParser.parse(new File(home, "conf/server.xml"));
             final String remoteEjb = System.getProperty(Context.PROVIDER_URL, "http://" + parser.host() + ":" + parser.http() + "/tomee/ejb");
+            System.setProperty(RemoteServer.SERVER_SHUTDOWN_PORT, parser.stop());
 
             try {
                 instance = new RemoteTomEEEJBContainer();

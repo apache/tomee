@@ -36,7 +36,6 @@ import org.apache.openjpa.jdbc.meta.MappingRepository;
 import org.apache.openjpa.jdbc.meta.NoneMappingDefaults;
 import org.apache.openjpa.jdbc.sql.HSQLDictionary;
 import org.apache.openjpa.lib.util.BytecodeWriter;
-import org.apache.openjpa.meta.AccessCode;
 import org.apache.openjpa.meta.MetaDataModes;
 import org.apache.openjpa.meta.MetaDataRepository;
 import org.apache.openjpa.persistence.jdbc.PersistenceMappingFactory;
@@ -399,7 +398,7 @@ public class CmpJarBuilder {
         }
     }
 
-    private static class Entry {
+    private static final class Entry {
         private final String clazz;
         private final String name;
         private final byte[] bytes;
@@ -411,7 +410,7 @@ public class CmpJarBuilder {
         }
     }
 
-    private static class StoringBytecodeBytecodeWriter implements BytecodeWriter {
+    private static final class StoringBytecodeBytecodeWriter implements BytecodeWriter {
         private final Map<String, byte[]> bytecodes = new HashMap<>();
         private final ClassLoader loader;
 
@@ -438,7 +437,7 @@ public class CmpJarBuilder {
         }
     }
 
-    private static class CommonClassWriterHack extends ClassWriter {
+    private static final class CommonClassWriterHack extends ClassWriter {
         private final ClassLoader loader;
 
         private CommonClassWriterHack(final ClassLoader loader) {
