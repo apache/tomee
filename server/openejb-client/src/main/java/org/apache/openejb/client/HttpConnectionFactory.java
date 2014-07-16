@@ -53,14 +53,14 @@ public class HttpConnectionFactory implements ConnectionFactory {
             final Map<String, String> params;
             try {
                 params = MulticastConnectionFactory.URIs.parseParamters(uri);
-            } catch (URISyntaxException e) {
+            } catch (final URISyntaxException e) {
                 throw new IllegalArgumentException("Invalid uri " + uri.toString(), e);
             }
 
             httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setDoOutput(true);
 
-            final int timeout;
+            int timeout;
             if (params.containsKey("connectTimeout")) {
                 timeout = Integer.parseInt(params.get("connectTimeout"));
             } else {
@@ -70,15 +70,19 @@ public class HttpConnectionFactory implements ConnectionFactory {
             httpURLConnection.setConnectTimeout(timeout);
 
             if (params.containsKey("readTimeout")) {
-                httpURLConnection.setReadTimeout(Integer.parseInt(params.get("readTimeout")));
+                timeout = Integer.parseInt(params.get("readTimeout"));
+            } else {
+                timeout = 10000;
             }
+
+            httpURLConnection.setReadTimeout(timeout);
 
             if (params.containsKey("sslKeyStore") || params.containsKey("sslTrustStore")) {
                 try {
                     ((HttpsURLConnection) httpURLConnection).setSSLSocketFactory(new SSLContextBuilder(params).build().getSocketFactory());
-                } catch (NoSuchAlgorithmException e) {
+                } catch (final NoSuchAlgorithmException e) {
                     throw new ClientRuntimeException(e.getMessage(), e);
-                } catch (KeyManagementException e) {
+                } catch (final KeyManagementException e) {
                     throw new ClientRuntimeException(e.getMessage(), e);
                 }
             }
@@ -94,7 +98,7 @@ public class HttpConnectionFactory implements ConnectionFactory {
         public void discard() {
             try {
                 close();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 //Ignore
             }
         }
@@ -110,14 +114,14 @@ public class HttpConnectionFactory implements ConnectionFactory {
             if (inputStream != null) {
                 try {
                     inputStream.close();
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     exception = e;
                 }
             }
             if (outputStream != null) {
                 try {
                     outputStream.close();
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     if (exception == null) {
                         exception = e;
                     }
