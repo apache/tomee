@@ -37,6 +37,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class PersistenceContextAnnFactory {
+
+    @SuppressWarnings("FieldMayBeFinal") // This gets set by reflection
     private static boolean useAsm;
 
     static {
@@ -231,7 +233,7 @@ public class PersistenceContextAnnFactory {
 
     private static class PersistenceContextVisitor extends AnnotationVisitor {
         private final Map<String, AsmPersistenceContext> contexts;
-        private AsmPersistenceContext persistenceContext = new AsmPersistenceContext();
+        private final AsmPersistenceContext persistenceContext = new AsmPersistenceContext();
 
         public PersistenceContextVisitor(final String className, final String memberName, final Map<String, AsmPersistenceContext> contexts) {
             super(Opcodes.ASM5);
@@ -244,7 +246,7 @@ public class PersistenceContextAnnFactory {
         }
 
         public void visitEnum(final String name, final String type, final String value) {
-            setValue(name, value == null ? null : value.toString());
+            setValue(name, value == null ? null : value);
         }
 
         public AnnotationVisitor visitAnnotation(final String name, final String desc) {
