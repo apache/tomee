@@ -1,0 +1,30 @@
+Usage: openejb validate [options] JARFILES...
+
+OPTIONS
+ -v         Sets the output level to 1.  This will output 
+            just the minumum details on each failure.
+         
+ -vv        Default. Sets the output level to 2. Outputs one 
+            line summaries of each failure. This is the 
+            default output level.
+
+ -vvv       Sets the output level to 3. Outputs verbose 
+            details on each failure, usually with details on 
+            how to correct the failures.
+          
+ -xml       Outputs information in well-formed XML.
+         
+ -nowarn    Suppresses warnings.
+
+ -version   Print the version.
+ 
+ -help      Print this help message.
+
+ -examples  Show examples of how to use the options.
+
+
+Apache OpenEJB -- EJB Container System and EJB Server.
+For updates and additional information, visit
+http://openejb.apache.org
+
+Bug Reports to <user@openejb.apache.org>

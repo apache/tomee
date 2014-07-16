@@ -1,0 +1,14 @@
+{
+    "resources": {
+        "DS": {
+            "properties": {
+                "JdbcUrl": "not:used:url",
+                "UserName": "foo",
+                "Password": "bar"
+            }
+        },
+        "My Resource": {
+            "class-name": "org.apache.openejb.assembler.classic.ResourcesJsonTest$MyResource"
+        }
+    }
+}

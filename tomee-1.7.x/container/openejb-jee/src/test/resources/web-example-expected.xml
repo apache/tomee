@@ -1,0 +1,893 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" version="2.5" metadata-complete="false" id="ID001">
+    <description xml:lang="en-US">description117</description>
+    <description xml:lang="">description121</description>
+    <display-name xml:lang="en-US">display-name6</display-name>
+    <display-name xml:lang="">display-name9</display-name>
+    <icon xml:lang="en-US" id="ID967">
+        <small-icon>small-icon8</small-icon>
+        <large-icon>large-icon8</large-icon>
+    </icon>
+    <icon xml:lang="" id="ID913">
+        <small-icon>small-icon5</small-icon>
+        <large-icon>large-icon5</large-icon>
+    </icon>
+    <distributable id="ID261"/>
+    <filter id="ID939">
+        <description xml:lang="">description119</description>
+        <display-name xml:lang="en-US">display-name8</display-name>
+        <icon xml:lang="en-US" id="ID945">
+            <small-icon>small-icon7</small-icon>
+            <large-icon>large-icon7</large-icon>
+        </icon>
+        <filter-name>filter-name0</filter-name>
+        <filter-class>filter-class0</filter-class>
+        <async-supported>false</async-supported>
+        <init-param id="ID955">
+            <description xml:lang="">description120</description>
+            <param-name>param-name1</param-name>
+            <param-value>param-value1</param-value>
+        </init-param>
+    </filter>
+    <filter id="ID699">
+        <description xml:lang="en-US">description107</description>
+        <display-name xml:lang="en-US">display-name3</display-name>
+        <icon xml:lang="" id="ID705">
+            <small-icon>small-icon2</small-icon>
+            <large-icon>large-icon2</large-icon>
+        </icon>
+        <filter-name>filter-name0</filter-name>
+        <filter-class>filter-class0</filter-class>
+        <async-supported>false</async-supported>
+        <init-param id="ID715">
+            <description xml:lang="">description108</description>
+            <param-name>param-name1</param-name>
+            <param-value>param-value1</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping id="I6727">
+        <filter-name>filter-name0</filter-name>
+        <url-pattern>url-pattern100</url-pattern>
+        <url-pattern>url-pattern101</url-pattern>
+        <url-pattern>url-pattern102</url-pattern>
+        <url-pattern>url-pattern103</url-pattern>
+        <servlet-name>servlet-name0</servlet-name>
+        <servlet-name>servlet-name1</servlet-name>
+        <servlet-name>servlet-name2</servlet-name>
+        <servlet-name>servlet-name3</servlet-name>
+        <dispatcher>FORWARD</dispatcher>
+    </filter-mapping>
+    <filter-mapping id="I8297">
+        <filter-name>filter-name1</filter-name>
+        <url-pattern>url-pattern918</url-pattern>
+        <url-pattern>url-pattern919</url-pattern>
+        <url-pattern>url-pattern920</url-pattern>
+        <url-pattern>url-pattern921</url-pattern>
+        <servlet-name>servlet-name1590</servlet-name>
+        <servlet-name>servlet-name1591</servlet-name>
+        <servlet-name>servlet-name1592</servlet-name>
+        <dispatcher>FORWARD</dispatcher>
+    </filter-mapping>
+    <listener id="ID003">
+        <description xml:lang="">description0</description>
+        <display-name xml:lang="en-US">display-name0</display-name>
+        <icon xml:lang="en-US" id="ID009">
+            <small-icon>small-icon0</small-icon>
+            <large-icon>large-icon0</large-icon>
+        </icon>
+        <listener-class>listener-class0</listener-class>
+    </listener>
+    <listener id="ID017">
+        <description xml:lang="en-US">description1</description>
+        <display-name xml:lang="">display-name1</display-name>
+        <icon xml:lang="" id="ID023">
+            <small-icon>small-icon1</small-icon>
+            <large-icon>large-icon1</large-icon>
+        </icon>
+        <listener-class>listener-class1</listener-class>
+    </listener>
+    <servlet id="ID009">
+        <description xml:lang="">description0</description>
+        <display-name xml:lang="en-US">display-name0</display-name>
+        <icon xml:lang="en-US" id="ID015">
+            <small-icon>small-icon0</small-icon>
+            <large-icon>large-icon0</large-icon>
+        </icon>
+        <servlet-name>servlet-name0</servlet-name>
+        <jsp-file>jsp-file0</jsp-file>
+        <init-param id="ID025">
+            <description xml:lang="en-US">description1</description>
+            <param-name>param-name0</param-name>
+            <param-value>param-value0</param-value>
+        </init-param>
+        <run-as id="ID033">
+            <description xml:lang="en-US">description2</description>
+            <role-name>role-name0</role-name>
+        </run-as>
+        <security-role-ref id="ID039">
+            <description xml:lang="en-US">description3</description>
+            <role-name>role-name1</role-name>
+            <role-link>role-link0</role-link>
+        </security-role-ref>
+    </servlet>
+    <servlet id="ID079">
+        <description xml:lang="en-US">description7</description>
+        <display-name xml:lang="">display-name5</display-name>
+        <icon xml:lang="en-US" id="ID085">
+            <small-icon>small-icon5</small-icon>
+            <large-icon>large-icon5</large-icon>
+        </icon>
+        <servlet-name>servlet-name1</servlet-name>
+        <servlet-class>servlet-class0</servlet-class>
+        <init-param id="ID091">
+            <description xml:lang="en-US">description8</description>
+            <param-name>param-name2</param-name>
+            <param-value>param-value2</param-value>
+        </init-param>
+        <run-as id="ID099">
+            <description xml:lang="">description9</description>
+            <role-name>role-name0</role-name>
+        </run-as>
+        <security-role-ref id="ID105">
+            <description xml:lang="">description10</description>
+            <role-name>role-name1</role-name>
+            <role-link>role-link0</role-link>
+        </security-role-ref>
+    </servlet>
+    <servlet-mapping id="ID113">
+        <servlet-name>servlet-name2</servlet-name>
+        <url-pattern>url-pattern1</url-pattern>
+        <url-pattern>url-pattern2</url-pattern>
+        <url-pattern>url-pattern3</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping id="ID919">
+        <servlet-name>servlet-name0</servlet-name>
+        <url-pattern>url-pattern10097</url-pattern>
+        <url-pattern>url-pattern10098</url-pattern>
+        <url-pattern>url-pattern10099</url-pattern>
+    </servlet-mapping>
+    <session-config id="ID031">
+        <session-timeout>0</session-timeout>
+    </session-config>
+    <session-config id="ID929">
+        <session-timeout>22</session-timeout>
+    </session-config>
+    <mime-mapping id="ID003">
+        <extension>extension0</extension>
+        <mime-type>!/!</mime-type>
+    </mime-mapping>
+    <mime-mapping id="ID117">
+        <extension>extension1</extension>
+        <mime-type>mime-type0</mime-type>
+    </mime-mapping>
+    <welcome-file-list id="ID291">
+        <welcome-file>welcome-file100</welcome-file>
+        <welcome-file>welcome-file101</welcome-file>
+        <welcome-file>welcome-file102</welcome-file>
+    </welcome-file-list>
+    <welcome-file-list id="ID259">
+        <welcome-file>welcome-file0</welcome-file>
+        <welcome-file>welcome-file1</welcome-file>
+        <welcome-file>welcome-file2</welcome-file>
+        <welcome-file>welcome-file3</welcome-file>
+    </welcome-file-list>
+    <error-page id="I3287">
+        <error-code>0</error-code>
+        <location>/</location>
+    </error-page>
+    <error-page id="I3287">
+        <error-code>22</error-code>
+        <location>location</location>
+    </error-page>
+    <jsp-config id="ID663">
+        <taglib id="ID665">
+            <taglib-uri>taglib-uri0</taglib-uri>
+            <taglib-location>taglib-location0</taglib-location>
+        </taglib>
+        <jsp-property-group id="ID671">
+            <description xml:lang="en-US">description106</description>
+            <display-name xml:lang="en-US">display-name2</display-name>
+            <icon xml:lang="" id="ID677">
+                <small-icon>small-icon1</small-icon>
+                <large-icon>large-icon1</large-icon>
+            </icon>
+            <url-pattern>url-pattern10000</url-pattern>
+            <url-pattern>url-pattern10001</url-pattern>
+            <url-pattern>url-pattern10002</url-pattern>
+            <el-ignored>true</el-ignored>
+            <page-encoding>page-encoding0</page-encoding>
+            <scripting-invalid>true</scripting-invalid>
+            <is-xml>true</is-xml>
+            <include-prelude>include-prelude0</include-prelude>
+            <include-coda>include-coda0</include-coda>
+            <deferred-syntax-allowed-as-literal>true</deferred-syntax-allowed-as-literal>
+            <trim-directive-whitespaces>true</trim-directive-whitespaces>
+        </jsp-property-group>
+    </jsp-config>
+    <jsp-config id="ID123">
+        <taglib id="ID125">
+            <taglib-uri>taglib-uri1</taglib-uri>
+            <taglib-location>taglib-location1</taglib-location>
+        </taglib>
+        <jsp-property-group id="ID127">
+            <description xml:lang="en-US">description11</description>
+            <display-name xml:lang="">display-name6</display-name>
+            <icon xml:lang="en-US" id="ID133">
+                <small-icon>small-icon6</small-icon>
+                <large-icon>large-icon6</large-icon>
+            </icon>
+            <url-pattern>url-pattern4</url-pattern>
+            <url-pattern>url-pattern5</url-pattern>
+            <url-pattern>url-pattern6</url-pattern>
+            <el-ignored>false</el-ignored>
+            <page-encoding>page-encoding0</page-encoding>
+            <scripting-invalid>false</scripting-invalid>
+            <is-xml>false</is-xml>
+            <include-prelude>include-prelude1</include-prelude>
+            <include-coda>include-coda0</include-coda>
+            <deferred-syntax-allowed-as-literal>false</deferred-syntax-allowed-as-literal>
+            <trim-directive-whitespaces>false</trim-directive-whitespaces>
+        </jsp-property-group>
+    </jsp-config>
+    <security-constraint id="ID293">
+        <display-name>display-name5</display-name>
+        <web-resource-collection id="ID297">
+            <web-resource-name>web-resource-name0</web-resource-name>
+            <description xml:lang="">description15</description>
+            <url-pattern>url-pattern0</url-pattern>
+            <url-pattern>url-pattern1</url-pattern>
+            <url-pattern>url-pattern2</url-pattern>
+            <http-method>!</http-method>
+        </web-resource-collection>
+        <web-resource-collection id="ID303">
+            <web-resource-name>web-resource-name1</web-resource-name>
+            <description xml:lang="en-US">description16</description>
+            <url-pattern>url-pattern100</url-pattern>
+            <url-pattern>url-pattern101</url-pattern>
+            <url-pattern>url-pattern102</url-pattern>
+            <url-pattern>url-pattern103</url-pattern>
+            <http-method>!</http-method>
+        </web-resource-collection>
+        <web-resource-collection id="ID309">
+            <web-resource-name>web-resource-name2</web-resource-name>
+            <description xml:lang="en-US">description17</description>
+            <url-pattern>url-pattern200</url-pattern>
+            <url-pattern>url-pattern201</url-pattern>
+            <url-pattern>url-pattern202</url-pattern>
+            <http-method>!</http-method>
+        </web-resource-collection>
+        <auth-constraint id="ID897">
+            <description>description115</description>
+            <role-name>role-name1</role-name>
+        </auth-constraint>
+        <user-data-constraint id="ID903">
+            <description xml:lang="">description116</description>
+            <transport-guarantee>NONE</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+    <security-constraint id="ID139">
+        <display-name>display-name7</display-name>
+        <web-resource-collection id="ID141">
+            <web-resource-name>web-resource-name10</web-resource-name>
+            <description xml:lang="">description12</description>
+            <url-pattern>url-pattern7</url-pattern>
+            <url-pattern>url-pattern8</url-pattern>
+            <url-pattern>url-pattern9</url-pattern>
+            <http-method>!</http-method>
+        </web-resource-collection>
+        <web-resource-collection id="ID145">
+            <web-resource-name>web-resource-name11</web-resource-name>
+            <description xml:lang="">description13</description>
+            <url-pattern>url-pattern10</url-pattern>
+            <url-pattern>url-pattern11</url-pattern>
+            <url-pattern>url-pattern12</url-pattern>
+            <http-method>!</http-method>
+        </web-resource-collection>
+        <web-resource-collection id="ID149">
+            <web-resource-name>web-resource-name12</web-resource-name>
+            <description xml:lang="en-US">description14</description>
+            <url-pattern>url-pattern13</url-pattern>
+            <url-pattern>url-pattern14</url-pattern>
+            <url-pattern>url-pattern15</url-pattern>
+            <http-method>!</http-method>
+        </web-resource-collection>
+        <auth-constraint id="ID153">
+            <description>description15</description>
+            <role-name>role-name2</role-name>
+        </auth-constraint>
+        <user-data-constraint id="ID155">
+            <description xml:lang="">description16</description>
+        </user-data-constraint>
+    </security-constraint>
+    <login-config id="ID263">
+        <auth-method>auth-method0</auth-method>
+        <realm-name>realm-name0</realm-name>
+        <form-login-config id="ID269">
+            <form-login-page>/</form-login-page>
+            <form-error-page>/</form-error-page>
+        </form-login-config>
+    </login-config>
+    <login-config id="I1199">
+        <auth-method>auth-method1</auth-method>
+        <realm-name>realm-name1</realm-name>
+        <form-login-config id="I1205">
+            <form-login-page>/</form-login-page>
+            <form-error-page>/</form-error-page>
+        </form-login-config>
+    </login-config>
+    <security-role id="ID035">
+        <description xml:lang="">description2</description>
+        <role-name>role-name0</role-name>
+    </security-role>
+    <security-role id="ID039">
+        <description xml:lang="">description3</description>
+        <role-name>role-name3</role-name>
+    </security-role>
+    <locale-encoding-mapping-list id="ID727">
+        <locale-encoding-mapping id="ID729">
+            <locale>aa</locale>
+            <encoding></encoding>
+        </locale-encoding-mapping>
+        <locale-encoding-mapping id="ID731">
+            <locale>aa</locale>
+            <encoding></encoding>
+        </locale-encoding-mapping>
+        <locale-encoding-mapping id="ID733">
+            <locale>aa</locale>
+            <encoding></encoding>
+        </locale-encoding-mapping>
+        <locale-encoding-mapping id="ID735">
+            <locale>aa</locale>
+            <encoding></encoding>
+        </locale-encoding-mapping>
+    </locale-encoding-mapping-list>
+    <locale-encoding-mapping-list id="ID937">
+        <locale-encoding-mapping id="ID939">
+            <locale>aa</locale>
+            <encoding></encoding>
+        </locale-encoding-mapping>
+        <locale-encoding-mapping id="ID941">
+            <locale>aa</locale>
+            <encoding></encoding>
+        </locale-encoding-mapping>
+    </locale-encoding-mapping-list>
+    <env-entry id="ID059">
+        <description xml:lang="">description2</description>
+        <env-entry-name>env-entry-name0</env-entry-name>
+        <env-entry-type>java.lang.Boolean</env-entry-type>
+        <env-entry-value>env-entry-value0</env-entry-value>
+        <mapped-name>mapped-name0</mapped-name>
+        <injection-target>
+            <injection-target-class>injection-target-class0</injection-target-class>
+            <injection-target-name>$</injection-target-name>
+        </injection-target>
+    </env-entry>
+    <env-entry id="I3303">
+        <description xml:lang="">description215</description>
+        <env-entry-name>env-entry-name1</env-entry-name>
+        <env-entry-type>java.lang.Boolean</env-entry-type>
+        <env-entry-value>env-entry-value1</env-entry-value>
+        <mapped-name>mapped-name10</mapped-name>
+        <injection-target>
+            <injection-target-class>injection-target-class9</injection-target-class>
+            <injection-target-name>$</injection-target-name>
+        </injection-target>
+    </env-entry>
+    <env-entry id="I3521">
+        <description xml:lang="en-US">description226</description>
+        <env-entry-name>env-entry-name2</env-entry-name>
+        <env-entry-type>java.lang.Boolean</env-entry-type>
+        <env-entry-value>env-entry-value2</env-entry-value>
+        <mapped-name>mapped-name19</mapped-name>
+        <injection-target>
+            <injection-target-class>injection-target-class18</injection-target-class>
+            <injection-target-name>$</injection-target-name>
+        </injection-target>
+    </env-entry>
+    <ejb-ref id="ID075">
+        <description xml:lang="">description3</description>
+        <ejb-ref-name>ejb-ref-name0</ejb-ref-name>
+        <ejb-ref-type>Entity</ejb-ref-type>
+        <home>home0</home>
+        <remote>remote0</remote>
+        <ejb-link>ejb-link0</ejb-link>
+        <mapped-name>mapped-name1</mapped-name>
+        <injection-target>
+            <injection-target-class>injection-target-class1</injection-target-class>
+            <injection-target-name>$</injection-target-name>
+        </injection-target>
+    </ejb-ref>
+    <ejb-ref id="I3319">
+        <description xml:lang="en-US">description216</description>
+        <ejb-ref-name>ejb-ref-name2</ejb-ref-name>
+        <ejb-ref-type>Entity</ejb-ref-type>
+        <home>home1</home>
+        <remote>remote1</remote>
+        <ejb-link>ejb-link2</ejb-link>
+        <mapped-name>mapped-name11</mapped-name>
+        <injection-target>
+            <injection-target-class>injection-target-class10</injection-target-class>
+            <injection-target-name>$</injection-target-name>
+        </injection-target>
+    </ejb-ref>
+    <ejb-ref id="I3537">
+        <description xml:lang="">description227</description>
+        <ejb-ref-name>ejb-ref-name4</ejb-ref-name>
+        <ejb-ref-type>Entity</ejb-ref-type>
+        <home>home2</home>
+        <remote>remote2</remote>
+        <ejb-link>ejb-link4</ejb-link>
+        <mapped-name>mapped-name20</mapped-name>
+        <injection-target>
+            <injection-target-class>injection-target-class19</injection-target-class>
+            <injection-target-name>$</injection-target-name>
+        </injection-target>
+    </ejb-ref>
+    <ejb-local-ref id="ID095">
+        <description xml:lang="en-US">description4</description>
+        <ejb-ref-name>ejb-ref-name1</ejb-ref-name>
+        <ejb-ref-type>Entity</ejb-ref-type>
+        <local-home>local-home0</local-home>
+        <local>local0</local>
+        <ejb-link>ejb-link1</ejb-link>
+        <mapped-name>mapped-name2</mapped-name>
+        <injection-target>
+            <injection-target-class>injection-target-class2</injection-target-class>
+            <injection-target-name>$</injection-target-name>
+        </injection-target>
+    </ejb-local-ref>
+    <ejb-local-ref id="I3339">
+        <description xml:lang="en-US">description217</description>
+        <ejb-ref-name>ejb-ref-name3</ejb-ref-name>
+        <ejb-ref-type>Entity</ejb-ref-type>
+        <local-home>local-home1</local-home>
+        <local>local1</local>
+        <ejb-link>ejb-link3</ejb-link>
+        <mapped-name>mapped-name12</mapped-name>
+        <injection-target>
+            <injection-target-class>injection-target-class11</injection-target-class>
+            <injection-target-name>$</injection-target-name>
+        </injection-target>
+    </ejb-local-ref>
+    <ejb-local-ref id="I3557">
+        <description xml:lang="en-US">description228</description>
+        <ejb-ref-name>ejb-ref-name5</ejb-ref-name>
+        <ejb-ref-type>Entity</ejb-ref-type>
+        <local-home>local-home2</local-home>
+        <local>local2</local>
+        <ejb-link>ejb-link5</ejb-link>
+        <mapped-name>mapped-name21</mapped-name>
+        <injection-target>
+            <injection-target-class>injection-target-class20</injection-target-class>
+            <injection-target-name>$</injection-target-name>
+        </injection-target>
+    </ejb-local-ref>
+    <service-ref id="ID115">
+        <description xml:lang="">description5</description>
+        <display-name xml:lang="">display-name2</display-name>
+        <icon xml:lang="en-US" id="ID121">
+            <small-icon>small-icon2</small-icon>
+            <large-icon>large-icon2</large-icon>
+        </icon>
+        <service-ref-name>service-ref-name0</service-ref-name>
+        <service-interface>service-interface0</service-interface>
+        <service-ref-type>service-ref-type0</service-ref-type>
+        <wsdl-file>http://www.oxygenxml.com/</wsdl-file>
+        <jaxrpc-mapping-file>jaxrpc-mapping-file0</jaxrpc-mapping-file>
+        <service-qname>qName</service-qname>
+        <port-component-ref id="ID139">
+            <service-endpoint-interface>service-endpoint-interface0</service-endpoint-interface>
+            <enable-mtom>true</enable-mtom>
+            <port-component-link>port-component-link0</port-component-link>
+        </port-component-ref>
+        <handler-chains id="ID147">
+            <handler-chain id="ID149">
+                <service-name-pattern>*</service-name-pattern>
+                <handler id="ID151">
+                    <description>description6</description>
+                    <display-name>display-name3</display-name>
+                    <icon xml:lang="" id="ID157">
+                        <small-icon>small-icon3</small-icon>
+                        <large-icon>large-icon3</large-icon>
+                    </icon>
+                    <handler-name>handler-name0</handler-name>
+                    <handler-class>handler-class0</handler-class>
+                    <init-param id="ID167">
+                        <description xml:lang="en-US">description7</description>
+                        <param-name>param-name0</param-name>
+                        <param-value>param-value0</param-value>
+                    </init-param>
+                    <soap-header>qName</soap-header>
+                    <soap-role>soap-role0</soap-role>
+                    <port-name>port-name0</port-name>
+                </handler>
+                <handler id="ID181">
+                    <description>description8</description>
+                    <display-name>display-name4</display-name>
+                    <icon xml:lang="en-US" id="ID187">
+                        <small-icon>small-icon4</small-icon>
+                        <large-icon>large-icon4</large-icon>
+                    </icon>
+                    <handler-name>handler-name1</handler-name>
+                    <handler-class>handler-class1</handler-class>
+                    <init-param id="ID197">
+                        <description xml:lang="en-US">description9</description>
+                        <param-name>param-name1</param-name>
+                        <param-value>param-value1</param-value>
+                    </init-param>
+                    <soap-header>qName</soap-header>
+                    <soap-role>soap-role1</soap-role>
+                    <port-name>port-name1</port-name>
+                </handler>
+            </handler-chain>
+        </handler-chains>
+        <mapped-name>mapped-name3</mapped-name>
+        <injection-target>
+            <injection-target-class>injection-target-class3</injection-target-class>
+            <injection-target-name>$</injection-target-name>
+        </injection-target>
+    </service-ref>
+    <service-ref id="I3359">
+        <description xml:lang="en-US">description218</description>
+        <display-name xml:lang="en-US">display-name106</display-name>
+        <icon xml:lang="" id="I3365">
+            <small-icon>small-icon106</small-icon>
+            <large-icon>large-icon106</large-icon>
+        </icon>
+        <service-ref-name>service-ref-name1</service-ref-name>
+        <service-interface>service-interface1</service-interface>
+        <service-ref-type>service-ref-type1</service-ref-type>
+        <wsdl-file>http://www.oxygenxml.com/</wsdl-file>
+        <jaxrpc-mapping-file>jaxrpc-mapping-file1</jaxrpc-mapping-file>
+        <service-qname>qName</service-qname>
+        <port-component-ref id="I3383">
+            <service-endpoint-interface>service-endpoint-interface1</service-endpoint-interface>
+            <enable-mtom>true</enable-mtom>
+            <port-component-link>port-component-link1</port-component-link>
+        </port-component-ref>
+        <handler id="I3391">
+            <description>description219</description>
+            <display-name>display-name107</display-name>
+            <icon xml:lang="" id="I3397">
+                <small-icon>small-icon107</small-icon>
+                <large-icon>large-icon107</large-icon>
+            </icon>
+            <handler-name>handler-name100</handler-name>
+            <handler-class>handler-class100</handler-class>
+            <init-param id="I3407">
+                <description xml:lang="en-US">description220</description>
+                <param-name>param-name100</param-name>
+                <param-value>param-value100</param-value>
+            </init-param>
+            <soap-header>qName</soap-header>
+            <soap-role>soap-role100</soap-role>
+            <port-name>port-name100</port-name>
+        </handler>
+        <mapped-name>mapped-name13</mapped-name>
+        <injection-target>
+            <injection-target-class>injection-target-class12</injection-target-class>
+            <injection-target-name>$</injection-target-name>
+        </injection-target>
+    </service-ref>
+    <service-ref id="I3577">
+        <description xml:lang="en-US">description229</description>
+        <display-name xml:lang="en-US">display-name108</display-name>
+        <icon xml:lang="" id="I3583">
+            <small-icon>small-icon108</small-icon>
+            <large-icon>large-icon108</large-icon>
+        </icon>
+        <service-ref-name>service-ref-name2</service-ref-name>
+        <service-interface>service-interface2</service-interface>
+        <service-ref-type>service-ref-type2</service-ref-type>
+        <wsdl-file>http://www.oxygenxml.com/</wsdl-file>
+        <jaxrpc-mapping-file>jaxrpc-mapping-file2</jaxrpc-mapping-file>
+        <service-qname>qName</service-qname>
+        <port-component-ref id="I3601">
+            <service-endpoint-interface>service-endpoint-interface2</service-endpoint-interface>
+            <enable-mtom>true</enable-mtom>
+            <port-component-link>port-component-link2</port-component-link>
+        </port-component-ref>
+        <handler-chains id="I3609">
+            <handler-chain id="I3611">
+                <service-name-pattern>*</service-name-pattern>
+                <handler id="I3613">
+                    <description>description230</description>
+                    <display-name>display-name109</display-name>
+                    <icon xml:lang="en-US" id="I3619">
+                        <small-icon>small-icon109</small-icon>
+                        <large-icon>large-icon109</large-icon>
+                    </icon>
+                    <handler-name>handler-name101</handler-name>
+                    <handler-class>handler-class101</handler-class>
+                    <init-param id="I3629">
+                        <description xml:lang="en-US">description231</description>
+                        <param-name>param-name101</param-name>
+                        <param-value>param-value101</param-value>
+                    </init-param>
+                    <soap-header>qName</soap-header>
+                    <soap-role>soap-role101</soap-role>
+                    <port-name>port-name101</port-name>
+                </handler>
+                <handler id="I3643">
+                    <description>description232</description>
+                    <display-name>display-name110</display-name>
+                    <icon xml:lang="" id="I3649">
+                        <small-icon>small-icon110</small-icon>
+                        <large-icon>large-icon110</large-icon>
+                    </icon>
+                    <handler-name>handler-name102</handler-name>
+                    <handler-class>handler-class102</handler-class>
+                    <init-param id="I3659">
+                        <description xml:lang="en-US">description233</description>
+                        <param-name>param-name102</param-name>
+                        <param-value>param-value102</param-value>
+                    </init-param>
+                    <soap-header>qName</soap-header>
+                    <soap-role>soap-role102</soap-role>
+                    <port-name>port-name102</port-name>
+                </handler>
+                <handler id="I3673">
+                    <description>description234</description>
+                    <display-name>display-name111</display-name>
+                    <icon xml:lang="en-US" id="I3679">
+                        <small-icon>small-icon111</small-icon>
+                        <large-icon>large-icon111</large-icon>
+                    </icon>
+                    <handler-name>handler-name103</handler-name>
+                    <handler-class>handler-class103</handler-class>
+                    <init-param id="I3689">
+                        <description xml:lang="en-US">description235</description>
+                        <param-name>param-name103</param-name>
+                        <param-value>param-value103</param-value>
+                    </init-param>
+                    <soap-header>qName</soap-header>
+                    <soap-role>soap-role103</soap-role>
+                    <port-name>port-name103</port-name>
+                </handler>
+            </handler-chain>
+        </handler-chains>
+        <mapped-name>mapped-name22</mapped-name>
+        <injection-target>
+            <injection-target-class>injection-target-class21</injection-target-class>
+            <injection-target-name>$</injection-target-name>
+        </injection-target>
+    </service-ref>
+    <resource-ref id="I3157">
+        <description xml:lang="">description206</description>
+        <res-ref-name>res-ref-name0</res-ref-name>
+        <res-type>res-type0</res-type>
+        <res-auth>Application</res-auth>
+        <res-sharing-scope>Shareable</res-sharing-scope>
+        <mapped-name>mapped-name4</mapped-name>
+        <injection-target>
+            <injection-target-class>injection-target-class4</injection-target-class>
+            <injection-target-name>$</injection-target-name>
+        </injection-target>
+    </resource-ref>
+    <resource-ref id="I3427">
+        <description xml:lang="en-US">description221</description>
+        <res-ref-name>res-ref-name1</res-ref-name>
+        <res-type>res-type1</res-type>
+        <res-auth>Application</res-auth>
+        <res-sharing-scope>Shareable</res-sharing-scope>
+        <mapped-name>mapped-name14</mapped-name>
+        <injection-target>
+            <injection-target-class>injection-target-class13</injection-target-class>
+            <injection-target-name>$</injection-target-name>
+        </injection-target>
+    </resource-ref>
+    <resource-ref id="I6619">
+        <description xml:lang="">description430</description>
+        <res-ref-name>res-ref-name2</res-ref-name>
+        <res-type>res-type2</res-type>
+        <res-auth>Application</res-auth>
+        <res-sharing-scope>Shareable</res-sharing-scope>
+        <mapped-name>mapped-name23</mapped-name>
+        <injection-target>
+            <injection-target-class>injection-target-class22</injection-target-class>
+            <injection-target-name>$</injection-target-name>
+        </injection-target>
+    </resource-ref>
+    <resource-env-ref id="I3175">
+        <description xml:lang="">description207</description>
+        <resource-env-ref-name>resource-env-ref-name0</resource-env-ref-name>
+        <resource-env-ref-type>resource-env-ref-type0</resource-env-ref-type>
+        <mapped-name>mapped-name5</mapped-name>
+        <injection-target>
+            <injection-target-class>injection-target-class5</injection-target-class>
+            <injection-target-name>$</injection-target-name>
+        </injection-target>
+    </resource-env-ref>
+    <resource-env-ref id="I3445">
+        <description xml:lang="en-US">description222</description>
+        <resource-env-ref-name>resource-env-ref-name1</resource-env-ref-name>
+        <resource-env-ref-type>resource-env-ref-type1</resource-env-ref-type>
+        <mapped-name>mapped-name15</mapped-name>
+        <injection-target>
+            <injection-target-class>injection-target-class14</injection-target-class>
+            <injection-target-name>$</injection-target-name>
+        </injection-target>
+    </resource-env-ref>
+    <resource-env-ref id="I6637">
+        <description xml:lang="">description431</description>
+        <resource-env-ref-name>resource-env-ref-name2</resource-env-ref-name>
+        <resource-env-ref-type>resource-env-ref-type2</resource-env-ref-type>
+        <mapped-name>mapped-name24</mapped-name>
+        <injection-target>
+            <injection-target-class>injection-target-class23</injection-target-class>
+            <injection-target-name>$</injection-target-name>
+        </injection-target>
+    </resource-env-ref>
+    <message-destination-ref id="I3189">
+        <description xml:lang="en-US">description208</description>
+        <message-destination-ref-name>message-destination-ref-name0</message-destination-ref-name>
+        <message-destination-type>message-destination-type0</message-destination-type>
+        <message-destination-usage>Consumes</message-destination-usage>
+        <message-destination-link>message-destination-link0</message-destination-link>
+        <mapped-name>mapped-name6</mapped-name>
+        <injection-target>
+            <injection-target-class>injection-target-class6</injection-target-class>
+            <injection-target-name>$</injection-target-name>
+        </injection-target>
+    </message-destination-ref>
+    <message-destination-ref id="I3459">
+        <description xml:lang="">description223</description>
+        <message-destination-ref-name>message-destination-ref-name1</message-destination-ref-name>
+        <message-destination-type>message-destination-type1</message-destination-type>
+        <message-destination-usage>Consumes</message-destination-usage>
+        <message-destination-link>message-destination-link1</message-destination-link>
+        <mapped-name>mapped-name16</mapped-name>
+        <injection-target>
+            <injection-target-class>injection-target-class15</injection-target-class>
+            <injection-target-name>$</injection-target-name>
+        </injection-target>
+    </message-destination-ref>
+    <message-destination-ref id="I6651">
+        <description xml:lang="">description432</description>
+        <message-destination-ref-name>message-destination-ref-name2</message-destination-ref-name>
+        <message-destination-type>message-destination-type2</message-destination-type>
+        <message-destination-usage>Consumes</message-destination-usage>
+        <message-destination-link>message-destination-link2</message-destination-link>
+        <mapped-name>mapped-name25</mapped-name>
+        <injection-target>
+            <injection-target-class>injection-target-class24</injection-target-class>
+            <injection-target-name>$</injection-target-name>
+        </injection-target>
+    </message-destination-ref>
+    <persistence-context-ref id="I3207">
+        <description xml:lang="en-US">description209</description>
+        <persistence-context-ref-name>persistence-context-ref-name0</persistence-context-ref-name>
+        <persistence-unit-name>persistence-unit-name0</persistence-unit-name>
+        <persistence-context-type>Transaction</persistence-context-type>
+        <persistence-property id="I3217">
+            <name>name0</name>
+            <value>value0</value>
+        </persistence-property>
+        <mapped-name>mapped-name7</mapped-name>
+        <injection-target>
+            <injection-target-class>injection-target-class7</injection-target-class>
+            <injection-target-name>$</injection-target-name>
+        </injection-target>
+    </persistence-context-ref>
+    <persistence-context-ref id="I3477">
+        <description xml:lang="">description224</description>
+        <persistence-context-ref-name>persistence-context-ref-name1</persistence-context-ref-name>
+        <persistence-unit-name>persistence-unit-name2</persistence-unit-name>
+        <persistence-context-type>Transaction</persistence-context-type>
+        <persistence-property id="I3487">
+            <name>name1</name>
+            <value>value1</value>
+        </persistence-property>
+        <mapped-name>mapped-name17</mapped-name>
+        <injection-target>
+            <injection-target-class>injection-target-class16</injection-target-class>
+            <injection-target-name>$</injection-target-name>
+        </injection-target>
+    </persistence-context-ref>
+    <persistence-context-ref id="I6669">
+        <description xml:lang="en-US">description433</description>
+        <persistence-context-ref-name>persistence-context-ref-name2</persistence-context-ref-name>
+        <persistence-unit-name>persistence-unit-name4</persistence-unit-name>
+        <persistence-context-type>Transaction</persistence-context-type>
+        <persistence-property id="I6679">
+            <name>name2</name>
+            <value>value2</value>
+        </persistence-property>
+        <mapped-name>mapped-name26</mapped-name>
+        <injection-target>
+            <injection-target-class>injection-target-class25</injection-target-class>
+            <injection-target-name>$</injection-target-name>
+        </injection-target>
+    </persistence-context-ref>
+    <persistence-unit-ref id="I3229">
+        <description xml:lang="en-US">description210</description>
+        <persistence-unit-ref-name>persistence-unit-ref-name0</persistence-unit-ref-name>
+        <persistence-unit-name>persistence-unit-name1</persistence-unit-name>
+        <mapped-name>mapped-name8</mapped-name>
+        <injection-target>
+            <injection-target-class>injection-target-class8</injection-target-class>
+            <injection-target-name>$</injection-target-name>
+        </injection-target>
+    </persistence-unit-ref>
+    <persistence-unit-ref id="I3499">
+        <description xml:lang="">description225</description>
+        <persistence-unit-ref-name>persistence-unit-ref-name1</persistence-unit-ref-name>
+        <persistence-unit-name>persistence-unit-name3</persistence-unit-name>
+        <mapped-name>mapped-name18</mapped-name>
+        <injection-target>
+            <injection-target-class>injection-target-class17</injection-target-class>
+            <injection-target-name>$</injection-target-name>
+        </injection-target>
+    </persistence-unit-ref>
+    <persistence-unit-ref id="I6691">
+        <description xml:lang="en-US">description434</description>
+        <persistence-unit-ref-name>persistence-unit-ref-name2</persistence-unit-ref-name>
+        <persistence-unit-name>persistence-unit-name5</persistence-unit-name>
+        <mapped-name>mapped-name27</mapped-name>
+        <injection-target>
+            <injection-target-class>injection-target-class26</injection-target-class>
+            <injection-target-name>$</injection-target-name>
+        </injection-target>
+    </persistence-unit-ref>
+    <post-construct>
+        <lifecycle-callback-class>lifecycle-callback-class0</lifecycle-callback-class>
+        <lifecycle-callback-method>$</lifecycle-callback-method>
+    </post-construct>
+    <post-construct>
+        <lifecycle-callback-class>lifecycle-callback-class2</lifecycle-callback-class>
+        <lifecycle-callback-method>$</lifecycle-callback-method>
+    </post-construct>
+    <post-construct>
+        <lifecycle-callback-class>lifecycle-callback-class4</lifecycle-callback-class>
+        <lifecycle-callback-method>$</lifecycle-callback-method>
+    </post-construct>
+    <pre-destroy>
+        <lifecycle-callback-class>lifecycle-callback-class1</lifecycle-callback-class>
+        <lifecycle-callback-method>$</lifecycle-callback-method>
+    </pre-destroy>
+    <pre-destroy>
+        <lifecycle-callback-class>lifecycle-callback-class3</lifecycle-callback-class>
+        <lifecycle-callback-method>$</lifecycle-callback-method>
+    </pre-destroy>
+    <pre-destroy>
+        <lifecycle-callback-class>lifecycle-callback-class5</lifecycle-callback-class>
+        <lifecycle-callback-method>$</lifecycle-callback-method>
+    </pre-destroy>
+    <message-destination id="ID275">
+        <description xml:lang="">description14</description>
+        <display-name xml:lang="en-US">display-name4</display-name>
+        <icon xml:lang="en-US" id="ID281">
+            <small-icon>small-icon4</small-icon>
+            <large-icon>large-icon4</large-icon>
+        </icon>
+        <message-destination-name>message-destination-name0</message-destination-name>
+        <mapped-name>mapped-name9</mapped-name>
+    </message-destination>
+    <message-destination id="ID923">
+        <description xml:lang="">description118</description>
+        <display-name xml:lang="en-US">display-name7</display-name>
+        <icon xml:lang="en-US" id="ID929">
+            <small-icon>small-icon6</small-icon>
+            <large-icon>large-icon6</large-icon>
+        </icon>
+        <message-destination-name>message-destination-name1</message-destination-name>
+        <mapped-name>mapped-name10</mapped-name>
+    </message-destination>
+</web-app>

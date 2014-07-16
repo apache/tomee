@@ -1,0 +1,42 @@
+<div class="panel panel-default ux-script ux-script-output ux-normal">
+    <div class="panel-heading">
+        <h3 class="panel-title">{{i18n "output"}}</h3>
+        <button type="button" class="btn btn-default btn-sm ux-clean"><span class="glyphicon glyphicon-trash"></span></button>
+        <button type="button" class="btn btn-default btn-sm ux-maximize"><span class="glyphicon glyphicon-fullscreen"></span></button>
+    </div>
+    <div class="panel-body">
+        <pre></pre>
+    </div>
+</div>
+<div class="panel panel-default ux-script ux-script-source ux-normal">
+    <div class="panel-heading">
+        <h3 class="panel-title">{{i18n "source"}}</h3>
+        <button type="button" class="btn btn-default btn-sm ux-user"><span class="glyphicon glyphicon-user"></span></button>
+        <button type="button" class="btn btn-default btn-sm ux-maximize"><span class="glyphicon glyphicon-fullscreen"></span></button>
+    </div>
+    <div class="panel-body">
+        <textarea></textarea>
+    </div>
+    <div class="ux-commands">
+        <div class="btn-group dropup">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                <span class="ux-source-choice">{{i18n "javascript"}}</span> <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li><a class="ux-source-option" name="javascript" href="#">{{i18n "javascript"}}</a></li>
+                <li><a class="ux-source-option" name="groovy" href="#">{{i18n "groovy"}}</a></li>
+            </ul>
+        </div>
+        <div class="btn-group dropup">
+            <a class="btn btn-primary ux-execute-primary ux-execute-script">{{i18n "execute"}}</a>
+            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                <span class="caret"></span>
+                <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li><a class="ux-execute-script">{{i18n "execute"}}</a></li>
+                <li><a class="ux-clean-execute-script">{{i18n "clean.execute"}}</a></li>
+            </ul>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,4 @@
+${projectName} (${version}) stable; urgency=${urgency}
+
+${issues}
+ -- devlist <dev@tomee.apache.org>  ${fixDate}

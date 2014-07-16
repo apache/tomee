@@ -1,0 +1,28 @@
+Usage: openejb stop [options]
+
+Example: Simplest scenario
+
+ openejb stop
+
+ That's it.  This connects to the server running on the default host 
+ address (127.0.0.1) and port (4201) and sends it a stop request.
+
+Example: -h
+
+ openejb stop -h 10.45.67.8
+
+ Sends a stop request to the server running on IP 10.45.67.8 and port 4201.
+
+ DNS names can also be used.
+
+ openejb stop -h myhost.foo.com
+
+ Sends a stop request to the server running on myhost.foo.com and port 4201.
+
+Example: -p
+
+ openejb stop -p 8765
+ 
+ Sends a stop request to the server running on IP 127.0.0.1 and port 8765.
+
+Bug Reports to <users@openejb.apache.org>

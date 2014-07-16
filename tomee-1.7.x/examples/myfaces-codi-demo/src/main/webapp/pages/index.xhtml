@@ -1,0 +1,68 @@
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+-->
+
+<html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/layout/main-template.xhtml">
+
+  <ui:define name="content">
+    <h2>Illustrated Features</h2>
+
+    <h3>Apache MyFaces CODI</h3>
+    <ul>
+      <li>Type-safe view-config</li>
+      <li>Type-safe (custom) view-meta-data</li>
+      <li>Type-safe navigation</li>
+      <li>Type-safe (specialized) config</li>
+      <li>Type-safe custom project-stage</li>
+      <li>@WindowScoped</li>
+      <li>Controlling CODI scopes with WindowContext</li>
+      <li>@ViewAccessScoped</li>
+      <li>Manual conversation handling</li>
+      <li>Secured pages (AccessDecisionVoter)</li>
+      <li>@Transactional</li>
+      <li>I18n (fluent API)</li>
+      <li>Dependency-Injection for JSR303 (BV) constraint-validators</li>
+      <li>Dependency-Injection for JSF phase-listeners</li>
+    </ul>
+
+    <h3>Apache MyFaces ExtVal</h3>
+    <ul>
+      <li>Cross-Field validation (@Equals)</li>
+      <li>Type-safe group-validation (@BeanValidation) for JSF action-methods</li>
+    </ul>
+
+    <h2>Hints</h2>
+    <ul>
+      <li>
+        This application doesn't show the/a best practise. It's only a small application which shows a bunch of features.
+      </li>
+      <li>
+        To sync the project-stage of MyFaces CODI and JSF use e.g. faces.PROJECT_STAGE=Development in [tomee dir]/conf/system.properties
+      </li>
+    </ul>
+  </ui:define>
+
+</ui:composition>
+</html>

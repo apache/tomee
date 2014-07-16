@@ -1,0 +1,83 @@
+/**
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+package org.apache.openejb.core.webservices;
+
+import junit.framework.TestCase;
+import org.w3c.dom.Element;
+
+import javax.xml.namespace.QName;
+import javax.xml.transform.Source;
+import javax.xml.ws.Endpoint;
+import javax.xml.ws.EndpointReference;
+import javax.xml.ws.WebServiceFeature;
+import javax.xml.ws.spi.Provider;
+import javax.xml.ws.spi.ServiceDelegate;
+import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import java.net.URL;
+import java.util.List;
+
+public class ProviderWrapperTest extends TestCase {
+    public void test() throws Exception {
+        System.setProperty(Provider.JAXWSPROVIDER_PROPERTY, MockProvider.class.getName());
+        Provider provider = Provider.provider();
+        assertNotNull("provider is null", provider);
+        assertFalse("provider should not be an instance of ProviderWrapper", provider instanceof ProviderWrapper);
+
+        ProviderWrapper.beforeCreate(null);
+        try {
+            provider = Provider.provider();
+            assertNotNull("provider is null", provider);
+            assertTrue("provider should be an instance of ProviderWrapper", provider instanceof ProviderWrapper);
+            final ProviderWrapper providerWrapper = (ProviderWrapper) provider;
+
+            // check delegate
+            final Provider delegate = providerWrapper.getDelegate();
+            assertNotNull("providerWrapper delegate is null", delegate);
+            assertFalse("providerWrapper delegate should not be an instance of ProviderWrapper", delegate instanceof ProviderWrapper);
+        } finally {
+            ProviderWrapper.afterCreate();
+        }
+    }
+
+    @SuppressWarnings({"UnusedDeclaration"})
+    public static class MockProvider extends Provider {
+        public ServiceDelegate createServiceDelegate(final URL url, final QName qName, final Class aClass) {
+            return null;
+        }
+
+        public Endpoint createEndpoint(final String string, final Object object) {
+            return null;
+        }
+
+        public Endpoint createAndPublishEndpoint(final String string, final Object object) {
+            return null;
+        }
+
+        public W3CEndpointReference createW3CEndpointReference(final String address, final QName serviceName, final QName portName, final List<Element> metadata, final String wsdlDocumentLocation, final List<Element> referenceParameters) {
+            return null;
+        }
+
+        public EndpointReference readEndpointReference(final Source source) {
+            return null;
+        }
+
+        public <T> T getPort(final EndpointReference endpointReference, final Class<T> serviceEndpointInterface, final WebServiceFeature... features) {
+            return null;
+        }
+    }
+}

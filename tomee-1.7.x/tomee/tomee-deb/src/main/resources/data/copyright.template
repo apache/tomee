@@ -1,0 +1,16 @@
+This package was debianized by the Apache TomEE dev Team <dev@tomee.apache.org> on
+${new Date().toString()}
+
+Upstream Authors:
+
+    devlist <dev@tomee.apache.org>
+
+Copyright:
+
+    Copyright (C) 1999-2014 The Apache Software Foundation
+
+License:
+
+    * (if not otherwise specified):
+
+     /usr/share/common-licenses/Apache-2'

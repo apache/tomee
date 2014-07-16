@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+
+<!-- $Rev$ $Date$ -->
+
+<ns4:ejb-jar xmlns="http://geronimo.apache.org/xml/ns/deployment-1.2" xmlns:ns2="http://geronimo.apache.org/xml/ns/naming-1.2" xmlns:ns3="http://openejb.apache.org/xml/ns/openejb-jar-2.2" xmlns:ns4="http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0" xmlns:ns5="http://geronimo.apache.org/xml/ns/j2ee/application-1.2" xmlns:ns6="http://geronimo.apache.org/xml/ns/security-2.0" xmlns:ns7="http://java.sun.com/xml/ns/persistence" xmlns:ns8="http://openejb.apache.org/xml/ns/pkgen-2.1">
+    <environment>
+        <moduleId>
+            <groupId>itests</groupId>
+            <artifactId>itests</artifactId>
+            <version>1</version>
+            <type>car</type>
+        </moduleId>
+        <dependencies>
+            <dependency>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>2.0</version>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.geronimo.configs</groupId>
+                <artifactId>system-database</artifactId>
+                <type>car</type>
+            </dependency>
+        </dependencies>
+    </environment>
+    <ns2:persistence-context-ref>
+        <ns2:persistence-context-ref-name>persistence/TestContext</ns2:persistence-context-ref-name>
+        <ns2:persistence-unit-name>openjpa-test-unit</ns2:persistence-unit-name>
+        <ns2:persistence-context-type>transaction-scoped</ns2:persistence-context-type>
+    </ns2:persistence-context-ref>
+    <ns2:persistence-context-ref>
+        <ns2:persistence-context-ref-name>persistence/ExtendedTestContext</ns2:persistence-context-ref-name>
+        <ns2:persistence-unit-name>openjpa-test-unit</ns2:persistence-unit-name>
+        <ns2:persistence-context-type>extended</ns2:persistence-context-type>
+    </ns2:persistence-context-ref>
+    <ns2:persistence-context-ref>
+        <ns2:persistence-context-ref-name>openejb/cmp</ns2:persistence-context-ref-name>
+        <ns2:persistence-unit-name>cmp</ns2:persistence-unit-name>
+        <ns2:persistence-context-type>transaction-scoped</ns2:persistence-context-type>
+    </ns2:persistence-context-ref>
+    <ns2:persistence-unit-ref>
+        <ns2:persistence-unit-ref-name>persistence/TestUnit</ns2:persistence-unit-ref-name>
+        <ns2:persistence-unit-name>openjpa-test-unit</ns2:persistence-unit-name>
+    </ns2:persistence-unit-ref>
+    <ns2:resource-ref>
+        <ns2:ref-name>database</ns2:ref-name>
+        <ns2:pattern>
+            <ns2:groupId>org.apache.geronimo.configs</ns2:groupId>
+            <ns2:artifactId>system-database</ns2:artifactId>
+            <ns2:name>SystemDatasource</ns2:name>
+        </ns2:pattern>
+    </ns2:resource-ref>
+    <ns2:resource-ref>
+        <ns2:ref-name>datasource</ns2:ref-name>
+        <ns2:pattern>
+            <ns2:groupId>org.apache.geronimo.configs</ns2:groupId>
+            <ns2:artifactId>system-database</ns2:artifactId>
+            <ns2:name>SystemDatasource</ns2:name>
+        </ns2:pattern>
+    </ns2:resource-ref>
+    <ns2:resource-ref>
+        <ns2:ref-name>jdbc/basic/entityDatabase</ns2:ref-name>
+        <ns2:pattern>
+            <ns2:groupId>org.apache.geronimo.configs</ns2:groupId>
+            <ns2:artifactId>system-database</ns2:artifactId>
+            <ns2:name>SystemDatasource</ns2:name>
+        </ns2:pattern>
+    </ns2:resource-ref>
+    <ns2:resource-ref>
+        <ns2:ref-name>stateless/references/Resource_manager_access</ns2:ref-name>
+        <ns2:pattern>
+            <ns2:groupId>org.apache.geronimo.configs</ns2:groupId>
+            <ns2:artifactId>system-database</ns2:artifactId>
+            <ns2:name>SystemDatasource</ns2:name>
+        </ns2:pattern>
+    </ns2:resource-ref>
+    <ns2:resource-ref>
+        <ns2:ref-name>org.apache.openejb.test.stateless.AnnotatedFieldInjectionStatelessBean/daataSource</ns2:ref-name>
+        <ns2:pattern>
+            <ns2:groupId>org.apache.geronimo.configs</ns2:groupId>
+            <ns2:artifactId>system-database</ns2:artifactId>
+            <ns2:name>SystemDatasource</ns2:name>
+        </ns2:pattern>
+    </ns2:resource-ref>
+    <ns2:resource-ref>
+        <ns2:ref-name>org.apache.openejb.test.stateful.AnnotatedFieldInjectionStatefulBean/daataSource</ns2:ref-name>
+        <ns2:pattern>
+            <ns2:groupId>org.apache.geronimo.configs</ns2:groupId>
+            <ns2:artifactId>system-database</ns2:artifactId>
+            <ns2:name>SystemDatasource</ns2:name>
+        </ns2:pattern>
+    </ns2:resource-ref>
+    <ns7:persistence version="1.0">
+        <ns7:persistence-unit transaction-type="JTA" name="cmp">
+            <ns7:provider>org.apache.openjpa.persistence.PersistenceProviderImpl</ns7:provider>
+            <ns7:jta-data-source>?name=SystemDatasource</ns7:jta-data-source>
+            <ns7:non-jta-data-source>?name=NoTxDatasource</ns7:non-jta-data-source>
+            <ns7:mapping-file>META-INF/jpa.mapping.xml</ns7:mapping-file>
+            <ns7:class>org.apache.openejb.test.entity.cmp.BasicCmpBean</ns7:class>
+            <ns7:exclude-unlisted-classes>false</ns7:exclude-unlisted-classes>
+        </ns7:persistence-unit>
+        <ns7:persistence-unit transaction-type="JTA" name="openjpa-test-unit">
+            <ns7:provider>org.apache.openjpa.persistence.PersistenceProviderImpl</ns7:provider>
+            <ns7:jta-data-source>?name=SystemDatasource</ns7:jta-data-source>
+            <ns7:non-jta-data-source>?name=NoTxDatasource</ns7:non-jta-data-source>
+            <ns7:class>org.apache.openejb.test.entity.Customer</ns7:class>
+        </ns7:persistence-unit>
+    </ns7:persistence>
+</ns4:ejb-jar>

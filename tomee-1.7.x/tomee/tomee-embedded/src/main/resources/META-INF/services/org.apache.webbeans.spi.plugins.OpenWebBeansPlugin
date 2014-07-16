@@ -1,0 +1,3 @@
+org.apache.webbeans.jsf.plugin.OpenWebBeansJsfPlugin
+org.apache.openejb.cdi.CdiPlugin
+

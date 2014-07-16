@@ -1,0 +1,6 @@
+var pairs = ctx.list('');
+while(pairs.hasMore()) {
+  println('[entry] ' + pairs.next().getName());
+}
+var user = ctx.lookup('java:comp/EJBContext').getCallerPrincipal().getName();
+println("Logged user: '" + user + "'");

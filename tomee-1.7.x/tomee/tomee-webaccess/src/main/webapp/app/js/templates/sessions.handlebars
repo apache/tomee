@@ -1,0 +1,36 @@
+<div class="ux-sessions-panel panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">{{i18n "sessions"}}</h3>
+    </div>
+    <div class="panel-body">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>{{i18n "session.id"}}</th>
+                <th>{{i18n "session.context"}}</th>
+                <th>{{i18n "session.creation.date"}}</th>
+                <th>{{i18n "session.last.access"}}</th>
+                <th>{{i18n "session.expiration.date"}}</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {{#each sessions}}
+            <tr>
+                <td>{{this.sessionId}}</td>
+                <td>{{this.context}}</td>
+                <td>{{timeStampToDate this.creationTs}}</td>
+                <td>{{timeStampToDate this.lastAccessTs}}</td>
+                <td>{{timeStampToDate this.expirationTs}}</td>
+                <td>
+                    <a class="ux-expire-btn" href="expire">
+                <span data-session-id="{{this.sessionId}}" data-context-id="{{this.context}}"
+                      class="glyphicon glyphicon-trash"></span>
+                    </a>
+                </td>
+            </tr>
+            {{/each}}
+            </tbody>
+        </table>
+    </div>
+</div>

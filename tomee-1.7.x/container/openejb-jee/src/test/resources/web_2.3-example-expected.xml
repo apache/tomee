@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" id="ID001">
+    <description>description117</description>
+    <display-name>display-name6</display-name>
+    <icon xml:lang="en" id="ID967">
+        <small-icon>small-icon8</small-icon>
+        <large-icon>large-icon8</large-icon>
+    </icon>
+    <distributable id="ID261"/>
+    <context-param>
+        <description>description1</description>
+        <param-name>param-name1</param-name>
+        <param-value>param-value1</param-value>
+    </context-param>
+    <context-param>
+        <description>description2</description>
+        <param-name>param-name2</param-name>
+        <param-value>param-value2</param-value>
+    </context-param>
+    <filter id="ID939">
+        <description>description119</description>
+        <display-name>display-name8</display-name>
+        <icon xml:lang="en" id="ID945">
+            <small-icon>small-icon7</small-icon>
+            <large-icon>large-icon7</large-icon>
+        </icon>
+        <filter-name>filter-name0</filter-name>
+        <filter-class>filter-class0</filter-class>
+        <async-supported>false</async-supported>
+        <init-param id="ID955">
+            <description>description120</description>
+            <param-name>param-name1</param-name>
+            <param-value>param-value1</param-value>
+        </init-param>
+    </filter>
+    <filter id="ID699">
+        <description>description107</description>
+        <display-name>display-name3</display-name>
+        <icon xml:lang="en" id="ID705">
+            <small-icon>small-icon2</small-icon>
+            <large-icon>large-icon2</large-icon>
+        </icon>
+        <filter-name>filter-name0</filter-name>
+        <filter-class>filter-class0</filter-class>
+        <async-supported>false</async-supported>
+        <init-param id="ID715">
+            <description>description108</description>
+            <param-name>param-name1</param-name>
+            <param-value>param-value1</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping id="I6727">
+        <filter-name>filter-name0</filter-name>
+        <servlet-name>servlet-name0</servlet-name>
+    </filter-mapping>
+    <filter-mapping id="I8297">
+        <filter-name>filter-name1</filter-name>
+        <url-pattern>url-pattern918</url-pattern>
+    </filter-mapping>
+    <listener id="ID003">
+        <listener-class>listener-class0</listener-class>
+    </listener>
+    <listener id="ID017">
+        <listener-class>listener-class1</listener-class>
+    </listener>
+    <servlet id="ID009">
+        <description>description0</description>
+        <display-name>display-name0</display-name>
+        <icon xml:lang="en" id="ID015">
+            <small-icon>small-icon0</small-icon>
+            <large-icon>large-icon0</large-icon>
+        </icon>
+        <servlet-name>servlet-name0</servlet-name>
+        <jsp-file>jsp-file0</jsp-file>
+        <init-param id="ID025">
+            <description>description1</description>
+            <param-name>param-name0</param-name>
+            <param-value>param-value0</param-value>
+        </init-param>
+        <run-as id="ID033">
+            <description>description2</description>
+            <role-name>role-name0</role-name>
+        </run-as>
+        <security-role-ref id="ID039">
+            <description>description3</description>
+            <role-name>role-name1</role-name>
+            <role-link>role-link0</role-link>
+        </security-role-ref>
+    </servlet>
+    <servlet id="ID079">
+        <description>description7</description>
+        <display-name>display-name5</display-name>
+        <icon xml:lang="en" id="ID085">
+            <small-icon>small-icon5</small-icon>
+            <large-icon>large-icon5</large-icon>
+        </icon>
+        <servlet-name>servlet-name1</servlet-name>
+        <servlet-class>servlet-class0</servlet-class>
+        <init-param id="ID091">
+            <description>description8</description>
+            <param-name>param-name2</param-name>
+            <param-value>param-value2</param-value>
+        </init-param>
+        <run-as id="ID099">
+            <description>description9</description>
+            <role-name>role-name0</role-name>
+        </run-as>
+        <security-role-ref id="ID105">
+            <description>description10</description>
+            <role-name>role-name1</role-name>
+            <role-link>role-link0</role-link>
+        </security-role-ref>
+    </servlet>
+    <servlet-mapping id="ID113">
+        <servlet-name>servlet-name2</servlet-name>
+        <url-pattern>url-pattern1</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping id="ID919">
+        <servlet-name>servlet-name0</servlet-name>
+        <url-pattern>url-pattern10098</url-pattern>
+    </servlet-mapping>
+    <session-config id="ID031">
+        <session-timeout>0</session-timeout>
+    </session-config>
+    <session-config id="ID929">
+        <session-timeout>22</session-timeout>
+    </session-config>
+    <mime-mapping id="ID003">
+        <extension>extension0</extension>
+        <mime-type>!/!</mime-type>
+    </mime-mapping>
+    <mime-mapping id="ID117">
+        <extension>extension1</extension>
+        <mime-type>mime-type0</mime-type>
+    </mime-mapping>
+    <welcome-file-list id="ID291">
+        <welcome-file>welcome-file100</welcome-file>
+        <welcome-file>welcome-file101</welcome-file>
+        <welcome-file>welcome-file102</welcome-file>
+    </welcome-file-list>
+    <error-page id="I3287">
+        <error-code>0</error-code>
+        <location>/</location>
+    </error-page>
+    <error-page id="I3287">
+        <error-code>22</error-code>
+        <location>location</location>
+    </error-page>
+    <jsp-config>
+        <taglib id="ID665">
+            <taglib-uri>taglib-uri0</taglib-uri>
+            <taglib-location>taglib-location0</taglib-location>
+        </taglib>
+    </jsp-config>
+    <security-constraint id="ID293">
+        <display-name>display-name5</display-name>
+        <web-resource-collection id="ID297">
+            <web-resource-name>web-resource-name0</web-resource-name>
+            <description>description15</description>
+            <url-pattern>url-pattern0</url-pattern>
+            <url-pattern>url-pattern1</url-pattern>
+            <url-pattern>url-pattern2</url-pattern>
+            <http-method>!</http-method>
+        </web-resource-collection>
+        <web-resource-collection id="ID303">
+            <web-resource-name>web-resource-name1</web-resource-name>
+            <description>description16</description>
+            <url-pattern>url-pattern100</url-pattern>
+            <url-pattern>url-pattern101</url-pattern>
+            <url-pattern>url-pattern102</url-pattern>
+            <url-pattern>url-pattern103</url-pattern>
+            <http-method>!</http-method>
+        </web-resource-collection>
+        <web-resource-collection id="ID309">
+            <web-resource-name>web-resource-name2</web-resource-name>
+            <description>description17</description>
+            <url-pattern>url-pattern200</url-pattern>
+            <url-pattern>url-pattern201</url-pattern>
+            <url-pattern>url-pattern202</url-pattern>
+            <http-method>!</http-method>
+        </web-resource-collection>
+        <auth-constraint id="ID897">
+            <description>description115</description>
+            <role-name>role-name1</role-name>
+        </auth-constraint>
+        <user-data-constraint id="ID903">
+            <description>description116</description>
+            <transport-guarantee>NONE</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+    <security-constraint id="ID139">
+        <display-name>display-name7</display-name>
+        <web-resource-collection id="ID141">
+            <web-resource-name>web-resource-name10</web-resource-name>
+            <description>description12</description>
+            <url-pattern>url-pattern7</url-pattern>
+            <url-pattern>url-pattern8</url-pattern>
+            <url-pattern>url-pattern9</url-pattern>
+            <http-method>!</http-method>
+        </web-resource-collection>
+        <web-resource-collection id="ID145">
+            <web-resource-name>web-resource-name11</web-resource-name>
+            <description>description13</description>
+            <url-pattern>url-pattern10</url-pattern>
+            <url-pattern>url-pattern11</url-pattern>
+            <url-pattern>url-pattern12</url-pattern>
+            <http-method>!</http-method>
+        </web-resource-collection>
+        <web-resource-collection id="ID149">
+            <web-resource-name>web-resource-name12</web-resource-name>
+            <description>description14</description>
+            <url-pattern>url-pattern13</url-pattern>
+            <url-pattern>url-pattern14</url-pattern>
+            <url-pattern>url-pattern15</url-pattern>
+            <http-method>!</http-method>
+        </web-resource-collection>
+        <auth-constraint id="ID153">
+            <description>description15</description>
+            <role-name>role-name2</role-name>
+        </auth-constraint>
+        <user-data-constraint id="ID155">
+            <description>description16</description>
+        </user-data-constraint>
+    </security-constraint>
+    <login-config id="ID263">
+        <auth-method>auth-method0</auth-method>
+        <realm-name>realm-name0</realm-name>
+        <form-login-config id="ID269">
+            <form-login-page>/</form-login-page>
+            <form-error-page>/</form-error-page>
+        </form-login-config>
+    </login-config>
+    <login-config id="I1199">
+        <auth-method>auth-method1</auth-method>
+        <realm-name>realm-name1</realm-name>
+        <form-login-config id="I1205">
+            <form-login-page>/</form-login-page>
+            <form-error-page>/</form-error-page>
+        </form-login-config>
+    </login-config>
+    <security-role id="ID035">
+        <description>description2</description>
+        <role-name>role-name0</role-name>
+    </security-role>
+    <security-role id="ID039">
+        <description>description3</description>
+        <role-name>role-name3</role-name>
+    </security-role>
+    <env-entry id="ID059">
+        <description>description2</description>
+        <env-entry-name>env-entry-name0</env-entry-name>
+        <env-entry-type>java.lang.Boolean</env-entry-type>
+        <env-entry-value>env-entry-value0</env-entry-value>
+    </env-entry>
+    <ejb-ref id="ID075">
+        <description>description3</description>
+        <ejb-ref-name>ejb-ref-name0</ejb-ref-name>
+        <ejb-ref-type>Entity</ejb-ref-type>
+        <home>home0</home>
+        <remote>remote0</remote>
+        <ejb-link>ejb-link0</ejb-link>
+    </ejb-ref>
+    <resource-env-ref id="I3445">
+        <description>description222</description>
+        <resource-env-ref-name>resource-env-ref-name1</resource-env-ref-name>
+        <resource-env-ref-type>resource-env-ref-type1</resource-env-ref-type>
+    </resource-env-ref>
+    <resource-env-ref id="I6637">
+        <description>description431</description>
+        <resource-env-ref-name>resource-env-ref-name2</resource-env-ref-name>
+        <resource-env-ref-type>resource-env-ref-type2</resource-env-ref-type>
+    </resource-env-ref>
+    <message-destination-ref id="I3189">
+        <description>description208</description>
+        <message-destination-ref-name>message-destination-ref-name0</message-destination-ref-name>
+        <message-destination-type>message-destination-type0</message-destination-type>
+        <message-destination-usage>Consumes</message-destination-usage>
+        <message-destination-link>message-destination-link0</message-destination-link>
+        <mapped-name>mapped-name6</mapped-name>
+        <injection-target>
+            <injection-target-class>injection-target-class6</injection-target-class>
+            <injection-target-name>$</injection-target-name>
+        </injection-target>
+    </message-destination-ref>
+</web-app>

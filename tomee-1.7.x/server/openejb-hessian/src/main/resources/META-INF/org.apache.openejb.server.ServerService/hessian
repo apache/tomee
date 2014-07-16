@@ -1,0 +1,10 @@
+server      = org.apache.openejb.server.hessian.HessianService
+disabled    = ${openejb.profile.custom}
+
+# NONE, INTEGRAL or CONFIDENTIAL
+transportGuarantee = NONE
+
+#  NONE, BASIC
+authMethod  = NONE
+
+# realmName   =

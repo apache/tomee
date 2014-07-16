@@ -1,0 +1,204 @@
+/*!
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+body {
+  .growl-container {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    z-index: 5000;
+
+    .growl {
+      display: none;
+      width: 300px;
+    }
+  }
+}
+
+.ux-contentarea {
+  @topOffset: 55px;
+  @offset: 5px;
+
+  .panel-body {
+    padding: 0;
+  }
+
+  .ux-dashboard {
+    position: absolute;
+    top: @topOffset;
+    bottom: @offset;
+    left: @offset;
+    right: @offset;
+    margin-bottom: 0;
+
+    .panel-body {
+      position: absolute;
+      top: 40px;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      overflow: auto;
+    }
+
+    .ux-sessions-panel {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 300px;
+      margin-bottom: 0;
+    }
+
+    .ux-contexts-panel {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 295px;
+      right: 0;
+      margin-bottom: 0;
+    }
+  }
+
+  .ux-logfile-output {
+    position: absolute;
+    top: @topOffset;
+    bottom: @offset;
+    left: @offset;
+    right: @offset;
+    margin-bottom: 0;
+
+    > div.panel-body {
+      position: absolute;
+      top: (@topOffset + @offset);
+      bottom: @offset;
+      left: @offset;
+      right: @offset;
+      overflow: auto;
+
+      pre {
+        padding: 0;
+        border: 0;
+        margin: 0;
+        background-color: white;
+        border-radius: 0;
+        overflow: auto;
+        width: 2000px;
+      }
+    }
+  }
+
+  .ux-scripting {
+    @sourceWidth: 650px;
+
+    .ux-script {
+      position: absolute;
+      top: @topOffset;
+      bottom: @offset;
+      margin-bottom: 0;
+    }
+
+    .ux-script-output {
+      right: @offset;
+      left: @sourceWidth + (2 * @offset);
+
+      pre {
+        padding: 0;
+        border: 0;
+        margin: 0;
+        background-color: white;
+        border-radius: 0;
+        overflow: auto;
+        width: 2000px;
+      }
+
+      > div.panel-heading > button {
+        position: absolute;
+        top: 4px;
+      }
+
+      > div.panel-heading > button.ux-clean {
+        right: (@offset + 38);
+      }
+
+      > div.panel-heading > button.ux-maximize {
+        right: @offset;
+      }
+
+      > div.panel-body {
+        position: absolute;
+        top: @topOffset;
+        bottom: @offset;
+        left: (@offset * 2);
+        right: (@offset * 2);
+        overflow: auto;
+      }
+    }
+
+    .ux-script-output.ux-fullscreen {
+      left: @offset;
+      z-index: 5000;
+    }
+
+    .ux-script-source {
+      left: @offset;
+
+      .ux-user-form {
+        height: 135px;
+        width: 240px;
+      }
+
+      .ux-commands {
+        position: absolute;
+        bottom: (@offset * 2);
+        right: (@offset * 2);
+      }
+
+      > div.panel-heading > button {
+        position: absolute;
+        top: 4px;
+      }
+
+      > div.panel-heading > button.ux-user {
+        right: (@offset + 38);
+      }
+
+      > div.panel-heading > button.ux-maximize {
+        right: @offset;
+      }
+
+      > div.panel-body {
+        position: absolute;
+        top: @topOffset;
+        bottom: @offset;
+        left: @offset;
+        right: @offset;
+        overflow: auto;
+      }
+    }
+
+    .ux-script-source.ux-normal {
+      width: @sourceWidth;
+    }
+
+    .ux-script-source.ux-fullscreen {
+      left: @offset;
+      right: @offset;
+      z-index: 5000;
+    }
+  }
+
+}

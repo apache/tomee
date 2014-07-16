@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ejb-jar xmlns="http://java.sun.com/xml/ns/javaee">
+  <assembly-descriptor>
+    <interceptor-binding>
+      <ejb-name>Movies</ejb-name>
+      <interceptor-class>org.superbiz.altdd.MoviesTest$Interceptor</interceptor-class>
+    </interceptor-binding>
+  </assembly-descriptor>
+</ejb-jar>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+
+<!-- $Rev: 773519 $ $Date: 2009-05-11 12:08:51 +0200 (Mon, 11 May 2009) $ -->
+
+<handler-chains xmlns="http://java.sun.com/xml/ns/javaee">
+  <handler-chain>
+    <handler>
+      <handler-name>org.superbiz.calculator.wsh.Inflate</handler-name>
+      <handler-class>org.superbiz.calculator.wsh.Inflate</handler-class>
+    </handler>
+    <handler>
+      <handler-name>org.superbiz.calculator.wsh.Increment</handler-name>
+      <handler-class>org.superbiz.calculator.wsh.Increment</handler-class>
+    </handler>
+  </handler-chain>
+</handler-chains>

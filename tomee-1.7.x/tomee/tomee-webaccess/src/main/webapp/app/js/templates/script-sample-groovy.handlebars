@@ -1,0 +1,5 @@
+ctx.list('').each {
+  println "[entry] ${it.name}"
+}
+def user = ctx.lookup('java:comp/EJBContext').callerPrincipal.name
+println "Logged user: '$user'"

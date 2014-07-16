@@ -1,0 +1,21 @@
+<div class="ux-contexts-panel panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">{{i18n "contexts"}}</h3>
+    </div>
+    <div class="panel-body">
+        <table class="table table-striped">
+            <tbody>
+            {{#each contexts}}
+            <tr>
+                <td>{{this.baseName}}</td>
+                <td>
+                    <a class="ux-kill-context-btn" href="kill">
+                        <span data-context-basename="{{this.baseName}}" class="glyphicon glyphicon-trash"></span>
+                    </a>
+                </td>
+            </tr>
+            {{/each}}
+            </tbody>
+        </table>
+    </div>
+</div>
