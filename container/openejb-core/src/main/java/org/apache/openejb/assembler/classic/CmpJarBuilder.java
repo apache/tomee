@@ -17,8 +17,6 @@
 
 package org.apache.openejb.assembler.classic;
 
-import org.apache.commons.lang3.JavaVersion;
-import org.apache.commons.lang3.SystemUtils;
 import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.core.cmp.CmpUtil;
 import org.apache.openejb.core.cmp.cmp2.Cmp1Generator;
@@ -29,39 +27,16 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.UrlCache;
-import org.apache.openejb.util.classloader.URLClassLoaderFirst;
-import org.apache.openjpa.enhance.PCEnhancer;
-import org.apache.openjpa.jdbc.conf.JDBCConfigurationImpl;
-import org.apache.openjpa.jdbc.meta.MappingRepository;
-import org.apache.openjpa.jdbc.meta.NoneMappingDefaults;
-import org.apache.openjpa.jdbc.sql.HSQLDictionary;
-import org.apache.openjpa.lib.util.BytecodeWriter;
-import org.apache.openjpa.meta.MetaDataModes;
-import org.apache.openjpa.meta.MetaDataRepository;
-import org.apache.openjpa.persistence.jdbc.PersistenceMappingFactory;
-import org.apache.xbean.asm5.ClassReader;
-import org.apache.xbean.asm5.ClassWriter;
-import serp.bytecode.BCClass;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
-
-import static java.util.Arrays.asList;
 
 /**
  * Creates a jar file which contains the CMP implementation classes and the cmp entity mappings xml file.
@@ -120,20 +95,8 @@ public class CmpJarBuilder {
                 }
             }
 
-            final URLClassLoaderFirst thisClassLoader = new EnhancingClassLoader(tempClassLoader, classes);
-            final StoringBytecodeBytecodeWriter writer = new StoringBytecodeBytecodeWriter(thisClassLoader);
-            doEnhanceWithOpenJPA(classes, thisClassLoader, writer, appInfo.cmpMappingsXml);
-
             for (final Entry e : classes.values()) {
-                // add the generated class to the jar
-                final byte[] bytes = writer.bytecodes.get(e.clazz);
-                final byte[] bytecode = bytes != null ? bytes : e.bytes;
-                final File f = new File("/tmp/dump/" + e.name + ".class");
-                f.getParentFile().mkdirs();
-                final FileOutputStream w = new FileOutputStream(f);
-                w.write(bytecode);
-                w.close();
-                addJarEntry(jarOutputStream, e.name, bytecode);
+                addJarEntry(jarOutputStream, e.name, e.bytes);
             }
             if (appInfo.cmpMappingsXml != null) {
                 // System.out.println(appInfo.cmpMappingsXml);
@@ -149,68 +112,6 @@ public class CmpJarBuilder {
             throw new IOException("CmpJarBuilder.generate()", e);
         } finally {
             close(jarOutputStream);
-        }
-    }
-
-    private void doEnhanceWithOpenJPA(final Map<String, Entry> classes, final ClassLoader tmpLoader,
-                                      final StoringBytecodeBytecodeWriter writer,
-                                      final String cmpMappingsXml) throws ClassNotFoundException, IOException {
-        final Thread th = Thread.currentThread();
-        final ClassLoader old = th.getContextClassLoader();
-        th.setContextClassLoader(tmpLoader);
-        try {
-            final JDBCConfigurationImpl conf = new JDBCConfigurationImpl();
-            conf.setDBDictionary(new HSQLDictionary());
-            final MappingRepository repos = new MappingRepository();
-
-            final Set<Class<?>> tmpClasses = new HashSet<>();
-            for (final Entry e : classes.values()) {
-                tmpClasses.add(tmpLoader.loadClass(e.clazz));
-            }
-
-            final PersistenceMappingFactory factory = new PersistenceMappingFactory() {
-                @Override
-                public Set getPersistentTypeNames(final boolean devpath, final ClassLoader envLoader) {
-                    getXMLParser().setValidating(false);
-                    try { // xml only
-                        return parsePersistentTypeNames(tmpLoader);
-                    } catch (final IOException e) {
-                        // no-op
-                    }
-                    return super.getPersistentTypeNames(devpath, envLoader);
-                }
-            };
-
-            final File tempFile = File.createTempFile("OpenEJBGenerated.", ".xml", tmpDir());
-            tempFile.deleteOnExit();
-            final FileWriter tmpMapping = new FileWriter(tempFile);
-            try {
-                tmpMapping.write(cmpMappingsXml);
-            } finally {
-                tmpMapping.close();
-            }
-            factory.setFiles(asList(tempFile));
-
-            repos.setConfiguration(conf);
-            repos.setMetaDataFactory(factory);
-            repos.setMappingDefaults(NoneMappingDefaults.getInstance());
-            repos.setResolve(MetaDataModes.MODE_NONE);
-            repos.setValidate(MetaDataRepository.VALIDATE_NONE);
-            for (final Class<?> tmpClass : tmpClasses) {
-                repos.addMetaData(tmpClass);
-            }
-
-            final PCEnhancer.Flags flags = new PCEnhancer.Flags();
-            flags.tmpClassLoader = false;
-
-            PCEnhancer.run(conf, null, flags, repos, writer, tmpLoader);
-
-            tempFile.delete(); // try to delete it now, not a big deal otherwise,deleteOnExit will do it
-        } catch (final Throwable thr) {
-            // shouldn't be created in normal case
-            Logger.getInstance(LogCategory.OPENEJB, CmpJarBuilder.class).error(thr.getMessage(), thr);
-        } finally {
-            th.setContextClassLoader(old);
         }
     }
 
@@ -407,104 +308,6 @@ public class CmpJarBuilder {
             this.clazz = clazz;
             this.name = name;
             this.bytes = bytes;
-        }
-    }
-
-    private static final class StoringBytecodeBytecodeWriter implements BytecodeWriter {
-        private final Map<String, byte[]> bytecodes = new HashMap<>();
-        private final ClassLoader loader;
-
-        private StoringBytecodeBytecodeWriter(final ClassLoader loader) {
-            this.loader = loader;
-        }
-
-        @Override
-        public void write(final BCClass type) throws IOException {
-            bytecodes.put(type.getName(), type.toByteArray());
-
-            final byte[] b = type.toByteArray();
-            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            if (SystemUtils.isJavaVersionAtLeast(JavaVersion.JAVA_1_7)) {
-                final ByteArrayInputStream bais = new ByteArrayInputStream(b);
-                final BufferedInputStream bis = new BufferedInputStream(bais);
-                final ClassWriter cw = new CommonClassWriterHack(loader);
-                final ClassReader cr = new ClassReader(bis);
-                cr.accept(cw, 0);
-                baos.write(cw.toByteArray());
-            } else {
-                baos.write(b);
-            }
-        }
-    }
-
-    private static final class CommonClassWriterHack extends ClassWriter {
-        private final ClassLoader loader;
-
-        private CommonClassWriterHack(final ClassLoader loader) {
-            super(ClassWriter.COMPUTE_FRAMES);
-            this.loader = loader;
-        }
-
-        @Override
-        protected String getCommonSuperClass(final String type1, final String type2) {
-            Class<?> class1;
-            Class<?> class2;
-            try {
-                class1 = loader.loadClass(type1.replace('/', '.'));
-                class2 = loader.loadClass(type2.replace('/', '.'));
-            } catch (final ClassNotFoundException ex) {
-                throw new RuntimeException(ex);
-            }
-            if (class1.isAssignableFrom(class2)) {
-                return type1;
-            }
-            if (class2.isAssignableFrom(class1)) {
-                return type2;
-            }
-            if (class1.isInterface() || class2.isInterface()) {
-                return "java/lang/Object";
-            }
-            do {
-                class1 = class1.getSuperclass();
-            } while (!class1.isAssignableFrom(class2));
-            return class1.getName().replace('.', '/');
-        }
-    }
-
-    private static class EnhancingClassLoader extends URLClassLoaderFirst {
-        private final Map<String, Entry> classes;
-
-        public EnhancingClassLoader(final ClassLoader tempClassLoader, Map<String, Entry> classes) {
-            super(new URL[0], tempClassLoader);
-            this.classes = classes;
-        }
-
-        @Override
-        public Class<?> loadClass(final String name, final boolean resolve) throws ClassNotFoundException {
-            final Entry e = classes.get(name);
-            if (e != null) {
-                final Class<?> alreadyLoaded = findLoadedClass(name);
-                if (alreadyLoaded != null) {
-                    if (resolve) {
-                        resolveClass(alreadyLoaded);
-                    }
-                    return alreadyLoaded;
-                }
-
-                final Class<?> c = defineClass(e.clazz, e.bytes, 0, e.bytes.length);
-                if (resolve) {
-                    resolveClass(c);
-                }
-                return c;
-            }
-            return super.loadClass(name, resolve);
-        }
-
-        @Override
-        public InputStream getResourceAsStream(final String name) {
-            final String key = name.replace('/', '.').replace(".class", "");
-            final Entry e = classes.get(key);
-            return e != null ? new ByteArrayInputStream(e.bytes) : super.getResourceAsStream(name);
         }
     }
 }

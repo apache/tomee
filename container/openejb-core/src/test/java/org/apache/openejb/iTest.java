@@ -46,6 +46,7 @@ public class iTest extends org.apache.openejb.test.TestSuite {
         } catch (final Exception e) {
             // do nothing - exception ignored
         }
+        System.setProperty("openejb.classloader.skip-app-loader-if-possible", "false");
         System.setProperty("openejb.test.server", org.apache.openejb.test.IvmTestServer.class.getName());
         //        System.setProperty("openejb.test.database", org.apache.openejb.test.DerbyTestDatabase.class.getName());
         System.setProperty("openejb.test.database", org.apache.openejb.test.HsqldbTestDatabase.class.getName());
