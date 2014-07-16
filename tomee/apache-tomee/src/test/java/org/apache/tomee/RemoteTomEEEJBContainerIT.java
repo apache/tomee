@@ -18,21 +18,23 @@ package org.apache.tomee;
 
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.ejb.embeddable.EJBContainer;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Hashtable;
 
 import static org.junit.Assert.assertEquals;
 
+@Ignore
 public class RemoteTomEEEJBContainerIT {
     @Test
-    public void run() throws IOException {
+    public void run() throws Exception {
         final File app = new File("target/mock/webapp");
         Files.mkdirs(app);
 
@@ -45,13 +47,23 @@ public class RemoteTomEEEJBContainerIT {
             container = EJBContainer.createEJBContainer(new HashMap<Object, Object>() {{
                 put(EJBContainer.PROVIDER, "tomee-remote");
                 put(EJBContainer.MODULES, app.getAbsolutePath());
-                put("openejb.home", new File("target/webprofile-work-dir/").listFiles(new FileFilter() {
+                final File workDir = new File("target/webprofile-work-dir/");
+                final File[] files = workDir.listFiles(new FileFilter() {
                     @Override
                     public boolean accept(final File pathname) {
                         return pathname.isDirectory() && pathname.getName().startsWith("apache-tomcat-");
                     }
-                })[0].getAbsolutePath());
+                });
+
+                if (null == files) {
+                    throw new Exception("File not found: " + workDir.getAbsolutePath());
+                }
+
+                put("openejb.home", files[0].getAbsolutePath());
             }});
+
+            final Hashtable<?, ?> environment = container.getContext().getEnvironment();
+
             assertEquals("Hello", IO.slurp(new URL("http://localhost:8080/webapp/index.html")));
         } finally {
             if (container != null) {
