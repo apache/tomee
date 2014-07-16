@@ -88,7 +88,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.17</version>
         <configuration>
-          <skipTests>false</skipTests>
+          <!--skipTests>false</skipTests-->
           <!--
 TODO: remove the skipTests flag. I needed to do it because it was throwing this exception.
 Test set: org.superbiz.projectstage.TestingProjectStageTest
