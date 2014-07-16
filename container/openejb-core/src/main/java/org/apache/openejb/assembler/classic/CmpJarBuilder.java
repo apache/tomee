@@ -17,8 +17,6 @@
 
 package org.apache.openejb.assembler.classic;
 
-import org.apache.commons.lang3.JavaVersion;
-import org.apache.commons.lang3.SystemUtils;
 import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.core.cmp.CmpUtil;
 import org.apache.openejb.core.cmp.cmp2.Cmp1Generator;
@@ -29,33 +27,9 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.UrlCache;
-import org.apache.openejb.util.classloader.URLClassLoaderFirst;
-import org.apache.openjpa.enhance.PCEnhancer;
-import org.apache.openjpa.jdbc.conf.JDBCConfigurationImpl;
-import org.apache.openjpa.jdbc.meta.MappingRepository;
-import org.apache.openjpa.jdbc.meta.NoneMappingDefaults;
-import org.apache.openjpa.jdbc.sql.HSQLDictionary;
-import org.apache.openjpa.lib.util.BytecodeWriter;
-import org.apache.openjpa.meta.AccessCode;
-import org.apache.openjpa.meta.MetaDataModes;
-import org.apache.openjpa.meta.MetaDataRepository;
-import org.apache.openjpa.persistence.jdbc.PersistenceMappingFactory;
-import org.apache.xbean.asm5.ClassReader;
-import org.apache.xbean.asm5.ClassWriter;
-import serp.bytecode.BCClass;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
@@ -106,53 +80,15 @@ public class CmpJarBuilder {
             jarOutputStream = openJarFile(this);
 
             // Generate CMP implementation classes
-            final Map<String, Entry> classes = new HashMap<>();
             for (final EjbJarInfo ejbJar : appInfo.ejbJars) {
                 for (final EnterpriseBeanInfo beanInfo : ejbJar.enterpriseBeans) {
                     if (beanInfo instanceof EntityBeanInfo) {
                         final EntityBeanInfo entityBeanInfo = (EntityBeanInfo) beanInfo;
                         if ("CONTAINER".equalsIgnoreCase(entityBeanInfo.persistenceType)) {
-                            final Entry entry = generateClass(jarOutputStream, entityBeanInfo);
-                            classes.put(entry.clazz, entry);
+                            generateClass(jarOutputStream, entityBeanInfo);
                         }
                     }
                 }
-            }
-
-            final URLClassLoaderFirst thisClassLoader = new URLClassLoaderFirst(new URL[0], tempClassLoader) {
-                @Override
-                public Class<?> loadClass(final String name, final boolean resolve) throws ClassNotFoundException {
-                    final Entry e = classes.get(name);
-                    if (e != null) {
-                        final Class<?> alreadyLoaded = findLoadedClass(name);
-                        if (alreadyLoaded != null) {
-                            if (resolve) {
-                                resolveClass(alreadyLoaded);
-                            }
-                            return alreadyLoaded;
-                        }
-
-                        final Class<?> c = defineClass(e.clazz, e.bytes, 0, e.bytes.length);
-                        if (resolve) {
-                            resolveClass(c);
-                        }
-                        return c;
-                    }
-                    return super.loadClass(name, resolve);
-                }
-
-                @Override
-                public InputStream getResourceAsStream(final String name) {
-                    final String key = name.replace('/', '.').replace(".class", "");
-                    final Entry e = classes.get(key);
-                    return e != null ? new ByteArrayInputStream(e.bytes) : super.getResourceAsStream(name);
-                }
-            };
-
-
-            for (final Entry e : classes.values()) {
-                // add the generated class to the jar
-                addJarEntry(jarOutputStream, e.name, enhance(thisClassLoader, e.clazz, e.bytes));
             }
             if (appInfo.cmpMappingsXml != null) {
                 // System.out.println(appInfo.cmpMappingsXml);
@@ -204,12 +140,12 @@ public class CmpJarBuilder {
      * @param entityBeanInfo  The descriptor for the entity bean we need to wrapper.
      * @throws IOException
      */
-    private Entry generateClass(final JarOutputStream jarOutputStream, final EntityBeanInfo entityBeanInfo) throws IOException {
+    private void generateClass(final JarOutputStream jarOutputStream, final EntityBeanInfo entityBeanInfo) throws IOException {
         // don't generate if there is aleady an implementation class
         final String cmpImplClass = CmpUtil.getCmpImplClassName(entityBeanInfo.abstractSchemaName, entityBeanInfo.ejbClass);
         final String entryName = cmpImplClass.replace(".", "/") + ".class";
         if (entries.contains(entryName) || tempClassLoader.getResource(entryName) != null) {
-            return null;
+            return;
         }
 
         // load the bean class, which is used by the generator
@@ -265,7 +201,8 @@ public class CmpJarBuilder {
             bytes = cmp2Generator.generate();
         }
 
-        return new Entry(cmpImplClass, entryName, bytes);
+        // add the generated class to the jar
+        addJarEntry(jarOutputStream, entryName, bytes);
     }
 
     /**
@@ -300,81 +237,6 @@ public class CmpJarBuilder {
             jarOutputStream.closeEntry();
             entries.add(fileName);
         }
-    }
-
-    private byte[] enhance(final ClassLoader thisClassLoader, final String clazz, final byte[] bytes) {
-        try {
-            final ByteArrayOutputStream baos = new ByteArrayOutputStream(bytes.length * 2);
-            final JDBCConfigurationImpl conf = new JDBCConfigurationImpl();
-            conf.setDBDictionary(new HSQLDictionary());
-            final MappingRepository repos = new MappingRepository();
-
-            final Class<?> tmpClass = thisClassLoader.loadClass(clazz);
-            repos.setConfiguration(conf);
-            repos.setMetaDataFactory(new PersistenceMappingFactory() {
-                @Override
-                public Set getPersistentTypeNames(boolean devpath, ClassLoader envLoader) {
-                    return Collections.singleton(tmpClass);
-                }
-            });
-            repos.setMappingDefaults(NoneMappingDefaults.getInstance());
-            repos.setResolve(MetaDataModes.MODE_NONE);
-            repos.setValidate(MetaDataRepository.VALIDATE_NONE);
-            repos.addMetaData(tmpClass, AccessCode.PROPERTY);
-
-            final PCEnhancer.Flags flags = new PCEnhancer.Flags();
-            flags.tmpClassLoader = false;
-
-            final BytecodeWriter writer = new BytecodeWriter() {
-                @Override
-                public void write(final BCClass type) throws IOException {
-                    final byte[] b = type.toByteArray();
-                    if (SystemUtils.isJavaVersionAtLeast(JavaVersion.JAVA_1_7)) {
-                        final ByteArrayInputStream bais = new ByteArrayInputStream(b);
-                        final BufferedInputStream bis = new BufferedInputStream(bais);
-
-                        final ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES) {
-                            protected String getCommonSuperClass(String type1, String type2) {
-                                Class<?> class1;
-                                Class<?> class2;
-                                try {
-                                    class1 = thisClassLoader.loadClass(type1.replace('/', '.'));
-                                    class2 = thisClassLoader.loadClass(type2.replace('/', '.'));
-                                } catch (final ClassNotFoundException ex) {
-                                    throw new RuntimeException(ex);
-                                }
-                                if (class1.isAssignableFrom(class2)) {
-                                    return type1;
-                                }
-                                if (class2.isAssignableFrom(class1)) {
-                                    return type2;
-                                }
-                                if (class1.isInterface() || class2.isInterface()) {
-                                    return "java/lang/Object";
-                                }
-                                do {
-                                    class1 = class1.getSuperclass();
-                                } while (!class1.isAssignableFrom(class2));
-                                return class1.getName().replace('.', '/');
-                            }
-                        };
-                        final ClassReader cr = new ClassReader(bis);
-                        cr.accept(cw, 0);
-                        baos.write(cw.toByteArray());
-                    } else {
-                        baos.write(b);
-                    }
-                }
-            };
-            PCEnhancer.run(conf, null, flags, repos, writer, thisClassLoader);
-            final byte[] enhanced = baos.toByteArray();
-            if (enhanced.length > 0) {
-                return enhanced;
-            }
-        } catch (final Exception e) {
-            // no-op: we should surely log something, maybe a warning
-        }
-        return bytes;
     }
 
     private static synchronized JarOutputStream openJarFile(final CmpJarBuilder instance) throws IOException {
@@ -422,18 +284,6 @@ public class CmpJarBuilder {
             } catch (final Throwable ignored) {
                 // no-op
             }
-        }
-    }
-
-    private static class Entry {
-        private final String clazz;
-        private final String name;
-        private final byte[] bytes;
-
-        private Entry(final String clazz, final String name, final byte[] bytes) {
-            this.clazz = clazz;
-            this.name = name;
-            this.bytes = bytes;
         }
     }
 }
