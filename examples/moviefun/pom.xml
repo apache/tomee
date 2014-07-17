@@ -72,6 +72,9 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.17</version>
+        <configuration>
+          <reuseForks>false</reuseForks> <!-- otherwise openejb embedded and tomee embedded shares the same context and EJBContainer is broken -->
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
