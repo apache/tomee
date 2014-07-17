@@ -44,9 +44,9 @@ public class SimpleApplicationTest {
     @Classes(cdi = true, value = {MySecondRestClass.class, HookedRest.class, RestWithInjections.class, SimpleEJB.class, MyExpertRestClass.class, MyFirstRestClass.class})
     public WebApp war() {
         return new WebApp()
-                .contextRoot("foo")
-                .addServlet("REST Application", Application.class.getName())
-                .addInitParam("REST Application", "javax.ws.rs.Application", MyRESTApplication.class.getName());
+            .contextRoot("foo")
+            .addServlet("REST Application", Application.class.getName())
+            .addInitParam("REST Application", "javax.ws.rs.Application", MyRESTApplication.class.getName());
     }
 
     @Test
@@ -65,7 +65,7 @@ public class SimpleApplicationTest {
             if (br != null) {
                 try {
                     br.close();
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     //Ignore
                 }
             }
@@ -91,7 +91,7 @@ public class SimpleApplicationTest {
             if (br != null) {
                 try {
                     br.close();
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     //Ignore
                 }
             }

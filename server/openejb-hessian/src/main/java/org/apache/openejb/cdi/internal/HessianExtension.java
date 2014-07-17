@@ -116,9 +116,9 @@ public class HessianExtension implements Extension {
             final String appName = findAppName(bm);
             try {
                 LOGGER.info("Hessian(url=" + registry.deploy(deployment.itf.getClassLoader(), server,
-                        service.getVirtualHost(), appName,
-                        service.getAuthMethod(), service.getTransportGuarantee(),
-                        service.getRealmName(), name) + ", interface=" + name + ")");
+                    service.getVirtualHost(), appName,
+                    service.getAuthMethod(), service.getTransportGuarantee(),
+                    service.getRealmName(), name) + ", interface=" + name + ")");
                 deployed.add(new DeployedEndpoint(appName, name));
             } catch (final URISyntaxException e) {
                 throw new OpenEJBRuntimeException(e);
@@ -135,7 +135,7 @@ public class HessianExtension implements Extension {
         for (final AppContext app : SystemInstance.get().getComponent(ContainerSystem.class).getAppContexts()) {
             for (final WebContext webContext : app.getWebContexts()) {
                 if (isSameContext(bm, webContext.getWebBeansContext())) {
-                    String contextRoot = webContext.getContextRoot();
+                    final String contextRoot = webContext.getContextRoot();
                     if (contextRoot != null) {
                         if (contextRoot.startsWith("/")) {
                             return contextRoot.substring(1);
@@ -152,9 +152,9 @@ public class HessianExtension implements Extension {
         throw new IllegalArgumentException("Can't find application matching bean manager " + bm);
     }
 
-    private static boolean isSameContext(final BeanManager bm, WebBeansContext app) {
+    private static boolean isSameContext(final BeanManager bm, final WebBeansContext app) {
         return InjectableBeanManager.class.isInstance(bm) && app == InjectableBeanManager.class.cast(bm).getWebBeansContext()
-                || BeanManagerImpl.class.isInstance(bm) && app == BeanManagerImpl.class.cast(bm).getWebBeansContext();
+            || BeanManagerImpl.class.isInstance(bm) && app == BeanManagerImpl.class.cast(bm).getWebBeansContext();
     }
 
     protected void shutdown(final @Observes BeforeShutdown unused) {

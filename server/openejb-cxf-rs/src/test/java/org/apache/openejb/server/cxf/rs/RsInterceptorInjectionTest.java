@@ -119,7 +119,7 @@ public class RsInterceptorInjectionTest {
 
 
         @AroundInvoke
-        private Object invoke(InvocationContext context) throws Exception {
+        private Object invoke(final InvocationContext context) throws Exception {
             // Are they injected?
             Assert.assertNotNull("httpHeaders", httpHeaders);
             Assert.assertNotNull("providers", providers);

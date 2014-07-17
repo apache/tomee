@@ -38,7 +38,7 @@ public class PathParamAtClassLevelTest {
 
     @BeforeClass
     public static void start() throws Exception {
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
         properties.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*openejb-cxf-rs.*");
         properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
         container = EJBContainer.createEJBContainer(properties);
@@ -53,7 +53,7 @@ public class PathParamAtClassLevelTest {
 
     @Test
     public void rest() {
-        String response = WebClient.create("http://localhost:4204/openejb-cxf-rs").path("/match/openejb/test/normal").get(String.class);
+        final String response = WebClient.create("http://localhost:4204/openejb-cxf-rs").path("/match/openejb/test/normal").get(String.class);
         assertEquals("openejb", response);
     }
 
@@ -62,7 +62,7 @@ public class PathParamAtClassLevelTest {
     public static class DoesItMatchWithPathParamAtClassLevel {
         @Path("/normal")
         @GET
-        public String normal(@PathParam("name") String name) {
+        public String normal(@PathParam("name") final String name) {
             return name;
         }
     }

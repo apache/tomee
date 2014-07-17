@@ -99,13 +99,13 @@ public class MulticastSearch {
 
                             return service;
                         }
-                    } catch (URISyntaxException e) {
+                    } catch (final URISyntaxException e) {
                         // not a service URI
                     }
                 }
-            } catch (SocketTimeoutException e) {
+            } catch (final SocketTimeoutException e) {
                 //Ignore
-            } catch (SocketException e) {
+            } catch (final SocketException e) {
                 System.out.println(e.getClass().getName() + ": " + e.getMessage());
             } finally {
                 final long stop = System.currentTimeMillis();
@@ -119,7 +119,7 @@ public class MulticastSearch {
     public void close() {
         try {
             multicast.close();
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             //Ignore
         }
     }

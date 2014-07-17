@@ -45,7 +45,7 @@ public class ConfigureCxfSecurity {
 
     private static final String OPENEJB_ENDPOINT_CONFIGURATOR = "openejb.endpoint.configurator";
 
-    public static final void setupWSS4JChain(Endpoint endpoint, Properties inProps) {
+    public static final void setupWSS4JChain(final Endpoint endpoint, final Properties inProps) {
         final Map<String, Object> in = getPropsFromProperties(inProps, "wss4j.in.");
         final Map<String, Object> out = getPropsFromProperties(inProps, "wss4j.out.");
         if (!in.containsKey(WSS4JInInterceptor.VALIDATOR_MAP)) {
@@ -55,7 +55,7 @@ public class ConfigureCxfSecurity {
         setupWSS4JChain(endpoint, in, out);
     }
 
-    public static Map<String, Object> getPropsFromProperties(Properties inProps, String pattern) {
+    public static Map<String, Object> getPropsFromProperties(final Properties inProps, final String pattern) {
         final String validatorPrefix = pattern + "validator";
         final String processorPrefix = pattern + "processor";
         final Map<QName, Object> validatorMap = new HashMap<QName, Object>();
@@ -63,18 +63,19 @@ public class ConfigureCxfSecurity {
         final Map<String, Object> props = new HashMap<String, Object>();
 
         String key, val;
-        for (Map.Entry<Object, Object> entry : inProps.entrySet()) {
+        for (final Map.Entry<Object, Object> entry : inProps.entrySet()) {
             key = String.valueOf(entry.getKey()).trim();
             val = String.valueOf(entry.getValue()).trim();
             if (key.startsWith(validatorPrefix)) {
-                SplitInfo infos = new SplitInfo(key, val);
+                final SplitInfo infos = new SplitInfo(key, val);
                 try {
                     validatorMap.put(infos.qname, getValidator(infos.value));
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     LOGGER.warning("validator not found " + val, e);
                 }
-            } if (key.startsWith(processorPrefix)) {
-                SplitInfo infos = new SplitInfo(key, val);
+            }
+            if (key.startsWith(processorPrefix)) {
+                final SplitInfo infos = new SplitInfo(key, val);
                 processorMap.put(infos.qname, infos.value);
             } else if (key.startsWith(pattern)) {
                 props.put(key.substring(pattern.length()), val);
@@ -90,7 +91,7 @@ public class ConfigureCxfSecurity {
         return props;
     }
 
-    private static Object getValidator(String validator) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+    private static Object getValidator(final String validator) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         if (cl == null) {
             cl = ConfigureCxfSecurity.class.getClassLoader();
@@ -98,7 +99,7 @@ public class ConfigureCxfSecurity {
         return cl.loadClass(validator).newInstance();
     }
 
-    public static final void setupWSS4JChain(Endpoint endpoint, Map<String, Object> inProps, Map<String, Object> outProps) {
+    public static final void setupWSS4JChain(final Endpoint endpoint, final Map<String, Object> inProps, final Map<String, Object> outProps) {
 
         if (null != inProps && !inProps.isEmpty()) {
             endpoint.getInInterceptors().add(new SAAJInInterceptor());
@@ -116,14 +117,14 @@ public class ConfigureCxfSecurity {
 
     }
 
-    public static final void configure(Endpoint endpoint, PortData port) {
+    public static final void configure(final Endpoint endpoint, final PortData port) {
         final Properties p = port.getProperties();
         if (p != null && p.containsKey(OPENEJB_ENDPOINT_CONFIGURATOR)) {
             final String classname = p.getProperty(OPENEJB_ENDPOINT_CONFIGURATOR);
             try {
                 final EndpointConfigurator configurator = (EndpointConfigurator) Thread.currentThread().getContextClassLoader().loadClass(classname).newInstance();
                 configurator.configure(endpoint, p);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 LOGGER.error("can't configure endpoint " + endpoint + " with configurator " + classname + ", using default config", e);
                 if (port.isSecure()) {
                     setupWSS4JChain(endpoint, p);
@@ -147,14 +148,14 @@ public class ConfigureCxfSecurity {
 
         public SplitInfo(final String key, final String val) {
             String k = key;
-            int startIdx = k.indexOf('{');
+            final int startIdx = k.indexOf('{');
             if (startIdx > 0) {
                 k = k.substring(startIdx);
             }
 
             value = val;
 
-            int idx = value.indexOf("=");
+            final int idx = value.indexOf("=");
             if (idx > 0) {
                 k = k + ':' + value.substring(0, idx);
                 value = value.substring(idx + 1);

@@ -31,22 +31,22 @@ public class RandomConnectionStrategyIteratorTest {
     @Test
     public void test() throws Exception {
         final URI[] uris = uris(
-                                   "one://localhost:1243",
-                                   "two://localhost:1243",
-                                   "three://localhost:1243",
-                                   "four://localhost:1243");
+            "one://localhost:1243",
+            "two://localhost:1243",
+            "three://localhost:1243",
+            "four://localhost:1243");
 
-        ClusterMetaData cluster = new ClusterMetaData(System.currentTimeMillis(), uris);
-        Iterable<URI> iterable = new RandomConnectionStrategy().createIterable(cluster);
+        final ClusterMetaData cluster = new ClusterMetaData(System.currentTimeMillis(), uris);
+        final Iterable<URI> iterable = new RandomConnectionStrategy().createIterable(cluster);
 
-        List<URI> found = new ArrayList<URI>();
+        final List<URI> found = new ArrayList<URI>();
 
-        for (URI uri : iterable) {
+        for (final URI uri : iterable) {
             found.add(uri);
         }
 
         Assert.assertEquals(uris.length, found.size());
-        for (URI uri : uris) {
+        for (final URI uri : uris) {
             Assert.assertTrue(found.contains(uri));
         }
 
@@ -58,7 +58,7 @@ public class RandomConnectionStrategyIteratorTest {
         //        );
     }
 
-    private URI[] uris(String... strings) {
+    private URI[] uris(final String... strings) {
         final URI[] uris = new URI[strings.length];
 
         for (int i = 0; i < strings.length; i++) {

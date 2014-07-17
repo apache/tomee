@@ -38,7 +38,7 @@ public class ClassLoaderCommand extends AbstractCommand {
     public void execute(final String cmd) {
         final String appName = extractAppName(cmd);
         final ContainerSystem cs = SystemInstance.get().getComponent(ContainerSystem.class);
-        for (AppContext ctx : cs.getAppContexts()) {
+        for (final AppContext ctx : cs.getAppContexts()) {
             if (appName.equalsIgnoreCase(ctx.getId())) {
                 dumpClassLoader(ctx.getClassLoader());
                 return;
@@ -46,7 +46,7 @@ public class ClassLoaderCommand extends AbstractCommand {
         }
         streamManager.writeErr("can't find app " + appName);
         streamManager.writeErr("available apps are:");
-        for (AppContext ctx : cs.getAppContexts()) {
+        for (final AppContext ctx : cs.getAppContexts()) {
             streamManager.writeErr("- " + ctx.getId());
         }
     }
@@ -61,7 +61,7 @@ public class ClassLoaderCommand extends AbstractCommand {
 
         Collections.reverse(classLoaders);
 
-        for (ClassLoader cl : classLoaders) {
+        for (final ClassLoader cl : classLoaders) {
             streamManager.writeOut("+" + cl.toString());
 
             UrlSet urls;
@@ -70,7 +70,7 @@ public class ClassLoaderCommand extends AbstractCommand {
                 if (cl.getParent() != null) {
                     urls = urls.exclude(cl.getParent());
                 }
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 streamManager.writeErr(INDENT + "` can't get urls of this classloader");
                 continue;
             }
@@ -102,7 +102,7 @@ public class ClassLoaderCommand extends AbstractCommand {
 
     private class URLComparator implements Comparator<URL> {
         @Override
-        public int compare(final URL o1, URL o2) {
+        public int compare(final URL o1, final URL o2) {
             return o1.toExternalForm().compareTo(o2.toExternalForm());
         }
     }

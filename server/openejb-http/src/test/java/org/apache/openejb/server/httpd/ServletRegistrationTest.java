@@ -37,15 +37,15 @@ import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 
-@EnableServices({ "httpejbd" })
+@EnableServices({"httpejbd"})
 @RunWith(ApplicationComposer.class)
 public class ServletRegistrationTest {
     @Module
-    @Classes({ TestServlet.class, TestServlet2.class, TestServlet3.class, TestServlet4.class, SomeEjb.class })
+    @Classes({TestServlet.class, TestServlet2.class, TestServlet3.class, TestServlet4.class, SomeEjb.class})
     public WebApp app() {
         return new WebApp()
-                .contextRoot("servlet")
-                .addServlet("test", TestServlet.class.getName(), "/touch");
+            .contextRoot("servlet")
+            .addServlet("test", TestServlet.class.getName(), "/touch");
     }
 
     @Test

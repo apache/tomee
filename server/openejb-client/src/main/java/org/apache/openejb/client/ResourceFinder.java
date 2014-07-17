@@ -86,7 +86,7 @@ public class ResourceFinder {
             }
             try {
                 urls[i] = new URL("jar", "", -1, url.toString() + "!/");
-            } catch (MalformedURLException e) {
+            } catch (final MalformedURLException e) {
                 //Ignore
             }
         }
@@ -211,7 +211,7 @@ public class ResourceFinder {
             try {
                 final String string = readContents(url);
                 strings.add(string);
-            } catch (IOException notAvailable) {
+            } catch (final IOException notAvailable) {
                 resourcesNotLoaded.add(url.toExternalForm());
             }
         }
@@ -289,7 +289,7 @@ public class ResourceFinder {
             try {
                 final String value = readContents(url);
                 strings.put(name, value);
-            } catch (IOException notAvailable) {
+            } catch (final IOException notAvailable) {
                 resourcesNotLoaded.add(url.toExternalForm());
             }
         }
@@ -356,7 +356,7 @@ public class ResourceFinder {
             try {
                 final Class clazz = classLoader.loadClass(className);
                 classes.add(clazz);
-            } catch (Exception notAvailable) {
+            } catch (final Exception notAvailable) {
                 resourcesNotLoaded.add(className);
             }
         }
@@ -431,7 +431,7 @@ public class ResourceFinder {
             try {
                 final Class clazz = classLoader.loadClass(className);
                 classes.put(string, clazz);
-            } catch (Exception notAvailable) {
+            } catch (final Exception notAvailable) {
                 resourcesNotLoaded.add(className);
             }
         }
@@ -547,7 +547,7 @@ public class ResourceFinder {
                 } else {
                     resourcesNotLoaded.add(className);
                 }
-            } catch (Exception notAvailable) {
+            } catch (final Exception notAvailable) {
                 resourcesNotLoaded.add(className);
             }
         }
@@ -631,7 +631,7 @@ public class ResourceFinder {
                 } else {
                     resourcesNotLoaded.add(className);
                 }
-            } catch (Exception notAvailable) {
+            } catch (final Exception notAvailable) {
                 resourcesNotLoaded.add(className);
             }
         }
@@ -732,7 +732,7 @@ public class ResourceFinder {
             try {
                 final Properties props = loadProperties(url);
                 properties.add(props);
-            } catch (Exception notAvailable) {
+            } catch (final Exception notAvailable) {
                 resourcesNotLoaded.add(url.toExternalForm());
             }
         }
@@ -806,7 +806,7 @@ public class ResourceFinder {
             try {
                 final Properties properties = loadProperties(url);
                 propertiesMap.put(string, properties);
-            } catch (Exception notAvailable) {
+            } catch (final Exception notAvailable) {
                 resourcesNotLoaded.add(url.toExternalForm());
             }
         }
@@ -841,7 +841,7 @@ public class ResourceFinder {
                     readDirectoryEntries(location, resources);
 
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 //Ignore
             }
         }
@@ -855,7 +855,7 @@ public class ResourceFinder {
         File dir;
         try {
             dir = new File(URLDecoder.decode(location.getPath(), "UTF-8"));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             dir = new File(URLDecoder.decode(location.getPath()));
         }
 
@@ -911,7 +911,7 @@ public class ResourceFinder {
             if (reader != null) {
                 try {
                     reader.close();
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     //Ignore
                 }
             }
@@ -936,7 +936,7 @@ public class ResourceFinder {
             if (reader != null) {
                 try {
                     reader.close();
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     //Ignore
                 }
             }
@@ -985,7 +985,7 @@ public class ResourceFinder {
                     try {
                         final JarURLConnection juc = (JarURLConnection) new URL("jar", "", jarURL.toExternalForm() + "!/").openConnection();
                         jarFile = juc.getJarFile();
-                    } catch (IOException e) {
+                    } catch (final IOException e) {
                         // Don't look for this jar file again
                         search[i] = null;
                         throw e;
@@ -1039,7 +1039,7 @@ public class ResourceFinder {
                     File file2;
                     try {
                         file2 = new File(URLDecoder.decode(filename, "UTF-8"));
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         //noinspection deprecation
                         file2 = new File(URLDecoder.decode(filename));
                     }
@@ -1053,7 +1053,7 @@ public class ResourceFinder {
 
                     try {
                         urlConnection.getInputStream().close();
-                    } catch (SecurityException e) {
+                    } catch (final SecurityException e) {
                         return null;
                     }
                     // HTTP can return a stream on a non-existent file
@@ -1067,11 +1067,11 @@ public class ResourceFinder {
                         return resourceURL;
                     }
                 }
-            } catch (MalformedURLException e) {
+            } catch (final MalformedURLException e) {
                 // Keep iterating through the URL list
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 //Ignore
-            } catch (SecurityException e) {
+            } catch (final SecurityException e) {
                 //Ignore
             }
         }

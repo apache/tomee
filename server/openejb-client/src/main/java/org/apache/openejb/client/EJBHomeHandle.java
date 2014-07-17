@@ -86,7 +86,7 @@ public class EJBHomeHandle implements java.io.Externalizable, javax.ejb.HomeHand
     public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
         final byte version = in.readByte(); // future use
 
-        ThreadPoolExecutor executorService;
+        final ThreadPoolExecutor executorService;
         if (version > 1) {
             if (in.readBoolean()) {
                 final int queue = in.readInt();

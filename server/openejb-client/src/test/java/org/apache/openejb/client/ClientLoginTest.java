@@ -36,22 +36,22 @@ public class ClientLoginTest extends TestCase {
         LoginTestUtil.setAuthGranted();
 
         // attempt a login
-        LoginContext context = new LoginContext("ClientLogin", new UsernamePasswordCallbackHandler("jonathan", "secret"));
+        final LoginContext context = new LoginContext("ClientLogin", new UsernamePasswordCallbackHandler("jonathan", "secret"));
         context.login();
 
         // Verify stored server request
         assertTrue("serverRequest should be an instance of AuthenticationRequest", LoginTestUtil.serverRequest instanceof AuthenticationRequest);
-        AuthenticationRequest authenticationRequest = (AuthenticationRequest) LoginTestUtil.serverRequest;
+        final AuthenticationRequest authenticationRequest = (AuthenticationRequest) LoginTestUtil.serverRequest;
         assertEquals("jonathan", authenticationRequest.getUsername());
         assertEquals("secret", authenticationRequest.getCredentials());
 
         // get the subject
-        Subject subject = context.getSubject();
+        final Subject subject = context.getSubject();
 
         // verify subject
         assertEquals("Should have one principal", 1, subject.getPrincipals().size());
         assertEquals("Should have one user principal", 1, subject.getPrincipals(ClientIdentityPrincipal.class).size());
-        ClientIdentityPrincipal principal = subject.getPrincipals(ClientIdentityPrincipal.class).iterator().next();
+        final ClientIdentityPrincipal principal = subject.getPrincipals(ClientIdentityPrincipal.class).iterator().next();
         assertEquals("jonathan", principal.getName());
         assertEquals("SecretIdentity", principal.getClientIdentity());
 
@@ -66,11 +66,11 @@ public class ClientLoginTest extends TestCase {
     public void testAuthDenied() throws Exception {
         LoginTestUtil.setAuthDenied();
 
-        LoginContext context = new LoginContext("ClientLogin", new UsernamePasswordCallbackHandler("nobody", "secret"));
+        final LoginContext context = new LoginContext("ClientLogin", new UsernamePasswordCallbackHandler("nobody", "secret"));
         try {
             context.login();
             fail("Should have thrown a FailedLoginException");
-        } catch (FailedLoginException doNothing) {
+        } catch (final FailedLoginException doNothing) {
         }
     }
 }

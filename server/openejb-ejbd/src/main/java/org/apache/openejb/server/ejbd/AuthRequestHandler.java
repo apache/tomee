@@ -76,14 +76,14 @@ class AuthRequestHandler extends RequestHandler {
 
             res.setIdentity(client);
             res.setResponseCode(ResponseCodes.AUTH_GRANTED);
-        } catch (Throwable t) {
+        } catch (final Throwable t) {
             res.setResponseCode(ResponseCodes.AUTH_DENIED);
             res.setDeniedCause(t);
         } finally {
             if (debug) {
                 try {
                     logger.debug("AUTH REQUEST: " + req + " -- RESPONSE: " + res);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     //Ignore
                 }
             }
@@ -102,7 +102,7 @@ class AuthRequestHandler extends RequestHandler {
 
             try {
                 res.writeExternal(out);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.fatal("Could not write AuthenticationResponse to output stream", e);
             }
         } else {

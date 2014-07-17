@@ -23,7 +23,7 @@ public class OpenEJBShellFactory implements Factory<Command> {
     private String bind;
     private int port;
 
-    public OpenEJBShellFactory(String bind, int port) {
+    public OpenEJBShellFactory(final String bind, final int port) {
         this.bind = bind;
         this.port = port;
     }

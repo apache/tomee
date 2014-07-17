@@ -40,33 +40,33 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AxisWsContainerTest extends AbstractTestCase {
-    public AxisWsContainerTest(String testName) {
+    public AxisWsContainerTest(final String testName) {
         super(testName);
     }
 
     public void testInvokeSOAP() throws Exception {
 
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        JavaServiceDesc serviceDesc = new JavaServiceDesc();
+        final ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        final JavaServiceDesc serviceDesc = new JavaServiceDesc();
         serviceDesc.setEndpointURL("http://127.0.0.1:8080/axis/services/echo");
         //serviceDesc.setWSDLFile(portInfo.getWsdlURL().toExternalForm());
         serviceDesc.setStyle(Style.RPC);
         serviceDesc.setUse(Use.ENCODED);
 
-        TypeMappingRegistryImpl tmr = new TypeMappingRegistryImpl();
+        final TypeMappingRegistryImpl tmr = new TypeMappingRegistryImpl();
         tmr.doRegisterFromVersion("1.3");
-        TypeMapping typeMapping = tmr.getOrMakeTypeMapping(serviceDesc.getUse().getEncoding());
+        final TypeMapping typeMapping = tmr.getOrMakeTypeMapping(serviceDesc.getUse().getEncoding());
 
         serviceDesc.setTypeMappingRegistry(tmr);
         serviceDesc.setTypeMapping(typeMapping);
 
-        OperationDesc op = new OperationDesc();
+        final OperationDesc op = new OperationDesc();
         op.setName("echoString");
         op.setStyle(Style.RPC);
         op.setUse(Use.ENCODED);
-        Class beanClass = EchoBean.class;
+        final Class beanClass = EchoBean.class;
         op.setMethod(beanClass.getMethod("echoString", String.class));
-        ParameterDesc parameter =
+        final ParameterDesc parameter =
             new ParameterDesc(
                 new QName("http://ws.apache.org/echosample", "in0"),
                 ParameterDesc.IN,
@@ -78,46 +78,46 @@ public class AxisWsContainerTest extends AbstractTestCase {
         serviceDesc.addOperationDesc(op);
 
         serviceDesc.getOperations();
-        ReadOnlyServiceDesc sd = new ReadOnlyServiceDesc(serviceDesc);
+        final ReadOnlyServiceDesc sd = new ReadOnlyServiceDesc(serviceDesc);
 
-        Class pojoClass = cl.loadClass("org.apache.openejb.server.axis.EchoBean");
+        final Class pojoClass = cl.loadClass("org.apache.openejb.server.axis.EchoBean");
 
-        RPCProvider provider = new PojoProvider();
-        SOAPService service = new SOAPService(null, provider, null);
+        final RPCProvider provider = new PojoProvider();
+        final SOAPService service = new SOAPService(null, provider, null);
         service.setServiceDescription(sd);
-        service.setOption("className","org.apache.openejb.server.axis.EchoBean");
-        URL wsdlURL = new URL("http://fake/echo.wsdl");
-        URI location = new URI(serviceDesc.getEndpointURL());
-        Map wsdlMap = new HashMap();
+        service.setOption("className", "org.apache.openejb.server.axis.EchoBean");
+        final URL wsdlURL = new URL("http://fake/echo.wsdl");
+        final URI location = new URI(serviceDesc.getEndpointURL());
+        final Map wsdlMap = new HashMap();
 
-        AxisWsContainer container = new AxisWsContainer(wsdlURL, service, wsdlMap, cl);
+        final AxisWsContainer container = new AxisWsContainer(wsdlURL, service, wsdlMap, cl);
 
-        InputStream in = cl.getResourceAsStream("echoString-req.txt");
+        final InputStream in = cl.getResourceAsStream("echoString-req.txt");
 
         try {
-            AxisRequest req =
+            final AxisRequest req =
                 new AxisRequest(
                     504,
                     "text/xml; charset=utf-8",
                     new ServletIntputStreamAdapter(in),
                     HttpRequest.Method.GET,
-                    new HashMap<String,String>(),
+                    new HashMap<String, String>(),
                     location,
-                    new HashMap<String,String>(),
+                    new HashMap<String, String>(),
                     "127.0.0.1");
-            
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            AxisResponse res = new AxisResponse("text/xml; charset=utf-8", "127.0.0.1", null, null, 8080, new ServletOutputStreamAdapter(out));
+
+            final ByteArrayOutputStream out = new ByteArrayOutputStream();
+            final AxisResponse res = new AxisResponse("text/xml; charset=utf-8", "127.0.0.1", null, null, 8080, new ServletOutputStreamAdapter(out));
             req.setAttribute(WsConstants.POJO_INSTANCE, pojoClass.newInstance());
             container.onMessage(req, res);
-            
+
             out.flush();
 //            log.debug(new String(out.toByteArray()));
         } finally {
             if (in != null) {
                 try {
                     in.close();
-                } catch (IOException ignore) {
+                } catch (final IOException ignore) {
                     // ignore
                 }
             }

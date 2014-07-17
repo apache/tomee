@@ -100,7 +100,7 @@ public class MulticastPulseAgentTest {
 
         try {
             ia = InetAddress.getByName(host);
-        } catch (UnknownHostException e) {
+        } catch (final UnknownHostException e) {
             throw new Exception(host + " is not a valid address", e);
         }
 
@@ -159,7 +159,7 @@ public class MulticastPulseAgentTest {
                     } else if (0 != h1.compareTo(h2)) {
                         return -1;
                     }
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     //Ignore
                 }
 
@@ -183,7 +183,7 @@ public class MulticastPulseAgentTest {
                     String name = "Unknown interface";
                     try {
                         name = socket.getNetworkInterface().getDisplayName();
-                    } catch (Throwable e) {
+                    } catch (final Throwable e) {
                         //Ignore
                     }
                     System.out.println("Entered MulticastPulse client thread on: " + name);
@@ -225,9 +225,9 @@ public class MulticastPulseAgentTest {
                                     final String[] hosts = s.split(",");
 
                                     System.out.println(String.format("\n" + name + " received Server pulse:\n\tGroup: %1$s\n\tServices: %2$s\n\tServer: %3$s\n",
-                                                                     group,
-                                                                     services,
-                                                                     s));
+                                        group,
+                                        services,
+                                        s));
 
                                     for (final String svc : serviceList) {
 
@@ -238,7 +238,7 @@ public class MulticastPulseAgentTest {
                                         final URI serviceUri;
                                         try {
                                             serviceUri = URI.create(svc);
-                                        } catch (Throwable e) {
+                                        } catch (final Throwable e) {
                                             continue;
                                         }
 
@@ -277,7 +277,7 @@ public class MulticastPulseAgentTest {
                                                     //Just add as is
                                                     set.add(URI.create(fullsvc));
                                                 }
-                                            } catch (Throwable e) {
+                                            } catch (final Throwable e) {
                                                 //Ignore
                                             } finally {
                                                 setLock.unlock();
@@ -289,7 +289,7 @@ public class MulticastPulseAgentTest {
                                 }
                             }
 
-                        } catch (Throwable e) {
+                        } catch (final Throwable e) {
                             //Ignore
                         }
                     }
@@ -313,7 +313,7 @@ public class MulticastPulseAgentTest {
                 for (final MulticastSocket socket : clientSockets) {
                     try {
                         socket.send(request);
-                    } catch (Throwable e) {
+                    } catch (final Throwable e) {
                         //Ignore
                     }
                 }
@@ -322,7 +322,7 @@ public class MulticastPulseAgentTest {
                 System.out.println("Giving up on threads");
             }
 
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             timeout = 1;
         }
 
@@ -336,7 +336,7 @@ public class MulticastPulseAgentTest {
                 for (final Future future : futures) {
                     try {
                         future.cancel(true);
-                    } catch (Throwable e) {
+                    } catch (final Throwable e) {
                         //Ignore
                     }
                 }
@@ -345,12 +345,12 @@ public class MulticastPulseAgentTest {
 
                     try {
                         socket.leaveGroup(ia);
-                    } catch (Throwable e) {
+                    } catch (final Throwable e) {
                         //Ignore
                     }
                     try {
                         socket.close();
-                    } catch (Throwable e) {
+                    } catch (final Throwable e) {
                         //Ignore
                     }
                 }
@@ -361,7 +361,7 @@ public class MulticastPulseAgentTest {
         for (final Future future : futures) {
             try {
                 future.get();
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 //Ignore
             }
         }
@@ -431,12 +431,12 @@ public class MulticastPulseAgentTest {
 
                         try {
                             socket.send(request);
-                        } catch (Exception e) {
+                        } catch (final Exception e) {
                             System.out.println("Failed to broadcast bad URI on: " + socket.getInterface().getHostAddress());
                             e.printStackTrace();
                         }
                     }
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     System.out.println("Failed to broadcast bad URI");
                     e.printStackTrace();
                 }
@@ -467,7 +467,7 @@ public class MulticastPulseAgentTest {
         final InetAddress ia;
         try {
             ia = InetAddress.getByName(host);
-        } catch (UnknownHostException e) {
+        } catch (final UnknownHostException e) {
             throw new Exception(host + " is not a valid address", e);
         }
 

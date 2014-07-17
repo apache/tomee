@@ -32,22 +32,23 @@ class SaajFactoryFinder {
     private static SaajUniverse.Type DEFAULT_SAAJ_UNIVERSE = null;
 
     private static final Map<String, Map<String, String>> SAAJ_FACTORIES = new HashMap<String, Map<String, String>>();
+
     static {
         SAAJ_FACTORIES.put(SaajUniverse.Type.AXIS1.toString(), createSAAJInfo(
-                "org.apache.axis.soap.MessageFactoryImpl",
-                "org.apache.axis.soap.SOAPFactoryImpl",
-                "org.apache.axis.soap.SOAPConnectionFactoryImpl",
-                "org.apache.axis.soap.SAAJMetaFactoryImpl"));
+            "org.apache.axis.soap.MessageFactoryImpl",
+            "org.apache.axis.soap.SOAPFactoryImpl",
+            "org.apache.axis.soap.SOAPConnectionFactoryImpl",
+            "org.apache.axis.soap.SAAJMetaFactoryImpl"));
         SAAJ_FACTORIES.put(SaajUniverse.Type.AXIS2.toString(), createSAAJInfo(
-                "org.apache.axis2.saaj.MessageFactoryImpl",
-                "org.apache.axis2.saaj.SOAPFactoryImpl",
-                "org.apache.axis2.saaj.SOAPConnectionFactoryImpl",
-                "org.apache.axis2.saaj.SAAJMetaFactoryImpl"));
+            "org.apache.axis2.saaj.MessageFactoryImpl",
+            "org.apache.axis2.saaj.SOAPFactoryImpl",
+            "org.apache.axis2.saaj.SOAPConnectionFactoryImpl",
+            "org.apache.axis2.saaj.SAAJMetaFactoryImpl"));
         SAAJ_FACTORIES.put(SaajUniverse.Type.SUN.toString(), createSAAJInfo(
-                "com.sun.xml.messaging.saaj.soap.ver1_1.SOAPMessageFactory1_1Impl",
-                "com.sun.xml.messaging.saaj.soap.ver1_1.SOAPFactory1_1Impl",
-                "com.sun.xml.messaging.saaj.client.p2p.HttpSOAPConnectionFactory",
-                "com.sun.xml.messaging.saaj.soap.SAAJMetaFactoryImpl"));
+            "com.sun.xml.messaging.saaj.soap.ver1_1.SOAPMessageFactory1_1Impl",
+            "com.sun.xml.messaging.saaj.soap.ver1_1.SOAPFactory1_1Impl",
+            "com.sun.xml.messaging.saaj.client.p2p.HttpSOAPConnectionFactory",
+            "com.sun.xml.messaging.saaj.soap.SAAJMetaFactoryImpl"));
 
         initDefaultSAAJProvider();
     }
@@ -75,8 +76,8 @@ class SaajFactoryFinder {
         }
     }
 
-    private static Map<String, String> createSAAJInfo(String messageFactory, String soapFactory, String soapConnectionFactory, String metaFactory) {
-        Map<String, String> map = new HashMap<String, String>();
+    private static Map<String, String> createSAAJInfo(final String messageFactory, final String soapFactory, final String soapConnectionFactory, final String metaFactory) {
+        final Map<String, String> map = new HashMap<String, String>();
         map.put("javax.xml.soap.MessageFactory", messageFactory);
         map.put("javax.xml.soap.SOAPFactory", soapFactory);
         map.put("javax.xml.soap.SOAPConnectionFactory", soapConnectionFactory);
@@ -84,8 +85,8 @@ class SaajFactoryFinder {
         return map;
     }
 
-    static Object find(String factoryPropertyName) throws SOAPException {
-        String factoryClassName = getFactoryClass(factoryPropertyName);
+    static Object find(final String factoryPropertyName) throws SOAPException {
+        final String factoryClassName = getFactoryClass(factoryPropertyName);
         if (factoryClassName == null) {
             throw new SOAPException("Provider for " + factoryPropertyName + " cannot be found", null);
         } else {
@@ -93,7 +94,7 @@ class SaajFactoryFinder {
         }
     }
 
-    private static String getFactoryClass(String factoryName) {
+    private static String getFactoryClass(final String factoryName) {
         SaajUniverse.Type universe = SaajUniverse.getCurrentUniverse();
         if (universe == null || universe == SaajUniverse.Type.DEFAULT) {
             if (DEFAULT_SAAJ_UNIVERSE == null) {
@@ -117,13 +118,13 @@ class SaajFactoryFinder {
         try {
             loadClass("org.apache.axis2.saaj.MessageFactoryImpl");
             return true;
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             return false;
         }
     }
 
-    private static Class loadClass(String className) throws ClassNotFoundException {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+    private static Class loadClass(final String className) throws ClassNotFoundException {
+        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         if (classLoader == null) {
             return Class.forName(className);
         } else {
@@ -131,18 +132,18 @@ class SaajFactoryFinder {
         }
     }
 
-    private static Object newInstance(String factoryClassName) throws SOAPException {
+    private static Object newInstance(final String factoryClassName) throws SOAPException {
         try {
             Class factory = null;
             try {
                 factory = loadClass(factoryClassName);
-            } catch (ClassNotFoundException cnfe) {
+            } catch (final ClassNotFoundException cnfe) {
                 factory = SaajFactoryFinder.class.getClassLoader().loadClass(factoryClassName);
             }
             return factory.newInstance();
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             throw new SOAPException("Provider " + factoryClassName + " not found", e);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new SOAPException("Provider " + factoryClassName + " could not be instantiated: " + e.getMessage(), e);
         }
     }

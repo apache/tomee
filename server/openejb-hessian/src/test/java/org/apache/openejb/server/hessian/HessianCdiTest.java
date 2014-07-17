@@ -37,11 +37,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-@EnableServices({ "hessian", "httpejbd" })
+@EnableServices({"hessian", "httpejbd"})
 @RunWith(ApplicationComposer.class)
 public class HessianCdiTest {
     @Module
-    @Classes(cdi = true, value = { MyCdiHessianService.class, CdiBean.class })
+    @Classes(cdi = true, value = {MyCdiHessianService.class, CdiBean.class})
     public WebApp webApp() {
         return new WebApp().contextRoot("web");
     }
@@ -80,7 +80,7 @@ public class HessianCdiTest {
     public static class In {
         private String value;
 
-        public In(String value) {
+        public In(final String value) {
             this.value = value;
         }
     }
@@ -88,7 +88,7 @@ public class HessianCdiTest {
     public static class Out {
         private String value;
 
-        public Out(String value) {
+        public Out(final String value) {
             this.value = value;
         }
     }

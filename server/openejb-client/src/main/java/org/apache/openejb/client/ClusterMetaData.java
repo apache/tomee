@@ -89,7 +89,7 @@ public class ClusterMetaData implements Externalizable {
             final Object o = in.readObject();
             try {
                 locations[i] = URI.create((String) o);
-            } catch (IllegalArgumentException e) {
+            } catch (final IllegalArgumentException e) {
                 throw (IOException) new IOException().initCause(e);
             }
         }

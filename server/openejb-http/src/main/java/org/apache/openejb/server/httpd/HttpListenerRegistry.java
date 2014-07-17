@@ -35,21 +35,21 @@ public class HttpListenerRegistry implements HttpListener {
     }
 
     @Override
-    public void onMessage(HttpRequest request, HttpResponse response) throws Exception {
+    public void onMessage(final HttpRequest request, final HttpResponse response) throws Exception {
         final String path = request.getURI().getPath();
         final FilterListener currentFL = currentFilterListener.get();
 
         // first look filters
-        Map<String, Collection<HttpListener>> filters;
+        final Map<String, Collection<HttpListener>> filters;
         synchronized (filterRegistry) {
             filters = new HashMap<String, Collection<HttpListener>>(filterRegistry);
         }
 
         try {
             boolean lastWasCurrent = false;
-            for (Map.Entry<String, Collection<HttpListener>> entry : filters.entrySet()) {
-                String pattern = entry.getKey();
-                for (HttpListener listener : entry.getValue()) {
+            for (final Map.Entry<String, Collection<HttpListener>> entry : filters.entrySet()) {
+                final String pattern = entry.getKey();
+                for (final HttpListener listener : entry.getValue()) {
                     if ((lastWasCurrent || currentFL == null) && path.matches(pattern)) {
                         listener.onMessage(request, response);
                         return;
@@ -60,7 +60,7 @@ public class HttpListenerRegistry implements HttpListener {
 
 
             // then others
-            Map<String, HttpListener> listeners;
+            final Map<String, HttpListener> listeners;
             synchronized (registry) {
                 listeners = new HashMap<String, HttpListener>(registry);
             }
@@ -79,21 +79,21 @@ public class HttpListenerRegistry implements HttpListener {
         }
     }
 
-    public void addHttpListener(HttpListener listener, String regex) {
+    public void addHttpListener(final HttpListener listener, final String regex) {
         synchronized (registry) {
             registry.put(regex, listener);
         }
     }
 
-    public HttpListener removeHttpListener(String regex) {
-        HttpListener listener;
+    public HttpListener removeHttpListener(final String regex) {
+        final HttpListener listener;
         synchronized (registry) {
             listener = registry.remove(regex);
         }
         return listener;
     }
 
-    public void addHttpFilter(HttpListener listener, String regex) {
+    public void addHttpFilter(final HttpListener listener, final String regex) {
         synchronized (filterRegistry) {
             if (!filterRegistry.containsKey(regex)) {
                 filterRegistry.put(regex, new ArrayList<HttpListener>());
@@ -102,7 +102,7 @@ public class HttpListenerRegistry implements HttpListener {
         }
     }
 
-    public Collection<HttpListener> removeHttpFilter(String regex) {
+    public Collection<HttpListener> removeHttpFilter(final String regex) {
         synchronized (filterRegistry) {
             return filterRegistry.remove(regex);
         }

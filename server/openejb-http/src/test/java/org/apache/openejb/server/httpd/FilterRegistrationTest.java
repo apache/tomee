@@ -42,16 +42,16 @@ import java.net.URL;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@EnableServices({ "httpejbd" })
+@EnableServices({"httpejbd"})
 @RunWith(ApplicationComposer.class)
 public class FilterRegistrationTest {
     @Module
     public WebApp app() {
         return new WebApp()
-                .contextRoot("filter")
-                .addServlet("test", TestServlet.class.getName(), "/touch")
-                .addFilter("filter", TestFilter.class.getName(), "/touch")
-                .addFilter("filter2", TestFilter2.class.getName(), "/touch");
+            .contextRoot("filter")
+            .addServlet("test", TestServlet.class.getName(), "/touch")
+            .addFilter("filter", TestFilter.class.getName(), "/touch")
+            .addFilter("filter2", TestFilter2.class.getName(), "/touch");
     }
 
     @Test
@@ -94,7 +94,7 @@ public class FilterRegistrationTest {
                     }
 
                 }, response);
-            } catch (URISyntaxException e) {
+            } catch (final URISyntaxException e) {
                 throw new ServletException(e);
             }
         }

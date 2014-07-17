@@ -113,7 +113,7 @@ public class SerializerTest {
     public static class AnEjbRemote implements AnInterfaceRemote {
 
         @Override
-        public OutputNotSerializable call(InputNotSerilizable input) {
+        public OutputNotSerializable call(final InputNotSerilizable input) {
             return new OutputNotSerializable(input.rename);
         }
     }

@@ -30,19 +30,19 @@ public abstract class AbstractCommand {
 
     public abstract void execute(final String cmd);
 
-    public void setStreamManager(StreamManager streamManager) {
+    public void setStreamManager(final StreamManager streamManager) {
         this.streamManager = streamManager;
     }
 
-    public void setCommand(String command) {
+    public void setCommand(final String command) {
         this.command = command;
     }
 
     public <T> T lookup(final Class<T> clazz, final String jndiName) throws NamingException {
-        Properties p = new Properties();
+        final Properties p = new Properties();
         p.setProperty(Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
 
-        ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
+        final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
         try {
             return (T) new InitialContext(p).lookup(jndiName);

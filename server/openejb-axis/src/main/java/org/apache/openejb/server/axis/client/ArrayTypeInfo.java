@@ -28,28 +28,28 @@ public class ArrayTypeInfo extends TypeInfo {
     private final QName componentType;
     private final QName componentQName;
 
-    public ArrayTypeInfo(Class clazz,
-            QName qName,
-            Class serializerClass,
-            Class deserializerClass,
-            boolean canSearchParents,
-            FieldDesc[] fields,
-            QName componentType,
-            QName componentQName) {
+    public ArrayTypeInfo(final Class clazz,
+                         final QName qName,
+                         final Class serializerClass,
+                         final Class deserializerClass,
+                         final boolean canSearchParents,
+                         final FieldDesc[] fields,
+                         final QName componentType,
+                         final QName componentQName) {
         super(clazz, qName, serializerClass, deserializerClass, canSearchParents, fields);
         this.componentType = componentType;
         this.componentQName = componentQName;
     }
 
-    public void register(TypeMapping typeMapping) {
+    public void register(final TypeMapping typeMapping) {
 //        SerializerFactory ser = BaseSerializerFactory.createFactory(getSerFactoryClass(), getClazz(), getqName());
 //        ((ArraySerializerFactory)ser).setComponentType(componentType);
 //        ((ArraySerializerFactory)ser).setComponentQName(componentQName);
 //        DeserializerFactory deser = BaseDeserializerFactory.createFactory(getDeserFactoryClass(), getClazz(), getqName());
 //        ((ArrayDeserializerFactory)deser).setComponentType(componentType);
 
-        ArraySerializerFactory ser = new ArraySerializerFactory(componentType, componentQName);
-        ArrayDeserializerFactory deser = new ArrayDeserializerFactory();
+        final ArraySerializerFactory ser = new ArraySerializerFactory(componentType, componentQName);
+        final ArrayDeserializerFactory deser = new ArrayDeserializerFactory();
 
         typeMapping.register(getClazz(), getqName(), ser, deser);
     }
@@ -82,11 +82,11 @@ public class ArrayTypeInfo extends TypeInfo {
             return componentQName;
         }
 
-        public void setComponentType(QName componentType) {
+        public void setComponentType(final QName componentType) {
             this.componentType = componentType;
         }
 
-        public void setComponentQName(QName componentQName) {
+        public void setComponentQName(final QName componentQName) {
             this.componentQName = componentQName;
         }
     }

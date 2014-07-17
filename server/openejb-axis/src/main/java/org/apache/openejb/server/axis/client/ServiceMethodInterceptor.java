@@ -26,16 +26,16 @@ import java.util.Map;
 public class ServiceMethodInterceptor implements MethodInterceptor {
     private final Map seiFactoryMap;
 
-    public ServiceMethodInterceptor(Map seiFactoryMap) {
+    public ServiceMethodInterceptor(final Map seiFactoryMap) {
         this.seiFactoryMap = seiFactoryMap;
     }
 
-    public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
+    public Object intercept(final Object o, final Method method, final Object[] objects, final MethodProxy methodProxy) throws Throwable {
         if (objects.length == 0) {
-            String methodName = method.getName();
+            final String methodName = method.getName();
             if (methodName.startsWith("get")) {
-                String portName = methodName.substring(3);
-                SeiFactory seiFactory = (SeiFactory) seiFactoryMap.get(portName);
+                final String portName = methodName.substring(3);
+                final SeiFactory seiFactory = (SeiFactory) seiFactoryMap.get(portName);
                 if (seiFactory != null) {
                     return seiFactory.createServiceEndpoint();
                 }

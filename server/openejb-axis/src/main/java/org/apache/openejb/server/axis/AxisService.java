@@ -54,34 +54,34 @@ public class AxisService extends WsService {
         return "axis";
     }
 
-    private JaxRpcServiceInfo getJaxRpcServiceInfo(ClassLoader classLoader) throws OpenEJBException {
-        JavaWsdlMapping mapping = null; // the java to wsdl mapping file
-        CommonsSchemaInfoBuilder xmlBeansSchemaInfoBuilder = new CommonsSchemaInfoBuilder(null, null); // the schema data from the wsdl file
-        PortComponent portComponent = null; // webservice.xml declaration of this service
-        Port port = null; // wsdl.xml declaration of this service
-        String wsdlFile = null;
+    private JaxRpcServiceInfo getJaxRpcServiceInfo(final ClassLoader classLoader) throws OpenEJBException {
+        final JavaWsdlMapping mapping = null; // the java to wsdl mapping file
+        final CommonsSchemaInfoBuilder xmlBeansSchemaInfoBuilder = new CommonsSchemaInfoBuilder(null, null); // the schema data from the wsdl file
+        final PortComponent portComponent = null; // webservice.xml declaration of this service
+        final Port port = null; // wsdl.xml declaration of this service
+        final String wsdlFile = null;
 
-        XmlSchemaInfo schemaInfo = xmlBeansSchemaInfoBuilder.createSchemaInfo();
+        final XmlSchemaInfo schemaInfo = xmlBeansSchemaInfoBuilder.createSchemaInfo();
 
-        JaxRpcServiceInfoBuilder serviceInfoBuilder = new JaxRpcServiceInfoBuilder(mapping, schemaInfo, portComponent, port, wsdlFile, classLoader);
-        JaxRpcServiceInfo serviceInfo = serviceInfoBuilder.createServiceInfo();
+        final JaxRpcServiceInfoBuilder serviceInfoBuilder = new JaxRpcServiceInfoBuilder(mapping, schemaInfo, portComponent, port, wsdlFile, classLoader);
+        final JaxRpcServiceInfo serviceInfo = serviceInfoBuilder.createServiceInfo();
         return serviceInfo;
     }
 
     @Override
-    protected HttpListener createEjbWsContainer(URL url, PortData port, BeanContext beanContext, ServiceConfiguration serviceInfos) throws Exception {
-        ClassLoader classLoader = beanContext.getClassLoader();
+    protected HttpListener createEjbWsContainer(final URL url, final PortData port, final BeanContext beanContext, final ServiceConfiguration serviceInfos) throws Exception {
+        final ClassLoader classLoader = beanContext.getClassLoader();
 
         // todo build JaxRpcServiceInfo in assembler
-        JaxRpcServiceInfo serviceInfo = getJaxRpcServiceInfo(classLoader);
+        final JaxRpcServiceInfo serviceInfo = getJaxRpcServiceInfo(classLoader);
 
         // Build java service descriptor
-        JavaServiceDescBuilder javaServiceDescBuilder = new JavaServiceDescBuilder(serviceInfo, classLoader);
-        JavaServiceDesc serviceDesc = javaServiceDescBuilder.createServiceDesc();
+        final JavaServiceDescBuilder javaServiceDescBuilder = new JavaServiceDescBuilder(serviceInfo, classLoader);
+        final JavaServiceDesc serviceDesc = javaServiceDescBuilder.createServiceDesc();
 
         // Create service
-        RPCProvider provider = new EjbRpcProvider(beanContext, createHandlerInfos(port.getHandlerChains()));
-        SOAPService service = new SOAPService(null, provider, null);
+        final RPCProvider provider = new EjbRpcProvider(beanContext, createHandlerInfos(port.getHandlerChains()));
+        final SOAPService service = new SOAPService(null, provider, null);
         service.setServiceDescription(serviceDesc);
 
         // Set class name
@@ -89,66 +89,66 @@ public class AxisService extends WsService {
         serviceDesc.setImplClass(beanContext.getServiceEndpointInterface());
 
         // Create container
-        AxisWsContainer container = new AxisWsContainer(port.getWsdlUrl(), service, null, classLoader);
+        final AxisWsContainer container = new AxisWsContainer(port.getWsdlUrl(), service, null, classLoader);
         wsContainers.put(beanContext.getDeploymentID().toString(), container);
         return container;
     }
 
 
-    protected void destroyEjbWsContainer(String deploymentId) {
-        AxisWsContainer container = wsContainers.remove(deploymentId);
+    protected void destroyEjbWsContainer(final String deploymentId) {
+        final AxisWsContainer container = wsContainers.remove(deploymentId);
         if (container != null) {
             container.destroy();
         }
     }
 
-    protected HttpListener createPojoWsContainer(ClassLoader loader, URL moduleBaseUrl, PortData port, String serviceId, Class target, Context context, String contextRoot, Map<String, Object> bdgs, ServiceConfiguration serviceInfos) throws Exception {
-        ClassLoader classLoader = target.getClassLoader();
+    protected HttpListener createPojoWsContainer(final ClassLoader loader, final URL moduleBaseUrl, final PortData port, final String serviceId, final Class target, final Context context, final String contextRoot, final Map<String, Object> bdgs, final ServiceConfiguration serviceInfos) throws Exception {
+        final ClassLoader classLoader = target.getClassLoader();
 
         // todo build JaxRpcServiceInfo in assembler
-        JaxRpcServiceInfo serviceInfo = getJaxRpcServiceInfo(classLoader);
+        final JaxRpcServiceInfo serviceInfo = getJaxRpcServiceInfo(classLoader);
 
         // Build java service descriptor
-        JavaServiceDescBuilder javaServiceDescBuilder = new JavaServiceDescBuilder(serviceInfo, classLoader);
-        JavaServiceDesc serviceDesc = javaServiceDescBuilder.createServiceDesc();
+        final JavaServiceDescBuilder javaServiceDescBuilder = new JavaServiceDescBuilder(serviceInfo, classLoader);
+        final JavaServiceDesc serviceDesc = javaServiceDescBuilder.createServiceDesc();
 
         // Create service
-        RPCProvider provider = new PojoProvider();
-        SOAPService service = new SOAPService(null, provider, null);
+        final RPCProvider provider = new PojoProvider();
+        final SOAPService service = new SOAPService(null, provider, null);
         service.setServiceDescription(serviceDesc);
 
         // Set class name
         service.setOption("className", target.getName());
 
         // Add Handler Chain
-        List<HandlerInfo> handlerInfos = createHandlerInfos(port.getHandlerChains());
-        HandlerInfoChainFactory handlerInfoChainFactory = new HandlerInfoChainFactory(handlerInfos);
+        final List<HandlerInfo> handlerInfos = createHandlerInfos(port.getHandlerChains());
+        final HandlerInfoChainFactory handlerInfoChainFactory = new HandlerInfoChainFactory(handlerInfos);
         service.setOption(org.apache.axis.Constants.ATTR_HANDLERINFOCHAIN, handlerInfoChainFactory);
 
         // Create container
-        AxisWsContainer container = new AxisWsContainer(port.getWsdlUrl(), service, null, classLoader);
+        final AxisWsContainer container = new AxisWsContainer(port.getWsdlUrl(), service, null, classLoader);
         wsContainers.put(serviceId, container);
         return container;
     }
 
-    protected void destroyPojoWsContainer(String serviceId) {
-        AxisWsContainer container = wsContainers.remove(serviceId);
+    protected void destroyPojoWsContainer(final String serviceId) {
+        final AxisWsContainer container = wsContainers.remove(serviceId);
         if (container != null) {
             container.destroy();
         }
     }
 
     @SuppressWarnings({"unchecked"})
-    private List<HandlerInfo> createHandlerInfos(List<HandlerChainData> handlerChains) throws ClassNotFoundException {
+    private List<HandlerInfo> createHandlerInfos(final List<HandlerChainData> handlerChains) throws ClassNotFoundException {
         if (handlerChains == null || handlerChains.isEmpty()) return null;
-        List<HandlerData> handlers = handlerChains.get(0).getHandlers();
+        final List<HandlerData> handlers = handlerChains.get(0).getHandlers();
 
-        List<HandlerInfo> handlerInfos = new ArrayList<HandlerInfo>(handlers.size());
-        for (HandlerData handler : handlers) {
-            Class<?> handlerClass = handler.getHandlerClass();
-            Map initParams = new HashMap(handler.getInitParams());
-            QName[] headers = handler.getSoapHeaders().toArray(new QName[handler.getSoapHeaders().size()]);
-            HandlerInfo handlerInfo = new HandlerInfo(handlerClass, initParams, headers);
+        final List<HandlerInfo> handlerInfos = new ArrayList<HandlerInfo>(handlers.size());
+        for (final HandlerData handler : handlers) {
+            final Class<?> handlerClass = handler.getHandlerClass();
+            final Map initParams = new HashMap(handler.getInitParams());
+            final QName[] headers = handler.getSoapHeaders().toArray(new QName[handler.getSoapHeaders().size()]);
+            final HandlerInfo handlerInfo = new HandlerInfo(handlerClass, initParams, headers);
             handlerInfos.add(handlerInfo);
         }
 

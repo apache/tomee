@@ -69,9 +69,9 @@ public class ClientDataSource implements DataSource {
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         try {
             Class.forName(jdbcDriver, true, classLoader);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             throw new IllegalStateException("Cannot use DataSource in client VM without the JDBC Driver in classpath: " + jdbcDriver, e);
-        } catch (NoClassDefFoundError e) {
+        } catch (final NoClassDefFoundError e) {
             throw new IllegalStateException("Cannot use DataSource in client VM without the JDBC Driver in classpath: " + jdbcDriver, e);
         }
     }

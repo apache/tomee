@@ -27,19 +27,19 @@ import java.util.Iterator;
 public class GenericServiceEndpointWrapper implements Stub {
     private final GenericServiceEndpoint genericServiceEndpoint;
 
-    public GenericServiceEndpointWrapper(GenericServiceEndpoint genericServiceEndpoint) {
+    public GenericServiceEndpointWrapper(final GenericServiceEndpoint genericServiceEndpoint) {
         this.genericServiceEndpoint = genericServiceEndpoint;
     }
 
-    public void _setProperty(String s, Object o) {
+    public void _setProperty(final String s, final Object o) {
         genericServiceEndpoint._setProperty(s, o);
     }
 
-    public Object _getProperty(String s) {
+    public Object _getProperty(final String s) {
         return genericServiceEndpoint._getProperty(s);
     }
 
-    public Object removeProperty(String s) {
+    public Object removeProperty(final String s) {
         return genericServiceEndpoint.removeProperty(s);
     }
 
@@ -47,7 +47,7 @@ public class GenericServiceEndpointWrapper implements Stub {
         return genericServiceEndpoint._getPropertyNames();
     }
 
-    public void setUsername(String s) {
+    public void setUsername(final String s) {
         genericServiceEndpoint.setUsername(s);
     }
 
@@ -55,7 +55,7 @@ public class GenericServiceEndpointWrapper implements Stub {
         return genericServiceEndpoint.getUsername();
     }
 
-    public void setPassword(String s) {
+    public void setPassword(final String s) {
         genericServiceEndpoint.setPassword(s);
     }
 
@@ -67,7 +67,7 @@ public class GenericServiceEndpointWrapper implements Stub {
         return genericServiceEndpoint.getTimeout();
     }
 
-    public void setTimeout(int i) {
+    public void setTimeout(final int i) {
         genericServiceEndpoint.setTimeout(i);
     }
 
@@ -75,39 +75,39 @@ public class GenericServiceEndpointWrapper implements Stub {
         return genericServiceEndpoint.getPortName();
     }
 
-    public void setPortName(QName qName) {
+    public void setPortName(final QName qName) {
         genericServiceEndpoint.setPortName(qName);
     }
 
-    public void setPortName(String s) {
+    public void setPortName(final String s) {
         genericServiceEndpoint.setPortName(s);
     }
 
-    public void setMaintainSession(boolean b) {
+    public void setMaintainSession(final boolean b) {
         genericServiceEndpoint.setMaintainSession(b);
     }
 
-    public void setHeader(String s, String s1, Object o) {
+    public void setHeader(final String s, final String s1, final Object o) {
         genericServiceEndpoint.setHeader(s, s1, o);
     }
 
-    public void setHeader(SOAPHeaderElement soapHeaderElement) {
+    public void setHeader(final SOAPHeaderElement soapHeaderElement) {
         genericServiceEndpoint.setHeader(soapHeaderElement);
     }
 
-    public void extractAttachments(Call call) {
+    public void extractAttachments(final Call call) {
         genericServiceEndpoint.extractAttachments(call);
     }
 
-    public void addAttachment(Object o) {
+    public void addAttachment(final Object o) {
         genericServiceEndpoint.addAttachment(o);
     }
 
-    public SOAPHeaderElement getHeader(String s, String s1) {
+    public SOAPHeaderElement getHeader(final String s, final String s1) {
         return genericServiceEndpoint.getHeader(s, s1);
     }
 
-    public SOAPHeaderElement getResponseHeader(String s, String s1) {
+    public SOAPHeaderElement getResponseHeader(final String s, final String s1) {
         return genericServiceEndpoint.getResponseHeader(s, s1);
     }
 

@@ -148,7 +148,7 @@ public class Tracker {
                 discoveredServices.put(uriString, vitals);
 
                 fireServiceAddedEvent(vitals.service.uri);
-            } catch (URISyntaxException e) {
+            } catch (final URISyntaxException e) {
                 // don't continuously log this
             }
 
@@ -267,9 +267,9 @@ public class Tracker {
         @Override
         public String toString() {
             return "Service{" +
-                   "uri=" + uri +
-                   ", broadcastString='" + broadcastString + '\'' +
-                   '}';
+                "uri=" + uri +
+                ", broadcastString='" + broadcastString + '\'' +
+                '}';
         }
     }
 
@@ -327,8 +327,8 @@ public class Tracker {
 
                 if (debug()) {
                     log.debug("Remote failure of " + service + " while still receiving multicast advertisements.  " +
-                              "Advertising events will be suppressed for " + delay
-                              + " ms, the current failure count is: " + failureCount);
+                        "Advertising events will be suppressed for " + delay
+                        + " ms, the current failure count is: " + failureCount);
                 }
 
                 recoveryTime = System.currentTimeMillis() + delay;
@@ -339,7 +339,7 @@ public class Tracker {
 
         /**
          * @return true if this broker is marked failed and it is now the right
-         *         time to start recovery.
+         * time to start recovery.
          */
         public synchronized boolean doRecovery() {
             if (!dead) {
@@ -373,11 +373,11 @@ public class Tracker {
         @Override
         public String toString() {
             return service + "Vitals{" +
-                   ", lastHeartBeat=" + lastHeartBeat +
-                   ", recoveryTime=" + recoveryTime +
-                   ", failureCount=" + failureCount +
-                   ", dead=" + dead +
-                   '}';
+                ", lastHeartBeat=" + lastHeartBeat +
+                ", recoveryTime=" + recoveryTime +
+                ", failureCount=" + failureCount +
+                ", dead=" + dead +
+                '}';
         }
     }
 
@@ -477,17 +477,17 @@ public class Tracker {
     @Override
     public String toString() {
         return "Tracker{" +
-               "group='" + group + '\'' +
-               ", groupPrefix='" + groupPrefix + '\'' +
-               ", heartRate=" + heartRate +
-               ", maxMissedHeartbeats=" + maxMissedHeartbeats +
-               ", reconnectDelay=" + reconnectDelay +
-               ", maxReconnectDelay=" + maxReconnectDelay +
-               ", maxReconnectAttempts=" + maxReconnectAttempts +
-               ", exponentialBackoff=" + exponentialBackoff +
-               ", useExponentialBackOff=" + useExponentialBackOff +
-               ", registeredServices=" + registeredServices.size() +
-               ", discoveredServices=" + discoveredServices.size() +
-               '}';
+            "group='" + group + '\'' +
+            ", groupPrefix='" + groupPrefix + '\'' +
+            ", heartRate=" + heartRate +
+            ", maxMissedHeartbeats=" + maxMissedHeartbeats +
+            ", reconnectDelay=" + reconnectDelay +
+            ", maxReconnectDelay=" + maxReconnectDelay +
+            ", maxReconnectAttempts=" + maxReconnectAttempts +
+            ", exponentialBackoff=" + exponentialBackoff +
+            ", useExponentialBackOff=" + useExponentialBackOff +
+            ", registeredServices=" + registeredServices.size() +
+            ", discoveredServices=" + discoveredServices.size() +
+            '}';
     }
 }

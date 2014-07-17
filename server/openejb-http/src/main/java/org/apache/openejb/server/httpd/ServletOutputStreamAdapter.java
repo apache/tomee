@@ -24,12 +24,12 @@ import java.io.OutputStream;
 public class ServletOutputStreamAdapter extends ServletOutputStream {
     private OutputStream outputStream;
 
-    public ServletOutputStreamAdapter(OutputStream os) {
+    public ServletOutputStreamAdapter(final OutputStream os) {
         outputStream = os;
     }
 
     @Override
-    public void write(int b) throws IOException {
+    public void write(final int b) throws IOException {
         outputStream.write(b);
     }
 }

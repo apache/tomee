@@ -21,7 +21,7 @@ import java.io.IOException;
 public class DirectConnectionStrategy implements ConnectionStrategy {
 
     @Override
-    public Connection connect(ClusterMetaData cluster, ServerMetaData server) throws IOException {
+    public Connection connect(final ClusterMetaData cluster, final ServerMetaData server) throws IOException {
         final Connection connection = ConnectionManager.getConnection(server.getLocation());
 
         // Grabbing the URI from the associated connection allows the ConnectionFactory to

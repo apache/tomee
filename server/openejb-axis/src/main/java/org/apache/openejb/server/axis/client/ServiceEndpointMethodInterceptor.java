@@ -37,14 +37,14 @@ public class ServiceEndpointMethodInterceptor implements MethodInterceptor {
     private final OperationInfo[] operations;
     private final String credentialsName;
 
-    public ServiceEndpointMethodInterceptor(GenericServiceEndpoint stub, OperationInfo[] operations, String credentialsName) {
+    public ServiceEndpointMethodInterceptor(final GenericServiceEndpoint stub, final OperationInfo[] operations, final String credentialsName) {
         this.stub = stub;
         this.operations = operations;
         this.credentialsName = credentialsName;
     }
 
-    public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
-        SaajUniverse universe = new SaajUniverse();
+    public Object intercept(final Object o, final Method method, final Object[] objects, final MethodProxy methodProxy) throws Throwable {
+        final SaajUniverse universe = new SaajUniverse();
         universe.set(SaajUniverse.AXIS1);
         try {
             return doIntercept(method, objects, methodProxy);
@@ -53,15 +53,15 @@ public class ServiceEndpointMethodInterceptor implements MethodInterceptor {
         }
     }
 
-    private Object doIntercept(Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
-        int index = methodProxy.getSuperIndex();
-        OperationInfo operationInfo = operations[index];
+    private Object doIntercept(final Method method, final Object[] objects, final MethodProxy methodProxy) throws Throwable {
+        final int index = methodProxy.getSuperIndex();
+        final OperationInfo operationInfo = operations[index];
         if (operationInfo == null) {
             throw new ServerRuntimeException("Operation not mapped: " + method.getName() + " index: " + index + "\n OperationInfos: " + Arrays.asList(operations));
         }
         stub.checkCachedEndpoint();
 
-        Call call = stub.createCall();
+        final Call call = stub.createCall();
 
         operationInfo.prepareCall(call);
 
@@ -89,12 +89,12 @@ public class ServiceEndpointMethodInterceptor implements MethodInterceptor {
 //            }
         }
         Object response = null;
-        List parameterDescs = operationInfo.getOperationDesc().getParameters();
-        Object[] unwrapped = extractFromHolders(objects, parameterDescs, operationInfo.getOperationDesc().getNumInParams());
+        final List parameterDescs = operationInfo.getOperationDesc().getParameters();
+        final Object[] unwrapped = extractFromHolders(objects, parameterDescs, operationInfo.getOperationDesc().getNumInParams());
         if (operationInfo.getOperationDesc().getMep() == OperationType.REQUEST_RESPONSE) {
             try {
                 response = call.invoke(unwrapped);
-            } catch (RemoteException e) {
+            } catch (final RemoteException e) {
                 throw operationInfo.unwrapFault(e);
             }
 
@@ -102,9 +102,9 @@ public class ServiceEndpointMethodInterceptor implements MethodInterceptor {
                 throw operationInfo.unwrapFault((RemoteException) response);
             } else {
                 stub.extractAttachments(call);
-                Map outputParameters = call.getOutputParams();
+                final Map outputParameters = call.getOutputParams();
                 putInHolders(outputParameters, objects, parameterDescs);
-                Class returnType = operationInfo.getOperationDesc().getReturnClass();
+                final Class returnType = operationInfo.getOperationDesc().getReturnClass();
                 //return type should never be null... but we are not objecting if wsdl-return-value-mapping is not set.
                 if (response == null || returnType == null || returnType.isAssignableFrom(response.getClass())) {
                     return response;
@@ -121,15 +121,15 @@ public class ServiceEndpointMethodInterceptor implements MethodInterceptor {
         }
     }
 
-    private Object[] extractFromHolders(Object[] objects, List parameterDescs, int inParameterCount) throws JavaUtils.HolderException {
+    private Object[] extractFromHolders(final Object[] objects, final List parameterDescs, final int inParameterCount) throws JavaUtils.HolderException {
         if (objects.length != parameterDescs.size()) {
             throw new IllegalArgumentException("Mismatch parameter count: expected: " + parameterDescs.size() + ", actual: " + objects.length);
         }
-        Object[] unwrapped = new Object[inParameterCount];
+        final Object[] unwrapped = new Object[inParameterCount];
         int j = 0;
         for (int i = 0; objects != null && i < objects.length; i++) {
-            Object parameter = objects[i];
-            ParameterDesc parameterDesc = (ParameterDesc) parameterDescs.get(i);
+            final Object parameter = objects[i];
+            final ParameterDesc parameterDesc = (ParameterDesc) parameterDescs.get(i);
 
             if (parameterDesc.getMode() == ParameterDesc.INOUT) {
                 unwrapped[j++] = JavaUtils.getHolderValue(parameter);
@@ -140,10 +140,10 @@ public class ServiceEndpointMethodInterceptor implements MethodInterceptor {
         return unwrapped;
     }
 
-    private void putInHolders(Map outputParameters, Object[] objects, List parameterDescs) throws JavaUtils.HolderException {
+    private void putInHolders(final Map outputParameters, final Object[] objects, final List parameterDescs) throws JavaUtils.HolderException {
         for (int i = 0; i < objects.length; i++) {
-            Object parameter = objects[i];
-            ParameterDesc parameterDesc = (ParameterDesc) parameterDescs.get(i);
+            final Object parameter = objects[i];
+            final ParameterDesc parameterDesc = (ParameterDesc) parameterDescs.get(i);
             if ((parameterDesc.getMode() == ParameterDesc.INOUT) || (parameterDesc.getMode() == ParameterDesc.OUT)) {
                 Object returned = outputParameters.get(parameterDesc.getQName());
                 if (returned instanceof Holder) {

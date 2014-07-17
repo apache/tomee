@@ -42,7 +42,7 @@ public class OpenEJBJaasPasswordAuthenticator extends JaasPasswordAuthenticator 
         try {
             final Subject subject = new Subject();
             final LoginContext loginContext = new LoginContext(getDomain(), subject, new CallbackHandler() {
-                public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+                public void handle(final Callback[] callbacks) throws IOException, UnsupportedCallbackException {
                     for (final Callback callback : callbacks) {
                         if (callback instanceof NameCallback) {
                             ((NameCallback) callback).setName(username);
@@ -59,7 +59,7 @@ public class OpenEJBJaasPasswordAuthenticator extends JaasPasswordAuthenticator 
             session.setAttribute(USERNAME_KEY, username);
             session.setAttribute(LOGIN_CONTEXT_KEY, loginContext);
             return true;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             LOGGER.debug("can't log using username '" + username + "'", e);
             return false;
         }

@@ -22,7 +22,7 @@ package org.apache.openejb.server.auth;
  */
 public class IPAddressPermissionFactory {
 
-    public static IPAddressPermission getIPAddressMask(String mask) {
+    public static IPAddressPermission getIPAddressMask(final String mask) {
         if (StartWithIPAddressPermission.canSupport(mask)) {
             return new StartWithIPAddressPermission(mask);
         } else if (ExactIPAddressPermission.canSupport(mask)) {

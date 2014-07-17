@@ -56,9 +56,9 @@ public class ConnectionPoolCreated {
     @Override
     public String toString() {
         return "ConnectionPoolCreated{" +
-               "uri=" + uri +
-               ", size=" + size +
-               ", timeout='" + timeout + " " + timeUnit + "'" +
-               '}';
+            "uri=" + uri +
+            ", size=" + size +
+            ", timeout='" + timeout + " " + timeUnit + "'" +
+            '}';
     }
 }

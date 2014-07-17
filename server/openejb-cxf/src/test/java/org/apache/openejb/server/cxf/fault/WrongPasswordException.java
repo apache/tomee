@@ -28,15 +28,15 @@ public class WrongPasswordException extends Exception {
         super();
     }
 
-    public WrongPasswordException(String message, Throwable cause) {
+    public WrongPasswordException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
-    public WrongPasswordException(String message) {
+    public WrongPasswordException(final String message) {
         super(message);
     }
 
-    public WrongPasswordException(Throwable cause) {
+    public WrongPasswordException(final Throwable cause) {
         super(cause);
     }
 }

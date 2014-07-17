@@ -24,15 +24,15 @@ public class ServiceException extends OpenEJBException {
         super();
     }
 
-    public ServiceException(String message) {
+    public ServiceException(final String message) {
         super(message);
     }
 
-    public ServiceException(Throwable rootCause) {
+    public ServiceException(final Throwable rootCause) {
         super(rootCause);
     }
 
-    public ServiceException(String message, Throwable rootCause) {
+    public ServiceException(final String message, final Throwable rootCause) {
         super(message, rootCause);
     }
 

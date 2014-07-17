@@ -35,22 +35,22 @@ public class OpenEJBCommands extends CliRunnable implements Command, Runnable, S
     private ExitCallback cbk;
     private LoginContext loginContext;
 
-    public OpenEJBCommands(String bind, int port) {
+    public OpenEJBCommands(final String bind, final int port) {
         super(bind, port, null, "\r\n");
     }
 
     @Override
-    public void setInputStream(InputStream in) {
+    public void setInputStream(final InputStream in) {
         super.setInputStream(in);
     }
 
     @Override
-    public void setOutputStream(OutputStream out) {
+    public void setOutputStream(final OutputStream out) {
         super.setOutputStream(out);
     }
 
     @Override
-    public void setErrorStream(OutputStream err) {
+    public void setErrorStream(final OutputStream err) {
         super.setErrorStream(err);
     }
 
@@ -60,12 +60,12 @@ public class OpenEJBCommands extends CliRunnable implements Command, Runnable, S
     }
 
     @Override
-    public void setExitCallback(ExitCallback callback) {
+    public void setExitCallback(final ExitCallback callback) {
         cbk = callback;
     }
 
     @Override
-    public void start(Environment env) throws IOException {
+    public void start(final Environment env) throws IOException {
         start();
     }
 
@@ -85,7 +85,7 @@ public class OpenEJBCommands extends CliRunnable implements Command, Runnable, S
         } finally {
             try {
                 loginContext.logout();
-            } catch (LoginException e) {
+            } catch (final LoginException e) {
                 // ignored
             }
             cbk.onExit(0);

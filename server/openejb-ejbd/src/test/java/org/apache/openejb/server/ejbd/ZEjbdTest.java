@@ -63,8 +63,8 @@ public class ZEjbdTest {
         for (final ServerService daemon : SimpleServiceManager.class.cast(ServiceManager.get()).getDaemons()) {
             if (ServiceDaemon.class.isInstance(daemon) && daemon.getName().equals("ejbd")) {
                 assertTrue(EjbDaemon.class.cast(Reflections.get(Reflections.get(Reflections.get(Reflections.get(Reflections.get(Reflections.get(Reflections.get(daemon, "next"),
-                                                                                                                                                "service"), "service"), "service"),
-                                                                                                "service"), "service"), "server")).isGzip());
+                        "service"), "service"), "service"),
+                    "service"), "service"), "server")).isGzip());
                 checked++;
             }
         }

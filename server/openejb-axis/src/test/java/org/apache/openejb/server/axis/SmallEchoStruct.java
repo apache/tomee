@@ -28,11 +28,11 @@ public class SmallEchoStruct {
         return val2;
     }
 
-    public void setVal1(String string) {
+    public void setVal1(final String string) {
         val1 = string;
     }
 
-    public void setVal2(String string) {
+    public void setVal2(final String string) {
         val2 = string;
     }
 }

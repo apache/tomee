@@ -51,11 +51,11 @@ public class WsJMXTest {
     public WebApp war() {
         final WebApp webapp = new WebApp().contextRoot("app");
 
-        Servlet servlet = new Servlet();
+        final Servlet servlet = new Servlet();
         servlet.setServletName("toto");
         servlet.setServletClass(AnPojoEndpoint.class.getName());
 
-        ServletMapping servletMapping = new ServletMapping();
+        final ServletMapping servletMapping = new ServletMapping();
         servletMapping.setServletName("pojo");
         servletMapping.getUrlPattern().add("/toto");
 

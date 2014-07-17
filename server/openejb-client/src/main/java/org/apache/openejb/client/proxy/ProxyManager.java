@@ -32,7 +32,7 @@ public class ProxyManager {
 
         try {
             version = System.getProperty("java.vm.version");
-        } catch (Exception e) {
+        } catch (final Exception e) {
 
             throw new ClientRuntimeException("Unable to determine the version of your VM.  No ProxyFactory Can be installed");
         }
@@ -45,14 +45,14 @@ public class ProxyManager {
 
             try {
                 Class.forName("org.opentools.proxies.Proxy", true, cl);
-            } catch (Exception e) {
+            } catch (final Exception e) {
 
                 throw new ClientRuntimeException("No ProxyFactory Can be installed. Unable to load the class org.opentools.proxies.Proxy.  This class is needed for generating proxies in JDK 1.2 VMs.");
             }
 
             try {
                 factory = Class.forName("org.apache.openejb.client.proxy.Jdk12ProxyFactory", true, cl);
-            } catch (Exception e) {
+            } catch (final Exception e) {
 
                 throw new ClientRuntimeException("No ProxyFactory Can be installed. Unable to load the class org.apache.openejb.client.proxy.Jdk12ProxyFactory.");
             }
@@ -61,7 +61,7 @@ public class ProxyManager {
 
             try {
                 factory = Class.forName("org.apache.openejb.client.proxy.Jdk13ProxyFactory", true, cl);
-            } catch (Exception e) {
+            } catch (final Exception e) {
 
                 throw new ClientRuntimeException("No ProxyFactory Can be installed. Unable to load the class org.apache.openejb.client.proxy.Jdk13ProxyFactory.");
             }
@@ -72,7 +72,7 @@ public class ProxyManager {
             defaultFactory = (ProxyFactory) factory.newInstance();
             defaultFactory.init(new Properties());
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
 
             throw new ClientRuntimeException("No ProxyFactory Can be installed. Unable to load the class org.apache.openejb.client.proxy.Jdk13ProxyFactory.");
         }
@@ -121,11 +121,11 @@ public class ProxyManager {
 
     public static ClassLoader getContextClassLoader() {
         return (ClassLoader) java.security.AccessController.doPrivileged(new java.security.PrivilegedAction() {
-            @Override
-            public Object run() {
-                return Thread.currentThread().getContextClassLoader();
-            }
-        }
-                                                                        );
+                                                                             @Override
+                                                                             public Object run() {
+                                                                                 return Thread.currentThread().getContextClassLoader();
+                                                                             }
+                                                                         }
+        );
     }
 }

@@ -47,7 +47,7 @@ public class DynamicSubclassEjbDeploymentTest {
 
     @BeforeClass
     public static void start() throws Exception {
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
         properties.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*openejb-cxf-rs.*");
         properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
         container = EJBContainer.createEJBContainer(properties);
@@ -69,7 +69,7 @@ public class DynamicSubclassEjbDeploymentTest {
 
     @Test
     public void rest() {
-        String response = WebClient.create("http://localhost:4204/openejb-cxf-rs").path("/ejb/rest").get(String.class);
+        final String response = WebClient.create("http://localhost:4204/openejb-cxf-rs").path("/ejb/rest").get(String.class);
         assertEquals("ok", response);
     }
 
@@ -84,7 +84,7 @@ public class DynamicSubclassEjbDeploymentTest {
 
     @Test
     public void restFieldInjected() {
-        Boolean response = WebClient.create("http://localhost:4204/openejb-cxf-rs").path("/ejb/field").get(Boolean.class);
+        final Boolean response = WebClient.create("http://localhost:4204/openejb-cxf-rs").path("/ejb/field").get(Boolean.class);
         assertEquals(true, response.booleanValue());
     }
 
@@ -108,7 +108,7 @@ public class DynamicSubclassEjbDeploymentTest {
 
         @Path("/param")
         @GET
-        public String param(@QueryParam("arg") @DefaultValue("true") String p) {
+        public String param(@QueryParam("arg") @DefaultValue("true") final String p) {
             return p;
         }
 
@@ -119,7 +119,7 @@ public class DynamicSubclassEjbDeploymentTest {
         }
 
         @Override
-        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
             return simpleEJB.ok();
         }
     }

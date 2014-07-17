@@ -50,9 +50,9 @@ public class FailoverSelection {
     @Override
     public String toString() {
         return this.getClass().getSimpleName() + "{" +
-               "remaining=" + remaining.size() +
-               ", failed=" + failed.size() +
-               ", server=" + server +
-               '}';
+            "remaining=" + remaining.size() +
+            ", failed=" + failed.size() +
+            ", server=" + server +
+            '}';
     }
 }

@@ -65,7 +65,7 @@ public class BrokerServer implements ServerService, SelfManaging {
             return;
         try {
             broker.start();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new ServiceException(e);
         }
     }
@@ -77,7 +77,7 @@ public class BrokerServer implements ServerService, SelfManaging {
         }
         try {
             broker.stop();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new ServiceException(e);
         } finally {
             broker = null;

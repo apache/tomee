@@ -44,7 +44,7 @@ import static org.junit.Assert.assertEquals;
 @RunWith(ApplicationComposer.class)
 public class CheckedExceptionMapperTest {
     @Module
-    @Classes({ ExampleExceptionMapper.class })
+    @Classes({ExampleExceptionMapper.class})
     public EjbModule module() {
         final SingletonBean bean = new SingletonBean(ExampleRest.class);
         bean.setRestService(true);
@@ -70,7 +70,7 @@ public class CheckedExceptionMapperTest {
     }
 
     public static class ExampleException extends Exception {
-        public ExampleException(String message) {
+        public ExampleException(final String message) {
             super(message);
         }
     }
@@ -78,7 +78,7 @@ public class CheckedExceptionMapperTest {
     @Provider
     public static class ExampleExceptionMapper implements ExceptionMapper<ExampleException> {
         @Override
-        public Response toResponse(ExampleException ex) {
+        public Response toResponse(final ExampleException ex) {
             return Response.ok("Exception!").build();
         }
     }

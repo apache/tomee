@@ -22,7 +22,9 @@ import javax.ws.rs.PathParam;
 
 @Path("/second")
 public class MySecondRestClass {
-    @Path("/hi2/{you}") @GET public String hi(@PathParam("you") String you) {
+    @Path("/hi2/{you}")
+    @GET
+    public String hi(@PathParam("you") final String you) {
         return "hi " + you;
     }
 }

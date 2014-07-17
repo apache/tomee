@@ -185,7 +185,7 @@ public class MultipointDiscoveryAgent implements DiscoveryAgent, ServerService, 
                 this.port = multipointServer.getPort();
 
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new ServiceException(port + "", e);
         }
     }

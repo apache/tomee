@@ -35,7 +35,7 @@ public class ServerRemoved {
     @Override
     public String toString() {
         return "ServerRemoved{" +
-               "server=" + server +
-               "} " + clusterMetaDataUpdated;
+            "server=" + server +
+            "} " + clusterMetaDataUpdated;
     }
 }

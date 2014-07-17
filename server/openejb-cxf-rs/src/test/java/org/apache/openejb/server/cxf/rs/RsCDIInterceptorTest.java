@@ -45,10 +45,10 @@ import static org.junit.Assert.assertEquals;
 @RunWith(ApplicationComposer.class)
 public class RsCDIInterceptorTest {
     @Module
-    @Classes(cdi = true, value = { InterceptedEJBRs.class, InterceptedRs.class }, cdiInterceptors = MockingInterceptor.class)
+    @Classes(cdi = true, value = {InterceptedEJBRs.class, InterceptedRs.class}, cdiInterceptors = MockingInterceptor.class)
     public WebApp war() {
         return new WebApp()
-                .contextRoot("foo");
+            .contextRoot("foo");
     }
 
     @Test
@@ -84,7 +84,8 @@ public class RsCDIInterceptorTest {
         }
     }
 
-    @Interceptor @IBinding
+    @Interceptor
+    @IBinding
     public static class MockingInterceptor {
         @AroundInvoke
         public Object mock(final InvocationContext ic) throws Exception {

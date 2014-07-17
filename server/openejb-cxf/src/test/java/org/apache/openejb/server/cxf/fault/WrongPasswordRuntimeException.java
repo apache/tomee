@@ -29,15 +29,15 @@ public class WrongPasswordRuntimeException extends RuntimeException {
         super();
     }
 
-    public WrongPasswordRuntimeException(String message, Throwable cause) {
+    public WrongPasswordRuntimeException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
-    public WrongPasswordRuntimeException(String message) {
+    public WrongPasswordRuntimeException(final String message) {
         super(message);
     }
 
-    public WrongPasswordRuntimeException(Throwable cause) {
+    public WrongPasswordRuntimeException(final Throwable cause) {
         super(cause);
     }
 }

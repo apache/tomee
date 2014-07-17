@@ -65,8 +65,8 @@ public class DiscoverCustomProviderTest {
     @Test
     public void customProvider() {
         final String response = WebClient.create("http://localhost:4204/openejb-cxf-rs")
-                .accept("discover/reverse")
-                .path("the/service").get(String.class);
+            .accept("discover/reverse")
+            .path("the/service").get(String.class);
         assertEquals("it rocks", response);
     }
 
@@ -84,7 +84,7 @@ public class DiscoverCustomProviderTest {
     @Provider
     @Produces("discover/reverse")
     public static class ReverseProvider<T> implements MessageBodyWriter<T> {
-        private String reverse(String str) {
+        private String reverse(final String str) {
             if (str == null) {
                 return "";
             }
@@ -92,17 +92,17 @@ public class DiscoverCustomProviderTest {
         }
 
         @Override
-        public long getSize(T t, Class<?> rawType, Type genericType, Annotation[] annotations, MediaType mediaType) {
+        public long getSize(final T t, final Class<?> rawType, final Type genericType, final Annotation[] annotations, final MediaType mediaType) {
             return -1;
         }
 
         @Override
-        public boolean isWriteable(Class<?> rawType, Type genericType, Annotation[] annotations, MediaType mediaType) {
+        public boolean isWriteable(final Class<?> rawType, final Type genericType, final Annotation[] annotations, final MediaType mediaType) {
             return true;
         }
 
         @Override
-        public void writeTo(T t, Class<?> rawType, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException {
+        public void writeTo(final T t, final Class<?> rawType, final Type genericType, final Annotation[] annotations, final MediaType mediaType, final MultivaluedMap<String, Object> httpHeaders, final OutputStream entityStream) throws IOException {
             entityStream.write(reverse((String) t).getBytes());
         }
     }

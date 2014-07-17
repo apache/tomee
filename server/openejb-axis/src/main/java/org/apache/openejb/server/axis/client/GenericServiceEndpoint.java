@@ -25,7 +25,7 @@ import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 
 public class GenericServiceEndpoint extends org.apache.axis.client.Stub {
-    public GenericServiceEndpoint(QName portQName, Service service, URL location) {
+    public GenericServiceEndpoint(final QName portQName, final Service service, final URL location) {
         this.service = service;
         cachedEndpoint = location;
         cachedPortName = portQName;
@@ -34,8 +34,8 @@ public class GenericServiceEndpoint extends org.apache.axis.client.Stub {
 
     Call createCall() throws java.rmi.RemoteException {
         try {
-            org.apache.axis.client.Call _call =
-                    (org.apache.axis.client.Call) service.createCall();
+            final org.apache.axis.client.Call _call =
+                (org.apache.axis.client.Call) service.createCall();
             if (super.maintainSessionSet) {
                 _call.setMaintainSession(super.maintainSession);
             }
@@ -54,9 +54,9 @@ public class GenericServiceEndpoint extends org.apache.axis.client.Stub {
             if (super.cachedPortName != null) {
                 _call.setPortName(super.cachedPortName);
             }
-            java.util.Enumeration keys = super.cachedProperties.keys();
+            final java.util.Enumeration keys = super.cachedProperties.keys();
             while (keys.hasMoreElements()) {
-                java.lang.String key = (java.lang.String) keys.nextElement();
+                final java.lang.String key = (java.lang.String) keys.nextElement();
                 _call.setProperty(key, super.cachedProperties.get(key));
             }
             // All the type mapping information is registered
@@ -87,7 +87,7 @@ public class GenericServiceEndpoint extends org.apache.axis.client.Stub {
 //                }
 //            }
             return _call;
-        } catch (java.lang.Throwable t) {
+        } catch (final java.lang.Throwable t) {
             throw new org.apache.axis.AxisFault("Failure trying to get the Call object", t);
         }
     }
@@ -98,7 +98,7 @@ public class GenericServiceEndpoint extends org.apache.axis.client.Stub {
         }
     }
 
-    void setUpCall(Call call) throws AxisFault {
+    void setUpCall(final Call call) throws AxisFault {
         setRequestHeaders(call);
         setAttachments(call);
     }

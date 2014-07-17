@@ -43,7 +43,7 @@ public class RsJMXTest {
     private static ObjectName name;
 
     @Module
-    @Classes(AnEndpoint.class )
+    @Classes(AnEndpoint.class)
     public WebApp war() {
         return new WebApp().contextRoot("app");
     }

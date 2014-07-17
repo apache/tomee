@@ -56,10 +56,10 @@ public class WebServiceWithAnUserInterceptorTest {
 
     @Test
     public void test() throws Exception {
-        Foo foo = Service.create(
-                new URL("http://localhost:4204/openejb-cxf/FooImpl?wsdl"),
-                new QName("http://cxf.server.openejb.apache.org/", "FooImplService"))
-                .getPort(Foo.class);
+        final Foo foo = Service.create(
+            new URL("http://localhost:4204/openejb-cxf/FooImpl?wsdl"),
+            new QName("http://cxf.server.openejb.apache.org/", "FooImplService"))
+            .getPort(Foo.class);
         assertNotNull(foo);
         assertEquals("bar", foo.hi());
     }
@@ -80,7 +80,7 @@ public class WebServiceWithAnUserInterceptorTest {
 
     public static class BarInterceptor {
         @AroundInvoke
-        public Object around(InvocationContext ic) throws Exception {
+        public Object around(final InvocationContext ic) throws Exception {
             return "bar";
         }
     }

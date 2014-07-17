@@ -17,6 +17,7 @@
 package org.apache.openejb.server.axis;
 
 import javax.servlet.ServletInputStream;
+
 import org.apache.openejb.server.httpd.HttpRequest;
 import org.apache.openejb.server.httpd.HttpRequestImpl;
 import org.apache.openejb.server.httpd.HttpSession;
@@ -36,13 +37,13 @@ public class AxisRequest extends HttpRequestImpl {
 
     private Method method;
 
-    private Map<String,String> parameters;
+    private Map<String, String> parameters;
 
-    private Map<String,String> headers;
+    private Map<String, String> headers;
 
     private String remoteAddress;
 
-    public AxisRequest(int contentLength, String contentType, ServletInputStream in, Method method, Map<String,String> parameters, URI uri, Map<String,String> headers, String remoteAddress) {
+    public AxisRequest(final int contentLength, final String contentType, final ServletInputStream in, final Method method, final Map<String, String> parameters, final URI uri, final Map<String, String> headers, final String remoteAddress) {
         super(uri);
         this.contentLength = contentLength;
         this.contentType = contentType;
@@ -61,7 +62,7 @@ public class AxisRequest extends HttpRequestImpl {
         return contentType;
     }
 
-    public String getHeader(String name) {
+    public String getHeader(final String name) {
         return headers.get(name);
     }
 
@@ -73,7 +74,7 @@ public class AxisRequest extends HttpRequestImpl {
         return method.name();
     }
 
-    public String getParameter(String name) {
+    public String getParameter(final String name) {
         return parameters.get(name);
     }
 
@@ -93,7 +94,7 @@ public class AxisRequest extends HttpRequestImpl {
         return "/axis2";
     }
 
-    public HttpSession getSession(boolean create) {
+    public HttpSession getSession(final boolean create) {
         throw new UnsupportedOperationException();
     }
 

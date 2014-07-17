@@ -73,12 +73,12 @@ public class PojoWsContainer extends CxfWsContainer {
     @Override
     protected ObjectName registerMBean() {
         final ObjectName name = new ObjectNameBuilder("openejb.management")
-                .set("j2eeType", "JAX-WS")
-                .set("J2EEServer", "openejb")
-                .set("J2EEApplication", null)
-                .set("EndpointType", "POJO")
-                .set("name", target.getSimpleName())
-                .build();
+            .set("j2eeType", "JAX-WS")
+            .set("J2EEServer", "openejb")
+            .set("J2EEApplication", null)
+            .set("EndpointType", "POJO")
+            .set("name", target.getSimpleName())
+            .build();
 
         mbean = new WsServiceMBean(context, target, port);
         LocalMBeanServer.registerDynamicWrapperSilently(mbean, name);
@@ -148,8 +148,8 @@ public class PojoWsContainer extends CxfWsContainer {
             }
 
             return LocalMBeanServer.tabularData(
-                    "handlers", "The list of handlers",
-                    names.toArray(new String[names.size()]), values.toArray(new String[values.size()]));
+                "handlers", "The list of handlers",
+                names.toArray(new String[names.size()]), values.toArray(new String[values.size()]));
         }
 
         @ManagedAttribute
@@ -168,10 +168,10 @@ public class PojoWsContainer extends CxfWsContainer {
         @Description("Service configuration properties")
         public TabularData getProperties() {
             return LocalMBeanServer.tabularData(
-                    "properties",
-                    "Service configuration properties",
-                    "Service configuration properties",
-                    port.getProperties()
+                "properties",
+                "Service configuration properties",
+                "Service configuration properties",
+                port.getProperties()
             );
         }
 

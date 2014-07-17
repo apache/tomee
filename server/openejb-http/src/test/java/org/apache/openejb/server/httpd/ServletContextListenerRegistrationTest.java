@@ -29,14 +29,14 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertTrue;
 
-@EnableServices({ "httpejbd" })
+@EnableServices({"httpejbd"})
 @RunWith(ApplicationComposer.class)
 public class ServletContextListenerRegistrationTest {
     @Module
     public WebApp app() {
         return new WebApp()
-                .contextRoot("init")
-                .addListener(Initializer.class.getName());
+            .contextRoot("init")
+            .addListener(Initializer.class.getName());
     }
 
     @Test
@@ -48,12 +48,12 @@ public class ServletContextListenerRegistrationTest {
         private static boolean init = false;
 
         @Override
-        public void contextInitialized(ServletContextEvent sce) {
+        public void contextInitialized(final ServletContextEvent sce) {
             init = sce != null;
         }
 
         @Override
-        public void contextDestroyed(ServletContextEvent sce) {
+        public void contextDestroyed(final ServletContextEvent sce) {
             System.out.println("destroyed");
         }
     }

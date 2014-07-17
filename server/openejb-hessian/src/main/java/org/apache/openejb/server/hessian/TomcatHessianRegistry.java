@@ -221,13 +221,13 @@ public class TomcatHessianRegistry implements HessianRegistry {
         return context;
     }
 
-    private static String generateServletPath(String name) {
+    private static String generateServletPath(final String name) {
         return HESSIAN + name;
     }
 
     private static String contextName(final String app) {
         if (!app.startsWith("/") && !app.isEmpty()) {
-            return  "/" + app;
+            return "/" + app;
         }
         return app;
     }

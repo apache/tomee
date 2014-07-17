@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 public class HttpDestination extends AbstractHTTPDestination {
-    public HttpDestination(Bus bus, DestinationRegistry registry, EndpointInfo endpointInfo, String path) throws IOException {
+    public HttpDestination(final Bus bus, final DestinationRegistry registry, final EndpointInfo endpointInfo, final String path) throws IOException {
         super(bus, registry, endpointInfo, path, true);
     }
 

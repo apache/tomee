@@ -84,8 +84,8 @@ public class BoneCPPooledDataSourceFromPoolTest {
     @Module
     public EjbJar app() throws Exception {
         return new EjbJar()
-                .enterpriseBean(new SingletonBean(Persister.class).localBean())
-                .enterpriseBean(new SingletonBean(OtherPersister.class).localBean());
+            .enterpriseBean(new SingletonBean(Persister.class).localBean())
+            .enterpriseBean(new SingletonBean(OtherPersister.class).localBean());
     }
 
     @LocalBean
@@ -111,9 +111,9 @@ public class BoneCPPooledDataSourceFromPoolTest {
     @LocalBean
     @Singleton
     @DataSourceDefinition(
-            name = "managed",
-            url = URL, user = USER, password = PASSWORD,
-            className = "org.hsqldb.jdbc.JDBCDataSource")
+        name = "managed",
+        url = URL, user = USER, password = PASSWORD,
+        className = "org.hsqldb.jdbc.JDBCDataSource")
     public static class Persister {
         @Resource(name = "managed")
         private DataSource ds;
@@ -199,12 +199,12 @@ public class BoneCPPooledDataSourceFromPoolTest {
     public void checkTxMapIsEmpty() throws Exception { // avoid memory leak
         final Field map = ManagedConnection.class.getDeclaredField("CONNECTION_BY_TX_BY_DS");
         map.setAccessible(true);
-        final Map<DataSource, Map<Transaction, Connection>>  instance = (Map<DataSource, Map<Transaction, Connection>> ) map.get(null);
+        final Map<DataSource, Map<Transaction, Connection>> instance = (Map<DataSource, Map<Transaction, Connection>>) map.get(null);
         assertEquals(1, instance.size());
         assertEquals(0, instance.values().iterator().next().size());
     }
 
-    private static boolean exists(int id) throws SQLException {
+    private static boolean exists(final int id) throws SQLException {
         final Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
         final Statement statement = connection.createStatement();
         final ResultSet result = statement.executeQuery("SELECT count(*) AS NB FROM " + TABLE + " WHERE ID = " + id);
@@ -217,7 +217,7 @@ public class BoneCPPooledDataSourceFromPoolTest {
         }
     }
 
-    private static void save(final DataSource ds, int id) throws SQLException {
+    private static void save(final DataSource ds, final int id) throws SQLException {
         execute(ds, "INSERT INTO " + TABLE + "(ID) VALUES(" + id + ")");
     }
 

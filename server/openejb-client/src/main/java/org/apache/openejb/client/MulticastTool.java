@@ -85,10 +85,10 @@ public class MulticastTool {
         final CommandParser.Arguments arguments;
         try {
             arguments = cmd.parse(array);
-        } catch (CommandParser.HelpException e) {
+        } catch (final CommandParser.HelpException e) {
             System.exit(0);
             throw new Exception(); // never reached, but keeps compiler happy
-        } catch (CommandParser.InvalidOptionsException e) {
+        } catch (final CommandParser.InvalidOptionsException e) {
             System.exit(1);
             throw new Exception(); // never reached, but keeps compiler happy
         }
@@ -187,7 +187,7 @@ public class MulticastTool {
                     sb.append(str);
                     System.out.println(sb.toString());
                 }
-            } catch (SocketTimeoutException e) {
+            } catch (final SocketTimeoutException e) {
                 final StringBuilder sb = new StringBuilder();
                 sb.append(format.format(new Date()));
                 sb.append(" - ");
@@ -228,7 +228,7 @@ public class MulticastTool {
         private void close() {
             try {
                 multicast.close();
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 //Ignore
             }
         }
@@ -239,7 +239,7 @@ public class MulticastTool {
                 final byte[] data = text.getBytes();
                 final DatagramPacket packet = new DatagramPacket(data, 0, data.length, address);
                 multicast.send(packet);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 e.printStackTrace();
             }
         }

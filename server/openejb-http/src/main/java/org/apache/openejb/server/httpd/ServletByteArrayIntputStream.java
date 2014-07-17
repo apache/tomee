@@ -23,7 +23,7 @@ import java.io.IOException;
 public class ServletByteArrayIntputStream extends ServletInputStream {
     private final ByteArrayInputStream intputStream;
 
-    public ServletByteArrayIntputStream(byte[] body) {
+    public ServletByteArrayIntputStream(final byte[] body) {
         intputStream = new ByteArrayInputStream(body);
     }
 

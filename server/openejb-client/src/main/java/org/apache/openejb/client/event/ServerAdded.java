@@ -35,7 +35,7 @@ public class ServerAdded {
     @Override
     public String toString() {
         return "ServerAdded{" +
-               "server=" + server +
-               "} " + clusterMetaDataUpdated;
+            "server=" + server +
+            "} " + clusterMetaDataUpdated;
     }
 }

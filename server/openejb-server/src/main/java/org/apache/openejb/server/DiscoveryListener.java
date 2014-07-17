@@ -23,8 +23,9 @@ import java.io.IOException;
 /**
  * @version $Rev$ $Date$
  */
-public interface  DiscoveryListener {
+public interface DiscoveryListener {
     public void serviceAdded(URI service);
+
     public void serviceRemoved(URI service);
 
 }

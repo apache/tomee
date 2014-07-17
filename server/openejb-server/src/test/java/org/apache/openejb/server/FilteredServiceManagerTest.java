@@ -23,27 +23,27 @@ import static org.junit.Assert.assertTrue;
 public class FilteredServiceManagerTest {
     @Test
     public void checkJaxRs() {
-        final FilteredServiceManager fsm = new FilteredServiceManager(new String[] { "jaxrs" });
+        final FilteredServiceManager fsm = new FilteredServiceManager(new String[]{"jaxrs"});
         assertTrue(fsm.accept("httpejbd"));
         assertTrue(fsm.accept("cxf-rs"));
     }
 
     @Test
     public void checkJaxWs() {
-        final FilteredServiceManager fsm = new FilteredServiceManager(new String[] { "jaxws" });
+        final FilteredServiceManager fsm = new FilteredServiceManager(new String[]{"jaxws"});
         assertTrue(fsm.accept("httpejbd"));
         assertTrue(fsm.accept("cxf"));
     }
 
     @Test
     public void checkEjbd() {
-        final FilteredServiceManager fsm = new FilteredServiceManager(new String[] { "http" });
+        final FilteredServiceManager fsm = new FilteredServiceManager(new String[]{"http"});
         assertTrue(fsm.accept("httpejbd"));
     }
 
     @Test
     public void checkDefault() {
-        final FilteredServiceManager fsm = new FilteredServiceManager(new String[] { "foo" });
+        final FilteredServiceManager fsm = new FilteredServiceManager(new String[]{"foo"});
         assertTrue(fsm.accept("foo"));
     }
 }

@@ -35,7 +35,7 @@ public class RetryConditionRemoved {
     @Override
     public String toString() {
         return "RetryConditionRemoved{" +
-               "condition=" + condition.getName() +
-               '}';
+            "condition=" + condition.getName() +
+            '}';
     }
 }

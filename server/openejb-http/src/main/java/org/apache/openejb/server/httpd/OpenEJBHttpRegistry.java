@@ -37,14 +37,14 @@ public class OpenEJBHttpRegistry {
 
     public OpenEJBHttpRegistry() {
         try {
-            OpenEjbConfiguration configuration = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
-            for (ServiceInfo service : configuration.facilities.services) {
+            final OpenEjbConfiguration configuration = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
+            for (final ServiceInfo service : configuration.facilities.services) {
                 if (service.className.equals(HttpServerFactory.class.getName())) {
-                    int port = Integer.parseInt(service.properties.getProperty("port"));
-                    String ip = service.properties.getProperty("bind");
+                    final int port = Integer.parseInt(service.properties.getProperty("port"));
+                    final String ip = service.properties.getProperty("bind");
                     if ("0.0.0.0".equals(ip)) {
-                        InetAddress[] addresses = InetAddress.getAllByName(ip);
-                        for (InetAddress address : addresses) {
+                        final InetAddress[] addresses = InetAddress.getAllByName(ip);
+                        for (final InetAddress address : addresses) {
                             baseUris.add(new URI("http", null, address.getHostAddress(), port, null, null, null));
                         }
                     } else {
@@ -53,25 +53,25 @@ public class OpenEJBHttpRegistry {
                     break;
                 }
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             log.error("Unable to build base URIs for " + getClass().getSimpleName() + " registry", e);
         }
         registry = SystemInstance.get().getComponent(HttpListenerRegistry.class);
     }
 
-    public HttpListener addWrappedHttpListener(HttpListener httpListener, ClassLoader classLoader, String regex) {
-        HttpListener listener = new ClassLoaderHttpListener(httpListener, classLoader);
+    public HttpListener addWrappedHttpListener(final HttpListener httpListener, final ClassLoader classLoader, final String regex) {
+        final HttpListener listener = new ClassLoaderHttpListener(httpListener, classLoader);
         registry.addHttpListener(listener, regex);
         return listener;
     }
 
-    public List<String> getResolvedAddresses(String path) {
+    public List<String> getResolvedAddresses(final String path) {
         String suffix = path;
         if (!path.startsWith("/")) {
             suffix = '/' + suffix;
         }
 
-        List<String> addresses = new ArrayList<String>();
+        final List<String> addresses = new ArrayList<String>();
         for (final URI baseUri : baseUris) {
             URI uri = baseUri;
             if (baseUri.getPort() == 0) { // if port was set to 0 we need to get httpejbd service port which was updated in SystemInstance
@@ -87,20 +87,20 @@ public class OpenEJBHttpRegistry {
             final URI address = uri.resolve(suffix);
             addresses.add(address.toString());
         }
-        return  addresses;
+        return addresses;
     }
 
     protected static class ClassLoaderHttpListener implements HttpListener {
         private final HttpListener delegate;
         private final ClassLoader classLoader;
 
-        protected ClassLoaderHttpListener(HttpListener delegate, ClassLoader classLoader) {
+        protected ClassLoaderHttpListener(final HttpListener delegate, final ClassLoader classLoader) {
             this.delegate = delegate;
             this.classLoader = classLoader;
         }
 
-        public void onMessage(HttpRequest request, HttpResponse response) throws Exception {
-            ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
+        public void onMessage(final HttpRequest request, final HttpResponse response) throws Exception {
+            final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
             Thread.currentThread().setContextClassLoader(classLoader);
 
             try {
@@ -125,7 +125,7 @@ public class OpenEJBHttpRegistry {
                     request.setBeginListener(new BeginWebBeansListener(context));
                     request.setEndListener(new EndWebBeansListener(context));
                 }
-            } catch (IllegalStateException ise) {
+            } catch (final IllegalStateException ise) {
                 // no-op: ignore
             }
             return request;

@@ -64,12 +64,12 @@ public class FilterListener implements HttpListener {
         }
 
         @Override
-        public void doFilter(ServletRequest request, ServletResponse response) throws IOException, ServletException {
+        public void doFilter(final ServletRequest request, final ServletResponse response) throws IOException, ServletException {
             final HttpListenerRegistry registry = SystemInstance.get().getComponent(HttpListenerRegistry.class);
             registry.setOrigin(origin);
             try {
                 registry.onMessage((HttpRequest) request, (HttpResponse) response);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new ServletException(e);
             } finally {
                 registry.setOrigin(origin);

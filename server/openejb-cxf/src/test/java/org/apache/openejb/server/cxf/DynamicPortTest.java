@@ -35,18 +35,15 @@ import static org.junit.Assert.assertEquals;
 
 @EnableServices("jax-ws")
 @RunWith(ApplicationComposer.class)
-public class DynamicPortTest
-{
+public class DynamicPortTest {
     @Configuration
-    public Properties config()
-    {
+    public Properties config() {
         return new PropertiesBuilder().property("httpejbd.port", "0").build();
     }
 
     @Module
     @Classes(value = DynamicImpl.class)
-    public WebApp module()
-    {
+    public WebApp module() {
         return new WebApp().contextRoot("/test").addServlet("ws", DynamicImpl.class.getName(), "/ws");
     }
 
@@ -54,23 +51,19 @@ public class DynamicPortTest
     private Dynamic client;
 
     @Test
-    public void checkHandlersAreCDIBeans() throws MalformedURLException
-    {
+    public void checkHandlersAreCDIBeans() throws MalformedURLException {
         assertEquals("ok", client.test());
     }
 
     @WebService
-    public static interface Dynamic
-    {
+    public static interface Dynamic {
         String test();
     }
 
     @WebService
-    public static class DynamicImpl implements Dynamic
-    {
+    public static class DynamicImpl implements Dynamic {
         @Override
-        public String test()
-        {
+        public String test() {
             return "ok";
         }
     }

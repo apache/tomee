@@ -43,12 +43,12 @@ public class JAXRSWithInterfaceTest {
     public static final String BASE_URL = "http://localhost:4204/foo/";
 
     @Module
-    @Classes(cdi = true, value = { Impl.class, RestWithInjections.class, SimpleEJB.class, MyExpertRestClass.class, MyFirstRestClass.class })
+    @Classes(cdi = true, value = {Impl.class, RestWithInjections.class, SimpleEJB.class, MyExpertRestClass.class, MyFirstRestClass.class})
     public WebApp war() {
         return new WebApp()
-                .contextRoot("foo")
-                .addServlet("REST Application", Application.class.getName())
-                .addInitParam("REST Application", "javax.ws.rs.Application", InterfaceApp.class.getName());
+            .contextRoot("foo")
+            .addServlet("REST Application", Application.class.getName())
+            .addInitParam("REST Application", "javax.ws.rs.Application", InterfaceApp.class.getName());
     }
 
     @Test

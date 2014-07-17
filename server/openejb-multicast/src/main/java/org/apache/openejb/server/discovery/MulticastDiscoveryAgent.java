@@ -137,7 +137,7 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
                 this.address = new InetSocketAddress(inetAddress, port);
                 multicast = new Multicast(tracker);
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new ServiceException(e);
         }
     }
@@ -211,9 +211,9 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
                             //                        System.out.println("read = " + str);
                             tracker.processData(str);
                         }
-                    } catch (SocketTimeoutException se) {
+                    } catch (final SocketTimeoutException se) {
                         // ignore
-                    } catch (IOException e) {
+                    } catch (final IOException e) {
                         if (running.get()) {
                             log.error("failed to process packet: " + e);
                         }
@@ -241,7 +241,7 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
                         final DatagramPacket packet = new DatagramPacket(data, 0, data.length, address);
                         //                    System.out.println("ann = " + uri);
                         multicast.send(packet);
-                    } catch (IOException e) {
+                    } catch (final IOException e) {
                         // If a send fails, chances are all subsequent sends will fail
                         // too.. No need to keep reporting the
                         // same error over and over.
@@ -252,7 +252,7 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
                             final String message = e.getMessage();
                             if (null != message && message.toLowerCase().contains("operation not permitted")) {
                                 log.error("The 'Operation not permitted' error has been know to be caused by improper firewall/network setup.  "
-                                          + "Please make sure that the OS is properly configured to allow multicast traffic over: " + multicast.getLocalAddress());
+                                    + "Please make sure that the OS is properly configured to allow multicast traffic over: " + multicast.getLocalAddress());
                             }
                         }
                     }

@@ -47,7 +47,7 @@ public class JaxRpcServiceInfoBuilder {
     private final ClassLoader classLoader;
     private JaxRpcServiceInfo serviceInfo;
 
-    public JaxRpcServiceInfoBuilder(JavaWsdlMapping javaWsdlMapping, XmlSchemaInfo schemaInfo, PortComponent portComponent, Port port, String wsdlFile, ClassLoader classLoader) {
+    public JaxRpcServiceInfoBuilder(final JavaWsdlMapping javaWsdlMapping, final XmlSchemaInfo schemaInfo, final PortComponent portComponent, final Port port, final String wsdlFile, final ClassLoader classLoader) {
         this.javaWsdlMapping = javaWsdlMapping;
         this.schemaInfo = schemaInfo;
         this.portComponent = portComponent;
@@ -57,10 +57,10 @@ public class JaxRpcServiceInfoBuilder {
     }
 
     public JaxRpcServiceInfo createServiceInfo() throws OpenEJBException {
-        Class serviceEndpointInterface;
+        final Class serviceEndpointInterface;
         try {
             serviceEndpointInterface = classLoader.loadClass(portComponent.getServiceEndpointInterface());
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             throw new OpenEJBException("Unable to load the service-endpoint interface for port-component " + portComponent.getPortComponentName(), e);
         }
 
@@ -72,22 +72,22 @@ public class JaxRpcServiceInfoBuilder {
         serviceInfo.defaultBindingStyle = getStyle(port.getBinding());
 
         // The service is using lightweight mappings if there are no Java to XML service mappings
-        boolean isLightweight = javaWsdlMapping.getServiceEndpointInterfaceMapping().isEmpty();
+        final boolean isLightweight = javaWsdlMapping.getServiceEndpointInterfaceMapping().isEmpty();
 
         //
         // Map Operations
         //
-        Set wrapperElementQNames = buildOperations(port.getBinding(), serviceEndpointInterface, isLightweight);
+        final Set wrapperElementQNames = buildOperations(port.getBinding(), serviceEndpointInterface, isLightweight);
 
         //
         // Map Types
         //
-        Collection<JaxRpcTypeInfo> types;
+        final Collection<JaxRpcTypeInfo> types;
         if (isLightweight) {
-            LightweightTypeInfoBuilder builder = new LightweightTypeInfoBuilder(javaWsdlMapping, schemaInfo, classLoader);
+            final LightweightTypeInfoBuilder builder = new LightweightTypeInfoBuilder(javaWsdlMapping, schemaInfo, classLoader);
             types = builder.buildTypeInfo();
         } else {
-            HeavyweightTypeInfoBuilder builder = new HeavyweightTypeInfoBuilder(javaWsdlMapping, schemaInfo, classLoader, wrapperElementQNames, serviceInfo.operations, serviceInfo.defaultBindingStyle.isEncoded());
+            final HeavyweightTypeInfoBuilder builder = new HeavyweightTypeInfoBuilder(javaWsdlMapping, schemaInfo, classLoader, wrapperElementQNames, serviceInfo.operations, serviceInfo.defaultBindingStyle.isEncoded());
             types = builder.buildTypeInfo();
         }
         serviceInfo.types.addAll(types);
@@ -95,33 +95,33 @@ public class JaxRpcServiceInfoBuilder {
         return serviceInfo;
     }
 
-    private Set<QName> buildOperations(Binding binding, Class serviceEndpointInterface, boolean lightweight) throws OpenEJBException {
-        Set<QName> wrappedElementQNames = new HashSet<QName>();
+    private Set<QName> buildOperations(final Binding binding, final Class serviceEndpointInterface, final boolean lightweight) throws OpenEJBException {
+        final Set<QName> wrappedElementQNames = new HashSet<QName>();
 
 
-        for (Object op : binding.getBindingOperations()) {
-            BindingOperation bindingOperation = (BindingOperation) op;
-            String operationName = bindingOperation.getOperation().getName();
+        for (final Object op : binding.getBindingOperations()) {
+            final BindingOperation bindingOperation = (BindingOperation) op;
+            final String operationName = bindingOperation.getOperation().getName();
 
             if (lightweight) {
                 // Lightweight mappings are solely based on the Java method
-                Method method = getMethodForOperation(operationName, serviceEndpointInterface);
+                final Method method = getMethodForOperation(operationName, serviceEndpointInterface);
 
                 // Build the operation info using the method
-                LightweightOperationInfoBuilder operationInfoBuilder = new LightweightOperationInfoBuilder(bindingOperation, method);
-                JaxRpcOperationInfo operationInfo = operationInfoBuilder.buildOperationInfo();
+                final LightweightOperationInfoBuilder operationInfoBuilder = new LightweightOperationInfoBuilder(bindingOperation, method);
+                final JaxRpcOperationInfo operationInfo = operationInfoBuilder.buildOperationInfo();
                 serviceInfo.operations.add(operationInfo);
             } else {
                 // Heavyweight mappings are solely based on the Java to XML mapping declarations
-                ServiceEndpointMethodMapping methodMapping = getMethodMappingForOperation(operationName, serviceEndpointInterface);
+                final ServiceEndpointMethodMapping methodMapping = getMethodMappingForOperation(operationName, serviceEndpointInterface);
 
                 // Build the operation info using the Java to XML method mapping
-                HeavyweightOperationInfoBuilder operationInfoBuilder = new HeavyweightOperationInfoBuilder(bindingOperation, methodMapping, javaWsdlMapping, schemaInfo);
-                JaxRpcOperationInfo operationInfo = operationInfoBuilder.buildOperationInfo();
+                final HeavyweightOperationInfoBuilder operationInfoBuilder = new HeavyweightOperationInfoBuilder(bindingOperation, methodMapping, javaWsdlMapping, schemaInfo);
+                final JaxRpcOperationInfo operationInfo = operationInfoBuilder.buildOperationInfo();
                 serviceInfo.operations.add(operationInfo);
 
                 // remember wrapped elements for type mapping
-                Set<QName> wrappedElementQNamesForOper = operationInfoBuilder.getWrapperElementQNames();
+                final Set<QName> wrappedElementQNamesForOper = operationInfoBuilder.getWrapperElementQNames();
                 wrappedElementQNames.addAll(wrappedElementQNamesForOper);
             }
         }
@@ -129,27 +129,27 @@ public class JaxRpcServiceInfoBuilder {
         return wrappedElementQNames;
     }
 
-    private BindingStyle getStyle(Binding binding) throws OpenEJBException {
-        SOAPBinding soapBinding = getExtensibilityElement(SOAPBinding.class, binding.getExtensibilityElements());
-        String styleString = soapBinding.getStyle();
+    private BindingStyle getStyle(final Binding binding) throws OpenEJBException {
+        final SOAPBinding soapBinding = getExtensibilityElement(SOAPBinding.class, binding.getExtensibilityElements());
+        final String styleString = soapBinding.getStyle();
 
-        BindingInput bindingInput = ((BindingOperation) binding.getBindingOperations().get(0)).getBindingInput();
-        SOAPBody soapBody = getExtensibilityElement(SOAPBody.class, bindingInput.getExtensibilityElements());
-        String useString = soapBody.getUse();
+        final BindingInput bindingInput = ((BindingOperation) binding.getBindingOperations().get(0)).getBindingInput();
+        final SOAPBody soapBody = getExtensibilityElement(SOAPBody.class, bindingInput.getExtensibilityElements());
+        final String useString = soapBody.getUse();
 
-        BindingStyle bindingStyle = BindingStyle.getBindingStyle(styleString, useString);
+        final BindingStyle bindingStyle = BindingStyle.getBindingStyle(styleString, useString);
         return bindingStyle;
     }
 
-    private String getAddressLocation(List extensibilityElements) throws OpenEJBException {
-        SOAPAddress soapAddress = getExtensibilityElement(SOAPAddress.class, extensibilityElements);
-        String locationURIString = soapAddress.getLocationURI();
+    private String getAddressLocation(final List extensibilityElements) throws OpenEJBException {
+        final SOAPAddress soapAddress = getExtensibilityElement(SOAPAddress.class, extensibilityElements);
+        final String locationURIString = soapAddress.getLocationURI();
         return locationURIString;
     }
 
-    private Method getMethodForOperation(String operationName, Class serviceEndpointInterface) throws OpenEJBException {
+    private Method getMethodForOperation(final String operationName, final Class serviceEndpointInterface) throws OpenEJBException {
         Method found = null;
-        for (Method method : serviceEndpointInterface.getMethods()) {
+        for (final Method method : serviceEndpointInterface.getMethods()) {
             if (method.getName().equals(operationName)) {
                 if (found != null) {
                     throw new OpenEJBException("Overloaded methods are not allowed in lightweight mappings");
@@ -163,32 +163,32 @@ public class JaxRpcServiceInfoBuilder {
         return found;
     }
 
-    private ServiceEndpointMethodMapping getMethodMappingForOperation(String operationName, Class serviceEndpointInterface) throws OpenEJBException {
+    private ServiceEndpointMethodMapping getMethodMappingForOperation(final String operationName, final Class serviceEndpointInterface) throws OpenEJBException {
         // get mapping for service endpoint interface
-        ServiceEndpointInterfaceMapping interfaceMapping = javaWsdlMapping.getServiceEndpointInterfaceMappingMap().get(serviceEndpointInterface.getName());
+        final ServiceEndpointInterfaceMapping interfaceMapping = javaWsdlMapping.getServiceEndpointInterfaceMappingMap().get(serviceEndpointInterface.getName());
         if (interfaceMapping == null) {
             throw new OpenEJBException("No java-wsdl mapping found for the service interface " + serviceEndpointInterface);
         }
 
         // match by operation name
-        for (ServiceEndpointMethodMapping methodMapping : interfaceMapping.getServiceEndpointMethodMapping()) {
+        for (final ServiceEndpointMethodMapping methodMapping : interfaceMapping.getServiceEndpointMethodMapping()) {
             if (operationName.equals(methodMapping.getWsdlOperation())) {
                 return methodMapping;
             }
         }
 
         // failed - throw nice exception message
-        StringBuffer availOps = new StringBuffer(128);
-        for (ServiceEndpointMethodMapping methodMapping : interfaceMapping.getServiceEndpointMethodMapping()) {
+        final StringBuffer availOps = new StringBuffer(128);
+        for (final ServiceEndpointMethodMapping methodMapping : interfaceMapping.getServiceEndpointMethodMapping()) {
             if (availOps.length() > 0) availOps.append(",");
             availOps.append(methodMapping.getWsdlOperation());
         }
         throw new OpenEJBException("No method found for operation named '" + operationName + "'. Available operations: " + availOps);
     }
 
-    public static <T extends ExtensibilityElement> T getExtensibilityElement(Class<T> clazz, List extensibilityElements) throws OpenEJBException {
-        for (Object o : extensibilityElements) {
-            ExtensibilityElement extensibilityElement = (ExtensibilityElement) o;
+    public static <T extends ExtensibilityElement> T getExtensibilityElement(final Class<T> clazz, final List extensibilityElements) throws OpenEJBException {
+        for (final Object o : extensibilityElements) {
+            final ExtensibilityElement extensibilityElement = (ExtensibilityElement) o;
             if (clazz.isAssignableFrom(extensibilityElement.getClass())) {
                 return clazz.cast(extensibilityElement);
             }

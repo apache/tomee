@@ -47,12 +47,12 @@ import static org.junit.Assert.assertEquals;
 @RunWith(ApplicationComposer.class)
 public class CdiInterceptorContextTest {
     @Module
-    @Classes(value = { Endpoint.class, AnswerPerfect.class }, cdiInterceptors = AnswerPerfect.class)
+    @Classes(value = {Endpoint.class, AnswerPerfect.class}, cdiInterceptors = AnswerPerfect.class)
     public WebApp war() {
         return new WebApp()
-                .contextRoot("app")
-                .addServlet("REST Application", Application.class.getName())
-                .addInitParam("REST Application", "javax.ws.rs.Application", PerfectApplication.class.getName());
+            .contextRoot("app")
+            .addServlet("REST Application", Application.class.getName())
+            .addInitParam("REST Application", "javax.ws.rs.Application", PerfectApplication.class.getName());
     }
 
     @Test
@@ -76,7 +76,8 @@ public class CdiInterceptorContextTest {
 
     }
 
-    @Interceptor @Perfect
+    @Interceptor
+    @Perfect
     public static class AnswerPerfect {
         @Context
         private HttpServletRequest request;

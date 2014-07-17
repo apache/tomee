@@ -129,7 +129,7 @@ public class SimpleServiceManager extends ServiceManager {
             ServiceLogger.MDCput("SERVER", "main");
             final InetAddress localhost = InetAddress.getLocalHost();
             ServiceLogger.MDCput("HOST", localhost.getHostName());
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             //Ignore
         }
 
@@ -138,7 +138,7 @@ public class SimpleServiceManager extends ServiceManager {
         // register the mbean
         try {
             LocalMBeanServer.get().registerMBean(new ManagedMBean(registry), getDiscoveryRegistryObjectName());
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             logger.error("Failed to register 'openejb' MBean", e);
         }
 
@@ -170,7 +170,7 @@ public class SimpleServiceManager extends ServiceManager {
             try {
                 d.start();
                 errors[i] = null;
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 errors[i] = e;
                 LOGGER.info("Can't start service " + d.getName(), e);
             }
@@ -217,7 +217,7 @@ public class SimpleServiceManager extends ServiceManager {
 
                 this.wait(Long.MAX_VALUE);
             }
-        } catch (Throwable t) {
+        } catch (final Throwable t) {
             logger.fatal("Unable to keep the server thread alive. Received exception: " + t.getClass().getName() + " : " + t.getMessage());
         }
         logger.info("Stopping Remote Server");
@@ -237,7 +237,7 @@ public class SimpleServiceManager extends ServiceManager {
                 if (server.isRegistered(on)) {
                     try {
                         server.unregisterMBean(on);
-                    } catch (Exception ignored) {
+                    } catch (final Exception ignored) {
                         // no-op
                     }
                 }
@@ -245,7 +245,7 @@ public class SimpleServiceManager extends ServiceManager {
 
             try {
                 service.stop();
-            } catch (ServiceException e) {
+            } catch (final ServiceException e) {
                 logger.fatal("Service Shutdown Failed: " + service.getName() + ".  Exception: " + e.getMessage(), e);
             }
         }
@@ -258,7 +258,7 @@ public class SimpleServiceManager extends ServiceManager {
                 server.unregisterMBean(objectName);
             }
 
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             logger.warning("Failed to de-register the 'openejb' mbean", e);
         }
 

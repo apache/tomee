@@ -28,75 +28,75 @@ import java.util.Locale;
 public class ServletResponseAdapter implements HttpResponse {
     private final HttpServletResponse response;
 
-    public ServletResponseAdapter(HttpServletResponse response) {
+    public ServletResponseAdapter(final HttpServletResponse response) {
         this.response = response;
     }
 
-    public void setHeader(String name, String value) {
+    public void setHeader(final String name, final String value) {
         response.setHeader(name, value);
     }
 
     @Override
-    public void setIntHeader(String s, int i) {
+    public void setIntHeader(final String s, final int i) {
         response.setIntHeader(s, i);
     }
 
     @Override
-    public void setStatus(int i) {
+    public void setStatus(final int i) {
         response.setStatus(i);
     }
 
     @Override
-    public void setStatus(int i, String s) {
+    public void setStatus(final int i, final String s) {
         response.setStatus(i, s);
     }
 
     @Override
-    public void addCookie(Cookie cookie) {
+    public void addCookie(final Cookie cookie) {
         response.addCookie(cookie);
     }
 
     @Override
-    public void addDateHeader(String s, long l) {
+    public void addDateHeader(final String s, final long l) {
         response.addDateHeader(s, l);
     }
 
     @Override
-    public void addHeader(String s, String s1) {
+    public void addHeader(final String s, final String s1) {
         response.addHeader(s, s1);
     }
 
     @Override
-    public void addIntHeader(String s, int i) {
+    public void addIntHeader(final String s, final int i) {
         response.addIntHeader(s, i);
     }
 
     @Override
-    public boolean containsHeader(String s) {
+    public boolean containsHeader(final String s) {
         return response.containsHeader(s);
     }
 
     @Override
-    public String encodeURL(String s) {
+    public String encodeURL(final String s) {
         return response.encodeURL(s);
     }
 
     @Override
-    public String encodeRedirectURL(String s) {
+    public String encodeRedirectURL(final String s) {
         return response.encodeRedirectURL(s);
     }
 
     @Override
-    public String encodeUrl(String s) {
+    public String encodeUrl(final String s) {
         return response.encodeUrl(s);
     }
 
     @Override
-    public String encodeRedirectUrl(String s) {
+    public String encodeRedirectUrl(final String s) {
         return response.encodeRedirectUrl(s);
     }
 
-    public String getHeader(String name) {
+    public String getHeader(final String name) {
         throw new UnsupportedOperationException("Not possible to implement");
     }
 
@@ -106,7 +106,7 @@ public class ServletResponseAdapter implements HttpResponse {
     }
 
     @Override
-    public Collection<String> getHeaders(String s) {
+    public Collection<String> getHeaders(final String s) {
         return response.getHeaders(s);
     }
 
@@ -116,29 +116,29 @@ public class ServletResponseAdapter implements HttpResponse {
     }
 
     @Override
-    public void sendError(int i) throws IOException {
+    public void sendError(final int i) throws IOException {
         response.sendError(i);
     }
 
     @Override
-    public void sendError(int i, String s) throws IOException {
+    public void sendError(final int i, final String s) throws IOException {
         response.sendError(i, s);
     }
 
     @Override
-    public void sendRedirect(String s) throws IOException {
+    public void sendRedirect(final String s) throws IOException {
         response.sendRedirect(s);
     }
 
     @Override
-    public void setDateHeader(String s, long l) {
+    public void setDateHeader(final String s, final long l) {
         response.setDateHeader(s, l);
     }
 
     public ServletOutputStream getOutputStream() {
         try {
             return response.getOutputStream();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw (IllegalStateException) new IllegalStateException().initCause(e);
         }
     }
@@ -164,26 +164,26 @@ public class ServletResponseAdapter implements HttpResponse {
     }
 
     @Override
-    public void setBufferSize(int i) {
+    public void setBufferSize(final int i) {
         response.setBufferSize(i);
     }
 
     @Override
-    public void setCharacterEncoding(String s) {
+    public void setCharacterEncoding(final String s) {
         response.setCharacterEncoding(s);
     }
 
     @Override
-    public void setContentLength(int i) {
+    public void setContentLength(final int i) {
         response.setContentLength(i);
     }
 
-    public void setContentType(String type) {
+    public void setContentType(final String type) {
         response.setContentType(type);
     }
 
     @Override
-    public void setLocale(Locale locale) {
+    public void setLocale(final Locale locale) {
         response.setLocale(locale);
     }
 
@@ -197,7 +197,7 @@ public class ServletResponseAdapter implements HttpResponse {
     }
 
     @SuppressWarnings({"deprecation"})
-    public void setStatusMessage(String responseString) {
+    public void setStatusMessage(final String responseString) {
         response.setStatus(getStatus(), responseString);
     }
 

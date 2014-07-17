@@ -36,7 +36,7 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-@EnableServices({ "hessian", "httpejbd" })
+@EnableServices({"hessian", "httpejbd"})
 @RunWith(ApplicationComposer.class)
 public class HessianCdiByConfigTest {
     @Module
@@ -79,7 +79,7 @@ public class HessianCdiByConfigTest {
     public static class In {
         private String value;
 
-        public In(String value) {
+        public In(final String value) {
             this.value = value;
         }
     }
@@ -87,7 +87,7 @@ public class HessianCdiByConfigTest {
     public static class Out {
         private String value;
 
-        public Out(String value) {
+        public Out(final String value) {
             this.value = value;
         }
     }

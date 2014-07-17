@@ -27,6 +27,7 @@ import org.apache.openejb.jee.PackageMapping;
 import org.apache.openejb.jee.ServiceEndpointMethodMapping;
 import org.apache.openejb.jee.WsdlMessageMapping;
 import org.apache.openejb.jee.WsdlReturnValueMapping;
+
 import static org.apache.openejb.server.axis.assembler.JaxRpcParameterInfo.Mode;
 
 import javax.wsdl.BindingInput;
@@ -73,7 +74,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class HeavyweightOperationInfoBuilder{
+public class HeavyweightOperationInfoBuilder {
     private final JavaWsdlMapping mapping;
     private final ServiceEndpointMethodMapping methodMapping;
 
@@ -106,15 +107,15 @@ public class HeavyweightOperationInfoBuilder{
 
     private JaxRpcOperationInfo operationInfo;
 
-    public HeavyweightOperationInfoBuilder(BindingOperation bindingOperation, ServiceEndpointMethodMapping methodMapping, JavaWsdlMapping mapping, XmlSchemaInfo schemaInfo) throws OpenEJBException {
-        Operation operation = bindingOperation.getOperation();
+    public HeavyweightOperationInfoBuilder(final BindingOperation bindingOperation, final ServiceEndpointMethodMapping methodMapping, final JavaWsdlMapping mapping, final XmlSchemaInfo schemaInfo) throws OpenEJBException {
+        final Operation operation = bindingOperation.getOperation();
         this.operationName = operation.getName();
         this.operationStyle = JaxRpcOperationInfo.OperationStyle.valueOf(operation.getStyle().toString());
         this.outputMessage = operation.getOutput() == null ? null : operation.getOutput().getMessage();
         this.inputMessage = operation.getInput().getMessage();
 
         // faults
-        for (Object o : operation.getFaults().values()) {
+        for (final Object o : operation.getFaults().values()) {
             faults.add((Fault) o);
         }
 
@@ -123,13 +124,13 @@ public class HeavyweightOperationInfoBuilder{
         this.schemaInfo = schemaInfo;
 
         // index types - used to process build exception class constructor args
-        for (JavaXmlTypeMapping javaXmlTypeMapping : mapping.getJavaXmlTypeMapping()) {
-            String javaClassName = javaXmlTypeMapping.getJavaType();
+        for (final JavaXmlTypeMapping javaXmlTypeMapping : mapping.getJavaXmlTypeMapping()) {
+            final String javaClassName = javaXmlTypeMapping.getJavaType();
             if (javaXmlTypeMapping.getAnonymousTypeQname() != null) {
-                String anonymousTypeQName = javaXmlTypeMapping.getAnonymousTypeQname();
+                final String anonymousTypeQName = javaXmlTypeMapping.getAnonymousTypeQname();
                 anonymousTypes.put(anonymousTypeQName, javaClassName);
             } else if (javaXmlTypeMapping.getRootTypeQname() != null) {
-                QName qname = javaXmlTypeMapping.getRootTypeQname();
+                final QName qname = javaXmlTypeMapping.getRootTypeQname();
                 publicTypes.put(qname, javaClassName);
             }
         }
@@ -138,17 +139,17 @@ public class HeavyweightOperationInfoBuilder{
         if (methodMapping.getWrappedElement() != null) {
             bindingStyle = BindingStyle.DOCUMENT_LITERAL_WRAPPED;
         } else {
-            BindingInput bindingInput = bindingOperation.getBindingInput();
+            final BindingInput bindingInput = bindingOperation.getBindingInput();
 
-            SOAPOperation soapOperation = JaxRpcServiceInfoBuilder.getExtensibilityElement(SOAPOperation.class, bindingOperation.getExtensibilityElements());
+            final SOAPOperation soapOperation = JaxRpcServiceInfoBuilder.getExtensibilityElement(SOAPOperation.class, bindingOperation.getExtensibilityElements());
             String styleString = soapOperation.getStyle();
             if (styleString == null) {
-                SOAPBinding soapBinding = JaxRpcServiceInfoBuilder.getExtensibilityElement(SOAPBinding.class, bindingInput.getExtensibilityElements());
+                final SOAPBinding soapBinding = JaxRpcServiceInfoBuilder.getExtensibilityElement(SOAPBinding.class, bindingInput.getExtensibilityElements());
                 styleString = soapBinding.getStyle();
             }
 
-            SOAPBody soapBody = JaxRpcServiceInfoBuilder.getExtensibilityElement(SOAPBody.class, bindingInput.getExtensibilityElements());
-            String useString = soapBody.getUse();
+            final SOAPBody soapBody = JaxRpcServiceInfoBuilder.getExtensibilityElement(SOAPBody.class, bindingInput.getExtensibilityElements());
+            final String useString = soapBody.getUse();
 
             bindingStyle = BindingStyle.getBindingStyle(styleString, useString);
         }
@@ -190,14 +191,14 @@ public class HeavyweightOperationInfoBuilder{
 
         // Validate output mapping is complete
         if (outputMessage != null && bindingStyle.isWrapped()) {
-            Part inputPart = getWrappedPart(outputMessage);
+            final Part inputPart = getWrappedPart(outputMessage);
 
-            QName wrapperName = inputPart.getElementName();
-            XmlElementInfo wraperElement = schemaInfo.elements.get(wrapperName);
-            XmlTypeInfo wrapperType = schemaInfo.types.get(wraperElement.xmlType);
+            final QName wrapperName = inputPart.getElementName();
+            final XmlElementInfo wraperElement = schemaInfo.elements.get(wrapperName);
+            final XmlTypeInfo wrapperType = schemaInfo.types.get(wraperElement.xmlType);
 
-            Set<String> expectedOutParams = new HashSet<String>();
-            for (XmlElementInfo expectedOutParam : wrapperType.elements.values()) {
+            final Set<String> expectedOutParams = new HashSet<String>();
+            for (final XmlElementInfo expectedOutParam : wrapperType.elements.values()) {
                 expectedOutParams.add(expectedOutParam.qname.getLocalPart());
             }
             if (!outParamNames.equals(expectedOutParams)) {
@@ -212,8 +213,8 @@ public class HeavyweightOperationInfoBuilder{
         //
         // Map faults (exception)
         //
-        for (Fault fault : faults) {
-            JaxRpcFaultInfo faultInfo = mapFaults(fault);
+        for (final Fault fault : faults) {
+            final JaxRpcFaultInfo faultInfo = mapFaults(fault);
             operationInfo.faults.add(faultInfo);
         }
 
@@ -221,15 +222,15 @@ public class HeavyweightOperationInfoBuilder{
     }
 
     private JaxRpcParameterInfo[] mapParameters() throws OpenEJBException {
-        List<MethodParamPartsMapping> paramMappings = methodMapping.getMethodParamPartsMapping();
+        final List<MethodParamPartsMapping> paramMappings = methodMapping.getMethodParamPartsMapping();
 
         //
         // Map the ParameterDesc instance in an array so they can be ordered properly
         // before they are added to the the OperationDesc.
         //
-        JaxRpcParameterInfo[] parameterInfos = new JaxRpcParameterInfo[paramMappings.size()];
-        for (MethodParamPartsMapping paramMapping : paramMappings) {
-            JaxRpcParameterInfo parameterInfo = mapParameter(paramMapping);
+        final JaxRpcParameterInfo[] parameterInfos = new JaxRpcParameterInfo[paramMappings.size()];
+        for (final MethodParamPartsMapping paramMapping : paramMappings) {
+            final JaxRpcParameterInfo parameterInfo = mapParameter(paramMapping);
             parameterInfos[paramMapping.getParamPosition().intValue()] = parameterInfo;
         }
 
@@ -247,14 +248,14 @@ public class HeavyweightOperationInfoBuilder{
         //
         if (bindingStyle.isWrapped()) {
             // verify that all child elements have a parameter mapping
-            Part inputPart = getWrappedPart(inputMessage);
+            final Part inputPart = getWrappedPart(inputMessage);
 
-            QName wrapperName = inputPart.getElementName();
-            XmlElementInfo wrapperElement = schemaInfo.elements.get(wrapperName);
-            XmlTypeInfo wrapperType = schemaInfo.types.get(wrapperElement.xmlType);
+            final QName wrapperName = inputPart.getElementName();
+            final XmlElementInfo wrapperElement = schemaInfo.elements.get(wrapperName);
+            final XmlTypeInfo wrapperType = schemaInfo.types.get(wrapperElement.xmlType);
 
-            Set<String> expectedInParams = new HashSet<String>();
-            for (XmlElementInfo expectedInParam : wrapperType.elements.values()) {
+            final Set<String> expectedInParams = new HashSet<String>();
+            for (final XmlElementInfo expectedInParam : wrapperType.elements.values()) {
                 expectedInParams.add(expectedInParam.qname.getLocalPart());
             }
             if (!inParamNames.equals(expectedInParams)) {
@@ -270,12 +271,12 @@ public class HeavyweightOperationInfoBuilder{
         return parameterInfos;
     }
 
-    private JaxRpcParameterInfo mapParameter(MethodParamPartsMapping paramMapping) throws OpenEJBException {
-        WsdlMessageMapping wsdlMessageMappingType = paramMapping.getWsdlMessageMapping();
-        QName wsdlMessageQName = wsdlMessageMappingType.getWsdlMessage();
-        String wsdlMessagePartName = wsdlMessageMappingType.getWsdlMessagePartName();
+    private JaxRpcParameterInfo mapParameter(final MethodParamPartsMapping paramMapping) throws OpenEJBException {
+        final WsdlMessageMapping wsdlMessageMappingType = paramMapping.getWsdlMessageMapping();
+        final QName wsdlMessageQName = wsdlMessageMappingType.getWsdlMessage();
+        final String wsdlMessagePartName = wsdlMessageMappingType.getWsdlMessagePartName();
 
-        Mode mode = Mode.valueOf(wsdlMessageMappingType.getParameterMode());
+        final Mode mode = Mode.valueOf(wsdlMessageMappingType.getParameterMode());
         if ((mode == Mode.OUT || mode == Mode.INOUT) && outputMessage == null) {
             throw new OpenEJBException("Mapping for output parameter " + wsdlMessagePartName + " found, but no output message for operation " + operationName);
         }
@@ -291,19 +292,19 @@ public class HeavyweightOperationInfoBuilder{
             //
             if (!wsdlMessageQName.equals(inputMessage.getQName())) {
                 throw new OpenEJBException("QName of input message: " + inputMessage.getQName() +
-                        " does not match mapping message QName: " + wsdlMessageQName + " for operation " + operationName);
+                    " does not match mapping message QName: " + wsdlMessageQName + " for operation " + operationName);
             }
 
             Part part = null;
             XmlElementInfo inParameter = null;
             if (bindingStyle.isWrapped()) {
-                Part inPart = getWrappedPart(inputMessage);
+                final Part inPart = getWrappedPart(inputMessage);
 
                 // operation name == wraper element name
-                QName name = inPart.getElementName();
+                final QName name = inPart.getElementName();
                 if (!name.getLocalPart().equals(operationName)) {
                     throw new OpenEJBException("message " + inputMessage.getQName() + " refers to a global element named " +
-                            name.getLocalPart() + ", which is not equal to the operation name " + operationName);
+                        name.getLocalPart() + ", which is not equal to the operation name " + operationName);
                 }
                 inParameter = getWrapperChild(inPart, wsdlMessagePartName);
 
@@ -316,7 +317,7 @@ public class HeavyweightOperationInfoBuilder{
                 }
 
                 paramQName = new QName("", part.getName());
-                
+
                 // RPC can only use type
                 paramXmlType = part.getTypeName();
             } else {
@@ -336,14 +337,14 @@ public class HeavyweightOperationInfoBuilder{
             if (mode == Mode.INOUT) {
                 if (bindingStyle.isWrapped()) {
                     // Verify output message supports this inout parameter
-                    Part outPart = getWrappedPart(outputMessage);
-                    XmlElementInfo outParameter = getWrapperChild(outPart, wsdlMessagePartName);
+                    final Part outPart = getWrappedPart(outputMessage);
+                    final XmlElementInfo outParameter = getWrapperChild(outPart, wsdlMessagePartName);
                     if (inParameter.xmlType != outParameter.xmlType) {
                         throw new OpenEJBException("The wrapper children " + wsdlMessagePartName + " do not have the same type for operation " + operationName);
                     }
                 } else if (bindingStyle.isRpc()) {
                     // Verify output message supports this inout parameter
-                    Part outPart = outputMessage.getPart(wsdlMessagePartName);
+                    final Part outPart = outputMessage.getPart(wsdlMessagePartName);
                     if (outPart == null) {
                         throw new OpenEJBException("No part for wsdlMessagePartName " + wsdlMessagePartName + " in output message for INOUT parameter of operation " + operationName);
                     }
@@ -374,17 +375,17 @@ public class HeavyweightOperationInfoBuilder{
             //
             if (!wsdlMessageQName.equals(outputMessage.getQName())) {
                 throw new OpenEJBException("QName of output message: " + outputMessage.getQName() +
-                        " does not match mapping message QName: " + wsdlMessageQName + " for operation " + operationName);
+                    " does not match mapping message QName: " + wsdlMessageQName + " for operation " + operationName);
             }
 
             if (bindingStyle.isWrapped()) {
-                Part outPart = getWrappedPart(outputMessage);
-                XmlElementInfo outParameter = getWrapperChild(outPart, wsdlMessagePartName);
+                final Part outPart = getWrappedPart(outputMessage);
+                final XmlElementInfo outParameter = getWrapperChild(outPart, wsdlMessagePartName);
 
                 paramQName = new QName("", outParameter.qname.getLocalPart());
                 paramXmlType = outParameter.xmlType;
             } else if (bindingStyle.isRpc()) {
-                Part part = outputMessage.getPart(wsdlMessagePartName);
+                final Part part = outputMessage.getPart(wsdlMessagePartName);
                 if (part == null) {
                     throw new OpenEJBException("No part for wsdlMessagePartName " + wsdlMessagePartName + " in output message for operation " + operationName);
                 }
@@ -394,7 +395,7 @@ public class HeavyweightOperationInfoBuilder{
                 // RPC can only use type
                 paramXmlType = part.getTypeName();
             } else {
-                Part part = outputMessage.getPart(wsdlMessagePartName);
+                final Part part = outputMessage.getPart(wsdlMessagePartName);
                 if (part == null) {
                     throw new OpenEJBException("No part for wsdlMessagePartName " + wsdlMessagePartName + " in output message for operation " + operationName);
                 }
@@ -408,7 +409,7 @@ public class HeavyweightOperationInfoBuilder{
         //
         // Determine the param java type
         //
-        String paramJavaType;
+        final String paramJavaType;
         if (mode == Mode.IN) {
             // IN only prarmeters don't have holders
             paramJavaType = paramMapping.getParamType();
@@ -417,10 +418,10 @@ public class HeavyweightOperationInfoBuilder{
             paramJavaType = rpcHolderClasses.get(paramMapping.getParamType());
         } else {
             // holderClass == ${packageName}.holders.${typeName}Holder
-            String packageName;
+            final String packageName;
             String typeName;
 
-            PackageMapping packageMapping = mapping.getPackageMappingMap().get(paramXmlType.getNamespaceURI());
+            final PackageMapping packageMapping = mapping.getPackageMappingMap().get(paramXmlType.getNamespaceURI());
             if (packageMapping != null) {
                 packageName = packageMapping.getPackageType();
 
@@ -429,8 +430,8 @@ public class HeavyweightOperationInfoBuilder{
                 typeName = Character.toUpperCase(typeName.charAt(0)) + typeName.substring(1);
             } else {
                 // a.b.foo.Bar >>> a.b.foo.holders.BarHolder
-                String paramJavaTypeName = paramMapping.getParamType();
-                int lastDot = paramJavaTypeName.lastIndexOf(".");
+                final String paramJavaTypeName = paramMapping.getParamType();
+                final int lastDot = paramJavaTypeName.lastIndexOf(".");
                 packageName = paramJavaTypeName.substring(0, lastDot);
                 typeName = paramJavaTypeName.substring(lastDot + 1);
             }
@@ -441,7 +442,7 @@ public class HeavyweightOperationInfoBuilder{
         //
         // Build JaxRpcParameterInfo
         //
-        JaxRpcParameterInfo parameterInfo = new JaxRpcParameterInfo();
+        final JaxRpcParameterInfo parameterInfo = new JaxRpcParameterInfo();
         parameterInfo.qname = paramQName;
         parameterInfo.xmlType = paramXmlType;
         parameterInfo.javaType = paramJavaType;
@@ -457,7 +458,7 @@ public class HeavyweightOperationInfoBuilder{
         }
 
         // verify mapped return value qname matches expected output message name
-        WsdlReturnValueMapping wsdlReturnValueMapping = methodMapping.getWsdlReturnValueMapping();
+        final WsdlReturnValueMapping wsdlReturnValueMapping = methodMapping.getWsdlReturnValueMapping();
         if (!wsdlReturnValueMapping.getWsdlMessage().equals(outputMessage.getQName())) {
             throw new OpenEJBException("OutputMessage has QName: " + outputMessage.getQName() + " but mapping specifies: " + wsdlReturnValueMapping.getWsdlMessage() + " for operation " + operationName);
         }
@@ -468,19 +469,19 @@ public class HeavyweightOperationInfoBuilder{
         QName returnQName = null;
         QName returnXmlType = null;
         if (wsdlReturnValueMapping.getWsdlMessagePartName() != null) {
-            String wsdlMessagePartName = wsdlReturnValueMapping.getWsdlMessagePartName();
+            final String wsdlMessagePartName = wsdlReturnValueMapping.getWsdlMessagePartName();
             if (outParamNames.contains(wsdlMessagePartName)) {
                 throw new OpenEJBException("output message part " + wsdlMessagePartName + " has both an INOUT or OUT mapping and a return value mapping for operation " + operationName);
             }
 
             if (bindingStyle.isWrapped()) {
-                Part outPart = getWrappedPart(outputMessage);
-                XmlElementInfo returnParticle = getWrapperChild(outPart, wsdlMessagePartName);
+                final Part outPart = getWrappedPart(outputMessage);
+                final XmlElementInfo returnParticle = getWrapperChild(outPart, wsdlMessagePartName);
 
                 returnQName = new QName("", returnParticle.qname.getLocalPart());
                 returnXmlType = returnParticle.xmlType;
             } else if (bindingStyle.isRpc()) {
-                Part part = outputMessage.getPart(wsdlMessagePartName);
+                final Part part = outputMessage.getPart(wsdlMessagePartName);
                 if (part == null) {
                     throw new OpenEJBException("No part for wsdlMessagePartName " + wsdlMessagePartName + " in output message for operation " + operationName);
                 }
@@ -490,7 +491,7 @@ public class HeavyweightOperationInfoBuilder{
                 // RPC can only use type
                 returnXmlType = part.getTypeName();
             } else {
-                Part part = outputMessage.getPart(wsdlMessagePartName);
+                final Part part = outputMessage.getPart(wsdlMessagePartName);
                 if (part == null) {
                     throw new OpenEJBException("No part for wsdlMessagePartName " + wsdlMessagePartName + " in output message for operation " + operationName);
                 }
@@ -509,9 +510,9 @@ public class HeavyweightOperationInfoBuilder{
         operationInfo.returnJavaType = wsdlReturnValueMapping.getMethodReturnValue();
     }
 
-    private JaxRpcFaultInfo mapFaults(Fault fault) throws OpenEJBException {
-        Message message = fault.getMessage();
-        ExceptionMapping exceptionMapping = mapping.getExceptionMappingMap().get(message.getQName());
+    private JaxRpcFaultInfo mapFaults(final Fault fault) throws OpenEJBException {
+        final Message message = fault.getMessage();
+        final ExceptionMapping exceptionMapping = mapping.getExceptionMappingMap().get(message.getQName());
         if (exceptionMapping == null) {
             throw new OpenEJBException("No exception mapping for fault " + fault.getName() + " and fault message " + message.getQName() + " for operation " + operationName);
         }
@@ -519,20 +520,20 @@ public class HeavyweightOperationInfoBuilder{
         // TODO investigate whether there are other cases in which the namespace of faultQName can be determined.
         // this is weird, but I can't figure out what it should be.
         // if part has an element rather than a type, it should be part.getElementName() (see below)
-        Part part;
+        final Part part;
         if (exceptionMapping.getWsdlMessagePartName() != null) {
             // According to schema documentation, this will only be set when several headerfaults use the same message.
-            String headerFaultMessagePartName = exceptionMapping.getWsdlMessagePartName();
+            final String headerFaultMessagePartName = exceptionMapping.getWsdlMessagePartName();
             part = message.getPart(headerFaultMessagePartName);
         } else {
             part = (Part) message.getOrderedParts(null).iterator().next();
         }
 
         // Determine the fault qname and xml schema type
-        QName faultQName;
-        XmlTypeInfo faultTypeInfo;
+        final QName faultQName;
+        final XmlTypeInfo faultTypeInfo;
         if (part.getElementName() != null) {
-            XmlElementInfo elementInfo = schemaInfo.elements.get(part.getElementName());
+            final XmlElementInfo elementInfo = schemaInfo.elements.get(part.getElementName());
             if (elementInfo == null) {
                 throw new OpenEJBException("Can not find element: " + part.getElementName() + ", known elements: " + schemaInfo.elements.keySet());
             }
@@ -556,7 +557,7 @@ public class HeavyweightOperationInfoBuilder{
         //
         // Build the fault info
         //
-        JaxRpcFaultInfo faultInfo = new JaxRpcFaultInfo();
+        final JaxRpcFaultInfo faultInfo = new JaxRpcFaultInfo();
         faultInfo.qname = faultQName;
         faultInfo.xmlType = faultTypeInfo.qname;
         faultInfo.javaType = exceptionMapping.getExceptionType();
@@ -570,24 +571,24 @@ public class HeavyweightOperationInfoBuilder{
                 throw new OpenEJBException("ConstructorParameterOrder can only be set for complex types, not " + faultTypeInfo.qname);
             }
 
-            Map<String, XmlElementInfo> elements = new HashMap<String, XmlElementInfo>();
-            for (XmlElementInfo element : faultTypeInfo.elements.values()) {
+            final Map<String, XmlElementInfo> elements = new HashMap<String, XmlElementInfo>();
+            for (final XmlElementInfo element : faultTypeInfo.elements.values()) {
                 elements.put(element.qname.getLocalPart(), element);
             }
 
-            ConstructorParameterOrder constructorParameterOrder = exceptionMapping.getConstructorParameterOrder();
+            final ConstructorParameterOrder constructorParameterOrder = exceptionMapping.getConstructorParameterOrder();
             for (int i = 0; i < constructorParameterOrder.getElementName().size(); i++) {
-                String paramName = constructorParameterOrder.getElementName().get(i);
+                final String paramName = constructorParameterOrder.getElementName().get(i);
 
                 // get the parameter element
-                XmlElementInfo paramElementInfo = elements.get(paramName);
+                final XmlElementInfo paramElementInfo = elements.get(paramName);
                 if (paramElementInfo == null) {
                     throw new OpenEJBException("Can not find element " + paramName + " in fault type " + faultTypeInfo.qname + ", known elements: " + elements.keySet());
                 }
 
                 // Java Type
                 String paramJavaType = null;
-                XmlTypeInfo paramTypeInfo = schemaInfo.types.get(paramElementInfo.xmlType);
+                final XmlTypeInfo paramTypeInfo = schemaInfo.types.get(paramElementInfo.xmlType);
                 if (paramTypeInfo != null) {
                     if (paramTypeInfo.anonymous) {
                         paramJavaType = anonymousTypes.get(paramTypeInfo.qname.getLocalPart());
@@ -603,7 +604,7 @@ public class HeavyweightOperationInfoBuilder{
                     throw new OpenEJBException("No class mapped for element type: " + paramElementInfo.xmlType);
                 }
 
-                JaxRpcParameterInfo parameterInfo = new JaxRpcParameterInfo();
+                final JaxRpcParameterInfo parameterInfo = new JaxRpcParameterInfo();
                 parameterInfo.qname = paramElementInfo.qname;
                 parameterInfo.mode = Mode.OUT;
                 // todo could be a soap header
@@ -618,40 +619,40 @@ public class HeavyweightOperationInfoBuilder{
     }
 
 
-    private QName getPartName(Part part) {
+    private QName getPartName(final Part part) {
         return part.getElementName() == null ? part.getTypeName() : part.getElementName();
     }
 
-    private Part getWrappedPart(Message message) throws OpenEJBException {
+    private Part getWrappedPart(final Message message) throws OpenEJBException {
         // a wrapped element can only have one part
-        Collection parts = message.getParts().values();
+        final Collection parts = message.getParts().values();
         if (parts.size() != 1) {
             throw new OpenEJBException("message " + message.getQName() + " has " + parts.size() +
-                    " parts and should only have one as wrapper style mapping is specified for operation " +
-                    operationName);
+                " parts and should only have one as wrapper style mapping is specified for operation " +
+                operationName);
         }
         return (Part) parts.iterator().next();
     }
 
-    private XmlElementInfo getWrapperChild(Part part, String wsdlMessagePartName) throws OpenEJBException {
+    private XmlElementInfo getWrapperChild(final Part part, final String wsdlMessagePartName) throws OpenEJBException {
         // get the part name
-        QName elementName = part.getElementName();
+        final QName elementName = part.getElementName();
         wrapperElementQNames.add(elementName);
 
         // get the wrapper element
-        XmlElementInfo wrapperElement = schemaInfo.elements.get(elementName);
+        final XmlElementInfo wrapperElement = schemaInfo.elements.get(elementName);
         if (wrapperElement == null) {
             throw new OpenEJBException("No global element named " + elementName + " for operation " + operationName);
         }
 
         // get the wrapper type
-        XmlTypeInfo wrapperType = schemaInfo.types.get(wrapperElement.xmlType);
+        final XmlTypeInfo wrapperType = schemaInfo.types.get(wrapperElement.xmlType);
         if (wrapperType == null) {
             throw new OpenEJBException("Can not find type " + wrapperElement.xmlType + " for element " + wrapperElement.qname + ", known types: " + schemaInfo.types.keySet());
         }
 
         // get the part type
-        for (XmlElementInfo wrapperChild : wrapperType.elements.values()) {
+        for (final XmlElementInfo wrapperChild : wrapperType.elements.values()) {
             if (wrapperChild.qname.getLocalPart().equals(wsdlMessagePartName)) {
                 return wrapperChild;
             }
@@ -689,9 +690,9 @@ public class HeavyweightOperationInfoBuilder{
 
     /**
      * Supporting the Document/Literal Wrapped pattern
-     *
+     * <p/>
      * See http://www-106.ibm.com/developerworks/webservices/library/ws-whichwsdl/ for a nice explanation and example
-     *
+     * <p/>
      * wrapped-element tag is used
      * WSDL message with a single part
      * part uses the 'element' attribute to point to an elemement in the types section
@@ -699,7 +700,7 @@ public class HeavyweightOperationInfoBuilder{
      */
 
     // standard holder classes by type
-    private static final Map<String,String> rpcHolderClasses = new HashMap<String, String>();
+    private static final Map<String, String> rpcHolderClasses = new HashMap<String, String>();
 
     static {
         rpcHolderClasses.put(BigDecimal.class.getName(), BigDecimalHolder.class.getName());

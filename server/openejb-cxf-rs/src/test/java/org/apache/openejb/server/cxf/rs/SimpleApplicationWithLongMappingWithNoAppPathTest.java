@@ -46,13 +46,14 @@ public class SimpleApplicationWithLongMappingWithNoAppPathTest {
     @Classes(cdi = true, value = {MySecondRestClass.class, HookedRest.class, RestWithInjections.class, SimpleEJB.class, MyExpertRestClass.class, MyFirstRestClass.class})
     public WebApp war() {
         return new WebApp()
-                .contextRoot("foo")
-                .addServlet("REST Application", Application.class.getName())
-                .addInitParam("REST Application", "javax.ws.rs.Application", MyRootRESTApp.class.getName())
-                .addServletMapping("REST Application", "/mapping/part2/*");
+            .contextRoot("foo")
+            .addServlet("REST Application", Application.class.getName())
+            .addInitParam("REST Application", "javax.ws.rs.Application", MyRootRESTApp.class.getName())
+            .addServletMapping("REST Application", "/mapping/part2/*");
     }
 
-    public static class MyRootRESTApp extends MyRESTApplication {}
+    public static class MyRootRESTApp extends MyRESTApplication {
+    }
 
     @Test
     public void first() {

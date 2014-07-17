@@ -17,7 +17,7 @@
 package org.apache.openejb.server.cli;
 
 public class CliRuntimeException extends RuntimeException {
-    public CliRuntimeException(Exception e) {
+    public CliRuntimeException(final Exception e) {
         super(e);
     }
 }

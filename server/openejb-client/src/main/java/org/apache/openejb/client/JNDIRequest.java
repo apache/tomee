@@ -91,7 +91,7 @@ public class JNDIRequest implements ClusterableRequest {
         final int code = in.readByte();
         try {
             requestMethod = RequestMethodCode.valueOf(code);
-        } catch (IllegalArgumentException iae) {
+        } catch (final IllegalArgumentException iae) {
             throw new IOException("Invalid request code " + code);
         }
         requestString = in.readUTF();

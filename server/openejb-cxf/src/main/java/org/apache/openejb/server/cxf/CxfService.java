@@ -71,7 +71,7 @@ public class CxfService extends WsService {
         }
     }
 
-    protected HttpListener createEjbWsContainer(URL moduleBaseUrl, PortData port, BeanContext beanContext, ServiceConfiguration config) {
+    protected HttpListener createEjbWsContainer(final URL moduleBaseUrl, final PortData port, final BeanContext beanContext, final ServiceConfiguration config) {
         final Bus bus = CxfUtil.getBus();
 
         final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
@@ -90,15 +90,15 @@ public class CxfService extends WsService {
         }
     }
 
-    protected HttpListener createPojoWsContainer(ClassLoader loader, URL moduleBaseUrl, PortData port, String serviceId, Class target, Context context, String contextRoot, Map<String, Object> bdgs, ServiceConfiguration services) {
-        Bus bus = CxfUtil.getBus();
+    protected HttpListener createPojoWsContainer(final ClassLoader loader, final URL moduleBaseUrl, final PortData port, final String serviceId, final Class target, final Context context, final String contextRoot, final Map<String, Object> bdgs, final ServiceConfiguration services) {
+        final Bus bus = CxfUtil.getBus();
 
         final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());
         try {
             CxfCatalogUtils.loadOASISCatalog(bus, moduleBaseUrl, "META-INF/jax-ws-catalog.xml");
 
-            PojoWsContainer container = new PojoWsContainer(loader, httpTransportFactory, bus, port, context, target, bdgs, services);
+            final PojoWsContainer container = new PojoWsContainer(loader, httpTransportFactory, bus, port, context, target, bdgs, services);
             container.start();
             wsContainers.put(serviceId, container);
             return container;
@@ -118,7 +118,7 @@ public class CxfService extends WsService {
     }
 
     protected void destroyWsContainer(final String serviceId) {
-        CxfWsContainer container = wsContainers.remove(serviceId);
+        final CxfWsContainer container = wsContainers.remove(serviceId);
         if (container != null) {
             final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
             Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());

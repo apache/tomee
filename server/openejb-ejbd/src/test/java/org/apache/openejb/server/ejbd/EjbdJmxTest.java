@@ -54,11 +54,11 @@ public class EjbdJmxTest {
 
         ServiceManager.register("ejbd", service, server);
 
-        ObjectName invocationsName = new ObjectName("openejb:type=ServerService,name=ejbd");
+        final ObjectName invocationsName = new ObjectName("openejb:type=ServerService,name=ejbd");
 
-        MBeanInfo beanInfo = server.getMBeanInfo(invocationsName);
+        final MBeanInfo beanInfo = server.getMBeanInfo(invocationsName);
 
-        for (MBeanAttributeInfo info : beanInfo.getAttributes()) {
+        for (final MBeanAttributeInfo info : beanInfo.getAttributes()) {
             System.out.println(info);
         }
     }

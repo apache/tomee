@@ -41,10 +41,10 @@ public class OpenEJBEJBInvoker extends JAXRSInvoker {
             final Collection<Class<?>> classes = new HashSet<Class<?>>();
             Contexts.findContextFields(context.getBeanClass(), classes);
             for (final Collection<InterceptorData> list :
-                    Arrays.asList(
-                            context.getInterceptorData(),
-                            context.getInstanceScopedInterceptors(),
-                            context.getCallbackInterceptors())) {
+                Arrays.asList(
+                    context.getInterceptorData(),
+                    context.getInstanceScopedInterceptors(),
+                    context.getCallbackInterceptors())) {
                 for (final InterceptorData id : list) {
                     final Class<?> interceptorClass = id.getInterceptorClass();
                     if (!StatsInterceptor.class.equals(interceptorClass)) {
@@ -64,7 +64,7 @@ public class OpenEJBEJBInvoker extends JAXRSInvoker {
 
     private Collection<Class<?>> getContextTypes(final Object resourceObject) {
         if (!ProxyManager.isProxyClass(resourceObject.getClass())
-                && !LocalBeanProxyFactory.isProxy(resourceObject.getClass())) {
+            && !LocalBeanProxyFactory.isProxy(resourceObject.getClass())) {
             return Collections.emptySet();
         }
 

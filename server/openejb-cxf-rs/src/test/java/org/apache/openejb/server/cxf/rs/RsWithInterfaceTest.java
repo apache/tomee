@@ -43,7 +43,7 @@ import static org.junit.Assert.assertEquals;
 public class RsWithInterfaceTest {
     @Module
     public static Class<?>[] service() throws Exception {
-        return new Class<?>[] { RsImpl.class, App.class };
+        return new Class<?>[]{RsImpl.class, App.class};
     }
 
     @Configuration

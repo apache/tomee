@@ -25,7 +25,7 @@ import java.io.InputStream;
 public class ServletIntputStreamAdapter extends ServletInputStream {
     private InputStream intputStream;
 
-    public ServletIntputStreamAdapter(InputStream is) {
+    public ServletIntputStreamAdapter(final InputStream is) {
         intputStream = is;
     }
 

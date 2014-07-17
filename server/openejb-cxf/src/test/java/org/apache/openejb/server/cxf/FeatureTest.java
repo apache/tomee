@@ -90,7 +90,7 @@ public class FeatureTest {
         public static boolean ok = false;
 
         @Override
-        public void initialize(Server server, Bus bus) {
+        public void initialize(final Server server, final Bus bus) {
             ok = true;
         }
     }

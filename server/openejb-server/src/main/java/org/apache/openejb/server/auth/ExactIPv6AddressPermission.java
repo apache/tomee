@@ -29,40 +29,40 @@ import java.net.Inet6Address;
 public class ExactIPv6AddressPermission implements IPAddressPermission {
     private static final Pattern MASK_VALIDATOR = Pattern.compile("^(([a-fA-F0-9]{1,4}:){7})([a-fA-F0-9]{1,4})$");
 
-    public static boolean canSupport(String mask) {
-        Matcher matcher = MASK_VALIDATOR.matcher(mask);
+    public static boolean canSupport(final String mask) {
+        final Matcher matcher = MASK_VALIDATOR.matcher(mask);
         return matcher.matches();
     }
 
     private final byte[] bytes;
 
-    public ExactIPv6AddressPermission(byte[] bytes) {
+    public ExactIPv6AddressPermission(final byte[] bytes) {
         this.bytes = bytes;
     }
 
-    public ExactIPv6AddressPermission(String mask) {
-        Matcher matcher = MASK_VALIDATOR.matcher(mask);
+    public ExactIPv6AddressPermission(final String mask) {
+        final Matcher matcher = MASK_VALIDATOR.matcher(mask);
         if (false == matcher.matches()) {
             throw new IllegalArgumentException("Mask " + mask + " does not match pattern " + MASK_VALIDATOR.pattern());
         }
 
         bytes = new byte[16];
         int pos = 0;
-        StringTokenizer tokenizer = new StringTokenizer(mask, ":");
+        final StringTokenizer tokenizer = new StringTokenizer(mask, ":");
         while (tokenizer.hasMoreTokens()) {
-            String token = tokenizer.nextToken();
-            int value = Integer.parseInt(token, 16);
+            final String token = tokenizer.nextToken();
+            final int value = Integer.parseInt(token, 16);
             bytes[pos++] = (byte) ((value & 0xff00) >> 8);
             bytes[pos++] = (byte) value;
         }
     }
 
-    public boolean implies(InetAddress address) {
+    public boolean implies(final InetAddress address) {
         if (false == address instanceof Inet6Address) {
             return false;
         }
 
-        byte[] byteAddress = address.getAddress();
+        final byte[] byteAddress = address.getAddress();
         for (int i = 0; i < 16; i++) {
             if (byteAddress[i] != bytes[i]) {
                 return false;

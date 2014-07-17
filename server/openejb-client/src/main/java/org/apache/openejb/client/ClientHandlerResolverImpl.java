@@ -65,7 +65,7 @@ public class ClientHandlerResolverImpl implements HandlerResolver {
 
     private List<Handler> buildHandlers(final javax.xml.ws.handler.PortInfo portInfo, final HandlerChainMetaData handlerChain) {
         if (!matchServiceName(portInfo, handlerChain.getServiceNamePattern()) || !matchPortName(portInfo, handlerChain.getPortNamePattern()) || !matchBinding(portInfo,
-                                                                                                                                                              handlerChain.getProtocolBindings())) {
+            handlerChain.getProtocolBindings())) {
             return Collections.emptyList();
         }
 
@@ -74,17 +74,17 @@ public class ClientHandlerResolverImpl implements HandlerResolver {
             try {
                 final Class<? extends Handler> handlerClass = loadClass(handler.getHandlerClass()).asSubclass(Handler.class);
                 final ClientInjectionProcessor<Handler> processor = new ClientInjectionProcessor<Handler>(handlerClass,
-                                                                                                          injections,
-                                                                                                          handler.getPostConstruct(),
-                                                                                                          handler.getPreDestroy(),
-                                                                                                          context);
+                    injections,
+                    handler.getPostConstruct(),
+                    handler.getPreDestroy(),
+                    context);
                 processor.createInstance();
                 processor.postConstruct();
                 final Handler handlerInstance = processor.getInstance();
 
                 handlers.add(handlerInstance);
                 handlerInstances.add(processor);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new WebServiceException("Failed to instantiate handler", e);
             }
         }

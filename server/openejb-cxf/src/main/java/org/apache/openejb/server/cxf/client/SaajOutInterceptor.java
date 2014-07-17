@@ -23,15 +23,15 @@ import org.apache.cxf.phase.Phase;
 import org.apache.openejb.server.webservices.saaj.SaajUniverse;
 
 public class SaajOutInterceptor extends SaajInterceptor {
-    public SaajOutInterceptor(SaajUniverse universe) {
+    public SaajOutInterceptor(final SaajUniverse universe) {
         super(Phase.SETUP, universe);
     }
-    
-    public void handleMessage(Message msg) throws Fault {
+
+    public void handleMessage(final Message msg) throws Fault {
         this.universe.set(SaajUniverse.DEFAULT);
     }
-    
-    public void handleFault(Message msg) {
+
+    public void handleFault(final Message msg) {
         this.universe.unset();
     }
 }

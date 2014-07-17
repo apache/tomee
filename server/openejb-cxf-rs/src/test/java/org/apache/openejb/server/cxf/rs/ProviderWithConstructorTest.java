@@ -48,12 +48,12 @@ import static org.junit.Assert.assertEquals;
 @RunWith(ApplicationComposer.class)
 public class ProviderWithConstructorTest {
     @Module
-    @Classes(value = { AnEndpointToCheckAProvider.class })
+    @Classes(value = {AnEndpointToCheckAProvider.class})
     public WebApp war() {
         return new WebApp()
-                .contextRoot("app")
-                .addServlet("REST Application", Application.class.getName())
-                .addInitParam("REST Application", "javax.ws.rs.Application", ApplicationWithProvider.class.getName());
+            .contextRoot("app")
+            .addServlet("REST Application", Application.class.getName())
+            .addInitParam("REST Application", "javax.ws.rs.Application", ApplicationWithProvider.class.getName());
     }
 
     @Test
@@ -63,7 +63,8 @@ public class ProviderWithConstructorTest {
 
     @Path("/foo")
     public static class AnEndpointToCheckAProvider {
-        @GET @Produces("openejb/constructor")
+        @GET
+        @Produces("openejb/constructor")
         public String bar() {
             return "bar"; // whatever the value is the provider will return the context path
         }
@@ -92,17 +93,17 @@ public class ProviderWithConstructorTest {
         }
 
         @Override
-        public long getSize(T t, Class<?> rawType, Type genericType, Annotation[] annotations, MediaType mediaType) {
+        public long getSize(final T t, final Class<?> rawType, final Type genericType, final Annotation[] annotations, final MediaType mediaType) {
             return -1;
         }
 
         @Override
-        public boolean isWriteable(Class<?> rawType, Type genericType, Annotation[] annotations, MediaType mediaType) {
+        public boolean isWriteable(final Class<?> rawType, final Type genericType, final Annotation[] annotations, final MediaType mediaType) {
             return true;
         }
 
         @Override
-        public void writeTo(T t, Class<?> rawType, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException {
+        public void writeTo(final T t, final Class<?> rawType, final Type genericType, final Annotation[] annotations, final MediaType mediaType, final MultivaluedMap<String, Object> httpHeaders, final OutputStream entityStream) throws IOException {
             entityStream.write(request.getContextPath().getBytes());
         }
     }

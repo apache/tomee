@@ -23,11 +23,11 @@ import org.apache.cxf.phase.Phase;
 import org.apache.openejb.server.webservices.saaj.SaajUniverse;
 
 public class SaajInInterceptor extends SaajInterceptor {
-    public SaajInInterceptor(SaajUniverse universe) {
+    public SaajInInterceptor(final SaajUniverse universe) {
         super(Phase.POST_INVOKE, universe);
     }
-    
-    public void handleMessage(Message msg) throws Fault {
+
+    public void handleMessage(final Message msg) throws Fault {
         this.universe.unset();
     }
 }

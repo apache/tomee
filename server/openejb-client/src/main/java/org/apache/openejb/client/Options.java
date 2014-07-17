@@ -121,7 +121,7 @@ public class Options {
             final Constructor<?> constructor = type.getConstructor(String.class);
             final T t = (T) constructor.newInstance(value);
             return log(property, t);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             warn(property, value, e);
             return parent.get(property, defaultValue);
@@ -137,7 +137,7 @@ public class Options {
 
         try {
             return log(property, Integer.parseInt(value));
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             warn(property, value, e);
             return parent.get(property, defaultValue);
         }
@@ -152,7 +152,7 @@ public class Options {
 
         try {
             return log(property, Long.parseLong(value));
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             warn(property, value, e);
             return parent.get(property, defaultValue);
         }
@@ -167,7 +167,7 @@ public class Options {
 
         try {
             return log(property, Boolean.parseBoolean(value));
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             warn(property, value, e);
             return parent.get(property, defaultValue);
         }
@@ -183,7 +183,7 @@ public class Options {
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         try {
             return log(property, classLoader.loadClass(className));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             getLogger().warning("Could not load " + property + " : " + className, e);
             return parent.get(property, defaultValue);
         }
@@ -205,7 +205,7 @@ public class Options {
 
         try {
             return log(property, valueOf(enumType, value.toUpperCase()));
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             warn(property, value);
             return parent.get(property, defaultValue);
         }
@@ -222,7 +222,7 @@ public class Options {
         try {
             final T t = defaultValue.iterator().next();
             enumType = (Class<T>) t.getClass();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalArgumentException("Must supply a default for property " + property);
         }
 
@@ -260,7 +260,7 @@ public class Options {
                 set.add(valueOf(enumType, s.toUpperCase()));
             }
             return logAll(property, set);
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             warn(property, value);
             return parent.getAll(property, defaultValue, enumType);
         }

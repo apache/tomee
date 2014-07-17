@@ -18,6 +18,7 @@ package org.apache.openejb.server.httpd;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSessionContext;
+
 import org.apache.openejb.client.ArrayEnumeration;
 
 import java.util.*;
@@ -37,15 +38,15 @@ public class HttpSessionImpl implements HttpSession {
     }
 
     @Override
-    public void removeAttribute(String name) {
+    public void removeAttribute(final String name) {
         attributes.remove(name);
     }
 
     @Override
-    public void removeValue(String s) {
-        Iterator<String> it = attributes.keySet().iterator();
+    public void removeValue(final String s) {
+        final Iterator<String> it = attributes.keySet().iterator();
         while (it.hasNext()) {
-            String key = it.next();
+            final String key = it.next();
             if (attributes.get(key).equals(s)) {
                 attributes.remove(key);
             }
@@ -66,12 +67,12 @@ public class HttpSessionImpl implements HttpSession {
     }
 
     @Override
-    public Object getAttribute(String name) {
+    public Object getAttribute(final String name) {
         return attributes.get(name);
     }
 
     @Override
-    public Object getValue(String s) {
+    public Object getValue(final String s) {
         return attributes.get(s);
     }
 
@@ -86,12 +87,12 @@ public class HttpSessionImpl implements HttpSession {
     }
 
     @Override
-    public void setAttribute(String name, Object value) {
+    public void setAttribute(final String name, final Object value) {
         attributes.put(name, value);
     }
 
     @Override
-    public void putValue(String s, Object o) {
+    public void putValue(final String s, final Object o) {
         setAttribute(s, o);
     }
 
@@ -116,7 +117,7 @@ public class HttpSessionImpl implements HttpSession {
     }
 
     @Override
-    public void setMaxInactiveInterval(int i) {
+    public void setMaxInactiveInterval(final int i) {
         // no-op
     }
 

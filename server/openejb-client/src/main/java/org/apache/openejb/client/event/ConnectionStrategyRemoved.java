@@ -43,8 +43,8 @@ public class ConnectionStrategyRemoved {
     @Override
     public String toString() {
         return "ConnectionStrategyRemoved{" +
-               "scheme='" + scheme + '\'' +
-               ", strategy=" + strategy.getClass().getName() +
-               '}';
+            "scheme='" + scheme + '\'' +
+            ", strategy=" + strategy.getClass().getName() +
+            '}';
     }
 }
