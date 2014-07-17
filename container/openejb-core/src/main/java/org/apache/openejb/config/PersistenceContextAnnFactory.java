@@ -37,7 +37,9 @@ import java.util.Map;
 import java.util.Set;
 
 public class PersistenceContextAnnFactory {
-    private static final boolean useAsm;
+
+    @SuppressWarnings("FieldMayBeFinal") // This gets set by reflection
+    private static boolean useAsm;
 
     static {
         boolean isPersistenceContextAnnotationValid = false;
