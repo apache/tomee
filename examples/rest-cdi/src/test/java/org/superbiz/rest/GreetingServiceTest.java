@@ -20,19 +20,36 @@ import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Classes;
+import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.Module;
+import org.apache.openejb.testng.PropertiesBuilder;
+import org.apache.openejb.util.NetworkUtil;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
+import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 
 @EnableServices(value = "jaxrs", httpDebug = true)
 @RunWith(ApplicationComposer.class)
 public class GreetingServiceTest {
+
+    private static int port = -1;
+
+    @BeforeClass
+    public static void beforeClass() {
+        port = NetworkUtil.getNextAvailablePort();
+    }
+
+    @Configuration
+    public Properties props() {
+        return new PropertiesBuilder().p("httpejbd.port", Integer.toString(port)).build();
+    }
 
     @Module
     @Classes(value = {GreetingService.class, Greeting.class}, cdi = true) //This enables the CDI magic
@@ -42,33 +59,33 @@ public class GreetingServiceTest {
 
     @Test
     public void getXml() throws IOException {
-        final String message = WebClient.create("http://localhost:4204").path("/test/greeting/")
-                .accept(MediaType.APPLICATION_XML_TYPE)
-                .get(Response.class).getValue();
+        final String message = WebClient.create("http://localhost:" + port).path("/test/greeting/")
+            .accept(MediaType.APPLICATION_XML_TYPE)
+            .get(Response.class).getValue();
         assertEquals("Hi REST!", message);
     }
 
     @Test
     public void postXml() throws IOException {
-        final String message = WebClient.create("http://localhost:4204").path("/test/greeting/")
-                .accept(MediaType.APPLICATION_XML_TYPE)
-                .post(new Request("Hi REST!"), Response.class).getValue();
+        final String message = WebClient.create("http://localhost:" + port).path("/test/greeting/")
+            .accept(MediaType.APPLICATION_XML_TYPE)
+            .post(new Request("Hi REST!"), Response.class).getValue();
         assertEquals("hi rest!", message);
     }
 
     @Test
     public void getJson() throws IOException {
-        final String message = WebClient.create("http://localhost:4204").path("/test/greeting/")
-                .accept(MediaType.APPLICATION_JSON_TYPE)
-                .get(Response.class).getValue();
+        final String message = WebClient.create("http://localhost:" + port).path("/test/greeting/")
+            .accept(MediaType.APPLICATION_JSON_TYPE)
+            .get(Response.class).getValue();
         assertEquals("Hi REST!", message);
     }
 
     @Test
     public void postJson() throws IOException {
-        final String message = WebClient.create("http://localhost:4204").path("/test/greeting/")
-                .accept(MediaType.APPLICATION_JSON_TYPE)
-                .post(new Request("Hi REST!"), Response.class).getValue();
+        final String message = WebClient.create("http://localhost:" + port).path("/test/greeting/")
+            .accept(MediaType.APPLICATION_JSON_TYPE)
+            .post(new Request("Hi REST!"), Response.class).getValue();
         assertEquals("hi rest!", message);
     }
 }
