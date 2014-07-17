@@ -24,8 +24,12 @@ import org.apache.openejb.server.cxf.rs.beans.MyFirstRestClass;
 import org.apache.openejb.server.cxf.rs.beans.RestWithInjections;
 import org.apache.openejb.server.cxf.rs.beans.SimpleEJB;
 import org.apache.openejb.testing.Classes;
+import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.Module;
+import org.apache.openejb.testng.PropertiesBuilder;
+import org.apache.openejb.util.NetworkUtil;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -33,6 +37,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Application;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
@@ -40,7 +45,18 @@ import static org.junit.Assert.assertEquals;
 @EnableServices("jax-rs")
 @RunWith(ApplicationComposer.class)
 public class JAXRSRoutingTest {
-    public static final String BASE_URL = "http://localhost:4204/foo/";
+
+    private static int port = -1;
+
+    @BeforeClass
+    public static void beforeClass() {
+        port = NetworkUtil.getNextAvailablePort();
+    }
+
+    @Configuration
+    public Properties props() {
+        return new PropertiesBuilder().p("httpejbd.port", Integer.toString(port)).build();
+    }
 
     @Module
     @Classes(cdi = true, value = {RestWithInjections.class, FirstService.class, SimpleEJB.class, MyExpertRestClass.class, MyFirstRestClass.class})
@@ -53,7 +69,7 @@ public class JAXRSRoutingTest {
 
     @Test
     public void routing() {
-        assertEquals("routing", WebClient.create(BASE_URL).path("routing").get(String.class));
+        assertEquals("routing", WebClient.create("http://localhost:" + port + "/foo/").path("routing").get(String.class));
     }
 
     public static class NoClassAtPathApplication extends Application {

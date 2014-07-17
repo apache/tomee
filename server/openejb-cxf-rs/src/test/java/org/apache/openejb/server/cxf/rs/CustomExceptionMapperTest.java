@@ -21,6 +21,7 @@ import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.config.DeploymentFilterable;
 import org.apache.openejb.config.DeploymentLoader;
+import org.apache.openejb.util.NetworkUtil;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -36,14 +37,18 @@ import java.util.Properties;
 import static org.junit.Assert.assertEquals;
 
 public class CustomExceptionMapperTest {
+
     private static EJBContainer container;
+    private static int port = -1;
 
     @BeforeClass
     public static void start() throws Exception {
+        port = NetworkUtil.getNextAvailablePort();
         final Properties properties = new Properties();
         properties.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*openejb-cxf-rs.*");
         properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
         properties.setProperty(DeploymentLoader.OPENEJB_ALTDD_PREFIX, "em");
+        properties.setProperty("httpejbd.port", Integer.toString(port));
         container = EJBContainer.createEJBContainer(properties);
     }
 
@@ -56,7 +61,7 @@ public class CustomExceptionMapperTest {
 
     @Test
     public void exceptionMapper() {
-        final String response = WebClient.create("http://localhost:4204/openejb-cxf-rs")
+        final String response = WebClient.create("http://localhost:" + port + "/openejb-cxf-rs")
             .path("/exception-mapper/throw").get(String.class);
         assertEquals(FooException.class.getName(), response);
     }

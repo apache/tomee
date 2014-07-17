@@ -16,14 +16,18 @@
  */
 package org.apache.openejb.server.cxf;
 
+import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.jee.Servlet;
 import org.apache.openejb.jee.ServletMapping;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.testing.Classes;
+import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.Module;
+import org.apache.openejb.testng.PropertiesBuilder;
+import org.apache.openejb.util.NetworkUtil;
 import org.hamcrest.CoreMatchers;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -36,6 +40,7 @@ import javax.ejb.Singleton;
 import javax.jws.WebService;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
+import java.util.Properties;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -44,7 +49,24 @@ import static org.junit.Assert.assertTrue;
 @EnableServices("jax-ws")
 @RunWith(ApplicationComposer.class)
 public class WsJMXTest {
-    private static ObjectName[] names = new ObjectName[2];
+
+    private static final ObjectName[] names = new ObjectName[2];
+    private static int port = -1;
+
+    @BeforeClass
+    public static void beforeClass() throws MalformedObjectNameException {
+        port = NetworkUtil.getNextAvailablePort();
+        names[0] = new ObjectName("openejb.management:j2eeType=JAX-WS,J2EEServer=openejb,J2EEApplication=<empty>,EndpointType=EJB,name=AnEjbEndpoint");
+        names[1] = new ObjectName("openejb.management:j2eeType=JAX-WS,J2EEServer=openejb,J2EEApplication=<empty>,EndpointType=POJO,name=AnPojoEndpoint");
+    }
+
+    @Configuration
+    public Properties props() {
+        return new PropertiesBuilder()
+            .p("httpejbd.port", Integer.toString(port))
+            .p(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true")
+            .build();
+    }
 
     @Module
     @Classes({AnEjbEndpoint.class, AnPojoEndpoint.class})
@@ -65,18 +87,12 @@ public class WsJMXTest {
         return webapp;
     }
 
-    @BeforeClass
-    public static void before() throws MalformedObjectNameException {
-        names[0] = new ObjectName("openejb.management:j2eeType=JAX-WS,J2EEServer=openejb,J2EEApplication=<empty>,EndpointType=EJB,name=AnEjbEndpoint");
-        names[1] = new ObjectName("openejb.management:j2eeType=JAX-WS,J2EEServer=openejb,J2EEApplication=<empty>,EndpointType=POJO,name=AnPojoEndpoint");
-    }
-
     @Test
     public void checkServiceWasDeployed() throws Exception {
         assertTrue(LocalMBeanServer.get().isRegistered(names[0]));
         assertTrue(LocalMBeanServer.get().isRegistered(names[1]));
-        assertThat(String.class.cast(LocalMBeanServer.get().invoke(names[0], "getWsdl", new Object[0], new String[0])), CoreMatchers.containsString("<soap:address location=\"http://127.0.0.1:4204/app/AnEjbEndpoint\"/>"));
-        assertThat(String.class.cast(LocalMBeanServer.get().invoke(names[1], "getWsdl", new Object[0], new String[0])), CoreMatchers.containsString("<soap:address location=\"http://127.0.0.1:4204/app/AnPojoEndpointService\"/>"));
+        assertThat(String.class.cast(LocalMBeanServer.get().invoke(names[0], "getWsdl", new Object[0], new String[0])), CoreMatchers.containsString("<soap:address location=\"http://127.0.0.1:" + port + "/app/AnEjbEndpoint\"/>"));
+        assertThat(String.class.cast(LocalMBeanServer.get().invoke(names[1], "getWsdl", new Object[0], new String[0])), CoreMatchers.containsString("<soap:address location=\"http://127.0.0.1:" + port + "/app/AnPojoEndpointService\"/>"));
     }
 
     @AfterClass
