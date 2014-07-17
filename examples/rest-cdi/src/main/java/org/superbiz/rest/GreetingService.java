@@ -23,6 +23,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.xml.bind.annotation.XmlRootElement;
 
 @Path("/greeting")
 @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -33,12 +34,33 @@ public class GreetingService {
     Greeting greeting;
 
     @GET
-    public Response message() {
-        return new Response("Hi REST!");
+    public Greet message() {
+        return new Greet("Hi REST!");
     }
 
     @POST
-    public Response lowerCase(final Request message) {
-        return new Response(greeting.doSomething(message.getValue()));
+    public Greet lowerCase(final Request message) {
+        return new Greet(greeting.doSomething(message.getValue()));
+    }
+
+    @XmlRootElement // for xml only, useless for json (fleece is the default)
+    public static class Greet {
+        private String message;
+
+        public Greet(final String message) {
+            this.message = message;
+        }
+
+        public Greet() {
+            this(null);
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(final String message) {
+            this.message = message;
+        }
     }
 }

@@ -17,6 +17,7 @@
 package org.superbiz.rest;
 
 import org.apache.cxf.jaxrs.client.WebClient;
+import org.apache.fleece.jaxrs.FleeceProvider;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Classes;
@@ -28,6 +29,7 @@ import org.junit.runner.RunWith;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 
 @EnableServices(value = "jaxrs", httpDebug = true)
@@ -35,7 +37,7 @@ import static org.junit.Assert.assertEquals;
 public class GreetingServiceTest {
 
     @Module
-    @Classes(value = {GreetingService.class, Greeting.class}, cdi = true) //This enables the CDI magic
+    @Classes(value = {GreetingService.class, Greeting.class}, cdi = true) // This enables the CDI magic
     public WebApp app() {
         return new WebApp().contextRoot("test");
     }
@@ -44,7 +46,7 @@ public class GreetingServiceTest {
     public void getXml() throws IOException {
         final String message = WebClient.create("http://localhost:4204").path("/test/greeting/")
                 .accept(MediaType.APPLICATION_XML_TYPE)
-                .get(Response.class).getValue();
+                .get(GreetingService.Greet.class).getMessage();
         assertEquals("Hi REST!", message);
     }
 
@@ -52,23 +54,23 @@ public class GreetingServiceTest {
     public void postXml() throws IOException {
         final String message = WebClient.create("http://localhost:4204").path("/test/greeting/")
                 .accept(MediaType.APPLICATION_XML_TYPE)
-                .post(new Request("Hi REST!"), Response.class).getValue();
+                .post(new Request("Hi REST!"), GreetingService.Greet.class).getMessage();
         assertEquals("hi rest!", message);
     }
 
     @Test
     public void getJson() throws IOException {
-        final String message = WebClient.create("http://localhost:4204").path("/test/greeting/")
+        final String message = WebClient.create("http://localhost:4204", asList(new FleeceProvider<GreetingService.Greet>())).path("/test/greeting/")
                 .accept(MediaType.APPLICATION_JSON_TYPE)
-                .get(Response.class).getValue();
+                .get(GreetingService.Greet.class).getMessage();
         assertEquals("Hi REST!", message);
     }
 
     @Test
     public void postJson() throws IOException {
-        final String message = WebClient.create("http://localhost:4204").path("/test/greeting/")
+        final String message = WebClient.create("http://localhost:4204", asList(new FleeceProvider<GreetingService.Greet>())).path("/test/greeting/")
                 .accept(MediaType.APPLICATION_JSON_TYPE)
-                .post(new Request("Hi REST!"), Response.class).getValue();
+                .post(new Request("Hi REST!"), GreetingService.Greet.class).getMessage();
         assertEquals("hi rest!", message);
     }
 }
