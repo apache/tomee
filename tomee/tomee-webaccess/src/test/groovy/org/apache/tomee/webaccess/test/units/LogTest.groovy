@@ -59,7 +59,7 @@ class LogTest {
     @Test
     void test() throws Exception {
         Utilities.withClient(deploymentURL, { CloseableHttpClient client ->
-            Assert.assertEquals('{"listFilesResultDto":{"files":["catalina.2014-02-07.log","localhost_access_log.2014-02-07.txt"]}}',
+            Assert.assertEquals('{"files":["catalina.2014-02-07.log","localhost_access_log.2014-02-07.txt"]}',
                     Utilities.getBody(client.execute(new HttpGet("${deploymentURL.toURI()}rest/log/list-files")))
             )
             Utilities.getBody(client.execute(new HttpGet("${deploymentURL.toURI()}rest/keep-alive")))
