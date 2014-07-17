@@ -23,6 +23,9 @@ import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.Module;
+import org.apache.openejb.testng.PropertiesBuilder;
+import org.apache.openejb.util.NetworkUtil;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -41,6 +44,22 @@ import static org.junit.Assert.assertEquals;
 
 @RunWith(ApplicationComposer.class)
 public class RsInjectionTest {
+
+    private static int port = -1;
+
+    @BeforeClass
+    public static void beforeClass() {
+        port = NetworkUtil.getNextAvailablePort();
+    }
+
+    @Configuration
+    public Properties props() {
+        return new PropertiesBuilder()
+            .p("httpejbd.port", Integer.toString(port))
+            .p(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true")
+            .build();
+    }
+
     @Module
     public static SingletonBean service() throws Exception {
         final SingletonBean bean = new SingletonBean(RsInjection.class);
@@ -48,16 +67,9 @@ public class RsInjectionTest {
         return bean;
     }
 
-    @Configuration
-    public static Properties configuration() throws Exception {
-        final Properties properties = new Properties();
-        properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
-        return properties;
-    }
-
     @Test
     public void rest() throws IOException {
-        final String response = IO.slurp(new URL("http://127.0.0.1:4204/RsInjectionTest/injections/check"));
+        final String response = IO.slurp(new URL("http://127.0.0.1:" + port + "/RsInjectionTest/injections/check"));
         assertEquals("true", response);
     }
 

@@ -18,10 +18,13 @@ package org.apache.openejb.server.httpd;
 
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.junit.Classes;
-import org.apache.openejb.junit.EnableServices;
-import org.apache.openejb.junit.Module;
 import org.apache.openejb.loader.IO;
+import org.apache.openejb.testing.Configuration;
+import org.apache.openejb.testing.EnableServices;
+import org.apache.openejb.testing.Module;
+import org.apache.openejb.testng.PropertiesBuilder;
+import org.apache.openejb.util.NetworkUtil;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -38,6 +41,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -45,6 +49,19 @@ import static org.junit.Assert.assertTrue;
 @EnableServices({"httpejbd"})
 @RunWith(ApplicationComposer.class)
 public class FilterRegistrationTest {
+
+    private static int port = -1;
+
+    @BeforeClass
+    public static void beforeClass() {
+        port = NetworkUtil.getNextAvailablePort();
+    }
+
+    @Configuration
+    public Properties props() {
+        return new PropertiesBuilder().p("httpejbd.port", Integer.toString(port)).build();
+    }
+
     @Module
     public WebApp app() {
         return new WebApp()
@@ -56,7 +73,7 @@ public class FilterRegistrationTest {
 
     @Test
     public void touch() throws IOException {
-        assertEquals("/filter/touch", IO.slurp(new URL("http://localhost:4204/filter/touch")));
+        assertEquals("/filter/touch", IO.slurp(new URL("http://localhost:" + port + "/filter/touch")));
         assertTrue(TestFilter.init);
         assertTrue(TestFilter.ok);
         assertTrue(TestFilter2.ok);

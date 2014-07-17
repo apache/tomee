@@ -20,8 +20,11 @@ import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.testing.Classes;
+import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.Module;
+import org.apache.openejb.testng.PropertiesBuilder;
+import org.apache.openejb.util.NetworkUtil;
 import org.hamcrest.CoreMatchers;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -32,6 +35,7 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import java.util.Properties;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -41,6 +45,19 @@ import static org.junit.Assert.assertTrue;
 @RunWith(ApplicationComposer.class)
 public class RsJMXTest {
     private static ObjectName name;
+    private static int port = -1;
+
+    @BeforeClass
+    public static void beforeClass() {
+        port = NetworkUtil.getNextAvailablePort();
+    }
+
+    @Configuration
+    public Properties props() {
+        return new PropertiesBuilder()
+            .p("httpejbd.port", Integer.toString(port))
+            .build();
+    }
 
     @Module
     @Classes(AnEndpoint.class)
@@ -50,7 +67,7 @@ public class RsJMXTest {
 
     @BeforeClass
     public static void before() throws MalformedObjectNameException {
-        name = new ObjectName("openejb.management:j2eeType=JAX-RS,J2EEServer=openejb,J2EEApplication=http_//127.0.0.1_4204/app,EndpointType=Pojo,name=org.apache.openejb.server.cxf.rs.RsJMXTest$AnEndpoint");
+        name = new ObjectName("openejb.management:j2eeType=JAX-RS,J2EEServer=openejb,J2EEApplication=http_//127.0.0.1_" + port + "/app,EndpointType=Pojo,name=org.apache.openejb.server.cxf.rs.RsJMXTest$AnEndpoint");
     }
 
     @Test
@@ -58,7 +75,7 @@ public class RsJMXTest {
         assertTrue(LocalMBeanServer.get().isRegistered(name));
 
         final String wadlXml = String.class.cast(LocalMBeanServer.get().invoke(name, "getWadl", new Object[]{null}, new String[0]));
-        assertThat(wadlXml, wadlXml, CoreMatchers.containsString("<resources base=\"http://127.0.0.1:4204/app/"));
+        assertThat(wadlXml, wadlXml, CoreMatchers.containsString("<resources base=\"http://127.0.0.1:" + port + "/app/"));
 
         /* need a fix from cxf which will be shipped soon so deactivating it ATM
         final String wadlJson = String.class.cast(LocalMBeanServer.get().invoke(name, "getWadl", new Object[]{"json"}, new String[0]));
