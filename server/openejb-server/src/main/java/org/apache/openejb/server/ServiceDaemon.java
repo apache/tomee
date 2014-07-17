@@ -29,6 +29,7 @@ import javax.net.ssl.SSLServerSocketFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.BindException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
@@ -149,7 +150,15 @@ public class ServiceDaemon implements ServerService {
                 } else {
                     serverSocket = new ServerSocket();
                     serverSocket.setReuseAddress(true);
-                    serverSocket.bind(new InetSocketAddress(this.inetAddress, this.port), this.backlog);
+
+                    try {
+                        serverSocket.bind(new InetSocketAddress(this.inetAddress, this.port), this.backlog);
+
+                    } catch (final BindException e) {
+                        //One retry - Port may be closing
+                        Thread.sleep(1000);
+                        serverSocket.bind(new InetSocketAddress(this.inetAddress, this.port), this.backlog);
+                    }
                 }
 
                 serverSocket.setSoTimeout(this.timeout);

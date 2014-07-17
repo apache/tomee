@@ -19,14 +19,19 @@ package org.apache.openejb.server.hessian;
 import com.caucho.hessian.client.HessianProxyFactory;
 import com.caucho.hessian.io.SerializerFactory;
 import org.apache.openejb.junit.ApplicationComposer;
+import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.Module;
+import org.apache.openejb.testng.PropertiesBuilder;
+import org.apache.openejb.util.NetworkUtil;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.ejb.Remote;
 import javax.ejb.Singleton;
 import java.net.MalformedURLException;
+import java.util.Properties;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertEquals;
@@ -35,6 +40,19 @@ import static org.junit.Assert.assertThat;
 @EnableServices({"hessian", "httpejbd"})
 @RunWith(ApplicationComposer.class)
 public class HessianServiceTest {
+
+    private static int port = -1;
+
+    @BeforeClass
+    public static void beforeClass() {
+        port = NetworkUtil.getNextAvailablePort();
+    }
+
+    @Configuration
+    public Properties props() {
+        return new PropertiesBuilder().p("httpejbd.port", Integer.toString(port)).build();
+    }
+
     @Module
     public Class<?>[] classes() {
         return new Class<?>[]{MyHessianWebService.class};
@@ -47,7 +65,7 @@ public class HessianServiceTest {
         final SerializerFactory factory = new SerializerFactory(loader);
         factory.setAllowNonSerializable(true);
         clientFactory.setSerializerFactory(factory);
-        final HessianWebService client = HessianWebService.class.cast(clientFactory.create(HessianWebService.class, "http://127.0.0.1:4204/HessianServiceTest/hessian/" + MyHessianWebService.class.getSimpleName()));
+        final HessianWebService client = HessianWebService.class.cast(clientFactory.create(HessianWebService.class, "http://127.0.0.1:" + port + "/HessianServiceTest/hessian/" + MyHessianWebService.class.getSimpleName()));
 
         final Out out = client.call(new In("test"));
         assertThat(out, instanceOf(Out.class));

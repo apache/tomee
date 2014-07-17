@@ -63,7 +63,7 @@ public class CxfContainerClassLoader extends ClassLoader {
     @Override
     protected Class<?> findClass(final String name) throws ClassNotFoundException {
         if (name.startsWith(CXF_PACKAGE)) {
-            final Throwable th;
+            Throwable th = new ClassNotFoundException(name);
             try {
                 return CONTAINER_LOADER.loadClass(name);
             } catch (final Exception e) {

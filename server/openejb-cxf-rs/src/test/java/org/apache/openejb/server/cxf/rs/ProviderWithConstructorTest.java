@@ -17,11 +17,16 @@
 package org.apache.openejb.server.cxf.rs;
 
 import org.apache.cxf.jaxrs.client.WebClient;
+import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Classes;
+import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.Module;
+import org.apache.openejb.testng.PropertiesBuilder;
+import org.apache.openejb.util.NetworkUtil;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -40,6 +45,7 @@ import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
@@ -47,6 +53,22 @@ import static org.junit.Assert.assertEquals;
 @EnableServices("jax-rs")
 @RunWith(ApplicationComposer.class)
 public class ProviderWithConstructorTest {
+
+    private static int port = -1;
+
+    @BeforeClass
+    public static void beforeClass() {
+        port = NetworkUtil.getNextAvailablePort();
+    }
+
+    @Configuration
+    public Properties props() {
+        return new PropertiesBuilder()
+            .p("httpejbd.port", Integer.toString(port))
+            .p(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true")
+            .build();
+    }
+
     @Module
     @Classes(value = {AnEndpointToCheckAProvider.class})
     public WebApp war() {
@@ -58,7 +80,7 @@ public class ProviderWithConstructorTest {
 
     @Test
     public void checkServiceWasDeployed() {
-        assertEquals("/app", WebClient.create("http://localhost:4204/app").path("/foo").accept("openejb/constructor").get(String.class));
+        assertEquals("/app", WebClient.create("http://localhost:" + port + "/app").path("/foo").accept("openejb/constructor").get(String.class));
     }
 
     @Path("/foo")

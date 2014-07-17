@@ -25,6 +25,8 @@ import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.Module;
 import org.apache.openejb.testng.PropertiesBuilder;
+import org.apache.openejb.util.NetworkUtil;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -39,6 +41,14 @@ import static org.junit.Assert.assertThat;
 @EnableServices({"hessian", "httpejbd"})
 @RunWith(ApplicationComposer.class)
 public class HessianCdiByConfigTest {
+
+    private static int port = -1;
+
+    @BeforeClass
+    public static void beforeClass() {
+        port = NetworkUtil.getNextAvailablePort();
+    }
+
     @Module
     @Classes(cdi = true, value = MyCdiHessianService.class)
     public WebApp webApp() {
@@ -47,7 +57,8 @@ public class HessianCdiByConfigTest {
 
     @Configuration
     public Properties config() {
-        return new PropertiesBuilder().p("openejb.hessian." + MyCdiHessianService.class.getName() + "_" + CdiService.class.getName() + ".path", "foo").build();
+        return new PropertiesBuilder().p("openejb.hessian." + MyCdiHessianService.class.getName() + "_" + CdiService.class.getName() + ".path", "foo")
+            .p("httpejbd.port", Integer.toString(port)).build();
     }
 
     @Test
@@ -57,7 +68,7 @@ public class HessianCdiByConfigTest {
         final SerializerFactory factory = new SerializerFactory(loader);
         factory.setAllowNonSerializable(true);
         clientFactory.setSerializerFactory(factory);
-        final CdiService client = CdiService.class.cast(clientFactory.create(CdiService.class, "http://127.0.0.1:4204/web/hessian/foo"));
+        final CdiService client = CdiService.class.cast(clientFactory.create(CdiService.class, "http://127.0.0.1:" + port + "/web/hessian/foo"));
 
         final Out out = client.call(new In("test"));
         assertThat(out, instanceOf(Out.class));

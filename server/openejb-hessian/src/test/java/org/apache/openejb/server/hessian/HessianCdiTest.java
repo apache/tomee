@@ -22,15 +22,19 @@ import org.apache.openejb.cdi.api.Hessian;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Classes;
+import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.Module;
+import org.apache.openejb.testng.PropertiesBuilder;
+import org.apache.openejb.util.NetworkUtil;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.beans.Beans;
 import java.net.MalformedURLException;
+import java.util.Properties;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertEquals;
@@ -40,6 +44,19 @@ import static org.junit.Assert.assertThat;
 @EnableServices({"hessian", "httpejbd"})
 @RunWith(ApplicationComposer.class)
 public class HessianCdiTest {
+
+    private static int port = -1;
+
+    @BeforeClass
+    public static void beforeClass() {
+        port = NetworkUtil.getNextAvailablePort();
+    }
+
+    @Configuration
+    public Properties props() {
+        return new PropertiesBuilder().p("httpejbd.port", Integer.toString(port)).build();
+    }
+
     @Module
     @Classes(cdi = true, value = {MyCdiHessianService.class, CdiBean.class})
     public WebApp webApp() {
@@ -53,7 +70,7 @@ public class HessianCdiTest {
         final SerializerFactory factory = new SerializerFactory(loader);
         factory.setAllowNonSerializable(true);
         clientFactory.setSerializerFactory(factory);
-        final CdiService client = CdiService.class.cast(clientFactory.create(CdiService.class, "http://127.0.0.1:4204/web/hessian/service"));
+        final CdiService client = CdiService.class.cast(clientFactory.create(CdiService.class, "http://127.0.0.1:" + port + "/web/hessian/service"));
 
         final Out out = client.call(new In("test"));
         assertThat(out, instanceOf(Out.class));
