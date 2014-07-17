@@ -20,6 +20,7 @@ import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.config.DeploymentFilterable;
 import org.apache.openejb.config.DeploymentLoader;
+import org.apache.openejb.util.NetworkUtil;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -43,13 +44,16 @@ import static org.junit.Assert.assertEquals;
 
 public class CustomProviderWithConfigTest {
     private static EJBContainer container;
+    private static int port = -1;
 
     @BeforeClass
     public static void start() throws Exception {
+        port = NetworkUtil.getNextAvailablePort();
         final Properties properties = new Properties();
         properties.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*openejb-cxf-rs.*");
         properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
         properties.setProperty(DeploymentLoader.OPENEJB_ALTDD_PREFIX, "custom-config");
+        properties.setProperty("httpejbd.port", Integer.toString(port));
         // cxf.jaxrs.properties = faultStackTraceEnabled=true
         container = EJBContainer.createEJBContainer(properties);
     }
@@ -63,7 +67,7 @@ public class CustomProviderWithConfigTest {
 
     @Test
     public void config() {
-        final String response = WebClient.create("http://localhost:4204/openejb-cxf-rs").accept("openejb/conf")
+        final String response = WebClient.create("http://localhost:" + port + "/openejb-cxf-rs").accept("openejb/conf")
             .path("/customized/").get(String.class);
         assertEquals("done!", response);
     }

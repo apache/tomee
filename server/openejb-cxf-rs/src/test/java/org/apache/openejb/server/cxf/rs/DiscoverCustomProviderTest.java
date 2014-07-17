@@ -21,6 +21,7 @@ import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.config.DeploymentFilterable;
 import org.apache.openejb.server.rest.RESTService;
+import org.apache.openejb.util.NetworkUtil;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -44,10 +45,13 @@ import static org.junit.Assert.assertEquals;
 
 public class DiscoverCustomProviderTest {
     private static EJBContainer container;
+    private static int port = -1;
 
     @BeforeClass
     public static void start() throws Exception {
+        port = NetworkUtil.getNextAvailablePort();
         final Properties properties = new Properties();
+        properties.setProperty("httpejbd.port", Integer.toString(port));
         properties.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*openejb-cxf-rs.*");
         properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
         properties.setProperty(RESTService.OPENEJB_JAXRS_PROVIDERS_AUTO_PROP, "true");
@@ -64,7 +68,7 @@ public class DiscoverCustomProviderTest {
 
     @Test
     public void customProvider() {
-        final String response = WebClient.create("http://localhost:4204/openejb-cxf-rs")
+        final String response = WebClient.create("http://localhost:" + port + "/openejb-cxf-rs")
             .accept("discover/reverse")
             .path("the/service").get(String.class);
         assertEquals("it rocks", response);

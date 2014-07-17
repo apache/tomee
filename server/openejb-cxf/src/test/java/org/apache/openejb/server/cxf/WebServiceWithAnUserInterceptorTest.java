@@ -19,6 +19,7 @@ package org.apache.openejb.server.cxf;
 
 import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.config.DeploymentFilterable;
+import org.apache.openejb.util.NetworkUtil;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -39,13 +40,15 @@ import static org.junit.Assert.assertNotNull;
 
 public class WebServiceWithAnUserInterceptorTest {
     private static EJBContainer container;
+    private static int port = -1;
 
     @BeforeClass
     public static void start() {
+        port = NetworkUtil.getNextAvailablePort();
         final Properties properties = new Properties();
         properties.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*openejb-cxf.*");
         properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
-
+        properties.setProperty("httpejbd.port", Integer.toString(port));
         container = EJBContainer.createEJBContainer(properties);
     }
 
@@ -57,7 +60,7 @@ public class WebServiceWithAnUserInterceptorTest {
     @Test
     public void test() throws Exception {
         final Foo foo = Service.create(
-            new URL("http://localhost:4204/openejb-cxf/FooImpl?wsdl"),
+            new URL("http://localhost:" + port + "/openejb-cxf/FooImpl?wsdl"),
             new QName("http://cxf.server.openejb.apache.org/", "FooImplService"))
             .getPort(Foo.class);
         assertNotNull(foo);

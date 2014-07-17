@@ -21,6 +21,7 @@ import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.config.DeploymentFilterable;
 import org.apache.openejb.config.DeploymentLoader;
+import org.apache.openejb.util.NetworkUtil;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -44,13 +45,17 @@ import static org.junit.Assert.assertEquals;
 
 public class CustomProviderTest {
     private static EJBContainer container;
+    private static int port = -1;
 
     @BeforeClass
     public static void start() throws Exception {
+        port = NetworkUtil.getNextAvailablePort();
         final Properties properties = new Properties();
+        properties.setProperty("httpejbd.port", Integer.toString(port));
         properties.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*openejb-cxf-rs.*");
         properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
         properties.setProperty(DeploymentLoader.OPENEJB_ALTDD_PREFIX, "custom");
+
         container = EJBContainer.createEJBContainer(properties);
     }
 
@@ -63,14 +68,14 @@ public class CustomProviderTest {
 
     @Test
     public void customProvider() {
-        final String response = WebClient.create("http://localhost:4204/openejb-cxf-rs").accept("openejb/reverse")
+        final String response = WebClient.create("http://localhost:" + port + "/openejb-cxf-rs").accept("openejb/reverse")
             .path("/custom1/reverse").get(String.class);
         assertEquals("provider", response);
     }
 
     @Test
     public void customSpecificProvider() {
-        final String response = WebClient.create("http://localhost:4204/openejb-cxf-rs").accept("openejb/constant")
+        final String response = WebClient.create("http://localhost:" + port + "/openejb-cxf-rs").accept("openejb/constant")
             .path("/custom2/constant").get(String.class);
         assertEquals("it works!", response);
     }
