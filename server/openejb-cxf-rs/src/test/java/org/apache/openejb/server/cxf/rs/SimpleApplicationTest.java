@@ -18,19 +18,35 @@ package org.apache.openejb.server.cxf.rs;
 
 import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
 import org.apache.cxf.jaxrs.client.WebClient;
+import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.server.cxf.rs.beans.*;
+import org.apache.openejb.server.cxf.rs.beans.HookedRest;
+import org.apache.openejb.server.cxf.rs.beans.MyExpertRestClass;
+import org.apache.openejb.server.cxf.rs.beans.MyFirstRestClass;
+import org.apache.openejb.server.cxf.rs.beans.MyRESTApplication;
+import org.apache.openejb.server.cxf.rs.beans.MySecondRestClass;
+import org.apache.openejb.server.cxf.rs.beans.RestWithInjections;
+import org.apache.openejb.server.cxf.rs.beans.SimpleEJB;
 import org.apache.openejb.testing.Classes;
+import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.Module;
+import org.apache.openejb.testng.PropertiesBuilder;
+import org.apache.openejb.util.NetworkUtil;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
+import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -38,7 +54,23 @@ import static org.junit.Assert.assertTrue;
 @EnableServices("jax-rs")
 @RunWith(ApplicationComposer.class)
 public class SimpleApplicationTest {
-    public static final String BASE_URL = "http://localhost:4204/foo/my-app";
+
+    private static int port = -1;
+    public static String BASE_URL = "undefined";
+
+    @BeforeClass
+    public static void beforeClass() {
+        port = NetworkUtil.getNextAvailablePort();
+        BASE_URL = "http://localhost:" + port + "/foo/my-app/";
+    }
+
+    @Configuration
+    public Properties props() {
+        return new PropertiesBuilder()
+            .p("httpejbd.port", Integer.toString(port))
+            .p(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true")
+            .build();
+    }
 
     @Module
     @Classes(cdi = true, value = {MySecondRestClass.class, HookedRest.class, RestWithInjections.class, SimpleEJB.class, MyExpertRestClass.class, MyFirstRestClass.class})
