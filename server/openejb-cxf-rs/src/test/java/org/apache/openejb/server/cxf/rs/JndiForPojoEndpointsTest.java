@@ -17,11 +17,16 @@
 package org.apache.openejb.server.cxf.rs;
 
 import org.apache.cxf.jaxrs.client.WebClient;
+import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Classes;
+import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.Module;
+import org.apache.openejb.testng.PropertiesBuilder;
+import org.apache.openejb.util.NetworkUtil;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -31,12 +36,29 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Application;
+import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 
 @EnableServices("jax-rs")
 @RunWith(ApplicationComposer.class)
 public class JndiForPojoEndpointsTest {
+
+    private static int port = -1;
+
+    @BeforeClass
+    public static void beforeClass() {
+        port = NetworkUtil.getNextAvailablePort();
+    }
+
+    @Configuration
+    public Properties props() {
+        return new PropertiesBuilder()
+            .p("httpejbd.port", Integer.toString(port))
+            .p(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true")
+            .build();
+    }
+
     @Module
     @Classes(cdi = true, value = {JndiEndpoint.class})
     public WebApp war() {
@@ -47,7 +69,7 @@ public class JndiForPojoEndpointsTest {
 
     @Test
     public void injectionWorked() {
-        assertEquals("1", WebClient.create("http://localhost:4204/foo/").path("/api/jndi").get(String.class));
+        assertEquals("1", WebClient.create("http://localhost:" + port + "/foo/").path("/api/jndi").get(String.class));
     }
 
     @Path("jndi")

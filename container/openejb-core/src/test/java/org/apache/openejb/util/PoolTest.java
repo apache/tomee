@@ -33,6 +33,7 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 /**
  * @version $Rev$ $Date$
  */
+@SuppressWarnings({"unchecked", "StatementWithEmptyBody"})
 public class PoolTest extends TestCase {
 
     private Pool pool;
@@ -1300,7 +1301,7 @@ public class PoolTest extends TestCase {
         //  -- DONE --
     }
 
-    private void await(final CountDownLatch latch, final int timeout, final TimeUnit seconds) throws InterruptedException {
+    private static void await(final CountDownLatch latch, final int timeout, final TimeUnit seconds) throws InterruptedException {
         if (!latch.await(timeout, seconds)) {
 //            String path = "<dump-failed>";
 //            try {
@@ -1313,21 +1314,21 @@ public class PoolTest extends TestCase {
         }
     }
 
-    private <T> void checkMax(final int max, final List<Pool<T>.Entry> entries) {
+    private static <T> void checkMax(final int max, final List<Pool<T>.Entry> entries) {
         assertEquals(max, entries.size());
     }
 
-    private <T> void checkMin(final int min, final List<Pool<T>.Entry> entries) {
+    private static <T> void checkMin(final int min, final List<Pool<T>.Entry> entries) {
         assertEquals(min, getMin(entries).size());
     }
 
-    private <T> void checkNull(final List<Pool<T>.Entry> entries) {
+    private static <T> void checkNull(final List<Pool<T>.Entry> entries) {
         for (final Pool<T>.Entry entry : entries) {
             assertNull(entry);
         }
     }
 
-    private <T> List<Pool<T>.Entry> getMin(final List<Pool<T>.Entry> entries) {
+    private static <T> List<Pool<T>.Entry> getMin(final List<Pool<T>.Entry> entries) {
         final List<Pool<T>.Entry> list = new ArrayList<Pool<T>.Entry>();
 
         for (final Pool<T>.Entry entry : entries) {
@@ -1336,7 +1337,7 @@ public class PoolTest extends TestCase {
         return list;
     }
 
-    private <T> void checkEntries(final int expected, final List<Pool<T>.Entry> entries) {
+    private static <T> void checkEntries(final int expected, final List<Pool<T>.Entry> entries) {
         int found = 0;
         for (final Pool<T>.Entry entry : entries) {
             if (entry == null) continue;
@@ -1347,11 +1348,11 @@ public class PoolTest extends TestCase {
         assertEquals(expected, found);
     }
 
-    private <T> List<Pool<T>.Entry> drain(final Pool<T> pool) throws InterruptedException {
+    private static <T> List<Pool<T>.Entry> drain(final Pool<T> pool) throws InterruptedException {
         return drain(pool, 0);
     }
 
-    private <T> List<Pool<T>.Entry> drain(final Pool<T> pool, final int timeout) throws InterruptedException {
+    private static <T> List<Pool<T>.Entry> drain(final Pool<T> pool, final int timeout) throws InterruptedException {
         final List<Pool<T>.Entry> entries = new ArrayList<Pool<T>.Entry>();
         try {
             while (true) {
@@ -1363,7 +1364,7 @@ public class PoolTest extends TestCase {
         return entries;
     }
 
-    public static class Bean {
+    public static final class Bean {
 
         public static AtomicInteger instances = new AtomicInteger();
 

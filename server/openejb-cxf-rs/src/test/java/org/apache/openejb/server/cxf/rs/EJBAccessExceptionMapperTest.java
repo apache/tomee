@@ -20,6 +20,7 @@ import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.config.DeploymentFilterable;
 import org.apache.openejb.server.cxf.rs.beans.SimpleEJB;
+import org.apache.openejb.util.NetworkUtil;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -44,10 +45,13 @@ import static org.junit.Assert.assertEquals;
 public class EJBAccessExceptionMapperTest {
     private static EJBContainer container;
     private static RESTIsCoolOne service;
+    private static int port = -1;
 
     @BeforeClass
     public static void start() throws Exception {
+        port = NetworkUtil.getNextAvailablePort();
         final Properties properties = new Properties();
+        properties.setProperty("httpejbd.port", Integer.toString(port));
         properties.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*openejb-cxf-rs.*");
         properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
         container = EJBContainer.createEJBContainer(properties);
@@ -64,7 +68,7 @@ public class EJBAccessExceptionMapperTest {
 
     @Test
     public void rest() {
-        final Response response = WebClient.create("http://localhost:4204/openejb-cxf-rs").path("/ejbsecu/rest").get();
+        final Response response = WebClient.create("http://localhost:" + port + "/openejb-cxf-rs").path("/ejbsecu/rest").get();
         assertEquals(403, response.getStatus());
     }
 
