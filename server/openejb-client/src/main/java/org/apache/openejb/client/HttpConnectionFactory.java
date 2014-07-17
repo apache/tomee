@@ -17,7 +17,7 @@
  */
 package org.apache.openejb.client;
 
-import javax.net.ssl.*;
+import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -60,7 +60,7 @@ public class HttpConnectionFactory implements ConnectionFactory {
             httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setDoOutput(true);
 
-            int timeout;
+            final int timeout;
             if (params.containsKey("connectTimeout")) {
                 timeout = Integer.parseInt(params.get("connectTimeout"));
             } else {
@@ -70,12 +70,8 @@ public class HttpConnectionFactory implements ConnectionFactory {
             httpURLConnection.setConnectTimeout(timeout);
 
             if (params.containsKey("readTimeout")) {
-                timeout = Integer.parseInt(params.get("readTimeout"));
-            } else {
-                timeout = 10000;
+                httpURLConnection.setReadTimeout(Integer.parseInt(params.get("readTimeout")));
             }
-
-            httpURLConnection.setReadTimeout(timeout);
 
             if (params.containsKey("sslKeyStore") || params.containsKey("sslTrustStore")) {
                 try {
