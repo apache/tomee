@@ -18,10 +18,16 @@ package org.apache.openejb.server;
 
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.junit.ApplicationComposer;
+import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.Module;
+import org.apache.openejb.testng.PropertiesBuilder;
+import org.apache.openejb.util.NetworkUtil;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 
@@ -33,6 +39,18 @@ import static org.junit.Assert.assertEquals;
 @EnableServices
 @RunWith(ApplicationComposer.class)
 public class FilteredServiceManagerDefaultsTest {
+
+    private static int port = -1;
+
+    @BeforeClass
+    public static void beforeClass() {
+        port = NetworkUtil.getNextAvailablePort();
+    }
+
+    @Configuration
+    public Properties props() {
+        return new PropertiesBuilder().p("httpejbd.port", Integer.toString(port)).build();
+    }
 
     @Module
     public EjbJar jar() {

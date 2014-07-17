@@ -17,6 +17,7 @@
 package org.apache.openejb.server.discovery;
 
 import org.apache.openejb.server.DiscoveryListener;
+import org.apache.openejb.util.NetworkUtil;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -56,7 +57,7 @@ public class MulticastPulseAgentTest {
     private static final Charset utf8 = Charset.forName("UTF-8");
     private static final String forGroup = "*";
     private static final String host = "239.255.3.2";
-    private static final int port = 6142;
+    private static final int port = NetworkUtil.getNextAvailablePort();
     private static MulticastPulseAgent agent;
 
     @BeforeClass
