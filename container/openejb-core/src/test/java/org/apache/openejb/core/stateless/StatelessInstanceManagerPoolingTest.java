@@ -25,7 +25,7 @@ import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.core.ivm.naming.InitContextFactory;
+import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
 
@@ -94,7 +94,7 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
 
     public void testStatelessBeanRelease() throws Exception {
 
-        final int count = 30;
+        final int count = 50;
         final CountDownLatch invocations = new CountDownLatch(count);
         final InitialContext ctx = new InitialContext();
         final Runnable counterBeanLocal = new Runnable() {
@@ -119,10 +119,18 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
         // 'count' instances should be created and discarded.
         for (int i = 0; i < count; i++) {
             final Thread thread = new Thread(counterBeanLocal);
+            thread.setDaemon(false);
+            thread.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+                @Override
+                public void uncaughtException(final Thread t, final Throwable e) {
+                    System.out.println("e = " + e);
+                }
+            });
             thread.start();
+            thread.join();
         }
 
-        final boolean success = invocations.await(30, TimeUnit.SECONDS);
+        final boolean success = invocations.await(60, TimeUnit.SECONDS);
 
         assertTrue("invocations timeout -> invocations.getCount() == " + invocations.getCount(), success);
 
@@ -190,7 +198,7 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
+        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
 
         final ConfigurationFactory config = new ConfigurationFactory();
         final Assembler assembler = new Assembler();
