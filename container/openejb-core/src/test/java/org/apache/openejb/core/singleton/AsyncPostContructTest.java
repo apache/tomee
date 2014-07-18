@@ -34,6 +34,8 @@ import javax.ejb.SessionContext;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
@@ -71,27 +73,27 @@ public class AsyncPostContructTest {
         private SessionContext sc;
 
         private Future<Boolean> future;
-        private long startEnd;
-        private long asyncStart;
-        private Object startInstance;
-        private Object asyncInstance;
+        private final AtomicLong startEnd = new AtomicLong();
+        private final AtomicLong asyncStart = new AtomicLong();
+        private final AtomicReference<Object> startInstance = new AtomicReference<Object>();
+        private final AtomicReference<Object> asyncInstance = new AtomicReference<Object>();
 
         @PostConstruct
         public void start() {
-            startInstance = this;
+            startInstance.set(this);
             future = sc.getBusinessObject(BuildMeAsync.class).async();
             try {
                 Thread.sleep(100);
             } catch (final InterruptedException e) {
                 // no-op
             }
-            startEnd = System.nanoTime();
+            startEnd.set(System.nanoTime());
         }
 
         @Asynchronous
         public Future<Boolean> async() {
-            asyncStart = System.nanoTime();
-            asyncInstance = this;
+            asyncStart.set(System.nanoTime());
+            asyncInstance.set(this);
             return new AsyncResult<Boolean>(true);
         }
 
@@ -104,19 +106,19 @@ public class AsyncPostContructTest {
         }
 
         public long getStartEnd() {
-            return startEnd;
+            return startEnd.get();
         }
 
         public long getAsyncStart() {
-            return asyncStart;
+            return asyncStart.get();
         }
 
         public Object getStartInstance() {
-            return startInstance;
+            return startInstance.get();
         }
 
         public Object getAsyncInstance() {
-            return asyncInstance;
+            return asyncInstance.get();
         }
     }
 }
