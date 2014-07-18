@@ -43,35 +43,32 @@ public class GreetingServiceTest {
     @Test
     public void getXml() throws IOException {
         final String message = WebClient.create("http://localhost:4204").path("/test/greeting/")
-                .accept(MediaType.APPLICATION_XML_TYPE)
-                .get(String.class);
-        assertEquals("<response><value>Hi REST!</value></response>", message);
+                                        .accept(MediaType.APPLICATION_XML_TYPE)
+                                        .get(Response.class).getValue();
+        assertEquals("Hi REST!", message);
     }
 
     @Test
     public void postXml() throws IOException {
-        final String message = WebClient.create("http://localhost:4204")
-                .path("/test/greeting/")
-                .accept(MediaType.APPLICATION_XML_TYPE)
-                .post("<request><value>Hi REST!</value></request>", String.class);
-        assertEquals("<response><value>hi rest!</value></response>", message);
+        final String message = WebClient.create("http://localhost:4204").path("/test/greeting/")
+                                        .accept(MediaType.APPLICATION_XML_TYPE)
+                                        .post(new Request("Hi REST!"), Response.class).getValue();
+        assertEquals("hi rest!", message);
     }
 
     @Test
     public void getJson() throws IOException {
-        final String message = WebClient.create("http://localhost:4204")
-                .path("/test/greeting/")
-                .accept(MediaType.APPLICATION_JSON_TYPE)
-                .get(String.class);
-        assertEquals("{\"value\":\"Hi REST!\"}", message);
+        final String message = WebClient.create("http://localhost:4204").path("/test/greeting/")
+                                        .accept(MediaType.APPLICATION_JSON_TYPE)
+                                        .get(Response.class).getValue();
+        assertEquals("Hi REST!", message);
     }
 
     @Test
     public void postJson() throws IOException {
-        final String message = WebClient.create("http://localhost:4204")
-                .path("/test/greeting/")
-                .accept(MediaType.APPLICATION_JSON_TYPE)
-                .post(new Request("Hi REST!"), String.class);
-        assertEquals("{\"value\":\"hi rest!\"}", message);
+        final String message = WebClient.create("http://localhost:4204").path("/test/greeting/")
+                                        .accept(MediaType.APPLICATION_JSON_TYPE)
+                                        .post(new Request("Hi REST!"), Response.class).getValue();
+        assertEquals("hi rest!", message);
     }
 }
