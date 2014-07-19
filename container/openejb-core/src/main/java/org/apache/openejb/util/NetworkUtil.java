@@ -20,48 +20,39 @@ package org.apache.openejb.util;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.Collection;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.ReentrantLock;
 
 public final class NetworkUtil {
+
+    private static final ReentrantLock lock = new ReentrantLock();
+    private static final AtomicReference<LastPort> lastPort = new AtomicReference<LastPort>();
 
     private NetworkUtil() {
         // no-op
     }
 
     public static int getNextAvailablePort() {
-        return getNextAvailablePort(new int[]{0});
-    }
-
-    public static int getNextAvailablePort(final int[] portList) {
-        int port;
-        ServerSocket s = null;
+        final ReentrantLock l = lock;
+        l.lock();
         try {
-            s = create(portList);
-            port = s.getLocalPort();
-        } catch (final IOException ioe) {
-            port = -1;
+            return getNextAvailablePort(new int[]{0});
         } finally {
-            if (s != null) {
-                try {
-                    s.close();
-                } catch (final Throwable e) {
-                    //Ignore
-                }
-            }
+            l.unlock();
         }
-        return port;
     }
 
-    public static int getNextAvailablePort(final int min, final int max, final Collection<Integer> excepted) {
-        int port = -1;
-        ServerSocket s = null;
-        for (int i = min; i <= max; i++) {
-            try {
-                s = create(new int[]{i});
-                port = s.getLocalPort();
+    public synchronized static int getNextAvailablePort(final int[] portList) {
 
-                if (excepted == null || !excepted.contains(port)) {
-                    break;
-                }
+        final ReentrantLock l = lock;
+        l.lock();
+
+        try {
+            int port;
+            ServerSocket s = null;
+            try {
+                s = create(portList);
+                port = s.getLocalPort();
             } catch (final IOException ioe) {
                 port = -1;
             } finally {
@@ -73,13 +64,61 @@ public final class NetworkUtil {
                     }
                 }
             }
+
+            lastPort.set(new LastPort(port, System.currentTimeMillis()));
+            return port;
+        } finally {
+            l.unlock();
         }
-        return port;
+    }
+
+    public synchronized static int getNextAvailablePort(final int min, final int max, final Collection<Integer> excluded) {
+
+        final ReentrantLock l = lock;
+        l.lock();
+
+        try {
+            int port = -1;
+            ServerSocket s = null;
+            for (int i = min; i <= max; i++) {
+                try {
+                    s = create(new int[]{i});
+                    port = s.getLocalPort();
+
+                    if (excluded == null || !excluded.contains(port)) {
+                        break;
+                    }
+                } catch (final IOException ioe) {
+                    port = -1;
+                } finally {
+                    if (s != null) {
+                        try {
+                            s.close();
+                        } catch (final Throwable e) {
+                            //Ignore
+                        }
+                    }
+                }
+            }
+
+            lastPort.set(new LastPort(port, System.currentTimeMillis()));
+            return port;
+        } finally {
+            l.unlock();
+        }
     }
 
     private static ServerSocket create(final int[] ports) throws IOException {
         for (final int port : ports) {
             try {
+
+                final LastPort last = lastPort.get();
+                if (null != last && port == last.port) {
+                    if ((System.currentTimeMillis() - last.time) < 10000) {
+                        continue;
+                    }
+                }
+
                 return new ServerSocket(port);
             } catch (final IOException ex) {
                 // try next port
@@ -92,5 +131,15 @@ public final class NetworkUtil {
 
     public static String getLocalAddress(final String start, final String end) {
         return start + "localhost:" + getNextAvailablePort() + end;
+    }
+
+    private static final class LastPort {
+        private final int port;
+        private final long time;
+
+        private LastPort(final int port, final long time) {
+            this.port = port;
+            this.time = time;
+        }
     }
 }
