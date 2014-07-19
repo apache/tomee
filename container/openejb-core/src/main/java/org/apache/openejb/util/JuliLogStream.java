@@ -107,6 +107,10 @@ public class JuliLogStream implements LogStream {
     }
 
     public static class OpenEJBLogRecord extends LogRecord {
+        private static final String LOGGER = org.apache.openejb.util.Logger.class.getName();
+        private static final String ASYNC_LOG_NAME = "org.apache.openejb.util.LogStreamAsync";
+        private static final String ASYNC_LOG_THREAD = ASYNC_LOG_NAME + "$Consumer";
+
         /**
          * The name of the class that issued the logging call.
          *
@@ -173,15 +177,21 @@ public class JuliLogStream implements LogStream {
          * Init the sourceClass and sourceMethod fields.
          */
         private void initSource() {
-            if (!sourceInited) {
+            if (!this.sourceInited) {
                 // search back up the stack for the first use of the OpenEJB Logger
                 final StackTraceElement[] elements = new Throwable().getStackTrace();
                 int i = 0;
                 String current = null;
                 for (; i < elements.length; i++) {
                     current = elements[i].getClassName();
-                    if (current.equals(org.apache.openejb.util.Logger.class.getName())) {
+                    if (current.equals(LOGGER)) {
                         break;
+                    }
+                    if (current.equals(ASYNC_LOG_THREAD)) { // kind of mock since we lost the info
+                        this.sourceClassName = ASYNC_LOG_NAME;
+                        this.sourceMethodName = elements[i].getMethodName();
+                        this.sourceInited = true;
+                        return;
                     }
                 }
 
@@ -195,7 +205,8 @@ public class JuliLogStream implements LogStream {
                     this.sourceClassName = elements[i].getClassName();
                     this.sourceMethodName = elements[i].getMethodName();
                 }
-                sourceInited = true;
+
+                this.sourceInited = true;
             }
         }
     }
