@@ -99,6 +99,7 @@ public class Installer implements InstallerInterface {
         installJavaagent();
         installConfigFiles();
 
+        removeTomcatLibJar("annotations-api.jar");
         addJavaeeInEndorsed();
         addTomEEJuli();
 
@@ -183,6 +184,7 @@ public class Installer implements InstallerInterface {
         commentDeploymentDir();
         installConfigFiles();
 
+        removeTomcatLibJar("annotations-api.jar");
         addJavaeeInEndorsed();
         addTomEEJuli(); // before moveLibs
         moveLibs();
@@ -193,6 +195,11 @@ public class Installer implements InstallerInterface {
         if (!alerts.hasErrors()) {
             status = Status.REBOOT_REQUIRED;
         }
+    }
+
+    private void removeTomcatLibJar(final String name) {
+        final File jar = new File(paths.getCatalinaLibDir(), name);
+        removeJar(jar);
     }
 
     private void commentDeploymentDir() {
