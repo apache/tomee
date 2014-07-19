@@ -633,7 +633,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
         String value = read(serverXml);
 
-        if (tomeeHttpsPort != null && tomeeHttpsPort > 0 && parser.value("HTTPS", null) == null) {
+        if (tomeeHttpsPort != null && tomeeHttpsPort > 0 && parser.value("HTTPS", null) != null) {
             // ensure connector is not commented
             value = value.replace("<Service name=\"Catalina\">", "<Service name=\"Catalina\">\n"
                 + "    <Connector port=\"" + tomeeHttpsPort + "\" protocol=\"HTTP/1.1\" SSLEnabled=\"true\"\n" +
@@ -753,9 +753,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
             server.setPortStartup(tomeeHttpPort);
 
-            getLog().info("Running '" + getClass().getSimpleName().replace("TomEEMojo", "").toLowerCase(Locale.ENGLISH)
+            getLog().info("Running '" + getClass().getName().replace("TomEEMojo", "").toLowerCase(Locale.ENGLISH)
                 + "'. Configured TomEE in plugin is " + tomeeHost + ":" + tomeeHttpPort
-                + " (plugin shutdown port is " + tomeeShutdownPort + ")");
+                + " (plugin shutdown port is " + tomeeShutdownPort + ") " + tomeeHttpsPort);
         } else {
             getLog().info("Running '" + getClass().getSimpleName().replace("TomEEMojo", "").toLowerCase(Locale.ENGLISH));
         }
