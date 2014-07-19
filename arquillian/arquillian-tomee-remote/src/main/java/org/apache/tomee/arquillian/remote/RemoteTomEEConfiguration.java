@@ -95,7 +95,7 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
     }
 
     @Multiline
-    public void setAdditionalLibs(String additionalLibs) {
+    public void setAdditionalLibs(final String additionalLibs) {
         this.additionalLibs = additionalLibs;
     }
 
