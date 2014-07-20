@@ -42,7 +42,7 @@ public final class NetworkUtil {
         }
     }
 
-    public synchronized static int getNextAvailablePort(final int[] portList) {
+    public static synchronized int getNextAvailablePort(final int[] portList) {
 
         final ReentrantLock l = lock;
         l.lock();
@@ -72,7 +72,7 @@ public final class NetworkUtil {
         }
     }
 
-    public synchronized static int getNextAvailablePort(final int min, final int max, final Collection<Integer> excluded) {
+    public static synchronized int getNextAvailablePort(final int min, final int max, final Collection<Integer> excluded) {
 
         final ReentrantLock l = lock;
         l.lock();
