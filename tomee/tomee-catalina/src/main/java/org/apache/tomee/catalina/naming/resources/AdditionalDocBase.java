@@ -31,6 +31,7 @@ public class AdditionalDocBase extends FileDirContext {
     private static final String PREFIX = "/META-INF/resources";
     private static final int PREFIX_LENGTH = PREFIX.length();
     private static final String WEB_INF_CLASSES = "/WEB-INF/classes";
+    private static final boolean RESPECT_HEADERS = Boolean.getBoolean("tomee.AdditionalDocBase.respect-headers");
 
     @Override
     protected File file(final String name) {
@@ -44,12 +45,14 @@ public class AdditionalDocBase extends FileDirContext {
     }
 
     @Override
-    protected Attributes doGetAttributes(String name, String[] attrIds) throws NamingException {
+    protected Attributes doGetAttributes(final String name, final String[] attrIds) throws NamingException {
+        if (RESPECT_HEADERS) {
+            return super.doGetAttributes(name, attrIds);
+        }
         final File file = file(name);
-
-        if (file == null)
+        if (file == null) {
             return null;
-
+        }
         return new ForceRefeshAttributes(file);
     }
 
