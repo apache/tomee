@@ -69,7 +69,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -88,12 +87,12 @@ public abstract class RESTService implements ServerService, SelfManaging {
     private static final int PORT = -1;
     public static final String NOPATH_PREFIX = "http://nopath/";
 
-    private final Set<AppInfo> deployedApplications = new HashSet<AppInfo>();
-    private final Set<WebAppInfo> deployedWebApps = new HashSet<WebAppInfo>();
+    private final Set<AppInfo> deployedApplications = new HashSet<>();
+    private final Set<WebAppInfo> deployedWebApps = new HashSet<>();
     private Assembler assembler;
     private CoreContainerSystem containerSystem;
     private RsRegistry rsRegistry;
-    private final List<DeployedService> services = new ArrayList<DeployedService>();
+    private final List<DeployedService> services = new ArrayList<>();
     private String virtualHost = "localhost";
     private String auth = "NONE";
     private String realm = "PropertiesLogin";
@@ -129,7 +128,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
         final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(classLoader);
 
-        final Collection<Object> additionalProviders = new HashSet<Object>();
+        final Collection<Object> additionalProviders = new HashSet<>();
         addAppProvidersIfNeeded(appInfo, webApp, classLoader, additionalProviders);
 
         Collection<IdPropertiesInfo> pojoConfigurations = null; // done lazily
@@ -401,7 +400,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
                 appPrefix = webApp.contextRoot;
             } // else keep application prefix
 
-            final Set<String> restClasses = new HashSet<String>(webApp.restClass);
+            final Set<String> restClasses = new HashSet<>(webApp.restClass);
             restClasses.addAll(webApp.ejbRestServices);
 
             for (final String clazz : restClasses) {
@@ -528,7 +527,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
     }
 
     private static <T> boolean isProvider(final Class<T> clazz) {
-        return new MetaAnnotatedClass<T>(clazz).isAnnotationPresent(Provider.class);
+        return new MetaAnnotatedClass<>(clazz).isAnnotationPresent(Provider.class);
     }
 
     private boolean hasEjbAndIsNotAManagedBean(final Map<String, EJBRestServiceInfo> restEjbs, final String clazz) {
@@ -544,7 +543,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
     }
 
     private Collection<Object> appProviders(final Collection<String> jaxRsProviders, final ClassLoader classLoader) {
-        final Collection<Object> additionalProviders = new HashSet<Object>();
+        final Collection<Object> additionalProviders = new HashSet<>();
         for (final String name : jaxRsProviders) {
             try {
                 final Class<?> providerClass = classLoader.loadClass(name);
@@ -586,7 +585,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
                     if (useDiscoveredProviders(appInfo)) {
                         providers = appProviders(appInfo.jaxRsProviders, appClassLoader);
                     } else {
-                        providers = new ArrayList<Object>();
+                        providers = new ArrayList<>();
                     }
 
                     if ("true".equalsIgnoreCase(appInfo.properties.getProperty(OPENEJB_USE_APPLICATION_PROPERTY, APPLICATION_DEPLOYMENT))) {
@@ -594,7 +593,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
                         addEjbToApplication(application, restEjbs);
 
                         // merge configurations at app level since a single deployment is available
-                        final List<IdPropertiesInfo> pojoConfigurations = new ArrayList<IdPropertiesInfo>();
+                        final List<IdPropertiesInfo> pojoConfigurations = new ArrayList<>();
                         BeanContext comp = null;
                         for (final EjbJarInfo ejbJar : appInfo.ejbJars) {
                             for (final EnterpriseBeanInfo bean : ejbJar.enterpriseBeans) {
@@ -673,7 +672,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
     protected abstract boolean containsJaxRsConfiguration(final Properties properties);
 
     protected Map<String, EJBRestServiceInfo> getRestEjbs(final AppInfo appInfo, final String webapp) {
-        final Map<String, BeanContext> beanContexts = new HashMap<String, BeanContext>();
+        final Map<String, BeanContext> beanContexts = new HashMap<>();
         for (final EjbJarInfo ejbJar : appInfo.ejbJars) {
             if (ejbJar.webapp && webapp != null && !ejbJar.moduleId.equals(webapp)) {
                 continue;
@@ -691,7 +690,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
             }
         }
 
-        final Map<String, EJBRestServiceInfo> restEjbs = new HashMap<String, EJBRestServiceInfo>();
+        final Map<String, EJBRestServiceInfo> restEjbs = new HashMap<>();
         for (final WebAppInfo webApp : appInfo.webApps) {
             for (final String ejb : webApp.ejbRestServices) {
                 if (beanContexts.containsKey(ejb)) {
@@ -913,7 +912,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
         final AppInfo app = event.getApp();
         if (deployedApplications.contains(app)) {
             for (final WebAppInfo webApp : app.webApps) {
-                final List<DeployedService> toRemove = new ArrayList<DeployedService>();
+                final List<DeployedService> toRemove = new ArrayList<>();
                 for (final DeployedService service : services) {
                     if (service.isInWebApp(webApp)) {
                         undeployRestObject(service.address);
@@ -954,7 +953,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
     public void stop() throws ServiceException {
         if (assembler != null) {
             SystemInstance.get().removeObserver(this);
-            for (final AppInfo appInfo : new ArrayList<AppInfo>(deployedApplications)) {
+            for (final AppInfo appInfo : new ArrayList<>(deployedApplications)) {
                 undeploy(new AssemblerBeforeApplicationDestroyed(appInfo, null));
             }
         }
