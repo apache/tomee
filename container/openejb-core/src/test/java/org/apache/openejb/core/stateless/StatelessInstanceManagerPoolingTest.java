@@ -34,6 +34,8 @@ import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -54,22 +56,22 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
 
         final CountDownLatch startPistol = new CountDownLatch(1);
         final CountDownLatch startingLine = new CountDownLatch(10);
-        final CountDownLatch finishingLine = new CountDownLatch(30);
 
         final Counter counter = (Counter) object;
         // Do a business method...
         final Runnable r = new Runnable() {
             public void run() {
                 counter.race(startingLine, startPistol);
-                finishingLine.countDown();
             }
         };
 
         //  -- READY --
 
         // How much ever the no of client invocations the count should be 10 as only 10 instances will be created.
+        final Collection<Thread> th = new ArrayList<>(30);
         for (int i = 0; i < 30; i++) {
             final Thread t = new Thread(r);
+            th.add(t);
             t.start();
         }
 
@@ -84,7 +86,9 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
 
         startPistol.countDown(); // go
 
-        finishingLine.await(1000, TimeUnit.MILLISECONDS);
+        for (final Thread t : th) {
+            t.join();
+        }
 
         //  -- DONE --
 
@@ -117,15 +121,16 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
         };
 
         // 'count' instances should be created and discarded.
+        final Collection<Thread> th = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
             final Thread thread = new Thread(counterBeanLocal);
+            th.add(thread);
             thread.start();
         }
 
-        final boolean success = invocations.await(120, TimeUnit.SECONDS);
-
-        assertTrue("invocations timeout -> invocations.getCount() == " + invocations.getCount(), success);
-
+        for (final Thread t : th) {
+            t.join();
+        }
         assertEquals(count, discardedInstances.get());
 
     }
