@@ -24,7 +24,6 @@ import org.apache.openejb.util.Join;
 import org.apache.openejb.util.Pipe;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
@@ -126,13 +125,30 @@ public class RemoteServer {
     }
 
     public void destroy() {
+
         stop();
+
         if (server != null) {
+            final Process sp = server;
+            final Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
             try {
-                server.waitFor();
+                        sp.waitFor();
             } catch (final InterruptedException e) {
                 // no-op
             }
+        }
+            }, "RemoteServer-destroy");
+
+            t.start();
+            try {
+                t.join(15000);
+            } catch (final InterruptedException e) {
+                //Ignore
+            } finally {
+                server.destroy();
+    }
         }
     }
 
@@ -435,16 +451,14 @@ public class RemoteServer {
     }
 
     public void stop() {
-        if (!serverHasAlreadyBeenStarted) {
             try {
                 shutdown();
             } catch (final Exception e) {
-                if (verbose) {
+            if (verbose && !serverHasAlreadyBeenStarted) {
                     e.printStackTrace(System.err);
                 }
             }
         }
-    }
 
     public void forceStop() throws Exception {
         shutdown();
@@ -487,7 +501,7 @@ public class RemoteServer {
             if (socket != null) {
                 try {
                     socket.close();
-                } catch (final IOException e) {
+                } catch (final Exception e) {
                     // Ignore
                 }
             }
