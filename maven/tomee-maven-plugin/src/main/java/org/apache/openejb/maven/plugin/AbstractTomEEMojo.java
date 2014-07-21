@@ -652,7 +652,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                 + "    <Connector port=\"" + tomeeHttpsPort + "\" protocol=\"HTTP/1.1\" SSLEnabled=\"true\"\n" +
                 "                scheme=\"https\" secure=\"true\"\n" +
                 "                clientAuth=\"false\" sslProtocol=\"TLS\" keystoreFile=\"" + keystoreFilePath + "\" />\n");
-        } else if (tomeeHttpsPort == null) {
+        }
+
+        if (tomeeHttpsPort == null) {
             // avoid NPE
             tomeeHttpsPort = 8443;
         }

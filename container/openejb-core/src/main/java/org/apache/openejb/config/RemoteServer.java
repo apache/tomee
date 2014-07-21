@@ -24,7 +24,6 @@ import org.apache.openejb.util.Join;
 import org.apache.openejb.util.Pipe;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
@@ -53,7 +52,7 @@ public class RemoteServer {
     public static final String START = "start";
     public static final String STOP = "stop";
 
-    private boolean debug = options.get(OPENEJB_SERVER_DEBUG, false);
+    private final boolean debug = options.get(OPENEJB_SERVER_DEBUG, false);
     private final boolean profile = options.get("openejb.server.profile", false);
     private final boolean tomcat;
     private final String javaOpts = System.getProperty("java.opts");
@@ -126,12 +125,29 @@ public class RemoteServer {
     }
 
     public void destroy() {
+
         stop();
+
         if (server != null) {
+            final Process sp = server;
+            final Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        sp.waitFor();
+                    } catch (final InterruptedException e) {
+                        // no-op
+                    }
+                }
+            }, "RemoteServer-destroy");
+
+            t.start();
             try {
-                server.waitFor();
+                t.join(15000);
             } catch (final InterruptedException e) {
-                // no-op
+                //Ignore
+            } finally {
+                server.destroy();
             }
         }
     }
@@ -435,13 +451,11 @@ public class RemoteServer {
     }
 
     public void stop() {
-        if (!serverHasAlreadyBeenStarted) {
-            try {
-                shutdown();
-            } catch (final Exception e) {
-                if (verbose) {
-                    e.printStackTrace(System.err);
-                }
+        try {
+            shutdown();
+        } catch (final Exception e) {
+            if (verbose && !serverHasAlreadyBeenStarted) {
+                e.printStackTrace(System.err);
             }
         }
     }
@@ -487,7 +501,7 @@ public class RemoteServer {
             if (socket != null) {
                 try {
                     socket.close();
-                } catch (final IOException e) {
+                } catch (final Exception e) {
                     // Ignore
                 }
             }
