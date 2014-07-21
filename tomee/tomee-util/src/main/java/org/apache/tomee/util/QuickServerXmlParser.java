@@ -156,6 +156,6 @@ public class QuickServerXmlParser extends DefaultHandler {
 
     @Override
     public String toString() {
-        return "QuickServerXmlParser" + values;
+        return "QuickServerXmlParser: " + values;
     }
 }
