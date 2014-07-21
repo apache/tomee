@@ -34,7 +34,6 @@ import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -101,8 +100,6 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
         final int count = 30;
         final CountDownLatch invocations = new CountDownLatch(count);
         final InitialContext ctx = new InitialContext();
-        final Runnable counterBeanLocal = new Runnable() {
-            public void run() {
 
                 Object object = null;
                 try {
@@ -123,14 +120,46 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
         // 'count' instances should be created and discarded.
         final Collection<Thread> th = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
-            final Thread thread = new Thread(counterBeanLocal);
-            th.add(thread);
+            final Thread thread = new Thread(new Runnable() {
+                public void run() {
+
+                    Object object = null;
+                    try {
+                        object = ctx.lookup("CounterBeanLocal");
+                    } catch (final NamingException e) {
+                        assertTrue(false);
+                    }
+                    final Counter counter = (Counter) object;
+                    assertNotNull(counter);
+
+                    boolean run = true;
+
+                    while (run) {
+                        try {
+                            counter.explode();
+                        } catch (final javax.ejb.ConcurrentAccessTimeoutException e) {
+                            //Try again in moment...
+                            try {
+                                Thread.sleep(10);
+                            } catch (final InterruptedException ie) {
+                                //Ignore
+                            }
+                        } catch (final Exception e) {
+                            invocations.countDown();
+                            run = false;
+                        }
+                    }
+                }
+            }, "test-thread-" + count);
+
+            thread.setDaemon(false);
             thread.start();
         }
 
-        for (final Thread t : th) {
-            t.join();
-        }
+        final boolean success = invocations.await(20, TimeUnit.SECONDS);
+
+        assertTrue("invocations timeout -> invocations.getCount() == " + invocations.getCount(), success);
+
         assertEquals(count, discardedInstances.get());
 
     }
@@ -263,17 +292,9 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
             return instances.get();
         }
 
-        public int discardCount() {
-            return discardedInstances.get();
-        }
-
         public void explode(final CountDownLatch latch) {
-            discardedInstances.incrementAndGet();
-            try {
-                throw new NullPointerException("Test expected this null pointer: " + latch.getCount());
-            } finally {
-                latch.countDown();
-            }
+            final int i = discardedInstances.incrementAndGet();
+            throw new NullPointerException("Test expected this null pointer: " + i);
         }
 
         public void race(final CountDownLatch ready, final CountDownLatch go) {
