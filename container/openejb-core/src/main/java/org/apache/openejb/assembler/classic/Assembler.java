@@ -1948,10 +1948,17 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 try {
                     if (!urls.contains(URLs.toFile(url))) {
                         allIsIntheClasspath = false;
+                        if (logger.isDebugEnabled()) {
+                            logger.debug(url.toExternalForm() + " (" + URLs.toFile(url)
+                                + ") is not in the classloader so we'll create a dedicated classloader for this app");
+                        }
                         break;
                     }
                 } catch (final Exception ignored) {
                     allIsIntheClasspath = false;
+                    if (logger.isDebugEnabled()) {
+                        logger.debug(url.toExternalForm() + " (" + URLs.toFile(url) + ") is not in the classloader", ignored);
+                    }
                     break;
                 }
             }
@@ -1963,6 +1970,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 logger.debug("Logging all urls from the app since we don't skip the app classloader creation:");
                 for (final URL url : filtered) {
                     logger.debug(" -> " + url.toExternalForm());
+                }
+                logger.debug("Logging all urls from the classloader since we don't skip the app classloader creation:");
+                for (final File url : urls) {
+                    logger.debug(" -> " + url.getAbsolutePath());
                 }
             }
         }
