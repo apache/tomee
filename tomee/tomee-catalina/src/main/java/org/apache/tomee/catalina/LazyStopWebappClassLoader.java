@@ -39,6 +39,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 public class LazyStopWebappClassLoader extends WebappClassLoader {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, LazyStopWebappClassLoader.class.getName());
@@ -48,9 +49,10 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
     public static final String TOMEE_WEBAPP_FIRST = "tomee.webapp-first";
 
     private boolean restarting;
-    private boolean forceStopPhase = Boolean.parseBoolean(SystemInstance.get().getProperty("tomee.webappclassloader.force-stop-phase", "false"));
+    private final boolean forceStopPhase = Boolean.parseBoolean(SystemInstance.get().getProperty("tomee.webappclassloader.force-stop-phase", "false"));
     private ClassLoaderConfigurer configurer;
     private final int hashCode;
+    private Collection<File> additionalRepos;
 
     public LazyStopWebappClassLoader() {
         j2seClassLoader = getSystemClassLoader();
@@ -77,13 +79,18 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
         }
     }
 
+    public Collection<File> getAdditionalRepos() {
+        initAdditionalRepos();
+        return additionalRepos;
+    }
+
     @Override
     public Class<?> loadClass(final String name) throws ClassNotFoundException {
         if ("org.apache.openejb.hibernate.OpenEJBJtaPlatform".equals(name)
-                || "org.apache.openejb.jpa.integration.hibernate.PrefixNamingStrategy".equals(name)
-                || "org.apache.openejb.jpa.integration.eclipselink.PrefixSessionCustomizer".equals(name)
-                || "org.apache.openejb.eclipselink.JTATransactionController".equals(name)
-                || "org.apache.tomee.mojarra.TomEEInjectionProvider".equals(name)) {
+            || "org.apache.openejb.jpa.integration.hibernate.PrefixNamingStrategy".equals(name)
+            || "org.apache.openejb.jpa.integration.eclipselink.PrefixSessionCustomizer".equals(name)
+            || "org.apache.openejb.eclipselink.JTATransactionController".equals(name)
+            || "org.apache.tomee.mojarra.TomEEInjectionProvider".equals(name)) {
             // don't load them from system classloader (breaks all in embedded mode and no sense in other cases)
             synchronized (this) {
                 final ClassLoader old = j2seClassLoader;
@@ -158,6 +165,29 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
         return restarting;
     }
 
+    public synchronized void initAdditionalRepos() {
+        if (additionalRepos != null) {
+            return;
+        }
+        if (CONTEXT.get() != null) {
+            additionalRepos = new LinkedList<File>();
+            final String root = CONTEXT.get().getServletContext().getRealPath("/");
+            if (root != null) {
+                final String externalRepositories = SystemInstance.get().getProperty("tomee." + new File(root).getName() + ".externalRepositories");
+                if (externalRepositories != null) {
+                    setSearchExternalFirst(true);
+                    for (final String additional : externalRepositories.split(",")) {
+                        final String trim = additional.trim();
+                        if (!trim.isEmpty()) {
+                            final File file = new File(trim);
+                            additionalRepos.add(file);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     // embeddeding implementation of sthg (JPA, JSF) can lead to classloading issues if we don't enrich the webapp
     // with our integration jars
     // typically the class will try to be loaded by the common classloader
@@ -168,22 +198,13 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
         super.start(); // do it first otherwise we can't use this as classloader
 
         // mainly for tomee-maven-plugin
-        if (CONTEXT.get() != null) {
-            final String root = CONTEXT.get().getServletContext().getRealPath("/");
-            if (root != null) {
-                final String externalRepositories = SystemInstance.get().getProperty("tomee." + new File(root).getName() + ".externalRepositories");
-                if (externalRepositories != null) {
-                    setSearchExternalFirst(true);
-                    for (final String additional : externalRepositories.split(",")) {
-                        final String trim = additional.trim();
-                        if (!trim.isEmpty()) {
-                            try { // not addURL to look here first
-                                super.addRepository(new File(trim).toURI().toURL().toExternalForm());
-                            } catch (final MalformedURLException e) {
-                                LOGGER.error(e.getMessage());
-                            }
-                        }
-                    }
+        initAdditionalRepos();
+        if (additionalRepos != null) {
+            for (final File f : additionalRepos) {
+                try { // not addURL to look here first
+                    super.addRepository(f.toURI().toURL().toExternalForm());
+                } catch (final MalformedURLException e) {
+                    LOGGER.error(e.getMessage());
                 }
             }
         }

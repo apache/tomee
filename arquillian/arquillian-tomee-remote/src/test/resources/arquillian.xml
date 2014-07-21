@@ -26,6 +26,11 @@
                <property name="stopPort">-1</property>
                <property name="ajpPort">-1</property>
                <property name="dir">target/apache-tomee-remote</property>
+               <property name="additionalLibs">
+                 mvn:org.apache.sirona:sirona-core:0.2-incubating
+                 mvn:org.apache.sirona:sirona-aop:0.2-incubating
+                 mvn:org.apache.sirona:sirona-web:0.2-incubating
+               </property>
                <property name="appWorkingDir">target/arquillian-test-working-dir</property>
                <property name="properties">
                   openejb.classloader.forced-load=org.apache.openejb

@@ -18,8 +18,10 @@ package org.apache.tomee.catalina.naming.resources;
 
 import org.apache.catalina.core.StandardContext;
 import org.apache.naming.resources.FileDirContext;
+import org.apache.tomee.catalina.LazyStopWebappClassLoader;
 
 import java.io.File;
+import java.util.Collection;
 
 // we need a FileDirContext (so doesn't work with not exploded wars) for boot time
 // note lifecycle is a quick one mainly used internally, other listeners are not intended to be used
@@ -49,6 +51,14 @@ public class EmptyDirContext extends FileDirContext {
     protected File file(final String name) {
         if (shouldLookup(name)) {
             return super.file(name);
+        }
+        if ("/WEB-INF/classes".equals(name)) {
+            if (context.getLoader() != null && LazyStopWebappClassLoader.class.isInstance(context.getLoader().getClassLoader())) {
+                final Collection<File> repos = LazyStopWebappClassLoader.class.cast(context.getLoader().getClassLoader()).getAdditionalRepos();
+                if (repos != null && !repos.isEmpty()) {
+                    return repos.iterator().next();
+                }
+            }
         }
         return null;
     }
