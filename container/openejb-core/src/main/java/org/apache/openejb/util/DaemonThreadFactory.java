@@ -31,7 +31,7 @@ public class DaemonThreadFactory implements ThreadFactory {
 
     private final String name;
     private final ThreadGroup group;
-    private AtomicInteger ids = new AtomicInteger(0);
+    private final AtomicInteger ids = new AtomicInteger(0);
 
     public DaemonThreadFactory(final Object... name) {
         this.name = join(" ", name).trim();
