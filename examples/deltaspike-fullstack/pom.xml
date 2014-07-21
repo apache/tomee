@@ -55,6 +55,7 @@
         <configuration> <!-- optional -->
           <systemPropertyVariables>
             <openejb.jul.forceReload>true</openejb.jul.forceReload>
+            <logging.level.OpenEJB.startup>FINEST</logging.level.OpenEJB.startup>
           </systemPropertyVariables>
           <reuseForks>false</reuseForks>
         </configuration>

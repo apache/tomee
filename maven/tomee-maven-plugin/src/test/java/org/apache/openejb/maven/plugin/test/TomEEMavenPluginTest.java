@@ -19,6 +19,7 @@ package org.apache.openejb.maven.plugin.test;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.maven.plugin.TomEEMavenPluginRule;
 import org.apache.openejb.maven.plugin.Url;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -27,6 +28,7 @@ import java.net.URL;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
 
+@Ignore
 public class TomEEMavenPluginTest {
     @Rule
     public TomEEMavenPluginRule TMPRule = new TomEEMavenPluginRule();
