@@ -633,7 +633,11 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
         String value = read(serverXml);
 
-        File keystoreFile = new File(System.getProperty("user.home"), ".keystore");
+        File keystoreFile = new File(parser.keystore());
+
+        if (!keystoreFile.exists()) {
+            keystoreFile = new File(System.getProperty("user.home"), ".keystore");
+        }
 
         if (!keystoreFile.exists()) {
             keystoreFile = new File("target", ".keystore");
@@ -641,15 +645,14 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
         final String keystoreFilePath = (keystoreFile.exists() ? keystoreFile.getAbsolutePath() : "");
 
+
         if (tomeeHttpsPort != null && tomeeHttpsPort > 0 && parser.value("HTTPS", null) == null) {
             // ensure connector is not commented
             value = value.replace("<Service name=\"Catalina\">", "<Service name=\"Catalina\">\n"
                 + "    <Connector port=\"" + tomeeHttpsPort + "\" protocol=\"HTTP/1.1\" SSLEnabled=\"true\"\n" +
                 "                scheme=\"https\" secure=\"true\"\n" +
                 "                clientAuth=\"false\" sslProtocol=\"TLS\" keystoreFile=\"" + keystoreFilePath + "\" />\n");
-        }
-
-        if (tomeeHttpsPort == null) {
+        } else if (tomeeHttpsPort == null) {
             // avoid NPE
             tomeeHttpsPort = 8443;
         }
