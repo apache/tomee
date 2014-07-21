@@ -159,7 +159,6 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
         final ThreadContext callContext = new ThreadContext(beanContext, primKey);
         final ThreadContext oldCallContext = ThreadContext.enter(callContext);
 
-        OpenEJBException oejbe = null;
         Instance bean = null;
         final CurrentCreationalContext currentCreationalContext = beanContext.get(CurrentCreationalContext.class);
 
@@ -193,28 +192,20 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
                 currentCreationalContext.set(bean.creationalContext);
             }
             return _invoke(callMethod, runMethod, args, bean, callContext, type);
-        } catch (final OpenEJBException t) {
-            oejbe = t;
-        }
-
-        if (bean != null) {
-            if (callContext.isDiscardInstance()) {
-                this.instanceManager.discardInstance(callContext, bean);
-            } else {
-                this.instanceManager.poolInstance(callContext, bean);
+        } finally {
+            if (bean != null) {
+                if (callContext.isDiscardInstance()) {
+                    this.instanceManager.discardInstance(callContext, bean);
+                } else {
+                    this.instanceManager.poolInstance(callContext, bean);
+                }
             }
-        }
 
-        ThreadContext.exit(oldCallContext);
+            ThreadContext.exit(oldCallContext);
 
-        if (currentCreationalContext != null) {
-            currentCreationalContext.remove();
-        }
-
-        if (null != oejbe) {
-            throw oejbe;
-        } else {
-            return null;
+            if (currentCreationalContext != null) {
+                currentCreationalContext.remove();
+            }
         }
     }
 
