@@ -48,7 +48,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.locks.ReentrantLock;
 
 import static org.apache.openejb.core.transaction.EjbTransactionUtil.afterInvoke;
 import static org.apache.openejb.core.transaction.EjbTransactionUtil.createTransactionPolicy;
@@ -60,10 +59,9 @@ import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleSyste
  */
 public class StatelessContainer implements org.apache.openejb.RpcContainer {
 
-    private final ReentrantLock lockRegistry = new ReentrantLock();
     private final ConcurrentMap<Class<?>, List<Method>> interceptorCache = new ConcurrentHashMap<Class<?>, List<Method>>();
     private final StatelessInstanceManager instanceManager;
-    private final Map<String, BeanContext> deploymentRegistry = new HashMap<String, BeanContext>();
+    private final Map<String, BeanContext> deploymentRegistry = new ConcurrentHashMap<String, BeanContext>();
     private final Object containerID;
     private final SecurityService securityService;
 
@@ -80,29 +78,13 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
 
     @Override
     public BeanContext[] getBeanContexts() {
-
-        final ReentrantLock l = lockRegistry;
-        l.lock();
-
-        try {
-            return this.deploymentRegistry.values().toArray(new BeanContext[this.deploymentRegistry.size()]);
-        } finally {
-            l.unlock();
-        }
+        return this.deploymentRegistry.values().toArray(new BeanContext[this.deploymentRegistry.size()]);
     }
 
     @Override
     public BeanContext getBeanContext(final Object deploymentID) {
-
-        final ReentrantLock l = lockRegistry;
-        l.lock();
-
-        try {
-            final String id = (String) deploymentID;
-            return deploymentRegistry.get(id);
-        } finally {
-            l.unlock();
-        }
+        final String id = (String) deploymentID;
+        return deploymentRegistry.get(id);
     }
 
     @Override
@@ -118,16 +100,9 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
     @Override
     public void deploy(final BeanContext beanContext) throws OpenEJBException {
 
-        final ReentrantLock l = lockRegistry;
-        l.lock();
-
-        try {
-            final String id = (String) beanContext.getDeploymentID();
-            deploymentRegistry.put(id, beanContext);
-            beanContext.setContainer(this);
-        } finally {
-            l.unlock();
-        }
+        final String id = (String) beanContext.getDeploymentID();
+        deploymentRegistry.put(id, beanContext);
+        beanContext.setContainer(this);
 
         // add it before starting the timer (@PostCostruct)
         if (StatsInterceptor.isStatsActivated()) {
@@ -154,17 +129,10 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
     @Override
     public void undeploy(final BeanContext beanContext) {
         this.instanceManager.undeploy(beanContext);
-
-        final ReentrantLock l = lockRegistry;
-        l.lock();
-        try {
-            final String id = (String) beanContext.getDeploymentID();
-            beanContext.setContainer(null);
-            beanContext.setContainerData(null);
-            this.deploymentRegistry.remove(id);
-        } finally {
-            l.unlock();
-        }
+        final String id = (String) beanContext.getDeploymentID();
+        beanContext.setContainer(null);
+        beanContext.setContainerData(null);
+        this.deploymentRegistry.remove(id);
     }
 
     @SuppressWarnings("unchecked")
@@ -191,7 +159,6 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
         final ThreadContext callContext = new ThreadContext(beanContext, primKey);
         final ThreadContext oldCallContext = ThreadContext.enter(callContext);
 
-        OpenEJBException oejbe = null;
         Instance bean = null;
         final CurrentCreationalContext currentCreationalContext = beanContext.get(CurrentCreationalContext.class);
 
@@ -225,28 +192,20 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
                 currentCreationalContext.set(bean.creationalContext);
             }
             return _invoke(callMethod, runMethod, args, bean, callContext, type);
-        } catch (final OpenEJBException t) {
-            oejbe = t;
-        }
-
-        if (bean != null) {
-            if (callContext.isDiscardInstance()) {
-                this.instanceManager.discardInstance(callContext, bean);
-            } else {
-                this.instanceManager.poolInstance(callContext, bean);
+        } finally {
+            if (bean != null) {
+                if (callContext.isDiscardInstance()) {
+                    this.instanceManager.discardInstance(callContext, bean);
+                } else {
+                    this.instanceManager.poolInstance(callContext, bean);
+                }
             }
-        }
 
-        ThreadContext.exit(oldCallContext);
+            ThreadContext.exit(oldCallContext);
 
-        if (currentCreationalContext != null) {
-            currentCreationalContext.remove();
-        }
-
-        if (null != oejbe) {
-            throw oejbe;
-        } else {
-            return null;
+            if (currentCreationalContext != null) {
+                currentCreationalContext.remove();
+            }
         }
     }
 
