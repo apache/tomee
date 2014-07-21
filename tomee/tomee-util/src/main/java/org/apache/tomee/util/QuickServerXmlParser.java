@@ -27,8 +27,10 @@ import java.io.File;
 import java.util.Map;
 import java.util.TreeMap;
 
+@SuppressWarnings("UnusedDeclaration")
 public class QuickServerXmlParser extends DefaultHandler {
     private static final SAXParserFactory FACTORY = SAXParserFactory.newInstance();
+
     static {
         FACTORY.setNamespaceAware(true);
         FACTORY.setValidating(false);
@@ -41,6 +43,7 @@ public class QuickServerXmlParser extends DefaultHandler {
     private static final String HOST_KEY = "host";
     private static final String APP_BASE_KEY = "app-base";
     private static final String DEFAULT_CONNECTOR_KEY = HTTP_KEY;
+    private static final String KEYSTORE_KEY = "keystoreFile";
 
     public static final String DEFAULT_HTTP_PORT = "8080";
     public static final String DEFAULT_HTTPS_PORT = "8443";
@@ -48,6 +51,7 @@ public class QuickServerXmlParser extends DefaultHandler {
     public static final String DEFAULT_AJP_PORT = "8009";
     public static final String DEFAULT_HOST = "localhost";
     public static final String DEFAULT_APP_BASE = "webapps";
+    public static final String DEFAULT_KEYSTORE = new File(System.getProperty("user.home"), ".keystore").getAbsolutePath();
 
     private final Map<String, String> values = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
 
@@ -57,6 +61,7 @@ public class QuickServerXmlParser extends DefaultHandler {
         values.put(AJP_KEY, DEFAULT_AJP_PORT);
         values.put(HOST_KEY, DEFAULT_HOST);
         values.put(APP_BASE_KEY, DEFAULT_APP_BASE);
+        values.put(KEYSTORE_KEY, DEFAULT_KEYSTORE);
     }
 
     @Override
@@ -78,10 +83,16 @@ public class QuickServerXmlParser extends DefaultHandler {
             }
             final String port = attributes.getValue("port");
             final String ssl = attributes.getValue("secure");
+
             if (ssl == null || "false".equalsIgnoreCase(ssl)) {
                 values.put(protocol.toUpperCase(), port);
             } else {
                 values.put(protocol.toUpperCase() + SECURED_SUFFIX, port);
+            }
+
+            final String keystore = attributes.getValue("keystoreFile");
+            if (null != keystore) {
+                values.put(KEYSTORE_KEY, keystore);
             }
         } else if ("Host".equalsIgnoreCase(localName)) {
             final String host = attributes.getValue("name");
@@ -142,12 +153,16 @@ public class QuickServerXmlParser extends DefaultHandler {
         return value(HOST_KEY, DEFAULT_HOST);
     }
 
+    public String keystore() {
+        return value(KEYSTORE_KEY, DEFAULT_KEYSTORE);
+    }
+
     public String value(final String key, final String defaultValue) {
-        final String port = values.get(key);
-        if (port == null) {
+        final String val = values.get(key);
+        if (val == null) {
             return defaultValue;
         }
-        return port;
+        return val;
     }
 
     public String securedValue(final String key, final String defaultValue) {
@@ -156,6 +171,6 @@ public class QuickServerXmlParser extends DefaultHandler {
 
     @Override
     public String toString() {
-        return "QuickServerXmlParser" + values;
+        return "QuickServerXmlParser: " + values;
     }
 }
