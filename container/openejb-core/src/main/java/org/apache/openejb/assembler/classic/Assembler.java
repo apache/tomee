@@ -1936,8 +1936,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             for (final URL url : ClassLoaders.findUrls(parent)) { // need to convert it to file since urls can be file:/xxx or jar:file:///xxx
                 try {
                     urls.add(URLs.toFile(url));
-                } catch (final Exception ignored) {
-                    // no-op
+                } catch (final Exception error) {
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Can't determine url for: " + url.toExternalForm(), error);
+                    }
                 }
             }
 
@@ -1957,6 +1959,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             if (allIsIntheClasspath) {
                 logger.info("Not creating another application classloader for " + appInfo.appId);
                 return parent;
+            } else if (logger.isDebugEnabled()) {
+                logger.debug("Logging all urls from the app since we don't skip the app classloader creation:");
+                for (final URL url : filtered) {
+                    logger.debug(" -> " + url.toExternalForm());
+                }
             }
         }
 
