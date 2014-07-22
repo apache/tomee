@@ -137,8 +137,8 @@ public class RemoteServer {
                 t.printStackTrace(System.err);
             }
 
-    }
         }
+    }
 
     public void start() {
         start(Collections.<String>emptyList(), START, true);
@@ -328,18 +328,19 @@ public class RemoteServer {
                 }
 
                 // kill3UNIXDebug();
-                final ProcessBuilder pb = new ProcessBuilder(args).inheritIO().directory(home.getAbsoluteFile());
-                Process p = pb.start();
+                final ProcessBuilder pb = new ProcessBuilder(args)
+                    .redirectOutput(ProcessBuilder.Redirect.INHERIT)
+                    .redirectError(ProcessBuilder.Redirect.INHERIT)
+                    .directory(home.getAbsoluteFile());
 
-                //Process p = Runtime.getRuntime().exec(args);
-                //Pipe.pipeOut(p); // why would we need to redirect System.in to the process, TomEE doesn't use it
+                Process p = pb.start();
 
                 if (START.equals(cmd)) {
                     server.set(p);
                 } else if (STOP.equals(cmd)) {
                     p.waitFor();
                     p = server.get();
-                    if (p != null){
+                    if (p != null) {
                         p.waitFor();
                     }
                 }
@@ -445,14 +446,14 @@ public class RemoteServer {
     }
 
     public void stop() {
-            try {
-                shutdown();
-            } catch (final Exception e) {
+        try {
+            shutdown();
+        } catch (final Exception e) {
             if (verbose && !serverHasAlreadyBeenStarted) {
-                    e.printStackTrace(System.err);
-                }
+                e.printStackTrace(System.err);
             }
         }
+    }
 
     public void forceStop() throws Exception {
         shutdown();
