@@ -328,11 +328,12 @@ public class RemoteServer {
                 }
 
                 // kill3UNIXDebug();
-                final ProcessBuilder pb = new ProcessBuilder(args).inheritIO().directory(home.getAbsoluteFile());
+                final ProcessBuilder pb = new ProcessBuilder(args);
+                pb.directory(home.getAbsoluteFile());
                 Process p = pb.start();
 
                 //Process p = Runtime.getRuntime().exec(args);
-                //Pipe.pipeOut(p); // why would we need to redirect System.in to the process, TomEE doesn't use it
+                Pipe.pipeOut(p); // why would we need to redirect System.in to the process, TomEE doesn't use it
 
                 if (START.equals(cmd)) {
                     server.set(p);
