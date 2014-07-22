@@ -304,7 +304,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
         if ("-1".equals(tomeeVersion)) {
             final String version = OpenEjbVersion.get().getVersion();
-            tomeeVersion = "1" + version.substring(1, version.length());
+            tomeeVersion = (Integer.parseInt(Character.toString(version.charAt(0))) - 3) + version.substring(1, version.length());
         }
 
         if (!tomeeAlreadyInstalled) {
@@ -361,7 +361,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             if (8005 == tomeeShutdownPort) { // default admin port
                 tomeeShutdownPort = 4200;
             }
-            if (tomeeVersion.startsWith("1.")) {
+            if (tomeeVersion.startsWith("2.")) {
                 tomeeVersion = OpenEjbVersion.get().getVersion();
             }
 
