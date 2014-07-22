@@ -17,6 +17,7 @@
 
 package org.apache.openejb.core.timer;
 
+import org.apache.openejb.ApplicationException;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.OpenEJBException;
@@ -810,7 +811,11 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                     }
                 } catch (final OpenEJBException e) {
                     retry = true;
-                    log.warning("Exception from ejbTimeout on " + deployment.getDeploymentID(), e);
+                    if (ApplicationException.class.isInstance(e)) { // we don't want to pollute logs
+                        log.debug("Exception from ejbTimeout on " + deployment.getDeploymentID(), e);
+                    } else {
+                        log.warning("Exception from ejbTimeout on " + deployment.getDeploymentID(), e);
+                    }
                     if (transacted) {
                         try {
                             transactionManager.setRollbackOnly();
