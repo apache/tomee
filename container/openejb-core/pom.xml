@@ -324,12 +324,12 @@
             <exclude>**/TestHandler.java</exclude>
             <exclude>org/apache/openejb/cdi/**</exclude>
           </excludes>
-          <properties>
+          <!--properties>
             <property>
               <name>listener</name>
               <value>org.apache.openejb.tool.junit.OpenEJBJUnitDebugListener</value>
             </property>
-          </properties>
+          </properties-->
         </configuration>
         <executions>
           <execution>
