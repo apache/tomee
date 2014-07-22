@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * NOTE: don't add inner classes or anonymous one or dependency without updating ExecMojo
@@ -64,7 +65,7 @@ public class RemoteServer {
     private boolean serverHasAlreadyBeenStarted = true;
 
     private Properties properties;
-    private Process server;
+    private final AtomicReference<Process> server = new AtomicReference<Process>();
     private final int tries;
     private final boolean verbose;
     private final int portShutdown;
@@ -128,27 +129,14 @@ public class RemoteServer {
 
         stop();
 
-        if (server != null) {
-            final Process sp = server;
-            final Thread t = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        sp.waitFor();
-                    } catch (final InterruptedException e) {
-                        // no-op
-                    }
-                }
-            }, "RemoteServer-destroy");
-
-            t.start();
+        final Process p = server.get();
+        if (p != null) {
             try {
-                t.join(15000);
-            } catch (final InterruptedException e) {
-                //Ignore
-            } finally {
-                server.destroy();
+                p.waitFor();
+            } catch (final Throwable t) {
+                t.printStackTrace(System.err);
             }
+
         }
     }
 
@@ -340,14 +328,19 @@ public class RemoteServer {
                 }
 
                 // kill3UNIXDebug();
+                final ProcessBuilder pb = new ProcessBuilder(args).inheritIO().directory(home.getAbsoluteFile());
+                Process p = pb.start();
 
-                final Process process = Runtime.getRuntime().exec(args);
-                Pipe.pipeOut(process); // why would we need to redirect System.in to the process, TomEE doesn't use it
+                //Process p = Runtime.getRuntime().exec(args);
+                //Pipe.pipeOut(p); // why would we need to redirect System.in to the process, TomEE doesn't use it
 
                 if (START.equals(cmd)) {
-                    server = process;
-                } else if (STOP.equals(cmd) && server != null) {
-                    server.waitFor();
+                    server.set(p);
+                } else if (STOP.equals(cmd)) {
+                    p.waitFor();
+                    p = server.get();
+                    if (p != null)
+                        p.waitFor();
                 }
 
             } catch (final Exception e) {
@@ -378,9 +371,9 @@ public class RemoteServer {
         }
 
         try {
-            final Field f = server.getClass().getDeclaredField("pid");
+            final Field f = server.get().getClass().getDeclaredField("pid");
             f.setAccessible(true);
-            final int pid = (Integer) f.get(server);
+            final int pid = (Integer) f.get(server.get());
             Pipe.pipe(Runtime.getRuntime().exec("kill -3 " + pid));
         } catch (final Exception e1) {
             e1.printStackTrace();
@@ -428,7 +421,7 @@ public class RemoteServer {
     }
 
     public Process getServer() {
-        return server;
+        return server.get();
     }
 
     private void addIfSet(final List<String> argsList, final String key) {
@@ -553,10 +546,10 @@ public class RemoteServer {
     }
 
     public void killOnExit() {
-        if (!serverHasAlreadyBeenStarted && kill.contains(this.server)) {
+        if (!serverHasAlreadyBeenStarted && kill.contains(this.server.get())) {
             return;
         }
-        kill.add(this.server);
+        kill.add(this.server.get());
     }
 
     // Shutdown hook for recursive delete on tmp directories
