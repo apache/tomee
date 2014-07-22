@@ -339,8 +339,9 @@ public class RemoteServer {
                 } else if (STOP.equals(cmd)) {
                     p.waitFor();
                     p = server.get();
-                    if (p != null)
+                    if (p != null){
                         p.waitFor();
+                    }
                 }
 
             } catch (final Exception e) {
