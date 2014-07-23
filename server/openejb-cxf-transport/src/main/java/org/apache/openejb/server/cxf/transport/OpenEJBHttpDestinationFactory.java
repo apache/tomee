@@ -19,23 +19,16 @@ package org.apache.openejb.server.cxf.transport;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.service.model.EndpointInfo;
-import org.apache.cxf.transport.Destination;
-import org.apache.cxf.transport.http.HTTPTransportFactory;
+import org.apache.cxf.transport.http.AbstractHTTPDestination;
+import org.apache.cxf.transport.http.DestinationRegistry;
+import org.apache.cxf.transport.http.HttpDestinationFactory;
 
 import java.io.IOException;
 
-public class HttpTransportFactory extends HTTPTransportFactory {
-    public HttpTransportFactory() {
-        // no-op
-    }
-
-    public HttpTransportFactory(Bus bus) {
-        setBus(bus);
-
-    }
-
+public class OpenEJBHttpDestinationFactory implements HttpDestinationFactory {
     @Override
-    public Destination getDestination(EndpointInfo endpointInfo) throws IOException {
-        return new HttpDestination(getBus(), getRegistry(), endpointInfo, endpointInfo.getAddress());
+    public AbstractHTTPDestination createDestination(final EndpointInfo endpointInfo, final Bus bus,
+                                                     final DestinationRegistry registry) throws IOException {
+        return new HttpDestination(bus, registry, endpointInfo, endpointInfo.getAddress());
     }
 }

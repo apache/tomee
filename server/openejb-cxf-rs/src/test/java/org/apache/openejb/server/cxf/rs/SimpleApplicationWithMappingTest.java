@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.server.cxf.rs;
 
-import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.jee.WebApp;
@@ -38,6 +37,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Application;
 import java.util.Properties;
 
@@ -86,7 +86,7 @@ public class SimpleApplicationWithMappingTest {
         assertEquals("hi 2nd", hi);
     }
 
-    @Test(expected = ServerWebApplicationException.class)
+    @Test(expected = WebApplicationException.class)
     public void nonListed() {
         WebClient.create(BASE_URL).path("/non-listed/yata/foo").get(String.class);
     }

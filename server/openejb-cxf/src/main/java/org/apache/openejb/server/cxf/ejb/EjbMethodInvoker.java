@@ -45,42 +45,48 @@ public class EjbMethodInvoker extends AbstractJAXWSMethodInvoker {
     private static final Logger log = Logger.getInstance(LogCategory.CXF, EjbMethodInvoker.class);
 
     private static final String HANDLER_PROPERTIES = "HandlerProperties";
+    private final Object instance;
 
-    private BeanContext beanContext;
-    private Bus bus;
+    private final BeanContext beanContext;
+    private final Bus bus;
 
-    public EjbMethodInvoker(Bus bus, BeanContext beanContext) {
-        super((Factory) null);
+    public EjbMethodInvoker(final Bus bus, final BeanContext beanContext) {
+        super(null);
         this.bus = bus;
         this.beanContext = beanContext;
+
+        Object inst;
+        try {
+            inst = beanContext.getBeanClass().newInstance();
+        } catch (final Exception e) {
+            inst = null;
+        }
+        this.instance = inst;
     }
 
-    public Object getServiceObject(Exchange context) {
-        return null;
+    @Override
+    public Object getServiceObject(final Exchange context) {
+        return instance; // just to not get a NPE
     }
 
-    public void releaseServiceObject(Exchange ex, Object obj) {
+    @Override
+    public void releaseServiceObject(final Exchange ex, final Object obj) {
         // do nothing
     }
 
-    protected Object invoke(Exchange exchange, Object serviceObject, Method m,
-                            List<Object> params) {
-        Object result = null;
-
-        InvocationContext invContext = exchange.get(InvocationContext.class);
+    @Override
+    protected Object invoke(final Exchange exchange, final Object serviceObject,
+                            final Method m, final List<Object> params) {
+        final InvocationContext invContext = exchange.get(InvocationContext.class);
         if (invContext == null) {
-            log.debug("PreEJBInvoke");
-            result = preEjbInvoke(exchange, serviceObject, m, params);
-        } else {
-            log.debug("EJBInvoke"); // calls performInvocation()
-            result = super.invoke(exchange, serviceObject, m, params);
+            return preEjbInvoke(exchange, m, params);
         }
-
-        return result;
+        return super.invoke(exchange, serviceObject, m, params);
     }
 
-    protected Object performInvocation(Exchange exchange, Object serviceObject,
-                                       Method m, Object[] paramArray) throws Exception {
+    @Override
+    protected Object performInvocation(final Exchange exchange, final Object serviceObject,
+                                       final Method m, final Object[] paramArray) throws Exception {
         InvocationContext invContext = exchange.get(InvocationContext.class);
         invContext.setParameters(paramArray);
         Object res = invContext.proceed();
@@ -96,8 +102,7 @@ public class EjbMethodInvoker extends AbstractJAXWSMethodInvoker {
         return res;
     }
 
-    private Object preEjbInvoke(Exchange exchange, Object serviceObject,
-                                Method method, List<Object> params) {
+    private Object preEjbInvoke(Exchange exchange, Method method, List<Object> params) {
 
         EjbMessageContext ctx = new EjbMessageContext(exchange.getInMessage(),
             Scope.APPLICATION);

@@ -24,9 +24,9 @@ import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor;
 import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;
-import org.apache.ws.security.WSConstants;
-import org.apache.ws.security.WSPasswordCallback;
-import org.apache.ws.security.handler.WSHandlerConstants;
+import org.apache.wss4j.common.ext.WSPasswordCallback;
+import org.apache.wss4j.dom.WSConstants;
+import org.apache.wss4j.dom.handler.WSHandlerConstants;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -74,7 +74,7 @@ public class CalculatorTest extends TestCase {
         final Endpoint endpoint = client.getEndpoint();
         endpoint.getOutInterceptors().add(new SAAJOutInterceptor());
 
-        final Map<String, Object> outProps = new HashMap<String, Object>();
+        final Map<String, Object> outProps = new HashMap<>();
         outProps.put(WSHandlerConstants.ACTION, WSHandlerConstants.USERNAME_TOKEN);
         outProps.put(WSHandlerConstants.USER, "jane");
         outProps.put(WSHandlerConstants.PASSWORD_TYPE, WSConstants.PW_TEXT);

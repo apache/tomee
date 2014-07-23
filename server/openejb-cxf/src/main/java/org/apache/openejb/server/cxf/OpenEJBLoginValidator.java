@@ -18,18 +18,16 @@ package org.apache.openejb.server.cxf;
 
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
-import org.apache.ws.security.WSPasswordCallback;
-import org.apache.ws.security.WSSecurityException;
-import org.apache.ws.security.handler.RequestData;
-import org.apache.ws.security.message.token.UsernameToken;
-import org.apache.ws.security.validate.UsernameTokenValidator;
+import org.apache.wss4j.common.ext.WSPasswordCallback;
+import org.apache.wss4j.common.ext.WSSecurityException;
+import org.apache.wss4j.dom.handler.RequestData;
+import org.apache.wss4j.dom.message.token.UsernameToken;
+import org.apache.wss4j.dom.validate.UsernameTokenValidator;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.login.LoginException;
 
 public class OpenEJBLoginValidator extends UsernameTokenValidator {
-
-    @SuppressWarnings("unchecked")
     @Override
     protected void verifyDigestPassword(final UsernameToken usernameToken,
                                         final RequestData data) throws WSSecurityException {
@@ -37,8 +35,7 @@ public class OpenEJBLoginValidator extends UsernameTokenValidator {
         super.verifyDigestPassword(usernameToken, data);
 
         // get the plain text password
-        final WSPasswordCallback pwCb = new WSPasswordCallback(usernameToken.getName(),
-            null, usernameToken.getPasswordType(), WSPasswordCallback.USERNAME_TOKEN, data);
+        final WSPasswordCallback pwCb = new WSPasswordCallback(usernameToken.getName(), null, usernameToken.getPasswordType(), WSPasswordCallback.USERNAME_TOKEN);
         try {
             data.getCallbackHandler().handle(new Callback[]{pwCb});
         } catch (Exception e) {

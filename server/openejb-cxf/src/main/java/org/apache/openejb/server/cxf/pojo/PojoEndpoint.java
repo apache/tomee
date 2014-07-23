@@ -25,7 +25,7 @@ import org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean;
 import org.apache.cxf.resource.DefaultResourceManager;
 import org.apache.cxf.resource.ResourceManager;
 import org.apache.cxf.resource.ResourceResolver;
-import org.apache.cxf.transport.http.HTTPTransportFactory;
+import org.apache.cxf.transport.DestinationFactory;
 import org.apache.openejb.Injection;
 import org.apache.openejb.InjectionProcessor;
 import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
@@ -68,7 +68,7 @@ public class PojoEndpoint extends CxfEndpoint {
     private CreationalContextImpl toClean = null;
 
     public PojoEndpoint(ClassLoader loader, Bus bus, PortData port, Context context, Class<?> instance,
-                        HTTPTransportFactory httpTransportFactory,
+                        DestinationFactory httpTransportFactory,
                         Map<String, Object> bindings, ServiceConfiguration config) {
         super(bus, port, context, instance, httpTransportFactory, config);
 

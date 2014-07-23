@@ -42,6 +42,26 @@ public class MultivaluedMapWithCaseInsensitiveKeySet<V> implements MultivaluedMa
     }
 
     @Override
+    public void addAll(final String key, final V... newValues) {
+        delegate.addAll(key, newValues);
+    }
+
+    @Override
+    public void addAll(final String key, final List<V> valueList) {
+        delegate.addAll(key, valueList);
+    }
+
+    @Override
+    public void addFirst(final String key, final V value) {
+        delegate.addFirst(key, value);
+    }
+
+    @Override
+    public boolean equalsIgnoreValueOrder(final MultivaluedMap<String, V> otherMap) {
+        return delegate.equalsIgnoreValueOrder(otherMap);
+    }
+
+    @Override
     public void putSingle(final String key, final V value) {
         delegate.putSingle(key, value);
     }

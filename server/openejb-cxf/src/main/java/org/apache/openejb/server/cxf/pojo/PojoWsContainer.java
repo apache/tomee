@@ -18,7 +18,7 @@
 package org.apache.openejb.server.cxf.pojo;
 
 import org.apache.cxf.Bus;
-import org.apache.cxf.transport.http.HTTPTransportFactory;
+import org.apache.cxf.transport.DestinationFactory;
 import org.apache.openejb.api.internal.Internal;
 import org.apache.openejb.api.jmx.Description;
 import org.apache.openejb.api.jmx.MBean;
@@ -49,7 +49,7 @@ public class PojoWsContainer extends CxfWsContainer {
     private final ClassLoader loader;
     private WsServiceMBean mbean;
 
-    public PojoWsContainer(final ClassLoader loader, final HTTPTransportFactory transportFactory,
+    public PojoWsContainer(final ClassLoader loader, final DestinationFactory transportFactory,
                            final Bus bus, final PortData port, final Context context,
                            final Class target,
                            final Map<String, Object> bdgs, final ServiceConfiguration configuration) {
@@ -63,11 +63,11 @@ public class PojoWsContainer extends CxfWsContainer {
 
     @Override
     protected String getFakeUrl() {
-        return target.getClass().getName() + "_" + hashCode(); // pojo are not like ejbName: unique
+        return (Class.class.isInstance(target)? Class.class.cast(target).getName() : target.getClass().getName()) + "_" + hashCode(); // pojo are not like ejbName: unique
     }
 
     protected PojoEndpoint createEndpoint() {
-        return new PojoEndpoint(loader, bus, port, context, target, httpTransportFactory, bindings, serviceConfiguration);
+        return new PojoEndpoint(loader, bus, port, context, target, transportFactory, bindings, serviceConfiguration);
     }
 
     @Override

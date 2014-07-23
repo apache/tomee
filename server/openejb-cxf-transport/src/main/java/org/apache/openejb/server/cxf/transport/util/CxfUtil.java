@@ -21,18 +21,17 @@ import org.apache.cxf.BusFactory;
 import org.apache.cxf.binding.BindingFactory;
 import org.apache.cxf.binding.BindingFactoryManager;
 import org.apache.cxf.bus.CXFBusFactory;
-import org.apache.cxf.bus.CXFBusImpl;
-import org.apache.cxf.bus.managers.BindingFactoryManagerImpl;
 import org.apache.cxf.common.logging.LogUtils;
-import org.apache.cxf.configuration.spring.MapProvider;
 import org.apache.cxf.databinding.DataBinding;
 import org.apache.cxf.endpoint.AbstractEndpointFactory;
 import org.apache.cxf.feature.AbstractFeature;
-import org.apache.cxf.interceptor.AbstractBasicInterceptorProvider;
+import org.apache.cxf.feature.Feature;
 import org.apache.cxf.interceptor.Interceptor;
+import org.apache.cxf.interceptor.InterceptorProvider;
 import org.apache.cxf.management.InstrumentationManager;
 import org.apache.cxf.management.jmx.InstrumentationManagerImpl;
 import org.apache.cxf.message.Message;
+import org.apache.cxf.transport.http.HttpDestinationFactory;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.ServiceInfo;
@@ -40,7 +39,9 @@ import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
 import org.apache.openejb.assembler.classic.util.ServiceInfos;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.monitoring.LocalMBeanServer;
+import org.apache.openejb.server.cxf.transport.OpenEJBHttpDestinationFactory;
 import org.apache.openejb.util.PropertiesHelper;
+import org.apache.openejb.util.reflection.Reflections;
 
 import javax.management.MBeanServer;
 import java.lang.reflect.InvocationHandler;
@@ -50,7 +51,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 public final class CxfUtil {
@@ -65,16 +65,15 @@ public final class CxfUtil {
     public static final String DEBUG = "debug";
     public static final String BUS_PREFIX = "org.apache.openejb.cxf.bus.";
     public static final String BUS_CONFIGURED_FLAG = "openejb.cxf.bus.configured";
-    private static final Map<String, BindingFactory> bindingFactoryMap = new ConcurrentHashMap<String, BindingFactory>(8, 0.75f, 4);
     private static final Bus DEFAULT_BUS = initDefaultBus(); // has to be initializd after bindingFactoryMap
-    private static volatile boolean usingBindingFactoryMap = false;
+    private static Map<String, BindingFactory> bindingFactoryMap;
 
     private CxfUtil() {
         // no-op
     }
 
     public static boolean hasService(final String name) {
-        return usingBindingFactoryMap && bindingFactoryMap.containsKey(name);
+        return bindingFactoryMap != null && bindingFactoryMap.containsKey(name);
     }
 
     private static Bus initDefaultBus() {
@@ -83,16 +82,9 @@ public final class CxfUtil {
         try { // create the bus reusing cxf logic but skipping factory lookup
             final Bus bus = BusFactory.newInstance(CXFBusFactory.class.getName()).createBus();
             final BindingFactoryManager bfm = bus.getExtension(BindingFactoryManager.class);
+            bindingFactoryMap = (Map<String, BindingFactory>) Reflections.get(bfm, "bindingFactories");
 
-            if (BindingFactoryManagerImpl.class.isInstance(bfm) && !usingBindingFactoryMap) {
-                BindingFactoryManagerImpl.class.cast(bfm).setMapProvider(new MapProvider<String, BindingFactory>() {
-                    @Override
-                    public Map<String, BindingFactory> createMap() {
-                        usingBindingFactoryMap = true;
-                        return bindingFactoryMap;
-                    }
-                });
-            }
+            bus.setExtension(new OpenEJBHttpDestinationFactory(), HttpDestinationFactory.class);
 
             // ensure client proxies can use app classes
             CXFBusFactory.setDefaultBus(Bus.class.cast(Proxy.newProxyInstance(CxfUtil.class.getClassLoader(), new Class<?>[]{Bus.class}, new ClientAwareBusHandler())));
@@ -105,11 +97,6 @@ public final class CxfUtil {
 
     public static Bus getBus() {
         return DEFAULT_BUS;
-    }
-
-    @Deprecated // no more useful since we create it once
-    public static Bus getDefaultBus() {
-        return getBus();
     }
 
     public static ClassLoader initBusLoader() {
@@ -154,8 +141,8 @@ public final class CxfUtil {
         // endpoint features
         final String featuresIds = beanConfig.getProperty(prefix + FEATURES);
         if (featuresIds != null) {
-            final List<?> features = createFeatures(availableServices, featuresIds);
-            svrFactory.setFeatures((List<AbstractFeature>) features);
+            final List<? extends Feature> features = createFeatures(availableServices, featuresIds);
+            svrFactory.setFeatures(features);
         }
 
         configureInterceptors(svrFactory, prefix, availableServices, beanConfig);
@@ -186,7 +173,7 @@ public final class CxfUtil {
         }
     }
 
-    public static void configureInterceptors(final AbstractBasicInterceptorProvider abip, final String prefix, final Collection<ServiceInfo> availableServices, final Properties beanConfig) {
+    public static void configureInterceptors(final InterceptorProvider abip, final String prefix, final Collection<ServiceInfo> availableServices, final Properties beanConfig) {
         // interceptors
         final String inInterceptorsIds = beanConfig.getProperty(prefix + IN_INTERCEPTORS);
         if (inInterceptorsIds != null && !inInterceptorsIds.trim().isEmpty()) {
@@ -209,14 +196,14 @@ public final class CxfUtil {
         }
     }
 
-    public static List<AbstractFeature> createFeatures(final Collection<ServiceInfo> availableServices, final String featuresIds) {
+    public static List<Feature> createFeatures(final Collection<ServiceInfo> availableServices, final String featuresIds) {
         final List<?> features = ServiceInfos.resolve(availableServices, featuresIds.split(","));
-        for (Object instance : features) {
+        for (final Object instance : features) {
             if (!AbstractFeature.class.isInstance(instance)) {
                 throw new OpenEJBRuntimeException("feature should inherit from " + AbstractFeature.class.getName());
             }
         }
-        return (List<AbstractFeature>) features;
+        return (List<Feature>) features;
     }
 
     public static List<Interceptor<? extends Message>> createInterceptors(final Collection<ServiceInfo> availableServices, final String ids) {
@@ -258,37 +245,34 @@ public final class CxfUtil {
             }
         }
 
-        if (bus instanceof CXFBusImpl) {
-            final ServiceConfiguration configuration = new ServiceConfiguration(SystemInstance.get().getProperties(),
-                SystemInstance.get().getComponent(OpenEjbConfiguration.class).facilities.services);
+        final ServiceConfiguration configuration = new ServiceConfiguration(SystemInstance.get().getProperties(),
+            SystemInstance.get().getComponent(OpenEjbConfiguration.class).facilities.services);
 
-            final CXFBusImpl busImpl = (CXFBusImpl) bus;
-            final Collection<ServiceInfo> serviceInfos = configuration.getAvailableServices();
-            final Properties properties = configuration.getProperties();
-            if (properties == null || properties.isEmpty()) {
-                return;
-            }
-
-            final String featuresIds = properties.getProperty(BUS_PREFIX + FEATURES);
-            if (featuresIds != null) {
-                final List<AbstractFeature> features = createFeatures(serviceInfos, featuresIds);
-                if (features != null) {
-                    features.addAll(busImpl.getFeatures());
-                    busImpl.setFeatures(features);
-                }
-            }
-
-            final Properties busProperties = ServiceInfos.serviceProperties(serviceInfos, properties.getProperty(BUS_PREFIX + ENDPOINT_PROPERTIES));
-            if (busProperties != null) {
-                busImpl.getProperties().putAll(PropertiesHelper.map(busProperties));
-            }
-
-            configureInterceptors(busImpl, BUS_PREFIX, serviceInfos, configuration.getProperties());
-
-            SystemInstance.get().getProperties().setProperty(BUS_CONFIGURED_FLAG, "true");
-
-            busImpl.setId(SystemInstance.get().getProperty("openejb.cxf.bus.id", "openejb.cxf.bus"));
+        final Collection<ServiceInfo> serviceInfos = configuration.getAvailableServices();
+        final Properties properties = configuration.getProperties();
+        if (properties == null || properties.isEmpty()) {
+            return;
         }
+
+        final String featuresIds = properties.getProperty(BUS_PREFIX + FEATURES);
+        if (featuresIds != null) {
+            final List<Feature> features = createFeatures(serviceInfos, featuresIds);
+            if (features != null) {
+                features.addAll(bus.getFeatures());
+                bus.setFeatures(features);
+            }
+        }
+
+        final Properties busProperties = ServiceInfos.serviceProperties(serviceInfos, properties.getProperty(BUS_PREFIX + ENDPOINT_PROPERTIES));
+        if (busProperties != null) {
+            bus.getProperties().putAll(PropertiesHelper.map(busProperties));
+        }
+
+        configureInterceptors(bus, BUS_PREFIX, serviceInfos, configuration.getProperties());
+
+        SystemInstance.get().getProperties().setProperty(BUS_CONFIGURED_FLAG, "true");
+
+        bus.setId(SystemInstance.get().getProperty("openejb.cxf.bus.id", "openejb.cxf.bus"));
     }
 
     private static class ClientAwareBusHandler implements InvocationHandler {

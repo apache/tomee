@@ -100,7 +100,16 @@ public class RemoteTomEEEJBContainer extends EJBContainer {
                     setProperty(Context.PROVIDER_URL, remoteEjb);
                 }});
 
-                final Deployer deployer = Deployer.class.cast(instance.context.lookup("openejb/DeployerBusinessRemote"));
+                Deployer deployer = null;
+                for (int i = 0; i < (properties.containsKey("retries") ? Integer.parseInt(String.class.cast(properties.get("retries"))) : 20); i++) {
+                    deployer = Deployer.class.cast(instance.context.lookup("openejb/DeployerBusinessRemote"));
+                    if (deployer != null) {
+                        break;
+                    }
+                }
+                if (deployer == null) {
+                    throw new TomEERemoteEJBContainerException("Can't lookup deployer, eother increse retries or setup it correctly", new IllegalStateException());
+                }
 
                 if (modules instanceof File) {
                     final File file = File.class.cast(modules);

@@ -28,8 +28,8 @@ import org.apache.cxf.jaxws.support.JaxWsEndpointImpl;
 import org.apache.cxf.jaxws.support.JaxWsImplementorInfo;
 import org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean;
 import org.apache.cxf.service.Service;
-import org.apache.cxf.service.factory.ReflectionServiceFactoryBean;
-import org.apache.cxf.transport.http.HTTPTransportFactory;
+import org.apache.cxf.transport.DestinationFactory;
+import org.apache.cxf.wsdl.service.factory.ReflectionServiceFactoryBean;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
@@ -78,18 +78,18 @@ public abstract class CxfEndpoint {
 
     protected HandlerResolverImpl handlerResolver;
 
-    protected HTTPTransportFactory httpTransportFactory;
+    protected DestinationFactory destinationFactory;
 
     protected ServiceConfiguration serviceConfiguration;
 
     public CxfEndpoint(Bus bus, PortData port, Context context,
-                       Object implementor, HTTPTransportFactory httpTransportFactory,
+                       Object implementor, DestinationFactory destinationFactory,
                        ServiceConfiguration configuration) {
         this.bus = bus;
         this.port = port;
         this.context = context;
         this.implementor = implementor;
-        this.httpTransportFactory = httpTransportFactory;
+        this.destinationFactory = destinationFactory;
         this.serviceConfiguration = configuration;
         this.bus.setExtension(this, CxfEndpoint.class);
     }
@@ -181,7 +181,7 @@ public abstract class CxfEndpoint {
         svrFactory.setServiceFactory(serviceFactory);
         svrFactory.setStart(false);
         svrFactory.setServiceBean(implementor);
-        svrFactory.setDestinationFactory(httpTransportFactory);
+        svrFactory.setDestinationFactory(destinationFactory);
         svrFactory.setServiceClass(serviceFactory.getServiceClass());
 
         final Properties beanConfig = serviceConfiguration.getProperties();

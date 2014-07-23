@@ -19,9 +19,8 @@ package org.apache.openejb.server.cxf.rs;
 import org.apache.cxf.Bus;
 import org.apache.cxf.binding.BindingFactoryManager;
 import org.apache.cxf.jaxrs.JAXRSBindingFactory;
-import org.apache.openejb.assembler.classic.AppInfo;
-import org.apache.openejb.assembler.classic.WebAppInfo;
-import org.apache.openejb.assembler.classic.event.AssemblerAfterApplicationCreated;
+import org.apache.cxf.transport.DestinationFactory;
+import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.openejb.cdi.WebBeansContextCreated;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.observer.Observes;
@@ -29,11 +28,9 @@ import org.apache.openejb.rest.AbstractRestThreadLocalProxy;
 import org.apache.openejb.rest.RESTResourceFinder;
 import org.apache.openejb.rest.ThreadLocalContextManager;
 import org.apache.openejb.server.ServiceException;
-import org.apache.openejb.server.cxf.transport.HttpTransportFactory;
 import org.apache.openejb.server.cxf.transport.util.CxfUtil;
 import org.apache.openejb.server.rest.RESTService;
 import org.apache.openejb.server.rest.RsHttpListener;
-import org.apache.openejb.spi.ContainerSystem;
 import org.apache.webbeans.annotation.AnyLiteral;
 import org.apache.webbeans.annotation.EmptyAnnotationLiteral;
 import org.apache.webbeans.config.WebBeansContext;
@@ -77,7 +74,7 @@ import static java.util.Arrays.asList;
 public class CxfRSService extends RESTService {
 
     private static final String NAME = "cxf-rs";
-    private HttpTransportFactory httpTransportFactory;
+    private DestinationFactory destinationFactory;
 
     @Override
     public void service(final InputStream in, final OutputStream out) throws ServiceException, IOException {
@@ -146,7 +143,7 @@ public class CxfRSService extends RESTService {
     @Override
     protected void beforeStart() {
         super.beforeStart();
-        httpTransportFactory = new HttpTransportFactory(CxfUtil.getBus());
+        destinationFactory = new HTTPTransportFactory();
     }
 
     @Override
@@ -164,7 +161,7 @@ public class CxfRSService extends RESTService {
 
     @Override
     protected RsHttpListener createHttpListener() {
-        return new CxfRsHttpListener(httpTransportFactory, getWildcard());
+        return new CxfRsHttpListener(destinationFactory, getWildcard());
     }
 
     private static class ContextLiteral extends EmptyAnnotationLiteral<Context> implements Context {

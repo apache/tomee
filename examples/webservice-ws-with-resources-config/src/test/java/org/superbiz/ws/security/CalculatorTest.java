@@ -19,7 +19,7 @@ package org.superbiz.ws.security;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;
 import org.apache.openejb.OpenEjbContainer;
-import org.apache.ws.security.WSPasswordCallback;
+import org.apache.wss4j.common.ext.WSPasswordCallback;
 import org.junit.Test;
 
 import javax.ejb.embeddable.EJBContainer;

@@ -17,10 +17,10 @@
 package org.apache.openejb.server.cxf.rs;
 
 import org.apache.cxf.jaxrs.ext.ContextProvider;
+import org.apache.cxf.jaxrs.ext.MessageContext;
 import org.apache.cxf.jaxrs.model.ClassResourceInfo;
 import org.apache.cxf.jaxrs.model.OperationResourceInfo;
 import org.apache.cxf.jaxrs.provider.ProviderFactory;
-import org.apache.cxf.jaxrs.utils.AnnotationUtils;
 import org.apache.cxf.jaxrs.utils.JAXRSUtils;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.Message;
@@ -29,18 +29,30 @@ import org.apache.openejb.rest.ThreadLocalContextManager;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.*;
+import javax.ws.rs.core.Application;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.Request;
+import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Providers;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public final class Contexts {
-    private static final ThreadLocal<Exchange> EXCHANGE = new ThreadLocal<Exchange>();
+    private static final ThreadLocal<Exchange> EXCHANGE = new ThreadLocal<>();
+    private static final Set<Class<?>> CONTEXT_CLASSES = contextClasses();
 
     private Contexts() {
         // no-op
@@ -53,13 +65,37 @@ public final class Contexts {
         for (final Field f : cls.getDeclaredFields()) {
             for (final Annotation a : f.getAnnotations()) {
                 if (a.annotationType() == Context.class || a.annotationType() == Resource.class
-                    && AnnotationUtils.isContextClass(f.getType())) {
+                    && isContextClass(f.getType())) {
                     types.add(f.getType());
                 }
             }
         }
         findContextFields(cls.getSuperclass(), types);
         return types;
+    }
+
+    private static boolean isContextClass(final Class<?> type) {
+        return CONTEXT_CLASSES.contains(type);
+    }
+
+    private static Set<Class<?>> contextClasses() {
+        final Set<Class<?>> classes = new HashSet<>(); classes.add(UriInfo.class);
+        classes.add(SecurityContext.class);
+        classes.add(HttpHeaders.class);
+        classes.add(ContextResolver.class);
+        classes.add(Providers.class);
+        classes.add(Request.class);
+        /* TODO: when we have jaxrs 2
+        classes.add(ResourceInfo.class);
+        classes.add(ResourceContext.class);
+        */
+        classes.add(Application.class);
+        classes.add(HttpServletRequest.class);
+        classes.add(HttpServletResponse.class);
+        classes.add(ServletConfig.class);
+        classes.add(ServletContext.class);
+        classes.add(MessageContext.class);
+        return classes;
     }
 
     @SuppressWarnings("UnusedDeclaration")
@@ -71,7 +107,7 @@ public final class Contexts {
         final ClassResourceInfo cri = exchange.get(OperationResourceInfo.class).getClassResourceInfo();
 
         // binding context fields
-        final Set<Class<?>> types = new HashSet<Class<?>>();
+        final Set<Class<?>> types = new HashSet<>();
         for (final Field field : cri.getContextFields()) {
             types.add(field.getType());
         }
@@ -133,7 +169,7 @@ public final class Contexts {
                     final Object value = provider.createContext(message);
                     Map<String, Object> map = ThreadLocalContextManager.OTHERS.get();
                     if (map == null) {
-                        map = new HashMap<String, Object>();
+                        map = new HashMap<>();
                         ThreadLocalContextManager.OTHERS.set(map);
                     }
                     map.put(type.getName(), value);

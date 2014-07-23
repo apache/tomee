@@ -237,6 +237,11 @@
             <artifactId>openejb-jpa-integration</artifactId>
             <version>${version.openejb}</version>
           </dependency>
+          <dependency>
+            <groupId>org.apache.xbean</groupId>
+            <artifactId>xbean-asm5-shaded</artifactId>
+            <version>${xbeanVersion}</version>
+          </dependency>
         </dependencies>
         <configuration>
           <classpathScope>runtime</classpathScope>
