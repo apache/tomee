@@ -15,7 +15,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>tck</artifactId>
     <groupId>org.apache.openejb</groupId>
@@ -27,9 +28,11 @@
   <name>OpenEJB :: TCK :: CDI TomEE</name>
 
   <properties>
-    <openejb.home>${project.build.directory}${file.separator}apache-tomee-${tomee.classifier}-${tomee.version}</openejb.home>
+    <openejb.home>${project.build.directory}${file.separator}apache-tomee-${tomee.classifier}-${tomee.version}
+    </openejb.home>
     <openejb.deployer.jndiname>openejb/DeployerBusinessRemote</openejb.deployer.jndiname>
-    <org.jboss.testharness.spi.Containers>org.apache.openejb.tck.impl.ContainersImplTomEE</org.jboss.testharness.spi.Containers>
+    <org.jboss.testharness.spi.Containers>org.apache.openejb.tck.impl.ContainersImplTomEE
+    </org.jboss.testharness.spi.Containers>
     <suiteXmlFile>src/test/resources/passing.xml</suiteXmlFile>
   </properties>
 
@@ -240,7 +243,8 @@
             <org.jboss.testharness.standalone>false</org.jboss.testharness.standalone>
             <org.jboss.testharness.runIntegrationTests>true</org.jboss.testharness.runIntegrationTests>
             <org.jboss.testharness.container.forceRestart>true</org.jboss.testharness.container.forceRestart>
-            <org.jboss.testharness.libraryDirectory>${project.build.directory}/dependency/lib</org.jboss.testharness.libraryDirectory>
+            <org.jboss.testharness.libraryDirectory>${project.build.directory}/dependency/lib
+            </org.jboss.testharness.libraryDirectory>
             <org.jboss.testharness.host>127.0.0.1:${tomee.http.port}</org.jboss.testharness.host>
             <!--<org.jboss.testharness.outputDirectory>target</org.jboss.testharness.outputDirectory>-->
             <deleteArtifacts>true</deleteArtifacts>
@@ -254,7 +258,8 @@
             <java.opts>-Xmx768m -XX:PermSize=64m -XX:MaxPermSize=512m -XX:ReservedCodeCacheSize=64m -Xss2048k</java.opts>
             <openejb.home>${openejb.home}</openejb.home>
             <openejb.deployer.jndiname>${openejb.deployer.jndiname}</openejb.deployer.jndiname>
-            <org.jboss.testharness.spi.Containers>${org.jboss.testharness.spi.Containers}</org.jboss.testharness.spi.Containers>
+            <org.jboss.testharness.spi.Containers>${org.jboss.testharness.spi.Containers}
+            </org.jboss.testharness.spi.Containers>
           </systemPropertyVariables>
         </configuration>
         <executions>
@@ -282,7 +287,8 @@
     <profile>
       <id>webapp-deployer</id>
       <properties>
-        <org.jboss.testharness.spi.Containers>org.apache.openejb.tck.impl.FullRestartContainer</org.jboss.testharness.spi.Containers>
+        <org.jboss.testharness.spi.Containers>org.apache.openejb.tck.impl.FullRestartContainer
+        </org.jboss.testharness.spi.Containers>
         <!--suiteXmlFile>src/test/resources/webapps-passing.xml</suiteXmlFile-->
       </properties>
     </profile>

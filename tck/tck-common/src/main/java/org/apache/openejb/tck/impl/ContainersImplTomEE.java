@@ -23,6 +23,7 @@ import org.apache.openejb.config.RemoteServer;
 import org.apache.openejb.config.ValidationException;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.tck.OpenEJBTCKRuntimeException;
+import org.apache.openejb.tck.util.ServerLocal;
 import org.jboss.testharness.api.DeploymentException;
 import org.jboss.testharness.spi.Containers;
 
@@ -44,7 +45,7 @@ public class ContainersImplTomEE extends AbstractContainers implements Container
     private Exception exception;
     private AppInfo appInfo;
     private File currentFile = null;
-    private final int port = Integer.getInteger("server.http.port", 8080);
+    private final int port = ServerLocal.getPort(8080);
 
     private Deployer lookup() {
         final Options options = new Options(System.getProperties());
