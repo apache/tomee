@@ -61,6 +61,11 @@
       <artifactId>webdeployer</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>tomee-util</artifactId>
+      <version>${tomee.version}</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
