@@ -24,10 +24,13 @@ import org.apache.openejb.util.ExecutorBuilder;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @version $Rev$ $Date$
@@ -68,12 +71,22 @@ public class DefaultTimerThreadPoolAdapter implements ThreadPool {
     // that specifically and have it explicitly created somewhere
     public static final class TimerExecutor {
         private final Executor executor;
+        private final AtomicInteger references = new AtomicInteger(0);
 
         private TimerExecutor(final Executor executor) {
             if (executor == null) {
                 throw new IllegalArgumentException("executor cannot be null");
             }
             this.executor = executor;
+        }
+
+        public TimerExecutor incr() {
+            references.incrementAndGet();
+            return this;
+        }
+
+        public boolean decr() {
+            return references.decrementAndGet() == 0;
         }
     }
 
@@ -128,14 +141,15 @@ public class DefaultTimerThreadPoolAdapter implements ThreadPool {
         final TimerExecutor timerExecutor = SystemInstance.get().getComponent(TimerExecutor.class);
 
         if (timerExecutor != null) {
-            this.executor = timerExecutor.executor;
+            this.executor = timerExecutor.incr().executor;
         } else {
             this.executor = new ExecutorBuilder()
                 .size(threadCount)
                 .prefix("EjbTimerPool")
                 .build(SystemInstance.get().getOptions());
 
-            SystemInstance.get().setComponent(TimerExecutor.class, new TimerExecutor(this.executor));
+            final TimerExecutor value = new TimerExecutor(this.executor).incr();
+            SystemInstance.get().setComponent(TimerExecutor.class, value);
         }
 
         this.threadPoolExecutorUsed = this.executor instanceof ThreadPoolExecutor;
@@ -157,19 +171,48 @@ public class DefaultTimerThreadPoolAdapter implements ThreadPool {
     }
 
     @Override
-    public void shutdown(final boolean arg0) {
+    public synchronized void shutdown(final boolean waitForJobsToComplete) {
         if (threadPoolExecutorUsed) {
-            final ThreadPoolExecutor tpe = (ThreadPoolExecutor) executor;
-            tpe.shutdown();
-            if (arg0) {
-                final int timeout = SystemInstance.get().getOptions().get(OPENEJB_EJB_TIMER_POOL_AWAIT_SECONDS, 5);
-                try {
-                    tpe.awaitTermination(timeout, TimeUnit.SECONDS);
-                } catch (final InterruptedException e) {
-                    logger.error(e.getMessage(), e);
+            final SystemInstance systemInstance = SystemInstance.get();
+            final TimerExecutor te = systemInstance.getComponent(TimerExecutor.class);
+            if (te != null) {
+                if (te.executor == executor) {
+                    if (te.decr()) {
+                        doShutdownExecutor(waitForJobsToComplete);
+                        systemInstance.removeComponent(TimerExecutor.class);
+                    } else { // flush jobs, maybe not all dedicated to this threadpool if shared but shouldn't be an issue
+                        final ThreadPoolExecutor tpe = ThreadPoolExecutor.class.cast(executor);
+                        if (waitForJobsToComplete) {
+                            final Collection<Runnable> jobs = new ArrayList<>();
+                            tpe.getQueue().drainTo(jobs);
+                            for (final Runnable r : jobs) {
+                                try {
+                                    r.run();
+                                } catch (final Exception e) {
+                                    logger.warning(e.getMessage(), e);
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    doShutdownExecutor(waitForJobsToComplete);
                 }
+            } else {
+                doShutdownExecutor(waitForJobsToComplete);
             }
-            SystemInstance.get().removeComponent(TimerExecutor.class);
+        }
+    }
+
+    private void doShutdownExecutor(final boolean waitJobs) {
+        final ThreadPoolExecutor tpe = (ThreadPoolExecutor) executor;
+        tpe.shutdown();
+        if (waitJobs) {
+            final int timeout = SystemInstance.get().getOptions().get(OPENEJB_EJB_TIMER_POOL_AWAIT_SECONDS, 5);
+            try {
+                tpe.awaitTermination(timeout, TimeUnit.SECONDS);
+            } catch (final InterruptedException e) {
+                logger.error(e.getMessage(), e);
+            }
         }
     }
 
