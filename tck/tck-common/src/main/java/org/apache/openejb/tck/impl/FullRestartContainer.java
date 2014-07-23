@@ -118,8 +118,8 @@ public class FullRestartContainer extends AbstractContainers implements Containe
         final Options options = new Options(System.getProperties());
         final Properties props = new Properties();
         props.put(Context.INITIAL_CONTEXT_FACTORY, RemoteInitialContextFactory.class.getName());
-        final String port = System.getProperty("server.http.port");
-        if (port != null) {
+        final int port = ServerLocal.getPort(-1);
+        if (port > 0) {
             System.out.println("provider url = " + "http://localhost:" + port + "/tomee/ejb");
             props.put(Context.PROVIDER_URL, options.get(Context.PROVIDER_URL, "http://localhost:" + port + "/tomee/ejb"));
         } else {
