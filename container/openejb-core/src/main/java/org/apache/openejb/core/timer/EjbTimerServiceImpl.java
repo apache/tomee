@@ -384,10 +384,6 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                     timeout = 1000L;
                 }
 
-                if (timeout > 60000L) {
-                    timeout = 60000L;
-                }
-
                 final CountDownLatch shutdownWait = new CountDownLatch(1);
                 final AtomicReference<Throwable> ex = new AtomicReference<Throwable>();
 
