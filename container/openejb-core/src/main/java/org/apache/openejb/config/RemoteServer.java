@@ -346,9 +346,6 @@ public class RemoteServer {
                         waitFor(p);
                     }
                 }
-
-                System.out.println("Started server process on port: " + port);
-
             } catch (final Exception e) {
                 throw (RuntimeException) new OpenEJBRuntimeException("Cannot start the server.  Exception: " + e.getClass().getName() + ": " + e.getMessage()).initCause(e);
             }
