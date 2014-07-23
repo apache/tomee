@@ -31,71 +31,97 @@ public class ThreadLocalUriInfo extends AbstractRestThreadLocalProxy<UriInfo>
         super(UriInfo.class);
     }
 
+    @Override
     public URI getAbsolutePath() {
         return get().getAbsolutePath();
     }
 
+    @Override
     public UriBuilder getAbsolutePathBuilder() {
         return get().getAbsolutePathBuilder();
     }
 
-
+    @Override
     public URI getBaseUri() {
         return get().getBaseUri();
     }
 
+    @Override
     public UriBuilder getBaseUriBuilder() {
         return get().getBaseUriBuilder();
     }
 
+    @Override
     public String getPath() {
         return get().getPath();
     }
 
+    @Override
     public String getPath(final boolean decode) {
         return get().getPath(decode);
     }
 
+    @Override
     public List<PathSegment> getPathSegments() {
         return get().getPathSegments();
     }
 
+    @Override
     public List<PathSegment> getPathSegments(final boolean decode) {
         return get().getPathSegments(decode);
     }
 
+    @Override
     public MultivaluedMap<String, String> getQueryParameters() {
         return get().getQueryParameters();
     }
 
+    @Override
     public MultivaluedMap<String, String> getQueryParameters(final boolean decode) {
         return get().getQueryParameters(decode);
     }
 
+    @Override
     public URI getRequestUri() {
         return get().getRequestUri();
     }
 
+    @Override
     public UriBuilder getRequestUriBuilder() {
         return get().getRequestUriBuilder();
     }
 
+    @Override
     public MultivaluedMap<String, String> getPathParameters() {
         return get().getPathParameters();
     }
 
+    @Override
     public MultivaluedMap<String, String> getPathParameters(final boolean decode) {
         return get().getPathParameters(decode);
     }
 
+    @Override
     public List<Object> getMatchedResources() {
         return get().getMatchedResources();
     }
 
+    @Override
+    public URI resolve(final URI uri) {
+        return get().resolve(uri);
+    }
+
+    @Override
+    public URI relativize(final URI uri) {
+        return get().relativize(uri);
+    }
+
+    @Override
     public List<String> getMatchedURIs() {
         return get().getMatchedURIs();
     }
 
+    @Override
     public List<String> getMatchedURIs(final boolean decode) {
         return get().getMatchedURIs(decode);
     }

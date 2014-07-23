@@ -22,20 +22,16 @@ import org.apache.cxf.endpoint.ServerImpl;
 import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.JAXRSServiceImpl;
-import org.apache.cxf.jaxrs.ext.RequestHandler;
 import org.apache.cxf.jaxrs.ext.ResourceComparator;
 import org.apache.cxf.jaxrs.lifecycle.ResourceProvider;
 import org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider;
 import org.apache.cxf.jaxrs.model.ClassResourceInfo;
 import org.apache.cxf.jaxrs.model.MethodDispatcher;
 import org.apache.cxf.jaxrs.model.OperationResourceInfo;
-import org.apache.cxf.jaxrs.model.ProviderInfo;
-import org.apache.cxf.jaxrs.model.wadl.WadlGenerator;
 import org.apache.cxf.jaxrs.provider.JAXBElementProvider;
-import org.apache.cxf.jaxrs.provider.json.JSONProvider;
 import org.apache.cxf.service.invoker.Invoker;
+import org.apache.cxf.transport.DestinationFactory;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
-import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.cxf.transport.servlet.BaseUrlHelper;
 import org.apache.fleece.jaxrs.FleeceProvider;
 import org.apache.fleece.jaxrs.JsrProvider;
@@ -66,7 +62,6 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.proxy.ProxyEJB;
 import org.apache.webbeans.config.WebBeansContext;
-import org.w3c.dom.Document;
 
 import javax.management.ObjectName;
 import javax.management.openmbean.TabularData;
@@ -75,21 +70,12 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Application;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.ext.MessageBodyReader;
-import javax.ws.rs.ext.MessageBodyWriter;
-import javax.ws.rs.ext.Provider;
 import javax.xml.bind.Marshaller;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -121,17 +107,17 @@ public class CxfRsHttpListener implements RsHttpListener {
 
     private static final Map<String, String> STATIC_CONTENT_TYPES;
 
-    private final HTTPTransportFactory transportFactory;
+    private final DestinationFactory transportFactory;
     private final String wildcard;
     private AbstractHTTPDestination destination;
     private Server server;
     private String context = "";
     private String servlet = "";
-    private final Collection<Pattern> staticResourcesList = new CopyOnWriteArrayList<Pattern>();
-    private final List<ObjectName> jmxNames = new ArrayList<ObjectName>();
+    private final Collection<Pattern> staticResourcesList = new CopyOnWriteArrayList<>();
+    private final List<ObjectName> jmxNames = new ArrayList<>();
 
     static {
-        STATIC_CONTENT_TYPES = new HashMap<String, String>();
+        STATIC_CONTENT_TYPES = new HashMap<>();
         STATIC_CONTENT_TYPES.put("html", "text/html");
         STATIC_CONTENT_TYPES.put("xhtml", "text/html");
         STATIC_CONTENT_TYPES.put("txt", "text/plain");
@@ -141,27 +127,10 @@ public class CxfRsHttpListener implements RsHttpListener {
         STATIC_CONTENT_TYPES.put("ico", "image/ico");
         STATIC_CONTENT_TYPES.put("pdf", "application/pdf");
         STATIC_CONTENT_TYPES.put("xsd", "application/xml");
-
-        for (final ProviderInfo<RequestHandler> rh : org.apache.cxf.jaxrs.provider.ProviderFactory.getSharedInstance().getRequestHandlers()) {
-            final RequestHandler provider = rh.getProvider();
-            if (WadlGenerator.class.isInstance(provider)) {
-                final WadlGenerator wadlGenerator = WadlGenerator.class.cast(provider);
-                final String ignoreRequests = SystemInstance.get().getProperty("openejb.cxf-rs.wadl-generator.ignoreRequests");
-                final String ignoreMessageWriters = SystemInstance.get().getProperty("openejb.cxf-rs.wadl-generator.ignoreMessageWriters", "false");
-
-                if (ignoreRequests != null) {
-                    wadlGenerator.setIgnoreRequests(Boolean.parseBoolean(ignoreRequests));
-                }
-                // CXF-5319: bug in CXF? it prevents to get the wadl as json otherwise
-                if (ignoreMessageWriters != null) {
-                    wadlGenerator.setIgnoreMessageWriters(Boolean.parseBoolean(ignoreMessageWriters));
-                }
-            }
-        }
     }
 
-    public CxfRsHttpListener(final HTTPTransportFactory httpTransportFactory, final String star) {
-        transportFactory = httpTransportFactory;
+    public CxfRsHttpListener(final DestinationFactory destinationFactory, final String star) {
+        transportFactory = destinationFactory;
         wildcard = star;
     }
 
@@ -314,7 +283,7 @@ public class CxfRsHttpListener implements RsHttpListener {
     }
 
     private Collection<Object> providers(final Collection<ServiceInfo> services, final Collection<Object> additionalProviders) {
-        final Collection<Object> instances = new ArrayList<Object>();
+        final Collection<Object> instances = new ArrayList<>();
         for (final Object o : additionalProviders) {
             if (o instanceof Class<?>) {
                 final Class<?> clazz = (Class<?>) o;
@@ -382,7 +351,7 @@ public class CxfRsHttpListener implements RsHttpListener {
             configureFactory(additionalProviders, serviceConfiguration, factory);
             factory.setApplication(application);
 
-            final List<Class<?>> classes = new ArrayList<Class<?>>();
+            final List<Class<?>> classes = new ArrayList<>();
 
             for (final Class<?> clazz : application.getClasses()) {
                 if (!additionalProviders.contains(clazz) && !clazz.isInterface()) {
@@ -468,7 +437,7 @@ public class CxfRsHttpListener implements RsHttpListener {
     private void logEndpoints(final Application application, final String prefix,
                               final Map<String, EJBRestServiceInfo> restEjbs,
                               final JAXRSServerFactoryBean factory, final String base) {
-        final List<Logs.LogResourceEndpointInfo> resourcesToLog = new ArrayList<Logs.LogResourceEndpointInfo>();
+        final List<Logs.LogResourceEndpointInfo> resourcesToLog = new ArrayList<>();
         int classSize = 0;
         int addressSize = 0;
 
@@ -495,7 +464,7 @@ public class CxfRsHttpListener implements RsHttpListener {
             int methodSize = 7;
             int methodStrSize = 0;
 
-            final List<Logs.LogOperationEndpointInfo> toLog = new ArrayList<Logs.LogOperationEndpointInfo>();
+            final List<Logs.LogOperationEndpointInfo> toLog = new ArrayList<>();
 
             final MethodDispatcher md = info.getMethodDispatcher();
             for (final OperationResourceInfo ori : md.getOperationResourceInfos()) {
@@ -559,7 +528,7 @@ public class CxfRsHttpListener implements RsHttpListener {
     private JAXRSServerFactoryBean newFactory(final String prefix) {
         final JAXRSServerFactoryBean factory = new JAXRSServerFactoryBean();
         factory.setDestinationFactory(transportFactory);
-        factory.setBus(transportFactory.getBus());
+        factory.setBus(CxfUtil.getBus());
         factory.setAddress(prefix);
         return factory;
     }
@@ -607,7 +576,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         {
             final String provider = serviceConfiguration.getProperties().getProperty(PROVIDERS_KEY);
             if (provider != null) {
-                providersConfig = new HashSet<String>();
+                providersConfig = new HashSet<>();
                 for (final String p : Arrays.asList(provider.split(","))) {
                     providersConfig.add(p.trim());
                 }
@@ -616,7 +585,7 @@ public class CxfRsHttpListener implements RsHttpListener {
             {
                 if (GLOBAL_PROVIDERS != null) {
                     if (providersConfig == null) {
-                        providersConfig = new HashSet<String>();
+                        providersConfig = new HashSet<>();
                     }
                     providersConfig.addAll(Arrays.asList(GLOBAL_PROVIDERS.split(",")));
                 }
@@ -635,7 +604,7 @@ public class CxfRsHttpListener implements RsHttpListener {
             }
         }
         if (providers == null) {
-            providers = new ArrayList<Object>(4);
+            providers = new ArrayList<>(4);
             if (additionalProviders != null && !additionalProviders.isEmpty()) {
                 providers.addAll(providers(services, additionalProviders));
             } else {
@@ -656,7 +625,7 @@ public class CxfRsHttpListener implements RsHttpListener {
 
     private static List<Object> defaultProviders() {
         final JAXBElementProvider jaxb = new JAXBElementProvider();
-        final Map<String, Object> jaxbProperties = new HashMap<String, Object>();
+        final Map<String, Object> jaxbProperties = new HashMap<>();
         jaxbProperties.put(Marshaller.JAXB_FRAGMENT, true);
         jaxb.setMarshallerProperties(jaxbProperties);
 

@@ -18,8 +18,8 @@
 package org.apache.openejb.server.cxf;
 
 import org.apache.cxf.Bus;
+import org.apache.cxf.transport.DestinationFactory;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
-import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
 import org.apache.openejb.core.webservices.PortData;
 import org.apache.openejb.monitoring.LocalMBeanServer;
@@ -35,20 +35,20 @@ public abstract class CxfWsContainer implements HttpListener {
     protected final PortData port;
     protected AbstractHTTPDestination destination;
     protected CxfEndpoint endpoint;
-    protected HTTPTransportFactory httpTransportFactory;
+    protected DestinationFactory transportFactory;
     protected final ServiceConfiguration serviceConfiguration;
     private ObjectName jmxName;
 
-    public CxfWsContainer(final Bus bus, final HTTPTransportFactory httpTransportFactory, final PortData port, final ServiceConfiguration config) {
+    public CxfWsContainer(final Bus bus, final DestinationFactory transportFactory, final PortData port, final ServiceConfiguration config) {
         this.bus = bus;
         this.port = port;
         this.serviceConfiguration = config;
-        this.httpTransportFactory = httpTransportFactory;
+        this.transportFactory = transportFactory;
     }
 
     public void start() {
         endpoint = createEndpoint();
-        endpoint.publish("http://" + getFakeUrl() + ":80"); // needs to be unique and with a port
+        endpoint.publish("http://" + getFakeUrl().replace('$', '_') + ":80"); // needs to be unique and with a port
         destination = (AbstractHTTPDestination) endpoint.getServer().getDestination();
 
         // register an MBean for this endpoint

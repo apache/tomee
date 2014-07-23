@@ -19,7 +19,7 @@ package org.apache.openejb.server.cxf;
 import org.apache.cxf.binding.soap.SoapMessage;
 import org.apache.cxf.binding.soap.interceptor.AbstractSoapInterceptor;
 import org.apache.cxf.phase.Phase;
-import org.apache.ws.security.WSConstants;
+import org.apache.wss4j.dom.WSConstants;
 
 import javax.xml.namespace.QName;
 import java.util.HashSet;

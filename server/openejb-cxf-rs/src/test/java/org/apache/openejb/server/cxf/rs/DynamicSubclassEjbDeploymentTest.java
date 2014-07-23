@@ -73,7 +73,8 @@ public class DynamicSubclassEjbDeploymentTest {
 
     @Test
     public void rest() {
-        final String response = WebClient.create("http://localhost:" + port + "/openejb-cxf-rs").path("/ejb/rest").get(String.class);
+        final String response = WebClient.create("http://localhost:" + port + "/openejb-cxf-rs")
+            .path("/ejb/rest").get(String.class);
         assertEquals("ok", response);
     }
 

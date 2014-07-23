@@ -19,7 +19,6 @@ package org.apache.openejb.server.cxf.rs;
 import org.apache.cxf.jaxrs.lifecycle.ResourceProvider;
 import org.apache.cxf.jaxrs.utils.InjectionUtils;
 import org.apache.cxf.jaxrs.utils.ResourceUtils;
-import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.Message;
 import org.apache.openejb.Injection;
 import org.apache.openejb.InjectionProcessor;
@@ -47,11 +46,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Level;
 
 public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
     protected final Collection<Injection> injections;
@@ -63,7 +60,7 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
     protected final Method preDestroyMethod;
     protected final ClassLoader classLoader;
 
-    private final Collection<Class<?>> contextTypes = new HashSet<Class<?>>();
+    private final Collection<Class<?>> contextTypes = new HashSet<>();
     private final BeanManagerImpl bm;
     private final Bean<?> bean;
     private final BeanCreator normalScopeCreator;
@@ -294,11 +291,11 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
 
         @Override
         public Object create() {
-            final Object[] values = ResourceUtils.createConstructorArguments(constructor, m);
+            final Object[] values = ResourceUtils.createConstructorArguments(constructor, m, true);
             try {
                 instance = constructor.newInstance(values);
 
-                injector = new InjectionProcessor<Object>(instance, new ArrayList<Injection>(injections), InjectionProcessor.unwrap(context));
+                injector = new InjectionProcessor<>(instance, new ArrayList<>(injections), InjectionProcessor.unwrap(context));
                 instance = injector.createInstance();
 
                 final BeanManager bm = webbeansContext.getBeanManagerImpl();

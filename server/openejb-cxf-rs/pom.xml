@@ -28,15 +28,6 @@
   <name>OpenEJB :: Server :: CXF RS</name>
 
   <dependencies>
-    <!-- TODO: remove when using javaee-api 7 -->
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-json_1.0_spec</artifactId>
-      <version>1.0-SNAPSHOT</version>
-      <scope>provided</scope>
-    </dependency>
-
-
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -55,6 +46,11 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-cxf-transport</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-rs-service-description</artifactId>
+      <version>${cxf.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
@@ -80,6 +76,10 @@
         <exclusion>
           <groupId>xalan</groupId>
           <artifactId>serializer</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.annotation</groupId>
+          <artifactId>javax.annotation-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -115,5 +115,4 @@
       <version>1.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
-
 </project>

@@ -22,6 +22,7 @@ import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -33,32 +34,54 @@ public class ThreadLocalHttpHeaders extends AbstractRestThreadLocalProxy<HttpHea
         super(HttpHeaders.class);
     }
 
+    @Override
     public List<MediaType> getAcceptableMediaTypes() {
         return get().getAcceptableMediaTypes();
     }
 
+    @Override
     public Map<String, Cookie> getCookies() {
         return get().getCookies();
     }
 
+    @Override
+    public Date getDate() {
+        return get().getDate();
+    }
+
+    @Override
+    public int getLength() {
+        return get().getLength();
+    }
+
+    @Override
     public Locale getLanguage() {
         return get().getLanguage();
     }
 
+    @Override
     public MediaType getMediaType() {
         return get().getMediaType();
     }
 
+    @Override
     public MultivaluedMap<String, String> getRequestHeaders() {
         return new MultivaluedMapWithCaseInsensitiveKeySet<String>(get().getRequestHeaders());
     }
 
+    @Override
     public List<Locale> getAcceptableLanguages() {
         return get().getAcceptableLanguages();
     }
 
+    @Override
     public List<String> getRequestHeader(final String name) {
         return get().getRequestHeader(name);
+    }
+
+    @Override
+    public String getHeaderString(final String name) {
+        return get().getHeaderString(name);
     }
 
 }

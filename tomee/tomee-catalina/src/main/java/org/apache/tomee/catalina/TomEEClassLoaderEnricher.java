@@ -144,7 +144,7 @@ public final class TomEEClassLoaderEnricher implements WebAppEnricher {
             {"javax.jms.Queue", null, null}, // JMS
             {"javax.enterprise.context.ApplicationScoped", null, null}, // CDI
             {"javax.inject.Inject", null, null}, // CDI
-            {"javax.ws.rs.Path", "javax.ws.rs.core.Configurable", "You provide JAXRS 2 API in the webapp, we tolerate it to support some advanced feature but if you expect TomEE to provide it you should remove it"}, // JAXRS - commented since we manage to find why jersey-core brings the api!
+            {"javax.ws.rs.Path", null, null},
             {"javax.ejb.EJB", null, null}, // EJB
             {"javax.annotation.PostConstruct", "javax.annotation.Priority", "You provide javax.annotation API 1.2 so we'll tolerate new classes but it should surely be upgraded in the container"} // javax.annotation
     };

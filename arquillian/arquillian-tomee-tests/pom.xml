@@ -169,6 +169,7 @@
               <skip>true</skip>
               <parallel>none</parallel>
               <threadCount>1</threadCount>
+              <reuseForks>true</reuseForks>
             </configuration>
           </plugin>
         </plugins>
@@ -367,6 +368,7 @@
               <skip>true</skip>
               <parallel>none</parallel>
               <threadCount>1</threadCount>
+              <reuseForks>true</reuseForks>
             </configuration>
           </plugin>
         </plugins>

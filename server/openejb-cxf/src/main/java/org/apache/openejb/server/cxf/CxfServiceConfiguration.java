@@ -17,7 +17,7 @@
  */
 package org.apache.openejb.server.cxf;
 
-import org.apache.cxf.service.factory.AbstractServiceConfiguration;
+import org.apache.cxf.wsdl.service.factory.AbstractServiceConfiguration;
 import org.apache.openejb.core.webservices.PortData;
 
 import javax.xml.namespace.QName;

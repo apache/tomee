@@ -56,7 +56,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
     @Test
     public void testAcceptableLanguagesNoneGiven() throws IOException {
         final String response = get("context/httpheaders/acceptablelanguages");
-        assertEquals("acceptablelanguages:", response);
+        assertEquals("acceptablelanguages:*:", response);
     }
 
     /**

@@ -18,21 +18,20 @@
 package org.apache.openejb.server.cxf;
 
 import org.apache.cxf.Bus;
+import org.apache.cxf.binding.soap.SoapTransportFactory;
+import org.apache.cxf.transport.DestinationFactory;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
 import org.apache.openejb.core.webservices.PortData;
 import org.apache.openejb.server.cxf.client.SaajInterceptor;
 import org.apache.openejb.server.cxf.ejb.EjbWsContainer;
 import org.apache.openejb.server.cxf.pojo.PojoWsContainer;
-import org.apache.openejb.server.cxf.transport.HttpTransportFactory;
 import org.apache.openejb.server.cxf.transport.util.CxfUtil;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.webservices.WsService;
 
 import javax.naming.Context;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
@@ -42,7 +41,7 @@ public class CxfService extends WsService {
 
     private final Map<String, CxfWsContainer> wsContainers = new TreeMap<String, CxfWsContainer>();
 
-    private HttpTransportFactory httpTransportFactory;
+    private SoapTransportFactory transportFactory;
 
     public String getName() {
         return "cxf";
@@ -53,15 +52,7 @@ public class CxfService extends WsService {
         CxfUtil.configureBus();
         SaajInterceptor.registerInterceptors();
 
-        initBusTransport(CxfUtil.getBus());
-    }
-
-    private void initBusTransport(final Bus bus) {
-        httpTransportFactory = new HttpTransportFactory(bus);
-        final List<String> ids = new ArrayList<String>(httpTransportFactory.getTransportIds().size() + 1);
-        ids.addAll(httpTransportFactory.getTransportIds());
-        ids.add("http://schemas.xmlsoap.org/wsdl/soap/");
-        httpTransportFactory.setTransportIds(ids);
+        transportFactory = new SoapTransportFactory();
     }
 
     @Override
@@ -79,7 +70,7 @@ public class CxfService extends WsService {
         try {
             CxfCatalogUtils.loadOASISCatalog(bus, moduleBaseUrl, "META-INF/jax-ws-catalog.xml");
 
-            final EjbWsContainer container = new EjbWsContainer(bus, httpTransportFactory, port, beanContext, config);
+            final EjbWsContainer container = new EjbWsContainer(bus, transportFactory, port, beanContext, config);
             container.start();
             wsContainers.put(beanContext.getDeploymentID().toString(), container);
             return container;
@@ -98,7 +89,7 @@ public class CxfService extends WsService {
         try {
             CxfCatalogUtils.loadOASISCatalog(bus, moduleBaseUrl, "META-INF/jax-ws-catalog.xml");
 
-            PojoWsContainer container = new PojoWsContainer(loader, httpTransportFactory, bus, port, context, target, bdgs, services);
+            PojoWsContainer container = new PojoWsContainer(loader, transportFactory, bus, port, context, target, bdgs, services);
             container.start();
             wsContainers.put(serviceId, container);
             return container;
