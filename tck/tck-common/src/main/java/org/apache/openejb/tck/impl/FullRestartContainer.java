@@ -21,6 +21,7 @@ import org.apache.openejb.client.RemoteInitialContextFactory;
 import org.apache.openejb.config.RemoteServer;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.tck.OpenEJBTCKRuntimeException;
+import org.apache.openejb.tck.util.ServerLocal;
 import org.apache.tomee.catalina.facade.ExceptionManagerFacade;
 import org.jboss.testharness.api.DeploymentException;
 import org.jboss.testharness.spi.Containers;
@@ -61,7 +62,7 @@ public class FullRestartContainer extends AbstractContainers implements Containe
     }
 
     @Override
-    public boolean deploy(InputStream archive, String name) throws IOException {
+    public boolean deploy(final InputStream archive, final String name) throws IOException {
         if (name.endsWith("war")) {
             currentFile = new File(WEBAPP_DIR, name);
         } else {
@@ -71,17 +72,17 @@ public class FullRestartContainer extends AbstractContainers implements Containe
         System.out.println(currentFile);
         writeToFile(currentFile, archive);
 
-        String port = System.getProperty("server.http.port");
-        if (port != null) {
+        final int port = ServerLocal.getPort(-1);
+        if (port > 0) {
             server = new RemoteServer(100, true);
-            server.setPortStartup(Integer.parseInt(port));
+            server.setPortStartup(port);
         } else {
             throw new OpenEJBTCKRuntimeException("Please set the tomee port using the system property 'server.http.port'");
         }
 
         try {
             server.start();
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             e.printStackTrace();
             throw e;
         }
@@ -90,13 +91,13 @@ public class FullRestartContainer extends AbstractContainers implements Containe
     }
 
     @Override
-    public void undeploy(String name) throws IOException {
+    public void undeploy(final String name) throws IOException {
 
         if (null != server) {
             server.destroy();
         }
 
-        File folder = new File(currentFile.getParentFile(), currentFile.getName().substring(0, currentFile.getName().length() - 4));
+        final File folder = new File(currentFile.getParentFile(), currentFile.getName().substring(0, currentFile.getName().length() - 4));
         if (folder.exists()) {
             delete(folder);
         }
@@ -117,7 +118,7 @@ public class FullRestartContainer extends AbstractContainers implements Containe
         final Options options = new Options(System.getProperties());
         final Properties props = new Properties();
         props.put(Context.INITIAL_CONTEXT_FACTORY, RemoteInitialContextFactory.class.getName());
-        String port = System.getProperty("server.http.port");
+        final String port = System.getProperty("server.http.port");
         if (port != null) {
             System.out.println("provider url = " + "http://localhost:" + port + "/tomee/ejb");
             props.put(Context.PROVIDER_URL, options.get(Context.PROVIDER_URL, "http://localhost:" + port + "/tomee/ejb"));
@@ -126,9 +127,9 @@ public class FullRestartContainer extends AbstractContainers implements Containe
         }
 
         try {
-            InitialContext context = new InitialContext(props);
+            final InitialContext context = new InitialContext(props);
             return (ExceptionManagerFacade) context.lookup("openejb/ExceptionManagerFacadeBusinessRemote");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new OpenEJBTCKRuntimeException(e);
         }
     }

@@ -34,6 +34,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -127,16 +129,16 @@ public class RemoteServer {
 
     public void destroy() {
 
-        stop();
+        final boolean stopSent = stop();
 
         final Process p = server.get();
         if (p != null) {
-            try {
-                p.waitFor();
-            } catch (final Throwable t) {
-                t.printStackTrace(System.err);
-            }
 
+            if (stopSent) {
+                waitFor(p);
+            } else {
+                p.destroy();
+            }
         }
     }
 
@@ -338,32 +340,62 @@ public class RemoteServer {
                 if (START.equals(cmd)) {
                     server.set(p);
                 } else if (STOP.equals(cmd)) {
-                    p.waitFor();
+                    waitFor(p);
                     p = server.get();
                     if (p != null) {
-                        p.waitFor();
+                        waitFor(p);
                     }
                 }
+
+                System.out.println("Started server process on port: " + port);
 
             } catch (final Exception e) {
                 throw (RuntimeException) new OpenEJBRuntimeException("Cannot start the server.  Exception: " + e.getClass().getName() + ": " + e.getMessage()).initCause(e);
             }
-            if (checkPortAvailable) {
-                if (debug) {
 
-                    if (!connect(port, Integer.MAX_VALUE)) {
-                        throw new OpenEJBRuntimeException("Could not connect to server");
-                    }
-                } else {
-                    if (!connect(port, tries)) {
-                        throw new OpenEJBRuntimeException("Could not connect to server");
-                    }
+            if (debug) {
+                if (!connect(port, Integer.MAX_VALUE)) {
+                    destroy();
+                    throw new OpenEJBRuntimeException("Could not connect to server");
+                }
+            } else {
+                if (!connect(port, tries)) {
+                    destroy();
+                    throw new OpenEJBRuntimeException("Could not connect to server");
                 }
             }
+
         } else {
             if (verbose) {
                 System.out.println("[] FOUND STARTED SERVER");
             }
+        }
+    }
+
+    private void waitFor(final Process p) {
+        final CountDownLatch latch = new CountDownLatch(1);
+        final Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    p.waitFor();
+                } catch (final InterruptedException e) {
+                    //Ignore
+                }
+
+                latch.countDown();
+            }
+        }, "process-waitFor");
+
+        t.start();
+
+        try {
+            if (!latch.await(10, TimeUnit.SECONDS)) {
+                killOnExit(p);
+                throw new RuntimeException("Timeout waiting for process");
+            }
+        } catch (final InterruptedException e) {
+            killOnExit(p);
         }
     }
 
@@ -445,18 +477,21 @@ public class RemoteServer {
         return home;
     }
 
-    public void stop() {
+    public boolean stop() {
         try {
-            shutdown();
+            shutdown(5);
+            return true;
         } catch (final Exception e) {
             if (verbose && !serverHasAlreadyBeenStarted) {
                 e.printStackTrace(System.err);
             }
         }
+
+        return false;
     }
 
     public void forceStop() throws Exception {
-        shutdown();
+        shutdown(5);
 
         // check tomcat was effectively shutted down
         // we can have some concurrent shutdown commands (catalina shutdown hook for instance)
@@ -480,7 +515,7 @@ public class RemoteServer {
     }
 
     // same as catalina.sh stop {@see org.apache.catalina.startup.Catalina#stopServer}
-    private void shutdown() throws Exception {
+    private void shutdown(int attempts) throws Exception {
         Socket socket = null;
         OutputStream stream = null;
         try {
@@ -491,6 +526,13 @@ public class RemoteServer {
                 stream.write(shutdown.charAt(i));
             }
             stream.flush();
+        } catch (final Exception e) {
+            if (attempts > 0) {
+                Thread.sleep(1000);
+                shutdown(--attempts);
+            } else {
+                throw e;
+            }
         } finally {
             IO.close(stream);
             if (socket != null) {
@@ -505,7 +547,7 @@ public class RemoteServer {
 
     private boolean connect(final int port, int tries) {
         if (verbose) {
-            System.out.println("[] CONNECT ATTEMPT " + (this.tries - tries));
+            System.out.println("[] CONNECT ATTEMPT " + (this.tries - tries) + " on port: " + port);
         }
 
         Socket s = null;
@@ -524,7 +566,7 @@ public class RemoteServer {
                 return false;
             } else {
                 try {
-                    Thread.sleep(2000);
+                    Thread.sleep(1000);
                 } catch (final Exception e2) {
                     e.printStackTrace();
                 }
@@ -548,14 +590,20 @@ public class RemoteServer {
     }
 
     public void killOnExit() {
-        if (!serverHasAlreadyBeenStarted && kill.contains(this.server.get())) {
+        final Process p = this.server.get();
+        if (!serverHasAlreadyBeenStarted && kill.contains(p)) {
             return;
         }
-        kill.add(this.server.get());
+
+        killOnExit(p);
     }
 
-    // Shutdown hook for recursive delete on tmp directories
-    static final List<Process> kill = new ArrayList<Process>();
+    private static void killOnExit(final Process p) {
+        kill.add(p);
+    }
+
+    // Shutdown hook for processes
+    private static final List<Process> kill = new ArrayList<Process>();
 
     static {
         Runtime.getRuntime().addShutdownHook(new CleanUpThread());
