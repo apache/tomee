@@ -42,7 +42,8 @@ Licensed to the Apache Software Foundation (ASF) under one or more
             </goals>
             <configuration>
               <target>
-                <replace file="${project.build.directory}/classes/archetype-resources/pom.xml" token="[VERSION]" value="${project.version}"/>
+                <replace file="${project.build.directory}/classes/archetype-resources/pom.xml" token="[TOMEE]" value="${project.version}"/>
+                <replace file="${project.build.directory}/classes/archetype-resources/pom.xml" token="[OPENEJB]" value="${openejb.version}"/>
                 </target>
             </configuration>
           </execution>
