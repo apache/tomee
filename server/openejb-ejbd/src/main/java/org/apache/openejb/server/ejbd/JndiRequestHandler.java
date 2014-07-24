@@ -103,7 +103,7 @@ class JndiRequestHandler extends RequestHandler {
         rootContext = containerSystem.getJNDIContext();
         try {
             clientJndiTree = (Context) containerSystem.getJNDIContext().lookup("openejb/client");
-        } catch (NamingException ignore) {
+        } catch (final NamingException ignore) {
         }
         clusterableRequestHandler = newClusterableRequestHandler();
     }
@@ -132,7 +132,7 @@ class JndiRequestHandler extends RequestHandler {
         try {
             req.setMetaData(metaData);
             req.readExternal(in);
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
             final NamingException namingException = new NamingException("Could not read jndi request");
             namingException.setRootCause(e);
@@ -141,7 +141,7 @@ class JndiRequestHandler extends RequestHandler {
             if (logger.isDebugEnabled()) {
                 try {
                     logRequestResponse(req, res);
-                } catch (Exception ignore) {
+                } catch (final Exception ignore) {
                     // no-op
                 }
             }
@@ -179,7 +179,7 @@ class JndiRequestHandler extends RequestHandler {
                     }
                 }
 
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
                 final NamingException namingException = new NamingException("Unknown error in container");
                 namingException.setRootCause(e);
@@ -189,7 +189,7 @@ class JndiRequestHandler extends RequestHandler {
                 try {
                     res.setMetaData(metaData);
                     res.writeExternal(out);
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     logger.fatal("Could not write JndiResponse to output stream", e);
                 }
 
@@ -197,7 +197,7 @@ class JndiRequestHandler extends RequestHandler {
                     try {
                         out.flush(); // force it to as correct as possible response size
                         logRequestResponse(req, res);
-                    } catch (Exception ignore) {
+                    } catch (final Exception ignore) {
                         // no-op
                     }
                 }
@@ -214,8 +214,8 @@ class JndiRequestHandler extends RequestHandler {
         final CountingOutputStream cos = info.getOutputStream();
 
         logger.debug("JNDI REQUEST: " + req + " (size = " + (null != cis ? cis.getCount() : 0)
-                     + "b, remote-ip =" + info.ip
-                     + ") -- RESPONSE: " + res + " (size = " + (null != cos ? cos.getCount() : 0) + "b)");
+            + "b, remote-ip =" + info.ip
+            + ") -- RESPONSE: " + res + " (size = " + (null != cos ? cos.getCount() : 0) + "b)");
     }
 
     private String getPrefix(final JNDIRequest req) throws NamingException {
@@ -259,7 +259,7 @@ class JndiRequestHandler extends RequestHandler {
             } else {
                 try {
                     object = rootContext.lookup(prefix + name);
-                } catch (NameNotFoundException nnfe) { // fallback to resources
+                } catch (final NameNotFoundException nnfe) { // fallback to resources
                     object = rootContext.lookup("openejb/Resource/" + name);
                 }
             }
@@ -276,7 +276,7 @@ class JndiRequestHandler extends RequestHandler {
                         final DataSourceMetaData dataSourceMetaData = new DataSourceMetaData(cf.getDriverClassName(), cf.getUrl(), cf.getUsername(), cf.getPassword());
                         res.setResponseCode(ResponseCodes.JNDI_DATA_SOURCE);
                         res.setResult(dataSourceMetaData);
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         res.setResponseCode(ResponseCodes.JNDI_ERROR);
                         res.setResult(new ThrowableArtifact(e));
                     }
@@ -419,10 +419,10 @@ class JndiRequestHandler extends RequestHandler {
                 res.setResult(serviceMetaData);
                 return;
             }
-        } catch (NameNotFoundException e) {
+        } catch (final NameNotFoundException e) {
             res.setResponseCode(ResponseCodes.JNDI_NOT_FOUND);
             return;
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
             res.setResult(new ThrowableArtifact(e));
             return;
@@ -431,12 +431,12 @@ class JndiRequestHandler extends RequestHandler {
         BaseEjbProxyHandler handler;
         try {
             handler = (BaseEjbProxyHandler) ProxyManager.getInvocationHandler(object);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             try {
                 final Field field = object.getClass().getDeclaredField("invocationHandler");
                 field.setAccessible(true);
                 handler = (BaseEjbProxyHandler) field.get(object);
-            } catch (Exception e1) {
+            } catch (final Exception e1) {
                 // Not a proxy.  See if it's serializable and send it
                 if (object instanceof java.io.Serializable) {
                     res.setResponseCode(ResponseCodes.JNDI_OK);
@@ -445,9 +445,9 @@ class JndiRequestHandler extends RequestHandler {
                 } else {
                     res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
                     final NamingException namingException = new NamingException("Expected an ejb proxy, found unknown object: type=" +
-                                                                                object.getClass().getName() +
-                                                                                ", toString=" +
-                                                                                object);
+                        object.getClass().getName() +
+                        ", toString=" +
+                        object);
                     res.setResult(new ThrowableArtifact(namingException));
                     return;
                 }
@@ -464,14 +464,14 @@ class JndiRequestHandler extends RequestHandler {
             case EJB_HOME: {
                 res.setResponseCode(ResponseCodes.JNDI_EJBHOME);
                 final EJBMetaDataImpl metaData = new EJBMetaDataImpl(beanContext.getHomeInterface(),
-                                                                     beanContext.getRemoteInterface(),
-                                                                     beanContext.getPrimaryKeyClass(),
-                                                                     beanContext.getComponentType().toString(),
-                                                                     deploymentID,
-                                                                     -1,
-                                                                     convert(proxyInfo.getInterfaceType()),
-                                                                     null,
-                                                                     beanContext.getAsynchronousMethodSignatures());
+                    beanContext.getRemoteInterface(),
+                    beanContext.getPrimaryKeyClass(),
+                    beanContext.getComponentType().toString(),
+                    deploymentID,
+                    -1,
+                    convert(proxyInfo.getInterfaceType()),
+                    null,
+                    beanContext.getAsynchronousMethodSignatures());
                 metaData.loadProperties(beanContext.getProperties());
                 log(metaData);
                 res.setResult(metaData);
@@ -480,22 +480,22 @@ class JndiRequestHandler extends RequestHandler {
             case EJB_LOCAL_HOME: {
                 res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
                 final NamingException namingException = new NamingException("Not remotable: '" +
-                                                                            name +
-                                                                            "'. EJBLocalHome interfaces are not remotable as per the EJB specification.");
+                    name +
+                    "'. EJBLocalHome interfaces are not remotable as per the EJB specification.");
                 res.setResult(new ThrowableArtifact(namingException));
                 break;
             }
             case BUSINESS_REMOTE: {
                 res.setResponseCode(ResponseCodes.JNDI_BUSINESS_OBJECT);
                 final EJBMetaDataImpl metaData = new EJBMetaDataImpl(null,
-                                                                     null,
-                                                                     beanContext.getPrimaryKeyClass(),
-                                                                     beanContext.getComponentType().toString(),
-                                                                     deploymentID,
-                                                                     -1,
-                                                                     convert(proxyInfo.getInterfaceType()),
-                                                                     proxyInfo.getInterfaces(),
-                                                                     beanContext.getAsynchronousMethodSignatures());
+                    null,
+                    beanContext.getPrimaryKeyClass(),
+                    beanContext.getComponentType().toString(),
+                    deploymentID,
+                    -1,
+                    convert(proxyInfo.getInterfaceType()),
+                    proxyInfo.getInterfaces(),
+                    beanContext.getAsynchronousMethodSignatures());
                 metaData.setPrimaryKey(proxyInfo.getPrimaryKey());
                 metaData.loadProperties(beanContext.getProperties());
 
@@ -506,8 +506,8 @@ class JndiRequestHandler extends RequestHandler {
             case BUSINESS_LOCAL: {
                 res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
                 final NamingException namingException = new NamingException("Not remotable: '" +
-                                                                            name +
-                                                                            "'. Business Local interfaces are not remotable as per the EJB specification.  To disable this restriction, set the system property 'openejb.remotable.businessLocals=true' in the server.");
+                    name +
+                    "'. Business Local interfaces are not remotable as per the EJB specification.  To disable this restriction, set the system property 'openejb.remotable.businessLocals=true' in the server.");
                 res.setResult(new ThrowableArtifact(namingException));
                 break;
             }
@@ -567,9 +567,9 @@ class JndiRequestHandler extends RequestHandler {
                 }
                 res.setResult(new NameClassPairEnumeration(list));
             }
-        } catch (NameNotFoundException e) {
+        } catch (final NameNotFoundException e) {
             res.setResponseCode(ResponseCodes.JNDI_NOT_FOUND);
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
             res.setResult(new ThrowableArtifact(e));
         }
@@ -589,7 +589,7 @@ class JndiRequestHandler extends RequestHandler {
         public java.lang.String getDriverClassName() throws Exception {
             try {
                 return (String) clazz.getMethod("getDriverClassName").invoke(object);
-            } catch (NoSuchMethodException nsme) {
+            } catch (final NoSuchMethodException nsme) {
                 return (String) clazz.getMethod("getDriverClass").invoke(object);
             }
         }
@@ -601,7 +601,7 @@ class JndiRequestHandler extends RequestHandler {
         public java.lang.String getUrl() throws Exception {
             try {
                 return (String) clazz.getMethod("getUrl").invoke(object);
-            } catch (NoSuchMethodException nsme) {
+            } catch (final NoSuchMethodException nsme) {
                 return (String) clazz.getMethod("getJdbcUrl").invoke(object);
             }
         }

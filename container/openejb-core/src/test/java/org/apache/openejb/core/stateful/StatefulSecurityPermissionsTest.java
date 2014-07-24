@@ -17,6 +17,7 @@
 package org.apache.openejb.core.stateful;
 
 import junit.framework.TestCase;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
@@ -34,6 +35,7 @@ import org.apache.openejb.jee.MethodPermission;
 import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
+import org.junit.AfterClass;
 
 import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
@@ -68,6 +70,11 @@ import java.util.UUID;
  * @version $Rev$ $Date$
  */
 public class StatefulSecurityPermissionsTest extends TestCase {
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        OpenEJB.destroy();
+    }
 
     public void test() throws Exception {
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());

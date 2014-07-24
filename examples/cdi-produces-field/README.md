@@ -227,7 +227,7 @@ inject resources, such as persistence contexts. One caveat to using producer fie
 	INFO - OpenEJB http://openejb.apache.org/
 	INFO - Startup: Thu May 10 01:28:19 CDT 2012
 	INFO - Copyright 1999-2012 (C) Apache OpenEJB Project, All Rights Reserved.
-	INFO - Version: 4.7.0
+	INFO - Version: 4.0.0-beta-3-SNAPSHOT
 	INFO - Build date: 20120510
 	INFO - Build time: 04:06
 	INFO - ********************************************************************************

@@ -42,7 +42,7 @@ public class SaajUniverseTest extends TestCase {
         //assertEquals(DEFAULT_MESSAGE_CLASS, MessageFactory.newInstance().createMessage().getClass().getName());
 
         // case 2, default universe set                       
-        SaajUniverse u = new SaajUniverse();
+        final SaajUniverse u = new SaajUniverse();
         u.set(SaajUniverse.DEFAULT);
         assertEquals(DEFAULT_MESSAGE_CLASS, MessageFactory.newInstance().createMessage().getClass().getName());
         u.unset();
@@ -61,7 +61,7 @@ public class SaajUniverseTest extends TestCase {
     public void testNested() throws Exception {
         assertEquals(DEFAULT_MESSAGE_CLASS, MessageFactory.newInstance().createMessage().getClass().getName());
 
-        SaajUniverse u = new SaajUniverse();
+        final SaajUniverse u = new SaajUniverse();
 
         // set axis1
         u.set(SaajUniverse.AXIS1);

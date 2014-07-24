@@ -41,7 +41,7 @@ import java.security.Principal;
 public class WsServlet implements Servlet {
     public static final String POJO_CLASS = WsServlet.class.getName() + "@pojoClassName";
     public static final String WEBSERVICE_CONTAINER = WsServlet.class.getName() + "@WebServiceContainer";
-    
+
     private static final DefaultContext DEFAULT_CONTEXT = new DefaultContext();
     private static final ThreadLocal<ServletEndpointContext> endpointContext = new ThreadLocal<ServletEndpointContext>();
 
@@ -52,11 +52,11 @@ public class WsServlet implements Servlet {
     public WsServlet() {
     }
 
-    public WsServlet(HttpListener service) {
+    public WsServlet(final HttpListener service) {
         this.service = service;
     }
 
-    public void init(ServletConfig config) throws ServletException {
+    public void init(final ServletConfig config) throws ServletException {
         this.config = config;
 
         // this is only used by JaxRPC pojo services
@@ -64,7 +64,7 @@ public class WsServlet implements Servlet {
         if (pojo instanceof ServiceLifecycle) {
             try {
                 ((ServiceLifecycle) pojo).init(new InstanceContext(config.getServletContext()));
-            } catch (ServiceException e) {
+            } catch (final ServiceException e) {
                 throw new ServletException("Unable to initialize ServiceEndpoint", e);
             }
         }
@@ -79,16 +79,16 @@ public class WsServlet implements Servlet {
         return "Webservice Servlet " + getService();
     }
 
-    public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
-        HttpListener service = getService();
+    public void service(final ServletRequest req, final ServletResponse res) throws ServletException, IOException {
+        final HttpListener service = getService();
         if (service == null) throw new ServletException("WebServiceContainer has not been set");
 
-        ServletEndpointContext context = getContext();
+        final ServletEndpointContext context = getContext();
         endpointContext.set(new InvocationContext((HttpServletRequest) req));
         try {
             res.setContentType("text/xml");
-            HttpRequest httpRequest = new ServletRequestAdapter((HttpServletRequest) req, (HttpServletResponse) res, config.getServletContext());
-            HttpResponse httpResponse = new ServletResponseAdapter((HttpServletResponse) res);
+            final HttpRequest httpRequest = new ServletRequestAdapter((HttpServletRequest) req, (HttpServletResponse) res, config.getServletContext());
+            final HttpResponse httpResponse = new ServletResponseAdapter((HttpServletResponse) res);
 
             if (pojo != null) {
                 req.setAttribute(WsConstants.POJO_INSTANCE, pojo);
@@ -96,11 +96,11 @@ public class WsServlet implements Servlet {
 
             try {
                 service.onMessage(httpRequest, httpResponse);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw e;
-            } catch (ServletException e) {
+            } catch (final ServletException e) {
                 throw e;
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new ServletException("Error processing webservice request", e);
             }
         } finally {
@@ -115,26 +115,26 @@ public class WsServlet implements Servlet {
     }
 
     private Object createPojoInstance() throws ServletException {
-        ServletContext context = getServletConfig().getServletContext();
+        final ServletContext context = getServletConfig().getServletContext();
 
-        String pojoClassId = context.getInitParameter(POJO_CLASS);
+        final String pojoClassId = context.getInitParameter(POJO_CLASS);
         if (pojoClassId == null) return null;
 
-        Class pojoClass = (Class) context.getAttribute(pojoClassId);
+        final Class pojoClass = (Class) context.getAttribute(pojoClassId);
         if (pojoClass == null) return null;
 
         try {
-            Object instance = pojoClass.newInstance();
+            final Object instance = pojoClass.newInstance();
             return instance;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new ServletException("Unable to instantiate POJO WebService class: " + pojoClass.getName(), e);
         }
     }
 
     private synchronized HttpListener getService() {
         if (service == null) {
-            ServletConfig config = getServletConfig();
-            String webServiceContainerId = config.getInitParameter(WEBSERVICE_CONTAINER);
+            final ServletConfig config = getServletConfig();
+            final String webServiceContainerId = config.getInitParameter(WEBSERVICE_CONTAINER);
             if (webServiceContainerId != null) {
                 service = (HttpListener) config.getServletContext().getAttribute(webServiceContainerId);
             }
@@ -143,14 +143,14 @@ public class WsServlet implements Servlet {
     }
 
     private static ServletEndpointContext getContext() {
-        ServletEndpointContext context = endpointContext.get();
+        final ServletEndpointContext context = endpointContext.get();
         return context != null ? context : DEFAULT_CONTEXT;
     }
 
     private static class InstanceContext implements ServletEndpointContext {
         private final ServletContext servletContext;
 
-        public InstanceContext(ServletContext servletContext) {
+        public InstanceContext(final ServletContext servletContext) {
             this.servletContext = servletContext;
         }
 
@@ -170,7 +170,7 @@ public class WsServlet implements Servlet {
             return servletContext;
         }
 
-        public boolean isUserInRole(String s) {
+        public boolean isUserInRole(final String s) {
             return getContext().isUserInRole(s);
         }
     }
@@ -179,7 +179,7 @@ public class WsServlet implements Servlet {
 
         private final HttpServletRequest request;
 
-        public InvocationContext(HttpServletRequest request) {
+        public InvocationContext(final HttpServletRequest request) {
             this.request = request;
         }
 
@@ -199,7 +199,7 @@ public class WsServlet implements Servlet {
             throw new IllegalAccessError("InstanceContext should never delegate this method.");
         }
 
-        public boolean isUserInRole(String s) {
+        public boolean isUserInRole(final String s) {
             return request.isUserInRole(s);
         }
     }
@@ -222,7 +222,7 @@ public class WsServlet implements Servlet {
             throw new IllegalAccessError("InstanceContext should never delegate this method.");
         }
 
-        public boolean isUserInRole(String s) {
+        public boolean isUserInRole(final String s) {
             throw new IllegalStateException("Method cannot be called outside a request context");
         }
     }

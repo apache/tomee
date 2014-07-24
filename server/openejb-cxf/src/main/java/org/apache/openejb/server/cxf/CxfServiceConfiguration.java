@@ -28,7 +28,7 @@ import javax.xml.namespace.QName;
 public class CxfServiceConfiguration extends AbstractServiceConfiguration {
     private PortData port;
 
-    public CxfServiceConfiguration(PortData portData) {
+    public CxfServiceConfiguration(final PortData portData) {
         this.port = portData;
     }
 

@@ -87,7 +87,7 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
             // application class loader
             final Class[] interfaces = new Class[]{ejb.homeClass, EJBHomeProxy.class};
             return (EJBHomeProxy) ProxyManager.newProxyInstance(interfaces, this);
-        } catch (IllegalAccessException e) {
+        } catch (final IllegalAccessException e) {
             throw new ClientRuntimeException("Unable to create proxy for " + ejb.homeClass, e);
         }
     }
@@ -158,27 +158,27 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
                 return homeMethod(method, args, proxy);
             }
 
-        } catch (SystemException e) {
+        } catch (final SystemException e) {
             invalidateReference();
             throw convertException(getCause(e), method);
             /*
             * Application exceptions must be reported dirctly to the client. They
             * do not impact the viability of the proxy.
             */
-        } catch (ApplicationException ae) {
+        } catch (final ApplicationException ae) {
             throw convertException(getCause(ae), method);
             /*
             * A system exception would be highly unusual and would indicate a sever
             * problem with the container system.
             */
-        } catch (SystemError se) {
+        } catch (final SystemError se) {
             invalidateReference();
             if (remote) {
                 throw new RemoteException("Container has suffered a SystemException", getCause(se));
             } else {
                 throw new EJBException("Container has suffered a SystemException").initCause(getCause(se));
             }
-        } catch (Throwable oe) {
+        } catch (final Throwable oe) {
             if (remote) {
                 throw new RemoteException("Unknown Client Exception", oe);
             } else {

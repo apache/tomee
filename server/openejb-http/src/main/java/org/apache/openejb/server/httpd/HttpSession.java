@@ -25,7 +25,6 @@ public interface HttpSession extends javax.servlet.http.HttpSession {
      * <code>null</code> if no object is bound under the name.
      *
      * @param name a string specifying the name of the object
-     *
      * @return the object with the specified name
      */
     public Object getAttribute(String name);
@@ -35,7 +34,7 @@ public interface HttpSession extends javax.servlet.http.HttpSession {
      * of the same name is already bound to the session, the object is
      * replaced.
      *
-     * @param name the name to which the object is bound; cannot be null
+     * @param name  the name to which the object is bound; cannot be null
      * @param value the object to be bound
      */
     public void setAttribute(String name, Object value);

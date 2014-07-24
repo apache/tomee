@@ -27,18 +27,19 @@ import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.RuntimeMBeanException;
+
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.xbean.propertyeditor.PropertyEditors;
 
 // TODO: maybe find a better way to invoker get/set/invoke because currently we limit a bit possible values
 @Command(name = "jmx", description = "consult/update a jmx information", usage = "jmx <operation> <options>. " +
-        "\n\t\tOperation can be set|get|invoke.\n\t\tLast value is always the object name canonical path." +
-        "\n\t\tSet takes the new value as last value and the name of the attribute as second parameter." +
-        "\n\t\tInvoke takes the method invocation as second parameter." +
-        "\n\t\tSamples:" +
-        "\n\t\t\tjmx get MyAttributeName foo:type=bar" +
-        "\n\t\t\tjmx set MyAttributeName foo:type=bar NewValue" +
-        "\n\t\t\tjmx invoke myMethod(arg1,arg2) foo:type=bar")
+    "\n\t\tOperation can be set|get|invoke.\n\t\tLast value is always the object name canonical path." +
+    "\n\t\tSet takes the new value as last value and the name of the attribute as second parameter." +
+    "\n\t\tInvoke takes the method invocation as second parameter." +
+    "\n\t\tSamples:" +
+    "\n\t\t\tjmx get MyAttributeName foo:type=bar" +
+    "\n\t\t\tjmx set MyAttributeName foo:type=bar NewValue" +
+    "\n\t\t\tjmx invoke myMethod(arg1,arg2) foo:type=bar")
 public class LocalJMXCommand extends AbstractCommand {
     @Override
     public void execute(final String cmd) {
@@ -53,7 +54,7 @@ public class LocalJMXCommand extends AbstractCommand {
             return;
         }
 
-        int space = jmxCmd.indexOf(" ");
+        final int space = jmxCmd.indexOf(" ");
         final String command = jmxCmd.substring(0, space);
         final String value = jmxCmd.substring(command.length()).trim();
         if ("get".equals(command)) {
@@ -73,15 +74,15 @@ public class LocalJMXCommand extends AbstractCommand {
             return;
         }
 
-        int open = value.indexOf("(");
-        int close = value.lastIndexOf(")");
+        final int open = value.indexOf("(");
+        final int close = value.lastIndexOf(")");
 
         final String name = value.substring(0, open).trim();
         final String rawArgs = value.substring(open + 1, close).trim();
         final ObjectName on;
         try {
             on = new ObjectName(value.substring(close + 1).trim());
-        } catch (MalformedObjectNameException e) {
+        } catch (final MalformedObjectNameException e) {
             streamManager.writeErr(e);
             return;
         }
@@ -124,14 +125,14 @@ public class LocalJMXCommand extends AbstractCommand {
             }
 
             streamManager.writeOut(stringify(server.invoke(on, name, passedArgs, passedArgTypes)));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             streamManager.writeErr(e);
             return;
         }
     }
 
     private void get(final String cmd) {
-        int space = cmd.indexOf(" ");
+        final int space = cmd.indexOf(" ");
         if (space < 0) {
             streamManager.writeErr("you need to specify an attribute and an objectname");
             return;
@@ -145,7 +146,7 @@ public class LocalJMXCommand extends AbstractCommand {
             final ObjectName oname = new ObjectName(on);
             final Object value = mBeanServer.getAttribute(oname, attr);
             streamManager.writeOut("Attribute [" + on + " -> " + attr + "] = " + stringify(value));
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             streamManager.writeErr(ex);
         }
     }
@@ -175,7 +176,7 @@ public class LocalJMXCommand extends AbstractCommand {
             final Object valueObj = PropertyEditors.getValue(type, newValue, Thread.currentThread().getContextClassLoader());
             mBeanServer.setAttribute(oname, new Attribute(split[0], valueObj));
             streamManager.writeOut("done");
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             streamManager.writeOut("Error - " + ex.toString());
         }
     }
@@ -196,14 +197,14 @@ public class LocalJMXCommand extends AbstractCommand {
         final Set<ObjectName> names;
         try {
             names = mBeanServer.queryNames(null, null);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             streamManager.writeErr(e);
             return;
         }
 
         final Iterator<ObjectName> it = names.iterator();
         while (it.hasNext()) {
-            ObjectName oname = it.next();
+            final ObjectName oname = it.next();
             streamManager.writeOut("Name: " + oname.toString());
 
             try {
@@ -214,7 +215,7 @@ public class LocalJMXCommand extends AbstractCommand {
                 }
                 streamManager.writeOut("  + modelerType: " + code);
 
-                MBeanAttributeInfo attrs[] = minfo.getAttributes();
+                final MBeanAttributeInfo[] attrs = minfo.getAttributes();
                 Object value = null;
 
                 for (int i = 0; i < attrs.length; i++) {
@@ -228,28 +229,28 @@ public class LocalJMXCommand extends AbstractCommand {
                     }
 
                     if (attName.indexOf("=") >= 0 ||
-                            attName.indexOf(":") >= 0 ||
-                            attName.indexOf(" ") >= 0) {
+                        attName.indexOf(":") >= 0 ||
+                        attName.indexOf(" ") >= 0) {
                         continue;
                     }
 
                     try {
                         value = mBeanServer.getAttribute(oname, attName);
-                    } catch (RuntimeMBeanException uoe) {
+                    } catch (final RuntimeMBeanException uoe) {
                         // ignored
-                    } catch (Throwable t) {
+                    } catch (final Throwable t) {
                         streamManager.writeErr(new Exception(t));
                         continue;
                     }
 
                     try {
-                        String valueString = stringify(value);
+                        final String valueString = stringify(value);
                         streamManager.writeOut("  + " + attName + ": " + valueString);
-                    } catch (Throwable t) {
+                    } catch (final Throwable t) {
                         streamManager.writeErr(new Exception(t));
                     }
                 }
-            } catch (Throwable t) {
+            } catch (final Throwable t) {
                 streamManager.writeErr(new Exception(t));
             }
             streamManager.writeOut("");

@@ -17,12 +17,12 @@
  */
 package org.apache.openejb.core.stateless;
 
-import junit.framework.TestCase;
 import org.apache.openejb.jee.Empty;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.Module;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -39,7 +39,7 @@ import java.util.Stack;
  * @version $Revision$ $Date$
  */
 @RunWith(ApplicationComposer.class)
-public class StatelessContainerTest extends TestCase {
+public class StatelessContainerTest {
 
     @EJB
     private WidgetBean localBean;
@@ -59,24 +59,24 @@ public class StatelessContainerTest extends TestCase {
 
             // Do a business method...
             final Stack<Lifecycle> lifecycle = local.getLifecycle();
-            assertNotNull("lifecycle", lifecycle);
-            assertSame("lifecycle", lifecycle, WidgetBean.lifecycle);
+            Assert.assertNotNull("lifecycle", lifecycle);
+            Assert.assertSame("lifecycle", lifecycle, WidgetBean.lifecycle);
 
             // Check the lifecycle of the bean
-            assertEquals(join("\n", expected), join("\n", lifecycle));
+            Assert.assertEquals(join("\n", expected), join("\n", lifecycle));
         }
         {
             WidgetBean.lifecycle.clear();
 
             // Do a business method...
             final Stack<Lifecycle> lifecycle = localBean.getLifecycle();
-            assertNotNull("lifecycle", lifecycle);
-            assertSame("lifecycle", lifecycle, WidgetBean.lifecycle);
+            Assert.assertNotNull("lifecycle", lifecycle);
+            Assert.assertSame("lifecycle", lifecycle, WidgetBean.lifecycle);
 
             // Check the lifecycle of the bean
             final List localBeanExpected = new ArrayList();
             localBeanExpected.addAll(expected);
-            assertEquals(join("\n", localBeanExpected), join("\n", lifecycle));
+            Assert.assertEquals(join("\n", localBeanExpected), join("\n", lifecycle));
         }
         {
 
@@ -84,11 +84,11 @@ public class StatelessContainerTest extends TestCase {
 
             // Do a business method...
             final Stack<Lifecycle> lifecycle = remote.getLifecycle();
-            assertNotNull("lifecycle", lifecycle);
-            assertNotSame("lifecycle", lifecycle, WidgetBean.lifecycle);
+            Assert.assertNotNull("lifecycle", lifecycle);
+            Assert.assertNotSame("lifecycle", lifecycle, WidgetBean.lifecycle);
 
             // Check the lifecycle of the bean
-            assertEquals(join("\n", expected), join("\n", lifecycle));
+            Assert.assertEquals(join("\n", expected), join("\n", lifecycle));
         }
     }
 
@@ -117,7 +117,7 @@ public class StatelessContainerTest extends TestCase {
     }
 
     private static String join(final String delimeter, final List items) {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         for (final Object item : items) {
             sb.append(item.toString()).append(delimeter);
         }
@@ -138,7 +138,7 @@ public class StatelessContainerTest extends TestCase {
 
     public static class WidgetBean implements Widget, RemoteWidget {
 
-        private static Stack<Lifecycle> lifecycle = new Stack<Lifecycle>();
+        private static final Stack<Lifecycle> lifecycle = new Stack<Lifecycle>();
 
         public WidgetBean() {
             lifecycle.push(Lifecycle.CONSTRUCTOR);

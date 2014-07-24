@@ -55,7 +55,7 @@ public class ThrowableArtifact implements Externalizable {
         out.writeObject(stack);
         try {
             out.writeObject(throwable);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             //Ignore
         }
     }
@@ -66,7 +66,7 @@ public class ThrowableArtifact implements Externalizable {
         final Stack<MockThrowable> stack = (Stack<MockThrowable>) in.readObject();
         try {
             throwable = (Throwable) in.readObject();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throwable = createMockThrowable(stack); // recreate exception
         }
     }

@@ -24,7 +24,7 @@ public class EJBAccessExceptionMapper implements ExceptionMapper<EJBAccessExcept
     public static final EJBAccessExceptionMapper INSTANCE = new EJBAccessExceptionMapper();
 
     @Override
-    public Response toResponse(EJBAccessException throwable) {
+    public Response toResponse(final EJBAccessException throwable) {
         return Response.status(Response.Status.FORBIDDEN).build();
     }
 }

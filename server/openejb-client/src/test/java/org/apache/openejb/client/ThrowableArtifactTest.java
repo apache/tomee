@@ -46,41 +46,41 @@ public class ThrowableArtifactTest extends TestCase {
         exception = new BadException("FIVE", exception);
         exception = throwCatchReturn(exception);
 
-        String expectedStackTrace = getPrintedStackTrace(exception);
+        final String expectedStackTrace = getPrintedStackTrace(exception);
 
-        ThrowableArtifact artifact = marshal(new ThrowableArtifact(exception));
+        final ThrowableArtifact artifact = marshal(new ThrowableArtifact(exception));
         exception = throwCatchReturn(artifact.getThrowable().getCause());
 
-        String actualStackTrace = getPrintedStackTrace(exception);
+        final String actualStackTrace = getPrintedStackTrace(exception);
 
         assertEquals("stackTrace", expectedStackTrace, actualStackTrace);
     }
 
-    private String getPrintedStackTrace(Throwable exception) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PrintStream printStream = new PrintStream(baos);
+    private String getPrintedStackTrace(final Throwable exception) {
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final PrintStream printStream = new PrintStream(baos);
         exception.printStackTrace(printStream);
         printStream.flush();
-        String stackTrace = new String(baos.toByteArray());
+        final String stackTrace = new String(baos.toByteArray());
         return stackTrace;
     }
 
-    private Throwable throwCatchReturn(Throwable exception) {
+    private Throwable throwCatchReturn(final Throwable exception) {
         try {
             throw exception;
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             return exception;
         }
     }
 
-    private ThrowableArtifact marshal(ThrowableArtifact artifact) throws IOException, ClassNotFoundException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ObjectOutputStream out = new ObjectOutputStream(baos);
+    private ThrowableArtifact marshal(final ThrowableArtifact artifact) throws IOException, ClassNotFoundException {
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final ObjectOutputStream out = new ObjectOutputStream(baos);
         out.writeObject(artifact);
         out.close();
 
-        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        ObjectInputStream in = new ObjectInputStream(bais);
+        final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        final ObjectInputStream in = new ObjectInputStream(bais);
         return (ThrowableArtifact) in.readObject();
     }
 
@@ -88,7 +88,7 @@ public class ThrowableArtifactTest extends TestCase {
 
         private final Object data = new NotSerializableObject();
 
-        public BadException(String message, Throwable throwable) {
+        public BadException(final String message, final Throwable throwable) {
             super(message, throwable);
         }
     }

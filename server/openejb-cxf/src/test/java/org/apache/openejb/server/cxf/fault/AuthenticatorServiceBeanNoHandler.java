@@ -27,15 +27,15 @@ import javax.jws.WebService;
 // @HandlerChain(file="handler.xml")
 public class AuthenticatorServiceBeanNoHandler implements AuthenticatorService {
 
-    public boolean authenticate(String name, String password) throws WrongPasswordException {
-        System.out.println(String.format("AuthenticatorServiceBeanNoHandler.authenticate(%s, %s)", 
-                                        name,password));
+    public boolean authenticate(final String name, final String password) throws WrongPasswordException {
+        System.out.println(String.format("AuthenticatorServiceBeanNoHandler.authenticate(%s, %s)",
+            name, password));
         throw new WrongPasswordException("Checked exception");
     }
 
-    public boolean authenticateRuntime(String name, String password) {
+    public boolean authenticateRuntime(final String name, final String password) {
         System.out.println(String.format("AuthenticatorServiceBeanNoHandler.authenticateRuntime(%s, %s)",
-                                            name, password));
+            name, password));
         throw new WrongPasswordRuntimeException("Runtime exception");
     }
 

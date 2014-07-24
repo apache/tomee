@@ -27,7 +27,7 @@ public class ScriptFileCommand extends ScriptCommand {
     public void execute(final String cmd) {
         try {
             parse(cmd);
-        } catch (IllegalArgumentException iae) {
+        } catch (final IllegalArgumentException iae) {
             streamManager.writeErr("script cmd " + cmd + " can't be parsed");
             return;
         }
@@ -47,18 +47,18 @@ public class ScriptFileCommand extends ScriptCommand {
             char[] buf = new char[1024];
             int numRead;
             while ((numRead = reader.read(buf)) != -1) {
-                String readData = String.valueOf(buf, 0, numRead);
+                final String readData = String.valueOf(buf, 0, numRead);
                 builder.append(readData);
                 buf = new char[1024];
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             streamManager.writeErr(e);
             return;
         } finally {
             if (reader != null) {
                 try {
                     reader.close();
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     // ignored
                 }
             }

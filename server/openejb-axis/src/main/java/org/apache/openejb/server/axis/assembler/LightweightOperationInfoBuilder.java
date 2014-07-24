@@ -35,12 +35,12 @@ public class LightweightOperationInfoBuilder {
 
     private JaxRpcOperationInfo operationInfo;
 
-    public LightweightOperationInfoBuilder(BindingOperation bindingOperation, Method method) throws OpenEJBException{
+    public LightweightOperationInfoBuilder(final BindingOperation bindingOperation, final Method method) throws OpenEJBException {
         if (bindingOperation == null) {
             throw new OpenEJBException("No BindingOperation supplied for method " + method.getName());
         }
 
-        Operation operation = bindingOperation.getOperation();
+        final Operation operation = bindingOperation.getOperation();
         this.operationName = operation.getName();
         this.inputMessage = operation.getInput().getMessage();
         this.outputMessage = operation.getOutput() == null ? null : operation.getOutput().getMessage();
@@ -58,18 +58,18 @@ public class LightweightOperationInfoBuilder {
         operationInfo.javaMethodName = method.getName();
 
         // Verify we have the right number of args for this method
-        Class[] methodParamTypes = method.getParameterTypes();
-        List inputParts = inputMessage.getOrderedParts(null);
+        final Class[] methodParamTypes = method.getParameterTypes();
+        final List inputParts = inputMessage.getOrderedParts(null);
         if (methodParamTypes.length != inputParts.size()) {
             throw new OpenEJBException("mismatch in parameter counts: method has " + methodParamTypes.length + " whereas the input message has " + inputParts.size());
         }
 
         // Map parameters
         int i = 0;
-        for (Object inputPart : inputParts) {
-            Part part = (Part) inputPart;
+        for (final Object inputPart : inputParts) {
+            final Part part = (Part) inputPart;
 
-            JaxRpcParameterInfo parameter = new JaxRpcParameterInfo();
+            final JaxRpcParameterInfo parameter = new JaxRpcParameterInfo();
             parameter.qname = new QName("", part.getName());
             parameter.mode = JaxRpcParameterInfo.Mode.IN;
 
@@ -92,7 +92,7 @@ public class LightweightOperationInfoBuilder {
 
         // Map return type mapping
         if (outputMessage != null && outputMessage.getParts().size() == 1) {
-            Part part = (Part) outputMessage.getParts().values().iterator().next();
+            final Part part = (Part) outputMessage.getParts().values().iterator().next();
 
             // return qname
             if (part.getElementName() == null) {

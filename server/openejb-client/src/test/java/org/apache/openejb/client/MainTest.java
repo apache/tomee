@@ -42,7 +42,7 @@ public class MainTest extends TestCase {
     private static void initialize() {
         try {
             NamingManager.setInitialContextFactoryBuilder(new MockContextFactoryBuilder());
-        } catch (Exception e) {
+        } catch (final Exception e) {
         }
     }
 
@@ -80,19 +80,19 @@ public class MainTest extends TestCase {
         try {
             Main.main(new String[0]);
             fail("Expected main method to throw FailedLoginException");
-        } catch (FailedLoginException expected) {
+        } catch (final FailedLoginException expected) {
         }
     }
 
     public static class SecureMain {
 
-        public static void main(String[] args) {
-            Subject subject = Subject.getSubject(AccessController.getContext());
+        public static void main(final String[] args) {
+            final Subject subject = Subject.getSubject(AccessController.getContext());
 
             // verify subject
             assertEquals("Should have one principal", 1, subject.getPrincipals().size());
             assertEquals("Should have one user principal", 1, subject.getPrincipals(ClientIdentityPrincipal.class).size());
-            ClientIdentityPrincipal principal = subject.getPrincipals(ClientIdentityPrincipal.class).iterator().next();
+            final ClientIdentityPrincipal principal = subject.getPrincipals(ClientIdentityPrincipal.class).iterator().next();
             assertEquals("victoria", principal.getName());
             assertEquals("SecretIdentity", principal.getClientIdentity());
 
@@ -108,8 +108,8 @@ public class MainTest extends TestCase {
 
     public static class NormalMain {
 
-        public static void main(String[] args) {
-            Subject subject = Subject.getSubject(AccessController.getContext());
+        public static void main(final String[] args) {
+            final Subject subject = Subject.getSubject(AccessController.getContext());
 
             assertNull("subject is not null", subject);
 
@@ -123,125 +123,125 @@ public class MainTest extends TestCase {
     //
     public static class MockContextFactoryBuilder implements InitialContextFactoryBuilder {
 
-        public InitialContextFactory createInitialContextFactory(Hashtable<?, ?> environment) throws NamingException {
+        public InitialContextFactory createInitialContextFactory(final Hashtable<?, ?> environment) throws NamingException {
             return new MockContextFactory();
         }
     }
 
     public static class MockContextFactory implements InitialContextFactory {
 
-        public Context getInitialContext(Hashtable<?, ?> environment) throws NamingException {
+        public Context getInitialContext(final Hashtable<?, ?> environment) throws NamingException {
             return new MockContext();
         }
     }
 
     public static class MockContext implements Context {
 
-        public Object lookup(String name) throws NamingException {
-            Object value = jndi.get(name);
+        public Object lookup(final String name) throws NamingException {
+            final Object value = jndi.get(name);
             if (value == null) {
                 throw new NameNotFoundException(name);
             }
             return value;
         }
 
-        public Object lookup(Name name) throws NamingException {
+        public Object lookup(final Name name) throws NamingException {
             return null;
         }
 
-        public void bind(Name name, Object obj) throws NamingException {
+        public void bind(final Name name, final Object obj) throws NamingException {
 
         }
 
-        public void bind(String name, Object obj) throws NamingException {
+        public void bind(final String name, final Object obj) throws NamingException {
 
         }
 
-        public void rebind(Name name, Object obj) throws NamingException {
+        public void rebind(final Name name, final Object obj) throws NamingException {
 
         }
 
-        public void rebind(String name, Object obj) throws NamingException {
+        public void rebind(final String name, final Object obj) throws NamingException {
 
         }
 
-        public void unbind(Name name) throws NamingException {
+        public void unbind(final Name name) throws NamingException {
 
         }
 
-        public void unbind(String name) throws NamingException {
+        public void unbind(final String name) throws NamingException {
 
         }
 
-        public void rename(Name oldName, Name newName) throws NamingException {
+        public void rename(final Name oldName, final Name newName) throws NamingException {
 
         }
 
-        public void rename(String oldName, String newName) throws NamingException {
+        public void rename(final String oldName, final String newName) throws NamingException {
 
         }
 
-        public NamingEnumeration<NameClassPair> list(Name name) throws NamingException {
+        public NamingEnumeration<NameClassPair> list(final Name name) throws NamingException {
             return null;
         }
 
-        public NamingEnumeration<NameClassPair> list(String name) throws NamingException {
+        public NamingEnumeration<NameClassPair> list(final String name) throws NamingException {
             return null;
         }
 
-        public NamingEnumeration<Binding> listBindings(Name name) throws NamingException {
+        public NamingEnumeration<Binding> listBindings(final Name name) throws NamingException {
             return null;
         }
 
-        public NamingEnumeration<Binding> listBindings(String name) throws NamingException {
+        public NamingEnumeration<Binding> listBindings(final String name) throws NamingException {
             return null;
         }
 
-        public void destroySubcontext(Name name) throws NamingException {
+        public void destroySubcontext(final Name name) throws NamingException {
 
         }
 
-        public void destroySubcontext(String name) throws NamingException {
+        public void destroySubcontext(final String name) throws NamingException {
 
         }
 
-        public Context createSubcontext(Name name) throws NamingException {
+        public Context createSubcontext(final Name name) throws NamingException {
             return null;
         }
 
-        public Context createSubcontext(String name) throws NamingException {
+        public Context createSubcontext(final String name) throws NamingException {
             return null;
         }
 
-        public Object lookupLink(Name name) throws NamingException {
+        public Object lookupLink(final Name name) throws NamingException {
             return null;
         }
 
-        public Object lookupLink(String name) throws NamingException {
+        public Object lookupLink(final String name) throws NamingException {
             return null;
         }
 
-        public NameParser getNameParser(Name name) throws NamingException {
+        public NameParser getNameParser(final Name name) throws NamingException {
             return null;
         }
 
-        public NameParser getNameParser(String name) throws NamingException {
+        public NameParser getNameParser(final String name) throws NamingException {
             return null;
         }
 
-        public Name composeName(Name name, Name prefix) throws NamingException {
+        public Name composeName(final Name name, final Name prefix) throws NamingException {
             return null;
         }
 
-        public String composeName(String name, String prefix) throws NamingException {
+        public String composeName(final String name, final String prefix) throws NamingException {
             return null;
         }
 
-        public Object addToEnvironment(String propName, Object propVal) throws NamingException {
+        public Object addToEnvironment(final String propName, final Object propVal) throws NamingException {
             return null;
         }
 
-        public Object removeFromEnvironment(String propName) throws NamingException {
+        public Object removeFromEnvironment(final String propName) throws NamingException {
             return null;
         }
 

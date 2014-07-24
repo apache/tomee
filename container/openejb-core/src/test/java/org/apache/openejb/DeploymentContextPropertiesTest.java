@@ -45,6 +45,11 @@ public class DeploymentContextPropertiesTest extends TestCase {
         Thread.currentThread().getContextClassLoader().loadClass("org.apache.bval.jsr303.ConfigurationImpl");
     }
 
+    @Override
+    protected void tearDown() throws Exception {
+        OpenEJB.destroy();
+    }
+
     public void testBeanContextProperties() throws Exception {
 
         final ConfigurationFactory config = new ConfigurationFactory();

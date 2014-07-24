@@ -17,6 +17,7 @@
 package org.apache.openejb.server.axis;
 
 import javax.servlet.ServletOutputStream;
+
 import org.apache.openejb.server.httpd.HttpResponseImpl;
 
 import java.io.IOException;
@@ -31,22 +32,22 @@ public class AxisResponse extends HttpResponseImpl {
     private String host;
     private ServletOutputStream out;
     private int method;
-    private Map<String,String> parameters;
+    private Map<String, String> parameters;
     private String path;
     private URL uri;
     private int port;
-    private Map<String,String> headers;
+    private Map<String, String> headers;
     private int statusCode;
     private String statusMessage;
 
-    public AxisResponse(String contentType, String host, String path, URL uri, int port, ServletOutputStream out) {
+    public AxisResponse(final String contentType, final String host, final String path, final URL uri, final int port, final ServletOutputStream out) {
         this.contentType = contentType;
         this.host = host;
-        this.parameters = new HashMap<String,String>();
+        this.parameters = new HashMap<String, String>();
         this.path = path;
         this.uri = uri;
         this.port = port;
-        this.headers = new HashMap<String,String>();
+        this.headers = new HashMap<String, String>();
         this.out = out;
     }
 
@@ -55,7 +56,7 @@ public class AxisResponse extends HttpResponseImpl {
     }
 
 
-    public String getHeader(String name) {
+    public String getHeader(final String name) {
         return headers.get(name);
     }
 
@@ -71,7 +72,7 @@ public class AxisResponse extends HttpResponseImpl {
         return method;
     }
 
-    public String getParameter(String name) {
+    public String getParameter(final String name) {
         return parameters.get(name);
     }
 
@@ -99,35 +100,35 @@ public class AxisResponse extends HttpResponseImpl {
         return uri;
     }
 
-    public void setContentLength(int i) {
+    public void setContentLength(final int i) {
         contentLength = i;
     }
 
-    public void setContentType(String string) {
+    public void setContentType(final String string) {
         contentType = string;
     }
 
-    public void setHost(String string) {
+    public void setHost(final String string) {
         host = string;
     }
 
-    public void setMethod(int i) {
+    public void setMethod(final int i) {
         method = i;
     }
 
-    public void setParameters(Map<String,String> map) {
+    public void setParameters(final Map<String, String> map) {
         parameters = map;
     }
 
-    public void setPath(String string) {
+    public void setPath(final String string) {
         path = string;
     }
 
-    public void setPort(int i) {
+    public void setPort(final int i) {
         port = i;
     }
 
-    public void setUri(URL url) {
+    public void setUri(final URL url) {
         uri = url;
     }
 
@@ -135,7 +136,7 @@ public class AxisResponse extends HttpResponseImpl {
         return statusMessage;
     }
 
-    public void setStatusMessage(String responseString) {
+    public void setStatusMessage(final String responseString) {
         statusMessage = responseString;
 
     }

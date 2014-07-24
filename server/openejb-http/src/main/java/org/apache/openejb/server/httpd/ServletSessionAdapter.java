@@ -25,7 +25,7 @@ import java.util.Enumeration;
 public class ServletSessionAdapter implements HttpSession {
     protected final javax.servlet.http.HttpSession session;
 
-    public ServletSessionAdapter(javax.servlet.http.HttpSession session) {
+    public ServletSessionAdapter(final javax.servlet.http.HttpSession session) {
         this.session = session;
     }
 
@@ -49,7 +49,7 @@ public class ServletSessionAdapter implements HttpSession {
     }
 
     @Override
-    public void setMaxInactiveInterval(int i) {
+    public void setMaxInactiveInterval(final int i) {
         session.setMaxInactiveInterval(i);
     }
 
@@ -63,12 +63,12 @@ public class ServletSessionAdapter implements HttpSession {
         return session.getSessionContext();
     }
 
-    public Object getAttribute(String name) {
+    public Object getAttribute(final String name) {
         return session.getAttribute(name);
     }
 
     @Override
-    public Object getValue(String s) {
+    public Object getValue(final String s) {
         return session.getValue(s);
     }
 
@@ -82,21 +82,21 @@ public class ServletSessionAdapter implements HttpSession {
         return session.getValueNames();
     }
 
-    public void setAttribute(String name, Object value) {
+    public void setAttribute(final String name, final Object value) {
         session.setAttribute(name, value);
     }
 
     @Override
-    public void putValue(String s, Object o) {
+    public void putValue(final String s, final Object o) {
         session.putValue(s, o);
     }
 
-    public void removeAttribute(String name) {
+    public void removeAttribute(final String name) {
         session.removeAttribute(name);
     }
 
     @Override
-    public void removeValue(String s) {
+    public void removeValue(final String s) {
         session.removeValue(s);
     }
 

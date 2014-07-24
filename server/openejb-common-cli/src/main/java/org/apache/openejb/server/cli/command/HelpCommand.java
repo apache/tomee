@@ -24,19 +24,19 @@ public class HelpCommand extends AbstractCommand {
 
     @Override
     public void execute(final String cmd) {
-        for (Map.Entry<String, Class<?>> command : commands.entrySet()) {
+        for (final Map.Entry<String, Class<?>> command : commands.entrySet()) {
             try {
                 final Class<?> clazz = command.getValue();
                 final Command annotation = clazz.getAnnotation(Command.class);
                 streamManager.writeOut(annotation.name() + ": " + annotation.description());
                 streamManager.writeOut("\tUsage: " + annotation.usage(), "\n");
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // ignored = command not available
             }
         }
     }
 
-    public void setCommands(Map<String, Class<?>> commands) {
+    public void setCommands(final Map<String, Class<?>> commands) {
         this.commands = commands;
     }
 }

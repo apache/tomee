@@ -38,6 +38,7 @@ import static org.junit.Assert.assertNotNull;
 @RunWith(Arquillian.class)
 // @RunAsClient
 public class EmbeddedTomEEContainerTest {
+
     @Deployment
     public static WebArchive createDeployment() {
         return ShrinkWrap.create(WebArchive.class, "test.war")

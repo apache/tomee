@@ -76,7 +76,7 @@ public class SoapBinding12ClientTest {
      */
     public static class MockWebService12 extends HttpServlet {
         @Override
-        protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        protected void service(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
             if ("GET".equals(req.getMethod())) {
                 resp.getWriter().write("<?xml version='1.0' encoding='UTF-8'?>" +
                     "<wsdl:definitions xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:wsdl=\"http://schemas.xmlsoap.org/wsdl/\" xmlns:tns=\"http://cxf.server.openejb.apache.org/\" xmlns:soap12=\"http://schemas.xmlsoap.org/wsdl/soap12/\" xmlns:soap=\"http://schemas.xmlsoap.org/wsdl/soap/\" xmlns:ns1=\"http://schemas.xmlsoap.org/soap/http\" name=\"MyWebservice12Service\" targetNamespace=\"http://cxf.server.openejb.apache.org/\">\n" +
@@ -172,7 +172,7 @@ public class SoapBinding12ClientTest {
             return attribute;
         }
 
-        public void setAttribute(String attribute) {
+        public void setAttribute(final String attribute) {
             this.attribute = attribute;
         }
     }
@@ -193,7 +193,7 @@ public class SoapBinding12ClientTest {
             return attribute;
         }
 
-        public void setAttribute(String attribute) {
+        public void setAttribute(final String attribute) {
             this.attribute = attribute;
         }
     }

@@ -26,11 +26,11 @@ public class ServerServiceAdapter implements HttpListener {
 
     private final ServerService service;
 
-    public ServerServiceAdapter(ServerService service) {
+    public ServerServiceAdapter(final ServerService service) {
         this.service = service;
     }
 
-    public void onMessage(HttpRequest request, HttpResponse response) throws Exception {
+    public void onMessage(final HttpRequest request, final HttpResponse response) throws Exception {
         service.service(request.getInputStream(), response.getOutputStream());
     }
 }

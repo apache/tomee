@@ -69,7 +69,7 @@ public class FlushableGZIPOutputStream extends GZIPOutputStream {
     public synchronized void finish() throws IOException {
         try {
             flushLastByte();
-        } catch (IOException ignore) {
+        } catch (final IOException ignore) {
             // If our write failed, then trailer write in finish() will fail
             // with IOException as well, but it will leave Deflater in more
             // consistent state.
@@ -81,7 +81,7 @@ public class FlushableGZIPOutputStream extends GZIPOutputStream {
     public synchronized void close() throws IOException {
         try {
             flushLastByte();
-        } catch (IOException ignored) {
+        } catch (final IOException ignored) {
             // Ignore. As OutputStream#close() says, the contract of close()
             // is to close the stream. It does not matter much if the
             // stream is not writable any more.

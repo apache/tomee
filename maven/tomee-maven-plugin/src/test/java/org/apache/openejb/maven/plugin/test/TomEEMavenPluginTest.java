@@ -22,6 +22,8 @@ import org.apache.openejb.maven.plugin.Url;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 
 import static org.hamcrest.CoreMatchers.containsString;
@@ -36,6 +38,26 @@ public class TomEEMavenPluginTest {
 
     @Test
     public void simpleStart() throws Exception {
-        assertThat(IO.slurp(new URL(url + "/docs")), containsString("Apache Tomcat"));
+        final String slurp = slurp(URI.create(url + "/docs").toURL(), 5);
+        assertThat(slurp, containsString("Apache Tomcat"));
+    }
+
+    private String slurp(final URL url, int attempts) throws IOException {
+        try {
+            return IO.slurp(url);
+        } catch (final IOException e) {
+            if (attempts < 1) {
+                throw e;
+            } else {
+                try {
+                    Thread.sleep(1000);
+                    return slurp(url, --attempts);
+                } catch (final InterruptedException ie) {
+                    //
+                }
+            }
+        }
+
+        return "";
     }
 }

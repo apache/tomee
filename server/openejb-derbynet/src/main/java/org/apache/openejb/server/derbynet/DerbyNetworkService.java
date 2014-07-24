@@ -68,8 +68,8 @@ public class DerbyNetworkService implements ServerService, SelfManaging {
         this.verbose = options.get("verbose", false);
         this.host = InetAddress.getByName("0.0.0.0");
         System.setProperty(
-                "derby.system.home",
-                options.get("derby.system.home", SystemInstance.get().getBase().getDirectory().getAbsolutePath())
+            "derby.system.home",
+            options.get("derby.system.home", SystemInstance.get().getBase().getDirectory().getAbsolutePath())
         );
     }
 
@@ -94,7 +94,7 @@ public class DerbyNetworkService implements ServerService, SelfManaging {
             if (verbose) {
                 LOGGER.info("Starting openejb-derbynet with derby " + serverControl.getRuntimeInfo() + " " + serverControl.getSysinfo());
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new ServiceException(e);
         }
     }
@@ -106,7 +106,7 @@ public class DerbyNetworkService implements ServerService, SelfManaging {
         }
         try {
             this.serverControl.shutdown();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new ServiceException(e);
         } finally {
             this.serverControl = null;

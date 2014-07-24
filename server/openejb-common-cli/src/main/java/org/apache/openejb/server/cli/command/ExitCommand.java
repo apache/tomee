@@ -20,7 +20,7 @@ package org.apache.openejb.server.cli.command;
 @Command(name = "exit", usage = "exit", description = "exit from the cli")
 public class ExitCommand extends AbstractCommand {
     @Override
-    public void execute(String cmd) {
+    public void execute(final String cmd) {
         throw new UnsupportedOperationException("shouldn't be called directly");
     }
 }

@@ -17,6 +17,7 @@
 package org.apache.openejb.assembler.classic;
 
 import junit.framework.TestCase;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.loader.JarLocation;
@@ -24,6 +25,7 @@ import org.apache.openejb.test.stateful.AnnotatedFieldInjectionStatefulBean;
 import org.apache.openejb.test.stateful.EncStatefulHome;
 import org.apache.openejb.test.stateful.EncStatefulObject;
 import org.apache.openejb.test.stateless.BasicStatelessBean;
+import org.junit.AfterClass;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -35,6 +37,17 @@ import java.util.Properties;
  * @version $Rev$ $Date$
  */
 public class RedeployTest extends TestCase {
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        OpenEJB.destroy();
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        OpenEJB.destroy();
+    }
+
     public void test() throws Exception {
         // create reference to openejb itests
         final File file = JarLocation.jarLocation(BasicStatelessBean.class);

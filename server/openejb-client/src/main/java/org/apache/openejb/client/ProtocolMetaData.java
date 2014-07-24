@@ -105,7 +105,7 @@ public class ProtocolMetaData {
         }
         try {
             init(new String(spec, "UTF-8"));
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             throw new IOException("Failed to read spec: " + Arrays.toString(spec), e);
         }
     }

@@ -40,7 +40,12 @@ public class SslTomEETest {
             try {
                 keyToolClass = Class.forName("sun.security.tools.KeyTool");
             } catch (final ClassNotFoundException e) {
-                keyToolClass = Class.forName("com.ibm.crypto.tools.KeyTool");
+                try {
+                    // in jdk8, the tool changed ...
+                    keyToolClass = Class.forName("sun.security.tools.keytool.Main");
+                } catch (final ClassNotFoundException cnfe) {
+                    keyToolClass = Class.forName("com.ibm.crypto.tools.KeyTool");
+                }
             }
 
             final String[] args = {

@@ -104,67 +104,67 @@ public class EchoStruct {
         return strVal;
     }
 
-    public void setBoolaenaVal(boolean[] bs) {
+    public void setBoolaenaVal(final boolean[] bs) {
         boolaenaVal = bs;
     }
 
-    public void setBoolaenVal(boolean b) {
+    public void setBoolaenVal(final boolean b) {
         boolaenVal = b;
     }
 
-    public void setBytesaVal(byte[][] bs) {
+    public void setBytesaVal(final byte[][] bs) {
         bytesaVal = bs;
     }
 
-    public void setBytesVal(byte[] bs) {
+    public void setBytesVal(final byte[] bs) {
         bytesVal = bs;
     }
 
-    public void setDoubleaVal(double[] ds) {
+    public void setDoubleaVal(final double[] ds) {
         doubleaVal = ds;
     }
 
-    public void setDoubleVal(double d) {
+    public void setDoubleVal(final double d) {
         doubleVal = d;
     }
 
-    public void setFloataVal(float[] fs) {
+    public void setFloataVal(final float[] fs) {
         floataVal = fs;
     }
 
-    public void setFloatVal(float f) {
+    public void setFloatVal(final float f) {
         floatVal = f;
     }
 
-    public void setIntaVal(int[] is) {
+    public void setIntaVal(final int[] is) {
         intaVal = is;
     }
 
-    public void setIntVal(int i) {
+    public void setIntVal(final int i) {
         intVal = i;
     }
 
-    public void setLongaVal(long[] ls) {
+    public void setLongaVal(final long[] ls) {
         longaVal = ls;
     }
 
-    public void setLongVal(long l) {
+    public void setLongVal(final long l) {
         longVal = l;
     }
 
-    public void setShortaVal(short[] ses) {
+    public void setShortaVal(final short[] ses) {
         shortaVal = ses;
     }
 
-    public void setShortVal(short s) {
+    public void setShortVal(final short s) {
         shortVal = s;
     }
 
-    public void setStraVal(String[] strings) {
+    public void setStraVal(final String[] strings) {
         straVal = strings;
     }
 
-    public void setStrVal(String string) {
+    public void setStrVal(final String string) {
         strVal = string;
     }
 
@@ -176,11 +176,11 @@ public class EchoStruct {
         return sturctVal;
     }
 
-    public void setSturctaVal(SmallEchoStruct struct) {
+    public void setSturctaVal(final SmallEchoStruct struct) {
         sturctaVal = struct;
     }
 
-    public void setSturctVal(SmallEchoStruct struct) {
+    public void setSturctVal(final SmallEchoStruct struct) {
         sturctVal = struct;
     }
 }

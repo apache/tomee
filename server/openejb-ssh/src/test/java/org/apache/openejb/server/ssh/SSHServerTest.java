@@ -66,11 +66,11 @@ public class SSHServerTest {
             session.authPassword("jonathan", "secret");
 
             final ClientChannel channel = session.createChannel("shell");
-            ByteArrayOutputStream sent = new ByteArrayOutputStream();
-            PipedOutputStream pipedIn = new TeePipedOutputStream(sent);
+            final ByteArrayOutputStream sent = new ByteArrayOutputStream();
+            final PipedOutputStream pipedIn = new TeePipedOutputStream(sent);
             channel.setIn(new PipedInputStream(pipedIn));
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            ByteArrayOutputStream err = new ByteArrayOutputStream();
+            final ByteArrayOutputStream out = new ByteArrayOutputStream();
+            final ByteArrayOutputStream err = new ByteArrayOutputStream();
             channel.setOut(out);
             channel.setErr(err);
             channel.open();
@@ -87,7 +87,7 @@ public class SSHServerTest {
 
             assertTrue(new String(sent.toByteArray()).contains("properties\r\nexit\r\n"));
             assertTrue(new String(out.toByteArray()).contains("ServerService(id=ssh)"));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             fail();
         }
@@ -96,18 +96,18 @@ public class SSHServerTest {
     public static class TeePipedOutputStream extends PipedOutputStream {
         private OutputStream tee;
 
-        public TeePipedOutputStream(OutputStream tee) {
+        public TeePipedOutputStream(final OutputStream tee) {
             this.tee = tee;
         }
 
         @Override
-        public void write(int b) throws IOException {
+        public void write(final int b) throws IOException {
             super.write(b);
             tee.write(b);
         }
 
         @Override
-        public void write(byte[] b, int off, int len) throws IOException {
+        public void write(final byte[] b, final int off, final int len) throws IOException {
             super.write(b, off, len);
             tee.write(b, off, len);
         }

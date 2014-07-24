@@ -43,38 +43,38 @@ public class AxisServiceReference extends Reference {
     private Callback[] methodInterceptors;
     private Class enhancedServiceClass;
 
-    public AxisServiceReference(String serviceInterfaceClassName, Map seiPortNameToFactoryMap, Map seiClassNameToFactoryMap) {
+    public AxisServiceReference(final String serviceInterfaceClassName, final Map seiPortNameToFactoryMap, final Map seiClassNameToFactoryMap) {
         this.serviceInterfaceClassName = serviceInterfaceClassName;
         this.seiPortNameToFactoryMap = seiPortNameToFactoryMap;
         this.seiClassNameToFactoryMap = seiClassNameToFactoryMap;
     }
 
-    public void setClassLoader(ClassLoader classLoader) {
+    public void setClassLoader(final ClassLoader classLoader) {
         this.classLoader = classLoader;
     }
 
     public Object getObject() throws NamingException {
-        Object serviceInstance = createServiceInterfaceProxy(serviceInterfaceClassName, seiPortNameToFactoryMap, seiClassNameToFactoryMap, classLoader);
+        final Object serviceInstance = createServiceInterfaceProxy(serviceInterfaceClassName, seiPortNameToFactoryMap, seiClassNameToFactoryMap, classLoader);
         return serviceInstance;
     }
 
-    private Object createServiceInterfaceProxy(String serviceInterfaceClassName, Map seiPortNameToFactoryMap, Map seiClassNameToFactoryMap, ClassLoader classLoader) throws NamingException {
-        boolean initialize = (this.serviceConstructor == null);
+    private Object createServiceInterfaceProxy(final String serviceInterfaceClassName, final Map seiPortNameToFactoryMap, final Map seiClassNameToFactoryMap, final ClassLoader classLoader) throws NamingException {
+        final boolean initialize = (this.serviceConstructor == null);
 
         if (initialize) {
-            Class serviceInterface;
+            final Class serviceInterface;
             try {
                 serviceInterface = classLoader.loadClass(serviceInterfaceClassName);
-            } catch (ClassNotFoundException e) {
+            } catch (final ClassNotFoundException e) {
                 throw (NamingException) new NamingException("Could not load service interface class " + serviceInterfaceClassName).initCause(e);
             }
 
             // create method interceptors
-            Callback callback = new ServiceMethodInterceptor(seiPortNameToFactoryMap);
+            final Callback callback = new ServiceMethodInterceptor(seiPortNameToFactoryMap);
             this.methodInterceptors = new Callback[]{NoOp.INSTANCE, callback};
 
             // create service class
-            Enhancer enhancer = new Enhancer();
+            final Enhancer enhancer = new Enhancer();
             enhancer.setClassLoader(classLoader);
             enhancer.setSuperclass(ServiceImpl.class);
             enhancer.setInterfaces(new Class[]{serviceInterface});
@@ -91,22 +91,22 @@ public class AxisServiceReference extends Reference {
         // associate the method interceptors with the generated service class on the current thread
         Enhancer.registerCallbacks(this.enhancedServiceClass, this.methodInterceptors);
 
-        Object[] arguments = new Object[]{seiPortNameToFactoryMap, seiClassNameToFactoryMap};
+        final Object[] arguments = new Object[]{seiPortNameToFactoryMap, seiClassNameToFactoryMap};
 
         Object serviceInstance = null;
 
         try {
             serviceInstance = this.serviceConstructor.newInstance(arguments);
-        } catch (InvocationTargetException e) {
+        } catch (final InvocationTargetException e) {
             throw (NamingException) new NamingException("Could not construct service instance").initCause(e.getTargetException());
         }
 
         if (initialize) {
-            for (Iterator iterator = seiPortNameToFactoryMap.values().iterator(); iterator.hasNext();) {
-                SeiFactoryImpl seiFactory = (SeiFactoryImpl) iterator.next();
+            for (final Iterator iterator = seiPortNameToFactoryMap.values().iterator(); iterator.hasNext(); ) {
+                final SeiFactoryImpl seiFactory = (SeiFactoryImpl) iterator.next();
                 try {
                     seiFactory.initialize(serviceInstance, classLoader);
-                } catch (ClassNotFoundException e) {
+                } catch (final ClassNotFoundException e) {
                     throw (NamingException) new NamingException("Could not load service interface class; " + e.getMessage()).initCause(e);
                 }
             }

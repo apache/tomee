@@ -36,14 +36,14 @@ public class DummyInterceptor implements SOAPHandler<SOAPMessageContext> {
         return Collections.emptySet();
     }
 
-    public void close(MessageContext mc) {
+    public void close(final MessageContext mc) {
     }
 
-    public boolean handleFault(SOAPMessageContext mc) {
+    public boolean handleFault(final SOAPMessageContext mc) {
         return true;
     }
 
-    public boolean handleMessage(SOAPMessageContext mc) {
+    public boolean handleMessage(final SOAPMessageContext mc) {
         return true;
     }
 }

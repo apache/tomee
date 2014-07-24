@@ -24,7 +24,6 @@ import org.apache.openejb.util.Join;
 import org.apache.openejb.util.Pipe;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
@@ -35,6 +34,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * NOTE: don't add inner classes or anonymous one or dependency without updating ExecMojo
@@ -53,7 +55,7 @@ public class RemoteServer {
     public static final String START = "start";
     public static final String STOP = "stop";
 
-    private boolean debug = options.get(OPENEJB_SERVER_DEBUG, false);
+    private final boolean debug = options.get(OPENEJB_SERVER_DEBUG, false);
     private final boolean profile = options.get("openejb.server.profile", false);
     private final boolean tomcat;
     private final String javaOpts = System.getProperty("java.opts");
@@ -65,7 +67,7 @@ public class RemoteServer {
     private boolean serverHasAlreadyBeenStarted = true;
 
     private Properties properties;
-    private Process server;
+    private final AtomicReference<Process> server = new AtomicReference<Process>();
     private final int tries;
     private final boolean verbose;
     private final int portShutdown;
@@ -126,12 +128,16 @@ public class RemoteServer {
     }
 
     public void destroy() {
-        stop();
-        if (server != null) {
-            try {
-                server.waitFor();
-            } catch (final InterruptedException e) {
-                // no-op
+
+        final boolean stopSent = stop();
+
+        final Process p = server.get();
+        if (p != null) {
+
+            if (stopSent) {
+                waitFor(p);
+            } else {
+                p.destroy();
             }
         }
     }
@@ -262,9 +268,9 @@ public class RemoteServer {
                     final File endorsed = new File(home, "endorsed");
                     final File temp = new File(home, "temp");
 
-                    if (!addedArgs.containsKey("-Dcom.sun.management.jmxremote")) {
-                        argsList.add("-Dcom.sun.management.jmxremote");
-                    }
+//                    if (!addedArgs.containsKey("-Dcom.sun.management.jmxremote")) {
+//                        argsList.add("-Dcom.sun.management.jmxremote");
+//                    }
                     if (!addedArgs.containsKey("-Djava.util.logging.manager")) {
                         argsList.add("-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager");
                     }
@@ -324,35 +330,72 @@ public class RemoteServer {
                 }
 
                 // kill3UNIXDebug();
+                final ProcessBuilder pb = new ProcessBuilder(args);
+                pb.directory(home.getAbsoluteFile());
+                Process p = pb.start();
 
-                final Process process = Runtime.getRuntime().exec(args);
-                Pipe.pipeOut(process); // why would we need to redirect System.in to the process, TomEE doesn't use it
+                //Process p = Runtime.getRuntime().exec(args);
+                Pipe.pipeOut(p); // why would we need to redirect System.in to the process, TomEE doesn't use it
 
                 if (START.equals(cmd)) {
-                    server = process;
-                } else if (STOP.equals(cmd) && server != null) {
-                    server.waitFor();
+                    server.set(p);
+                } else if (STOP.equals(cmd)) {
+                    waitFor(p);
+                    p = server.get();
+                    if (p != null) {
+                        waitFor(p);
+                    }
                 }
+
+                System.out.println("Started server process on port: " + port);
 
             } catch (final Exception e) {
                 throw (RuntimeException) new OpenEJBRuntimeException("Cannot start the server.  Exception: " + e.getClass().getName() + ": " + e.getMessage()).initCause(e);
             }
-            if (checkPortAvailable) {
-                if (debug) {
 
-                    if (!connect(port, Integer.MAX_VALUE)) {
-                        throw new OpenEJBRuntimeException("Could not connect to server");
-                    }
-                } else {
-                    if (!connect(port, tries)) {
-                        throw new OpenEJBRuntimeException("Could not connect to server");
-                    }
+            if (debug) {
+                if (!connect(port, Integer.MAX_VALUE)) {
+                    destroy();
+                    throw new OpenEJBRuntimeException("Could not connect to server");
+                }
+            } else {
+                if (!connect(port, tries)) {
+                    destroy();
+                    throw new OpenEJBRuntimeException("Could not connect to server");
                 }
             }
+
         } else {
             if (verbose) {
                 System.out.println("[] FOUND STARTED SERVER");
             }
+        }
+    }
+
+    private void waitFor(final Process p) {
+        final CountDownLatch latch = new CountDownLatch(1);
+        final Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    p.waitFor();
+                } catch (final InterruptedException e) {
+                    //Ignore
+                }
+
+                latch.countDown();
+            }
+        }, "process-waitFor");
+
+        t.start();
+
+        try {
+            if (!latch.await(10, TimeUnit.SECONDS)) {
+                killOnExit(p);
+                throw new RuntimeException("Timeout waiting for process");
+            }
+        } catch (final InterruptedException e) {
+            killOnExit(p);
         }
     }
 
@@ -362,9 +405,9 @@ public class RemoteServer {
         }
 
         try {
-            final Field f = server.getClass().getDeclaredField("pid");
+            final Field f = server.get().getClass().getDeclaredField("pid");
             f.setAccessible(true);
-            final int pid = (Integer) f.get(server);
+            final int pid = (Integer) f.get(server.get());
             Pipe.pipe(Runtime.getRuntime().exec("kill -3 " + pid));
         } catch (final Exception e1) {
             e1.printStackTrace();
@@ -412,7 +455,7 @@ public class RemoteServer {
     }
 
     public Process getServer() {
-        return server;
+        return server.get();
     }
 
     private void addIfSet(final List<String> argsList, final String key) {
@@ -434,20 +477,21 @@ public class RemoteServer {
         return home;
     }
 
-    public void stop() {
-        if (!serverHasAlreadyBeenStarted) {
-            try {
-                shutdown();
-            } catch (final Exception e) {
-                if (verbose) {
-                    e.printStackTrace(System.err);
-                }
+    public boolean stop() {
+        try {
+            shutdown(5);
+            return true;
+        } catch (final Exception e) {
+            if (verbose && !serverHasAlreadyBeenStarted) {
+                e.printStackTrace(System.err);
             }
         }
+
+        return false;
     }
 
     public void forceStop() throws Exception {
-        shutdown();
+        shutdown(5);
 
         // check tomcat was effectively shutted down
         // we can have some concurrent shutdown commands (catalina shutdown hook for instance)
@@ -471,7 +515,7 @@ public class RemoteServer {
     }
 
     // same as catalina.sh stop {@see org.apache.catalina.startup.Catalina#stopServer}
-    private void shutdown() throws Exception {
+    private void shutdown(int attempts) throws Exception {
         Socket socket = null;
         OutputStream stream = null;
         try {
@@ -482,12 +526,19 @@ public class RemoteServer {
                 stream.write(shutdown.charAt(i));
             }
             stream.flush();
+        } catch (final Exception e) {
+            if (attempts > 0) {
+                Thread.sleep(1000);
+                shutdown(--attempts);
+            } else {
+                throw e;
+            }
         } finally {
             IO.close(stream);
             if (socket != null) {
                 try {
                     socket.close();
-                } catch (final IOException e) {
+                } catch (final Exception e) {
                     // Ignore
                 }
             }
@@ -496,7 +547,7 @@ public class RemoteServer {
 
     private boolean connect(final int port, int tries) {
         if (verbose) {
-            System.out.println("[] CONNECT ATTEMPT " + (this.tries - tries));
+            System.out.println("[] CONNECT ATTEMPT " + (this.tries - tries) + " on port: " + port);
         }
 
         Socket s = null;
@@ -515,7 +566,7 @@ public class RemoteServer {
                 return false;
             } else {
                 try {
-                    Thread.sleep(2000);
+                    Thread.sleep(1000);
                 } catch (final Exception e2) {
                     e.printStackTrace();
                 }
@@ -539,14 +590,20 @@ public class RemoteServer {
     }
 
     public void killOnExit() {
-        if (!serverHasAlreadyBeenStarted && kill.contains(this.server)) {
+        final Process p = this.server.get();
+        if (!serverHasAlreadyBeenStarted && kill.contains(p)) {
             return;
         }
-        kill.add(this.server);
+
+        killOnExit(p);
     }
 
-    // Shutdown hook for recursive delete on tmp directories
-    static final List<Process> kill = new ArrayList<Process>();
+    private static void killOnExit(final Process p) {
+        kill.add(p);
+    }
+
+    // Shutdown hook for processes
+    private static final List<Process> kill = new ArrayList<Process>();
 
     static {
         Runtime.getRuntime().addShutdownHook(new CleanUpThread());

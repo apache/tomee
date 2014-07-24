@@ -142,7 +142,7 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
             if (!parent) {
                 Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             }
-        } catch (IllegalAccessException e) {
+        } catch (final IllegalAccessException e) {
 
             e.printStackTrace();
         }
@@ -200,27 +200,27 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
 
             }
 
-        } catch (SystemException e) {
+        } catch (final SystemException e) {
             invalidateAllHandlers(getRegistryId());
             throw convertException(getCause(e), m);
             /*
             * Application exceptions must be reported dirctly to the client. They
             * do not impact the viability of the proxy.
             */
-        } catch (ApplicationException ae) {
+        } catch (final ApplicationException ae) {
             throw convertException(getCause(ae), m);
             /*
             * A system exception would be highly unusual and would indicate a sever
             * problem with the container system.
             */
-        } catch (SystemError se) {
+        } catch (final SystemError se) {
             invalidateReference();
             if (remote) {
                 throw new RemoteException("Container has suffered a SystemException", getCause(se));
             } else {
                 throw new EJBException("Container has suffered a SystemException").initCause(getCause(se));
             }
-        } catch (Throwable throwable) {
+        } catch (final Throwable throwable) {
             if (remote) {
                 if (throwable instanceof RemoteException) {
                     throw throwable;
@@ -266,7 +266,7 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
                     executor = JNDIContext.newExecutor(-1, null);
                 }
                 return new FutureAdapter(executor.submit(asynchronousCall), response, requestId);
-            } catch (RejectedExecutionException e) {
+            } catch (final RejectedExecutionException e) {
                 throw new EJBException("failed to allocate internal resource to execute the target task", e);
             }
         } else {
@@ -342,9 +342,9 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
         public Object call() throws Exception {
             try {
                 return _businessMethod(method, args, proxy, requestId, response);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw e;
-            } catch (Throwable error) {
+            } catch (final Throwable error) {
                 throw new SystemException(error);
             }
         }
@@ -404,11 +404,11 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
                         return false;
                     }
                     final EJBRequest req = new EJBRequest(RequestMethodCode.FUTURE_CANCEL,
-                                                          ejb,
-                                                          CANCEL,
-                                                          new Object[]{Boolean.valueOf(mayInterruptIfRunning)},
-                                                          primaryKey,
-                                                          client.getSerializer());
+                        ejb,
+                        CANCEL,
+                        new Object[]{Boolean.valueOf(mayInterruptIfRunning)},
+                        primaryKey,
+                        client.getSerializer());
                     req.getBody().setRequestId(requestId);
                     try {
                         final EJBResponse res = request(req);
@@ -416,7 +416,7 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
                             //TODO how do we notify the user that we fail to configure the value ?
                             Logger.getLogger(this.getClass().getName()).info("Unexpected response on cancel: " + res);
                         }
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         //TODO how to handle
                         Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Unexpected error on cancel", e);
                         return false;

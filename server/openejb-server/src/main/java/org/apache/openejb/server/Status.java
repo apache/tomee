@@ -52,13 +52,13 @@ public class Status {
             final int port = SystemInstance.get().getOptions().get("ejbd.port", 4201);
             socket = new Socket("localhost", port);
             out = socket.getOutputStream();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             if (tries < 2) {
                 return false;
             } else {
                 try {
                     Thread.sleep(2000);
-                } catch (Exception e2) {
+                } catch (final Exception e2) {
                     e.printStackTrace();
                 }
                 return connect(--tries);
@@ -67,7 +67,7 @@ public class Status {
             if (null != out) {
                 try {
                     out.close();
-                } catch (Throwable t) {
+                } catch (final Throwable t) {
                     //Ignore
                 }
             }
@@ -75,7 +75,7 @@ public class Status {
             if (null != socket) {
                 try {
                     socket.close();
-                } catch (Throwable t) {
+                } catch (final Throwable t) {
                     //Ignore
                 }
             }

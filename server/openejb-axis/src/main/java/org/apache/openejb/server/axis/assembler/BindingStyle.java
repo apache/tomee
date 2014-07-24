@@ -28,7 +28,7 @@ public enum BindingStyle {
     private final boolean literal;
     private final boolean wrapped;
 
-    BindingStyle(boolean document, boolean literal, boolean wrapped) {
+    BindingStyle(final boolean document, final boolean literal, final boolean wrapped) {
         this.document = document;
         this.literal = literal;
         this.wrapped = wrapped;
@@ -54,9 +54,9 @@ public enum BindingStyle {
         return wrapped;
     }
 
-    public static BindingStyle getBindingStyle(String style, String use) {
+    public static BindingStyle getBindingStyle(final String style, final String use) {
         if ("rpc".equalsIgnoreCase(style)) {
-            if (use == null ||"encoded".equalsIgnoreCase(use)) {
+            if (use == null || "encoded".equalsIgnoreCase(use)) {
                 return RPC_ENCODED;
             } else if ("literal".equalsIgnoreCase(use)) {
                 return RPC_LITERAL;

@@ -17,19 +17,25 @@
 package org.apache.openejb.server.cxf.rs;
 
 import org.apache.cxf.jaxrs.client.WebClient;
+import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.server.cxf.rs.beans.MyFirstRestClass;
 import org.apache.openejb.server.cxf.rs.beans.MySecondRestClass;
 import org.apache.openejb.testing.Classes;
+import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.Module;
+import org.apache.openejb.testng.PropertiesBuilder;
+import org.apache.openejb.util.NetworkUtil;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 import java.util.Collections;
+import java.util.Properties;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
@@ -37,20 +43,36 @@ import static org.junit.Assert.assertEquals;
 @EnableServices("jax-rs")
 @RunWith(ApplicationComposer.class)
 public class MultipleApplicationsTest {
+
+    private static int port = -1;
+
+    @BeforeClass
+    public static void beforeClass() {
+        port = NetworkUtil.getNextAvailablePort();
+    }
+
+    @Configuration
+    public Properties props() {
+        return new PropertiesBuilder()
+            .p("httpejbd.port", Integer.toString(port))
+            .p(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true")
+            .build();
+    }
+
     @Module
-    @Classes(cdi = true, value = { Application1.class, Application2.class, MyFirstRestClass.class })
+    @Classes(cdi = true, value = {Application1.class, Application2.class, MyFirstRestClass.class})
     public WebApp war() {
         return new WebApp().contextRoot("foo");
     }
 
     @Test
     public void app1() {
-        assertEquals("Hi from REST World!", WebClient.create("http://localhost:4204/foo/").path("app1/first/hi").get(String.class));
+        assertEquals("Hi from REST World!", WebClient.create("http://localhost:" + port + "/foo/").path("app1/first/hi").get(String.class));
     }
 
     @Test
     public void app2() {
-        assertEquals("hi bar", WebClient.create("http://localhost:4204/foo/").path("app2/second/hi2/bar").get(String.class));
+        assertEquals("hi bar", WebClient.create("http://localhost:" + port + "/foo/").path("app2/second/hi2/bar").get(String.class));
     }
 
     @ApplicationPath("app1")

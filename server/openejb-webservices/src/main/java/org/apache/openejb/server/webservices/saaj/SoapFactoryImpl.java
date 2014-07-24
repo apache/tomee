@@ -25,26 +25,27 @@ import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPFault;
 
 public class SoapFactoryImpl extends SOAPFactory {
-    
+
     private SOAPFactory getSOAPFactory() throws SOAPException {
-        SOAPFactory factory = 
+        final SOAPFactory factory =
             (SOAPFactory) SaajFactoryFinder.find("javax.xml.soap.SOAPFactory");
         return factory;
-        
+
     }
+
     public Detail createDetail() throws SOAPException {
         return getSOAPFactory().createDetail();
     }
 
-    public SOAPElement createElement(Name arg0) throws SOAPException {
+    public SOAPElement createElement(final Name arg0) throws SOAPException {
         return getSOAPFactory().createElement(arg0);
     }
 
-    public SOAPElement createElement(String arg0) throws SOAPException {
+    public SOAPElement createElement(final String arg0) throws SOAPException {
         return getSOAPFactory().createElement(arg0);
     }
 
-    public SOAPElement createElement(String arg0, String arg1, String arg2) throws SOAPException {
+    public SOAPElement createElement(final String arg0, final String arg1, final String arg2) throws SOAPException {
         return getSOAPFactory().createElement(arg0, arg1, arg2);
     }
 
@@ -52,16 +53,16 @@ public class SoapFactoryImpl extends SOAPFactory {
         return getSOAPFactory().createFault();
     }
 
-    public SOAPFault createFault(String arg0, QName arg1) throws SOAPException {
+    public SOAPFault createFault(final String arg0, final QName arg1) throws SOAPException {
         return getSOAPFactory().createFault(arg0, arg1);
     }
 
-    public Name createName(String arg0) throws SOAPException {
+    public Name createName(final String arg0) throws SOAPException {
         return getSOAPFactory().createName(arg0);
     }
 
-    public Name createName(String arg0, String arg1, String arg2) throws SOAPException {
+    public Name createName(final String arg0, final String arg1, final String arg2) throws SOAPException {
         return getSOAPFactory().createName(arg0, arg1, arg2);
     }
-      
+
 }

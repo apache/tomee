@@ -26,18 +26,18 @@ import javax.xml.rpc.holders.IntHolder;
 import java.lang.reflect.Method;
 
 public class PojoProvider extends RPCProvider {
-    public Object getServiceObject(MessageContext msgContext, Handler service, String clsName, IntHolder scopeHolder) throws Exception {
-        HttpRequest request = (HttpRequest) msgContext.getProperty(AxisWsContainer.REQUEST);
+    public Object getServiceObject(final MessageContext msgContext, final Handler service, final String clsName, final IntHolder scopeHolder) throws Exception {
+        final HttpRequest request = (HttpRequest) msgContext.getProperty(AxisWsContainer.REQUEST);
         return request.getAttribute(WsConstants.POJO_INSTANCE);
     }
 
-    protected Object invokeMethod(MessageContext msgContext, Method interfaceMethod, Object pojo, Object[] arguments) throws Exception {
-        Class pojoClass = pojo.getClass();
+    protected Object invokeMethod(final MessageContext msgContext, final Method interfaceMethod, final Object pojo, final Object[] arguments) throws Exception {
+        final Class pojoClass = pojo.getClass();
 
         Method pojoMethod = null;
         try {
             pojoMethod = pojoClass.getMethod(interfaceMethod.getName(), interfaceMethod.getParameterTypes());
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             throw (NoSuchMethodException) new NoSuchMethodException("The pojo class '" + pojoClass.getName() + "' does not have a method matching signature: " + interfaceMethod).initCause(e);
         }
 

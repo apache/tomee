@@ -58,15 +58,12 @@ public /* abstract */ class LogFactory {
         this.logConfig=p;
     }
 
-    public Collection<String> getNames() {
+    public synchronized Collection<String> getNames() {
         return names;
     }
 
-    public Log getInstance(final String name)
-            throws LogConfigurationException {
-        synchronized (names) {
-            names.add(name);
-        }
+    public synchronized Log getInstance(final String name) throws LogConfigurationException {
+        names.add(name);
         return DirectJDKLog.getInstance(name);
     }
 

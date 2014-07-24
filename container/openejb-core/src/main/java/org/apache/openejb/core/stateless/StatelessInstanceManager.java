@@ -133,6 +133,7 @@ public class StatelessInstanceManager {
 
         @Override
         public void discard(final Instance instance, final Pool.Event reason) {
+
             final ThreadContext ctx = new ThreadContext(beanContext, null);
             final ThreadContext oldCallContext = ThreadContext.enter(ctx);
             try {
@@ -194,10 +195,11 @@ public class StatelessInstanceManager {
             throw new OpenEJBException("Unexpected Interruption of current thread: ", e);
         }
 
-        if (instance != null) {
-            return instance;
+        if (null == instance) {
+            instance = createInstance(callContext, beanContext);
         }
-        return createInstance(callContext, beanContext);
+
+        return instance;
     }
 
     private Instance createInstance(final ThreadContext callContext, final BeanContext beanContext) throws ApplicationException {
@@ -246,6 +248,7 @@ public class StatelessInstanceManager {
      * @throws OpenEJBException
      */
     public void poolInstance(final ThreadContext callContext, final Object bean) throws OpenEJBException {
+
         if (bean == null) {
             throw new SystemException("Invalid arguments");
         }
@@ -270,6 +273,7 @@ public class StatelessInstanceManager {
      * @param bean        Object
      */
     public void discardInstance(final ThreadContext callContext, final Object bean) throws SystemException {
+
         if (bean == null) {
             throw new SystemException("Invalid arguments");
         }
@@ -453,6 +457,7 @@ public class StatelessInstanceManager {
             if (!data.closePool()) {
                 logger.error("Timed-out waiting for stateless pool to close: for deployment '" + beanContext.getDeploymentID() + "'");
             }
+
         } catch (final InterruptedException e) {
             Thread.interrupted();
         }
@@ -502,12 +507,12 @@ public class StatelessInstanceManager {
     }
 
     private final class InstanceCreatorRunnable implements Runnable {
-        private long maxAge;
-        private long iteration;
-        private double maxAgeOffset;
-        private long min;
-        private Data data;
-        private StatelessSupplier supplier;
+        private final long maxAge;
+        private final long iteration;
+        private final double maxAgeOffset;
+        private final long min;
+        private final Data data;
+        private final StatelessSupplier supplier;
 
         private InstanceCreatorRunnable(final long maxAge, final long iteration, final long min, final double maxAgeOffset, final Data data, final StatelessSupplier supplier) {
             this.maxAge = maxAge;

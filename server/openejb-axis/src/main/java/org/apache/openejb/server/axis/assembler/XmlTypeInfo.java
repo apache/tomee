@@ -32,6 +32,6 @@ public class XmlTypeInfo extends InfoObject {
     public boolean listType;
     public QName arrayComponentType;
 
-    public final Map<String, QName> attributes = new LinkedHashMap<String,QName>();
+    public final Map<String, QName> attributes = new LinkedHashMap<String, QName>();
     public final Map<QName, XmlElementInfo> elements = new LinkedHashMap<QName, XmlElementInfo>();
 }

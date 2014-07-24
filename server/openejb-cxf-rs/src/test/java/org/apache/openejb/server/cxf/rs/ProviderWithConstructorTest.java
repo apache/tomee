@@ -17,11 +17,16 @@
 package org.apache.openejb.server.cxf.rs;
 
 import org.apache.cxf.jaxrs.client.WebClient;
+import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Classes;
+import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.Module;
+import org.apache.openejb.testng.PropertiesBuilder;
+import org.apache.openejb.util.NetworkUtil;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -40,6 +45,7 @@ import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
@@ -47,23 +53,40 @@ import static org.junit.Assert.assertEquals;
 @EnableServices("jax-rs")
 @RunWith(ApplicationComposer.class)
 public class ProviderWithConstructorTest {
+
+    private static int port = -1;
+
+    @BeforeClass
+    public static void beforeClass() {
+        port = NetworkUtil.getNextAvailablePort();
+    }
+
+    @Configuration
+    public Properties props() {
+        return new PropertiesBuilder()
+            .p("httpejbd.port", Integer.toString(port))
+            .p(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true")
+            .build();
+    }
+
     @Module
-    @Classes(value = { AnEndpointToCheckAProvider.class })
+    @Classes(value = {AnEndpointToCheckAProvider.class})
     public WebApp war() {
         return new WebApp()
-                .contextRoot("app")
-                .addServlet("REST Application", Application.class.getName())
-                .addInitParam("REST Application", "javax.ws.rs.Application", ApplicationWithProvider.class.getName());
+            .contextRoot("app")
+            .addServlet("REST Application", Application.class.getName())
+            .addInitParam("REST Application", "javax.ws.rs.Application", ApplicationWithProvider.class.getName());
     }
 
     @Test
     public void checkServiceWasDeployed() {
-        assertEquals("/app", WebClient.create("http://localhost:4204/app").path("/foo").accept("openejb/constructor").get(String.class));
+        assertEquals("/app", WebClient.create("http://localhost:" + port + "/app").path("/foo").accept("openejb/constructor").get(String.class));
     }
 
     @Path("/foo")
     public static class AnEndpointToCheckAProvider {
-        @GET @Produces("openejb/constructor")
+        @GET
+        @Produces("openejb/constructor")
         public String bar() {
             return "bar"; // whatever the value is the provider will return the context path
         }
@@ -92,17 +115,17 @@ public class ProviderWithConstructorTest {
         }
 
         @Override
-        public long getSize(T t, Class<?> rawType, Type genericType, Annotation[] annotations, MediaType mediaType) {
+        public long getSize(final T t, final Class<?> rawType, final Type genericType, final Annotation[] annotations, final MediaType mediaType) {
             return -1;
         }
 
         @Override
-        public boolean isWriteable(Class<?> rawType, Type genericType, Annotation[] annotations, MediaType mediaType) {
+        public boolean isWriteable(final Class<?> rawType, final Type genericType, final Annotation[] annotations, final MediaType mediaType) {
             return true;
         }
 
         @Override
-        public void writeTo(T t, Class<?> rawType, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException {
+        public void writeTo(final T t, final Class<?> rawType, final Type genericType, final Annotation[] annotations, final MediaType mediaType, final MultivaluedMap<String, Object> httpHeaders, final OutputStream entityStream) throws IOException {
             entityStream.write(request.getContextPath().getBytes());
         }
     }

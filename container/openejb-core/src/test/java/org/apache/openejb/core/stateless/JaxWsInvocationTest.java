@@ -19,6 +19,7 @@ package org.apache.openejb.core.stateless;
 import junit.framework.TestCase;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.InterfaceType;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
@@ -33,6 +34,7 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
+import org.junit.AfterClass;
 
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;
@@ -66,6 +68,11 @@ import java.util.Set;
  * @version $Rev$ $Date$
  */
 public class JaxWsInvocationTest extends TestCase {
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        OpenEJB.destroy();
+    }
 
     public void testWsInvocations() throws Exception {
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
@@ -156,6 +163,9 @@ public class JaxWsInvocationTest extends TestCase {
     @WebService
     public static class EchoBean {
 
+        public EchoBean() {
+        }
+
         @Resource
         private SessionContext ctx;
 
@@ -218,6 +228,9 @@ public class JaxWsInvocationTest extends TestCase {
      */
     public static class PlainEjbInterceptor {
 
+        public PlainEjbInterceptor() {
+        }
+
         @AroundInvoke
         public Object invoke(final InvocationContext context) throws Exception {
             // Track this call so we can assert proper interceptor order
@@ -230,7 +243,7 @@ public class JaxWsInvocationTest extends TestCase {
 
 
     private static String join(final String delimeter, final List items) {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         for (final Object item : items) {
             sb.append(item.toString()).append(delimeter);
         }
@@ -245,7 +258,7 @@ public class JaxWsInvocationTest extends TestCase {
      */
     public static class FakeMessageContext implements MessageContext {
 
-        private Map map = new HashMap();
+        private final Map map = new HashMap();
 
         public void clear() {
             map.clear();
@@ -336,6 +349,10 @@ public class JaxWsInvocationTest extends TestCase {
      * annotation must be used and is not optional, and the method must be public.
      */
     public static class FakeWsProviderInterceptor {
+
+        public FakeWsProviderInterceptor() {
+            this(new Object[]{});
+        }
 
         /**
          * These would normally come from the soap message

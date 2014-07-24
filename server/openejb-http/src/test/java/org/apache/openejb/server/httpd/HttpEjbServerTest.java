@@ -36,7 +36,7 @@ import org.apache.openejb.test.stateless.StatelessTestSuite;
 
 /**
  * To run from intellij or another IDE add
- *
+ * <p/>
  * -Dopenejb.home=/Users/dblevins/work/openejb3/server/openejb-httpd/target/test-classes
  *
  * @version $Revision$ $Date$
@@ -47,7 +47,7 @@ public class HttpEjbServerTest extends org.apache.openejb.test.TestSuite {
         System.setProperty("openejb.test.server", HttpEjbTestServer.class.getName());
 //        System.setProperty("openejb.test.database", org.apache.openejb.test.DerbyTestDatabase.class.getName());
         System.setProperty("openejb.test.database", org.apache.openejb.test.HsqldbTestDatabase.class.getName());
-        
+
         // Copied from org.apache.openejb.server.httpd.SomeoneBrokeSurefireAndThisIsADirtyHackForItTest which is now gone
         System.setProperty("openejb.assembler", org.apache.openejb.assembler.classic.Assembler.class.getName());
         System.setProperty("openejb.deployments.classpath.include", ".*openejb-itests-beans.*");
@@ -63,7 +63,7 @@ public class HttpEjbServerTest extends org.apache.openejb.test.TestSuite {
     }
 
     public static Test suite() {
-        TestSuite suite = new HttpEjbServerTest();
+        final TestSuite suite = new HttpEjbServerTest();
         suite.addTest(SingletonTestSuite.suite());
         suite.addTest(StatelessTestSuite.suite());
         suite.addTest(StatefulTestSuite.suite());
@@ -74,26 +74,26 @@ public class HttpEjbServerTest extends org.apache.openejb.test.TestSuite {
 
     public static class HttpEjbTestServer implements org.apache.openejb.test.TestServer {
         private ServiceDaemon serviceDaemon;
-    	HttpServer httpServer;
+        HttpServer httpServer;
         private int port;
 
-        public void init(Properties props) {
+        public void init(final Properties props) {
             try {
-                EjbServer ejbServer = new EjbServer();
-                ServerServiceAdapter adapter = new ServerServiceAdapter(ejbServer);
+                final EjbServer ejbServer = new EjbServer();
+                final ServerServiceAdapter adapter = new ServerServiceAdapter(ejbServer);
                 httpServer = new OpenEJBHttpServer(adapter);
 
                 props.put("openejb.deployments.classpath", "true");
                 OpenEJB.init(props, new ServerFederation());
                 ejbServer.init(props);
-                
+
                 httpServer.init(props);
 
                 // Binding to port 0 means that the OS will
                 // randomly pick an *available* port and bind to it
                 serviceDaemon = new ServiceDaemon(httpServer, 0, "localhost");
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new RuntimeException("Unable to initialize Test Server.", e);
             }
         }
@@ -106,7 +106,7 @@ public class HttpEjbServerTest extends org.apache.openejb.test.TestSuite {
                 // Here we figure out which port the OS picked for us
                 // so we can use it in the getContextEnvironment method
                 port = serviceDaemon.getPort();
-            } catch (ServiceException e) {
+            } catch (final ServiceException e) {
                 throw new RuntimeException("Unable to start Test Server.", e);
             }
         }
@@ -114,16 +114,16 @@ public class HttpEjbServerTest extends org.apache.openejb.test.TestSuite {
         public void stop() {
             try {
                 serviceDaemon.stop();
-            	httpServer.stop();
-            } catch (ServiceException e) {
+                httpServer.stop();
+            } catch (final ServiceException e) {
                 throw new RuntimeException("Unable to stop Test Server.", e);
             }
         }
 
         public Properties getContextEnvironment() {
-            Properties props = new Properties();
+            final Properties props = new Properties();
             props.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
-            props.put("java.naming.provider.url", "http://127.0.0.1:"+port+"/rjp");
+            props.put("java.naming.provider.url", "http://127.0.0.1:" + port + "/rjp");
             return props;
         }
     }

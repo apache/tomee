@@ -86,7 +86,7 @@ public class ConnectionManager {
 
         try {
             return strategy.connect(cluster, server);
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             Client.fireEvent(new ConnectionStrategyFailed(strategy, cluster, server, e));
 
             if (e instanceof IOException) {
@@ -110,7 +110,7 @@ public class ConnectionManager {
 
         try {
             return factory.getConnection(uri);
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             Client.fireEvent(new ConnectionFailed(uri, e));
 
             if (e instanceof IOException) {

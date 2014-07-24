@@ -46,7 +46,7 @@ public class WSSPassThroughInterceptor extends AbstractSoapInterceptor {
         super(Phase.PRE_PROTOCOL);
     }
 
-    public WSSPassThroughInterceptor(String phase) {
+    public WSSPassThroughInterceptor(final String phase) {
         super(phase);
     }
 
@@ -55,7 +55,7 @@ public class WSSPassThroughInterceptor extends AbstractSoapInterceptor {
         return HEADERS;
     }
 
-    public void handleMessage(SoapMessage soapMessage) {
+    public void handleMessage(final SoapMessage soapMessage) {
         // do nothing
 
         // this interceptor simply returns all WS-Security headers in its getUnderstoodHeaders()

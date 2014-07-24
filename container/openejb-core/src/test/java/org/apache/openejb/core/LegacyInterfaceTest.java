@@ -17,6 +17,7 @@
 package org.apache.openejb.core;
 
 import junit.framework.TestCase;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
@@ -33,6 +34,7 @@ import org.apache.openejb.jee.Query;
 import org.apache.openejb.jee.QueryMethod;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.jee.TransAttribute;
+import org.junit.AfterClass;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
@@ -49,6 +51,11 @@ import java.util.List;
  * @version $Rev$ $Date$
  */
 public class LegacyInterfaceTest extends TestCase {
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        OpenEJB.destroy();
+    }
 
     public void test() throws Exception {
 

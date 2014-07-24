@@ -38,18 +38,18 @@ public class CxfJaxWsProviderTest extends TestCase {
 
     //START SNIPPET: setup	
     private InitialContext initialContext;
-	
-	//Random port to avoid test conflicts
+
+    //Random port to avoid test conflicts
     private static final int port = Integer.parseInt(System.getProperty("httpejbd.port", "" + org.apache.openejb.util.NetworkUtil.getNextAvailablePort()));
 
     protected void setUp() throws Exception {
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
         properties.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*openejb-cxf.*");
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
         properties.setProperty("openejb.embedded.remotable", "true");
-		
-		//Just for this test we change the default port from 4204 to avoid conflicts
-		properties.setProperty("httpejbd.port", "" + port);
+
+        //Just for this test we change the default port from 4204 to avoid conflicts
+        properties.setProperty("httpejbd.port", "" + port);
 
         initialContext = new InitialContext(properties);
     }
@@ -57,13 +57,13 @@ public class CxfJaxWsProviderTest extends TestCase {
 
     public void test00_runCheckedException() {
         try {
-            AuthenticatorService withHandler = Service.create(
+            final AuthenticatorService withHandler = Service.create(
                 new URL("http://localhost:" + port + "/openejb-cxf/AuthenticatorServiceBean?wsdl"),
                 new QName("http://superbiz.org/wsdl", "AuthenticatorServiceBeanService"))
                 .getPort(AuthenticatorService.class);
             assertNotNull(withHandler);
 
-            AuthenticatorService noHandler = Service.create(
+            final AuthenticatorService noHandler = Service.create(
                 new URL("http://localhost:" + port + "/openejb-cxf/AuthenticatorServiceBeanNoHandler?wsdl"),
                 new QName("http://superbiz.org/wsdl", "AuthenticatorServiceBeanNoHandlerService"))
                 .getPort(AuthenticatorService.class);
@@ -71,23 +71,23 @@ public class CxfJaxWsProviderTest extends TestCase {
 
             try {
                 withHandler.authenticate("John", "Doe");
-            } catch (WrongPasswordException e) {
+            } catch (final WrongPasswordException e) {
                 System.out.println("My lovely checked exception...");
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 e.printStackTrace();
                 fail("A throwable instead of a checked exception...");
             }
 
             try {
                 noHandler.authenticate("John", "Doe");
-            } catch (WrongPasswordException e) {
+            } catch (final WrongPasswordException e) {
                 System.out.println("My lovely checked exception...");
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 e.printStackTrace();
                 fail("A throwable instead of a checked exception...");
             }
 
-        } catch (MalformedURLException e) {
+        } catch (final MalformedURLException e) {
             e.printStackTrace();
             fail("?!? invalid URL ???");
         }
@@ -96,13 +96,13 @@ public class CxfJaxWsProviderTest extends TestCase {
 
     public void test01_runRuntimeException() {
         try {
-            AuthenticatorService withHandler = Service.create(
+            final AuthenticatorService withHandler = Service.create(
                 new URL("http://localhost:" + port + "/openejb-cxf/AuthenticatorServiceBean?wsdl"),
                 new QName("http://superbiz.org/wsdl", "AuthenticatorServiceBeanService"))
                 .getPort(AuthenticatorService.class);
             assertNotNull(withHandler);
 
-            AuthenticatorService noHandler = Service.create(
+            final AuthenticatorService noHandler = Service.create(
                 new URL("http://localhost:" + port + "/openejb-cxf/AuthenticatorServiceBeanNoHandler?wsdl"),
                 new QName("http://superbiz.org/wsdl", "AuthenticatorServiceBeanNoHandlerService"))
                 .getPort(AuthenticatorService.class);
@@ -110,24 +110,24 @@ public class CxfJaxWsProviderTest extends TestCase {
 
             try {
                 withHandler.authenticateRuntime("John", "Doe");
-            } catch (WrongPasswordRuntimeException e) {
+            } catch (final WrongPasswordRuntimeException e) {
                 e.printStackTrace();
                 fail("My checked exception instead of a throwableS...");
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 System.out.println("A throwable exception...");
             }
 
 
             try {
                 noHandler.authenticateRuntime("John", "Doe");
-            } catch (WrongPasswordRuntimeException e) {
+            } catch (final WrongPasswordRuntimeException e) {
                 e.printStackTrace();
                 fail("My checked exception instead of a throwableS...");
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 System.out.println("A throwable exception...");
             }
 
-        } catch (MalformedURLException e) {
+        } catch (final MalformedURLException e) {
             e.printStackTrace();
             fail("?!? invalid URL ???");
         }

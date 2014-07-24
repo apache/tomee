@@ -27,13 +27,13 @@ public class MessageFactoryImpl extends MessageFactory {
     private MessageFactory getMessageFactory() throws SOAPException {
         return (MessageFactory) SaajFactoryFinder.find("javax.xml.soap.MessageFactory");
     }
-    
+
     public SOAPMessage createMessage() throws SOAPException {
-        return getMessageFactory().createMessage();        
+        return getMessageFactory().createMessage();
     }
 
-    public SOAPMessage createMessage(MimeHeaders arg0, InputStream arg1) throws IOException, SOAPException {
+    public SOAPMessage createMessage(final MimeHeaders arg0, final InputStream arg1) throws IOException, SOAPException {
         return getMessageFactory().createMessage(arg0, arg1);
     }
-     
+
 }

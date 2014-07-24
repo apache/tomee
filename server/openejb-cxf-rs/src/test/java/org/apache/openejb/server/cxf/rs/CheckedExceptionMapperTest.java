@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.server.cxf.rs;
 
+import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SingletonBean;
@@ -24,8 +25,12 @@ import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.testing.Classes;
+import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.Module;
+import org.apache.openejb.testng.PropertiesBuilder;
+import org.apache.openejb.util.NetworkUtil;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -43,8 +48,24 @@ import static org.junit.Assert.assertEquals;
 @EnableServices("jaxrs")
 @RunWith(ApplicationComposer.class)
 public class CheckedExceptionMapperTest {
+
+    private static int port = -1;
+
+    @BeforeClass
+    public static void beforeClass() {
+        port = NetworkUtil.getNextAvailablePort();
+    }
+
+    @Configuration
+    public Properties props() {
+        return new PropertiesBuilder()
+            .p("httpejbd.port", Integer.toString(port))
+            .p(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true")
+            .build();
+    }
+
     @Module
-    @Classes({ ExampleExceptionMapper.class })
+    @Classes({ExampleExceptionMapper.class})
     public EjbModule module() {
         final SingletonBean bean = new SingletonBean(ExampleRest.class);
         bean.setRestService(true);
@@ -66,11 +87,11 @@ public class CheckedExceptionMapperTest {
 
     @Test
     public void testThrowException() throws IOException {
-        assertEquals("Exception!", IO.slurp(new URL("http://localhost:4204/CheckedExceptionMapperTest/example/throw/")));
+        assertEquals("Exception!", IO.slurp(new URL("http://localhost:" + port + "/CheckedExceptionMapperTest/example/throw/")));
     }
 
     public static class ExampleException extends Exception {
-        public ExampleException(String message) {
+        public ExampleException(final String message) {
             super(message);
         }
     }
@@ -78,7 +99,7 @@ public class CheckedExceptionMapperTest {
     @Provider
     public static class ExampleExceptionMapper implements ExceptionMapper<ExampleException> {
         @Override
-        public Response toResponse(ExampleException ex) {
+        public Response toResponse(final ExampleException ex) {
             return Response.ok("Exception!").build();
         }
     }

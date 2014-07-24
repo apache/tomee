@@ -16,10 +16,6 @@
  */
 package org.apache.openejb.arquillian.tests.persistence;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import org.apache.openejb.arquillian.tests.Runner;
 import org.apache.ziplock.JarLocation;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -33,6 +29,11 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -65,33 +66,32 @@ public class ServletPersistenceInjectionTest {
 
     @Deployment(testable = false)
     public static WebArchive createDeployment() {
-        WebAppDescriptor descriptor = Descriptors.create(WebAppDescriptor.class)
-                .version("3.0")
-                .createServlet()
-                    .servletName("check").servletClass(PersistenceServlet.class.getName()).up()
-                .createServletMapping()
-                    .servletName("check").urlPattern("/" + TEST_NAME).up();
+        final WebAppDescriptor descriptor = Descriptors.create(WebAppDescriptor.class)
+            .version("3.0")
+            .createServlet()
+            .servletName("check").servletClass(PersistenceServlet.class.getName()).up()
+            .createServletMapping()
+            .servletName("check").urlPattern("/" + TEST_NAME).up();
 
-        WebArchive archive = ShrinkWrap.create(WebArchive.class, TEST_NAME + ".war")
-                .addClass(PersistenceServlet.class)
-                .addClass(Address.class)
-                .addClass(Runner.class)
-                .addAsLibraries(JarLocation.jarLocation(Test.class))
-                .addAsManifestResource("persistence.xml", ArchivePaths.create("persistence.xml"))
-                .setWebXML(new StringAsset(descriptor.exportAsString()));
-
+        final WebArchive archive = ShrinkWrap.create(WebArchive.class, TEST_NAME + ".war")
+            .addClass(PersistenceServlet.class)
+            .addClass(Address.class)
+            .addClass(Runner.class)
+            .addAsLibraries(JarLocation.jarLocation(Test.class))
+            .addAsManifestResource("persistence.xml", ArchivePaths.create("persistence.xml"))
+            .setWebXML(new StringAsset(descriptor.exportAsString()));
 
 
         return archive;
     }
 
 
-    private void validateTest(String expectedOutput) throws IOException {
+    private void validateTest(final String expectedOutput) throws IOException {
         final InputStream is = new URL(url.toExternalForm() + TEST_NAME).openStream();
         final ByteArrayOutputStream os = new ByteArrayOutputStream();
 
         int bytesRead;
-        byte[] buffer = new byte[8192];
+        final byte[] buffer = new byte[8192];
         while ((bytesRead = is.read(buffer)) > -1) {
             os.write(buffer, 0, bytesRead);
         }
@@ -99,7 +99,7 @@ public class ServletPersistenceInjectionTest {
         is.close();
         os.close();
 
-        String output = new String(os.toByteArray(), "UTF-8");
+        final String output = new String(os.toByteArray(), "UTF-8");
         assertNotNull("Response shouldn't be null", output);
         assertTrue("Output should contain: " + expectedOutput, output.contains(expectedOutput));
     }

@@ -18,13 +18,14 @@
 package org.apache.openejb.core.stateful;
 
 import junit.framework.TestCase;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.StatefulSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.core.ivm.naming.InitContextFactory;
+import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.loader.SystemInstance;
@@ -212,6 +213,7 @@ public class StatefulContainerTest extends TestCase {
             widget.destroy();
             fail("Calling a removed bean should not be possible");
         } catch (final Exception e) {
+            //Ignore
         }
 
         // Check the lifecycle of the bean
@@ -221,7 +223,7 @@ public class StatefulContainerTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
+        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
 
         final ConfigurationFactory config = new ConfigurationFactory();
         final Assembler assembler = new Assembler();
@@ -254,6 +256,11 @@ public class StatefulContainerTest extends TestCase {
                 inTxExpectedLifecycle.add(lifecycle);
             }
         }
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        OpenEJB.destroy();
     }
 
     private static String join(final String delimeter, final List items) {

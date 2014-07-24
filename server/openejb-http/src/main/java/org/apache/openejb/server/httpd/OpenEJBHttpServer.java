@@ -108,18 +108,18 @@ public class OpenEJBHttpServer implements HttpServer {
             final URI socketURI = new URI("http://" + socket.getLocalAddress().getHostAddress() + ":" + socket.getLocalPort());
             processRequest(socketURI, in, out);
 
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             log.error("Unexpected error", e);
         } finally {
             if (out != null) {
                 try {
                     out.flush();
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     //Ignore
                 }
                 try {
                     out.close();
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     //Ignore
                 }
             }
@@ -127,14 +127,14 @@ public class OpenEJBHttpServer implements HttpServer {
             if (in != null) {
                 try {
                     in.close();
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     //Ignore
                 }
             }
 
             try {
                 socket.close();
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 log.error("Encountered problem while closing connection with client: " + e.getMessage());
             }
         }
@@ -193,7 +193,7 @@ public class OpenEJBHttpServer implements HttpServer {
         try {
             response = process(socketURI, in);
 
-        } catch (Throwable t) {
+        } catch (final Throwable t) {
             response = HttpResponseImpl.createError(t.getMessage(), t);
         } finally {
             try {
@@ -204,7 +204,7 @@ public class OpenEJBHttpServer implements HttpServer {
                         response.writeMessage(new LoggerOutputStream(log, "debug"), indent);
                     }
                 }
-            } catch (Throwable t2) {
+            } catch (final Throwable t2) {
 
                 if (log.isDebugEnabled()) {
                     log.debug("Could not write response", t2);
@@ -231,13 +231,13 @@ public class OpenEJBHttpServer implements HttpServer {
             }
 
             res.setRequest(req);
-        } catch (Throwable t) {
+        } catch (final Throwable t) {
             res.setCode(400);
             res.setResponseString("Could not read the request");
             try {
                 res.getWriter().println(t.getMessage());
                 t.printStackTrace(res.getWriter());
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 // no-op
             }
             log.error("BAD REQUEST", t);
@@ -253,13 +253,13 @@ public class OpenEJBHttpServer implements HttpServer {
             if (querry != -1) {
                 location = location.substring(0, querry);
             }
-        } catch (Throwable t) {
+        } catch (final Throwable t) {
             throw new OpenEJBException("Could not determine the module " + location + "\n" + t.getClass().getName() + ":\n" + t.getMessage());
         }
 
         try {
             listener.onMessage(req, res);
-        } catch (Throwable t) {
+        } catch (final Throwable t) {
             throw new OpenEJBException("Error occurred while executing the module " + location + "\n" + t.getClass().getName() + ":\n" + t.getMessage(), t);
         }
 
@@ -286,7 +286,7 @@ public class OpenEJBHttpServer implements HttpServer {
             transformer.transform(new StreamSource(new StringReader(raw)), result);
 
             return result.getWriter().toString();
-        } catch (TransformerException e) {
+        } catch (final TransformerException e) {
             e.printStackTrace();
             return raw;
         }

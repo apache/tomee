@@ -22,13 +22,13 @@ public class HttpServerFactory {
 
     public static ServerService createServerService() {
         try {
-            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            final ClassLoader cl = Thread.currentThread().getContextClassLoader();
             cl.loadClass("org.mortbay.jetty.Connector");
             return new JettyHttpEjbServer();
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             // We don't have jetty
         }
-        
+
         return new OpenEJBHttpEjbServer();
     }
 }

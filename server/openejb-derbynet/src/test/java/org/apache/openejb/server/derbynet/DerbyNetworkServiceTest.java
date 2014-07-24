@@ -45,25 +45,25 @@ public class DerbyNetworkServiceTest {
     private static final long RETRY_TIMEOUT = 250;
     private long timeoutLeftover = 10000;
 
-    private void waitForDerby(int port) {
+    private void waitForDerby(final int port) {
         try {
-            Socket socket = new Socket("localhost", port);
+            final Socket socket = new Socket("localhost", port);
             socket.close();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             timeoutLeftover -= RETRY_TIMEOUT;
             if (timeoutLeftover < 0) {
                 Assert.fail("Impossible to connect using port\"" + port + "\". Message: " + e.getMessage());
             }
             try {
                 Thread.sleep(RETRY_TIMEOUT);
-            } catch (InterruptedException ignore) {
+            } catch (final InterruptedException ignore) {
                 // no-op
             }
             waitForDerby(port);
         }
     }
 
-    private void assertConnection(int port) throws ClassNotFoundException, SQLException {
+    private void assertConnection(final int port) throws ClassNotFoundException, SQLException {
         Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
         final String connectionStr = "jdbc:derby://localhost:" + port + "/testDB;create=true;user=tomee;password=tomee";
         final Connection conn = DriverManager.getConnection(connectionStr);
@@ -87,15 +87,15 @@ public class DerbyNetworkServiceTest {
         final int port = NetworkUtil.getNextAvailablePort();
         final SimpleServiceManager serviceManager = new SimpleServiceManager(new ServiceFinder() {
             @Override
-            public Map<String, Properties> mapAvailableServices(Class interfase) throws IOException, ClassNotFoundException {
+            public Map<String, Properties> mapAvailableServices(final Class interfase) throws IOException, ClassNotFoundException {
                 final Properties properties = new Properties();
                 properties.setProperty("server", DerbyNetworkService.class.getName());
                 properties.setProperty("port", port + "");
                 properties.setProperty("disabled", "false");
                 properties.put(ServerService.class, DerbyNetworkService.class);
                 properties.put(
-                        "derby.system.home",
-                        new File(SystemInstance.get().getBase().getDirectory(), "target").getAbsolutePath()
+                    "derby.system.home",
+                    new File(SystemInstance.get().getBase().getDirectory(), "target").getAbsolutePath()
                 );
                 final Map<String, Properties> services = new HashMap<String, Properties>();
                 services.put("derbynet", properties);

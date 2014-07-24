@@ -37,7 +37,7 @@ public class RemoteInitialContextCreated {
     @Override
     public String toString() {
         return "RemoteInitialContextCreated{" +
-               "providerUri=" + providerUri +
-               '}';
+            "providerUri=" + providerUri +
+            '}';
     }
 }

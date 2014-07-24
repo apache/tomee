@@ -26,40 +26,40 @@ import javax.xml.soap.SOAPFactory;
 
 public class SaajMetaFactoryImpl extends SAAJMetaFactory {
 
-    protected MessageFactory newMessageFactory(String arg0) throws SOAPException {
-        return (MessageFactory)callFactoryMethod("newMessageFactory", arg0);
+    protected MessageFactory newMessageFactory(final String arg0) throws SOAPException {
+        return (MessageFactory) callFactoryMethod("newMessageFactory", arg0);
     }
 
-    protected SOAPFactory newSOAPFactory(String arg0) throws SOAPException {
-        return (SOAPFactory)callFactoryMethod("newSOAPFactory", arg0);
+    protected SOAPFactory newSOAPFactory(final String arg0) throws SOAPException {
+        return (SOAPFactory) callFactoryMethod("newSOAPFactory", arg0);
     }
 
-    private Object callFactoryMethod(String methodName, String arg) throws SOAPException {
-        SAAJMetaFactory factory = 
+    private Object callFactoryMethod(final String methodName, final String arg) throws SOAPException {
+        final SAAJMetaFactory factory =
             (SAAJMetaFactory) SaajFactoryFinder.find("javax.xml.soap.MetaFactory");
 
         try {
-            Method method = 
-                factory.getClass().getDeclaredMethod(methodName, new Class[] { String.class });
-            boolean accessibility = method.isAccessible();
+            final Method method =
+                factory.getClass().getDeclaredMethod(methodName, new Class[]{String.class});
+            final boolean accessibility = method.isAccessible();
             try {
                 method.setAccessible(true);
-                Object result = method.invoke(factory, new Object[] { arg });                
+                final Object result = method.invoke(factory, new Object[]{arg});
                 return result;
-            } catch (InvocationTargetException e) {
+            } catch (final InvocationTargetException e) {
                 if (e.getTargetException() instanceof SOAPException) {
                     throw (SOAPException) e.getTargetException();
                 } else {
                     throw new SOAPException("Error calling factory method: " + methodName, e);
                 }
-            } catch (IllegalArgumentException e) {
+            } catch (final IllegalArgumentException e) {
                 throw new SOAPException("Error calling factory method: " + methodName, e);
-            } catch (IllegalAccessException e) {
+            } catch (final IllegalAccessException e) {
                 throw new SOAPException("Error calling factory method: " + methodName, e);
             } finally {
                 method.setAccessible(accessibility);
             }
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             throw new SOAPException("Factory method not found: " + methodName, e);
         }
     }

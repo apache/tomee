@@ -17,6 +17,7 @@
 package org.apache.openejb.timer;
 
 import junit.framework.TestCase;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
@@ -52,6 +53,11 @@ public class ScheduleTest extends TestCase {
 
     private static final List<Call> result = new ArrayList<Call>();
     private static final CountDownLatch countDownLatch = new CountDownLatch(3);
+
+    @Override
+    protected void tearDown() throws Exception {
+        OpenEJB.destroy();
+    }
 
     public void testSchedule() throws Exception {
 

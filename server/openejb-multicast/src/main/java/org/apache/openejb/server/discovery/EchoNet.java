@@ -25,9 +25,9 @@ import java.util.Set;
  */
 public class EchoNet {
 
-    public static void _main(String[] args) throws Exception {
-        MultipointServer a = new MultipointServer(1111, new Tracker.Builder().build()).start();
-        MultipointServer b = new MultipointServer(3333, new Tracker.Builder().build()).start();
+    public static void _main(final String[] args) throws Exception {
+        final MultipointServer a = new MultipointServer(1111, new Tracker.Builder().build()).start();
+        final MultipointServer b = new MultipointServer(3333, new Tracker.Builder().build()).start();
         a.connect(b);
         b.connect(a);
         a.connect(b);
@@ -38,7 +38,7 @@ public class EchoNet {
         b.connect(a);
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
 
         final int multiple = 1;
         final int base = 2000;
@@ -57,10 +57,10 @@ public class EchoNet {
 
         // get out of the 1000 port range
         servers += base;
-        
+
         MultipointServer lastServer = null;
         for (int i = base; i < servers; i++) {
-            MultipointServer newServer = new MultipointServer(multiple * i, new Tracker.Builder().build()).start();
+            final MultipointServer newServer = new MultipointServer(multiple * i, new Tracker.Builder().build()).start();
 
             if (lastServer != null)
                 newServer.connect(lastServer);
@@ -73,17 +73,17 @@ public class EchoNet {
 
 
     public static class Calc {
-        public static void main(String[] args) {
-            Set<Item> set = new HashSet<Item>();
+        public static void main(final String[] args) {
+            final Set<Item> set = new HashSet<Item>();
 
-            int x = 150;
+            final int x = 150;
 
             for (int i = 1; i <= x; i++) {
                 for (int j = 1; j <= x; j++) {
-                    if (i==j) continue;
+                    if (i == j) continue;
 
-                    Item item = new Item(i, j);
-                    boolean b = set.add(item);
+                    final Item item = new Item(i, j);
+                    final boolean b = set.add(item);
 //                    if (b) System.out.println("item = " + item);
                 }
             }
@@ -97,16 +97,16 @@ public class EchoNet {
             int a;
             int b;
 
-            Item(int a, int b) {
+            Item(final int a, final int b) {
                 this.a = a;
                 this.b = b;
             }
 
             @Override
-            public boolean equals(Object o) {
+            public boolean equals(final Object o) {
                 if (o == null || getClass() != o.getClass()) return false;
 
-                Item set = (Item) o;
+                final Item set = (Item) o;
 
                 if (a == set.a && b == set.b) return true;
                 if (a == set.b && b == set.a) return true;

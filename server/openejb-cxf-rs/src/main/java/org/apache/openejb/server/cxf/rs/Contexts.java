@@ -53,7 +53,7 @@ public final class Contexts {
         for (final Field f : cls.getDeclaredFields()) {
             for (final Annotation a : f.getAnnotations()) {
                 if (a.annotationType() == Context.class || a.annotationType() == Resource.class
-                        && AnnotationUtils.isContextClass(f.getType())) {
+                    && AnnotationUtils.isContextClass(f.getType())) {
                     types.add(f.getType());
                 }
             }

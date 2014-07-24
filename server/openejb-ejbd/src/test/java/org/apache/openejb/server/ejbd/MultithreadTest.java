@@ -111,7 +111,7 @@ public class MultithreadTest {
             public void run() {
                 try {
                     counter.explode();
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     //Ignore
                 }
             }
@@ -146,11 +146,11 @@ public class MultithreadTest {
             public void run() {
                 try {
                     counter.race();
-                } catch (ConcurrentAccessException ex) {
+                } catch (final ConcurrentAccessException ex) {
                     comment("Leap Start");
                     timeouts.countDown();
                     assertEquals("No instances available in Stateless Session Bean pool.  Waited 100 MILLISECONDS", ex.getMessage());
-                } catch (Throwable t) {
+                } catch (final Throwable t) {
                     error.set(t);
                     fail("Unexpected exception" + t.getClass().getName() + " " + t.getMessage()); // useless in another thread
                 }
@@ -304,7 +304,7 @@ public class MultithreadTest {
             try {
                 startPistol.await();
                 comment("running = " + count);
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 Thread.interrupted();
             }
         }

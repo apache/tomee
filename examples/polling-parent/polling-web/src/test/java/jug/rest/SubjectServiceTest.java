@@ -21,6 +21,7 @@ import jug.routing.PollingRouter;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.loader.IO;
+import org.apache.openejb.util.NetworkUtil;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -40,6 +41,7 @@ import static org.junit.Assert.assertTrue;
 public class SubjectServiceTest {
 
     private static EJBContainer container;
+    private static int port = -1;
 
     @Inject
     private DataSourceInitializer init;
@@ -49,10 +51,12 @@ public class SubjectServiceTest {
 
     @BeforeClass
     public static void start() {
+        port = NetworkUtil.getNextAvailablePort();
         final Properties properties = new Properties();
         properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
         properties.setProperty(EJBContainer.APP_NAME, "polling/api");
         properties.setProperty(EJBContainer.PROVIDER, "openejb");
+        properties.setProperty("httpejbd.port", Integer.toString(port));
         container = EJBContainer.createEJBContainer(properties);
     }
 
@@ -69,11 +73,11 @@ public class SubjectServiceTest {
 
     @Test
     public void createVote() throws IOException {
-        final Response response = WebClient.create("http://localhost:4204/polling/")
-                                           .path("api/subject/create")
-                                           .accept("application/json")
-                                           .query("name", "TOMEE_JUG_JSON")
-                                           .post("was it cool?");
+        final Response response = WebClient.create("http://localhost:" + port + "/polling/")
+            .path("api/subject/create")
+            .accept("application/json")
+            .query("name", "TOMEE_JUG_JSON")
+            .post("was it cool?");
         final String output = IO.slurp((InputStream) response.getEntity());
         assertTrue("output doesn't contain TOMEE_JUG_JSON '" + output + "'", output.contains("TOMEE_JUG_JSON"));
     }

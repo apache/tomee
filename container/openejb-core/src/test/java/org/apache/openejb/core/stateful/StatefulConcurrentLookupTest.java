@@ -15,6 +15,7 @@
  */
 package org.apache.openejb.core.stateful;
 
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
@@ -27,6 +28,7 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.NamedMethod;
 import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.jee.Timeout;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -77,6 +79,11 @@ public class StatefulConcurrentLookupTest {
         ejbJar.addEnterpriseBean(bean1);
 
         assembler.createApplication(config.configureApplication(ejbJar));
+    }
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        OpenEJB.destroy();
     }
 
     @Test

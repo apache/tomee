@@ -21,9 +21,9 @@ package org.apache.openejb.server.httpd;
  */
 public class OpenEJBHttpEjbServer extends HttpEjbServer {
 
-	public OpenEJBHttpEjbServer() {
-		super();
-		httpServer = new OpenEJBHttpServer();
-	}
+    public OpenEJBHttpEjbServer() {
+        super();
+        httpServer = new OpenEJBHttpServer();
+    }
 
 }

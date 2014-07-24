@@ -16,10 +16,18 @@
  */
 package org.apache.openejb.server.cxf.rs;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.HashSet;
-import java.util.Set;
+import org.apache.cxf.jaxrs.client.WebClient;
+import org.apache.openejb.jee.WebApp;
+import org.apache.openejb.junit.ApplicationComposer;
+import org.apache.openejb.testing.Classes;
+import org.apache.openejb.testing.Configuration;
+import org.apache.openejb.testing.EnableServices;
+import org.apache.openejb.testing.Module;
+import org.apache.openejb.testng.PropertiesBuilder;
+import org.apache.openejb.util.NetworkUtil;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -28,36 +36,45 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Context;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Set;
 
-import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.Module;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import static org.junit.Assert.assertEquals;
 
 @EnableServices("jax-rs")
 @RunWith(ApplicationComposer.class)
 public class CdiConstructorInjectionTest {
+
+    private static int port = -1;
+
+    @BeforeClass
+    public static void beforeClass() {
+        port = NetworkUtil.getNextAvailablePort();
+    }
+
+    @Configuration
+    public Properties props() {
+        return new PropertiesBuilder().p("httpejbd.port", Integer.toString(port)).build();
+    }
+
     @Module
-    @Classes(value = { FullCDI.class, Service.class, CDIAndContext.class }, cdi = true)
+    @Classes(value = {FullCDI.class, Service.class, CDIAndContext.class}, cdi = true)
     public WebApp war() {
         return new WebApp()
-                .contextRoot("app")
-                .addServlet("REST Application", Application.class.getName())
-                .addInitParam("REST Application", "javax.ws.rs.Application", ConstructorApplication.class.getName());
+            .contextRoot("app")
+            .addServlet("REST Application", Application.class.getName())
+            .addInitParam("REST Application", "javax.ws.rs.Application", ConstructorApplication.class.getName());
     }
 
     @Test
     public void standardCDI() {
-        assertEquals("service", WebClient.create("http://localhost:4204/app").path("/foo").get(String.class));
+        assertEquals("service", WebClient.create("http://localhost:" + port + "/app").path("/foo").get(String.class));
     }
 
     @Test
     public void cdiAndContext() {
-        assertEquals("GET", WebClient.create("http://localhost:4204/app").path("/bar").get(String.class));
+        assertEquals("GET", WebClient.create("http://localhost:" + port + "/app").path("/bar").get(String.class));
     }
 
     public static class Service {

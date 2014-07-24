@@ -16,12 +16,13 @@
  */
 package org.apache.openejb.concurrencyutilities.test;
 
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.concurrencyutilities.ee.factory.ManagedScheduledExecutorServiceImplFactory;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.ri.sp.PseudoSecurityService;
 import org.apache.openejb.spi.SecurityService;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import javax.enterprise.concurrent.LastExecution;
@@ -40,14 +41,17 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class ManagedScheduledExecutorServiceTest {
-    @BeforeClass
-    public static void forceSecurityService() {
+
+    @Before
+    public void forceSecurityService() {
+        SystemInstance.reset();
         SystemInstance.get().setComponent(SecurityService.class, new PseudoSecurityService());
     }
 
-    @AfterClass
-    public static void reset() {
+    @After
+    public void reset() {
         SystemInstance.reset();
+        OpenEJB.destroy();
     }
 
     @Test

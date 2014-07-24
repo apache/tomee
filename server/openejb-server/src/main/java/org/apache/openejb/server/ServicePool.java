@@ -97,64 +97,64 @@ public class ServicePool extends ServerServiceFilter {
         final int q = queue;
 
         threadPool = new ThreadPoolExecutor(threadCore, threads, keepAliveTime, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(queue),
-                new ThreadFactory() {
-                    private final AtomicInteger i = new AtomicInteger(0);
+            new ThreadFactory() {
+                private final AtomicInteger i = new AtomicInteger(0);
 
-                    @Override
-                    public Thread newThread(final Runnable r) {
-                        final Thread t = new Thread(r, "OpenEJB." + ServicePool.this.getName() + "." + i.incrementAndGet());
-                        t.setDaemon(true);
-                        t.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-                            @Override
-                            public void uncaughtException(final Thread t, final Throwable e) {
-                                log.error("ServicePool '" + ServicePool.this.getName() + "': Uncaught error in: " + t.getName(), e);
-                            }
-                        });
+                @Override
+                public Thread newThread(final Runnable r) {
+                    final Thread t = new Thread(r, "OpenEJB." + ServicePool.this.getName() + "." + i.incrementAndGet());
+                    t.setDaemon(true);
+                    t.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+                        @Override
+                        public void uncaughtException(final Thread t, final Throwable e) {
+                            log.error("ServicePool '" + ServicePool.this.getName() + "': Uncaught error in: " + t.getName(), e);
+                        }
+                    });
 
-                        return t;
+                    return t;
+                }
+
+            },
+            new RejectedExecutionHandler() {
+                @Override
+                public void rejectedExecution(final Runnable r, final ThreadPoolExecutor tpe) {
+
+                    if (null == r || null == tpe || tpe.isShutdown() || tpe.isTerminated() || tpe.isTerminating()) {
+                        return;
                     }
 
-                },
-                new RejectedExecutionHandler() {
-                    @Override
-                    public void rejectedExecution(final Runnable r, final ThreadPoolExecutor tpe) {
+                    if (log.isWarningEnabled()) {
+                        log.warning(String.format("ServicePool '" + ServicePool.this.getName() + "' with (%1$s) threads is at capicity (%2$s) for queue (%3$s) on process: %4$s"
+                            + "\nConsider increasing the 'threadCore','threads' and 'queue' size properties.", c, t, q, r));
+                    }
 
-                        if (null == r || null == tpe || tpe.isShutdown() || tpe.isTerminated() || tpe.isTerminating()) {
-                            return;
-                        }
+                    boolean offer = false;
+                    try {
+                        offer = tpe.getQueue().offer(r, 10, TimeUnit.SECONDS);
+                    } catch (final InterruptedException e) {
+                        //Ignore
+                    }
 
-                        if (log.isWarningEnabled()) {
-                            log.warning(String.format("ServicePool '" + ServicePool.this.getName() + "' with (%1$s) threads is at capicity (%2$s) for queue (%3$s) on process: %4$s"
-                                                      + "\nConsider increasing the 'threadCore','threads' and 'queue' size properties.", c, t, q, r));
-                        }
+                    if (!offer) {
 
-                        boolean offer = false;
-                        try {
-                            offer = tpe.getQueue().offer(r, 10, TimeUnit.SECONDS);
-                        } catch (InterruptedException e) {
-                            //Ignore
-                        }
+                        if (block) {
+                            try {
+                                //Last ditch effort to run the process in the current thread
+                                r.run();
 
-                        if (!offer) {
+                                log.warning("ServicePool '" + ServicePool.this.getName() + "' forced execution on the current server thread: " + r
+                                    + "\nIt is highly recommended that the service 'threadCore','threads' and 'queue' size properties are increased!");
 
-                            if (block) {
-                                try {
-                                    //Last ditch effort to run the process in the current thread
-                                    r.run();
-
-                                    log.warning("ServicePool '" + ServicePool.this.getName() + "' forced execution on the current server thread: " + r
-                                                + "\nIt is highly recommended that the service 'threadCore','threads' and 'queue' size properties are increased!");
-
-                                } catch (Throwable e) {
-                                    log.error("ServicePool '" + ServicePool.this.getName() + "' failed to run a process in the current server thread: " + r);
-                                }
-                            } else {
-                                log.error("ServicePool '" + ServicePool.this.getName() + "' rejected asynchronous process: " + r
-                                          + "\nIt is strongly advised that the 'threadCore', 'threads', 'queue' size and 'block' properties are modified to prevent data loss!");
+                            } catch (final Throwable e) {
+                                log.error("ServicePool '" + ServicePool.this.getName() + "' failed to run a process in the current server thread: " + r);
                             }
+                        } else {
+                            log.error("ServicePool '" + ServicePool.this.getName() + "' rejected asynchronous process: " + r
+                                + "\nIt is strongly advised that the 'threadCore', 'threads', 'queue' size and 'block' properties are modified to prevent data loss!");
                         }
                     }
-                });
+                }
+            });
 
         SystemInstance.get().setComponent(ServicePool.class, this);
 
@@ -197,21 +197,21 @@ public class ServicePool extends ServerServiceFilter {
 
                     ServicePool.super.service(socket);
 
-                } catch (SecurityException e) {
+                } catch (final SecurityException e) {
                     final String msg = "ServicePool '" + ServicePool.this.getName() + "': Security error: " + e.getMessage();
                     if (log.isDebugEnabled()) {
                         log.error(msg, e);
                     } else {
                         log.error(msg + " - Debug for StackTrace");
                     }
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     final String msg = "ServicePool '" + ServicePool.this.getName() + "': Unexpected IO error: " + e.getMessage();
                     if (log.isDebugEnabled()) {
                         log.debug(msg, e);
                     } else {
                         log.warning(msg + " - Debug for StackTrace");
                     }
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     final String msg = "ServicePool '" + ServicePool.this.getName() + "': Unexpected error: " + e.getMessage();
                     if (log.isDebugEnabled()) {
                         log.error(msg, e);
@@ -227,7 +227,7 @@ public class ServicePool extends ServerServiceFilter {
                         if (socket != null) {
                             socket.close();
                         }
-                    } catch (Throwable t) {
+                    } catch (final Throwable t) {
 
                         if (log.isDebugEnabled()) {
                             log.debug("ServicePool '" + ServicePool.this.getName() + "': Error closing socket", t);

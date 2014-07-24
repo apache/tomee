@@ -17,6 +17,7 @@
 package org.apache.openejb.server.cxf.rs;
 
 import org.apache.cxf.jaxrs.provider.JAXBElementProvider;
+import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.config.sys.Resources;
 import org.apache.openejb.config.sys.Service;
@@ -27,9 +28,13 @@ import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.jee.oejb3.PojoDeployment;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.loader.IO;
+import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.Module;
+import org.apache.openejb.testng.PropertiesBuilder;
+import org.apache.openejb.util.NetworkUtil;
 import org.apache.openejb.util.reflection.Reflections;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -38,19 +43,35 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.Providers;
 import javax.xml.bind.ValidationEvent;
 import javax.xml.bind.ValidationEventHandler;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.lang.annotation.Annotation;
 import java.net.URL;
+import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 
 @EnableServices("jax-rs")
 @RunWith(ApplicationComposer.class)
 public class AdvancedProviderConfigTest {
+
+    private static int port = -1;
+
+    @BeforeClass
+    public static void beforeClass() {
+        port = NetworkUtil.getNextAvailablePort();
+    }
+
+    @Configuration
+    public Properties props() {
+        return new PropertiesBuilder()
+            .p("httpejbd.port", Integer.toString(port))
+            .p(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true")
+            .build();
+    }
+
     @Module
     public static EjbModule service() throws Exception {
         final EjbModule module = new EjbModule(new EjbJar(), new OpenejbJar());
@@ -80,7 +101,7 @@ public class AdvancedProviderConfigTest {
 
     @Test
     public void check() throws Exception {
-        assertEquals("true", IO.slurp(new URL("http://127.0.0.1:4204/AdvancedProviderConfigTest/advanced-provider-config/")));
+        assertEquals("true", IO.slurp(new URL("http://127.0.0.1:" + port + "/AdvancedProviderConfigTest/advanced-provider-config/")));
     }
 
     @Singleton

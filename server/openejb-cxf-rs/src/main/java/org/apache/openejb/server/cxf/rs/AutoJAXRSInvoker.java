@@ -47,7 +47,7 @@ public class AutoJAXRSInvoker implements Invoker {
 
     private static Collection<BeanContext> beanContexts(final Map<String, EJBRestServiceInfo> restEjbs) {
         final Collection<BeanContext> bc = new ArrayList<BeanContext>();
-        for (EJBRestServiceInfo i : restEjbs.values()) {
+        for (final EJBRestServiceInfo i : restEjbs.values()) {
             bc.add(i.context);
         }
         return bc;

@@ -72,19 +72,19 @@ public class MultipointDiscoveryAgentTest extends TestCase {
         final int PEERS = names.length;
 
         final CountDownLatch[] latches = {
-                new CountDownLatch(PEERS + 1),
-                new CountDownLatch(PEERS + 1)
+            new CountDownLatch(PEERS + 1),
+            new CountDownLatch(PEERS + 1)
         };
 
         final DiscoveryListener listener = new DiscoveryListener() {
-            public void serviceAdded(URI service) {
+            public void serviceAdded(final URI service) {
                 System.out.println("added = " + service);
                 if (testService.equals(service)) {
                     latches[0].countDown();
                 }
             }
 
-            public void serviceRemoved(URI service) {
+            public void serviceRemoved(final URI service) {
                 System.out.println("removed = " + service);
                 if (testService.equals(service)) {
                     latches[1].countDown();
@@ -97,7 +97,7 @@ public class MultipointDiscoveryAgentTest extends TestCase {
 
         nodes.add(root);
 
-        for (String name : names) {
+        for (final String name : names) {
             final Node node = new Node(0, listener, name, root.getURI());
             nodes.add(node);
         }
@@ -119,7 +119,7 @@ public class MultipointDiscoveryAgentTest extends TestCase {
 
             assertTrue("round=" + i + ". Remove failed", latches[1].await(60, TimeUnit.SECONDS));
 
-            for (Node node : nodes) {
+            for (final Node node : nodes) {
                 final Set<URI> services = node.getRegistry().getServices();
                 assertEquals("round=" + i + ". Service retained", 0, services.size());
             }
@@ -151,8 +151,8 @@ public class MultipointDiscoveryAgentTest extends TestCase {
 
     }
 
-    private Node launch(Node green, String color, int port) throws Exception {
-        final URI orangeService = new URI(color + "://localhost:"+ port);
+    private Node launch(final Node green, final String color, final int port) throws Exception {
+        final URI orangeService = new URI(color + "://localhost:" + port);
         final Node orange = new Node(port, new Listener(color), color, green.getURI());
         orange.getRegistry().registerService(orangeService);
         Thread.sleep(100);
@@ -164,15 +164,15 @@ public class MultipointDiscoveryAgentTest extends TestCase {
         private final DiscoveryRegistry registry;
         private final String name;
 
-        public Node(int p, DiscoveryListener listener, String name, URI... uris) throws Exception {
+        public Node(final int p, final DiscoveryListener listener, final String name, final URI... uris) throws Exception {
             this(p, listener, false, name, 100, 2, uris);
         }
 
-        public Node(int p, DiscoveryListener listener, boolean debug, String name, int heartRate, int maxMissHeartBeats, URI... uris) throws Exception {
+        public Node(final int p, final DiscoveryListener listener, final boolean debug, final String name, final int heartRate, final int maxMissHeartBeats, final URI... uris) throws Exception {
             this.agent = new MultipointDiscoveryAgent(debug, name);
             this.name = name;
             final Properties props = new Properties();
-            props.put("port", p+"");
+            props.put("port", p + "");
 
             props.put("initialServers", Join.join(",", uris));
             props.put("max_missed_heartbeats", "1");
@@ -225,15 +225,15 @@ public class MultipointDiscoveryAgentTest extends TestCase {
             return name;
         }
 
-        private Listener(String name) {
+        private Listener(final String name) {
             this.name = name;
         }
 
-        public void serviceAdded(URI service) {
+        public void serviceAdded(final URI service) {
 //            System.out.printf("[%s] added = %s\n", name, service);
         }
 
-        public void serviceRemoved(URI service) {
+        public void serviceRemoved(final URI service) {
 //            System.out.printf("[%s] removed = %s\n", name, service);
         }
 
@@ -253,13 +253,13 @@ public class MultipointDiscoveryAgentTest extends TestCase {
         private final Handler handler;
         private final LogRecordFilter filter;
 
-        public FilteredHandler(Handler handler, LogRecordFilter filter) {
+        public FilteredHandler(final Handler handler, final LogRecordFilter filter) {
             this.handler = handler;
             this.filter = filter;
         }
 
         @Override
-        public void publish(LogRecord record) {
+        public void publish(final LogRecord record) {
             handler.publish(record);
 //            if (filter.accept(record)) {
 //            }
@@ -276,7 +276,7 @@ public class MultipointDiscoveryAgentTest extends TestCase {
         }
 
         @Override
-        public void setFormatter(Formatter newFormatter) throws SecurityException {
+        public void setFormatter(final Formatter newFormatter) throws SecurityException {
             handler.setFormatter(newFormatter);
         }
 
@@ -286,7 +286,7 @@ public class MultipointDiscoveryAgentTest extends TestCase {
         }
 
         @Override
-        public void setEncoding(String encoding) throws SecurityException, UnsupportedEncodingException {
+        public void setEncoding(final String encoding) throws SecurityException, UnsupportedEncodingException {
             handler.setEncoding(encoding);
         }
 
@@ -296,7 +296,7 @@ public class MultipointDiscoveryAgentTest extends TestCase {
         }
 
         @Override
-        public void setFilter(Filter newFilter) throws SecurityException {
+        public void setFilter(final Filter newFilter) throws SecurityException {
             handler.setFilter(newFilter);
         }
 
@@ -306,7 +306,7 @@ public class MultipointDiscoveryAgentTest extends TestCase {
         }
 
         @Override
-        public void setErrorManager(ErrorManager em) {
+        public void setErrorManager(final ErrorManager em) {
             handler.setErrorManager(em);
         }
 
@@ -316,7 +316,7 @@ public class MultipointDiscoveryAgentTest extends TestCase {
         }
 
         @Override
-        public void setLevel(Level newLevel) throws SecurityException {
+        public void setLevel(final Level newLevel) throws SecurityException {
             handler.setLevel(newLevel);
         }
 
@@ -326,7 +326,7 @@ public class MultipointDiscoveryAgentTest extends TestCase {
         }
 
         @Override
-        public boolean isLoggable(LogRecord record) {
+        public boolean isLoggable(final LogRecord record) {
             return handler.isLoggable(record);
         }
     }

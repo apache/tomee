@@ -18,6 +18,7 @@
 package org.apache.openejb.timer;
 
 import junit.framework.TestCase;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
@@ -82,6 +83,11 @@ public class TimerContainerTest extends TestCase {
 
         assembler.createApplication(config.configureApplication(ejbJar));
 
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        OpenEJB.destroy();
     }
 
     public static interface Widget {

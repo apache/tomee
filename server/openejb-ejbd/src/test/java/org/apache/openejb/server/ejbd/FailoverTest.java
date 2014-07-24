@@ -64,7 +64,7 @@ public class FailoverTest extends TestCase {
             initProps.setProperty("openejb.deployments.classpath.include", "");
             initProps.setProperty("openejb.deployments.classpath.filter.descriptors", "true");
             OpenEJB.init(initProps, new ServerFederation());
-        } catch (Exception e) {
+        } catch (final Exception e) {
         }
         final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
         final ConfigurationFactory config = new ConfigurationFactory();
@@ -100,7 +100,7 @@ public class FailoverTest extends TestCase {
         try {
             target.getHost();
             fail("EJBException should have been thrown");
-        } catch (EJBException e) {
+        } catch (final EJBException e) {
             // pass
         }
 
@@ -119,7 +119,7 @@ public class FailoverTest extends TestCase {
             initProps.setProperty("openejb.deployments.classpath.include", "");
             initProps.setProperty("openejb.deployments.classpath.filter.descriptors", "true");
             OpenEJB.init(initProps, new ServerFederation());
-        } catch (Exception e) {
+        } catch (final Exception e) {
         }
         final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
         final ConfigurationFactory config = new ConfigurationFactory();
@@ -150,7 +150,7 @@ public class FailoverTest extends TestCase {
         try {
             target.getHost();
             fail("EJBException should have been thrown");
-        } catch (EJBException e) {
+        } catch (final EJBException e) {
             // pass
         }
 
@@ -245,7 +245,7 @@ public class FailoverTest extends TestCase {
             try {
                 uri = new URI("ejb:ejbd://localhost:" + getPort() + "/" + host);
                 agent.registerService(uri);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new ServiceException(e);
             }
         }
@@ -255,7 +255,7 @@ public class FailoverTest extends TestCase {
             super.stop();
             try {
                 agent.unregisterService(uri);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new ServiceException(e);
             }
         }

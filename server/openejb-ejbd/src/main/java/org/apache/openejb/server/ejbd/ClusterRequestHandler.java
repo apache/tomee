@@ -67,10 +67,10 @@ public class ClusterRequestHandler extends RequestHandler implements DiscoveryLi
 
         try {
             req.readExternal(in);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             res.setFailure(e);
             return res;
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             res.setFailure(new IOException().initCause(e));
             return res;
         }
@@ -110,7 +110,7 @@ public class ClusterRequestHandler extends RequestHandler implements DiscoveryLi
                 try {
                     res.setMetaData(metaData);
                     res.writeExternal(out);
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     logger.error("Failed to write to ClusterResponse", e);
                     throw e;
                 }
@@ -129,7 +129,7 @@ public class ClusterRequestHandler extends RequestHandler implements DiscoveryLi
                 logger.info("Peer discovered: " + service.toString());
                 data.add(service);
             }
-        } catch (URISyntaxException e) {
+        } catch (final URISyntaxException e) {
             logger.error("serviceAdded: Invalid service URI format.  Expected <group>:<type>:<serverURI> but found '" + uri.toString() + "'");
         }
     }
@@ -147,7 +147,7 @@ public class ClusterRequestHandler extends RequestHandler implements DiscoveryLi
                 logger.info("Peer removed: " + service.toString());
                 data.remove(service);
             }
-        } catch (URISyntaxException e) {
+        } catch (final URISyntaxException e) {
             logger.error("serviceAdded: Invalid service URI format.  Expected <group>:<type>:<serverURI> but found '" + uri.toString() + "'");
         }
     }

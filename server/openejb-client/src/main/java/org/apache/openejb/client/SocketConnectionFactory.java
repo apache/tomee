@@ -78,7 +78,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
                 property = property.toUpperCase();
                 this.keepAliveStyle = KeepAliveStyle.valueOf(property);
             }
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             //Ignore
         }
     }
@@ -131,7 +131,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
             if (value != null) {
                 return Integer.parseInt(value);
             }
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             //Ignore
         }
         return defaultValue;
@@ -145,7 +145,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
             } else {
                 return defaultValue;
             }
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             return defaultValue;
         }
     }
@@ -160,7 +160,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
             try {
                 conn = new SocketConnection(uri, pool);
                 conn.open(uri);
-            } catch (IOException e) {
+            } catch (final IOException e) {
 
                 conn.cleanUp();
 
@@ -173,7 +173,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
             if (!conn.lock.tryLock(2, TimeUnit.SECONDS)) {
                 throw new InterruptedException();
             }
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             Thread.interrupted();
             pool.put(conn);
             throw new IOException("Connection busy");
@@ -201,7 +201,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
                     break;
                 }
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             pool.put(null);
             throw e;
         }
@@ -251,7 +251,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
             if (null != this.in) {
                 try {
                     this.in.close();
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     //Ignore
                 }
             }
@@ -259,7 +259,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
             if (null != this.out) {
                 try {
                     this.out.close();
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     //Ignore
                 }
             }
@@ -267,7 +267,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
             if (null != this.socket) {
                 try {
                     this.socket.close();
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     //Ignore
                 }
             }
@@ -304,27 +304,27 @@ public class SocketConnectionFactory implements ConnectionFactory {
 
                 Client.fireEvent(new ConnectionOpened(uri));
 
-            } catch (ConnectException e) {
+            } catch (final ConnectException e) {
                 throw this.failure("Cannot connect to server '" + uri.toString() + "'.  Check that the server is started and that the specified serverURL is correct.", e);
 
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw this.failure("Cannot connect to server: '" + uri.toString() + "'.  Exception: " + e.getClass().getName() + " : " + e.getMessage(), e);
 
-            } catch (SecurityException e) {
+            } catch (final SecurityException e) {
                 throw this.failure("Cannot access server: '" +
-                                   uri.toString() +
-                                   "' due to security restrictions in the current VM: " +
-                                   e.getClass().getName() +
-                                   " : " +
-                                   e.getMessage(), e);
+                    uri.toString() +
+                    "' due to security restrictions in the current VM: " +
+                    e.getClass().getName() +
+                    " : " +
+                    e.getMessage(), e);
 
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 throw this.failure("Cannot  connect to server: '" +
-                                   uri.toString() +
-                                   "' due to an unknown exception in the OpenEJB client: " +
-                                   e.getClass().getName() +
-                                   " : " +
-                                   e.getMessage(), e);
+                    uri.toString() +
+                    "' due to an unknown exception in the OpenEJB client: " +
+                    e.getClass().getName() +
+                    " : " +
+                    e.getMessage(), e);
             }
 
         }
@@ -361,7 +361,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
             this.pool.put(this);
             try {
                 this.lock.unlock();
-            } catch (IllegalMonitorStateException e) {
+            } catch (final IllegalMonitorStateException e) {
                 //Ignore
             }
         }
@@ -382,13 +382,13 @@ public class SocketConnectionFactory implements ConnectionFactory {
 
                 return new Input(this.in);
 
-            } catch (StreamCorruptedException e) {
+            } catch (final StreamCorruptedException e) {
                 throw this.failure("Cannot open input stream to server, the stream has been corrupted: " + e.getClass().getName(), e);
 
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw this.failure("Cannot open input stream to server: " + e.getClass().getName(), e);
 
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 throw this.failure("Cannot open output stream to server: " + e.getClass().getName(), e);
             }
         }
@@ -408,10 +408,10 @@ public class SocketConnectionFactory implements ConnectionFactory {
 
                 return new Output(this.out);
 
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw this.failure("Cannot open output stream to server: " + e.getClass().getName(), e);
 
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 throw this.failure("Cannot open output stream to server: " + e.getClass().getName(), e);
             }
         }
@@ -469,15 +469,15 @@ public class SocketConnectionFactory implements ConnectionFactory {
                 if (this.semaphore.tryAcquire(this.timeout, this.timeUnit)) {
                     return this.pool.pop();
                 }
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 Thread.interrupted();
             }
 
             final ConnectionPoolTimeoutException exception = new ConnectionPoolTimeoutException("No connections available in pool (size " +
-                                                                                                this.size +
-                                                                                                ").  Waited for " +
-                                                                                                this.timeout +
-                                                                                                " milliseconds for a connection.");
+                this.size +
+                ").  Waited for " +
+                this.timeout +
+                " milliseconds for a connection.");
             exception.fillInStackTrace();
             Client.fireEvent(new ConnectionPoolTimeout(this.uri, this.size, this.timeout, this.timeUnit, exception));
             throw exception;
@@ -491,10 +491,10 @@ public class SocketConnectionFactory implements ConnectionFactory {
         @Override
         public String toString() {
             return "Pool{" +
-                   "size=" + this.size +
-                   ", available=" + this.semaphore.availablePermits() +
-                   ", uri=" + this.uri +
-                   '}';
+                "size=" + this.size +
+                ", available=" + this.semaphore.availablePermits() +
+                ", uri=" + this.uri +
+                '}';
         }
     }
 }

@@ -97,7 +97,7 @@ public class HsqlService implements ServerService, SelfManaging {
                 property.startsWith(sc_key_database + ".")) {
 
                 throw new ServiceException("Databases cannot be declared in the hsql.properties.  " +
-                                           "Instead declare a database connection in the openejb.conf file");
+                    "Instead declare a database connection in the openejb.conf file");
             }
 
             if ("port".equals(property)) {
@@ -127,13 +127,13 @@ public class HsqlService implements ServerService, SelfManaging {
                             connection = jdbc.getConnection();
                             final DatabaseMetaData meta = connection.getMetaData();
                             path = getPath(meta.getDriverName(), meta.getURL());
-                        } catch (Throwable t) {
+                        } catch (final Throwable t) {
                             continue;
                         } finally {
                             if (connection != null) {
                                 try {
                                     connection.close();
-                                } catch (SQLException sqlEx) {
+                                } catch (final SQLException sqlEx) {
                                     // no-op
                                 }
                             }
@@ -153,7 +153,7 @@ public class HsqlService implements ServerService, SelfManaging {
                         }
                     }
                 }
-            } catch (NameNotFoundException e) {
+            } catch (final NameNotFoundException e) {
                 //Ignore
             }
 

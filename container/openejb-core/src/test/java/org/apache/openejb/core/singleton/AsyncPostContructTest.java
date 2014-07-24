@@ -16,10 +16,12 @@
  */
 package org.apache.openejb.core.singleton;
 
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Module;
+import org.junit.AfterClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -32,12 +34,20 @@ import javax.ejb.SessionContext;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 
 @RunWith(ApplicationComposer.class)
 public class AsyncPostContructTest {
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        OpenEJB.destroy();
+    }
+
     @EJB
     private BuildMeAsync buildMeAsync;
 
@@ -50,9 +60,9 @@ public class AsyncPostContructTest {
 
     @Test
     public void postConstructShouldEndsBeforeAsyncCall() {
-        final long start = buildMeAsync.getStartEnd();
+        final long constructed = buildMeAsync.getStartEnd();
         final long async = buildMeAsync.getAsyncStart();
-        assertTrue(async > start);
+        assertTrue(async >= constructed);
         assertSame(buildMeAsync.getAsyncInstance(), buildMeAsync.getAsyncInstance());
     }
 
@@ -63,27 +73,27 @@ public class AsyncPostContructTest {
         private SessionContext sc;
 
         private Future<Boolean> future;
-        private long startEnd;
-        private long asyncStart;
-        private Object startInstance;
-        private Object asyncInstance;
+        private final AtomicLong startEnd = new AtomicLong();
+        private final AtomicLong asyncStart = new AtomicLong();
+        private final AtomicReference<Object> startInstance = new AtomicReference<Object>();
+        private final AtomicReference<Object> asyncInstance = new AtomicReference<Object>();
 
         @PostConstruct
         public void start() {
-            startInstance = this;
+            startInstance.set(this);
             future = sc.getBusinessObject(BuildMeAsync.class).async();
             try {
                 Thread.sleep(100);
             } catch (final InterruptedException e) {
                 // no-op
             }
-            startEnd = System.currentTimeMillis();
+            startEnd.set(System.nanoTime());
         }
 
         @Asynchronous
         public Future<Boolean> async() {
-            asyncStart = System.currentTimeMillis();
-            asyncInstance = this;
+            asyncStart.set(System.nanoTime());
+            asyncInstance.set(this);
             return new AsyncResult<Boolean>(true);
         }
 
@@ -96,19 +106,19 @@ public class AsyncPostContructTest {
         }
 
         public long getStartEnd() {
-            return startEnd;
+            return startEnd.get();
         }
 
         public long getAsyncStart() {
-            return asyncStart;
+            return asyncStart.get();
         }
 
         public Object getStartInstance() {
-            return startInstance;
+            return startInstance.get();
         }
 
         public Object getAsyncInstance() {
-            return asyncInstance;
+            return asyncInstance.get();
         }
     }
 }

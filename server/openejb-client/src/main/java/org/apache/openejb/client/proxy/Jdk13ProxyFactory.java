@@ -35,19 +35,19 @@ public class Jdk13ProxyFactory implements ProxyFactory {
         final String badVersion = "1.3.0-";
         try {
             version = System.getProperty("java.vm.version");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             //Ignore
         }
 
         if (version.contains(badVersion)) {
             final String message = "" +
-                                   "INCOMPATIBLE VM: \n\n" +
-                                   "The Java Virtual Machine you are using contains a bug\n" +
-                                   "in the proxy generation logic.  This bug has been    \n" +
-                                   "documented by Sun and has been fixed in later VMs.   \n" +
-                                   "Please download the latest 1.3 Virtual Machine.      \n" +
-                                   "For more details see:                                \n" +
-                                   "http://developer.java.sun.com/developer/bugParade/bugs/4346224.html\n  ";
+                "INCOMPATIBLE VM: \n\n" +
+                "The Java Virtual Machine you are using contains a bug\n" +
+                "in the proxy generation logic.  This bug has been    \n" +
+                "documented by Sun and has been fixed in later VMs.   \n" +
+                "Please download the latest 1.3 Virtual Machine.      \n" +
+                "For more details see:                                \n" +
+                "http://developer.java.sun.com/developer/bugParade/bugs/4346224.html\n  ";
             throw new ClientRuntimeException(message);
         }
     }
@@ -108,13 +108,13 @@ public class Jdk13ProxyFactory implements ProxyFactory {
             //noinspection RedundantArrayCreation
             return cons.newInstance(new Object[]{new Jdk13InvocationHandler()});
 
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             throw new InternalError(e.toString());
-        } catch (IllegalAccessException e) {
+        } catch (final IllegalAccessException e) {
             throw new InternalError(e.toString());
-        } catch (InstantiationException e) {
+        } catch (final InstantiationException e) {
             throw new InternalError(e.toString());
-        } catch (InvocationTargetException e) {
+        } catch (final InvocationTargetException e) {
             throw new InternalError(e.toString());
         }
     }
@@ -136,12 +136,12 @@ public class Jdk13ProxyFactory implements ProxyFactory {
         final Jdk13InvocationHandler handler = new Jdk13InvocationHandler(h);
         try {
             return Proxy.newProxyInstance(interfaces[0].getClassLoader(), interfaces, handler);
-        } catch (IllegalArgumentException iae) {
+        } catch (final IllegalArgumentException iae) {
             final ClassLoader reconciliatedCl = reconciliate(interfaces);
             try {
                 reconciliatedCl.loadClass(interfaces[0].getName());
                 return Proxy.newProxyInstance(reconciliatedCl, interfaces, handler);
-            } catch (ClassNotFoundException e2) {
+            } catch (final ClassNotFoundException e2) {
                 throw iae;
             }
         }
@@ -170,7 +170,7 @@ public class Jdk13ProxyFactory implements ProxyFactory {
             for (final ClassLoader cl : delegatingClassloaders) {
                 try {
                     return cl.loadClass(name);
-                } catch (ClassNotFoundException cnfe) {
+                } catch (final ClassNotFoundException cnfe) {
                     if (ex == null) {
                         ex = cnfe;
                     }

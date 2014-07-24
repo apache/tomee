@@ -75,7 +75,7 @@ public class Main {
         try {
             final String callbackHandlerName = (String) initialContext.lookup("java:info/callbackHandler");
             callbackHandlerClass = classLoader.loadClass(callbackHandlerName);
-        } catch (NameNotFoundException ignored) {
+        } catch (final NameNotFoundException ignored) {
         }
 
         final InjectionMetaData injectionMetaData = (InjectionMetaData) initialContext.lookup("java:info/injections");
@@ -87,7 +87,7 @@ public class Main {
                 final Field field = target.getDeclaredField(injection.getName());
                 setAccessible(field);
                 field.set(null, value);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 //noinspection UseOfSystemOutOrSystemErr
                 System.err.println("Injection FAILED: class=" + injection.getTargetClass() + ", name=" + injection.getName() + ", jndi-ref=" + injection.getJndiName());
                 e.printStackTrace();
@@ -130,7 +130,7 @@ public class Main {
     private static void invoke(final Method mainMethod, final Object[] mainArgs) throws Exception {
         try {
             mainMethod.invoke(null, mainArgs);
-        } catch (InvocationTargetException e) {
+        } catch (final InvocationTargetException e) {
             final Throwable cause = e.getCause();
             if (cause instanceof Exception) {
                 throw (Exception) cause;

@@ -23,9 +23,9 @@ import org.apache.openejb.server.SelfManaging;
  */
 public class JettyHttpEjbServer extends HttpEjbServer implements SelfManaging {
 
-	public JettyHttpEjbServer() {
-		super();
-		httpServer = new JettyHttpServer();
-	}
+    public JettyHttpEjbServer() {
+        super();
+        httpServer = new JettyHttpServer();
+    }
 
 }

@@ -24,7 +24,7 @@ import java.util.LinkedList;
 
 public class SaajUniverse {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_WS, SaajUniverse.class);
-    
+
     static {
         if (SystemInstance.get().getOptions().get("openejb.soap.override-factory", false)) { // default are far faster than our chain
             setProperty("javax.xml.soap.MessageFactory", "org.apache.openejb.server.webservices.saaj.MessageFactoryImpl");
@@ -34,35 +34,35 @@ public class SaajUniverse {
         }
     }
 
-    private static void setProperty(String name, String value) {
+    private static void setProperty(final String name, final String value) {
         if (System.getProperty(name) == null) {
             System.setProperty(name, value);
         }
     }
 
-    enum Type { DEFAULT, AXIS1, AXIS2, SUN }
+    enum Type {DEFAULT, AXIS1, AXIS2, SUN}
 
     public static final Type DEFAULT = Type.DEFAULT;
     public static final Type SUN = Type.SUN;
     public static final Type AXIS1 = Type.AXIS1;
     public static final Type AXIS2 = Type.AXIS2;
-    
-    private static final ThreadLocal<LinkedList<Type>> currentUniverse = 
+
+    private static final ThreadLocal<LinkedList<Type>> currentUniverse =
         new ThreadLocal<LinkedList<Type>>() {
             @Override
             protected LinkedList<Type> initialValue() {
                 return new LinkedList<Type>();
             }
         };
-        
-    public void set(Type newUniverse) {
+
+    public void set(final Type newUniverse) {
         final LinkedList<Type> universeList = currentUniverse.get();
         universeList.add(newUniverse);
         if (logger.isDebugEnabled()) {
             logger.debug("Set universe: " + Thread.currentThread() + " " + newUniverse);
         }
     }
-    
+
     public void unset() {
         final LinkedList<Type> universeList = currentUniverse.get();
         if (universeList != null && !universeList.isEmpty()) {
@@ -72,7 +72,7 @@ public class SaajUniverse {
             }
         }
     }
-    
+
     static Type getCurrentUniverse() {
         final LinkedList<Type> universeList = currentUniverse.get();
         if (universeList != null && !universeList.isEmpty()) {
@@ -80,5 +80,5 @@ public class SaajUniverse {
         }
         return null;
     }
-       
+
 }

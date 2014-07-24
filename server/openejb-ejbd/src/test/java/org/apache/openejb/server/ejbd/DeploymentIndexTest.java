@@ -41,20 +41,20 @@ public class DeploymentIndexTest {
     public void setUp() throws SystemException {
         method = Method.class.getMethods()[0];
         beanContext = new BeanContext("aDeploymentId",
-                                      null,
-                                      new ModuleContext("", null, "", new AppContext("", SystemInstance.get(), null, null, null, false), null, null),
-                                      DeploymentIndexTest.class,
-                                      null,
-                                      null,
-                                      null,
-                                      null,
-                                      null,
-                                      null,
-                                      null,
-                                      null,
-                                      null,
-                                      null,
-                                      false);
+            null,
+            new ModuleContext("", null, "", new AppContext("", SystemInstance.get(), null, null, null, false), null, null),
+            DeploymentIndexTest.class,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            false);
         deploymentIndex = new DeploymentIndex(new BeanContext[]{beanContext, beanContext});
     }
 

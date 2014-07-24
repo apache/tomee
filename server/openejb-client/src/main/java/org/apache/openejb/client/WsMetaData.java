@@ -107,7 +107,7 @@ public class WsMetaData implements Serializable {
             } else {
                 try {
                     instance = serviceClass.getConstructor(URL.class, QName.class).newInstance(wsdlLocation, serviceQName);
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     throw (NamingException) new NamingException("Could not instantiate jax-ws service class " + serviceClass.getName()).initCause(e);
                 }
             }
@@ -142,11 +142,11 @@ public class WsMetaData implements Serializable {
             if (classLoader != null) {
                 try {
                     return classLoader.loadClass(className);
-                } catch (ClassNotFoundException ignored) {
+                } catch (final ClassNotFoundException ignored) {
                 }
             }
             return Class.forName(className);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             return null;
         }
     }

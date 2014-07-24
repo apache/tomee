@@ -34,7 +34,7 @@ public class OperationInfo {
     private final String methodName;
     private final String methodDesc;
 
-    public OperationInfo(OperationDesc operationDesc, boolean useSOAPAction, String soapActionURI, SOAPConstants soapVersion, QName operationName, String methodName, String methodDesc) {
+    public OperationInfo(final OperationDesc operationDesc, final boolean useSOAPAction, final String soapActionURI, final SOAPConstants soapVersion, final QName operationName, final String methodName, final String methodDesc) {
         this.operationDesc = operationDesc;
         this.useSOAPAction = useSOAPAction;
         this.soapActionURI = soapActionURI;
@@ -68,7 +68,7 @@ public class OperationInfo {
         return operationName;
     }
 
-    public void prepareCall(Call call) {
+    public void prepareCall(final Call call) {
         call.setOperation(operationDesc);
         call.setUseSOAPAction(useSOAPAction);
         call.setSOAPActionURI(soapActionURI);
@@ -79,9 +79,9 @@ public class OperationInfo {
         call.setOperationUse(operationDesc.getUse());
     }
 
-    public Throwable unwrapFault(RemoteException re) {
+    public Throwable unwrapFault(final RemoteException re) {
         if (re instanceof AxisFault && re.getCause() != null) {
-            Throwable t = re.getCause();
+            final Throwable t = re.getCause();
             if (operationDesc.getFaultByClass(t.getClass()) != null) {
                 return t;
             }

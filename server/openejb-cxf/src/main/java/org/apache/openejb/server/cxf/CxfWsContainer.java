@@ -60,6 +60,7 @@ public abstract class CxfWsContainer implements HttpListener {
     }
 
     protected abstract CxfEndpoint createEndpoint();
+
     protected abstract ObjectName registerMBean();
 
     protected abstract void setWsldUrl(String wsdl);

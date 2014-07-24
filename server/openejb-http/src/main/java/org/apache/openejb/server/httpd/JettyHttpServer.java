@@ -112,11 +112,11 @@ public class JettyHttpServer implements HttpServer {
                     final HttpRequest httpRequest = new ServletRequestAdapter(req, res, servletContext);
                     final HttpResponse httpResponse = new ServletResponseAdapter(res);
                     JettyHttpServer.this.listener.onMessage(httpRequest, httpResponse);
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     throw e;
-                } catch (ServletException e) {
+                } catch (final ServletException e) {
                     throw e;
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     throw new ServletException(e);
                 }
             }
@@ -135,7 +135,7 @@ public class JettyHttpServer implements HttpServer {
     public void start() throws ServiceException {
         try {
             server.start();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new ServiceException(e);
         }
     }
@@ -144,7 +144,7 @@ public class JettyHttpServer implements HttpServer {
     public void stop() throws ServiceException {
         try {
             server.stop();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new ServiceException(e);
         }
     }

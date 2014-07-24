@@ -17,6 +17,7 @@
 package org.apache.openejb.core.stateful;
 
 import junit.framework.TestCase;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
@@ -25,7 +26,7 @@ import org.apache.openejb.assembler.classic.StatefulSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.EjbModule;
-import org.apache.openejb.core.ivm.naming.InitContextFactory;
+import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.jee.AssemblyDescriptor;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EnterpriseBean;
@@ -33,6 +34,7 @@ import org.apache.openejb.jee.Interceptor;
 import org.apache.openejb.jee.InterceptorBinding;
 import org.apache.openejb.jee.NamedMethod;
 import org.apache.openejb.jee.StatefulBean;
+import org.junit.AfterClass;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJBException;
@@ -48,8 +50,13 @@ import java.util.List;
  */
 public class StatefulInterceptorTest extends TestCase {
 
+    @AfterClass
+    public static void afterClass() throws Exception {
+        OpenEJB.destroy();
+    }
+
     public void test() throws Exception {
-        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
+        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
 
         final ConfigurationFactory config = new ConfigurationFactory();
         final Assembler assembler = new Assembler();

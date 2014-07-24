@@ -22,7 +22,9 @@ import javax.ws.rs.QueryParam;
 
 @Path("/non-listed")
 public class MyNonListedRestClass {
-    @Path("/yata/{did}") @GET public String yata(@QueryParam("did") String iDidIt) {
+    @Path("/yata/{did}")
+    @GET
+    public String yata(@QueryParam("did") final String iDidIt) {
         return "Yata! " + iDidIt;
     }
 }

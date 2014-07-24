@@ -17,6 +17,7 @@
 package org.apache.openejb.config;
 
 import junit.framework.TestCase;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.ResourceInfo;
@@ -25,6 +26,7 @@ import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.loader.SystemInstance;
+import org.junit.AfterClass;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
@@ -33,6 +35,11 @@ import javax.sql.DataSource;
  * @version $Rev$ $Date$
  */
 public class DefaultDataSourceTest extends TestCase {
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        OpenEJB.destroy();
+    }
 
     /**
      * Default DataSource should be a JtaManaged DataSource

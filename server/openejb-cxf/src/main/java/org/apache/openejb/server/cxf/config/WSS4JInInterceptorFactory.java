@@ -33,13 +33,13 @@ public class WSS4JInInterceptorFactory {
         return properties;
     }
 
-    public void setProperties(Properties properties) {
+    public void setProperties(final Properties properties) {
         this.properties = properties;
     }
 
     public WSS4JInInterceptor create() {
         final Map<String, Object> map = new HashMap<String, Object>();
-        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+        for (final Map.Entry<Object, Object> entry : properties.entrySet()) {
             map.put(entry.getKey().toString(), entry.getValue());
         }
         properties.clear();

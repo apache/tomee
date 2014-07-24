@@ -256,18 +256,18 @@ public class EJBRequest implements ClusterableRequest {
         final int code = in.readByte();
         try {
             requestMethod = RequestMethodCode.valueOf(code);
-        } catch (IllegalArgumentException iae) {
+        } catch (final IllegalArgumentException iae) {
             throw new IOException("Invalid request code " + code);
         }
         try {
             deploymentId = (String) in.readObject();
-        } catch (ClassNotFoundException cnfe) {
+        } catch (final ClassNotFoundException cnfe) {
             ex = cnfe;
         }
         deploymentCode = in.readShort();
         try {
             clientIdentity = in.readObject();
-        } catch (ClassNotFoundException cnfe) {
+        } catch (final ClassNotFoundException cnfe) {
             if (ex == null) {
                 ex = cnfe;
             }
@@ -439,7 +439,7 @@ public class EJBRequest implements ClusterableRequest {
                 requestId = (String) in.readObject();
                 primaryKey = in.readObject();
                 interfaceClass = (Class) in.readObject();
-            } catch (ClassNotFoundException cnfe) {
+            } catch (final ClassNotFoundException cnfe) {
                 result = cnfe;
             }
 
@@ -447,7 +447,7 @@ public class EJBRequest implements ClusterableRequest {
 
             try {
                 readMethodParameters(in);
-            } catch (ClassNotFoundException cnfe) {
+            } catch (final ClassNotFoundException cnfe) {
                 if (result == null) {
                     result = cnfe;
                 }
@@ -457,7 +457,7 @@ public class EJBRequest implements ClusterableRequest {
                 try {
                     //noinspection unchecked
                     methodInstance = interfaceClass.getMethod(methodName, methodParamTypes);
-                } catch (NoSuchMethodException nsme) {
+                } catch (final NoSuchMethodException nsme) {
                     if (result == null) {
                         throw new ClassNotFoundException(interfaceClass.getSimpleName() + "#" + methodName + " is not valid");
                     }
@@ -588,11 +588,11 @@ public class EJBRequest implements ClusterableRequest {
                 try {
                     final Context initialContext = new InitialContext();
                     orb = (ORB) initialContext.lookup("java:comp/ORB");
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     try {
                         // any orb will do if we can't get a context one.
                         orb = ORB.init();
-                    } catch (Throwable ex) {
+                    } catch (final Throwable ex) {
                         throw new IOException("Unable to connect PortableRemoteObject stub to an ORB, no ORB bound to java:comp/ORB");
                     }
                 }
@@ -697,17 +697,17 @@ public class EJBRequest implements ClusterableRequest {
         public String toString() {
             if (null == toString) {
                 toString = "Body{" +
-                           "ejb=" + ejb +
-                           ", orb=" + orb +
-                           ", methodInstance=" + methodInstance +
-                           ", interfaceClass=" + interfaceClass +
-                           ", methodName='" + methodName + '\'' +
-                           ", methodParamTypes=" + (methodParamTypes == null ? null : Arrays.asList(methodParamTypes)) +
-                           ", methodParameters=" + (methodParameters == null ? null : Arrays.asList(methodParameters)) +
-                           ", primaryKey=" + primaryKey +
-                           ", requestId='" + requestId + '\'' +
-                           ", version=" + version +
-                           '}';
+                    "ejb=" + ejb +
+                    ", orb=" + orb +
+                    ", methodInstance=" + methodInstance +
+                    ", interfaceClass=" + interfaceClass +
+                    ", methodName='" + methodName + '\'' +
+                    ", methodParamTypes=" + (methodParamTypes == null ? null : Arrays.asList(methodParamTypes)) +
+                    ", methodParameters=" + (methodParameters == null ? null : Arrays.asList(methodParameters)) +
+                    ", primaryKey=" + primaryKey +
+                    ", requestId='" + requestId + '\'' +
+                    ", version=" + version +
+                    '}';
             }
 
             return toString;

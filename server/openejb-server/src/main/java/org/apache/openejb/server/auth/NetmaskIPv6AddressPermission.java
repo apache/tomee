@@ -29,16 +29,16 @@ import java.net.Inet6Address;
 public class NetmaskIPv6AddressPermission implements IPAddressPermission {
     private static final Pattern MASK_VALIDATOR = Pattern.compile("^(([a-fA-F0-9]{1,4}:){7}[a-fA-F0-9]{1,4})/((\\d{1,3})|(([a-fA-F0-9]{1,4}:){7}[a-fA-F0-9]{1,4}))$");
 
-    public static boolean canSupport(String mask) {
-        Matcher matcher = MASK_VALIDATOR.matcher(mask);
+    public static boolean canSupport(final String mask) {
+        final Matcher matcher = MASK_VALIDATOR.matcher(mask);
         return matcher.matches();
     }
 
     private final byte[] networkAddressBytes;
     private final byte[] netmaskBytes;
 
-    public NetmaskIPv6AddressPermission(String mask) {
-        Matcher matcher = MASK_VALIDATOR.matcher(mask);
+    public NetmaskIPv6AddressPermission(final String mask) {
+        final Matcher matcher = MASK_VALIDATOR.matcher(mask);
         if (false == matcher.matches()) {
             throw new IllegalArgumentException("Mask " + mask + " does not match pattern " + MASK_VALIDATOR.pattern());
         }
@@ -47,18 +47,18 @@ public class NetmaskIPv6AddressPermission implements IPAddressPermission {
         int pos = 0;
         StringTokenizer tokenizer = new StringTokenizer(matcher.group(1), ":");
         while (tokenizer.hasMoreTokens()) {
-            String token = tokenizer.nextToken();
-            int value = Integer.parseInt(token, 16);
+            final String token = tokenizer.nextToken();
+            final int value = Integer.parseInt(token, 16);
             networkAddressBytes[pos++] = (byte) ((value & 0xff00) >> 8);
             networkAddressBytes[pos++] = (byte) value;
         }
 
         netmaskBytes = new byte[16];
-        String netmask = matcher.group(4);
+        final String netmask = matcher.group(4);
         if (null != netmask) {
-            int value = Integer.parseInt(netmask);
+            final int value = Integer.parseInt(netmask);
             pos = value / 8;
-            int shift = 8 - value % 8;
+            final int shift = 8 - value % 8;
             for (int i = 0; i < pos; i++) {
                 netmaskBytes[i] = (byte) 0xff;
             }
@@ -67,20 +67,20 @@ public class NetmaskIPv6AddressPermission implements IPAddressPermission {
             pos = 0;
             tokenizer = new StringTokenizer(matcher.group(5), ":");
             while (tokenizer.hasMoreTokens()) {
-                String token = tokenizer.nextToken();
-                int value = Integer.parseInt(token, 16);
+                final String token = tokenizer.nextToken();
+                final int value = Integer.parseInt(token, 16);
                 netmaskBytes[pos++] = (byte) ((value & 0xff00) >> 8);
                 netmaskBytes[pos++] = (byte) value;
             }
         }
     }
 
-    public boolean implies(InetAddress address) {
+    public boolean implies(final InetAddress address) {
         if (false == address instanceof Inet6Address) {
             return false;
         }
 
-        byte[] byteAddress = address.getAddress();
+        final byte[] byteAddress = address.getAddress();
         for (int i = 0; i < 16; i++) {
             if ((netmaskBytes[i] & byteAddress[i]) != networkAddressBytes[i]) {
                 return false;

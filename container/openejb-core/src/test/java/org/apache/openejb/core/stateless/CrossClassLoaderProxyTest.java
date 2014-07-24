@@ -18,15 +18,16 @@
 package org.apache.openejb.core.stateless;
 
 import junit.framework.TestCase;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.core.ivm.EjbObjectInputStream;
 import org.apache.openejb.core.ivm.IntraVmCopyMonitor;
-import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
 
@@ -106,10 +107,10 @@ public class CrossClassLoaderProxyTest extends TestCase {
             final Class widgetClass = (Class) testObjectClass.getField("widgetClass").get(null);
             assertEquals(Widget.class, widgetClass);
 
-            Class widgetHomeClass = (Class) testObjectClass.getField("widgetHomeClass").get(null);
+            final Class widgetHomeClass = (Class) testObjectClass.getField("widgetHomeClass").get(null);
             assertFalse(WidgetHome.class.equals(widgetHomeClass));
 
-            Class widgetRemoteClass = (Class) testObjectClass.getField("widgetRemoteClass").get(null);
+            final Class widgetRemoteClass = (Class) testObjectClass.getField("widgetRemoteClass").get(null);
             assertFalse(WidgetRemote.class.equals(widgetRemoteClass));
 
             final Object testObject = testObjectClass.newInstance();
@@ -117,7 +118,7 @@ public class CrossClassLoaderProxyTest extends TestCase {
             final InitialContext ctx = new InitialContext();
             final EJBHome rawHome = (EJBHome) ctx.lookup("WidgetBeanRemoteHome");
 
-            EJBHome home = (EJBHome) copy(rawHome);
+            final EJBHome home = (EJBHome) copy(rawHome);
             assertNotNull("home", home);
             assertEquals(widgetHomeClass.getClassLoader(), home.getClass().getClassLoader());
             assertTrue(widgetHomeClass.isAssignableFrom(home.getClass()));
@@ -134,13 +135,13 @@ public class CrossClassLoaderProxyTest extends TestCase {
         IntraVmCopyMonitor.preCrossClassLoaderOperation();
         try {
             final ByteArrayOutputStream baos = new ByteArrayOutputStream(128);
-            ObjectOutputStream out = new ObjectOutputStream(baos);
+            final ObjectOutputStream out = new ObjectOutputStream(baos);
             out.writeObject(source);
             out.close();
 
-            ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-            ObjectInputStream in = new EjbObjectInputStream(bais);
-            Object copy = in.readObject();
+            final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+            final ObjectInputStream in = new EjbObjectInputStream(bais);
+            final Object copy = in.readObject();
             return copy;
         } finally {
             IntraVmCopyMonitor.postCrossClassLoaderOperation();
@@ -176,13 +177,13 @@ public class CrossClassLoaderProxyTest extends TestCase {
             }
 
             // 80% of class files are smaller then 6k
-            ByteArrayOutputStream bout = new ByteArrayOutputStream(8 * 1024);
+            final ByteArrayOutputStream bout = new ByteArrayOutputStream(8 * 1024);
 
             // copy the input stream into a byte array
-            byte[] bytes = new byte[0];
+            final byte[] bytes;
             try {
                 final byte[] buf = new byte[4 * 1024];
-                for (int count = -1; (count = in.read(buf)) >= 0; ) {
+                for (int count; (count = in.read(buf)) >= 0; ) {
                     bout.write(buf, 0, count);
                 }
                 bytes = bout.toByteArray();
@@ -191,9 +192,9 @@ public class CrossClassLoaderProxyTest extends TestCase {
             }
 
             // define the package
-            int packageEndIndex = name.lastIndexOf('.');
+            final int packageEndIndex = name.lastIndexOf('.');
             if (packageEndIndex != -1) {
-                String packageName = name.substring(0, packageEndIndex);
+                final String packageName = name.substring(0, packageEndIndex);
                 if (getPackage(packageName) == null) {
                     definePackage(packageName, null, null, null, null, null, null, null);
                 }
@@ -215,7 +216,7 @@ public class CrossClassLoaderProxyTest extends TestCase {
 
     protected void setUp() throws Exception {
         super.setUp();
-        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
+        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
 
         final ConfigurationFactory config = new ConfigurationFactory();
         final Assembler assembler = new Assembler();
@@ -233,7 +234,7 @@ public class CrossClassLoaderProxyTest extends TestCase {
 
         // Setup the descriptor information
 
-        StatelessBean bean = new StatelessBean(WidgetBean.class);
+        final StatelessBean bean = new StatelessBean(WidgetBean.class);
         bean.addBusinessLocal(Widget.class.getName());
         bean.addBusinessRemote(RemoteWidget.class.getName());
         bean.setHomeAndRemote(WidgetHome.class, WidgetRemote.class);
@@ -248,8 +249,13 @@ public class CrossClassLoaderProxyTest extends TestCase {
         WidgetBean.lifecycle.clear();
     }
 
+    @Override
+    protected void tearDown() throws Exception {
+        OpenEJB.destroy();
+    }
+
     private static String join(final String delimeter, final List items) {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         for (final Object item : items) {
             sb.append(item.toString()).append(delimeter);
         }

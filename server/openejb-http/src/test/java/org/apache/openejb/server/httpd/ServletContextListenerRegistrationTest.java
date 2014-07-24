@@ -18,25 +18,43 @@ package org.apache.openejb.server.httpd;
 
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.junit.EnableServices;
-import org.apache.openejb.junit.Module;
+import org.apache.openejb.testing.Configuration;
+import org.apache.openejb.testing.EnableServices;
+import org.apache.openejb.testing.Module;
+import org.apache.openejb.testng.PropertiesBuilder;
+import org.apache.openejb.util.NetworkUtil;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.io.IOException;
+import java.util.Properties;
 
 import static org.junit.Assert.assertTrue;
 
-@EnableServices({ "httpejbd" })
+@EnableServices({"httpejbd"})
 @RunWith(ApplicationComposer.class)
 public class ServletContextListenerRegistrationTest {
+
+    private static int port = -1;
+
+    @BeforeClass
+    public static void beforeClass() {
+        port = NetworkUtil.getNextAvailablePort();
+    }
+
+    @Configuration
+    public Properties props() {
+        return new PropertiesBuilder().p("httpejbd.port", Integer.toString(port)).build();
+    }
+
     @Module
     public WebApp app() {
         return new WebApp()
-                .contextRoot("init")
-                .addListener(Initializer.class.getName());
+            .contextRoot("init")
+            .addListener(Initializer.class.getName());
     }
 
     @Test
@@ -48,12 +66,12 @@ public class ServletContextListenerRegistrationTest {
         private static boolean init = false;
 
         @Override
-        public void contextInitialized(ServletContextEvent sce) {
+        public void contextInitialized(final ServletContextEvent sce) {
             init = sce != null;
         }
 
         @Override
-        public void contextDestroyed(ServletContextEvent sce) {
+        public void contextDestroyed(final ServletContextEvent sce) {
             System.out.println("destroyed");
         }
     }

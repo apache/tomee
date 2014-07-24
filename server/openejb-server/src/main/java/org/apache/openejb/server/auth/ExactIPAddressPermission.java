@@ -28,27 +28,27 @@ import java.net.Inet4Address;
 public class ExactIPAddressPermission implements IPAddressPermission {
     private static final Pattern MASK_VALIDATOR = Pattern.compile("^(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})$");
 
-    public static boolean canSupport(String mask) {
-        Matcher matcher = MASK_VALIDATOR.matcher(mask);
+    public static boolean canSupport(final String mask) {
+        final Matcher matcher = MASK_VALIDATOR.matcher(mask);
         return matcher.matches();
     }
 
     private final byte[] bytes;
 
-    public ExactIPAddressPermission(byte[] bytes) {
+    public ExactIPAddressPermission(final byte[] bytes) {
         this.bytes = bytes;
     }
 
-    public ExactIPAddressPermission(String mask) {
-        Matcher matcher = MASK_VALIDATOR.matcher(mask);
+    public ExactIPAddressPermission(final String mask) {
+        final Matcher matcher = MASK_VALIDATOR.matcher(mask);
         if (false == matcher.matches()) {
             throw new IllegalArgumentException("Mask " + mask + " does not match pattern " + MASK_VALIDATOR.pattern());
         }
 
         bytes = new byte[4];
         for (int i = 0; i < 4; i++) {
-            String group = matcher.group(i + 1);
-            int value = Integer.parseInt(group);
+            final String group = matcher.group(i + 1);
+            final int value = Integer.parseInt(group);
             if (value < 0 || 255 < value) {
                 throw new IllegalArgumentException("byte #" + i + " is not valid.");
             }
@@ -56,12 +56,12 @@ public class ExactIPAddressPermission implements IPAddressPermission {
         }
     }
 
-    public boolean implies(InetAddress address) {
+    public boolean implies(final InetAddress address) {
         if (false == address instanceof Inet4Address) {
             return false;
         }
 
-        byte[] byteAddress = address.getAddress();
+        final byte[] byteAddress = address.getAddress();
         for (int i = 0; i < 4; i++) {
             if (byteAddress[i] != bytes[i]) {
                 return false;

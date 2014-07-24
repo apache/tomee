@@ -23,13 +23,14 @@ import java.util.List;
 
 public interface RsRegistry {
     AddressInfo createRsHttpListener(String webContext, HttpListener listener, ClassLoader classLoader, String path, String virtualHost, String auth, String realm);
+
     HttpListener removeListener(String context);
 
     public static class AddressInfo {
         public String base;
         public String complete;
 
-        public AddressInfo(String base, String complete) {
+        public AddressInfo(final String base, final String complete) {
             this.base = base;
             this.complete = complete;
         }

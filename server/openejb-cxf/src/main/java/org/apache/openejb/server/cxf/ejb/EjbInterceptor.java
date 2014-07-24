@@ -58,15 +58,15 @@ public class EjbInterceptor {
     private List<Object> params;
     private Method method;
 
-    public EjbInterceptor(List<Object> params, Method method, Bus bus, Exchange exchange) {
+    public EjbInterceptor(final List<Object> params, final Method method, final Bus bus, final Exchange exchange) {
         this.params = params;
         this.method = method;
         this.bus = bus;
         this.exchange = exchange;
     }
 
-    private static void copyDataBindingInterceptors(PhaseInterceptorChain newChain, InterceptorChain oldChain) {
-        for (Interceptor interceptor : oldChain) {
+    private static void copyDataBindingInterceptors(final PhaseInterceptorChain newChain, final InterceptorChain oldChain) {
+        for (final Interceptor interceptor : oldChain) {
             if (interceptor instanceof AbstractInDatabindingInterceptor) {
                 log.debug("Added data binding interceptor: " + interceptor);
                 newChain.add(interceptor);
@@ -75,10 +75,10 @@ public class EjbInterceptor {
     }
 
     @AroundInvoke
-    public Object intercept(InvocationContext context) throws Exception {
-        Endpoint endpoint = this.exchange.get(Endpoint.class);
-        Service service = endpoint.getService();
-        Binding binding = ((JaxWsEndpointImpl) endpoint).getJaxwsBinding();
+    public Object intercept(final InvocationContext context) throws Exception {
+        final Endpoint endpoint = this.exchange.get(Endpoint.class);
+        final Service service = endpoint.getService();
+        final Binding binding = ((JaxWsEndpointImpl) endpoint).getJaxwsBinding();
 
         this.exchange.put(InvocationContext.class, context);
 
@@ -86,7 +86,7 @@ public class EjbInterceptor {
             // no handlers so let's just directly invoke the bean
             log.debug("No handlers found.");
 
-            EjbMethodInvoker invoker = (EjbMethodInvoker) service.getInvoker();
+            final EjbMethodInvoker invoker = (EjbMethodInvoker) service.getInvoker();
             return invoker.directEjbInvoke(this.exchange, this.method, this.params);
 
         } else {
@@ -94,8 +94,8 @@ public class EjbInterceptor {
             // as handlers can change the soap message
             log.debug("Handlers found.");
 
-            Message inMessage = exchange.getInMessage();
-            PhaseInterceptorChain chain = new PhaseInterceptorChain(bus.getExtension(PhaseManager.class).getInPhases());
+            final Message inMessage = exchange.getInMessage();
+            final PhaseInterceptorChain chain = new PhaseInterceptorChain(bus.getExtension(PhaseManager.class).getInPhases());
 
             chain.setFaultObserver(endpoint.getOutFaultObserver());
 
@@ -108,7 +108,7 @@ public class EjbInterceptor {
             if (inMessage instanceof SoapMessage) {
                 try {
                     reserialize((SoapMessage) inMessage);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     throw new ServerRuntimeException("Failed to reserialize soap message", e);
                 }
             } else {
@@ -134,7 +134,7 @@ public class EjbInterceptor {
             // install data binding interceptors
             copyDataBindingInterceptors(chain, inMessage.getInterceptorChain());
 
-            InterceptorChain oldChain = inMessage.getInterceptorChain();
+            final InterceptorChain oldChain = inMessage.getInterceptorChain();
             inMessage.setInterceptorChain(chain);
             try {
                 chain.doIntercept(inMessage);
@@ -143,18 +143,18 @@ public class EjbInterceptor {
             }
 
             // TODO: the result should be deserialized from SOAPMessage
-            Object result = getResult();
+            final Object result = getResult();
 
             return result;
         }
     }
 
     private Object getResult() {
-        Message outMessage = this.exchange.getOutMessage();
+        final Message outMessage = this.exchange.getOutMessage();
         if (outMessage == null) {
             return null;
         } else {
-            List<?> result = outMessage.getContent(List.class);
+            final List<?> result = outMessage.getContent(List.class);
             if (result == null) {
                 return outMessage.get(Object.class);
             } else if (result.isEmpty()) {
@@ -165,14 +165,14 @@ public class EjbInterceptor {
         }
     }
 
-    private void reserialize(SoapMessage message) throws Exception {
-        SOAPMessage soapMessage = message.getContent(SOAPMessage.class);
+    private void reserialize(final SoapMessage message) throws Exception {
+        final SOAPMessage soapMessage = message.getContent(SOAPMessage.class);
         if (soapMessage == null) {
             return;
         }
 
-        DOMSource bodySource = new DOMSource(soapMessage.getSOAPPart());
-        XMLStreamReader xmlReader = StaxUtils.createXMLStreamReader(bodySource);
+        final DOMSource bodySource = new DOMSource(soapMessage.getSOAPPart());
+        final XMLStreamReader xmlReader = StaxUtils.createXMLStreamReader(bodySource);
         message.setContent(XMLStreamReader.class, xmlReader);
     }
 }

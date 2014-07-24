@@ -18,9 +18,12 @@ package org.apache.openejb.server.hessian;
 
 import org.apache.openejb.client.hessian.HessianInitialContextFactory;
 import org.apache.openejb.junit.ApplicationComposer;
+import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.Module;
 import org.apache.openejb.testng.PropertiesBuilder;
+import org.apache.openejb.util.NetworkUtil;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -28,27 +31,41 @@ import javax.ejb.Remote;
 import javax.ejb.Singleton;
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import java.util.Properties;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-@EnableServices({ "hessian", "httpejbd" })
+@EnableServices({"hessian", "httpejbd"})
 @RunWith(ApplicationComposer.class)
 public class HessianInitialContextTest {
+
+    private static int port = -1;
+
+    @BeforeClass
+    public static void beforeClass() {
+        port = NetworkUtil.getNextAvailablePort();
+    }
+
+    @Configuration
+    public Properties props() {
+        return new PropertiesBuilder().p("httpejbd.port", Integer.toString(port)).build();
+    }
+
     @Module
     public Class<?>[] classes() {
-        return new Class<?>[] { Server.class };
+        return new Class<?>[]{Server.class};
     }
 
     @Test
     public void client() throws Exception {
         final MyApi client = MyApi.class.cast(
-                new InitialContext(new PropertiesBuilder()
-                        .p(Context.INITIAL_CONTEXT_FACTORY, HessianInitialContextFactory.class.getName())
-                        .p(Context.PROVIDER_URL, "http://127.0.0.1:4204/HessianInitialContextTest/hessian/")
-                        .build())
-                    .lookup("Server"));
+            new InitialContext(new PropertiesBuilder()
+                .p(Context.INITIAL_CONTEXT_FACTORY, HessianInitialContextFactory.class.getName())
+                .p(Context.PROVIDER_URL, "http://127.0.0.1:" + port + "/HessianInitialContextTest/hessian/")
+                .build())
+                .lookup("Server"));
 
         final Out out = client.call(new In("test"));
         assertThat(out, instanceOf(Out.class));

@@ -83,7 +83,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
 
         try {
             this.timeout = Integer.parseInt(props.getProperty("timeout", "14400000"));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             //Ignore
         }
 
@@ -134,13 +134,13 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
 
                 try {
                     out.flush();
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     //Ignore
                 }
 
                 try {
                     out.close();
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     //Ignore
                 }
             }
@@ -148,7 +148,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
             if (null != in) {
                 try {
                     in.close();
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     //Ignore
                 }
             }
@@ -156,7 +156,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
             if (null != socket) {
                 try {
                     socket.close();
-                } catch (Throwable t) {
+                } catch (final Throwable t) {
                     //Ignore
                 }
             }
@@ -214,7 +214,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
                         clusterResponse.setMetaData(clientProtocol);
                         clusterResponse.writeExternal(oos);
                         oos.flush();
-                    } catch (IOException ie) {
+                    } catch (final IOException ie) {
                         final String m = "Failed to write to ClusterResponse: " + ie.getMessage();
                         clusterHandler.getLogger().error(m, ie);
                         throw Exceptions.newIOException(m, ie);
@@ -280,21 +280,21 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
                 }
             }
 
-        } catch (IllegalArgumentException iae) {
+        } catch (final IllegalArgumentException iae) {
             final String msg = "\"" + clientProtocol.getSpec() + "\" FAIL \"Unknown request type " + requestTypeByte;
             if (logger.isDebugEnabled()) {
                 logger.debug(msg, iae);
             } else {
                 logger.warning(msg + " - Debug for StackTrace");
             }
-        } catch (SecurityException e) {
+        } catch (final SecurityException e) {
             final String msg = "\"" + requestType + " " + clientProtocol.getSpec() + "\" FAIL \"Security error - " + e.getMessage() + "\"";
             if (logger.isDebugEnabled()) {
                 logger.debug(msg, e);
             } else {
                 logger.warning(msg + " - Debug for StackTrace");
             }
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             final String msg = "\"" + requestType + " " + clientProtocol.getSpec() + "\" FAIL \"Unexpected error - " + e.getMessage() + "\"";
             if (logger.isDebugEnabled()) {
                 logger.debug(msg, e);
@@ -309,13 +309,13 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
 
                     try {
                         oos.flush();
-                    } catch (Throwable e) {
+                    } catch (final Throwable e) {
                         //Ignore
                     }
 
                     try {
                         oos.close();
-                    } catch (Throwable e) {
+                    } catch (final Throwable e) {
                         //Ignore
                     }
                 }
@@ -323,7 +323,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
                 if (null != ois) {
                     try {
                         ois.close();
-                    } catch (Throwable e) {
+                    } catch (final Throwable e) {
                         //Ignore
                     }
                 }

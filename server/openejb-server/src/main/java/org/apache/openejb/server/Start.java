@@ -29,7 +29,7 @@ import java.util.Set;
 
 public class Start {
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
 
         //        System.exit(new Start().start()?0:1);
 
@@ -65,14 +65,14 @@ public class Start {
 
         try {
 
-            ArrayList<String> cmd = new ArrayList<String>();
+            final ArrayList<String> cmd = new ArrayList<String>();
 
-            String s = java.io.File.separator;
+            final String s = java.io.File.separator;
 
             //Not really required here for exec, but as a reminder that we run on all platforms
             final boolean isWindows = System.getProperty("os.name").toLowerCase().contains("win");
 
-            String java = System.getProperty("java.home") + s + "bin" + s + (isWindows ? "java.exe" : "java");
+            final String java = System.getProperty("java.home") + s + "bin" + s + (isWindows ? "java.exe" : "java");
 
             cmd.add(java);
 
@@ -84,29 +84,29 @@ public class Start {
 
             cmd.add("org.apache.openejb.server.Main");
 
-            String[] command = cmd.toArray(new String[cmd.size()]);
+            final String[] command = cmd.toArray(new String[cmd.size()]);
 
-            Runtime runtime = Runtime.getRuntime();
+            final Runtime runtime = Runtime.getRuntime();
 
-            Process server = runtime.exec(command);
+            final Process server = runtime.exec(command);
 
-            InputStream out = server.getInputStream();
+            final InputStream out = server.getInputStream();
 
-            Thread serverOut = new Thread(new Pipe(out, System.out));
+            final Thread serverOut = new Thread(new Pipe(out, System.out));
 
             serverOut.setDaemon(true);
 
             serverOut.start();
 
-            InputStream err = server.getErrorStream();
+            final InputStream err = server.getErrorStream();
 
-            Thread serverErr = new Thread(new Pipe(err, System.err));
+            final Thread serverErr = new Thread(new Pipe(err, System.err));
 
             serverErr.setDaemon(true);
 
             serverErr.start();
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
 
             throw new ServerRuntimeException("Cannot start the server.");
 
@@ -114,17 +114,17 @@ public class Start {
 
     }
 
-    private void addSystemProperties(ArrayList<String> cmd) {
+    private void addSystemProperties(final ArrayList<String> cmd) {
 
-        Set set = System.getProperties().entrySet();
+        final Set set = System.getProperties().entrySet();
 
         for (final Object aSet : set) {
 
-            Map.Entry entry = (Map.Entry) aSet;
+            final Map.Entry entry = (Map.Entry) aSet;
 
-            String key = (String) entry.getKey();
+            final String key = (String) entry.getKey();
 
-            String value = (String) entry.getValue();
+            final String value = (String) entry.getValue();
 
             if (key.matches("^-X.*")) {
 
@@ -145,21 +145,21 @@ public class Start {
 
         String classpath = System.getProperty("java.class.path");
 
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        final ClassLoader cl = Thread.currentThread().getContextClassLoader();
 
-        String antLoader = "org.apache.tools.ant.AntClassLoader";
+        final String antLoader = "org.apache.tools.ant.AntClassLoader";
 
         if (cl.getClass().getName().equals(antLoader)) {
 
             try {
 
-                Class ant = cl.getClass();
+                final Class ant = cl.getClass();
 
-                Method getClasspath = ant.getMethod("getClasspath", new Class[0]);
+                final Method getClasspath = ant.getMethod("getClasspath", new Class[0]);
 
                 classpath += File.pathSeparator + getClasspath.invoke(cl, new Object[0]);
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
 
                 e.printStackTrace();
 
@@ -176,7 +176,7 @@ public class Start {
         private final InputStream is;
         private final OutputStream out;
 
-        private Pipe(InputStream is, OutputStream out) {
+        private Pipe(final InputStream is, final OutputStream out) {
 
             super();
 
@@ -203,7 +203,7 @@ public class Start {
 
                 }
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
 
                 e.printStackTrace();
 

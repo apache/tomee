@@ -22,10 +22,10 @@ import org.apache.openejb.assembler.Deployer;
 @Command(name = "undeploy", usage = "undeploy <location>", description = "undeploy an application. Note the location should be the same than for deploy")
 public class Undeploy extends AbstractCommand {
     @Override
-    public void execute(String cmd) {
+    public void execute(final String cmd) {
         try {
             lookup(Deployer.class, "openejb/DeployerBusinessRemote").undeploy(cmd.trim());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             streamManager.writeErr(e);
         }
     }

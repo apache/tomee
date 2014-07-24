@@ -31,7 +31,7 @@ import java.util.Collection;
 import java.util.List;
 
 public final class HttpUtil {
-    private static  final String WILDCARD = SystemInstance.get().getProperty("openejb.http.wildcard", ".*");
+    private static final String WILDCARD = SystemInstance.get().getProperty("openejb.http.wildcard", ".*");
 
     private HttpUtil() {
         // no-op
@@ -68,7 +68,7 @@ public final class HttpUtil {
         try {
             listener = new ServletListener((Servlet) wc.newInstance(wc.getClassLoader().loadClass(classname)), wc.getContextRoot());
             listener.getDelegate().init(null);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new OpenEJBRuntimeException(e);
         }
 
@@ -97,7 +97,7 @@ public final class HttpUtil {
         try {
             listener = new FilterListener((Filter) wc.newInstance(wc.getClassLoader().loadClass(classname)), wc.getContextRoot());
             listener.getDelegate().init(config);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new OpenEJBRuntimeException(e);
         }
 
@@ -112,7 +112,7 @@ public final class HttpUtil {
         }
 
         final Collection<HttpListener> filters = registry.removeHttpFilter(pattern(wc.getContextRoot(), mapping));
-        for (HttpListener listener : filters) {
+        for (final HttpListener listener : filters) {
             final Filter filter = ((FilterListener) listener).getDelegate();
             filter.destroy();
             wc.destroy(filter);
