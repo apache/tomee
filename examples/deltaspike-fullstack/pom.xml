@@ -100,12 +100,6 @@
       <id>apache-m2</id>
       <name>Apache M2 Repository</name>
       <url>https://repository.apache.org/content/repositories/releases/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
     </repository>
   </repositories>
 

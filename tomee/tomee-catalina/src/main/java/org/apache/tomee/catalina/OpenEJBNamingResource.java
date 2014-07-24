@@ -16,22 +16,22 @@
  */
 package org.apache.tomee.catalina;
 
-import org.apache.catalina.deploy.ContextEjb;
-import org.apache.catalina.deploy.ContextEnvironment;
-import org.apache.catalina.deploy.ContextLocalEjb;
-import org.apache.catalina.deploy.ContextResource;
-import org.apache.catalina.deploy.ContextResourceEnvRef;
-import org.apache.catalina.deploy.ContextResourceLink;
-import org.apache.catalina.deploy.ContextService;
-import org.apache.catalina.deploy.MessageDestinationRef;
-import org.apache.catalina.deploy.NamingResources;
-import org.apache.catalina.deploy.ResourceBase;
+import org.apache.catalina.deploy.NamingResourcesImpl;
+import org.apache.tomcat.util.descriptor.web.ContextEjb;
+import org.apache.tomcat.util.descriptor.web.ContextEnvironment;
+import org.apache.tomcat.util.descriptor.web.ContextLocalEjb;
+import org.apache.tomcat.util.descriptor.web.ContextResource;
+import org.apache.tomcat.util.descriptor.web.ContextResourceEnvRef;
+import org.apache.tomcat.util.descriptor.web.ContextResourceLink;
+import org.apache.tomcat.util.descriptor.web.ContextService;
+import org.apache.tomcat.util.descriptor.web.MessageDestinationRef;
+import org.apache.tomcat.util.descriptor.web.ResourceBase;
 import org.apache.tomee.common.NamingUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class OpenEJBNamingResource extends NamingResources {
+public class OpenEJBNamingResource extends NamingResourcesImpl {
     private static final String JAVA_PREFIX = "java:";
 
     private boolean isTomcatResource;
@@ -41,7 +41,7 @@ public class OpenEJBNamingResource extends NamingResources {
         // no-op
     }
 
-    public OpenEJBNamingResource(final NamingResources namingResources) {
+    public OpenEJBNamingResource(final NamingResourcesImpl namingResources) {
         if (namingResources != null) {
             isTomcatResource = true;
             for (final ContextResource resource : namingResources.findResources()) {

@@ -18,14 +18,12 @@ package org.apache.tomee.catalina;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
-import org.apache.catalina.loader.VirtualWebappLoader;
+import org.apache.catalina.loader.WebappLoader;
 import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.classloader.ClassLoaderConfigurer;
 import org.apache.openejb.classloader.CompositeClassLoaderConfigurer;
 import org.apache.openejb.config.QuickJarsTxtParser;
-import org.apache.openejb.loader.ProvisioningUtil;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.util.reflection.Reflections;
 
 import java.io.File;
 
@@ -42,7 +40,7 @@ import java.io.File;
  * />
  * </Context>
  */
-public class ProvisioningWebappLoader extends VirtualWebappLoader {
+public class TomEEWebappLoader extends WebappLoader {
     public static final boolean SKIP_BACKGROUND_PROCESS = "true".equals(SystemInstance.get().getProperty("tomee.classloader.skip-background-process", "false"));
 
     @Override
@@ -52,13 +50,13 @@ public class ProvisioningWebappLoader extends VirtualWebappLoader {
         }
 
         final ClassLoader classloader = super.getClassLoader();
-        if (classloader instanceof LazyStopWebappClassLoader) {
-            final LazyStopWebappClassLoader lazyStopWebappClassLoader = (LazyStopWebappClassLoader) classloader;
-            lazyStopWebappClassLoader.restarting();
+        if (classloader instanceof TomEEWebappClassLoader) {
+            final TomEEWebappClassLoader tomEEWebappClassLoader = (TomEEWebappClassLoader) classloader;
+            tomEEWebappClassLoader.restarting();
             try {
                 super.backgroundProcess();
             } finally {
-                lazyStopWebappClassLoader.restarted();
+                tomEEWebappClassLoader.restarted();
             }
         } else {
             super.backgroundProcess();
@@ -75,45 +73,29 @@ public class ProvisioningWebappLoader extends VirtualWebappLoader {
 
     @Override
     protected void startInternal() throws LifecycleException {
-        // standard tomcat part
-        final StringBuilder builder = new StringBuilder();
-        final String classpath = String.class.cast(Reflections.get(this, "virtualClasspath"));
-        if (classpath != null && !classpath.isEmpty()) {
-            for (final String s : String.class.cast(classpath).split(";")) {
-                builder.append(ProvisioningUtil.realLocation(s)).append(";");
-            }
-        }
+        final Context context = getContext();
 
-        ClassLoaderConfigurer configurer = ClassLoaderUtil.configurer(getContainer().getName());
+        ClassLoaderConfigurer configurer = ClassLoaderUtil.configurer(context.getName());
 
         // WEB-INF/jars.xml
-        if (Context.class.isInstance(getContainer())) {
-            final File war = Contexts.warPath(Context.class.cast(getContainer()));
-            final File jarsXml = new File(war, "WEB-INF/" + QuickJarsTxtParser.FILE_NAME);
-            final ClassLoaderConfigurer configurerTxt = QuickJarsTxtParser.parse(jarsXml);
-            if (configurerTxt != null) {
-                configurer = new CompositeClassLoaderConfigurer(configurer, configurerTxt);
-            }
+        final File war = Contexts.warPath(Context.class.cast(context));
+        final File jarsXml = new File(war, "WEB-INF/" + QuickJarsTxtParser.FILE_NAME);
+        final ClassLoaderConfigurer configurerTxt = QuickJarsTxtParser.parse(jarsXml);
+        if (configurerTxt != null) {
+            configurer = new CompositeClassLoaderConfigurer(configurer, configurerTxt);
         }
 
-        // clean up builder and set classpath to delegate to parent init
-        String cp = builder.toString();
-        if (cp.endsWith(";")) {
-            cp = cp.substring(0, cp.length() - 1);
-        }
-        Reflections.set(this, "virtualClasspath", cp);
-
-        LazyStopWebappClassLoader.initContext(configurer);
-        LazyStopWebappClassLoader.initContext(Context.class.cast(getContainer()));
+        TomEEWebappClassLoader.initContext(configurer);
+        TomEEWebappClassLoader.initContext(context);
         try {
             super.startInternal();
         } finally {
-            LazyStopWebappClassLoader.cleanContext();
+            TomEEWebappClassLoader.cleanContext();
         }
     }
 
     @Override
     public String toString() {
-        return "Provisioning" + super.toString();
+        return "TomEE" + super.toString();
     }
 }

@@ -28,4 +28,9 @@ public class UndeployMessage extends ClusterMessageBase {
     public String getFile() {
         return file;
     }
+
+    @Override
+    public String getUniqueId() {
+        return "UNDEPLOY-" + file;
+    }
 }

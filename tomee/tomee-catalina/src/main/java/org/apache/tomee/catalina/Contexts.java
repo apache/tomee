@@ -111,10 +111,10 @@ public class Contexts {
     }
 
     private static File engineBase(final Context standardContext) {
-        String base=System.getProperty(Globals.CATALINA_BASE_PROP);
+        final String base = System.getProperty(Globals.CATALINA_BASE_PROP);
         if( base == null ) {
             final StandardEngine eng = (StandardEngine) standardContext.getParent().getParent();
-            base = eng.getBaseDir();
+            return eng.getCatalinaBase();
         }
         return new File(base);
     }

@@ -20,7 +20,6 @@ package org.apache.tomee.installer;
 
 import org.apache.openejb.jpa.integration.MakeTxLookup;
 import org.apache.openejb.loader.JarLocation;
-import org.apache.tomee.common.TomcatVersion;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -174,11 +173,7 @@ public class Paths implements PathsInterface {
             return null;
         }
 
-        if (TomcatVersion.v6.isTheVersion() || TomcatVersion.v7.isTheVersion()) {
-            return new File(catalinaHomeDir, "lib");
-        } else {
-            return new File(new File(catalinaHomeDir, "server"), "lib");
-        }
+        return new File(catalinaHomeDir, "lib");
     }
     /**
      * Returns the directory representing {@link #catalinaBaseDir}/conf

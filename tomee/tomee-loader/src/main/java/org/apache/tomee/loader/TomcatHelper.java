@@ -141,13 +141,8 @@ public class TomcatHelper {
      */
     public static boolean hasRole(final Realm realm, final Principal tomcatPrincipal, final String logicalRole) {
         try {
-            if (isTomcat7()) {
-                final Method method = realm.getClass().getMethod("hasRole", Wrapper.class, Principal.class, String.class);
-                return (Boolean) method.invoke(realm, null, tomcatPrincipal, logicalRole);
-            } else {
-                final Method method = realm.getClass().getMethod("hasRole", Principal.class, String.class);
-                return (Boolean) method.invoke(realm, tomcatPrincipal, logicalRole);
-            }
+            final Method method = realm.getClass().getMethod("hasRole", Wrapper.class, Principal.class, String.class);
+            return (Boolean) method.invoke(realm, null, tomcatPrincipal, logicalRole);
         } catch (final Exception e) {
             e.printStackTrace();
         }

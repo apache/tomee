@@ -65,7 +65,7 @@ public class ContainersImplTomEE extends AbstractContainers implements Container
 
     public ContainersImplTomEE() {
         System.out.println("ContainersImpl=" + ContainersImplTomEE.class.getName());
-        System.out.println("Initialized ContainersImplTomEE " + (++count));
+        System.out.println("Initialized ContainersImplTomEE " + (++count) + ", wait port = " + port);
         server = new RemoteServer();
         server.setPortStartup(this.port);
     }
@@ -154,6 +154,7 @@ public class ContainersImplTomEE extends AbstractContainers implements Container
     public void setup() throws IOException {
         System.out.println("Setup called");
         server.start(Arrays.asList("-Dopenejb.classloader.forced-load=org.apache.openejb.tck"), "start", true);
+        System.out.println("Started");
     }
 
     @Override

@@ -18,7 +18,6 @@ package org.apache.tomee.catalina.deployer;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Properties;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
@@ -97,9 +96,6 @@ public class WebappDeployer implements Deployer {
 			if (location == null) {
 				location = properties.getProperty(FILENAME);
 			}
-			if (properties == null) {
-				properties = new Properties();
-			}
 
 			final File source = new File(location);
 			final File destination = new File(System.getProperty(OPENEJB_HOME) + File.separator + WEBAPPS + File.separator + source.getName());
@@ -140,17 +136,13 @@ public class WebappDeployer implements Deployer {
 
 	private AppInfo findAppInfo(final String... paths) {
 		final Collection<AppInfo> deployedApps = getDeployedApps();
-
-		final Iterator<AppInfo> iterator = deployedApps.iterator();
-		while (iterator.hasNext()) {
-			final AppInfo appInfo = iterator.next();
-			for (final String path : paths) {
-				if (appInfo.path.equals(path)) {
-					return appInfo;
-				}
-			}
-		}
-		
+        for (final AppInfo appInfo : deployedApps) {
+            for (final String path : paths) {
+                if (appInfo.path.equals(path)) {
+                    return appInfo;
+                }
+            }
+        }
 		return null;
 	}
 
@@ -171,7 +163,7 @@ public class WebappDeployer implements Deployer {
 
 	private void checkWebapp(final String webappName) {
 		try {
-			final ContextName cn = new ContextName(webappName);
+			final ContextName cn = new ContextName(webappName, true);
 
 			final String name = "Catalina:type=Deployer,host=localhost";
 			final ObjectName oname = new ObjectName(name);

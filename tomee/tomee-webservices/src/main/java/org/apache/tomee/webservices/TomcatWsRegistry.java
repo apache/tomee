@@ -30,15 +30,15 @@ import org.apache.catalina.authenticator.SSLAuthenticator;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardServer;
-import org.apache.catalina.deploy.LoginConfig;
-import org.apache.catalina.deploy.SecurityCollection;
-import org.apache.catalina.deploy.SecurityConstraint;
 import org.apache.openejb.assembler.classic.ServletInfo;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.webservices.WsRegistry;
 import org.apache.openejb.server.webservices.WsServlet;
+import org.apache.tomcat.util.descriptor.web.LoginConfig;
+import org.apache.tomcat.util.descriptor.web.SecurityCollection;
+import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
 import org.apache.tomee.catalina.IgnoredStandardContext;
 import org.apache.tomee.catalina.OpenEJBValve;
 import org.apache.tomee.catalina.TomEERuntimeException;
@@ -52,8 +52,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
-import static org.apache.tomee.catalina.BackportUtil.getServlet;
 
 public class TomcatWsRegistry implements WsRegistry {
     private static final String WEBSERVICE_SUB_CONTEXT = forceSlash(SystemInstance.get().getOptions().get("tomee.jaxws.subcontext", "/webservices"));
@@ -121,7 +119,7 @@ public class TomcatWsRegistry implements WsRegistry {
         // for Pojo web services, we need to change the servlet class which is the service implementation
         // by the WsServler class
         wrapper.setServletClass(WsServlet.class.getName());
-        if (getServlet(wrapper) != null) {
+        if (wrapper.getServlet() != null) {
             wrapper.load();
             wrapper.unload();
         }
@@ -384,7 +382,7 @@ public class TomcatWsRegistry implements WsRegistry {
             path = "/" + path;
         }
 
-        if (TomcatHelper.isTomcat7() && TomcatHelper.isStopping()) {
+        if (TomcatHelper.isStopping()) {
             return;
         }
 

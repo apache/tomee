@@ -21,10 +21,11 @@ import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.core.StandardContext;
+import org.apache.tomee.catalina.scan.EmptyScanner;
 
 public class IgnoredStandardContext extends StandardContext {
     public IgnoredStandardContext() {
-        setProcessTlds(false);
+        setJarScanner(new EmptyScanner());
 
         // Tomcat has a stupid rule where a life cycle listener must set
         // configured true, or it will treat it as a failed deployment

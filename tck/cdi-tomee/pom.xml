@@ -31,8 +31,7 @@
     <openejb.home>${project.build.directory}${file.separator}apache-tomee-${tomee.classifier}-${tomee.version}
     </openejb.home>
     <openejb.deployer.jndiname>openejb/DeployerBusinessRemote</openejb.deployer.jndiname>
-    <org.jboss.testharness.spi.Containers>org.apache.openejb.tck.impl.ContainersImplTomEE
-    </org.jboss.testharness.spi.Containers>
+    <org.jboss.testharness.spi.Containers>org.apache.openejb.tck.impl.ContainersImplTomEE</org.jboss.testharness.spi.Containers>
     <suiteXmlFile>src/test/resources/passing.xml</suiteXmlFile>
   </properties>
 
@@ -107,6 +106,12 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency> <!-- useless but so cool for debug purposes -->
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat-catalina</artifactId>
+      <version>${tomcat.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -243,8 +248,7 @@
             <org.jboss.testharness.standalone>false</org.jboss.testharness.standalone>
             <org.jboss.testharness.runIntegrationTests>true</org.jboss.testharness.runIntegrationTests>
             <org.jboss.testharness.container.forceRestart>true</org.jboss.testharness.container.forceRestart>
-            <org.jboss.testharness.libraryDirectory>${project.build.directory}/dependency/lib
-            </org.jboss.testharness.libraryDirectory>
+            <org.jboss.testharness.libraryDirectory>${project.build.directory}/dependency/lib</org.jboss.testharness.libraryDirectory>
             <org.jboss.testharness.host>127.0.0.1:${tomee.http.port}</org.jboss.testharness.host>
             <!--<org.jboss.testharness.outputDirectory>target</org.jboss.testharness.outputDirectory>-->
             <deleteArtifacts>true</deleteArtifacts>
@@ -287,8 +291,7 @@
     <profile>
       <id>webapp-deployer</id>
       <properties>
-        <org.jboss.testharness.spi.Containers>org.apache.openejb.tck.impl.FullRestartContainer
-        </org.jboss.testharness.spi.Containers>
+        <org.jboss.testharness.spi.Containers>org.apache.openejb.tck.impl.FullRestartContainer</org.jboss.testharness.spi.Containers>
         <!--suiteXmlFile>src/test/resources/webapps-passing.xml</suiteXmlFile-->
       </properties>
     </profile>

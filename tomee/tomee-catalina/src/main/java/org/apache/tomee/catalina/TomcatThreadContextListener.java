@@ -61,7 +61,7 @@ public class TomcatThreadContextListener implements ThreadContextListener {
             method = ContextBindings.class.getDeclaredMethod("getThreadName");
             method.setAccessible(true);
 
-            final Field threadNameBindingsField = ContextBindings.class.getDeclaredField("threadNameBindings");
+            final Field threadNameBindingsField = ContextBindings.class.getDeclaredField("threadObjectBindings");
             threadNameBindingsField.setAccessible(true);
             threadNameBindings = (Hashtable<Thread, Object>) threadNameBindingsField.get(null);
         } catch (final Exception e) {

@@ -14,19 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.tomee.loader.log;
+package org.apache.tomee.jul.formatter.log;
 
 import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogConfigurationException;
-import org.slf4j.LoggerFactory;
 
-public class Slf4jLogFactory extends org.apache.juli.logging.LogFactory {
-    @Override
-    public Log getInstance(final String name) throws LogConfigurationException {
-        try {
-            return new Slf4jLog(LoggerFactory.getLogger(name));
-        } catch (final Exception e) {
-            throw new IllegalStateException(e);
-        }
-    }
+public interface LoggerFactory {
+    Log newInstance(String name);
 }

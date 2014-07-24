@@ -25,7 +25,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
@@ -264,6 +263,7 @@ public class Installer implements InstallerInterface {
         }
     }
 
+    /*
     private void addJavaeeInEndorsed() {
         final File endorsed = new File(paths.getCatalinaHomeDir(), "endorsed");
         if (!endorsed.mkdir()) {
@@ -285,6 +285,7 @@ public class Installer implements InstallerInterface {
             }
         }
     }
+    */
 
     private void copyClasses(final File javaEEAPIJar, final File sourceJar, final File destinationJar,
                              final String pattern, final List<String> exceptions) {
@@ -651,7 +652,10 @@ public class Installer implements InstallerInterface {
             }
         }
         if (newLoggingProps != null) {
-            if (Installers.writeAll(loggingPropsFile, newLoggingProps, alerts)) {
+            if (Installers.writeAll(
+                    loggingPropsFile,
+                    newLoggingProps.replace("java.util.logging.ConsoleHandler", "org.apache.tomee.jul.formatter.AsyncConsoleHandler"),
+                    alerts)) {
                 alerts.addInfo("Append OpenEJB config to logging.properties");
             }
         }

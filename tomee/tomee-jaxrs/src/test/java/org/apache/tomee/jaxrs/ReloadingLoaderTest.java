@@ -34,7 +34,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.cxf.rs.CxfRSService;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.reflection.Reflections;
-import org.apache.tomee.catalina.LazyStopWebappClassLoader;
+import org.apache.tomee.catalina.TomEEWebappClassLoader;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -52,7 +52,7 @@ import static org.junit.Assert.assertSame;
 public class ReloadingLoaderTest {
     private AppInfo info;
     private AppContext context;
-    private LazyStopWebappClassLoader loader;
+    private TomEEWebappClassLoader loader;
 
     @BeforeClass
     @AfterClass
@@ -76,7 +76,7 @@ public class ReloadingLoaderTest {
             }
         });
 
-        loader = new LazyStopWebappClassLoader(ParentClassLoaderFinder.Helper.get());
+        loader = new TomEEWebappClassLoader(ParentClassLoaderFinder.Helper.get());
         loader.init();
         loader.start();
 

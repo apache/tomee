@@ -347,7 +347,7 @@
       </dependency>
       <dependency>
         <groupId>org.apache.tomcat</groupId>
-        <artifactId>tomcat7-websocket</artifactId>
+        <artifactId>tomcat-websocket</artifactId>
         <version>${tomcat.version}</version>
       </dependency>
       <dependency>

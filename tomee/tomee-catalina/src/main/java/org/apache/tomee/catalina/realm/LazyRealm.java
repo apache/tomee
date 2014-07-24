@@ -27,9 +27,9 @@ import org.apache.catalina.Realm;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
-import org.apache.catalina.deploy.SecurityConstraint;
 import org.apache.catalina.util.LifecycleBase;
 import org.apache.openejb.config.sys.PropertiesAdapter;
+import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
 import org.apache.tomee.catalina.TomEERuntimeException;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.xbean.recipe.ObjectRecipe;
@@ -52,7 +52,7 @@ public class LazyRealm extends LifecycleBase implements Realm {
     private boolean cdi;
 
     private volatile Realm delegate;
-    private Container container;
+    private Context container;
 
     private CreationalContext<Object> creationalContext;
 
@@ -183,13 +183,8 @@ public class LazyRealm extends LifecycleBase implements Realm {
         if (delegate != null) {
             instance().setContainer(container);
         } else {
-            this.container = container;
+            this.container = Context.class.cast(container);
         }
-    }
-
-    @Override
-    public String getInfo() {
-        return instance().getInfo();
     }
 
     @Override
@@ -230,7 +225,8 @@ public class LazyRealm extends LifecycleBase implements Realm {
 
     @Override
     public boolean hasResourcePermission(final Request request, final Response response,
-                                         final SecurityConstraint[] constraint, final Context context) throws IOException {
+                                         final SecurityConstraint[] constraint,
+                                         final Context context) throws IOException {
         return instance().hasResourcePermission(request, response, constraint, context);
     }
 

@@ -55,4 +55,9 @@ public class DeployMessage extends ClusterMessageBase {
     public byte[] getArchive() {
         return archive;
     }
+
+    @Override
+    public String getUniqueId() {
+        return "DEPLOY-" + file;
+    }
 }

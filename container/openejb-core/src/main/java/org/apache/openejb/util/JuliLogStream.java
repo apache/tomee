@@ -204,6 +204,9 @@ public class JuliLogStream implements LogStream {
                 if (i < elements.length) {
                     this.sourceClassName = elements[i].getClassName();
                     this.sourceMethodName = elements[i].getMethodName();
+                } else if (current != null && current.endsWith("LoggerThread")) {
+                    this.sourceClassName = ASYNC_LOG_NAME;
+                    this.sourceMethodName = "run";
                 }
 
                 this.sourceInited = true;

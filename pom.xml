@@ -106,7 +106,7 @@
     <maven-bundle-plugin.version>2.3.7</maven-bundle-plugin.version>
 
     <!-- This is used by a manifest classpath entry -->
-    <xbeanVersion>3.18</xbeanVersion>
+    <xbeanVersion>3.19-SNAPSHOT</xbeanVersion>
 
     <!-- OSGi bundles properties -->
     <openejb.bundle.activator/>
@@ -125,7 +125,7 @@
     <!-- to change easily the javaee api version -->
     <javaee-api.version>7.0-SNAPSHOT</javaee-api.version>
 
-    <tomcat.version>7.0.54</tomcat.version>
+    <tomcat.version>8.0.9</tomcat.version>
 
     <cxf.version>3.0.2-SNAPSHOT</cxf.version>
     <!--2.6.4 requires wss4j 1.6.8-->
