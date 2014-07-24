@@ -16,16 +16,18 @@
  */
 package org.apache.tomee.catalina.websocket;
 
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.tomcat.InstanceManager;
 import org.apache.tomcat.websocket.server.DefaultServerEndpointConfigurator;
+import org.apache.tomee.catalina.TomcatWebAppBuilder;
 
 import java.util.Map;
 
 public class JavaEEDefaultServerEnpointConfigurator extends DefaultServerEndpointConfigurator {
     private final Map<ClassLoader, InstanceManager> instanceManagers;
 
-    public JavaEEDefaultServerEnpointConfigurator(final Map<ClassLoader, InstanceManager> instanceManagers) {
-        this.instanceManagers = instanceManagers;
+    public JavaEEDefaultServerEnpointConfigurator() {
+        this.instanceManagers = SystemInstance.get().getComponent(TomcatWebAppBuilder.class).getInstanceManagers();
     }
 
     @Override
