@@ -157,7 +157,7 @@
         <executions>
           <execution>
             <id>filter-resources</id>
-            <phase>prepare-package</phase>
+            <phase>process-resources</phase>
             <goals>
               <goal>resources</goal>
             </goals>
@@ -170,7 +170,7 @@
         <executions>
           <execution>
             <id>copy-tomcat-for-webprofile</id>
-            <phase>prepare-package</phase>
+            <phase>process-resources</phase>
             <goals>
               <goal>copy</goal>
             </goals>
@@ -189,7 +189,7 @@
           </execution>
           <execution>
             <id>copy-tomcat-for-plus</id>
-            <phase>prepare-package</phase>
+            <phase>process-resources</phase>
             <goals>
               <goal>copy</goal>
             </goals>
@@ -208,7 +208,7 @@
           </execution>
           <execution>
             <id>copy-tomcat-for-plume</id>
-            <phase>prepare-package</phase>
+            <phase>process-resources</phase>
             <goals>
               <goal>copy</goal>
             </goals>

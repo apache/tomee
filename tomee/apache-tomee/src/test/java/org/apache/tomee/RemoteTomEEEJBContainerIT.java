@@ -42,14 +42,22 @@ public class RemoteTomEEEJBContainerIT {
         writer.write("Hello");
         writer.close();
 
-        final File tomee = new File("target/webprofile-work-dir/").listFiles(new FileFilter() {
+        File work = new File("target/webprofile-work-dir/").getAbsoluteFile();
+        if (!work.exists()) {
+            //May be running from root
+            work = new File("apache-tomee/target/webprofile-work-dir/").getAbsoluteFile();
+        }
+
+        final File[] files = work.listFiles(new FileFilter() {
             @Override
             public boolean accept(final File pathname) {
                 return pathname.isDirectory() && pathname.getName().startsWith("apache-tomcat-");
             }
-        })[0];
+        });
+
+        final File tomee = (null != files ? files[0] : null);
         if (tomee == null) {
-            fail("tomee not built");
+            fail("Failed to find Tomcat directory required for this test - Ensure you have run at least the maven phase: mvn process-resources");
         }
 
         final FileWriter serverXml = new FileWriter(new File(tomee, "conf/server.xml"));
