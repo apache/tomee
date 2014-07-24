@@ -27,7 +27,7 @@ public abstract class AbstractTestCase extends TestCase {
     protected String outDir = "target/generated/samples/";
     protected String tempDir = "target/generated/temp";
 
-    public AbstractTestCase(String testName) {
+    public AbstractTestCase(final String testName) {
         super(testName);
 
         testDir = new File(testDir).getAbsolutePath();
@@ -41,7 +41,7 @@ public abstract class AbstractTestCase extends TestCase {
      *
      * @param path Path to test input file.
      */
-    public String getTestFile(String path) {
+    public String getTestFile(final String path) {
         return new File(path).getAbsolutePath();
     }
 

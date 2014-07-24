@@ -18,6 +18,7 @@
 package org.apache.openejb.core.stateful;
 
 import junit.framework.TestCase;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
@@ -31,6 +32,7 @@ import org.apache.openejb.jee.Interceptor;
 import org.apache.openejb.jee.InterceptorBinding;
 import org.apache.openejb.jee.NamedMethod;
 import org.apache.openejb.jee.StatefulBean;
+import org.junit.AfterClass;
 
 import javax.ejb.AfterBegin;
 import javax.ejb.AfterCompletion;
@@ -57,6 +59,11 @@ import java.util.List;
 public class StatefulSessionSynchronizationTest extends TestCase {
 
     private static final List<Call> result = new ArrayList<Call>();
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        OpenEJB.destroy();
+    }
 
     public void test() throws Exception {
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());

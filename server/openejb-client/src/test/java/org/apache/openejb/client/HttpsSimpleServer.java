@@ -31,22 +31,22 @@ import java.util.concurrent.Executors;
 
 public class HttpsSimpleServer {
 
-    public HttpsSimpleServer(int serverPort, final String storePath, final String storePassword) throws IOException, KeyManagementException, NoSuchAlgorithmException {
-        final Map<String, String> params = new HashMap<String, String>(){
+    public HttpsSimpleServer(final int serverPort, final String storePath, final String storePassword) throws IOException, KeyManagementException, NoSuchAlgorithmException {
+        final Map<String, String> params = new HashMap<String, String>() {
             {
-                put("sslKeyStore",storePath);
-                put("sslKeyStorePassword",storePassword);
-                put("sslTrustStore",storePath);
-                put("sslTrustStorePassword",storePassword);
+                put("sslKeyStore", storePath);
+                put("sslKeyStorePassword", storePassword);
+                put("sslTrustStore", storePath);
+                put("sslTrustStorePassword", storePassword);
             }
         };
 
-        HttpsServer server = HttpsServer.create(new InetSocketAddress(serverPort), 5);
-        SSLContext sslContext = new SSLContextBuilder(params).build();
+        final HttpsServer server = HttpsServer.create(new InetSocketAddress(serverPort), 5);
+        final SSLContext sslContext = new SSLContextBuilder(params).build();
 
         final SSLEngine m_engine = sslContext.createSSLEngine();
         server.setHttpsConfigurator(new HttpsConfigurator(new SSLContextBuilder(params).build()) {
-            public void configure(HttpsParameters params) {
+            public void configure(final HttpsParameters params) {
 
                 params.setCipherSuites(m_engine.getEnabledCipherSuites());
                 params.setProtocols(m_engine.getEnabledProtocols());
@@ -60,12 +60,12 @@ public class HttpsSimpleServer {
 
 
     class MyHandler implements HttpHandler {
-        public void handle(HttpExchange exchange) throws IOException {
-            String requestMethod = exchange.getRequestMethod();
-            Headers responseHeaders = exchange.getResponseHeaders();
+        public void handle(final HttpExchange exchange) throws IOException {
+            final String requestMethod = exchange.getRequestMethod();
+            final Headers responseHeaders = exchange.getResponseHeaders();
             responseHeaders.set("Content-Type", "text/plain");
             exchange.sendResponseHeaders(200, 0);
-            OutputStream responseBody = exchange.getResponseBody();
+            final OutputStream responseBody = exchange.getResponseBody();
             responseBody.write("secure page".getBytes());
             responseBody.close();
         }

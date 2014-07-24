@@ -29,28 +29,28 @@ import java.net.Inet4Address;
 public class FactorizedIPAddressPermission implements IPAddressPermission {
     private static final Pattern MASK_VALIDATOR = Pattern.compile("^((\\d{1,3}){1}(\\.\\d{1,3}){0,2}\\.)?\\{(\\d{1,3}){1}((,\\d{1,3})*)\\}$");
 
-    public static boolean canSupport(String mask) {
-        Matcher matcher = MASK_VALIDATOR.matcher(mask);
+    public static boolean canSupport(final String mask) {
+        final Matcher matcher = MASK_VALIDATOR.matcher(mask);
         return matcher.matches();
     }
 
     private final byte[] prefixBytes;
     private final byte[] suffixBytes;
 
-    public FactorizedIPAddressPermission(String mask) {
-        Matcher matcher = MASK_VALIDATOR.matcher(mask);
+    public FactorizedIPAddressPermission(final String mask) {
+        final Matcher matcher = MASK_VALIDATOR.matcher(mask);
         if (false == matcher.matches()) {
             throw new IllegalArgumentException("Mask " + mask + " does not match pattern " + MASK_VALIDATOR.pattern());
         }
 
         // group 1 is the factorized IP part.
         // e.g. group 1 in "1.2.3.{4,5,6}" is "1.2.3."
-        String prefix = matcher.group(1);
+        final String prefix = matcher.group(1);
         StringTokenizer tokenizer = new StringTokenizer(prefix, ".");
         prefixBytes = new byte[tokenizer.countTokens()];
         for (int i = 0; i < prefixBytes.length; i++) {
-            String token = tokenizer.nextToken();
-            int value = Integer.parseInt(token);
+            final String token = tokenizer.nextToken();
+            final int value = Integer.parseInt(token);
             if (value < 0 || 255 < value) {
                 throw new IllegalArgumentException("byte #" + i + " is not valid.");
             }
@@ -59,7 +59,7 @@ public class FactorizedIPAddressPermission implements IPAddressPermission {
 
         // group 5 is a comma separated list of optional suffixes.
         // e.g. group 5 in "1.2.3.{4,5,6}" is ",5,6"
-        String suffix = matcher.group(5);
+        final String suffix = matcher.group(5);
         tokenizer = new StringTokenizer(suffix, ",");
         suffixBytes = new byte[1 + tokenizer.countTokens()];
 
@@ -73,7 +73,7 @@ public class FactorizedIPAddressPermission implements IPAddressPermission {
         suffixBytes[i++] = (byte) value;
 
         for (; i < suffixBytes.length; i++) {
-            String token = tokenizer.nextToken();
+            final String token = tokenizer.nextToken();
             value = Integer.parseInt(token);
             if (value < 0 || 255 < value) {
                 throw new IllegalArgumentException("byte #" + i + " is not valid.");
@@ -82,18 +82,18 @@ public class FactorizedIPAddressPermission implements IPAddressPermission {
         }
     }
 
-    public boolean implies(InetAddress address) {
+    public boolean implies(final InetAddress address) {
         if (false == address instanceof Inet4Address) {
             return false;
         }
 
-        byte[] byteAddress = address.getAddress();
+        final byte[] byteAddress = address.getAddress();
         for (int i = 0; i < prefixBytes.length; i++) {
             if (byteAddress[i] != prefixBytes[i]) {
                 return false;
             }
         }
-        byte lastByte = byteAddress[prefixBytes.length];
+        final byte lastByte = byteAddress[prefixBytes.length];
         for (int i = 0; i < suffixBytes.length; i++) {
             if (lastByte == suffixBytes[i]) {
                 return true;

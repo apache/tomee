@@ -38,7 +38,7 @@ public class NTService {
     public static void start(final String[] args) {
         try {
             instance.startImpl(args);
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             e.printStackTrace(System.err);
         }
     }
@@ -51,7 +51,7 @@ public class NTService {
     public static void stop(final String[] args) {
         try {
             instance.stopImpl();
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             e.printStackTrace(System.err);
         }
     }
@@ -84,7 +84,7 @@ public class NTService {
                 //The process has finished
                 running.set(false);
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 running.set(false);
                 throw new RuntimeException("Failed to Bootstrap OpenEJB", e);
             }
@@ -101,7 +101,7 @@ public class NTService {
                 try {
                     System.out.println("Stopping NTService");
                     server.stop();
-                } catch (Exception e) {
+                } catch (final Exception e) {
 
                     //Failed to stop
                     running.set(true);

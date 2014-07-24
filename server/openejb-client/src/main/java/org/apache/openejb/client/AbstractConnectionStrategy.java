@@ -57,7 +57,7 @@ public abstract class AbstractConnectionStrategy implements ConnectionStrategy {
 
                 try {
                     return connect(cluster, uri);
-                } catch (IOException e) {
+                } catch (final IOException e) {
 
                     if (!failover) {
                         Collections.addAll(remaining, cluster.getLocations());

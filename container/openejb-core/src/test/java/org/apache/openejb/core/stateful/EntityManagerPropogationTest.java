@@ -17,6 +17,7 @@
 package org.apache.openejb.core.stateful;
 
 import junit.framework.TestCase;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
@@ -355,6 +356,11 @@ public class EntityManagerPropogationTest extends TestCase {
         // Configure and assemble the ear -- aka. deploy it
         final AppInfo info = config.configureApplication(appModule);
         assembler.createApplication(info);
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        OpenEJB.destroy();
     }
 
     private void addStatefulBean(final EjbJar ejbJar, final Class<?> ejbClass, final String name, final String reference) {

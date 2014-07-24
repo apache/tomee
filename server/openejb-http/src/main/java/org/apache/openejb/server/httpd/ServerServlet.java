@@ -37,7 +37,7 @@ public class ServerServlet extends HttpServlet {
     private EjbServer ejbServer;
     private boolean activated = SystemInstance.get().isDefaultProfile();
 
-    public void init(ServletConfig config) {
+    public void init(final ServletConfig config) {
         ejbServer = SystemInstance.get().getComponent(EjbServer.class);
         final String activatedStr = config.getInitParameter(ACTIVATED_INIT_PARAM);
         if (activatedStr != null) {
@@ -45,18 +45,18 @@ public class ServerServlet extends HttpServlet {
         }
     }
 
-    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
         if (!activated) {
             response.getWriter().write("");
             return;
         }
 
-        ServletInputStream in = request.getInputStream();
-        ServletOutputStream out = response.getOutputStream();
+        final ServletInputStream in = request.getInputStream();
+        final ServletOutputStream out = response.getOutputStream();
         try {
             RequestInfos.initRequestInfo(request);
             ejbServer.service(in, out);
-        } catch (ServiceException e) {
+        } catch (final ServiceException e) {
             throw new ServletException("ServerService error: " + ejbServer.getClass().getName() + " -- " + e.getMessage(), e);
         } finally {
             RequestInfos.clearRequestInfo();

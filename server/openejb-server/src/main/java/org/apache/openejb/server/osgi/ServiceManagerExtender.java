@@ -158,21 +158,21 @@ public class ServiceManagerExtender extends ServiceManager {
         public void start() {
             try {
                 server = initServer(name, description);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 logger.error("Error initializing " + name + " service.", e);
             }
 
             if (server != null) {
                 try {
                     server.start();
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     logger.error("Service Start Failed: " + name + " " + server.getIP() + " " + server.getPort() + ". Exception: " + e.getMessage(), e);
                 }
 
                 final BundleContext context = bundle.getBundleContext();
                 registration = context.registerService(ServerService.class.getName(),
-                                                       server,
-                                                       getServiceProperties());
+                    server,
+                    getServiceProperties());
             }
         }
 
@@ -191,14 +191,14 @@ public class ServiceManagerExtender extends ServiceManager {
             if (server != null) {
                 try {
                     server.stop();
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     logger.warning("Service Shutdown Failed: " + name + ". Exception: " + e.getMessage(), e);
                 }
             }
             if (registration != null) {
                 try {
                     registration.unregister();
-                } catch (IllegalStateException ignore) {
+                } catch (final IllegalStateException ignore) {
                 }
             }
         }
@@ -234,7 +234,7 @@ public class ServiceManagerExtender extends ServiceManager {
                         setClass(props, bundle, ServerService.class);
                         setRawProperties(props, entry);
                         resources.put(name, props);
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         logger.error("Error loading " + name + " properties", e);
                     }
                 }

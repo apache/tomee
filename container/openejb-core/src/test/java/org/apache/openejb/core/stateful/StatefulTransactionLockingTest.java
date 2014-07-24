@@ -17,6 +17,7 @@
 package org.apache.openejb.core.stateful;
 
 import junit.framework.TestCase;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.StatefulSessionContainerInfo;
@@ -75,6 +76,11 @@ public class StatefulTransactionLockingTest extends TestCase {
         ejbJar.addEnterpriseBean(new StatefulBean(LegacyStatefulBean.class));
 
         assembler.createApplication(config.configureApplication(ejbJar));
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        OpenEJB.destroy();
     }
 
     public void testCompetingTransactions() throws Exception {

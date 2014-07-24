@@ -21,6 +21,7 @@ import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.config.DeploymentFilterable;
 import org.apache.openejb.config.DeploymentLoader;
+import org.apache.openejb.util.NetworkUtil;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -44,13 +45,17 @@ import static org.junit.Assert.assertEquals;
 
 public class CustomProviderTest {
     private static EJBContainer container;
+    private static int port = -1;
 
     @BeforeClass
     public static void start() throws Exception {
+        port = NetworkUtil.getNextAvailablePort();
         final Properties properties = new Properties();
+        properties.setProperty("httpejbd.port", Integer.toString(port));
         properties.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*openejb-cxf-rs.*");
         properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
         properties.setProperty(DeploymentLoader.OPENEJB_ALTDD_PREFIX, "custom");
+
         container = EJBContainer.createEJBContainer(properties);
     }
 
@@ -63,15 +68,15 @@ public class CustomProviderTest {
 
     @Test
     public void customProvider() {
-        String response = WebClient.create("http://localhost:4204/openejb-cxf-rs").accept("openejb/reverse")
-                .path("/custom1/reverse").get(String.class);
+        final String response = WebClient.create("http://localhost:" + port + "/openejb-cxf-rs").accept("openejb/reverse")
+            .path("/custom1/reverse").get(String.class);
         assertEquals("provider", response);
     }
 
     @Test
     public void customSpecificProvider() {
-        String response = WebClient.create("http://localhost:4204/openejb-cxf-rs").accept("openejb/constant")
-                .path("/custom2/constant").get(String.class);
+        final String response = WebClient.create("http://localhost:" + port + "/openejb-cxf-rs").accept("openejb/constant")
+            .path("/custom2/constant").get(String.class);
         assertEquals("it works!", response);
     }
 
@@ -100,12 +105,12 @@ public class CustomProviderTest {
     @Provider
     @Produces("openejb/reverse")
     public static class ReverseProvider<T> implements MessageBodyWriter<T> {
-        private String reverse(String str) {
+        private String reverse(final String str) {
             if (str == null) {
                 return "";
             }
 
-            StringBuilder s = new StringBuilder(str.length());
+            final StringBuilder s = new StringBuilder(str.length());
             for (int i = str.length() - 1; i >= 0; i--) {
                 s.append(str.charAt(i));
             }
@@ -113,17 +118,17 @@ public class CustomProviderTest {
         }
 
         @Override
-        public long getSize(T t, Class<?> rawType, Type genericType, Annotation[] annotations, MediaType mediaType) {
+        public long getSize(final T t, final Class<?> rawType, final Type genericType, final Annotation[] annotations, final MediaType mediaType) {
             return -1;
         }
 
         @Override
-        public boolean isWriteable(Class<?> rawType, Type genericType, Annotation[] annotations, MediaType mediaType) {
+        public boolean isWriteable(final Class<?> rawType, final Type genericType, final Annotation[] annotations, final MediaType mediaType) {
             return true;
         }
 
         @Override
-        public void writeTo(T t, Class<?> rawType, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException {
+        public void writeTo(final T t, final Class<?> rawType, final Type genericType, final Annotation[] annotations, final MediaType mediaType, final MultivaluedMap<String, Object> httpHeaders, final OutputStream entityStream) throws IOException {
             entityStream.write(reverse((String) t).getBytes());
         }
     }
@@ -132,17 +137,17 @@ public class CustomProviderTest {
     @Produces("openejb/constant")
     public static class ConstantProvider<T> implements MessageBodyWriter<T> {
         @Override
-        public long getSize(T t, Class<?> rawType, Type genericType, Annotation[] annotations, MediaType mediaType) {
+        public long getSize(final T t, final Class<?> rawType, final Type genericType, final Annotation[] annotations, final MediaType mediaType) {
             return -1;
         }
 
         @Override
-        public boolean isWriteable(Class<?> rawType, Type genericType, Annotation[] annotations, MediaType mediaType) {
+        public boolean isWriteable(final Class<?> rawType, final Type genericType, final Annotation[] annotations, final MediaType mediaType) {
             return true;
         }
 
         @Override
-        public void writeTo(T t, Class<?> rawType, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException {
+        public void writeTo(final T t, final Class<?> rawType, final Type genericType, final Annotation[] annotations, final MediaType mediaType, final MultivaluedMap<String, Object> httpHeaders, final OutputStream entityStream) throws IOException {
             entityStream.write("it works!".getBytes());
         }
     }

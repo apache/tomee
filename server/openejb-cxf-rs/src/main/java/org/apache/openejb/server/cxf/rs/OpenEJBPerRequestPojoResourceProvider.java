@@ -318,12 +318,12 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
                 throw new WebApplicationException(Response.serverError().entity(msg).build());
             } catch (final IllegalAccessException ex) {
                 final String msg = "Resource class " + constructor.getDeclaringClass().getName() + " can not be instantiated"
-                        + " due to IllegalAccessException";
+                    + " due to IllegalAccessException";
                 throw new WebApplicationException(Response.serverError().entity(msg).build());
             } catch (final InvocationTargetException ex) {
                 final String msg = "Resource class "
-                        + constructor.getDeclaringClass().getName() + " can not be instantiated"
-                        + " due to InvocationTargetException";
+                    + constructor.getDeclaringClass().getName() + " can not be instantiated"
+                    + " due to InvocationTargetException";
                 throw new WebApplicationException(Response.serverError().entity(msg).build());
             } catch (final OpenEJBException e) {
                 final String msg = "An error occured injecting in class " + constructor.getDeclaringClass().getName();

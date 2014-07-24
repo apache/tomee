@@ -48,34 +48,34 @@ import java.util.Properties;
 public class PropertiesPropogationTest extends TestCase {
 
     public void test() throws Exception {
-        EjbServer ejbServer = new EjbServer();
+        final EjbServer ejbServer = new EjbServer();
 
-        Properties initProps = new Properties();
+        final Properties initProps = new Properties();
         initProps.setProperty("openejb.deployments.classpath.include", "");
         initProps.setProperty("openejb.deployments.classpath.filter.descriptors", "true");
         OpenEJB.init(initProps, new ServerFederation());
         ejbServer.init(new Properties());
 
-        ServicePool pool = new ServicePool(ejbServer, 10);
-        ServiceDaemon serviceDaemon = new ServiceDaemon(pool, 0, "localhost");
+        final ServicePool pool = new ServicePool(ejbServer, 10);
+        final ServiceDaemon serviceDaemon = new ServiceDaemon(pool, 0, "localhost");
         serviceDaemon.start();
 
-        int port = serviceDaemon.getPort();
+        final int port = serviceDaemon.getPort();
 
-        Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
-        ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
+        final ConfigurationFactory config = new ConfigurationFactory();
 
-        EjbModule ejbModule = new EjbModule(new EjbJar(), new OpenejbJar());
-        EjbJar ejbJar = ejbModule.getEjbJar();
-        OpenejbJar openejbJar = ejbModule.getOpenejbJar();
+        final EjbModule ejbModule = new EjbModule(new EjbJar(), new OpenejbJar());
+        final EjbJar ejbJar = ejbModule.getEjbJar();
+        final OpenejbJar openejbJar = ejbModule.getOpenejbJar();
 
-        StatelessBean statelessBean = ejbJar.addEnterpriseBean(new StatelessBean(WidgetBean.class));
-        EjbDeployment deployment = openejbJar.addEjbDeployment(statelessBean);
+        final StatelessBean statelessBean = ejbJar.addEnterpriseBean(new StatelessBean(WidgetBean.class));
+        final EjbDeployment deployment = openejbJar.addEjbDeployment(statelessBean);
         deployment.getProperties().put("color", "orange");
         deployment.getProperties().put("openejb.client.color", "red");
 
-        EjbJarInfo ejbJarInfo = config.configureApplication(ejbModule);
-        EnterpriseBeanInfo beanInfo = ejbJarInfo.enterpriseBeans.get(0);
+        final EjbJarInfo ejbJarInfo = config.configureApplication(ejbModule);
+        final EnterpriseBeanInfo beanInfo = ejbJarInfo.enterpriseBeans.get(0);
 
         assertTrue(beanInfo.properties.containsKey("color"));
         assertTrue(beanInfo.properties.containsKey("openejb.client.color"));
@@ -84,8 +84,8 @@ public class PropertiesPropogationTest extends TestCase {
 
         assembler.createApplication(ejbJarInfo);
 
-        ContainerSystem cs = SystemInstance.get().getComponent(ContainerSystem.class);
-        BeanContext info = cs.getBeanContext("WidgetBean");
+        final ContainerSystem cs = SystemInstance.get().getComponent(ContainerSystem.class);
+        final BeanContext info = cs.getBeanContext("WidgetBean");
         assertNotNull(info);
 
         assertTrue(info.getProperties().containsKey("color"));
@@ -94,18 +94,18 @@ public class PropertiesPropogationTest extends TestCase {
         assertEquals("orange", info.getProperties().get("color"));
         assertEquals("red", info.getProperties().get("openejb.client.color"));
 
-        Properties props = new Properties();
+        final Properties props = new Properties();
         props.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
         props.put("java.naming.provider.url", "ejbd://127.0.0.1:" + port);
-        Context context = new InitialContext(props);
+        final Context context = new InitialContext(props);
 
-        Widget remote = (Widget) context.lookup("WidgetBeanRemote");
+        final Widget remote = (Widget) context.lookup("WidgetBeanRemote");
 
-        InvocationHandler handler = ProxyManager.getInvocationHandler(remote);
+        final InvocationHandler handler = ProxyManager.getInvocationHandler(remote);
 
-        EJBObjectHandler objectHandler = EJBObjectHandler.class.cast(handler);
+        final EJBObjectHandler objectHandler = EJBObjectHandler.class.cast(handler);
 
-        Properties properties = objectHandler.getEjb().getProperties();
+        final Properties properties = objectHandler.getEjb().getProperties();
 
         // Should only contain "openejb.client.*" properties
         assertFalse(properties.containsKey("color"));
@@ -123,7 +123,7 @@ public class PropertiesPropogationTest extends TestCase {
 
     public static class WidgetBean implements Widget {
 
-        public Object echo(Object o) {
+        public Object echo(final Object o) {
             return o;
         }
     }

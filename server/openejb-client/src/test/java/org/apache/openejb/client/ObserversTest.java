@@ -79,21 +79,21 @@ public class ObserversTest extends Assert {
         private static final String object = "object";
         private static final String emerald = "emerald";
 
-        public void observe(@Observes Object event) {
+        public void observe(@Observes final Object event) {
             observed.add(object);
         }
 
-        public void observe(@Observes Color event) {
+        public void observe(@Observes final Color event) {
             observed.add(color);
         }
 
-        public void observe(@Observes Emerald event) {
+        public void observe(@Observes final Emerald event) {
             observed.add(emerald);
         }
     }
 
 
-    private void assertEvent(String... expected) {
+    private void assertEvent(final String... expected) {
         assertEquals(join(expected), join(observed));
     }
 

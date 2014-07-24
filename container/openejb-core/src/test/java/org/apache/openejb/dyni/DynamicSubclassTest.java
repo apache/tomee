@@ -112,7 +112,7 @@ public class DynamicSubclassTest extends Assert {
         private final Method method;
         private final Object[] args;
 
-        public Invocation(final Object proxy, final Method method, Object[] args) {
+        public Invocation(final Object proxy, final Method method, final Object[] args) {
             this.proxy = proxy;
             this.method = method;
             this.args = args;

@@ -61,46 +61,46 @@ public class EjbRpcProvider extends RPCProvider {
     private final BeanContext ejbDeployment;
     private final List<HandlerInfo> handlerInfos;
 
-    public EjbRpcProvider(BeanContext ejbDeployment) {
+    public EjbRpcProvider(final BeanContext ejbDeployment) {
         this.ejbDeployment = ejbDeployment;
         this.handlerInfos = new ArrayList<HandlerInfo>();
     }
 
-    public EjbRpcProvider(BeanContext ejbDeployment, List<HandlerInfo> handlerInfos) {
+    public EjbRpcProvider(final BeanContext ejbDeployment, final List<HandlerInfo> handlerInfos) {
         this.ejbDeployment = ejbDeployment;
         this.handlerInfos = handlerInfos;
     }
 
-    public void processMessage(MessageContext msgContext, SOAPEnvelope reqEnv, SOAPEnvelope resEnv, Object obj) throws Exception {
+    public void processMessage(final MessageContext msgContext, final SOAPEnvelope reqEnv, final SOAPEnvelope resEnv, final Object obj) throws Exception {
 
-        RPCElement body = getBody(reqEnv, msgContext);
-        OperationDesc operation = getOperationDesc(msgContext, body);
+        final RPCElement body = getBody(reqEnv, msgContext);
+        final OperationDesc operation = getOperationDesc(msgContext, body);
 
-        AxisRpcInterceptor interceptor = new AxisRpcInterceptor(operation, msgContext);
-        SOAPMessage message = msgContext.getMessage();
+        final AxisRpcInterceptor interceptor = new AxisRpcInterceptor(operation, msgContext);
+        final SOAPMessage message = msgContext.getMessage();
 
         try {
             message.getSOAPPart().getEnvelope();
             msgContext.setProperty(org.apache.axis.SOAPPart.ALLOW_FORM_OPTIMIZATION, Boolean.FALSE);
 
-            RpcContainer container = (RpcContainer) ejbDeployment.getContainer();
+            final RpcContainer container = (RpcContainer) ejbDeployment.getContainer();
 
-            Object[] arguments = {msgContext, interceptor};
+            final Object[] arguments = {msgContext, interceptor};
 
-            Class callInterface = ejbDeployment.getServiceEndpointInterface();
-            Object result = container.invoke(ejbDeployment.getDeploymentID(), InterfaceType.SERVICE_ENDPOINT, callInterface, operation.getMethod(), arguments, null);
+            final Class callInterface = ejbDeployment.getServiceEndpointInterface();
+            final Object result = container.invoke(ejbDeployment.getDeploymentID(), InterfaceType.SERVICE_ENDPOINT, callInterface, operation.getMethod(), arguments, null);
 
             interceptor.createResult(result);
-        } catch (InvalidateReferenceException e) {
+        } catch (final InvalidateReferenceException e) {
             interceptor.createExceptionResult(e.getCause());
-        } catch (ApplicationException e) {
+        } catch (final ApplicationException e) {
             interceptor.createExceptionResult(e.getCause());
-        } catch (Throwable throwable) {
+        } catch (final Throwable throwable) {
             throw new AxisFault("Web Service EJB Invocation failed: method " + operation.getMethod(), throwable);
         }
     }
 
-    public Object getServiceObject(MessageContext msgContext, Handler service, String clsName, IntHolder scopeHolder) throws Exception {
+    public Object getServiceObject(final MessageContext msgContext, final Handler service, final String clsName, final IntHolder scopeHolder) throws Exception {
         return ejbDeployment;
     }
 
@@ -115,14 +115,14 @@ public class EjbRpcProvider extends RPCProvider {
         private OperationDesc operation;
         private MessageContext messageContext;
 
-        public AxisRpcInterceptor(OperationDesc operation, MessageContext msgContext) throws Exception {
+        public AxisRpcInterceptor(final OperationDesc operation, final MessageContext msgContext) throws Exception {
             this.messageContext = msgContext;
             this.operation = operation;
         }
 
         @AroundInvoke
-        public Object intercept(InvocationContext context) throws Exception {
-            HandlerChain handlerChain = new HandlerChainImpl(handlerInfos);
+        public Object intercept(final InvocationContext context) throws Exception {
+            final HandlerChain handlerChain = new HandlerChainImpl(handlerInfos);
             try {
                 Object invocationResult = null;
 
@@ -145,7 +145,7 @@ public class EjbRpcProvider extends RPCProvider {
                          */
                         invocationResult = null;
                     }
-                } catch (SOAPFaultException e) {
+                } catch (final SOAPFaultException e) {
                     handlerChain.handleFault(messageContext);
                     throw e;
                 }
@@ -159,7 +159,7 @@ public class EjbRpcProvider extends RPCProvider {
                      */
                     try {
                         invocationResult = demarshallResult();
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         // if this fails, return invocationResult from above
                     }
                 }
@@ -173,46 +173,46 @@ public class EjbRpcProvider extends RPCProvider {
         public Object[] getArguments() {
             try {
                 return demarshallArguments();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw (IllegalStateException) new IllegalStateException("Cannot demarshal the soap parts into arguments").initCause(e);
             }
         }
 
         private Object[] demarshallArguments() throws Exception {
-            SOAPMessage message = messageContext.getMessage();
+            final SOAPMessage message = messageContext.getMessage();
             messageContext.setProperty(org.apache.axis.SOAPPart.ALLOW_FORM_OPTIMIZATION, Boolean.TRUE);
             if (message != null) {
                 message.saveChanges();
             }
 
             try {
-                Message reqMsg = messageContext.getRequestMessage();
-                SOAPEnvelope requestEnvelope = reqMsg.getSOAPEnvelope();
-                RPCElement body = getBody(requestEnvelope, messageContext);
+                final Message reqMsg = messageContext.getRequestMessage();
+                final SOAPEnvelope requestEnvelope = reqMsg.getSOAPEnvelope();
+                final RPCElement body = getBody(requestEnvelope, messageContext);
                 body.setNeedDeser(true);
                 Vector args = null;
                 try {
                     args = body.getParams();
-                } catch (SAXException e) {
+                } catch (final SAXException e) {
                     if (e.getException() != null) {
                         throw e.getException();
                     }
                     throw e;
                 }
 
-                Object[] argValues = new Object[operation.getNumParams()];
+                final Object[] argValues = new Object[operation.getNumParams()];
 
                 for (int i = 0; i < args.size(); i++) {
-                    RPCParam rpcParam = (RPCParam) args.get(i);
+                    final RPCParam rpcParam = (RPCParam) args.get(i);
                     Object value = rpcParam.getObjectValue();
 
-                    ParameterDesc paramDesc = rpcParam.getParamDesc();
+                    final ParameterDesc paramDesc = rpcParam.getParamDesc();
 
                     if (paramDesc != null && paramDesc.getJavaType() != null) {
                         value = JavaUtils.convert(value, paramDesc.getJavaType());
                         rpcParam.setObjectValue(value);
                     }
-                    int order = (paramDesc == null || paramDesc.getOrder() == -1) ? i : paramDesc.getOrder();
+                    final int order = (paramDesc == null || paramDesc.getOrder() == -1) ? i : paramDesc.getOrder();
                     argValues[order] = value;
                 }
                 return argValues;
@@ -222,27 +222,27 @@ public class EjbRpcProvider extends RPCProvider {
         }
 
         private Object demarshallResult() throws Exception {
-            Message resMsg = messageContext.getResponseMessage();
+            final Message resMsg = messageContext.getResponseMessage();
 
             /*
              * This is not the most efficient way to deserialize the result
              * but could not find better or more reliable way to do this.
              */
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            final ByteArrayOutputStream out = new ByteArrayOutputStream();
             resMsg.writeTo(out);
-            ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+            final ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
 
-            DeserializationContext dser =
+            final DeserializationContext dser =
                 new DeserializationContext(new InputSource(in), resMsg.getMessageContext(), null);
             dser.parse();
-            SOAPEnvelope responseEnvelope = dser.getEnvelope();
+            final SOAPEnvelope responseEnvelope = dser.getEnvelope();
 
-            SOAPBodyElement bodyEl = responseEnvelope.getFirstBody();
+            final SOAPBodyElement bodyEl = responseEnvelope.getFirstBody();
             if (bodyEl == null) {
                 return null;
             }
 
-            QName returnType = operation.getReturnType();
+            final QName returnType = operation.getReturnType();
             if (XMLType.AXIS_VOID.equals(returnType)) {
                 return null;
             }
@@ -250,27 +250,27 @@ public class EjbRpcProvider extends RPCProvider {
             Object result = null;
 
             if (bodyEl instanceof RPCElement) {
-                RPCElement body = (RPCElement)bodyEl;
+                final RPCElement body = (RPCElement) bodyEl;
                 body.setNeedDeser(true);
                 Vector args = null;
                 try {
                     args = body.getParams();
-                } catch (SAXException e) {
+                } catch (final SAXException e) {
                     if (e.getException() != null) {
                         throw e.getException();
                     }
                     throw e;
                 }
 
-                QName returnParamQName = operation.getReturnQName();
+                final QName returnParamQName = operation.getReturnQName();
                 if (args != null && args.size() > 0) {
 
                     if (returnParamQName == null) {
-                        RPCParam param = (RPCParam) args.get(0);
+                        final RPCParam param = (RPCParam) args.get(0);
                         result = param.getObjectValue();
                     } else {
                         for (int i = 0; i < args.size(); i++) {
-                            RPCParam param = (RPCParam) args.get(i);
+                            final RPCParam param = (RPCParam) args.get(i);
                             if (returnParamQName.equals(param.getQName())) {
                                 result = param.getObjectValue();
                                 break;
@@ -282,7 +282,7 @@ public class EjbRpcProvider extends RPCProvider {
             } else {
                 try {
                     result = bodyEl.getValueAsType(returnType);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     result = bodyEl;
                 }
             }
@@ -294,40 +294,40 @@ public class EjbRpcProvider extends RPCProvider {
             return result;
         }
 
-        public void createResult(Object object) {
+        public void createResult(final Object object) {
             messageContext.setPastPivot(true);
             try {
-                Message requestMessage = messageContext.getRequestMessage();
-                SOAPEnvelope requestEnvelope = requestMessage.getSOAPEnvelope();
-                RPCElement requestBody = getBody(requestEnvelope, messageContext);
+                final Message requestMessage = messageContext.getRequestMessage();
+                final SOAPEnvelope requestEnvelope = requestMessage.getSOAPEnvelope();
+                final RPCElement requestBody = getBody(requestEnvelope, messageContext);
 
-                Message responseMessage = messageContext.getResponseMessage();
-                SOAPEnvelope responseEnvelope = responseMessage.getSOAPEnvelope();
-                ServiceDesc serviceDescription = messageContext.getService().getServiceDescription();
-                RPCElement responseBody = createResponseBody(requestBody, messageContext, operation, serviceDescription, object, responseEnvelope, getInOutParams());
+                final Message responseMessage = messageContext.getResponseMessage();
+                final SOAPEnvelope responseEnvelope = responseMessage.getSOAPEnvelope();
+                final ServiceDesc serviceDescription = messageContext.getService().getServiceDescription();
+                final RPCElement responseBody = createResponseBody(requestBody, messageContext, operation, serviceDescription, object, responseEnvelope, getInOutParams());
 
                 responseEnvelope.removeBody();
                 responseEnvelope.addBodyElement(responseBody);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new ServerRuntimeException("Failed while creating response message body", e);
             }
         }
 
-        public void createExceptionResult(Throwable exception) {
+        public void createExceptionResult(final Throwable exception) {
             messageContext.setPastPivot(true);
 
             AxisFault axisFault = null;
             if (exception instanceof Exception) {
-                axisFault = AxisFault.makeFault((Exception)exception);
+                axisFault = AxisFault.makeFault((Exception) exception);
                 axisFault.setFaultCodeAsString(Constants.FAULT_SERVER_GENERAL);
             } else {
                 axisFault = new AxisFault("Server", "Server Error", null, null);
             }
 
-            SOAPFault fault = new SOAPFault(axisFault);
-            SOAPEnvelope envelope = new SOAPEnvelope();
+            final SOAPFault fault = new SOAPFault(axisFault);
+            final SOAPEnvelope envelope = new SOAPEnvelope();
             envelope.addBodyElement(fault);
-            Message message = new Message(envelope);
+            final Message message = new Message(envelope);
             message.setMessageType(Message.RESPONSE);
             messageContext.setResponseMessage(message);
         }

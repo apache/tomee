@@ -37,7 +37,7 @@ public class EjbObjectInputStream extends ObjectInputStream {
         final ClassLoader classloader = getClassloader();
         try {
             return Class.forName(n, false, classloader);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
 
             if (n.equals("boolean")) {
                 return boolean.class;
@@ -78,7 +78,7 @@ public class EjbObjectInputStream extends ObjectInputStream {
 
         try {
             return Proxy.getProxyClass(getClassloader(), cinterfaces);
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             throw new ClassNotFoundException(null, e);
         }
     }

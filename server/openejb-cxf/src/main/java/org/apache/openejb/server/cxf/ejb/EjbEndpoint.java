@@ -46,11 +46,11 @@ import java.util.logging.Level;
 public class EjbEndpoint extends CxfEndpoint {
     private final BeanContext beanContext;
 
-    public EjbEndpoint(Bus bus, PortData portData, BeanContext beanContext, HTTPTransportFactory httpTransportFactory, ServiceConfiguration config) {
+    public EjbEndpoint(final Bus bus, final PortData portData, final BeanContext beanContext, final HTTPTransportFactory httpTransportFactory, final ServiceConfiguration config) {
         super(bus, portData, beanContext.getJndiEnc(), beanContext.getBeanClass(), httpTransportFactory, config);
         this.beanContext = beanContext;
 
-        String bindingURI = JaxWsUtils.getBindingURI(portData.getBindingID());
+        final String bindingURI = JaxWsUtils.getBindingURI(portData.getBindingID());
         implInfo = new JaxWsImplementorInfoImpl((Class) implementor, bindingURI);
 
         serviceFactory = configureService(new JaxWsServiceFactoryBean(implInfo), config, CXF_JAXWS_PREFIX);
@@ -58,7 +58,7 @@ public class EjbEndpoint extends CxfEndpoint {
         serviceFactory.setServiceClass(beanContext.getBeanClass());
 
         // install as first to overwrite annotations (wsdl-file, wsdl-port, wsdl-service)
-        CxfServiceConfiguration configuration = new CxfServiceConfiguration(portData);
+        final CxfServiceConfiguration configuration = new CxfServiceConfiguration(portData);
         serviceFactory.getConfigurations().add(0, configuration);
 
         service = doServiceCreate();
@@ -72,7 +72,7 @@ public class EjbEndpoint extends CxfEndpoint {
         // configure handlers
         try {
             initHandlers();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new WebServiceException("Error configuring handlers", e);
         }
 
@@ -81,7 +81,7 @@ public class EjbEndpoint extends CxfEndpoint {
 
         // Remove interceptors that perform handler processing since
         // handler processing must happen within the EJB container.
-        Endpoint endpoint = getEndpoint();
+        final Endpoint endpoint = getEndpoint();
         removeHandlerInterceptors(bus.getInInterceptors());
         removeHandlerInterceptors(endpoint.getInInterceptors());
         removeHandlerInterceptors(endpoint.getBinding().getInInterceptors());
@@ -96,8 +96,8 @@ public class EjbEndpoint extends CxfEndpoint {
         ConfigureCxfSecurity.configure(endpoint, port);
     }
 
-    private static void removeHandlerInterceptors(List<? extends Interceptor> interceptors) {
-        for (Interceptor interceptor : interceptors) {
+    private static void removeHandlerInterceptors(final List<? extends Interceptor> interceptors) {
+        for (final Interceptor interceptor : interceptors) {
             if (interceptor instanceof MustUnderstandInterceptor || interceptor instanceof LogicalHandlerInInterceptor || interceptor instanceof SOAPHandlerInterceptor) {
                 interceptors.remove(interceptor);
             }

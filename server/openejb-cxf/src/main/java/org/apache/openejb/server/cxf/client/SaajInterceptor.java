@@ -28,18 +28,18 @@ public abstract class SaajInterceptor extends AbstractPhaseInterceptor<Message> 
     private static boolean interceptorsRegistered = false;
     protected SaajUniverse universe;
 
-    public SaajInterceptor(String phase, SaajUniverse universe) {
+    public SaajInterceptor(final String phase, final SaajUniverse universe) {
         super(phase);
         this.universe = universe;
     }
-    
+
     public static synchronized void registerInterceptors() {
         if (!interceptorsRegistered) {
             final Bus bus = CxfUtil.getBus();
             final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
             Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());
             try {
-                SaajUniverse universe = new SaajUniverse();
+                final SaajUniverse universe = new SaajUniverse();
                 bus.getOutInterceptors().add(new SaajOutInterceptor(universe));
                 bus.getInInterceptors().add(new SaajInInterceptor(universe));
                 bus.getInInterceptors().add(new SaajInFaultInterceptor(universe));

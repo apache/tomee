@@ -33,22 +33,22 @@ import java.util.Properties;
 public class AuthTest extends TestCase {
 
     public void test() throws Exception {
-        EjbServer ejbServer = new EjbServer();
+        final EjbServer ejbServer = new EjbServer();
 
-        Properties initProps = new Properties();
+        final Properties initProps = new Properties();
         initProps.put(DeploymentsResolver.DEPLOYMENTS_CLASSPATH_PROPERTY, Boolean.toString(false));
         OpenEJB.init(initProps, new ServerFederation());
         ejbServer.init(new Properties());
 
-        ServiceDaemon serviceDaemon = new ServiceDaemon(ejbServer, 0, "localhost");
+        final ServiceDaemon serviceDaemon = new ServiceDaemon(ejbServer, 0, "localhost");
         serviceDaemon.start();
 
-        int port = serviceDaemon.getPort();
+        final int port = serviceDaemon.getPort();
 
         try {
 
             // good creds
-            Properties props = new Properties();
+            final Properties props = new Properties();
             props.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
             props.put("java.naming.provider.url", "ejbd://127.0.0.1:" + port);
             props.put("openejb.authentication.realmName", "LM"); // reusing LoginModule from AuthentWithRequestTest since it is more specific
@@ -60,11 +60,11 @@ public class AuthTest extends TestCase {
                 props.put(Context.SECURITY_PRINCIPAL, "alfred");
                 props.put(Context.SECURITY_CREDENTIALS, "doesnotexist");
                 new InitialContext(props);
-            } catch (javax.naming.AuthenticationException e) {
+            } catch (final javax.naming.AuthenticationException e) {
                 // pass -- user does not exist
             }
 
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             throw e;
         } finally {
             serviceDaemon.stop();

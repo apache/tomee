@@ -28,23 +28,23 @@ import java.util.Map;
 public class AxisClientImpl extends AxisClient {
     private final Map portNameToSEIFactoryMap;
 
-    public AxisClientImpl(EngineConfiguration engineConfiguration, Map portNameToSEIFactoryMap) {
+    public AxisClientImpl(final EngineConfiguration engineConfiguration, final Map portNameToSEIFactoryMap) {
         super(engineConfiguration);
         this.portNameToSEIFactoryMap = portNameToSEIFactoryMap;
     }
 
-    protected HandlerChain getJAXRPChandlerChain(MessageContext context) {
-        QName portQName = (QName) context.getProperty(Call.WSDL_PORT_NAME);
+    protected HandlerChain getJAXRPChandlerChain(final MessageContext context) {
+        final QName portQName = (QName) context.getProperty(Call.WSDL_PORT_NAME);
         if (portQName == null) {
             return null;
         }
-        String portName = portQName.getLocalPart();
+        final String portName = portQName.getLocalPart();
 
-        SeiFactory seiFactory = (SeiFactory) portNameToSEIFactoryMap.get(portName);
+        final SeiFactory seiFactory = (SeiFactory) portNameToSEIFactoryMap.get(portName);
         if (seiFactory == null) {
             return null;
         }
-        HandlerChain handlerChain = seiFactory.createHandlerChain();
+        final HandlerChain handlerChain = seiFactory.createHandlerChain();
         return handlerChain;
     }
 }

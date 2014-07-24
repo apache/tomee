@@ -33,29 +33,29 @@ public class RsServlet extends HttpServlet {
     private HttpListener listener;
     private ServletConfig servletConfig;
 
-    public void init(ServletConfig config) throws ServletException {
+    public void init(final ServletConfig config) throws ServletException {
         servletConfig = config;
-        String listenerId = config.getInitParameter(HttpListener.class.getName());
+        final String listenerId = config.getInitParameter(HttpListener.class.getName());
         if (listenerId != null) {
             listener = (HttpListener) config.getServletContext().getAttribute(listenerId);
         }
     }
 
-    public void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+    public void service(final HttpServletRequest req, final HttpServletResponse res) throws ServletException, IOException {
         if (listener == null) {
             throw new ServletException("RESTServiceContainer has not been set");
         }
 
-        HttpRequest httpRequest = new ServletRequestAdapter(req, res, servletConfig.getServletContext());
-        HttpResponse httpResponse = new ServletResponseAdapter(res);
+        final HttpRequest httpRequest = new ServletRequestAdapter(req, res, servletConfig.getServletContext());
+        final HttpResponse httpResponse = new ServletResponseAdapter(res);
 
         try {
             listener.onMessage(httpRequest, httpResponse);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw e;
-        } catch (ServletException e) {
+        } catch (final ServletException e) {
             throw e;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new ServletException("Error processing webservice request", e);
         }
     }

@@ -26,7 +26,7 @@ public class ListCommand extends AbstractCommand {
     public void execute(final String cmd) {
         try {
             CommandHelper.listEJBs(streamManager.getLineSep()).print(new PrintStream(streamManager.getOut()));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             streamManager.writeErr(e);
         }
     }

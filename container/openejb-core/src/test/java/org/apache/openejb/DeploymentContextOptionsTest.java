@@ -50,6 +50,11 @@ public class DeploymentContextOptionsTest extends TestCase {
         }
     }
 
+    @Override
+    protected void tearDown() throws Exception {
+        OpenEJB.destroy();
+    }
+
     public void testBeanContextOptions() throws Exception {
 
         final ConfigurationFactory config = new ConfigurationFactory();

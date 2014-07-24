@@ -76,7 +76,6 @@ public class MetaRunner extends BlockJUnit4ClassRunner {
     @Override
     protected List<FrameworkMethod> computeTestMethods() {
         final TestClass testClass = getTestClass();
-        final List<FrameworkMethod> methods = testClass.getAnnotatedMethods(MetaTest.class);
-        return methods;
+        return testClass.getAnnotatedMethods(MetaTest.class);
     }
 }

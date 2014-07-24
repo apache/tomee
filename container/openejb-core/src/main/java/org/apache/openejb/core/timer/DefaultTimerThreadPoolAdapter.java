@@ -169,6 +169,7 @@ public class DefaultTimerThreadPoolAdapter implements ThreadPool {
                     logger.error(e.getMessage(), e);
                 }
             }
+            SystemInstance.get().removeComponent(TimerExecutor.class);
         }
     }
 

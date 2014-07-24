@@ -49,25 +49,25 @@ public class EjbMethodInvoker extends AbstractJAXWSMethodInvoker {
     private BeanContext beanContext;
     private Bus bus;
 
-    public EjbMethodInvoker(Bus bus, BeanContext beanContext) {
+    public EjbMethodInvoker(final Bus bus, final BeanContext beanContext) {
         super((Factory) null);
         this.bus = bus;
         this.beanContext = beanContext;
     }
 
-    public Object getServiceObject(Exchange context) {
+    public Object getServiceObject(final Exchange context) {
         return null;
     }
 
-    public void releaseServiceObject(Exchange ex, Object obj) {
+    public void releaseServiceObject(final Exchange ex, final Object obj) {
         // do nothing
     }
 
-    protected Object invoke(Exchange exchange, Object serviceObject, Method m,
-            List<Object> params) {
+    protected Object invoke(final Exchange exchange, final Object serviceObject, final Method m,
+                            final List<Object> params) {
         Object result = null;
 
-        InvocationContext invContext = exchange.get(InvocationContext.class);
+        final InvocationContext invContext = exchange.get(InvocationContext.class);
         if (invContext == null) {
             log.debug("PreEJBInvoke");
             result = preEjbInvoke(exchange, serviceObject, m, params);
@@ -79,16 +79,16 @@ public class EjbMethodInvoker extends AbstractJAXWSMethodInvoker {
         return result;
     }
 
-    protected Object performInvocation(Exchange exchange, Object serviceObject,
-            Method m, Object[] paramArray) throws Exception {
-        InvocationContext invContext = exchange.get(InvocationContext.class);
+    protected Object performInvocation(final Exchange exchange, final Object serviceObject,
+                                       final Method m, final Object[] paramArray) throws Exception {
+        final InvocationContext invContext = exchange.get(InvocationContext.class);
         invContext.setParameters(paramArray);
-        Object res = invContext.proceed();
+        final Object res = invContext.proceed();
 
-        EjbMessageContext ctx = (EjbMessageContext) invContext.getContextData();
+        final EjbMessageContext ctx = (EjbMessageContext) invContext.getContextData();
 
-        Map<String, Object> handlerProperties = (Map<String, Object>) exchange
-                .get(HANDLER_PROPERTIES);
+        final Map<String, Object> handlerProperties = (Map<String, Object>) exchange
+            .get(HANDLER_PROPERTIES);
         addHandlerProperties(ctx, handlerProperties);
 
         updateWebServiceContext(exchange, ctx);
@@ -96,38 +96,38 @@ public class EjbMethodInvoker extends AbstractJAXWSMethodInvoker {
         return res;
     }
 
-    private Object preEjbInvoke(Exchange exchange, Object serviceObject,
-            Method method, List<Object> params) {
+    private Object preEjbInvoke(final Exchange exchange, final Object serviceObject,
+                                Method method, final List<Object> params) {
 
-        EjbMessageContext ctx = new EjbMessageContext(exchange.getInMessage(),
-                Scope.APPLICATION);
+        final EjbMessageContext ctx = new EjbMessageContext(exchange.getInMessage(),
+            Scope.APPLICATION);
         WebServiceContextImpl.setMessageContext(ctx);
 
-        Map<String, Object> handlerProperties = removeHandlerProperties(ctx);
+        final Map<String, Object> handlerProperties = removeHandlerProperties(ctx);
         exchange.put(HANDLER_PROPERTIES, handlerProperties);
 
         try {
-            EjbInterceptor interceptor = new EjbInterceptor(params, method,
-                    this.bus, exchange);
-            Object[] arguments = { ctx, interceptor };
+            final EjbInterceptor interceptor = new EjbInterceptor(params, method,
+                this.bus, exchange);
+            final Object[] arguments = {ctx, interceptor};
 
-            RpcContainer container = (RpcContainer) this.beanContext
-                    .getContainer();
+            final RpcContainer container = (RpcContainer) this.beanContext
+                .getContainer();
 
-            Class callInterface = this.beanContext
-                    .getServiceEndpointInterface();
+            final Class callInterface = this.beanContext
+                .getServiceEndpointInterface();
             method = getMostSpecificMethod(beanContext, method, callInterface);
-            Object res = container.invoke(
-                    this.beanContext.getDeploymentID(),
-                    InterfaceType.SERVICE_ENDPOINT, callInterface, method,
-                    arguments, null);
+            final Object res = container.invoke(
+                this.beanContext.getDeploymentID(),
+                InterfaceType.SERVICE_ENDPOINT, callInterface, method,
+                arguments, null);
 
             if (exchange.isOneWay()) {
                 return null;
             }
 
             return new MessageContentsList(res);
-        } catch (ApplicationException e) {
+        } catch (final ApplicationException e) {
             // when no handler is defined, EjbInterceptor will directly delegate
             // to #directEjbInvoke. So if an application exception is thrown by
             // the end user, when must consider the ApplicationException as a
@@ -135,15 +135,15 @@ public class EjbMethodInvoker extends AbstractJAXWSMethodInvoker {
             Throwable t = e.getCause();
             if (t != null) {
                 if (RuntimeException.class.isAssignableFrom(t.getClass())
-                        && t.getClass().isAnnotationPresent(
-                                javax.ejb.ApplicationException.class)) {
+                    && t.getClass().isAnnotationPresent(
+                    javax.ejb.ApplicationException.class)) {
                     // it's not a checked exception so it can not be a WebFault
                     throw (RuntimeException) t;
 
                 } else if (!t.getClass().isAnnotationPresent(WebFault.class)) {
                     // not a web fault even if it's an EJB ApplicationException
                     exchange.getInMessage().put(FaultMode.class,
-                            FaultMode.UNCHECKED_APPLICATION_FAULT);
+                        FaultMode.UNCHECKED_APPLICATION_FAULT);
                     throw createFault(t, method, params, false);
                 }
 
@@ -152,11 +152,11 @@ public class EjbMethodInvoker extends AbstractJAXWSMethodInvoker {
             }
             // TODO may be we can change to FaultMode.CHECKED_APPLICATION_FAULT
             exchange.getInMessage().put(FaultMode.class,
-                    FaultMode.UNCHECKED_APPLICATION_FAULT);
+                FaultMode.UNCHECKED_APPLICATION_FAULT);
             throw createFault(t, method, params, false);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             exchange.getInMessage().put(FaultMode.class,
-                    FaultMode.UNCHECKED_APPLICATION_FAULT);
+                FaultMode.UNCHECKED_APPLICATION_FAULT);
             throw createFault(e, method, params, false);
         } finally {
             WebServiceContextImpl.clear();
@@ -188,13 +188,13 @@ public class EjbMethodInvoker extends AbstractJAXWSMethodInvoker {
         return m;
     }
 
-    public Object directEjbInvoke(Exchange exchange, Method m,
-            List<Object> params) throws Exception {
-        Object[] paramArray;
+    public Object directEjbInvoke(final Exchange exchange, final Method m,
+                                  final List<Object> params) throws Exception {
+        final Object[] paramArray;
         if (params != null) {
             paramArray = params.toArray();
         } else {
-            paramArray = new Object[] {};
+            paramArray = new Object[]{};
         }
         return performInvocation(exchange, null, m, paramArray);
     }

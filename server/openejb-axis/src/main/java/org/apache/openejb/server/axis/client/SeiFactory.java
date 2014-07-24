@@ -35,5 +35,5 @@ public interface SeiFactory {
 
     QName getServiceName();
 
-    URL getWSDLDocumentLocation();    
+    URL getWSDLDocumentLocation();
 }

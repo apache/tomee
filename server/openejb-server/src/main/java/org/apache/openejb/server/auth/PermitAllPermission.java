@@ -22,7 +22,7 @@ import java.net.InetAddress;
  * @version $Rev$ $Date$
  */
 public class PermitAllPermission implements IPAddressPermission {
-    public boolean implies(InetAddress address) {
+    public boolean implies(final InetAddress address) {
         return true;
     }
 }

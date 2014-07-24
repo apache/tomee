@@ -30,18 +30,18 @@ public class StickyConnectionStrategyIteratorTest {
     @Test
     public void testRandom() throws Exception {
         final URI[] uris = uris(
-                                   "one://localhost:1243",
-                                   "two://localhost:1243",
-                                   "three://localhost:1243",
-                                   "four://localhost:1243");
+            "one://localhost:1243",
+            "two://localhost:1243",
+            "three://localhost:1243",
+            "four://localhost:1243");
 
-        ClusterMetaData cluster = new ClusterMetaData(System.currentTimeMillis(), uris);
-        Iterable<URI> iterable = new StickyConnectionStrategy(new RandomConnectionStrategy()).createIterable(cluster);
+        final ClusterMetaData cluster = new ClusterMetaData(System.currentTimeMillis(), uris);
+        final Iterable<URI> iterable = new StickyConnectionStrategy(new RandomConnectionStrategy()).createIterable(cluster);
 
         assertIteration(uris, iterable);
 
         { // Stick to uri 2
-            URI uri = uris[2];
+            final URI uri = uris[2];
             cluster.setLastLocation(uri);
             Assert.assertEquals(uri, iterable.iterator().next());
             Assert.assertEquals(uri, iterable.iterator().next());
@@ -50,7 +50,7 @@ public class StickyConnectionStrategyIteratorTest {
         }
 
         { // Stick to uri 2
-            URI uri = uris[3];
+            final URI uri = uris[3];
             cluster.setLastLocation(uri);
             Assert.assertEquals(uri, iterable.iterator().next());
             Assert.assertEquals(uri, iterable.iterator().next());
@@ -62,10 +62,10 @@ public class StickyConnectionStrategyIteratorTest {
 
     }
 
-    private void assertIteration(URI[] uris, Iterable<URI> iterable) {
-        ArrayList<URI> found = new ArrayList<URI>();
+    private void assertIteration(final URI[] uris, final Iterable<URI> iterable) {
+        final ArrayList<URI> found = new ArrayList<URI>();
 
-        for (URI uri : iterable) {
+        for (final URI uri : iterable) {
             if (!found.contains(uri)) {
                 found.add(uri);
             }
@@ -73,7 +73,7 @@ public class StickyConnectionStrategyIteratorTest {
 
         Assert.assertEquals(uris.length, found.size());
 
-        for (URI uri : uris) {
+        for (final URI uri : uris) {
             Assert.assertTrue(found.contains(uri));
         }
 
@@ -85,7 +85,7 @@ public class StickyConnectionStrategyIteratorTest {
         //        );
     }
 
-    private URI[] uris(String... strings) {
+    private URI[] uris(final String... strings) {
         final URI[] uris = new URI[strings.length];
 
         for (int i = 0; i < strings.length; i++) {

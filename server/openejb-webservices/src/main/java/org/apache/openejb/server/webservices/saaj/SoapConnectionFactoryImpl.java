@@ -21,16 +21,16 @@ import javax.xml.soap.SOAPConnectionFactory;
 import javax.xml.soap.SOAPException;
 
 public class SoapConnectionFactoryImpl extends SOAPConnectionFactory {
-    
+
     private SOAPConnectionFactory getSOAPConnectionFactory() throws SOAPException {
-        SOAPConnectionFactory factory = 
+        final SOAPConnectionFactory factory =
             (SOAPConnectionFactory) SaajFactoryFinder.find("javax.xml.soap.SOAPConnectionFactory");
         return factory;
-        
+
     }
 
     public SOAPConnection createConnection() throws SOAPException {
         return getSOAPConnectionFactory().createConnection();
     }
-      
+
 }

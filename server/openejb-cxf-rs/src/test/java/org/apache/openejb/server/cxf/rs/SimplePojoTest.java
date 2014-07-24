@@ -22,12 +22,15 @@ import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.config.WebModule;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
+import org.apache.openejb.server.cxf.rs.beans.MyFirstRestClass;
 import org.apache.openejb.testing.Classes;
 import org.apache.openejb.testing.Component;
-import org.apache.openejb.server.cxf.rs.beans.MyFirstRestClass;
 import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.Module;
+import org.apache.openejb.testng.PropertiesBuilder;
+import org.apache.openejb.util.NetworkUtil;
 import org.apache.openejb.web.LightweightWebAppBuilder;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -37,20 +40,29 @@ import static org.junit.Assert.assertEquals;
 
 @RunWith(ApplicationComposer.class)
 public class SimplePojoTest {
+
+    private static int port = -1;
+
+    @BeforeClass
+    public static void beforeClass() {
+        port = NetworkUtil.getNextAvailablePort();
+    }
+
+    @Configuration
+    public Properties props() {
+        return new PropertiesBuilder()
+            .p("httpejbd.port", Integer.toString(port))
+            .p(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true")
+            .build();
+    }
+
     @Component
     public WebAppBuilder webAppBuilder() {
         return new LightweightWebAppBuilder();
     }
 
-    @Configuration
-    public Properties configuration() {
-        final Properties properties = new Properties();
-        properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
-        return properties;
-    }
-
     @Module
-    @Classes(cdi = true, value = { MyFirstRestClass.class })
+    @Classes(cdi = true, value = {MyFirstRestClass.class})
     public WebModule war() {
         final WebModule webModule = new WebModule(new WebApp(), "/foo", Thread.currentThread().getContextClassLoader(), "", "foo");
         webModule.getRestClasses().add(MyFirstRestClass.class.getName());
@@ -59,6 +71,6 @@ public class SimplePojoTest {
 
     @Test
     public void checkServiceWasDeployed() {
-        assertEquals("Hi from REST World!", WebClient.create("http://localhost:4204/foo").path("/first/hi").get(String.class));
+        assertEquals("Hi from REST World!", WebClient.create("http://localhost:" + port + "/foo").path("/first/hi").get(String.class));
     }
 }

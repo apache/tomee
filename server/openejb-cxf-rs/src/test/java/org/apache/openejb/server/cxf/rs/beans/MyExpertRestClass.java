@@ -21,7 +21,9 @@ import javax.ws.rs.Path;
 
 @Path("/expert")
 public class MyExpertRestClass {
-    @Path("/still-hi/") @POST public String hi(String you) {
+    @Path("/still-hi/")
+    @POST
+    public String hi(final String you) {
         return "hi " + you;
     }
 }

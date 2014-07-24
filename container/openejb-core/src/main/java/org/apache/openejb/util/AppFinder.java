@@ -42,6 +42,7 @@ public final class AppFinder {
 
     public interface Transformer<T> {
         T from(AppContext appCtx);
+
         T from(WebContext webCtx);
     }
 

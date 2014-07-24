@@ -23,6 +23,7 @@ import org.apache.openejb.config.RemoteServer;
 import org.apache.openejb.config.ValidationException;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.tck.OpenEJBTCKRuntimeException;
+import org.apache.openejb.tck.util.ServerLocal;
 import org.jboss.testharness.api.DeploymentException;
 import org.jboss.testharness.spi.Containers;
 
@@ -44,31 +45,33 @@ public class ContainersImplTomEE extends AbstractContainers implements Container
     private Exception exception;
     private AppInfo appInfo;
     private File currentFile = null;
-    private int port = Integer.getInteger("server.http.port", 8080);
+    private final int port = ServerLocal.getPort(8080);
 
     private Deployer lookup() {
         final Options options = new Options(System.getProperties());
         final Properties props = new Properties();
         props.put(Context.INITIAL_CONTEXT_FACTORY, RemoteInitialContextFactory.class.getName());
-        props.put(Context.PROVIDER_URL, options.get(Context.PROVIDER_URL,"http://localhost:" + port + "/tomee/ejb"));
+        props.put(Context.PROVIDER_URL, options.get(Context.PROVIDER_URL, "http://localhost:" + port + "/tomee/ejb"));
 
         final String deployerJndi = System.getProperty("openejb.deployer.jndiname", "openejb/DeployerBusinessRemote");
 
         try {
-            InitialContext context = new InitialContext(props);
+            final InitialContext context = new InitialContext(props);
             return (Deployer) context.lookup(deployerJndi);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new OpenEJBTCKRuntimeException(e);
         }
     }
+
     public ContainersImplTomEE() {
         System.out.println("ContainersImpl=" + ContainersImplTomEE.class.getName());
         System.out.println("Initialized ContainersImplTomEE " + (++count));
         server = new RemoteServer();
         server.setPortStartup(this.port);
     }
+
     @Override
-    public boolean deploy(InputStream archive, String name) throws IOException {
+    public boolean deploy(final InputStream archive, final String name) throws IOException {
         exception = null;
         appInfo = null;
 
@@ -82,7 +85,7 @@ public class ContainersImplTomEE extends AbstractContainers implements Container
                 deployer = lookup();
             }
             appInfo = deployer.deploy(currentFile.getAbsolutePath());
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             Exception e = ex;
             if (e.getCause() instanceof ValidationException) {
                 e = (Exception) e.getCause();
@@ -108,14 +111,14 @@ public class ContainersImplTomEE extends AbstractContainers implements Container
     public DeploymentException getDeploymentException() {
         try {
             return (DeploymentException) exception;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             System.out.println("BADCAST");
             return new DeploymentException("", exception);
         }
     }
 
     @Override
-    public void undeploy(String name) throws IOException {
+    public void undeploy(final String name) throws IOException {
         if (appInfo == null) {
             if (!(exception instanceof DeploymentException)) {
                 System.out.println("Nothing to undeploy" + name);
@@ -126,19 +129,19 @@ public class ContainersImplTomEE extends AbstractContainers implements Container
         System.out.println("Undeploying " + name);
         try {
             deployer.undeploy(appInfo.path);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             throw new OpenEJBTCKRuntimeException(e);
         }
 
-        File toDelete;
+        final File toDelete;
         if (currentFile != null && (toDelete = currentFile.getParentFile()).exists()) {
             System.out.println("deleting " + toDelete.getAbsolutePath());
             delete(toDelete);
         }
     }
 
-    protected File getFile(String name) {
+    protected File getFile(final String name) {
         final File dir = new File(tmpDir, Math.random() + "");
         if (!dir.exists() && !dir.mkdir()) {
             throw new RuntimeException("Failed to create directory: " + dir);
@@ -152,6 +155,7 @@ public class ContainersImplTomEE extends AbstractContainers implements Container
         System.out.println("Setup called");
         server.start(Arrays.asList("-Dopenejb.classloader.forced-load=org.apache.openejb.tck"), "start", true);
     }
+
     @Override
     public void cleanup() throws IOException {
         System.out.println("Cleanup called");

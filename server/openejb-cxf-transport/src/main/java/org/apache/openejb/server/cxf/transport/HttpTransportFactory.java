@@ -29,13 +29,13 @@ public class HttpTransportFactory extends HTTPTransportFactory {
         // no-op
     }
 
-    public HttpTransportFactory(Bus bus) {
+    public HttpTransportFactory(final Bus bus) {
         setBus(bus);
 
     }
 
     @Override
-    public Destination getDestination(EndpointInfo endpointInfo) throws IOException {
+    public Destination getDestination(final EndpointInfo endpointInfo) throws IOException {
         return new HttpDestination(getBus(), getRegistry(), endpointInfo, endpointInfo.getAddress());
     }
 }

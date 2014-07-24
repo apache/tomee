@@ -113,8 +113,8 @@ public class HessianInitialContextFactory implements InitialContextFactory {
             try {
                 final Object clientFactory = factoryConstructor.newInstance(loader);
                 final Object factory = serializerConstructor.newInstance(loader);
-                Reflections.invokeByReflection(factory, "setAllowNonSerializable", BOOLEAN_PARAM, new Object[] { allowNonSerializable});
-                Reflections.invokeByReflection(clientFactory, "setSerializerFactory", new Class<?>[]{ serializerConstructor.getDeclaringClass() }, new Object[]{factory});
+                Reflections.invokeByReflection(factory, "setAllowNonSerializable", BOOLEAN_PARAM, new Object[]{allowNonSerializable});
+                Reflections.invokeByReflection(clientFactory, "setSerializerFactory", new Class<?>[]{serializerConstructor.getDeclaringClass()}, new Object[]{factory});
                 if (user != null) {
                     Reflections.invokeByReflection(clientFactory, "setUser", STRING_PARAM, new Object[]{user});
                     Reflections.invokeByReflection(clientFactory, "setPassword", STRING_PARAM, new Object[]{password});
@@ -127,7 +127,7 @@ public class HessianInitialContextFactory implements InitialContextFactory {
                 final String completeUrl = url + name;
                 try {
                     if (api != null) { // just use it
-                        return Reflections.invokeByReflection(clientFactory, "create", CREATE_PARAM, new Object[] { api, completeUrl, loader });
+                        return Reflections.invokeByReflection(clientFactory, "create", CREATE_PARAM, new Object[]{api, completeUrl, loader});
                     }
 
                     return Reflections.invokeByReflection(clientFactory, "create", STRING_PARAM, new Object[]{completeUrl});

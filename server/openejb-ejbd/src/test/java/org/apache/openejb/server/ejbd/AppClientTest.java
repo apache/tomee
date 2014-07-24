@@ -64,7 +64,7 @@ public class AppClientTest extends TestCase {
         final ServiceDaemon serviceDaemon = new ServiceDaemon(pool, 0, "localhost");
         serviceDaemon.start();
 
-        int port = serviceDaemon.getPort();
+        final int port = serviceDaemon.getPort();
 
         final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
         final ConfigurationFactory config = new ConfigurationFactory();
@@ -94,13 +94,13 @@ public class AppClientTest extends TestCase {
         final Object home = context.lookup("comp/env/home");
         assertTrue(home instanceof OrangeHome);
 
-        OrangeHome orangeHome = (OrangeHome) home;
+        final OrangeHome orangeHome = (OrangeHome) home;
         final OrangeRemote orangeRemote = orangeHome.create();
         assertEquals("bat", orangeRemote.echo("tab"));
 
         final Object business = context.lookup("comp/env/business");
         assertTrue(business instanceof OrangeBusinessRemote);
-        OrangeBusinessRemote orangeBusinessRemote = (OrangeBusinessRemote) business;
+        final OrangeBusinessRemote orangeBusinessRemote = (OrangeBusinessRemote) business;
         assertEquals("nap", orangeBusinessRemote.echo("pan"));
 
         final Object dataSourceObject = context.lookup("comp/env/datasource");
@@ -113,7 +113,7 @@ public class AppClientTest extends TestCase {
 
         final Object global = context.lookup("global/testapp/testejbmodule/Orange!" + OrangeBusinessRemote.class.getName());
         assertTrue(global instanceof OrangeBusinessRemote);
-        OrangeBusinessRemote globalOrangeBusinessRemote = (OrangeBusinessRemote) global;
+        final OrangeBusinessRemote globalOrangeBusinessRemote = (OrangeBusinessRemote) global;
         assertEquals("nap", globalOrangeBusinessRemote.echo("pan"));
     }
 
@@ -138,7 +138,7 @@ public class AppClientTest extends TestCase {
     public static class Orange implements OrangeBusinessRemote {
 
         @Override
-        public String echo(String string) {
+        public String echo(final String string) {
             return new StringBuilder(string).reverse().toString();
         }
     }

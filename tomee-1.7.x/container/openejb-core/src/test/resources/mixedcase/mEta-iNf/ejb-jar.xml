@@ -1,8 +1,0 @@
-<ejb-jar>
-  <enterprise-beans>
-    <session id="OrangeBean">
-      <ejb-name>OrangeBean</ejb-name>
-      <ejb-class>org.apache.openejb.config.AppPathsTest$OrangeBean</ejb-class>
-    </session>
-  </enterprise-beans>
-</ejb-jar>

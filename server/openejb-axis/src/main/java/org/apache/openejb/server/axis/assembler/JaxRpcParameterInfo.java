@@ -34,7 +34,7 @@ public class JaxRpcParameterInfo {
         private boolean in;
         private boolean out;
 
-        Mode(boolean in, boolean out) {
+        Mode(final boolean in, final boolean out) {
             this.in = in;
             this.out = out;
         }
@@ -43,7 +43,7 @@ public class JaxRpcParameterInfo {
             return in;
         }
 
-        public void setIn(boolean in) {
+        public void setIn(final boolean in) {
             this.in = in;
         }
 
@@ -51,7 +51,7 @@ public class JaxRpcParameterInfo {
             return out;
         }
 
-        public void setOut(boolean out) {
+        public void setOut(final boolean out) {
             this.out = out;
         }
     }

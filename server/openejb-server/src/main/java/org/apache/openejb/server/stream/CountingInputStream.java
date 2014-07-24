@@ -49,7 +49,7 @@ public class CountingInputStream extends InputStream {
     }
 
     @Override
-    public void mark(int readlimit) {
+    public void mark(final int readlimit) {
         delegate.mark(readlimit);
     }
 

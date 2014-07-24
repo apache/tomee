@@ -26,6 +26,7 @@ import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Zips;
 import org.apache.openejb.server.control.StandaloneServer;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -53,7 +54,9 @@ import static org.apache.openejb.util.NetworkUtil.getNextAvailablePort;
 
 public class LegacyClientTest {
 
-    static final Logger logger = Logger.getLogger("org.apache.openejb.client");
+    private static final Map<String, StandaloneServer> servers = new HashMap<String, StandaloneServer>();
+    private static StandaloneServer root = null;
+    private static final Logger logger = Logger.getLogger("org.apache.openejb.client");
 
     static {
         final ConsoleHandler consoleHandler = new ConsoleHandler();
@@ -61,6 +64,27 @@ public class LegacyClientTest {
         logger.addHandler(consoleHandler);
         logger.setLevel(Level.FINER);
         logger.setUseParentHandlers(false);
+    }
+
+    @AfterClass
+    public static void afterClass() {
+
+        for (final Map.Entry<String, StandaloneServer> entry : servers.entrySet()) {
+            try {
+                final StandaloneServer server = entry.getValue();
+                server.kill();
+            } catch (final Throwable t) {
+                //Ignore
+            }
+        }
+
+        if (null != root) {
+            try {
+                root.kill();
+            } catch (final Throwable t) {
+                //Ignore
+            }
+        }
     }
 
     @Test
@@ -76,35 +100,34 @@ public class LegacyClientTest {
 
         final File dir = Files.tmpdir();
 
-        final StandaloneServer root;
-        {
-            final String name = "root";
-            final File home = new File(dir, name);
+        final String rootname = "root";
+        final File roothome = new File(dir, rootname);
 
-            Files.mkdir(home);
-            Zips.unzip(zip, home, true);
+        Files.mkdir(roothome);
+        Zips.unzip(zip, roothome, true);
 
-            root = new StandaloneServer(home, home);
-            root.killOnExit();
-            root.getJvmOpts().add("-Dopenejb.classloader.forced-load=org.apache.openejb");
-            root.ignoreOut();
-            root.setProperty("name", name);
-            root.setProperty("openejb.extract.configuration", "false");
+        root = new StandaloneServer(roothome, roothome);
 
-            final StandaloneServer.ServerService multipoint = root.getServerService("multipoint");
-            multipoint.setBind("localhost");
-            multipoint.setPort(getNextAvailablePort());
-            multipoint.setDisabled(false);
-            multipoint.set("discoveryName", name);
+        root.killOnExit();
+        root.getJvmOpts().add("-Dopenejb.classloader.forced-load=org.apache.openejb");
+        root.ignoreOut();
+        root.setProperty("name", rootname);
+        root.setProperty("openejb.extract.configuration", "false");
 
-            logger.info("Starting Root server");
-            root.start();
-        }
+        StandaloneServer.ServerService multipoint = root.getServerService("multipoint");
+        multipoint.setBind("localhost");
+        multipoint.setPort(getNextAvailablePort());
+        multipoint.setDisabled(false);
+        multipoint.set("discoveryName", rootname);
+
+        logger.info("Starting Root server");
+        root.start();
+
 
         final Services services = new Services();
         Client.addEventObserver(services);
 
-        final Map<String, StandaloneServer> servers = new HashMap<String, StandaloneServer>();
+
         for (final String name : new String[]{"red", "green", "blue"}) {
 
             final File home = new File(dir, name);
@@ -132,7 +155,7 @@ public class LegacyClientTest {
             services.add(uri);
             server.getContext().set(URI.class, uri);
 
-            final StandaloneServer.ServerService multipoint = server.getServerService("multipoint");
+            multipoint = server.getServerService("multipoint");
             multipoint.setPort(getNextAvailablePort());
             multipoint.setDisabled(false);
             multipoint.set("discoveryName", name);
@@ -163,7 +186,7 @@ public class LegacyClientTest {
             final URI serverURI = server.getContext().get(URI.class);
 
             logger.info("Waiting for updated list");
-            services.assertServices(30, TimeUnit.SECONDS, new CalculatorCallable(bean), 500);
+            services.assertServices(1, TimeUnit.MINUTES, new CalculatorCallable(bean), 500);
 
             logger.info("Asserting balance");
             assertBalance(bean, services.get().size());
@@ -196,7 +219,7 @@ public class LegacyClientTest {
             services.add(serverURI);
 
             logger.info("Waiting for updated list");
-            services.assertServices(30, TimeUnit.SECONDS, new CalculatorCallable(bean), 500);
+            services.assertServices(1, TimeUnit.MINUTES, new CalculatorCallable(bean), 500);
 
             logger.info("Asserting balance");
             assertBalance(bean, services.get().size());
@@ -243,8 +266,6 @@ public class LegacyClientTest {
 
     public static class Services {
 
-        static final Logger logger = Logger.getLogger(Services.class.getName());
-
         private final ReentrantLock lock = new ReentrantLock();
         private final Condition condition = lock.newCondition();
 
@@ -290,9 +311,9 @@ public class LegacyClientTest {
             return diffs;
         }
 
-        public void assertServices(final long timeout, final TimeUnit unit, final Callable callable) {
-            assertServices(timeout, unit, callable, 10);
-        }
+//        public void assertServices(final long timeout, final TimeUnit unit, final Callable callable) {
+//            assertServices(timeout, unit, callable, 10);
+//        }
 
         public void assertServices(final long timeout, final TimeUnit unit, final Callable callable, final int delay) {
             final ClientThread client = new ClientThread(callable);

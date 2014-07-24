@@ -84,13 +84,13 @@ public class AuthentWithRequestTest {
         try {
 
             final Context context = new InitialContext(new PropertiesBuilder()
-                                                           .p(Context.INITIAL_CONTEXT_FACTORY, RemoteInitialContextFactory.class.getName())
-                                                           .p(Context.PROVIDER_URL, "ejbd://127.0.0.1:" + port)
-                                                           .p(JNDIContext.AUTHENTICATE_WITH_THE_REQUEST, "true")
-                                                           .p("java.naming.security.principal", "foo")
-                                                           .p("java.naming.security.credentials", "bar")
-                                                           .p("openejb.authentication.realmName", "LM")
-                                                           .build());
+                .p(Context.INITIAL_CONTEXT_FACTORY, RemoteInitialContextFactory.class.getName())
+                .p(Context.PROVIDER_URL, "ejbd://127.0.0.1:" + port)
+                .p(JNDIContext.AUTHENTICATE_WITH_THE_REQUEST, "true")
+                .p("java.naming.security.principal", "foo")
+                .p("java.naming.security.credentials", "bar")
+                .p("openejb.authentication.realmName", "LM")
+                .build());
             final AnInterfaceRemote client = AnInterfaceRemote.class.cast(context.lookup("RemoteWithSecurityRemote"));
             assertNotNull(client);
 
@@ -123,7 +123,7 @@ public class AuthentWithRequestTest {
         private CallbackHandler callbackHandler;
 
         @Override
-        public void initialize(Subject subject, CallbackHandler callbackHandler, Map<String, ?> sharedState, Map<String, ?> options) {
+        public void initialize(final Subject subject, final CallbackHandler callbackHandler, final Map<String, ?> sharedState, final Map<String, ?> options) {
             this.callbackHandler = callbackHandler;
         }
 

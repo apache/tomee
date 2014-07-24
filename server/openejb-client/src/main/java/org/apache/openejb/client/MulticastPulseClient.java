@@ -109,10 +109,10 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
             //This is here just as a brake to prevent DOS or OOME.
             //There is no way we should have more than this number of unique MutliPulse URI's in a LAN
             throw new IllegalArgumentException("Unique MultiPulse URI limit of " +
-                                               LIMIT +
-                                               " reached. Increase using the system property '" +
-                                               ORG_APACHE_OPENEJB_MULTIPULSE_URI_LIMIT +
-                                               "'");
+                LIMIT +
+                " reached. Increase using the system property '" +
+                ORG_APACHE_OPENEJB_MULTIPULSE_URI_LIMIT +
+                "'");
         }
 
         Set<URI> uriSet = knownUris.get(uri);
@@ -127,7 +127,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
 
             try {
                 uriSet = MulticastPulseClient.discoverURIs(group, schemes, uri.getHost(), uri.getPort(), timeout);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new IllegalArgumentException("Unable to find an ejb server via the MultiPulse URI: " + uri);
             }
 
@@ -141,7 +141,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
 
             try {
                 return ConnectionManager.getConnection(tryUri);
-            } catch (Exception e) {
+            } catch (final Exception e) {
 
                 uriSet.remove(serviceURI);
 
@@ -163,7 +163,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
         final Map<String, String> params;
         try {
             params = URIs.parseParamters(uri);
-        } catch (URISyntaxException e) {
+        } catch (final URISyntaxException e) {
             throw new IllegalArgumentException("Invalid MultiPulse uri " + uri.toString(), e);
         }
         return params;
@@ -258,7 +258,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                         } else if (0 != h1.compareTo(h2)) {
                             return -1;
                         }
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         //Ignore
                     }
 
@@ -326,7 +326,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                                                 final URI serviceUri;
                                                 try {
                                                     serviceUri = URI.create(svc);
-                                                } catch (Exception e) {
+                                                } catch (final Exception e) {
                                                     continue;
                                                 }
 
@@ -365,7 +365,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                                                             //Just add as is
                                                             set.add(URI.create(svcfull));
                                                         }
-                                                    } catch (Exception e) {
+                                                    } catch (final Exception e) {
                                                         //Ignore
                                                     } finally {
                                                         setLock.unlock();
@@ -375,19 +375,19 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                                         }
                                     }
 
-                                } catch (Exception e) {
+                                } catch (final Exception e) {
                                     //Ignore
                                 }
                             }
                         } finally {
                             try {
                                 socket.leaveGroup(ia);
-                            } catch (Exception e) {
+                            } catch (final Exception e) {
                                 //Ignore
                             }
                             try {
                                 socket.close();
-                            } catch (Exception e) {
+                            } catch (final Exception e) {
                                 //Ignore
                             }
                         }
@@ -411,7 +411,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                                     if (running.get()) {
                                         try {
                                             socket.send(request);
-                                        } catch (Exception e) {
+                                        } catch (final Exception e) {
                                             //Ignore
                                         }
                                     } else {
@@ -422,7 +422,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                                 if (running.get()) {
                                     try {
                                         Thread.sleep(10);
-                                    } catch (InterruptedException e) {
+                                    } catch (final InterruptedException e) {
                                         break;
                                     }
                                 }
@@ -433,7 +433,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                     timeout = 1;
                 }
 
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 //Terminate as quickly as possible
                 timeout = 1;
             }
@@ -449,7 +449,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                         for (final Future future : futures) {
                             future.cancel(true);
                         }
-                    } catch (ConcurrentModificationException e) {
+                    } catch (final ConcurrentModificationException e) {
                         //Ignore
                     }
 
@@ -460,7 +460,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
             for (final Future future : futures) {
                 try {
                     future.get();
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     //Ignore
                 }
             }
@@ -477,7 +477,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
             for (final Future future : futures) {
                 try {
                     future.cancel(true);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     //Ignore
                 }
             }
@@ -488,12 +488,12 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
 
                 try {
                     socket.leaveGroup(ia);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     //Ignore
                 }
                 try {
                     socket.close();
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     //Ignore
                 }
             }
@@ -504,7 +504,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
         final InetAddress ia;
         try {
             ia = InetAddress.getByName(host);
-        } catch (UnknownHostException e) {
+        } catch (final UnknownHostException e) {
             throw new Exception(host + " is not a valid address", e);
         }
 
@@ -526,7 +526,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
         final InetAddress addr;
         try {
             addr = InetAddress.getByName(host);
-        } catch (UnknownHostException e) {
+        } catch (final UnknownHostException e) {
             return false;
         }
 
@@ -538,7 +538,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
         // Check if the address is defined on any local interface
         try {
             return NetworkInterface.getByInetAddress(addr) != null;
-        } catch (SocketException e) {
+        } catch (final SocketException e) {
             return false;
         }
     }
@@ -574,12 +574,12 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
 
                 list.add(ms);
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
 
                 if (null != ms) {
                     try {
                         ms.close();
-                    } catch (Exception t) {
+                    } catch (final Exception t) {
                         //Ignore
                     }
                 }
@@ -603,7 +603,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                     list.add(next);
                 }
             }
-        } catch (SocketException e) {
+        } catch (final SocketException e) {
             //Ignore
         }
 
@@ -641,10 +641,10 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
         final CommandParser.Arguments arguments;
         try {
             arguments = cmd.parse(args);
-        } catch (CommandParser.HelpException e) {
+        } catch (final CommandParser.HelpException e) {
             System.exit(0);
             throw new Exception(); // never reached, but keeps compiler happy
-        } catch (CommandParser.InvalidOptionsException e) {
+        } catch (final CommandParser.InvalidOptionsException e) {
             System.exit(1);
             throw new Exception(); // never reached, but keeps compiler happy
         }
@@ -670,7 +670,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                     Set<URI> uriSet = null;
                     try {
                         uriSet = MulticastPulseClient.discoverURIs(discover, new HashSet<String>(Arrays.asList("ejbd", "ejbds", "http", "https")), mchost, mcport, timeout);
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         System.err.println(e.getMessage());
                     }
 
@@ -702,7 +702,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                             try {
                                 s.connect(new InetSocketAddress(host, port), st);
                                 b = true;
-                            } catch (Exception e) {
+                            } catch (final Exception e) {
                                 if (java.net.SocketTimeoutException.class.isInstance(e) || SocketException.class.isInstance(e)) {
                                     MulticastPulseClient.broadcastBadUri(group, uriSub, mchost, mcport);
                                     System.out.print("" + e + " : ");
@@ -710,7 +710,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                             } finally {
                                 try {
                                     s.close();
-                                } catch (Exception e) {
+                                } catch (final Exception e) {
                                     //Ignore
                                 }
                             }
@@ -725,7 +725,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
 
                     try {
                         Thread.sleep(500);
-                    } catch (InterruptedException e) {
+                    } catch (final InterruptedException e) {
                         //Ignore
                     }
                 }
@@ -765,11 +765,11 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
 
                         try {
                             socket.send(request);
-                        } catch (Exception e) {
+                        } catch (final Exception e) {
                             log.log(Level.WARNING, "Failed to broadcast bad URI: " + uri + " on: " + socket.getInterface().getHostAddress(), e);
                         }
                     }
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     log.log(Level.WARNING, "Failed to broadcast bad URI: " + uri, e);
                 }
             }

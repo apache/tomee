@@ -137,13 +137,13 @@ public class MultipointServer {
         this.reconnectDelay = reconnectDelay.getTime(TimeUnit.NANOSECONDS);
 
         final String format = String.format("MultipointServer(bindHost=%s, discoveryHost=%s, port=%s, name=%s, debug=%s, roots=%s, reconnectDelay='%s')",
-                                            bindHost,
-                                            broadcastHost,
-                                            port,
-                                            name,
-                                            debug,
-                                            this.roots.size(),
-                                            reconnectDelay.toString());
+            bindHost,
+            broadcastHost,
+            port,
+            name,
+            debug,
+            this.roots.size(),
+            reconnectDelay.toString());
 
         log.debug(format);
 
@@ -290,7 +290,7 @@ public class MultipointServer {
         lock.lock();
         try {
             condition.await(time, unit);
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             Thread.interrupted();
         } finally {
             lock.unlock();
@@ -301,7 +301,7 @@ public class MultipointServer {
         running.set(false);
         try {
             serverChannel.close();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new CloseException(e);
         } finally {
             await(stopped, 10, TimeUnit.SECONDS);
@@ -464,14 +464,14 @@ public class MultipointServer {
         @Override
         public String toString() {
             return "Session{" +
-                   "uri=" + uri +
-                   ", created=" + created +
-                   ", state=" + state +
-                   ", owner=" + port +
-                   ", s=" + (client ? channel.socket().getPort() : channel.socket().getLocalPort()) +
-                   ", c=" + (!client ? channel.socket().getPort() : channel.socket().getLocalPort()) +
-                   ", " + (client ? "client" : "server") +
-                   '}';
+                "uri=" + uri +
+                ", created=" + created +
+                ", state=" + state +
+                ", owner=" + port +
+                ", s=" + (client ? channel.socket().getPort() : channel.socket().getLocalPort()) +
+                ", c=" + (!client ? channel.socket().getPort() : channel.socket().getLocalPort()) +
+                ", " + (client ? "client" : "server") +
+                '}';
         }
 
         private long last = 0;
@@ -535,7 +535,7 @@ public class MultipointServer {
             try {
                 selector.select(selectorTimeout);
                 failed = 0;
-            } catch (IOException ex) {
+            } catch (final IOException ex) {
                 if (failed++ > 100) {
                     log.fatal("Too many Multipoint Failures.  Terminating service.", ex);
                     return;
@@ -543,7 +543,7 @@ public class MultipointServer {
                 log.error("Multipoint Failure.", ex);
                 try {
                     Thread.sleep(100);
-                } catch (InterruptedException e) {
+                } catch (final InterruptedException e) {
                     Thread.interrupted();
                 }
             }
@@ -567,21 +567,21 @@ public class MultipointServer {
                     if (key.isWritable())
                         doWrite(key);
 
-                } catch (CancelledKeyException ex) {
+                } catch (final CancelledKeyException ex) {
                     synchronized (connect) {
                         final Session session = (Session) key.attachment();
                         if (session.state != State.CLOSED) {
                             close(key);
                         }
                     }
-                } catch (ClosedChannelException ex) {
+                } catch (final ClosedChannelException ex) {
                     synchronized (connect) {
                         final Session session = (Session) key.attachment();
                         if (session.state != State.CLOSED) {
                             close(key);
                         }
                     }
-                } catch (IOException ex) {
+                } catch (final IOException ex) {
                     final Session session = (Session) key.attachment();
                     session.trace(ex.getClass().getSimpleName() + ": " + ex.getMessage());
                     close(key);
@@ -596,7 +596,7 @@ public class MultipointServer {
                 try {
                     if (session != null && session.state == State.HEARTBEAT)
                         session.tick();
-                } catch (IOException ex) {
+                } catch (final IOException ex) {
                     close(key);
                 }
             }
@@ -648,12 +648,12 @@ public class MultipointServer {
                 final InetSocketAddress address;
                 try {
                     address = host.getSocketAddress();
-                } catch (ExecutionException e) {
+                } catch (final ExecutionException e) {
                     final Throwable t = (e.getCause() != null) ? e.getCause() : e;
                     final String message = String.format("Failed Connect{uri=%s} %s{message=\"%s\"}", host.getUri(), t.getClass().getSimpleName(), t.getMessage());
                     log.warning(message);
                     continue;
-                } catch (TimeoutException e) {
+                } catch (final TimeoutException e) {
                     unresolved.add(host);
                     log.debug("Unresolved(uri=" + host.getUri() + ")");
                     continue;
@@ -676,7 +676,7 @@ public class MultipointServer {
 
                     // seen - needs to get maintained as "connected"
                     // TODO remove from seen
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     throw new ServerRuntimeException(e);
                 }
             }
@@ -850,7 +850,7 @@ public class MultipointServer {
 
                         try {
                             connect(uri);
-                        } catch (Exception e) {
+                        } catch (final Exception e) {
                             println("connect failed " + uri + " - " + e.getMessage());
                             e.printStackTrace();
                         }
@@ -960,7 +960,7 @@ public class MultipointServer {
         key.cancel();
         try {
             key.channel().close();
-        } catch (IOException cex) {
+        } catch (final IOException cex) {
             //Ignore
         }
     }
@@ -1086,121 +1086,121 @@ public class MultipointServer {
     @Override
     public String toString() {
         return "MultipointServer{" +
-               "name='" + name + '\'' +
-               ", me=" + me +
-               '}';
+            "name='" + name + '\'' +
+            ", me=" + me +
+            '}';
     }
 
     public static String randomColor() {
         final String[] colors = {
-                                        "almond",
-                                        "amber",
-                                        "amethyst",
-                                        "apple",
-                                        "apricot",
-                                        "aqua",
-                                        "aquamarine",
-                                        "ash",
-                                        "azure",
-                                        "banana",
-                                        "beige",
-                                        "black",
-                                        "blue",
-                                        "brick",
-                                        "bronze",
-                                        "brown",
-                                        "burgundy",
-                                        "carrot",
-                                        "charcoal",
-                                        "cherry",
-                                        "chestnut",
-                                        "chocolate",
-                                        "chrome",
-                                        "cinnamon",
-                                        "citrine",
-                                        "cobalt",
-                                        "copper",
-                                        "coral",
-                                        "cornflower",
-                                        "cotton",
-                                        "cream",
-                                        "crimson",
-                                        "cyan",
-                                        "ebony",
-                                        "emerald",
-                                        "forest",
-                                        "fuchsia",
-                                        "ginger",
-                                        "gold",
-                                        "goldenrod",
-                                        "gray",
-                                        "green",
-                                        "grey",
-                                        "indigo",
-                                        "ivory",
-                                        "jade",
-                                        "jasmine",
-                                        "khaki",
-                                        "lava",
-                                        "lavender",
-                                        "lemon",
-                                        "lilac",
-                                        "lime",
-                                        "macaroni",
-                                        "magenta",
-                                        "magnolia",
-                                        "mahogany",
-                                        "malachite",
-                                        "mango",
-                                        "maroon",
-                                        "mauve",
-                                        "mint",
-                                        "moonstone",
-                                        "navy",
-                                        "ocean",
-                                        "olive",
-                                        "onyx",
-                                        "orange",
-                                        "orchid",
-                                        "papaya",
-                                        "peach",
-                                        "pear",
-                                        "pearl",
-                                        "periwinkle",
-                                        "pine",
-                                        "pink",
-                                        "pistachio",
-                                        "platinum",
-                                        "plum",
-                                        "prune",
-                                        "pumpkin",
-                                        "purple",
-                                        "quartz",
-                                        "raspberry",
-                                        "red",
-                                        "rose",
-                                        "rosewood",
-                                        "ruby",
-                                        "salmon",
-                                        "sapphire",
-                                        "scarlet",
-                                        "sienna",
-                                        "silver",
-                                        "slate",
-                                        "strawberry",
-                                        "tan",
-                                        "tangerine",
-                                        "taupe",
-                                        "teal",
-                                        "titanium",
-                                        "topaz",
-                                        "turquoise",
-                                        "umber",
-                                        "vanilla",
-                                        "violet",
-                                        "watermelon",
-                                        "white",
-                                        "yellow"
+            "almond",
+            "amber",
+            "amethyst",
+            "apple",
+            "apricot",
+            "aqua",
+            "aquamarine",
+            "ash",
+            "azure",
+            "banana",
+            "beige",
+            "black",
+            "blue",
+            "brick",
+            "bronze",
+            "brown",
+            "burgundy",
+            "carrot",
+            "charcoal",
+            "cherry",
+            "chestnut",
+            "chocolate",
+            "chrome",
+            "cinnamon",
+            "citrine",
+            "cobalt",
+            "copper",
+            "coral",
+            "cornflower",
+            "cotton",
+            "cream",
+            "crimson",
+            "cyan",
+            "ebony",
+            "emerald",
+            "forest",
+            "fuchsia",
+            "ginger",
+            "gold",
+            "goldenrod",
+            "gray",
+            "green",
+            "grey",
+            "indigo",
+            "ivory",
+            "jade",
+            "jasmine",
+            "khaki",
+            "lava",
+            "lavender",
+            "lemon",
+            "lilac",
+            "lime",
+            "macaroni",
+            "magenta",
+            "magnolia",
+            "mahogany",
+            "malachite",
+            "mango",
+            "maroon",
+            "mauve",
+            "mint",
+            "moonstone",
+            "navy",
+            "ocean",
+            "olive",
+            "onyx",
+            "orange",
+            "orchid",
+            "papaya",
+            "peach",
+            "pear",
+            "pearl",
+            "periwinkle",
+            "pine",
+            "pink",
+            "pistachio",
+            "platinum",
+            "plum",
+            "prune",
+            "pumpkin",
+            "purple",
+            "quartz",
+            "raspberry",
+            "red",
+            "rose",
+            "rosewood",
+            "ruby",
+            "salmon",
+            "sapphire",
+            "scarlet",
+            "sienna",
+            "silver",
+            "slate",
+            "strawberry",
+            "tan",
+            "tangerine",
+            "taupe",
+            "teal",
+            "titanium",
+            "topaz",
+            "turquoise",
+            "umber",
+            "vanilla",
+            "violet",
+            "watermelon",
+            "white",
+            "yellow"
         };
 
         final Random random = new Random();
@@ -1243,7 +1243,7 @@ public class MultipointServer {
             try {
                 final InetAddress inetAddress = address.get(0, TimeUnit.NANOSECONDS);
                 return new InetSocketAddress(inetAddress, uri.getPort());
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 Thread.interrupted();
                 throw new TimeoutException();
             }

@@ -49,9 +49,9 @@ public class ClusterMetaDataUpdated {
     @Override
     public String toString() {
         return "ClusterMetaDataUpdated{" +
-               "provider=" + serverMetaData.getLocation() +
-               ", version=" + clusterMetaData.getVersion() +
-               ", uris=" + clusterMetaData.getLocations().length +
-               '}';
+            "provider=" + serverMetaData.getLocation() +
+            ", version=" + clusterMetaData.getVersion() +
+            ", uris=" + clusterMetaData.getLocations().length +
+            '}';
     }
 }

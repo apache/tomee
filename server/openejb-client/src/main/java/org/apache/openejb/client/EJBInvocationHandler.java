@@ -116,9 +116,9 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
     protected static Method getMethod(final Class c, final String method, final Class... params) {
         try {
             return c.getMethod(method, params);
-        } catch (NoSuchMethodException nse) {
+        } catch (final NoSuchMethodException nse) {
             throw new IllegalStateException("Cannot find method: " + c.getName() + "." + method, nse);
-        } catch (java.lang.ExceptionInInitializerError eiie) {
+        } catch (final java.lang.ExceptionInInitializerError eiie) {
             throw new IllegalStateException("Invalid parameters for method: " + c.getName() + "." + method + " : " + Arrays.toString(params), eiie);
         }
     }

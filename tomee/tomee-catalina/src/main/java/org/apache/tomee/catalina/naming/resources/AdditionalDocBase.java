@@ -18,7 +18,10 @@ package org.apache.tomee.catalina.naming.resources;
 
 import org.apache.naming.resources.FileDirContext;
 
+import javax.naming.NamingException;
+import javax.naming.directory.Attributes;
 import java.io.File;
+import java.util.Date;
 
 // a normal FileDirContext just unwrapping tomcat prefix
 // to simulate a normal webapp dir and not a jar one
@@ -28,6 +31,7 @@ public class AdditionalDocBase extends FileDirContext {
     private static final String PREFIX = "/META-INF/resources";
     private static final int PREFIX_LENGTH = PREFIX.length();
     private static final String WEB_INF_CLASSES = "/WEB-INF/classes";
+    private static final boolean RESPECT_HEADERS = Boolean.getBoolean("tomee.AdditionalDocBase.respect-headers");
 
     @Override
     protected File file(final String name) {
@@ -38,5 +42,38 @@ public class AdditionalDocBase extends FileDirContext {
             return super.file("/");
         }
         return super.file(name);
+    }
+
+    @Override
+    protected Attributes doGetAttributes(final String name, final String[] attrIds) throws NamingException {
+        if (RESPECT_HEADERS) {
+            return super.doGetAttributes(name, attrIds);
+        }
+        final File file = file(name);
+        if (file == null) {
+            return null;
+        }
+        return new ForceRefeshAttributes(file);
+    }
+
+    private class ForceRefeshAttributes extends FileResourceAttributes {
+        public ForceRefeshAttributes(final File file) {
+            super(file);
+        }
+
+        @Override
+        public String getETag() {
+            return null;
+        }
+
+        @Override
+        public Date getLastModifiedDate() {
+            return new Date();
+        }
+
+        @Override
+        public long getLastModified() {
+            return System.currentTimeMillis();
+        }
     }
 }

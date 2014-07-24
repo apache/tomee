@@ -37,19 +37,19 @@ import java.util.Map;
 public class ServletRequestAdapter implements HttpRequest {
     private final HttpServletRequest request;
 
-    public ServletRequestAdapter(HttpServletRequest request) {
+    public ServletRequestAdapter(final HttpServletRequest request) {
         this.request = request;
     }
 
-    public ServletRequestAdapter(HttpServletRequest request, HttpServletResponse response, ServletContext servletContext) {
+    public ServletRequestAdapter(final HttpServletRequest request, final HttpServletResponse response, final ServletContext servletContext) {
         this.request = request;
         request.setAttribute(HttpRequest.SERVLET_REQUEST, request);
         request.setAttribute(HttpRequest.SERVLET_RESPONSE, response);
         request.setAttribute(HttpRequest.SERVLET_CONTEXT, servletContext);
     }
 
-    public HttpSession getSession(boolean create) {
-        javax.servlet.http.HttpSession session = request.getSession(create);
+    public HttpSession getSession(final boolean create) {
+        final javax.servlet.http.HttpSession session = request.getSession(create);
         if (session != null) {
             return new ServletSessionAdapter(session);
         } else {
@@ -83,12 +83,12 @@ public class ServletRequestAdapter implements HttpRequest {
     }
 
     @Override
-    public boolean isUserInRole(String s) {
+    public boolean isUserInRole(final String s) {
         return request.isUserInRole(s);
     }
 
     @Override
-    public void login(String s, String s1) throws ServletException {
+    public void login(final String s, final String s1) throws ServletException {
         request.login(s, s1);
     }
 
@@ -98,7 +98,7 @@ public class ServletRequestAdapter implements HttpRequest {
     }
 
     public HttpSession getSession() {
-        javax.servlet.http.HttpSession session = request.getSession();
+        final javax.servlet.http.HttpSession session = request.getSession();
         if (session != null) {
             return new ServletSessionAdapter(session);
         } else {
@@ -106,7 +106,7 @@ public class ServletRequestAdapter implements HttpRequest {
         }
     }
 
-    public String getHeader(String name) {
+    public String getHeader(final String name) {
         return request.getHeader(name);
     }
 
@@ -116,19 +116,19 @@ public class ServletRequestAdapter implements HttpRequest {
     }
 
     @Override
-    public Enumeration<String> getHeaders(String s) {
+    public Enumeration<String> getHeaders(final String s) {
         return request.getHeaders(s);
     }
 
     @Override
-    public int getIntHeader(String s) {
+    public int getIntHeader(final String s) {
         return request.getIntHeader(s);
     }
 
     public URI getURI() {
         try {
             return new URI(request.getScheme(), null, request.getServerName(), request.getServerPort(), request.getRequestURI(), request.getQueryString(), null);
-        } catch (URISyntaxException e) {
+        } catch (final URISyntaxException e) {
             throw new IllegalStateException(e.getMessage(), e);
         }
     }
@@ -147,7 +147,7 @@ public class ServletRequestAdapter implements HttpRequest {
     }
 
     @Override
-    public boolean authenticate(HttpServletResponse httpServletResponse) throws IOException, ServletException {
+    public boolean authenticate(final HttpServletResponse httpServletResponse) throws IOException, ServletException {
         return request.authenticate(httpServletResponse);
     }
 
@@ -166,7 +166,7 @@ public class ServletRequestAdapter implements HttpRequest {
     }
 
     @Override
-    public long getDateHeader(String s) {
+    public long getDateHeader(final String s) {
         return request.getDateHeader(s);
     }
 
@@ -211,7 +211,7 @@ public class ServletRequestAdapter implements HttpRequest {
     }
 
     @Override
-    public Part getPart(String s) throws IOException, ServletException {
+    public Part getPart(final String s) throws IOException, ServletException {
         return request.getPart(s);
     }
 
@@ -260,7 +260,7 @@ public class ServletRequestAdapter implements HttpRequest {
         return request.getServletPath();
     }
 
-    public String getParameter(String name) {
+    public String getParameter(final String name) {
         return request.getParameter(name);
     }
 
@@ -275,7 +275,7 @@ public class ServletRequestAdapter implements HttpRequest {
     }
 
     @Override
-    public String[] getParameterValues(String s) {
+    public String[] getParameterValues(final String s) {
         return request.getParameterValues(s);
     }
 
@@ -290,7 +290,7 @@ public class ServletRequestAdapter implements HttpRequest {
     }
 
     @Override
-    public String getRealPath(String s) {
+    public String getRealPath(final String s) {
         return request.getRealPath(s);
     }
 
@@ -303,8 +303,8 @@ public class ServletRequestAdapter implements HttpRequest {
         return request.getAsyncContext();
     }
 
-    public Object getAttribute(String s) {
-        Object o = request.getAttribute(s);
+    public Object getAttribute(final String s) {
+        final Object o = request.getAttribute(s);
 
         return o;
     }
@@ -319,12 +319,12 @@ public class ServletRequestAdapter implements HttpRequest {
         return request.getCharacterEncoding();
     }
 
-    public void setAttribute(String s, Object o) {
+    public void setAttribute(final String s, final Object o) {
         request.setAttribute(s, o);
     }
 
     @Override
-    public void setCharacterEncoding(String s) throws UnsupportedEncodingException {
+    public void setCharacterEncoding(final String s) throws UnsupportedEncodingException {
         request.setCharacterEncoding(s);
     }
 
@@ -334,7 +334,7 @@ public class ServletRequestAdapter implements HttpRequest {
     }
 
     @Override
-    public AsyncContext startAsync(ServletRequest servletRequest, ServletResponse servletResponse) {
+    public AsyncContext startAsync(final ServletRequest servletRequest, final ServletResponse servletResponse) {
         return request.startAsync(servletRequest, servletResponse);
     }
 
@@ -353,7 +353,7 @@ public class ServletRequestAdapter implements HttpRequest {
     }
 
     @Override
-    public RequestDispatcher getRequestDispatcher(String s) {
+    public RequestDispatcher getRequestDispatcher(final String s) {
         return request.getRequestDispatcher(s);
     }
 
@@ -393,7 +393,7 @@ public class ServletRequestAdapter implements HttpRequest {
     }
 
     @Override
-    public void removeAttribute(String s) {
+    public void removeAttribute(final String s) {
         request.removeAttribute(s);
     }
 

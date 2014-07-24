@@ -63,7 +63,7 @@ public class SSHServer implements ServerService, SelfManaging {
 
         try {
             sshServer.start();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             // no-op
         }
     }
@@ -72,18 +72,18 @@ public class SSHServer implements ServerService, SelfManaging {
     public void stop() throws ServiceException {
         try {
             sshServer.stop();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // no-op
         }
     }
 
     @Override
-    public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
+    public void service(final InputStream in, final OutputStream out) throws ServiceException, IOException {
         // no-op
     }
 
     @Override
-    public void service(Socket socket) throws ServiceException, IOException {
+    public void service(final Socket socket) throws ServiceException, IOException {
         // no-op
     }
 
@@ -103,21 +103,21 @@ public class SSHServer implements ServerService, SelfManaging {
     }
 
     @Override
-    public void init(Properties props) throws Exception {
+    public void init(final Properties props) throws Exception {
         bind = props.getProperty("bind");
         domain = props.getProperty("domain");
         port = Integer.parseInt(props.getProperty("port"));
     }
 
-    public void setPort(int port) {
+    public void setPort(final int port) {
         this.port = port;
     }
 
-    public void setDomain(String domain) {
+    public void setDomain(final String domain) {
         this.domain = domain;
     }
 
-    public void setBind(String bind) {
+    public void setBind(final String bind) {
         this.bind = bind;
     }
 }

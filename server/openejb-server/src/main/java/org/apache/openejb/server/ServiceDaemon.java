@@ -29,6 +29,7 @@ import javax.net.ssl.SSLServerSocketFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.BindException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
@@ -86,7 +87,7 @@ public class ServiceDaemon implements ServerService {
     public static InetAddress getAddress(final String host) {
         try {
             return InetAddress.getByName(host);
-        } catch (UnknownHostException e) {
+        } catch (final UnknownHostException e) {
             throw new IllegalArgumentException(host);
         }
     }
@@ -149,17 +150,25 @@ public class ServiceDaemon implements ServerService {
                 } else {
                     serverSocket = new ServerSocket();
                     serverSocket.setReuseAddress(true);
-                    serverSocket.bind(new InetSocketAddress(this.inetAddress, this.port), this.backlog);
+
+                    try {
+                        serverSocket.bind(new InetSocketAddress(this.inetAddress, this.port), this.backlog);
+
+                    } catch (final BindException e) {
+                        //One retry - Port may be closing
+                        Thread.sleep(1000);
+                        serverSocket.bind(new InetSocketAddress(this.inetAddress, this.port), this.backlog);
+                    }
                 }
 
                 serverSocket.setSoTimeout(this.timeout);
-                int serverPort = serverSocket.getLocalPort();
+                final int serverPort = serverSocket.getLocalPort();
                 if (this.port == 0 && next.getName() != null) {
                     SystemInstance.get().getProperties().put(next.getName() + ".port", Integer.toString(serverPort));
                     this.port = serverPort;
                 }
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new ServiceException("Service failed to open socket", e);
             }
 
@@ -185,7 +194,7 @@ public class ServiceDaemon implements ServerService {
                 if ("0.0.0.0".equals(address)) {
                     try {
                         address = InetAddress.getLocalHost().getHostAddress();
-                    } catch (UnknownHostException e) {
+                    } catch (final UnknownHostException e) {
                         log.error("Failed to resolve 0.0.0.0 to a routable address", e);
                     }
                 }
@@ -196,7 +205,7 @@ public class ServiceDaemon implements ServerService {
                 try {
                     this.serviceUri = new URI(uriString);
                     agent.registerService(this.serviceUri);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     log.error("Cannot register service '" + this.getName() + "' with DiscoveryAgent.", e);
                 }
             }
@@ -213,7 +222,7 @@ public class ServiceDaemon implements ServerService {
             if (agent != null && this.discoveryUriFormat != null && this.serviceUri != null) {
                 try {
                     agent.unregisterService(this.serviceUri);
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     log.error("Cannot unregister service '" + this.getName() + "' with DiscoveryAgent.", e);
                 }
             }
@@ -276,13 +285,13 @@ public class ServiceDaemon implements ServerService {
             try {
                 //This lock is here to try and be fair to the serverService on a shutdown
                 b = l.tryLock(10, TimeUnit.SECONDS);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 //Ignore
             } finally {
 
                 try {
                     this.serverSocket.close();
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     //Ignore
                 } finally {
                     if (b) {
@@ -321,13 +330,13 @@ public class ServiceDaemon implements ServerService {
                     // and should never be closed here
                     // It's up to the consumer of the socket
                     // to close it.
-                } catch (SocketTimeoutException e) {
+                } catch (final SocketTimeoutException e) {
                     // Ignore - Should not get here on serverSocket.setSoTimeout(0)
-                } catch (SocketException e) {
+                } catch (final SocketException e) {
                     if (!this.stop.get()) {
                         log.debug("Socket error", e);
                     }
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     if (!this.stop.get()) {
                         log.debug("Unexpected error", e);
                     }
@@ -336,7 +345,7 @@ public class ServiceDaemon implements ServerService {
 
             try {
                 this.serverSocket.close();
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 log.debug("Error cleaning up socked", e);
             }
         }

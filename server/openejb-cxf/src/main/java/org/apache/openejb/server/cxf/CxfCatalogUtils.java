@@ -31,7 +31,7 @@ import java.net.URL;
 public final class CxfCatalogUtils {
     private static final Logger logger = Logger.getInstance(LogCategory.CXF, CxfCatalogUtils.class);
 
-    public static void loadOASISCatalog(Bus bus, URL baseURL, String catalogName) {
+    public static void loadOASISCatalog(final Bus bus, final URL baseURL, final String catalogName) {
         if (baseURL == null) {
             logger.debug("baseUrl is not valid for catalog '" + catalogName + "'");
             return;
@@ -47,22 +47,22 @@ public final class CxfCatalogUtils {
             } else {
                 logger.info("catalog '" + catalogName + "' not found");
             }
-        } catch (MalformedURLException e) {
+        } catch (final MalformedURLException e) {
             logger.warning("Error constructing catalog URL: " + baseURL + " " + catalogName);
-        } catch (FileNotFoundException e) {
+        } catch (final FileNotFoundException e) {
             logger.debug("Catalog " + catalogURL + " is not present in the module");
-        } catch (IOException e) {
+        } catch (final IOException e) {
             logger.warning("Failed to load catalog file: " + catalogURL, e);
         }
     }
 
-    private static void loadOASISCatalog(Bus bus, URL catalogURL) {
-        OASISCatalogManager catalog = new OASISCatalogManager();
+    private static void loadOASISCatalog(final Bus bus, final URL catalogURL) {
+        final OASISCatalogManager catalog = new OASISCatalogManager();
         try {
             catalog.loadCatalog(catalogURL);
             logger.debug("Loaded " + catalogURL + " catalog.");
             bus.setExtension(catalog, OASISCatalogManager.class);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             logger.warning("Failed to load catalog file: " + catalogURL, e);
         }
     }

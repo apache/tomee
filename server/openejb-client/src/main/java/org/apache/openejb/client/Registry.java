@@ -42,7 +42,7 @@ public class Registry<T> {
         try {
             final ResourceFinder resourceFinder = new ResourceFinder("META-INF/");
             available = resourceFinder.mapAvailableImplementations(type);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             available = new HashMap<String, Class>();
         }
     }
@@ -83,7 +83,7 @@ public class Registry<T> {
             components.put(scheme, factory);
 
             return factory;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException(componentType + " cannot be installed.  Unable to instantiate the class " + clazz.getName() + " for scheme " + scheme);
         }
     }

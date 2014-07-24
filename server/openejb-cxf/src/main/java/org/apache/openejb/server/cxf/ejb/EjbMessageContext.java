@@ -29,21 +29,21 @@ import org.w3c.dom.Element;
 
 public class EjbMessageContext extends WrappedMessageContext implements AddressingSupport {
 
-    public EjbMessageContext(Message m, Scope defScope) {
+    public EjbMessageContext(final Message m, final Scope defScope) {
         super(m, defScope);
     }
 
-    public EndpointReference getEndpointReference(Element... referenceParameters) {
-        org.apache.cxf.message.Message msg = getWrappedMessage();
-        Endpoint ep = msg.getExchange().get(Endpoint.class);
+    public EndpointReference getEndpointReference(final Element... referenceParameters) {
+        final org.apache.cxf.message.Message msg = getWrappedMessage();
+        final Endpoint ep = msg.getExchange().get(Endpoint.class);
 
-        W3CEndpointReferenceBuilder builder = new W3CEndpointReferenceBuilder();
+        final W3CEndpointReferenceBuilder builder = new W3CEndpointReferenceBuilder();
         builder.address(ep.getEndpointInfo().getAddress());
         builder.serviceName(ep.getService().getName());
         builder.endpointName(ep.getEndpointInfo().getName());
 
         if (referenceParameters != null) {
-            for (Element referenceParameter : referenceParameters) {
+            for (final Element referenceParameter : referenceParameters) {
                 builder.referenceParameter(referenceParameter);
             }
         }
@@ -51,7 +51,7 @@ public class EjbMessageContext extends WrappedMessageContext implements Addressi
         return builder.build();
     }
 
-    public <T extends EndpointReference> T getEndpointReference(Class<T> clazz, Element... referenceParameters) {
+    public <T extends EndpointReference> T getEndpointReference(final Class<T> clazz, final Element... referenceParameters) {
         if (W3CEndpointReference.class.isAssignableFrom(clazz)) {
             return clazz.cast(getEndpointReference(referenceParameters));
         } else {

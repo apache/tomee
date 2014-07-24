@@ -67,9 +67,9 @@ public class PojoEndpoint extends CxfEndpoint {
     private final ResourceInjector injector;
     private CreationalContextImpl toClean = null;
 
-    public PojoEndpoint(ClassLoader loader, Bus bus, PortData port, Context context, Class<?> instance,
-                        HTTPTransportFactory httpTransportFactory,
-                        Map<String, Object> bindings, ServiceConfiguration config) {
+    public PojoEndpoint(final ClassLoader loader, final Bus bus, final PortData port, final Context context, final Class<?> instance,
+                        final HTTPTransportFactory httpTransportFactory,
+                        final Map<String, Object> bindings, final ServiceConfiguration config) {
         super(bus, port, context, instance, httpTransportFactory, config);
 
         String bindingURI = null;
@@ -83,7 +83,7 @@ public class PojoEndpoint extends CxfEndpoint {
         serviceFactory.setServiceClass(instance);
 
         // install as first to overwrite annotations (wsdl-file, wsdl-port, wsdl-service)
-        CxfServiceConfiguration configuration = new CxfServiceConfiguration(port);
+        final CxfServiceConfiguration configuration = new CxfServiceConfiguration(port);
         serviceFactory.getConfigurations().add(0, configuration);
 
         service = doServiceCreate();
@@ -113,9 +113,9 @@ public class PojoEndpoint extends CxfEndpoint {
                     try {
                         final Set<Bean<?>> beans = bm.getBeans(instance);
                         final Bean<?> bean = bm.resolve(beans);
-                        CreationalContextImpl creationalContext = bm.createCreationalContext(bean);
+                        final CreationalContextImpl creationalContext = bm.createCreationalContext(bean);
                         if (bean != null) {
-                            Bean<?> oldBean = creationalContext.putBean(bean);
+                            final Bean<?> oldBean = creationalContext.putBean(bean);
                             try {
                                 if (AbstractOwbBean.class.isInstance(bean)) {
                                     final AbstractOwbBean<?> aob = AbstractOwbBean.class.cast(bean);
@@ -195,7 +195,7 @@ public class PojoEndpoint extends CxfEndpoint {
         // configure and inject handlers
         try {
             initHandlers();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new WebServiceException("Error configuring handlers", e);
         }
     }

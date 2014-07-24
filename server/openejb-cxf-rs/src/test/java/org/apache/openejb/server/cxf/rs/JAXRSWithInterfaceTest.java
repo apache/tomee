@@ -24,8 +24,12 @@ import org.apache.openejb.server.cxf.rs.beans.MyFirstRestClass;
 import org.apache.openejb.server.cxf.rs.beans.RestWithInjections;
 import org.apache.openejb.server.cxf.rs.beans.SimpleEJB;
 import org.apache.openejb.testing.Classes;
+import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.Module;
+import org.apache.openejb.testng.PropertiesBuilder;
+import org.apache.openejb.util.NetworkUtil;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -33,6 +37,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Application;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
@@ -40,20 +45,31 @@ import static org.junit.Assert.assertEquals;
 @EnableServices("jax-rs")
 @RunWith(ApplicationComposer.class)
 public class JAXRSWithInterfaceTest {
-    public static final String BASE_URL = "http://localhost:4204/foo/";
+
+    private static int port = -1;
+
+    @BeforeClass
+    public static void beforeClass() {
+        port = NetworkUtil.getNextAvailablePort();
+    }
+
+    @Configuration
+    public Properties props() {
+        return new PropertiesBuilder().p("httpejbd.port", Integer.toString(port)).build();
+    }
 
     @Module
-    @Classes(cdi = true, value = { Impl.class, RestWithInjections.class, SimpleEJB.class, MyExpertRestClass.class, MyFirstRestClass.class })
+    @Classes(cdi = true, value = {Impl.class, RestWithInjections.class, SimpleEJB.class, MyExpertRestClass.class, MyFirstRestClass.class})
     public WebApp war() {
         return new WebApp()
-                .contextRoot("foo")
-                .addServlet("REST Application", Application.class.getName())
-                .addInitParam("REST Application", "javax.ws.rs.Application", InterfaceApp.class.getName());
+            .contextRoot("foo")
+            .addServlet("REST Application", Application.class.getName())
+            .addInitParam("REST Application", "javax.ws.rs.Application", InterfaceApp.class.getName());
     }
 
     @Test
     public void itf() {
-        assertEquals("itf", WebClient.create(BASE_URL).path("itf").get(String.class));
+        assertEquals("itf", WebClient.create("http://localhost:" + port + "/foo/").path("itf").get(String.class));
     }
 
     public static class InterfaceApp extends Application {

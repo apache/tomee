@@ -36,6 +36,7 @@ import java.util.ConcurrentModificationException;
 /**
  * @version $Revision$ $Date$
  */
+@SuppressWarnings("UnusedDeclaration")
 public class OneToManyTests extends AbstractCMRTest {
     private ArtistLocalHome artistLocalHome;
     private SongLocalHome songLocalHome;
@@ -316,13 +317,13 @@ public class OneToManyTests extends AbstractCMRTest {
             try {
                 songs.add(new Object());
                 fail("expected games.add(new Object()) to throw an IllegalArgumentException");
-            } catch (final IllegalArgumentException e) {
+            } catch (final IllegalArgumentException ignored) {
             }
 
             try {
                 songs.addAll(Arrays.asList(new Object()));
                 fail("expected games.addAll(Arrays.asList(new Object())) to throw an IllegalArgumentException");
-            } catch (final IllegalArgumentException expected) {
+            } catch (final IllegalArgumentException ignored) {
             }
         } finally {
             completeTransaction();
@@ -360,28 +361,28 @@ public class OneToManyTests extends AbstractCMRTest {
         try {
             songs.add(newSong);
             fail("expected songs.add(newSong) to throw an IllegalStateException");
-        } catch (final IllegalStateException expected) {
+        } catch (final IllegalStateException ignored) {
         }
         try {
             songs.addAll(Arrays.asList(newSong));
             fail("expected songs.addAll(Arrays.asList(newSong)) to throw an IllegalStateException");
-        } catch (final IllegalStateException expected) {
+        } catch (final IllegalStateException ignored) {
         }
         try {
             songs.remove(newSong);
             fail("expected songs.remove(newSong) to throw an IllegalStateException");
-        } catch (final IllegalStateException expected) {
+        } catch (final IllegalStateException ignored) {
         }
         try {
             songs.removeAll(Arrays.asList(newSong));
             fail("expected songs.removeAll(Arrays.asList(newSong)) to throw an IllegalStateException");
-        } catch (final IllegalStateException expected) {
+        } catch (final IllegalStateException ignored) {
         }
         final Iterator iterator = songs.iterator();
         try {
             iterator.remove();
             fail("expected iterator.remove() to throw an ConcurrentModificationException");
-        } catch (final ConcurrentModificationException expected) {
+        } catch (final ConcurrentModificationException ignored) {
         }
     }
 
@@ -418,28 +419,28 @@ public class OneToManyTests extends AbstractCMRTest {
             try {
                 songs.add(newSong);
                 fail("expected songs.add(newSong) to throw an IllegalStateException");
-            } catch (final IllegalStateException expected) {
+            } catch (final IllegalStateException ignored) {
             }
             try {
                 songs.addAll(Arrays.asList(newSong));
                 fail("expected songs.addAll(Arrays.asList(newSong)) to throw an IllegalStateException");
-            } catch (final IllegalStateException expected) {
+            } catch (final IllegalStateException ignored) {
             }
             try {
                 songs.remove(newSong);
                 fail("expected songs.remove(newSong) to throw an IllegalStateException");
-            } catch (final IllegalStateException expected) {
+            } catch (final IllegalStateException ignored) {
             }
             try {
                 songs.removeAll(Arrays.asList(newSong));
                 fail("expected songs.removeAll(Arrays.asList(newSong)) to throw an IllegalStateException");
-            } catch (final IllegalStateException expected) {
+            } catch (final IllegalStateException ignored) {
             }
             final Iterator iterator = songs.iterator();
             try {
                 iterator.remove();
                 fail("expected iterator.remove() to throw an ConcurrentModificationException");
-            } catch (final ConcurrentModificationException expected) {
+            } catch (final ConcurrentModificationException ignored) {
             }
         } finally {
             completeTransaction();
@@ -464,7 +465,7 @@ public class OneToManyTests extends AbstractCMRTest {
             try {
                 iterator.next();
                 fail("expected iterator.next() to throw an ConcurrentModificationException");
-            } catch (final ConcurrentModificationException expected) {
+            } catch (final ConcurrentModificationException ignored) {
             }
         } finally {
             completeTransaction();
@@ -491,7 +492,7 @@ public class OneToManyTests extends AbstractCMRTest {
             try {
                 iterator.next();
                 fail("expected iterator.next() to throw an ConcurrentModificationException");
-            } catch (final ConcurrentModificationException expected) {
+            } catch (final ConcurrentModificationException ignored) {
             }
         } finally {
             completeTransaction();
@@ -555,7 +556,7 @@ public class OneToManyTests extends AbstractCMRTest {
         close(c);
     }
 
-    private void resetDB() throws Exception {
+    private synchronized void resetDB() throws Exception {
         final Connection connection = ds.getConnection();
         Statement statement = null;
         try {

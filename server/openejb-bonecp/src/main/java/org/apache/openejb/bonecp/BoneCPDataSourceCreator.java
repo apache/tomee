@@ -53,7 +53,7 @@ public class BoneCPDataSourceCreator extends PoolDataSourceCreator {
         try {
             config = new BoneCPConfig(prefixedProps(properties));
             pool = new BoneCP(config);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalArgumentException(e);
         }
         return build(BoneCPDataSourceProvidedPool.class, new BoneCPDataSourceProvidedPool(pool), new Properties());
@@ -75,7 +75,7 @@ public class BoneCPDataSourceCreator extends PoolDataSourceCreator {
                         properties.setProperty("jdbcUrl", newUrl);
                     }
                 }
-            } catch (SQLException ignored) {
+            } catch (final SQLException ignored) {
                 // no-op
             }
         }
@@ -101,7 +101,7 @@ public class BoneCPDataSourceCreator extends PoolDataSourceCreator {
 
         // bonecp expects bonecp prefix in properties
         final Properties prefixedProps = new Properties();
-        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+        for (final Map.Entry<Object, Object> entry : properties.entrySet()) {
             final String suffix = Strings.lcfirst((String) entry.getKey());
             prefixedProps.put("bonecp." + suffix, entry.getValue());
         }
@@ -136,11 +136,12 @@ public class BoneCPDataSourceCreator extends PoolDataSourceCreator {
 
     private static final class BoneCPDataSourceProvidedPool extends BoneCPDataSource {
         private static final Field POOL_FIELD;
+
         static {
             try {
                 POOL_FIELD = BoneCPDataSource.class.getDeclaredField("pool");
                 POOL_FIELD.setAccessible(true);
-            } catch (NoSuchFieldException e) {
+            } catch (final NoSuchFieldException e) {
                 throw new OpenEJBRuntimeException(e);
             }
         }
@@ -148,7 +149,7 @@ public class BoneCPDataSourceCreator extends PoolDataSourceCreator {
         public BoneCPDataSourceProvidedPool(final BoneCP pool) {
             try {
                 POOL_FIELD.set(this, pool);
-            } catch (IllegalAccessException e) {
+            } catch (final IllegalAccessException e) {
                 throw new OpenEJBRuntimeException(e);
             }
         }

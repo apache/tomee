@@ -43,7 +43,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
         try {
             uriString = (props.getProperty("openejb.ejbd.uri", uriString));
             this.defaultServerMetaData = new ServerMetaData(new URI(uriString));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             EjbDaemon.logger.error("Failed to read 'openejb.ejbd.uri': " + uriString, e);
         }
     }
@@ -68,7 +68,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
         Object securityIdentity = null;
         try {
             securityIdentity = call.getEJBRequest().getClientIdentity();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             //Ignore
         }
         final ClientMetaData cMetaData = new ClientMetaData(securityIdentity);
@@ -98,7 +98,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
         Object securityIdentity = null;
         try {
             securityIdentity = call.getEJBRequest().getClientIdentity();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
         final ClientMetaData cMetaData = new ClientMetaData(securityIdentity);
@@ -119,7 +119,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
         Object securityIdentity = null;
         try {
             securityIdentity = call.getEJBRequest().getClientIdentity();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
         final ClientMetaData cMetaData = new ClientMetaData(securityIdentity);
@@ -141,18 +141,18 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
         Object securityIdentity = null;
         try {
             securityIdentity = call.getEJBRequest().getClientIdentity();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
         final ClientMetaData cMetaData = new ClientMetaData(securityIdentity);
         final EJBMetaDataImpl eMetaData = new EJBMetaDataImpl(null, null,
-                                                              beanContext.getPrimaryKeyClass(),
-                                                              beanContext.getComponentType().toString(),
-                                                              beanContext.getDeploymentID().toString(),
-                                                              idCode,
-                                                              convert(info.getInterfaceType()),
-                                                              info.getInterfaces(),
-                                                              beanContext.getAsynchronousMethodSignatures());
+            beanContext.getPrimaryKeyClass(),
+            beanContext.getComponentType().toString(),
+            beanContext.getDeploymentID().toString(),
+            idCode,
+            convert(info.getInterfaceType()),
+            info.getInterfaces(),
+            beanContext.getAsynchronousMethodSignatures());
         eMetaData.loadProperties(beanContext.getProperties());
 
         final Object primKey = info.getPrimaryKey();
@@ -194,7 +194,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
         Object securityIdentity = null;
         try {
             securityIdentity = call.getEJBRequest().getClientIdentity();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
         final ClientMetaData cMetaData = new ClientMetaData(securityIdentity);
@@ -207,14 +207,14 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
 
     private EJBMetaDataImpl buildEjbMetaData(final ProxyInfo info, final BeanContext beanContext, final int idCode) {
         final EJBMetaDataImpl eMetaData = new EJBMetaDataImpl(beanContext.getHomeInterface(),
-                                                              beanContext.getRemoteInterface(),
-                                                              beanContext.getPrimaryKeyClass(),
-                                                              beanContext.getComponentType().toString(),
-                                                              beanContext.getDeploymentID().toString(),
-                                                              idCode,
-                                                              convert(info.getInterfaceType()),
-                                                              info.getInterfaces(),
-                                                              beanContext.getAsynchronousMethodSignatures());
+            beanContext.getRemoteInterface(),
+            beanContext.getPrimaryKeyClass(),
+            beanContext.getComponentType().toString(),
+            beanContext.getDeploymentID().toString(),
+            idCode,
+            convert(info.getInterfaceType()),
+            info.getInterfaces(),
+            beanContext.getAsynchronousMethodSignatures());
         eMetaData.loadProperties(beanContext.getProperties());
         return eMetaData;
     }

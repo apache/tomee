@@ -110,7 +110,7 @@ public class KeepAliveServer implements ServerService {
 
                         try {
                             session.close();
-                        } catch (Throwable e) {
+                        } catch (final Throwable e) {
                             //Ignore
                         } finally {
                             this.removeSession(session);
@@ -140,7 +140,7 @@ public class KeepAliveServer implements ServerService {
             if (l.tryLock()) {
                 try {
                     session.close();
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     //Ignore
                 } finally {
                     this.removeSession(session);
@@ -149,7 +149,7 @@ public class KeepAliveServer implements ServerService {
             } else if (logger.isDebugEnabled()) {
                 try {
                     logger.debug("Allowing graceful shutdown of " + session.socket.getInetAddress());
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     //Ignore
                 }
             }
@@ -246,7 +246,7 @@ public class KeepAliveServer implements ServerService {
                 while (KeepAliveServer.this.running.get()) {
                     try {
                         i = in.read();
-                    } catch (SocketException e) {
+                    } catch (final SocketException e) {
                         // Socket closed.
                         break;
                     }
@@ -276,7 +276,7 @@ public class KeepAliveServer implements ServerService {
                         try {
                             KeepAliveServer.this.service.service(new Input(in), new Output(out));
                             out.flush();
-                        } catch (SocketException e) {
+                        } catch (final SocketException e) {
                             // Socket closed.
                             break;
                         }
@@ -285,9 +285,9 @@ public class KeepAliveServer implements ServerService {
                         l2.unlock();
                     }
                 }
-            } catch (ArrayIndexOutOfBoundsException e) {
+            } catch (final ArrayIndexOutOfBoundsException e) {
                 throw new IOException("Unexpected byte " + i);
-            } catch (InterruptedIOException e) {
+            } catch (final InterruptedIOException e) {
                 Thread.interrupted();
             } finally {
 
@@ -301,7 +301,7 @@ public class KeepAliveServer implements ServerService {
             if (null != in) {
                 try {
                     in.close();
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     //ignore
                 }
             }
@@ -309,7 +309,7 @@ public class KeepAliveServer implements ServerService {
             if (null != out) {
                 try {
                     out.close();
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     //ignore
                 }
             }
@@ -317,7 +317,7 @@ public class KeepAliveServer implements ServerService {
             if (null != socket) {
                 try {
                     socket.close();
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     //ignore
                 }
             }
@@ -366,12 +366,12 @@ public class KeepAliveServer implements ServerService {
         if (this.running.getAndSet(false)) {
             try {
                 this.closeSessions();
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 //Ignore
             }
             try {
                 this.timer.cancel();
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 //Ignore
             }
         }

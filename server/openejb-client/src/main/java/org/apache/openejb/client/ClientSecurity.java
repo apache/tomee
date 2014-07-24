@@ -40,12 +40,12 @@ public class ClientSecurity {
             try {
                 final URI location = new URI(serverUri);
                 server = new ServerMetaData(location);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 if (!serverUri.contains("://")) {
                     try {
                         final URI location = new URI("oejb://" + serverUri);
                         server = new ServerMetaData(location);
-                    } catch (URISyntaxException ignored) {
+                    } catch (final URISyntaxException ignored) {
                     }
                 }
             }
@@ -131,7 +131,7 @@ public class ClientSecurity {
         final AuthenticationResponse authRes;
         try {
             authRes = (AuthenticationResponse) Client.request(authReq, new AuthenticationResponse(), server);
-        } catch (RemoteException e) {
+        } catch (final RemoteException e) {
             throw (FailedLoginException) new FailedLoginException("Unable to authenticate with server " + server).initCause(e);
         }
 
@@ -159,23 +159,23 @@ public class ClientSecurity {
                 final Class identityResolverClass;
                 try {
                     identityResolverClass = finder.findClass(IdentityResolver.class.getName() + "/" + strategy);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     throw new IllegalArgumentException("Could not find client identity strategy '" + strategy + "'");
                 }
 
                 // verify the interface
                 if (!IdentityResolver.class.isAssignableFrom(identityResolverClass)) {
                     throw new IllegalArgumentException("Client identity strategy '" + strategy + "' " +
-                                                       "class '" + identityResolverClass.getName() + "' does not implement the " +
-                                                       "interface '" + IdentityResolver.class.getSimpleName() + "'");
+                        "class '" + identityResolverClass.getName() + "' does not implement the " +
+                        "interface '" + IdentityResolver.class.getSimpleName() + "'");
                 }
 
                 // create the class
                 try {
                     identityResolver = (IdentityResolver) identityResolverClass.newInstance();
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     throw new IllegalArgumentException("Unable to create client identity strategy '" + strategy + "' " +
-                                                       "class '" + identityResolverClass.getName() + "'", e);
+                        "class '" + identityResolverClass.getName() + "'", e);
                 }
             }
 

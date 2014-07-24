@@ -63,24 +63,24 @@ public class StaticFailoverTest extends TestCase {
 
     public void testStatelessBeanTimeout() throws Exception {
 
-        Properties initProps = new Properties();
+        final Properties initProps = new Properties();
         initProps.setProperty("openejb.deployments.classpath.include", "");
         initProps.setProperty("openejb.deployments.classpath.filter.descriptors", "true");
         OpenEJB.init(initProps, new ServerFederation());
 
         System.setProperty(org.apache.openejb.client.SocketConnectionFactory.PROPERTY_POOL_SIZE, "" + 20);
 
-        EjbServer ejbServer = new EjbServer();
+        final EjbServer ejbServer = new EjbServer();
         ejbServer.init(new Properties());
 
         daemons.add(createServiceDaemon(20, ejbServer, red));
         daemons.add(createServiceDaemon(20, ejbServer, blue));
 
-        ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
+        final ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
 
         // containers
-        StatelessSessionContainerInfo statelessContainerInfo = config.configureService(StatelessSessionContainerInfo.class);
+        final StatelessSessionContainerInfo statelessContainerInfo = config.configureService(StatelessSessionContainerInfo.class);
         statelessContainerInfo.properties.setProperty("TimeOut", "100");
         statelessContainerInfo.properties.setProperty("PoolSize", "" + 10);
         statelessContainerInfo.properties.setProperty("MinSize", "2");
@@ -89,13 +89,13 @@ public class StaticFailoverTest extends TestCase {
 
         // Setup the descriptor information
 
-        StatelessBean bean = new StatelessBean(CounterBean.class);
+        final StatelessBean bean = new StatelessBean(CounterBean.class);
         bean.addBusinessLocal(Counter.class.getName());
         bean.addBusinessRemote(RemoteCounter.class.getName());
         bean.addPostConstruct("init");
         bean.addPreDestroy("destroy");
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(bean);
 
         CounterBean.instances.set(0);
@@ -105,10 +105,10 @@ public class StaticFailoverTest extends TestCase {
         failoverURI += "ejbd://127.0.0.1:" + daemons.get(0).getPort() + "?red,";
         failoverURI += "ejbd://127.0.0.1:" + daemons.get(1).getPort() + "?blue";
 
-        Properties props = new Properties();
+        final Properties props = new Properties();
         props.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
         props.put("java.naming.provider.url", failoverURI);
-        Context context = new InitialContext(props);
+        final Context context = new InitialContext(props);
         counter = (Counter) context.lookup("CounterBeanRemote");
 
         System.out.println(counter.hit());
@@ -127,7 +127,7 @@ public class StaticFailoverTest extends TestCase {
     protected void tearDown() throws Exception {
         super.tearDown();
 
-        for (ServiceDaemon daemon : daemons) {
+        for (final ServiceDaemon daemon : daemons) {
             daemon.stop();
         }
 
@@ -136,11 +136,11 @@ public class StaticFailoverTest extends TestCase {
 
     private final List<ServiceDaemon> daemons = new ArrayList<ServiceDaemon>();
 
-    private ServiceDaemon createServiceDaemon(int poolSize, EjbServer ejbServer, URI uri) throws ServiceException {
-        ServiceIdentifier serviceIdentifier = new ServiceIdentifier(ejbServer, uri);
-        KeepAliveServer keepAliveServer = new KeepAliveServer(serviceIdentifier);
-        ServicePool pool = new ServicePool(keepAliveServer, poolSize);
-        ServiceDaemon daemon = new ServiceDaemon(pool, 0, "localhost");
+    private ServiceDaemon createServiceDaemon(final int poolSize, final EjbServer ejbServer, final URI uri) throws ServiceException {
+        final ServiceIdentifier serviceIdentifier = new ServiceIdentifier(ejbServer, uri);
+        final KeepAliveServer keepAliveServer = new KeepAliveServer(serviceIdentifier);
+        final ServicePool pool = new ServicePool(keepAliveServer, poolSize);
+        final ServiceDaemon daemon = new ServiceDaemon(pool, 0, "localhost");
         daemon.start();
         return daemon;
     }
@@ -151,13 +151,13 @@ public class StaticFailoverTest extends TestCase {
 
         private final URI me;
 
-        public ServiceIdentifier(ServerService service, URI me) {
+        public ServiceIdentifier(final ServerService service, final URI me) {
             super(service);
             this.me = me;
         }
 
         @Override
-        public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
+        public void service(final InputStream in, final OutputStream out) throws ServiceException, IOException {
             synchronized (hits) {
                 hits.add(me);
             }
@@ -172,7 +172,7 @@ public class StaticFailoverTest extends TestCase {
 
     public static Object lock = new Object[]{};
 
-    private static void comment(String x) {
+    private static void comment(final String x) {
         //        synchronized(lock){
         //            System.out.println(x);
         //            System.out.flush();
@@ -207,13 +207,13 @@ public class StaticFailoverTest extends TestCase {
         }
 
         public URI hit() {
-            URI uri = host.get();
+            final URI uri = host.get();
 
             if (hold.contains(uri)) {
                 try {
                     paused.countDown();
                     resume.await();
-                } catch (InterruptedException e) {
+                } catch (final InterruptedException e) {
                     Thread.interrupted();
                 }
             }

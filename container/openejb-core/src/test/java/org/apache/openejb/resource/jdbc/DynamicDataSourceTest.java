@@ -17,6 +17,7 @@
  */
 package org.apache.openejb.resource.jdbc;
 
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.ResourceInfo;
@@ -37,6 +38,7 @@ import org.apache.openejb.jee.jpa.unit.TransactionType;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.resource.jdbc.router.Router;
 import org.apache.openejb.spi.ContainerSystem;
+import org.junit.After;
 import org.junit.Test;
 
 import javax.ejb.Local;
@@ -64,6 +66,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import static org.junit.Assert.assertEquals;
 
 public class DynamicDataSourceTest {
+
+    @After
+    public void tearDown() throws Exception {
+        OpenEJB.destroy();
+    }
 
     @Test
     public void route() throws Exception {
@@ -240,7 +247,7 @@ public class DynamicDataSourceTest {
         private String dataSourceNames;
         private String defaultDataSourceName;
         private Map<String, DataSource> dataSources = null;
-        private ThreadLocal<DataSource> currentDataSource = new ThreadLocal<DataSource>();
+        private final ThreadLocal<DataSource> currentDataSource = new ThreadLocal<DataSource>();
 
         /**
          * @param datasourceList datasource resource name, separator is a space

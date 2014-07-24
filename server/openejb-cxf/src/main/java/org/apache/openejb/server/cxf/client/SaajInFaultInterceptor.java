@@ -23,14 +23,14 @@ import org.apache.cxf.phase.Phase;
 import org.apache.openejb.server.webservices.saaj.SaajUniverse;
 
 public class SaajInFaultInterceptor extends SaajInterceptor {
-    public SaajInFaultInterceptor(SaajUniverse universe) {
+    public SaajInFaultInterceptor(final SaajUniverse universe) {
         super(Phase.RECEIVE, universe);
     }
 
-    public void handleMessage(Message arg0) throws Fault {
+    public void handleMessage(final Message arg0) throws Fault {
     }
 
-    public void handleFault(Message msg) {
+    public void handleFault(final Message msg) {
         this.universe.unset();
     }
 }

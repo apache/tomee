@@ -23,49 +23,49 @@ public class EchoBean implements Echo {
     public void echoVoid() {
     }
 
-    public int echoInt(int in) {
+    public int echoInt(final int in) {
         return in;
     }
 
-    public double echoDouble(double in) {
+    public double echoDouble(final double in) {
         return in;
     }
 
-    public float echoFloat(float in) {
+    public float echoFloat(final float in) {
         return in;
     }
 
-    public boolean echoBoolean(boolean in) {
+    public boolean echoBoolean(final boolean in) {
         return in;
     }
 
-    public String echoString(String in) {
+    public String echoString(final String in) {
         return in;
     }
 
-    public short echoShort(short in) {
+    public short echoShort(final short in) {
         return in;
     }
 
-    public long echoLong(long in) {
+    public long echoLong(final long in) {
         return in;
     }
 
-    public char echoChar(char in) {
+    public char echoChar(final char in) {
         return in;
     }
 
-    public byte[] echoBytes(byte[] in) {
+    public byte[] echoBytes(final byte[] in) {
         return in;
     }
 
     public void echoEvoid() {
     }
 
-    public EchoStruct echoStruct(EchoStruct in) {
+    public EchoStruct echoStruct(final EchoStruct in) {
         return in;
     }
-    
+
 //	public EchoStruct[] echoAStruct(EchoStruct[] in){
 //		return in;
 //	}
@@ -79,6 +79,6 @@ public class EchoBean implements Echo {
     public void ejbRemove() throws javax.ejb.EJBException, java.rmi.RemoteException {
     }
 
-    public void setSessionContext(javax.ejb.SessionContext arg0) throws javax.ejb.EJBException, java.rmi.RemoteException {
+    public void setSessionContext(final javax.ejb.SessionContext arg0) throws javax.ejb.EJBException, java.rmi.RemoteException {
     }
 }

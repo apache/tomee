@@ -32,66 +32,66 @@ import java.rmi.Remote;
 import java.util.Iterator;
 import java.util.Map;
 
-public class ServiceImpl implements javax.xml.rpc.Service{
+public class ServiceImpl implements javax.xml.rpc.Service {
     private final Service delegate;
     private final Map seiClassNameToFactoryMap;
     private final Map portToImplementationMap;
 
-    public ServiceImpl(Map portToImplementationMap, Map seiClassNameToFactoryMap) {
+    public ServiceImpl(final Map portToImplementationMap, final Map seiClassNameToFactoryMap) {
         this.portToImplementationMap = portToImplementationMap;
         this.seiClassNameToFactoryMap = seiClassNameToFactoryMap;
 
-        TypeMappingRegistryImpl typeMappingRegistry = new TypeMappingRegistryImpl();
+        final TypeMappingRegistryImpl typeMappingRegistry = new TypeMappingRegistryImpl();
         typeMappingRegistry.doRegisterFromVersion("1.3");
 
-        SimpleProvider engineConfiguration = new SimpleProvider(typeMappingRegistry);
+        final SimpleProvider engineConfiguration = new SimpleProvider(typeMappingRegistry);
         engineConfiguration.deployTransport("http", new SimpleTargetedChain(new HTTPSender()));
 
-        AxisClientImpl engine = new AxisClientImpl(engineConfiguration, this.portToImplementationMap);
+        final AxisClientImpl engine = new AxisClientImpl(engineConfiguration, this.portToImplementationMap);
 
         delegate = new Service(engineConfiguration, engine);
     }
 
-    public Remote getPort(QName qName, Class portClass) throws ServiceException {
+    public Remote getPort(final QName qName, final Class portClass) throws ServiceException {
         if (qName != null) {
-            String portName = qName.getLocalPart();
-            Remote port = internalGetPort(portName);
+            final String portName = qName.getLocalPart();
+            final Remote port = internalGetPort(portName);
             return port;
         }
         return getPort(portClass);
     }
 
-    public Remote getPort(Class portClass) throws ServiceException {
-        String fqcn = portClass.getName();
-        Remote port = internalGetPortFromClassName(fqcn);
+    public Remote getPort(final Class portClass) throws ServiceException {
+        final String fqcn = portClass.getName();
+        final Remote port = internalGetPortFromClassName(fqcn);
         return port;
     }
 
-    public Call[] getCalls(QName portName) throws ServiceException {
+    public Call[] getCalls(final QName portName) throws ServiceException {
 
         if (portName == null) throw new ServiceException("Portname cannot be null");
 
-        SeiFactory factory = (SeiFactory) portToImplementationMap.get(portName.getLocalPart());
+        final SeiFactory factory = (SeiFactory) portToImplementationMap.get(portName.getLocalPart());
         if (factory == null) throw new ServiceException("No port for portname: " + portName);
 
-        OperationInfo[] operationInfos = factory.getOperationInfos();
-        javax.xml.rpc.Call[] array = new javax.xml.rpc.Call[operationInfos.length];
+        final OperationInfo[] operationInfos = factory.getOperationInfos();
+        final javax.xml.rpc.Call[] array = new javax.xml.rpc.Call[operationInfos.length];
         for (int i = 0; i < operationInfos.length; i++) {
-            OperationInfo operation = operationInfos[i];
+            final OperationInfo operation = operationInfos[i];
             array[i] = delegate.createCall(factory.getPortQName(), operation.getOperationName());
         }
         return array;
     }
 
-    public Call createCall(QName qName) throws ServiceException {
+    public Call createCall(final QName qName) throws ServiceException {
         return delegate.createCall(qName);
     }
 
-    public Call createCall(QName qName, QName qName1) throws ServiceException {
+    public Call createCall(final QName qName, final QName qName1) throws ServiceException {
         return delegate.createCall(qName, qName1);
     }
 
-    public Call createCall(QName qName, String s) throws ServiceException {
+    public Call createCall(final QName qName, final String s) throws ServiceException {
         return delegate.createCall(qName, s);
     }
 
@@ -100,9 +100,9 @@ public class ServiceImpl implements javax.xml.rpc.Service{
     }
 
     public QName getServiceName() {
-        Iterator iterator = portToImplementationMap.values().iterator();
+        final Iterator iterator = portToImplementationMap.values().iterator();
         if (!iterator.hasNext()) return null;
-        SeiFactory factory = (SeiFactory) iterator.next();
+        final SeiFactory factory = (SeiFactory) iterator.next();
         return factory.getServiceName();
     }
 
@@ -111,9 +111,9 @@ public class ServiceImpl implements javax.xml.rpc.Service{
     }
 
     public URL getWSDLDocumentLocation() {
-        Iterator iterator = portToImplementationMap.values().iterator();
+        final Iterator iterator = portToImplementationMap.values().iterator();
         if (!iterator.hasNext()) return null;
-        SeiFactory factory = (SeiFactory) iterator.next();
+        final SeiFactory factory = (SeiFactory) iterator.next();
         return factory.getWSDLDocumentLocation();
     }
 
@@ -126,19 +126,19 @@ public class ServiceImpl implements javax.xml.rpc.Service{
         throw new UnsupportedOperationException();
     }
 
-    Remote internalGetPort(String portName) throws ServiceException {
+    Remote internalGetPort(final String portName) throws ServiceException {
         if (portToImplementationMap.containsKey(portName)) {
-            SeiFactory seiFactory = (SeiFactory) portToImplementationMap.get(portName);
-            Remote port = seiFactory.createServiceEndpoint();
+            final SeiFactory seiFactory = (SeiFactory) portToImplementationMap.get(portName);
+            final Remote port = seiFactory.createServiceEndpoint();
             return port;
         }
         throw new ServiceException("No port for portname: " + portName);
     }
 
-    Remote internalGetPortFromClassName(String className) throws ServiceException {
+    Remote internalGetPortFromClassName(final String className) throws ServiceException {
         if (seiClassNameToFactoryMap.containsKey(className)) {
-            SeiFactory seiFactory = (SeiFactory) seiClassNameToFactoryMap.get(className);
-            Remote port = seiFactory.createServiceEndpoint();
+            final SeiFactory seiFactory = (SeiFactory) seiClassNameToFactoryMap.get(className);
+            final Remote port = seiFactory.createServiceEndpoint();
             return port;
         }
         throw new ServiceException("no port for class " + className);

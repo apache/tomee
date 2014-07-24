@@ -19,11 +19,12 @@
 
 <!-- $Rev$ $Date$ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>server</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.7.0</version>
+    <version>4.7.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-ejbd</artifactId>
@@ -61,7 +62,10 @@
           <forkMode>pertest</forkMode>
           <!-- DEBUG: Uncomment this line and comment out the next -->
           <!--<argLine>-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -javaagent:${project.build.directory}/openejb-javaagent-${version}.jar=foo=bar</argLine>-->
-          <argLine>"-javaagent:${project.build.directory}/openejb-javaagent-${project.version}.jar=foo=bar" -Dopenejb.classloader.forced-skip=org.apache.openejb.jee.,org.apache.openejb.api. -Dopenejb.classloader.forced-load=org.apache.openejb</argLine>
+          <argLine>"-javaagent:${project.build.directory}/openejb-javaagent-${project.version}.jar=foo=bar"
+            -Dopenejb.classloader.forced-skip=org.apache.openejb.jee.,org.apache.openejb.api.
+            -Dopenejb.classloader.forced-load=org.apache.openejb
+          </argLine>
           <!-- 
           <systemProperties>
             <property>

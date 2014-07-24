@@ -57,7 +57,7 @@ public class RemoteiTest extends org.apache.openejb.test.TestSuite {
     }
 
     public static Test suite() {
-        TestSuite suite = new RemoteiTest();
+        final TestSuite suite = new RemoteiTest();
         suite.addTest(SingletonTestSuite.suite());
         suite.addTest(StatelessTestSuite.suite());
         suite.addTest(StatefulTestSuite.suite());
@@ -72,9 +72,9 @@ public class RemoteiTest extends org.apache.openejb.test.TestSuite {
         private ServiceDaemon serviceDaemon;
         private int port;
 
-        public void init(Properties props) {
+        public void init(final Properties props) {
             try {
-                EjbServer ejbServer = new EjbServer();
+                final EjbServer ejbServer = new EjbServer();
                 // classpath should be scanned...
                 props.put("openejb.deployments.classpath", "true");
                 // ...and only the openejb-itests-beans should be considered as a deployment
@@ -87,7 +87,7 @@ public class RemoteiTest extends org.apache.openejb.test.TestSuite {
 
                 serviceDaemon = new ServiceDaemon(ejbServer, 0, "localhost");
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new RuntimeException("Unable to initialize Test Server.", e);
             }
         }
@@ -96,7 +96,7 @@ public class RemoteiTest extends org.apache.openejb.test.TestSuite {
             try {
                 serviceDaemon.start();
                 port = serviceDaemon.getPort();
-            } catch (ServiceException e) {
+            } catch (final ServiceException e) {
                 throw new RuntimeException("Unable to start Test Server.", e);
             }
         }
@@ -104,13 +104,13 @@ public class RemoteiTest extends org.apache.openejb.test.TestSuite {
         public void stop() {
             try {
                 serviceDaemon.stop();
-            } catch (ServiceException e) {
+            } catch (final ServiceException e) {
                 throw new RuntimeException("Unable to stop Test Server.", e);
             }
         }
 
         public Properties getContextEnvironment() {
-            Properties props = new Properties();
+            final Properties props = new Properties();
             props.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
             props.put(Context.PROVIDER_URL, "ejbd://localhost:" + port);
             return props;

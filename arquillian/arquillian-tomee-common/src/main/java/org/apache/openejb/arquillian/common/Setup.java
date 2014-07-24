@@ -342,6 +342,27 @@ public class Setup {
         Files.delete(destination);
     }
 
+    public static void addTomEELibraries(final File tomeeHome, final String additionalLibs) {
+        if (additionalLibs == null) {
+            return;
+        }
+        final String libs = additionalLibs.trim();
+        if (libs.isEmpty()) {
+            return;
+        }
+
+        final File libFolder = new File(tomeeHome, "lib");
+        for (final String lib : libs.split("\n")) {
+            final String location = ProvisioningUtil.realLocation(lib.trim());
+            final File from = new File(location);
+            try {
+                org.apache.openejb.loader.IO.copy(from, new File(libFolder, from.getName()));
+            } catch (final IOException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+    }
+
     private static class DirectFileOnlyFilter implements FileFilter {
         private final File accepted;
 

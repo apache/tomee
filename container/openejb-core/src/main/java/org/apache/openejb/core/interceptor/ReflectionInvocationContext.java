@@ -189,8 +189,7 @@ public class ReflectionInvocationContext implements InvocationContext {
 
         public Object invoke() throws Exception {
 
-            final Object value = method.invoke(target, args);
-            return value;
+            return method.invoke(target, args);
         }
 
 
@@ -224,8 +223,7 @@ public class ReflectionInvocationContext implements InvocationContext {
             super.invoke();
 
             // we need to call proceed so callbacks in subclasses get invoked
-            final Object value = invocationContext.proceed();
-            return value;
+            return invocationContext.proceed();
         }
     }
 

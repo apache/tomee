@@ -31,16 +31,16 @@ public class RoundRobinConnectionStrategyIteratorTest {
     @Test
     public void test() throws Exception {
         final URI[] uris = uris(
-                                   "one://localhost:1243",
-                                   "two://localhost:1243",
-                                   "three://localhost:1243",
-                                   "four://localhost:1243");
+            "one://localhost:1243",
+            "two://localhost:1243",
+            "three://localhost:1243",
+            "four://localhost:1243");
 
-        ClusterMetaData cluster = new ClusterMetaData(System.currentTimeMillis(), uris);
-        Iterable<URI> iterable = new RoundRobinConnectionStrategy().createIterable(cluster);
+        final ClusterMetaData cluster = new ClusterMetaData(System.currentTimeMillis(), uris);
+        final Iterable<URI> iterable = new RoundRobinConnectionStrategy().createIterable(cluster);
 
         {
-            Iterator<URI> iterator = iterable.iterator();
+            final Iterator<URI> iterator = iterable.iterator();
             Assert.assertTrue(iterator.hasNext());
             Assert.assertEquals(uris[0], iterator.next());
             Assert.assertTrue(iterator.hasNext());
@@ -54,17 +54,17 @@ public class RoundRobinConnectionStrategyIteratorTest {
             try {
                 iterator.next();
                 Assert.fail("Expected NoSuchElementException");
-            } catch (NoSuchElementException e) {
+            } catch (final NoSuchElementException e) {
                 // pass
             }
         }
 
         {
-            Iterator<URI> prep = iterable.iterator();
+            final Iterator<URI> prep = iterable.iterator();
             prep.next();
             prep.next();
 
-            Iterator<URI> iterator = iterable.iterator();
+            final Iterator<URI> iterator = iterable.iterator();
             Assert.assertEquals(uris[2], iterator.next());
             Assert.assertEquals(uris[3], iterator.next());
             Assert.assertEquals(uris[0], iterator.next());
@@ -73,7 +73,7 @@ public class RoundRobinConnectionStrategyIteratorTest {
 
     }
 
-    private URI[] uris(String... strings) {
+    private URI[] uris(final String... strings) {
         final URI[] uris = new URI[strings.length];
 
         for (int i = 0; i < strings.length; i++) {

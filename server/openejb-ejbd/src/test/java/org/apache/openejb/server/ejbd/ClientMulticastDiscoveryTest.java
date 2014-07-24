@@ -174,7 +174,7 @@ public class ClientMulticastDiscoveryTest extends TestCase {
             try {
                 uri = new URI("ejb:ejbd://localhost:" + getPort() + "/" + host);
                 agent.registerService(uri);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new ServiceException(e);
             }
         }
@@ -184,7 +184,7 @@ public class ClientMulticastDiscoveryTest extends TestCase {
             super.stop();
             try {
                 agent.unregisterService(uri);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new ServiceException(e);
             }
         }

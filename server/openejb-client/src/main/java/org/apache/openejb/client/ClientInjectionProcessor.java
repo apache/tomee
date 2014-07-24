@@ -93,19 +93,19 @@ public class ClientInjectionProcessor<T> {
                 final String jndiName = injection.getJndiName();
                 final Object object = context.lookup("java:comp/env/" + jndiName);
                 values.put(injection, object);
-            } catch (NamingException e) {
+            } catch (final NamingException e) {
                 logger.warning("Injection data not found in JNDI context: jndiName='" +
-                               injection.getJndiName() +
-                               "', target=" +
-                               injection.getTargetClass() +
-                               "/" +
-                               injection.getName());
+                    injection.getJndiName() +
+                    "', target=" +
+                    injection.getTargetClass() +
+                    "/" +
+                    injection.getName());
             }
         }
 
         try {
             instance = beanClass.newInstance();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException("Error while creating bean " + beanClass.getName(), e);
         }
 
@@ -188,7 +188,7 @@ public class ClientInjectionProcessor<T> {
             final String className = callback.getClassName();
             final Class<?> clazz = classLoader.loadClass(className);
             return clazz.getDeclaredMethod(callback.getMethod());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return null;
         }
     }
@@ -200,7 +200,7 @@ public class ClientInjectionProcessor<T> {
                 propertyValue = convert(method.getParameterTypes()[0], propertyValue);
                 method.invoke(instance, propertyValue);
                 return true;
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 return false;
             }
         }
@@ -211,7 +211,7 @@ public class ClientInjectionProcessor<T> {
                 propertyValue = convert(field.getType(), propertyValue);
                 field.set(instance, propertyValue);
                 return true;
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 return false;
             }
         }
@@ -383,7 +383,7 @@ public class ClientInjectionProcessor<T> {
      *
      * @param type The target object class of the property.
      * @return The resolved editor, if any.  Returns null if a suitable editor
-     *         could not be located.
+     * could not be located.
      */
     private static PropertyEditor findEditor(final Class type) {
         if (type == null) {
@@ -405,7 +405,7 @@ public class ClientInjectionProcessor<T> {
     private Class<?> loadClass(final String targetClass) {
         try {
             return classLoader.loadClass(targetClass);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             return null;
         }
     }

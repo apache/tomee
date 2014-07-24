@@ -17,11 +17,11 @@
 package org.apache.openejb.server.rest;
 
 public class OpenEJBRestRuntimeException extends RuntimeException {
-    public OpenEJBRestRuntimeException(String message) {
+    public OpenEJBRestRuntimeException(final String message) {
         super(message);
     }
 
-    public OpenEJBRestRuntimeException(String message, Throwable cause) {
+    public OpenEJBRestRuntimeException(final String message, final Throwable cause) {
         super(message, cause);
     }
 }

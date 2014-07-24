@@ -20,6 +20,7 @@ package org.apache.openejb.server.cxf.rs;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.config.DeploymentFilterable;
+import org.apache.openejb.util.NetworkUtil;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -36,10 +37,14 @@ import static org.junit.Assert.assertEquals;
 public class PathParamAtClassLevelTest {
     private static EJBContainer container;
 
+    private static int port = -1;
+
     @BeforeClass
     public static void start() throws Exception {
-        Properties properties = new Properties();
+        port = NetworkUtil.getNextAvailablePort();
+        final Properties properties = new Properties();
         properties.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*openejb-cxf-rs.*");
+        properties.setProperty("httpejbd.port", Integer.toString(port));
         properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
         container = EJBContainer.createEJBContainer(properties);
     }
@@ -53,7 +58,7 @@ public class PathParamAtClassLevelTest {
 
     @Test
     public void rest() {
-        String response = WebClient.create("http://localhost:4204/openejb-cxf-rs").path("/match/openejb/test/normal").get(String.class);
+        final String response = WebClient.create("http://localhost:" + port + "/openejb-cxf-rs").path("/match/openejb/test/normal").get(String.class);
         assertEquals("openejb", response);
     }
 
@@ -62,7 +67,7 @@ public class PathParamAtClassLevelTest {
     public static class DoesItMatchWithPathParamAtClassLevel {
         @Path("/normal")
         @GET
-        public String normal(@PathParam("name") String name) {
+        public String normal(@PathParam("name") final String name) {
             return name;
         }
     }

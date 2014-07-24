@@ -30,7 +30,7 @@ public class ScriptCommand extends AbstractCommand {
             parse(cmd);
             final Object result = scripter.evaluate(language, script);
             streamManager.writeOut(streamManager.asString(result));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             streamManager.writeErr(e);
         }
     }
@@ -44,7 +44,7 @@ public class ScriptCommand extends AbstractCommand {
         script = parseableCmd.substring(spaceIdx + 1, parseableCmd.length());
     }
 
-    public void setScripter(OpenEJBScripter scripter) {
+    public void setScripter(final OpenEJBScripter scripter) {
         this.scripter = scripter;
     }
 }

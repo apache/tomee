@@ -26,17 +26,17 @@ import java.net.URI;
 public class ConnectionManagerTest extends TestCase {
 
     public void testRegisterFactory() throws Exception {
-        MockConnectionFactory connectionFactory = new MockConnectionFactory();
+        final MockConnectionFactory connectionFactory = new MockConnectionFactory();
         ConnectionManager.registerFactory("mock", connectionFactory);
 
-        Connection connection = ConnectionManager.getConnection(new URI("mock://foo"));
+        final Connection connection = ConnectionManager.getConnection(new URI("mock://foo"));
 
         assertTrue(connection instanceof MockConnection);
     }
 
     public static class MockConnectionFactory implements ConnectionFactory {
 
-        public Connection getConnection(URI uri) throws IOException {
+        public Connection getConnection(final URI uri) throws IOException {
             return new MockConnection();
         }
 

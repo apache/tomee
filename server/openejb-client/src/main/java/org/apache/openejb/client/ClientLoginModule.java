@@ -76,11 +76,11 @@ public class ClientLoginModule implements LoginModule {
         URI location = null;
         try {
             location = new URI(serverUri);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             if (!serverUri.contains("://")) {
                 try {
                     location = new URI("foo://" + serverUri);
-                } catch (URISyntaxException giveUp) {
+                } catch (final URISyntaxException giveUp) {
                     throw new LoginException("Invalid openejb.server.uri " + serverUri);
                 }
             }
@@ -95,9 +95,9 @@ public class ClientLoginModule implements LoginModule {
         // get the call back values (username and password)
         try {
             callbackHandler.handle(callbacks);
-        } catch (IOException ioe) {
+        } catch (final IOException ioe) {
             throw new LoginException(ioe.getMessage());
-        } catch (UnsupportedCallbackException uce) {
+        } catch (final UnsupportedCallbackException uce) {
             throw new LoginException(uce.getMessage() + " not available to obtain information from user");
         }
         user = ((NameCallback) callbacks[0]).getName();

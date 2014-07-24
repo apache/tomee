@@ -142,7 +142,7 @@ public abstract class ServiceManager {
                     if (org.apache.xbean.recipe.ReflectionUtil.findStaticFactory(serviceClass, "createServerService", null, null) != null) {
                         recipe = new ObjectRecipe(serviceClass, "createServerService");
                     }
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     //Ignore
                 }
 
@@ -169,7 +169,7 @@ public abstract class ServiceManager {
                 }
 
                 return service;
-            } catch (Throwable t) {
+            } catch (final Throwable t) {
                 t.printStackTrace();
                 logger.error("service.instantiation.err", t, serviceClass.getName(), t.getClass().getName(), t.getMessage());
             }
@@ -192,7 +192,7 @@ public abstract class ServiceManager {
                 server.unregisterMBean(on);
             }
             server.registerMBean(new ManagedMBean(service), on);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error("Unable to register MBean ", e);
         }
     }
@@ -226,9 +226,9 @@ public abstract class ServiceManager {
                     public boolean accept(final File dir, String name) {
                         name = name.toLowerCase();
                         return name.equals("ejbd.properties")
-                               || name.equals("ejbds.properties")
-                               || name.equals("admin.properties")
-                               || name.equals("httpejbd.properties");
+                            || name.equals("ejbds.properties")
+                            || name.equals("admin.properties")
+                            || name.equals("httpejbd.properties");
                     }
                 });
 

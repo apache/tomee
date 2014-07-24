@@ -47,7 +47,7 @@ public class MulticastConnectionFactory implements ConnectionFactory {
         final Map<String, String> params;
         try {
             params = URIs.parseParamters(uri);
-        } catch (URISyntaxException e) {
+        } catch (final URISyntaxException e) {
             throw new IllegalArgumentException("Invalid multicast uri " + uri.toString(), e);
         }
 
@@ -71,9 +71,9 @@ public class MulticastConnectionFactory implements ConnectionFactory {
         try {
             serviceURI = unwrap(serviceURI); // cut group:
             serviceURI = unwrap(serviceURI); // cut ejb:
-        } catch (URISyntaxException e) {
+        } catch (final URISyntaxException e) {
             throw new IllegalArgumentException("Invalid ejb service uri " + serviceURI.toString(), e);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalArgumentException("Invalid ejb service uri " + serviceURI.toString(), e);
         }
 
@@ -129,7 +129,7 @@ public class MulticastConnectionFactory implements ConnectionFactory {
                     }
                 }
                 return rc;
-            } catch (UnsupportedEncodingException e) {
+            } catch (final UnsupportedEncodingException e) {
                 throw (URISyntaxException) new URISyntaxException(e.toString(), "Invalid encoding").initCause(e);
             }
         }
@@ -176,7 +176,7 @@ public class MulticastConnectionFactory implements ConnectionFactory {
                 if (schemes.contains(service.getScheme())) {
                     return true;
                 }
-            } catch (URISyntaxException e) {
+            } catch (final URISyntaxException e) {
                 // not the uri we're looking for.
             }
             return false;

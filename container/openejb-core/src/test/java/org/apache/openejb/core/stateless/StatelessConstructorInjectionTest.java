@@ -17,6 +17,7 @@
 package org.apache.openejb.core.stateless;
 
 import junit.framework.TestCase;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
@@ -76,6 +77,11 @@ public class StatelessConstructorInjectionTest extends TestCase {
 
         assembler.createApplication(config.configureApplication(new EjbModule(ejbJar).withCdi()));
 
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        OpenEJB.destroy();
     }
 
     public static interface Foo {

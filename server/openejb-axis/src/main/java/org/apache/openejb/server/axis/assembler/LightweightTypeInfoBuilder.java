@@ -35,27 +35,27 @@ public class LightweightTypeInfoBuilder {
     private final XmlSchemaInfo schemaInfo;
     private final ClassLoader classLoader;
 
-    public LightweightTypeInfoBuilder(JavaWsdlMapping mapping, XmlSchemaInfo schemaInfo, ClassLoader classLoader) {
+    public LightweightTypeInfoBuilder(final JavaWsdlMapping mapping, final XmlSchemaInfo schemaInfo, final ClassLoader classLoader) {
         this.mapping = mapping;
         this.classLoader = classLoader;
         this.schemaInfo = schemaInfo;
     }
 
     public List<JaxRpcTypeInfo> buildTypeInfo() throws OpenEJBException {
-        List<JaxRpcTypeInfo> typeInfoList = new ArrayList<JaxRpcTypeInfo>();
+        final List<JaxRpcTypeInfo> typeInfoList = new ArrayList<JaxRpcTypeInfo>();
 
-        for (XmlTypeInfo xmlTypeInfo : schemaInfo.types.values()) {
+        for (final XmlTypeInfo xmlTypeInfo : schemaInfo.types.values()) {
             // skip anonymous elements
             if (!xmlTypeInfo.anonymous) {
-                QName typeQName = xmlTypeInfo.qname;
-                Class clazz = loadClass(typeQName, mapping);
+                final QName typeQName = xmlTypeInfo.qname;
+                final Class clazz = loadClass(typeQName, mapping);
 
                 JaxRpcTypeInfo.SerializerType serializerType = JaxRpcTypeInfo.SerializerType.OTHER;
                 if (clazz.isArray()) {
                     serializerType = JaxRpcTypeInfo.SerializerType.ARRAY;
                 }
 
-                JaxRpcTypeInfo typeInfo = new JaxRpcTypeInfo();
+                final JaxRpcTypeInfo typeInfo = new JaxRpcTypeInfo();
                 typeInfo.qname = typeQName;
                 typeInfo.javaType = clazz.getName();
                 typeInfo.serializerType = serializerType;
@@ -70,26 +70,26 @@ public class LightweightTypeInfoBuilder {
         return typeInfoList;
     }
 
-    private void mapFields(Class javaClass, XmlTypeInfo xmlTypeInfo, JaxRpcTypeInfo typeInfo) throws OpenEJBException {
+    private void mapFields(final Class javaClass, final XmlTypeInfo xmlTypeInfo, final JaxRpcTypeInfo typeInfo) throws OpenEJBException {
         // Map JavaBean property name to propertyType
-        Map<String, Class> propertyToClass = new HashMap<String, Class>();
+        final Map<String, Class> propertyToClass = new HashMap<String, Class>();
         try {
-            for (PropertyDescriptor descriptor : Introspector.getBeanInfo(javaClass).getPropertyDescriptors()) {
+            for (final PropertyDescriptor descriptor : Introspector.getBeanInfo(javaClass).getPropertyDescriptors()) {
                 propertyToClass.put(descriptor.getName(), descriptor.getPropertyType());
             }
-        } catch (IntrospectionException e) {
+        } catch (final IntrospectionException e) {
             throw new OpenEJBException("Class " + javaClass + " is not a valid javabean", e);
         }
 
         // Map the elements nexted in the XML Schema Type
-        for (XmlElementInfo nestedElement : xmlTypeInfo.elements.values()) {
-            String fieldName = nestedElement.qname.getLocalPart();
-            Class javaType = propertyToClass.get(fieldName);
+        for (final XmlElementInfo nestedElement : xmlTypeInfo.elements.values()) {
+            final String fieldName = nestedElement.qname.getLocalPart();
+            final Class javaType = propertyToClass.get(fieldName);
             if (javaType == null) {
                 throw new OpenEJBException("Field " + fieldName + " is not defined by class " + javaClass.getName());
             }
 
-            JaxRpcFieldInfo fieldInfo = new JaxRpcFieldInfo();
+            final JaxRpcFieldInfo fieldInfo = new JaxRpcFieldInfo();
             fieldInfo.name = fieldName;
             fieldInfo.isNillable = nestedElement.nillable;
             fieldInfo.xmlName = nestedElement.qname;
@@ -104,23 +104,23 @@ public class LightweightTypeInfoBuilder {
         }
     }
 
-    private Class loadClass(QName typeQName, JavaWsdlMapping mapping) throws OpenEJBException {
-        String namespace = typeQName.getNamespaceURI();
+    private Class loadClass(final QName typeQName, final JavaWsdlMapping mapping) throws OpenEJBException {
+        final String namespace = typeQName.getNamespaceURI();
 
         // package name comes from the package mapping
-        PackageMapping packageMapping = mapping.getPackageMappingMap().get(namespace);
+        final PackageMapping packageMapping = mapping.getPackageMappingMap().get(namespace);
         if (packageMapping == null) {
             throw new OpenEJBException("Namespace " + namespace + " was not mapped in jaxrpc mapping file");
         }
-        String packageName = packageMapping.getPackageType();
+        final String packageName = packageMapping.getPackageType();
 
         // class name is package + type local part
-        String className = packageName + "." + typeQName.getLocalPart();
+        final String className = packageName + "." + typeQName.getLocalPart();
 
         try {
-            Class clazz = Class.forName(className, false, classLoader);
+            final Class clazz = Class.forName(className, false, classLoader);
             return clazz;
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             throw new OpenEJBException("Could not load java type " + className, e);
         }
     }

@@ -20,6 +20,7 @@ import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.config.DeploymentFilterable;
 import org.apache.openejb.server.cxf.rs.beans.SimpleEJB;
+import org.apache.openejb.util.NetworkUtil;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -40,10 +41,13 @@ import static org.junit.Assert.assertNotNull;
 public class EjbDeploymentTest {
     private static EJBContainer container;
     private static RESTIsCoolTwo service;
+    private static int port = -1;
 
     @BeforeClass
     public static void start() throws Exception {
+        port = NetworkUtil.getNextAvailablePort();
         final Properties properties = new Properties();
+        properties.setProperty("httpejbd.port", Integer.toString(port));
         properties.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*openejb-cxf-rs.*");
         properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
         container = EJBContainer.createEJBContainer(properties);
@@ -65,22 +69,22 @@ public class EjbDeploymentTest {
 
     @Test
     public void rest() {
-        final String response = WebClient.create("http://localhost:4204/openejb-cxf-rs").path("/ejb/rest").get(String.class);
+        final String response = WebClient.create("http://localhost:" + port + "/openejb-cxf-rs").path("/ejb/rest").get(String.class);
         assertEquals("ok", response);
     }
 
     @Test
     public void restParameterInjected() {
-        String response = WebClient.create("http://localhost:4204/openejb-cxf-rs").path("/ejb/param").get(String.class);
+        String response = WebClient.create("http://localhost:" + port + "/openejb-cxf-rs").path("/ejb/param").get(String.class);
         assertEquals("true", response);
 
-        response = WebClient.create("http://localhost:4204/openejb-cxf-rs").path("/ejb/param").query("arg", "foo").get(String.class);
+        response = WebClient.create("http://localhost:" + port + "/openejb-cxf-rs").path("/ejb/param").query("arg", "foo").get(String.class);
         assertEquals("foo", response);
     }
 
     @Test
     public void restFieldInjected() {
-        final Boolean response = WebClient.create("http://localhost:4204/openejb-cxf-rs").path("/ejb/field").get(Boolean.class);
+        final Boolean response = WebClient.create("http://localhost:" + port + "/openejb-cxf-rs").path("/ejb/field").get(Boolean.class);
         assertEquals(true, response);
     }
 

@@ -22,6 +22,7 @@ import jug.monitoring.VoteCounter;
 import jug.rest.SubjectService;
 import jug.routing.PollingRouter;
 import org.apache.commons.io.IOUtils;
+import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.ziplock.JarLocation;
 import org.apache.ziplock.WebModule;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -38,6 +39,7 @@ import java.io.BufferedInputStream;
 import java.net.URL;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 @RunAsClient
 @RunWith(Arquillian.class)
@@ -49,7 +51,7 @@ public class SubjectServiceTomEETest {
     @Deployment
     public static WebArchive archive() {
         return new WebModule(SubjectServiceTomEETest.class).getArchive()
-                                                           .addClass(VoteCounter.class)
+                   .addClass(VoteCounter.class)
                    .addPackage(Subject.class.getPackage()) // domain
                    .addAsWebInfResource(new ClassLoaderAsset("META-INF/persistence.xml"), "persistence.xml")
                    .addAsWebInfResource(new ClassLoaderAsset("META-INF/env-entries.properties"), "env-entries.properties")
@@ -65,8 +67,18 @@ public class SubjectServiceTomEETest {
     @Test
     public void checkThereIsSomeOutput() throws Exception {
         final String base = url.toExternalForm();
-        final URL url = new URL(base + "api/subject/list");
-        final String output = IOUtils.toString(new BufferedInputStream(url.openStream()));
-        assertTrue(output.contains("subject"));
+        WebClient.create(base)
+            .path("api/subject/create")
+            .accept("application/json")
+            .query("name", "SubjectServiceTomEETest")
+            .post("SubjectServiceTomEETest");
+        for (int i = 0; i < 2; i++) { // we have a dynamic datasource so let it round
+            final URL url = new URL(base + "api/subject/list");
+            final String output = IOUtils.toString(new BufferedInputStream(url.openStream()));
+            if (output.contains("SubjectServiceTomEETest")) {
+                return;
+            }
+        }
+        fail("created entry not found");
     }
 }

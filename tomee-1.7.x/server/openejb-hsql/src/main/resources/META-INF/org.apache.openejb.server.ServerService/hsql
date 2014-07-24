@@ -1,4 +1,0 @@
-server      = org.apache.openejb.server.hsql.HsqlService
-bind        = 127.0.0.1
-port        = 9001
-disabled    = true

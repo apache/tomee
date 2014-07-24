@@ -30,7 +30,7 @@ import java.util.List;
 public class ReadOnlyServiceDesc extends JavaServiceDesc {
     private JavaServiceDesc serviceDesc;
 
-    public ReadOnlyServiceDesc(JavaServiceDesc serviceDesc) {
+    public ReadOnlyServiceDesc(final JavaServiceDesc serviceDesc) {
         this.serviceDesc = serviceDesc;
     }
 
@@ -38,7 +38,7 @@ public class ReadOnlyServiceDesc extends JavaServiceDesc {
         return serviceDesc.getImplClass();
     }
 
-    public void setImplClass(Class implClass) {
+    public void setImplClass(final Class implClass) {
         serviceDesc.setImplClass(implClass);
     }
 
@@ -46,18 +46,18 @@ public class ReadOnlyServiceDesc extends JavaServiceDesc {
         return serviceDesc.getStopClasses();
     }
 
-    public void setStopClasses(ArrayList stopClasses) {
+    public void setStopClasses(final ArrayList stopClasses) {
     }
 
     public void loadServiceDescByIntrospection() {
         serviceDesc.loadServiceDescByIntrospection();
     }
 
-    public void loadServiceDescByIntrospection(Class implClass) {
+    public void loadServiceDescByIntrospection(final Class implClass) {
         serviceDesc.loadServiceDescByIntrospection(implClass);
     }
 
-    public void loadServiceDescByIntrospection(Class cls, TypeMapping tm) {
+    public void loadServiceDescByIntrospection(final Class cls, final TypeMapping tm) {
         serviceDesc.loadServiceDescByIntrospection(cls, tm);
     }
 
@@ -65,92 +65,92 @@ public class ReadOnlyServiceDesc extends JavaServiceDesc {
         return serviceDesc.getStyle();
     }
 
-    public void setStyle(Style style) {
+    public void setStyle(final Style style) {
     }
 
     public Use getUse() {
         return serviceDesc.getUse();
     }
 
-    public void setUse(Use use) {
+    public void setUse(final Use use) {
     }
 
     public String getWSDLFile() {
         return serviceDesc.getWSDLFile();
     }
 
-    public void setWSDLFile(String wsdlFileName) {
+    public void setWSDLFile(final String wsdlFileName) {
     }
 
     public List getAllowedMethods() {
         return serviceDesc.getAllowedMethods();
     }
 
-    public void setAllowedMethods(List allowedMethods) {
+    public void setAllowedMethods(final List allowedMethods) {
     }
 
     public TypeMapping getTypeMapping() {
         return serviceDesc.getTypeMapping();
     }
 
-    public void setTypeMapping(TypeMapping tm) {
+    public void setTypeMapping(final TypeMapping tm) {
     }
 
     public String getName() {
         return serviceDesc.getName();
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
     }
 
     public String getDocumentation() {
         return serviceDesc.getDocumentation();
     }
 
-    public void setDocumentation(String documentation) {
+    public void setDocumentation(final String documentation) {
     }
 
-    public void removeOperationDesc(OperationDesc operation) {
+    public void removeOperationDesc(final OperationDesc operation) {
     }
 
-    public void addOperationDesc(OperationDesc operation) {
+    public void addOperationDesc(final OperationDesc operation) {
     }
 
     public ArrayList getOperations() {
         return serviceDesc.getOperations();
     }
 
-    public OperationDesc[] getOperationsByName(String methodName) {
+    public OperationDesc[] getOperationsByName(final String methodName) {
         return serviceDesc.getOperationsByName(methodName);
     }
 
-    public OperationDesc getOperationByName(String methodName) {
+    public OperationDesc getOperationByName(final String methodName) {
         return serviceDesc.getOperationByName(methodName);
     }
 
-    public OperationDesc getOperationByElementQName(QName qname) {
+    public OperationDesc getOperationByElementQName(final QName qname) {
         return serviceDesc.getOperationByElementQName(qname);
     }
 
-    public OperationDesc[] getOperationsByQName(QName qname) {
+    public OperationDesc[] getOperationsByQName(final QName qname) {
         return serviceDesc.getOperationsByQName(qname);
     }
 
-    public void setNamespaceMappings(List namespaces) {
+    public void setNamespaceMappings(final List namespaces) {
     }
 
     public String getDefaultNamespace() {
         return serviceDesc.getDefaultNamespace();
     }
 
-    public void setDefaultNamespace(String namespace) {
+    public void setDefaultNamespace(final String namespace) {
     }
 
-    public void setProperty(String name, Object value) {
+    public void setProperty(final String name, final Object value) {
         serviceDesc.setProperty(name, value);
     }
 
-    public Object getProperty(String name) {
+    public Object getProperty(final String name) {
         return serviceDesc.getProperty(name);
     }
 
@@ -158,14 +158,14 @@ public class ReadOnlyServiceDesc extends JavaServiceDesc {
         return serviceDesc.getEndpointURL();
     }
 
-    public void setEndpointURL(String endpointURL) {
+    public void setEndpointURL(final String endpointURL) {
     }
 
     public TypeMappingRegistry getTypeMappingRegistry() {
         return serviceDesc.getTypeMappingRegistry();
     }
 
-    public void setTypeMappingRegistry(TypeMappingRegistry tmr) {
+    public void setTypeMappingRegistry(final TypeMappingRegistry tmr) {
     }
 
     public boolean isInitialized() {
@@ -180,6 +180,6 @@ public class ReadOnlyServiceDesc extends JavaServiceDesc {
         return serviceDesc.getDisallowedMethods();
     }
 
-    public void setDisallowedMethods(List disallowedMethods) {
+    public void setDisallowedMethods(final List disallowedMethods) {
     }
 }

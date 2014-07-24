@@ -17,6 +17,7 @@
 package org.apache.openejb.assembler.classic;
 
 import junit.framework.TestCase;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.EjbModule;
@@ -26,6 +27,7 @@ import org.apache.openejb.jee.SecurityRoleRef;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
+import org.junit.AfterClass;
 
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;
@@ -64,6 +66,11 @@ public class EjbSecurityRoleRefTest extends TestCase {
         SystemInstance.get().setComponent(Assembler.class, null);
         SystemInstance.get().setComponent(ContainerSystem.class, null);
         super.tearDown();
+    }
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        OpenEJB.destroy();
     }
 
     public void testShouldCheckUserRole() throws Exception {

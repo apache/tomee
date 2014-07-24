@@ -31,19 +31,19 @@ import org.apache.openejb.util.Logger;
 public class AdminDaemon implements ServerService {
 
     @Override
-    public void init(Properties props) throws Exception {
+    public void init(final Properties props) throws Exception {
     }
 
     @Override
-    public void service(Socket socket) throws ServiceException, IOException {
+    public void service(final Socket socket) throws ServiceException, IOException {
         InputStream in = null;
 
         try {
             in = socket.getInputStream();
 
-            byte requestTypeByte = (byte) in.read();
+            final byte requestTypeByte = (byte) in.read();
             try {
-                RequestType requestType = RequestType.valueOf(requestTypeByte);
+                final RequestType requestType = RequestType.valueOf(requestTypeByte);
 
                 switch (requestType) {
                     case NOP_REQUEST:
@@ -52,7 +52,7 @@ public class AdminDaemon implements ServerService {
                     case STOP_REQUEST_quit:
                     case STOP_REQUEST_Stop:
                     case STOP_REQUEST_stop:
-                        Server server = SystemInstance.get().getComponent(Server.class);
+                        final Server server = SystemInstance.get().getComponent(Server.class);
                         if (null != server) {
                             server.stop();
                         }
@@ -62,17 +62,17 @@ public class AdminDaemon implements ServerService {
                         Logger.getInstance(LogCategory.OPENEJB_SERVER, AdminDaemon.class).warning("Invalid Server Socket request: " + requestType);
                         break;
                 }
-            } catch (IllegalArgumentException iae) {
+            } catch (final IllegalArgumentException iae) {
                 Logger.getInstance(LogCategory.OPENEJB_SERVER, AdminDaemon.class).warning("Invalid Server Socket request: " + requestTypeByte);
             }
 
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             Logger.getInstance(LogCategory.OPENEJB_SERVER, AdminDaemon.class).warning("Server Socket request failed", e);
         } finally {
             if (null != in) {
                 try {
                     in.close();
-                } catch (Throwable t) {
+                } catch (final Throwable t) {
                     //Ignore
                 }
             }
@@ -80,7 +80,7 @@ public class AdminDaemon implements ServerService {
             if (null != socket) {
                 try {
                     socket.close();
-                } catch (Throwable t) {
+                } catch (final Throwable t) {
                     //Ignore
                 }
             }
@@ -88,7 +88,7 @@ public class AdminDaemon implements ServerService {
     }
 
     @Override
-    public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
+    public void service(final InputStream in, final OutputStream out) throws ServiceException, IOException {
         throw new UnsupportedOperationException("Method not implemented: service(InputStream in, OutputStream out)");
     }
 

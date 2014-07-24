@@ -77,7 +77,7 @@ public class KeepAilveTest extends TestCase {
     private void waitOneSecond() {
         try {
             Thread.sleep(1000);
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             e.printStackTrace();
         }
     }
@@ -187,7 +187,7 @@ public class KeepAilveTest extends TestCase {
                     Assert.assertEquals(message, reverse(response));
                     try {
                         Thread.sleep(5000);
-                    } catch (InterruptedException e) {
+                    } catch (final InterruptedException e) {
                         e.printStackTrace();
                     }
                 }

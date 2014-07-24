@@ -36,14 +36,14 @@ public class TypeInfo {
     private final boolean canSearchParents;
     private final FieldDesc[] fields;
 
-    public static void register(List typeInfo, TypeMapping typeMapping) {
-        for (Iterator iter = typeInfo.iterator(); iter.hasNext();) {
-            TypeInfo info = (TypeInfo) iter.next();
+    public static void register(final List typeInfo, final TypeMapping typeMapping) {
+        for (final Iterator iter = typeInfo.iterator(); iter.hasNext(); ) {
+            final TypeInfo info = (TypeInfo) iter.next();
             info.register(typeMapping);
         }
     }
 
-    public TypeInfo(Class clazz, QName qName, Class serializerClass, Class deserializerClass, boolean canSearchParents, FieldDesc[] fields) {
+    public TypeInfo(final Class clazz, final QName qName, final Class serializerClass, final Class deserializerClass, final boolean canSearchParents, final FieldDesc[] fields) {
         this.clazz = clazz;
         this.qName = qName;
         this.serFactoryClass = serializerClass;
@@ -77,15 +77,15 @@ public class TypeInfo {
     }
 
     public TypeDesc buildTypeDesc() {
-        TypeDesc typeDesc = new TypeDesc(clazz, canSearchParents);
+        final TypeDesc typeDesc = new TypeDesc(clazz, canSearchParents);
         typeDesc.setXmlType(qName);
         typeDesc.setFields(fields);
         return typeDesc;
     }
 
-    public void register(TypeMapping typeMapping) {
-        SerializerFactory ser = BaseSerializerFactory.createFactory(serFactoryClass, clazz, qName);
-        DeserializerFactory deser = BaseDeserializerFactory.createFactory(deserFactoryClass, clazz, qName);
+    public void register(final TypeMapping typeMapping) {
+        final SerializerFactory ser = BaseSerializerFactory.createFactory(serFactoryClass, clazz, qName);
+        final DeserializerFactory deser = BaseDeserializerFactory.createFactory(deserFactoryClass, clazz, qName);
 
         typeMapping.register(clazz, qName, ser, deser);
     }
@@ -113,27 +113,27 @@ public class TypeInfo {
             return new TypeInfo(clazz, qName, serializerClass, deserializerClass, canSearchParents, fields);
         }
 
-        public void setClazz(Class clazz) {
+        public void setClazz(final Class clazz) {
             this.clazz = clazz;
         }
 
-        public void setDeserializerClass(Class deserializerClass) {
+        public void setDeserializerClass(final Class deserializerClass) {
             this.deserializerClass = deserializerClass;
         }
 
-        public void setFields(FieldDesc[] fields) {
+        public void setFields(final FieldDesc[] fields) {
             this.fields = fields;
         }
 
-        public void setQName(QName name) {
+        public void setQName(final QName name) {
             qName = name;
         }
 
-        public void setSerializerClass(Class serializerClass) {
+        public void setSerializerClass(final Class serializerClass) {
             this.serializerClass = serializerClass;
         }
 
-        public void setCanSearchParents(boolean canSearchParents) {
+        public void setCanSearchParents(final boolean canSearchParents) {
             this.canSearchParents = canSearchParents;
         }
     }

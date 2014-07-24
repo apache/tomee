@@ -44,15 +44,15 @@ public class Stop {
 
             out.write(RequestType.STOP_REQUEST_Stop.getCode());
 
-        } catch (ConnectException e) {
+        } catch (final ConnectException e) {
             System.out.println(":: server not running ::");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         } finally {
             if (null != out) {
                 try {
                     out.close();
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     //Ignore
                 }
             }
@@ -60,7 +60,7 @@ public class Stop {
             if (null != socket) {
                 try {
                     socket.close();
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     //Ignore
                 }
             }
@@ -97,7 +97,7 @@ public class Stop {
             }
 
             stop(host, port);
-        } catch (Exception re) {
+        } catch (final Exception re) {
             System.err.println("[EJB Server] FATAL ERROR: " + re.getMessage());
             re.printStackTrace();
         }
@@ -108,7 +108,7 @@ public class Stop {
         try {
             final Properties versionInfo = loadVersionProperties();
             header += versionInfo.get("version");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             //Ignore
         }
 
@@ -126,13 +126,13 @@ public class Stop {
                     b = in.read();
                 }
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             //Ignore
         } finally {
             if (null != in) {
                 try {
                     in.close();
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     //Ignore
                 }
             }
@@ -144,7 +144,7 @@ public class Stop {
         try {
             final Properties versionInfo = loadVersionProperties();
             header += versionInfo.get("version");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             //Ignore
         }
 
@@ -161,13 +161,13 @@ public class Stop {
                     b = in.read();
                 }
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             //Ignore
         } finally {
             if (null != in) {
                 try {
                     in.close();
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     //Ignore
                 }
             }

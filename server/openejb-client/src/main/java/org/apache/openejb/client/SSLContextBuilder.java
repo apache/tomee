@@ -26,7 +26,7 @@ import java.util.Map;
 public class SSLContextBuilder {
     private Map<String, String> params;
 
-    public SSLContextBuilder(Map<String, String> params) {
+    public SSLContextBuilder(final Map<String, String> params) {
         this.params = params;
     }
 
@@ -45,23 +45,23 @@ public class SSLContextBuilder {
         }
 
         try {
-            String sslTrustStoreType = params.get("sslTrustStoreType");
-            KeyStore ks = KeyStore.getInstance(null == sslTrustStoreType ? KeyStore.getDefaultType() : sslTrustStoreType);
-            String trustStorePwd = params.get("sslTrustStorePassword");
-            char[] pwd;
+            final String sslTrustStoreType = params.get("sslTrustStoreType");
+            final KeyStore ks = KeyStore.getInstance(null == sslTrustStoreType ? KeyStore.getDefaultType() : sslTrustStoreType);
+            final String trustStorePwd = params.get("sslTrustStorePassword");
+            final char[] pwd;
             if (trustStorePwd != null) {
                 pwd = trustStorePwd.toCharArray();
             } else {
                 pwd = "changeit".toCharArray();
             }
-            FileInputStream fis = new FileInputStream(trustStore);
+            final FileInputStream fis = new FileInputStream(trustStore);
             try {
                 ks.load(fis, pwd);
             } finally {
                 fis.close();
             }
-            String sslTrustStoreProvider = params.get("sslTrustStoreProvider");
-            TrustManagerFactory tmf = TrustManagerFactory.getInstance(null == sslTrustStoreProvider ? TrustManagerFactory.getDefaultAlgorithm() : sslTrustStoreProvider);
+            final String sslTrustStoreProvider = params.get("sslTrustStoreProvider");
+            final TrustManagerFactory tmf = TrustManagerFactory.getInstance(null == sslTrustStoreProvider ? TrustManagerFactory.getDefaultAlgorithm() : sslTrustStoreProvider);
             tmf.init(ks);
             return tmf.getTrustManagers();
         } catch (final Exception e) {
@@ -76,23 +76,23 @@ public class SSLContextBuilder {
         }
 
         try {
-            String sslKeyStoreType = params.get("sslKeyStoreType");
-            KeyStore ks = KeyStore.getInstance(null == sslKeyStoreType ? KeyStore.getDefaultType() : sslKeyStoreType);
-            String keyStorePassword = params.get("sslKeyStorePassword");
-            char[] pwd;
+            final String sslKeyStoreType = params.get("sslKeyStoreType");
+            final KeyStore ks = KeyStore.getInstance(null == sslKeyStoreType ? KeyStore.getDefaultType() : sslKeyStoreType);
+            final String keyStorePassword = params.get("sslKeyStorePassword");
+            final char[] pwd;
             if (keyStorePassword != null) {
                 pwd = keyStorePassword.toCharArray();
             } else {
                 pwd = "changeit".toCharArray();
             }
-            FileInputStream fis = new FileInputStream(keyStore);
+            final FileInputStream fis = new FileInputStream(keyStore);
             try {
                 ks.load(fis, pwd);
             } finally {
                 fis.close();
             }
-            String sslKeyStoreProvider = params.get("sslKeyStoreProvider");
-            KeyManagerFactory kmf = KeyManagerFactory.getInstance(null == sslKeyStoreProvider ? KeyManagerFactory.getDefaultAlgorithm() : sslKeyStoreProvider);
+            final String sslKeyStoreProvider = params.get("sslKeyStoreProvider");
+            final KeyManagerFactory kmf = KeyManagerFactory.getInstance(null == sslKeyStoreProvider ? KeyManagerFactory.getDefaultAlgorithm() : sslKeyStoreProvider);
             kmf.init(ks, pwd);
             return kmf.getKeyManagers();
         } catch (final Exception e) {

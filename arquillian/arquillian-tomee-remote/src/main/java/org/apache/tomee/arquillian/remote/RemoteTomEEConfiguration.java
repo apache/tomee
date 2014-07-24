@@ -39,6 +39,7 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
     private String conf;
     private String bin;
     private String lib;
+    private String additionalLibs;
     private boolean cleanOnStartUp;
     private boolean debug;
     private int debugPort = 5005;
@@ -87,6 +88,15 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
 
     public void setType(final String type) {
         this.type = type;
+    }
+    
+    public String getAdditionalLibs() {
+        return additionalLibs;
+    }
+
+    @Multiline
+    public void setAdditionalLibs(final String additionalLibs) {
+        this.additionalLibs = additionalLibs;
     }
 
     public String getArtifactName() {

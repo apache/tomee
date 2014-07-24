@@ -54,35 +54,35 @@ public class CommonsSchemaLoader {
     private final JarFile moduleFile;
     private final XmlSchemaCollection xmlSchemaCollection = new XmlSchemaCollection();
 
-    public CommonsSchemaLoader(URI wsdlUri, JarFile moduleFile) {
+    public CommonsSchemaLoader(final URI wsdlUri, final JarFile moduleFile) {
         this.wsdlUri = wsdlUri;
         this.moduleFile = moduleFile;
     }
 
     public XmlSchemaCollection loadSchema() throws OpenEJBException {
-        Definition definition = readWsdl(wsdlUri);
+        final Definition definition = readWsdl(wsdlUri);
         addImportsFromDefinition(definition);
         return xmlSchemaCollection;
     }
 
-    private void addImportsFromDefinition(Definition definition) throws OpenEJBException {
-        Types types = definition.getTypes();
+    private void addImportsFromDefinition(final Definition definition) throws OpenEJBException {
+        final Types types = definition.getTypes();
         if (types != null) {
-            for (Object extensibilityElement : types.getExtensibilityElements()) {
+            for (final Object extensibilityElement : types.getExtensibilityElements()) {
                 if (extensibilityElement instanceof Schema) {
-                    Schema unknownExtensibilityElement = (Schema) extensibilityElement;
-                    QName elementType = unknownExtensibilityElement.getElementType();
+                    final Schema unknownExtensibilityElement = (Schema) extensibilityElement;
+                    final QName elementType = unknownExtensibilityElement.getElementType();
                     if (new QName("http://www.w3.org/2001/XMLSchema", "schema").equals(elementType)) {
-                        Element element = unknownExtensibilityElement.getElement();
+                        final Element element = unknownExtensibilityElement.getElement();
                         xmlSchemaCollection.read(element);
                     }
                 } else if (extensibilityElement instanceof UnknownExtensibilityElement) {
                     //This is allegedly obsolete as of axis-wsdl4j-1.2-RC3.jar which includes the Schema extension above.
                     //The change notes imply that imported schemas should end up in Schema elements.  They don't, so this is still needed.
-                    UnknownExtensibilityElement unknownExtensibilityElement = (UnknownExtensibilityElement) extensibilityElement;
-                    Element element = unknownExtensibilityElement.getElement();
-                    String elementNamespace = element.getNamespaceURI();
-                    String elementLocalName = element.getNodeName();
+                    final UnknownExtensibilityElement unknownExtensibilityElement = (UnknownExtensibilityElement) extensibilityElement;
+                    final Element element = unknownExtensibilityElement.getElement();
+                    final String elementNamespace = element.getNamespaceURI();
+                    final String elementLocalName = element.getNodeName();
                     if ("http://www.w3.org/2001/XMLSchema".equals(elementNamespace) && "schema".equals(elementLocalName)) {
                         xmlSchemaCollection.read(element);
                     }
@@ -91,15 +91,15 @@ public class CommonsSchemaLoader {
         }
 
         //noinspection unchecked
-        Map<String,List<Import>> imports = definition.getImports();
+        final Map<String, List<Import>> imports = definition.getImports();
         if (imports != null) {
-            for (Map.Entry<String, List<Import>> entry : imports.entrySet()) {
-                String namespaceURI = entry.getKey();
-                List<Import> importList = entry.getValue();
-                for (Import anImport : importList) {
+            for (final Map.Entry<String, List<Import>> entry : imports.entrySet()) {
+                final String namespaceURI = entry.getKey();
+                final List<Import> importList = entry.getValue();
+                for (final Import anImport : importList) {
                     //according to the 1.1 jwsdl mr shcema imports are supposed to show up here,
                     //but according to the 1.0 spec there is supposed to be no Definition.
-                    Definition importedDef = anImport.getDefinition();
+                    final Definition importedDef = anImport.getDefinition();
                     if (importedDef != null) {
                         addImportsFromDefinition(importedDef);
                     } else {
@@ -110,51 +110,51 @@ public class CommonsSchemaLoader {
         }
     }
 
-    private Definition readWsdl(URI wsdlURI) throws OpenEJBException {
+    private Definition readWsdl(final URI wsdlURI) throws OpenEJBException {
         Definition definition;
-        WSDLFactory wsdlFactory;
+        final WSDLFactory wsdlFactory;
         try {
             wsdlFactory = WSDLFactory.newInstance();
-        } catch (WSDLException e) {
+        } catch (final WSDLException e) {
             throw new OpenEJBException("Could not create WSDLFactory", e);
         }
-        WSDLReader wsdlReaderNoImport = wsdlFactory.newWSDLReader();
+        final WSDLReader wsdlReaderNoImport = wsdlFactory.newWSDLReader();
         wsdlReaderNoImport.setFeature("javax.wsdl.importDocuments", false);
-        ExtensionRegistry extensionRegistry = new PopulatedExtensionRegistry();
+        final ExtensionRegistry extensionRegistry = new PopulatedExtensionRegistry();
         extensionRegistry.mapExtensionTypes(Types.class, SchemaConstants.Q_ELEM_XSD_1999,
-                UnknownExtensibilityElement.class);
+            UnknownExtensibilityElement.class);
         extensionRegistry.registerDeserializer(Types.class, SchemaConstants.Q_ELEM_XSD_1999,
-                extensionRegistry.getDefaultDeserializer());
+            extensionRegistry.getDefaultDeserializer());
         extensionRegistry.registerSerializer(Types.class, SchemaConstants.Q_ELEM_XSD_1999,
-                extensionRegistry.getDefaultSerializer());
+            extensionRegistry.getDefaultSerializer());
 
         extensionRegistry.mapExtensionTypes(Types.class, SchemaConstants.Q_ELEM_XSD_2000,
-                UnknownExtensibilityElement.class);
+            UnknownExtensibilityElement.class);
         extensionRegistry.registerDeserializer(Types.class, SchemaConstants.Q_ELEM_XSD_2000,
-                extensionRegistry.getDefaultDeserializer());
+            extensionRegistry.getDefaultDeserializer());
         extensionRegistry.registerSerializer(Types.class, SchemaConstants.Q_ELEM_XSD_2000,
-                extensionRegistry.getDefaultSerializer());
+            extensionRegistry.getDefaultSerializer());
 
         extensionRegistry.mapExtensionTypes(Types.class, SchemaConstants.Q_ELEM_XSD_2001,
-                UnknownExtensibilityElement.class);
+            UnknownExtensibilityElement.class);
         extensionRegistry.registerDeserializer(Types.class, SchemaConstants.Q_ELEM_XSD_2001,
-                extensionRegistry.getDefaultDeserializer());
+            extensionRegistry.getDefaultDeserializer());
         extensionRegistry.registerSerializer(Types.class, SchemaConstants.Q_ELEM_XSD_2001,
-                extensionRegistry.getDefaultSerializer());
+            extensionRegistry.getDefaultSerializer());
         wsdlReaderNoImport.setExtensionRegistry(extensionRegistry);
 
-        JarWSDLLocator wsdlLocator = new JarWSDLLocator(wsdlURI);
-        WSDLReader wsdlReader = wsdlFactory.newWSDLReader();
+        final JarWSDLLocator wsdlLocator = new JarWSDLLocator(wsdlURI);
+        final WSDLReader wsdlReader = wsdlFactory.newWSDLReader();
 
-        Thread thread = Thread.currentThread();
-        ClassLoader oldCl = thread.getContextClassLoader();
+        final Thread thread = Thread.currentThread();
+        final ClassLoader oldCl = thread.getContextClassLoader();
         thread.setContextClassLoader(this.getClass().getClassLoader());
         try {
             try {
                 definition = wsdlReader.readWSDL(wsdlLocator);
-            } catch (WSDLException e) {
+            } catch (final WSDLException e) {
                 throw new OpenEJBException("Failed to read wsdl document", e);
-            } catch (RuntimeException e) {
+            } catch (final RuntimeException e) {
                 throw new OpenEJBException(e.getMessage(), e);
             }
         } finally {
@@ -170,21 +170,21 @@ public class CommonsSchemaLoader {
         private final URI wsdlURI;
         private URI latestImportURI;
 
-        public JarWSDLLocator(URI wsdlURI) {
+        public JarWSDLLocator(final URI wsdlURI) {
             this.wsdlURI = wsdlURI;
         }
 
         public InputSource getBaseInputSource() {
-            ZipEntry entry = moduleFile.getEntry(wsdlURI.toString());
-            if(entry == null){
-                throw new ServerRuntimeException("The webservices.xml file points to a non-existant WSDL file "+wsdlURI.toString());
+            final ZipEntry entry = moduleFile.getEntry(wsdlURI.toString());
+            if (entry == null) {
+                throw new ServerRuntimeException("The webservices.xml file points to a non-existant WSDL file " + wsdlURI.toString());
             }
 
-            InputStream wsdlInputStream;
+            final InputStream wsdlInputStream;
             try {
                 wsdlInputStream = moduleFile.getInputStream(entry);
                 streams.add(wsdlInputStream);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new ServerRuntimeException("Could not open stream to wsdl file", e);
             }
             return new InputSource(wsdlInputStream);
@@ -194,20 +194,20 @@ public class CommonsSchemaLoader {
             return wsdlURI.toString();
         }
 
-        public InputSource getImportInputSource(String parentLocation, String relativeLocation) {
-            URI parentURI = URI.create(parentLocation);
+        public InputSource getImportInputSource(final String parentLocation, final String relativeLocation) {
+            final URI parentURI = URI.create(parentLocation);
             latestImportURI = parentURI.resolve(relativeLocation);
 
-            InputStream importInputStream;
+            final InputStream importInputStream;
             try {
-                ZipEntry entry = moduleFile.getEntry(latestImportURI.toString());
+                final ZipEntry entry = moduleFile.getEntry(latestImportURI.toString());
                 importInputStream = moduleFile.getInputStream(entry);
                 streams.add(importInputStream);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new ServerRuntimeException("Could not open stream to import file", e);
             }
 
-            InputSource inputSource = new InputSource(importInputStream);
+            final InputSource inputSource = new InputSource(importInputStream);
             inputSource.setSystemId(getLatestImportURI());
             return inputSource;
         }
@@ -217,10 +217,10 @@ public class CommonsSchemaLoader {
         }
 
         public void close() {
-            for (InputStream inputStream : streams) {
+            for (final InputStream inputStream : streams) {
                 try {
                     inputStream.close();
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     //ignore
                 }
             }

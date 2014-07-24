@@ -55,12 +55,12 @@ public class ServerSideResolver implements EJBHomeProxyHandle.Resolver, EJBObjec
             final BeanContext beanContext = containerSystem.getBeanContext(ejb.getDeploymentID());
 
             return EjbHomeProxyHandler.createHomeProxy(beanContext, interfaceType, interfaces, ejb.getMainInterface());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE, "org.apache.openejb.server.util.resources")
-                  .error("ServerSideResolver.resolve() failed, falling back to ClientSideResolver: " +
-                         e.getClass().getName() +
-                         ": " +
-                         e.getMessage(), e);
+                .error("ServerSideResolver.resolve() failed, falling back to ClientSideResolver: " +
+                    e.getClass().getName() +
+                    ": " +
+                    e.getMessage(), e);
             return new EJBHomeProxyHandle.ClientSideResovler().resolve(handler);
         }
     }
@@ -83,12 +83,12 @@ public class ServerSideResolver implements EJBHomeProxyHandle.Resolver, EJBObjec
             final BeanContext beanContext = containerSystem.getBeanContext(ejb.getDeploymentID());
 
             return EjbObjectProxyHandler.createProxy(beanContext, handler.getPrimaryKey(), interfaceType, interfaces, ejb.getMainInterface());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE, "org.apache.openejb.server.util.resources")
-                  .error("ServerSideResolver.resolve() failed, falling back to ClientSideResolver: " +
-                         e.getClass().getName() +
-                         ": " +
-                         e.getMessage(), e);
+                .error("ServerSideResolver.resolve() failed, falling back to ClientSideResolver: " +
+                    e.getClass().getName() +
+                    ": " +
+                    e.getMessage(), e);
             return new EJBObjectProxyHandle.ClientSideResovler().resolve(handler);
         }
     }

@@ -258,7 +258,7 @@ Which should create output like the following.
     INFO - OpenEJB http://openejb.apache.org/
     INFO - Startup: Sun Jun 09 03:46:51 IDT 2013
     INFO - Copyright 1999-2013 (C) Apache OpenEJB Project, All Rights Reserved.
-    INFO - Version: 4.7.0
+    INFO - Version: 4.6.0-SNAPSHOT
     INFO - Build date: 20130608
     INFO - Build time: 04:07
     INFO - ********************************************************************************
@@ -309,7 +309,7 @@ Which should create output like the following.
     INFO - OpenEJB http://openejb.apache.org/
     INFO - Startup: Sun Jun 09 03:46:52 IDT 2013
     INFO - Copyright 1999-2013 (C) Apache OpenEJB Project, All Rights Reserved.
-    INFO - Version: 4.7.0
+    INFO - Version: 4.6.0-SNAPSHOT
     INFO - Build date: 20130608
     INFO - Build time: 04:07
     INFO - ********************************************************************************
@@ -323,7 +323,7 @@ Which should create output like the following.
     INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
     INFO - Creating TransactionManager(id=Default Transaction Manager)
     INFO - Creating SecurityService(id=Default Security Service)
-    INFO - Using 'java.security.auth.login.config=jar:file:/C:/Users/Oz/.m2/repository/org/apache/openejb/openejb-core/4.7.0/openejb-core-4.7.0.jar!/login.config'
+    INFO - Using 'java.security.auth.login.config=jar:file:/C:/Users/Oz/.m2/repository/org/apache/openejb/openejb-core/4.6.0-SNAPSHOT/openejb-core-4.6.0-SNAPSHOT.jar!/login.config'
     INFO - Found EjbModule in classpath: c:\users\oz\desktop\ee-examples\simple-singleton\target\classes
     INFO - Beginning load: c:\users\oz\desktop\ee-examples\simple-singleton\target\classes
     INFO - Configuring enterprise application: C:\Users\Oz\Desktop\ee-examples\simple-singleton

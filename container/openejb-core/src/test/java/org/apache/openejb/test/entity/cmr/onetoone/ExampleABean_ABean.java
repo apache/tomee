@@ -70,7 +70,7 @@ public class ExampleABean_ABean extends PersonBean implements Cmp2Entity {
             return null;
         }
 
-        Object oldValue;
+        final Object oldValue;
         if ("b".equals(name)) {
             oldValue = License;
             License = (ExampleBBean_BBean) bean;

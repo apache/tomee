@@ -28,15 +28,15 @@ public abstract class PathCommand extends AbstractCommand {
         if (cmd == null || cmd.trim().isEmpty()) {
             return SystemInstance.get().getBase().getDirectory();
         }
-        String path = cmd.trim();
-        File workingFile = new File(path);
+        final String path = cmd.trim();
+        final File workingFile = new File(path);
         if ((!path.startsWith(HOME) && !path.startsWith(BASE) && workingFile.getPath().equals(workingFile.getAbsolutePath())) || path.startsWith("..")) {
             throw new IllegalArgumentException("path should start with " + BASE + " or " + HOME + " or be relative");
         }
 
         if (path.startsWith(HOME)) {
             return new File(path.replace(HOME, SystemInstance.get().getHome().getDirectory().getAbsolutePath()));
-        } else  if(path.startsWith(BASE)) {
+        } else if (path.startsWith(BASE)) {
             return new File(path.replace(BASE, SystemInstance.get().getBase().getDirectory().getAbsolutePath()));
         }
         return new File(SystemInstance.get().getBase().getDirectory().getAbsolutePath(), path);

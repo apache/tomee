@@ -30,7 +30,7 @@ public class CatCommand extends PathCommand {
         final File file;
         try {
             file = resolve(cmd);
-        } catch (IllegalArgumentException iae) {
+        } catch (final IllegalArgumentException iae) {
             streamManager.writeErr(iae.getMessage());
             return;
         }
@@ -40,7 +40,7 @@ public class CatCommand extends PathCommand {
         } else if (file.exists()) {
             try {
                 cat(file);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 streamManager.writeErr(e);
             }
         } else {

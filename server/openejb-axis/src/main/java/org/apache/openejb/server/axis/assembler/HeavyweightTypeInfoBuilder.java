@@ -23,6 +23,7 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.jee.JavaWsdlMapping;
 import org.apache.openejb.jee.JavaXmlTypeMapping;
 import org.apache.openejb.jee.VariableMapping;
+
 import static org.apache.openejb.server.axis.assembler.JaxRpcTypeInfo.SerializerType;
 
 import javax.xml.namespace.QName;
@@ -54,7 +55,7 @@ public class HeavyweightTypeInfoBuilder {
     private final Collection<JaxRpcOperationInfo> operations;
     private final boolean hasEncoded;
 
-    public HeavyweightTypeInfoBuilder(JavaWsdlMapping mapping, XmlSchemaInfo schemaInfo, ClassLoader classLoader, Set wrapperElementQNames, Collection<JaxRpcOperationInfo> operations, boolean hasEncoded) {
+    public HeavyweightTypeInfoBuilder(final JavaWsdlMapping mapping, final XmlSchemaInfo schemaInfo, final ClassLoader classLoader, final Set wrapperElementQNames, final Collection<JaxRpcOperationInfo> operations, final boolean hasEncoded) {
         this.mapping = mapping;
         this.classLoader = classLoader;
         this.schemaInfo = schemaInfo;
@@ -63,17 +64,17 @@ public class HeavyweightTypeInfoBuilder {
         this.hasEncoded = hasEncoded;
     }
 
-    public List<JaxRpcTypeInfo>  buildTypeInfo() throws OpenEJBException {
-        List<JaxRpcTypeInfo> typeInfos = new ArrayList<JaxRpcTypeInfo>();
+    public List<JaxRpcTypeInfo> buildTypeInfo() throws OpenEJBException {
+        final List<JaxRpcTypeInfo> typeInfos = new ArrayList<JaxRpcTypeInfo>();
 
-        Set<QName> mappedTypeQNames = new HashSet<QName>();
+        final Set<QName> mappedTypeQNames = new HashSet<QName>();
 
         //
         // Map types with explicity Java to XML mappings
         //
-        for (JavaXmlTypeMapping javaXmlTypeMapping : mapping.getJavaXmlTypeMapping()) {
+        for (final JavaXmlTypeMapping javaXmlTypeMapping : mapping.getJavaXmlTypeMapping()) {
             // get the QName for this mapping
-            QName qname;
+            final QName qname;
             if (javaXmlTypeMapping.getRootTypeQname() != null) {
                 qname = javaXmlTypeMapping.getRootTypeQname();
 
@@ -82,15 +83,15 @@ public class HeavyweightTypeInfoBuilder {
                     continue;
                 }
             } else if (javaXmlTypeMapping.getAnonymousTypeQname() != null) {
-                String anonTypeQNameString = javaXmlTypeMapping.getAnonymousTypeQname();
+                final String anonTypeQNameString = javaXmlTypeMapping.getAnonymousTypeQname();
 
                 // this appears to be ignored...
-                int pos = anonTypeQNameString.lastIndexOf(":");
+                final int pos = anonTypeQNameString.lastIndexOf(":");
                 if (pos == -1) {
                     throw new OpenEJBException("anon QName is invalid, no final ':' " + anonTypeQNameString);
                 }
-                String namespace = anonTypeQNameString.substring(0, pos);
-                String localPart = anonTypeQNameString.substring(pos + 1);
+                final String namespace = anonTypeQNameString.substring(0, pos);
+                final String localPart = anonTypeQNameString.substring(pos + 1);
                 qname = new QName(namespace, localPart);
 
                 // Skip the wrapper elements.
@@ -103,9 +104,9 @@ public class HeavyweightTypeInfoBuilder {
             }
 
             // get the xml type qname of this mapping
-            QName xmlTypeQName;
+            final QName xmlTypeQName;
             if ("element".equals(javaXmlTypeMapping.getQNameScope())) {
-                XmlElementInfo elementInfo = schemaInfo.elements.get(qname);
+                final XmlElementInfo elementInfo = schemaInfo.elements.get(qname);
                 if (elementInfo == null) {
                     log.warn("Element [" + qname + "] not been found in schema, known elements: " + schemaInfo.elements.keySet());
                 }
@@ -115,7 +116,7 @@ public class HeavyweightTypeInfoBuilder {
             }
 
             // finally, get the xml type info for the mapping
-            XmlTypeInfo xmlTypeInfo = schemaInfo.types.get(xmlTypeQName);
+            final XmlTypeInfo xmlTypeInfo = schemaInfo.types.get(xmlTypeQName);
             if (xmlTypeInfo == null) {
                 // if this is a built in type then assume this is a redundant mapping
                 if (WebserviceNameSpaces.contains(xmlTypeInfo.qname.getNamespaceURI())) {
@@ -129,15 +130,15 @@ public class HeavyweightTypeInfoBuilder {
             mappedTypeQNames.add(xmlTypeInfo.qname);
 
             // load the java class
-            Class clazz;
+            final Class clazz;
             try {
                 clazz = Class.forName(javaXmlTypeMapping.getJavaType(), false, classLoader);
-            } catch (ClassNotFoundException e) {
+            } catch (final ClassNotFoundException e) {
                 throw new OpenEJBException("Could not load java type " + javaXmlTypeMapping.getJavaType(), e);
             }
 
             // create the jax-rpc type mapping
-            JaxRpcTypeInfo typeInfo = createTypeInfo(qname, xmlTypeInfo, clazz);
+            final JaxRpcTypeInfo typeInfo = createTypeInfo(qname, xmlTypeInfo, clazz);
             mapFields(clazz, xmlTypeInfo, javaXmlTypeMapping, typeInfo);
 
             typeInfos.add(typeInfo);
@@ -146,31 +147,31 @@ public class HeavyweightTypeInfoBuilder {
         //
         // Map types used in operations
         //
-        for (JaxRpcOperationInfo operationInfo : operations) {
-            List<JaxRpcParameterInfo> parameters = new ArrayList<JaxRpcParameterInfo>(operationInfo.parameters);
+        for (final JaxRpcOperationInfo operationInfo : operations) {
+            final List<JaxRpcParameterInfo> parameters = new ArrayList<JaxRpcParameterInfo>(operationInfo.parameters);
 
             // add the return type to the parameters so it is processed below
             if (operationInfo.returnXmlType != null) {
-                JaxRpcParameterInfo returnParameter = new JaxRpcParameterInfo();
+                final JaxRpcParameterInfo returnParameter = new JaxRpcParameterInfo();
                 returnParameter.xmlType = operationInfo.returnXmlType;
                 returnParameter.javaType = operationInfo.returnJavaType;
                 parameters.add(returnParameter);
             }
 
             // add type mappings for each parameter (including the return type)
-            for (JaxRpcParameterInfo parameterInfo : parameters) {
-                QName xmlType = parameterInfo.xmlType;
+            for (final JaxRpcParameterInfo parameterInfo : parameters) {
+                final QName xmlType = parameterInfo.xmlType;
 
                 // skip types that have already been mapped or are built in types
                 if (xmlType == null ||
-                        mappedTypeQNames.contains(xmlType) ||
-                        xmlType.getNamespaceURI().equals(XML_SCHEMA_NS) ||
-                        xmlType.getNamespaceURI().equals(SOAP_ENCODING_NS)) {
+                    mappedTypeQNames.contains(xmlType) ||
+                    xmlType.getNamespaceURI().equals(XML_SCHEMA_NS) ||
+                    xmlType.getNamespaceURI().equals(SOAP_ENCODING_NS)) {
                     continue;
                 }
 
                 // get the xml type info
-                XmlTypeInfo xmlTypeInfo = schemaInfo.types.get(xmlType);
+                final XmlTypeInfo xmlTypeInfo = schemaInfo.types.get(xmlType);
                 if (xmlTypeInfo == null) {
                     log.warn("Type QName [" + xmlType + "] defined by operation [" + operationInfo + "] has not been found in schema: " + schemaInfo.types.keySet());
                     continue;
@@ -178,10 +179,10 @@ public class HeavyweightTypeInfoBuilder {
                 mappedTypeQNames.add(xmlTypeInfo.qname);
 
                 // load the java class
-                Class<?> clazz;
+                final Class<?> clazz;
                 try {
                     clazz = classLoader.loadClass(parameterInfo.javaType);
-                } catch (ClassNotFoundException e) {
+                } catch (final ClassNotFoundException e) {
                     throw new OpenEJBException("Could not load paramter");
                 }
 
@@ -195,7 +196,7 @@ public class HeavyweightTypeInfoBuilder {
                 }
 
                 // create the jax-rpc type mapping
-                JaxRpcTypeInfo typeInfo = createTypeInfo(parameterInfo.qname, xmlTypeInfo, clazz);
+                final JaxRpcTypeInfo typeInfo = createTypeInfo(parameterInfo.qname, xmlTypeInfo, clazz);
                 typeInfos.add(typeInfo);
             }
         }
@@ -205,13 +206,14 @@ public class HeavyweightTypeInfoBuilder {
 
     /**
      * Creates a JaxRpcTypeInfo based on the information contained in the XML Schema Type and Java Class.
+     *
      * @param xmlTypeInfo the xml schema for the type
-     * @param clazz the java class for the type
+     * @param clazz       the java class for the type
      * @return the JaxRpcTypeInfo object
      * @throws OpenEJBException if the schema is invalid
      */
-    private JaxRpcTypeInfo createTypeInfo(QName qname, XmlTypeInfo xmlTypeInfo, Class clazz) throws OpenEJBException {
-        SerializerType serializerType;
+    private JaxRpcTypeInfo createTypeInfo(final QName qname, final XmlTypeInfo xmlTypeInfo, final Class clazz) throws OpenEJBException {
+        final SerializerType serializerType;
         if (xmlTypeInfo.listType) {
             serializerType = SerializerType.LIST;
         } else if (clazz.isArray()) {
@@ -222,7 +224,7 @@ public class HeavyweightTypeInfoBuilder {
             serializerType = SerializerType.OTHER;
         }
 
-        JaxRpcTypeInfo typeInfo = new JaxRpcTypeInfo();
+        final JaxRpcTypeInfo typeInfo = new JaxRpcTypeInfo();
         typeInfo.qname = qname;
         typeInfo.javaType = clazz.getName();
         typeInfo.serializerType = serializerType;
@@ -238,13 +240,14 @@ public class HeavyweightTypeInfoBuilder {
 
     /**
      * Map the (nested) fields of a XML Schema Type to Java Beans properties or public fields of the specified Java Class.
-     * @param javaClass the java class to map
-     * @param xmlTypeInfo the xml schema for the type
+     *
+     * @param javaClass          the java class to map
+     * @param xmlTypeInfo        the xml schema for the type
      * @param javaXmlTypeMapping the java to xml type mapping metadata
-     * @param typeInfo the JaxRpcTypeInfo for this type
+     * @param typeInfo           the JaxRpcTypeInfo for this type
      * @throws OpenEJBException if the XML Schema Type can not be mapped to the Java Class
      */
-    private void mapFields(Class javaClass, XmlTypeInfo xmlTypeInfo, JavaXmlTypeMapping javaXmlTypeMapping, JaxRpcTypeInfo typeInfo) throws OpenEJBException {
+    private void mapFields(final Class javaClass, final XmlTypeInfo xmlTypeInfo, final JavaXmlTypeMapping javaXmlTypeMapping, final JaxRpcTypeInfo typeInfo) throws OpenEJBException {
         // Skip arrays since they can't define a variable-mapping element
         if (!javaClass.isArray()) {
             // if there is a variable-mapping, log a warning
@@ -255,31 +258,31 @@ public class HeavyweightTypeInfoBuilder {
         }
 
         // Index Java bean properties by name
-        Map<String,Class> properties = new HashMap<String,Class>();
+        final Map<String, Class> properties = new HashMap<String, Class>();
         try {
-            PropertyDescriptor[] propertyDescriptors = Introspector.getBeanInfo(javaClass).getPropertyDescriptors();
-            for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
+            final PropertyDescriptor[] propertyDescriptors = Introspector.getBeanInfo(javaClass).getPropertyDescriptors();
+            for (final PropertyDescriptor propertyDescriptor : propertyDescriptors) {
                 properties.put(propertyDescriptor.getName(), propertyDescriptor.getPropertyType());
             }
-        } catch (IntrospectionException e) {
+        } catch (final IntrospectionException e) {
             throw new OpenEJBException("Class " + javaClass + " is not a valid javabean", e);
         }
 
-        for (VariableMapping variableMapping : javaXmlTypeMapping.getVariableMapping()) {
-            String fieldName = variableMapping.getJavaVariableName();
+        for (final VariableMapping variableMapping : javaXmlTypeMapping.getVariableMapping()) {
+            final String fieldName = variableMapping.getJavaVariableName();
 
             if (variableMapping.getXmlAttributeName() != null) {
-                JaxRpcFieldInfo fieldInfo = new JaxRpcFieldInfo();
+                final JaxRpcFieldInfo fieldInfo = new JaxRpcFieldInfo();
                 fieldInfo.name = fieldName;
 
                 // verify that the property exists on the java class
-                Class javaType = properties.get(fieldName);
+                final Class javaType = properties.get(fieldName);
                 if (javaType == null) {
                     throw new OpenEJBException("field name " + fieldName + " not found in " + properties);
                 }
 
-                String attributeLocalName = variableMapping.getXmlAttributeName();
-                QName xmlName = new QName("", attributeLocalName);
+                final String attributeLocalName = variableMapping.getXmlAttributeName();
+                final QName xmlName = new QName("", attributeLocalName);
                 fieldInfo.xmlName = xmlName;
 
                 fieldInfo.xmlType = xmlTypeInfo.attributes.get(attributeLocalName);
@@ -289,7 +292,7 @@ public class HeavyweightTypeInfoBuilder {
 
                 typeInfo.fields.add(fieldInfo);
             } else {
-                JaxRpcFieldInfo fieldInfo = new JaxRpcFieldInfo();
+                final JaxRpcFieldInfo fieldInfo = new JaxRpcFieldInfo();
                 fieldInfo.isElement = true;
                 fieldInfo.name = fieldName;
 
@@ -298,9 +301,9 @@ public class HeavyweightTypeInfoBuilder {
                 if (javaType == null) {
                     //see if it is a public field
                     try {
-                        Field field = javaClass.getField(fieldName);
+                        final Field field = javaClass.getField(fieldName);
                         javaType = field.getType();
-                    } catch (NoSuchFieldException e) {
+                    } catch (final NoSuchFieldException e) {
                         throw new OpenEJBException("field name " + fieldName + " not found in " + properties, e);
                     }
                 }
@@ -309,7 +312,7 @@ public class HeavyweightTypeInfoBuilder {
                 QName xmlName = new QName("", variableMapping.getXmlElementName());
                 XmlElementInfo nestedElement = xmlTypeInfo.elements.get(xmlName);
                 if (nestedElement == null) {
-                    String ns = xmlTypeInfo.qname.getNamespaceURI();
+                    final String ns = xmlTypeInfo.qname.getNamespaceURI();
                     xmlName = new QName(ns, variableMapping.getXmlElementName());
                     nestedElement = xmlTypeInfo.elements.get(xmlName);
                     if (nestedElement == null) {
@@ -323,13 +326,13 @@ public class HeavyweightTypeInfoBuilder {
                 if (nestedElement.xmlType != null) {
                     fieldInfo.xmlType = nestedElement.xmlType;
                 } else {
-                    QName anonymousName;
+                    final QName anonymousName;
                     if (xmlTypeInfo.anonymous) {
                         anonymousName = new QName(xmlTypeInfo.qname.getNamespaceURI(), xmlTypeInfo.qname.getLocalPart() +
-                                ">" + nestedElement.qname.getLocalPart());
+                            ">" + nestedElement.qname.getLocalPart());
                     } else {
                         anonymousName = new QName(xmlTypeInfo.qname.getNamespaceURI(),
-                                ">" + xmlTypeInfo.qname.getLocalPart() + ">" + nestedElement.qname.getLocalPart());
+                            ">" + xmlTypeInfo.qname.getLocalPart() + ">" + nestedElement.qname.getLocalPart());
                     }
                     fieldInfo.xmlType = anonymousName;
                 }
@@ -348,12 +351,12 @@ public class HeavyweightTypeInfoBuilder {
      * All of the known built in XML Schemas used by webservices.  This is used to supress unknown type exceptions
      */
     private static final Set<String> WebserviceNameSpaces = Collections.unmodifiableSet(new LinkedHashSet<String>(Arrays.asList(
-            "http://schemas.xmlsoap.org/soap/encoding/", // SOAP 1.1
-            "http://www.w3.org/2003/05/soap-encoding",   // SOAP 1.2
-            "http://xml.apache.org/xml-soap",            // Apache XMLSOAP
-            "http://www.w3.org/1999/XMLSchema",          // XSD 1999
-            "http://www.w3.org/2000/10/XMLSchema",       // XSD 2000
-            "http://www.w3.org/2001/XMLSchema",          // XSD 2001
-            "http://www.w3.org/XML/1998/namespace"       // XML (for xml-any)
+        "http://schemas.xmlsoap.org/soap/encoding/", // SOAP 1.1
+        "http://www.w3.org/2003/05/soap-encoding",   // SOAP 1.2
+        "http://xml.apache.org/xml-soap",            // Apache XMLSOAP
+        "http://www.w3.org/1999/XMLSchema",          // XSD 1999
+        "http://www.w3.org/2000/10/XMLSchema",       // XSD 2000
+        "http://www.w3.org/2001/XMLSchema",          // XSD 2001
+        "http://www.w3.org/XML/1998/namespace"       // XML (for xml-any)
     )));
 }

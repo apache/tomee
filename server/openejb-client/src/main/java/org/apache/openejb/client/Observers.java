@@ -60,13 +60,13 @@ public class Observers {
         for (final Observer observer : observers) {
             try {
                 observer.invoke(event);
-            } catch (InvocationTargetException e) {
+            } catch (final InvocationTargetException e) {
                 final Throwable t = e.getTargetException() == null ? e : e.getTargetException();
 
                 if (e.getTargetException() != null) {
                     logger.log(Level.WARNING, "Observer method invocation failed", t);
                 }
-            } catch (IllegalAccessException e) {
+            } catch (final IllegalAccessException e) {
                 e.printStackTrace();
             }
         }

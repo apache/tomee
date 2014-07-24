@@ -24,11 +24,11 @@ import java.lang.reflect.Modifier;
 public class NoOverrideCallbackFilter implements CallbackFilter {
     private Class superClass;
 
-    public NoOverrideCallbackFilter(Class superClass) {
+    public NoOverrideCallbackFilter(final Class superClass) {
         this.superClass = superClass;
     }
 
-    public int accept(Method method) {
+    public int accept(final Method method) {
         // we don't intercept non-public methods like finalize
         if (!Modifier.isPublic(method.getModifiers())) {
             return 0;
@@ -42,12 +42,12 @@ public class NoOverrideCallbackFilter implements CallbackFilter {
             // if the super class defined this method don't intercept
             superClass.getMethod(method.getName(), method.getParameterTypes());
             return 0;
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             return 1;
         }
     }
 
-    public boolean equals(Object other) {
+    public boolean equals(final Object other) {
         if (other == null) {
             return false;
         }

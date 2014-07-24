@@ -18,10 +18,14 @@ package org.apache.openejb.server.httpd;
 
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.junit.Classes;
-import org.apache.openejb.junit.EnableServices;
-import org.apache.openejb.junit.Module;
+import org.apache.openejb.testing.Classes;
+import org.apache.openejb.testing.Configuration;
+import org.apache.openejb.testing.EnableServices;
+import org.apache.openejb.testing.Module;
 import org.apache.openejb.loader.IO;
+import org.apache.openejb.testng.PropertiesBuilder;
+import org.apache.openejb.util.NetworkUtil;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -34,38 +38,52 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 
-@EnableServices({ "httpejbd" })
+@EnableServices({"httpejbd"})
 @RunWith(ApplicationComposer.class)
 public class ServletRegistrationTest {
+
+    private static int port = -1;
+
+    @BeforeClass
+    public static void beforeClass() {
+        port = NetworkUtil.getNextAvailablePort();
+    }
+
+    @Configuration
+    public Properties props() {
+        return new PropertiesBuilder().p("httpejbd.port", Integer.toString(port)).build();
+    }
+
     @Module
-    @Classes({ TestServlet.class, TestServlet2.class, TestServlet3.class, TestServlet4.class, SomeEjb.class })
+    @Classes({TestServlet.class, TestServlet2.class, TestServlet3.class, TestServlet4.class, SomeEjb.class})
     public WebApp app() {
         return new WebApp()
-                .contextRoot("servlet")
-                .addServlet("test", TestServlet.class.getName(), "/touch");
+            .contextRoot("servlet")
+            .addServlet("test", TestServlet.class.getName(), "/touch");
     }
 
     @Test
     public void touch() throws IOException {
-        assertEquals("touched", IO.slurp(new URL("http://localhost:4204/servlet/touch")));
+        assertEquals("touched", IO.slurp(new URL("http://localhost:" + port + "/servlet/touch")));
     }
 
     @Test
     public void discover() throws IOException {
-        assertEquals("discovered", IO.slurp(new URL("http://localhost:4204/servlet/discover")));
+        assertEquals("discovered", IO.slurp(new URL("http://localhost:" + port + "/servlet/discover")));
     }
 
     @Test
     public void wildcard() throws IOException {
-        assertEquals("wildcard", IO.slurp(new URL("http://localhost:4204/servlet/bar/openejb")));
+        assertEquals("wildcard", IO.slurp(new URL("http://localhost:" + port + "/servlet/bar/openejb")));
     }
 
     @Test
     public void injections() throws IOException {
-        assertEquals("true", IO.slurp(new URL("http://localhost:4204/servlet/injection")));
+        assertEquals("true", IO.slurp(new URL("http://localhost:" + port + "/servlet/injection")));
     }
 
     private static class TestServlet extends HttpServlet {

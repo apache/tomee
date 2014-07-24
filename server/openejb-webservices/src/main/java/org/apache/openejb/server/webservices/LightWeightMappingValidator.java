@@ -44,7 +44,7 @@ public class LightWeightMappingValidator extends WsdlVisitor {
     private ValidationContext context;
     private Class<? extends DeploymentModule> moduleType;
 
-    public LightWeightMappingValidator(Definition definition, Class<? extends DeploymentModule> moduleType) {
+    public LightWeightMappingValidator(final Definition definition, final Class<? extends DeploymentModule> moduleType) {
         super(definition);
         this.moduleType = moduleType;
     }
@@ -58,7 +58,7 @@ public class LightWeightMappingValidator extends WsdlVisitor {
     }
 
     public boolean isValid() {
-        ValidationContext context = validate();
+        final ValidationContext context = validate();
         return !context.hasFailures() && !context.hasErrors();
     }
 
@@ -66,28 +66,28 @@ public class LightWeightMappingValidator extends WsdlVisitor {
         operationNames = new ArrayList<String>();
     }
 
-    protected void visit(Definition definition) {
+    protected void visit(final Definition definition) {
         if (definition.getServices().values().size() != 1) {
             context.addFailure(new ValidationFailure("A lightweight RPC/Encoded service must contain only one Service"));
         }
     }
 
-    protected void visit(Output output) {
-        Map outputParts = output.getMessage().getParts();
+    protected void visit(final Output output) {
+        final Map outputParts = output.getMessage().getParts();
         if (outputParts.size() != 0 && outputParts.size() != 1) {
             context.addFailure(new ValidationFailure("The output message must contain zero or one parts: " + output.getName()));
         }
 
     }
 
-    protected void visit(Operation operation) {
+    protected void visit(final Operation operation) {
         if (!operationNames.add(operation.getName())) {
             context.addFailure(new ValidationFailure("No two operations can have the same name: " + operation.getName()));
         }
     }
 
-    protected void visit(Fault fault) {
-        Part message = fault.getMessage().getPart("message");
+    protected void visit(final Fault fault) {
+        final Part message = fault.getMessage().getPart("message");
         if (message == null) {
             context.addFailure(new ValidationFailure("The fault message must contain one part named 'message' : " + fault.getName()));
         } else if (!XSD_STRING.equals(message.getTypeName())) {
@@ -96,38 +96,38 @@ public class LightWeightMappingValidator extends WsdlVisitor {
     }
 
 
-    protected void visit(BindingInput bindingInput) {
-        SOAPBody body = getSOAPBody(bindingInput.getExtensibilityElements());
-        String encoding = body.getUse();
+    protected void visit(final BindingInput bindingInput) {
+        final SOAPBody body = getSOAPBody(bindingInput.getExtensibilityElements());
+        final String encoding = body.getUse();
         if (encoding == null || !encoding.equals("encoded")) {
             context.addFailure(new ValidationFailure("The use attribute of the binding input operation must be 'encoded': " + bindingInput.getName()));
         }
     }
 
-    protected void visit(BindingOutput bindingOutput) {
-        SOAPBody body = getSOAPBody(bindingOutput.getExtensibilityElements());
-        String encoding = body.getUse();
+    protected void visit(final BindingOutput bindingOutput) {
+        final SOAPBody body = getSOAPBody(bindingOutput.getExtensibilityElements());
+        final String encoding = body.getUse();
         if (encoding == null || !encoding.equals("encoded")) {
             context.addFailure(new ValidationFailure("The use attribute of the binding output operation must be 'encoded': " + bindingOutput.getName()));
         }
     }
 
-    protected void visit(BindingFault bindingFault) {
-        SOAPBody body = getSOAPBody(bindingFault.getExtensibilityElements());
-        String encoding = body.getUse();
+    protected void visit(final BindingFault bindingFault) {
+        final SOAPBody body = getSOAPBody(bindingFault.getExtensibilityElements());
+        final String encoding = body.getUse();
         if (encoding == null || !encoding.equals("encoded")) {
             context.addFailure(new ValidationFailure("The use attribute of the binding fault operation must be 'encoded': " + bindingFault.getName()));
         }
     }
 
-    protected void visit(Binding binding) {
-        SOAPBinding soapBinding = getSOAPBinding(binding);
+    protected void visit(final Binding binding) {
+        final SOAPBinding soapBinding = getSOAPBinding(binding);
         if (soapBinding == null || soapBinding.getStyle() == null || !soapBinding.getStyle().equals("rpc")) {
             context.addFailure(new ValidationFailure("The messaging style of the binding must be rpc: " + binding.getQName()));
         }
     }
 
-    protected void visit(Service service) {
+    protected void visit(final Service service) {
         if (service.getPorts().values().size() != 1) {
             context.addFailure(new ValidationFailure("A lightweight RPC/Encoded service must contain only one Port"));
         }

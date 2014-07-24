@@ -95,7 +95,7 @@ public class ServiceAccessController extends ServerServiceFilter {
                 final String mask = st.nextToken();
                 try {
                     permissions.add(IPAddressPermissionFactory.getIPAddressMask(mask));
-                } catch (IllegalArgumentException iae) {
+                } catch (final IllegalArgumentException iae) {
                     // it could be that it is a hostname not ip address
                     addIPAddressPermissions(permissions, mask);
                 }
@@ -106,8 +106,8 @@ public class ServiceAccessController extends ServerServiceFilter {
     }
 
     private void addIPAddressPermissions(
-            final LinkedList<IPAddressPermission> permissions, final String hostname)
-            throws ServiceException {
+        final LinkedList<IPAddressPermission> permissions, final String hostname)
+        throws ServiceException {
         try {
             final InetAddress[] localIps = InetAddress.getAllByName(hostname);
             for (final InetAddress localIp : localIps) {
@@ -117,7 +117,7 @@ public class ServiceAccessController extends ServerServiceFilter {
                     permissions.add(new ExactIPv6AddressPermission(localIp.getAddress()));
                 }
             }
-        } catch (UnknownHostException e) {
+        } catch (final UnknownHostException e) {
             throw new ServiceException("Could not get " + hostname + " inet address", e);
         }
     }

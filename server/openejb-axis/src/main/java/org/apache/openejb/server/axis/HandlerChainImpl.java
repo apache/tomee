@@ -41,20 +41,20 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
     private String[] roles;
     private LinkedList<Handler> invokedHandlers = new LinkedList<Handler>();
 
-    public HandlerChainImpl(List<HandlerInfo> handlerInfos) {
+    public HandlerChainImpl(final List<HandlerInfo> handlerInfos) {
         this(handlerInfos, null);
     }
 
     @SuppressWarnings({"unchecked"})
-    public HandlerChainImpl(List<HandlerInfo> handlerInfos, String[] roles) {
+    public HandlerChainImpl(final List<HandlerInfo> handlerInfos, final String[] roles) {
         this.roles = roles;
         for (int i = 0; i < handlerInfos.size(); i++) {
-            HandlerInfo handlerInfo = handlerInfos.get(i);
+            final HandlerInfo handlerInfo = handlerInfos.get(i);
             try {
-                Handler handler = (Handler) handlerInfo.getHandlerClass().newInstance();
+                final Handler handler = (Handler) handlerInfo.getHandlerClass().newInstance();
                 handler.init(handlerInfo);
                 add(handler);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new JAXRPCException("Unable to initialize handler class: " + handlerInfo.getHandlerClass().getName(), e);
             }
         }
@@ -64,7 +64,7 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
         return roles;
     }
 
-    public void setRoles(String[] roles) {
+    public void setRoles(final String[] roles) {
         if (roles == null) {
             this.roles = new String[0];
         } else {
@@ -72,29 +72,29 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
         }
     }
 
-    public void init(Map map) {
+    public void init(final Map map) {
     }
 
     public void destroy() {
-        for (Iterator iterator = invokedHandlers.iterator(); iterator.hasNext();) {
-            Handler handler = (Handler) iterator.next();
+        for (final Iterator iterator = invokedHandlers.iterator(); iterator.hasNext(); ) {
+            final Handler handler = (Handler) iterator.next();
             handler.destroy();
         }
         invokedHandlers.clear();
         clear();
     }
 
-    public boolean handleRequest(MessageContext context) {
-        MessageSnapshot snapshot = new MessageSnapshot(context);
+    public boolean handleRequest(final MessageContext context) {
+        final MessageSnapshot snapshot = new MessageSnapshot(context);
         try {
             for (int i = 0; i < size(); i++) {
-                Handler currentHandler = (Handler) get(i);
+                final Handler currentHandler = (Handler) get(i);
                 invokedHandlers.addFirst(currentHandler);
                 try {
                     if (!currentHandler.handleRequest(context)) {
                         return false;
                     }
-                } catch (SOAPFaultException e) {
+                } catch (final SOAPFaultException e) {
                     throw e;
                 }
             }
@@ -108,11 +108,11 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
         return true;
     }
 
-    public boolean handleResponse(MessageContext context) {
-        MessageSnapshot snapshot = new MessageSnapshot(context);
+    public boolean handleResponse(final MessageContext context) {
+        final MessageSnapshot snapshot = new MessageSnapshot(context);
         try {
-            for (Iterator iterator = invokedHandlers.iterator(); iterator.hasNext();) {
-                Handler handler = (Handler) iterator.next();
+            for (final Iterator iterator = invokedHandlers.iterator(); iterator.hasNext(); ) {
+                final Handler handler = (Handler) iterator.next();
                 if (!handler.handleResponse(context)) {
                     return false;
                 }
@@ -126,11 +126,11 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
         return true;
     }
 
-    public boolean handleFault(MessageContext context) {
-        MessageSnapshot snapshot = new MessageSnapshot(context);
+    public boolean handleFault(final MessageContext context) {
+        final MessageSnapshot snapshot = new MessageSnapshot(context);
         try {
-            for (Iterator iterator = invokedHandlers.iterator(); iterator.hasNext();) {
-                Handler handler = (Handler) iterator.next();
+            for (final Iterator iterator = invokedHandlers.iterator(); iterator.hasNext(); ) {
+                final Handler handler = (Handler) iterator.next();
                 if (!handler.handleFault(context)) {
                     return false;
                 }
@@ -144,13 +144,13 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
         return true;
     }
 
-    private void saveChanges(MessageContext context) {
+    private void saveChanges(final MessageContext context) {
         try {
-            SOAPMessage message = ((SOAPMessageContext) context).getMessage();
+            final SOAPMessage message = ((SOAPMessageContext) context).getMessage();
             if (message != null) {
                 message.saveChanges();
             }
-        } catch (SOAPException e) {
+        } catch (final SOAPException e) {
             throw new ServerRuntimeException("Unable to save changes to SOAPMessage : " + e.toString());
         }
     }
@@ -168,62 +168,62 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
         private final String operationName;
         private final List<String> parameterNames;
 
-        public MessageSnapshot(MessageContext soapMessage) {
-            SOAPMessage message = ((SOAPMessageContext) soapMessage).getMessage();
+        public MessageSnapshot(final MessageContext soapMessage) {
+            final SOAPMessage message = ((SOAPMessageContext) soapMessage).getMessage();
             if (message == null || message.getSOAPPart() == null) {
                 operationName = null;
                 parameterNames = null;
             } else {
-                SOAPBody body = getBody(message);
+                final SOAPBody body = getBody(message);
 
-                SOAPElement operation = ((SOAPElement) body.getChildElements().next());
+                final SOAPElement operation = ((SOAPElement) body.getChildElements().next());
                 this.operationName = operation.getElementName().toString();
 
                 this.parameterNames = new ArrayList<String>();
-                for (Iterator i = operation.getChildElements(); i.hasNext();) {
-                    SOAPElement parameter = (SOAPElement) i.next();
-                    String element = parameter.getElementName().toString();
+                for (final Iterator i = operation.getChildElements(); i.hasNext(); ) {
+                    final SOAPElement parameter = (SOAPElement) i.next();
+                    final String element = parameter.getElementName().toString();
                     parameterNames.add(element);
                 }
             }
         }
 
-        private SOAPBody getBody(SOAPMessage message) {
+        private SOAPBody getBody(final SOAPMessage message) {
             try {
                 return message.getSOAPPart().getEnvelope().getBody();
-            } catch (SOAPException e) {
+            } catch (final SOAPException e) {
                 throw new ServerRuntimeException(e);
             }
         }
 
-        public boolean equals(Object obj) {
+        public boolean equals(final Object obj) {
             return (obj instanceof SOAPMessageContext) && equals((SOAPMessageContext) obj);
         }
 
-        private boolean equals(SOAPMessageContext soapMessage) {
-            SOAPMessage message = soapMessage.getMessage();
+        private boolean equals(final SOAPMessageContext soapMessage) {
+            final SOAPMessage message = soapMessage.getMessage();
 
             if (operationName == null) {
                 return message == null || message.getSOAPPart() == null;
             }
 
-            SOAPBody body = getBody(message);
+            final SOAPBody body = getBody(message);
 
             // Handlers can't change the operation
-            SOAPElement operation = ((SOAPElement) body.getChildElements().next());
+            final SOAPElement operation = ((SOAPElement) body.getChildElements().next());
             if (!this.operationName.equals(operation.getElementName().toString())) {
                 return false;
             }
 
-            Iterator parameters = operation.getChildElements();
-            for (Iterator i = parameterNames.iterator(); i.hasNext();) {
+            final Iterator parameters = operation.getChildElements();
+            for (final Iterator i = parameterNames.iterator(); i.hasNext(); ) {
                 // Handlers can't remove parameters
                 if (!parameters.hasNext()) {
                     return false;
                 }
 
-                String original = (String) i.next();
-                SOAPElement parameter = (SOAPElement) parameters.next();
+                final String original = (String) i.next();
+                final SOAPElement parameter = (SOAPElement) parameters.next();
                 // Handlers can't change parameter types
                 if (parameter == null || !original.equals(parameter.getElementName().toString())) {
                     return false;

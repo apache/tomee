@@ -18,6 +18,7 @@ package org.apache.openejb.config.sys;
 
 import junit.framework.TestCase;
 import org.apache.openejb.AppContext;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ResourceInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
@@ -31,6 +32,7 @@ import org.apache.openejb.config.provider.ServiceJarXmlLoader;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.loader.SystemInstance;
+import org.junit.AfterClass;
 
 import java.util.List;
 
@@ -38,6 +40,11 @@ import java.util.List;
  * @version $Rev$ $Date$
  */
 public class ServiceProviderInheritanceTest extends TestCase {
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        OpenEJB.destroy();
+    }
 
     public void test() throws Exception {
 

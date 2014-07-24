@@ -43,8 +43,8 @@ import java.util.Map;
 
 /**
  * @version $Rev$ $Date$
- *
- * Used as a stack executed at the end of the request too. Avoid multiple (useless) listeners.
+ *          <p/>
+ *          Used as a stack executed at the end of the request too. Avoid multiple (useless) listeners.
  */
 public class EndWebBeansListener implements ServletContextListener, ServletRequestListener, HttpSessionListener, HttpSessionActivationListener {
 
@@ -70,7 +70,7 @@ public class EndWebBeansListener implements ServletContextListener, ServletReque
      *
      * @param webBeansContext the OWB context
      */
-    public EndWebBeansListener(WebBeansContext webBeansContext) {
+    public EndWebBeansListener(final WebBeansContext webBeansContext) {
         this.webBeansContext = webBeansContext;
         if (webBeansContext != null) {
             this.failoverService = this.webBeansContext.getService(FailOverService.class);
@@ -78,7 +78,7 @@ public class EndWebBeansListener implements ServletContextListener, ServletReque
             this.contextKey = "org.apache.tomee.catalina.WebBeansListener@" + webBeansContext.hashCode();
         } else {
             this.contextKey = "notused";
-            this.contextsService= null;
+            this.contextsService = null;
         }
     }
 
@@ -86,7 +86,7 @@ public class EndWebBeansListener implements ServletContextListener, ServletReque
      * {@inheritDoc}
      */
     @Override
-    public void requestDestroyed(ServletRequestEvent event) {
+    public void requestDestroyed(final ServletRequestEvent event) {
         if (webBeansContext == null) {
             return;
         }
@@ -106,10 +106,10 @@ public class EndWebBeansListener implements ServletContextListener, ServletReque
             if (event != null
                 && failoverService != null
                 && failoverService.isSupportFailOver()) {
-                Object request = event.getServletRequest();
+                final Object request = event.getServletRequest();
                 if (request instanceof HttpServletRequest) {
-                    HttpServletRequest httpRequest = (HttpServletRequest) request;
-                    javax.servlet.http.HttpSession session = httpRequest.getSession(false);
+                    final HttpServletRequest httpRequest = (HttpServletRequest) request;
+                    final javax.servlet.http.HttpSession session = httpRequest.getSession(false);
                     if (session != null) {
                         failoverService.sessionIsIdle(session);
                     }
@@ -136,7 +136,7 @@ public class EndWebBeansListener implements ServletContextListener, ServletReque
      * {@inheritDoc}
      */
     @Override
-    public void requestInitialized(ServletRequestEvent event) {
+    public void requestInitialized(final ServletRequestEvent event) {
         // no-op
     }
 
@@ -144,7 +144,7 @@ public class EndWebBeansListener implements ServletContextListener, ServletReque
      * {@inheritDoc}
      */
     @Override
-    public void sessionCreated(HttpSessionEvent event) {
+    public void sessionCreated(final HttpSessionEvent event) {
         // no-op
     }
 
@@ -152,7 +152,7 @@ public class EndWebBeansListener implements ServletContextListener, ServletReque
      * {@inheritDoc}
      */
     @Override
-    public void sessionDestroyed(HttpSessionEvent event) {
+    public void sessionDestroyed(final HttpSessionEvent event) {
         if (webBeansContext == null) {
             return;
         }
@@ -193,7 +193,7 @@ public class EndWebBeansListener implements ServletContextListener, ServletReque
 
 
     @Override
-    public void sessionWillPassivate(HttpSessionEvent event) {
+    public void sessionWillPassivate(final HttpSessionEvent event) {
         if (webBeansContext == null) {
             return;
         }
@@ -205,17 +205,17 @@ public class EndWebBeansListener implements ServletContextListener, ServletReque
     }
 
     @Override
-    public void sessionDidActivate(HttpSessionEvent event) {
+    public void sessionDidActivate(final HttpSessionEvent event) {
         // no-op
     }
 
     @Override
-    public void contextInitialized(ServletContextEvent servletContextEvent) {
+    public void contextInitialized(final ServletContextEvent servletContextEvent) {
         destroyFakedRequest();
     }
 
     @Override
-    public void contextDestroyed(ServletContextEvent servletContextEvent) {
+    public void contextDestroyed(final ServletContextEvent servletContextEvent) {
         destroyFakedRequest();
     }
 }

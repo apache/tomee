@@ -28,7 +28,7 @@ import javax.xml.ws.soap.SOAPBinding;
 public class JaxWsImplementorInfoImpl extends JaxWsImplementorInfo {
     private final String bindingURI;
 
-    public JaxWsImplementorInfoImpl(Class clazz, String bindingURI) {
+    public JaxWsImplementorInfoImpl(final Class clazz, final String bindingURI) {
         super(clazz);
         this.bindingURI = bindingURI;
     }

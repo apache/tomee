@@ -41,15 +41,16 @@ public class Installer implements InstallerInterface {
 
     private static final boolean listenerInstalled;
     private static final boolean agentInstalled;
+
     static {
         final Options opts = SystemInstance.get().getOptions();
         // is the OpenEJB listener installed
         listenerInstalled = "OpenEJBListener".equals(opts.get("openejb.embedder.source", ""))
-                || "ServerListener".equals(opts.get("openejb.embedder.source", ""));
+            || "ServerListener".equals(opts.get("openejb.embedder.source", ""));
 
         // is the OpenEJB javaagent installed
         agentInstalled = InstallerTools.invokeStaticNoArgMethod(
-                "org.apache.openejb.javaagent.Agent", "getInstrumentation") != null;
+            "org.apache.openejb.javaagent.Agent", "getInstrumentation") != null;
     }
 
     public static boolean isListenerInstalled() {
@@ -152,21 +153,21 @@ public class Installer implements InstallerInterface {
 
         // add our listener
         final String roleUserTags =
-                "  <role rolename=\"tomee-admin\" />\n" +
-                        "  <user username=\"tomee\" password=\"tomee\" roles=\"tomee-admin,manager-gui\" />\n";
+            "  <role rolename=\"tomee-admin\" />\n" +
+                "  <user username=\"tomee\" password=\"tomee\" roles=\"tomee-admin,manager-gui\" />\n";
         final String content;
         if (!securityActivated) {
             content =
-                    "  <!-- Activate those lines to get access to TomEE GUI -->\n" +
-                            "  <!--\n" +
-                            roleUserTags +
-                            "  -->\n" +
-                            "</tomcat-users>\n";
+                "  <!-- Activate those lines to get access to TomEE GUI -->\n" +
+                    "  <!--\n" +
+                    roleUserTags +
+                    "  -->\n" +
+                    "</tomcat-users>\n";
         } else {
             content =
-                    "  <!-- Activate those lines to get access to TomEE GUI\n -->" +
-                            roleUserTags +
-                            "</tomcat-users>\n";
+                "  <!-- Activate those lines to get access to TomEE GUI\n -->" +
+                    roleUserTags +
+                    "</tomcat-users>\n";
 
         }
         final String newTomcatUsers = tomcatUsersXml.replace("</tomcat-users>", content);
@@ -197,22 +198,27 @@ public class Installer implements InstallerInterface {
         }
     }
 
+    private void removeTomcatLibJar(final String name) {
+        final File jar = new File(paths.getCatalinaLibDir(), name);
+        removeJar(jar);
+    }
+
     private void commentDeploymentDir() {
         final File tomeeXml = new File(paths.getCatalinaConfDir(), "tomee.xml");
         if (!tomeeXml.exists()) {
             Installers.writeAll(tomeeXml,
-                    "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                            "<tomee>\n" +
-                            "  <!-- see http://tomee.apache.org/containers-and-resources.html -->\n\n" +
-                            "  <!-- activate next line to be able to deploy applications in apps -->\n" +
-                            "  <!-- <Deployments dir=\"apps\" /> -->\n" +
-                            "</tomee>\n", alerts);
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                    "<tomee>\n" +
+                    "  <!-- see http://tomee.apache.org/containers-and-resources.html -->\n\n" +
+                    "  <!-- activate next line to be able to deploy applications in apps -->\n" +
+                    "  <!-- <Deployments dir=\"apps\" /> -->\n" +
+                    "</tomee>\n", alerts);
         }
     }
 
     private void addTomEELinkToTomcatHome() {
         final File home = paths.getHome();
-        if(!home.exists()) {
+        if (!home.exists()) {
             return;
         }
         final String indeJsp = Installers.readAll(home, alerts);
@@ -226,10 +232,10 @@ public class Installer implements InstallerInterface {
         }
 
         final String newIndeJsp = indeJsp.replaceFirst("<div id=\"actions\">",
-                "<div id=\\\"actions\\\">\r\n" +
-                        "                    <div class=\"button\">\n" +
-                        "                        <a class=\"container shadow\" href=\"/tomee\"><span>TomEE Gui</span></a>\n" +
-                        "                    </div>");
+            "<div id=\\\"actions\\\">\r\n" +
+                "                    <div class=\"button\">\n" +
+                "                        <a class=\"container shadow\" href=\"/tomee\"><span>TomEE Gui</span></a>\n" +
+                "                    </div>");
         Installers.writeAll(home, newIndeJsp, alerts);
     }
 
@@ -253,7 +259,7 @@ public class Installer implements InstallerInterface {
                     alerts.addInfo("Copy " + file.getName() + " to lib");
                 } catch (final IOException e) {
                     alerts.addError("Unable to " + file.getName() + " to Tomcat lib directory.  This will need to be " +
-                            "performed manually.", e);
+                        "performed manually.", e);
                 }
             }
         }
@@ -269,7 +275,7 @@ public class Installer implements InstallerInterface {
 
         final File jaxbApi = paths.findOpenEJBJar("geronimo-jaxb_2.2_spec");
         copyClasses(paths.getJavaEEAPIJar(), jaxbApi, new File(endorsed, "jaxb-api.jar"), "javax/xml/bind/.*",
-                Arrays.asList("javax/xml/bind/ContextFinder.class", "javax/xml/bind/DatatypeConverter.class"));
+            Arrays.asList("javax/xml/bind/ContextFinder.class", "javax/xml/bind/DatatypeConverter.class"));
         removeJar(jaxbApi);
 
         // don't put jaxb-impl in endorsed since it relies on the jvm itself
@@ -381,11 +387,6 @@ public class Installer implements InstallerInterface {
         }
     }
 
-    private void removeTomcatLibJar(final String name) {
-        final File jar = new File(paths.getCatalinaLibDir(), name);
-        removeJar(jar);
-    }
-
     public void installListener() {
         installListener("org.apache.tomee.loader.OpenEJBListener");
     }
@@ -436,12 +437,12 @@ public class Installer implements InstallerInterface {
         String newServerXml = null;
         try {
             newServerXml = Installers.replace(serverXmlOriginal,
-                    "<Server",
-                    "<Server",
-                    ">",
-                    ">\r\n" +
-                            "  <!-- TomEE plugin for Tomcat -->\r\n" +
-                            "  <Listener className=\"" + listener + "\" />");
+                "<Server",
+                "<Server",
+                ">",
+                ">\r\n" +
+                    "  <!-- TomEE plugin for Tomcat -->\r\n" +
+                    "  <Listener className=\"" + listener + "\" />");
         } catch (final IOException e) {
             alerts.addError("Error while adding listener to server.xml file", e);
         }
@@ -509,12 +510,12 @@ public class Installer implements InstallerInterface {
         // add our magic bits to the catalina sh file
         String openejbJavaagentPath = paths.getCatalinaHomeDir().toURI().relativize(javaagentJar.toURI()).getPath();
         final String newCatalinaSh = catalinaShOriginal.replace("# ----- Execute The Requested Command",
-                "# Add OpenEJB javaagent\n" +
-                        "if [ -r \"$CATALINA_HOME\"/" + openejbJavaagentPath + " ]; then\n" +
-                        "  JAVA_OPTS=\"\"-javaagent:$CATALINA_HOME/" + openejbJavaagentPath + "\" $JAVA_OPTS\"\n" +
-                        "fi\n" +
-                        "\n" +
-                        "# ----- Execute The Requested Command");
+            "# Add OpenEJB javaagent\n" +
+                "if [ -r \"$CATALINA_HOME\"/" + openejbJavaagentPath + " ]; then\n" +
+                "  JAVA_OPTS=\"\"-javaagent:$CATALINA_HOME/" + openejbJavaagentPath + "\" $JAVA_OPTS\"\n" +
+                "fi\n" +
+                "\n" +
+                "# ----- Execute The Requested Command");
 
         // overwrite the catalina.sh file
         if (Installers.writeAll(paths.getCatalinaShFile(), newCatalinaSh, alerts)) {
@@ -522,14 +523,14 @@ public class Installer implements InstallerInterface {
         }
 
         boolean isCatalinaShExecutable = paths.getCatalinaShFile().canExecute();
-        if(!isCatalinaShExecutable) {
+        if (!isCatalinaShExecutable) {
             try {
                 isCatalinaShExecutable = paths.getCatalinaShFile().setExecutable(true);
             } catch (final SecurityException e) {
                 alerts.addWarning("Cannot change CatalinaSh executable attribute.");
             }
         }
-        if(!isCatalinaShExecutable) {
+        if (!isCatalinaShExecutable) {
             alerts.addWarning("CatalinaSh is not executable.");
         }
 
@@ -559,12 +560,12 @@ public class Installer implements InstallerInterface {
         // add our magic bits to the catalina bat file
         openejbJavaagentPath = openejbJavaagentPath.replace('/', '\\');
         final String newCatalinaBat = catalinaBatOriginal.replace("rem ----- Execute The Requested Command",
-                "rem Add OpenEJB javaagent\r\n" +
-                        "if not exist \"%CATALINA_HOME%\\" + openejbJavaagentPath + "\" goto noOpenEJBJavaagent\r\n" +
-                        "set JAVA_OPTS=\"-javaagent:%CATALINA_HOME%\\" + openejbJavaagentPath + "\" %JAVA_OPTS%\r\n" +
-                        ":noOpenEJBJavaagent\r\n" +
-                        "\r\n" +
-                        "rem ----- Execute The Requested Command");
+            "rem Add OpenEJB javaagent\r\n" +
+                "if not exist \"%CATALINA_HOME%\\" + openejbJavaagentPath + "\" goto noOpenEJBJavaagent\r\n" +
+                "set JAVA_OPTS=\"-javaagent:%CATALINA_HOME%\\" + openejbJavaagentPath + "\" %JAVA_OPTS%\r\n" +
+                ":noOpenEJBJavaagent\r\n" +
+                "\r\n" +
+                "rem ----- Execute The Requested Command");
 
         // overwrite the catalina.bat file
         if (Installers.writeAll(paths.getCatalinaBatFile(), newCatalinaBat, alerts)) {
@@ -579,9 +580,9 @@ public class Installer implements InstallerInterface {
      * of tomcat. if there is already a conf/logging.properties file available
      * then this method appends the contents of openejb logging.properties file
      * to the exisiting properties file.
-     *
+     * <p/>
      * Replace web.xml to set jasper in production mode instead of dev mode.
-     *
+     * <p/>
      * NOTE:- If the existing conf/logging.properties file already has some openejb specific
      * configuration, then this method will just leave the logging.properties file alone
      */
@@ -621,59 +622,59 @@ public class Installer implements InstallerInterface {
         // now we are using tomcat one of jdk one by default
         //
         final String openejbLoggingProps = "################################\r\n" +
-                "# OpenEJB/TomEE specific loggers\r\n" +
-                "################################\r\n" +
-                "#\r\n" +
-                "# ACTIVATE LEVEL/HANDLERS YOU WANT\r\n" +
-                "# IF YOU ACTIVATE 5tomee.org.apache.juli.FileHandler\r\n" +
-                "# ADD IT TO handlers LINE LIKE:\r\n" +
-                "#\r\n" +
-                "# handlers = 1catalina.org.apache.juli.FileHandler, 2localhost.org.apache.juli.FileHandler, 3manager.org.apache.juli.FileHandler, 4host-manager.org.apache.juli.FileHandler, 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
-                "#\r\n" +
-                "# LEVELS:\r\n" +
-                "# =======\r\n" +
-                "#\r\n" +
-                "# OpenEJB.level             = WARNING\r\n" +
-                "# OpenEJB.options.level     = INFO\r\n" +
-                "# OpenEJB.server.level      = INFO\r\n" +
-                "# OpenEJB.startup.level     = INFO\r\n" +
-                "# OpenEJB.startup.service.level = WARNING\r\n" +
-                "# OpenEJB.startup.config.level = INFO\r\n" +
-                "# OpenEJB.hsql.level        = INFO\r\n" +
-                "# CORBA-Adapter.level       = WARNING\r\n" +
-                "# Transaction.level         = WARNING\r\n" +
-                "# org.apache.activemq.level = SEVERE\r\n" +
-                "# org.apache.geronimo.level = SEVERE\r\n" +
-                "# openjpa.level             = WARNING\r\n" +
-                "# OpenEJB.cdi.level         = INFO\r\n" +
-                "# org.apache.webbeans.level = INFO\r\n" +
-                "# org.apache.openejb.level = FINE\r\n" +
-                "#\r\n" +
-                "# HANDLERS:\r\n" +
-                "# =========\r\n" +
-                "#\r\n" +
-                "# OpenEJB.handlers             = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
-                "# OpenEJB.options.handlers     = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
-                "# OpenEJB.server.handlers      = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
-                "# OpenEJB.startup.handlers     = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
-                "# OpenEJB.startup.service.handlers = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
-                "# OpenEJB.startup.config.handlers = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
-                "# OpenEJB.hsql.handlers        = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
-                "# CORBA-Adapter.handlers       = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
-                "# Transaction.handlers         = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
-                "# org.apache.activemq.handlers = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
-                "# org.apache.geronimo.handlers = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
-                "# openjpa.handlers             = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
-                "# OpenEJB.cdi.handlers         = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
-                "# org.apache.webbeans.handlers = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
-                "# org.apache.openejb.handlers = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
-                "#\r\n" +
-                "# TOMEE HANDLER SAMPLE:\r\n" +
-                "# =====================\r\n" +
-                "#\r\n" +
-                "# 5tomee.org.apache.juli.FileHandler.level = FINEST\r\n" +
-                "# 5tomee.org.apache.juli.FileHandler.directory = ${catalina.base}/logs\r\n" +
-                "# 5tomee.org.apache.juli.FileHandler.prefix = tomee.\r\n";
+            "# OpenEJB/TomEE specific loggers\r\n" +
+            "################################\r\n" +
+            "#\r\n" +
+            "# ACTIVATE LEVEL/HANDLERS YOU WANT\r\n" +
+            "# IF YOU ACTIVATE 5tomee.org.apache.juli.FileHandler\r\n" +
+            "# ADD IT TO handlers LINE LIKE:\r\n" +
+            "#\r\n" +
+            "# handlers = 1catalina.org.apache.juli.FileHandler, 2localhost.org.apache.juli.FileHandler, 3manager.org.apache.juli.FileHandler, 4host-manager.org.apache.juli.FileHandler, 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
+            "#\r\n" +
+            "# LEVELS:\r\n" +
+            "# =======\r\n" +
+            "#\r\n" +
+            "# OpenEJB.level             = WARNING\r\n" +
+            "# OpenEJB.options.level     = INFO\r\n" +
+            "# OpenEJB.server.level      = INFO\r\n" +
+            "# OpenEJB.startup.level     = INFO\r\n" +
+            "# OpenEJB.startup.service.level = WARNING\r\n" +
+            "# OpenEJB.startup.config.level = INFO\r\n" +
+            "# OpenEJB.hsql.level        = INFO\r\n" +
+            "# CORBA-Adapter.level       = WARNING\r\n" +
+            "# Transaction.level         = WARNING\r\n" +
+            "# org.apache.activemq.level = SEVERE\r\n" +
+            "# org.apache.geronimo.level = SEVERE\r\n" +
+            "# openjpa.level             = WARNING\r\n" +
+            "# OpenEJB.cdi.level         = INFO\r\n" +
+            "# org.apache.webbeans.level = INFO\r\n" +
+            "# org.apache.openejb.level = FINE\r\n" +
+            "#\r\n" +
+            "# HANDLERS:\r\n" +
+            "# =========\r\n" +
+            "#\r\n" +
+            "# OpenEJB.handlers             = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
+            "# OpenEJB.options.handlers     = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
+            "# OpenEJB.server.handlers      = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
+            "# OpenEJB.startup.handlers     = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
+            "# OpenEJB.startup.service.handlers = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
+            "# OpenEJB.startup.config.handlers = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
+            "# OpenEJB.hsql.handlers        = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
+            "# CORBA-Adapter.handlers       = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
+            "# Transaction.handlers         = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
+            "# org.apache.activemq.handlers = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
+            "# org.apache.geronimo.handlers = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
+            "# openjpa.handlers             = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
+            "# OpenEJB.cdi.handlers         = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
+            "# org.apache.webbeans.handlers = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
+            "# org.apache.openejb.handlers = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
+            "#\r\n" +
+            "# TOMEE HANDLER SAMPLE:\r\n" +
+            "# =====================\r\n" +
+            "#\r\n" +
+            "# 5tomee.org.apache.juli.FileHandler.level = FINEST\r\n" +
+            "# 5tomee.org.apache.juli.FileHandler.directory = ${catalina.base}/logs\r\n" +
+            "# 5tomee.org.apache.juli.FileHandler.prefix = tomee.\r\n";
         final File loggingPropsFile = new File(confDir, "logging.properties");
         String newLoggingProps = null;
         if (!loggingPropsFile.exists()) {
@@ -683,8 +684,8 @@ public class Installer implements InstallerInterface {
             if (!loggingPropsOriginal.toLowerCase().contains("openejb")) {
                 // append our properties
                 newLoggingProps = loggingPropsOriginal +
-                        "\r\n\r\n" +
-                        openejbLoggingProps + "\r\n";
+                    "\r\n\r\n" +
+                    openejbLoggingProps + "\r\n";
             }
         }
         if (newLoggingProps != null) {

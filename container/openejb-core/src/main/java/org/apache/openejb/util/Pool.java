@@ -29,6 +29,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadFactory;
@@ -153,9 +154,30 @@ public class Pool<T> {
     }
 
     private Executor createExecutor() {
-        return new ThreadPoolExecutor(3, 10,
+        final ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(3, 10,
             60L, TimeUnit.SECONDS,
             new LinkedBlockingQueue<Runnable>(2), new DaemonThreadFactory("org.apache.openejb.util.Pool", hashCode()));
+
+        threadPoolExecutor.setRejectedExecutionHandler(new RejectedExecutionHandler() {
+            @Override
+            public void rejectedExecution(final Runnable r, final ThreadPoolExecutor tpe) {
+
+                if (null == r || null == tpe || tpe.isShutdown() || tpe.isTerminated() || tpe.isTerminating()) {
+                    return;
+                }
+
+                try {
+                    if (!tpe.getQueue().offer(r, 20, TimeUnit.SECONDS)) {
+                        org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources")
+                            .warning("Default pool executor failed to run asynchronous process: " + r);
+                    }
+                } catch (final InterruptedException e) {
+                    //Ignore
+                }
+            }
+        });
+
+        return threadPoolExecutor;
     }
 
     private void greater(final String maxName, final long max, final String minName, final long min) {
@@ -420,6 +442,7 @@ public class Pool<T> {
     }
 
     public boolean close(final long timeout, final TimeUnit unit) throws InterruptedException {
+
         // drain all keys so no new instances will be accepted into the pool
         while (instances.tryAcquire()) {
             Thread.yield();

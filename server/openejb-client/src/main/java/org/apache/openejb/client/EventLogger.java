@@ -65,7 +65,7 @@ public class EventLogger {
                 logger.log(level, event.toString());
             }
 
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             logger.log(Level.WARNING, event.toString());
         }
     }

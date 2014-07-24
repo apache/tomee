@@ -61,7 +61,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
 
     private final ConcurrentMap<Class<?>, List<Method>> interceptorCache = new ConcurrentHashMap<Class<?>, List<Method>>();
     private final StatelessInstanceManager instanceManager;
-    private final Map<String, BeanContext> deploymentRegistry = new HashMap<String, BeanContext>();
+    private final Map<String, BeanContext> deploymentRegistry = new ConcurrentHashMap<String, BeanContext>();
     private final Object containerID;
     private final SecurityService securityService;
 
@@ -77,12 +77,12 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
     }
 
     @Override
-    public synchronized BeanContext[] getBeanContexts() {
+    public BeanContext[] getBeanContexts() {
         return this.deploymentRegistry.values().toArray(new BeanContext[this.deploymentRegistry.size()]);
     }
 
     @Override
-    public synchronized BeanContext getBeanContext(final Object deploymentID) {
+    public BeanContext getBeanContext(final Object deploymentID) {
         final String id = (String) deploymentID;
         return deploymentRegistry.get(id);
     }
@@ -99,11 +99,10 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
 
     @Override
     public void deploy(final BeanContext beanContext) throws OpenEJBException {
+
         final String id = (String) beanContext.getDeploymentID();
-        synchronized (this) {
-            deploymentRegistry.put(id, beanContext);
-            beanContext.setContainer(this);
-        }
+        deploymentRegistry.put(id, beanContext);
+        beanContext.setContainer(this);
 
         // add it before starting the timer (@PostCostruct)
         if (StatsInterceptor.isStatsActivated()) {
@@ -130,13 +129,10 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
     @Override
     public void undeploy(final BeanContext beanContext) {
         this.instanceManager.undeploy(beanContext);
-
-        synchronized (this) {
-            final String id = (String) beanContext.getDeploymentID();
-            beanContext.setContainer(null);
-            beanContext.setContainerData(null);
-            this.deploymentRegistry.remove(id);
-        }
+        final String id = (String) beanContext.getDeploymentID();
+        beanContext.setContainer(null);
+        beanContext.setContainerData(null);
+        this.deploymentRegistry.remove(id);
     }
 
     @SuppressWarnings("unchecked")
@@ -196,9 +192,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
                 currentCreationalContext.set(bean.creationalContext);
             }
             return _invoke(callMethod, runMethod, args, bean, callContext, type);
-
         } finally {
-
             if (bean != null) {
                 if (callContext.isDiscardInstance()) {
                     this.instanceManager.discardInstance(callContext, bean);

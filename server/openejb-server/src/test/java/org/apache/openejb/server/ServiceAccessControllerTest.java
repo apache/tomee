@@ -33,7 +33,7 @@ public class ServiceAccessControllerTest extends TestCase {
         try {
             IPAddressPermissionFactory.getIPAddressMask("121.122.123.a");
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
         }
     }
 
@@ -41,7 +41,7 @@ public class ServiceAccessControllerTest extends TestCase {
         try {
             IPAddressPermissionFactory.getIPAddressMask("121.122.123.256");
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
         }
     }
 
@@ -55,7 +55,7 @@ public class ServiceAccessControllerTest extends TestCase {
         try {
             IPAddressPermissionFactory.getIPAddressMask("121.0.123.0");
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
         }
     }
 
@@ -146,7 +146,7 @@ public class ServiceAccessControllerTest extends TestCase {
         try {
             controller.service(mockSocket);
             fail();
-        } catch (SecurityException e) {
+        } catch (final SecurityException e) {
         }
     }
 

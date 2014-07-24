@@ -60,25 +60,25 @@ public class JavaServiceDescBuilder {
     private final JaxRpcServiceInfo serviceInfo;
     private final ClassLoader classLoader;
 
-    public JavaServiceDescBuilder(JaxRpcServiceInfo serviceInfo, ClassLoader classLoader) {
+    public JavaServiceDescBuilder(final JaxRpcServiceInfo serviceInfo, final ClassLoader classLoader) {
         this.serviceInfo = serviceInfo;
         this.classLoader = classLoader;
     }
 
     public JavaServiceDesc createServiceDesc() throws OpenEJBException {
-        Class serviceEndpointInterface;
+        final Class serviceEndpointInterface;
         try {
             serviceEndpointInterface = classLoader.loadClass(serviceInfo.serviceEndpointInterface);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             throw new OpenEJBException("Unable to load the service endpoint interface " + serviceInfo.serviceEndpointInterface, e);
         }
 
-        JavaServiceDesc serviceDesc = new JavaServiceDesc();
+        final JavaServiceDesc serviceDesc = new JavaServiceDesc();
         serviceDesc.setName(serviceInfo.name);
         serviceDesc.setEndpointURL(serviceInfo.endpointURL);
         serviceDesc.setWSDLFile(serviceInfo.wsdlFile);
 
-        BindingStyle bindingStyle = serviceInfo.defaultBindingStyle;
+        final BindingStyle bindingStyle = serviceInfo.defaultBindingStyle;
         switch (bindingStyle) {
             case RPC_ENCODED:
                 serviceDesc.setStyle(Style.RPC);
@@ -103,30 +103,30 @@ public class JavaServiceDescBuilder {
         }
 
         // Operations
-        for (JaxRpcOperationInfo operationInfo : serviceInfo.operations) {
-            OperationDesc operationDesc = buildOperationDesc(operationInfo, serviceEndpointInterface);
+        for (final JaxRpcOperationInfo operationInfo : serviceInfo.operations) {
+            final OperationDesc operationDesc = buildOperationDesc(operationInfo, serviceEndpointInterface);
             serviceDesc.addOperationDesc(operationDesc);
         }
 
         // Type mapping registry
-        TypeMappingRegistryImpl typeMappingRegistry = new TypeMappingRegistryImpl();
+        final TypeMappingRegistryImpl typeMappingRegistry = new TypeMappingRegistryImpl();
         typeMappingRegistry.doRegisterFromVersion("1.3");
         serviceDesc.setTypeMappingRegistry(typeMappingRegistry);
 
         // Type mapping
-        TypeMapping typeMapping = typeMappingRegistry.getOrMakeTypeMapping(serviceDesc.getUse().getEncoding());
+        final TypeMapping typeMapping = typeMappingRegistry.getOrMakeTypeMapping(serviceDesc.getUse().getEncoding());
         serviceDesc.setTypeMapping(typeMapping);
 
         // Types
-        for (JaxRpcTypeInfo type : serviceInfo.types) {
+        for (final JaxRpcTypeInfo type : serviceInfo.types) {
             registerType(type, typeMapping);
         }
 
         return new ReadOnlyServiceDesc(serviceDesc);
     }
 
-    private OperationDesc buildOperationDesc(JaxRpcOperationInfo operationInfo, Class serviceEndpointInterface) throws OpenEJBException {
-        OperationDesc operationDesc = new OperationDesc();
+    private OperationDesc buildOperationDesc(final JaxRpcOperationInfo operationInfo, final Class serviceEndpointInterface) throws OpenEJBException {
+        final OperationDesc operationDesc = new OperationDesc();
         operationDesc.setName(operationInfo.name);
 
         // Binding type
@@ -170,21 +170,21 @@ public class JavaServiceDescBuilder {
         }
 
         // Build parameters
-        Class[] paramTypes = new Class[operationInfo.parameters.size()];
+        final Class[] paramTypes = new Class[operationInfo.parameters.size()];
         int i = 0;
-        for (JaxRpcParameterInfo parameterInfo : operationInfo.parameters) {
-            ParameterDesc parameterDesc = buildParameterDesc(parameterInfo);
+        for (final JaxRpcParameterInfo parameterInfo : operationInfo.parameters) {
+            final ParameterDesc parameterDesc = buildParameterDesc(parameterInfo);
             operationDesc.addParameter(parameterDesc);
             paramTypes[i++] = parameterDesc.getJavaType();
         }
 
         // Java method
         try {
-            Method method = serviceEndpointInterface.getMethod(operationInfo.javaMethodName, paramTypes);
+            final Method method = serviceEndpointInterface.getMethod(operationInfo.javaMethodName, paramTypes);
             operationDesc.setMethod(method);
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             String args = "";
-            for (Class paramType : paramTypes) {
+            for (final Class paramType : paramTypes) {
                 if (args.length() > 0) {
                     args += ", ";
                 }
@@ -200,9 +200,9 @@ public class JavaServiceDescBuilder {
             operationDesc.setReturnQName(operationInfo.returnQName);
             operationDesc.setReturnType(operationInfo.returnXmlType);
             try {
-                Class<?> returnClass = classLoader.loadClass(operationInfo.returnJavaType);
+                final Class<?> returnClass = classLoader.loadClass(operationInfo.returnJavaType);
                 operationDesc.setReturnClass(returnClass);
-            } catch (ClassNotFoundException e) {
+            } catch (final ClassNotFoundException e) {
                 throw new OpenEJBException();
             }
         } else if (operationInfo.operationStyle == JaxRpcOperationInfo.OperationStyle.REQUEST_RESPONSE) {
@@ -212,37 +212,37 @@ public class JavaServiceDescBuilder {
         }
 
         // Build faults
-        for (JaxRpcFaultInfo faultInfo : operationInfo.faults) {
-            FaultDesc faultDesc = buildFaultDesc(faultInfo);
+        for (final JaxRpcFaultInfo faultInfo : operationInfo.faults) {
+            final FaultDesc faultDesc = buildFaultDesc(faultInfo);
             operationDesc.addFault(faultDesc);
         }
 
         return operationDesc;
     }
 
-    private ParameterDesc buildParameterDesc(JaxRpcParameterInfo parameterInfo) throws OpenEJBException {
-        byte mode = ParameterDesc.modeFromString(parameterInfo.mode.toString());
+    private ParameterDesc buildParameterDesc(final JaxRpcParameterInfo parameterInfo) throws OpenEJBException {
+        final byte mode = ParameterDesc.modeFromString(parameterInfo.mode.toString());
 
-        boolean inHeader = parameterInfo.soapHeader && parameterInfo.mode.isIn();
-        boolean outHeader = parameterInfo.soapHeader  && parameterInfo.mode.isOut();
+        final boolean inHeader = parameterInfo.soapHeader && parameterInfo.mode.isIn();
+        final boolean outHeader = parameterInfo.soapHeader && parameterInfo.mode.isOut();
 
-        Class<?> javaType;
+        final Class<?> javaType;
         try {
             javaType = classLoader.loadClass(parameterInfo.javaType);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             throw new OpenEJBException("Unable to load parameter type " + parameterInfo.javaType);
         }
 
-        ParameterDesc parameterDesc = new ParameterDesc(parameterInfo.qname, mode, parameterInfo.xmlType, javaType, inHeader, outHeader);
+        final ParameterDesc parameterDesc = new ParameterDesc(parameterInfo.qname, mode, parameterInfo.xmlType, javaType, inHeader, outHeader);
         return parameterDesc;
     }
 
-    private FaultDesc buildFaultDesc(JaxRpcFaultInfo faultInfo) throws OpenEJBException {
-        FaultDesc faultDesc = new FaultDesc(faultInfo.qname, faultInfo.javaType, faultInfo.xmlType, faultInfo.complex);
+    private FaultDesc buildFaultDesc(final JaxRpcFaultInfo faultInfo) throws OpenEJBException {
+        final FaultDesc faultDesc = new FaultDesc(faultInfo.qname, faultInfo.javaType, faultInfo.xmlType, faultInfo.complex);
 
-        ArrayList<ParameterDesc> parameters = new ArrayList<ParameterDesc>();
-        for (JaxRpcParameterInfo parameterInfo : faultInfo.parameters) {
-            ParameterDesc parameterDesc = buildParameterDesc(parameterInfo);
+        final ArrayList<ParameterDesc> parameters = new ArrayList<ParameterDesc>();
+        for (final JaxRpcParameterInfo parameterInfo : faultInfo.parameters) {
+            final ParameterDesc parameterDesc = buildParameterDesc(parameterInfo);
             parameters.add(parameterDesc);
         }
         faultDesc.setParameters(parameters);
@@ -250,11 +250,11 @@ public class JavaServiceDescBuilder {
         return faultDesc;
     }
 
-    private void registerType(JaxRpcTypeInfo type, TypeMapping typeMapping) throws OpenEJBException {
-        Class javaType;
+    private void registerType(final JaxRpcTypeInfo type, final TypeMapping typeMapping) throws OpenEJBException {
+        final Class javaType;
         try {
             javaType = classLoader.loadClass(type.javaType);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             throw new OpenEJBException("Could not load class for JaxRpc mapping " + type.javaType);
         }
 
@@ -293,8 +293,8 @@ public class JavaServiceDescBuilder {
                 break;
         }
 
-        SerializerFactory serializerFactory = BaseSerializerFactory.createFactory(serializerFactoryClass, javaType, type.qname);
-        DeserializerFactory deserializerFactory = BaseDeserializerFactory.createFactory(deserializerFactoryClass, javaType, type.qname);
+        final SerializerFactory serializerFactory = BaseSerializerFactory.createFactory(serializerFactoryClass, javaType, type.qname);
+        final DeserializerFactory deserializerFactory = BaseDeserializerFactory.createFactory(deserializerFactoryClass, javaType, type.qname);
 
         typeMapping.register(javaType, type.qname, serializerFactory, deserializerFactory);
     }

@@ -36,7 +36,7 @@ public class HessianRegistryImpl extends OpenEJBHttpRegistry implements HessianR
     }
 
     @Override
-    public void undeploy(String host, String app, String name) {
+    public void undeploy(final String host, final String app, final String name) {
         SystemInstance.get().getComponent(HttpListenerRegistry.class).removeHttpListener(generateEndpointName(app, name));
     }
 

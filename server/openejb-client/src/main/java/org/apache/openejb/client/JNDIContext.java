@@ -81,8 +81,9 @@ public class JNDIContext implements InitialContextFactory, Context {
     private ClientInstance clientIdentity;
 
     private static final ThreadPoolExecutor GLOBAL_CLIENT_POOL = newExecutor(10, null);
+
     static {
-        ClassLoader classLoader = Client.class.getClassLoader();
+        final ClassLoader classLoader = Client.class.getClassLoader();
         Class<?> container;
         try {
             container = Class.forName("org.apache.openejb.OpenEJB", false, classLoader);
@@ -90,7 +91,7 @@ public class JNDIContext implements InitialContextFactory, Context {
             container = null;
         }
         if (classLoader == ClassLoader.getSystemClassLoader() || Boolean.getBoolean("openejb.client.flus-tasks")
-                || (container != null && container.getClassLoader() == classLoader)) {
+            || (container != null && container.getClassLoader() == classLoader)) {
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 @Override
                 public void run() {
@@ -128,8 +129,7 @@ public class JNDIContext implements InitialContextFactory, Context {
         return executorService;
     }
 
-    public static ThreadPoolExecutor newExecutor(final int threads, final BlockingQueue<Runnable> blockingQueue)
-    {
+    public static ThreadPoolExecutor newExecutor(final int threads, final BlockingQueue<Runnable> blockingQueue) {
         /**
          This thread pool starts with 3 core threads and can grow to the limit defined by 'threads'.
          If a pool thread is idle for more than 1 minute it will be discarded, unless the core size is reached.
@@ -177,7 +177,7 @@ public class JNDIContext implements InitialContextFactory, Context {
                 boolean offer = false;
                 try {
                     offer = tpe.getQueue().offer(r, 10, TimeUnit.SECONDS);
-                } catch (InterruptedException e) {
+                } catch (final InterruptedException e) {
                     //Ignore
                 }
 
@@ -238,13 +238,13 @@ public class JNDIContext implements InitialContextFactory, Context {
         try {
             providerUrl = addMissingParts(providerUrl);
             location = new URI(providerUrl);
-        } catch (URISyntaxException e) {
+        } catch (final URISyntaxException e) {
             throw (ConfigurationException) new ConfigurationException("Property value for " +
-                                                                      Context.PROVIDER_URL +
-                                                                      " invalid: " +
-                                                                      providerUrl +
-                                                                      " - " +
-                                                                      e.getMessage()).initCause(e);
+                Context.PROVIDER_URL +
+                " invalid: " +
+                providerUrl +
+                " - " +
+                e.getMessage()).initCause(e);
         }
         this.server = new ServerMetaData(location);
 
@@ -284,9 +284,8 @@ public class JNDIContext implements InitialContextFactory, Context {
         return this;
     }
 
-    private static String getProperty(final Hashtable env, final String key, final String defaultValue)
-    {
-        Object value = env == null ? null : env.get(key);
+    private static String getProperty(final Hashtable env, final String key, final String defaultValue) {
+        final Object value = env == null ? null : env.get(key);
         if (value != null) {
             return value.toString();
         }
@@ -333,7 +332,7 @@ public class JNDIContext implements InitialContextFactory, Context {
         final AuthenticationResponse res;
         try {
             res = requestAuthorization(req);
-        } catch (RemoteException e) {
+        } catch (final RemoteException e) {
             throw new AuthenticationException(e.getLocalizedMessage());
         }
 
@@ -445,7 +444,7 @@ public class JNDIContext implements InitialContextFactory, Context {
                 final Reference ref = (Reference) res.getResult();
                 try {
                     return NamingManager.getObjectInstance(ref, getNameParser(name).parse(name), this, env);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     throw (NamingException) new NamingException("Could not dereference " + ref).initCause(e);
                 }
 
@@ -498,7 +497,7 @@ public class JNDIContext implements InitialContextFactory, Context {
             } else {
                 throw new UnsupportedOperationException("Unsupported Naming URI scheme '" + scheme + "'");
             }
-        } catch (URISyntaxException e) {
+        } catch (final URISyntaxException e) {
             throw (NamingException) new NamingException("Unparsable jndi entry '" + name + "=" + value + "'.  Exception: " + e.getMessage()).initCause(e);
         }
     }
@@ -518,7 +517,7 @@ public class JNDIContext implements InitialContextFactory, Context {
             final Class<?> clazz = Class.forName(driver, true, classLoader);
             final Constructor<?> constructor = clazz.getConstructor(String.class);
             return constructor.newInstance(url);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException("Cannot use " + driver + " with parameter " + url, e);
         }
     }
@@ -530,7 +529,7 @@ public class JNDIContext implements InitialContextFactory, Context {
     private Object createWebservice(final WsMetaData webserviceMetaData) throws NamingException {
         try {
             return webserviceMetaData.createWebservice();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw (NamingException) new NamingException("Error creating webservice").initCause(e);
         }
     }
@@ -642,7 +641,7 @@ public class JNDIContext implements InitialContextFactory, Context {
                 }
                 try {
                     super.setObject(context.lookup(getName()));
-                } catch (NamingException e) {
+                } catch (final NamingException e) {
                     throw failed = new ClientRuntimeException("Failed to lazily fetch the binding '" + getName() + "'", e);
                 }
             }
@@ -711,8 +710,7 @@ public class JNDIContext implements InitialContextFactory, Context {
         waitEndOfTasks(executorService);
     }
 
-    private static void waitEndOfTasks(final ExecutorService executor)
-    {
+    private static void waitEndOfTasks(final ExecutorService executor) {
         if (executor == null) {
             return;
         }

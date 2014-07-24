@@ -71,7 +71,7 @@ public class ClientSecurityTest extends TestCase {
 
         // verify we are using the simple client identity strategy
         assertTrue("ClientSecurity.getIdentityResolver() should be an instance of ClientSecurity.SimpleIdentityResolver",
-                   ClientSecurity.getIdentityResolver() instanceof ClientSecurity.SimpleIdentityResolver);
+            ClientSecurity.getIdentityResolver() instanceof ClientSecurity.SimpleIdentityResolver);
 
         // logout
         ClientSecurity.logout();
@@ -106,7 +106,7 @@ public class ClientSecurityTest extends TestCase {
 
                     // verify we are using the simple client identity strategy
                     assertTrue("ClientSecurity.getIdentityResolver() should be an instance of ClientSecurity.SimpleIdentityResolver",
-                               ClientSecurity.getIdentityResolver() instanceof ClientSecurity.SimpleIdentityResolver);
+                        ClientSecurity.getIdentityResolver() instanceof ClientSecurity.SimpleIdentityResolver);
 
                     // notify outer thread that we are logged in
                     loginLatch.countDown();
@@ -119,7 +119,7 @@ public class ClientSecurityTest extends TestCase {
 
                     // verify we are logged out
                     assertNull("ClientSecurity.getIdentity() is not null", ClientSecurity.getIdentity());
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     threadException = e;
                 }
 
@@ -156,7 +156,7 @@ public class ClientSecurityTest extends TestCase {
         try {
             ClientSecurity.login("nobody", "secret");
             fail("Should have thrown a FailedLoginException");
-        } catch (FailedLoginException doNothing) {
+        } catch (final FailedLoginException doNothing) {
         }
 
         // verify we are not logged in

@@ -55,7 +55,7 @@ public class XABoneCPTest {
             .p("txMgr.txRecovery", "true")
             .p("txMgr.logFileDir", "target/test/xa/howl")
 
-            // real XA datasources
+                // real XA datasources
             .p("xa", "new://Resource?class-name=" + JDBCXADataSource.class.getName())
             .p("xa.url", "jdbc:hsqldb:mem:tomcat-xa")
             .p("xa.user", "sa")

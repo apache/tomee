@@ -43,22 +43,22 @@ import java.util.Properties;
 public class JndiTest extends TestCase {
 
     public void test() throws Exception {
-        EjbServer ejbServer = new EjbServer();
+        final EjbServer ejbServer = new EjbServer();
 
-        Properties initProps = new Properties();
+        final Properties initProps = new Properties();
         initProps.put(DeploymentsResolver.DEPLOYMENTS_CLASSPATH_PROPERTY, Boolean.toString(false));
         OpenEJB.init(initProps, new ServerFederation());
         ejbServer.init(new Properties());
 
-        ServiceDaemon serviceDaemon = new ServiceDaemon(ejbServer, 0, "localhost");
+        final ServiceDaemon serviceDaemon = new ServiceDaemon(ejbServer, 0, "localhost");
         serviceDaemon.start();
 
-        int port = serviceDaemon.getPort();
+        final int port = serviceDaemon.getPort();
 
-        Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
-        ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
+        final ConfigurationFactory config = new ConfigurationFactory();
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean("Orange", Fruit.class));
         ejbJar.addEnterpriseBean(new StatelessBean("Apple", Fruit.class));
         ejbJar.addEnterpriseBean(new StatelessBean("Peach", Fruit.class));
@@ -74,10 +74,10 @@ public class JndiTest extends TestCase {
         try {
 
             // good creds
-            Properties props = new Properties();
+            final Properties props = new Properties();
             props.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
             props.put("java.naming.provider.url", "ejbd://127.0.0.1:" + port);
-            Context context = new InitialContext(props);
+            final Context context = new InitialContext(props);
 
             assertNameClassPair(context.list(""));
             assertNameClassPair(context.list("ejb"));
@@ -92,12 +92,12 @@ public class JndiTest extends TestCase {
 
     }
 
-    private void assertNameClassPair(NamingEnumeration<NameClassPair> namingEnumeration) {
+    private void assertNameClassPair(final NamingEnumeration<NameClassPair> namingEnumeration) {
         assertNotNull("namingEnumeration", namingEnumeration);
 
-        Map<String, String> map = new HashMap<String, String>();
+        final Map<String, String> map = new HashMap<String, String>();
         while (namingEnumeration.hasMoreElements()) {
-            NameClassPair pair = namingEnumeration.nextElement();
+            final NameClassPair pair = namingEnumeration.nextElement();
             map.put(pair.getName(), pair.getClassName());
         }
 
@@ -108,12 +108,12 @@ public class JndiTest extends TestCase {
         assertTrue("PlumRemote", map.containsKey("PlumRemote"));
     }
 
-    private void assertBindings(NamingEnumeration<Binding> namingEnumeration) {
+    private void assertBindings(final NamingEnumeration<Binding> namingEnumeration) {
         assertNotNull("namingEnumeration", namingEnumeration);
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<String, Object>();
         while (namingEnumeration.hasMoreElements()) {
-            Binding pair = namingEnumeration.nextElement();
+            final Binding pair = namingEnumeration.nextElement();
             map.put(pair.getName(), pair.getObject());
         }
 

@@ -35,7 +35,7 @@ public class ConnectionFailed {
     @Override
     public String toString() {
         return "ConnectionFailed{" +
-               "uri=" + uri +
-               " cause=" + this.cause + "}";
+            "uri=" + uri +
+            " cause=" + this.cause + "}";
     }
 }

@@ -147,6 +147,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
                 webBeansContext = new WebappWebBeansContext(services, properties, appContext.getWebBeansContext());
                 startupObject.getWebContext().setWebbeansContext(webBeansContext);
             }
+            SystemInstance.get().fireEvent(new WebBeansContextCreated(webBeansContext));
             OpenEJBTransactionService.class.cast(services.get(TransactionService.class)).setWebBeansContext(webBeansContext);
 
             // do it only here to get the webbeanscontext

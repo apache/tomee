@@ -23,10 +23,10 @@ import java.net.URI;
 public class ServerMetaDataTest extends TestCase {
 
     public void testHashIsTheSameWhateverTheOrderOfTheLocations() throws Exception {
-        URI uri1 = new URI("ejbd://localhost:4201");
-        URI uri2 = new URI("ejbd://localhost:4202");
-        ServerMetaData server1 = new ServerMetaData(uri1, uri2);
-        ServerMetaData server2 = new ServerMetaData(uri2, uri1);
+        final URI uri1 = new URI("ejbd://localhost:4201");
+        final URI uri2 = new URI("ejbd://localhost:4202");
+        final ServerMetaData server1 = new ServerMetaData(uri1, uri2);
+        final ServerMetaData server2 = new ServerMetaData(uri2, uri1);
         assertEquals(server1.buildHash(), server2.buildHash());
     }
 

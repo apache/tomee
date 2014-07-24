@@ -17,6 +17,7 @@
 package org.apache.openejb.core.mdb;
 
 import junit.framework.TestCase;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ResourceInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
@@ -26,6 +27,7 @@ import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.util.NetworkUtil;
+import org.junit.AfterClass;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -54,6 +56,12 @@ import static org.apache.openejb.util.Join.join;
  * @version $Rev$ $Date$
  */
 public class JmsMdbContainerTest extends TestCase {
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        OpenEJB.destroy();
+    }
+
     public void test() throws Exception {
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
@@ -134,7 +142,7 @@ public class JmsMdbContainerTest extends TestCase {
         public static Lock lock = new ReentrantLock();
         public static Condition messageRecieved = lock.newCondition();
 
-        private static Stack<Lifecycle> lifecycle = new Stack<Lifecycle>();
+        private static final Stack<Lifecycle> lifecycle = new Stack<Lifecycle>();
 
         @Resource
         ConnectionFactory connectionFactory;

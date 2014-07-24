@@ -33,12 +33,12 @@ public final class TypeInfoTestUtil {
     private TypeInfoTestUtil() {
     }
 
-    public static void assertEqual(InfoObject expected, InfoObject actual) throws Exception {
+    public static void assertEqual(final InfoObject expected, final InfoObject actual) throws Exception {
         assertEqual(expected, actual, false);
     }
 
-    public static void assertEqual(InfoObject expected, InfoObject actual, boolean printExpected) throws Exception {
-        List<String> messages = new ArrayList<String>();
+    public static void assertEqual(final InfoObject expected, final InfoObject actual, final boolean printExpected) throws Exception {
+        final List<String> messages = new ArrayList<String>();
         diff(null, expected, actual, messages);
         if (!messages.isEmpty()) {
             if (printExpected) {
@@ -48,8 +48,8 @@ public final class TypeInfoTestUtil {
                 System.out.println();
             }
 
-            StringBuilder msg = new StringBuilder();
-            for (String message : messages) {
+            final StringBuilder msg = new StringBuilder();
+            for (final String message : messages) {
                 if (msg.length() != 0) msg.append("\n");
                 msg.append(message);
             }
@@ -58,11 +58,11 @@ public final class TypeInfoTestUtil {
         }
     }
 
-    public static void diff(String name, Object expected, Object actual, List<String> messages) throws Exception {
-        for (Field field : expected.getClass().getFields()) {
-            String fieldName = name == null ? field.getName() : name + "." + field.getName();
-            Object expectedValue = field.get(expected);
-            Object actualValue = field.get(actual);
+    public static void diff(final String name, final Object expected, final Object actual, final List<String> messages) throws Exception {
+        for (final Field field : expected.getClass().getFields()) {
+            final String fieldName = name == null ? field.getName() : name + "." + field.getName();
+            final Object expectedValue = field.get(expected);
+            final Object actualValue = field.get(actual);
             if (expectedValue instanceof InfoObject) {
                 diff(fieldName, expectedValue, actualValue, messages);
             } else if (expectedValue instanceof Map) {
@@ -74,32 +74,32 @@ public final class TypeInfoTestUtil {
         }
     }
 
-    private static void diffMap(String name, Map<Object,Object> expected, Map<Object,Object> actual, List<String> message) throws Exception {
+    private static void diffMap(final String name, final Map<Object, Object> expected, final Map<Object, Object> actual, final List<String> message) throws Exception {
         // Added
         Set<Object> keys = new HashSet<Object>(actual.keySet());
         keys.removeAll(expected.keySet());
-        for (Object key : keys) {
+        for (final Object key : keys) {
             message.add("A " + name + "[" + key + "]");
         }
 
         // Removed
         keys = new HashSet<Object>(expected.keySet());
         keys.removeAll(actual.keySet());
-        for (Object key : keys) {
+        for (final Object key : keys) {
             message.add("R " + name + "[" + key + "]");
         }
 
         // Changed
-        for (Object key : expected.keySet()) {
-            Object expectValue = expected.get(key);
-            Object actualValue = actual.get(key);
+        for (final Object key : expected.keySet()) {
+            final Object expectValue = expected.get(key);
+            final Object actualValue = actual.get(key);
             if (actualValue != null) {
                 diff(name + "[" + key + "]", expectValue, actualValue, message);
             }
         }
     }
 
-    private static void diffSimple(String name, Object expected, Object actual, List<String> messages) {
+    private static void diffSimple(final String name, final Object expected, final Object actual, final List<String> messages) {
         boolean changed = true;
         if (expected == null) {
             if (actual == null) changed = false;
@@ -112,7 +112,7 @@ public final class TypeInfoTestUtil {
         }
     }
 
-    public static void dump(String name, Object value) throws Exception {
+    public static void dump(final String name, final Object value) throws Exception {
         if (name == null) throw new NullPointerException("name is null");
 
         if (isSimpleValue(value)) {
@@ -124,9 +124,9 @@ public final class TypeInfoTestUtil {
             }
         } else {
             System.out.println(getTypeDecl(value.getClass(), name) + " = new " + value.getClass().getSimpleName() + "();");
-            for (Field field : value.getClass().getFields()) {
-                String fieldName = name == null ? field.getName() : name + "." + field.getName();
-                Object fieldValue = field.get(value);
+            for (final Field field : value.getClass().getFields()) {
+                final String fieldName = name == null ? field.getName() : name + "." + field.getName();
+                final Object fieldValue = field.get(value);
                 if (fieldValue instanceof Map) {
                     //noinspection unchecked
                     dumpMap(fieldName, (Map) fieldValue);
@@ -137,15 +137,15 @@ public final class TypeInfoTestUtil {
         }
     }
 
-    private static void dumpMap(String name, Map<Object,Object> map) throws Exception {
-        for (Map.Entry<Object, Object> entry : map.entrySet()) {
-            Object key = entry.getKey();
-            Object value = entry.getValue();
+    private static void dumpMap(final String name, final Map<Object, Object> map) throws Exception {
+        for (final Map.Entry<Object, Object> entry : map.entrySet()) {
+            final Object key = entry.getKey();
+            final Object value = entry.getValue();
 
             if (isSimpleValue(key) && isSimpleValue(value)) {
                 System.out.println(name + ".put(" + getSimpleValue(key) + ", " + getSimpleValue(value) + ");");
             } else {
-                String indent = name.substring(0, getIndentSize(name));
+                final String indent = name.substring(0, getIndentSize(name));
 
                 String baseName;
                 if (value instanceof InfoObject) {
@@ -168,14 +168,15 @@ public final class TypeInfoTestUtil {
         }
     }
 
-    private static boolean isSimpleValue(Object value) {
-        return value == null || value instanceof Boolean || value instanceof Number || value instanceof String|| value instanceof QName;
+    private static boolean isSimpleValue(final Object value) {
+        return value == null || value instanceof Boolean || value instanceof Number || value instanceof String || value instanceof QName;
     }
 
-    private static String getSimpleValue(Object value) {
-        if (!isSimpleValue(value)) throw new IllegalArgumentException("Value is not a simple type " + value.getClass().getName());
+    private static String getSimpleValue(final Object value) {
+        if (!isSimpleValue(value))
+            throw new IllegalArgumentException("Value is not a simple type " + value.getClass().getName());
 
-        String stringValue;
+        final String stringValue;
         if (value == null) {
             stringValue = "null";
         } else if (value instanceof Boolean) {
@@ -183,7 +184,7 @@ public final class TypeInfoTestUtil {
         } else if (value instanceof Number) {
             stringValue = value.toString();
         } else if (value instanceof QName) {
-            QName qname = (QName) value;
+            final QName qname = (QName) value;
             stringValue = "new QName(\"" + qname.getNamespaceURI() + "\", \"" + qname.getLocalPart() + "\")";
         } else {
             stringValue = "\"" + value + "\"";
@@ -191,16 +192,16 @@ public final class TypeInfoTestUtil {
         return stringValue;
     }
 
-    private static String getTypeDecl(Class type, String name) {
-        int indentSize = getIndentSize(name);
+    private static String getTypeDecl(final Class type, final String name) {
+        final int indentSize = getIndentSize(name);
         return name.substring(0, indentSize) + type.getSimpleName() + " " + name.substring(indentSize);
     }
 
-    private static int getIndentSize(String name) {
+    private static int getIndentSize(final String name) {
         for (int i = 0; i < name.length(); i++) {
-             if (name.charAt(i) != ' ') {
-                 return i;
-             }
+            if (name.charAt(i) != ' ') {
+                return i;
+            }
         }
         return 0;
     }

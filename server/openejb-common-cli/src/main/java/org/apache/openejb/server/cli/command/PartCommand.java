@@ -28,6 +28,7 @@ import java.util.regex.Pattern;
 @Command(name = "part", usage = "part <first line>-<last line> <path>", description = "print the specified line range of a file (in tomee directories only)")
 public class PartCommand extends PathCommand {
     private static final Pattern PATTERN = Pattern.compile("([0-9]*)-([0-9]*) (.*)");
+
     @Override
     public void execute(final String cmd) {
         final Matcher matcher = PATTERN.matcher(cmd);
@@ -36,12 +37,12 @@ public class PartCommand extends PathCommand {
             return;
         }
 
-        int firstLine;
-        int secondLine;
+        final int firstLine;
+        final int secondLine;
         try {
             firstLine = getInt(matcher.group(1));
             secondLine = getInt(matcher.group(2));
-        } catch (NumberFormatException nfe) {
+        } catch (final NumberFormatException nfe) {
             streamManager.writeErr("line number was not parsable");
             return;
         }
@@ -50,7 +51,7 @@ public class PartCommand extends PathCommand {
         final File file;
         try {
             file = resolve(path);
-        } catch (IllegalArgumentException iae) {
+        } catch (final IllegalArgumentException iae) {
             streamManager.writeErr(iae.getMessage());
             return;
         }
@@ -60,7 +61,7 @@ public class PartCommand extends PathCommand {
         } else if (file.exists()) {
             try {
                 part(file, firstLine, secondLine);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 streamManager.writeErr(e);
             }
         } else {
@@ -68,16 +69,16 @@ public class PartCommand extends PathCommand {
         }
     }
 
-    private int getInt(String group) {
+    private int getInt(final String group) {
         try {
             return Integer.parseInt(group);
-        } catch (NumberFormatException nfe) {
+        } catch (final NumberFormatException nfe) {
             streamManager.writeErr("line number should be an integer");
             throw nfe;
         }
     }
 
-    private void part(final File file, int firstLine, int secondLine) throws IOException {
+    private void part(final File file, final int firstLine, final int secondLine) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(file));
         String line;
         int totalLineNumber = 0;
@@ -91,8 +92,8 @@ public class PartCommand extends PathCommand {
 
         br = new BufferedReader(new FileReader(file));
         try {
-            int firstLineToPrint = Math.max(1, firstLine);
-            int lastLine = Math.min(totalLineNumber, secondLine);
+            final int firstLineToPrint = Math.max(1, firstLine);
+            final int lastLine = Math.min(totalLineNumber, secondLine);
             totalLineNumber = 0;
             while ((line = br.readLine()) != null) {
                 totalLineNumber++;

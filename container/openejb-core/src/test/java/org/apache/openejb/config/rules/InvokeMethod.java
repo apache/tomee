@@ -54,9 +54,9 @@ public class InvokeMethod extends Statement {
     // The test method
     private final FrameworkMethod testMethod;
     // The TestCase instance
-    private Object target;
+    private final Object target;
     // These are all the keys defined in org.apache.openejb.config.rules.Messages.properties
-    private static Set<String> allKeys;
+    private static final Set<String> allKeys;
 
     static {
         final ResourceBundle bundle = ResourceBundle.getBundle("org.apache.openejb.config.rules.Messages");

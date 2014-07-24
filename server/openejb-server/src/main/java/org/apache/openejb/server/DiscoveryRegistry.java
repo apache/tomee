@@ -63,7 +63,7 @@ public class DiscoveryRegistry implements DiscoveryListener, DiscoveryAgent {
 
                 try {
                     tpe.getQueue().offer(r, 20, TimeUnit.SECONDS);
-                } catch (InterruptedException e) {
+                } catch (final InterruptedException e) {
                     //Ignore
                 }
             }
@@ -83,7 +83,7 @@ public class DiscoveryRegistry implements DiscoveryListener, DiscoveryAgent {
         for (final URI uri : registered.values()) {
             try {
                 agent.registerService(uri);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 //Ignore
             }
         }

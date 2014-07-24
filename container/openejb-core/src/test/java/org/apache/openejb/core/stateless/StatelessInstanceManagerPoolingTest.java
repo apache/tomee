@@ -18,13 +18,14 @@
 package org.apache.openejb.core.stateless;
 
 import junit.framework.TestCase;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.core.ivm.naming.InitContextFactory;
+import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
 
@@ -93,36 +94,49 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
 
     public void testStatelessBeanRelease() throws Exception {
 
-
-        final int count = 10; //Strict pool can starve on more than 10
+        final int count = 50;
         final CountDownLatch invocations = new CountDownLatch(count);
         final InitialContext ctx = new InitialContext();
-        final Runnable counterBeanLocal = new Runnable() {
-            public void run() {
-
-                Object object = null;
-                try {
-                    object = ctx.lookup("CounterBeanLocal");
-                } catch (final NamingException e) {
-                    assertTrue(false);
-                }
-                final Counter counter = (Counter) object;
-                assertNotNull(counter);
-                try {
-                    counter.explode(invocations);
-                } catch (final Exception e) {
-                    //Ignore
-                }
-            }
-        };
 
         // 'count' instances should be created and discarded.
         for (int i = 0; i < count; i++) {
-            final Thread thread = new Thread(counterBeanLocal);
+            final Thread thread = new Thread(new Runnable() {
+                public void run() {
+
+                    Object object = null;
+                    try {
+                        object = ctx.lookup("CounterBeanLocal");
+                    } catch (final NamingException e) {
+                        assertTrue(false);
+                    }
+                    final Counter counter = (Counter) object;
+                    assertNotNull(counter);
+
+                    boolean run = true;
+
+                    while (run) {
+                        try {
+                            counter.explode();
+                        } catch (final javax.ejb.ConcurrentAccessTimeoutException e) {
+                            //Try again in moment...
+                            try {
+                                Thread.sleep(10);
+                            } catch (final InterruptedException ie) {
+                                //Ignore
+                            }
+                        } catch (final Exception e) {
+                            invocations.countDown();
+                            run = false;
+                        }
+                    }
+                }
+            }, "test-thread-" + count);
+
+            thread.setDaemon(false);
             thread.start();
         }
 
-        final boolean success = invocations.await(20000, TimeUnit.MILLISECONDS);
+        final boolean success = invocations.await(20, TimeUnit.SECONDS);
 
         assertTrue("invocations timeout -> invocations.getCount() == " + invocations.getCount(), success);
 
@@ -190,7 +204,7 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
+        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
 
         final ConfigurationFactory config = new ConfigurationFactory();
         final Assembler assembler = new Assembler();
@@ -222,13 +236,17 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
         assembler.createApplication(config.configureApplication(ejbJar));
     }
 
+    @Override
+    protected void tearDown() throws Exception {
+        OpenEJB.destroy();
+    }
 
     public static interface Counter {
         int count();
 
         void race(CountDownLatch ready, CountDownLatch go);
 
-        void explode(CountDownLatch latch);
+        void explode();
     }
 
     @Remote
@@ -243,8 +261,6 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
     @Stateless
     public static class CounterBean implements Counter, RemoteCounter {
 
-
-
         private final int count;
 
         public CounterBean() {
@@ -255,17 +271,9 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
             return instances.get();
         }
 
-        public int discardCount() {
-            return discardedInstances.get();
-        }
-
-        public void explode(final CountDownLatch latch) {
-            discardedInstances.incrementAndGet();
-            try {
-                throw new NullPointerException("Test expected this null pointer");
-            } finally {
-                latch.countDown();
-            }
+        public void explode() {
+            final int i = discardedInstances.incrementAndGet();
+            throw new NullPointerException("Test expected this null pointer: " + i);
         }
 
         public void race(final CountDownLatch ready, final CountDownLatch go) {

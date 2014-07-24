@@ -62,9 +62,9 @@ public class ServiceLogger extends ServerServiceFilter {
         try {
             final Class<?> MDC = ServiceLogger.class.getClassLoader().loadClass("org.apache.log4j.MDC");
             MDBput = MDC.getMethod("put", String.class, String.class);
-        } catch (Exception e) { // no need to log it with a higher level
+        } catch (final Exception e) { // no need to log it with a higher level
             Logger.getInstance(LogCategory.OPENEJB, ServiceLogger.class.getName())
-                  .debug("can't find log4j MDC class");
+                .debug("can't find log4j MDC class");
         }
     }
 
@@ -72,7 +72,7 @@ public class ServiceLogger extends ServerServiceFilter {
         if (MDBput != null) {
             try {
                 MDBput.invoke(null, key, value);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // ignored
             }
         }
@@ -95,7 +95,7 @@ public class ServiceLogger extends ServerServiceFilter {
             if (this.debug) {
                 this.logger.debug("[request] for '" + name + "' by '" + address + "' took " + (System.nanoTime() - start) + "ns");
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             if (this.debug) {
                 //Only log on debug else there is a DOS risk
                 this.logger.debug("[Request failed] for '" + name + "' by '" + address + "' : " + e.getMessage(), e);

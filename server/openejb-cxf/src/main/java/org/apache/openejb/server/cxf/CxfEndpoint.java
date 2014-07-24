@@ -62,37 +62,37 @@ public abstract class CxfEndpoint {
 
     protected Bus bus;
 
-	protected PortData port;
-	
-	protected Context context;
+    protected PortData port;
 
-	protected Object implementor;
+    protected Context context;
 
-	protected Server server;
+    protected Object implementor;
 
-	protected Service service;
+    protected Server server;
 
-	protected JaxWsImplementorInfo implInfo;
+    protected Service service;
 
-	protected JaxWsServiceFactoryBean serviceFactory;
+    protected JaxWsImplementorInfo implInfo;
 
-	protected HandlerResolverImpl handlerResolver;
-	
-	protected HTTPTransportFactory httpTransportFactory;
+    protected JaxWsServiceFactoryBean serviceFactory;
+
+    protected HandlerResolverImpl handlerResolver;
+
+    protected HTTPTransportFactory httpTransportFactory;
 
     protected ServiceConfiguration serviceConfiguration;
 
-    public CxfEndpoint(Bus bus, PortData port, Context context,
-			Object implementor, HTTPTransportFactory httpTransportFactory,
-            ServiceConfiguration configuration) {
-		this.bus = bus;
-		this.port = port;
-		this.context = context;
-		this.implementor = implementor;
-		this.httpTransportFactory = httpTransportFactory;
+    public CxfEndpoint(final Bus bus, final PortData port, final Context context,
+                       final Object implementor, final HTTPTransportFactory httpTransportFactory,
+                       final ServiceConfiguration configuration) {
+        this.bus = bus;
+        this.port = port;
+        this.context = context;
+        this.implementor = implementor;
+        this.httpTransportFactory = httpTransportFactory;
         this.serviceConfiguration = configuration;
-		this.bus.setExtension(this, CxfEndpoint.class);
-	}
+        this.bus.setExtension(this, CxfEndpoint.class);
+    }
 
     protected Service doServiceCreate() {
         final Level level = FACTORY_BEAN_LOG.getLevel();
@@ -105,82 +105,82 @@ public abstract class CxfEndpoint {
         return service;
     }
 
-	protected Class getImplementorClass() {
-		return this.implementor.getClass();
-	}
+    protected Class getImplementorClass() {
+        return this.implementor.getClass();
+    }
 
-	protected org.apache.cxf.endpoint.Endpoint getEndpoint() {
-		return getServer().getEndpoint();
-	}
+    protected org.apache.cxf.endpoint.Endpoint getEndpoint() {
+        return getServer().getEndpoint();
+    }
 
-	public boolean isSOAP11() {
-		return SOAPBinding.SOAP11HTTP_BINDING.equals(implInfo.getBindingType()) || 
-			SOAPBinding.SOAP11HTTP_MTOM_BINDING.equals(implInfo.getBindingType());
-	}
+    public boolean isSOAP11() {
+        return SOAPBinding.SOAP11HTTP_BINDING.equals(implInfo.getBindingType()) ||
+            SOAPBinding.SOAP11HTTP_MTOM_BINDING.equals(implInfo.getBindingType());
+    }
 
-	public boolean isHTTP() {
-		return HTTPBinding.HTTP_BINDING.equals(implInfo.getBindingType());
-	}
+    public boolean isHTTP() {
+        return HTTPBinding.HTTP_BINDING.equals(implInfo.getBindingType());
+    }
 
-	public ServerImpl getServer() {
-		return (ServerImpl) server;
-	}
+    public ServerImpl getServer() {
+        return (ServerImpl) server;
+    }
 
-	public Binding getBinding() {
-		return ((JaxWsEndpointImpl) getEndpoint()).getJaxwsBinding();
-	}
+    public Binding getBinding() {
+        return ((JaxWsEndpointImpl) getEndpoint()).getJaxwsBinding();
+    }
 
-	public void setExecutor(Executor executor) {
-		service.setExecutor(executor);
-	}
+    public void setExecutor(final Executor executor) {
+        service.setExecutor(executor);
+    }
 
-	public Executor getExecutor() {
-		return service.getExecutor();
-	}
+    public Executor getExecutor() {
+        return service.getExecutor();
+    }
 
-	public Object getImplementor() {
-		return implementor;
-	}
-	
-	public List<Source> getMetadata() {
-		return null;
-	}
+    public Object getImplementor() {
+        return implementor;
+    }
 
-	public Map<String, Object> getProperties() {
-		return null;
-	}
+    public List<Source> getMetadata() {
+        return null;
+    }
 
-	public boolean isPublished() {
-		return server != null;
-	}
+    public Map<String, Object> getProperties() {
+        return null;
+    }
 
-	public void publish(Object arg0) {
-	}
+    public boolean isPublished() {
+        return server != null;
+    }
 
-	public void publish(String address) {
-		doPublish(address);
-	}
+    public void publish(final Object arg0) {
+    }
 
-	public void setMetadata(List<Source> arg0) {
-	}
+    public void publish(final String address) {
+        doPublish(address);
+    }
 
-	public void setProperties(Map<String, Object> arg0) {
-	}
+    public void setMetadata(final List<Source> arg0) {
+    }
 
-	private class NoInitJaxWsServerFactoryBean extends JaxWsServerFactoryBean {
-		public NoInitJaxWsServerFactoryBean() {
-			// disable CXF resource injection
-			doInit = false;
-		}
-	}
+    public void setProperties(final Map<String, Object> arg0) {
+    }
 
-	protected void doPublish(String address) {
-		JaxWsServerFactoryBean svrFactory = new NoInitJaxWsServerFactoryBean();
-		svrFactory.setBus(bus);
-		svrFactory.setAddress(address);
-		svrFactory.setServiceFactory(serviceFactory);
-		svrFactory.setStart(false);
-		svrFactory.setServiceBean(implementor);
+    private class NoInitJaxWsServerFactoryBean extends JaxWsServerFactoryBean {
+        public NoInitJaxWsServerFactoryBean() {
+            // disable CXF resource injection
+            doInit = false;
+        }
+    }
+
+    protected void doPublish(final String address) {
+        final JaxWsServerFactoryBean svrFactory = new NoInitJaxWsServerFactoryBean();
+        svrFactory.setBus(bus);
+        svrFactory.setAddress(address);
+        svrFactory.setServiceFactory(serviceFactory);
+        svrFactory.setStart(false);
+        svrFactory.setServiceBean(implementor);
         svrFactory.setDestinationFactory(httpTransportFactory);
         svrFactory.setServiceClass(serviceFactory.getServiceClass());
 
@@ -201,56 +201,56 @@ public abstract class CxfEndpoint {
         // look for bean info if exists
         CxfUtil.configureEndpoint(svrFactory, serviceConfiguration, CXF_JAXWS_PREFIX);
 
-		if (HTTPBinding.HTTP_BINDING.equals(implInfo.getBindingType())) {
-			svrFactory.setTransportId("http://cxf.apache.org/bindings/xformat");
-		}
+        if (HTTPBinding.HTTP_BINDING.equals(implInfo.getBindingType())) {
+            svrFactory.setTransportId("http://cxf.apache.org/bindings/xformat");
+        }
 
         final Level level = SERVER_IMPL_LOGGER.getLevel();
         SERVER_IMPL_LOGGER.setLevel(Level.SEVERE);
         try {
-		    server = svrFactory.create();
+            server = svrFactory.create();
         } finally {
             SERVER_IMPL_LOGGER.setLevel(level);
         }
 
         init();
 
-		if (getBinding() instanceof SOAPBinding) {
-			((SOAPBinding) getBinding()).setMTOMEnabled(port.isMtomEnabled());
-		}
+        if (getBinding() instanceof SOAPBinding) {
+            ((SOAPBinding) getBinding()).setMTOMEnabled(port.isMtomEnabled());
+        }
 
-		server.start();
-	}
+        server.start();
+    }
 
     protected void init() {
         // no-op
-	}
+    }
 
-	/**
-	 * Set appropriate handlers for the port/service/bindings.
-	 */
-	protected void initHandlers() throws Exception {
-		PortInfoImpl portInfo = new PortInfoImpl(implInfo.getBindingType(), serviceFactory.getEndpointName(), service.getName());
+    /**
+     * Set appropriate handlers for the port/service/bindings.
+     */
+    protected void initHandlers() throws Exception {
+        final PortInfoImpl portInfo = new PortInfoImpl(implInfo.getBindingType(), serviceFactory.getEndpointName(), service.getName());
 
-		handlerResolver = new HandlerResolverImpl(port.getHandlerChains(), port.getInjections(), context);
-		List<Handler> chain = handlerResolver.getHandlerChain(portInfo);
+        handlerResolver = new HandlerResolverImpl(port.getHandlerChains(), port.getInjections(), context);
+        final List<Handler> chain = handlerResolver.getHandlerChain(portInfo);
 
-		getBinding().setHandlerChain(chain);
-	}
+        getBinding().setHandlerChain(chain);
+    }
 
-	protected void destroyHandlers() {
-		if (this.handlerResolver != null) {
-			handlerResolver.destroyHandlers();
-			handlerResolver = null;
-		}
-	}
+    protected void destroyHandlers() {
+        if (this.handlerResolver != null) {
+            handlerResolver.destroyHandlers();
+            handlerResolver = null;
+        }
+    }
 
-	public void stop() {
-		// shutdown server
-		if (this.server != null) {
-			this.server.stop();
-		}
-	}
+    public void stop() {
+        // shutdown server
+        if (this.server != null) {
+            this.server.stop();
+        }
+    }
 
     protected static JaxWsServiceFactoryBean configureService(final JaxWsServiceFactoryBean serviceFactory, final ServiceConfiguration configuration, final String prefix) {
         final Properties beanConfig = configuration.getProperties();
@@ -267,13 +267,13 @@ public abstract class CxfEndpoint {
             if (instance == null) {  // maybe id == classname
                 try {
                     instance = Thread.currentThread().getContextClassLoader().loadClass(databinding).newInstance();
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     // ignore
                 }
             }
             if (!DataBinding.class.isInstance(instance)) {
                 throw new OpenEJBRuntimeException(instance + " is not a " + DataBinding.class.getName()
-                        + ", please check configuration of service [id=" + databinding + "]");
+                    + ", please check configuration of service [id=" + databinding + "]");
             }
             serviceFactory.setDataBinding((DataBinding) instance);
         }

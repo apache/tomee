@@ -18,11 +18,13 @@ package org.apache.openejb.assembler.classic;
 
 import junit.framework.TestCase;
 import org.apache.openejb.BeanContext;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
+import org.junit.AfterClass;
 
 import javax.ejb.AccessTimeout;
 import javax.ejb.Local;
@@ -38,6 +40,16 @@ import java.util.concurrent.TimeUnit;
  */
 public class AccessTimeoutTest extends TestCase {
     private Map<Method, MethodAttributeInfo> attributes;
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        OpenEJB.destroy();
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        OpenEJB.destroy();
+    }
 
     public void test() throws Exception {
         final Assembler assembler = new Assembler();
