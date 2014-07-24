@@ -36,6 +36,7 @@ import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.ProvisioningUtil;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
@@ -241,6 +242,7 @@ public class DeployerEjb implements Deployer {
             assembler.createApplication(appInfo);
 
             if (SAVE_DEPLOYMENTS || "true".equalsIgnoreCase(properties.getProperty(OPENEJB_DEPLOYER_SAVE_DEPLOYMENTS, "false"))) {
+                appInfo.properties.setProperty("save-deployment","true");
                 saveDeployment(file, true);
             }
 
@@ -360,24 +362,24 @@ public class DeployerEjb implements Deployer {
 
     @Override
     public void undeploy(final String moduleId) throws UndeployException, NoSuchApplicationException {
-        try {
-            assembler.destroyApplication(moduleId);
-        } catch (final NoSuchApplicationException nsae) {
-            try {
-                assembler.destroyApplication(realLocation(moduleId));
-            } catch (final Exception e) {
-                try {
-                    assembler.destroyApplication(new File(moduleId).getAbsolutePath());
-                } catch (final Exception e2) {
-                    try {
-                        assembler.destroyApplication(new File(realLocation(moduleId)).getAbsolutePath());
-                    } catch (final Exception e3) {
-                        throw nsae;
-                    }
+        AppInfo appInfo = assembler.getAppInfo(moduleId);
+        if (appInfo == null) {
+            appInfo = assembler.getAppInfo(realLocation(moduleId));
+            if (appInfo == null) {
+                appInfo = assembler.getAppInfo(new File(moduleId).getAbsolutePath());
+                if (appInfo == null) {
+                    appInfo = assembler.getAppInfo(new File(realLocation(moduleId)).getAbsolutePath());
                 }
             }
         }
-        saveDeployment(new File(moduleId), false);
+        if (appInfo != null) {
+            assembler.destroyApplication(appInfo);
+            if (appInfo.properties.containsKey("save-deployment")) {
+                saveDeployment(new File(moduleId), false);
+            }
+        } else {
+            throw new NoSuchApplicationException(moduleId);
+        }
     }
 
     private String contextRoot(final Properties properties, final String jarPath) {

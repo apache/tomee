@@ -19,24 +19,12 @@
 
 <suite name="CDI TCK" verbose="0">
   <test name="CDI TCK">
-    <!--<packages>-->
-        <!--<package name="org.jboss.jsr299.tck.tests.*"/>-->
-        <!--<package name="org.jboss.jsr299.tck.interceptors.tests.*"/>-->
-    <!--</packages>-->
     <classes>
-      <!--
-  NewEnterpriseBeanTest>AbstractTest.run:244->testNewBeanHasNoObservers:95 null
-  EnvInjectionTest>AbstractTest.run:244->testProduceEnvProxy:69 » NullPointer
-
--->
-      <class name="org.jboss.jsr299.tck.tests.implementation.simple.resource.env.EnvInjectionTest"/>
-      <!--
-      <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.newBean.NewEnterpriseBeanTest">
-        <methods>
-          <include name="testNewBeanHasNoObservers"/>
-        </methods>
-      </class>
-      -->
+      <class name="org.jboss.jsr299.tck.tests.context.conversation.InvalidatingSessionDestroysConversationTest"/>
+      <class name="org.jboss.jsr299.tck.tests.context.conversation.LongRunningConversationPropagatedByFacesContextTest"/>
+      <class name="org.jboss.jsr299.tck.tests.lookup.manager.ManagerTest"/>
+      <class name="org.jboss.jsr299.tck.tests.lookup.manager.jndi.ManagerTest"/>
+      <class name="org.jboss.jsr299.tck.tests.context.conversation.ManualCidPropagationTest"/>
     </classes>
   </test>
 </suite>

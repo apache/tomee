@@ -72,9 +72,6 @@
               <filters>
                 <filter>
                   <artifact>org.apache.tomcat:tomcat-juli</artifact>
-                  <excludes>
-                    <exclude>org/apache/juli/logging/LogFactory.class</exclude>
-                  </excludes>
                 </filter>
               </filters>
             </configuration>

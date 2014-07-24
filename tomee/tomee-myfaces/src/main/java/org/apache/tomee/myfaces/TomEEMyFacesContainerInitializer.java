@@ -77,7 +77,8 @@ public class TomEEMyFacesContainerInitializer implements ServletContainerInitial
                         Level.WARNING, "No mappings of FacesServlet found. Abort initializing MyFaces."),
                 Level.WARNING, "No mappings of FacesServlet found. Abort destroy MyFaces."));
 
-        if ((classes != null && !classes.isEmpty()) || isFacesServletPresent(ctx) || isFacesConfigPresent(ctx)) {
+        final boolean facesServletPresent = isFacesServletPresent(ctx);
+        if (facesServletPresent || isFacesConfigPresent(ctx)) {
             // we found a faces-config.xml or some classes so let's delegate to myfaces
 
             // since we don't want to call isFacesConfigPresent again (it scan all jars!!!!)
@@ -104,7 +105,9 @@ public class TomEEMyFacesContainerInitializer implements ServletContainerInitial
             }
 
             // finally delegating begin sure we'll not call isFacesConfigPresent
-            delegate.onStartup(classes, ctx);
+            if (!facesServletPresent) {
+                delegate.onStartup(classes, ctx);
+            } // else already done since there is the servlet
         }
     }
 

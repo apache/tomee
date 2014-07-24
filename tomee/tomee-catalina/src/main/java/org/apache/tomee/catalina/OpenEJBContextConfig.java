@@ -21,18 +21,10 @@ import org.apache.catalina.Context;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardWrapper;
-import org.apache.catalina.deploy.ApplicationListener;
-import org.apache.catalina.deploy.ContextResource;
-import org.apache.catalina.deploy.NamingResources;
-import org.apache.catalina.deploy.WebXml;
+import org.apache.catalina.deploy.NamingResourcesImpl;
 import org.apache.catalina.realm.DataSourceRealm;
 import org.apache.catalina.startup.ContextConfig;
 import org.apache.naming.factory.Constants;
-import org.apache.naming.resources.BaseDirContext;
-import org.apache.naming.resources.DirContextURLConnection;
-import org.apache.naming.resources.DirContextURLStreamHandler;
-import org.apache.naming.resources.ProxyDirContext;
-import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.ClassListInfo;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
@@ -49,9 +41,11 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URLs;
-import org.apache.openejb.util.reflection.Reflections;
 import org.apache.tomcat.util.bcel.classfile.AnnotationEntry;
 import org.apache.tomcat.util.bcel.classfile.ElementValuePair;
+import org.apache.tomcat.util.descriptor.web.ContextResource;
+import org.apache.tomcat.util.descriptor.web.JspPropertyGroup;
+import org.apache.tomcat.util.descriptor.web.WebXml;
 import org.apache.tomcat.util.digester.Digester;
 import org.apache.tomee.catalina.realm.TomEEDataSourceRealm;
 import org.apache.tomee.common.NamingUtil;
@@ -90,6 +84,7 @@ public class OpenEJBContextConfig extends ContextConfig {
     private static final String MYFACES_TOMEEM_CONTAINER_INITIALIZER = "org.apache.tomee.myfaces.TomEEMyFacesContainerInitializer";
     private static final String TOMEE_MYFACES_CONTEXT_LISTENER = "org.apache.tomee.myfaces.TomEEMyFacesContextListener";
     private static final String ADJUST_DATASOURCE_JNDI_NAMES = SystemInstance.get().getProperty("tomee.resources.adjust-web-xml-jndi-name", "true");
+    private static final String DEFERRED_SYNTAX = SystemInstance.get().getProperty("tomee.webxml.deferred-urls");
     private static final File BASE = SystemInstance.get().getBase().getDirectory();
 
     private TomcatWebAppBuilder.StandardContextInfo info;
@@ -252,7 +247,7 @@ public class OpenEJBContextConfig extends ContextConfig {
 
     @Override
     protected void contextConfig(final Digester digester) {
-        final NamingResources resources;
+        final NamingResourcesImpl resources;
         if (context != null) {
             resources = context.getNamingResources();
         } else {
@@ -273,7 +268,7 @@ public class OpenEJBContextConfig extends ContextConfig {
             return;
         }
 
-        final NamingResources resources = context.getNamingResources();
+        final NamingResourcesImpl resources = context.getNamingResources();
         if (resources == null) {
             return;
         }
@@ -339,7 +334,20 @@ public class OpenEJBContextConfig extends ContextConfig {
                 prefix = prefix.substring(1);
             }
         }
-        return new OpenEJBWebXml(prefix);
+        final OpenEJBWebXml webXml = new OpenEJBWebXml(prefix);
+
+        if (DEFERRED_SYNTAX != null) {
+            for (final String s : DEFERRED_SYNTAX.split(",")) {
+                if (!s.isEmpty()) {
+                    final JspPropertyGroup propertyGroup = new JspPropertyGroup();
+                    propertyGroup.addUrlPattern(s);
+                    propertyGroup.setDeferredSyntax("true");
+                    webXml.addJspPropertyGroup(propertyGroup);
+                }
+            }
+        }
+
+        return webXml;
     }
 
     public class OpenEJBWebXml extends WebXml {
@@ -382,7 +390,7 @@ public class OpenEJBContextConfig extends ContextConfig {
             final Class<?> myfacesInitializer = Class.forName(MYFACES_TOMEEM_CONTAINER_INITIALIZER, true, classLoader);
             final ServletContainerInitializer instance = (ServletContainerInitializer) myfacesInitializer.newInstance();
             context.addServletContainerInitializer(instance, getJsfClasses(context));
-            context.addApplicationListener(new ApplicationListener(TOMEE_MYFACES_CONTEXT_LISTENER, false)); // cleanup listener
+            context.addApplicationListener(TOMEE_MYFACES_CONTEXT_LISTENER); // cleanup listener
         } catch (final Exception ignored) {
             // no-op
         } catch (final NoClassDefFoundError error) {
@@ -535,33 +543,8 @@ public class OpenEJBContextConfig extends ContextConfig {
         try {
             currentUrlAsFile = URLs.toFile(currentUrl);
         } catch (final IllegalArgumentException iae) {
-            if ("jndi".equals(currentUrl.getProtocol())) {
-                String file = currentUrl.getFile();
-                try {
-                    final URLConnection connection = currentUrl.openConnection();
-                    if (connection instanceof DirContextURLConnection) {
-                        final DirContextURLStreamHandler handler = DirContextURLStreamHandler.class.cast(Reflections.get(currentUrl, "handler"));
-                        final ProxyDirContext dirContext = ProxyDirContext.class.cast(Reflections.get(handler, "context"));
-                        final String host = String.class.cast(Reflections.get(dirContext, "hostName"));
-                        final String contextPath = String.class.cast(Reflections.get(dirContext, "contextPath"));
-                        final Object context = Reflections.get(dirContext, "dirContext");
-
-                        if (BaseDirContext.class.isInstance(context)) {
-                            file = file.replace("/" + host + contextPath, BaseDirContext.class.cast(context).getDocBase());
-                        } else {
-                            throw new OpenEJBRuntimeException("Context not supported: " + context);
-                        }
-
-                        currentUrlAsFile = new File(file);
-                    } else {
-                        throw new OpenEJBRuntimeException("can't find webapp [" + webAppInfo.contextRoot + "], connection is not a DirContextURLConnection " + connection);
-                    }
-                } catch (final Exception ex) {
-                    throw new OpenEJBRuntimeException("can't find webapp [" + webAppInfo.contextRoot + "]", ex);
-                }
-            } else {
-                throw new OpenEJBRuntimeException("protocol not supported '" + currentUrl.getProtocol() + "'");
-            }
+            logger.error("Don't know this url: " + currentUrl);
+            return;
         }
 
         internalProcessAnnotations(currentUrlAsFile, webAppInfo, fragment);

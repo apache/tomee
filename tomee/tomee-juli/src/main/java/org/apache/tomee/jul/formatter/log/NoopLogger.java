@@ -14,107 +14,104 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.apache.tomee.loader.log;
+package org.apache.tomee.jul.formatter.log;
 
 import org.apache.juli.logging.Log;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 
-public class Log4jLog implements Log {
-    private final Logger log;
+public class NoopLogger implements Log {
+    public static final NoopLogger INSTANCE = new NoopLogger();
 
-    public Log4jLog(final String logger) {
-        this.log = Logger.getLogger(logger);
+    private NoopLogger() {
+        // no-op
     }
 
     @Override
     public boolean isDebugEnabled() {
-        return log.isDebugEnabled();
+        return false;
     }
 
     @Override
     public boolean isErrorEnabled() {
-        return log.isEnabledFor(Level.ERROR);
+        return false;
     }
 
     @Override
     public boolean isFatalEnabled() {
-        return log.isEnabledFor(Level.FATAL);
+        return false;
     }
 
     @Override
     public boolean isInfoEnabled() {
-        return log.isInfoEnabled();
+        return false;
     }
 
     @Override
     public boolean isTraceEnabled() {
-        return log.isEnabledFor(Level.TRACE);
+        return false;
     }
 
     @Override
     public boolean isWarnEnabled() {
-        return log.isEnabledFor(Level.WARN);
+        return false;
     }
 
     @Override
     public void trace(final Object message) {
-        log.trace(message);
+        // no-op
     }
 
     @Override
     public void trace(final Object message, final Throwable t) {
-        log.trace(message, t);
+        // no-op
     }
 
     @Override
     public void debug(final Object message) {
-        log.debug(message);
+        // no-op
     }
 
     @Override
     public void debug(final Object message, final Throwable t) {
-        log.debug(message, t);
+        // no-op
     }
 
     @Override
     public void info(final Object message) {
-        log.info(message);
+        // no-op
     }
 
     @Override
     public void info(final Object message, final Throwable t) {
-        log.info(message, t);
+        // no-op
     }
 
     @Override
     public void warn(final Object message) {
-        log.warn(message);
+        // no-op
     }
 
     @Override
     public void warn(final Object message, final Throwable t) {
-        log.warn(message, t);
+        // no-op
     }
 
     @Override
     public void error(final Object message) {
-        log.error(message);
+        // no-op
     }
 
     @Override
     public void error(final Object message, final Throwable t) {
-        log.error(message, t);
+        // no-op
     }
 
     @Override
     public void fatal(final Object message) {
-        log.fatal(message);
+        // no-op
     }
 
     @Override
     public void fatal(final Object message, final Throwable t) {
-        log.fatal(message, t);
+        // no-op
     }
 }

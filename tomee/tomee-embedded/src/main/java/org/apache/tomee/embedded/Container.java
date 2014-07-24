@@ -20,6 +20,7 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Server;
 import org.apache.catalina.Service;
 import org.apache.catalina.connector.Connector;
+import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.startup.CatalinaProperties;
@@ -508,11 +509,11 @@ public class Container {
                 final org.apache.catalina.Container e = service.getContainer();
                 for (final org.apache.catalina.Container h : e.findChildren()) {
                     for (final org.apache.catalina.Container c : h.findChildren()) {
-                        StandardManager m = (StandardManager) c.getManager();
+                        StandardManager m = (StandardManager) StandardContext.class.cast(c).getManager();
                         if (m == null) {
                             m = new StandardManager();
                             m.setSecureRandomClass("org.apache.catalina.startup.FastNonSecureRandom");
-                            c.setManager(m);
+                            StandardContext.class.cast(c).setManager(m);
                         }
                     }
                 }

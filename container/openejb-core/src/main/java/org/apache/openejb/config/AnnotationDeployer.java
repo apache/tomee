@@ -426,7 +426,7 @@ public class AnnotationDeployer implements DynamicDeployer {
         public AppModule deploy(AppModule appModule) throws OpenEJBException {
             if (!appModule.isWebapp() && !appModule.getWebModules().isEmpty()) { // need to scan for jsf stuff at least
                 try {
-                    appModule.setEarLibFinder(FinderFactory.createFinder(appModule));
+                    appModule.setEarLibFinder(FinderFactory.createFinder(appModule, true));
                 } catch (final Exception e) {
                     logger.error("Can't create a finder for ear libs", e);
                 }
@@ -498,7 +498,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             if (finder == null) {
                 try {
-                    finder = FinderFactory.createFinder(clientModule);
+                    finder = FinderFactory.createFinder(clientModule, false);
                 } catch (final MalformedURLException e) {
                     startupLogger.warning("startup.scrapeFailedForClientModule.url", clientModule.getJarLocation());
                     return clientModule;
@@ -552,7 +552,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             IAnnotationFinder finder = connectorModule.getFinder();
             if (finder == null) {
                 try {
-                    finder = FinderFactory.createFinder(connectorModule);
+                    finder = FinderFactory.createFinder(connectorModule, false);
                     connectorModule.setFinder(finder);
                 } catch (final Exception e) {
                     // TODO: some sort of error
@@ -1059,7 +1059,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             try {
                 if (webModule.getFinder() == null) {
-                    webModule.setFinder(FinderFactory.createFinder(webModule));
+                    webModule.setFinder(FinderFactory.createFinder(webModule, true));
                 }
             } catch (final Exception e) {
                 startupLogger.warning("Unable to scrape for @WebService or @WebServiceProvider annotations. AnnotationFinder failed.", e);
@@ -1277,7 +1277,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             try {
                 if (ejbModule.getFinder() == null) {
-                    ejbModule.setFinder(FinderFactory.createFinder(ejbModule));
+                    ejbModule.setFinder(FinderFactory.createFinder(ejbModule, true));
                 }
             } catch (final MalformedURLException e) {
                 startupLogger.warning("startup.scrapeFailedForModule", ejbModule.getJarLocation());

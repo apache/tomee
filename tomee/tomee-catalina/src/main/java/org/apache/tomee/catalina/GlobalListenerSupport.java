@@ -107,17 +107,11 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
             } else if (Lifecycle.BEFORE_START_EVENT.equals(type)) {
                 contextListener.beforeStart(standardContext);
             } else if (Lifecycle.START_EVENT.equals(type)) {
-                if (TomcatHelper.isTomcat7()) {
-                    standardContext.addParameter("openejb.start.late", "true");
-                }
-
+                standardContext.addParameter("openejb.start.late", "true");
                 contextListener.start(standardContext);
             } else if (Lifecycle.AFTER_START_EVENT.equals(type)) {
                 contextListener.afterStart(standardContext);
-
-                if (TomcatHelper.isTomcat7()) {
-                    standardContext.removeParameter("openejb.start.late");
-                }
+                standardContext.removeParameter("openejb.start.late");
             } else if (Lifecycle.BEFORE_STOP_EVENT.equals(type)) {
                 contextListener.beforeStop(standardContext);
             } else if (Lifecycle.STOP_EVENT.equals(type)) {

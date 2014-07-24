@@ -22,7 +22,7 @@ import org.apache.catalina.Realm;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
-import org.apache.catalina.deploy.SecurityConstraint;
+import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
 import org.apache.tomee.catalina.TomEERuntimeException;
 import org.ietf.jgss.GSSContext;
 
@@ -120,11 +120,6 @@ public class LowTypedRealm implements Realm {
     }
 
     @Override
-    public String getInfo() {
-        return info;
-    }
-
-    @Override
     public void addPropertyChangeListener(final PropertyChangeListener listener) {
         // no-op
     }
@@ -182,7 +177,8 @@ public class LowTypedRealm implements Realm {
 
     @Override
     public boolean hasResourcePermission(final Request request, final Response response,
-                                         final SecurityConstraint[] constraint, final Context context) throws IOException {
+                                         final SecurityConstraint[] constraint,
+                                         final Context context) throws IOException {
         return (Boolean) invoke(hasResourcePermissionMethod, request.getRequest(), response.getResponse(), constraint, context.getPath());
     }
 

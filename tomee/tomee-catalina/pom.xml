@@ -101,7 +101,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat7-websocket</artifactId>
+      <artifactId>tomcat-websocket</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>

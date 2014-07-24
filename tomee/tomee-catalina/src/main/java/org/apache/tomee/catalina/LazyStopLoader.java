@@ -16,7 +16,7 @@
  */
 package org.apache.tomee.catalina;
 
-import org.apache.catalina.Container;
+import org.apache.catalina.Context;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
@@ -111,13 +111,13 @@ public class LazyStopLoader implements Loader, Lifecycle {
     }
 
     @Override
-    public Container getContainer() {
-        return delegate.getContainer();
+    public Context getContext() {
+        return delegate.getContext();
     }
 
     @Override
-    public void setContainer(final Container container) {
-        delegate.setContainer(container);
+    public void setContext(final Context context) {
+        delegate.setContext(context);
     }
 
     @Override
@@ -128,11 +128,6 @@ public class LazyStopLoader implements Loader, Lifecycle {
     @Override
     public void setDelegate(final boolean delegate) {
         this.delegate.setDelegate(delegate);
-    }
-
-    @Override
-    public String getInfo() {
-        return delegate.getInfo();
     }
 
     @Override
@@ -148,16 +143,6 @@ public class LazyStopLoader implements Loader, Lifecycle {
     @Override
     public void addPropertyChangeListener(final PropertyChangeListener listener) {
         delegate.addPropertyChangeListener(listener);
-    }
-
-    @Override
-    public void addRepository(final String repository) {
-        delegate.addRepository(repository);
-    }
-
-    @Override
-    public String[] findRepositories() {
-        return delegate.findRepositories();
     }
 
     @Override

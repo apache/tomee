@@ -56,8 +56,11 @@ derbyclient-
 derbynet-
 dom4j
 ecj-
+el-api
 eclipselink-
 FastInfoset
+fleece-core
+fleece-mapper
 fusemq-leveldb-
 geronimo-
 google-
@@ -207,10 +210,12 @@ tomcat-el
 tomcat-i18n
 tomcat-jasper
 tomcat-jdbc
+tomcat-jni
 tomcat-jsp
 tomcat-juli
 tomcat-tribes
 tomcat-servlet
+tomcat-spdy
 tomcat-util
 tomee-
 tools.jar
@@ -221,6 +226,7 @@ webbeans-ee
 webbeans-ejb
 webbeans-impl
 webbeans-spi
+websocket-api
 woodstox-core-asl-
 ws-commons-util-
 wsdl4j-

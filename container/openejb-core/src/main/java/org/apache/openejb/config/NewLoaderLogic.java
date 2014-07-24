@@ -186,17 +186,32 @@ public class NewLoaderLogic {
 
             final String name = filter(file).getName();
 
-            if (includeFilter == null || !includeFilter.accept(name)) {
-                if (filter != null && filter.accept(name)) {
-                    return true;
-                } else if (excludeFilter != null && excludeFilter.accept(name)) {
-                    return true;
-                }
+            if (skip(includeFilter, excludeFilter, name)) {
+                return true;
             }
         } catch (final IllegalArgumentException iae) {
             // no-op
         }
 
+        return false;
+    }
+
+    private static boolean skip(final Filter includeFilter, final Filter excludeFilter, final String name) {
+        if (includeFilter == null || !includeFilter.accept(name)) {
+            if (filter != null && filter.accept(name)) {
+                return true;
+            } else if (excludeFilter != null && excludeFilter.accept(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean skip(final String name) {
+        getExclusions();
+        if (filter != null && filter.accept(name)) {
+            return true;
+        }
         return false;
     }
 

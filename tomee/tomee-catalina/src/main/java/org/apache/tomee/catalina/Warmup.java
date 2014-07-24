@@ -136,8 +136,6 @@ public class Warmup {
                 "org.apache.tomcat.util.net.AbstractEndpoint",
                 "org.apache.tomcat.util.scan.StandardJarScanner",
                 "org.apache.tomcat.util.threads.ThreadPoolExecutor",
-                "org.apache.tomee.catalina.BackportUtil",
-                "org.apache.tomee.catalina.BackportUtil$1",
                 "org.apache.tomee.loader.TomEEJarScanner",
                 // "org.apache.tomee.catalina.TomcatLoader", // can't be loaded from here
                 "org.apache.webbeans.config.WebBeansFinder",

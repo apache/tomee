@@ -21,14 +21,12 @@ import org.apache.catalina.ha.ClusterListener;
 import org.apache.catalina.ha.tcp.SimpleTcpCluster;
 import org.apache.tomee.catalina.cluster.TomEEClusterListener;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 public class SimpleTomEETcpCluster extends SimpleTcpCluster {
     public SimpleTomEETcpCluster(final SimpleTcpCluster from) {
-        clusterListeners = new ArrayList<ClusterListener>(Arrays.asList(from.findClusterListeners()));
+        clusterListeners.addAll(Arrays.asList(from.findClusterListeners()));
 
         setClusterName(from.getClusterName());
         setContainer(from.getContainer());
@@ -44,12 +42,6 @@ public class SimpleTomEETcpCluster extends SimpleTcpCluster {
 
         for (final Valve valve : from.getValves()) {
             addValve(valve);
-        }
-
-        final Iterator<String> propertyNames = from.getPropertyNames();
-        while (propertyNames.hasNext()) {
-            final String next = propertyNames.next();
-            setProperty(next, from.getProperty(next));
         }
     }
 

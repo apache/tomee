@@ -16,7 +16,7 @@
  */
 package org.apache.tomee.catalina.remote;
 
-import org.apache.catalina.Container;
+import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Loader;
 import org.apache.catalina.Wrapper;
@@ -53,8 +53,6 @@ public class TomEERemoteWebapp extends IgnoredStandardContext {
     }
 
     private static class ServerClassLoaderLoader implements Loader {
-        private static final String[] EMPTY_ARRAY = new String[0];
-
         private final TomEERemoteWebapp container;
 
         public ServerClassLoaderLoader(final TomEERemoteWebapp tomEERemoteWebapp) {
@@ -72,12 +70,12 @@ public class TomEERemoteWebapp extends IgnoredStandardContext {
         }
 
         @Override
-        public Container getContainer() {
+        public Context getContext() {
             return container;
         }
 
         @Override
-        public void setContainer(final Container container) {
+        public void setContext(final Context context) {
             // no-op
         }
 
@@ -89,11 +87,6 @@ public class TomEERemoteWebapp extends IgnoredStandardContext {
         @Override
         public void setDelegate(final boolean delegate) {
             // no-op
-        }
-
-        @Override
-        public String getInfo() {
-            return ServerClassLoaderLoader.class.getName() + "/1.0";
         }
 
         @Override
@@ -109,16 +102,6 @@ public class TomEERemoteWebapp extends IgnoredStandardContext {
         @Override
         public void addPropertyChangeListener(final PropertyChangeListener listener) {
             // no-op
-        }
-
-        @Override
-        public void addRepository(final String repository) {
-            // no-op
-        }
-
-        @Override
-        public String[] findRepositories() {
-            return EMPTY_ARRAY;
         }
 
         @Override

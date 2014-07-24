@@ -18,16 +18,28 @@ package org.apache.tomee.catalina;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
+import org.apache.catalina.LifecycleState;
+import org.apache.catalina.WebResourceRoot;
+import org.apache.catalina.WebResourceSet;
 import org.apache.catalina.loader.WebappClassLoader;
+import org.apache.catalina.webresources.DirResourceSet;
+import org.apache.catalina.webresources.FileResourceSet;
+import org.apache.catalina.webresources.JarResourceSet;
+import org.apache.catalina.webresources.JarWarResourceSet;
+import org.apache.catalina.webresources.StandardRoot;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.classloader.ClassLoaderConfigurer;
+import org.apache.openejb.classloader.CompositeClassLoaderConfigurer;
 import org.apache.openejb.classloader.WebAppEnricher;
 import org.apache.openejb.config.NewLoaderLogic;
+import org.apache.openejb.config.QuickJarsTxtParser;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.URLs;
 import org.apache.openejb.util.classloader.URLClassLoaderFirst;
+import org.apache.openejb.util.reflection.Reflections;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,9 +52,11 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
 
-public class LazyStopWebappClassLoader extends WebappClassLoader {
-    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, LazyStopWebappClassLoader.class.getName());
+public class TomEEWebappClassLoader extends WebappClassLoader {
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, TomEEWebappClassLoader.class.getName());
     private static final ThreadLocal<ClassLoaderConfigurer> INIT_CONFIGURER = new ThreadLocal<ClassLoaderConfigurer>();
     private static final ThreadLocal<Context> CONTEXT = new ThreadLocal<Context>();
 
@@ -53,13 +67,14 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
     private ClassLoaderConfigurer configurer;
     private final int hashCode;
     private Collection<File> additionalRepos;
+    private volatile ClassLoader j2seClassLoader;
 
-    public LazyStopWebappClassLoader() {
+    public TomEEWebappClassLoader() {
         j2seClassLoader = getSystemClassLoader();
         hashCode = construct();
     }
 
-    public LazyStopWebappClassLoader(final ClassLoader parent) {
+    public TomEEWebappClassLoader(final ClassLoader parent) {
         super(parent);
         j2seClassLoader = getSystemClassLoader();
         hashCode = construct();
@@ -130,8 +145,30 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
     }
 
     @Override
-    protected boolean validate(final String name) { // static validation, mainly container stuff
-        return !URLClassLoaderFirst.shouldSkip(name);
+    public void setResources(final WebResourceRoot resources) {
+        this.resources = resources;
+        if (StandardRoot.class.isInstance(resources)) {
+            final List<WebResourceSet> jars = (List<WebResourceSet>) Reflections.get(resources, "jarResources");
+            if (jars != null && !jars.isEmpty()) {
+                final Iterator<WebResourceSet> jarIt = jars.iterator();
+                while (jarIt.hasNext()) {
+                    final WebResourceSet set = jarIt.next();
+                    if (set.getBaseUrl() == null) {
+                        continue;
+                    }
+                    final File file = URLs.toFile(set.getBaseUrl());
+                    try {
+                        if (file.exists() && (!TomEEClassLoaderEnricher.validateJarFile(file) || !jarIsAccepted(file))) {
+                            // need to remove this resource
+                            LOGGER.warning("Removing " + file.getAbsolutePath() + " since it is offending");
+                            jarIt.remove();
+                        }
+                    } catch (final IOException e) {
+                        // ignore
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -140,7 +177,7 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
     }
 
     public void internalStop() throws LifecycleException {
-        if (isStarted()) {
+        if (getState().isAvailable()) {
             // reset classloader because of tomcat classloaderlogmanager
             // to be sure we reset the right loggers
             final ClassLoader loader = Thread.currentThread().getContextClassLoader();
@@ -175,7 +212,6 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
             if (root != null) {
                 final String externalRepositories = SystemInstance.get().getProperty("tomee." + new File(root).getName() + ".externalRepositories");
                 if (externalRepositories != null) {
-                    setSearchExternalFirst(true);
                     for (final String additional : externalRepositories.split(",")) {
                         final String trim = additional.trim();
                         if (!trim.isEmpty()) {
@@ -202,7 +238,7 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
         if (additionalRepos != null) {
             for (final File f : additionalRepos) {
                 try { // not addURL to look here first
-                    super.addRepository(f.toURI().toURL().toExternalForm());
+                    super.addURL(f.toURI().toURL());
                 } catch (final MalformedURLException e) {
                     LOGGER.error(e.getMessage());
                 }
@@ -222,17 +258,20 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
         for (final URL url : SystemInstance.get().getComponent(WebAppEnricher.class).enrichment(this)) {
             super.addURL(url);
         }
+
+        // WEB-INF/jars.xml
+        final File war = Contexts.warPath(CONTEXT.get());
+        final File jarsXml = new File(war, "WEB-INF/" + QuickJarsTxtParser.FILE_NAME);
+        final ClassLoaderConfigurer configurerTxt = QuickJarsTxtParser.parse(jarsXml);
+        if (configurerTxt != null) {
+            configurer = new CompositeClassLoaderConfigurer(configurer, configurerTxt);
+        }
     }
 
     public void addURL(final URL url) {
         if (configurer == null || configurer.accept(url)) {
             super.addURL(url);
         }
-    }
-
-    @Override
-    protected boolean validateJarFile(final File file) throws IOException {
-        return super.validateJarFile(file) && TomEEClassLoaderEnricher.validateJarFile(file) && jarIsAccepted(file);
     }
 
     private boolean jarIsAccepted(final File file) {
@@ -257,7 +296,7 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
 
     @Override
     public InputStream getResourceAsStream(final String name) {
-        if (!isStarted()) {
+        if (!getState().isAvailable()) {
             return null;
         }
         return super.getResourceAsStream(name);
@@ -265,7 +304,7 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
 
     @Override
     public Enumeration<URL> getResources(final String name) throws IOException {
-        if (!isStarted()) {
+        if (!getState().isAvailable()) {
             return null;
         }
 

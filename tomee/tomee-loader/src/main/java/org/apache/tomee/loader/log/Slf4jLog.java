@@ -19,12 +19,13 @@ package org.apache.tomee.loader.log;
 
 import org.apache.juli.logging.Log;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Slf4jLog implements Log {
     private final Logger log;
 
-    public Slf4jLog(final Logger log) {
-        this.log = log;
+    public Slf4jLog(final String logger) {
+        this.log = LoggerFactory.getLogger(logger);
     }
 
     @Override

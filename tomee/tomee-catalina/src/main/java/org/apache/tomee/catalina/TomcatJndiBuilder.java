@@ -19,12 +19,7 @@ package org.apache.tomee.catalina;
 import org.apache.catalina.core.NamingContextListener;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardServer;
-import org.apache.catalina.deploy.ContextEjb;
-import org.apache.catalina.deploy.ContextEnvironment;
-import org.apache.catalina.deploy.ContextResource;
-import org.apache.catalina.deploy.ContextResourceEnvRef;
-import org.apache.catalina.deploy.ContextTransaction;
-import org.apache.catalina.deploy.NamingResources;
+import org.apache.catalina.deploy.NamingResourcesImpl;
 import org.apache.naming.ContextAccessController;
 import org.apache.naming.ContextBindings;
 import org.apache.naming.factory.Constants;
@@ -54,6 +49,12 @@ import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.Contexts;
 import org.apache.openejb.util.URLs;
+import org.apache.tomcat.util.descriptor.web.ContextEjb;
+import org.apache.tomcat.util.descriptor.web.ContextEnvironment;
+import org.apache.tomcat.util.descriptor.web.ContextResource;
+import org.apache.tomcat.util.descriptor.web.ContextResourceEnvRef;
+import org.apache.tomcat.util.descriptor.web.ContextService;
+import org.apache.tomcat.util.descriptor.web.ContextTransaction;
 import org.apache.tomee.common.EjbFactory;
 import org.apache.tomee.common.EnumFactory;
 import org.apache.tomee.common.LookupFactory;
@@ -100,7 +101,7 @@ public class TomcatJndiBuilder {
     public TomcatJndiBuilder(final StandardContext standardContext, final WebAppInfo webAppInfo, final Collection<Injection> injections) {
         this.injections = injections;
         this.standardContext = standardContext;
-        this.namingContextListener = BackportUtil.getNamingContextListener(standardContext);
+        this.namingContextListener = standardContext.getNamingContextListener();
         this.webAppInfo = webAppInfo;
 
         final String parameter = standardContext.findParameter("openejb.start.late");
@@ -117,7 +118,7 @@ public class TomcatJndiBuilder {
 
     public void mergeJndi() throws OpenEJBException {
 
-        final NamingResources naming = standardContext.getNamingResources();
+        final NamingResourcesImpl naming = standardContext.getNamingResources();
         final URI moduleUri = URLs.uri(webAppInfo.moduleId);
 
         for (final EnvEntryInfo ref : webAppInfo.jndiEnc.envEntries) {
@@ -152,7 +153,9 @@ public class TomcatJndiBuilder {
 
     public static void mergeJava(final StandardContext standardContext) {
         final ContainerSystem cs = SystemInstance.get().getComponent(ContainerSystem.class);
-        ContextAccessController.setWritable(standardContext.getNamingContextListener().getName(), standardContext);
+        final String name = standardContext.getNamingContextListener().getName();
+        final Object namingToken = standardContext.getNamingToken();
+        ContextAccessController.setWritable(name, namingToken);
         Context root = null;
         try {
             root = (Context) ContextBindings.getClassLoader().lookup("");
@@ -163,7 +166,7 @@ public class TomcatJndiBuilder {
         // classical deployment - needed because can be overriden through META-INF/context.xml
         String path = standardContext.findParameter(TomcatWebAppBuilder.OPENEJB_WEBAPP_MODULE_ID);
         if (path == null) { // standardContext not created by OpenEJB
-            path = standardContext.getHostname();
+            path = org.apache.tomee.catalina.Contexts.getHostname(standardContext);
             if (standardContext.getPath().startsWith("/")) {
                 path += standardContext.getPath();
             } else {
@@ -292,7 +295,7 @@ public class TomcatJndiBuilder {
             // no-op
         }
 
-        ContextAccessController.setReadOnly(standardContext.getNamingContextListener().getName());
+        ContextAccessController.setReadOnly(name);
     }
 
     private static String removeCompEnv(final String key) {
@@ -338,7 +341,7 @@ public class TomcatJndiBuilder {
         return value;
     }
 
-    public void mergeRef(final NamingResources naming, final EnvEntryInfo ref) {
+    public void mergeRef(final NamingResourcesImpl naming, final EnvEntryInfo ref) {
 //        if (!ref.referenceName.startsWith("comp/")) return;
         if ("java.lang.Class".equals(ref.type)) {
             final ContextResourceEnvRef resourceEnv = new ContextResourceEnvRef();
@@ -393,7 +396,7 @@ public class TomcatJndiBuilder {
         }
 
         if (replaceEntry) {
-            ContextAccessController.setWritable(namingContextListener.getName(), standardContext);
+            ContextAccessController.setWritable(namingContextListener.getName(), standardContext.getNamingToken());
             if (!addEntry) {
                 namingContextListener.removeEnvironment(environment.getName());
             }
@@ -402,7 +405,7 @@ public class TomcatJndiBuilder {
         }
     }
 
-    private boolean isLookupRef(final NamingResources naming, final InjectableInfo ref) {
+    private boolean isLookupRef(final NamingResourcesImpl naming, final InjectableInfo ref) {
         if (ref.location == null) {
             return false;
         }
@@ -426,7 +429,7 @@ public class TomcatJndiBuilder {
         return true;
     }
 
-    public void mergeRef(final NamingResources naming, final EjbReferenceInfo ref) {
+    public void mergeRef(final NamingResourcesImpl naming, final EjbReferenceInfo ref) {
         if (isLookupRef(naming, ref)) {
             return;
         }
@@ -463,7 +466,7 @@ public class TomcatJndiBuilder {
         }
 
         if (replaceEntry) {
-            ContextAccessController.setWritable(namingContextListener.getName(), standardContext);
+            ContextAccessController.setWritable(namingContextListener.getName(), standardContext.getNamingToken());
             if (!addEntry) {
                 namingContextListener.removeEjb(ejb.getName());
             }
@@ -472,7 +475,7 @@ public class TomcatJndiBuilder {
         }
     }
 
-    public void mergeRef(final NamingResources naming, final EjbLocalReferenceInfo ref) {
+    public void mergeRef(final NamingResourcesImpl naming, final EjbLocalReferenceInfo ref) {
         if (isLookupRef(naming, ref)) {
             return;
         }
@@ -508,7 +511,7 @@ public class TomcatJndiBuilder {
         }
 
         if (replaceEntry) {
-            ContextAccessController.setWritable(namingContextListener.getName(), standardContext);
+            ContextAccessController.setWritable(namingContextListener.getName(), standardContext.getNamingToken());
             if (!addEntry) {
                 namingContextListener.removeEjb(ejb.getName());
             }
@@ -518,7 +521,7 @@ public class TomcatJndiBuilder {
     }
 
     @SuppressWarnings({"UnusedDeclaration"})
-    public void mergeRef(final NamingResources naming, final PersistenceContextReferenceInfo ref, final URI moduleUri) {
+    public void mergeRef(final NamingResourcesImpl naming, final PersistenceContextReferenceInfo ref, final URI moduleUri) {
         if (isLookupRef(naming, ref)) {
             return;
         }
@@ -561,7 +564,7 @@ public class TomcatJndiBuilder {
         }
 
         if (replaceEntry) {
-            ContextAccessController.setWritable(namingContextListener.getName(), standardContext);
+            ContextAccessController.setWritable(namingContextListener.getName(), standardContext.getNamingToken());
             if (!addEntry) {
                 namingContextListener.removeResource(resource.getName());
             }
@@ -571,7 +574,7 @@ public class TomcatJndiBuilder {
     }
 
     @SuppressWarnings({"UnusedDeclaration"})
-    public void mergeRef(final NamingResources naming, final PersistenceUnitReferenceInfo ref, final URI moduleUri) {
+    public void mergeRef(final NamingResourcesImpl naming, final PersistenceUnitReferenceInfo ref, final URI moduleUri) {
         if (isLookupRef(naming, ref)) {
             return;
         }
@@ -612,7 +615,7 @@ public class TomcatJndiBuilder {
         }
 
         if (replaceEntry) {
-            ContextAccessController.setWritable(namingContextListener.getName(), standardContext);
+            ContextAccessController.setWritable(namingContextListener.getName(), standardContext.getNamingToken());
             if (!addEntry) {
                 namingContextListener.removeResource(resource.getName());
             }
@@ -621,7 +624,7 @@ public class TomcatJndiBuilder {
         }
     }
 
-    public void mergeRef(final NamingResources naming, final ResourceReferenceInfo ref) {
+    public void mergeRef(final NamingResourcesImpl naming, final ResourceReferenceInfo ref) {
         if (isLookupRef(naming, ref)) {
             return;
         }
@@ -653,7 +656,7 @@ public class TomcatJndiBuilder {
         }
 
         if (replaceEntry) {
-            ContextAccessController.setWritable(namingContextListener.getName(), standardContext);
+            ContextAccessController.setWritable(namingContextListener.getName(), standardContext.getNamingToken());
             if (!addEntry) {
                 namingContextListener.removeResource(resource.getName());
             }
@@ -662,7 +665,7 @@ public class TomcatJndiBuilder {
         }
     }
 
-    public void mergeRef(final NamingResources naming, final ResourceEnvReferenceInfo ref) {
+    public void mergeRef(final NamingResourcesImpl naming, final ResourceEnvReferenceInfo ref) {
         if (isLookupRef(naming, ref)) {
             return;
         }
@@ -709,7 +712,7 @@ public class TomcatJndiBuilder {
         }
 
         if (replaceEntry) {
-            ContextAccessController.setWritable(namingContextListener.getName(), standardContext);
+            ContextAccessController.setWritable(namingContextListener.getName(), standardContext.getNamingToken());
             if (!addEntry) {
                 namingContextListener.removeResourceEnvRef(resourceEnv.getName());
             }
@@ -718,7 +721,7 @@ public class TomcatJndiBuilder {
         }
     }
 
-    public void mergeRef(final NamingResources naming, final ServiceReferenceInfo ref) {
+    public void mergeRef(final NamingResourcesImpl naming, final ServiceReferenceInfo ref) {
         if (isLookupRef(naming, ref)) {
             return;
         }
@@ -792,11 +795,12 @@ public class TomcatJndiBuilder {
         }
 
         // if there was a service entry, remove it
-        final String serviceName = BackportUtil.findServiceName(naming, ref.referenceName.replaceAll("^comp/env/", ""));
+        final ContextService service = naming.findService(ref.referenceName.replaceAll("^comp/env/", ""));
+        final String serviceName = service != null ? service.getName() : null;
         if (serviceName != null) {
-            ContextAccessController.setWritable(namingContextListener.getName(), standardContext);
+            ContextAccessController.setWritable(namingContextListener.getName(), standardContext.getNamingToken());
             if (!addEntry) {
-                BackportUtil.removeService(namingContextListener, serviceName);
+                namingContextListener.removeService(serviceName);
             }
             ContextAccessController.setReadOnly(namingContextListener.getName());
         }
@@ -808,7 +812,7 @@ public class TomcatJndiBuilder {
 
         // or replace the exisitng resource entry
         if (replaceEntry) {
-            ContextAccessController.setWritable(namingContextListener.getName(), standardContext);
+            ContextAccessController.setWritable(namingContextListener.getName(), standardContext.getNamingToken());
             if (!addEntry) {
                 namingContextListener.removeResource(resource.getName());
             }
@@ -857,7 +861,7 @@ public class TomcatJndiBuilder {
     }
 
     public static void importOpenEJBResourcesInTomcat(final Collection<ResourceInfo> resources, final StandardServer server) {
-        final NamingResources naming = server.getGlobalNamingResources();
+        final NamingResourcesImpl naming = server.getGlobalNamingResources();
 
         for (final ResourceInfo info : resources) {
             final String name = info.id;

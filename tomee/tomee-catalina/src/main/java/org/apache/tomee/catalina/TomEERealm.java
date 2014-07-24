@@ -34,11 +34,6 @@ public class TomEERealm extends CombinedRealm {
     private final ThreadLocal<Request> requests = new ThreadLocal<Request>();
 
     @Override
-    public String getInfo() {
-        return INFO;
-    }
-
-    @Override
     public Principal authenticate(final String username, final String password) {
         return logInTomEE(super.authenticate(username, password));
     }

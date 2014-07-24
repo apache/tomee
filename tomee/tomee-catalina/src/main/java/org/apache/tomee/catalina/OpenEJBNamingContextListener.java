@@ -20,14 +20,7 @@ import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.core.StandardServer;
-import org.apache.catalina.deploy.ContextEjb;
-import org.apache.catalina.deploy.ContextEnvironment;
-import org.apache.catalina.deploy.ContextLocalEjb;
-import org.apache.catalina.deploy.ContextResource;
-import org.apache.catalina.deploy.ContextResourceEnvRef;
-import org.apache.catalina.deploy.ContextResourceLink;
-import org.apache.catalina.deploy.NamingResources;
-import org.apache.catalina.deploy.ResourceBase;
+import org.apache.catalina.deploy.NamingResourcesImpl;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ResourceInfo;
@@ -35,6 +28,13 @@ import org.apache.openejb.assembler.dynamic.PassthroughFactory;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.tomcat.util.descriptor.web.ContextEjb;
+import org.apache.tomcat.util.descriptor.web.ContextEnvironment;
+import org.apache.tomcat.util.descriptor.web.ContextLocalEjb;
+import org.apache.tomcat.util.descriptor.web.ContextResource;
+import org.apache.tomcat.util.descriptor.web.ContextResourceEnvRef;
+import org.apache.tomcat.util.descriptor.web.ContextResourceLink;
+import org.apache.tomcat.util.descriptor.web.ResourceBase;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
@@ -58,7 +58,7 @@ public class OpenEJBNamingContextListener implements LifecycleListener, Property
     /**
      * Associated naming resources.
      */
-    private final NamingResources namingResources;
+    private final NamingResourcesImpl namingResources;
 
     public OpenEJBNamingContextListener(final StandardServer standardServer) {
         this.standardServer = standardServer;

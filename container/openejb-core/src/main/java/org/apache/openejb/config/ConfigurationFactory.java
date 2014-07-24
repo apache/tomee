@@ -93,10 +93,12 @@ import org.apache.openejb.util.URISupport;
 import org.apache.openejb.util.URLs;
 import org.apache.openejb.util.classloader.URLClassLoaderFirst;
 import org.apache.openejb.util.proxy.QueryProxy;
+import org.apache.xbean.finder.IAnnotationFinder;
 import org.apache.xbean.finder.MetaAnnotatedClass;
 import org.apache.xbean.finder.ResourceFinder;
 
 import javax.ejb.embeddable.EJBContainer;
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -917,55 +919,78 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     }
 
     public AppInfo configureApplication(final AppModule appModule) throws OpenEJBException {
-        final Collection<Class<?>> extensions = new HashSet<Class<?>>();
-        final Collection<String> notLoaded = new HashSet<String>();
+        try {
+            final Collection<Class<?>> extensions = new HashSet<Class<?>>();
+            final Collection<String> notLoaded = new HashSet<String>();
 
-        final List<URL> libs = appModule.getAdditionalLibraries();
-        if (libs != null && libs.size() > 0) {
-            final ResourceFinder finder = new ResourceFinder("META-INF", libs.toArray(new URL[libs.size()]));
-            extensions.addAll(Extensions.findExtensions(finder));
-            notLoaded.addAll(finder.getResourcesNotLoaded());
-        }
-        for (final EjbModule ejb : appModule.getEjbModules()) {
-            try {
-                final URI uri = ejb.getModuleUri();
-                if (uri.isAbsolute()) {
-                    final URL url = uri.toURL();
-                    if (libs != null && !libs.contains(url)) {
-                        final ResourceFinder finder = new ResourceFinder("META-INF", url);
-                        extensions.addAll(Extensions.findExtensions(finder));
-                        notLoaded.addAll(finder.getResourcesNotLoaded());
-                    }
-                }
-            } catch (final IllegalArgumentException iae) {
-                logger.debug("can't look for server event listener for module " + ejb.getModuleUri(), iae);
-            } catch (final MalformedURLException mue) {
-                logger.debug("can't look for server event listener for module " + ejb.getModuleUri(), mue);
-            } catch (final Exception e) {
-                logger.error("can't look for server event listener for module " + ejb.getJarLocation());
-            }
-        }
-        for (final WebModule web : appModule.getWebModules()) {
-            final List<URL> webLibs = web.getScannableUrls();
-            if (webLibs != null && webLibs.size() > 0) {
-                final ResourceFinder finder = new ResourceFinder("META-INF", webLibs.toArray(new URL[webLibs.size()]));
+            final List<URL> libs = appModule.getAdditionalLibraries();
+            if (libs != null && libs.size() > 0) {
+                final ResourceFinder finder = new ResourceFinder("META-INF", libs.toArray(new URL[libs.size()]));
                 extensions.addAll(Extensions.findExtensions(finder));
                 notLoaded.addAll(finder.getResourcesNotLoaded());
             }
+            for (final EjbModule ejb : appModule.getEjbModules()) {
+                try {
+                    final URI uri = ejb.getModuleUri();
+                    if (uri.isAbsolute()) {
+                        final URL url = uri.toURL();
+                        if (libs != null && !libs.contains(url)) {
+                            final ResourceFinder finder = new ResourceFinder("META-INF", url);
+                            extensions.addAll(Extensions.findExtensions(finder));
+                            notLoaded.addAll(finder.getResourcesNotLoaded());
+                        }
+                    }
+                } catch (final IllegalArgumentException iae) {
+                    logger.debug("can't look for server event listener for module " + ejb.getModuleUri(), iae);
+                } catch (final MalformedURLException mue) {
+                    logger.debug("can't look for server event listener for module " + ejb.getModuleUri(), mue);
+                } catch (final Exception e) {
+                    logger.error("can't look for server event listener for module " + ejb.getJarLocation());
+                }
+            }
+            for (final WebModule web : appModule.getWebModules()) {
+                final List<URL> webLibs = web.getScannableUrls();
+                if (webLibs != null && webLibs.size() > 0) {
+                    final ResourceFinder finder = new ResourceFinder("META-INF", webLibs.toArray(new URL[webLibs.size()]));
+                    extensions.addAll(Extensions.findExtensions(finder));
+                    notLoaded.addAll(finder.getResourcesNotLoaded());
+                }
+            }
+
+            // add it as early as possible, the ones needing the app classloader will be added later
+            Extensions.addExtensions(extensions);
+
+            final String location = appModule.getJarLocation();
+            logger.info("config.configApp", null != location ? location : appModule.getModuleId());
+            deployer.deploy(appModule);
+            final AppInfoBuilder appInfoBuilder = new AppInfoBuilder(this);
+
+            final AppInfo info = appInfoBuilder.build(appModule);
+            info.eventClassesNeedingAppClassloader.addAll(notLoaded);
+
+            return info;
+        } finally {
+            destroy(appModule.getEarLibFinder());
+            for (final EjbModule ejb : appModule.getEjbModules()) {
+                destroy(ejb.getFinder());
+            }
+            for (final WebModule web : appModule.getWebModules()) {
+                destroy(web.getFinder());
+            }
         }
+    }
 
-        // add it as early as possible, the ones needing the app classloader will be added later
-        Extensions.addExtensions(extensions);
-
-        final String location = appModule.getJarLocation();
-        logger.info("config.configApp", null != location ? location : appModule.getModuleId());
-        deployer.deploy(appModule);
-        final AppInfoBuilder appInfoBuilder = new AppInfoBuilder(this);
-
-        final AppInfo info = appInfoBuilder.build(appModule);
-        info.eventClassesNeedingAppClassloader.addAll(notLoaded);
-
-        return info;
+    private static void destroy(final IAnnotationFinder finder) {
+        if (finder == null) {
+            return;
+        }
+        if (AutoCloseable.class.isInstance(finder)) {
+            try {
+                AutoCloseable.class.cast(finder).close();
+            } catch (final Exception e) {
+                // no-op
+            }
+        }
     }
 
     private static class DefaultService {

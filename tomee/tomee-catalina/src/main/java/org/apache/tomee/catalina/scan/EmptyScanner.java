@@ -14,20 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.tomee.loader.log;
+package org.apache.tomee.catalina.scan;
 
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogConfigurationException;
-import org.apache.juli.logging.LogFactory;
-import org.apache.log4j.Logger;
+import org.apache.tomcat.JarScanFilter;
+import org.apache.tomcat.JarScanType;
+import org.apache.tomcat.JarScanner;
+import org.apache.tomcat.JarScannerCallback;
 
-public class Log4jLogFactory extends LogFactory {
+import javax.servlet.ServletContext;
+
+public class EmptyScanner implements JarScanner {
+    private JarScanFilter scanner;
+
     @Override
-    public Log getInstance(final String name) throws LogConfigurationException {
-        try {
-            return new Log4jLog(Logger.getLogger(name));
-        } catch (final Exception e) {
-            throw new IllegalStateException(e);
-        }
+    public void scan(final JarScanType scanType, final ServletContext context,
+                     final JarScannerCallback callback) {
+        // no-op
+    }
+
+    @Override
+    public JarScanFilter getJarScanFilter() {
+        return scanner;
+    }
+
+    @Override
+    public void setJarScanFilter(final JarScanFilter jarScanFilter) {
+        this.scanner = jarScanFilter;
     }
 }

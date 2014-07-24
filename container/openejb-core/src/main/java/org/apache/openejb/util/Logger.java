@@ -273,7 +273,9 @@ public class Logger {
     public Logger(final LogCategory category, final LogStream logStream, final String baseName) {
         this.category = category;
         this.baseName = baseName;
-        this.logStream = ("true".equals(SystemInstance.get().getProperty("openejb.log.async", "true")) ? new LogStreamAsync(logStream) : logStream);
+        this.logStream = // tomcat is already async so abuse of it
+            ("true".equals(SystemInstance.get().getProperty("openejb.log.async", "true")) && System.getProperty("catalina.home") == null) ?
+                new LogStreamAsync(logStream) : logStream;
     }
 
     public static Logger getInstance(final LogCategory category, final Class clazz) {

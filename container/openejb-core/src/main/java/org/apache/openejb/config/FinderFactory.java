@@ -54,27 +54,27 @@ public class FinderFactory {
         return factory != null ? factory : FinderFactory.factory;
     }
 
-    public static IAnnotationFinder createFinder(final DeploymentModule module) throws Exception {
-        return get().create(module);
+    public static IAnnotationFinder createFinder(final DeploymentModule module, final boolean allowAsync) throws Exception {
+        return get().create(module, allowAsync);
     }
 
-    public static AnnotationFinder getFinder(final ClassLoader classLoader, final URL url) {
-        return newFinder(ClasspathArchive.archive(classLoader, url));
+    public static AnnotationFinder getFinder(final ClassLoader classLoader, final URL url, final boolean allowAsync) {
+        return newFinder(ClasspathArchive.archive(classLoader, url), allowAsync);
     }
 
-    public IAnnotationFinder create(final DeploymentModule module) throws Exception {
+    public IAnnotationFinder create(final DeploymentModule module, final boolean allowAsync) throws Exception {
         final AnnotationFinder finder;
         if (module instanceof WebModule) {
             final WebModule webModule = (WebModule) module;
-            final AnnotationFinder annotationFinder = newFinder(new WebappAggregatedArchive(webModule, webModule.getScannableUrls()));
+            final AnnotationFinder annotationFinder = newFinder(new WebappAggregatedArchive(webModule, webModule.getScannableUrls()), allowAsync);
             enableFinderOptions(annotationFinder);
             finder = annotationFinder;
         } else if (module instanceof ConnectorModule) {
             final ConnectorModule connectorModule = (ConnectorModule) module;
-            finder = newFinder(new ConfigurableClasspathArchive(connectorModule, connectorModule.getLibraries())).link();
+            finder = newFinder(new ConfigurableClasspathArchive(connectorModule, connectorModule.getLibraries()), allowAsync).link();
         } else if (module instanceof AppModule) {
             final Collection<URL> urls = NewLoaderLogic.applyBuiltinExcludes(new UrlSet(AppModule.class.cast(module).getAdditionalLibraries())).getUrls();
-            finder = newFinder(new WebappAggregatedArchive(module.getClassLoader(), module.getAltDDs(), urls));
+            finder = newFinder(new WebappAggregatedArchive(module.getClassLoader(), module.getAltDDs(), urls), allowAsync);
         } else if (module.getJarLocation() != null) {
             final String location = module.getJarLocation();
             final File file = new File(location);
@@ -93,9 +93,9 @@ public class FinderFactory {
 
             if (module instanceof Module) {
                 final DebugArchive archive = new DebugArchive(new ConfigurableClasspathArchive((Module) module, url));
-                finder = newFinder(archive);
+                finder = newFinder(archive, allowAsync);
             } else {
-                finder = newFinder(new DebugArchive(new ConfigurableClasspathArchive(module.getClassLoader(), url)));
+                finder = newFinder(new DebugArchive(new ConfigurableClasspathArchive(module.getClassLoader(), url)), allowAsync);
             }
             if ("true".equals(SystemInstance.get().getProperty(FORCE_LINK, module.getProperties().getProperty(FORCE_LINK, "false")))) {
                 finder.link();
@@ -110,8 +110,8 @@ public class FinderFactory {
         return new ModuleLimitedFinder(finder);
     }
 
-    private static AnnotationFinder newFinder(final Archive archive) {
-        if ("true".equals(SystemInstance.get().getProperty(ASYNC_SCAN, "true"))) {
+    private static AnnotationFinder newFinder(final Archive archive, final boolean allowAsync) {
+        if (allowAsync && "true".equals(SystemInstance.get().getProperty(ASYNC_SCAN, "true"))) {
             return new AsynchronousInheritanceAnnotationFinder(archive);
         }
         return new AnnotationFinder(archive);
@@ -155,21 +155,13 @@ public class FinderFactory {
     }
 
     private static void enableSubclassing(final AnnotationFinder annotationFinder) {
-        if (enableFindSubclasses()) {
-            // for @HandleTypes we need interface impl, impl of abstract classes too
-            annotationFinder.enableFindSubclasses();
-            annotationFinder.enableFindImplementations();
-        }
-    }
-
-    private static boolean enableFindSubclasses() {
-        return SystemInstance.get().getOptions().get(FORCE_LINK, false)
-            || !SystemInstance.get().getOptions().get(SKIP_LINK, false)
-            && (isTomEE() || isJaxRsInstalled() && SystemInstance.get().getOptions().get(TOMEE_JAXRS_DEPLOY_UNDECLARED_PROP, false));
+        // for @HandleTypes we need interface impl, impl of abstract classes too
+        annotationFinder.enableFindSubclasses();
+        annotationFinder.enableFindImplementations();
     }
 
     public static boolean isTomEE() {
-        try { // since Tomcat 7.0.47
+        try {
             FinderFactory.class.getClassLoader().loadClass("javax.websocket.Endpoint");
             return true;
         } catch (final Throwable e) {
@@ -186,7 +178,7 @@ public class FinderFactory {
         }
     }
 
-    public static class ModuleLimitedFinder implements IAnnotationFinder {
+    public static class ModuleLimitedFinder implements IAnnotationFinder, AutoCloseable {
         private final IAnnotationFinder delegate;
 
         public ModuleLimitedFinder(final IAnnotationFinder delegate) {
@@ -312,6 +304,13 @@ public class FinderFactory {
 
         public IAnnotationFinder getDelegate() {
             return delegate;
+        }
+
+        @Override
+        public void close() {
+            if (AsynchronousInheritanceAnnotationFinder.class.isInstance(delegate)) {
+                AsynchronousInheritanceAnnotationFinder.class.cast(delegate).destroy();
+            }
         }
 
         private abstract static class Predicate<T> {

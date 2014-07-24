@@ -27,13 +27,13 @@ import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.ProvisioningUtil;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.OpenEjbVersion;
-import org.apache.tomee.TomEELogConfigurer;
 import org.apache.tomee.loader.TomcatHelper;
 
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -167,8 +167,6 @@ public class ServerListener implements LifecycleListener {
 
                 loader.initialize(properties);
 
-                TomEELogConfigurer.configureLogs();
-
                 listenerInstalled.set(true);
             } catch (final Exception e) {
                 LOGGER.log(Level.SEVERE, "TomEE Listener can't start OpenEJB", e);
@@ -201,6 +199,12 @@ public class ServerListener implements LifecycleListener {
             field.setAccessible(true);
             final String version = OpenEjbVersion.get().getVersion();
             final String tomeeVersion = (Integer.parseInt(Character.toString(version.charAt(0))) - 3) + version.substring(1, version.length());
+            final int modifiers = field.getModifiers();
+            if (Modifier.isFinal(modifiers)) {
+                final Field modifiersField = Field.class.getDeclaredField("modifiers");
+                modifiersField.setAccessible(true);
+                modifiersField.setInt(field, modifiers & ~Modifier.FINAL);
+            }
             field.set(null, value.substring(0, slash) + " (TomEE)" + value.substring(slash) + " (" + tomeeVersion + ")");
         } catch (final Exception e) {
             // no-op
