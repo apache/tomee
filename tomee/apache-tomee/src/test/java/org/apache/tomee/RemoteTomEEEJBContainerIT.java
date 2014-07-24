@@ -18,23 +18,23 @@ package org.apache.tomee;
 
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
-import org.junit.Ignore;
+import org.apache.openejb.util.NetworkUtil;
 import org.junit.Test;
 
 import javax.ejb.embeddable.EJBContainer;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Hashtable;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
-@Ignore
 public class RemoteTomEEEJBContainerIT {
     @Test
-    public void run() throws Exception {
+    public void run() throws IOException {
         final File app = new File("target/mock/webapp");
         Files.mkdirs(app);
 
@@ -42,29 +42,50 @@ public class RemoteTomEEEJBContainerIT {
         writer.write("Hello");
         writer.close();
 
+        File work = new File("target/webprofile-work-dir/").getAbsoluteFile();
+        if (!work.exists()) {
+            //May be running from root
+            work = new File("apache-tomee/target/webprofile-work-dir/").getAbsoluteFile();
+        }
+
+        final File[] files = work.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(final File pathname) {
+                return pathname.isDirectory() && pathname.getName().startsWith("apache-tomcat-");
+            }
+        });
+
+        final File tomee = (null != files ? files[0] : null);
+        if (tomee == null) {
+            fail("Failed to find Tomcat directory required for this test - Ensure you have run at least the maven phase: mvn process-resources");
+        }
+
+        final FileWriter serverXml = new FileWriter(new File(tomee, "conf/server.xml"));
+        final int http = NetworkUtil.getNextAvailablePort();
+        serverXml.write("<?xml version='1.0' encoding='utf-8'?>\n" +
+            "<Server port=\"" + NetworkUtil.getNextAvailablePort() + "\" shutdown=\"SHUTDOWN\">\n" +
+            "  <!-- TomEE plugin for Tomcat -->\n" +
+            "  <Listener className=\"org.apache.tomee.catalina.ServerListener\" />\n" +
+            "  <Service name=\"Catalina\">\n" +
+            "    <Connector port=\"" + http + "\" protocol=\"HTTP/1.1\" />\n" +
+            "    <Engine name=\"Catalina\" defaultHost=\"localhost\">\n" +
+            "      <Host name=\"localhost\"  appBase=\"webapps\"\n" +
+            "            unpackWARs=\"true\" autoDeploy=\"true\">\n" +
+            "      </Host>\n" +
+            "    </Engine>\n" +
+            "  </Service>\n" +
+            "</Server>\n");
+        serverXml.close();
+
         EJBContainer container = null;
         try {
             container = EJBContainer.createEJBContainer(new HashMap<Object, Object>() {{
                 put(EJBContainer.PROVIDER, "tomee-remote");
                 put(EJBContainer.MODULES, app.getAbsolutePath());
-                final File workDir = new File("target/webprofile-work-dir/");
-                final File[] files = workDir.listFiles(new FileFilter() {
-                    @Override
-                    public boolean accept(final File pathname) {
-                        return pathname.isDirectory() && pathname.getName().startsWith("apache-tomcat-");
-                    }
-                });
-
-                if (null == files) {
-                    throw new Exception("File not found: " + workDir.getAbsolutePath());
-                }
-
-                put("openejb.home", files[0].getAbsolutePath());
+                put("openejb.home", tomee.getAbsolutePath());
             }});
-
-            final Hashtable<?, ?> environment = container.getContext().getEnvironment();
-
-            assertEquals("Hello", IO.slurp(new URL("http://localhost:8080/webapp/index.html")));
+            final URL url = new URL("http://localhost:" + http + "/webapp/index.html");
+            assertEquals("Hello", IO.slurp(url));
         } finally {
             if (container != null) {
                 container.close();
