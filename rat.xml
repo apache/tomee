@@ -46,6 +46,7 @@
           <exclude name="**/*.handlebars"/>
 
           <exclude name="report.txt"/>
+          <exclude name="LIBRARIES"/>
           <exclude name="shade/quartz/dependency-reduced-pom.xml"/>
           <exclude name="assembly/openejb-lite/dependency-reduced-pom.xml"/>
           <exclude name="container/openejb-core/src/test/resources/cdi-login.config"/>
@@ -81,6 +82,8 @@
           <exclude name="server/openejb-cxf/src/main/resources/META-INF/cxf.extension"/>
           <exclude name="server/openejb-cxf-rs/src/main/resources/META-INF/services/javax.ws.rs.ext.RuntimeDelegate"/>
           <exclude name="server/openejb-ssh/src/test/key/ssh-key.ser"/>
+          <exclude name="server/openejb-ejbd/activemq-data/**"/>
+          <exclude name="server/openejb-http/activemq-data/**"/>
           <exclude name="examples/datasource-ciphered-password/src/test/resources/META-INF/beans.xml"/>
           <exclude name="examples/decorators/src/main/resources/META-INF/beans.xml"/>
           <exclude name="examples/webapps/rest-example/TODO"/>
