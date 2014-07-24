@@ -278,11 +278,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         final StandardServer standardServer = TomcatHelper.getServer();
         globalListenerSupport = new GlobalListenerSupport(standardServer, this);
 
-        // force tomcat to use our custom WebSocket ServerEndpointConfigurator
-        forceEEServerEndpointConfigurator();
-
-        // could search mbeans
-
         //Getting host config listeners
         hosts = new Hosts();
         SystemInstance.get().setComponent(Hosts.class, hosts);
@@ -325,27 +320,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
         configurationFactory = new ConfigurationFactory();
         deploymentLoader = new DeploymentLoader();
-    }
-
-    private void forceEEServerEndpointConfigurator() {
-        // by reflection cause
-        // 1- tomcat algorithm uses ServiceLoader.next() so no real way to ensure it is our META-INF/services/...
-        // 2- avoids getResources which can be slow depending the server config
-        try {
-            final Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass("javax.websocket.server.ServerEndpointConfig$Configurator");
-            final Field f = clazz.getDeclaredField("defaultImpl");
-            final boolean acc = f.isAccessible();
-            f.setAccessible(true);
-            try {
-                f.set(null, new JavaEEDefaultServerEnpointConfigurator(instanceManagers));
-            } finally {
-                f.setAccessible(acc);
-            }
-        } catch (final ClassNotFoundException cnfe) {
-            // no-op
-        } catch (final Exception e) {
-            logger.warning("Can't set TomEE ServerEndpointConfig$Configurator", e);
-        }
     }
 
     private void manageCluster(final Cluster cluster) {
@@ -2434,5 +2408,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
     public Map<String, Realm> getRealms() {
         return realms;
+    }
+
+    public Map<ClassLoader, InstanceManager> getInstanceManagers() {
+        return instanceManagers;
     }
 }
