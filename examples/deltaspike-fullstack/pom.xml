@@ -91,15 +91,15 @@
 
   <repositories>
     <repository>
+      <id>apache-m2-snapshot</id>
+      <name>Apache Snapshot Repository</name>
+      <url>http://repository.apache.org/snapshots</url>
+    </repository>
+    <repository>
       <id>prime-repo</id>
       <name>Prime Technology Maven Repository</name>
       <url>http://repository.primefaces.org/</url>
       <layout>default</layout>
-    </repository>
-    <repository>
-      <id>apache-m2-snapshot</id>
-      <name>Apache Snapshot Repository</name>
-      <url>http://repository.apache.org/snapshots</url>
     </repository>
   </repositories>
 

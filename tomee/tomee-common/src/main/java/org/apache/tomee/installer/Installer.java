@@ -17,19 +17,13 @@
  */
 package org.apache.tomee.installer;
 
-import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.List;
 import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
 
 public class Installer implements InstallerInterface {
     private final Alerts alerts = new Alerts();
@@ -285,7 +279,7 @@ public class Installer implements InstallerInterface {
             }
         }
     }
-    */
+
 
     private void copyClasses(final File javaEEAPIJar, final File sourceJar, final File destinationJar,
                              final String pattern, final List<String> exceptions) {
@@ -340,6 +334,7 @@ public class Installer implements InstallerInterface {
             alerts.addError(e.getMessage());
         }
     }
+    */
 
     private void removeJar(final File jar) {
         if (jar.exists()) {

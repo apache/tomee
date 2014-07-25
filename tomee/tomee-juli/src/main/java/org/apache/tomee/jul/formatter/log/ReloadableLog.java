@@ -37,7 +37,7 @@ public class ReloadableLog {
             ReloadableLog.class.getClassLoader(), INTERFACES, new ReloadableLogHandler(factory, name)));
     }
 
-    private static class ReloadableLogHandler implements InvocationHandler {
+    private static final class ReloadableLogHandler implements InvocationHandler {
         private static final String LOG4J_IMPL = "org.apache.tomee.loader.log.Log4jLog";
         private static final String SLF4J_IMPL = "org.apache.tomee.loader.log.Slf4jLog";
 

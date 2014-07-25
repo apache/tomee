@@ -27,6 +27,8 @@ import org.apache.tomee.catalina.IgnoredStandardContext;
 import org.apache.tomee.catalina.OpenEJBValve;
 
 import java.beans.PropertyChangeListener;
+import java.net.URL;
+import java.net.URLClassLoader;
 
 public class TomEERemoteWebapp extends IgnoredStandardContext {
     private static final String CONTEXT_NAME = SystemInstance.get().getProperty("tomee.remote.support.context", "/tomee");
@@ -54,9 +56,11 @@ public class TomEERemoteWebapp extends IgnoredStandardContext {
 
     private static class ServerClassLoaderLoader implements Loader {
         private final TomEERemoteWebapp container;
+        private final FakeWebAppLoader classloader;
 
         public ServerClassLoaderLoader(final TomEERemoteWebapp tomEERemoteWebapp) {
             container = tomEERemoteWebapp;
+            classloader = new FakeWebAppLoader(OpenEJB.class.getClassLoader());
         }
 
         @Override
@@ -66,7 +70,7 @@ public class TomEERemoteWebapp extends IgnoredStandardContext {
 
         @Override
         public ClassLoader getClassLoader() {
-            return OpenEJB.class.getClassLoader();
+            return classloader;
         }
 
         @Override
@@ -111,6 +115,38 @@ public class TomEERemoteWebapp extends IgnoredStandardContext {
 
         @Override
         public void removePropertyChangeListener(final PropertyChangeListener listener) {
+            // no-op
+        }
+    }
+
+    // mainly for StandardContext.setClassLoaderProperty() otherwise OpenEJB.class.getClassLoader() would be fine
+    public static class FakeWebAppLoader extends URLClassLoader {
+        private final ClassLoader delegate;
+
+        // ignored but validated by tomcat, avoid warnings
+        private boolean clearReferencesHttpClientKeepAliveThread;
+        private boolean clearReferencesStopThreads;
+        private boolean clearReferencesStopTimerThreads;
+        private boolean clearReferencesStatic;
+
+        public FakeWebAppLoader(final ClassLoader classLoader) {
+            super(new URL[0], classLoader);
+            delegate = classLoader;
+        }
+
+        public void setClearReferencesHttpClientKeepAliveThread(final boolean ignored) {
+            // no-op
+        }
+
+        public void setClearReferencesStopThreads(final boolean ignored) {
+            // no-op
+        }
+
+        public void setClearReferencesStopTimerThreads(final boolean ignored) {
+            // no-op
+        }
+
+        public void setClearReferencesStatic(final boolean ignored) {
             // no-op
         }
     }

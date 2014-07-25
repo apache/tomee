@@ -33,20 +33,21 @@ public class JULLogger implements Log {
     private static final String FORMATTER="org.apache.juli.formatter";
 
     static {
-        if( System.getProperty("java.util.logging.config.class") == null  &&
-            System.getProperty("java.util.logging.config.file") == null ) {
+        if (System.getProperty("java.util.logging.config.class") == null  &&
+            System.getProperty("java.util.logging.config.file") == null) {
             // default configuration - it sucks. Let's override at least the
             // formatter for the console
             try {
                 Class.forName(SIMPLE_CFG).newInstance();
-            } catch( Throwable t ) {
+            } catch(final Throwable t) {
+                // no-op
             }
             try {
-                Formatter fmt=(Formatter)Class.forName(System.getProperty(FORMATTER, SIMPLE_FMT)).newInstance();
+                final Formatter fmt=(Formatter)Class.forName(System.getProperty(FORMATTER, SIMPLE_FMT)).newInstance();
                 // it is also possible that the user modified jre/lib/logging.properties -
                 // but that's really stupid in most cases
-                Logger root=Logger.getLogger("");
-                Handler handlers[]=root.getHandlers();
+                final Logger root=Logger.getLogger("");
+                final Handler handlers[]=root.getHandlers();
                 for( int i=0; i< handlers.length; i++ ) {
                     // I only care about console - that's what's used in default config anyway
                     if( handlers[i] instanceof ConsoleHandler) {
@@ -54,9 +55,8 @@ public class JULLogger implements Log {
                     }
                 }
             } catch( Throwable t ) {
-                // maybe it wasn't included - the ugly default will be used.
+                // no-op maybe it wasn't included - the ugly default will be used.
             }
-
         }
     }
 
@@ -97,70 +97,70 @@ public class JULLogger implements Log {
     }
 
     @Override
-    public final void debug(Object message) {
+    public final void debug(final Object message) {
         log(Level.FINE, String.valueOf(message), null);
     }
 
     @Override
-    public final void debug(Object message, Throwable t) {
+    public final void debug(final Object message, final Throwable t) {
         log(Level.FINE, String.valueOf(message), t);
     }
 
     @Override
-    public final void trace(Object message) {
+    public final void trace(final Object message) {
         log(Level.FINER, String.valueOf(message), null);
     }
 
     @Override
-    public final void trace(Object message, Throwable t) {
+    public final void trace(final Object message, final Throwable t) {
         log(Level.FINER, String.valueOf(message), t);
     }
 
     @Override
-    public final void info(Object message) {
+    public final void info(final Object message) {
         log(Level.INFO, String.valueOf(message), null);
     }
 
     @Override
-    public final void info(Object message, Throwable t) {
+    public final void info(final Object message, final Throwable t) {
         log(Level.INFO, String.valueOf(message), t);
     }
 
     @Override
-    public final void warn(Object message) {
+    public final void warn(final Object message) {
         log(Level.WARNING, String.valueOf(message), null);
     }
 
     @Override
-    public final void warn(Object message, Throwable t) {
+    public final void warn(final Object message, final Throwable t) {
         log(Level.WARNING, String.valueOf(message), t);
     }
 
     @Override
-    public final void error(Object message) {
+    public final void error(final Object message) {
         log(Level.SEVERE, String.valueOf(message), null);
     }
 
     @Override
-    public final void error(Object message, Throwable t) {
+    public final void error(final Object message, final Throwable t) {
         log(Level.SEVERE, String.valueOf(message), t);
     }
 
     @Override
-    public final void fatal(Object message) {
+    public final void fatal(final Object message) {
         log(Level.SEVERE, String.valueOf(message), null);
     }
 
     @Override
-    public final void fatal(Object message, Throwable t) {
+    public final void fatal(final Object message, final Throwable t) {
         log(Level.SEVERE, String.valueOf(message), t);
     }
 
-    private void log(Level level, String msg, Throwable ex) {
+    private void log(final Level level, final String msg, final Throwable ex) {
         if (logger.isLoggable(level)) {
             // Hack (?) to get the stack trace.
-            Throwable dummyException=new Throwable();
-            StackTraceElement locations[]=dummyException.getStackTrace();
+            final Throwable dummyException=new Throwable();
+            final StackTraceElement[] locations=dummyException.getStackTrace();
             // Caller will be the third element
             String cname = "unknown";
             String method = "unknown";
