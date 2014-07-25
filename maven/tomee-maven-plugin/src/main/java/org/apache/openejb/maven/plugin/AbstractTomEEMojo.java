@@ -117,6 +117,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     @Parameter(property = "tomee-plugin.apache-repos", defaultValue = "snapshots")
     protected String apacheRepos;
 
+    /**
+     * tomee classifier to use (webprofile or plus)
+     */
     @Parameter(property = "tomee-plugin.classifier", defaultValue = "webprofile")
     protected String tomeeClassifier;
 
@@ -217,6 +220,12 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     protected boolean forceReloadable;
 
     /**
+     * force webapp to be reloadable
+     */
+    @Parameter(property = "tomee-plugin.jsp-development", defaultValue = "true")
+    protected boolean forceJspDevelopment;
+
+    /**
      * supported formats:
      * --> groupId:artifactId:version...
      * --> unzip:groupId:artifactId:version...
@@ -287,12 +296,6 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
      */
     @Parameter
     protected List<File> externalRepositories;
-
-    /**
-     * when you set docBases to src/main/webapp setting it to true will allow hot refresh.
-     */
-    @Parameter(property = "tomee-plugin.skipWarResources", defaultValue = "false")
-    protected boolean skipWarResources = false;
 
     protected File deployedFile = null;
     protected RemoteServer server = null;
@@ -924,8 +927,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             }
         }
 
-        if (skipWarResources) {
-            strings.add("-Dtomee.skip-war-resources=" + skipWarResources);
+        if (forceJspDevelopment) {
+            getLog().info("TomEE will run in development mode");
+            strings.add("-Dtomee.jsp-development=true");
         }
 
         return strings;
@@ -939,10 +943,6 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         if (!forceReloadable) {
             getLog().info("Forcing forceReloadable=true to be able to type 'reload[ENTER]' when classes are updated");
             forceReloadable = true;
-        }
-        if (!skipWarResources) {
-            getLog().info("Forcing skipWarResources=true to be able to refresh resources with F5");
-            skipWarResources = true;
         }
         if (docBases == null) {
             docBases = new ArrayList<File>();

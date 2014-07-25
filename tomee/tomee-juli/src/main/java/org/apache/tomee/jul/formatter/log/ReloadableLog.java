@@ -24,7 +24,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class ReloadableLog {
+public final class ReloadableLog {
 
     public static final Class<?>[] INTERFACES = new Class<?>[]{Log.class};
 

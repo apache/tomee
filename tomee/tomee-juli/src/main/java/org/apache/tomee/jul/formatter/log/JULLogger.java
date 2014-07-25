@@ -47,7 +47,7 @@ public class JULLogger implements Log {
                 // it is also possible that the user modified jre/lib/logging.properties -
                 // but that's really stupid in most cases
                 final Logger root=Logger.getLogger("");
-                final Handler handlers[]=root.getHandlers();
+                final Handler[] handlers = root.getHandlers();
                 for( int i=0; i< handlers.length; i++ ) {
                     // I only care about console - that's what's used in default config anyway
                     if( handlers[i] instanceof ConsoleHandler) {
@@ -165,7 +165,7 @@ public class JULLogger implements Log {
             String cname = "unknown";
             String method = "unknown";
             if (locations != null && locations.length > 3) {
-                StackTraceElement caller = locations[3];
+                final StackTraceElement caller = locations[3];
                 cname = caller.getClassName();
                 method = caller.getMethodName();
             }

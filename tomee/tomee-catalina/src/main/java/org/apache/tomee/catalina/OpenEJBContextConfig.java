@@ -43,6 +43,7 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URLs;
 import org.apache.tomcat.util.bcel.classfile.AnnotationEntry;
 import org.apache.tomcat.util.bcel.classfile.ElementValuePair;
+import org.apache.tomcat.util.bcel.classfile.JavaClass;
 import org.apache.tomcat.util.descriptor.web.ContextResource;
 import org.apache.tomcat.util.descriptor.web.JspPropertyGroup;
 import org.apache.tomcat.util.descriptor.web.WebXml;
@@ -377,6 +378,13 @@ public class OpenEJBContextConfig extends ContextConfig {
             return;
         }
 
+        if ("true".equalsIgnoreCase(SystemInstance.get().getProperty("tomee.jsp-development", "true"))) {
+            final Wrapper jsp = Wrapper.class.cast(context.findChild("jsp"));
+            if (jsp != null) {
+                jsp.addInitParameter("development", "true");
+            }
+        }
+
         final ClassLoader classLoader = context.getLoader().getClassLoader();
 
         // add myfaces auto-initializer if mojarra is not present
@@ -506,6 +514,11 @@ public class OpenEJBContextConfig extends ContextConfig {
     protected void processAnnotations(final Set<WebXml> fragments, final boolean handlesTypesOnly) {
         webInfClassesAnnotationsProcessed = false;
         super.processAnnotations(fragments, handlesTypesOnly);
+    }
+
+    @Override
+    protected void checkHandlesTypes(final JavaClass javaClass) {
+        // no-op
     }
 
     @Override

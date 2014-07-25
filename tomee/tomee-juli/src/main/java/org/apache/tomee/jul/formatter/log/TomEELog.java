@@ -21,7 +21,7 @@ import org.apache.juli.logging.Log;
 import java.lang.reflect.Method;
 
 public class TomEELog implements Log {
-    private static volatile boolean initialized = false;
+    private static volatile boolean initialized;
     private static volatile String loggerClazz;
     private static volatile boolean defaultLogger;
 
