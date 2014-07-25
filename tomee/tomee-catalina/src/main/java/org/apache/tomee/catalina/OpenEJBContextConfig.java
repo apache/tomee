@@ -18,12 +18,14 @@ package org.apache.tomee.catalina;
 
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
+import org.apache.catalina.WebResource;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardWrapper;
 import org.apache.catalina.deploy.NamingResourcesImpl;
 import org.apache.catalina.realm.DataSourceRealm;
 import org.apache.catalina.startup.ContextConfig;
+import org.apache.catalina.webresources.FileResource;
 import org.apache.naming.factory.Constants;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.ClassListInfo;
@@ -42,6 +44,7 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URLs;
 import org.apache.tomcat.util.bcel.classfile.AnnotationEntry;
+import org.apache.tomcat.util.bcel.classfile.ClassFormatException;
 import org.apache.tomcat.util.bcel.classfile.ElementValuePair;
 import org.apache.tomcat.util.bcel.classfile.JavaClass;
 import org.apache.tomcat.util.descriptor.web.ContextResource;
@@ -94,7 +97,7 @@ public class OpenEJBContextConfig extends ContextConfig {
 
     // processAnnotationXXX is called for each folder of WEB-INF
     // since we store all classes in WEB-INF we will do it only once so use this boolean to avoid multiple processing
-    private boolean webInfClassesAnnotationsProcessed;
+    private Collection<String> webInfClassesAnnotationsProcessed = new ArrayList<>(1);
 
     public OpenEJBContextConfig(final TomcatWebAppBuilder.StandardContextInfo standardContextInfo) {
         logger.debug("OpenEJBContextConfig({0})", standardContextInfo.toString());
@@ -431,7 +434,6 @@ public class OpenEJBContextConfig extends ContextConfig {
 
     @Override // called before processAnnotationsFile so using it as hook to init webInfClassesAnnotationsProcessed
     protected void processServletContainerInitializers(final ServletContext ctx) {
-        webInfClassesAnnotationsProcessed = false;
         try {
             super.processServletContainerInitializers(ctx);
             final Iterator<Map.Entry<ServletContainerInitializer,Set<Class<?>>>> iterator = initializerClassMap.entrySet().iterator();
@@ -505,20 +507,51 @@ public class OpenEJBContextConfig extends ContextConfig {
             finder = null;
             tempLoader = null;
         } catch (final RuntimeException e) { // if exception occurs we have to clear the threadlocal
-            webInfClassesAnnotationsProcessed = false;
             throw e;
         }
     }
 
-    @Override // called after processAnnotationsXX so using it as hook to reset webInfClassesAnnotationsProcessed
-    protected void processAnnotations(final Set<WebXml> fragments, final boolean handlesTypesOnly) {
-        webInfClassesAnnotationsProcessed = false;
-        super.processAnnotations(fragments, handlesTypesOnly);
+    @Override
+    protected void processAnnotationsWebResource(final WebResource webResource,
+                                                 final WebXml fragment,
+                                                 final boolean handlesTypesOnly) {
+        final WebAppInfo webAppInfo = info.get();
+        if (webAppInfo != null && FileResource.class.isInstance(webResource)) {
+            final File file = new File(FileResource.class.cast(webResource).getCanonicalPath());
+            for (final ClassListInfo info : webAppInfo.webAnnotatedClasses) {
+                if (webInfClassesAnnotationsProcessed.contains(info.name)) {
+                    continue;
+                }
+                try {
+                    if (file.getAbsolutePath().startsWith(URLs.toFile(new URL(info.name)).getAbsolutePath())) {
+                        webInfClassesAnnotationsProcessed.add(info.name);
+                        internalProcessAnnotationsStream(info.list, fragment, false);
+                    }
+                } catch (final MalformedURLException e) {
+                    logger.warning(e.getMessage(), e);
+                    continue;
+                }
+            }
+        } else {
+            super.processAnnotationsWebResource(webResource, fragment, handlesTypesOnly);
+        }
+    }
+
+    @Override
+    protected void processAnnotationsStream(final InputStream is, final WebXml fragment,
+                                            final boolean handlesTypesOnly) throws ClassFormatException, IOException {
+        // no-op
     }
 
     @Override
     protected void checkHandlesTypes(final JavaClass javaClass) {
         // no-op
+    }
+
+    @Override
+    protected synchronized void configureStop() {
+        webInfClassesAnnotationsProcessed.clear();
+        super.configureStop();
     }
 
     @Override
@@ -589,7 +622,7 @@ public class OpenEJBContextConfig extends ContextConfig {
             InputStream is = null;
             try {
                 is = new URL(url).openStream();
-                processAnnotationsStream(is, fragment, handlesTypeOnly);
+                super.processAnnotationsStream(is, fragment, handlesTypeOnly);
             } catch (final MalformedURLException e) {
                 throw new IllegalArgumentException(e);
             } catch (final IOException e) {
@@ -637,11 +670,7 @@ public class OpenEJBContextConfig extends ContextConfig {
             if (current.equals(file)) {
                 final File parent = current.getParentFile();
                 if ("classes".equals(current.getName()) && parent != null && "WEB-INF".equals(parent.getName())) {
-                    if (webInfClassesAnnotationsProcessed) {
-                        return false;
-                    }
-                    webInfClassesAnnotationsProcessed = true;
-                    return true;
+                    return false;
                 }
                 return true;
             }
@@ -650,16 +679,6 @@ public class OpenEJBContextConfig extends ContextConfig {
                 return false;
             }
         }
-
         return false;
-        /* classAsFile s
-        if (current != null && current.isDirectory()) {
-            return false;
-        }
-        return (classAsFile == null
-                    || !classAsFile.getName().endsWith(".jar") || !file.getName().endsWith(".jar"))
-                && !webInf;
-                */
-
     }
 }
