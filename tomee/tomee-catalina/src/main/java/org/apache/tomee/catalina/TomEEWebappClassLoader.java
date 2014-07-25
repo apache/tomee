@@ -18,14 +18,11 @@ package org.apache.tomee.catalina;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
-import org.apache.catalina.LifecycleState;
+import org.apache.catalina.WebResource;
 import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.WebResourceSet;
 import org.apache.catalina.loader.WebappClassLoader;
 import org.apache.catalina.webresources.DirResourceSet;
-import org.apache.catalina.webresources.FileResourceSet;
-import org.apache.catalina.webresources.JarResourceSet;
-import org.apache.catalina.webresources.JarWarResourceSet;
 import org.apache.catalina.webresources.StandardRoot;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.classloader.ClassLoaderConfigurer;
@@ -53,7 +50,6 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
 public class TomEEWebappClassLoader extends WebappClassLoader {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, TomEEWebappClassLoader.class.getName());
@@ -208,16 +204,15 @@ public class TomEEWebappClassLoader extends WebappClassLoader {
         }
         if (CONTEXT.get() != null) {
             additionalRepos = new LinkedList<>();
-            final String root = CONTEXT.get().getServletContext().getRealPath("/");
-            if (root != null) {
-                final String externalRepositories = SystemInstance.get().getProperty("tomee." + new File(root).getName() + ".externalRepositories");
-                if (externalRepositories != null) {
-                    for (final String additional : externalRepositories.split(",")) {
-                        final String trim = additional.trim();
-                        if (!trim.isEmpty()) {
-                            final File file = new File(trim);
-                            additionalRepos.add(file);
-                        }
+            final String contextPath = CONTEXT.get().getServletContext().getContextPath();
+            final String name = contextPath.isEmpty() ? "ROOT" : contextPath.substring(1);
+            final String externalRepositories = SystemInstance.get().getProperty("tomee." + name + ".externalRepositories");
+            if (externalRepositories != null) {
+                for (final String additional : externalRepositories.split(",")) {
+                    final String trim = additional.trim();
+                    if (!trim.isEmpty()) {
+                        final File file = new File(trim);
+                        additionalRepos.add(file);
                     }
                 }
             }
@@ -237,12 +232,11 @@ public class TomEEWebappClassLoader extends WebappClassLoader {
         initAdditionalRepos();
         if (additionalRepos != null) {
             for (final File f : additionalRepos) {
-                try { // not addURL to look here first
-                    super.addURL(f.toURI().toURL());
-                } catch (final MalformedURLException e) {
-                    LOGGER.error(e.getMessage());
-                }
+                final DirResourceSet webResourceSet = new PremptiveDirResourceSet(resources, "/", f.getAbsolutePath(), "/");
+                webResourceSet.setClassLoaderOnly(true);
+                resources.addPreResources(webResourceSet);
             }
+            resources.setCachingAllowed(false);
         }
 
         // add configurer enrichments
@@ -357,6 +351,19 @@ public class TomEEWebappClassLoader extends WebappClassLoader {
         @Override
         public Class<?> loadClass(final String name) throws ClassNotFoundException {
             throw new ClassNotFoundException();
+        }
+    }
+
+    private static final class PremptiveDirResourceSet extends DirResourceSet {
+        private static final String WEB_INF_CLASSES = "/WEB-INF/classes/";
+
+        public PremptiveDirResourceSet(final WebResourceRoot resources, final String s, final String absolutePath, final String s1) {
+            super(resources, s, absolutePath, s1);
+        }
+
+        @Override
+        public WebResource getResource(final String path) {
+            return super.getResource(path.startsWith(WEB_INF_CLASSES)? path.substring(WEB_INF_CLASSES.length() - 1) : path);
         }
     }
 }

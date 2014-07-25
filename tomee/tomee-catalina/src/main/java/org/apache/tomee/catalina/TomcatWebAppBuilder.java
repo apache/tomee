@@ -32,7 +32,6 @@ import org.apache.catalina.Service;
 import org.apache.catalina.UserDatabase;
 import org.apache.catalina.Valve;
 import org.apache.catalina.WebResourceRoot;
-import org.apache.catalina.Wrapper;
 import org.apache.catalina.core.ContainerBase;
 import org.apache.catalina.core.NamingContextListener;
 import org.apache.catalina.core.StandardContext;
@@ -104,7 +103,6 @@ import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
-import org.apache.openejb.util.reflection.Reflections;
 import org.apache.tomcat.InstanceManager;
 import org.apache.tomcat.JarScanFilter;
 import org.apache.tomcat.util.descriptor.web.ApplicationParameter;
@@ -122,8 +120,6 @@ import org.apache.tomee.catalina.cluster.TomEEClusterListener;
 import org.apache.tomee.catalina.environment.Hosts;
 import org.apache.tomee.catalina.event.AfterApplicationCreated;
 import org.apache.tomee.catalina.routing.RouterValve;
-import org.apache.tomee.catalina.websocket.JavaEEDefaultServerEnpointConfigurator;
-import org.apache.tomee.common.LegacyAnnotationProcessor;
 import org.apache.tomee.common.NamingUtil;
 import org.apache.tomee.common.UserTransactionFactory;
 import org.apache.tomee.loader.TomcatHelper;
@@ -1007,35 +1003,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 standardContext.addFilterMapBefore(filterMap);
             }
         }
-
-        // can only be done until here (before_start)
-        if (Boolean.parseBoolean(SystemInstance.get().getProperty("tomee.skip-war-resources", "false"))) {
-            /* play with StandardRoot to get:
-
-            @Override
-            protected File file(final String name) {
-                if (shouldLookup(name)) {
-                    return super.file(name);
-                }
-                if ("/WEB-INF/classes".equals(name)) {
-                    if (context.getLoader() != null && TomEEWebappClassLoader.class.isInstance(context.getLoader().getClassLoader())) {
-                        final Collection<File> repos = TomEEWebappClassLoader.class.cast(context.getLoader().getClassLoader()).getAdditionalRepos();
-                        if (repos != null && !repos.isEmpty()) {
-                            return repos.iterator().next();
-                        }
-                    }
-                }
-                return null;
-            }
-
-            private static boolean shouldLookup(final String name) {
-                return name != null && !name.equals("/WEB-INF/classes")
-                        && (name.matches("/?WEB-INF/[^/]*\\.?[^/]")
-                        || name.startsWith("/WEB-INF/lib") || name.startsWith("WEB-INF/lib")
-                        || name.startsWith("/META-INF/"));
-            }
-             */
-        }
     }
 
     private void initContextLoader(final StandardContext standardContext) {
@@ -1737,8 +1704,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
     private void addConfiguredDocBases(final StandardContext standardContext, final ContextInfo contextInfo) {
         if (contextInfo.appInfo.path != null) {   // add external web resources
-            final String webResources = SystemInstance.get().getProperty("tomee." + new File(contextInfo.appInfo.path).getName() + ".docBases", contextInfo.appInfo.properties.getProperty("docBases"));
-            final String cache = SystemInstance.get().getProperty("tomee." + new File(contextInfo.appInfo.path).getName() + ".docBases.cache", contextInfo.appInfo.properties.getProperty("docBases.cache"));
+            final String contextPath = standardContext.getServletContext().getContextPath();
+            final String name = contextPath.isEmpty() ? "ROOT" : contextPath.substring(1);
+            final String webResources = SystemInstance.get().getProperty("tomee." + name + ".docBases", contextInfo.appInfo.properties.getProperty("docBases"));
+            final String cache = SystemInstance.get().getProperty("tomee." + name + ".docBases.cache", contextInfo.appInfo.properties.getProperty("docBases.cache"));
             if (webResources != null) {
                 for (final String alt : webResources.trim().split(",")) {
                     final String trim = alt.trim();
