@@ -31,14 +31,14 @@ import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardServer;
-import org.apache.catalina.deploy.LoginConfig;
-import org.apache.catalina.deploy.SecurityCollection;
-import org.apache.catalina.deploy.SecurityConstraint;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.httpd.util.HttpUtil;
+import org.apache.tomcat.util.descriptor.web.LoginConfig;
+import org.apache.tomcat.util.descriptor.web.SecurityCollection;
+import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
 import org.apache.tomee.catalina.IgnoredStandardContext;
 import org.apache.tomee.catalina.OpenEJBValve;
 import org.apache.tomee.catalina.TomcatWebAppBuilder;
@@ -57,7 +57,7 @@ import java.util.Map;
 public class TomcatHessianRegistry implements HessianRegistry {
     private static final String TOMEE_HESSIAN_SECURITY_ROLE_PREFIX = "tomee.hessian.security-role.";
 
-    private final Map<String, Pair<Context, Integer>> fakeContexts = new HashMap<String, Pair<Context, Integer>>();
+    private final Map<String, Pair<Context, Integer>> fakeContexts = new HashMap<>();
 
     private Engine engine;
     private List<Connector> connectors;
@@ -82,7 +82,7 @@ public class TomcatHessianRegistry implements HessianRegistry {
         if (host == null) {
             host = engine.findChild(engine.getDefaultHost());
             if (host == null) {
-                throw new IllegalArgumentException("Invalid virtual host '" + host + "'.  Do you have a matchiing Host entry in the server.xml?");
+                throw new IllegalArgumentException("Invalid virtual host '" + engine.getDefaultHost() + "'.  Do you have a matchiing Host entry in the server.xml?");
             }
         }
 
@@ -99,7 +99,7 @@ public class TomcatHessianRegistry implements HessianRegistry {
                     fakeContext = fakeContexts.get(contextRoot);
                     if (fakeContext == null) {
                         context = createNewContext(loader, authMethod, transportGuarantee, realmName, app);
-                        fakeContext = new MutablePair<Context, Integer>(context, 1);
+                        fakeContext = new MutablePair<>(context, 1);
                         fakeContexts.put(contextRoot, fakeContext);
                     } else {
                         context = fakeContext.getLeft();
@@ -133,11 +133,11 @@ public class TomcatHessianRegistry implements HessianRegistry {
                 }
             }
             if (!found) {
-                standardContext.addValve(new LimitedBasicValve(new LoginConfig(authMethod, realmName, null, null)));
+                standardContext.addValve(new LimitedBasicValve());
             }
         }
 
-        final List<String> addresses = new ArrayList<String>();
+        final List<String> addresses = new ArrayList<>();
         for (final Connector connector : connectors) {
             for (final String mapping : wrapper.findMappings()) {
                 final URI address = new URI(connector.getScheme(), null, host.getName(), connector.getPort(), contextRoot + mapping, null, null);
@@ -203,14 +203,19 @@ public class TomcatHessianRegistry implements HessianRegistry {
             }
 
             //Set the proper authenticator
-            if ("BASIC".equals(authMethod)) {
-                context.addValve(new BasicAuthenticator());
-            } else if ("DIGEST".equals(authMethod)) {
-                context.addValve(new DigestAuthenticator());
-            } else if ("CLIENT-CERT".equals(authMethod)) {
-                context.addValve(new SSLAuthenticator());
-            } else if ("NONE".equals(authMethod)) {
-                context.addValve(new NonLoginAuthenticator());
+            switch (authMethod) {
+                case "BASIC":
+                    context.addValve(new BasicAuthenticator());
+                    break;
+                case "DIGEST":
+                    context.addValve(new DigestAuthenticator());
+                    break;
+                case "CLIENT-CERT":
+                    context.addValve(new SSLAuthenticator());
+                    break;
+                case "NONE":
+                    context.addValve(new NonLoginAuthenticator());
+                    break;
             }
 
             context.getPipeline().addValve(new OpenEJBValve());
@@ -238,7 +243,7 @@ public class TomcatHessianRegistry implements HessianRegistry {
         if (host == null) {
             host = engine.findChild(engine.getDefaultHost());
             if (host == null) {
-                throw new IllegalArgumentException("Invalid virtual host '" + host + "'.  Do you have a matchiing Host entry in the server.xml?");
+                throw new IllegalArgumentException("Invalid virtual host '" + engine.getDefaultHost() + "'.  Do you have a matchiing Host entry in the server.xml?");
             }
         }
 
@@ -255,17 +260,11 @@ public class TomcatHessianRegistry implements HessianRegistry {
     }
 
     protected static class LimitedBasicValve extends BasicAuthenticator {
-        private final LoginConfig fakeLoginConfig;
-
-        protected LimitedBasicValve(final LoginConfig fakeLoginConfig) {
-            this.fakeLoginConfig = fakeLoginConfig;
-        }
-
         @Override
         public void invoke(final Request request, final Response response) throws IOException, ServletException {
             final String requestURI = request.getDecodedRequestURI();
             if (requestURI.startsWith(HESSIAN)) {
-                if (!authenticate(request, response, fakeLoginConfig)) {
+                if (!authenticate(request, response)) {
                     return;
                 }
             }
