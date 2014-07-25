@@ -233,7 +233,6 @@ public class TomEEWebappClassLoader extends WebappClassLoader {
         if (additionalRepos != null) {
             for (final File f : additionalRepos) {
                 final DirResourceSet webResourceSet = new PremptiveDirResourceSet(resources, "/", f.getAbsolutePath(), "/");
-                webResourceSet.setClassLoaderOnly(true);
                 resources.addPreResources(webResourceSet);
             }
             resources.setCachingAllowed(false);
@@ -355,7 +354,7 @@ public class TomEEWebappClassLoader extends WebappClassLoader {
     }
 
     private static final class PremptiveDirResourceSet extends DirResourceSet {
-        private static final String WEB_INF_CLASSES = "/WEB-INF/classes/";
+        private static final String WEB_INF_CLASSES = "/WEB-INF/classes";
 
         public PremptiveDirResourceSet(final WebResourceRoot resources, final String s, final String absolutePath, final String s1) {
             super(resources, s, absolutePath, s1);
@@ -363,7 +362,19 @@ public class TomEEWebappClassLoader extends WebappClassLoader {
 
         @Override
         public WebResource getResource(final String path) {
-            return super.getResource(path.startsWith(WEB_INF_CLASSES)? path.substring(WEB_INF_CLASSES.length() - 1) : path);
+            return super.getResource(computePath(path));
+        }
+
+        @Override
+        public String[] list(final String path) {
+            return super.list(computePath(path));
+        }
+
+        private static String computePath(final String path) {
+            if (WEB_INF_CLASSES.equals(path)) {
+                return "/";
+            }
+            return path.startsWith(WEB_INF_CLASSES)? path.substring(WEB_INF_CLASSES.length()) : path;
         }
     }
 }
