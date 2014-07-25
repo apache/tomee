@@ -18,7 +18,7 @@ package org.apache.tomee.jul.formatter.log;
 
 import org.apache.juli.logging.Log;
 
-public class NoopLogger implements Log {
+public final class NoopLogger implements Log {
     public static final NoopLogger INSTANCE = new NoopLogger();
 
     private NoopLogger() {
