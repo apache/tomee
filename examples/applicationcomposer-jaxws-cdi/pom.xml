@@ -23,7 +23,7 @@
 
   <groupId>org.superbiz</groupId>
   <artifactId>ws-pojo-cdi</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.1.1-SNAPSHOT</version>
   <name>OpenEJB :: Examples :: Application Composer, JAX-WS and CDI are in a boat</name>
 
   <properties>
