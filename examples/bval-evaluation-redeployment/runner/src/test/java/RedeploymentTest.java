@@ -38,12 +38,12 @@ public class RedeploymentTest {
 
     @Deployment(name = "webapp1", managed = false)
     public static Archive<?> webapp1() {
-        return ShrinkWrap.createFromZipFile(WebArchive.class, new File("../WebApp1/target/WebApp1-1.1.0-SNAPSHOT.war"));
+        return ShrinkWrap.createFromZipFile(WebArchive.class, new File("../WebApp1/target/WebApp1-1.1.1-SNAPSHOT.war"));
     }
 
     @Deployment(name = "webapp2", managed = false)
     public static Archive<?> webapp2() {
-        return ShrinkWrap.createFromZipFile(WebArchive.class, new File("../WebApp2/target/WebApp2-1.1.0-SNAPSHOT.war"));
+        return ShrinkWrap.createFromZipFile(WebArchive.class, new File("../WebApp2/target/WebApp2-1.1.1-SNAPSHOT.war"));
     }
 
     @ArquillianResource

@@ -2013,7 +2013,7 @@
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-concurrent_1.0_spec</artifactId>
-        <version>1.1-EA-SNAPSHOT</version>
+        <version>1.0-EA</version>
       </dependency>
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
