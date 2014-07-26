@@ -1707,7 +1707,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             final String contextPath = standardContext.getServletContext().getContextPath();
             final String name = contextPath.isEmpty() ? "ROOT" : contextPath.substring(1);
             final String webResources = SystemInstance.get().getProperty("tomee." + name + ".docBases", contextInfo.appInfo.properties.getProperty("docBases"));
-            final String cache = SystemInstance.get().getProperty("tomee." + name + ".docBases.cache", contextInfo.appInfo.properties.getProperty("docBases.cache"));
             if (webResources != null) {
                 for (final String alt : webResources.trim().split(",")) {
                     final String trim = alt.trim();

@@ -29,9 +29,7 @@ import java.security.Principal;
 import java.security.cert.X509Certificate;
 
 public class TomEERealm extends CombinedRealm {
-    private static final String INFO = TomEERealm.class.getName() + "/1.0";
-
-    private final ThreadLocal<Request> requests = new ThreadLocal<Request>();
+    private final ThreadLocal<Request> requests = new ThreadLocal<>();
 
     @Override
     public Principal authenticate(final String username, final String password) {
