@@ -59,6 +59,7 @@ dom4j
 ecj-
 el-api
 eclipselink-
+ehcache-
 FastInfoset
 fleece-core
 fleece-mapper
