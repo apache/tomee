@@ -912,7 +912,6 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             if ("war".equals(packaging)) {
                 appName = destinationName().replace(".war", "");
                 strings.add("-Dtomee." + appName + ".docBases=" + filesToString(docBases));
-                strings.add("-Dtomee." + appName + ".docBases.cache=false"); // doesn't work for dev if activated
             } else {
                 getLog().warn("docBases parameter only valid for a war");
             }
