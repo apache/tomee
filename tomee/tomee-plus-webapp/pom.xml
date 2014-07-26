@@ -132,6 +132,12 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <dependency>
+      <groupId>org.apache.batchee</groupId>
+      <artifactId>batchee-jbatch</artifactId>
+      <version>${batchee.version}</version>
+      <scope>runtime</scope>
+    </dependency>
 
     <!-- if i'm not mistaken we decided to remove it from our default deliveries
     <dependency>

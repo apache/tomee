@@ -201,8 +201,12 @@ public class CdiScanner implements ScannerService {
             }
 
             addContainerCdiClasses(classLoader, appInfo);
+            try { // not done in batchee extension so for now doing it here, ensure to use container loader!
+                classes.add(CdiScanner.class.getClassLoader().loadClass("org.apache.batchee.container.cdi.BatchProducerBean"));
+            } catch (final Throwable e) {
+                // no-op
+            }
         }
-
     }
 
     private void addContainerCdiClasses(final ClassLoader loader, final AppInfo app) {
@@ -211,12 +215,6 @@ public class CdiScanner implements ScannerService {
         }
 
         addContainerClasses(app.properties, loader, "BVal");
-
-        /* useless since MyFaces uses Extension to register beans
-        if (ejbJar.webapp && "true".equalsIgnoreCase(app.properties.getProperty("Jsf.MyFaces", "true"))) {
-            addContainerClasses(app.properties, loader, "MyFaces");
-        }
-        */
     }
 
 
