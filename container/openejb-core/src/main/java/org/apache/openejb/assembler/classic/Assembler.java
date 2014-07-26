@@ -49,6 +49,7 @@ import org.apache.openejb.assembler.classic.event.ContainerSystemPostCreate;
 import org.apache.openejb.assembler.classic.event.ContainerSystemPreDestroy;
 import org.apache.openejb.assembler.monitoring.JMXContainer;
 import org.apache.openejb.async.AsynchronousPool;
+import org.apache.openejb.batchee.BatchEEServiceManager;
 import org.apache.openejb.cdi.CdiAppContextsService;
 import org.apache.openejb.cdi.CdiBuilder;
 import org.apache.openejb.cdi.CdiResourceInjectionService;
@@ -474,8 +475,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
      */
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     public void buildContainerSystem(final OpenEjbConfiguration configInfo) throws Exception {
-        if (SystemInstance.get().getOptions().get(OPENEJB_JPA_DEPLOY_TIME_ENHANCEMENT_PROP, false)) {
-            SystemInstance.get().addObserver(new DeployTimeEnhancer());
+        final SystemInstance systemInstance = SystemInstance.get();
+        if (systemInstance.getOptions().get(OPENEJB_JPA_DEPLOY_TIME_ENHANCEMENT_PROP, false)) {
+            systemInstance.addObserver(new DeployTimeEnhancer());
+        }
+        if (hasBatchEE()) {
+            systemInstance.addObserver(new BatchEEServiceManager());
         }
 
         for (final ServiceInfo serviceInfo : configInfo.facilities.services) {
@@ -516,14 +521,23 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             } catch (final Throwable e) {
                 logger.error("appNotDeployed", e, appInfo.path);
 
-                final DeploymentExceptionManager exceptionManager = SystemInstance.get().getComponent(DeploymentExceptionManager.class);
+                final DeploymentExceptionManager exceptionManager = systemInstance.getComponent(DeploymentExceptionManager.class);
                 if (exceptionManager != null && e instanceof Exception) {
                     exceptionManager.saveDeploymentException(appInfo, (Exception) e);
                 }
             }
         }
 
-        SystemInstance.get().fireEvent(new ContainerSystemPostCreate());
+        systemInstance.fireEvent(new ContainerSystemPostCreate());
+    }
+
+    private static boolean hasBatchEE() {
+        try {
+            Class.forName("org.apache.batchee.container.services.ServicesManager", true, Assembler.class.getClassLoader());
+            return true;
+        } catch (final Throwable e) {
+            return false;
+        }
     }
 
     private void createJavaGlobal() {

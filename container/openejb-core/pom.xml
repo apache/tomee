@@ -675,6 +675,13 @@
       <version>1.8</version>
       <scope>provided</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.apache.batchee</groupId>
+      <artifactId>batchee-jbatch</artifactId>
+      <version>${batchee.version}</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
   <profiles>
     <profile>

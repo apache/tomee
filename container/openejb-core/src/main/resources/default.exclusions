@@ -23,6 +23,7 @@ arquillian-tomee-
 avalon-framework-
 axis-
 axis2-
+batchee-jbatch
 bcprov-
 bootstrap.jar
 bval-core
