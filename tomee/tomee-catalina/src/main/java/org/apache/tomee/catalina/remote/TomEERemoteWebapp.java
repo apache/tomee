@@ -121,8 +121,6 @@ public class TomEERemoteWebapp extends IgnoredStandardContext {
 
     // mainly for StandardContext.setClassLoaderProperty() otherwise OpenEJB.class.getClassLoader() would be fine
     public static class FakeWebAppLoader extends URLClassLoader {
-        private final ClassLoader delegate;
-
         // ignored but validated by tomcat, avoid warnings
         private boolean clearReferencesHttpClientKeepAliveThread;
         private boolean clearReferencesStopThreads;
@@ -131,23 +129,38 @@ public class TomEERemoteWebapp extends IgnoredStandardContext {
 
         public FakeWebAppLoader(final ClassLoader classLoader) {
             super(new URL[0], classLoader);
-            delegate = classLoader;
         }
 
-        public void setClearReferencesHttpClientKeepAliveThread(final boolean ignored) {
-            // no-op
+        public boolean isClearReferencesHttpClientKeepAliveThread() {
+            return clearReferencesHttpClientKeepAliveThread;
         }
 
-        public void setClearReferencesStopThreads(final boolean ignored) {
-            // no-op
+        public void setClearReferencesHttpClientKeepAliveThread(final boolean clearReferencesHttpClientKeepAliveThread) {
+            this.clearReferencesHttpClientKeepAliveThread = clearReferencesHttpClientKeepAliveThread;
         }
 
-        public void setClearReferencesStopTimerThreads(final boolean ignored) {
-            // no-op
+        public boolean isClearReferencesStopThreads() {
+            return clearReferencesStopThreads;
         }
 
-        public void setClearReferencesStatic(final boolean ignored) {
-            // no-op
+        public void setClearReferencesStopThreads(final boolean clearReferencesStopThreads) {
+            this.clearReferencesStopThreads = clearReferencesStopThreads;
+        }
+
+        public boolean isClearReferencesStopTimerThreads() {
+            return clearReferencesStopTimerThreads;
+        }
+
+        public void setClearReferencesStopTimerThreads(final boolean clearReferencesStopTimerThreads) {
+            this.clearReferencesStopTimerThreads = clearReferencesStopTimerThreads;
+        }
+
+        public boolean isClearReferencesStatic() {
+            return clearReferencesStatic;
+        }
+
+        public void setClearReferencesStatic(final boolean clearReferencesStatic) {
+            this.clearReferencesStatic = clearReferencesStatic;
         }
     }
 }

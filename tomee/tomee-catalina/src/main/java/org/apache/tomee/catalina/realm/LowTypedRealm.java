@@ -52,7 +52,6 @@ public class LowTypedRealm implements Realm {
     private static final Class<?>[] HAS_USER_DATA_PERMISSION_CONSTRAINT = new Class<?>[] { HttpServletRequest.class, HttpServletResponse.class, Object[].class };
 
     private final Object delegate;
-    private final String info;
 
     private final Method simpleAuthenticateMethod;
     private final Method authenticateMethod;
@@ -67,7 +66,6 @@ public class LowTypedRealm implements Realm {
 
     public LowTypedRealm(final Object delegate) {
         this.delegate = delegate;
-        info = delegate.getClass() + "/1.0";
 
         final Class<?> clazz = delegate.getClass();
 
