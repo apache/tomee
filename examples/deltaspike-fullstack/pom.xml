@@ -111,6 +111,7 @@
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>
       <version>7.0-SNAPSHOT</version>
+      <classifier>tomcat</classifier>
       <scope>provided</scope>
     </dependency>
     <dependency>
