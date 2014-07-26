@@ -45,7 +45,7 @@ public class TomEEJarScanner extends StandardJarScanner {
     }
 
     private static class TomEEFilter implements JarScanFilter {
-        private static final Filter INCLUDE = Filters.tokens("openejb-jstl-1.2", "myfaces-impl", "javax.faces-2.", "spring-security-taglibs", "spring-webmvc");
+        private static final Filter INCLUDE = Filters.tokens("javax.faces-2.", "spring-security-taglibs", "spring-webmvc");
         private final JarScanFilter delegate;
 
         public TomEEFilter(final JarScanFilter jarScanFilter) {
@@ -54,8 +54,18 @@ public class TomEEJarScanner extends StandardJarScanner {
 
         @Override
         public boolean check(final JarScanType jarScanType, final String jarName) {
-            return INCLUDE.accept(jarName)
-                || (!NewLoaderLogic.skip(jarName) && (delegate == null || delegate.check(jarScanType, jarName)));
+            if (jarScanType == JarScanType.TLD) {
+                if (INCLUDE.accept(jarName)) {
+                    return true;
+                }
+                if (jarName.startsWith("tomcat-websocket")) {
+                    return false;
+                }
+            }
+            if (jarName.startsWith("fleece-")) {
+                return false; // but we scan it in openejb scnaning
+            }
+            return !NewLoaderLogic.skip(jarName) && (delegate == null || delegate.check(jarScanType, jarName));
         }
     }
 }

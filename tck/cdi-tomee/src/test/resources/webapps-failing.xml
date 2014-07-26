@@ -20,10 +20,6 @@
 <suite name="CDI TCK" verbose="0">
   <test name="CDI TCK">
     <classes>
-      <class name="org.jboss.jsr299.tck.tests.context.conversation.InvalidatingSessionDestroysConversationTest"/>
-      <class name="org.jboss.jsr299.tck.tests.context.conversation.LongRunningConversationPropagatedByFacesContextTest"/>
-      <class name="org.jboss.jsr299.tck.tests.lookup.manager.ManagerTest"/>
-      <class name="org.jboss.jsr299.tck.tests.lookup.manager.jndi.ManagerTest"/>
       <class name="org.jboss.jsr299.tck.tests.context.conversation.ManualCidPropagationTest"/>
     </classes>
   </test>

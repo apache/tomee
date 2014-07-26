@@ -54,6 +54,7 @@ import org.apache.tomcat.util.digester.Digester;
 import org.apache.tomee.catalina.realm.TomEEDataSourceRealm;
 import org.apache.tomee.common.NamingUtil;
 import org.apache.tomee.common.ResourceFactory;
+import org.apache.tomee.jasper.TomEEJasperInitializer;
 import org.apache.tomee.loader.TomcatHelper;
 import org.apache.xbean.finder.IAnnotationFinder;
 
@@ -450,8 +451,11 @@ public class OpenEJBContextConfig extends ContextConfig {
                         }
                     }
                     iterator.remove();
+                } else if ("org.apache.jasper.servlet.JasperInitializer".equals(classname)) {
+                    iterator.remove();
                 }
             }
+            initializerClassMap.put(new TomEEJasperInitializer(), new HashSet<Class<?>>());
 
             final ClassLoader loader = context.getLoader().getClassLoader();
 

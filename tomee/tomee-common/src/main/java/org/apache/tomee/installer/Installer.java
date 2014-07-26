@@ -224,7 +224,7 @@ public class Installer implements InstallerInterface {
         }
 
         final String newIndeJsp = indeJsp.replaceFirst("<div id=\"actions\">",
-                "<div id=\\\"actions\\\">\r\n" +
+                "<div id=\"actions\">\n" +
                         "                    <div class=\"button\">\n" +
                         "                        <a class=\"container shadow\" href=\"/tomee\"><span>TomEE Gui</span></a>\n" +
                         "                    </div>");
