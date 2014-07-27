@@ -22,8 +22,6 @@ import org.apache.openejb.BeanType;
 import org.apache.openejb.MethodContext;
 import org.apache.openejb.ModuleContext;
 import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
@@ -163,7 +161,7 @@ public class TimerServiceWrapper implements TimerService {
         return new TimerServiceImpl(timerService, pk, beanContext.getEjbTimeout());
     }
 
-    private static class HasSchedule {
+    private static final class HasSchedule {
         private final boolean value;
 
         private HasSchedule(final boolean value) {
