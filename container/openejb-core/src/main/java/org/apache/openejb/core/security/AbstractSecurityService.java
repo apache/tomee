@@ -245,6 +245,10 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
         final ThreadContext threadContext = ThreadContext.getThreadContext();
         final SecurityContext securityContext = threadContext.get(SecurityContext.class);
 
+        if ("**".equals(role)) {
+            return securityContext != defaultContext; // ie logged in
+        }
+
         final Set<Group> grps = securityContext.subject.getPrincipals(Group.class);
         for (final Group grp : grps) {
             if (grp.getName().equals(role)) {
