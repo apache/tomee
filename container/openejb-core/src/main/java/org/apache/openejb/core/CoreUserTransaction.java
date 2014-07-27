@@ -37,10 +37,21 @@ import java.io.Serializable;
 public class CoreUserTransaction implements UserTransaction, Serializable {
     private static final long serialVersionUID = 9203248912222645965L;
     private static final transient Logger transactionLogger = Logger.getInstance(LogCategory.TRANSACTION, "org.apache.openejb.util.resources");
+    private static final ThreadLocal<RuntimeException> ERROR = new ThreadLocal<>();
     private transient TransactionManager transactionManager;
 
     public CoreUserTransaction(final TransactionManager transactionManager) {
         this.transactionManager = transactionManager;
+    }
+
+    public static RuntimeException error(final RuntimeException e) {
+        final RuntimeException p = ERROR.get();
+        ERROR.set(e);
+        return p;
+    }
+
+    public static void resetError(final RuntimeException old) {
+        ERROR.set(old);
     }
 
     private TransactionManager transactionManager() {
@@ -52,15 +63,24 @@ public class CoreUserTransaction implements UserTransaction, Serializable {
 
     @Override
     public void begin() throws NotSupportedException, SystemException {
+        check();
         transactionManager().begin();
         if (transactionLogger.isDebugEnabled()) {
             transactionLogger.debug("Started user transaction " + transactionManager().getTransaction());
         }
     }
 
+    private void check() {
+        final RuntimeException e = ERROR.get();
+        if (e != null) {
+            throw e;
+        }
+    }
+
     @Override
     public void commit() throws RollbackException, HeuristicMixedException, HeuristicRollbackException,
         SecurityException, IllegalStateException, SystemException {
+        check();
         if (transactionLogger.isDebugEnabled()) {
             transactionLogger.debug("Committing user transaction " + transactionManager().getTransaction());
         }
@@ -69,6 +89,7 @@ public class CoreUserTransaction implements UserTransaction, Serializable {
 
     @Override
     public int getStatus() throws SystemException {
+        check();
         final int status = transactionManager().getStatus();
         if (transactionLogger.isDebugEnabled()) {
             transactionLogger.debug("User transaction " + transactionManager().getTransaction() + " has status " + getStatus(status));
@@ -78,6 +99,7 @@ public class CoreUserTransaction implements UserTransaction, Serializable {
 
     @Override
     public void rollback() throws IllegalStateException, SecurityException, SystemException {
+        check();
         if (transactionLogger.isDebugEnabled()) {
             transactionLogger.debug("Rolling back user transaction " + transactionManager().getTransaction());
         }
@@ -86,6 +108,7 @@ public class CoreUserTransaction implements UserTransaction, Serializable {
 
     @Override
     public void setRollbackOnly() throws SystemException {
+        check();
         if (transactionLogger.isDebugEnabled()) {
             transactionLogger.debug("Marking user transaction for rollback: " + transactionManager().getTransaction());
         }
@@ -94,6 +117,7 @@ public class CoreUserTransaction implements UserTransaction, Serializable {
 
     @Override
     public void setTransactionTimeout(final int seconds) throws SystemException {
+        check();
         transactionManager().setTransactionTimeout(seconds);
     }
 

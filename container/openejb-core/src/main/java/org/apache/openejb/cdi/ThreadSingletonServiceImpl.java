@@ -21,6 +21,7 @@ import org.apache.openejb.AppContext;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
+import org.apache.openejb.cdi.transactional.TransactionContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.AppFinder;
@@ -29,6 +30,7 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.classloader.MultipleClassLoader;
 import org.apache.webbeans.config.OpenWebBeansConfiguration;
 import org.apache.webbeans.config.WebBeansContext;
+import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.intercept.ApplicationScopedBeanInterceptorHandler;
 import org.apache.webbeans.intercept.NormalScopedBeanInterceptorHandler;
 import org.apache.webbeans.spi.ContainerLifecycle;
@@ -43,6 +45,7 @@ import org.apache.webbeans.spi.TransactionService;
 import org.apache.webbeans.spi.adaptor.ELAdaptor;
 import org.apache.webbeans.web.intercept.RequestScopedBeanInterceptorHandler;
 
+import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -147,6 +150,10 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
                 webBeansContext = new WebappWebBeansContext(services, properties, appContext.getWebBeansContext());
                 startupObject.getWebContext().setWebbeansContext(webBeansContext);
             }
+            final BeanManagerImpl beanManagerImpl = webBeansContext.getBeanManagerImpl();
+            beanManagerImpl.addContext(new TransactionContext());
+            beanManagerImpl.addAdditionalInterceptorBindings(Transactional.class);
+
             SystemInstance.get().fireEvent(new WebBeansContextCreated(webBeansContext));
             OpenEJBTransactionService.class.cast(services.get(TransactionService.class)).setWebBeansContext(webBeansContext);
 
