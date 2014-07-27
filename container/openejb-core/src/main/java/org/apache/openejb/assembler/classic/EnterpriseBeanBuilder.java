@@ -153,7 +153,7 @@ class EnterpriseBeanBuilder {
 
         final BeanContext deployment;
         if (BeanType.MESSAGE_DRIVEN != ejbType) {
-            deployment = new BeanContext(bean.ejbDeploymentId, compJndiContext, moduleContext, ejbClass, home, remote, localhome, local, proxy, serviceEndpoint, businessLocals, businessRemotes, primaryKey, ejbType, bean.localbean && ejbType.isSession());
+            deployment = new BeanContext(bean.ejbDeploymentId, compJndiContext, moduleContext, ejbClass, home, remote, localhome, local, proxy, serviceEndpoint, businessLocals, businessRemotes, primaryKey, ejbType, bean.localbean && ejbType.isSession(), bean.passivable);
             if (bean instanceof ManagedBeanInfo) {
                 deployment.setHidden(((ManagedBeanInfo) bean).hidden);
             }

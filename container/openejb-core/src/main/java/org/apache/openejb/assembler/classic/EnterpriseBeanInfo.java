@@ -93,4 +93,5 @@ public abstract class EnterpriseBeanInfo extends InfoObject {
     public List<MethodScheduleInfo> methodScheduleInfos = new ArrayList<MethodScheduleInfo>();
 
     public boolean restService;
+    public boolean passivable;
 }

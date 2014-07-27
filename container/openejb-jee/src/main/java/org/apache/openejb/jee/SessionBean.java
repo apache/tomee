@@ -179,6 +179,8 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
     protected List<Timer> timer;
     @XmlElement(name = "init-on-startup")
     protected Boolean initOnStartup;
+    @XmlElement(name = "passivation-capable")
+    protected Boolean passivationCapable;
     @XmlElement(name = "concurrency-management-type")
     protected ConcurrencyManagementType concurrencyManagementType;
     @XmlElement(name = "concurrent-method")
@@ -915,5 +917,16 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
     public EnterpriseBean localBean() {
         setLocalBean(new Empty());
         return this;
+    }
+
+    public Boolean getPassivationCapable() {
+        if (passivationCapable == null) {
+            return true;
+        }
+        return passivationCapable;
+    }
+
+    public void setPassivationCapable(final Boolean passivationCapable) {
+        this.passivationCapable = passivationCapable;
     }
 }

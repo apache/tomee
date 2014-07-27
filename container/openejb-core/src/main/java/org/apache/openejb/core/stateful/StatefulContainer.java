@@ -298,7 +298,7 @@ public class StatefulContainer implements RpcContainer {
         beanContext.setContainer(null);
         beanContext.setContainerData(null);
 
-        if (!containsExtendedPersistenceContext(beanContext)) {
+        if (isPassivable(beanContext)) {
             cache.removeAll(new BeanContextFilter(beanContext.getId()));
         }
     }
@@ -377,12 +377,15 @@ public class StatefulContainer implements RpcContainer {
         }
     }
 
-    private boolean containsExtendedPersistenceContext(final BeanContext beanContext) {
+    private boolean isPassivable(final BeanContext beanContext) {
         if (preventExtendedEntityManagerSerialization) {
-            return false;
+            return true;
         }
         final Index<EntityManagerFactory, Map> factories = beanContext.getExtendedEntityManagerFactories();
-        return factories != null && factories.size() > 0;
+        if (factories != null && factories.size() > 0) {
+            return false;
+        }
+        return beanContext.isPassivable();
     }
 
     protected ProxyInfo createEJBObject(final BeanContext beanContext, final Method callMethod, final Object[] args, final InterfaceType interfaceType) throws OpenEJBException {
@@ -430,7 +433,7 @@ public class StatefulContainer implements RpcContainer {
                 }
 
                 // add to cache
-                if (!containsExtendedPersistenceContext(beanContext)) { // no need to cache it it will never expires
+                if (isPassivable(beanContext)) { // no need to cache it it will never expires
                     cache.add(primaryKey, instance);
                 }
 
@@ -807,7 +810,7 @@ public class StatefulContainer implements RpcContainer {
         // no longer in use
         instance.setInUse(false);
 
-        if (instance.getTransaction() == null && !containsExtendedPersistenceContext(instance.beanContext) && null == instance.getBeanTransaction()) {
+        if (instance.getTransaction() == null && isPassivable(instance.beanContext) && null == instance.getBeanTransaction()) {
             synchronized (instance.primaryKey) {
                 // return to cache
                 cache.checkIn(instance.primaryKey);
@@ -832,7 +835,7 @@ public class StatefulContainer implements RpcContainer {
         }
 
         if (i != null) {
-            if (!containsExtendedPersistenceContext(i.beanContext)) {
+            if (isPassivable(i.beanContext)) {
                 cache.remove(primaryKey);
             }
             if (null != i.creationalContext) {
