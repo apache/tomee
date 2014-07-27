@@ -22,6 +22,12 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.BeansInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
+import org.apache.openejb.cdi.transactional.MandatoryInterceptor;
+import org.apache.openejb.cdi.transactional.NeverInterceptor;
+import org.apache.openejb.cdi.transactional.NotSupportedInterceptor;
+import org.apache.openejb.cdi.transactional.RequiredInterceptor;
+import org.apache.openejb.cdi.transactional.RequiredNewInterceptor;
+import org.apache.openejb.cdi.transactional.SupportsInterceptor;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.PropertyPlaceHolderHelper;
 import org.apache.openejb.util.classloader.ClassLoaderComparator;
@@ -35,17 +41,25 @@ import org.apache.webbeans.spi.BDABeansXmlScanner;
 import org.apache.webbeans.spi.ScannerService;
 
 import java.net.URL;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import static java.util.Arrays.asList;
+
 /**
  * @version $Rev:$ $Date:$
  */
 public class CdiScanner implements ScannerService {
     public static final String OPENEJB_CDI_FILTER_CLASSLOADER = "openejb.cdi.filter.classloader";
+
+    private static final Class<?>[] TRANSACTIONAL_INTERCEPTORS = new Class<?>[]{
+        MandatoryInterceptor.class, NeverInterceptor.class, NotSupportedInterceptor.class,
+        RequiredInterceptor.class, RequiredInterceptor.class, SupportsInterceptor.class
+    };
 
     // TODO add all annotated class
     private final Set<Class<?>> classes = new HashSet<Class<?>>();
@@ -71,6 +85,9 @@ public class CdiScanner implements ScannerService {
         final DecoratorsManager decoratorsManager = webBeansContext.getDecoratorsManager();
         final InterceptorsManager interceptorsManager = webBeansContext.getInterceptorsManager();
 
+        classes.addAll(asList(TRANSACTIONAL_INTERCEPTORS));
+
+        // app beans
         for (final EjbJarInfo ejbJar : appInfo.ejbJars) {
             final BeansInfo beans = ejbJar.beans;
 
@@ -113,6 +130,9 @@ public class CdiScanner implements ScannerService {
                 } else if (shouldThrowCouldNotLoadException(startupObject)) {
                     throw new WebBeansConfigurationException("Could not load interceptor class: " + className);
                 }
+            }
+            for (final Class<?> interceptor : TRANSACTIONAL_INTERCEPTORS) {
+                interceptorsManager.addEnabledInterceptorClass(interceptor);
             }
 
             for (final String className : beans.decorators) {
