@@ -1570,7 +1570,7 @@ public class BeanContext extends DeploymentContext {
             //Transaction Demarcation for Singleton PostConstruct method
             TransactionType transactionType;
 
-            if (getComponentType() == BeanType.SINGLETON) {
+            if (componentType == BeanType.SINGLETON || componentType == BeanType.STATEFUL) {
                 final Set<Method> callbacks = callbackInterceptors.get(callbackInterceptors.size() - 1).getPostConstruct();
                 if (callbacks.isEmpty()) {
                     transactionType = TransactionType.RequiresNew;
