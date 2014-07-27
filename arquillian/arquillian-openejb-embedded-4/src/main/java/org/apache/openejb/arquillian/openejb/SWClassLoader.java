@@ -67,7 +67,26 @@ public class SWClassLoader extends ClassLoader {
     }
 
     @Override
+    public Enumeration<URL> getResources(final String name) throws IOException {
+        if (name != null && !name.contains("META-INF/services/javax")) { // we want to avoid duplicates but we need container stuff, see bval tcks
+            final Node node = findNode(name);
+            if (node != null) {
+                return enumerator(new URL(null, "archive:" + archive.getName() + "/" + name, new ArchiveStreamHandler()));
+            }
+        }
+        return super.getResources(name);
+    }
+
+    @Override
     protected Enumeration<URL> findResources(final String name) throws IOException {
+        final Node node = findNode(name);
+        if (node != null) {
+            return enumerator(new URL(null, "archive:" + archive.getName() + "/" + name, new ArchiveStreamHandler()));
+        }
+        return super.findResources(name);
+    }
+
+    private Node findNode(final String name) {
         ArchivePath path = ArchivePaths.create(prefix + name);
         Node node = archive.get(path);
         if (node == null) {
@@ -76,11 +95,7 @@ public class SWClassLoader extends ClassLoader {
 
 
         }
-
-        if (node != null) {
-            return enumerator(new URL(null, "archive:" + archive.getName() + "/" + name, new ArchiveStreamHandler()));
-        }
-        return super.findResources(name);
+        return node;
     }
 
     private static Enumeration<URL> enumerator(final URL url) {
@@ -89,13 +104,7 @@ public class SWClassLoader extends ClassLoader {
 
     @Override
     protected URL findResource(final String name) {
-        ArchivePath path = ArchivePaths.create(prefix + name);
-        Node node = archive.get(path);
-        if (node == null) {
-            path = ArchivePaths.create(name);
-            node = archive.get(path);
-        }
-
+        final Node node = findNode(name);
         if (node != null) {
             try {
                 return new URL(null, "archive:" + archive.getName() + "/" + name, new ArchiveStreamHandler());
