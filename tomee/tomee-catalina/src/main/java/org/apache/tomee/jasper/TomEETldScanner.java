@@ -4419,12 +4419,12 @@ public class TomEETldScanner extends TldScanner {
                 final ValidatorXml validator = new ValidatorXml();
                 validator.setValidatorClass("org.apache.taglibs.standard.tlv.JstlFmtTLV");
                 taglibXml.setValidator(validator);
-                taglibXml.getValidator().addInitParam("expressionAttributes", "requestEncoding:value\tsetLocale:value\tsetLocale:variant\ttimeZone:value\tsetTimeZone:value\tbundle:basename\tbundle:prefix\t" +
-                    "setBundle:basename\tmessage:key\tmessage:bundle\tparam:value\tformatNumber:value\tformatNumber:pattern\tformatNumber:currencyCode" +
-                    "\tformatNumber:currencySymbol\tformatNumber:groupingUsed\tformatNumber:maxIntegerDigits\tformatNumber:minIntegerDigits\t" +
-                    "formatNumber:maxFractionDigits\tformatNumber:minFractionDigits\tparseNumber:value\tparseNumber:pattern\tparseNumber:parseLocale" +
-                    "\tparseNumber:integerOnly\tformatDate:value\tformatDate:pattern\tformatDate:timeZone\tparseDate:value\tparseDate:pattern\t" +
-                    "parseDate:timeZone\tparseDate:parseLocale");
+                taglibXml.getValidator().addInitParam("expressionAttributes", "requestEncoding:value\nsetLocale:value\nsetLocale:variant\ntimeZone:value\nsetTimeZone:value\nbundle:basename\nbundle:prefix\n" +
+                    "setBundle:basename\nmessage:key\nmessage:bundle\nparam:value\nformatNumber:value\nformatNumber:pattern\nformatNumber:currencyCode" +
+                    "\nformatNumber:currencySymbol\nformatNumber:groupingUsed\nformatNumber:maxIntegerDigits\nformatNumber:minIntegerDigits\n" +
+                    "formatNumber:maxFractionDigits\nformatNumber:minFractionDigits\nparseNumber:value\nparseNumber:pattern\nparseNumber:parseLocale" +
+                    "\nparseNumber:integerOnly\nformatDate:value\nformatDate:pattern\nformatDate:timeZone\nparseDate:value\nparseDate:pattern\n" +
+                    "parseDate:timeZone\nparseDate:parseLocale");
                 {
                     final TagXml tag = new TagXml();
                     tag.setName("requestEncoding");
@@ -4901,8 +4901,8 @@ public class TomEETldScanner extends TldScanner {
                 final ValidatorXml validator = new ValidatorXml();
                 validator.setValidatorClass("org.apache.taglibs.standard.tlv.JstlXmlTLV");
                 taglibXml.setValidator(validator);
-                taglibXml.getValidator().addInitParam("expressionAttributes", "out:escapeXml\tparse:xml\tparse:systemId\tparse:filter\t" +
-                    "transform:xml\ttransform:xmlSystemId\ttransform:xslt\ttransform:xsltSystemId\ttransform:result");
+                taglibXml.getValidator().addInitParam("expressionAttributes", "out:escapeXml\nparse:xml\nparse:systemId\nparse:filter\n" +
+                    "transform:xml\ntransform:xmlSystemId\ntransform:xslt\ntransform:xsltSystemId\ntransform:result");
                 {
                     final TagXml tag = new TagXml();
                     tag.setName("choose");
@@ -4968,7 +4968,7 @@ public class TomEETldScanner extends TldScanner {
                     tag.setName("otherwise");
                     tag.setTagClass("org.apache.taglibs.standard.tag.common.core.OtherwiseTag");
                     tag.setBodyContent("JSP");
-                    tag.setInfo("Subtag of <choose> that follows <when> tags 	and runs only if all of the prior conditions evaluated to 	'false'");
+                    tag.setInfo("Subtag of <choose> that follows <when> tags \tand runs only if all of the prior conditions evaluated to \t'false'");
                     taglibXml.addTag(tag);
                 }
                 {
@@ -5050,7 +5050,7 @@ public class TomEETldScanner extends TldScanner {
                     tag.setTagClass("org.apache.taglibs.standard.tag.el.xml.TransformTag");
                     tag.setTeiClass("org.apache.taglibs.standard.tei.XmlTransformTEI");
                     tag.setBodyContent("JSP");
-                    tag.setInfo("Conducts a transformation given a source XML document 	and an XSLT stylesheet");
+                    tag.setInfo("Conducts a transformation given a source XML document \tand an XSLT stylesheet");
                     {
                         final TagAttributeInfo attr = new TagAttributeInfo("var", false, "java.lang.String", false, false, null, false, false, null, null);
                         tag.getAttributes().add(attr);
@@ -5408,10 +5408,10 @@ public class TomEETldScanner extends TldScanner {
                 final ValidatorXml validator = new ValidatorXml();
                 validator.setValidatorClass("org.apache.taglibs.standard.tlv.JstlCoreTLV");
                 taglibXml.setValidator(validator);
-                taglibXml.getValidator().addInitParam("expressionAttributes", "out:value\tout:default\tout:escapeXml\tif:test\t" +
-                    "import:url\timport:context\timport:charEncoding\tforEach:items\tforEach:begin\tforEach:end\tforEach:step\t" +
-                    "forTokens:items\tforTokens:begin\tforTokens:end\tforTokens:step\tparam:encode\tparam:name\tparam:value\tredirect:context" +
-                    "\tredirect:url\tset:property\tset:target\tset:value\turl:context\turl:value\twhen:test");
+                taglibXml.getValidator().addInitParam("expressionAttributes", "out:value\nout:default\nout:escapeXml\nif:test\n" +
+                    "import:url\nimport:context\nimport:charEncoding\nforEach:items\nforEach:begin\nforEach:end\nforEach:step\n" +
+                    "forTokens:items\nforTokens:begin\nforTokens:end\nforTokens:step\nparam:encode\nparam:name\nparam:value\nredirect:context" +
+                    "\nredirect:url\nset:property\nset:target\nset:value\nurl:context\nurl:value\nwhen:test");
                 {
                     final TagXml tag = new TagXml();
                     tag.setName("catch");
@@ -5478,7 +5478,7 @@ public class TomEETldScanner extends TldScanner {
                     tag.setTagClass("org.apache.taglibs.standard.tag.el.core.ImportTag");
                     tag.setTeiClass("org.apache.taglibs.standard.tei.ImportTEI");
                     tag.setBodyContent("JSP");
-                    tag.setInfo("Retrieves an absolute or relative URL and exposes its contents 	to either the page, a String in 'var', or a Reader in 'varReader'.");
+                    tag.setInfo("Retrieves an absolute or relative URL and exposes its contents \tto either the page, a String in 'var', or a Reader in 'varReader'.");
                     {
                         final TagAttributeInfo attr = new TagAttributeInfo("url", true, "java.lang.String", false, false, null, false, false, null, null);
                         tag.getAttributes().add(attr);
@@ -5579,7 +5579,7 @@ public class TomEETldScanner extends TldScanner {
                     tag.setName("otherwise");
                     tag.setTagClass("org.apache.taglibs.standard.tag.common.core.OtherwiseTag");
                     tag.setBodyContent("JSP");
-                    tag.setInfo("Subtag of <choose> that follows <when> tags 	and runs only if all of the prior conditions evaluated to 	'false'");
+                    tag.setInfo("Subtag of <choose> that follows <when> tags \tand runs only if all of the prior conditions evaluated to \t'false'");
                     taglibXml.addTag(tag);
                 }
                 {
@@ -6141,7 +6141,7 @@ public class TomEETldScanner extends TldScanner {
                     tag.setName("otherwise");
                     tag.setTagClass("org.apache.taglibs.standard.tag.common.core.OtherwiseTag");
                     tag.setBodyContent("JSP");
-                    tag.setInfo("Subtag of <choose> that follows <when> tags 	and runs only if all of the prior conditions evaluated to 	'false'");
+                    tag.setInfo("Subtag of <choose> that follows <when> tags \tand runs only if all of the prior conditions evaluated to \t'false'");
                     taglibXml.addTag(tag);
                 }
                 {
@@ -6227,7 +6227,7 @@ public class TomEETldScanner extends TldScanner {
                     tag.setTagClass("org.apache.taglibs.standard.tag.rt.xml.TransformTag");
                     tag.setTeiClass("org.apache.taglibs.standard.tei.XmlTransformTEI");
                     tag.setBodyContent("JSP");
-                    tag.setInfo("Conducts a transformation given a source XML document 	and an XSLT stylesheet");
+                    tag.setInfo("Conducts a transformation given a source XML document \tand an XSLT stylesheet");
                     {
                         final TagAttributeInfo attr = new TagAttributeInfo("var", false, "java.lang.String", false, false, "Name of the exported scoped variable for the transformed XML document. The type of the scoped variable is org.w3c.dom.Document.", false, false, null, null);
                         tag.getAttributes().add(attr);
@@ -6309,7 +6309,7 @@ public class TomEETldScanner extends TldScanner {
                     tag.setName("choose");
                     tag.setTagClass("org.apache.taglibs.standard.tag.common.core.ChooseTag");
                     tag.setBodyContent("JSP");
-                    tag.setInfo("Simple conditional tag that establishes a context for 	mutually exclusive conditional operations, marked by 	<when> and <otherwise>");
+                    tag.setInfo("Simple conditional tag that establishes a context for \tmutually exclusive conditional operations, marked by \t<when> and <otherwise>");
                     taglibXml.addTag(tag);
                 }
                 {
@@ -6317,7 +6317,7 @@ public class TomEETldScanner extends TldScanner {
                     tag.setName("if");
                     tag.setTagClass("org.apache.taglibs.standard.tag.rt.core.IfTag");
                     tag.setBodyContent("JSP");
-                    tag.setInfo("Simple conditional tag, which evalutes its body if the 	supplied condition is true and optionally exposes a Boolean 	scripting variable representing the evaluation of this condition");
+                    tag.setInfo("Simple conditional tag, which evalutes its body if the \tsupplied condition is true and optionally exposes a Boolean \tscripting variable representing the evaluation of this condition");
                     {
                         final TagAttributeInfo attr = new TagAttributeInfo("test", true, "boolean", true, false, "The test condition that determines whether or not the body content should be processed.", false, false, null, null);
                         tag.getAttributes().add(attr);
@@ -6567,7 +6567,7 @@ public class TomEETldScanner extends TldScanner {
                     tag.setName("when");
                     tag.setTagClass("org.apache.taglibs.standard.tag.rt.core.WhenTag");
                     tag.setBodyContent("JSP");
-                    tag.setInfo("Subtag of <choose> that includes its body if its 	condition evalutes to 'true'");
+                    tag.setInfo("Subtag of <choose> that includes its body if its \tcondition evalutes to 'true'");
                     {
                         final TagAttributeInfo attr = new TagAttributeInfo("test", true, "boolean", true, false, "The test condition that determines whether or not the body content should be processed.", false, false, null, null);
                         tag.getAttributes().add(attr);
@@ -6605,7 +6605,7 @@ public class TomEETldScanner extends TldScanner {
                     tag.setName("choose");
                     tag.setTagClass("org.apache.taglibs.standard.tag.common.core.ChooseTag");
                     tag.setBodyContent("JSP");
-                    tag.setInfo("Simple conditional tag that establishes a context for 	mutually exclusive conditional operations, marked by 	<when> and <otherwise>");
+                    tag.setInfo("Simple conditional tag that establishes a context for \tmutually exclusive conditional operations, marked by \t<when> and <otherwise>");
                     taglibXml.addTag(tag);
                 }
                 {
@@ -6613,7 +6613,7 @@ public class TomEETldScanner extends TldScanner {
                     tag.setName("if");
                     tag.setTagClass("org.apache.taglibs.standard.tag.rt.core.IfTag");
                     tag.setBodyContent("JSP");
-                    tag.setInfo("Simple conditional tag, which evalutes its body if the 	supplied condition is true and optionally exposes a Boolean 	scripting variable representing the evaluation of this condition");
+                    tag.setInfo("Simple conditional tag, which evalutes its body if the \tsupplied condition is true and optionally exposes a Boolean \tscripting variable representing the evaluation of this condition");
                     {
                         final TagAttributeInfo attr = new TagAttributeInfo("test", true, "boolean", true, false, null, false, false, null, null);
                         tag.getAttributes().add(attr);
@@ -6871,7 +6871,7 @@ public class TomEETldScanner extends TldScanner {
                     tag.setName("when");
                     tag.setTagClass("org.apache.taglibs.standard.tag.rt.core.WhenTag");
                     tag.setBodyContent("JSP");
-                    tag.setInfo("Subtag of <choose> that includes its body if its 	condition evalutes to 'true'");
+                    tag.setInfo("Subtag of <choose> that includes its body if its \tcondition evalutes to 'true'");
                     {
                         final TagAttributeInfo attr = new TagAttributeInfo("test", true, "boolean", true, false, null, false, false, null, null);
                         tag.getAttributes().add(attr);
@@ -6957,7 +6957,7 @@ public class TomEETldScanner extends TldScanner {
                     tag.setName("otherwise");
                     tag.setTagClass("org.apache.taglibs.standard.tag.common.core.OtherwiseTag");
                     tag.setBodyContent("JSP");
-                    tag.setInfo("Subtag of <choose> that follows <when> tags 	and runs only if all of the prior conditions evaluated to 	'false'");
+                    tag.setInfo("Subtag of <choose> that follows <when> tags \tand runs only if all of the prior conditions evaluated to \t'false'");
                     taglibXml.addTag(tag);
                 }
                 {
@@ -7039,7 +7039,7 @@ public class TomEETldScanner extends TldScanner {
                     tag.setTagClass("org.apache.taglibs.standard.tag.rt.xml.TransformTag");
                     tag.setTeiClass("org.apache.taglibs.standard.tei.XmlTransformTEI");
                     tag.setBodyContent("JSP");
-                    tag.setInfo("Conducts a transformation given a source XML document 	and an XSLT stylesheet");
+                    tag.setInfo("Conducts a transformation given a source XML document \tand an XSLT stylesheet");
                     {
                         final TagAttributeInfo attr = new TagAttributeInfo("var", false, "java.lang.String", false, false, null, false, false, null, null);
                         tag.getAttributes().add(attr);
@@ -7171,7 +7171,7 @@ public class TomEETldScanner extends TldScanner {
                 final ValidatorXml validator = new ValidatorXml();
                 validator.setValidatorClass("javax.servlet.jsp.jstl.tlv.PermittedTaglibsTLV");
                 taglibXml.setValidator(validator);
-                taglibXml.getValidator().addInitParam("permittedTaglibs", "http://java.sun.com/jsp/jstl/core\thttp://java.sun.com/jsp/jstl/fmt\thttp://java.sun.com/jsp/jstl/sql\thttp://java.sun.com/jsp/jstl/xml");
+                taglibXml.getValidator().addInitParam("permittedTaglibs", "http://java.sun.com/jsp/jstl/core\nhttp://java.sun.com/jsp/jstl/fmt\nhttp://java.sun.com/jsp/jstl/sql\nhttp://java.sun.com/jsp/jstl/xml");
                 TLD_RESOURCE_TAG_LIB.put(path, taglibXml);
             }
         }
