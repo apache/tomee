@@ -39,8 +39,7 @@ public class Warmup {
 
     static {
         final String[] classes = {
-                "java.util.concurrent.TimeUnit",
-                "java.util.concurrent.atomic.AtomicLong",
+                "org.apache.tomee.jasper.TomEETldScanner",
                 "javax.el.ExpressionFactory",
                 "javax.faces.component.UIViewRoot",
                 "javax.imageio.ImageIO",
@@ -83,7 +82,6 @@ public class Warmup {
                 "org.apache.coyote.http11.AbstractHttp11Protocol",
                 "org.apache.geronimo.transaction.manager.TransactionManagerImpl",
                 "org.apache.jasper.compiler.JspRuntimeContext",
-                "org.apache.juli.logging.DirectJDKLog",
                 "org.apache.myfaces.context.servlet.ServletExternalContextImplBase",
                 "org.apache.myfaces.shared.config.MyfacesConfig",
                 "org.apache.myfaces.spi.WebConfigProviderFactory",
@@ -136,7 +134,6 @@ public class Warmup {
                 "org.apache.tomcat.util.net.AbstractEndpoint",
                 "org.apache.tomcat.util.scan.StandardJarScanner",
                 "org.apache.tomcat.util.threads.ThreadPoolExecutor",
-                "org.apache.tomee.loader.TomEEJarScanner",
                 // "org.apache.tomee.catalina.TomcatLoader", // can't be loaded from here
                 "org.apache.webbeans.config.WebBeansFinder",
                 "org.apache.webbeans.container.InjectionResolver",

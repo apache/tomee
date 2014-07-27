@@ -28,13 +28,13 @@ import org.apache.openejb.util.AppFinder;
 import java.util.Properties;
 
 public class BatchEEServiceManager implements ServicesManagerLocator {
-    public void initEnvironment(final @Observes ObserverAdded event) {
+    public void initEnvironment(@Observes final ObserverAdded event) {
         if (event.getObserver() == this) {
             ServicesManager.setServicesManagerLocator(this);
         }
     }
 
-    public void storeClassLoader(final @Observes AssemblerAfterApplicationCreated init) {
+    public void storeClassLoader(@Observes final AssemblerAfterApplicationCreated init) {
         final Properties properties = new Properties(SystemInstance.get().getProperties());
         properties.putAll(init.getApp().properties);
 
