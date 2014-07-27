@@ -18,8 +18,12 @@
 package org.apache.openejb.core.timer;
 
 import org.apache.openejb.BeanContext;
+import org.apache.openejb.BeanType;
 import org.apache.openejb.MethodContext;
+import org.apache.openejb.ModuleContext;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
@@ -32,6 +36,7 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -57,6 +62,36 @@ public class TimerServiceWrapper implements TimerService {
 
     public Collection<Timer> getTimers() throws IllegalStateException, EJBException {
         return getTimerService().getTimers();
+    }
+
+    @Override
+    public Collection<Timer> getAllTimers() throws IllegalStateException, EJBException {
+        final ThreadContext threadContext = ThreadContext.getThreadContext();
+        final BeanContext beanContext = threadContext.getBeanContext();
+        final ModuleContext module = beanContext.getModuleContext();
+
+        final Collection<Timer> timers = new HashSet<>();
+        for (final BeanContext c : module.getAppContext().getBeanContexts()) {
+            if (c.getModuleContext() == module) { // filter by module
+                if (c.getComponentType() != BeanType.STATEFUL) {
+                    final TimerService timerService = getTimerService(null, c, true);
+                    if (timerService == null) {
+                        continue;
+                    }
+                    final Collection<Timer> beanTimers = timerService.getTimers();
+                    timers.addAll(beanTimers);
+                } else {
+                    // for all instances
+                    final TimerService timerService = getTimerService(null, c, true);
+                    if (timerService == null) {
+                        continue;
+                    }
+                    final Collection<Timer> beanTimers = timerService.getTimers();
+                    timers.addAll(beanTimers);
+                }
+            }
+        }
+        return timers;
     }
 
     public Timer createSingleActionTimer(final long l, final TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
@@ -86,27 +121,53 @@ public class TimerServiceWrapper implements TimerService {
     private TimerService getTimerService() throws IllegalStateException {
         final ThreadContext threadContext = ThreadContext.getThreadContext();
         final BeanContext beanContext = threadContext.getBeanContext();
+        return getTimerService(threadContext.getPrimaryKey(), beanContext, false);
+    }
+
+    private TimerService getTimerService(final Object pk, final BeanContext beanContext, final boolean nullIfNotRelevant) throws IllegalStateException {
         final EjbTimerService timerService = beanContext.getEjbTimerService();
         if (timerService == null) {
             throw new IllegalStateException("This ejb does not support timers " + beanContext.getDeploymentID());
         } else if (beanContext.getEjbTimeout() == null) {
 
+            HasSchedule hasSchedule = beanContext.get(HasSchedule.class);
+
             boolean hasSchedules = false;
 
-            for (final Iterator<Map.Entry<Method, MethodContext>> it = beanContext.iteratorMethodContext(); it.hasNext(); ) {
-                final Map.Entry<Method, MethodContext> entry = it.next();
-                final MethodContext methodContext = entry.getValue();
-                if (methodContext.getSchedules().size() > 0) {
-                    hasSchedules = true;
+            if (hasSchedule != null) {
+                hasSchedules = hasSchedule.value;
+            } else {
+                for (final Iterator<Map.Entry<Method, MethodContext>> it = beanContext.iteratorMethodContext(); it.hasNext(); ) {
+                    final Map.Entry<Method, MethodContext> entry = it.next();
+                    final MethodContext methodContext = entry.getValue();
+                    if (methodContext.getSchedules().size() > 0) {
+                        hasSchedules = true;
+                    }
+                }
+                synchronized (beanContext) { // surely not the best lock instance but works in this context
+                    if (beanContext.get(HasSchedule.class) == null) {
+                        beanContext.set(HasSchedule.class, new HasSchedule(hasSchedules));
+                    }
                 }
             }
 
             if (!hasSchedules) {
+                if (nullIfNotRelevant) {
+                    return null;
+                }
                 log.error("This ejb does not support timers " + beanContext.getDeploymentID() + " due to no timeout method nor schedules in methodContext is configured");
             }
 
         }
 
-        return new TimerServiceImpl(timerService, threadContext.getPrimaryKey(), beanContext.getEjbTimeout());
+        return new TimerServiceImpl(timerService, pk, beanContext.getEjbTimeout());
+    }
+
+    private static class HasSchedule {
+        private final boolean value;
+
+        private HasSchedule(final boolean value) {
+            this.value = value;
+        }
     }
 }
