@@ -34,16 +34,11 @@ import org.apache.webbeans.intercept.InterceptorsManager;
 import org.apache.webbeans.spi.BDABeansXmlScanner;
 import org.apache.webbeans.spi.ScannerService;
 
-import java.io.IOException;
 import java.net.URL;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -51,22 +46,6 @@ import java.util.Set;
  */
 public class CdiScanner implements ScannerService {
     public static final String OPENEJB_CDI_FILTER_CLASSLOADER = "openejb.cdi.filter.classloader";
-    public static final ThreadLocal<Collection<String>> ADDITIONAL_CLASSES = new ThreadLocal<Collection<String>>();
-    private static final Map<String, Collection<String>> CONTAINER_CLASSES = new HashMap<String, Collection<String>>();
-
-    static { // load container classes lists
-        final Properties props = new Properties();
-        try {
-            props.load(CdiScanner.class.getResourceAsStream("/container-cdi-classes.properties"));
-        } catch (final IOException e) {
-            // no-op
-        }
-        for (final String key : props.stringPropertyNames()) {
-            final Collection<String> set = new HashSet<String>();
-            CONTAINER_CLASSES.put(key, set);
-            Collections.addAll(set, props.getProperty(key).split(","));
-        }
-    }
 
     // TODO add all annotated class
     private final Set<Class<?>> classes = new HashSet<Class<?>>();
@@ -178,14 +157,6 @@ public class CdiScanner implements ScannerService {
                 process(classLoader, it, startupObject, comparator, scl, filterByClassLoader);
             }
 
-            final Collection<String> otherClasses = ADDITIONAL_CLASSES.get();
-            if (otherClasses != null) {
-                final Iterator<String> it2 = otherClasses.iterator();
-                while (it2.hasNext()) {
-                    process(classLoader, it2, startupObject, comparator, scl, filterByClassLoader);
-                }
-            }
-
             if (startupObject.getBeanContexts() != null) { // ensure ejbs are in managed beans otherwise they will not be deployed in CDI
                 for (final BeanContext bc : startupObject.getBeanContexts()) {
                     final String name = bc.getBeanClass().getName();
@@ -198,36 +169,6 @@ public class CdiScanner implements ScannerService {
                         classes.add(load);
                     }
                 }
-            }
-
-            addContainerCdiClasses(classLoader, appInfo);
-            try { // not done in batchee extension so for now doing it here, ensure to use container loader!
-                classes.add(CdiScanner.class.getClassLoader().loadClass("org.apache.batchee.container.cdi.BatchProducerBean"));
-            } catch (final Throwable e) {
-                // no-op
-            }
-        }
-    }
-
-    private void addContainerCdiClasses(final ClassLoader loader, final AppInfo app) {
-        if (!"true".equalsIgnoreCase(app.properties.getProperty("CdiContainer", "true"))) {
-            return;
-        }
-
-        addContainerClasses(app.properties, loader, "BVal");
-    }
-
-
-    private void addContainerClasses(final Properties appProps, final ClassLoader loader, final String key) {
-        if (!"true".equalsIgnoreCase(appProps.getProperty("CdiContainer." + key, "true"))) {
-            return;
-        }
-
-        for (final String clazz : CONTAINER_CLASSES.get(key)) {
-            try {
-                classes.add(loader.loadClass(clazz));
-            } catch (final Throwable th) { // classnotfoundexception ot noclassdeffounderror
-                // no-op
             }
         }
     }
