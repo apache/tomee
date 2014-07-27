@@ -23,6 +23,7 @@ import org.apache.openejb.util.Logger;
 
 import javax.validation.ConstraintValidatorFactory;
 import javax.validation.MessageInterpolator;
+import javax.validation.ParameterNameProvider;
 import javax.validation.TraversableResolver;
 import javax.validation.Validator;
 import javax.validation.ValidatorContext;
@@ -64,5 +65,15 @@ public class ValidatorFactoryWrapper implements ValidatorFactory, Serializable {
     @Override
     public <T> T unwrap(final Class<T> tClass) {
         return factory().unwrap(tClass);
+    }
+
+    @Override
+    public ParameterNameProvider getParameterNameProvider() {
+        return factory().getParameterNameProvider();
+    }
+
+    @Override
+    public void close() {
+        factory().close();
     }
 }
