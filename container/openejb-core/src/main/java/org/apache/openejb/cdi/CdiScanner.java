@@ -41,7 +41,6 @@ import org.apache.webbeans.spi.BDABeansXmlScanner;
 import org.apache.webbeans.spi.ScannerService;
 
 import java.net.URL;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -58,7 +57,7 @@ public class CdiScanner implements ScannerService {
 
     private static final Class<?>[] TRANSACTIONAL_INTERCEPTORS = new Class<?>[]{
         MandatoryInterceptor.class, NeverInterceptor.class, NotSupportedInterceptor.class,
-        RequiredInterceptor.class, RequiredInterceptor.class, SupportsInterceptor.class
+        RequiredInterceptor.class, RequiredNewInterceptor.class, SupportsInterceptor.class
     };
 
     // TODO add all annotated class
@@ -85,7 +84,11 @@ public class CdiScanner implements ScannerService {
         final DecoratorsManager decoratorsManager = webBeansContext.getDecoratorsManager();
         final InterceptorsManager interceptorsManager = webBeansContext.getInterceptorsManager();
 
+        // "manual" extension to avoid to add it through SPI mecanism
         classes.addAll(asList(TRANSACTIONAL_INTERCEPTORS));
+        for (final Class<?> interceptor : TRANSACTIONAL_INTERCEPTORS) {
+            interceptorsManager.addEnabledInterceptorClass(interceptor);
+        }
 
         // app beans
         for (final EjbJarInfo ejbJar : appInfo.ejbJars) {
@@ -130,9 +133,6 @@ public class CdiScanner implements ScannerService {
                 } else if (shouldThrowCouldNotLoadException(startupObject)) {
                     throw new WebBeansConfigurationException("Could not load interceptor class: " + className);
                 }
-            }
-            for (final Class<?> interceptor : TRANSACTIONAL_INTERCEPTORS) {
-                interceptorsManager.addEnabledInterceptorClass(interceptor);
             }
 
             for (final String className : beans.decorators) {

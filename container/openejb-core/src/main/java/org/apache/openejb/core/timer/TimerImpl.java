@@ -17,11 +17,6 @@
 
 package org.apache.openejb.core.timer;
 
-import org.apache.openejb.BeanContext;
-import org.apache.openejb.core.BaseContext;
-import org.apache.openejb.core.ThreadContext;
-
-import javax.ejb.EJBContext;
 import javax.ejb.EJBException;
 import javax.ejb.NoMoreTimeoutsException;
 import javax.ejb.NoSuchObjectLocalException;

@@ -150,6 +150,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
     public ConfigurationFactory() {
         this(!shouldAutoDeploy());
+        System.setProperty("bval.in-container", "true");
     }
 
     private static boolean exists(final String s) {
