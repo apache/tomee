@@ -98,4 +98,9 @@ public class TimerServiceImpl implements TimerService {
 
         return scheduleExpressionCopy;
     }
+
+    @Override
+    public Collection<Timer> getAllTimers() throws IllegalStateException, EJBException {
+        throw new UnsupportedOperationException("not expecting to call this method from this class, see TimerServiceWrapper");
+    }
 }
