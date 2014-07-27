@@ -101,13 +101,14 @@ public final class CxfUtil {
 
     public static ClassLoader initBusLoader() {
         final ClassLoader loader = CxfUtil.getBus().getExtension(ClassLoader.class);
+        final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
         if (loader != null) {
-            if (CxfContainerClassLoader.class.isInstance(loader)) {
-                CxfContainerClassLoader.class.cast(loader).tccl(Thread.currentThread().getContextClassLoader());
+            if (CxfContainerClassLoader.class.isInstance(loader) && !CxfContainerClassLoader.class.isInstance(tccl)) {
+                CxfContainerClassLoader.class.cast(loader).tccl(tccl);
             }
             return loader;
         }
-        return Thread.currentThread().getContextClassLoader();
+        return tccl;
     }
 
     public static void clearBusLoader(final ClassLoader old) {
