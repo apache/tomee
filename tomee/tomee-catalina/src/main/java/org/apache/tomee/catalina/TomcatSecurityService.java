@@ -65,6 +65,10 @@ public class TomcatSecurityService extends AbstractSecurityService {
     public boolean isCallerInRole(final String role) {
         final Principal principal = getCallerPrincipal();
         if (TomcatUser.class.isInstance(principal)) {
+            if ("**".equals(role)) {
+                return true; // ie logged in through tomcat
+            }
+
             final TomcatUser tomcatUser = (TomcatUser) principal;
             final GenericPrincipal genericPrincipal = (GenericPrincipal) tomcatUser.getTomcatPrincipal();
             final String[] roles = genericPrincipal.getRoles();
