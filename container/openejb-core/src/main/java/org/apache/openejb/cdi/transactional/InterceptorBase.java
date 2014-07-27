@@ -88,7 +88,7 @@ public abstract class InterceptorBase implements Serializable {
         return OpenEJB.getTransactionManager();
     }
 
-    private static class ExceptionPriotiryRules {
+    private static final class ExceptionPriotiryRules {
         private final Class<?>[] includes;
         private final Class<?>[] excludes;
 
