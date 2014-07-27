@@ -103,6 +103,7 @@ public class BeanContext extends DeploymentContext {
 
     private final boolean isPassivatingScope = true;
     private ConstructorInjectionBean<Object> constructorInjectionBean;
+    private final boolean passivable;
 
     public boolean isDynamicallyImplemented() {
         return proxyClass != null;
@@ -329,7 +330,8 @@ public class BeanContext extends DeploymentContext {
     /**
      * load default interceptors configured in properties.
      */
-    private BeanContext(final String id, final Context jndiContext, final ModuleContext moduleContext, final BeanType componentType, final boolean localBean, final Class beanClass) {
+    private BeanContext(final String id, final Context jndiContext, final ModuleContext moduleContext, final BeanType componentType,
+                        final boolean localBean, final Class beanClass, final boolean passivable) {
         super(id, moduleContext.getOptions());
 
         if (beanClass == null) {
@@ -341,6 +343,7 @@ public class BeanContext extends DeploymentContext {
         this.localbean = localBean;
         this.componentType = componentType;
         this.beanClass = beanClass;
+        this.passivable = passivable;
 
         final String interceptors = SystemInstance.get().getProperties().getProperty(USER_INTERCEPTOR_KEY);
         if (interceptors != null) {
@@ -370,8 +373,9 @@ public class BeanContext extends DeploymentContext {
                        final Class proxy,
                        final Class serviceEndpointInterface, final List<Class> businessLocals, final List<Class> businessRemotes, final Class pkClass,
                        final BeanType componentType,
-                       final boolean localBean) throws SystemException {
-        this(id, jndiContext, moduleContext, componentType, localBean, beanClass);
+                       final boolean localBean,
+                       final boolean passivable) throws SystemException {
+        this(id, jndiContext, moduleContext, componentType, localBean, beanClass, passivable);
 
         this.proxyClass = proxy;
 
@@ -560,7 +564,7 @@ public class BeanContext extends DeploymentContext {
     }
 
     public BeanContext(final String id, final Context jndiContext, final ModuleContext moduleContext, final Class beanClass, final Class mdbInterface, final Map<String, String> activationProperties) throws SystemException {
-        this(id, jndiContext, moduleContext, BeanType.MESSAGE_DRIVEN, false, beanClass);
+        this(id, jndiContext, moduleContext, BeanType.MESSAGE_DRIVEN, false, beanClass, false);
 
         this.getMdb().mdbInterface = mdbInterface;
         this.getMdb().activationProperties.putAll(activationProperties);
@@ -1768,6 +1772,10 @@ public class BeanContext extends DeploymentContext {
         }
 
         return isPassivatingScope;
+    }
+
+    public boolean isPassivable() {
+        return componentType == BeanType.STATEFUL && passivable;
     }
 
     public void stop() {

@@ -1491,6 +1491,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                     if (stateful.mappedName() != null) {
                         sessionBean.setMappedName(stateful.mappedName());
                     }
+                    if (sessionBean.getPassivationCapable() == null) {
+                        sessionBean.setPassivationCapable(stateful.passivationCapable());
+                    }
                 }
                 LegacyProcessor.process(beanClass.get(), enterpriseBean);
             }

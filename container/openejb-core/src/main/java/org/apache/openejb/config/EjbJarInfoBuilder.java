@@ -574,6 +574,7 @@ public class EjbJarInfoBuilder {
 
         if (s.getSessionType() == SessionType.STATEFUL) {
             bean = new StatefulBeanInfo();
+            bean.passivable = s.getPassivationCapable();
             final StatefulBeanInfo stateful = (StatefulBeanInfo) bean;
 
             copyCallbacks(s.getPostActivate(), stateful.postActivate);
