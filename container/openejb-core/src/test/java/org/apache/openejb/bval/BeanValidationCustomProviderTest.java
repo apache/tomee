@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.bval;
 
-import org.apache.bval.jsr303.ApacheValidationProvider;
+import org.apache.bval.jsr.ApacheValidationProvider;
 import org.apache.openejb.assembler.classic.ValidatorBuilder;
 import org.apache.openejb.bval.util.CustomValidatorProvider;
 import org.apache.openejb.jee.Empty;
