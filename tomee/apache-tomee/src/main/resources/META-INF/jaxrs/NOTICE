@@ -26,7 +26,7 @@ Portions of this software were originally based on the following:
 Apache OpenJPA NOTICE
 
 OpenJPA includes the persistence and orm schemas from the JPA specifications.
-Copyright 2005-2007 Sun Microsystems, Inc. All rights reserved.
+Copyright 2005-2014 Sun Microsystems, Inc. All rights reserved.
 
 OpenJPA elects to include this software in this distribution under the
 CDDL license.  You can obtain a copy of the License at:
@@ -117,4 +117,24 @@ This product includes software Copyright University of Southampton IT Innovation
 
 =========================================================================
   - JAnsi (http://http://jansi.fusesource.org/) org.fusesource.jansi:jansi:jar:1.8
-    License: Apache V2
+    License: Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0.txt)
+=========================================================================
+Gson - A Java library that can be used to convert Java Objects into their JSON representation
+License: Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0.txt)
+=========================================================================
+FastInfoset (https://fi.java.net/)
+License: Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0.txt)
+=========================================================================
+Istack Commons Runtime (https://istack-commons.java.net/)
+License: CDDL v1.1 and GPL v2 (https://glassfish.java.net/public/CDDL+GPL_1_1.html)
+=========================================================================
+Jaxb Core (https://jaxb.java.net/)
+License: CDDL v1.1 and GPL v2 (https://glassfish.java.net/public/CDDL+GPL_1_1.html)
+=========================================================================
+Quartz (http://quartz-scheduler.org/)
+License: Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0.txt)
+=========================================================================
+el-api - Unified Expression Language is dual licensed under 2 OSI approved licenses (https://uel.java.net/license.html)
+    COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL - Version 1.1)
+    GNU General Public License (GPL - Version 2, June 1991) with the Classpath Exception
+=========================================================================

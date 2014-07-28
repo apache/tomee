@@ -215,8 +215,8 @@ W3C Consortium (http://www.w3c.org/).
 Use of the source code, thus licensed, and the resultant binary are
 subject to the terms and conditions of the following license.
 
-W3C� SOFTWARE NOTICE AND LICENSE
-Copyright � 1994-2002 World Wide Web Consortium, (Massachusetts Institute of
+W3C SOFTWARE NOTICE AND LICENSE
+Copyright (c) 1994-2014 World Wide Web Consortium, (Massachusetts Institute of
 Technology, Institut National de Recherche en Informatique et en Automatique,
 Keio University). All Rights Reserved. http://www.w3.org/Consortium/Legal/
 
@@ -237,7 +237,7 @@ modifications, that you make:
    2. Any pre-existing intellectual property disclaimers, notices, or terms
          and conditions. If none exist, a short notice of the following form
          (hypertext is preferred, text is permitted) should be used within
-         the body of any redistributed or derivative code: "Copyright �
+         the body of any redistributed or derivative code: "Copyright (c)
          [$date-of-software] World Wide Web Consortium, (Massachusetts Institute
          of Technology, Institut National de Recherche en Informatique et en
          Automatique, Keio University). All Rights Reserved.
@@ -268,7 +268,7 @@ times remain with copyright holders.
 
 For work developed by the HSQL Development Group:
 
-Copyright (c) 2001-2010, The HSQL Development Group
+Copyright (c) 2001-2014, The HSQL Development Group
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -1099,7 +1099,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     License: MIT License  (http://www.opensource.org/licenses/mit-license.php)
 -------------------------------------------------------------------------
 
-Copyright (c) 2004-2008 QOS.ch
+Copyright (c) 2004-2014 QOS.ch
  All rights reserved.
 
  Permission is hereby granted, free  of charge, to any person obtaining
@@ -1127,7 +1127,7 @@ Copyright (c) 2004-2008 QOS.ch
     License: BSD (http://asm.ow2.org/license.html)
 -------------------------------------------------------------------------
 
-Copyright (c) 2000-2005 INRIA, France Telecom
+Copyright (c) 2000-2014 INRIA, France Telecom
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
