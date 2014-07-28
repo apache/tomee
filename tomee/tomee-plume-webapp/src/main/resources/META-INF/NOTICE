@@ -103,3 +103,10 @@ el-api - Unified Expression Language is dual licensed under 2 OSI approved licen
     COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL - Version 1.1)
     GNU General Public License (GPL - Version 2, June 1991) with the Classpath Exception
 =========================================================================
+EclipseLink - http://www.eclipse.org/eclipselink/
+License: The EclipseLink project is dual licensed under the Eclipse Public License (http://www.eclipse.org/legal/epl-v10.html) 
+and the Eclipse Distribution Licensed (http://www.eclipse.org/org/documents/edl-v10.php). 
+=========================================================================
+Mojarra JavaServer Faces - Oracle's open source implementation of the JSF standard (https://javaserverfaces.java.net/)
+License: COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) plus GPL, https://glassfish.dev.java.net/public/CDDL+GPL.html
+=========================================================================
