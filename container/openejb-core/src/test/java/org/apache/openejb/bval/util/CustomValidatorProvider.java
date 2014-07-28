@@ -16,17 +16,20 @@
  */
 package org.apache.openejb.bval.util;
 
-import org.apache.bval.jsr303.ApacheValidationProvider;
-import org.apache.bval.jsr303.ApacheValidatorConfiguration;
-import org.apache.bval.jsr303.ConfigurationImpl;
+import org.apache.bval.jsr.ApacheValidationProvider;
+import org.apache.bval.jsr.ApacheValidatorConfiguration;
+import org.apache.bval.jsr.ConfigurationImpl;
+import org.apache.bval.jsr.parameter.DefaultParameterNameProvider;
 
 import javax.validation.ConstraintValidatorFactory;
 import javax.validation.ConstraintViolation;
 import javax.validation.MessageInterpolator;
+import javax.validation.ParameterNameProvider;
 import javax.validation.TraversableResolver;
 import javax.validation.Validator;
 import javax.validation.ValidatorContext;
 import javax.validation.ValidatorFactory;
+import javax.validation.executable.ExecutableValidator;
 import javax.validation.metadata.BeanDescriptor;
 import javax.validation.spi.BootstrapState;
 import javax.validation.spi.ConfigurationState;
@@ -158,6 +161,16 @@ public class CustomValidatorProvider implements ValidationProvider<ApacheValidat
         public <T> T unwrap(final Class<T> type) {
             return null;
         }
+
+        @Override
+        public ParameterNameProvider getParameterNameProvider() {
+            return new DefaultParameterNameProvider();
+        }
+
+        @Override
+        public void close() {
+            // no-op
+        }
     }
 
     public static class CustomValidatorContext implements ValidatorContext {
@@ -179,6 +192,11 @@ public class CustomValidatorProvider implements ValidationProvider<ApacheValidat
         @Override
         public Validator getValidator() {
             return new CustomValidator();
+        }
+
+        @Override
+        public ValidatorContext parameterNameProvider(final ParameterNameProvider parameterNameProvider) {
+            return null;
         }
     }
 
@@ -205,6 +223,11 @@ public class CustomValidatorProvider implements ValidationProvider<ApacheValidat
 
         @Override
         public <T> T unwrap(final Class<T> type) {
+            return null;
+        }
+
+        @Override
+        public ExecutableValidator forExecutables() {
             return null;
         }
     }
