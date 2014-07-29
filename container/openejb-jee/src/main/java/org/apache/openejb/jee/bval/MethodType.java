@@ -28,18 +28,18 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * <p>Java class for fieldType complex type.
+ * <p>Java class for methodType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="fieldType">
+ * &lt;complexType name="methodType">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="valid" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="convert-group" type="{http://jboss.org/xml/ns/javax/validation/mapping}groupConversionType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="constraint" type="{http://jboss.org/xml/ns/javax/validation/mapping}constraintType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="parameter" type="{http://jboss.org/xml/ns/javax/validation/mapping}parameterType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="cross-parameter" type="{http://jboss.org/xml/ns/javax/validation/mapping}crossParameterType" minOccurs="0"/>
+ *         &lt;element name="return-value" type="{http://jboss.org/xml/ns/javax/validation/mapping}returnValueType" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="ignore-annotations" type="{http://www.w3.org/2001/XMLSchema}boolean" />
@@ -51,18 +51,18 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "fieldType", propOrder = {
-    "valid",
-    "convertGroup",
-    "constraint"
+@XmlType(name = "methodType", propOrder = {
+    "parameter",
+    "crossParameter",
+    "returnValue"
 })
-public class FieldType {
+public class MethodType {
 
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String valid;
-    @XmlElement(name = "convert-group")
-    protected List<GroupConversionType> convertGroup;
-    protected List<ConstraintType> constraint;
+    protected List<ParameterType> parameter;
+    @XmlElement(name = "cross-parameter")
+    protected CrossParameterType crossParameter;
+    @XmlElement(name = "return-value")
+    protected ReturnValueType returnValue;
     @XmlAttribute(name = "name", required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String name;
@@ -70,85 +70,80 @@ public class FieldType {
     protected Boolean ignoreAnnotations;
 
     /**
-     * Gets the value of the valid property.
+     * Gets the value of the parameter property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the parameter property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getParameter().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link ParameterType }
+     * 
+     * 
+     */
+    public List<ParameterType> getParameter() {
+        if (parameter == null) {
+            parameter = new ArrayList<ParameterType>();
+        }
+        return this.parameter;
+    }
+
+    /**
+     * Gets the value of the crossParameter property.
      * 
      * @return
      *     possible object is
-     *     {@link String }
+     *     {@link CrossParameterType }
      *     
      */
-    public String getValid() {
-        return valid;
+    public CrossParameterType getCrossParameter() {
+        return crossParameter;
     }
 
     /**
-     * Sets the value of the valid property.
+     * Sets the value of the crossParameter property.
      * 
      * @param value
      *     allowed object is
-     *     {@link String }
+     *     {@link CrossParameterType }
      *     
      */
-    public void setValid(String value) {
-        this.valid = value;
+    public void setCrossParameter(CrossParameterType value) {
+        this.crossParameter = value;
     }
 
     /**
-     * Gets the value of the convertGroup property.
+     * Gets the value of the returnValue property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the convertGroup property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getConvertGroup().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link GroupConversionType }
-     * 
-     * 
+     * @return
+     *     possible object is
+     *     {@link ReturnValueType }
+     *     
      */
-    public List<GroupConversionType> getConvertGroup() {
-        if (convertGroup == null) {
-            convertGroup = new ArrayList<GroupConversionType>();
-        }
-        return this.convertGroup;
+    public ReturnValueType getReturnValue() {
+        return returnValue;
     }
 
     /**
-     * Gets the value of the constraint property.
+     * Sets the value of the returnValue property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the constraint property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getConstraint().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link ConstraintType }
-     * 
-     * 
+     * @param value
+     *     allowed object is
+     *     {@link ReturnValueType }
+     *     
      */
-    public List<ConstraintType> getConstraint() {
-        if (constraint == null) {
-            constraint = new ArrayList<ConstraintType>();
-        }
-        return this.constraint;
+    public void setReturnValue(ReturnValueType value) {
+        this.returnValue = value;
     }
 
     /**

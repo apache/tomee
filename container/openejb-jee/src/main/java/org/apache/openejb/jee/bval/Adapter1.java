@@ -14,6 +14,25 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://jboss.org/xml/ns/javax/validation/mapping", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.apache.openejb.jee.bval;
+
+import javax.validation.executable.ExecutableType;
+import javax.xml.bind.annotation.adapters.XmlAdapter;
+
+public class Adapter1
+    extends XmlAdapter<String, ExecutableType>
+{
+
+
+    public ExecutableType unmarshal(String value) {
+        return (javax.validation.executable.ExecutableType.valueOf(value));
+    }
+
+    public String marshal(ExecutableType value) {
+        if (value == null) {
+            return null;
+        }
+        return value.toString();
+    }
+
+}

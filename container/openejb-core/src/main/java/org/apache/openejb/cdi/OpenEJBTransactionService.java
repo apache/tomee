@@ -91,7 +91,8 @@ public class OpenEJBTransactionService implements TransactionService {
         }
 
         TransactionalEventNotifier.registerTransactionSynchronization(phase, observer, event,
-            new EventMetadataImpl(observer.getObservedType(), null, qualifiers.toArray(new Annotation[qualifiers.size()])));
+            new EventMetadataImpl(observer.getObservedType(), null, null,
+                qualifiers.toArray(new Annotation[qualifiers.size()]), webBeansContext));
     }
 
     public void setWebBeansContext(final WebBeansContext webBeansContext) {

@@ -8,11 +8,11 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.apache.openejb.jee.bval;
 
@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for constraintType complex type.
- * <p/>
+ * 
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ * 
  * <pre>
  * &lt;complexType name="constraintType">
  *   &lt;complexContent>
@@ -46,6 +46,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
+ * 
+ * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "constraintType", propOrder = {
@@ -61,15 +63,17 @@ public class ConstraintType {
     protected GroupsType groups;
     protected PayloadType payload;
     protected List<ElementType> element;
-    @XmlAttribute(required = true)
+    @XmlAttribute(name = "annotation", required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String annotation;
 
     /**
      * Gets the value of the message property.
-     *
-     * @return possible object is
-     * {@link String }
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
     public String getMessage() {
         return message;
@@ -77,19 +81,23 @@ public class ConstraintType {
 
     /**
      * Sets the value of the message property.
-     *
-     * @param value allowed object is
-     *              {@link String }
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setMessage(final String value) {
+    public void setMessage(String value) {
         this.message = value;
     }
 
     /**
      * Gets the value of the groups property.
-     *
-     * @return possible object is
-     * {@link GroupsType }
+     * 
+     * @return
+     *     possible object is
+     *     {@link GroupsType }
+     *     
      */
     public GroupsType getGroups() {
         return groups;
@@ -97,19 +105,23 @@ public class ConstraintType {
 
     /**
      * Sets the value of the groups property.
-     *
-     * @param value allowed object is
-     *              {@link GroupsType }
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link GroupsType }
+     *     
      */
-    public void setGroups(final GroupsType value) {
+    public void setGroups(GroupsType value) {
         this.groups = value;
     }
 
     /**
      * Gets the value of the payload property.
-     *
-     * @return possible object is
-     * {@link PayloadType }
+     * 
+     * @return
+     *     possible object is
+     *     {@link PayloadType }
+     *     
      */
     public PayloadType getPayload() {
         return payload;
@@ -117,33 +129,37 @@ public class ConstraintType {
 
     /**
      * Sets the value of the payload property.
-     *
-     * @param value allowed object is
-     *              {@link PayloadType }
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link PayloadType }
+     *     
      */
-    public void setPayload(final PayloadType value) {
+    public void setPayload(PayloadType value) {
         this.payload = value;
     }
 
     /**
      * Gets the value of the element property.
-     * <p/>
-     * <p/>
+     * 
+     * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the element property.
-     * <p/>
-     * <p/>
+     * 
+     * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getElement().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     * 
+     * 
+     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link ElementType }
+     * 
+     * 
      */
     public List<ElementType> getElement() {
         if (element == null) {
@@ -154,9 +170,11 @@ public class ConstraintType {
 
     /**
      * Gets the value of the annotation property.
-     *
-     * @return possible object is
-     * {@link String }
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
     public String getAnnotation() {
         return annotation;
@@ -164,11 +182,13 @@ public class ConstraintType {
 
     /**
      * Sets the value of the annotation property.
-     *
-     * @param value allowed object is
-     *              {@link String }
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setAnnotation(final String value) {
+    public void setAnnotation(String value) {
         this.annotation = value;
     }
 

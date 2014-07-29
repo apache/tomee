@@ -38,7 +38,6 @@ import org.apache.webbeans.config.WebBeansFinder;
 import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.event.ObserverMethodImpl;
 import org.apache.webbeans.exception.WebBeansConfigurationException;
-import org.apache.webbeans.portable.events.ProcessAnnotatedTypeImpl;
 import org.apache.webbeans.portable.events.discovery.BeforeShutdownImpl;
 import org.apache.webbeans.portable.events.generics.GProcessSessionBean;
 import org.apache.webbeans.proxy.NormalScopeProxyFactory;
@@ -56,6 +55,7 @@ import javax.enterprise.context.spi.Context;
 import javax.enterprise.context.spi.Contextual;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.Disposes;
+import javax.enterprise.inject.Vetoed;
 import javax.enterprise.inject.spi.AnnotatedField;
 import javax.enterprise.inject.spi.AnnotatedMethod;
 import javax.enterprise.inject.spi.AnnotatedType;
@@ -274,60 +274,10 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
         return isNewSessionBean(webBeansContext, clazz) || isNewSessionBean(superContext(webBeansContext), clazz);
     }
 
-    private boolean isNewSessionBean(final WebBeansContext ctx, final Class<?> clazz) {
-        if (ctx == null) {
-            return false;
-        }
-
-        final Map<Class<?>, BeanContext> map = pluginBeans(ctx);
-        return map != null && (map.containsKey(clazz) || clazz.isInterface() && findBeanContext(ctx, clazz) != null);
-    }
-
-    private static WebBeansContext superContext(final WebBeansContext ctx) {
-        if (!WebappWebBeansContext.class.isInstance(ctx)) {
-            return null;
-        }
-        return WebappWebBeansContext.class.cast(ctx).getParent();
-    }
-
-    private static BeanContext findBeanContext(final WebBeansContext ctx, final Class<?> clazz) {
-        final Map<Class<?>, BeanContext> beans = pluginBeans(ctx);
-
-        final BeanContext b = beans.get(clazz);
-        if (b != null) {
-            return b;
-        }
-
-        for (final BeanContext bc : beans.values()) {
-            if (bc.isLocalbean()) {
-                continue; // see isSessionBean() impl
-            }
-
-            final CdiEjbBean<?> cdiEjbBean = bc.get(CdiEjbBean.class);
-            if (cdiEjbBean == null) {
-                continue;
-            }
-
-            for (final Class<?> itf : cdiEjbBean.getBusinessLocalInterfaces()) {
-                if (itf.equals(clazz)) {
-                    return bc;
-                }
-            }
-        }
-
-        final WebBeansContext parentCtx = superContext(ctx);
-        if (parentCtx != null) {
-            return findBeanContext(parentCtx, clazz);
-        }
-
-        return null;
-    }
-
     @Override
-    public <T> Bean<T> defineSessionBean(final Class<T> clazz, final ProcessAnnotatedType<T> processAnnotateTypeEvent) {
+    public <T> Bean<T> defineSessionBean(final Class<T> clazz, final AnnotatedType<T> annotatedType) {
         final BeanContext bc = findBeanContext(webBeansContext, clazz);
-        final AnnotatedType<T> annotatedType = processAnnotateTypeEvent.getAnnotatedType();
-        final CdiEjbBean<T> bean = new OpenEJBBeanBuilder<T>(bc, webBeansContext, annotatedType).createBean(clazz, isActivated(processAnnotateTypeEvent));
+        final CdiEjbBean<T> bean = new OpenEJBBeanBuilder<T>(bc, webBeansContext, annotatedType).createBean(clazz, !annotatedType.isAnnotationPresent(Vetoed.class));
 
         bc.set(CdiEjbBean.class, bean);
         bc.set(CurrentCreationalContext.class, new CurrentCreationalContext());
@@ -381,7 +331,7 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
         final BeanManagerImpl beanManager = webBeansContext.getBeanManagerImpl();
 
         //Fires ProcessManagedBean
-        webBeansContext.getBeanManagerImpl().fireEvent(new GProcessSessionBean(Bean.class.cast(bean), annotatedType, bc.getEjbName(), bean.getEjbType()));
+        webBeansContext.getBeanManagerImpl().fireEvent(new GProcessSessionBean(Bean.class.cast(bean), annotatedType, bc.getEjbName(), bean.getEjbType()), true);
         webBeansUtil.inspectErrorStack("There are errors that are added by ProcessSessionBean event observers for managed beans. Look at logs for further details");
 
         //Fires ProcessProducerMethod
@@ -410,6 +360,54 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
         return bean;
     }
 
+    private boolean isNewSessionBean(final WebBeansContext ctx, final Class<?> clazz) {
+        if (ctx == null) {
+            return false;
+        }
+
+        final Map<Class<?>, BeanContext> map = pluginBeans(ctx);
+        return map != null && (map.containsKey(clazz) || clazz.isInterface() && findBeanContext(ctx, clazz) != null);
+    }
+
+    private static WebBeansContext superContext(final WebBeansContext ctx) {
+        if (!WebappWebBeansContext.class.isInstance(ctx)) {
+            return null;
+        }
+        return WebappWebBeansContext.class.cast(ctx).getParent();
+    }
+
+    private static BeanContext findBeanContext(final WebBeansContext ctx, final Class<?> clazz) {
+        final Map<Class<?>, BeanContext> beans = pluginBeans(ctx);
+
+        final BeanContext b = beans.get(clazz);
+        if (b != null) {
+            return b;
+        }
+
+        for (final BeanContext bc : beans.values()) {
+            if (bc.isLocalbean()) {
+                continue; // see isSessionBean() impl
+            }
+
+            final CdiEjbBean<?> cdiEjbBean = bc.get(CdiEjbBean.class);
+            if (cdiEjbBean == null) {
+                continue;
+            }
+
+            for (final Class<?> itf : cdiEjbBean.getBusinessLocalInterfaces()) {
+                if (itf.equals(clazz)) {
+                    return bc;
+                }
+            }
+        }
+
+        final WebBeansContext parentCtx = superContext(ctx);
+        if (parentCtx != null) {
+            return findBeanContext(parentCtx, clazz);
+        }
+
+        return null;
+    }
 
     @Override
     public <T> Bean<T> defineNewSessionBean(final Class<T> clazz) {
@@ -480,10 +478,6 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
                 }
             }
         }
-    }
-
-    private static boolean isActivated(final ProcessAnnotatedType<?> pat) {
-        return !ProcessAnnotatedTypeImpl.class.isInstance(pat) || !ProcessAnnotatedTypeImpl.class.cast(pat).isVeto();
     }
 
     @Override

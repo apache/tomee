@@ -18,21 +18,8 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 <suite name="JSR-303-TCK" verbose="1">
     <test name="JSR-303-TCK">
-        <method-selectors>
-            <method-selector>
-                <selector-class name="org.jboss.testharness.impl.testng.ExcludeIncontainerUnderInvestigationMethodSelector"/>
-            </method-selector>
-        </method-selectors>
-        <groups>
-            <run>
-                <exclude name="underInvestigation"/>
-                <exclude name="ri-broken"/>
-                <exclude name="jboss-as-broken"/>
-                <exclude name="broken"/>
-            </run>
-        </groups>
-        <packages>
-            <package name="org.hibernate.jsr303.tck.tests"/>
-        </packages>
+      <classes>
+        <class name="org.hibernate.beanvalidation.tck.tests.integration.cdi.executable.types.ExecutableTypesTest" />
+      </classes>
     </test>
 </suite>

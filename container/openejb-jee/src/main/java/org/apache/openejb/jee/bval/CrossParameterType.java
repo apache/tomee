@@ -21,21 +21,19 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for classType complex type.
+ * <p>Java class for crossParameterType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="classType">
+ * &lt;complexType name="crossParameterType">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="group-sequence" type="{http://jboss.org/xml/ns/javax/validation/mapping}groupSequenceType" minOccurs="0"/>
  *         &lt;element name="constraint" type="{http://jboss.org/xml/ns/javax/validation/mapping}constraintType" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="ignore-annotations" type="{http://www.w3.org/2001/XMLSchema}boolean" />
@@ -47,41 +45,14 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "classType", propOrder = {
-    "groupSequence",
+@XmlType(name = "crossParameterType", propOrder = {
     "constraint"
 })
-public class ClassType {
+public class CrossParameterType {
 
-    @XmlElement(name = "group-sequence")
-    protected GroupSequenceType groupSequence;
     protected List<ConstraintType> constraint;
     @XmlAttribute(name = "ignore-annotations")
     protected Boolean ignoreAnnotations;
-
-    /**
-     * Gets the value of the groupSequence property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link GroupSequenceType }
-     *     
-     */
-    public GroupSequenceType getGroupSequence() {
-        return groupSequence;
-    }
-
-    /**
-     * Sets the value of the groupSequence property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link GroupSequenceType }
-     *     
-     */
-    public void setGroupSequence(GroupSequenceType value) {
-        this.groupSequence = value;
-    }
 
     /**
      * Gets the value of the constraint property.

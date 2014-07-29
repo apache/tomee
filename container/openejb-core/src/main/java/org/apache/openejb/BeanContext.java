@@ -1618,7 +1618,8 @@ public class BeanContext extends DeploymentContext {
                             CreationalContextImpl.class.cast(creationalContext).putDelegate(beanInstance);
                             final Object decoratorInstance = decorator.create(CreationalContext.class.cast(creationalContext));
                             instances.put(decorator, decoratorInstance);
-                            beanInstance = pf.createProxyInstance(proxyClass, instance, new DecoratorHandler(interceptorInfo, instances, i - 1, instance, cdiEjbBean.getId()));
+                            beanInstance = pf.createProxyInstance(proxyClass, instance,
+                                new DecoratorHandler(interceptorInfo, decorators, instances, i - 1, instance, cdiEjbBean.getId()));
                         }
                     }
                 }

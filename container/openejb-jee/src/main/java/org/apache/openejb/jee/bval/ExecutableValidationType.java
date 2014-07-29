@@ -21,23 +21,21 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * <p>Java class for constraint-definitionType complex type.
+ * <p>Java class for executable-validationType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="constraint-definitionType">
+ * &lt;complexType name="executable-validationType">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="validated-by" type="{http://jboss.org/xml/ns/javax/validation/mapping}validated-byType"/>
+ *         &lt;element name="default-validated-executable-types" type="{http://jboss.org/xml/ns/javax/validation/configuration}default-validated-executable-typesType" minOccurs="0"/>
  *       &lt;/sequence>
- *       &lt;attribute name="annotation" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="enabled" type="{http://www.w3.org/2001/XMLSchema}boolean" default="true" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -46,63 +44,66 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "constraint-definitionType", propOrder = {
-    "validatedBy"
+@XmlType(name = "executable-validationType", namespace = "http://jboss.org/xml/ns/javax/validation/configuration", propOrder = {
+    "defaultValidatedExecutableTypes"
 })
-public class ConstraintDefinitionType {
+public class ExecutableValidationType {
 
-    @XmlElement(name = "validated-by", required = true)
-    protected ValidatedByType validatedBy;
-    @XmlAttribute(name = "annotation", required = true)
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String annotation;
+    @XmlElement(name = "default-validated-executable-types")
+    protected DefaultValidatedExecutableTypesType defaultValidatedExecutableTypes;
+    @XmlAttribute(name = "enabled")
+    protected Boolean enabled;
 
     /**
-     * Gets the value of the validatedBy property.
+     * Gets the value of the defaultValidatedExecutableTypes property.
      * 
      * @return
      *     possible object is
-     *     {@link ValidatedByType }
+     *     {@link DefaultValidatedExecutableTypesType }
      *     
      */
-    public ValidatedByType getValidatedBy() {
-        return validatedBy;
+    public DefaultValidatedExecutableTypesType getDefaultValidatedExecutableTypes() {
+        return defaultValidatedExecutableTypes;
     }
 
     /**
-     * Sets the value of the validatedBy property.
+     * Sets the value of the defaultValidatedExecutableTypes property.
      * 
      * @param value
      *     allowed object is
-     *     {@link ValidatedByType }
+     *     {@link DefaultValidatedExecutableTypesType }
      *     
      */
-    public void setValidatedBy(ValidatedByType value) {
-        this.validatedBy = value;
+    public void setDefaultValidatedExecutableTypes(DefaultValidatedExecutableTypesType value) {
+        this.defaultValidatedExecutableTypes = value;
     }
 
     /**
-     * Gets the value of the annotation property.
+     * Gets the value of the enabled property.
      * 
      * @return
      *     possible object is
-     *     {@link String }
+     *     {@link Boolean }
      *     
      */
-    public String getAnnotation() {
-        return annotation;
+    public boolean getEnabled() {
+        if (enabled == null) {
+            return true;
+        } else {
+            return enabled;
+        }
     }
 
     /**
-     * Sets the value of the annotation property.
+     * Sets the value of the enabled property.
      * 
      * @param value
      *     allowed object is
-     *     {@link String }
+     *     {@link Boolean }
      *     
      */
-    public void setAnnotation(String value) {
-        this.annotation = value;
+    public void setEnabled(Boolean value) {
+        this.enabled = value;
     }
 
 }

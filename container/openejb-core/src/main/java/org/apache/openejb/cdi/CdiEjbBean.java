@@ -322,18 +322,12 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker {
             return it;
         }
 
-        protected Set<InjectionPoint> createInjectionPoints(final Bean<T> bean) {
-            final Set<InjectionPoint> injectionPoints = new HashSet<InjectionPoint>();
-            for (final InjectionPoint injectionPoint : getWebBeansContext().getInjectionPointFactory().buildInjectionPoints(bean, getAnnotatedType())) {
-                injectionPoints.add(injectionPoint);
-            }
-            return injectionPoints;
-        }
-
+        @Override
         protected List<AnnotatedMethod<?>> getPostConstructMethods() {
             return Collections.emptyList();
         }
 
+        @Override
         protected List<AnnotatedMethod<?>> getPreDestroyMethods() {
             return Collections.emptyList();
         }

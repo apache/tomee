@@ -41,7 +41,6 @@ import org.apache.webbeans.spi.ScannerService;
 import org.apache.webbeans.spi.adaptor.ELAdaptor;
 import org.apache.webbeans.util.WebBeansConstants;
 import org.apache.webbeans.util.WebBeansUtil;
-import org.apache.webbeans.xml.WebBeansXMLConfigurator;
 
 import javax.el.ELResolver;
 import javax.enterprise.inject.spi.BeanManager;
@@ -79,12 +78,6 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
     private final BeansDeployer deployer;
 
     /**
-     * XML discovery.
-     */
-    //XML discovery is removed from the specification. It is here for next revisions of spec.
-    private final WebBeansXMLConfigurator xmlDeployer;
-
-    /**
      * Using for lookup operations
      */
     private final JNDIService jndiService;
@@ -101,13 +94,10 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
 
     public OpenEJBLifecycle(final WebBeansContext webBeansContext) {
         this.webBeansContext = webBeansContext;
-        beforeInitApplication(null);
 
         this.beanManager = webBeansContext.getBeanManagerImpl();
-        this.xmlDeployer = new WebBeansXMLConfigurator();
-        this.deployer = new BeansDeployer(this.xmlDeployer, webBeansContext);
+        this.deployer = new BeansDeployer(webBeansContext);
         this.jndiService = webBeansContext.getService(JNDIService.class);
-        this.beanManager.setXMLConfigurator(this.xmlDeployer);
         this.scannerService = webBeansContext.getScannerService();
         this.contextsService = webBeansContext.getContextsService();
 
@@ -139,10 +129,6 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
 
         try {
             Thread.currentThread().setContextClassLoader(stuff.getClassLoader());
-
-            //Before Start
-            beforeStartApplication(startupObject);
-
 
             //Load all plugins
             webBeansContext.getPluginLoader().startUp();
@@ -214,7 +200,9 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             }
 
             //Start actual starting on sub-classes
-            afterStartApplication(startupObject);
+            if (beanManager instanceof WebappBeanManager) {
+                ((WebappBeanManager) beanManager).afterStart();
+            }
         } finally {
             Thread.currentThread().setContextClassLoader(oldCl);
 
@@ -231,13 +219,15 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
 
         try {
             //Sub-classes operations
-            beforeStopApplication(null);
+            if (service != null) {
+                service.shutdownNow();
+            }
 
             //Fire shut down
             if (beanManager instanceof WebappBeanManager) {
                 ((WebappBeanManager) beanManager).beforeStop();
             }
-            this.beanManager.fireEvent(new BeforeShutdownImpl());
+            this.beanManager.fireEvent(new BeforeShutdownImpl(), true);
 
             //Destroys context
             this.contextsService.destroy(null);
@@ -261,7 +251,18 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             webBeansContext.getAnnotatedElementFactory().clear();
 
             //After Stop
-            afterStopApplication(null);
+            //Clear the resource injection service
+            final ResourceInjectionService injectionServices = webBeansContext.getService(ResourceInjectionService.class);
+            if (injectionServices != null) {
+                injectionServices.clear();
+            }
+
+            //Comment out for commit OWB-502
+            //ContextFactory.cleanUpContextFactory();
+
+            CdiAppContextsService.class.cast(contextsService).removeThreadLocals();
+
+            WebBeansFinder.clearInstances(WebBeansUtil.getCurrentClassLoader());
 
             // Clear BeanManager
             this.beanManager.clear();
@@ -290,13 +291,6 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
     }
 
     /**
-     * @return the xmlDeployer
-     */
-    protected WebBeansXMLConfigurator getXmlDeployer() {
-        return xmlDeployer;
-    }
-
-    /**
      * @return the jndiService
      */
     protected JNDIService getJndiService() {
@@ -305,21 +299,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
 
     @Override
     public void initApplication(final Properties properties) {
-        afterInitApplication(properties);
-    }
-
-    protected void beforeInitApplication(final Properties properties) {
-        //Do nothing as default
-    }
-
-    protected void afterInitApplication(final Properties properties) {
-        //Do nothing as default
-    }
-
-    protected void afterStartApplication(final Object startupObject) {
-        if (beanManager instanceof WebappBeanManager) {
-            ((WebappBeanManager) beanManager).afterStart();
-        }
+        // no-op
     }
 
     public void startServletContext(final ServletContext servletContext) {
@@ -378,22 +358,6 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         }
     }
 
-    protected void afterStopApplication(final Object stopObject) throws Exception {
-
-        //Clear the resource injection service
-        final ResourceInjectionService injectionServices = webBeansContext.getService(ResourceInjectionService.class);
-        if (injectionServices != null) {
-            injectionServices.clear();
-        }
-
-        //Comment out for commit OWB-502
-        //ContextFactory.cleanUpContextFactory();
-
-        CdiAppContextsService.class.cast(contextsService).removeThreadLocals();
-
-        WebBeansFinder.clearInstances(WebBeansUtil.getCurrentClassLoader());
-    }
-
     /**
      * Returns servelt context otherwise throws exception.
      *
@@ -406,15 +370,5 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             return object;
         }
         return object;
-    }
-
-    protected void beforeStartApplication(final Object startupObject) {
-        //Do nothing as default
-    }
-
-    protected void beforeStopApplication(final Object stopObject) throws Exception {
-        if (service != null) {
-            service.shutdownNow();
-        }
     }
 }

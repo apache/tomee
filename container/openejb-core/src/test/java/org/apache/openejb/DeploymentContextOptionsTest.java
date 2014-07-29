@@ -17,7 +17,7 @@
 package org.apache.openejb;
 
 import junit.framework.TestCase;
-import org.apache.bval.jsr303.ConfigurationImpl;
+import org.apache.bval.jsr.ConfigurationImpl;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
