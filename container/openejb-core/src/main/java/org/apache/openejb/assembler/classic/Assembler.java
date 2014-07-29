@@ -227,7 +227,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     public static final String TIMER_STORE_CLASS = "timerStore.class";
     private static final ReentrantLock lock = new ReentrantLock(true);
     public static final String OPENEJB_TIMERS_ON = "openejb.timers.on";
-
+    public static final Class<?>[] VALIDATOR_FACTORY_INTERFACES = new Class<?>[]{ValidatorFactory.class};
+    public static final Class<?>[] VALIDATOR_INTERFACES = new Class<?>[]{Validator.class};
     private final boolean skipLoaderIfPossible;
 
     Messages messages = new Messages(Assembler.class.getPackage().getName());
@@ -715,23 +716,28 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             final Context containerSystemContext = containerSystem.getJNDIContext();
 
-            if (!SystemInstance.get().hasProperty("openejb.geronimo")) {
+            final Map<String, LazyValidatorFactory> lazyValidatorFactories = new HashMap<String, LazyValidatorFactory>();
+            final Map<String, LazyValidator> lazyValidators = new HashMap<String, LazyValidator>();
+            final boolean isGeronimo = SystemInstance.get().hasProperty("openejb.geronimo");
+            if (!isGeronimo) {
                 // Bean Validation
                 // ValidatorFactory needs to be put in the map sent to the entity manager factory
                 // so it has to be constructed before
                 final List<CommonInfoObject> vfs = listCommonInfoObjectsForAppInfo(appInfo);
-
                 final Map<String, ValidatorFactory> validatorFactories = new HashMap<String, ValidatorFactory>();
+
                 for (final CommonInfoObject info : vfs) {
                     ValidatorFactory factory = null;
-                    try {
-                        factory = ValidatorBuilder.buildFactory(classLoader, info.validationInfo);
+                    try { // lazy cause of CDI :(
+                        final LazyValidatorFactory handler = new LazyValidatorFactory(classLoader, info.validationInfo);
+                        factory = (ValidatorFactory) Proxy.newProxyInstance(
+                            appContext.getClassLoader(), VALIDATOR_FACTORY_INTERFACES, handler);
+                        lazyValidatorFactories.put(info.uniqueId, handler);
                     } catch (final ValidationException ve) {
                         logger.warning("can't build the validation factory for module " + info.uniqueId, ve);
+                        continue;
                     }
-                    if (factory != null) {
-                        validatorFactories.put(info.uniqueId, factory);
-                    }
+                    validatorFactories.put(info.uniqueId, factory);
                 }
 
                 // validators bindings
@@ -743,9 +749,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
                         Validator validator;
                         try {
-                            validator = factory.usingContext().getValidator();
+                            final LazyValidator lazyValidator = new LazyValidator(factory);
+                            validator = (Validator) Proxy.newProxyInstance(appContext.getClassLoader(), VALIDATOR_INTERFACES, lazyValidator);
+                            lazyValidators.put(id, lazyValidator);
                         } catch (final Exception e) {
-                            validator = (Validator) Proxy.newProxyInstance(appContext.getClassLoader(), new Class<?>[]{Validator.class}, new LazyValidator(factory));
+                            logger.error(e.getMessage(), e);
+                            continue;
                         }
 
                         containerSystemContext.bind(VALIDATOR_NAMING_CONTEXT + id, validator);
@@ -755,6 +764,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                         throw new OpenEJBException(e);
                     }
                 }
+
+                validatorFactories.clear();
             }
 
             // JPA - Persistence Units MUST be processed first since they will add ClassFileTransformers
@@ -815,6 +826,28 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 ensureWebBeansContext(appContext);
                 appJndiContext.bind("app/BeanManager", appContext.getBeanManager());
                 appContext.getBindings().put("app/BeanManager", appContext.getBeanManager());
+            }
+
+            // now cdi is started we can try to bind real validator factory and validator
+            if (!isGeronimo) {
+                for (final Entry<String, LazyValidator> lazyValidator : lazyValidators.entrySet()) {
+                    final String id = lazyValidator.getKey();
+                    final ValidatorFactory factory = lazyValidatorFactories.get(lazyValidator.getKey()).getFactory();
+                    final Validator validator = lazyValidator.getValue().getValidator();
+                    try {
+                        final String factoryName = VALIDATOR_FACTORY_NAMING_CONTEXT + id;
+                        containerSystemContext.unbind(factoryName);
+                        containerSystemContext.bind(factoryName, factory);
+
+                        final String validatoryName = VALIDATOR_NAMING_CONTEXT + id;
+                        containerSystemContext.unbind(validatoryName);
+                        containerSystemContext.bind(validatoryName, validator);
+                    } catch (final NameAlreadyBoundException e) {
+                        throw new OpenEJBException("ValidatorFactory already exists for module " + id, e);
+                    } catch (final Exception e) {
+                        throw new OpenEJBException(e);
+                    }
+                }
             }
 
             startEjbs(start, allDeployments);

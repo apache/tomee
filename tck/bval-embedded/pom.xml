@@ -25,33 +25,21 @@
 
   <artifactId>bval-embedded</artifactId>
   <name>OpenEJB :: TCK :: Bean Validation Embedded</name>
-  <description>Aggregates dependencies and runs the JSR-303 TCK</description>
+
+  <properties>
+    <tck.version>1.1.0.Final</tck.version>
+    <arquillian.version>1.1.5.Final</arquillian.version>
+    <validation.provider>org.apache.bval.jsr.ApacheValidationProvider</validation.provider>
+  </properties>
 
   <dependencies>
     <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-osgi-locator</artifactId>
-      <version>1.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-osgi-registry</artifactId>
-      <version>1.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-validation_1.0_spec</artifactId>
-      <version>1.1</version>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>javaee-api</artifactId>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>tck-common</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
@@ -67,20 +55,38 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.hibernate.jsr303.tck</groupId>
-      <artifactId>jsr303-tck</artifactId>
-      <version>1.0.6.GA</version>
+      <groupId>org.jboss.arquillian.container</groupId>
+      <artifactId>arquillian-container-test-spi</artifactId>
+      <version>${arquillian.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>arquillian-openejb-embedded-4</artifactId>
+      <version>${project.version}</version>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.testng</groupId>
-          <artifactId>testng</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>javax.validation</groupId>
-          <artifactId>validation-api</artifactId>
-        </exclusion>
-      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat-jasper-el</artifactId>
+      <version>${tomcat.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate.beanvalidation.tck</groupId>
+      <artifactId>beanvalidation-tck-tests</artifactId>
+      <version>${tck.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.testng</groupId>
+      <artifactId>arquillian-testng-container</artifactId>
+      <version>${arquillian.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.protocol</groupId>
+      <artifactId>arquillian-protocol-servlet</artifactId>
+      <version>${arquillian.version}</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
@@ -88,18 +94,46 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.7</version>
+        <executions>
+          <execution>
+            <id>copy-tck-test-suite-file</id>
+            <phase>generate-test-sources</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <stripVersion>true</stripVersion>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.hibernate.beanvalidation.tck</groupId>
+                  <artifactId>beanvalidation-tck-tests</artifactId>
+                  <type>xml</type>
+                  <classifier>suite</classifier>
+                  <overWrite>false</overWrite>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.17</version>
         <configuration>
-          <useFile>false</useFile>
-          <disableXmlReport>true</disableXmlReport>
           <suiteXmlFiles>
-            <suiteXmlFile>src/test/resources/jsr303-tck-suite.xml</suiteXmlFile>
+            <suiteXmlFile>${project.build.directory}/dependency/beanvalidation-tck-tests-suite.xml</suiteXmlFile>
           </suiteXmlFiles>
-          <argLine>-Xmx768m -XX:PermSize=64m -XX:MaxPermSize=512m -XX:ReservedCodeCacheSize=64m -Xss2048k</argLine>
-          <systemPropertyVariables>
-            <validation.provider>org.apache.bval.jsr303.ApacheValidationProvider</validation.provider>
-            <force.deployment>true</force.deployment>
-          </systemPropertyVariables>
+          <systemProperties>
+            <property>
+              <name>validation.provider</name>
+              <value>${validation.provider}</value>
+            </property>
+          </systemProperties>
+          <parallel>methods</parallel>
+          <threadCount>4</threadCount>
         </configuration>
       </plugin>
       <plugin>

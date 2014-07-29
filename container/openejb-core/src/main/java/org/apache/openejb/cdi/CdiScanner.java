@@ -18,6 +18,7 @@
 
 package org.apache.openejb.cdi;
 
+import org.apache.bval.cdi.BValInterceptor;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.BeansInfo;
@@ -90,6 +91,10 @@ public class CdiScanner implements ScannerService {
             interceptorsManager.addEnabledInterceptorClass(interceptor);
         }
 
+        // TODO: this shouldn't be needed with OWB 2, see org.apache.openejb.cdi.OptimizedLoaderService.loadExtensions() too
+        classes.add(BValInterceptor.class);
+        interceptorsManager.addEnabledInterceptorClass(BValInterceptor.class);
+
         // app beans
         for (final EjbJarInfo ejbJar : appInfo.ejbJars) {
             final BeansInfo beans = ejbJar.beans;
@@ -151,7 +156,7 @@ public class CdiScanner implements ScannerService {
             for (final String className : beans.alternativeStereotypes) {
                 final Class<?> clazz = load(PropertyPlaceHolderHelper.simpleValue(className), classLoader);
                 if (clazz != null) {
-                    alternativesManager.addStereoTypeAlternative(clazz, null, null);
+                    alternativesManager.addXmlStereoTypeAlternative(clazz);
                     classes.add(clazz);
                 } else if (shouldThrowCouldNotLoadException(startupObject)) {
                     throw new WebBeansConfigurationException("Could not load alternativeStereotype class: " + className);
@@ -161,7 +166,7 @@ public class CdiScanner implements ScannerService {
             for (final String className : beans.alternativeClasses) {
                 final Class<?> clazz = load(PropertyPlaceHolderHelper.simpleValue(className), classLoader);
                 if (clazz != null) {
-                    alternativesManager.addClazzAlternative(clazz, null, null);
+                    alternativesManager.addXmlStereoTypeAlternative(clazz);
                     classes.add(clazz);
                 } else if (shouldThrowCouldNotLoadException(startupObject)) {
                     throw new WebBeansConfigurationException("Could not load alternative class: " + className);

@@ -22,8 +22,7 @@ import org.apache.webbeans.component.BuiltInOwbBean;
 import org.apache.webbeans.component.ExtensionBean;
 import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.context.creational.CreationalContextImpl;
-import org.apache.webbeans.event.EventMetadata;
-import org.apache.webbeans.util.ClassUtil;
+import org.apache.webbeans.event.EventMetadataImpl;
 import org.apache.webbeans.util.WebBeansUtil;
 
 import javax.el.ELResolver;
@@ -55,12 +54,8 @@ public class WebappBeanManager extends BeanManagerImpl {
     }
 
     @Override
-    public void fireEvent(final Object event, final EventMetadata metadata, final boolean isLifecycleEvent) {
+    public void fireEvent(final Object event, final EventMetadataImpl metadata, final boolean isLifecycleEvent) {
         final Class<?> eventClass = event.getClass();
-        if (ClassUtil.isDefinitionContainsTypeVariables(ClassUtil.getClass(metadata.getType()))) {
-            throw new IllegalArgumentException("Event class : " + event.getClass().getName() + " can not be defined as generic type");
-        }
-
         getNotificationManager().fireEvent(event, metadata, isLifecycleEvent);
         if (isEvent(eventClass)) {
             getParentBm().getNotificationManager().fireEvent(event, metadata, isLifecycleEvent);
@@ -68,17 +63,13 @@ public class WebappBeanManager extends BeanManagerImpl {
     }
 
     @Override
-    public <T> Set<ObserverMethod<? super T>> resolveObserverMethods(final T event, final EventMetadata metadata) {
+    public <T> Set<ObserverMethod<? super T>> resolveObserverMethods(final T event, final EventMetadataImpl metadata) {
         final Class<?> eventClass = event.getClass();
-        if (ClassUtil.isDefinitionContainsTypeVariables(ClassUtil.getClass(metadata.getType()))) {
-            throw new IllegalArgumentException("Event type can not contain type variables. Event class is : " + eventClass);
-        }
-
         final Set<ObserverMethod<? super T>> set = new HashSet<ObserverMethod<? super T>>();
-        set.addAll(getNotificationManager().resolveObservers(event, metadata));
+        set.addAll(getNotificationManager().resolveObservers(event, metadata, false));
 
         if (isEvent(eventClass)) {
-            set.addAll(getParentBm().getNotificationManager().resolveObservers(event, metadata));
+            set.addAll(getParentBm().getNotificationManager().resolveObservers(event, metadata, false));
         } // else nothing since extensions are loaded by classloader so we already have it
 
         return set;

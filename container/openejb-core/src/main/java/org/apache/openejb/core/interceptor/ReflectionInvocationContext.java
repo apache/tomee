@@ -21,6 +21,7 @@ import org.apache.openejb.core.Operation;
 import org.apache.openejb.util.Classes;
 
 import javax.interceptor.InvocationContext;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Iterator;
@@ -65,6 +66,7 @@ public class ReflectionInvocationContext implements InvocationContext {
         }
     }
 
+    @Override
     public Object getTimer() {
         if (operation.equals(Operation.TIMEOUT)) {
             return parameters[0];
@@ -72,14 +74,22 @@ public class ReflectionInvocationContext implements InvocationContext {
         return null;
     }
 
+    @Override
     public Object getTarget() {
         return target;
     }
 
+    @Override
     public Method getMethod() {
         return method;
     }
 
+    @Override
+    public Constructor<?> getConstructor() {
+        throw new IllegalStateException(); // TODO
+    }
+
+    @Override
     public Object[] getParameters() {
         //TODO Need to figure out what is going on with afterCompletion call back here ?
         if (Operation.POST_CONSTRUCT.equals(operation) || Operation.PRE_DESTROY.equals(operation)) {
@@ -101,6 +111,7 @@ public class ReflectionInvocationContext implements InvocationContext {
         return m;
     }
 
+    @Override
     public void setParameters(final Object[] parameters) {
         if (operation.isCallback() && !operation.equals(Operation.TIMEOUT)) {
             throw new IllegalStateException(getIllegalParameterAccessMessage());
@@ -134,6 +145,7 @@ public class ReflectionInvocationContext implements InvocationContext {
         System.arraycopy(parameters, 0, this.parameters, 0, parameters.length);
     }
 
+    @Override
     public Map<String, Object> getContextData() {
         return contextData;
     }
@@ -164,6 +176,7 @@ public class ReflectionInvocationContext implements InvocationContext {
         }
     }
 
+    @Override
     public Object proceed() throws Exception {
         // The bulk of the logic of this method has intentionally been moved
         // out so stepping through a large stack in a debugger can be done quickly.

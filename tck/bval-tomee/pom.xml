@@ -38,7 +38,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.bval</groupId>
-      <artifactId>bval-jsr303</artifactId>
+      <artifactId>bval-jsr</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
@@ -200,7 +200,7 @@
             <deleteArtifacts>true</deleteArtifacts>
 
             <force.deployment>true</force.deployment>
-            <validation.provider>org.apache.bval.jsr303.ApacheValidationProvider</validation.provider>
+            <validation.provider>org.apache.bval.jsr.ApacheValidationProvider</validation.provider>
 
             <!--<maven.failsafe.debug>true</maven.failsafe.debug>-->
             <!--<openejb.server.debug>true</openejb.server.debug>-->

@@ -8,11 +8,11 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.apache.openejb.jee.bval;
 
@@ -25,214 +25,253 @@ import javax.xml.namespace.QName;
 
 
 /**
- * This object contains factory methods for each
- * Java content interface and Java element interface
- * generated in the org.apache.openejb.jee.bval package.
- * <p>An ObjectFactory allows you to programatically
- * construct new instances of the Java representation
- * for XML content. The Java representation of XML
- * content can consist of schema derived interfaces
- * and classes representing the binding of schema
- * type definitions, element declarations and model
- * groups.  Factory methods for each of these are
+ * This object contains factory methods for each 
+ * Java content interface and Java element interface 
+ * generated in the org.apache.bval.jsr.xml package. 
+ * <p>An ObjectFactory allows you to programatically 
+ * construct new instances of the Java representation 
+ * for XML content. The Java representation of XML 
+ * content can consist of schema derived interfaces 
+ * and classes representing the binding of schema 
+ * type definitions, element declarations and model 
+ * groups.  Factory methods for each of these are 
  * provided in this class.
+ * 
  */
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _PayloadTypeValue_QNAME = new QName("http://jboss.org/xml/ns/javax/validation/mapping", "value");
-    private final static QName _ElementTypeAnnotation_QNAME = new QName("http://jboss.org/xml/ns/javax/validation/mapping", "annotation");
     private final static QName _ValidationConfig_QNAME = new QName("http://jboss.org/xml/ns/javax/validation/configuration", "validation-config");
     private final static QName _ConstraintMappings_QNAME = new QName("http://jboss.org/xml/ns/javax/validation/mapping", "constraint-mappings");
-    private final static QName _ValidationConfigTypeConstraintMapping_QNAME = new QName("http://jboss.org/xml/ns/javax/validation/configuration", "constraint-mapping");
+    private final static QName _ElementTypeAnnotation_QNAME = new QName("http://jboss.org/xml/ns/javax/validation/mapping", "annotation");
+    private final static QName _ElementTypeValue_QNAME = new QName("http://jboss.org/xml/ns/javax/validation/mapping", "value");
 
     /**
-     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.apache.openjeb.jee.bval
+     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.apache.bval.jsr.xml
+     * 
      */
     public ObjectFactory() {
     }
 
     /**
-     * Create an instance of {@link ValidationConfigType }
+     * Create an instance of {@link MethodType }
+     * 
      */
-    public ValidationConfigType createValidationConfigType() {
-        return new ValidationConfigType();
+    public MethodType createMethodType() {
+        return new MethodType();
     }
 
     /**
-     * Create an instance of {@link AnnotationType }
+     * Create an instance of {@link CrossParameterType }
+     * 
      */
-    public AnnotationType createAnnotationType() {
-        return new AnnotationType();
+    public CrossParameterType createCrossParameterType() {
+        return new CrossParameterType();
     }
 
     /**
-     * Create an instance of {@link ValidatedByType }
+     * Create an instance of {@link ParameterType }
+     * 
      */
-    public ValidatedByType createValidatedByType() {
-        return new ValidatedByType();
-    }
-
-    /**
-     * Create an instance of {@link ConstraintDefinitionType }
-     */
-    public ConstraintDefinitionType createConstraintDefinitionType() {
-        return new ConstraintDefinitionType();
-    }
-
-    /**
-     * Create an instance of {@link ClassType }
-     */
-    public ClassType createClassType() {
-        return new ClassType();
-    }
-
-    /**
-     * Create an instance of {@link GroupsType }
-     */
-    public GroupsType createGroupsType() {
-        return new GroupsType();
-    }
-
-    /**
-     * Create an instance of {@link FieldType }
-     */
-    public FieldType createFieldType() {
-        return new FieldType();
-    }
-
-    /**
-     * Create an instance of {@link ConstraintMappingsType }
-     */
-    public ConstraintMappingsType createConstraintMappingsType() {
-        return new ConstraintMappingsType();
-    }
-
-    /**
-     * Create an instance of {@link PayloadType }
-     */
-    public PayloadType createPayloadType() {
-        return new PayloadType();
-    }
-
-    /**
-     * Create an instance of {@link ElementType }
-     */
-    public ElementType createElementType() {
-        return new ElementType();
-    }
-
-    /**
-     * Create an instance of {@link BeanType }
-     */
-    public BeanType createBeanType() {
-        return new BeanType();
+    public ParameterType createParameterType() {
+        return new ParameterType();
     }
 
     /**
      * Create an instance of {@link GroupSequenceType }
+     * 
      */
     public GroupSequenceType createGroupSequenceType() {
         return new GroupSequenceType();
     }
 
     /**
-     * Create an instance of {@link PropertyType }
+     * Create an instance of {@link BeanType }
+     * 
      */
-    public PropertyType createPropertyType() {
-        return new PropertyType();
-    }
-
-    /**
-     * Create an instance of {@link ConstraintType }
-     */
-    public ConstraintType createConstraintType() {
-        return new ConstraintType();
+    public BeanType createBeanType() {
+        return new BeanType();
     }
 
     /**
      * Create an instance of {@link GetterType }
+     * 
      */
     public GetterType createGetterType() {
         return new GetterType();
     }
 
     /**
-     * Create an instance of {@link javax.xml.bind.JAXBElement }{@code <}{@link String }{@code >}}
+     * Create an instance of {@link GroupConversionType }
+     * 
      */
-    @XmlElementDecl(namespace = "http://jboss.org/xml/ns/javax/validation/mapping", name = "value", scope = PayloadType.class)
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    public JAXBElement<String> createPayloadTypeValue(final String value) {
-        return new JAXBElement<String>(_PayloadTypeValue_QNAME, String.class, PayloadType.class, value);
+    public GroupConversionType createGroupConversionType() {
+        return new GroupConversionType();
     }
 
     /**
-     * Create an instance of {@link javax.xml.bind.JAXBElement }{@code <}{@link AnnotationType }{@code >}}
+     * Create an instance of {@link GroupsType }
+     * 
      */
-    @XmlElementDecl(namespace = "http://jboss.org/xml/ns/javax/validation/mapping", name = "annotation", scope = ElementType.class)
-    public JAXBElement<AnnotationType> createElementTypeAnnotation(final AnnotationType value) {
-        return new JAXBElement<AnnotationType>(_ElementTypeAnnotation_QNAME, AnnotationType.class, ElementType.class, value);
+    public GroupsType createGroupsType() {
+        return new GroupsType();
     }
 
     /**
-     * Create an instance of {@link javax.xml.bind.JAXBElement }{@code <}{@link String }{@code >}}
+     * Create an instance of {@link ConstraintMappingsType }
+     * 
      */
-    @XmlElementDecl(namespace = "http://jboss.org/xml/ns/javax/validation/mapping", name = "value", scope = ElementType.class)
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    public JAXBElement<String> createElementTypeValue(final String value) {
-        return new JAXBElement<String>(_PayloadTypeValue_QNAME, String.class, ElementType.class, value);
+    public ConstraintMappingsType createConstraintMappingsType() {
+        return new ConstraintMappingsType();
     }
 
     /**
-     * Create an instance of {@link javax.xml.bind.JAXBElement }{@code <}{@link ValidationConfigType }{@code >}}
+     * Create an instance of {@link ValidationConfigType }
+     * 
+     */
+    public ValidationConfigType createValidationConfigType() {
+        return new ValidationConfigType();
+    }
+
+    /**
+     * Create an instance of {@link PayloadType }
+     * 
+     */
+    public PayloadType createPayloadType() {
+        return new PayloadType();
+    }
+
+    /**
+     * Create an instance of {@link ConstraintDefinitionType }
+     * 
+     */
+    public ConstraintDefinitionType createConstraintDefinitionType() {
+        return new ConstraintDefinitionType();
+    }
+
+    /**
+     * Create an instance of {@link ExecutableValidationType }
+     * 
+     */
+    public ExecutableValidationType createExecutableValidationType() {
+        return new ExecutableValidationType();
+    }
+
+    /**
+     * Create an instance of {@link PropertyType }
+     * 
+     */
+    public PropertyType createPropertyType() {
+        return new PropertyType();
+    }
+
+    /**
+     * Create an instance of {@link AnnotationType }
+     * 
+     */
+    public AnnotationType createAnnotationType() {
+        return new AnnotationType();
+    }
+
+    /**
+     * Create an instance of {@link FieldType }
+     * 
+     */
+    public FieldType createFieldType() {
+        return new FieldType();
+    }
+
+    /**
+     * Create an instance of {@link ConstraintType }
+     * 
+     */
+    public ConstraintType createConstraintType() {
+        return new ConstraintType();
+    }
+
+    /**
+     * Create an instance of {@link ReturnValueType }
+     * 
+     */
+    public ReturnValueType createReturnValueType() {
+        return new ReturnValueType();
+    }
+
+    /**
+     * Create an instance of {@link ConstructorType }
+     * 
+     */
+    public ConstructorType createConstructorType() {
+        return new ConstructorType();
+    }
+
+    /**
+     * Create an instance of {@link ElementType }
+     * 
+     */
+    public ElementType createElementType() {
+        return new ElementType();
+    }
+
+    /**
+     * Create an instance of {@link ClassType }
+     * 
+     */
+    public ClassType createClassType() {
+        return new ClassType();
+    }
+
+    /**
+     * Create an instance of {@link DefaultValidatedExecutableTypesType }
+     * 
+     */
+    public DefaultValidatedExecutableTypesType createDefaultValidatedExecutableTypesType() {
+        return new DefaultValidatedExecutableTypesType();
+    }
+
+    /**
+     * Create an instance of {@link ValidatedByType }
+     * 
+     */
+    public ValidatedByType createValidatedByType() {
+        return new ValidatedByType();
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link ValidationConfigType }{@code >}}
+     * 
      */
     @XmlElementDecl(namespace = "http://jboss.org/xml/ns/javax/validation/configuration", name = "validation-config")
-    public JAXBElement<ValidationConfigType> createValidationConfig(final ValidationConfigType value) {
+    public JAXBElement<ValidationConfigType> createValidationConfig(ValidationConfigType value) {
         return new JAXBElement<ValidationConfigType>(_ValidationConfig_QNAME, ValidationConfigType.class, null, value);
     }
 
     /**
-     * Create an instance of {@link javax.xml.bind.JAXBElement }{@code <}{@link ConstraintMappingsType }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link ConstraintMappingsType }{@code >}}
+     * 
      */
     @XmlElementDecl(namespace = "http://jboss.org/xml/ns/javax/validation/mapping", name = "constraint-mappings")
-    public JAXBElement<ConstraintMappingsType> createConstraintMappings(final ConstraintMappingsType value) {
+    public JAXBElement<ConstraintMappingsType> createConstraintMappings(ConstraintMappingsType value) {
         return new JAXBElement<ConstraintMappingsType>(_ConstraintMappings_QNAME, ConstraintMappingsType.class, null, value);
     }
 
     /**
-     * Create an instance of {@link javax.xml.bind.JAXBElement }{@code <}{@link String }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link AnnotationType }{@code >}}
+     * 
      */
-    @XmlElementDecl(namespace = "http://jboss.org/xml/ns/javax/validation/configuration", name = "constraint-mapping", scope = ValidationConfigType.class)
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    public JAXBElement<String> createValidationConfigTypeConstraintMapping(final String value) {
-        return new JAXBElement<String>(_ValidationConfigTypeConstraintMapping_QNAME, String.class, ValidationConfigType.class, value);
+    @XmlElementDecl(namespace = "http://jboss.org/xml/ns/javax/validation/mapping", name = "annotation", scope = ElementType.class)
+    public JAXBElement<AnnotationType> createElementTypeAnnotation(AnnotationType value) {
+        return new JAXBElement<AnnotationType>(_ElementTypeAnnotation_QNAME, AnnotationType.class, ElementType.class, value);
     }
 
     /**
-     * Create an instance of {@link javax.xml.bind.JAXBElement }{@code <}{@link String }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
+     * 
      */
-    @XmlElementDecl(namespace = "http://jboss.org/xml/ns/javax/validation/mapping", name = "value", scope = GroupSequenceType.class)
+    @XmlElementDecl(namespace = "http://jboss.org/xml/ns/javax/validation/mapping", name = "value", scope = ElementType.class)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    public JAXBElement<String> createGroupSequenceTypeValue(final String value) {
-        return new JAXBElement<String>(_PayloadTypeValue_QNAME, String.class, GroupSequenceType.class, value);
-    }
-
-    /**
-     * Create an instance of {@link javax.xml.bind.JAXBElement }{@code <}{@link String }{@code >}}
-     */
-    @XmlElementDecl(namespace = "http://jboss.org/xml/ns/javax/validation/mapping", name = "value", scope = ValidatedByType.class)
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    public JAXBElement<String> createValidatedByTypeValue(final String value) {
-        return new JAXBElement<String>(_PayloadTypeValue_QNAME, String.class, ValidatedByType.class, value);
-    }
-
-    /**
-     * Create an instance of {@link javax.xml.bind.JAXBElement }{@code <}{@link String }{@code >}}
-     */
-    @XmlElementDecl(namespace = "http://jboss.org/xml/ns/javax/validation/mapping", name = "value", scope = GroupsType.class)
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    public JAXBElement<String> createGroupsTypeValue(final String value) {
-        return new JAXBElement<String>(_PayloadTypeValue_QNAME, String.class, GroupsType.class, value);
+    public JAXBElement<String> createElementTypeValue(String value) {
+        return new JAXBElement<String>(_ElementTypeValue_QNAME, String.class, ElementType.class, value);
     }
 
 }

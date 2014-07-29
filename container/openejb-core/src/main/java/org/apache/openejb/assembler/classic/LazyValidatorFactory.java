@@ -14,45 +14,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.openejb.assembler.classic;
 
-import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class LazyValidator implements InvocationHandler {
-
+// TODO: make it generic (LazyDelegate + Factory + refactor LazyValidator)
+public class LazyValidatorFactory implements InvocationHandler {
     private final ReentrantLock lock = new ReentrantLock();
-    private final ValidatorFactory factory;
-    private Validator validator;
+    private final ClassLoader loader;
+    private final ValidationInfo info;
+    private volatile ValidatorFactory factory;
 
-    public LazyValidator(final ValidatorFactory factory) {
-        this.factory = factory;
+    public LazyValidatorFactory(final ClassLoader classLoader, final ValidationInfo validationInfo) {
+        this.loader = classLoader;
+        this.info = validationInfo;
     }
 
     @Override
     public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
         ensureDelegate();
         try {
-            return method.invoke(validator, args);
+            return method.invoke(factory, args);
         } catch (final InvocationTargetException ite) {
             throw ite.getCause();
         }
     }
 
     private void ensureDelegate() {
-        if (validator == null) {
-
+        if (factory == null) {
             final ReentrantLock l = lock;
             l.lock();
-
             try {
-                if (validator == null) {
-                    validator = factory.usingContext().getValidator();
+                if (factory == null) {
+                    factory = ValidatorBuilder.buildFactory(loader, info);
                 }
             } finally {
                 l.unlock();
@@ -60,8 +58,8 @@ public class LazyValidator implements InvocationHandler {
         }
     }
 
-    public Validator getValidator() {
+    public ValidatorFactory getFactory() {
         ensureDelegate();
-        return validator;
+        return factory;
     }
 }

@@ -8,11 +8,11 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.apache.openejb.jee.bval;
 
@@ -29,9 +29,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for beanType complex type.
- * <p/>
+ * 
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ * 
  * <pre>
  * &lt;complexType name="beanType">
  *   &lt;complexContent>
@@ -40,6 +40,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *         &lt;element name="class" type="{http://jboss.org/xml/ns/javax/validation/mapping}classType" minOccurs="0"/>
  *         &lt;element name="field" type="{http://jboss.org/xml/ns/javax/validation/mapping}fieldType" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="getter" type="{http://jboss.org/xml/ns/javax/validation/mapping}getterType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="constructor" type="{http://jboss.org/xml/ns/javax/validation/mapping}constructorType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="method" type="{http://jboss.org/xml/ns/javax/validation/mapping}methodType" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="class" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="ignore-annotations" type="{http://www.w3.org/2001/XMLSchema}boolean" />
@@ -47,12 +49,16 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
+ * 
+ * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "beanType", propOrder = {
     "classType",
     "field",
-    "getter"
+    "getter",
+    "constructor",
+    "method"
 })
 public class BeanType {
 
@@ -60,6 +66,8 @@ public class BeanType {
     protected ClassType classType;
     protected List<FieldType> field;
     protected List<GetterType> getter;
+    protected List<ConstructorType> constructor;
+    protected List<MethodType> method;
     @XmlAttribute(name = "class", required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String clazz;
@@ -68,9 +76,11 @@ public class BeanType {
 
     /**
      * Gets the value of the classType property.
-     *
-     * @return possible object is
-     * {@link ClassType }
+     * 
+     * @return
+     *     possible object is
+     *     {@link ClassType }
+     *     
      */
     public ClassType getClassType() {
         return classType;
@@ -78,33 +88,37 @@ public class BeanType {
 
     /**
      * Sets the value of the classType property.
-     *
-     * @param value allowed object is
-     *              {@link ClassType }
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link ClassType }
+     *     
      */
-    public void setClassType(final ClassType value) {
+    public void setClassType(ClassType value) {
         this.classType = value;
     }
 
     /**
      * Gets the value of the field property.
-     * <p/>
-     * <p/>
+     * 
+     * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the field property.
-     * <p/>
-     * <p/>
+     * 
+     * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getField().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     * 
+     * 
+     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link FieldType }
+     * 
+     * 
      */
     public List<FieldType> getField() {
         if (field == null) {
@@ -115,23 +129,25 @@ public class BeanType {
 
     /**
      * Gets the value of the getter property.
-     * <p/>
-     * <p/>
+     * 
+     * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the getter property.
-     * <p/>
-     * <p/>
+     * 
+     * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getGetter().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     * 
+     * 
+     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link GetterType }
+     * 
+     * 
      */
     public List<GetterType> getGetter() {
         if (getter == null) {
@@ -141,10 +157,70 @@ public class BeanType {
     }
 
     /**
+     * Gets the value of the constructor property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the constructor property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getConstructor().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link ConstructorType }
+     * 
+     * 
+     */
+    public List<ConstructorType> getConstructor() {
+        if (constructor == null) {
+            constructor = new ArrayList<ConstructorType>();
+        }
+        return this.constructor;
+    }
+
+    /**
+     * Gets the value of the method property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the method property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getMethod().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link MethodType }
+     * 
+     * 
+     */
+    public List<MethodType> getMethod() {
+        if (method == null) {
+            method = new ArrayList<MethodType>();
+        }
+        return this.method;
+    }
+
+    /**
      * Gets the value of the clazz property.
-     *
-     * @return possible object is
-     * {@link String }
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
     public String getClazz() {
         return clazz;
@@ -152,31 +228,37 @@ public class BeanType {
 
     /**
      * Sets the value of the clazz property.
-     *
-     * @param value allowed object is
-     *              {@link String }
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setClazz(final String value) {
+    public void setClazz(String value) {
         this.clazz = value;
     }
 
     /**
      * Gets the value of the ignoreAnnotations property.
-     *
-     * @return possible object is
-     * {@link Boolean }
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *     
      */
-    public Boolean isIgnoreAnnotations() {
+    public Boolean getIgnoreAnnotations() {
         return ignoreAnnotations;
     }
 
     /**
      * Sets the value of the ignoreAnnotations property.
-     *
-     * @param value allowed object is
-     *              {@link Boolean }
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *     
      */
-    public void setIgnoreAnnotations(final Boolean value) {
+    public void setIgnoreAnnotations(Boolean value) {
         this.ignoreAnnotations = value;
     }
 

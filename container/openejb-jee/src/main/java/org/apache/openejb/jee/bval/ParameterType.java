@@ -23,21 +23,25 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * <p>Java class for classType complex type.
+ * <p>Java class for parameterType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="classType">
+ * &lt;complexType name="parameterType">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="group-sequence" type="{http://jboss.org/xml/ns/javax/validation/mapping}groupSequenceType" minOccurs="0"/>
+ *         &lt;element name="valid" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="convert-group" type="{http://jboss.org/xml/ns/javax/validation/mapping}groupConversionType" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="constraint" type="{http://jboss.org/xml/ns/javax/validation/mapping}constraintType" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
+ *       &lt;attribute name="type" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="ignore-annotations" type="{http://www.w3.org/2001/XMLSchema}boolean" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -47,40 +51,75 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "classType", propOrder = {
-    "groupSequence",
+@XmlType(name = "parameterType", propOrder = {
+    "valid",
+    "convertGroup",
     "constraint"
 })
-public class ClassType {
+public class ParameterType {
 
-    @XmlElement(name = "group-sequence")
-    protected GroupSequenceType groupSequence;
+    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+    protected String valid;
+    @XmlElement(name = "convert-group")
+    protected List<GroupConversionType> convertGroup;
     protected List<ConstraintType> constraint;
+    @XmlAttribute(name = "type", required = true)
+    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+    protected String type;
     @XmlAttribute(name = "ignore-annotations")
     protected Boolean ignoreAnnotations;
 
     /**
-     * Gets the value of the groupSequence property.
+     * Gets the value of the valid property.
      * 
      * @return
      *     possible object is
-     *     {@link GroupSequenceType }
+     *     {@link String }
      *     
      */
-    public GroupSequenceType getGroupSequence() {
-        return groupSequence;
+    public String getValid() {
+        return valid;
     }
 
     /**
-     * Sets the value of the groupSequence property.
+     * Sets the value of the valid property.
      * 
      * @param value
      *     allowed object is
-     *     {@link GroupSequenceType }
+     *     {@link String }
      *     
      */
-    public void setGroupSequence(GroupSequenceType value) {
-        this.groupSequence = value;
+    public void setValid(String value) {
+        this.valid = value;
+    }
+
+    /**
+     * Gets the value of the convertGroup property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the convertGroup property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getConvertGroup().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link GroupConversionType }
+     * 
+     * 
+     */
+    public List<GroupConversionType> getConvertGroup() {
+        if (convertGroup == null) {
+            convertGroup = new ArrayList<GroupConversionType>();
+        }
+        return this.convertGroup;
     }
 
     /**
@@ -110,6 +149,30 @@ public class ClassType {
             constraint = new ArrayList<ConstraintType>();
         }
         return this.constraint;
+    }
+
+    /**
+     * Gets the value of the type property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * Sets the value of the type property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setType(String value) {
+        this.type = value;
     }
 
     /**
