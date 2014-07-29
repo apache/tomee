@@ -59,7 +59,7 @@ public class BasicClusterableRequestHandlerTest extends RMockTestCase {
             null,
             null,
             null,
-            false);
+            false, false);
     }
 
     public void testNoOpWhenNotAClusteredContainer() throws Exception {
