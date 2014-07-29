@@ -137,7 +137,7 @@ public class OpenEJBArchiveProcessor {
         if (!WEB_INF.equals(prefix)) {
             loader = new SWClassLoader("", new URLClassLoader(urls, parent), archive);
         } else {
-            loader = new SWClassLoader("/WEB-INF/classes/", new URLClassLoaderFirst(urls, parent), archive);
+            loader = new SWClassLoader(WEB_INF_CLASSES, new URLClassLoaderFirst(urls, parent), archive);
         }
         final URLClassLoader tempClassLoader = ClassLoaderUtil.createTempClassLoader(loader);
 
@@ -152,6 +152,7 @@ public class OpenEJBArchiveProcessor {
         }
 
         // add the test as a managed bean to be able to inject into it easily
+        final Map<String, Object> testDD;
         if (javaClass != null) {
             final EjbJar ejbJar = new EjbJar();
             final OpenejbJar openejbJar = new OpenejbJar();
@@ -164,6 +165,9 @@ public class OpenEJBArchiveProcessor {
             final EjbModule e = new EjbModule(ejbJar, openejbJar);
             e.setClassLoader(tempClassLoader);
             appModule.getEjbModules().add(e);
+            testDD = e.getAltDDs();
+        } else {
+            testDD = new HashMap<>(); // ignore
         }
 
         final EjbJar ejbJar;
@@ -242,8 +246,13 @@ public class OpenEJBArchiveProcessor {
         }
 
         {
-            final Node validationXml = archive.get(prefix.concat(VALIDATION_XML));
+            Node validationXml = archive.get(prefix.concat(VALIDATION_XML));
+            // bval tcks
+            if (validationXml == null && WEB_INF == prefix) { // we can use == here
+                validationXml = archive.get(WEB_INF_CLASSES.concat(META_INF).concat(VALIDATION_XML));
+            }
             if (validationXml != null) {
+                testDD.put(VALIDATION_XML, new AssetSource(validationXml.getAsset())); // use same config otherwise behavior is weird
                 ejbModule.getAltDDs().put(VALIDATION_XML, new AssetSource(validationXml.getAsset()));
             }
         }
