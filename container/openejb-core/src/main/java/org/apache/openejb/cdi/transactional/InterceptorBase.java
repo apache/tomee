@@ -102,7 +102,6 @@ public abstract class InterceptorBase implements Serializable {
                 return false;
             }
 
-            final Class<? extends Exception> key = e.getClass();
             final int includeScore = contains(includes, e);
             final int excludeScore = contains(excludes, e);
 
