@@ -140,7 +140,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "postActivate",
     "prePassivate",
     "securityRoleRef",
-    "securityIdentity"
+    "securityIdentity",
+    "passivationCapable"
 })
 public class SessionBean implements RemoteBean, Session, TimerConsumer {
     @XmlTransient
