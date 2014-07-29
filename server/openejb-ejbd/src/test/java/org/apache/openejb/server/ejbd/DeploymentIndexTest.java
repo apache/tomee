@@ -54,7 +54,7 @@ public class DeploymentIndexTest {
             null,
             null,
             null,
-            false);
+            false, false);
         deploymentIndex = new DeploymentIndex(new BeanContext[]{beanContext, beanContext});
     }
 
