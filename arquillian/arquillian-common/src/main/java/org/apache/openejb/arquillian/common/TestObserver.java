@@ -21,12 +21,16 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
+import org.jboss.arquillian.container.spi.context.annotation.DeploymentScoped;
+import org.jboss.arquillian.container.spi.event.container.AfterDeploy;
 import org.jboss.arquillian.container.spi.event.container.BeforeUnDeploy;
 import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.EventContext;
 import org.jboss.arquillian.test.spi.TestClass;
+import org.jboss.arquillian.test.spi.event.suite.ClassLifecycleEvent;
 import org.jboss.arquillian.test.spi.event.suite.TestEvent;
 
 import javax.enterprise.context.spi.CreationalContext;
@@ -38,16 +42,40 @@ public class TestObserver {
     @Inject
     private Instance<TestClass> testClass;
 
-    public void observes(@Observes final EventContext<TestEvent> event) {
+    @Inject
+    @DeploymentScoped
+    private InstanceProducer<DeploymentContext> contextProducer;
+
+    @Inject
+    private Instance<DeploymentContext> context;
+
+    public void observesDeploy(@Observes final AfterDeploy afterDeployment) {
+        contextProducer.set(new DeploymentContext(Thread.currentThread().getContextClassLoader()));
+        final ClassLoader loader = classLoader.get();
+        if (loader != null) {
+            setTCCL(loader);
+        }
+    }
+
+    public void observesUndeploy(@Observes final BeforeUnDeploy beforeUnDeploy) {
+        final DeploymentContext deploymentContext = context.get();
+        if (deploymentContext != null) {
+            setTCCL(deploymentContext.loader);
+        }
+    }
+
+    public void observesTest(@Observes final EventContext<TestEvent> event) {
+        switchLoader(event);
+    }
+
+    private void switchLoader(final EventContext<?> event) {
         if (!SystemInstance.isInitialized()) {
             event.proceed();
             return;
         }
-
         final BeanContext context = beanContext();
         ThreadContext oldCtx = null;
         ClassLoader oldCl = null;
-
         if (context != null) {
             oldCtx = ThreadContext.enter(new ThreadContext(context, null));
         } else {
@@ -56,7 +84,6 @@ public class TestObserver {
                 setTCCL(classLoader.get());
             }
         }
-
         try {
             event.proceed();
         } finally {
@@ -101,5 +128,13 @@ public class TestObserver {
             }
         }
         return null;
+    }
+
+    public static class DeploymentContext {
+        private final ClassLoader loader;
+
+        public DeploymentContext(final ClassLoader loader) {
+            this.loader = loader;
+        }
     }
 }
