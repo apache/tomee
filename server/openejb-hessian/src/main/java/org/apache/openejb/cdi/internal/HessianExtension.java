@@ -27,6 +27,7 @@ import org.apache.openejb.server.hessian.HessianRegistry;
 import org.apache.openejb.server.hessian.HessianServer;
 import org.apache.openejb.server.hessian.HessianService;
 import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.util.AppFinder;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.container.InjectableBeanManager;
@@ -49,8 +50,8 @@ import java.util.logging.Logger;
 public class HessianExtension implements Extension {
     private static final Logger LOGGER = Logger.getLogger(HessianExtension.class.getName());
 
-    private final Collection<Deployment> toDeploy = new ArrayList<Deployment>();
-    private final Collection<DeployedEndpoint> deployed = new ArrayList<DeployedEndpoint>();
+    private final Collection<Deployment> toDeploy = new ArrayList<>();
+    private final Collection<DeployedEndpoint> deployed = new ArrayList<>();
 
     private AppInfo appInfo;
 
@@ -87,6 +88,7 @@ public class HessianExtension implements Extension {
 
         final HessianRegistry registry = service.getRegistry();
 
+        final String appName = findAppName();
         for (final Deployment deployment : toDeploy) {
             final Hessian hessian = deployment.itf.getAnnotation(Hessian.class);
             final HessianServer server;
@@ -113,7 +115,6 @@ public class HessianExtension implements Extension {
             server.createSkeleton(bm.getReference(deployment.bean, deployment.itf, null), deployment.itf);
 
             final String name = getName(deployment.path, deployment.itf);
-            final String appName = findAppName(bm);
             try {
                 LOGGER.info("Hessian(url=" + registry.deploy(deployment.itf.getClassLoader(), server,
                     service.getVirtualHost(), appName,
@@ -127,14 +128,14 @@ public class HessianExtension implements Extension {
         toDeploy.clear();
     }
 
-    private String findAppName(final BeanManager bm) {
+    private String findAppName() {
         if (appInfo.webAppAlone) {
             return appInfo.webApps.iterator().next().contextRoot;
         }
 
         for (final AppContext app : SystemInstance.get().getComponent(ContainerSystem.class).getAppContexts()) {
             for (final WebContext webContext : app.getWebContexts()) {
-                if (isSameContext(bm, webContext.getWebBeansContext())) {
+                if (isSameContext(webContext.getWebBeansContext())) {
                     String contextRoot = webContext.getContextRoot();
                     if (contextRoot != null) {
                         if (contextRoot.startsWith("/")) {
@@ -145,16 +146,20 @@ public class HessianExtension implements Extension {
                     return webContext.getId();
                 }
             }
-            if (isSameContext(bm, app.getWebBeansContext())) {
+            if (isSameContext(app.getWebBeansContext())) {
                 return app.getId();
             }
         }
-        throw new IllegalArgumentException("Can't find application matching bean manager " + bm);
+        throw new IllegalArgumentException("Can't find application matching bean manager");
     }
 
-    private static boolean isSameContext(final BeanManager bm, WebBeansContext app) {
-        return InjectableBeanManager.class.isInstance(bm) && app == InjectableBeanManager.class.cast(bm).getWebBeansContext()
-            || BeanManagerImpl.class.isInstance(bm) && app == BeanManagerImpl.class.cast(bm).getWebBeansContext();
+    private boolean isSameContext(final WebBeansContext app) {
+        final BeanManagerImpl bm = app.getBeanManagerImpl();
+        try {
+            return bm.isInUse() && equals(bm.getExtension(HessianExtension.class));
+        } catch (final Exception e) {
+            return false;
+        }
     }
 
     protected void shutdown(final @Observes BeforeShutdown unused) {
