@@ -42,7 +42,7 @@ public class DeploymentContextPropertiesTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         SystemInstance.reset();
-        Thread.currentThread().getContextClassLoader().loadClass("org.apache.bval.jsr303.ConfigurationImpl");
+        Thread.currentThread().getContextClassLoader().loadClass("org.apache.bval.jsr.ConfigurationImpl");
     }
 
     @Override
