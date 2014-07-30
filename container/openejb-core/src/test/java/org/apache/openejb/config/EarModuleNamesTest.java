@@ -24,6 +24,7 @@ import org.apache.openejb.util.Archives;
 
 import javax.ejb.Singleton;
 import java.io.File;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,7 +46,7 @@ public class EarModuleNamesTest extends TestCase {
         Archives.jarArchive(ear, contents);
 
         final AppInfo appInfo = factory.configureApplication(ear);
-        assertEquals(appInfo.ejbJars.size(), 1);
+        assertEquals(appInfo.ejbJars.size(), 2);
         assertEquals("orange", appInfo.ejbJars.get(0).moduleId);
     }
 
@@ -62,7 +63,7 @@ public class EarModuleNamesTest extends TestCase {
         Archives.jarArchive(ear, contents);
 
         final AppInfo appInfo = factory.configureApplication(ear);
-        assertEquals(appInfo.ejbJars.size(), 1);
+        assertEquals(appInfo.ejbJars.size(), 2);
         assertEquals("orange", appInfo.webApps.get(0).moduleId);
     }
 
@@ -83,7 +84,7 @@ public class EarModuleNamesTest extends TestCase {
         Archives.jarArchive(ear, contents);
 
         final AppInfo appInfo = factory.configureApplication(ear);
-        assertEquals(appInfo.ejbJars.size(), 1);
+        assertEquals(appInfo.ejbJars.size(), 2);
         assertEquals("orange", appInfo.ejbJars.get(0).moduleId);
     }
 
@@ -146,7 +147,7 @@ public class EarModuleNamesTest extends TestCase {
         Archives.jarArchive(ear, contents);
 
         final AppInfo appInfo = factory.configureApplication(ear);
-        assertEquals(appInfo.ejbJars.size(), 1);
+        assertEquals(appInfo.ejbJars.size(), 2);
         assertEquals("orange", appInfo.ejbJars.get(0).moduleId);
     }
 
