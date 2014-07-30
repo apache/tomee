@@ -18,16 +18,10 @@ the minimum centimeters a sport man should jump at pole vaulting:
 
 # Usage
 
-To use this feature you have to add the BeanValidationAppendixInterceptor interceptor.
+TomEE and OpenEJB do not provide anymore `BeanValidationAppendixInterceptor` since
+Bean Validation 1.1 does it (with a slighly different usage but the exact same feature).
 
-In unit test simply put a properties in your context properties:
-
-    properties.setProperty(BeanContext.USER_INTERCEPTOR_KEY, BeanValidationAppendixInterceptor.class.getName());
-
-In a production environment or in tomcat add the properties in conf/system.properties for example:
-
-   org.apache.openejb.default.system.interceptors = org.apache.openejb.bval.BeanValidationAppendixInterceptor
-
+So basically you don't need to configure anything to use it.
 # Errors
 
 If a parameter is not validated an exception is thrown, it is an EJBException wrapping a ConstraintViolationException:
