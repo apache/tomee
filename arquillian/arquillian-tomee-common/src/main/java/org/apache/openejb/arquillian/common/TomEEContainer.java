@@ -317,7 +317,6 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
 
             return new ProtocolMetaData().addContext(httpContext);
         } catch (final Exception e) {
-            e.printStackTrace();
             throw new DeploymentException("Unable to deploy", e);
         }
     }
@@ -421,9 +420,12 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
     public void undeploy(final Archive<?> archive) throws DeploymentException {
         final DeployedApp deployed = moduleIds.remove(archive.getName());
         try {
+            if (deployed == null) {
+                LOGGER.warning(archive.getName() + " was not deployed");
+                return;
+            }
             deployer().undeploy(deployed.path);
         } catch (final Exception e) {
-            e.printStackTrace();
             throw new DeploymentException("Unable to undeploy " + archive.getName(), e);
         } finally {
             LOGGER.info("cleaning " + deployed.file.getAbsolutePath());

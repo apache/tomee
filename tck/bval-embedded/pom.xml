@@ -28,7 +28,6 @@
 
   <properties>
     <tck.version>1.1.0.Final</tck.version>
-    <arquillian.version>1.1.5.Final</arquillian.version>
     <validation.provider>org.apache.bval.jsr.ApacheValidationProvider</validation.provider>
   </properties>
 
@@ -55,11 +54,6 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.jboss.arquillian.container</groupId>
-      <artifactId>arquillian-container-test-spi</artifactId>
-      <version>${arquillian.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>arquillian-openejb-embedded-4</artifactId>
       <version>${project.version}</version>
@@ -79,13 +73,13 @@
     <dependency>
       <groupId>org.jboss.arquillian.testng</groupId>
       <artifactId>arquillian-testng-container</artifactId>
-      <version>${arquillian.version}</version>
+      <version>${version.arquillian}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.arquillian.protocol</groupId>
       <artifactId>arquillian-protocol-servlet</artifactId>
-      <version>${arquillian.version}</version>
+      <version>${version.arquillian}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

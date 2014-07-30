@@ -833,15 +833,19 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 for (final Entry<String, LazyValidator> lazyValidator : lazyValidators.entrySet()) {
                     final String id = lazyValidator.getKey();
                     final ValidatorFactory factory = lazyValidatorFactories.get(lazyValidator.getKey()).getFactory();
-                    final Validator validator = lazyValidator.getValue().getValidator();
                     try {
                         final String factoryName = VALIDATOR_FACTORY_NAMING_CONTEXT + id;
                         containerSystemContext.unbind(factoryName);
                         containerSystemContext.bind(factoryName, factory);
 
                         final String validatoryName = VALIDATOR_NAMING_CONTEXT + id;
-                        containerSystemContext.unbind(validatoryName);
-                        containerSystemContext.bind(validatoryName, validator);
+                        try { // do it after factory cause of TCKs which expects validator to be created later
+                            final Validator val = lazyValidator.getValue().getValidator();
+                            containerSystemContext.unbind(validatoryName);
+                            containerSystemContext.bind(validatoryName, val);
+                        } catch (final Exception e) {
+                            logger.error(e.getMessage(), e);
+                        }
                     } catch (final NameAlreadyBoundException e) {
                         throw new OpenEJBException("ValidatorFactory already exists for module " + id, e);
                     } catch (final Exception e) {

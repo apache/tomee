@@ -488,9 +488,5 @@ public final class ValidatorBuilder {
                 // no-op
             }
         }
-
-        private T getInstance() {
-            return instance;
-        }
     }
 }

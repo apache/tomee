@@ -126,6 +126,10 @@
     <!-- to change easily the javaee api version -->
     <javaee-api.version>7.0-SNAPSHOT</javaee-api.version>
 
+    <version.arquillian>1.1.5.Final</version.arquillian>
+    <version.shrinkwrap.descriptor>2.0.0-alpha-6</version.shrinkwrap.descriptor>
+    <version.shrinkwrap.shrinkwrap>1.1.2</version.shrinkwrap.shrinkwrap>
+
     <tomcat.version>8.0.9</tomcat.version>
 
     <cxf.version>3.0.2-SNAPSHOT</cxf.version>
