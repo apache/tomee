@@ -57,7 +57,7 @@
                         data: {},
                         success: function (data) {
                             sessionsView.render({
-                                sessions: data.sessionResultDto
+                                sessions: data
                             });
                         }
                     });
@@ -68,7 +68,7 @@
                         data: {},
                         success: function (data) {
                             sessionsView.render({
-                                contexts: data.contextResultDto
+                                contexts: data
                             });
                         }
                     });
@@ -134,7 +134,7 @@
                         realm: data.realm
                     },
                     success: function (data) {
-                        scriptingView.appendOutput(data.scriptingResultDto.output);
+                        scriptingView.appendOutput(data.output);
                     }
                 });
             });
@@ -153,7 +153,7 @@
                     dataType: 'json',
                     data: {},
                     success: function (data) {
-                        logfilesView.showList(data.listFilesResultDto.files);
+                        logfilesView.showList(data.files);
                     }
                 });
             });
@@ -170,7 +170,7 @@
                         href: data.href
                     },
                     success: function (data) {
-                        logfilesView.showFile(data.logFileResultDto.content);
+                        logfilesView.showFile(data.content);
                     }
                 });
             });
