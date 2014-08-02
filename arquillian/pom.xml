@@ -31,10 +31,6 @@
   <packaging>pom</packaging>
   <name>OpenEJB :: Arquillian Adaptors Parent</name>
 
-  <properties>
-    <test.coverage.skip>true</test.coverage.skip>
-  </properties>
-
   <modules>
     <module>arquillian-common</module>
     <module>arquillian-tomee-common</module>
