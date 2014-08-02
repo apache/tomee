@@ -50,21 +50,14 @@ public final class SystemInstance {
 
     private final Options options;
 
-    /**
-     * Properties that need to be set to System via {@link System#setProperty(String, String)}
-     * FIXME: Some properties are doubled in internal and external prop sets, but it simplifies get's
-     */
-    private final Properties externalProperties = new Properties();
-
     private final FileUtils home;
     private final FileUtils base;
     private final ClassLoader classLoader;
-    private final HashMap<Class, Object> components;
+    private final Map<Class, Object> components;
     private final ClassPath classPath;
     private final ObserverManager observerManager = new ObserverManager();
 
-    // FIXME: Why is Exception thrown at all? It's almost impossible that it'll happen.
-    private SystemInstance(final Properties properties) throws Exception {
+    private SystemInstance(final Properties properties) {
         this.components = new HashMap<Class, Object>();
 
         // import JVM system property config (if a resource/container/... is set through this way)
@@ -114,20 +107,23 @@ public final class SystemInstance {
             }
             this.internalProperties.put(e.getKey(), e.getValue());
         }
-
         this.internalProperties.putAll(properties);
-
         this.options = new Options(internalProperties, new Options(System.getProperties()));
         this.home = new FileUtils("openejb.home", "user.dir", this.internalProperties);
         this.base = new FileUtils("openejb.base", "openejb.home", this.internalProperties);
         this.classPath = ClassPathFactory.createClassPath(this.internalProperties.getProperty("openejb.loader", "context"));
         this.classLoader = classPath.getClassLoader();
-
-        this.internalProperties.setProperty("openejb.home", home.getDirectory().getCanonicalPath());
-        this.internalProperties.setProperty("openejb.base", base.getDirectory().getCanonicalPath());
-        System.setProperty("derby.system.home", System.getProperty("derby.system.home", base.getDirectory().getCanonicalPath()));
-
-
+        final String homeDirCanonicalPath;
+        final String baseDirCanonicalPath;
+        try {
+            homeDirCanonicalPath = home.getDirectory().getCanonicalPath();
+            baseDirCanonicalPath = base.getDirectory().getCanonicalPath();
+        } catch (IOException e) {
+            throw new LoaderRuntimeException("Failed to create default instance of SystemInstance", e);
+        }
+        this.internalProperties.setProperty("openejb.home", homeDirCanonicalPath);
+        this.internalProperties.setProperty("openejb.base", baseDirCanonicalPath);
+        System.setProperty("derby.system.home", System.getProperty("derby.system.home", baseDirCanonicalPath));
     }
 
     public <E> E fireEvent(final E event) {
@@ -174,7 +170,6 @@ public final class SystemInstance {
      */
     public Object setProperty(final String key, final String value, final boolean isExternalProperty) {
         if (isExternalProperty) {
-            this.externalProperties.setProperty(key, value);
             System.setProperty(key, value);
         }
         return internalProperties.setProperty(key, value);

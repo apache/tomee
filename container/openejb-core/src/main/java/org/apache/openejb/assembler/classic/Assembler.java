@@ -641,7 +641,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         return createApplication(appInfo, classLoader, true);
     }
 
-    public AppContext createApplication(final AppInfo appInfo, ClassLoader classLoader, final boolean start) throws OpenEJBException, IOException, NamingException {
+    private AppContext createApplication(final AppInfo appInfo, ClassLoader classLoader, final boolean start) throws OpenEJBException, IOException, NamingException {
         // The path is used in the UrlCache, command line deployer, JNDI name templates, tomcat integration and a few other places
         if (appInfo.appId == null) {
             throw new IllegalArgumentException("AppInfo.appId cannot be null");
@@ -653,13 +653,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         Extensions.addExtensions(classLoader, appInfo.eventClassesNeedingAppClassloader);
 
         logger.info("createApplication.start", appInfo.path);
-
-        //        try {
-        //            Thread.sleep(5000);
-        //        } catch (InterruptedException e) {
-        //            e.printStackTrace();
-        //            Thread.interrupted();
-        //        }
 
         // To start out, ensure we don't already have any beans deployed with duplicate IDs.  This
         // is a conflict we can't handle.
