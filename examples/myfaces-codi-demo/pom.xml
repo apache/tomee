@@ -20,7 +20,7 @@
   <packaging>war</packaging>
 
   <properties>
-    <myfaces2.version>2.1.11</myfaces2.version>
+    <myfaces2.version>2.2.4</myfaces2.version>
     <myfaces.codi.version>1.0.5</myfaces.codi.version>
     <extval.version>2.0.8</extval.version>
   </properties>
@@ -50,6 +50,11 @@
       <name>Prime Technology Maven Repository</name>
       <url>http://repository.primefaces.org/</url>
       <layout>default</layout>
+    </repository>
+    <repository>
+      <id>apache-m2-snapshot</id>
+      <name>Apache Snapshot Repository</name>
+      <url>http://repository.apache.org/snapshots</url>
     </repository>
   </repositories>
   <dependencies>
