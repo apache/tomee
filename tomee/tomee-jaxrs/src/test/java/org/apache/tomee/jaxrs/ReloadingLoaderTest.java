@@ -17,6 +17,9 @@
 package org.apache.tomee.jaxrs;
 
 import org.apache.catalina.LifecycleException;
+import org.apache.catalina.LifecycleState;
+import org.apache.catalina.core.StandardContext;
+import org.apache.catalina.webresources.StandardRoot;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.assembler.classic.AppInfo;
@@ -41,12 +44,14 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.File;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Collections;
 import java.util.Properties;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
 public class ReloadingLoaderTest {
@@ -78,6 +83,22 @@ public class ReloadingLoaderTest {
 
         loader = new TomEEWebappClassLoader(ParentClassLoaderFinder.Helper.get());
         loader.init();
+        final StandardRoot resources = new StandardRoot();
+        loader.setResources(resources);
+        resources.setContext(new StandardContext() {
+            @Override
+            public String getDocBase() {
+                final File file = new File("target/foo");
+                file.mkdirs();
+                return file.getAbsolutePath();
+            }
+
+            @Override
+            public String getMBeanKeyProperties() {
+                return "foo";
+            }
+        {}});
+        resources.start();
         loader.start();
 
         info = new AppInfo();
@@ -108,7 +129,7 @@ public class ReloadingLoaderTest {
                 final ClassLoader beforeLoader = SystemInstance.get().getComponent(ContainerSystem.class).getWebContext("test").getClassLoader();
                 assertSame(loader, beforeLoader);
                 assertNotNull(beforeLoader);
-                assertNotNull(Reflections.get(beforeLoader, "parent")); // getParent != parent from WebAppClassLoader
+                assertNotNull(Reflections.get(beforeLoader, "parent"));
             }
 
             loader.internalStop();
@@ -116,14 +137,31 @@ public class ReloadingLoaderTest {
             server.undeploy(new AssemblerBeforeApplicationDestroyed(info, context));
 
             {
-                final ClassLoader afterLoader = SystemInstance.get().getComponent(ContainerSystem.class).getWebContext("test").getClassLoader();
+                final URLClassLoader afterLoader = URLClassLoader.class.cast(SystemInstance.get().getComponent(ContainerSystem.class).getWebContext("test").getClassLoader());
                 assertSame(loader, afterLoader);
                 assertNotNull(afterLoader);
-                assertNull(Reflections.get(afterLoader, "parent"));
+                assertEquals(0, afterLoader.getURLs().length);
+                assertEquals(LifecycleState.STOPPED, loader.getState());
             }
 
+            final StandardRoot resources = new StandardRoot();
+            loader.setResources(resources);
+            resources.setContext(new StandardContext() {
+                @Override
+                public String getDocBase() {
+                    final File file = new File("target/foo");
+                    file.mkdirs();
+                    return file.getAbsolutePath();
+                }
+
+                @Override
+                public String getMBeanKeyProperties() {
+                    return "foo";
+                }
+                {}});
+            resources.start();
             loader.start();
-            // TomcatWebAppBuilder ill catch start event from StandardContext and force a classloader
+            // TomcatWebAppBuilder ill catch start event from StandardCo1ntext and force a classloader
             Reflections.set(loader, "parent", ParentClassLoaderFinder.Helper.get());
 
             server.afterApplicationCreated(new AssemblerAfterApplicationCreated(info, context, Collections.<BeanContext>emptyList()));
