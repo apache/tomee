@@ -1657,6 +1657,10 @@
         <version>2.2.1</version>
         <exclusions>
           <exclusion>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+          </exclusion>
+          <exclusion>
             <groupId>javax.transaction</groupId>
             <artifactId>jta</artifactId>
           </exclusion>
