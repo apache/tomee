@@ -74,9 +74,6 @@ Copyright 2006 Google, Inc.
   - License: Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0.txt)
   - https://github.com/sonatype/sisu-guice
 =========================================================================
-Gson (https://code.google.com/p/google-gson/) - A Java library that can be used to convert Java Objects into their JSON representation
-License: Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0.txt)
-=========================================================================
 FastInfoset (https://fi.java.net/)
 License: Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0.txt)
 =========================================================================
