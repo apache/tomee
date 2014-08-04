@@ -1730,7 +1730,7 @@
           </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jcdi_1.0_spec</artifactId>
+            <artifactId>geronimo-jcdi_1.2_spec</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -1738,7 +1738,7 @@
           </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-interceptor_1.1_spec</artifactId>
+            <artifactId>geronimo-interceptor_1.2_spec</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
@@ -1749,11 +1749,11 @@
         <exclusions>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-interceptor_1.1_spec</artifactId>
+            <artifactId>geronimo-interceptor_1.2_spec</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jcdi_1.0_spec</artifactId>
+            <artifactId>geronimo-jcdi_1.1_spec</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -1772,11 +1772,11 @@
           </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-servlet_2.5_spec</artifactId>
+            <artifactId>geronimo-servlet_3.0_spec</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jcdi_1.0_spec</artifactId>
+            <artifactId>geronimo-jcdi_1.1_spec</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -1814,7 +1814,7 @@
           </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jcdi_1.0_spec</artifactId>
+            <artifactId>geronimo-jcdi_1.1_spec</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
