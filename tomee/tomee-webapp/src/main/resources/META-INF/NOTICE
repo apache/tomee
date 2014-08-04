@@ -110,9 +110,6 @@ This product includes software Copyright University of Southampton IT Innovation
   - JAnsi (http://http://jansi.fusesource.org/) org.fusesource.jansi:jansi:jar:1.8
     License: Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0.txt)
 =========================================================================
-Gson (https://code.google.com/p/google-gson/) - A Java library that can be used to convert Java Objects into their JSON representation
-License: Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0.txt)
-=========================================================================
 FastInfoset (https://fi.java.net/)
 License: Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0.txt)
 =========================================================================
