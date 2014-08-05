@@ -62,7 +62,9 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.proxy.ProxyEJB;
 import org.apache.webbeans.config.WebBeansContext;
+import org.apache.webbeans.container.BeanManagerImpl;
 
+import javax.enterprise.inject.spi.Bean;
 import javax.management.ObjectName;
 import javax.management.openmbean.TabularData;
 import javax.naming.Context;
@@ -211,12 +213,14 @@ public class CxfRsHttpListener implements RsHttpListener {
     }
 
     @Override
+    @Deprecated // we could drop it now I think
     public void deploySingleton(final String contextRoot, final String fullContext, final Object o, final Application appInstance,
                                 final Collection<Object> additionalProviders, final ServiceConfiguration configuration) {
-        deploy(contextRoot, o.getClass(), fullContext, new SingletonResourceProvider(o), o, appInstance, null, additionalProviders, configuration);
+        deploy(contextRoot, o.getClass(), fullContext, new SingletonResourceProvider(o), o, appInstance, null, additionalProviders, configuration, null);
     }
 
     @Override
+    @Deprecated // we could drop it now I think
     public void deployPojo(final ClassLoader loader,
                            final String contextRoot,
                            final String fullContext,
@@ -228,10 +232,11 @@ public class CxfRsHttpListener implements RsHttpListener {
                            final Collection<Object> additionalProviders,
                            final ServiceConfiguration configuration) {
         deploy(contextRoot, loadedClazz, fullContext, new OpenEJBPerRequestPojoResourceProvider(loader, loadedClazz, injections, context, owbCtx),
-            null, app, null, additionalProviders, configuration);
+            null, app, null, additionalProviders, configuration, owbCtx);
     }
 
     @Override
+    @Deprecated // we could drop it now I think
     public void deployEJB(final String contextRoot,
                           final String fullContext,
                           final BeanContext beanContext,
@@ -239,16 +244,18 @@ public class CxfRsHttpListener implements RsHttpListener {
                           final ServiceConfiguration configuration) {
         final Object proxy = ProxyEJB.subclassProxy(beanContext);
 
-        deploy(contextRoot, beanContext.getBeanClass(), fullContext, new NoopResourceProvider(beanContext.getBeanClass(), proxy), proxy, null, new OpenEJBEJBInvoker(Collections.singleton(beanContext)), additionalProviders, configuration);
+        deploy(contextRoot, beanContext.getBeanClass(), fullContext, new NoopResourceProvider(beanContext.getBeanClass(), proxy),
+                proxy, null, new OpenEJBEJBInvoker(Collections.singleton(beanContext)), additionalProviders, configuration, null);
     }
 
     private void deploy(final String contextRoot, final Class<?> clazz, final String address, final ResourceProvider rp, final Object serviceBean,
-                        final Application app, final Invoker invoker, final Collection<Object> additionalProviders, final ServiceConfiguration configuration) {
+                        final Application app, final Invoker invoker, final Collection<Object> additionalProviders, final ServiceConfiguration configuration,
+                        final WebBeansContext webBeansContext) {
         final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());
         try {
             final JAXRSServerFactoryBean factory = newFactory(address);
-            configureFactory(additionalProviders, configuration, factory);
+            configureFactory(additionalProviders, configuration, factory, webBeansContext);
             factory.setResourceClasses(clazz);
             context = contextRoot;
             if (context == null) {
@@ -282,11 +289,26 @@ public class CxfRsHttpListener implements RsHttpListener {
         }
     }
 
-    private Collection<Object> providers(final Collection<ServiceInfo> services, final Collection<Object> additionalProviders) {
+    private Collection<Object> providers(final Collection<ServiceInfo> services, final Collection<Object> additionalProviders, final WebBeansContext ctx) {
         final Collection<Object> instances = new ArrayList<>();
+        final BeanManagerImpl bm = ctx.getBeanManagerImpl();
         for (final Object o : additionalProviders) {
             if (o instanceof Class<?>) {
                 final Class<?> clazz = (Class<?>) o;
+
+                if (bm.isInUse()) {
+                    try {
+                        final Set<Bean<?>> beans = bm.getBeans(clazz);
+                        if (beans != null && !beans.isEmpty()) {
+                            final Bean<?> bean = bm.resolve(beans);
+                            instances.add(bm.getReference(bean, clazz, bm.createCreationalContext(bean)));
+                            continue;
+                        }
+                    } catch (final Throwable th) {
+                        LOGGER.info("Can't use CDI to create provider " + clazz.getName());
+                    }
+                }
+
                 final Collection<Object> instance = ServiceInfos.resolve(services, new String[]{clazz.getName()}, ProviderFactory.INSTANCE);
                 if (instance != null && !instance.isEmpty()) {
                     instances.add(instance.iterator().next());
@@ -348,7 +370,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());
         try {
             final JAXRSServerFactoryBean factory = newFactory(prefix);
-            configureFactory(additionalProviders, serviceConfiguration, factory);
+            configureFactory(additionalProviders, serviceConfiguration, factory, owbCtx);
             factory.setApplication(application);
 
             final List<Class<?>> classes = new ArrayList<>();
@@ -533,7 +555,10 @@ public class CxfRsHttpListener implements RsHttpListener {
         return factory;
     }
 
-    private void configureFactory(final Collection<Object> givenAdditionalProviders, final ServiceConfiguration serviceConfiguration, final JAXRSServerFactoryBean factory) {
+    private void configureFactory(final Collection<Object> givenAdditionalProviders,
+                                  final ServiceConfiguration serviceConfiguration,
+                                  final JAXRSServerFactoryBean factory,
+                                  final WebBeansContext ctx) {
         CxfUtil.configureEndpoint(factory, serviceConfiguration, CXF_JAXRS_PREFIX);
 
         final Collection<ServiceInfo> services = serviceConfiguration.getAvailableServices();
@@ -600,13 +625,13 @@ public class CxfRsHttpListener implements RsHttpListener {
         if (providersConfig != null) {
             providers = ServiceInfos.resolve(services, providersConfig.toArray(new String[providersConfig.size()]), ProviderFactory.INSTANCE);
             if (providers != null && additionalProviders != null && !additionalProviders.isEmpty()) {
-                providers.addAll(providers(services, additionalProviders));
+                providers.addAll(providers(services, additionalProviders, ctx));
             }
         }
         if (providers == null) {
             providers = new ArrayList<>(4);
             if (additionalProviders != null && !additionalProviders.isEmpty()) {
-                providers.addAll(providers(services, additionalProviders));
+                providers.addAll(providers(services, additionalProviders, ctx));
             } else {
                 providers.addAll(defaultProviders());
             }
