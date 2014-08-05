@@ -45,10 +45,9 @@ import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.startup.Constants;
 import org.apache.catalina.startup.ContextConfig;
+import org.apache.catalina.startup.ContextRuleSet;
 import org.apache.catalina.startup.HostConfig;
-import org.apache.catalina.startup.RealmRuleSet;
-import org.apache.catalina.startup.SetAllPropertiesRule;
-import org.apache.catalina.startup.SetNextNamingRule;
+import org.apache.catalina.startup.NamingRuleSet;
 import org.apache.catalina.users.MemoryUserDatabase;
 import org.apache.catalina.webresources.DirResourceSet;
 import org.apache.naming.ContextAccessController;
@@ -414,25 +413,17 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             return CONTEXT_DIGESTER;
         }
 
+        final Map<Class<?>, List<String>> fakeAttributes = new HashMap<>();
+        final List<String> attrs = new ArrayList<>();
+        attrs.add("className");
+        fakeAttributes.put(Object.class, attrs);
+
         final Digester digester = new Digester();
         digester.setValidating(false);
-        digester.addObjectCreate("Context", "org.apache.catalina.core.StandardContext", "className");
-        digester.addSetProperties("Context");
-        digester.addObjectCreate("Context/Loader", "org.apache.catalina.loader.WebappLoader", "className");
-        digester.addSetProperties("Context/Loader");
-        digester.addSetNext("Context/Loader", "setLoader", "org.apache.catalina.Loader");
-        digester.addObjectCreate("Context/Manager", "org.apache.catalina.session.StandardManager", "className");
-        digester.addSetProperties("Context/Manager");
-        digester.addSetNext("Context/Manager", "setManager", "org.apache.catalina.Manager");
-        digester.addObjectCreate("Context/Manager/Store", null, "className");
-        digester.addSetProperties("Context/Manager/Store");
-        digester.addSetNext("Context/Manager/Store", "setStore", "org.apache.catalina.Store");
-        digester.addRuleSet(new RealmRuleSet("Context/"));
-        digester.addCallMethod("Context/WatchedResource", "addWatchedResource", 0);
-        digester.addObjectCreate("Context/Resource", "org.apache.catalina.deploy.ContextResource");
-        digester.addRule("Context/Resource", new SetAllPropertiesRule());
-        digester.addRule("Context/Resource", new SetNextNamingRule("addResource", "org.apache.catalina.deploy.ContextResource"));
-
+        digester.setRulesValidation(false);
+        digester.setFakeAttributes(fakeAttributes);
+        digester.addRuleSet(new ContextRuleSet(""));
+        digester.addRuleSet(new NamingRuleSet("Context/"));
         return digester;
     }
 
