@@ -146,13 +146,19 @@ public class BeanContext extends DeploymentContext {
 
         // handled by OpenEJB so clean up from OWB
         Map.class.cast(Reflections.get(injectionTarget, "methodInterceptors")).clear();
-        Collection.class.cast(Reflections.get(injectionTarget, "postConstructInterceptors")).clear();
-        Collection.class.cast(Reflections.get(injectionTarget, "postConstructMethods")).clear();
-        Collection.class.cast(Reflections.get(injectionTarget, "preDestroyInterceptors")).clear();
-        Collection.class.cast(Reflections.get(injectionTarget, "preDestroyMethods")).clear();
+        clear(Collection.class.cast(Reflections.get(injectionTarget, "postConstructInterceptors")));
+        clear(Collection.class.cast(Reflections.get(injectionTarget, "postConstructMethods")));
+        clear(Collection.class.cast(Reflections.get(injectionTarget, "preDestroyInterceptors")));
+        clear(Collection.class.cast(Reflections.get(injectionTarget, "preDestroyMethods")));
 
-        Collection.class.cast(Reflections.get(info, "ejbInterceptors")).clear();
-        Collection.class.cast(Reflections.get(info, "cdiInterceptors")).clear();
+        clear(Collection.class.cast(Reflections.get(info, "ejbInterceptors")));
+        clear(Collection.class.cast(Reflections.get(info, "cdiInterceptors")));
+    }
+
+    private static void clear(final Collection<?> c) {
+        if (c != null) { // yeah can be null with dynamically impl beans
+            c.clear();
+        }
     }
 
     public interface BusinessLocalHome extends EJBLocalHome {

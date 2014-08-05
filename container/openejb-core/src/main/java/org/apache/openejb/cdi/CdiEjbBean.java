@@ -352,6 +352,18 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker {
         }
 
         @Override
+        protected void defineLifecycleInterceptors(final Bean<T> bean, final AnnotatedType<T> annotatedType, final WebBeansContext webBeansContext) {
+            if (!isDynamicBean(bean)) {
+                super.defineLifecycleInterceptors(bean, annotatedType, webBeansContext);
+            }
+        }
+
+        @Override
+        protected boolean needsProxy() {
+            return !bean.beanContext.isDynamicallyImplemented() && super.needsProxy();
+        }
+
+        @Override
         public T produce(final CreationalContext<T> creationalContext) {
             if (delegate == null) {
                 return bean.createEjb(creationalContext);
@@ -405,6 +417,10 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker {
 
         public T createNewPojo(final CreationalContext<T> creationalContext) {
             return (T) super.newInstance(CreationalContextImpl.class.cast(creationalContext));
+        }
+
+        private static boolean isDynamicBean(final Bean<?> bean) {
+            return CdiEjbBean.class.isInstance(bean) && CdiEjbBean.class.cast(bean).beanContext.isDynamicallyImplemented();
         }
     }
 }
