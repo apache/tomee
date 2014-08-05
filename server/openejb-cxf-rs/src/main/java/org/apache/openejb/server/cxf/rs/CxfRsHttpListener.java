@@ -63,7 +63,9 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.proxy.ProxyEJB;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
+import org.apache.webbeans.context.creational.CreationalContextImpl;
 
+import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.management.ObjectName;
 import javax.management.openmbean.TabularData;
@@ -86,6 +88,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -117,6 +120,7 @@ public class CxfRsHttpListener implements RsHttpListener {
     private String servlet = "";
     private final Collection<Pattern> staticResourcesList = new CopyOnWriteArrayList<>();
     private final List<ObjectName> jmxNames = new ArrayList<>();
+    private final Collection<CreationalContext<?>> toRelease = new LinkedHashSet<>();
 
     static {
         STATIC_CONTENT_TYPES = new HashMap<>();
@@ -301,7 +305,9 @@ public class CxfRsHttpListener implements RsHttpListener {
                         final Set<Bean<?>> beans = bm.getBeans(clazz);
                         if (beans != null && !beans.isEmpty()) {
                             final Bean<?> bean = bm.resolve(beans);
-                            instances.add(bm.getReference(bean, clazz, bm.createCreationalContext(bean)));
+                            final CreationalContextImpl<?> creationalContext = bm.createCreationalContext(bean);
+                            instances.add(bm.getReference(bean, clazz, creationalContext));
+                            toRelease.add(creationalContext);
                             continue;
                         }
                     } catch (final Throwable th) {
@@ -339,9 +345,16 @@ public class CxfRsHttpListener implements RsHttpListener {
 
     @Override
     public void undeploy() {
-        // unregister all MBeans
         for (final ObjectName objectName : jmxNames) {
             LocalMBeanServer.unregisterSilently(objectName);
+        }
+
+        for (final CreationalContext<?> cc : toRelease) {
+            try {
+                cc.release();
+            } catch (final Exception e) {
+                LOGGER.warning(e.getMessage(), e);
+            }
         }
 
         final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
