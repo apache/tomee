@@ -86,7 +86,7 @@ public final class OpenEJBEnricher {
             final ThreadContext callContext = new ThreadContext(context, null, Operation.INJECTION);
             final ThreadContext oldContext = ThreadContext.enter(callContext);
             try {
-                final InjectionProcessor processor = new InjectionProcessor<Object>(testInstance, context.getInjections(), context.getJndiContext());
+                final InjectionProcessor processor = new InjectionProcessor<>(testInstance, context.getInjections(), context.getJndiContext());
                 processor.createInstance();
             } catch (final OpenEJBException e) {
                 // ignored
