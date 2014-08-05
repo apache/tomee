@@ -18,7 +18,6 @@
 
 package org.apache.openejb.cdi;
 
-import org.apache.bval.cdi.BValInterceptor;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.BeansInfo;
@@ -90,10 +89,6 @@ public class CdiScanner implements ScannerService {
         for (final Class<?> interceptor : TRANSACTIONAL_INTERCEPTORS) {
             interceptorsManager.addEnabledInterceptorClass(interceptor);
         }
-
-        // TODO: this shouldn't be needed with OWB 2, see org.apache.openejb.cdi.OptimizedLoaderService.loadExtensions() too
-        classes.add(BValInterceptor.class);
-        interceptorsManager.addEnabledInterceptorClass(BValInterceptor.class);
 
         // app beans
         for (final EjbJarInfo ejbJar : appInfo.ejbJars) {
