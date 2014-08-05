@@ -24,6 +24,9 @@
            <configuration>
                <property name="httpPort">-1</property>
                <property name="stopPort">-1</property>
+               <property name="properties">
+                 openejb.classloader.forced-skip=org.apache.openejb.arquillian.embedded.EmbeddedTomEEContainerTest,org.apache.openejb.arquillian.embedded.AnEJB
+               </property>
            </configuration>
        </container>
 </arquillian>
