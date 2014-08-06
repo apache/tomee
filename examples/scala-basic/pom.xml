@@ -29,8 +29,9 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <!--<scala.version>2.9.1</scala.version>-->
+
     <scala.version>2.11</scala.version>
+    <scala.full-version>${scala.version}.0</scala.full-version>
   </properties>
 
   <repositories>
@@ -62,7 +63,7 @@
           </execution>
         </executions>
         <configuration>
-          <scalaVersion>${scala.version}</scalaVersion>
+          <scalaVersion>${scala.full-version}</scalaVersion>
         </configuration>
       </plugin>
 
@@ -109,13 +110,19 @@
     <dependency>
       <groupId>org.scala-lang</groupId>
       <artifactId>scala-library</artifactId>
-      <version>${scala.version}.1</version>
+      <version>${scala.full-version}</version>
     </dependency>
     <dependency>
       <groupId>org.scalatest</groupId>
       <artifactId>scalatest_${scala.version}</artifactId>
       <version>2.2.0</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.scala-lang</groupId>
+          <artifactId>scala-library</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- other "classical" dependencies -->
