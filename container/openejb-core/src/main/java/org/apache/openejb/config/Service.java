@@ -66,4 +66,5 @@ public interface Service {
 
     String getClasspath();
 
+    String getPropertiesProvider();
 }

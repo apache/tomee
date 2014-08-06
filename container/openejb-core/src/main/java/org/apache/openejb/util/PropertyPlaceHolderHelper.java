@@ -31,6 +31,10 @@ public final class PropertyPlaceHolderHelper {
 
     private static final PropertiesLookup RESOLVER = new PropertiesLookup();
     public static final StrSubstitutor SUBSTITUTOR = new StrSubstitutor(RESOLVER);
+    static {
+        SUBSTITUTOR.setEnableSubstitutionInVariables(true);
+        SUBSTITUTOR.setValueDelimiter(System.getProperty("openejb.placehodler.delimiter", ":-")); // default one of [lang3]
+    }
 
     private PropertyPlaceHolderHelper() {
         // no-op
@@ -50,7 +54,7 @@ public final class PropertyPlaceHolderHelper {
         if (!value.equals(raw) && value.startsWith("java:")) {
             value = value.substring(5);
         }
-        return value;
+        return value.replace(PREFIX, "").replace(SUFFIX, "");
     }
 
     public static String value(final String aw) {
@@ -107,7 +111,7 @@ public final class PropertyPlaceHolderHelper {
                 return value;
             }
 
-            return key;
+            return null;
         }
 
         public synchronized void reload() {

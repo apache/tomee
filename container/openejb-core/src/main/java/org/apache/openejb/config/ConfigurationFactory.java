@@ -96,6 +96,8 @@ import org.apache.openejb.util.proxy.QueryProxy;
 import org.apache.xbean.finder.IAnnotationFinder;
 import org.apache.xbean.finder.MetaAnnotatedClass;
 import org.apache.xbean.finder.ResourceFinder;
+import org.apache.xbean.recipe.ObjectRecipe;
+import org.apache.xbean.recipe.Option;
 
 import javax.ejb.embeddable.EJBContainer;
 import java.io.File;
@@ -751,6 +753,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 service.setClassName(map.remove("class-name"));
                 service.setConstructor(map.remove("constructor"));
                 service.setFactoryName(map.remove("factory-name"));
+                service.setPropertiesProvider(map.remove("properties-provider"));
 
                 final String cp = map.remove("classpath");
                 if (null != cp) {
@@ -1164,6 +1167,23 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
             props.putAll(serviceProperties);
             props.putAll(overrides);
+
+            // force user properties last
+            if (service.getPropertiesProvider() != null) {
+                // don't trim them, user wants to handle it himself, let him do it
+                final ObjectRecipe recipe = new ObjectRecipe(service.getPropertiesProvider());
+                recipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
+                recipe.allow(Option.PRIVATE_PROPERTIES);
+                recipe.allow(Option.FIELD_INJECTION);
+                recipe.allow(Option.NAMED_PARAMETERS);
+                recipe.allow(Option.IGNORE_MISSING_PROPERTIES);
+                recipe.setFactoryMethod("provides");
+                recipe.setProperties(props);
+                recipe.setProperty("properties", props); // let user get all config
+                final Properties p = Properties.class.cast(recipe.create());
+
+                props.putAll(p);
+            }
 
             props.remove(IGNORE_DEFAULT_VALUES_PROP);
 

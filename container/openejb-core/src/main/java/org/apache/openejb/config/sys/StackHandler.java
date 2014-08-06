@@ -31,7 +31,7 @@ import java.util.List;
 public class StackHandler extends DefaultHandler {
     private static final boolean DEBUG = Boolean.getBoolean("openejb.sax.debug");
 
-    private final List<DefaultHandler> handlers = new LinkedList<DefaultHandler>();
+    private final List<DefaultHandler> handlers = new LinkedList<>();
 
     protected DefaultHandler get() {
         return handlers.get(0);
@@ -47,7 +47,7 @@ public class StackHandler extends DefaultHandler {
 
     protected void checkAttributes(final Attributes attributes, final List<String> allowed) throws SAXException {
 
-        final List<String> invalid = new ArrayList<String>();
+        final List<String> invalid = new ArrayList<>();
 
         for (int i = 0; i < attributes.getLength(); i++) {
             if (!allowed.contains(attributes.getLocalName(i))) {
@@ -63,7 +63,7 @@ public class StackHandler extends DefaultHandler {
 
     protected void push(final DefaultHandler handler) {
         if (DEBUG) {
-            for (int i = 0; i < handlers.size(); i++) {
+            for (final DefaultHandler ignored : handlers) {
                 System.out.print("  ");
             }
             System.out.println("+ " + handler);
@@ -74,7 +74,7 @@ public class StackHandler extends DefaultHandler {
     @Override
     public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
         if (DEBUG) {
-            for (int i = 0; i < handlers.size(); i++) {
+            for (final DefaultHandler ignored : handlers) {
                 System.out.print("  ");
             }
             System.out.println("> " + get());
@@ -88,7 +88,7 @@ public class StackHandler extends DefaultHandler {
         if (!DEBUG) {
             pop();
         } else {
-            for (int i = 0; i < handlers.size(); i++) {
+            for (final DefaultHandler ignored : handlers) {
                 System.out.print("  ");
             }
             System.out.println(" - " + pop());
@@ -159,7 +159,7 @@ public class StackHandler extends DefaultHandler {
         }
 
         protected List<String> getAttributes() {
-            final List<String> attributes = new ArrayList<String>();
+            final List<String> attributes = new ArrayList<>();
             attributes.add("type");
             attributes.add("jar");
             attributes.add("provider");
@@ -193,6 +193,7 @@ public class StackHandler extends DefaultHandler {
         public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
             super.startElement(uri, localName, qName, attributes);
             service.setJndi(attributes.getValue("jndi"));
+            service.setPropertiesProvider(attributes.getValue("property-provider"));
 
             final String aliases = attributes.getValue("aliases");
             if (aliases != null) {
@@ -211,6 +212,7 @@ public class StackHandler extends DefaultHandler {
             final List<String> attributes = super.getAttributes();
             attributes.add("jndi");
             attributes.add("aliases");
+            attributes.add("properties-provider");
             return attributes;
         }
     }
