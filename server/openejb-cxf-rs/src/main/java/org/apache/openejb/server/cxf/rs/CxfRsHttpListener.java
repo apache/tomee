@@ -249,7 +249,8 @@ public class CxfRsHttpListener implements RsHttpListener {
         final Object proxy = ProxyEJB.subclassProxy(beanContext);
 
         deploy(contextRoot, beanContext.getBeanClass(), fullContext, new NoopResourceProvider(beanContext.getBeanClass(), proxy),
-                proxy, null, new OpenEJBEJBInvoker(Collections.singleton(beanContext)), additionalProviders, configuration, null);
+                proxy, null, new OpenEJBEJBInvoker(Collections.singleton(beanContext)), additionalProviders, configuration,
+                beanContext.getWebBeansContext());
     }
 
     private void deploy(final String contextRoot, final Class<?> clazz, final String address, final ResourceProvider rp, final Object serviceBean,
@@ -295,12 +296,12 @@ public class CxfRsHttpListener implements RsHttpListener {
 
     private Collection<Object> providers(final Collection<ServiceInfo> services, final Collection<Object> additionalProviders, final WebBeansContext ctx) {
         final Collection<Object> instances = new ArrayList<>();
-        final BeanManagerImpl bm = ctx.getBeanManagerImpl();
+        final BeanManagerImpl bm = ctx == null ? null : ctx.getBeanManagerImpl();
         for (final Object o : additionalProviders) {
             if (o instanceof Class<?>) {
                 final Class<?> clazz = (Class<?>) o;
 
-                if (bm.isInUse()) {
+                if (bm != null && bm.isInUse()) {
                     try {
                         final Set<Bean<?>> beans = bm.getBeans(clazz);
                         if (beans != null && !beans.isEmpty()) {
