@@ -18,19 +18,39 @@
 package org.apache.openejb.util;
 
 import org.apache.openejb.loader.SystemInstance;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
 public class PropertyPlaceHolderTest {
+    @Before
+    @After
+    public void reset() {
+        SystemInstance.get().getProperties().clear();
+    }
+
     @Test
     public void simpleReplace() {
         SystemInstance.get().setProperty("PropertyPlaceHolderTest", "ok");
 
         final String foo = PropertyPlaceHolderHelper.simpleValue("${PropertyPlaceHolderTest}");
         assertEquals("ok", foo);
+    }
 
-        SystemInstance.get().getProperties().remove("PropertyPlaceHolderTest");
+    @Test
+    public void defaults() {
+        SystemInstance.get().setProperty("last", "e");
+        SystemInstance.get().setProperty("end", "real-end");
+        SystemInstance.get().setProperty("real-end", "!");
+        assertEquals("bah", PropertyPlaceHolderHelper.simpleValue("${PropertyPlaceHolderTest:-bah}"));
+        assertEquals("tomee!", PropertyPlaceHolderHelper.simpleValue("${not here sorry:-to}${no more luck:-me}${last:-missed}${${end}}"));
+    }
+
+    @Test
+    public void noValueFound() {
+        assertEquals("v", PropertyPlaceHolderHelper.simpleValue("${v}"));
     }
 
     @Test
@@ -40,8 +60,5 @@ public class PropertyPlaceHolderTest {
 
         final String foo = PropertyPlaceHolderHelper.simpleValue("jdbc://${PropertyPlaceHolderTest1}/${PropertyPlaceHolderTest2}");
         assertEquals("jdbc://uno/due", foo);
-
-        SystemInstance.get().getProperties().remove("PropertyPlaceHolderTest1");
-        SystemInstance.get().getProperties().remove("PropertyPlaceHolderTest2");
     }
 }

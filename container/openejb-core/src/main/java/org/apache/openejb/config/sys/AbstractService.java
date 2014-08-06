@@ -80,6 +80,9 @@ public abstract class AbstractService implements Service {
     @XmlAttribute(name = "factory-name")
     protected String factoryName;
 
+    @XmlAttribute(name = "properties-provider")
+    private String propertiesProvider;
+
 
     protected AbstractService(final String id) {
         this(id, null, null);
@@ -262,5 +265,14 @@ public abstract class AbstractService implements Service {
         result = 31 * result + (provider != null ? provider.hashCode() : 0);
         result = 31 * result + (type != null ? type.hashCode() : 0);
         return result;
+    }
+
+    public void setPropertiesProvider(final String propertiesProvider) {
+        this.propertiesProvider = propertiesProvider;
+    }
+
+    @Override
+    public String getPropertiesProvider() {
+        return propertiesProvider;
     }
 }
