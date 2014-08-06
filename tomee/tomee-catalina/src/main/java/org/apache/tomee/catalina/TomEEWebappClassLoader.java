@@ -63,17 +63,16 @@ public class TomEEWebappClassLoader extends WebappClassLoader {
     private ClassLoaderConfigurer configurer;
     private final int hashCode;
     private Collection<File> additionalRepos;
-    private volatile ClassLoader j2seClassLoader;
 
     public TomEEWebappClassLoader() {
-        j2seClassLoader = getSystemClassLoader();
         hashCode = construct();
+        setJavaseClassLoader(getSystemClassLoader());
     }
 
     public TomEEWebappClassLoader(final ClassLoader parent) {
         super(parent);
-        j2seClassLoader = getSystemClassLoader();
         hashCode = construct();
+        setJavaseClassLoader(getSystemClassLoader());
     }
 
     private int construct() {
@@ -104,14 +103,14 @@ public class TomEEWebappClassLoader extends WebappClassLoader {
                 || "org.apache.tomee.mojarra.TomEEInjectionProvider".equals(name)) {
             // don't load them from system classloader (breaks all in embedded mode and no sense in other cases)
             synchronized (this) {
-                final ClassLoader old = j2seClassLoader;
-                j2seClassLoader = NoClassClassLoader.INSTANCE;
+                final ClassLoader old = getJavaseClassLoader();
+                setJavaseClassLoader(NoClassClassLoader.INSTANCE);
                 final boolean delegate = getDelegate();
                 setDelegate(false);
                 try {
                     return super.loadClass(name);
                 } finally {
-                    j2seClassLoader = old;
+                    setJavaseClassLoader(old);
                     setDelegate(delegate);
                 }
             }
