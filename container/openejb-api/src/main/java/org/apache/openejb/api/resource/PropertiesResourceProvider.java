@@ -14,8 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.api;
+package org.apache.openejb.api.resource;
 
-public interface DestroyableResource {
-    void destroyResource();
+import java.util.Properties;
+
+// see properties-provider for resources/services
+public interface PropertiesResourceProvider {
+    Properties provides();
 }

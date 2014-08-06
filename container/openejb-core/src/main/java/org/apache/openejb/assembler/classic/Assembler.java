@@ -40,7 +40,7 @@ import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.UndeployException;
-import org.apache.openejb.api.DestroyableResource;
+import org.apache.openejb.api.resource.DestroyableResource;
 import org.apache.openejb.assembler.classic.event.AssemblerAfterApplicationCreated;
 import org.apache.openejb.assembler.classic.event.AssemblerBeforeApplicationDestroyed;
 import org.apache.openejb.assembler.classic.event.AssemblerCreated;

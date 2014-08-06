@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.threads.impl;
 
-import org.apache.openejb.api.DestroyableResource;
+import org.apache.openejb.api.resource.DestroyableResource;
 import org.apache.openejb.threads.future.CUFuture;
 import org.apache.openejb.threads.task.CUCallable;
 import org.apache.openejb.threads.task.CURunnable;
