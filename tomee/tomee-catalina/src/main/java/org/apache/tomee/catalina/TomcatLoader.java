@@ -150,7 +150,7 @@ public class TomcatLoader implements Loader {
             if (paths.verify()) {
                 final Installer installer = new Installer(paths);
                 if (installer.getStatus() != Status.INSTALLED) {
-                    installer.installConfigFiles();
+                    installer.installConfigFiles(false);
                 }
             }
         }

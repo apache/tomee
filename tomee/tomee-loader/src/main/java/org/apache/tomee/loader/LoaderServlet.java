@@ -45,6 +45,8 @@ public class LoaderServlet extends HttpServlet {
      * {@inheritDoc}
      */
     public void init(final ServletConfig config) throws ServletException {
+        super.init(config);
+
         // only install once
         if (embedded) {
             return;
@@ -107,7 +109,7 @@ public class LoaderServlet extends HttpServlet {
      */
     private String getWebappPath(final ServletConfig config) {
         final ServletContext ctx = config.getServletContext();
-        final File webInf = new File(ctx.getRealPath("WEB-INF"));
+        final File webInf = new File(ctx.getRealPath("/WEB-INF"));
         final File webapp = webInf.getParentFile();
         final String webappPath = webapp.getAbsolutePath();
         return webappPath;

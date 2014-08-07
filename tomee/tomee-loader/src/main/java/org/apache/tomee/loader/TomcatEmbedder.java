@@ -21,6 +21,7 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URI;
+import java.net.URLClassLoader;
 import java.net.URLDecoder;
 import java.util.Properties;
 
@@ -73,28 +74,10 @@ public class TomcatEmbedder {
         // set the ClassLoader to the one which loaded ServletConfig.class i.e. the parent ClassLoader
         Thread.currentThread().setContextClassLoader(catalinaCl);
         try {
-            // WebappClassLoader childCl = new WebappClassLoader(catalinaCl)
-            final Class<?> webappClClass = catalinaCl.loadClass("org.apache.catalina.loader.WebappClassLoader");
-            final ClassLoader childCl = (ClassLoader) webappClClass.getConstructor(ClassLoader.class).newInstance(catalinaCl);
-
-            // childCl.addRepository(tomee-loader.jar)
-            // Use reflection to add the tomee-loader.jar file to the repository of WebappClassLoader. 
-            // WebappClassLoader will now search for classes in this jar too
-            final File thisJar = getThisJar();
-            final String thisJarUrl = thisJar.toURI().toString();
-            webappClClass.getMethod("addRepository", String.class).invoke(childCl, thisJarUrl);
-
-            // childCl.addRepository(openejb-loader.jar)
-            // Use reflection to add the openejb-loader.jar file to the repository of WebappClassLoader. 
-            // WebappClassLoader will now search for classes in this jar too
-
-            final File jarFile = findOpenEJBJar(openejbWar, OPENEJB_LOADER_PREFIX);
-            final String openejbLoaderUrl = jarFile.toURI().toString();
-
-            webappClClass.getMethod("addRepository", String.class).invoke(childCl, openejbLoaderUrl);
-
-            // childCl.start()
-            webappClClass.getMethod("start").invoke(childCl);
+            final ClassLoader childCl = new URLClassLoader(new URL[] {
+                    getThisJar().toURI().toURL(),
+                    findOpenEJBJar(openejbWar, OPENEJB_LOADER_PREFIX).toURI().toURL()
+            });
 
             // TomcatHook.hook()
             //This is loaded by childCl and is defined in the tomee-loader

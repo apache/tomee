@@ -39,9 +39,6 @@ import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/*
- * TODO: delete old embedded adapter, move the tests and set those up
- */
 public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguration> {
 
     private static final Logger logger = Logger.getLogger(TomEEWebappContainer.class.getName());
@@ -131,7 +128,7 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
             }
 
             if (logger.isLoggable(Level.FINE)) {
-                final Map<Object, Object> map = new TreeMap<Object, Object>(System.getProperties());
+                final Map<Object, Object> map = new TreeMap<>(System.getProperties());
                 for (final Map.Entry<Object, Object> entry : map.entrySet()) {
                     System.out.printf("%s = %s\n", entry.getKey(), entry.getValue());
                 }
@@ -187,12 +184,9 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
         if (file.exists()) {
             Files.delete(file);
         }
-        final InputStream is = org.apache.openejb.loader.IO.read(resource);
 
-        try {
+        try (final InputStream is = org.apache.openejb.loader.IO.read(resource)) {
             IO.copy(is, file);
-        } finally {
-            is.close();
         }
     }
 
@@ -205,16 +199,11 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
     protected void downloadTomcat(final File catalinaDirectory, final String tomcatVersion) throws LifecycleException {
         String source = null;
 
-        if (tomcatVersion.startsWith("7.")) {
-            source = "http://archive.apache.org/dist/tomcat/tomcat-7/v" + tomcatVersion + "/bin/apache-tomcat-" + tomcatVersion + ".zip";
-        }
-
-        if (tomcatVersion.startsWith("6.")) {
-            source = "http://archive.apache.org/dist/tomcat/tomcat-6/v" + tomcatVersion + "/bin/apache-tomcat-" + tomcatVersion + ".zip";
-        }
-
-        if (tomcatVersion.startsWith("5.5")) {
-            source = "http://archive.apache.org/dist/tomcat/tomcat-5/v" + tomcatVersion + "/bin/apache-tomcat-" + tomcatVersion + ".zip";
+        try {
+            int v = Integer.parseInt(tomcatVersion.substring(0, tomcatVersion.indexOf('.')));
+            source = "http://archive.apache.org/dist/tomcat/tomcat-" + v + "/v" + v + "/bin/apache-tomcat-" + tomcatVersion + ".zip";
+        } catch (final Exception e) {
+            // no-op
         }
 
         if (source == null) {
