@@ -41,7 +41,7 @@ public class UserServiceTest {
 
     private static Context context;
     private static UserService service;
-    private static List<User> users = new ArrayList<User>();
+    private static List<User> users = new ArrayList<>();
 
     @BeforeClass
     public static void start() throws NamingException {
@@ -64,13 +64,12 @@ public class UserServiceTest {
 
     @Test
     public void create() {
-        int expected = service.list(0, 100).size() + 1;
-        Response response = WebClient.create("http://localhost:4204/rest-on-ejb")
+        WebClient.create("http://localhost:4204/rest-on-ejb")
                 .path("/user/create")
                 .query("name", "dummy")
                 .query("pwd", "unbreakable")
                 .query("mail", "foo@bar.fr")
-                .put(null);
+                .put("{}");
         List<User> list = service.list(0, 100);
         for (User u : list) {
             if (!users.contains(u)) {
