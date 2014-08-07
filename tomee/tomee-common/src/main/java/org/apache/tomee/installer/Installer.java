@@ -754,14 +754,12 @@ public class Installer implements InstallerInterface {
         }
     }
 
-    private void installTomEEJuli(Alerts alerts, File loggingPropsFile, String newLoggingProps) {
-        if (newLoggingProps != null) {
-            if (Installers.writeAll(
-                    loggingPropsFile,
-                    newLoggingProps.replace("java.util.logging.ConsoleHandler", "org.apache.tomee.jul.formatter.AsyncConsoleHandler"),
-                    alerts)) {
-                alerts.addInfo("Append OpenEJB config to logging.properties");
-            }
+    private void installTomEEJuli(final Alerts alerts, final File loggingPropsFile, final String newLoggingProps) {
+        if (newLoggingProps != null && Installers.writeAll(
+                loggingPropsFile,
+                newLoggingProps.replace("java.util.logging.ConsoleHandler", "org.apache.tomee.jul.formatter.AsyncConsoleHandler"),
+                alerts)) {
+            alerts.addInfo("Append OpenEJB config to logging.properties");
         }
     }
 }
