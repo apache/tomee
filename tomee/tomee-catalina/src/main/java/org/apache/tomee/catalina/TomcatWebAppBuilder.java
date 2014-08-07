@@ -1560,7 +1560,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             if (currentWebAppInfo != null) {
                 final WebContext webContext = getContainerSystem().getWebContext(currentWebAppInfo.moduleId);
                 if (webContext != null) {
-                    webContext.setJndiEnc(comp);
+                    webContext.setJndiEnc(root);
                 }
 
                 try {

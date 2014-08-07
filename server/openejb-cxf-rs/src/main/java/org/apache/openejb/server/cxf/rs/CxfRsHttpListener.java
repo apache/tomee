@@ -418,7 +418,8 @@ public class CxfRsHttpListener implements RsHttpListener {
                     final Object proxy = ProxyEJB.subclassProxy(restServiceInfo.context);
                     factory.setResourceProvider(clazz, new NoopResourceProvider(restServiceInfo.context.getBeanClass(), proxy));
                 } else {
-                    factory.setResourceProvider(clazz, new OpenEJBPerRequestPojoResourceProvider(classLoader, clazz, injections, context, owbCtx));
+                    factory.setResourceProvider(clazz, new OpenEJBPerRequestPojoResourceProvider(
+                            classLoader, clazz, injections, context, owbCtx));
                 }
             }
 
