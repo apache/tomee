@@ -45,9 +45,7 @@ import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.startup.Constants;
 import org.apache.catalina.startup.ContextConfig;
-import org.apache.catalina.startup.ContextRuleSet;
 import org.apache.catalina.startup.HostConfig;
-import org.apache.catalina.startup.NamingRuleSet;
 import org.apache.catalina.users.MemoryUserDatabase;
 import org.apache.catalina.webresources.DirResourceSet;
 import org.apache.naming.ContextAccessController;
@@ -112,7 +110,6 @@ import org.apache.tomcat.util.descriptor.web.ContextTransaction;
 import org.apache.tomcat.util.descriptor.web.FilterDef;
 import org.apache.tomcat.util.descriptor.web.FilterMap;
 import org.apache.tomcat.util.descriptor.web.ResourceBase;
-import org.apache.tomcat.util.digester.Digester;
 import org.apache.tomcat.util.scan.StandardJarScanFilter;
 import org.apache.tomee.catalina.cluster.ClusterObserver;
 import org.apache.tomee.catalina.cluster.TomEEClusterListener;
@@ -186,8 +183,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      * Logger instance
      */
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB.createChild("tomcat"), "org.apache.openejb.util.resources");
-
-    private static final Digester CONTEXT_DIGESTER = createDigester();
 
     public static final String DEFAULT_J2EE_SERVER = "Apache TomEE";
     public static final String OPENEJB_WEBAPP_MODULE_ID = "openejb.webapp.moduleId";
@@ -404,25 +399,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         }
     }
 
-    private static synchronized Digester createDigester() {
-        if (CONTEXT_DIGESTER != null) {
-            return CONTEXT_DIGESTER;
-        }
-
-        final Map<Class<?>, List<String>> fakeAttributes = new HashMap<>();
-        final List<String> attrs = new ArrayList<>();
-        attrs.add("className");
-        fakeAttributes.put(Object.class, attrs);
-
-        final Digester digester = new Digester();
-        digester.setValidating(false);
-        digester.setRulesValidation(false);
-        digester.setFakeAttributes(fakeAttributes);
-        digester.addRuleSet(new ContextRuleSet(""));
-        digester.addRuleSet(new NamingRuleSet("Context/"));
-        return digester;
-    }
-
     //
     // OpenEJB WebAppBuilder
     //
@@ -458,27 +434,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             }
 
             StandardContext standardContext;
-            if (contextXml != null) {
-                synchronized (CONTEXT_DIGESTER) {
-                    ClassLoader loader = null;
-                    if (classLoader != null) {
-                        loader = CONTEXT_DIGESTER.getClassLoader();
-                        CONTEXT_DIGESTER.setClassLoader(classLoader);
-                    }
-                    try {
-                        standardContext = (StandardContext) CONTEXT_DIGESTER.parse(contextXml);
-                        standardContext.setConfigFile(contextXmlUrl);
-                    } catch (final Exception e) {
-                        logger.error("can't parse context xml for webapp " + webApp.path, e);
-                        standardContext = new StandardContext();
-                    } finally {
-                        CONTEXT_DIGESTER.reset();
-                        if (classLoader != null) {
-                            CONTEXT_DIGESTER.setClassLoader(loader);
-                        }
-                    }
-                }
-            } else {
+            {
                 final Host host = hosts.getDefault();
                 if (StandardHost.class.isInstance(host)) {
                     try {
@@ -490,6 +446,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 } else {
                     standardContext = new StandardContext();
                 }
+            }
+            if (contextXml != null) {
+                standardContext.setConfigFile(contextXmlUrl);
             }
 
             if (standardContext.getPath() != null) {
