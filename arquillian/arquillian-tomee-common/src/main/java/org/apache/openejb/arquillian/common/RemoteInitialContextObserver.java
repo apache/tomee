@@ -27,6 +27,7 @@ import org.jboss.arquillian.test.spi.event.enrichment.BeforeEnrichment;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -69,8 +70,9 @@ public class RemoteInitialContextObserver {
                 // no-op
             }
 
-            context.set((Context) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[]{ Context.class }, new MultipleContextHandler(props, existing)));
-        } catch (final ClassNotFoundException e) {
+            final Context proxyInstance = (Context) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[]{Context.class}, new MultipleContextHandler(props, existing));
+            context.set(new InitialContextWrapper(proxyInstance)); // cause ContextProducer of arquillian supports InitialContext
+        } catch (final ClassNotFoundException | NamingException e) {
             // no-op
         }
     }
@@ -88,7 +90,6 @@ public class RemoteInitialContextObserver {
         public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
             Exception err = null;
             for (final Callable<Context> callable : Arrays.asList( // order is important to avoid to start an embedded container for some cases
-
                     new Callable<Context>() { // then try to create a remote context
                         @Override
                         public Context call() throws Exception {
@@ -129,6 +130,20 @@ public class RemoteInitialContextObserver {
             }
 
             return null;
+        }
+    }
+
+    private static class InitialContextWrapper extends InitialContext {
+        private final Context delegate;
+
+        public InitialContextWrapper(final Context proxyInstance) throws NamingException {
+            super(true);
+            this.delegate = proxyInstance;
+        }
+
+        @Override
+        protected Context getURLOrDefaultInitCtx(final String name) {
+            return delegate;
         }
     }
 }
