@@ -225,7 +225,11 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
                     }
                 }
             }
-            return method.invoke(ctx, args);
+            try {
+                return method.invoke(ctx, args);
+            } catch (final InvocationTargetException ite) {
+                throw ite.getCause();
+            }
         }
     }
 

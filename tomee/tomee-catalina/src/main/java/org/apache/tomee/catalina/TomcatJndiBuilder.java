@@ -158,7 +158,7 @@ public class TomcatJndiBuilder {
         ContextAccessController.setWritable(name, namingToken);
         Context root = null;
         try {
-            root = (Context) ContextBindings.getClassLoader().lookup("");
+            root = (Context) ContextBindings.getClassLoader();
         } catch (final NamingException ignored) { // shouldn't occur
             // no-op
         }
@@ -629,16 +629,21 @@ public class TomcatJndiBuilder {
             return;
         }
 
-        ContextResource resource = naming.findResource(ref.referenceName.replaceAll("^comp/env/", ""));
+        final String name = ref.referenceName.replaceAll("^comp/env/", "");
+        if (isOpenEjb(naming, name)) {
+            return;
+        }
+
+        ContextResource resource = naming.findResource(name);
         boolean addEntry = false;
         if (resource == null) {
             resource = new ContextResource();
-            resource.setName(ref.referenceName.replaceAll("^comp/env/", ""));
+            resource.setName(name);
             addEntry = true;
         }
 
         resource.setProperty(Constants.FACTORY, ResourceFactory.class.getName());
-        resource.setProperty(NamingUtil.NAME, ref.referenceName.replaceAll("^comp/env/", ""));
+        resource.setProperty(NamingUtil.NAME, name);
         resource.setType(ref.referenceType);
         resource.setAuth(ref.referenceAuth);
 
@@ -850,6 +855,11 @@ public class TomcatJndiBuilder {
         }
 
         return wsdlUrl;
+    }
+
+    private boolean isOpenEjb(final NamingResourcesImpl naming, final String name) {
+        final ContextResource resource = naming.findResource(name);
+        return resource != null && ResourceFactory.class.getName().equals(resource.getProperty("factory"));
     }
 
     private void setResource(final ContextResource resource, final String name, final Object object) {

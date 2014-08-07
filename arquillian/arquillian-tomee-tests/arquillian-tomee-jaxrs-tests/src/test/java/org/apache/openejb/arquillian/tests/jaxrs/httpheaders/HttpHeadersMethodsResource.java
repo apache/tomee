@@ -43,10 +43,10 @@ public class HttpHeadersMethodsResource {
     @GET
     @Path("acceptablelanguages")
     public String getLanguages() {
-        List<Locale> languages = headersfield.getAcceptableLanguages();
-        StringBuilder sb = new StringBuilder("acceptablelanguages:");
-        for (Locale l : languages) {
-            sb.append(l.getLanguage() + ":");
+        final List<Locale> languages = headersfield.getAcceptableLanguages();
+        final StringBuilder sb = new StringBuilder("acceptablelanguages:");
+        for (final Locale l : languages) {
+            sb.append(l.getLanguage()).append(":");
         }
         return sb.toString();
     }
@@ -54,10 +54,10 @@ public class HttpHeadersMethodsResource {
     @GET
     @Path("acceptablemediatypes")
     public String getAcceptableMediaTypes() {
-        List<MediaType> mediatypes = headersfield.getAcceptableMediaTypes();
-        StringBuilder sb = new StringBuilder("acceptablemediatypes:");
-        for (MediaType mt : mediatypes) {
-            sb.append(mt.getType() + "/" + mt.getSubtype() + ":");
+        final List<MediaType> mediatypes = headersfield.getAcceptableMediaTypes();
+        final StringBuilder sb = new StringBuilder("acceptablemediatypes:");
+        for (final MediaType mt : mediatypes) {
+            sb.append(mt.getType()).append("/").append(mt.getSubtype()).append(":");
         }
         return sb.toString();
     }
@@ -65,10 +65,10 @@ public class HttpHeadersMethodsResource {
     @POST
     @Path("requestmediatype")
     public String getRequestMediaType() {
-        MediaType mt = headersfield.getMediaType();
-        StringBuilder sb = new StringBuilder("mediatype:");
+        final MediaType mt = headersfield.getMediaType();
+        final StringBuilder sb = new StringBuilder("mediatype:");
         if (mt != null) {
-            sb.append(mt.getType() + "/" + mt.getSubtype() + ":");
+            sb.append(mt.getType()).append("/").append(mt.getSubtype()).append(":");
         } else {
             sb.append("null:");
         }
@@ -78,10 +78,10 @@ public class HttpHeadersMethodsResource {
     @POST
     @Path("language")
     public String getLanguage() {
-        Locale l = headersfield.getLanguage();
-        StringBuilder sb = new StringBuilder("language:");
+        final Locale l = headersfield.getLanguage();
+        final StringBuilder sb = new StringBuilder("language:");
         if (l != null) {
-            sb.append(l.getLanguage() + ":");
+            sb.append(l.getLanguage()).append(":");
         } else {
             sb.append("null:");
         }
@@ -91,15 +91,15 @@ public class HttpHeadersMethodsResource {
     @POST
     @Path("cookies")
     public String getCookies() {
-        Map<String, Cookie> cookies = headersfield.getCookies();
-        StringBuilder sb = new StringBuilder("cookies:");
+        final Map<String, Cookie> cookies = headersfield.getCookies();
+        final StringBuilder sb = new StringBuilder("cookies:");
         if (cookies == null) {
             sb.append("null:");
         } else {
-            List<String> cookieNames = new ArrayList<String>(cookies.keySet());
+            final List<String> cookieNames = new ArrayList<String>(cookies.keySet());
             Collections.sort(cookieNames);
-            for (String c : cookieNames) {
-                sb.append(c + "=" + cookies.get(c).getValue() + ":");
+            for (final String c : cookieNames) {
+                sb.append(c).append("=").append(cookies.get(c).getValue()).append(":");
             }
         }
         return sb.toString();
@@ -124,17 +124,17 @@ public class HttpHeadersMethodsResource {
     @GET
     @Path("/requestheaders")
     public String getHeaders(@Context HttpHeaders headers, @QueryParam("name") String headerName) {
-        MultivaluedMap<String, String> requestHeaders = headers.getRequestHeaders();
-        List<String> keys = new ArrayList<String>(requestHeaders.keySet());
+        final MultivaluedMap<String, String> requestHeaders = headers.getRequestHeaders();
+        final List<String> keys = new ArrayList<String>(requestHeaders.keySet());
         Collections.sort(keys);
-        StringBuilder sb = new StringBuilder("requestheaders:");
-        for (String k : keys) {
-            sb.append(k + "=");
+        final StringBuilder sb = new StringBuilder("requestheaders:");
+        for (final String k : keys) {
+            sb.append(k).append("=");
             List<String> values = requestHeaders.get(k);
             if (values != null) {
                 values = new ArrayList<String>(values);
                 Collections.sort(values);
-                sb.append(values + ":");
+                sb.append(values).append(":");
             }
         }
         return sb.toString();
