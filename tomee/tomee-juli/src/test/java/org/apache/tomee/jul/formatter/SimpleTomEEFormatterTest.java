@@ -18,7 +18,6 @@
 package org.apache.tomee.jul.formatter;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.apache.tomee.jul.formatter.SimpleTomEEFormatter;
 import org.junit.Test;
 
 import java.util.logging.Formatter;
@@ -29,6 +28,7 @@ import static org.junit.Assert.assertEquals;
 
 public class SimpleTomEEFormatterTest {
     private static final String LINE_SEPARATOR_KEY = "line.separator";
+
     @Test
     public void formatNullThrown() throws Exception {
         final String previousLineSeparatorProperty = System.getProperty(LINE_SEPARATOR_KEY);
