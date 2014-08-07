@@ -57,7 +57,7 @@ public class UserService {
         user.setPassword(pwd);
         user.setEmail(mail);
         em.persist(user);
-        return user;
+        return user.copy();
     }
 
     @Path("/list")
