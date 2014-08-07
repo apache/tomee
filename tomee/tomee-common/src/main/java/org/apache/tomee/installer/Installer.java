@@ -90,7 +90,7 @@ public class Installer implements InstallerInterface {
     public void installAll() {
         installListener();
         installJavaagent();
-        installConfigFiles();
+        installConfigFiles(false);
 
         removeTomcatLibJar("annotations-api.jar");
         // addJavaeeInEndorsed();
@@ -175,7 +175,7 @@ public class Installer implements InstallerInterface {
         installJavaagent();
 
         commentDeploymentDir();
-        installConfigFiles();
+        installConfigFiles(true);
 
         removeTomcatLibJar("annotations-api.jar");
         // addJavaeeInEndorsed();
@@ -543,8 +543,9 @@ public class Installer implements InstallerInterface {
      *
      * NOTE:- If the existing conf/logging.properties file already has some openejb specific
      * configuration, then this method will just leave the logging.properties file alone
+     * @param builtIn
      */
-    public void installConfigFiles() {
+    public void installConfigFiles(final boolean builtIn) {
         final File openejbCoreJar = paths.getOpenEJBCoreJar();
         final File confDir = paths.getCatalinaConfDir();
         final Alerts alerts = this.alerts;
@@ -646,13 +647,8 @@ public class Installer implements InstallerInterface {
                         openejbLoggingProps + "\r\n";
             }
         }
-        if (newLoggingProps != null) {
-            if (Installers.writeAll(
-                    loggingPropsFile,
-                    newLoggingProps.replace("java.util.logging.ConsoleHandler", "org.apache.tomee.jul.formatter.AsyncConsoleHandler"),
-                    alerts)) {
-                alerts.addInfo("Append OpenEJB config to logging.properties");
-            }
+        if (builtIn) {
+            installTomEEJuli(alerts, loggingPropsFile, newLoggingProps);
         }
 
         final File openejbSystemProperties = new File(confDir, "system.properties");
@@ -755,6 +751,17 @@ public class Installer implements InstallerInterface {
         final String webXml = Installers.readEntry(openejbTomcatCommonJar, "conf/web.xml", alerts);
         if (Installers.writeAll(webXmlFile, webXml, alerts)) {
             alerts.addInfo("Set jasper in production mode in TomEE web.xml");
+        }
+    }
+
+    private void installTomEEJuli(Alerts alerts, File loggingPropsFile, String newLoggingProps) {
+        if (newLoggingProps != null) {
+            if (Installers.writeAll(
+                    loggingPropsFile,
+                    newLoggingProps.replace("java.util.logging.ConsoleHandler", "org.apache.tomee.jul.formatter.AsyncConsoleHandler"),
+                    alerts)) {
+                alerts.addInfo("Append OpenEJB config to logging.properties");
+            }
         }
     }
 }
