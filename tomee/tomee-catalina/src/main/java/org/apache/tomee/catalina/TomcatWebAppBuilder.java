@@ -228,13 +228,13 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      * Tomcat host config elements
      */
     //Key is the host name
-    private final Map<String, HostConfig> deployers = new TreeMap<String, HostConfig>();
+    private final Map<String, HostConfig> deployers = new TreeMap<>();
     private final Hosts hosts;
     /**
      * Deployed web applications
      */
     // todo merge this map witth the infos map above
-    private final Map<String, DeployedApplication> deployedApps = new TreeMap<String, DeployedApplication>();
+    private final Map<String, DeployedApplication> deployedApps = new TreeMap<>();
     /**
      * OpenEJB deployment loader instance
      */
@@ -250,7 +250,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      */
     private CoreContainerSystem containerSystem;
 
-    private final Map<ClassLoader, Map<String, Set<String>>> jsfClasses = new HashMap<ClassLoader, Map<String, Set<String>>>();
+    private final Map<ClassLoader, Map<String, Set<String>>> jsfClasses = new HashMap<>();
 
     private Class<?> sessionManagerClass;
 
@@ -338,9 +338,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
     private void addTomEERealm(final Engine engine) {
         final Realm realm = engine.getRealm();
-        if (realm != null && !(realm instanceof TomEERealm)
-                && (engine.getParent() == null
-                || (engine.getParent() != null && !realm.equals(engine.getParent().getRealm())))) {
+        if (realm != null && !(realm instanceof TomEERealm) && (engine.getParent() == null || (!realm.equals(engine.getParent().getRealm())))) {
             final Realm tomeeRealm = tomeeRealm(realm);
             engine.setRealm(tomeeRealm);
             if (LifecycleState.STARTING_PREP.equals(engine.getState())) {
@@ -355,9 +353,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
     private void addTomEERealm(final Host host) {
         final Realm realm = host.getRealm();
-        if (realm != null && !(realm instanceof TomEERealm)
-                && (host.getParent() == null
-                || (host.getParent() != null && !realm.equals(host.getParent().getRealm())))) {
+        if (realm != null && !(realm instanceof TomEERealm) && (host.getParent() == null || (!realm.equals(host.getParent().getRealm())))) {
             host.setRealm(tomeeRealm(realm));
         }
     }
@@ -633,7 +629,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     }
 
     public synchronized Collection<String> availableApps() {
-        final Collection<String> apps = new ArrayList<String>();
+        final Collection<String> apps = new ArrayList<>();
         for (final ContextInfo info : infos.values()) {
             if (info.appInfo != null) {
                 apps.add(info.appInfo.path);
@@ -645,7 +641,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     }
 
     // TODO: find something more sexy
-    private static final AtomicReference<Field> HOST_CONFIG_HOST = new AtomicReference<Field>(null);
+    private static final AtomicReference<Field> HOST_CONFIG_HOST = new AtomicReference<>(null);
 
     static {
         try { // do it only once
@@ -968,7 +964,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         if (sc != null && !SystemInstance.get().getOptions().get(OPENEJB_JSESSION_ID_SUPPORT, true)) {
             final Set<SessionTrackingMode> defaultTrackingModes = sc.getEffectiveSessionTrackingModes();
             if (defaultTrackingModes.contains(SessionTrackingMode.URL)) {
-                final Set<SessionTrackingMode> newModes = new HashSet<SessionTrackingMode>();
+                final Set<SessionTrackingMode> newModes = new HashSet<>();
                 newModes.remove(SessionTrackingMode.URL);
                 sc.setSessionTrackingModes(newModes);
             }
@@ -1052,7 +1048,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     @SuppressWarnings("unchecked")
     @Override
     public void start(final StandardContext standardContext) {
-        startInternal(standardContext);
+        // no-op
     }
 
     /**
@@ -1081,7 +1077,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             final AppModule appModule = loadApplication(standardContext);
 
             if (standardContext.getNamingResources() instanceof OpenEJBNamingResource) {
-                final Collection<String> importedNames = new ArrayList<String>(); // we can get the same resource twice as in tomcat
+                final Collection<String> importedNames = new ArrayList<>(); // we can get the same resource twice as in tomcat
 
                 // add them to the app as resource
                 final OpenEJBNamingResource nr = (OpenEJBNamingResource) standardContext.getNamingResources();
@@ -1373,7 +1369,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     private static void eagerInitOfLocalBeanProxies(final Collection<BeanContext> beans, final ClassLoader classLoader) {
         for (final BeanContext deployment : beans) {
             if (deployment.isLocalbean() && !deployment.isDynamicallyImplemented()) { // init proxy eagerly otherwise deserialization of serialized object can't work
-                final List<Class> interfaces = new ArrayList<Class>(2);
+                final List<Class> interfaces = new ArrayList<>(2);
                 interfaces.add(Serializable.class);
                 interfaces.add(IntraVmProxy.class);
                 final BeanType type = deployment.getComponentType();
@@ -1509,9 +1505,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         final Realm realm = standardContext.getRealm();
         final ClassLoader classLoader = standardContext.getLoader().getClassLoader();
         final Thread thread = Thread.currentThread();
-        if (realm != null && !(realm instanceof TomEERealm)
-                && (standardContext.getParent() == null
-                || (standardContext.getParent() != null && !realm.equals(standardContext.getParent().getRealm())))) {
+        if (realm != null && !(realm instanceof TomEERealm) && (standardContext.getParent() == null || (!realm.equals(standardContext.getParent().getRealm())))) {
             final ClassLoader originalLoader = thread.getContextClassLoader();
             thread.setContextClassLoader(classLoader);
             try {
@@ -1930,7 +1924,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 for (File file : files) {
                     final String name = file.getName();
                     // ignore war files
-                    if (name.toLowerCase().endsWith(".war") || isRoot(name) || name.equalsIgnoreCase("META-INF") || name.equalsIgnoreCase("WEB-INF")) {
+                    if (name.toLowerCase().endsWith(".war") || isRoot(name)
+                            || name.equalsIgnoreCase("META-INF") || name.equalsIgnoreCase("WEB-INF")) {
                         continue;
                     }
                     // Simple fix for TOMEE-23
@@ -2311,7 +2306,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     private static class DeployedApplication {
 
         private final AppInfo appInfo;
-        private final Map<File, Long> watchedResource = new HashMap<File, Long>();
+        private final Map<File, Long> watchedResource = new HashMap<>();
 
         public DeployedApplication(final File base, final AppInfo appInfo) {
             this.appInfo = appInfo;
