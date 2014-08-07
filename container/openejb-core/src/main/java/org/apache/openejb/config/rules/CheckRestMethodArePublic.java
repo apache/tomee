@@ -79,9 +79,11 @@ public class CheckRestMethodArePublic implements ValidationRule {
                         for (final Class<?> rsClass : appInstance.getClasses()) {
                             classes.add(rsClass.getName());
                         }
+                        /* don't do it or ensure you have cdi activated! + CXF will catch it later
                         for (final Object rsSingleton : appInstance.getSingletons()) {
                             classes.add(rsSingleton.getClass().getName());
                         }
+                        */
                     } catch (final RuntimeException npe) {
                         if (appInstance == null) {
                             throw npe;

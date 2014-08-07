@@ -83,7 +83,7 @@
             <openejb.jul.forceReload>true</openejb.jul.forceReload>
             <logging.level.OpenEJB.startup>FINEST</logging.level.OpenEJB.startup>
           </systemPropertyVariables>
-          <reuseForks>false</reuseForks>
+          <forkMode>never</forkMode>
         </configuration>
       </plugin>
     </plugins>

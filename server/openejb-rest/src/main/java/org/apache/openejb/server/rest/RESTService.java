@@ -155,7 +155,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
                         throw new OpenEJBRestRuntimeException("can't create class " + app, e);
                     }
 
-                    final Set<Class<?>> classes = application.getClasses();
+                    final Set<Class<?>> classes = new HashSet<>(application.getClasses());
                     final Set<Object> singletons = application.getSingletons();
 
                     if (classes.size() + singletons.size() == 0) {
