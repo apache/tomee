@@ -36,7 +36,6 @@ import org.apache.openejb.Injection;
 import org.apache.openejb.JndiConstants;
 import org.apache.openejb.MethodContext;
 import org.apache.openejb.NoSuchApplicationException;
-import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.UndeployException;
@@ -1954,11 +1953,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         jars.addAll(Arrays.asList(SystemInstance.get().getComponent(ClassLoaderEnricher.class).applicationEnrichment()));
 
         // Create the class loader
-        final ParentClassLoaderFinder parentFinder = SystemInstance.get().getComponent(ParentClassLoaderFinder.class);
-        ClassLoader parent = OpenEJB.class.getClassLoader();
-        if (parentFinder != null) {
-            parent = parentFinder.getParentClassLoader(parent);
-        }
+        final ClassLoader parent = ParentClassLoaderFinder.Helper.get();
 
         final String prefix;
         if (appInfo.webAppAlone) {
@@ -1980,6 +1975,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         // try to get the app BM from the AppClassLoader having stored it in a map).
         // since we don't really need to create a classloader here when starting from classpath just let skip this step
         if (skipLoaderIfPossible) { // TODO: maybe use a boolean to know if all urls comes from the classpath to avoid this validation
+            if ("classpath.ear".equals(appInfo.appId)) {
+                return parent;
+            }
+
             final Collection<File> urls = new HashSet<>();
             for (final URL url : ClassLoaders.findUrls(parent)) { // need to convert it to file since urls can be file:/xxx or jar:file:///xxx
                 try {
