@@ -32,7 +32,9 @@ import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Application;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Properties;
 import java.util.Set;
 
@@ -66,7 +68,10 @@ public class CDIApplicationTest {
 
     @Test
     public void isCdi() {
-        assertTrue(MyCdiRESTApplication.injection);
+        assertEquals(2, MyCdiRESTApplication.injection.size());
+        for (final Boolean b : MyCdiRESTApplication.injection) {
+            assertTrue(b);
+        }
         assertEquals("Hi from REST World!", WebClient.create("http://localhost:" + port + "/foo/").path("/first/hi").get(String.class));
     }
 
@@ -74,22 +79,20 @@ public class CDIApplicationTest {
     }
 
     public static class MyCdiRESTApplication extends Application {
-        public static boolean injection = false;
+        public static Collection<Boolean> injection = new ArrayList<>();
 
         @Inject
         private ACdiBeanInjectedInApp cdi;
 
         public Set<Class<?>> getClasses() {
-            injection = cdi != null;
-
-            if (cdi == null) {
-                throw new NullPointerException();
-            }
-
             // if no class are returned we use scanning, since we don't test rest deployment we put a single class
-            final Set<Class<?>> clazz = new HashSet<Class<?>>();
-            clazz.add(MyFirstRestClass.class);
-            return clazz;
+            return Collections.<Class<?>>singleton(MyFirstRestClass.class);
+        }
+
+        @Override
+        public Set<Object> getSingletons() {
+            injection.add(cdi != null);
+            return super.getSingletons();
         }
     }
 }

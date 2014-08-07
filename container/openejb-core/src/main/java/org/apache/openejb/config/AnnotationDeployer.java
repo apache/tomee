@@ -2099,8 +2099,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                         try {
                             final Application app = Application.class.cast(clazz.newInstance());
                             try {
-                                if (!app.getClasses().isEmpty()) {
-                                    classes.addAll(app.getClasses());
+                                final Set<Class<?>> appClasses = app.getClasses();
+                                if (!appClasses.isEmpty()) {
+                                    classes.addAll(appClasses);
                                 } else {
                                     addRestClassesToScannedClasses(webModule, classes, classLoader);
                                 }
