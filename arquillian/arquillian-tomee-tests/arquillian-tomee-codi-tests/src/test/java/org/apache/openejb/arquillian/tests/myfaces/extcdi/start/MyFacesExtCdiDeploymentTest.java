@@ -32,6 +32,9 @@ import org.jboss.shrinkwrap.descriptor.api.webcommon30.WebAppVersionType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.enterprise.event.Observes;
+import javax.enterprise.inject.spi.Extension;
+import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import javax.inject.Inject;
 
 import static org.junit.Assert.assertEquals;
@@ -49,6 +52,9 @@ public class MyFacesExtCdiDeploymentTest {
         // descriptor.contextParam(ProjectStage.PROJECT_STAGE_PARAM_NAME, ProjectStage.SystemTest.name());
 
         return ShrinkWrap.create(WebArchive.class, "MyFacesExtCdiDeploymentTest.war")
+                .addClass(WorkaroundExtension.class)
+                .addAsServiceProvider(Extension.class, WorkaroundExtension.class)
+
                 .addAsLibraries(JarLocation.jarLocation(JsfProjectStageProducer.class)) // codi
                 .setWebXML(new StringAsset(descriptor.exportAsString()))
                 .addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
@@ -57,5 +63,13 @@ public class MyFacesExtCdiDeploymentTest {
     @Test
     public void testProjectStage() throws Exception {
         assertEquals(ProjectStage.Production, projectStage);
+    }
+
+    public static class WorkaroundExtension implements Extension {
+        void veto(final @Observes ProcessAnnotatedType<?> pat) {
+            if (pat.getAnnotatedType().getJavaClass().getName().equals("org.apache.myfaces.extensions.cdi.bv.impl.InjectableValidator")) {
+                pat.veto();
+            }
+        }
     }
 }
