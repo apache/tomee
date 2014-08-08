@@ -202,6 +202,7 @@
       <version>${version.groovy}</version>
     </dependency>
   </dependencies>
+
   <build>
     <plugins>
       <plugin>
@@ -282,6 +283,15 @@
           <rulesetfiles>
             rulesets/basic.xml,rulesets/exceptions.xml,rulesets/imports.xml,rulesets/unnecessary.xml,rulesets/convention.xml
           </rulesetfiles>
+        </configuration>
+      </plugin>
+      <plugin> <!-- the jar is only for resources and other classes are for the gui -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <includes>
+            <include>META-INF/**/*</include>
+          </includes>
         </configuration>
       </plugin>
     </plugins>
