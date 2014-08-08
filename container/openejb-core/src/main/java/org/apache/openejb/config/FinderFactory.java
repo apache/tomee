@@ -44,9 +44,7 @@ import java.util.List;
 public class FinderFactory {
 
     private static final FinderFactory factory = new FinderFactory();
-    public static final String TOMEE_JAXRS_DEPLOY_UNDECLARED_PROP = "tomee.jaxrs.deploy.undeclared";
     public static final String ASYNC_SCAN = "openejb.scanning.inheritance.asynchronous";
-    public static final String SKIP_LINK = "openejb.finder.skip.link";
     public static final String FORCE_LINK = "openejb.finder.force.link";
 
     private static FinderFactory get() {
@@ -160,24 +158,6 @@ public class FinderFactory {
         annotationFinder.enableFindImplementations();
     }
 
-    public static boolean isTomEE() {
-        try {
-            FinderFactory.class.getClassLoader().loadClass("javax.websocket.Endpoint");
-            return true;
-        } catch (final Throwable e) {
-            return false;
-        }
-    }
-
-    public static boolean isJaxRsInstalled() {
-        try {
-            FinderFactory.class.getClassLoader().loadClass("org.apache.openejb.server.rest.RsRegistry");
-            return true;
-        } catch (final Throwable e) {
-            return false;
-        }
-    }
-
     public static class ModuleLimitedFinder implements IAnnotationFinder, AutoCloseable {
         private final IAnnotationFinder delegate;
 
@@ -203,7 +183,7 @@ public class FinderFactory {
         @Override
         public List<Class<?>> findAnnotatedClasses(final Class<? extends Annotation> annotation) {
             try {
-                return filter(delegate.findAnnotatedClasses(annotation), new ClassPredicate<Object>(getAnnotatedClassNames()));
+                return filter(delegate.findAnnotatedClasses(annotation), new ClassPredicate<>(getAnnotatedClassNames()));
             } catch (final TypeNotPresentException tnpe) {
                 throw handleException(tnpe, annotation);
             }
@@ -235,7 +215,7 @@ public class FinderFactory {
 
         @Override
         public List<Class<?>> findInheritedAnnotatedClasses(final Class<? extends Annotation> annotation) {
-            return filter(delegate.findInheritedAnnotatedClasses(annotation), new ClassPredicate<Object>(getAnnotatedClassNames()));
+            return filter(delegate.findInheritedAnnotatedClasses(annotation), new ClassPredicate<>(getAnnotatedClassNames()));
         }
 
         @Override
@@ -255,7 +235,7 @@ public class FinderFactory {
 
         @Override
         public List<Class<?>> findClassesInPackage(final String packageName, final boolean recursive) {
-            return filter(delegate.findClassesInPackage(packageName, recursive), new ClassPredicate<Object>(getAnnotatedClassNames()));
+            return filter(delegate.findClassesInPackage(packageName, recursive), new ClassPredicate<>(getAnnotatedClassNames()));
         }
 
         @Override
@@ -293,7 +273,7 @@ public class FinderFactory {
         }
 
         private static <T> List<T> filter(final List<T> list, final Predicate<T> predicate) {
-            final List<T> ts = new ArrayList<T>();
+            final List<T> ts = new ArrayList<>();
             for (final T t : list) {
                 if (predicate.accept(t)) {
                     ts.add(t);
