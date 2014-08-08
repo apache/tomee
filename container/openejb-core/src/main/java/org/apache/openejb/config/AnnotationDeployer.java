@@ -5167,18 +5167,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             for (final Class<?> clazz : classes) {
                 parents.addAll(Classes.ancestors(clazz));
             }
-
-            return new AnnotationFinder(new ClassesArchive(parents)).link();
-        }
-
-        /**
-         * Copy lists for iteration avoiding ConcurrentModificationException
-         *
-         * @param classes
-         * @return
-         */
-        private List<Class<?>> copy(final List<Class<?>> classes) {
-            return new ArrayList<Class<?>>(classes);
+            return new AnnotationFinder(new ClassesArchive(parents)).enableMetaAnnotations(); // no need to have subclasses/impl here
         }
 
         /**
