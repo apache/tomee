@@ -52,9 +52,6 @@ public class MyFacesExtCdiDeploymentTest {
         // descriptor.contextParam(ProjectStage.PROJECT_STAGE_PARAM_NAME, ProjectStage.SystemTest.name());
 
         return ShrinkWrap.create(WebArchive.class, "MyFacesExtCdiDeploymentTest.war")
-                .addClass(WorkaroundExtension.class)
-                .addAsServiceProvider(Extension.class, WorkaroundExtension.class)
-
                 .addAsLibraries(JarLocation.jarLocation(JsfProjectStageProducer.class)) // codi
                 .setWebXML(new StringAsset(descriptor.exportAsString()))
                 .addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
@@ -64,12 +61,5 @@ public class MyFacesExtCdiDeploymentTest {
     public void testProjectStage() throws Exception {
         assertEquals(ProjectStage.Production, projectStage);
     }
-
-    public static class WorkaroundExtension implements Extension {
-        void veto(final @Observes ProcessAnnotatedType<?> pat) {
-            if (pat.getAnnotatedType().getJavaClass().getName().equals("org.apache.myfaces.extensions.cdi.bv.impl.InjectableValidator")) {
-                pat.veto();
-            }
-        }
-    }
 }
+
