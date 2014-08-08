@@ -153,3 +153,6 @@ and the Eclipse Distribution Licensed (http://www.eclipse.org/org/documents/edl-
 Mojarra JavaServer Faces - Oracle's open source implementation of the JSF standard (https://javaserverfaces.java.net/)
 License: COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) plus GPL, https://glassfish.dev.java.net/public/CDDL+GPL.html
 =========================================================================
+ECJ - Eclipse Compiler for Java
+Eclipse Public License - v 1.0 - https://www.eclipse.org/org/documents/epl-v10.html
+=========================================================================
