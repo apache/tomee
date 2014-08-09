@@ -44,7 +44,6 @@ import java.util.List;
 public class FinderFactory {
 
     private static final FinderFactory factory = new FinderFactory();
-    public static final String ASYNC_SCAN = "openejb.scanning.inheritance.asynchronous";
     public static final String FORCE_LINK = "openejb.finder.force.link";
 
     private static FinderFactory get() {
@@ -52,27 +51,27 @@ public class FinderFactory {
         return factory != null ? factory : FinderFactory.factory;
     }
 
-    public static IAnnotationFinder createFinder(final DeploymentModule module, final boolean allowAsync) throws Exception {
-        return get().create(module, allowAsync);
+    public static IAnnotationFinder createFinder(final DeploymentModule module) throws Exception {
+        return get().create(module);
     }
 
-    public static AnnotationFinder getFinder(final ClassLoader classLoader, final URL url, final boolean allowAsync) {
-        return newFinder(ClasspathArchive.archive(classLoader, url), allowAsync);
+    public static AnnotationFinder getFinder(final ClassLoader classLoader, final URL url) {
+        return newFinder(ClasspathArchive.archive(classLoader, url));
     }
 
-    public IAnnotationFinder create(final DeploymentModule module, final boolean allowAsync) throws Exception {
+    public IAnnotationFinder create(final DeploymentModule module) throws Exception {
         final AnnotationFinder finder;
         if (module instanceof WebModule) {
             final WebModule webModule = (WebModule) module;
-            final AnnotationFinder annotationFinder = newFinder(new WebappAggregatedArchive(webModule, webModule.getScannableUrls()), allowAsync);
+            final AnnotationFinder annotationFinder = newFinder(new WebappAggregatedArchive(webModule, webModule.getScannableUrls()));
             enableFinderOptions(annotationFinder);
             finder = annotationFinder;
         } else if (module instanceof ConnectorModule) {
             final ConnectorModule connectorModule = (ConnectorModule) module;
-            finder = newFinder(new ConfigurableClasspathArchive(connectorModule, connectorModule.getLibraries()), allowAsync).link();
+            finder = newFinder(new ConfigurableClasspathArchive(connectorModule, connectorModule.getLibraries())).link();
         } else if (module instanceof AppModule) {
             final Collection<URL> urls = NewLoaderLogic.applyBuiltinExcludes(new UrlSet(AppModule.class.cast(module).getAdditionalLibraries())).getUrls();
-            finder = newFinder(new WebappAggregatedArchive(module.getClassLoader(), module.getAltDDs(), urls), allowAsync);
+            finder = newFinder(new WebappAggregatedArchive(module.getClassLoader(), module.getAltDDs(), urls));
         } else if (module.getJarLocation() != null) {
             final String location = module.getJarLocation();
             final File file = new File(location);
@@ -91,9 +90,9 @@ public class FinderFactory {
 
             if (module instanceof Module) {
                 final DebugArchive archive = new DebugArchive(new ConfigurableClasspathArchive((Module) module, url));
-                finder = newFinder(archive, allowAsync);
+                finder = newFinder(archive);
             } else {
-                finder = newFinder(new DebugArchive(new ConfigurableClasspathArchive(module.getClassLoader(), url)), allowAsync);
+                finder = newFinder(new DebugArchive(new ConfigurableClasspathArchive(module.getClassLoader(), url)));
             }
             if ("true".equals(SystemInstance.get().getProperty(FORCE_LINK, module.getProperties().getProperty(FORCE_LINK, "false")))) {
                 finder.link();
@@ -108,11 +107,8 @@ public class FinderFactory {
         return new ModuleLimitedFinder(finder);
     }
 
-    private static AnnotationFinder newFinder(final Archive archive, final boolean allowAsync) {
-        if (allowAsync && "true".equals(SystemInstance.get().getProperty(ASYNC_SCAN, "true"))) {
-            return new AsynchronousInheritanceAnnotationFinder(archive);
-        }
-        return new AnnotationFinder(archive);
+    private static AnnotationFinder newFinder(final Archive archive) {
+        return new OpenEJBAnnotationFinder(archive);
     }
 
     public static final class DebugArchive implements Archive {
@@ -382,6 +378,28 @@ public class FinderFactory {
             protected String name(final Annotated<Field> field) {
                 return field.get().getDeclaringClass().getName();
             }
+        }
+    }
+
+    private static class OpenEJBAnnotationFinder extends AnnotationFinder {
+        private static final String[] JVM_SCANNING_CONFIG = SystemInstance.get().getProperty("openejb.scanning.xbean.jvm", "java.").split(",");
+
+        public OpenEJBAnnotationFinder(final Archive archive) {
+            super(archive);
+        }
+
+        @Override
+        protected boolean isJvm(final String name) {
+            return sharedIsJvm("java.");
+        }
+
+        // don't reuse URLClassLoaderFirst one since this one can kill scanning perf
+        // using a raw but efficient impl
+        public static boolean sharedIsJvm(final String name) {
+            for (final String s : JVM_SCANNING_CONFIG) {
+                return name.startsWith(s);
+            }
+            return false;
         }
     }
 }
