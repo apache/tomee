@@ -831,7 +831,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                     webModule.setFinder(finder);
                     webEjbModule.setFinder(finder);
                 } else {
-                    final IAnnotationFinder finder = FinderFactory.createFinder(webModule, true);
+                    final IAnnotationFinder finder = FinderFactory.createFinder(webModule);
                     webModule.setFinder(finder);
                     webEjbModule.setFinder(finder);
                 }
@@ -1119,7 +1119,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         IAnnotationFinder finder;
         try {
-            finder = FinderFactory.createFinder(appModule, true);
+            finder = FinderFactory.createFinder(appModule);
         } catch (final Exception e) {
             finder = new FinderFactory.ModuleLimitedFinder(new org.apache.xbean.finder.AnnotationFinder(new WebappAggregatedArchive(appModule.getClassLoader(), appModule.getAltDDs(), xmls)));
         }
