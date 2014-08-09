@@ -103,3 +103,12 @@ License: CDDL v1.1 and GPL v2 (https://glassfish.java.net/public/CDDL+GPL_1_1.ht
 Quartz (http://quartz-scheduler.org/)
 License: Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0.txt)
 =========================================================================
+This product includes software developed by
+The W3C Consortium (http://www.w3.org/).
+
+Copyright (c) 1994-2002 World Wide Web Consortium,
+(Massachusetts Institute of Technology, Institut National
+de Recherche en Informatique et en Automatique, Keio
+University). All Rights Reserved.
+http://www.w3.org/Consortium/Legal/
+=========================================================================

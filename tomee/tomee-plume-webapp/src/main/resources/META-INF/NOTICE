@@ -104,6 +104,9 @@ EclipseLink - http://www.eclipse.org/eclipselink/
 License: The EclipseLink project is dual licensed under the Eclipse Public License (http://www.eclipse.org/legal/epl-v10.html) 
 and the Eclipse Distribution Licensed (http://www.eclipse.org/org/documents/edl-v10.php). 
 =========================================================================
+ECJ - Eclipse Compiler for Java
+Eclipse Public License - v 1.0 - https://www.eclipse.org/org/documents/epl-v10.html
+=========================================================================
 Mojarra JavaServer Faces - Oracle's open source implementation of the JSF standard (https://javaserverfaces.java.net/)
 License: COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) plus GPL, https://glassfish.dev.java.net/public/CDDL+GPL.html
 =========================================================================
