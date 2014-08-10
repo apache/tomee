@@ -21,7 +21,6 @@ import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.xbean.finder.Annotated;
 import org.apache.xbean.finder.AnnotationFinder;
-import org.apache.xbean.finder.AsynchronousInheritanceAnnotationFinder;
 import org.apache.xbean.finder.IAnnotationFinder;
 import org.apache.xbean.finder.UrlSet;
 import org.apache.xbean.finder.archive.Archive;
@@ -45,6 +44,7 @@ public class FinderFactory {
 
     private static final FinderFactory factory = new FinderFactory();
     public static final String FORCE_LINK = "openejb.finder.force.link";
+    private static volatile boolean MODULE_LIMITED = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.finder.module-scoped", "false"));
 
     private static FinderFactory get() {
         final FinderFactory factory = SystemInstance.get().getComponent(FinderFactory.class);
@@ -63,7 +63,7 @@ public class FinderFactory {
         final AnnotationFinder finder;
         if (module instanceof WebModule) {
             final WebModule webModule = (WebModule) module;
-            return newFinder(new WebappAggregatedArchive(webModule, webModule.getScannableUrls())).link();
+            finder = newFinder(new WebappAggregatedArchive(webModule, webModule.getScannableUrls())).link();
         } else if (module instanceof ConnectorModule) {
             final ConnectorModule connectorModule = (ConnectorModule) module;
             finder = newFinder(new ConfigurableClasspathArchive(connectorModule, connectorModule.getLibraries())).link();
@@ -97,7 +97,7 @@ public class FinderFactory {
             finder = new AnnotationFinder(new ClassesArchive());
         }
 
-        return new ModuleLimitedFinder(finder);
+        return MODULE_LIMITED ? new ModuleLimitedFinder(finder) : finder;
     }
 
     private static AnnotationFinder newFinder(final Archive archive) {
@@ -132,7 +132,7 @@ public class FinderFactory {
         }
     }
 
-    public static class ModuleLimitedFinder implements IAnnotationFinder, AutoCloseable {
+    public static class ModuleLimitedFinder implements IAnnotationFinder {
         private final IAnnotationFinder delegate;
 
         public ModuleLimitedFinder(final IAnnotationFinder delegate) {
@@ -260,13 +260,6 @@ public class FinderFactory {
             return delegate;
         }
 
-        @Override
-        public void close() {
-            if (AsynchronousInheritanceAnnotationFinder.class.isInstance(delegate)) {
-                AsynchronousInheritanceAnnotationFinder.class.cast(delegate).destroy();
-            }
-        }
-
         private abstract static class Predicate<T> {
             protected final List<String> accepted;
 
@@ -359,7 +352,7 @@ public class FinderFactory {
         }
     }
 
-    private static class OpenEJBAnnotationFinder extends AnnotationFinder {
+    public static class OpenEJBAnnotationFinder extends AnnotationFinder {
         private static final String[] JVM_SCANNING_CONFIG = SystemInstance.get().getProperty("openejb.scanning.xbean.jvm", "java.").split(",");
 
         public OpenEJBAnnotationFinder(final Archive archive) {

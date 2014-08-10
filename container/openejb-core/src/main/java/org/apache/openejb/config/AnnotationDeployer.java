@@ -124,6 +124,7 @@ import org.apache.openejb.util.Join;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.SuperProperties;
+import org.apache.openejb.util.URLs;
 import org.apache.openejb.util.proxy.DynamicProxyImplFactory;
 import org.apache.webbeans.corespi.scanner.xbean.BeanArchiveFilter;
 import org.apache.xbean.finder.Annotated;
@@ -1632,19 +1633,10 @@ public class AnnotationDeployer implements DynamicDeployer {
             //  more classes than actually apply to CDI.  This can "pollute"
             //  the CDI class space and break injection points
 
-            /*
-            if (!(finder instanceof FinderFactory.ModuleLimitedFinder)) {
-                return finder.getAnnotatedClassNames();
-            }
-
-            if (!(delegate instanceof AnnotationFinder)) {
-                return finder.getAnnotatedClassNames();
-            }
-            */
-
             // force cast otherwise we would be broken
-            final IAnnotationFinder delegate = ((FinderFactory.ModuleLimitedFinder) finder).getDelegate();
-            final AnnotationFinder annotationFinder = (AnnotationFinder) delegate;
+            final IAnnotationFinder delegate = FinderFactory.ModuleLimitedFinder.class.isInstance(finder) ?
+                    FinderFactory.ModuleLimitedFinder.class.cast(finder).getDelegate() : finder;
+            final AnnotationFinder annotationFinder = AnnotationFinder.class.cast(delegate);
 
             final Archive archive = annotationFinder.getArchive();
             final Map<URL, List<String>> classes = new HashMap<>();
@@ -1669,6 +1661,26 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         public static URL hasBeansXml(final URL url) {
             if (url.getPath().endsWith("WEB-INF/classes/")) {
+                {
+                    final File file = new File(URLs.toFile(url).getParent(), "beans.xml");
+                    if (file.exists()) {
+                        try {
+                            return file.toURI().toURL();
+                        } catch (final MalformedURLException e) {
+                            return url;
+                        }
+                    }
+                }
+                {
+                    final File file = new File(URLs.toFile(url), "classes/beans.xml");
+                    if (file.exists()) {
+                        try {
+                            return file.toURI().toURL();
+                        } catch (final MalformedURLException e) {
+                            return url;
+                        }
+                    }
+                }
                 return url;
             }
             if (url.getPath().endsWith("!/META-INF/beans.xml")) {

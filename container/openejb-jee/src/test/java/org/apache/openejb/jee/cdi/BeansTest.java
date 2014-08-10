@@ -75,7 +75,7 @@ public class BeansTest {
     public void read11() throws Exception {
         final Beans b = read(
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                        "<beans xmlns=\"http://xmlns.jcp.org/xml/ns/javaee\">\n" +
+                        "<beans xmlns=\"http://xmlns.jcp.org/xml/ns/javaee\" version=\"1.1\">\n" +
                         "    <scan>\n" +
                         "        <exclude name=\"com.acme.swing.**\" />\n" +
                         "        <exclude name=\"com.acme.gwt.**\">\n" +

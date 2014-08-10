@@ -106,9 +106,6 @@ public class Beans {
     }
 
     public String getVersion() {
-        if (version == null) {
-            return "1.1";
-        }
         return version;
     }
 
