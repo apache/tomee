@@ -640,8 +640,12 @@ public final class ApplicationComposers {
             final Collection<Class<?>> finderClasses = new HashSet<>();
 
             final EnterpriseBean[] enterpriseBeans = ejb.getEjbJar().getEnterpriseBeans();
-            for (final EnterpriseBean bean : enterpriseBeans) {
-                finderClasses.add(loader.loadClass(bean.getEjbClass()));
+
+            final boolean noFinder= ejb.getFinder() == null;
+            if (noFinder) {
+                for (final EnterpriseBean bean : enterpriseBeans) {
+                    finderClasses.add(loader.loadClass(bean.getEjbClass()));
+                }
             }
 
             final Beans beans = ejb.getBeans();
@@ -660,14 +664,18 @@ public final class ApplicationComposers {
                     }
                 }
 
-                for (final List<String> managedClasses : beans.getManagedClasses().values()) {
-                    for (final String name : managedClasses) {
-                        finderClasses.add(loader.loadClass(name));
+                if (noFinder) {
+                    for (final List<String> managedClasses : beans.getManagedClasses().values()) {
+                        for (final String name : managedClasses) {
+                            finderClasses.add(loader.loadClass(name));
+                        }
                     }
                 }
             }
 
-            ejb.setFinder(new FinderFactory.OpenEJBAnnotationFinder(new ClassesArchive(finderClasses.toArray(new Class<?>[finderClasses.size()]))));
+            if (noFinder) {
+                ejb.setFinder(new FinderFactory.OpenEJBAnnotationFinder(new ClassesArchive(finderClasses.toArray(new Class<?>[finderClasses.size()]))));
+            }
         }
 
         if (webModulesNb > 0 && SystemInstance.get().getComponent(WebAppBuilder.class) == null) {
