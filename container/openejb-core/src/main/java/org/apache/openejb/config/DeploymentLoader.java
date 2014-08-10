@@ -1083,6 +1083,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 current.getAlternativeStereotypes().addAll(beans.getAlternativeStereotypes());
                 current.getDecorators().addAll(beans.getDecorators());
                 current.getInterceptors().addAll(beans.getInterceptors());
+                current.getScan().getExclude().addAll(beans.getScan().getExclude());
             }
             // check is done here since later we lost the data of the origin
             ReadDescriptors.checkDuplicatedByBeansXml(beans, returnValue);
