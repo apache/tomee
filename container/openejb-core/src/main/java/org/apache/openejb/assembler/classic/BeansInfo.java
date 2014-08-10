@@ -17,10 +17,13 @@
 
 package org.apache.openejb.assembler.classic;
 
+import org.apache.openejb.assembler.ExclusionInfo;
+
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.Map;
 
 /**
  * @version $Rev$ $Date$
@@ -33,10 +36,14 @@ public class BeansInfo extends InfoObject {
     public final List<String> alternativeClasses = new ArrayList<String>();
     public final List<String> alternativeStereotypes = new ArrayList<String>();
 
-    public final Set<String> managedClasses = new TreeSet<String>();
+    public final Map<URL, List<String>> managedClasses = new HashMap<>();
 
     public final List<String> duplicatedInterceptors = new ArrayList<String>();
     public final List<String> duplicatedDecorators = new ArrayList<String>();
     public final List<String> duplicatedAlternativeClasses = new ArrayList<String>();
     public final List<String> duplicatedAlternativeStereotypes = new ArrayList<String>();
+
+    public String version = "1.1";
+    public String discoveryMode;
+    public final Map<String, ExclusionInfo> excludes = new HashMap<>();
 }

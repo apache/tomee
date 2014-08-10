@@ -125,6 +125,7 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.SuperProperties;
 import org.apache.openejb.util.proxy.DynamicProxyImplFactory;
+import org.apache.webbeans.corespi.scanner.xbean.BeanArchiveFilter;
 import org.apache.xbean.finder.Annotated;
 import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.IAnnotationFinder;
@@ -238,6 +239,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -1290,47 +1292,13 @@ public class AnnotationDeployer implements DynamicDeployer {
             final IAnnotationFinder finder = ejbModule.getFinder();
 
 
-            final List<String> managedClasses;
+            final Map<URL, List<String>> managedClasses;
             {
                 final Beans beans = ejbModule.getBeans();
 
                 if (beans != null) {
                     managedClasses = beans.getManagedClasses();
-                    final List<String> classNames = getBeanClasses(finder);
-
-                    final Set<String> notLoadedClasses = new TreeSet<String>();
-                    for (final String rawClassName : classNames) {
-                        final String className = realClassName(rawClassName);
-                        try {
-                            final ClassLoader loader = ejbModule.getClassLoader();
-                            final Class<?> clazz = loader.loadClass(className);
-
-                            // The following can NOT be beans in CDI
-
-                            // 1. Non-static inner classes
-                            if (clazz.getEnclosingClass() != null && !Modifier.isStatic(clazz.getModifiers())) {
-                                continue;
-                            }
-//
-//                            // 2. Abstract classes (unless they are an @Decorator)
-//                            if (Modifier.isAbstract(clazz.getModifiers()) && !clazz.isAnnotationPresent(javax.decorator.Decorator.class)) continue;
-//
-                            // 3. Implementations of Extension
-                            if (Extension.class.isAssignableFrom(clazz)) {
-                                continue;
-                            }
-
-                            managedClasses.add(className);
-                        } catch (final ClassNotFoundException e) {
-                            notLoadedClasses.add(rawClassName);
-                        } catch (final NoClassDefFoundError e) {
-                            // no-op
-                        }
-                    }
-
-                    if (!notLoadedClasses.isEmpty()) { // don't log in info or warning since not 100% JavaEE/CDI libs will break the whole logs
-                        logger.debug("Some classes can't be loaded: " + Join.join("\n", notLoadedClasses.toArray(new String[notLoadedClasses.size()])));
-                    }
+                    managedClasses.putAll(getBeanClasses(finder));
 
                     // passing jar location to be able to manage maven classes/test-classes which have the same moduleId
                     String id = ejbModule.getModuleId();
@@ -1345,11 +1313,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                     managedBean.setTransactionType(TransactionType.BEAN);
                     ejbModule.getEjbJar().addEnterpriseBean(managedBean);
                 } else {
-                    managedClasses = new ArrayList<String>();
+                    managedClasses = new HashMap<>();
                 }
             }
-
-            final Set<Class<?>> specializingClasses = new HashSet<Class<?>>();
 
 
             // Fill in default sessionType for xml declared EJBs
@@ -1393,11 +1359,6 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             final EjbJar ejbJar = ejbModule.getEjbJar();
             for (final Annotated<Class<?>> beanClass : finder.findMetaAnnotatedClasses(Singleton.class)) {
-
-                if (beanClass.isAnnotationPresent(Specializes.class)) {
-                    specializingClasses.add(beanClass.get());
-                }
-
                 final Singleton singleton = beanClass.getAnnotation(Singleton.class);
                 final String ejbName = getEjbName(singleton, beanClass.get());
 
@@ -1425,11 +1386,6 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             for (final Annotated<Class<?>> beanClass : finder.findMetaAnnotatedClasses(Stateless.class)) {
-
-                if (beanClass.isAnnotationPresent(Specializes.class)) {
-                    specializingClasses.add(beanClass.get());
-                }
-
                 final Stateless stateless = beanClass.getAnnotation(Stateless.class);
                 final String ejbName = getEjbName(stateless, beanClass.get());
 
@@ -1464,11 +1420,6 @@ public class AnnotationDeployer implements DynamicDeployer {
             // Anyway.. the qualifiers aren't getting inherited, so we need to fix that
 
             for (final Annotated<Class<?>> beanClass : finder.findMetaAnnotatedClasses(Stateful.class)) {
-
-                if (beanClass.isAnnotationPresent(Specializes.class)) {
-                    specializingClasses.add(beanClass.get());
-                }
-
                 final Stateful stateful = beanClass.getAnnotation(Stateful.class);
                 final String ejbName = getEjbName(stateful, beanClass.get());
 
@@ -1499,11 +1450,6 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             for (final Annotated<Class<?>> beanClass : finder.findMetaAnnotatedClasses(ManagedBean.class)) {
-
-                if (beanClass.isAnnotationPresent(Specializes.class)) {
-                    specializingClasses.add(beanClass.get());
-                }
-
                 final ManagedBean managed = beanClass.getAnnotation(ManagedBean.class);
                 final String ejbName = getEjbName(managed, beanClass.get());
 
@@ -1534,11 +1480,6 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             for (final Annotated<Class<?>> beanClass : finder.findMetaAnnotatedClasses(MessageDriven.class)) {
-
-                if (beanClass.isAnnotationPresent(Specializes.class)) {
-                    specializingClasses.add(beanClass.get());
-                }
-
                 final MessageDriven mdb = beanClass.getAnnotation(MessageDriven.class);
                 final String ejbName = getEjbName(mdb, beanClass.get());
 
@@ -1556,33 +1497,6 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
                 LegacyProcessor.process(beanClass.get(), messageBean);
             }
-
-            /*
-            for (Class<?> specializingClass : sortClassesParentFirst(new ArrayList<Class<?>>(specializingClasses))) {
-
-                final Class<?> parent = specializingClass.getSuperclass();
-
-                if (parent == null || parent.equals(Object.class)) {
-                    ejbModule.getValidation().fail(specializingClass.getSimpleName(), "specializes.extendsNothing", specializingClass.getName());
-                }
-
-                boolean found = false;
-
-                for (EnterpriseBean enterpriseBean : ejbJar.getEnterpriseBeans()) {
-
-                    final String ejbClass = enterpriseBean.getEjbClass();
-
-                    if (ejbClass != null && ejbClass.equals(parent.getName())) {
-                        enterpriseBean.setEjbClass(specializingClass.getName());
-                        found = true;
-                    }
-                }
-
-                if (!found) {
-                    ejbModule.getValidation().fail(specializingClass.getSimpleName(), "specializes.extendsSimpleBean", specializingClass.getName());
-                }
-            }
-            */
 
             AssemblyDescriptor assemblyDescriptor = ejbModule.getEjbJar().getAssemblyDescriptor();
             if (assemblyDescriptor == null) {
@@ -1707,7 +1621,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             return name != null && name.length() != 0;
         }
 
-        private List<String> getBeanClasses(final IAnnotationFinder finder) {
+        private Map<URL, List<String>> getBeanClasses(final IAnnotationFinder finder) {
 
             //  What we're hoping in this method is to get lucky and find
             //  that our 'finder' instances is an AnnotationFinder that is
@@ -1718,43 +1632,47 @@ public class AnnotationDeployer implements DynamicDeployer {
             //  more classes than actually apply to CDI.  This can "pollute"
             //  the CDI class space and break injection points
 
+            /*
             if (!(finder instanceof FinderFactory.ModuleLimitedFinder)) {
                 return finder.getAnnotatedClassNames();
             }
 
-            final IAnnotationFinder delegate = ((FinderFactory.ModuleLimitedFinder) finder).getDelegate();
             if (!(delegate instanceof AnnotationFinder)) {
                 return finder.getAnnotatedClassNames();
             }
+            */
 
+            // force cast otherwise we would be broken
+            final IAnnotationFinder delegate = ((FinderFactory.ModuleLimitedFinder) finder).getDelegate();
             final AnnotationFinder annotationFinder = (AnnotationFinder) delegate;
 
             final Archive archive = annotationFinder.getArchive();
-            if (!(archive instanceof WebappAggregatedArchive)) {
-                return finder.getAnnotatedClassNames();
-            }
+            final Map<URL, List<String>> classes = new HashMap<>();
 
-            final List<String> classes = new ArrayList<String>();
+            if (!WebappAggregatedArchive.class.isInstance(archive)) {
+                classes.put(null, annotationFinder.getAnnotatedClassNames());
+                return classes;
+            }
 
             final WebappAggregatedArchive aggregatedArchive = (WebappAggregatedArchive) archive;
             final Map<URL, List<String>> map = aggregatedArchive.getClassesMap();
 
             for (final Map.Entry<URL, List<String>> entry : map.entrySet()) {
-
-                if (hasBeansXml(entry.getKey())) {
-                    classes.addAll(entry.getValue());
+                final URL beansXml = hasBeansXml(entry.getKey());
+                if (beansXml != null) {
+                    classes.put(beansXml, entry.getValue());
                 }
             }
 
             return classes;
         }
 
-        public static boolean hasBeansXml(final URL url) {
+        public static URL hasBeansXml(final URL url) {
             if (url.getPath().endsWith("WEB-INF/classes/")) {
-                return true;
+                return url;
             }
             if (url.getPath().endsWith("!/META-INF/beans.xml")) {
-                return true;
+                return url;
             }
             try {
                 final URLClassLoader loader = new URLClassLoader(new URL[]{url}, new EmptyResourcesClassLoader());
@@ -1766,14 +1684,15 @@ public class AnnotationDeployer implements DynamicDeployer {
                 };
 
                 for (final String path : paths) {
-                    if (loader.findResource(path) != null) {
-                        return true;
+                    final URL resource = loader.findResource(path);
+                    if (resource != null) {
+                        return resource;
                     }
                 }
             } catch (final Exception e) {
                 // no-op
             }
-            return false;
+            return null;
         }
 
         private String getEjbName(final MessageDriven mdb, final Class<?> beanClass) {

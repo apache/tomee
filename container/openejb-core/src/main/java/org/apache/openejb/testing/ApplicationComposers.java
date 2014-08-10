@@ -636,11 +636,17 @@ public final class ApplicationComposers {
             final Beans beans = ejb.getBeans();
             if (beans != null && ejb.getEjbJar() != null) {
                 for (final EnterpriseBean bean : ejb.getEjbJar().getEnterpriseBeans()) {
-                    if (beans.getManagedClasses().contains(bean.getEjbClass())) {
-                        continue;
-                    }
+                    boolean found = false;
+                    for (final List<String> mc : beans.getManagedClasses().values()) {
+                        if (mc.contains(bean.getEjbClass())) {
+                            found = true;
+                            break;
+                        }
 
-                    beans.addManagedClass(bean.getEjbClass());
+                    }
+                    if (!found) {
+                        beans.addManagedClass(bean.getEjbClass());
+                    }
                 }
             }
         }

@@ -18,6 +18,7 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.assembler.ExclusionInfo;
 import org.apache.openejb.assembler.classic.ApplicationExceptionInfo;
 import org.apache.openejb.assembler.classic.BeansInfo;
 import org.apache.openejb.assembler.classic.CallbackInfo;
@@ -50,6 +51,7 @@ import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.ActivationConfigProperty;
 import org.apache.openejb.jee.ApplicationException;
 import org.apache.openejb.jee.AsyncMethod;
+import org.apache.openejb.jee.Beans;
 import org.apache.openejb.jee.CallbackMethod;
 import org.apache.openejb.jee.CmpField;
 import org.apache.openejb.jee.CmpVersion;
@@ -102,6 +104,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -216,19 +219,44 @@ public class EjbJarInfoBuilder {
             initRelationships(jar, infos);
         }
 
-        if (jar.getBeans() != null) {
+        final Beans beans = jar.getBeans();
+        if (beans != null) {
             ejbJar.beans = new BeansInfo();
+            ejbJar.beans.version = beans.getVersion();
+            ejbJar.beans.discoveryMode = beans.getBeanDiscoveryMode();
+            if (beans.getScan() != null) {
+                for (final Beans.Scan.Exclude exclude : beans.getScan().getExclude()) {
+                    final ExclusionInfo exclusionInfo = new ExclusionInfo();
+                    for (final Object config : exclude.getIfClassAvailableOrIfClassNotAvailableOrIfSystemProperty()) {
+                        if (Beans.Scan.Exclude.IfAvailableClassCondition.class.isInstance(config)) {
+                            exclusionInfo.availableClasses.add(Beans.Scan.Exclude.ClassCondition.class.cast(config).getName());
+                        } else if (Beans.Scan.Exclude.IfNotAvailableClassCondition.class.isInstance(config)) {
+                            exclusionInfo.notAvailableClasses.add(Beans.Scan.Exclude.ClassCondition.class.cast(config).getName());
+                        } else if (Beans.Scan.Exclude.IfSystemProperty.class.isInstance(config)) {
+                            final Beans.Scan.Exclude.IfSystemProperty systemProperty = Beans.Scan.Exclude.IfSystemProperty.class.cast(config);
+                            if (systemProperty.getValue() == null) {
+                                exclusionInfo.systemPropertiesPresence.add(systemProperty.getName());
+                            } else {
+                                exclusionInfo.systemProperties.put(systemProperty.getName(), systemProperty.getValue());
+                            }
+                        } else {
+                            throw new IllegalArgumentException("Not supported: " + config);
+                        }
+                    }
+                    ejbJar.beans.excludes.put(exclude.getName(), exclusionInfo);
+                }
+            }
 
-            ejbJar.beans.interceptors.addAll(jar.getBeans().getInterceptors());
-            ejbJar.beans.decorators.addAll(jar.getBeans().getDecorators());
-            ejbJar.beans.alternativeClasses.addAll(jar.getBeans().getAlternativeClasses());
-            ejbJar.beans.alternativeStereotypes.addAll(jar.getBeans().getAlternativeStereotypes());
-            ejbJar.beans.managedClasses.addAll(jar.getBeans().getManagedClasses());
+            ejbJar.beans.interceptors.addAll(beans.getInterceptors());
+            ejbJar.beans.decorators.addAll(beans.getDecorators());
+            ejbJar.beans.alternativeClasses.addAll(beans.getAlternativeClasses());
+            ejbJar.beans.alternativeStereotypes.addAll(beans.getAlternativeStereotypes());
+            ejbJar.beans.managedClasses.putAll(beans.getManagedClasses());
 
-            ejbJar.beans.duplicatedAlternativeClasses.addAll(jar.getBeans().getDuplicatedAlternatives().getClasses());
-            ejbJar.beans.duplicatedAlternativeStereotypes.addAll(jar.getBeans().getDuplicatedAlternatives().getStereotypes());
-            ejbJar.beans.duplicatedInterceptors.addAll(jar.getBeans().getDuplicatedInterceptors());
-            ejbJar.beans.duplicatedDecorators.addAll(jar.getBeans().getDuplicatedDecorators());
+            ejbJar.beans.duplicatedAlternativeClasses.addAll(beans.getDuplicatedAlternatives().getClasses());
+            ejbJar.beans.duplicatedAlternativeStereotypes.addAll(beans.getDuplicatedAlternatives().getStereotypes());
+            ejbJar.beans.duplicatedInterceptors.addAll(beans.getDuplicatedInterceptors());
+            ejbJar.beans.duplicatedDecorators.addAll(beans.getDuplicatedDecorators());
         }
 
         return ejbJar;

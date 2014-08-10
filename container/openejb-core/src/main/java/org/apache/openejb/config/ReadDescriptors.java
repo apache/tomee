@@ -609,8 +609,10 @@ public class ReadDescriptors implements DynamicDeployer {
     public static Beans readBeans(final InputStream inputStream) throws OpenEJBException {
         try {
             final String content = IO.slurp(inputStream);
-            if (isEmptyBeansXml(new ByteArrayInputStream(content.getBytes()))) {
-                return new Beans();
+            if (content.length() == 0) { // otherwise we want to read <beans /> attributes
+                final Beans beans = new Beans();
+                beans.setBeanDiscoveryMode("ALL"); // backward compatibility
+                return beans;
             }
             return (Beans) JaxbJavaee.unmarshalJavaee(Beans.class, new ByteArrayInputStream(content.getBytes()));
         } catch (final SAXException e) {
