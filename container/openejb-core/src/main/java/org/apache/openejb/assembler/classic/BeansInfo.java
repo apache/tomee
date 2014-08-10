@@ -46,4 +46,5 @@ public class BeansInfo extends InfoObject {
     public String version = "1.1";
     public String discoveryMode;
     public final Map<String, ExclusionInfo> excludes = new HashMap<>();
+    public final Map<URL, String> discoveryModeByUrl = new HashMap<>();
 }

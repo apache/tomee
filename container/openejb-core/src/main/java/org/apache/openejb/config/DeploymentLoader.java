@@ -22,6 +22,7 @@ import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.api.LocalClient;
 import org.apache.openejb.api.RemoteClient;
+import org.apache.openejb.cdi.CompositeBeans;
 import org.apache.openejb.classloader.ClassLoaderConfigurer;
 import org.apache.openejb.classloader.WebAppEnricher;
 import org.apache.openejb.config.event.BeforeDeploymentEvent;
@@ -76,6 +77,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -742,7 +744,7 @@ public class DeploymentLoader implements DeploymentFilterable {
             try {
                 descriptors = getDescriptors(classLoader, null);
             } catch (final IOException e) {
-                descriptors = new HashMap<String, URL>();
+                descriptors = new HashMap<>();
             }
         }
 
@@ -1043,54 +1045,54 @@ public class DeploymentLoader implements DeploymentFilterable {
         // parent returns nothing when calling getresources because we don't want here to be fooled by maven classloader
         final URLClassLoader loader = new URLClassLoader(urls.toArray(new URL[urls.size()]), new EmptyResourcesClassLoader());
 
-        final ArrayList<URL> xmls;
+        final List<URL> xmls = new LinkedList<>();
         try {
-            xmls = Collections.list(loader.getResources("META-INF/beans.xml"));
-            xmls.add((URL) webModule.getAltDDs().get("beans.xml"));
+            final URL e = (URL) webModule.getAltDDs().get("beans.xml");
+            if (e != null) { // first!
+                xmls.add(e);
+            }
+            xmls.addAll(Collections.list(loader.getResources("META-INF/beans.xml")));
         } catch (final IOException e) {
-
             return;
         }
 
-        Beans complete = null;
+        final CompositeBeans complete = new CompositeBeans();
         for (final URL url : xmls) {
             if (url == null) {
                 continue;
             }
-            complete = mergeBeansXml(complete, url);
+            mergeBeansXml(complete, url);
         }
-        if (complete != null) {
+        if (!complete.getDiscoveryByUrl().isEmpty()) {
             complete.removeDuplicates();
+            webModule.getAltDDs().put("beans.xml", complete);
         }
-
-        webModule.getAltDDs().put("beans.xml", complete);
     }
 
-    private Beans mergeBeansXml(final Beans current, final URL url) {
-        Beans returnValue = current;
+    private Beans mergeBeansXml(final CompositeBeans current, final URL url) {
         try {
             final Beans beans;
             try {
                 beans = ReadDescriptors.readBeans(url.openStream());
             } catch (final IOException e) {
-                return returnValue;
+                return current;
             }
 
-            if (current == null) {
-                returnValue = beans;
-            } else {
-                current.getAlternativeClasses().addAll(beans.getAlternativeClasses());
-                current.getAlternativeStereotypes().addAll(beans.getAlternativeStereotypes());
-                current.getDecorators().addAll(beans.getDecorators());
-                current.getInterceptors().addAll(beans.getInterceptors());
-                current.getScan().getExclude().addAll(beans.getScan().getExclude());
-            }
+            current.getAlternativeClasses().addAll(beans.getAlternativeClasses());
+            current.getAlternativeStereotypes().addAll(beans.getAlternativeStereotypes());
+            current.getDecorators().addAll(beans.getDecorators());
+            current.getInterceptors().addAll(beans.getInterceptors());
+            current.getScan().getExclude().addAll(beans.getScan().getExclude());
+
             // check is done here since later we lost the data of the origin
-            ReadDescriptors.checkDuplicatedByBeansXml(beans, returnValue);
+            ReadDescriptors.checkDuplicatedByBeansXml(beans, current);
+
+            final String beanDiscoveryMode = beans.getBeanDiscoveryMode();
+            current.getDiscoveryByUrl().put(url, beanDiscoveryMode == null ? "ALL" : beanDiscoveryMode);
         } catch (final OpenEJBException e) {
             logger.error("Unable to read beans.xml from: " + url.toExternalForm(), e);
         }
-        return returnValue;
+        return current;
     }
 
     private void addBeansXmls(final AppModule appModule) {
@@ -1105,15 +1107,15 @@ public class DeploymentLoader implements DeploymentFilterable {
             return;
         }
 
-        Beans complete = null;
+        final CompositeBeans complete = new CompositeBeans();
         for (final URL url : xmls) {
             if (url == null) {
                 continue;
             }
-            complete = mergeBeansXml(complete, url);
+            mergeBeansXml(complete, url);
         }
 
-        if (complete == null) {
+        if (complete.getDiscoveryByUrl().isEmpty()) {
             return;
         }
         complete.removeDuplicates();

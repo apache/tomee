@@ -43,8 +43,8 @@ public class EjbModule extends Module implements WsModule {
     private OpenejbJar openejbJar;
     private Webservices webservices;
 
-    private final AtomicReference<IAnnotationFinder> finder = new AtomicReference<IAnnotationFinder>();
-    private final Set<String> watchedResources = new TreeSet<String>();
+    private final AtomicReference<IAnnotationFinder> finder = new AtomicReference<>();
+    private final Set<String> watchedResources = new TreeSet<>();
     private Beans beans;
     private boolean webapp;
 

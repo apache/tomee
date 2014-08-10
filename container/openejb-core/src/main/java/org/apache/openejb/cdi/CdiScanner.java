@@ -183,6 +183,7 @@ public class CdiScanner implements ScannerService {
             final BeanArchiveService beanArchiveService = webBeansContext.getBeanArchiveService();
             final boolean openejb = OpenEJBBeanInfoService.class.isInstance(beanArchiveService);
 
+            final Map<URL, String> discoveryModes = beans.discoveryModeByUrl;
             for (final Map.Entry<URL, List<String>> next : beans.managedClasses.entrySet()) {
                 final List<String> value = next.getValue();
 
@@ -190,7 +191,8 @@ public class CdiScanner implements ScannerService {
                 final BeanArchiveService.BeanArchiveInformation information;
                 if (openejb) {
                     final OpenEJBBeanInfoService beanInfoService = OpenEJBBeanInfoService.class.cast(beanArchiveService);
-                    information = beanInfoService.createBeanArchiveInformation(beans, classLoader);
+                    information = beanInfoService.createBeanArchiveInformation(beans, classLoader, discoveryModes.get(key));
+                    // TODO: log a warn is discoveryModes.get(key) == null
                     beanInfoService.getBeanArchiveInfo().put(key, information);
                 } else {
                     information = beanArchiveService.getBeanArchiveInformation(key);
@@ -207,8 +209,12 @@ public class CdiScanner implements ScannerService {
                         }
 
                         final Class clazz = load(name, classLoader);
+                        if (clazz == null) {
+                            continue;
+                        }
+
                         if (scanModeAnnotated) {
-                            if (clazz != null && isBean(clazz)) {
+                            if (isBean(clazz)) {
                                 classes.add(clazz);
                             }
                         } else {

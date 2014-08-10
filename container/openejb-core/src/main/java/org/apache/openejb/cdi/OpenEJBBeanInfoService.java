@@ -33,8 +33,8 @@ import java.util.Set;
 public class OpenEJBBeanInfoService implements BeanArchiveService {
     private Map<URL, BeanArchiveInformation> beanArchiveInfo = new HashMap<>();
 
-    public void register(final URL url, final BeansInfo info, final ClassLoader loader) {
-        final DefaultBeanArchiveInformation information = createBeanArchiveInformation(info, loader);
+    public void register(final URL url, final BeansInfo info, final ClassLoader loader, final String mode) {
+        final DefaultBeanArchiveInformation information = createBeanArchiveInformation(info, loader, mode);
         beanArchiveInfo.put(url, information);
     }
 
@@ -42,14 +42,14 @@ public class OpenEJBBeanInfoService implements BeanArchiveService {
         return beanArchiveInfo;
     }
 
-    public DefaultBeanArchiveInformation createBeanArchiveInformation(BeansInfo info, ClassLoader loader) {
+    public DefaultBeanArchiveInformation createBeanArchiveInformation(final BeansInfo info, final ClassLoader loader, final String mode) {
         if (info.version != null && !"1.0".equals(info.version) && info.discoveryMode == null) {
             throw new WebBeansConfigurationException("beans.xml with version 1.1 and higher must declare a bean-discovery-mode!");
         }
 
         final DefaultBeanArchiveInformation information = new DefaultBeanArchiveInformation();
         information.setVersion(info.version);
-        information.setBeanDiscoveryMode(info.discoveryMode == null ? BeanDiscoveryMode.ANNOTATED : BeanDiscoveryMode.valueOf(info.discoveryMode.trim().toUpperCase(Locale.ENGLISH)));
+        information.setBeanDiscoveryMode(mode == null ? BeanDiscoveryMode.ANNOTATED : BeanDiscoveryMode.valueOf(mode.trim().toUpperCase(Locale.ENGLISH)));
         information.setDecorators(info.decorators);
         information.setInterceptors(info.interceptors);
         information.getAlternativeClasses().addAll(info.alternativeClasses);

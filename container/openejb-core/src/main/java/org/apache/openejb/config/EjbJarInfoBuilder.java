@@ -47,6 +47,7 @@ import org.apache.openejb.assembler.classic.SingletonBeanInfo;
 import org.apache.openejb.assembler.classic.StatefulBeanInfo;
 import org.apache.openejb.assembler.classic.StatelessBeanInfo;
 import org.apache.openejb.assembler.classic.TimeoutInfo;
+import org.apache.openejb.cdi.CompositeBeans;
 import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.ActivationConfigProperty;
 import org.apache.openejb.jee.ApplicationException;
@@ -257,6 +258,12 @@ public class EjbJarInfoBuilder {
             ejbJar.beans.duplicatedAlternativeStereotypes.addAll(beans.getDuplicatedAlternatives().getStereotypes());
             ejbJar.beans.duplicatedInterceptors.addAll(beans.getDuplicatedInterceptors());
             ejbJar.beans.duplicatedDecorators.addAll(beans.getDuplicatedDecorators());
+
+            if (CompositeBeans.class.isInstance(beans)) {
+                ejbJar.beans.discoveryModeByUrl.putAll(CompositeBeans.class.cast(beans).getDiscoveryByUrl());
+            } else {
+                ejbJar.beans.discoveryModeByUrl.put(null, beans.getBeanDiscoveryMode());
+            }
         }
 
         return ejbJar;
