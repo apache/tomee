@@ -63,9 +63,7 @@ public class FinderFactory {
         final AnnotationFinder finder;
         if (module instanceof WebModule) {
             final WebModule webModule = (WebModule) module;
-            final AnnotationFinder annotationFinder = newFinder(new WebappAggregatedArchive(webModule, webModule.getScannableUrls()));
-            enableFinderOptions(annotationFinder);
-            finder = annotationFinder;
+            return newFinder(new WebappAggregatedArchive(webModule, webModule.getScannableUrls())).link();
         } else if (module instanceof ConnectorModule) {
             final ConnectorModule connectorModule = (ConnectorModule) module;
             finder = newFinder(new ConfigurableClasspathArchive(connectorModule, connectorModule.getLibraries())).link();
@@ -94,12 +92,7 @@ public class FinderFactory {
             } else {
                 finder = newFinder(new DebugArchive(new ConfigurableClasspathArchive(module.getClassLoader(), url)));
             }
-            if ("true".equals(SystemInstance.get().getProperty(FORCE_LINK, module.getProperties().getProperty(FORCE_LINK, "false")))) {
-                finder.link();
-            } else {
-                finder.enableMetaAnnotations(); // needed to stay compliant
-                enableSubclassing(finder);
-            }
+            finder.link();
         } else {
             finder = new AnnotationFinder(new ClassesArchive());
         }
@@ -137,21 +130,6 @@ public class FinderFactory {
                 throw e;
             }
         }
-    }
-
-    public static AnnotationFinder enableFinderOptions(final AnnotationFinder annotationFinder) {
-        if (annotationFinder.hasMetaAnnotations()) {
-            annotationFinder.enableMetaAnnotations();
-        }
-        enableSubclassing(annotationFinder);
-
-        return annotationFinder;
-    }
-
-    private static void enableSubclassing(final AnnotationFinder annotationFinder) {
-        // for @HandleTypes we need interface impl, impl of abstract classes too
-        annotationFinder.enableFindSubclasses();
-        annotationFinder.enableFindImplementations();
     }
 
     public static class ModuleLimitedFinder implements IAnnotationFinder, AutoCloseable {
@@ -397,7 +375,9 @@ public class FinderFactory {
         // using a raw but efficient impl
         public static boolean sharedIsJvm(final String name) {
             for (final String s : JVM_SCANNING_CONFIG) {
-                return name.startsWith(s);
+                if (name.startsWith(s)) {
+                    return true;
+                }
             }
             return false;
         }
