@@ -65,10 +65,7 @@ public class TomEEWebappLoader extends WebappLoader {
 
     @Override
     public boolean modified() {
-        if (SKIP_BACKGROUND_PROCESS) {
-            return false;
-        }
-        return super.modified();
+        return !SKIP_BACKGROUND_PROCESS && super.modified();
     }
 
     @Override

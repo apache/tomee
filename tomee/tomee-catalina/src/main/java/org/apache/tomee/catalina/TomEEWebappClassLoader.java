@@ -63,6 +63,7 @@ public class TomEEWebappClassLoader extends WebappClassLoader {
     private ClassLoaderConfigurer configurer;
     private final int hashCode;
     private Collection<File> additionalRepos;
+    private volatile boolean stopped = false;
 
     public TomEEWebappClassLoader() {
         hashCode = construct();
@@ -171,6 +172,13 @@ public class TomEEWebappClassLoader extends WebappClassLoader {
         return !"org.apache.tomee.mojarra.TomEEInjectionProvider".equals(name) && URLClassLoaderFirst.shouldSkip(name);
     }
 
+    @Override
+    protected void checkStateForClassLoading(final String className) throws ClassNotFoundException {
+        if (stopped) { // keep same error than parent
+            super.checkStateForClassLoading(className);
+        }
+    }
+
     public void internalStop() throws LifecycleException {
         if (getState().isAvailable()) {
             // reset classloader because of tomcat classloaderlogmanager
@@ -182,6 +190,7 @@ public class TomEEWebappClassLoader extends WebappClassLoader {
             } finally {
                 Thread.currentThread().setContextClassLoader(loader);
             }
+            stopped = true;
         }
     }
 
@@ -258,6 +267,8 @@ public class TomEEWebappClassLoader extends WebappClassLoader {
         if (configurerTxt != null) {
             configurer = new CompositeClassLoaderConfigurer(configurer, configurerTxt);
         }
+
+        stopped = false;
     }
 
     public void addURL(final URL url) {
