@@ -477,21 +477,21 @@ public class ReadDescriptors implements DynamicDeployer {
 
     private void readCmpOrm(final EjbModule ejbModule) throws OpenEJBException {
         final Object data = ejbModule.getAltDDs().get("openejb-cmp-orm.xml");
-        if (data == null || data instanceof EntityMappings) {
-            return;
-        } else if (data instanceof URL) {
-            final URL url = (URL) data;
-            try {
-                final EntityMappings entitymappings = (EntityMappings) JaxbJavaee.unmarshalJavaee(EntityMappings.class, IO.read(url));
-                ejbModule.getAltDDs().put("openejb-cmp-orm.xml", entitymappings);
-            } catch (final SAXException e) {
-                throw new OpenEJBException("Cannot parse the openejb-cmp-orm.xml file: " + url.toExternalForm(), e);
-            } catch (final JAXBException e) {
-                throw new OpenEJBException("Cannot unmarshall the openejb-cmp-orm.xml file: " + url.toExternalForm(), e);
-            } catch (final IOException e) {
-                throw new OpenEJBException("Cannot read the openejb-cmp-orm.xml file: " + url.toExternalForm(), e);
-            } catch (final Exception e) {
-                throw new OpenEJBException("Encountered unknown error parsing the openejb-cmp-orm.xml file: " + url.toExternalForm(), e);
+        if (data != null && !(data instanceof EntityMappings)) {
+            if (data instanceof URL) {
+                final URL url = (URL) data;
+                try {
+                    final EntityMappings entitymappings = (EntityMappings) JaxbJavaee.unmarshalJavaee(EntityMappings.class, IO.read(url));
+                    ejbModule.getAltDDs().put("openejb-cmp-orm.xml", entitymappings);
+                } catch (final SAXException e) {
+                    throw new OpenEJBException("Cannot parse the openejb-cmp-orm.xml file: " + url.toExternalForm(), e);
+                } catch (final JAXBException e) {
+                    throw new OpenEJBException("Cannot unmarshall the openejb-cmp-orm.xml file: " + url.toExternalForm(), e);
+                } catch (final IOException e) {
+                    throw new OpenEJBException("Cannot read the openejb-cmp-orm.xml file: " + url.toExternalForm(), e);
+                } catch (final Exception e) {
+                    throw new OpenEJBException("Encountered unknown error parsing the openejb-cmp-orm.xml file: " + url.toExternalForm(), e);
+                }
             }
         }
     }
@@ -608,7 +608,7 @@ public class ReadDescriptors implements DynamicDeployer {
 
     public static Beans readBeans(final InputStream inputStream) throws OpenEJBException {
         try {
-            final String content = IO.slurp(inputStream);
+            final String content = IO.slurp(inputStream).trim();
             if (content.length() == 0) { // otherwise we want to read <beans /> attributes
                 final Beans beans = new Beans();
                 beans.setBeanDiscoveryMode("ALL"); // backward compatibility
@@ -629,10 +629,6 @@ public class ReadDescriptors implements DynamicDeployer {
 
     private static boolean isEmptyEjbJar(final InputStream is) throws IOException, ParserConfigurationException, SAXException {
         return isEmpty(is, "ejb-jar");
-    }
-
-    private static boolean isEmptyBeansXml(final InputStream is) throws IOException, ParserConfigurationException, SAXException {
-        return isEmpty(is, "beans");
     }
 
     private static boolean isEmpty(final InputStream is, final String rootElement) throws IOException, ParserConfigurationException, SAXException {
