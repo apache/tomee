@@ -33,6 +33,7 @@ import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.intercept.ApplicationScopedBeanInterceptorHandler;
 import org.apache.webbeans.intercept.NormalScopedBeanInterceptorHandler;
+import org.apache.webbeans.spi.BeanArchiveService;
 import org.apache.webbeans.spi.ContainerLifecycle;
 import org.apache.webbeans.spi.ContextsService;
 import org.apache.webbeans.spi.ConversationService;
@@ -118,6 +119,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
 
         properties.putAll(appContext.getProperties());
 
+        services.put(BeanArchiveService.class, new OpenEJBBeanInfoService());
         services.put(AppContext.class, appContext);
         services.put(JNDIService.class, new OpenEJBJndiService());
         services.put(TransactionService.class, new OpenEJBTransactionService());

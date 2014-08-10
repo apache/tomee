@@ -38,13 +38,15 @@ import org.apache.webbeans.exception.WebBeansConfigurationException;
 import org.apache.webbeans.inject.AlternativesManager;
 import org.apache.webbeans.intercept.InterceptorsManager;
 import org.apache.webbeans.spi.BDABeansXmlScanner;
+import org.apache.webbeans.spi.BeanArchiveService;
 import org.apache.webbeans.spi.ScannerService;
 
+import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
@@ -61,7 +63,13 @@ public class CdiScanner implements ScannerService {
     };
 
     // TODO add all annotated class
-    private final Set<Class<?>> classes = new HashSet<Class<?>>();
+    private final Set<Class<?>> classes = new HashSet<>();
+
+    private WebBeansContext webBeansContext;
+
+    public void setContext(final WebBeansContext webBeansContext) {
+        this.webBeansContext = webBeansContext;
+    }
 
     @Override
     public void init(final Object object) {
@@ -172,9 +180,45 @@ public class CdiScanner implements ScannerService {
             final ClassLoader scl = ClassLoader.getSystemClassLoader();
             final boolean filterByClassLoader = "true".equals(SystemInstance.get().getProperty(OPENEJB_CDI_FILTER_CLASSLOADER, "true"));
 
-            final Iterator<String> it = beans.managedClasses.iterator();
-            while (it.hasNext()) {
-                process(classLoader, it, startupObject, comparator, scl, filterByClassLoader);
+            final BeanArchiveService beanArchiveService = webBeansContext.getBeanArchiveService();
+            final boolean openejb = OpenEJBBeanInfoService.class.isInstance(beanArchiveService);
+
+            for (final Map.Entry<URL, List<String>> next : beans.managedClasses.entrySet()) {
+                final List<String> value = next.getValue();
+
+                final URL key = next.getKey();
+                final BeanArchiveService.BeanArchiveInformation information;
+                if (openejb) {
+                    final OpenEJBBeanInfoService beanInfoService = OpenEJBBeanInfoService.class.cast(beanArchiveService);
+                    information = beanInfoService.createBeanArchiveInformation(beans, classLoader);
+                    beanInfoService.getBeanArchiveInfo().put(key, information);
+                } else {
+                    information = beanArchiveService.getBeanArchiveInformation(key);
+                }
+
+                final boolean scanModeAnnotated = BeanArchiveService.BeanDiscoveryMode.ANNOTATED.equals(information.getBeanDiscoveryMode());
+                final boolean noScan = BeanArchiveService.BeanDiscoveryMode.NONE.equals(information.getBeanDiscoveryMode());
+                final boolean isNotEarWebApp = startupObject.getWebContext() == null;
+
+                if (!noScan) {
+                    for (final String name : value) {
+                        if (information.isClassExcluded(name)) {
+                            continue;
+                        }
+
+                        final Class clazz = load(name, classLoader);
+                        if (scanModeAnnotated) {
+                            if (clazz != null && isBean(clazz)) {
+                                classes.add(clazz);
+                            }
+                        } else {
+                            final ClassLoader loader = clazz.getClassLoader();
+                            if (!filterByClassLoader || comparator.isSame(loader) || loader.equals(scl) && isNotEarWebApp) {
+                                classes.add(clazz);
+                            }
+                        }
+                    }
+                }
             }
 
             if (startupObject.getBeanContexts() != null) { // ensure ejbs are in managed beans otherwise they will not be deployed in CDI
@@ -193,27 +237,26 @@ public class CdiScanner implements ScannerService {
         }
     }
 
+    // TODO: reusing our finder would be a good idea to avoid reflection we already did!
+    private boolean isBean(final Class clazz) {
+        try {
+            for (final Annotation a : clazz.getAnnotations()) {
+                final Class<? extends Annotation> annotationType = a.annotationType();
+                if (webBeansContext.getBeanManagerImpl().isScope(annotationType)
+                        || webBeansContext.getBeanManagerImpl().isStereotype(annotationType)) {
+                    return true;
+                }
+            }
+        }
+        catch (final Throwable e) {
+            // no-op
+        }
+        return false;
+    }
+
     private static boolean shouldThrowCouldNotLoadException(final StartupObject startupObject) {
         final AppInfo appInfo = startupObject.getAppInfo();
         return appInfo.webAppAlone || appInfo.webApps.size() == 0 || startupObject.isFromWebApp();
-    }
-
-    private void process(final ClassLoader classLoader, final Iterator<String> it, final StartupObject startupObject, final ClassLoaderComparator comparator, final ClassLoader scl, final boolean filterByClassLoader) {
-        final String className = it.next();
-        final Class clazz = load(className, classLoader);
-        if (clazz == null) {
-            return;
-        }
-
-        final ClassLoader cl = clazz.getClassLoader();
-        // 1. this classloader is the good one
-        // 2. the classloader is the appclassloader one and we are in the ear parent
-        if (!filterByClassLoader
-            || comparator.isSame(cl) || cl.equals(scl) && startupObject.getWebContext() == null) {
-            classes.add(clazz);
-        } else {
-            it.remove();
-        }
     }
 
     private boolean addErrors(final StringBuilder errors, final String msg, final List<String> list) {

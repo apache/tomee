@@ -55,6 +55,7 @@ import org.apache.openejb.cdi.CdiResourceInjectionService;
 import org.apache.openejb.cdi.CdiScanner;
 import org.apache.openejb.cdi.CustomELAdapter;
 import org.apache.openejb.cdi.ManagedSecurityService;
+import org.apache.openejb.cdi.OpenEJBBeanInfoService;
 import org.apache.openejb.cdi.OpenEJBJndiService;
 import org.apache.openejb.cdi.OpenEJBTransactionService;
 import org.apache.openejb.cdi.OptimizedLoaderService;
@@ -131,6 +132,7 @@ import org.apache.openejb.util.proxy.ProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.logger.JULLoggerFactory;
+import org.apache.webbeans.spi.BeanArchiveService;
 import org.apache.webbeans.spi.ContainerLifecycle;
 import org.apache.webbeans.spi.ContextsService;
 import org.apache.webbeans.spi.JNDIService;
@@ -1294,6 +1296,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             services.put(AppContext.class, appContext);
             services.put(TransactionService.class, new OpenEJBTransactionService());
             services.put(ScannerService.class, new CdiScanner());
+            services.put(BeanArchiveService.class, new OpenEJBBeanInfoService());
             services.put(ELAdaptor.class, new CustomELAdapter(appContext));
             services.put(LoaderService.class, new OptimizedLoaderService());
 

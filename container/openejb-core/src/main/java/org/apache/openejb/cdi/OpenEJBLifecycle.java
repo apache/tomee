@@ -165,9 +165,12 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
 
                 if (scannerService instanceof CdiScanner) {
                     final CdiScanner service = (CdiScanner) scannerService;
+                    service.setContext(webBeansContext);
                     service.init(startupObject);
                 } else {
-                    new CdiScanner().init(startupObject);
+                    final CdiScanner cdiScanner = new CdiScanner();
+                    ((CdiScanner) scannerService).setContext(webBeansContext);
+                    cdiScanner.init(startupObject);
                 }
 
                 //Scan
