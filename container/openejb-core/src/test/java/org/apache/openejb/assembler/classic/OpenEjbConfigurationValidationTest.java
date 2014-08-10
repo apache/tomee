@@ -18,6 +18,7 @@ package org.apache.openejb.assembler.classic;
 
 import junit.framework.TestCase;
 
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.namespace.QName;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -148,6 +149,10 @@ public class OpenEjbConfigurationValidationTest extends TestCase {
             // Other InfoObjects are OK
             if (InfoObject.class.isAssignableFrom(type)) {
                 validate(type);
+                continue;
+            }
+
+            if (field.getAnnotation(XmlTransient.class) != null) {
                 continue;
             }
 

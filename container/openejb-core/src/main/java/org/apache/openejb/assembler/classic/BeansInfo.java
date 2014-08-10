@@ -19,6 +19,7 @@ package org.apache.openejb.assembler.classic;
 
 import org.apache.openejb.assembler.ExclusionInfo;
 
+import javax.xml.bind.annotation.XmlTransient;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,8 +37,6 @@ public class BeansInfo extends InfoObject {
     public final List<String> alternativeClasses = new ArrayList<String>();
     public final List<String> alternativeStereotypes = new ArrayList<String>();
 
-    public final Map<URL, List<String>> managedClasses = new HashMap<>();
-
     public final List<String> duplicatedInterceptors = new ArrayList<String>();
     public final List<String> duplicatedDecorators = new ArrayList<String>();
     public final List<String> duplicatedAlternativeClasses = new ArrayList<String>();
@@ -46,5 +45,15 @@ public class BeansInfo extends InfoObject {
     public String version = "1.1";
     public String discoveryMode;
     public final Map<String, ExclusionInfo> excludes = new HashMap<>();
+
+    // TODO: rework these two maps to make then more adapted to info tree
+    // Tip: get a real CompositeBeansInfo and each BeansInfo has a List<String> classes and a discovery mode
+    //      to remove these maps
+    //      NB: doesn't only need to change it here but also in DeploymentLoader and AnnotationDeployer
+
+    @XmlTransient // ClassListInfo instead of transient?
+    public final Map<URL, List<String>> managedClasses = new HashMap<>();
+
+    @XmlTransient // ClassListInfo wouldn't work since we need a key for this field + this is mainly a built info, not a tree info
     public final Map<URL, String> discoveryModeByUrl = new HashMap<>();
 }
