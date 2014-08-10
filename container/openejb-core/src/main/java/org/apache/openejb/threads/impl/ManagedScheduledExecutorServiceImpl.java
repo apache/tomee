@@ -60,7 +60,7 @@ public class ManagedScheduledExecutorServiceImpl extends ManagedExecutorServiceI
     public <V> ScheduledFuture<V> schedule(final Callable<V> vCallable, final Trigger trigger) {
         final Date taskScheduledTime = new Date();
         final AtomicReference<Future<V>> futureHandle = new AtomicReference<Future<V>>();
-        final TriggerCallable<V> wrapper = new TriggerCallable<V>(this, vCallable, new CUCallable<V>(vCallable), trigger, taskScheduledTime, getTaskId(vCallable), futureHandle);
+        final TriggerCallable<V> wrapper = new TriggerCallable<>(this, vCallable, new CUCallable<>(vCallable), trigger, taskScheduledTime, getTaskId(vCallable), futureHandle);
         final ScheduledFuture<V> future = delegate.schedule(wrapper, trigger.getNextRunTime(wrapper.getLastExecution(), taskScheduledTime).getTime() - nowMs(), TimeUnit.MILLISECONDS);
         return initTriggerScheduledFuture(vCallable, futureHandle, wrapper, future);
     }
@@ -69,7 +69,7 @@ public class ManagedScheduledExecutorServiceImpl extends ManagedExecutorServiceI
                                                               final TriggerTask<V> wrapper, final ScheduledFuture<V> future) {
         futureHandle.set(future);
         wrapper.taskSubmitted(future, this, original);
-        return new CUScheduleFuture<V>(ScheduledFutureFacade.<V>newProxy(futureHandle), wrapper);
+        return new CUScheduleFuture<>(ScheduledFutureFacade.newProxy(futureHandle), wrapper);
     }
 
     @Override
@@ -85,7 +85,7 @@ public class ManagedScheduledExecutorServiceImpl extends ManagedExecutorServiceI
         final CUCallable<V> wrapper = new CUCallable<V>(callable);
         final ScheduledFuture<V> future = delegate.schedule(wrapper, delay, unit);
         wrapper.taskSubmitted(future, this, callable);
-        return new CUScheduleFuture<V>(future, wrapper);
+        return new CUScheduleFuture<>(future, wrapper);
     }
 
     @Override
