@@ -34,6 +34,7 @@ import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.ConnectorModule;
 import org.apache.openejb.config.DeploymentLoader;
 import org.apache.openejb.config.EjbModule;
+import org.apache.openejb.config.FinderFactory;
 import org.apache.openejb.config.PersistenceModule;
 import org.apache.openejb.config.WebModule;
 import org.apache.openejb.config.sys.JSonConfigReader;
@@ -97,6 +98,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -311,7 +313,9 @@ public final class ApplicationComposers {
             final EjbDeployment ejbDeployment = openejbJar.addEjbDeployment(testBean);
             ejbDeployment.setDeploymentId(testClass.getName());
 
-            appModule.getEjbModules().add(new EjbModule(ejbJar, openejbJar));
+            final EjbModule ejbModule = new EjbModule(ejbJar, openejbJar);
+            ejbModule.setFinder(new FinderFactory.OpenEJBAnnotationFinder(new ClassesArchive(testClass)));
+            appModule.getEjbModules().add(ejbModule);
         }
 
         // For the moment we just take the first @Configuration method
@@ -631,11 +635,18 @@ public final class ApplicationComposers {
             appModule = newModule;
         }
 
-        // copy ejb into beans if cdi is activated
+        // copy ejb into beans if cdi is activated and init finder
         for (final EjbModule ejb : appModule.getEjbModules()) {
+            final Collection<Class<?>> finderClasses = new HashSet<>();
+
+            final EnterpriseBean[] enterpriseBeans = ejb.getEjbJar().getEnterpriseBeans();
+            for (final EnterpriseBean bean : enterpriseBeans) {
+                finderClasses.add(loader.loadClass(bean.getEjbClass()));
+            }
+
             final Beans beans = ejb.getBeans();
             if (beans != null && ejb.getEjbJar() != null) {
-                for (final EnterpriseBean bean : ejb.getEjbJar().getEnterpriseBeans()) {
+                for (final EnterpriseBean bean : enterpriseBeans) {
                     boolean found = false;
                     for (final List<String> mc : beans.getManagedClasses().values()) {
                         if (mc.contains(bean.getEjbClass())) {
@@ -648,7 +659,15 @@ public final class ApplicationComposers {
                         beans.addManagedClass(bean.getEjbClass());
                     }
                 }
+
+                for (final List<String> managedClasses : beans.getManagedClasses().values()) {
+                    for (final String name : managedClasses) {
+                        finderClasses.add(loader.loadClass(name));
+                    }
+                }
             }
+
+            ejb.setFinder(new FinderFactory.OpenEJBAnnotationFinder(new ClassesArchive(finderClasses.toArray(new Class<?>[finderClasses.size()]))));
         }
 
         if (webModulesNb > 0 && SystemInstance.get().getComponent(WebAppBuilder.class) == null) {

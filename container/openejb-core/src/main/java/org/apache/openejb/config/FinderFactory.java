@@ -94,6 +94,7 @@ public class FinderFactory {
             }
             finder.link();
         } else {
+            // TODO: error. Here it means we'll not find anything
             finder = new AnnotationFinder(new ClassesArchive());
         }
 

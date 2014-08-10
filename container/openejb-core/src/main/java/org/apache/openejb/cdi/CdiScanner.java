@@ -191,7 +191,8 @@ public class CdiScanner implements ScannerService {
                 final BeanArchiveService.BeanArchiveInformation information;
                 if (openejb) {
                     final OpenEJBBeanInfoService beanInfoService = OpenEJBBeanInfoService.class.cast(beanArchiveService);
-                    information = beanInfoService.createBeanArchiveInformation(beans, classLoader, discoveryModes.get(key));
+                    final String mode = discoveryModes.get(key);
+                    information = beanInfoService.createBeanArchiveInformation(beans, classLoader, mode == null? "ALL" : mode); // this fallback is 100% for tests, TODO: get rid of it (AppComposer)
                     // TODO: log a warn is discoveryModes.get(key) == null
                     beanInfoService.getBeanArchiveInfo().put(key, information);
                 } else {
