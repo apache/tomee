@@ -18,14 +18,21 @@ package org.apache.openejb.jee;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -53,6 +60,8 @@ import java.util.List;
 })
 @XmlRootElement(name = "beans")
 public class Beans {
+    private static final URL DEFAULT_URL = null;
+
     @XmlTransient
     protected List<String> duplicatedInterceptors;
 
@@ -63,7 +72,7 @@ public class Beans {
     protected Alternatives duplicatedAlternatives;
 
     @XmlTransient
-    private final List<String> managedClasses = new ArrayList<String>();
+    private final Map<URL, List<String>> managedClasses = new HashMap<>();
 
     @XmlElementWrapper(name = "interceptors")
     @XmlElement(name = "class")
@@ -75,21 +84,72 @@ public class Beans {
 
     protected Alternatives alternatives;
 
-    public List<String> getManagedClasses() {
+    @XmlAttribute(name = "version")
+    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+    protected String version;
+
+    @XmlAttribute(name = "bean-discovery-mode", required = true)
+    protected String beanDiscoveryMode;
+
+    @XmlElement
+    protected Scan scan;
+
+    public Scan getScan() {
+        if (scan == null) {
+            scan = new Scan();
+        }
+        return scan;
+    }
+
+    public void setScan(Scan scan) {
+        this.scan = scan;
+    }
+
+    public String getVersion() {
+        if (version == null) {
+            return "1.1";
+        }
+        return version;
+    }
+
+    public void setVersion(final String version) {
+        this.version = version;
+    }
+
+    public String getBeanDiscoveryMode() {
+        return beanDiscoveryMode;
+    }
+
+    public void setBeanDiscoveryMode(final String beanDiscoveryMode) {
+        this.beanDiscoveryMode = beanDiscoveryMode;
+    }
+
+    public void addManagedClass(final URL url, final String clazz) {
+        List<String> list = managedClasses.get(url);
+        if (list == null) {
+            list = new LinkedList<>();
+            managedClasses.put(url, list);
+        }
+        list.add(clazz);
+    }
+
+    public Map<URL, List<String>> getManagedClasses() {
         return managedClasses;
     }
 
+    @Deprecated
     public void addManagedClass(final String className) {
-        managedClasses.add(className);
+        addManagedClass(DEFAULT_URL, className);
     }
 
+    @Deprecated
     public void addManagedClass(final Class clazz) {
         addManagedClass(clazz.getName());
     }
 
     public List<String> getInterceptors() {
         if (interceptors == null) {
-            interceptors = new ArrayList<String>();
+            interceptors = new ArrayList<>();
         }
         return interceptors;
     }
@@ -104,7 +164,7 @@ public class Beans {
 
     public List<String> getDecorators() {
         if (decorators == null) {
-            decorators = new ArrayList<String>();
+            decorators = new ArrayList<>();
         }
         return decorators;
     }
@@ -189,29 +249,115 @@ public class Beans {
 
         public List<String> getClasses() {
             if (classes == null) {
-                classes = new ArrayList<String>();
+                classes = new ArrayList<>();
             }
             return classes;
         }
 
         public List<String> getStereotypes() {
             if (stereotypes == null) {
-                stereotypes = new ArrayList<String>();
+                stereotypes = new ArrayList<>();
             }
             return stereotypes;
         }
     }
 
+    @XmlAccessorType(XmlAccessType.FIELD)
+    @XmlRootElement(name = "scan")
+    public static class Scan {
+        protected List<Scan.Exclude> exclude;
+
+        public List<Scan.Exclude> getExclude() {
+            if (exclude == null) {
+                exclude = new ArrayList<>();
+            }
+            return this.exclude;
+        }
+
+        @XmlAccessorType(XmlAccessType.FIELD)
+        public static class Exclude {
+            @XmlElements({
+                    @XmlElement(name = "if-class-available", type = IfAvailableClassCondition.class),
+                    @XmlElement(name = "if-class-not-available", type = IfNotAvailableClassCondition.class),
+                    @XmlElement(name = "if-system-property", type = IfSystemProperty.class)
+            })
+            protected List<Object> ifClassAvailableOrIfClassNotAvailableOrIfSystemProperty;
+
+            @XmlAttribute(name = "name", required = true)
+            protected String name;
+
+            public List<Object> getIfClassAvailableOrIfClassNotAvailableOrIfSystemProperty() {
+                if (ifClassAvailableOrIfClassNotAvailableOrIfSystemProperty == null) {
+                    ifClassAvailableOrIfClassNotAvailableOrIfSystemProperty = new ArrayList<>();
+                }
+                return this.ifClassAvailableOrIfClassNotAvailableOrIfSystemProperty;
+            }
+
+            public String getName() {
+                return name;
+            }
+
+            public void setName(String value) {
+                this.name = value;
+            }
+
+            public static class IfAvailableClassCondition extends ClassCondition {
+            }
+
+            public static class IfNotAvailableClassCondition extends ClassCondition {
+            }
+
+            @XmlAccessorType(XmlAccessType.FIELD)
+            public static class ClassCondition {
+                @XmlAttribute(name = "name", required = true)
+                protected String name;
+
+                public String getName() {
+                    return name;
+                }
+
+                public void setName(String value) {
+                    this.name = value;
+                }
+            }
+
+            @XmlAccessorType(XmlAccessType.FIELD)
+            public static class IfSystemProperty {
+                @XmlAttribute(name = "name", required = true)
+                protected String name;
+
+                @XmlAttribute(name = "value")
+                protected String value;
+
+                public String getName() {
+                    return name;
+                }
+
+                public void setName(String value) {
+                    this.name = value;
+                }
+
+                public String getValue() {
+                    return value;
+                }
+
+                public void setValue(String value) {
+                    this.value = value;
+                }
+            }
+        }
+    }
+
     public List<String> getDuplicatedInterceptors() {
         if (duplicatedInterceptors == null) {
-            duplicatedInterceptors = new ArrayList<String>();
+            duplicatedInterceptors = new ArrayList<>();
         }
         return duplicatedInterceptors;
     }
 
     public List<String> getDuplicatedDecorators() {
         if (duplicatedDecorators == null) {
-            duplicatedDecorators = new ArrayList<String>();
+            duplicatedDecorators = new ArrayList<>();
         }
         return duplicatedDecorators;
     }
@@ -232,7 +378,7 @@ public class Beans {
 
     private <T> void removeDuplicates(final List<T> list) {
         // don't use a set to keep order
-        final List<T> classes = new ArrayList<T>();
+        final List<T> classes = new ArrayList<>();
         for (final T t : list) {
             if (!classes.contains(t)) {
                 classes.add(t);

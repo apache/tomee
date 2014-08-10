@@ -1,6 +1,6 @@
 http://java.sun.com/xml/ns/javaee/application_6.xsd
 http://java.sun.com/xml/ns/javaee/application-client_6.xsd
-http://java.sun.com/xml/ns/javaee/beans_1_0.xsd
+http://java.sun.com/xml/ns/javaee/beans_1_1.xsd
 http://java.sun.com/xml/ns/javaee/connector_1_6.xsd
 http://java.sun.com/xml/ns/javaee/ejb-jar_3_1.xsd
 http://java.sun.com/xml/ns/javaee/javaee_6.xsd
