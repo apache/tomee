@@ -100,7 +100,7 @@ public class FinderFactory {
             finder.link();
         } else {
             // TODO: error. Here it means we'll not find anything so helping a bit (if you hit it outside a test fix it)
-            finder = new AnnotationFinder(new ClassesArchive(ensureMinimalClasses(module)));
+            finder = new AnnotationFinder(new ClassesArchive(ensureMinimalClasses(module))).enableMetaAnnotations();
         }
 
         return MODULE_LIMITED ? new ModuleLimitedFinder(finder) : finder;
