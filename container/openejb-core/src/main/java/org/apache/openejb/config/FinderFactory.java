@@ -426,7 +426,7 @@ public class FinderFactory {
 
         @Override
         protected boolean isJvm(final String name) {
-            return sharedIsJvm("java.");
+            return sharedIsJvm(name);
         }
 
         // don't reuse URLClassLoaderFirst one since this one can kill scanning perf
