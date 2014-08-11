@@ -98,7 +98,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -637,16 +636,7 @@ public final class ApplicationComposers {
 
         // copy ejb into beans if cdi is activated and init finder
         for (final EjbModule ejb : appModule.getEjbModules()) {
-            final Collection<Class<?>> finderClasses = new HashSet<>();
-
             final EnterpriseBean[] enterpriseBeans = ejb.getEjbJar().getEnterpriseBeans();
-
-            final boolean noFinder= ejb.getFinder() == null;
-            if (noFinder) {
-                for (final EnterpriseBean bean : enterpriseBeans) {
-                    finderClasses.add(loader.loadClass(bean.getEjbClass()));
-                }
-            }
 
             final Beans beans = ejb.getBeans();
             if (beans != null && ejb.getEjbJar() != null) {
@@ -663,18 +653,6 @@ public final class ApplicationComposers {
                         beans.addManagedClass(bean.getEjbClass());
                     }
                 }
-
-                if (noFinder) {
-                    for (final List<String> managedClasses : beans.getManagedClasses().values()) {
-                        for (final String name : managedClasses) {
-                            finderClasses.add(loader.loadClass(name));
-                        }
-                    }
-                }
-            }
-
-            if (noFinder) {
-                ejb.setFinder(new FinderFactory.OpenEJBAnnotationFinder(new ClassesArchive(finderClasses.toArray(new Class<?>[finderClasses.size()]))));
             }
         }
 

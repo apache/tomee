@@ -18,6 +18,8 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.jee.Beans;
+import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.xbean.finder.Annotated;
 import org.apache.xbean.finder.AnnotationFinder;
@@ -37,8 +39,11 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+
+import static org.apache.openejb.util.Classes.ancestors;
 
 public class FinderFactory {
 
@@ -94,11 +99,70 @@ public class FinderFactory {
             }
             finder.link();
         } else {
-            // TODO: error. Here it means we'll not find anything
-            finder = new AnnotationFinder(new ClassesArchive());
+            // TODO: error. Here it means we'll not find anything so helping a bit (if you hit it outside a test fix it)
+            finder = new AnnotationFinder(new ClassesArchive(ensureMinimalClasses(module)));
         }
 
         return MODULE_LIMITED ? new ModuleLimitedFinder(finder) : finder;
+    }
+
+    private Class<?>[] ensureMinimalClasses(final DeploymentModule module) {
+        if (EjbModule.class.isInstance(module)) {
+            final Collection<Class<?>> finderClasses = new HashSet<>();
+
+            final EjbModule ejb = EjbModule.class.cast(module);
+            final EnterpriseBean[] enterpriseBeans = ejb.getEjbJar().getEnterpriseBeans();
+
+            ClassLoader classLoader = ejb.getClassLoader();
+            if (classLoader == null) {
+                classLoader = Thread.currentThread().getContextClassLoader();
+            }
+
+            for (final EnterpriseBean bean : enterpriseBeans) {
+                try {
+                    finderClasses.addAll(ancestors(classLoader.loadClass(bean.getEjbClass())));
+                } catch (final ClassNotFoundException e) {
+                    // no-op
+                }
+            }
+
+            final Beans beans = ejb.getBeans();
+            if (beans != null && ejb.getEjbJar() != null) {
+                for (final List<String> managedClasses : beans.getManagedClasses().values()) {
+                    for (final String name : managedClasses) {
+                        try {
+                            finderClasses.addAll(ancestors(classLoader.loadClass(name)));
+                        } catch (final ClassNotFoundException e) {
+                            // no-op
+                        }
+                    }
+                }
+                for (final String name : beans.getInterceptors()) {
+                    try {
+                        finderClasses.addAll(ancestors(classLoader.loadClass(name)));
+                    } catch (final ClassNotFoundException e) {
+                        // no-op
+                    }
+                }
+                for (final String name : beans.getAlternativeClasses()) {
+                    try {
+                        finderClasses.addAll(ancestors(classLoader.loadClass(name)));
+                    } catch (final ClassNotFoundException e) {
+                        // no-op
+                    }
+                }
+                for (final String name : beans.getDecorators()) {
+                    try {
+                        finderClasses.addAll(ancestors(classLoader.loadClass(name)));
+                    } catch (final ClassNotFoundException e) {
+                        // no-op
+                    }
+                }
+            }
+
+            return finderClasses.toArray(new Class<?>[finderClasses.size()]);
+        }
+        return new Class<?>[0];
     }
 
     private static AnnotationFinder newFinder(final Archive archive) {
