@@ -18,7 +18,6 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.assembler.ExclusionInfo;
 import org.apache.openejb.assembler.classic.ApplicationExceptionInfo;
 import org.apache.openejb.assembler.classic.BeansInfo;
 import org.apache.openejb.assembler.classic.CallbackInfo;
@@ -26,6 +25,7 @@ import org.apache.openejb.assembler.classic.CmrFieldInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.EntityBeanInfo;
+import org.apache.openejb.assembler.classic.ExclusionInfo;
 import org.apache.openejb.assembler.classic.InitMethodInfo;
 import org.apache.openejb.assembler.classic.InterceptorBindingInfo;
 import org.apache.openejb.assembler.classic.InterceptorInfo;

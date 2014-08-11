@@ -17,8 +17,6 @@
 
 package org.apache.openejb.assembler.classic;
 
-import org.apache.openejb.assembler.ExclusionInfo;
-
 import javax.xml.bind.annotation.XmlTransient;
 import java.net.URL;
 import java.util.ArrayList;

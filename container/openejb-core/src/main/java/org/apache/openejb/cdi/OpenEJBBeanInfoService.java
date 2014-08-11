@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.cdi;
 
-import org.apache.openejb.assembler.ExclusionInfo;
 import org.apache.openejb.assembler.classic.BeansInfo;
+import org.apache.openejb.assembler.classic.ExclusionInfo;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.webbeans.exception.WebBeansConfigurationException;
 import org.apache.webbeans.spi.BeanArchiveService;
