@@ -65,13 +65,15 @@ public class FinderFactory {
     }
 
     public IAnnotationFinder create(final DeploymentModule module) throws Exception {
-        final AnnotationFinder finder;
+        OpenEJBAnnotationFinder finder;
         if (module instanceof WebModule) {
             final WebModule webModule = (WebModule) module;
-            finder = newFinder(new WebappAggregatedArchive(webModule, webModule.getScannableUrls())).link();
+            finder = newFinder(new WebappAggregatedArchive(webModule, webModule.getScannableUrls()));
+            finder.link();
         } else if (module instanceof ConnectorModule) {
             final ConnectorModule connectorModule = (ConnectorModule) module;
-            finder = newFinder(new ConfigurableClasspathArchive(connectorModule, connectorModule.getLibraries())).link();
+            finder = newFinder(new ConfigurableClasspathArchive(connectorModule, connectorModule.getLibraries()));
+            finder.link();
         } else if (module instanceof AppModule) {
             final Collection<URL> urls = NewLoaderLogic.applyBuiltinExcludes(new UrlSet(AppModule.class.cast(module).getAdditionalLibraries())).getUrls();
             finder = newFinder(new WebappAggregatedArchive(module.getClassLoader(), module.getAltDDs(), urls));
@@ -97,13 +99,22 @@ public class FinderFactory {
             } else {
                 finder = newFinder(new DebugArchive(new ConfigurableClasspathArchive(module.getClassLoader(), url)));
             }
+            if (!finder.foundSomething()) { // test case too, should be removed in absolute. Next else should be hit but if jar location was set we are here.
+                finder = fallbackAnnotationFinder(module);
+            }
             finder.link();
         } else {
             // TODO: error. Here it means we'll not find anything so helping a bit (if you hit it outside a test fix it)
-            finder = new AnnotationFinder(new ClassesArchive(ensureMinimalClasses(module))).enableMetaAnnotations();
+            finder = fallbackAnnotationFinder(module);
         }
 
         return MODULE_LIMITED ? new ModuleLimitedFinder(finder) : finder;
+    }
+
+    private OpenEJBAnnotationFinder fallbackAnnotationFinder(DeploymentModule module) {
+        final OpenEJBAnnotationFinder finder = new OpenEJBAnnotationFinder(new ClassesArchive(ensureMinimalClasses(module)));
+        finder.enableMetaAnnotations();
+        return finder;
     }
 
     private Class<?>[] ensureMinimalClasses(final DeploymentModule module) {
@@ -121,6 +132,13 @@ public class FinderFactory {
             for (final EnterpriseBean bean : enterpriseBeans) {
                 try {
                     finderClasses.addAll(ancestors(classLoader.loadClass(bean.getEjbClass())));
+                } catch (final ClassNotFoundException e) {
+                    // no-op
+                }
+            }
+            for (final org.apache.openejb.jee.Interceptor interceptor : ejb.getEjbJar().getInterceptors()) {
+                try {
+                    finderClasses.addAll(ancestors(classLoader.loadClass(interceptor.getInterceptorClass())));
                 } catch (final ClassNotFoundException e) {
                     // no-op
                 }
@@ -165,7 +183,7 @@ public class FinderFactory {
         return new Class<?>[0];
     }
 
-    private static AnnotationFinder newFinder(final Archive archive) {
+    private static OpenEJBAnnotationFinder newFinder(final Archive archive) {
         return new OpenEJBAnnotationFinder(archive);
     }
 
@@ -438,6 +456,10 @@ public class FinderFactory {
                 }
             }
             return false;
+        }
+
+        public boolean foundSomething() {
+            return !classInfos.isEmpty();
         }
     }
 }

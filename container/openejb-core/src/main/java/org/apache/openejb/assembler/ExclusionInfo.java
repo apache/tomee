@@ -17,13 +17,13 @@
 
 package org.apache.openejb.assembler;
 
-import org.apache.openejb.assembler.classic.CommonInfoObject;
+import org.apache.openejb.assembler.classic.InfoObject;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
-public class ExclusionInfo extends CommonInfoObject {
+public class ExclusionInfo extends InfoObject {
     public final List<String> availableClasses = new LinkedList<>();
     public final List<String> notAvailableClasses = new LinkedList<>();
     public final List<String> systemPropertiesPresence = new LinkedList<>();

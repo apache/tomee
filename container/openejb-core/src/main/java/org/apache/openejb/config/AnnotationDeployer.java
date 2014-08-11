@@ -3504,7 +3504,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 /*
                  *  @AroundTimeout
                  */
-                if (apply(override, invokable.getAroundInvoke())) {
+                if (apply(override, invokable.getAroundTimeout())) {
                     for (final Annotated<Method> method : sortMethods(annotationFinder.findMetaAnnotatedMethods(javax.interceptor.AroundTimeout.class))) {
                         invokable.getAroundTimeout().add(new AroundTimeout(method.get()));
                     }
