@@ -34,9 +34,8 @@ public class CheckIncorrectPropertyNameTest {
         //SystemInstance.get().setProperty("java.persistence.provider", "test");
         SystemInstance.get().setProperty("javax.naming.referral", "test");
         final EjbJar ejbJar = new EjbJar();
-        ejbJar.addEnterpriseBean(new StatefulBean(org.apache.openejb.test.annotated.Green.class));
-        final AppModule appModule = new AppModule(new EjbModule(ejbJar));
-        return appModule;
+        ejbJar.addEnterpriseBean(new StatefulBean(Green.class));
+        return new AppModule(new EjbModule(ejbJar));
     }
 }
 
