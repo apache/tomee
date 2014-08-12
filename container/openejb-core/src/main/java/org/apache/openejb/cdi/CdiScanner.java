@@ -190,7 +190,7 @@ public class CdiScanner implements ScannerService {
                     information = beanInfoService.createBeanArchiveInformation(beans, classLoader, next.discoveryMode == null? "ALL" : next.discoveryMode); // this fallback is 100% for tests, TODO: get rid of it (AppComposer)
                     // TODO: log a warn is discoveryModes.get(key) == null
                     try {
-                        beanInfoService.getBeanArchiveInfo().put(next.uri.toURL(), information);
+                        beanInfoService.getBeanArchiveInfo().put(next.uri == null ? null : next.uri.toURL(), information);
                     } catch (final MalformedURLException e) {
                         throw new IllegalStateException(e);
                     }
