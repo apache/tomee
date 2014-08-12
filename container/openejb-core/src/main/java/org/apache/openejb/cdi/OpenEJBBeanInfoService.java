@@ -17,7 +17,6 @@
 package org.apache.openejb.cdi;
 
 import org.apache.openejb.assembler.classic.BeansInfo;
-import org.apache.openejb.assembler.classic.ExclusionInfo;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.webbeans.exception.WebBeansConfigurationException;
 import org.apache.webbeans.spi.BeanArchiveService;
@@ -55,17 +54,16 @@ public class OpenEJBBeanInfoService implements BeanArchiveService {
         information.getAlternativeClasses().addAll(info.alternativeClasses);
         information.getAlternativeStereotypes().addAll(info.alternativeStereotypes);
 
-        for (final Map.Entry<String, ExclusionInfo> exclusionInfo : info.excludes.entrySet()) {
-            final ExclusionInfo value = exclusionInfo.getValue();
+        for (final BeansInfo.ExclusionEntryInfo exclusionInfo : info.excludes) {
             boolean skip = false;
-            for (final String n : value.availableClasses) {
+            for (final String n : exclusionInfo.exclusion.availableClasses) {
                 if (!isClassAvailable(loader, n)) {
                     skip = true;
                     break;
                 }
             }
             if (!skip) {
-                for (final String n : value.notAvailableClasses) {
+                for (final String n : exclusionInfo.exclusion.notAvailableClasses) {
                     if (isClassAvailable(loader, n)) {
                         skip = true;
                         break;
@@ -73,7 +71,7 @@ public class OpenEJBBeanInfoService implements BeanArchiveService {
                 }
             }
             if (!skip) {
-                for (final String n : value.systemPropertiesPresence) {
+                for (final String n : exclusionInfo.exclusion.systemPropertiesPresence) {
                     // our system instance is more powerful here
                     if (SystemInstance.get().getProperty(n) == null) {
                         skip = true;
@@ -82,9 +80,9 @@ public class OpenEJBBeanInfoService implements BeanArchiveService {
                 }
             }
             if (!skip) {
-                for (final String n : value.systemProperties.stringPropertyNames()) {
+                for (final String n : exclusionInfo.exclusion.systemProperties.stringPropertyNames()) {
                     // our system instance is more powerful here
-                    if (!value.systemProperties.getProperty(n).equals(SystemInstance.get().getProperty(n))) {
+                    if (!exclusionInfo.exclusion.systemProperties.getProperty(n).equals(SystemInstance.get().getProperty(n))) {
                         skip = true;
                         break;
                     }
@@ -94,7 +92,7 @@ public class OpenEJBBeanInfoService implements BeanArchiveService {
                 continue;
             }
 
-            final String name = exclusionInfo.getKey();
+            final String name = exclusionInfo.name;
             if (name.endsWith(".*")) {
                 information.addClassExclude(name.substring(0, name.length() - 2));
             }

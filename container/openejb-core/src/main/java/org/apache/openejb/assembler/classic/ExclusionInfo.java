@@ -15,9 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.openejb.assembler;
-
-import org.apache.openejb.assembler.classic.InfoObject;
+package org.apache.openejb.assembler.classic;
 
 import java.util.LinkedList;
 import java.util.List;
