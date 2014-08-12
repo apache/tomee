@@ -100,6 +100,8 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -116,8 +118,8 @@ public class EjbJarInfoBuilder {
     public static Messages messages = new Messages("org.apache.openejb.util.resources");
     public static Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
 
-    private final List<String> deploymentIds = new ArrayList<String>();
-    private final List<String> securityRoles = new ArrayList<String>();
+    private final List<String> deploymentIds = new ArrayList<>();
+    private final List<String> securityRoles = new ArrayList<>();
 
 
     public EjbJarInfo buildInfo(final EjbModule jar) throws OpenEJBException {
@@ -243,7 +245,11 @@ public class EjbJarInfoBuilder {
                             throw new IllegalArgumentException("Not supported: " + config);
                         }
                     }
-                    ejbJar.beans.excludes.put(exclude.getName(), exclusionInfo);
+
+                    final BeansInfo.ExclusionEntryInfo exclusionEntryInfo = new BeansInfo.ExclusionEntryInfo();
+                    exclusionEntryInfo.name = exclude.getName();
+                    exclusionEntryInfo.exclusion = exclusionInfo;
+                    ejbJar.beans.excludes.add(exclusionEntryInfo);
                 }
             }
 
@@ -251,17 +257,30 @@ public class EjbJarInfoBuilder {
             ejbJar.beans.decorators.addAll(beans.getDecorators());
             ejbJar.beans.alternativeClasses.addAll(beans.getAlternativeClasses());
             ejbJar.beans.alternativeStereotypes.addAll(beans.getAlternativeStereotypes());
-            ejbJar.beans.managedClasses.putAll(beans.getManagedClasses());
 
             ejbJar.beans.duplicatedAlternativeClasses.addAll(beans.getDuplicatedAlternatives().getClasses());
             ejbJar.beans.duplicatedAlternativeStereotypes.addAll(beans.getDuplicatedAlternatives().getStereotypes());
             ejbJar.beans.duplicatedInterceptors.addAll(beans.getDuplicatedInterceptors());
             ejbJar.beans.duplicatedDecorators.addAll(beans.getDuplicatedDecorators());
 
+            final Map<URL, String> discoveryModeByUrl = new HashMap<>();
             if (CompositeBeans.class.isInstance(beans)) {
-                ejbJar.beans.discoveryModeByUrl.putAll(CompositeBeans.class.cast(beans).getDiscoveryByUrl());
+                discoveryModeByUrl.putAll(CompositeBeans.class.cast(beans).getDiscoveryByUrl());
             } else {
-                ejbJar.beans.discoveryModeByUrl.put(null, beans.getBeanDiscoveryMode());
+                discoveryModeByUrl.put(null, beans.getBeanDiscoveryMode());
+            }
+            for (final Map.Entry<URL, List<String>> next : beans.getManagedClasses().entrySet()) {
+                final URL key = next.getKey();
+
+                final BeansInfo.BDAInfo bdaInfo = new BeansInfo.BDAInfo();
+                bdaInfo.managedClasses.addAll(next.getValue());
+                bdaInfo.discoveryMode = discoveryModeByUrl.get(key);
+                try {
+                    bdaInfo.uri = key == null ? null : key.toURI();
+                } catch (final URISyntaxException e) {
+                    bdaInfo.uri = null;
+                }
+                ejbJar.beans.bdas.add(bdaInfo);
             }
         }
 

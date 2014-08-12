@@ -42,11 +42,11 @@ import org.apache.webbeans.spi.BeanArchiveService;
 import org.apache.webbeans.spi.ScannerService;
 
 import java.lang.annotation.Annotation;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
@@ -183,20 +183,23 @@ public class CdiScanner implements ScannerService {
             final BeanArchiveService beanArchiveService = webBeansContext.getBeanArchiveService();
             final boolean openejb = OpenEJBBeanInfoService.class.isInstance(beanArchiveService);
 
-            final Map<URL, String> discoveryModes = beans.discoveryModeByUrl;
-            for (final Map.Entry<URL, List<String>> next : beans.managedClasses.entrySet()) {
-                final List<String> value = next.getValue();
-
-                final URL key = next.getKey();
+            for (final BeansInfo.BDAInfo next : beans.bdas) {
                 final BeanArchiveService.BeanArchiveInformation information;
                 if (openejb) {
                     final OpenEJBBeanInfoService beanInfoService = OpenEJBBeanInfoService.class.cast(beanArchiveService);
-                    final String mode = discoveryModes.get(key);
-                    information = beanInfoService.createBeanArchiveInformation(beans, classLoader, mode == null? "ALL" : mode); // this fallback is 100% for tests, TODO: get rid of it (AppComposer)
+                    information = beanInfoService.createBeanArchiveInformation(beans, classLoader, next.discoveryMode == null? "ALL" : next.discoveryMode); // this fallback is 100% for tests, TODO: get rid of it (AppComposer)
                     // TODO: log a warn is discoveryModes.get(key) == null
-                    beanInfoService.getBeanArchiveInfo().put(key, information);
+                    try {
+                        beanInfoService.getBeanArchiveInfo().put(next.uri.toURL(), information);
+                    } catch (final MalformedURLException e) {
+                        throw new IllegalStateException(e);
+                    }
                 } else {
-                    information = beanArchiveService.getBeanArchiveInformation(key);
+                    try {
+                        information = beanArchiveService.getBeanArchiveInformation(next.uri.toURL());
+                    } catch (MalformedURLException e) {
+                        throw new IllegalStateException(e);
+                    }
                 }
 
                 final boolean scanModeAnnotated = BeanArchiveService.BeanDiscoveryMode.ANNOTATED.equals(information.getBeanDiscoveryMode());
@@ -204,7 +207,7 @@ public class CdiScanner implements ScannerService {
                 final boolean isNotEarWebApp = startupObject.getWebContext() == null;
 
                 if (!noScan) {
-                    for (final String name : value) {
+                    for (final String name : next.managedClasses) {
                         if (information.isClassExcluded(name)) {
                             continue;
                         }
