@@ -140,10 +140,10 @@ public final class ApplicationComposers {
         testClass = klass;
 
         testClassFinders = new HashMap<Object, ClassFinder>();
-        testClassFinders.put(this, new ClassFinder(org.apache.openejb.util.Classes.ancestors(klass))); // using this temporary since we don't have yet the instance
+        testClassFinders.put(this, new ClassFinder(ancestors(klass))); // using this temporary since we don't have yet the instance
         if (additionalModules != null) {
             for (final Object o : additionalModules) {
-                testClassFinders.put(o, new ClassFinder(org.apache.openejb.util.Classes.ancestors(o.getClass())));
+                testClassFinders.put(o, new ClassFinder(ancestors(o.getClass())));
             }
         }
 
