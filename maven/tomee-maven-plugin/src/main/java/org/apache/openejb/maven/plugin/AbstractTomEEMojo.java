@@ -55,6 +55,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -826,7 +827,11 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
         boolean deactivateStrictServletCompliance = args == null || !args.contains(servletCompliance);
 
-        final List<String> strings = new ArrayList<String>();
+        if (webappDefaultConfig) {
+            forceDefaultForNiceWebAppDevelopment();
+        }
+
+        final List<String> strings = new ArrayList<>();
         if (systemVariables != null) {
             for (final Map.Entry<String, String> entry : systemVariables.entrySet()) {
                 final String key = entry.getKey();
@@ -847,10 +852,6 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                     deployOpenEjbApplication = true;
                 }
             }
-        }
-
-        if (webappDefaultConfig) {
-            forceDefaultForNiceWebAppDevelopment();
         }
 
         if (deactivateStrictServletCompliance) {
@@ -962,6 +963,12 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         if (externalRepositories.isEmpty() && webappClasses.exists()) {
             getLog().info("adding " + webappClasses.toString() + " externalRepository");
             externalRepositories.add(webappClasses);
+        }
+        if (systemVariables == null) {
+            systemVariables = new HashMap<>();
+        }
+        if (!systemVariables.containsKey("openejb.classloader.resources.deeper-first")) {
+            systemVariables.put("openejb.classloader.force-maven", "true");
         }
     }
 

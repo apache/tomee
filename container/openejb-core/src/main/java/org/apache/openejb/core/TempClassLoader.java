@@ -26,6 +26,7 @@ import org.apache.xbean.asm5.shade.commons.EmptyVisitor;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -258,6 +259,7 @@ public class TempClassLoader extends URLClassLoader {
 
     // let maven resources go after other ones (arquillian tomee embedded and @WebXXX needs it absolutely)
     private static final class ResourceComparator implements Comparator<URL> {
+        private static final boolean FORCE_MAVEN_FIRST = "true".equals(SystemInstance.get().getProperty("openejb.classloader.force-maven", "false"));
         private static final ClassLoader STOP_LOADER = getSystemClassLoader().getParent();
 
         private final ClassLoader loader;
@@ -277,8 +279,31 @@ public class TempClassLoader extends URLClassLoader {
             final int weight1 = weight(o1);
             final int weight2 = weight(o2);
             if (weight1 == weight2) {
-                return o1.toExternalForm().compareTo(o2.toExternalForm());
+                final String s1 = o1.toExternalForm().replace(File.separatorChar, '/');
+                final String s2 = o2.toExternalForm().replace(File.separatorChar, '/');
+                if (FORCE_MAVEN_FIRST) { // tomee maven plugin dev feature
+                    if (s1.contains("/target/classes/")) {
+                        return -1;
+                    }
+                    if (s2.contains("/target/classes/")) {
+                        return 1;
+                    }
+                    if (s1.contains("/target/test-classes/")) {
+                        return -1;
+                    }
+                    if (s2.contains("/target/test-classes/")) {
+                        return 1;
+                    }
+                }
+                if (s1.contains("/WEB-INF/classes/")) {
+                    return -1;
+                }
+                if (s2.contains("/WEB-INF/classes/")) {
+                    return 1;
+                }
+                return s1.compareTo(s2);
             }
+            // tomee embedded case, we can load with system loader instead of webapp loader
             return weight1 - weight2;
         }
 
