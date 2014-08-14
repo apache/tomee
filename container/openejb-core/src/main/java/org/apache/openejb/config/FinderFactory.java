@@ -550,4 +550,22 @@ public class FinderFactory {
             return !classInfos.isEmpty();
         }
     }
+
+    public static class DoLoadClassesArchive extends ClassesArchive {
+        public DoLoadClassesArchive(final ClassLoader loader, final Collection<String> classes) {
+            super(load(loader, classes));
+        }
+
+        private static Iterable<Class<?>> load(final ClassLoader loader, final Collection<String> classes) {
+            final Collection<Class<?>> loaded = new ArrayList<>(classes.size());
+            for (final String n : classes) {
+                try {
+                    loaded.add(loader.loadClass(n));
+                } catch (final ClassNotFoundException e) {
+                    // no-op
+                }
+            }
+            return loaded;
+        }
+    }
 }
