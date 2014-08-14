@@ -1912,7 +1912,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             validateRemoteClientRefs(classLoader, client, remoteClients);
 
             final IAnnotationFinder finder = clientModule.getFinder();
-            if (!AnnotationFinder.class.isInstance(finder)) {
+            if (!AnnotationFinder.class.isInstance(finder) && finder != null) {
                 final Class<?>[] loadedClasses = new Class<?>[finder.getAnnotatedClassNames().size()];
                 int i = 0;
                 for (final String s : finder.getAnnotatedClassNames()) {
@@ -4716,7 +4716,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
             }
-            classes.add(bean.getEjbClass());
+            // classes.add(bean.getEjbClass());
             final AnnotationFinder handlersFinder = finder.select(classes);
             buildAnnotatedRefs(bean, handlersFinder, ejbModule.getClassLoader());
         }
@@ -4752,9 +4752,13 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
                 handlerClasses.removeAll(processedClasses);
+                if (handlerClasses.isEmpty()) {
+                    continue;
+                }
 
                 // process handler classes
-                final AnnotationFinder handlerAnnotationFinder = finder.select(handlerClasses);
+                final AnnotationFinder handlerAnnotationFinder = finder != null ? finder.select(handlerClasses) :
+                        new FinderFactory.OpenEJBAnnotationFinder(new FinderFactory.DoLoadClassesArchive(classLoader, handlerClasses));
 
                 /*
                  * @EJB
