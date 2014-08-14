@@ -1124,7 +1124,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         try {
             finder = FinderFactory.createFinder(appModule);
         } catch (final Exception e) {
-            finder = new FinderFactory.ModuleLimitedFinder(new org.apache.xbean.finder.AnnotationFinder(new WebappAggregatedArchive(appModule.getClassLoader(), appModule.getAltDDs(), xmls)));
+            finder = new FinderFactory.ModuleLimitedFinder(new FinderFactory.OpenEJBAnnotationFinder(new WebappAggregatedArchive(appModule.getClassLoader(), appModule.getAltDDs(), xmls)));
         }
         appModule.setEarLibFinder(finder);
 

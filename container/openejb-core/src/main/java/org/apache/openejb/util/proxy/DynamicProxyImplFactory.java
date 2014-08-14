@@ -33,6 +33,10 @@ import java.lang.reflect.Method;
 public class DynamicProxyImplFactory {
     public static boolean isKnownDynamicallyImplemented(final Class<?> clazz) {
         final Annotated<Class<?>> metaClass = new MetaAnnotatedClass(clazz);
+        return isKnownDynamicallyImplemented(metaClass, clazz);
+    }
+
+    public static boolean isKnownDynamicallyImplemented(final Annotated<?> metaClass, final Class<?> clazz) {
         return clazz.isInterface()
             && (metaClass.getAnnotation(PersistenceContext.class) != null
             || metaClass.getAnnotation(Proxy.class) != null);

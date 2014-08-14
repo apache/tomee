@@ -20,6 +20,12 @@ package org.apache.openejb.config;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.jee.Beans;
 import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.Handler;
+import org.apache.openejb.jee.HandlerChain;
+import org.apache.openejb.jee.PortComponent;
+import org.apache.openejb.jee.Servlet;
+import org.apache.openejb.jee.SessionBean;
+import org.apache.openejb.jee.WebserviceDescription;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.xbean.finder.Annotated;
 import org.apache.xbean.finder.AnnotationFinder;
@@ -69,14 +75,23 @@ public class FinderFactory {
         if (module instanceof WebModule) {
             final WebModule webModule = (WebModule) module;
             finder = newFinder(new WebappAggregatedArchive(webModule, webModule.getScannableUrls()));
+            if (!finder.foundSomething()) { // test case (AppComposer with new WebApp())
+                finder = fallbackAnnotationFinder(module);
+            }
             finder.link();
         } else if (module instanceof ConnectorModule) {
             final ConnectorModule connectorModule = (ConnectorModule) module;
             finder = newFinder(new ConfigurableClasspathArchive(connectorModule, connectorModule.getLibraries()));
+            if (!finder.foundSomething()) { // test case
+                finder = fallbackAnnotationFinder(module);
+            }
             finder.link();
         } else if (module instanceof AppModule) {
             final Collection<URL> urls = NewLoaderLogic.applyBuiltinExcludes(new UrlSet(AppModule.class.cast(module).getAdditionalLibraries())).getUrls();
             finder = newFinder(new WebappAggregatedArchive(module.getClassLoader(), module.getAltDDs(), urls));
+            if (!finder.foundSomething()) { // test case
+                finder = fallbackAnnotationFinder(module);
+            }
         } else if (module.getJarLocation() != null) {
             final String location = module.getJarLocation();
             final File file = new File(location);
@@ -118,9 +133,8 @@ public class FinderFactory {
     }
 
     private Class<?>[] ensureMinimalClasses(final DeploymentModule module) {
+        final Collection<Class<?>> finderClasses = new HashSet<>();
         if (EjbModule.class.isInstance(module)) {
-            final Collection<Class<?>> finderClasses = new HashSet<>();
-
             final EjbModule ejb = EjbModule.class.cast(module);
             final EnterpriseBean[] enterpriseBeans = ejb.getEjbJar().getEnterpriseBeans();
 
@@ -130,10 +144,42 @@ public class FinderFactory {
             }
 
             for (final EnterpriseBean bean : enterpriseBeans) {
+                final String name;
+                if (SessionBean.class.isInstance(bean)) {
+                    final SessionBean sessionBean = SessionBean.class.cast(bean);
+                    if (sessionBean.getProxy() == null) {
+                        name = sessionBean.getEjbClass();
+                    } else {
+                        name = sessionBean.getProxy();
+                    }
+                } else {
+                    name = bean.getEjbClass();
+                }
                 try {
-                    finderClasses.addAll(ancestors(classLoader.loadClass(bean.getEjbClass())));
+                    final Class<?> clazz = classLoader.loadClass(name);
+                    finderClasses.addAll(ancestors(clazz));
                 } catch (final ClassNotFoundException e) {
                     // no-op
+                }
+            }
+            if (ejb.getWebservices() != null) {
+                for (final WebserviceDescription webservice : ejb.getWebservices().getWebserviceDescription()) {
+                    for (final PortComponent port : webservice.getPortComponent()) {
+                        if (port.getHandlerChains() == null) {
+                            continue;
+                        }
+                        for (final HandlerChain handlerChain : port.getHandlerChains().getHandlerChain()) {
+                            for (final Handler handler : handlerChain.getHandler()) {
+                                if (handler.getHandlerClass() != null) {
+                                    try {
+                                        finderClasses.addAll(ancestors(classLoader.loadClass(handler.getHandlerClass())));
+                                    } catch (final ClassNotFoundException e) {
+                                        // no-op
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
             for (final org.apache.openejb.jee.Interceptor interceptor : ejb.getEjbJar().getInterceptors()) {
@@ -177,10 +223,38 @@ public class FinderFactory {
                     }
                 }
             }
-
-            return finderClasses.toArray(new Class<?>[finderClasses.size()]);
+        } else if (WebModule.class.isInstance(module)) {
+            final WebModule web = WebModule.class.cast(module);
+            final ClassLoader classLoader = web.getClassLoader();
+            if (web.getWebApp() != null) {
+                for (final Servlet s : web.getWebApp().getServlet()) {
+                    final String servletClass = s.getServletClass();
+                    if (servletClass == null) {
+                        continue;
+                    }
+                    try {
+                        finderClasses.addAll(ancestors(classLoader.loadClass(servletClass)));
+                    } catch (final ClassNotFoundException e) {
+                        // no-op
+                    }
+                }
+                for (final String s : web.getRestClasses()) {
+                    try {
+                        finderClasses.addAll(ancestors(classLoader.loadClass(s)));
+                    } catch (final ClassNotFoundException e) {
+                        // no-op
+                    }
+                }
+                for (final String s : web.getEjbWebServices()) {
+                    try {
+                        finderClasses.addAll(ancestors(classLoader.loadClass(s)));
+                    } catch (final ClassNotFoundException e) {
+                        // no-op
+                    }
+                }
+            }
         }
-        return new Class<?>[0];
+        return finderClasses.toArray(new Class<?>[finderClasses.size()]);
     }
 
     private static OpenEJBAnnotationFinder newFinder(final Archive archive) {
@@ -215,11 +289,16 @@ public class FinderFactory {
         }
     }
 
-    public static class ModuleLimitedFinder implements IAnnotationFinder {
-        private final IAnnotationFinder delegate;
+    public static class ModuleLimitedFinder implements IAnnotationFinder, AnnotationFinderDelegate {
+        private final OpenEJBAnnotationFinder delegate;
 
-        public ModuleLimitedFinder(final IAnnotationFinder delegate) {
+        public ModuleLimitedFinder(final OpenEJBAnnotationFinder delegate) {
             this.delegate = delegate;
+        }
+
+        @Override
+        public OpenEJBAnnotationFinder getOpenEJBFinder() {
+            return delegate;
         }
 
         @Override
@@ -435,11 +514,20 @@ public class FinderFactory {
         }
     }
 
-    public static class OpenEJBAnnotationFinder extends AnnotationFinder {
+    public static interface AnnotationFinderDelegate {
+        OpenEJBAnnotationFinder getOpenEJBFinder();
+    }
+
+    public static class OpenEJBAnnotationFinder extends AnnotationFinder implements AnnotationFinderDelegate {
         private static final String[] JVM_SCANNING_CONFIG = SystemInstance.get().getProperty("openejb.scanning.xbean.jvm", "java.").split(",");
 
         public OpenEJBAnnotationFinder(final Archive archive) {
             super(archive);
+        }
+
+        @Override
+        public OpenEJBAnnotationFinder getOpenEJBFinder() {
+            return this;
         }
 
         @Override
