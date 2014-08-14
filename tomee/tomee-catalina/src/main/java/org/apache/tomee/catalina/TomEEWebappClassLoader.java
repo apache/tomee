@@ -137,7 +137,9 @@ public class TomEEWebappClassLoader extends WebappClassLoader {
                 }
             }
         }
-        return super.loadClass(name);
+        synchronized (this) { // TODO: rework it to avoid it but not a big issue, see first if of this method
+            return super.loadClass(name);
+        }
     }
 
     @Override
