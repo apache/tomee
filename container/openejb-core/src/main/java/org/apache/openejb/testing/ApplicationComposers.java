@@ -104,6 +104,7 @@ import java.util.Properties;
 import java.util.concurrent.Callable;
 
 import static org.apache.openejb.config.DeploymentFilterable.DEPLOYMENTS_CLASSPATH_PROPERTY;
+import static org.apache.openejb.util.Classes.ancestors;
 
 @SuppressWarnings("deprecation")
 public final class ApplicationComposers {
@@ -313,7 +314,7 @@ public final class ApplicationComposers {
             ejbDeployment.setDeploymentId(testClass.getName());
 
             final EjbModule ejbModule = new EjbModule(ejbJar, openejbJar);
-            ejbModule.setFinder(new FinderFactory.OpenEJBAnnotationFinder(new ClassesArchive(testClass)));
+            ejbModule.setFinder(new FinderFactory.OpenEJBAnnotationFinder(new ClassesArchive(ancestors(testClass))));
             appModule.getEjbModules().add(ejbModule);
         }
 
