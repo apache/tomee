@@ -345,13 +345,16 @@ public class DataSourceFactory {
             return o;
         }
 
-        if (Proxy.isProxyClass(o.getClass())) {
+        Object ds = o;
+        while (Proxy.isProxyClass(ds.getClass())) {
             final InvocationHandler handler = Proxy.getInvocationHandler(o);
             if (handler instanceof LoggingSqlDataSource) {
-                return ((LoggingSqlDataSource) handler).getDelegate();
+                ds = ((LoggingSqlDataSource) handler).getDelegate();
+            } else if (FlushableDataSourceHandler.class.isInstance(handler)) {
+                ds = FlushableDataSourceHandler.class.cast(handler).getDelegate();
             }
         }
 
-        return o;
+        return ds;
     }
 }

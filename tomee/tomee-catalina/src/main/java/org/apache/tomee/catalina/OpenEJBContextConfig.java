@@ -533,7 +533,6 @@ public class OpenEJBContextConfig extends ContextConfig {
                     }
                 } catch (final MalformedURLException e) {
                     logger.warning(e.getMessage(), e);
-                    continue;
                 }
             }
         } else {
