@@ -32,7 +32,7 @@ public class ComponentRegistry {
 
     private final Map<Class, Object> components = new HashMap<Class, Object>();
 
-    public <T> T getComponent(Class<T> type) {
+    public <T> T getComponent(final Class<T> type) {
         return (T) components.get(type);
     }
 
@@ -41,12 +41,12 @@ public class ComponentRegistry {
     }
 
     @Lock(WRITE)
-    public <T> T setComponent(Class<T> type, T value) {
+    public <T> T setComponent(final Class<T> type, final T value) {
         return (T) components.put(type, value);
     }
 
     @Lock(WRITE)
-    public <T> T removeComponent(Class<T> type) {
+    public <T> T removeComponent(final Class<T> type) {
         return (T) components.remove(type);
     }
 }

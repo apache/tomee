@@ -30,10 +30,10 @@ public class PropertiesRegistryTest {
     @Test
     public void oneInstancePerMultipleReferences() throws Exception {
 
-        Context context = ejbContainer.getContext();
+        final Context context = ejbContainer.getContext();
 
-        PropertyRegistry one = (PropertyRegistry) context.lookup("java:global/simple-singleton/PropertyRegistry");
-        PropertyRegistry two = (PropertyRegistry) context.lookup("java:global/simple-singleton/PropertyRegistry");
+        final PropertyRegistry one = (PropertyRegistry) context.lookup("java:global/simple-singleton/PropertyRegistry");
+        final PropertyRegistry two = (PropertyRegistry) context.lookup("java:global/simple-singleton/PropertyRegistry");
 
         one.setProperty("url", "http://superbiz.org");
         String url = two.getProperty("url");

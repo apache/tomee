@@ -48,15 +48,15 @@ public class PropertyRegistry {
         properties.clear();
     }
 
-    public String getProperty(String key) {
+    public String getProperty(final String key) {
         return properties.getProperty(key);
     }
 
-    public String setProperty(String key, String value) {
+    public String setProperty(final String key, final String value) {
         return (String) properties.setProperty(key, value);
     }
 
-    public String removeProperty(String key) {
+    public String removeProperty(final String key) {
         return (String) properties.remove(key);
     }
 }

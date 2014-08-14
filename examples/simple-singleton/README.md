@@ -13,110 +13,90 @@ See the [Singleton Beans](../../singleton-beans.html) page for a full descriptio
 Here we see a bean that uses the Bean-Managed Concurrency option as well as the @Startup annotation which causes the bean to be instantiated by the container when the application starts. Singleton beans with @ConcurrencyManagement(BEAN) are responsible for their own thread-safety. The bean shown is a simple properties "registry" and provides a place where options could be set and retrieved by all beans in the application.
 
     package org.superbiz.registry;
-
+    
     import javax.annotation.PostConstruct;
     import javax.annotation.PreDestroy;
     import javax.ejb.ConcurrencyManagement;
     import javax.ejb.Singleton;
     import javax.ejb.Startup;
     import java.util.Properties;
-
+    
     import static javax.ejb.ConcurrencyManagementType.BEAN;
-
+    
     @Singleton
     @Startup
     @ConcurrencyManagement(BEAN)
     public class PropertyRegistry {
-
+    
         // Note the java.util.Properties object is a thread-safe
         // collections that uses synchronization.  If it didn't
         // you would have to use some form of synchronization
         // to ensure the PropertyRegistryBean is thread-safe.
         private final Properties properties = new Properties();
-
+    
         // The @Startup annotation ensures that this method is
         // called when the application starts up.
         @PostConstruct
         public void applicationStartup() {
             properties.putAll(System.getProperties());
         }
-
+    
         @PreDestroy
         public void applicationShutdown() {
             properties.clear();
         }
-
-        public String getProperty(String key) {
+    
+        public String getProperty(final String key) {
             return properties.getProperty(key);
         }
-
-        public String setProperty(String key, String value) {
+    
+        public String setProperty(final String key, final String value) {
             return (String) properties.setProperty(key, value);
         }
-
-        public String removeProperty(String key) {
+    
+        public String removeProperty(final String key) {
             return (String) properties.remove(key);
         }
     }
-
 
 ## ComponentRegistry  <small>Container-Managed Concurrency</small>
 
 Here we see a bean that uses the Container-Managed Concurrency option, the default. With @ConcurrencyManagement(CONTAINER) the container controls whether multi-threaded access should be allowed to the bean (`@Lock(READ)`) or if single-threaded access should be enforced (`@Lock(WRITE)`).
 
     package org.superbiz.registry;
-
-    import org.junit.Assert;
-    import org.junit.AfterClass;
-    import org.junit.Test;
-
-    import javax.ejb.embeddable.EJBContainer;
-    import javax.naming.Context;
-    import java.net.URI;
+    
+    import javax.ejb.Lock;
+    import javax.ejb.Singleton;
+    import java.util.ArrayList;
     import java.util.Collection;
-    import java.util.Date;
-
-    public class ComponentRegistryTest {
-
-        private final static EJBContainer ejbContainer = EJBContainer.createEJBContainer();
-
-        @Test
-        public void oneInstancePerMultipleReferences() throws Exception {
-
-            final Context context = ejbContainer.getContext();
-
-            // Both references below will point to the exact same instance
-            ComponentRegistry one = (ComponentRegistry) context.lookup("java:global/simple-singleton/ComponentRegistry");
-            ComponentRegistry two = (ComponentRegistry) context.lookup("java:global/simple-singleton/ComponentRegistry");
-
-            URI expectedUri = new URI("foo://bar/baz");
-            one.setComponent(URI.class, expectedUri);
-            URI actualUri = two.getComponent(URI.class);
-            Assert.assertSame(expectedUri, actualUri);
-
-            two.removeComponent(URI.class);
-            URI uri = one.getComponent(URI.class);
-            Assert.assertNull(uri);
-
-            Date expectedDate = new Date();
-            two.setComponent(Date.class, expectedDate);
-            Date actualDate = one.getComponent(Date.class);
-            Assert.assertSame(expectedDate, actualDate);
-
-            one.removeComponent(URI.class);
-            uri = two.getComponent(URI.class);
-            Assert.assertNull(uri);
-
-            Collection<?> collection = one.getComponents();
-            Assert.assertTrue("Reference 'one' - ComponentRegistry is empty",collection.isEmpty());
-
-            collection = two.getComponents();
-            Assert.assertTrue("Reference 'two' - ComponentRegistry is empty",collection.isEmpty());
+    import java.util.HashMap;
+    import java.util.Map;
+    
+    import static javax.ejb.LockType.READ;
+    import static javax.ejb.LockType.WRITE;
+    
+    @Singleton
+    @Lock(READ)
+    public class ComponentRegistry {
+    
+        private final Map<Class, Object> components = new HashMap<Class, Object>();
+    
+        public <T> T getComponent(final Class<T> type) {
+            return (T) components.get(type);
         }
-
-        @AfterClass
-        public static void closeEjbContainer() {
-            ejbContainer.close();
+    
+        public Collection<?> getComponents() {
+            return new ArrayList(components.values());
+        }
+    
+        @Lock(WRITE)
+        public <T> T setComponent(final Class<T> type, final T value) {
+            return (T) components.put(type, value);
+        }
+    
+        @Lock(WRITE)
+        public <T> T removeComponent(final Class<T> type) {
+            return (T) components.remove(type);
         }
     }
 
@@ -140,55 +120,56 @@ See the [Singleton Beans](../../singleton-beans.html) page for  more advanced de
 ## ComponentRegistryTest
 
     package org.superbiz.registry;
-
-    import org.junit.Assert;
+    
     import org.junit.AfterClass;
+    import org.junit.Assert;
     import org.junit.Test;
-
+    
     import javax.ejb.embeddable.EJBContainer;
     import javax.naming.Context;
     import java.net.URI;
     import java.util.Collection;
     import java.util.Date;
-
+    
     public class ComponentRegistryTest {
-
+    
         private final static EJBContainer ejbContainer = EJBContainer.createEJBContainer();
-
+    
         @Test
         public void oneInstancePerMultipleReferences() throws Exception {
-
+    
             final Context context = ejbContainer.getContext();
-
+    
             // Both references below will point to the exact same instance
-            ComponentRegistry one = (ComponentRegistry) context.lookup("java:global/simple-singleton/ComponentRegistry");
-            ComponentRegistry two = (ComponentRegistry) context.lookup("java:global/simple-singleton/ComponentRegistry");
-
-            URI expectedUri = new URI("foo://bar/baz");
+            final ComponentRegistry one = (ComponentRegistry) context.lookup("java:global/simple-singleton/ComponentRegistry");
+            final ComponentRegistry two = (ComponentRegistry) context.lookup("java:global/simple-singleton/ComponentRegistry");
+    
+            final URI expectedUri = new URI("foo://bar/baz");
             one.setComponent(URI.class, expectedUri);
-            URI actualUri = two.getComponent(URI.class);
+            final URI actualUri = two.getComponent(URI.class);
             Assert.assertSame(expectedUri, actualUri);
-
+    
             two.removeComponent(URI.class);
             URI uri = one.getComponent(URI.class);
             Assert.assertNull(uri);
-
-            Date expectedDate = new Date();
-            two.setComponent(Date.class, expectedDate);
-            Date actualDate = one.getComponent(Date.class);
-            Assert.assertSame(expectedDate, actualDate);
-
+    
             one.removeComponent(URI.class);
             uri = two.getComponent(URI.class);
             Assert.assertNull(uri);
-
+    
+            final Date expectedDate = new Date();
+            two.setComponent(Date.class, expectedDate);
+            final Date actualDate = one.getComponent(Date.class);
+            Assert.assertSame(expectedDate, actualDate);
+    
             Collection<?> collection = one.getComponents();
-            Assert.assertTrue("Reference 'one' - ComponentRegistry is empty",collection.isEmpty());
-
+            System.out.println(collection);
+            Assert.assertEquals("Reference 'one' - ComponentRegistry contains one record", collection.size(), 1);
+    
             collection = two.getComponents();
-            Assert.assertTrue("Reference 'two' - ComponentRegistry is empty",collection.isEmpty());
+            Assert.assertEquals("Reference 'two' - ComponentRegistry contains one record", collection.size(), 1);
         }
-
+    
         @AfterClass
         public static void closeEjbContainer() {
             ejbContainer.close();
@@ -198,48 +179,49 @@ See the [Singleton Beans](../../singleton-beans.html) page for  more advanced de
 ## PropertiesRegistryTest
 
     package org.superbiz.registry;
-
-    import org.junit.Assert;
+    
     import org.junit.AfterClass;
+    import org.junit.Assert;
     import org.junit.Test;
-
+    
     import javax.ejb.embeddable.EJBContainer;
     import javax.naming.Context;
-
+    
     public class PropertiesRegistryTest {
-
+    
         private final static EJBContainer ejbContainer = EJBContainer.createEJBContainer();
-
+    
         @Test
         public void oneInstancePerMultipleReferences() throws Exception {
-
-            Context context = ejbContainer.getContext();
-
-            PropertyRegistry one = (PropertyRegistry) context.lookup("java:global/simple-singleton/PropertyRegistry");
-            PropertyRegistry two = (PropertyRegistry) context.lookup("java:global/simple-singleton/PropertyRegistry");
-
+    
+            final Context context = ejbContainer.getContext();
+    
+            final PropertyRegistry one = (PropertyRegistry) context.lookup("java:global/simple-singleton/PropertyRegistry");
+            final PropertyRegistry two = (PropertyRegistry) context.lookup("java:global/simple-singleton/PropertyRegistry");
+    
             one.setProperty("url", "http://superbiz.org");
             String url = two.getProperty("url");
             Assert.assertSame("http://superbiz.org", url);
-
+    
             two.removeProperty("url");
             url = one.getProperty("url");
             Assert.assertNull(url);
-
+    
             two.setProperty("version", "1.0.5");
             String version = one.getProperty("version");
             Assert.assertSame("1.0.5", version);
-
+    
             one.removeProperty("version");
             version = two.getProperty("version");
             Assert.assertNull(version);
         }
-
+    
         @AfterClass
         public static void closeEjbContainer() {
             ejbContainer.close();
         }
     }
+
 
 #Running
 

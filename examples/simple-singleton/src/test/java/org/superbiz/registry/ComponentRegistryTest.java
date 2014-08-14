@@ -36,12 +36,12 @@ public class ComponentRegistryTest {
         final Context context = ejbContainer.getContext();
 
         // Both references below will point to the exact same instance
-        ComponentRegistry one = (ComponentRegistry) context.lookup("java:global/simple-singleton/ComponentRegistry");
-        ComponentRegistry two = (ComponentRegistry) context.lookup("java:global/simple-singleton/ComponentRegistry");
+        final ComponentRegistry one = (ComponentRegistry) context.lookup("java:global/simple-singleton/ComponentRegistry");
+        final ComponentRegistry two = (ComponentRegistry) context.lookup("java:global/simple-singleton/ComponentRegistry");
 
-        URI expectedUri = new URI("foo://bar/baz");
+        final URI expectedUri = new URI("foo://bar/baz");
         one.setComponent(URI.class, expectedUri);
-        URI actualUri = two.getComponent(URI.class);
+        final URI actualUri = two.getComponent(URI.class);
         Assert.assertSame(expectedUri, actualUri);
 
         two.removeComponent(URI.class);
@@ -52,9 +52,9 @@ public class ComponentRegistryTest {
         uri = two.getComponent(URI.class);
         Assert.assertNull(uri);
 
-        Date expectedDate = new Date();
+        final Date expectedDate = new Date();
         two.setComponent(Date.class, expectedDate);
-        Date actualDate = one.getComponent(Date.class);
+        final Date actualDate = one.getComponent(Date.class);
         Assert.assertSame(expectedDate, actualDate);
 
         Collection<?> collection = one.getComponents();
