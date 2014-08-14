@@ -257,7 +257,7 @@ public class TempClassLoader extends URLClassLoader {
     }
 
     // let maven resources go after other ones (arquillian tomee embedded and @WebXXX needs it absolutely)
-    private static class ResourceComparator implements Comparator<URL> {
+    private static final class ResourceComparator implements Comparator<URL> {
         private static final ClassLoader STOP_LOADER = getSystemClassLoader().getParent();
 
         private final ClassLoader loader;

@@ -514,7 +514,7 @@ public class FinderFactory {
         }
     }
 
-    public static interface AnnotationFinderDelegate {
+    public interface AnnotationFinderDelegate {
         OpenEJBAnnotationFinder getOpenEJBFinder();
     }
 
