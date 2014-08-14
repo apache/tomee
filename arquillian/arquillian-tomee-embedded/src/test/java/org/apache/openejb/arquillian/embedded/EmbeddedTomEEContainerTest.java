@@ -41,7 +41,7 @@ public class EmbeddedTomEEContainerTest {
     @Deployment
     public static WebArchive createDeployment() {
         return ShrinkWrap.create(WebArchive.class, "test.war")
-                .addClasses(AnEJB.class, AServlet.class, ARestService.class)
+                .addClasses(AnEJB.class, AServlet.class, ARestService.class, AnApp.class)
                 .setWebXML(new StringAsset(Descriptors.create(WebAppDescriptor.class).version("3.0").exportAsString()));
     }
 
@@ -64,7 +64,7 @@ public class EmbeddedTomEEContainerTest {
 
     @Test
     public void restServiceIsDeployed() throws Exception {
-        final String read = IOUtils.toString(new URL(url.toExternalForm() + "rest/foo").openStream());
+        final String read = IOUtils.toString(new URL(url.toExternalForm() + "api/rest/foo").openStream());
         assertEquals("foo", read);
     }
 }
