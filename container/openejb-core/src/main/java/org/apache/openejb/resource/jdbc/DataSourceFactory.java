@@ -348,10 +348,12 @@ public class DataSourceFactory {
         Object ds = o;
         while (Proxy.isProxyClass(ds.getClass())) {
             final InvocationHandler handler = Proxy.getInvocationHandler(o);
-            if (handler instanceof LoggingSqlDataSource) {
-                ds = ((LoggingSqlDataSource) handler).getDelegate();
+            if (LoggingSqlDataSource.class.isInstance(handler)) {
+                ds = LoggingSqlDataSource.class.cast(handler).getDelegate();
             } else if (FlushableDataSourceHandler.class.isInstance(handler)) {
                 ds = FlushableDataSourceHandler.class.cast(handler).getDelegate();
+            } else {
+                break;
             }
         }
 
