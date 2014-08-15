@@ -119,7 +119,7 @@
     <openejb.osgi.dynamic.import>${openejb.osgi.dynamic.import.pkg}</openejb.osgi.dynamic.import>
     <openejb.osgi.symbolic.name>${project.groupId}.${project.artifactId}</openejb.osgi.symbolic.name>
 
-    <batchee.version>0.1-incubating</batchee.version>
+    <batchee.version>0.2-incubating</batchee.version>
     <!-- to change easily the javaee api version -->
     <javaee-api.version>7.0-SNAPSHOT</javaee-api.version>
 
