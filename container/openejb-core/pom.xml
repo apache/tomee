@@ -258,7 +258,7 @@
             <id>copy-agent</id>
             <phase>process-resources</phase>
             <goals>
-              <goal>copy-dependencies</goal>
+              <goal>copy</goal>
             </goals>
             <configuration>
               <artifactItems>
@@ -275,7 +275,7 @@
             <id>AlternateDriverJarTest</id>
             <phase>process-test-resources</phase>
             <goals>
-              <goal>copy-dependencies</goal>
+              <goal>copy</goal>
             </goals>
             <configuration>
               <artifactItems>
