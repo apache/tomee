@@ -47,6 +47,7 @@
       </plugin>
     </plugins>
   </build>
+  
   <repositories>
     <repository>
       <releases>
@@ -54,22 +55,10 @@
       </releases>
       <snapshots/>
       <id>apache-maven-snapshots</id>
-      <url>http://repository.apache.org/snapshots/
-      </url>
+      <url>https://repository.apache.org/content/groups/snapshots</url>
     </repository>
-    <repository>
-      <id>java.net</id>
-      <url>http://download.java.net/maven/1</url>
-    </repository>
-	<repository>
-	  <id>apache.snapshots</id>
-	  <name>Apache Snapshot Repository</name>
-	  <url>http://repository.apache.org/snapshots</url>
-	  <releases>
-	    <enabled>false</enabled>
-	  </releases>
-	</repository>
   </repositories>
+  
   <dependencies>
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>

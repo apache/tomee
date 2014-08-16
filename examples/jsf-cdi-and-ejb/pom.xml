@@ -58,12 +58,8 @@
       </releases>
       <snapshots/>
       <id>apache-maven-snapshots</id>
-      <url>http://repository.apache.org/snapshots/
+      <url>https://repository.apache.org/content/groups/snapshots/
       </url>
-    </repository>
-    <repository>
-      <id>java.net</id>
-      <url>http://download.java.net/maven/1</url>
     </repository>
   </repositories>
   <dependencies>
