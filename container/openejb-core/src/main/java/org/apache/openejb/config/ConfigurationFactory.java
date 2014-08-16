@@ -462,6 +462,13 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             openejb = JaxbOpenejb.createOpenejb();
         }
 
+        for (final SystemProperty sp : openejb.getSystemProperties()) {
+            final String name = sp.getName();
+            final String value = sp.getValue();
+            SystemInstance.get().setProperty(name, value);
+            System.setProperty(name, value);
+        }
+
         loadPropertiesDeclaredConfiguration(openejb);
 
         sys = new OpenEjbConfiguration();
@@ -775,12 +782,16 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 final String cp = map.remove("classpath");
                 if (cp != null) {
                     final String[] paths = cp.split(File.pathSeparator);
-                    final List<URL> urls = new ArrayList<URL>();
+                    final List<URL> urls = new ArrayList<>();
                     for (final String path : paths) {
                         urls.add(new File(PropertyPlaceHolderHelper.value(ProvisioningUtil.realLocation(path))).toURI().normalize().toURL());
                     }
                     deployments.setClasspath(new URLClassLoaderFirst(urls.toArray(new URL[urls.size()]), ParentClassLoaderFinder.Helper.get()));
                 }
+            } else if (SystemProperty.class.isInstance(object)) {
+                final SystemProperty sp = SystemProperty.class.cast(object);
+                sp.setName(map.remove("name"));
+                sp.setValue(map.remove("value"));
             }
 
             return object;

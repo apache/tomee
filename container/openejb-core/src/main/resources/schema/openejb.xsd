@@ -24,6 +24,15 @@
 
   <!--
   -->
+  <xsd:element name="System-Property">
+    <xsd:complexType>
+      <xsd:attribute name="name" type="xsd:string"/>
+      <xsd:attribute name="value" type="xsd:string"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <!--
+  -->
   <xsd:element name="Connector">
     <xsd:complexType>
       <xsd:simpleContent>
