@@ -87,14 +87,14 @@
     <repository>
       <id>apache-m2-snapshot</id>
       <name>Apache Snapshot Repository</name>
-      <url>http://repository.apache.org/snapshots</url>
+      <url>https://repository.apache.org/content/groups/snapshots</url>
     </repository>
   </repositories>
   <pluginRepositories>
     <pluginRepository>
       <id>apache-m2-snapshot-plugin</id>
       <name>Apache Snapshot Repository</name>
-      <url>http://repository.apache.org/snapshots</url>
+      <url>https://repository.apache.org/content/groups/snapshots</url>
     </pluginRepository>
   </pluginRepositories>
 
