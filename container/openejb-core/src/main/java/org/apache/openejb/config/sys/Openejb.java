@@ -17,12 +17,15 @@
 
 package org.apache.openejb.config.sys;
 
+import org.apache.openejb.config.SystemProperty;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -36,6 +39,7 @@ import java.util.List;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element ref="{http://www.openejb.org/System/Configuration}SystemProperty" maxOccurs="unbounded"/>
  *         &lt;element ref="{http://www.openejb.org/System/Configuration}Container" maxOccurs="unbounded"/>
  *         &lt;element ref="{http://www.openejb.org/System/Configuration}JndiProvider" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element ref="{http://www.openejb.org/System/Configuration}SecurityService" minOccurs="0"/>
@@ -52,7 +56,7 @@ import java.util.List;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {"container", "jndiProvider", "securityService", "transactionManager", "connectionManager", "proxyFactory", "connector", "resource", "deployments", "services"})
+@XmlType(name = "", propOrder = {"systemProperties", "container", "jndiProvider", "securityService", "transactionManager", "connectionManager", "proxyFactory", "connector", "resource", "deployments", "services"})
 @XmlRootElement(name = "openejb")
 public class Openejb {
 
@@ -76,6 +80,8 @@ public class Openejb {
     protected List<Deployments> deployments;
     @XmlElement(name = "Service")
     protected List<Service> services;
+    @XmlElement(name = "System-Property")
+    protected List<SystemProperty> systemProperties;
 
     /**
      * Gets the value of the container property.
@@ -99,7 +105,7 @@ public class Openejb {
      */
     public List<Container> getContainer() {
         if (container == null) {
-            container = new ArrayList<Container>();
+            container = new ArrayList<>();
         }
         return this.container;
     }
@@ -233,7 +239,7 @@ public class Openejb {
      */
     public List<Connector> getConnector() {
         if (connector == null) {
-            connector = new ArrayList<Connector>();
+            connector = new ArrayList<>();
         }
         return this.connector;
     }
@@ -260,7 +266,7 @@ public class Openejb {
      */
     public List<Resource> getResource() {
         if (resource == null) {
-            resource = new ArrayList<Resource>();
+            resource = new ArrayList<>();
         }
 
         final List<Connector> connectors = getConnector();
@@ -301,16 +307,23 @@ public class Openejb {
      */
     public List<Deployments> getDeployments() {
         if (deployments == null) {
-            deployments = new ArrayList<Deployments>();
+            deployments = new ArrayList<>();
         }
         return this.deployments;
     }
 
     public List<Service> getServices() {
         if (services == null) {
-            services = new ArrayList<Service>();
+            services = new ArrayList<>();
         }
         return this.services;
+    }
+
+    public List<SystemProperty> getSystemProperties() {
+        if (systemProperties == null) {
+            systemProperties = new LinkedList<>();
+        }
+        return systemProperties;
     }
 
     public void add(final Object service) {
@@ -334,6 +347,8 @@ public class Openejb {
             getDeployments().add((Deployments) service);
         } else if (service instanceof Service) {
             getServices().add((Service) service);
+        } else if (service instanceof SystemProperty) {
+            getSystemProperties().add((SystemProperty) service);
         }
     }
 }

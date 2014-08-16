@@ -67,30 +67,45 @@ class SaxOpenejb extends StackHandler {
 
         @Override
         public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
-            if (localName.equals("Container")) {
-                push(new ContainerElement());
-            } else if (localName.equals("JndiProvider")) {
-                push(new JndiProviderElement());
-            } else if (localName.equals("SecurityService")) {
-                push(new SecurityServiceElement());
-            } else if (localName.equals("TransactionManager")) {
-                push(new TransactionManagerElement());
-            } else if (localName.equals("ConnectionManager")) {
-                push(new ConnectionManagerElement());
-            } else if (localName.equals("ProxyFactory")) {
-                push(new ProxyFactoryElement());
-            } else if (localName.equals("Resource")) {
-                push(new ResourceElement(openejb.getResource()));
-            } else if (localName.equals("Connector")) {
-                push(new ResourceElement(openejb.getResource()));
-            } else if (localName.equals("Deployments")) {
-                push(new DeploymentsElement());
-            } else if (localName.equals("Import")) {
-                push(new ImportElement());
-            } else if (localName.equals("Service")) {
-                push(new DeclaredServiceElement(openejb.getServices()));
-            } else {
-                throw new IllegalStateException("Unsupported Element: " + localName);
+            switch (localName) {
+                case "Container":
+                    push(new ContainerElement());
+                    break;
+                case "JndiProvider":
+                    push(new JndiProviderElement());
+                    break;
+                case "SecurityService":
+                    push(new SecurityServiceElement());
+                    break;
+                case "TransactionManager":
+                    push(new TransactionManagerElement());
+                    break;
+                case "ConnectionManager":
+                    push(new ConnectionManagerElement());
+                    break;
+                case "ProxyFactory":
+                    push(new ProxyFactoryElement());
+                    break;
+                case "Resource":
+                    push(new ResourceElement(openejb.getResource()));
+                    break;
+                case "Connector":
+                    push(new ResourceElement(openejb.getResource()));
+                    break;
+                case "Deployments":
+                    push(new DeploymentsElement());
+                    break;
+                case "Import":
+                    push(new ImportElement());
+                    break;
+                case "Service":
+                    push(new DeclaredServiceElement(openejb.getServices()));
+                    break;
+                case "System-Property":
+                    push(new SystemPropertyElement(openejb.getSystemProperties()));
+                    break;
+                default:
+                    throw new IllegalStateException("Unsupported Element: " + localName);
             }
             get().startElement(uri, localName, qName, attributes);
         }

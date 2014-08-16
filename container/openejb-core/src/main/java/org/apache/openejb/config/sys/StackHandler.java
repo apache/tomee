@@ -17,6 +17,7 @@
 
 package org.apache.openejb.config.sys;
 
+import org.apache.openejb.config.SystemProperty;
 import org.apache.openejb.util.Join;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -27,6 +28,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+
+import static java.util.Arrays.asList;
 
 public class StackHandler extends DefaultHandler {
     private static final boolean DEBUG = Boolean.getBoolean("openejb.sax.debug");
@@ -117,6 +120,32 @@ public class StackHandler extends DefaultHandler {
         }
 
         public void setValue(final String text) {
+        }
+    }
+
+    public class SystemPropertyElement extends Content {
+        private final List<String> ALLOWED = asList("name", "value");
+
+        private final SystemProperty built;
+        private final List<SystemProperty> list;
+
+        public SystemPropertyElement(final List<SystemProperty> systemProperties) {
+            this.list = systemProperties;
+            this.built = new SystemProperty();
+        }
+
+        @Override
+        public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
+            super.startElement(uri, localName, qName, attributes);
+            built.setName(attributes.getValue("name"));
+            built.setValue(attributes.getValue("value"));
+            checkAttributes(attributes, ALLOWED);
+        }
+
+        @Override
+        public void endElement(final String uri, final String localName, final String qName) {
+            list.add(built);
+            super.endElement(uri, localName, qName);
         }
     }
 

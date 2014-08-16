@@ -18,6 +18,7 @@ package org.apache.openejb.config.sys;
 
 import junit.framework.TestCase;
 import org.apache.openejb.config.Service;
+import org.apache.openejb.config.SystemProperty;
 import org.xml.sax.InputSource;
 
 import javax.xml.bind.JAXBException;
@@ -52,6 +53,7 @@ public class OpenejbTest extends TestCase {
         openejb.getDeployments().add(dir("square"));
         openejb.getDeployments().add(jar("circle"));
         openejb.getDeployments().add(jar("triangle"));
+        openejb.getSystemProperties().add(new SystemProperty().name("a-sys").value("a-val"));
 
         final byte[] expected = bytes(openejb);
 

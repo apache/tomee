@@ -41,7 +41,7 @@ public class JSonConfigReader {
     public static <T> T read(final Class<T> clazz, final InputStream is) throws OpenEJBException {
         if (Openejb.class.equals(clazz) || Tomee.class.equals(clazz)) {
             final SaxOpenejb handler = read(is, "openejb",
-                Arrays.asList("Resource", "Container", "JndiProvider", "TransactionManager", "ConnectionManager",
+                Arrays.asList("System-Property", "Resource", "Container", "JndiProvider", "TransactionManager", "ConnectionManager",
                     "ProxyFactory", "Connector", "Deployments", "Import", "Service", "SecurityService"),
                 new SaxOpenejb());
 

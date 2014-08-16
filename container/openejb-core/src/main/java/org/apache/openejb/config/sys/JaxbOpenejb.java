@@ -19,6 +19,7 @@ package org.apache.openejb.config.sys;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.config.ConfigUtils;
+import org.apache.openejb.config.SystemProperty;
 import org.apache.openejb.jee.JAXBContextFactory;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.util.Join;
@@ -101,34 +102,36 @@ public abstract class JaxbOpenejb {
             throw new NullPointerException("type is null");
         }
 
-        if (type.equals("ConnectionManager")) {
+        if (type.equalsIgnoreCase("ConnectionManager")) {
             return (T) createConnectionManager();
-        } else if (type.equals("Connector")) {
+        } else if (type.equalsIgnoreCase("Connector")) {
             return (T) createConnector();
-        } else if (type.equals("Container")) {
+        } else if (type.equalsIgnoreCase("Container")) {
             return (T) createContainer();
-        } else if (type.equals("Deployments")) {
+        } else if (type.equalsIgnoreCase("Deployments")) {
             return (T) createDeployments();
-        } else if (type.equals("JndiProvider")) {
+        } else if (type.equalsIgnoreCase("JndiProvider")) {
             return (T) createJndiProvider();
-        } else if (type.equals("Openejb")) {
+        } else if (type.equalsIgnoreCase("Openejb")) {
             return (T) createOpenejb();
-        } else if (type.equals("Tomee")) {
+        } else if (type.equalsIgnoreCase("Tomee")) {
             return (T) createTomee();
-        } else if (type.equals("ProxyFactory")) {
+        } else if (type.equalsIgnoreCase("ProxyFactory")) {
             return (T) createProxyFactory();
-        } else if (type.equals("Resource")) {
+        } else if (type.equalsIgnoreCase("Resource")) {
             return (T) createResource();
-        } else if (type.equals("SecurityService")) {
+        } else if (type.equalsIgnoreCase("SecurityService")) {
             return (T) createSecurityService();
-        } else if (type.equals("ServiceProvider")) {
+        } else if (type.equalsIgnoreCase("ServiceProvider")) {
             return (T) createServiceProvider();
-        } else if (type.equals("ServicesJar")) {
+        } else if (type.equalsIgnoreCase("ServicesJar")) {
             return (T) createServicesJar();
-        } else if (type.equals("TransactionManager")) {
+        } else if (type.equalsIgnoreCase("TransactionManager")) {
             return (T) createTransactionManager();
-        } else if (type.equals("Service")) {
+        } else if (type.equalsIgnoreCase("Service")) {
             return (T) createService();
+        } else if (type.equalsIgnoreCase("System-Property")) {
+            return (T) createSystemProperty();
         }
         throw new IllegalArgumentException("Unknown type " + type);
     }
@@ -370,6 +373,10 @@ public abstract class JaxbOpenejb {
 
     public static Service createService() {
         return new Service();
+    }
+
+    public static SystemProperty createSystemProperty() {
+        return new SystemProperty();
     }
 
     public static JndiProvider createJndiProvider() {
