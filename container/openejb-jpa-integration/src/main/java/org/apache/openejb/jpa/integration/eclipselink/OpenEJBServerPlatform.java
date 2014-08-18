@@ -28,7 +28,7 @@ public class OpenEJBServerPlatform extends JMXServerPlatformBase {
         super(newDatabaseSession);
         try {
             mBeanServer = MBeanServer.class.cast(
-                OpenEJBServerPlatform.class.getClassLoader().loadClass("org.apache.openejb.monitoring")
+                OpenEJBServerPlatform.class.getClassLoader().loadClass("org.apache.openejb.monitoring.LocalMBeanServer")
                     .getMethod("get").invoke(null));
         } catch (final Exception e) {
             // no-op
