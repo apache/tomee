@@ -132,7 +132,7 @@ public class FinderFactory {
         return finder;
     }
 
-    private Class<?>[] ensureMinimalClasses(final DeploymentModule module) {
+    public static Class<?>[] ensureMinimalClasses(final DeploymentModule module) {
         final Collection<Class<?>> finderClasses = new HashSet<>();
         if (EjbModule.class.isInstance(module)) {
             final EjbModule ejb = EjbModule.class.cast(module);
@@ -289,16 +289,11 @@ public class FinderFactory {
         }
     }
 
-    public static class ModuleLimitedFinder implements IAnnotationFinder, AnnotationFinderDelegate {
+    public static class ModuleLimitedFinder implements IAnnotationFinder {
         private final OpenEJBAnnotationFinder delegate;
 
         public ModuleLimitedFinder(final OpenEJBAnnotationFinder delegate) {
             this.delegate = delegate;
-        }
-
-        @Override
-        public OpenEJBAnnotationFinder getOpenEJBFinder() {
-            return delegate;
         }
 
         @Override
@@ -514,20 +509,11 @@ public class FinderFactory {
         }
     }
 
-    public interface AnnotationFinderDelegate {
-        OpenEJBAnnotationFinder getOpenEJBFinder();
-    }
-
-    public static class OpenEJBAnnotationFinder extends AnnotationFinder implements AnnotationFinderDelegate {
+    public static class OpenEJBAnnotationFinder extends AnnotationFinder {
         private static final String[] JVM_SCANNING_CONFIG = SystemInstance.get().getProperty("openejb.scanning.xbean.jvm", "java.").split(",");
 
         public OpenEJBAnnotationFinder(final Archive archive) {
             super(archive);
-        }
-
-        @Override
-        public OpenEJBAnnotationFinder getOpenEJBFinder() {
-            return this;
         }
 
         @Override

@@ -33,6 +33,8 @@ import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.ConnectorModule;
 import org.apache.openejb.config.DeploymentLoader;
+import org.apache.openejb.config.DeploymentModule;
+import org.apache.openejb.config.DeploymentsResolver;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.config.FinderFactory;
 import org.apache.openejb.config.PersistenceModule;
@@ -75,8 +77,11 @@ import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.ClassFinder;
 import org.apache.xbean.finder.IAnnotationFinder;
 import org.apache.xbean.finder.ResourceFinder;
+import org.apache.xbean.finder.UrlSet;
 import org.apache.xbean.finder.archive.Archive;
 import org.apache.xbean.finder.archive.ClassesArchive;
+import org.apache.xbean.finder.archive.CompositeArchive;
+import org.apache.xbean.finder.archive.JarArchive;
 import org.xml.sax.InputSource;
 
 import javax.enterprise.context.ConversationScoped;
@@ -92,6 +97,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -103,6 +109,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 
+import static java.util.Arrays.asList;
 import static org.apache.openejb.config.DeploymentFilterable.DEPLOYMENTS_CLASSPATH_PROPERTY;
 import static org.apache.openejb.util.Classes.ancestors;
 
@@ -134,12 +141,12 @@ public final class ApplicationComposers {
     private ThreadContext previous;
     private MockHttpSession session;
     private MockServletContext servletContext;
-    private final Collection<String> globalJndiEntries = new ArrayList<String>();
+    private final Collection<String> globalJndiEntries = new ArrayList<>();
 
     public ApplicationComposers(final Class<?> klass, final Object... additionalModules) {
         testClass = klass;
 
-        testClassFinders = new HashMap<Object, ClassFinder>();
+        testClassFinders = new HashMap<>();
         testClassFinders.put(this, new ClassFinder(ancestors(klass))); // using this temporary since we don't have yet the instance
         if (additionalModules != null) {
             for (final Object o : additionalModules) {
@@ -151,7 +158,7 @@ public final class ApplicationComposers {
     }
 
     private void validate() {
-        final List<Throwable> errors = new ArrayList<Throwable>();
+        final List<Throwable> errors = new ArrayList<>();
 
         final Map<Object, List<Method>> annotatedConfigurationMethods = findAnnotatedMethods(new HashMap<Object, List<Method>>(), Configuration.class);
         {
@@ -184,7 +191,7 @@ public final class ApplicationComposers {
             errors.add(new Exception("Test class should have no more than one @MockInjector method"));
         }
 
-        final List<Method> components = new ArrayList<Method>();
+        final List<Method> components = new ArrayList<>();
         for (final List<Method> l : findAnnotatedMethods(new HashMap<Object, List<Method>>(), Component.class).values()) {
             components.addAll(l);
         }
@@ -197,7 +204,7 @@ public final class ApplicationComposers {
             }
         }
 
-        final List<Method> descriptors = new ArrayList<Method>();
+        final List<Method> descriptors = new ArrayList<>();
         for (final List<Method> l : findAnnotatedMethods(new HashMap<Object, List<Method>>(), Descriptors.class).values()) {
             descriptors.addAll(l);
         }
@@ -213,7 +220,7 @@ public final class ApplicationComposers {
             }
         }
 
-        final List<Method> classes = new ArrayList<Method>();
+        final List<Method> classes = new ArrayList<>();
         for (final List<Method> l : findAnnotatedMethods(new HashMap<Object, List<Method>>(), Classes.class).values()) {
             classes.addAll(l);
         }
@@ -229,10 +236,21 @@ public final class ApplicationComposers {
             }
         }
 
+        for (final List<Method> l : findAnnotatedMethods(new HashMap<Object, List<Method>>(), Jars.class).values()) {
+            for (final Method method : l) {
+                final Class<?> returnType = method.getReturnType();
+                if (!returnType.equals(WebModule.class) && !returnType.equals(EjbModule.class)
+                        && !returnType.equals(WebApp.class) && !returnType.equals(EjbJar.class)
+                        && !EnterpriseBean.class.isAssignableFrom(returnType)) {
+                    errors.add(new Exception("@Classes can't be used on a method returning " + returnType));
+                }
+            }
+        }
+
         int appModules = 0;
         int modules = 0;
 
-        final List<Method> moduleMethods = new ArrayList<Method>();
+        final List<Method> moduleMethods = new ArrayList<>();
         for (final List<Method> l : findAnnotatedMethods(new HashMap<Object, List<Method>>(), Module.class).values()) {
             moduleMethods.addAll(l);
         }
@@ -343,7 +361,7 @@ public final class ApplicationComposers {
         }
 
         Openejb openejb = null;
-        final Map<Object, List<Method>> configs = new HashMap<Object, List<Method>>();
+        final Map<Object, List<Method>> configs = new HashMap<>();
         findAnnotatedMethods(configs, Configuration.class);
         findAnnotatedMethods(configs, org.apache.openejb.junit.Configuration.class);
         for (final Map.Entry<Object, List<Method>> method : configs.entrySet()) {
@@ -391,7 +409,7 @@ public final class ApplicationComposers {
 
         // call the mock injector before module method to be able to use mocked classes
         // it will often use the TestInstance so
-        final Map<Object, List<Method>> mockInjectors = new HashMap<Object, List<Method>>();
+        final Map<Object, List<Method>> mockInjectors = new HashMap<>();
         findAnnotatedMethods(mockInjectors, MockInjector.class);
         findAnnotatedMethods(mockInjectors, org.apache.openejb.junit.MockInjector.class);
         if (!mockInjectors.isEmpty() && !mockInjectors.values().iterator().next().isEmpty()) {
@@ -425,12 +443,13 @@ public final class ApplicationComposers {
         int webModulesNb = 0;
 
         // Invoke the @Module producer methods to build out the AppModule
-        final Map<Object, List<Method>> moduleMethods = new HashMap<Object, List<Method>>();
+        final Map<Object, List<Method>> moduleMethods = new HashMap<>();
         findAnnotatedMethods(moduleMethods, Module.class);
         findAnnotatedMethods(moduleMethods, org.apache.openejb.junit.Module.class);
         for (final Map.Entry<Object, List<Method>> methods : moduleMethods.entrySet()) {
             for (final Method method : methods.getValue()) {
                 final Object obj = method.invoke(methods.getKey());
+                final Jars jarsAnnotation = method.getAnnotation(Jars.class);
                 final Classes classesAnnotation = method.getAnnotation(Classes.class);
                 final org.apache.openejb.junit.Classes classesAnnotationOld = method.getAnnotation(org.apache.openejb.junit.Classes.class);
 
@@ -466,13 +485,13 @@ public final class ApplicationComposers {
                     webModule.getAltDDs().putAll(additionalDescriptors);
                     webModule.getAltDDs().putAll(descriptorsToMap(method.getAnnotation(Descriptors.class)));
 
-                    if (classes != null) {
-                        webModule.setFinder(finderFromClasses(classes));
-                    }
                     final EjbModule ejbModule = DeploymentLoader.addWebModule(webModule, appModule);
                     if (cdi) {
                         ejbModule.setBeans(beans(new Beans(), cdiDecorators, cdiInterceptors, cdiAlternatives));
                     }
+
+                    webModule.setFinder(finderFromClasses(webModule, classes, findFiles(jarsAnnotation)));
+                    ejbModule.setFinder(webModule.getFinder());
                 } else if (obj instanceof WebModule) { // will add the ejbmodule too
                     webModulesNb++;
 
@@ -481,27 +500,26 @@ public final class ApplicationComposers {
                     webModule.getAltDDs().putAll(additionalDescriptors);
                     webModule.getAltDDs().putAll(descriptorsToMap(method.getAnnotation(Descriptors.class)));
 
-                    if (classes != null) {
-                        webModule.setFinder(finderFromClasses(classes));
-                    }
                     final EjbModule ejbModule = DeploymentLoader.addWebModule(webModule, appModule);
                     if (cdi) {
                         ejbModule.setBeans(beans(new Beans(), cdiDecorators, cdiInterceptors, cdiAlternatives));
                     }
+
+                    webModule.setFinder(finderFromClasses(webModule, classes, findFiles(jarsAnnotation)));
+                    ejbModule.setFinder(webModule.getFinder());
                 } else if (obj instanceof EjbModule) {
                     final EjbModule ejbModule = (EjbModule) obj;
 
                     ejbModule.getAltDDs().putAll(additionalDescriptors);
                     ejbModule.getAltDDs().putAll(descriptorsToMap(method.getAnnotation(Descriptors.class)));
 
-                    if (classes != null) {
-                        ejbModule.setFinder(finderFromClasses(classes));
-                    }
                     ejbModule.initAppModule(appModule);
                     appModule.getEjbModules().add(ejbModule);
                     if (cdi) {
                         ejbModule.setBeans(beans(new Beans(), cdiDecorators, cdiInterceptors, cdiAlternatives));
                     }
+
+                    ejbModule.setFinder(finderFromClasses(ejbModule, classes, findFiles(jarsAnnotation)));
                 } else if (obj instanceof EjbJar) {
 
                     final EjbJar ejbJar = (EjbJar) obj;
@@ -513,12 +531,11 @@ public final class ApplicationComposers {
                     ejbModule.getAltDDs().putAll(descriptorsToMap(method.getAnnotation(Descriptors.class)));
 
                     appModule.getEjbModules().add(ejbModule);
-                    if (classes != null) {
-                        ejbModule.setFinder(finderFromClasses(classes));
-                    }
                     if (cdi) {
                         ejbModule.setBeans(beans(new Beans(), cdiDecorators, cdiInterceptors, cdiAlternatives));
                     }
+
+                    ejbModule.setFinder(finderFromClasses(ejbModule, classes, findFiles(jarsAnnotation)));
                 } else if (obj instanceof EnterpriseBean) {
 
                     final EnterpriseBean bean = (EnterpriseBean) obj;
@@ -528,17 +545,11 @@ public final class ApplicationComposers {
                     final Beans beans = new Beans();
                     beans.addManagedClass(bean.getEjbClass());
                     ejbModule.setBeans(beans);
-                    final Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(bean.getEjbClass());
-                    if (classes != null) {
-                        ejbModule.setFinder(finderFromClasses(classes));
-                    } else {
-                        ejbModule.setFinder(new AnnotationFinder(new ClassesArchive(clazz)).link());
-                    }
                     appModule.getEjbModules().add(ejbModule);
                     if (cdi) {
                         ejbModule.setBeans(beans(new Beans(), cdiDecorators, cdiInterceptors, cdiAlternatives));
                     }
-
+                    ejbModule.setFinder(finderFromClasses(ejbModule, classes, findFiles(jarsAnnotation)));
                 } else if (obj instanceof Application) {
 
                     application = (Application) obj;
@@ -565,14 +576,11 @@ public final class ApplicationComposers {
                     final Beans beans = (Beans) obj;
                     final EjbModule ejbModule = new EjbModule(new EjbJar(method.getName()));
                     ejbModule.setBeans(beans);
-                    if (classes != null) {
-                        ejbModule.setFinder(finderFromClasses(classes));
-                    }
                     appModule.getEjbModules().add(ejbModule);
                     if (cdi) {
                         ejbModule.setBeans(beans(beans, cdiDecorators, cdiInterceptors, cdiAlternatives));
                     }
-
+                    ejbModule.setFinder(finderFromClasses(ejbModule, classes, findFiles(jarsAnnotation)));
                 } else if (obj instanceof Class[]) {
 
                     final Class[] beans = (Class[]) obj;
@@ -743,7 +751,7 @@ public final class ApplicationComposers {
 
         // test injections
         final ClassFinder testClassFinder = testClassFinders.remove(inputTestInstance);
-        final List<Field> fields = new ArrayList<Field>(testClassFinder.findAnnotatedFields(AppResource.class));
+        final List<Field> fields = new ArrayList<>(testClassFinder.findAnnotatedFields(AppResource.class));
         fields.addAll(testClassFinder.findAnnotatedFields(org.apache.openejb.junit.AppResource.class));
         for (final Field field : fields) {
             final Class<?> type = field.getType();
@@ -764,6 +772,45 @@ public final class ApplicationComposers {
 
         // switch back since next test will use another instance
         testClassFinders.put(this, testClassFinder);
+    }
+
+    private Collection<File> findFiles(final Jars jarsAnnotation) {
+        if (jarsAnnotation == null) {
+            return null;
+        }
+
+        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+
+        final List<URL> classpathAppsUrls = new ArrayList<>(8);
+        if (jarsAnnotation.excludeDefaults()) {
+            DeploymentsResolver.loadFromClasspath(null, classpathAppsUrls, classLoader);
+        } else {
+            UrlSet urlSet;
+            try {
+                urlSet = new UrlSet(classLoader);
+                urlSet = URLs.cullSystemJars(urlSet);
+            } catch (final IOException e) {
+                throw new IllegalStateException(e);
+            }
+            classpathAppsUrls.addAll(urlSet.getUrls());
+        }
+
+        final String[] value = jarsAnnotation.value();
+        final Collection<File> files = new ArrayList<>(value.length);
+        for (final String v : value) {
+            int size = files.size();
+            for (final URL path : classpathAppsUrls) {
+                final File file = URLs.toFile(path);
+                if (file.getName().startsWith(v) && file.getName().endsWith(".jar")) {
+                    files.add(file);
+                    break;
+                }
+            }
+            if (size == files.size()) {
+                throw new IllegalArgumentException(v + " not found in classpath");
+            }
+        }
+        return files;
     }
 
     private Beans beans(final Beans beans, final Class<?>[] cdiDecorators, final Class<?>[] cdiInterceptors,
@@ -890,7 +937,7 @@ public final class ApplicationComposers {
 
     private static Map<String, URL> descriptorsToMap(final Object descriptors) {
         if (descriptors != null) {
-            final Map<String, URL> dds = new HashMap<String, URL>();
+            final Map<String, URL> dds = new HashMap<>();
             final ClassLoader loader = Thread.currentThread().getContextClassLoader();
             if (descriptors instanceof Descriptors) {
                 for (final Descriptor descriptor : ((Descriptors) descriptors).value()) {
@@ -908,8 +955,26 @@ public final class ApplicationComposers {
         return Collections.emptyMap();
     }
 
-    private static IAnnotationFinder finderFromClasses(final Class<?>[] value) {
-        return new AnnotationFinder(new ClassesArchive(value)).link();
+    private static IAnnotationFinder finderFromClasses(final DeploymentModule module, final Class<?>[] value, final Collection<File> others) {
+        final Collection<Archive> archives = new ArrayList<>(1 + (others == null ? 0 : others.size()));
+
+        final Collection<Class<?>> classes = new ArrayList<>(asList(FinderFactory.ensureMinimalClasses(module)));
+        if (value != null) {
+            classes.addAll(asList(value));
+        }
+        archives.add(new ClassesArchive(classes));
+
+        if (others != null) {
+            final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            for (final File f : others) {
+                try {
+                    archives.add(new JarArchive(classLoader, f.toURI().toURL()));
+                } catch (final MalformedURLException e) {
+                    throw new IllegalArgumentException(e);
+                }
+            }
+        }
+        return new FinderFactory.OpenEJBAnnotationFinder(new CompositeArchive(archives)).link();
     }
 
     @SuppressWarnings("unchecked")
@@ -952,7 +1017,7 @@ public final class ApplicationComposers {
 
         @Override
         protected List<? extends Extension> loadExtensions(final ClassLoader classLoader) {
-            final List<Extension> list = new ArrayList<Extension>();
+            final List<Extension> list = new ArrayList<>();
             for (final Class<? extends Extension> e : extensions) {
                 try {
                     list.add(e.newInstance());
