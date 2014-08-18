@@ -465,6 +465,12 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.apache.openejb.itests</groupId>
+      <artifactId>failover-ejb</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-itests-beans</artifactId>
       <version>${project.version}</version>
