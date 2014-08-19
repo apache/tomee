@@ -138,6 +138,12 @@
       <version>${batchee.version}</version>
       <scope>runtime</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-jcs-jcache</artifactId>
+      <version>${jcs.version}</version>
+      <scope>runtime</scope>
+    </dependency>
 
     <!-- if i'm not mistaken we decided to remove it from our default deliveries
     <dependency>
