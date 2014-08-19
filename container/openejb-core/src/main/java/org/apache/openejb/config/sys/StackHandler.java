@@ -124,7 +124,7 @@ public class StackHandler extends DefaultHandler {
     }
 
     public class SystemPropertyElement extends Content {
-        private final List<String> ALLOWED = asList("name", "value");
+        private final List<String> allowed = asList("name", "value");
 
         private final SystemProperty built;
         private final List<SystemProperty> list;
@@ -139,7 +139,7 @@ public class StackHandler extends DefaultHandler {
             super.startElement(uri, localName, qName, attributes);
             built.setName(attributes.getValue("name"));
             built.setValue(attributes.getValue("value"));
-            checkAttributes(attributes, ALLOWED);
+            checkAttributes(attributes, allowed);
         }
 
         @Override
