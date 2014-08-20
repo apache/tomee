@@ -21,13 +21,12 @@ import org.apache.openejb.core.security.jaas.UsernamePasswordCallbackHandler;
 import org.apache.openejb.core.security.jacc.BasicJaccProvider;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.ConfUtils;
+import org.apache.xbean.finder.archive.FileArchive;
 
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -68,12 +67,7 @@ public class SecurityServiceImpl extends AbstractSecurityService {
         }
 
         final URL loginConfig = ConfUtils.getConfResource("login.config");
-
-        try {
-            System.setProperty("java.security.auth.login.config", URLDecoder.decode(loginConfig.toExternalForm(), "UTF8"));
-        } catch (final UnsupportedEncodingException e) {
-            System.setProperty("java.security.auth.login.config", URLDecoder.decode(loginConfig.toExternalForm()));
-        }
+        System.setProperty("java.security.auth.login.config", FileArchive.decode(loginConfig.toExternalForm()));
     }
 
     @Override
