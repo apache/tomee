@@ -123,7 +123,7 @@ public final class ApplicationComposers {
         WebApp.class, EjbJar.class, EnterpriseBean.class,
         Persistence.class, PersistenceUnit.class,
         Connector.class, Beans.class,
-        Class[].class
+        Class[].class, Class.class
     };
 
     static {
