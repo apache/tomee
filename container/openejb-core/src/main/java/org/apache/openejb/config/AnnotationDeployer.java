@@ -244,6 +244,8 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
+import static java.util.Arrays.asList;
+
 /**
  * @version $Rev$ $Date$
  */
@@ -2293,6 +2295,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     AnnotationFinder af = (AnnotationFinder) ejbModule.getFinder();
 
                     final List<Class<?>> ancestors = Classes.ancestors(clazz);
+                    ancestors.addAll(asList(clazz.getInterfaces()));
                     if (dynamicBean) {
                         final Proxy p = metaClass.getAnnotation(Proxy.class);
                         if (p != null) {
@@ -5398,6 +5401,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                         webModule.getEjbRestServices().add(name);
                     }
                 }
+            } else if (isEJB(clazz) && DynamicSubclass.isDynamic(clazz)) {
+                classes.add(clazz.getName());
             }
         }
 
@@ -5413,6 +5418,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                 } else {
                     webModule.getEjbRestServices().add(clazz.getName());
                 }
+            } else if (isEJB(clazz) && DynamicSubclass.isDynamic(clazz)) {
+                classes.add(clazz.getName());
             }
         }
 
