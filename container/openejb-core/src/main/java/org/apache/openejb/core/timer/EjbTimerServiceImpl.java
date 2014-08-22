@@ -95,6 +95,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
 
     public EjbTimerServiceImpl(final BeanContext deployment, final TimerStore timerStore) {
         this(deployment, getDefaultTransactionManager(), timerStore, -1);
+        log.isDebugEnabled(); // touch logger to force it to be initialized
     }
 
     public static TransactionManager getDefaultTransactionManager() {
