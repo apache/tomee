@@ -73,7 +73,6 @@ import org.apache.webbeans.spi.ContextsService;
 import org.apache.webbeans.spi.LoaderService;
 import org.apache.webbeans.web.lifecycle.test.MockHttpSession;
 import org.apache.webbeans.web.lifecycle.test.MockServletContext;
-import org.apache.xbean.finder.Annotated;
 import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.ClassFinder;
 import org.apache.xbean.finder.IAnnotationFinder;
@@ -85,8 +84,6 @@ import org.apache.xbean.finder.archive.CompositeArchive;
 import org.apache.xbean.finder.archive.JarArchive;
 import org.xml.sax.InputSource;
 
-import javax.ejb.Singleton;
-import javax.ejb.Stateless;
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
