@@ -17,6 +17,7 @@
 package org.apache.tomee.jul.formatter.log;
 
 import org.apache.juli.logging.Log;
+import org.apache.openejb.loader.SystemInstance;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
@@ -39,9 +40,10 @@ public final class ReloadableLog {
 
     private static final class ReloadableLogHandler implements InvocationHandler {
         private static final String LOG4J_IMPL = "org.apache.tomee.loader.log.Log4jLog";
+        private static final String LOG4J2_IMPL = "org.apache.tomee.loader.log.Log4j2Log";
         private static final String SLF4J_IMPL = "org.apache.tomee.loader.log.Slf4jLog";
 
-        private final String factory;
+        private volatile String factory;
         private final String name;
         private final AtomicReference<Log> delegate = new AtomicReference<>();
         private volatile boolean done = false;
@@ -58,9 +60,19 @@ public final class ReloadableLog {
             }
 
             try {
+                if (factory == null) {
+                    final String f = TomEELog.getLoggerClazz();
+                    if (f != null) {
+                        factory = f;
+                    }
+                }
                 switch (factory) {
                     case "org.apache.openejb.util.Log4jLogStreamFactory":
-                        delegate.set(newInstance(LOG4J_IMPL)); break;
+                        delegate.set(newInstance(LOG4J_IMPL));
+                        break;
+                    case "org.apache.openejb.util.Log4j2LogStreamFactory":
+                        delegate.set(newInstance(LOG4J2_IMPL));
+                        break;
                     case "org.apache.openejb.util.Slf4jLogStreamFactory":
                         delegate.set(newInstance(SLF4J_IMPL));
                         break;

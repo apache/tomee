@@ -55,15 +55,10 @@ public class Logger {
 
         //See if user factory has been specified
         String factoryName = SystemInstance.get().getOptions().get("openejb.log.factory", JuliLogStreamFactory.class.getName());
-
         if ("jul".equalsIgnoreCase(factoryName) || "juli".equalsIgnoreCase(factoryName)) {
-
             factoryName = JuliLogStreamFactory.class.getName();
-
         } else if ("slf4j".equalsIgnoreCase(factoryName)) {
-
             factoryName = Slf4jLogStreamFactory.class.getName();
-
         } else if ("log4j".equalsIgnoreCase(factoryName)) {
 
             if (exists("org.apache.log4j.Logger")) {
@@ -78,8 +73,9 @@ public class Logger {
             }
 
         } else if ("pax".equalsIgnoreCase(factoryName)) {
-
             factoryName = "org.apache.openejb.util.PaxLogStreamFactory";
+        } else if ("log4j2".equalsIgnoreCase(factoryName)) {
+            factoryName = "org.apache.openejb.util.Log4j2LogStreamFactory";
         }
 
         if (factoryName != null) {
