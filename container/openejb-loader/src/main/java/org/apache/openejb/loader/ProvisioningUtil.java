@@ -153,11 +153,11 @@ public final class ProvisioningUtil {
             try {
                 final File file = cacheFile(lastPart(rawLocation));
                 final File local = new File(rawLocation);
-                if (local.isDirectory()) {
+                if (local.exists()) {
                     return local.getAbsolutePath();
                 }
 
-                final URL url = local.isFile() ? local.toURI().toURL() : new URL(rawLocation);
+                final URL url = new URL(rawLocation);
                 InputStream is = null;
                 try {
                     is = new BufferedInputStream(url.openStream());
