@@ -28,4 +28,13 @@ public class ProvisioningUtilTest {
         final String url = ProvisioningUtil.quickMvnUrl("org.apache.openejb/apache-tomee/x.y.z-SNAPSHOT");
         assertEquals("https://repository.apache.org/snapshots/org/apache/openejb/apache-tomee/x.y.z-SNAPSHOT/apache-tomee-x.y.z-SNAPSHOT.jar", url);
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void missingShouldFail() throws Exception {
+        ProvisioningUtil.realLocation("mvn:missing:artifact:c56dfhrvfjc");
+    }
+    @Test(expected = IllegalArgumentException.class)
+    public void missingShouldFailEvenWhenResolvedLocally() throws Exception {
+        ProvisioningUtil.realLocation("file:///target/cigcrdyicexbeoeoc is not here.jar");
+    }
 }

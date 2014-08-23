@@ -158,11 +158,15 @@ public final class ProvisioningUtil {
                     is = new BufferedInputStream(url.openStream());
                     IO.copy(is, file);
                     return file.getAbsolutePath();
+                } catch (final IOException ioe) {
+                    throw new IllegalArgumentException(ioe);
                 } finally {
                     IO.close(is);
                 }
+            } catch (final IllegalArgumentException iae) {
+                throw iae;
             } catch (final Exception e1) {
-                // no-op
+                throw new IllegalArgumentException(e1);
             }
         }
 
