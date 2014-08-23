@@ -61,8 +61,7 @@ el-api
 eclipselink-
 ehcache-
 FastInfoset
-fleece-core
-fleece-mapper
+fleece-
 fusemq-leveldb-
 geronimo-
 google-
