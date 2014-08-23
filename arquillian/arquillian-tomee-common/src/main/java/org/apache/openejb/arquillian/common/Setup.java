@@ -358,7 +358,7 @@ public class Setup {
             try {
                 org.apache.openejb.loader.IO.copy(from, new File(libFolder, from.getName()));
             } catch (final IOException e) {
-                throw new IllegalStateException(e);
+                throw new IllegalArgumentException(e);
             }
         }
     }
