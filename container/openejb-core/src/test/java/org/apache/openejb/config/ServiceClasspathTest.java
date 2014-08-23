@@ -25,6 +25,7 @@ import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
+import org.apache.openejb.loader.ProvisioningUtil;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.PropertyPlaceHolderHelper;
@@ -69,7 +70,6 @@ public class ServiceClasspathTest extends Assert {
         PropertyPlaceHolderHelper.reset();
     }
 
-
     @Test
     public void test() throws Exception {
 
@@ -90,6 +90,8 @@ public class ServiceClasspathTest extends Assert {
         resource.getProperties().put("blue", "00");
         resource.setClasspath(jar.getAbsolutePath());
 
+        createEnvrt();
+
         final ConfigurationFactory config = new ConfigurationFactory();
         final Assembler assembler = new Assembler();
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
@@ -106,6 +108,10 @@ public class ServiceClasspathTest extends Assert {
         assertEquals("Orange.FF", color.getRed());
         assertEquals("Orange.99", color.getGreen());
         assertEquals("Orange.00", color.getBlue());
+    }
+
+    private void createEnvrt() {
+        new File(SystemInstance.get().getBase().getDirectory(), ProvisioningUtil.cache()).mkdirs();
     }
 
     @Test
@@ -133,6 +139,8 @@ public class ServiceClasspathTest extends Assert {
 
         final ConfigurationFactory config = new ConfigurationFactory();
         final Assembler assembler = new Assembler();
+
+        createEnvrt();
 
         assembler.buildContainerSystem(config.getOpenEjbConfiguration(xml));
 
@@ -165,6 +173,7 @@ public class ServiceClasspathTest extends Assert {
             "  </Resource>\n" +
             "</openejb>");
         out.close();
+        new File(jar.getParentFile(), "temp").mkdirs();
 
 
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
@@ -173,6 +182,7 @@ public class ServiceClasspathTest extends Assert {
         properties.setProperty("openejb.home", jar.getParentFile().getAbsolutePath());
         SystemInstance.init(properties);
         PropertyPlaceHolderHelper.reset();
+        createEnvrt();
         final ConfigurationFactory config = new ConfigurationFactory();
         final Assembler assembler = new Assembler();
 
@@ -220,6 +230,7 @@ public class ServiceClasspathTest extends Assert {
         final ConfigurationFactory config = new ConfigurationFactory();
         final Assembler assembler = new Assembler();
 
+        createEnvrt();
         assembler.buildContainerSystem(config.getOpenEjbConfiguration(json));
 
         final InitialContext initialContext = new InitialContext();

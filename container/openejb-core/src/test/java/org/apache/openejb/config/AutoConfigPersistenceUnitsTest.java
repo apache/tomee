@@ -37,6 +37,7 @@ import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.util.Join;
 
 import javax.naming.NamingException;
+import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverPropertyInfo;
@@ -238,7 +239,9 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
     public void testFromUnitNameJtaWithClasspath() throws Exception {
 
         final Resource resource = new Resource("orange-unit", "DataSource");
-        resource.setClasspath("foo/bar.jar");
+        final File file = new File("target/" + getClass().getName());
+        file.mkdirs();
+        resource.setClasspath(file.getPath());
         final ResourceInfo supplied = addDataSource(OrangeDriver.class, "jdbc:orange:some:stuff", true, resource);
         assertSame(supplied, resources.get(0));
 

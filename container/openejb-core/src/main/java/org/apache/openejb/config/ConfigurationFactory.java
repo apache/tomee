@@ -1258,7 +1258,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         for (int i = 0; i < strings.length; i++) {
             final String string = strings[i];
-            final String pathname = PropertyPlaceHolderHelper.simpleValue(ProvisioningUtil.realLocation(string));
+            final String pathname = ProvisioningUtil.realLocation(PropertyPlaceHolderHelper.simpleValue(string));
             final File file = base.getFile(pathname, false);
             classpath[i] = file.toURI();
         }
