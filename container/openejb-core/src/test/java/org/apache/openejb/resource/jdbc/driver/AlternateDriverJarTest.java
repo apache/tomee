@@ -44,7 +44,7 @@ public class AlternateDriverJarTest {
     @Configuration
     public Properties config() {
 
-        final File drivers = new File(new File(System.getProperty("openejb.home")).getParentFile(), "drivers").getAbsoluteFile();
+        final File drivers = new File(".", "drivers").getAbsoluteFile();
 
         final Properties p = new Properties();
         p.put("openejb.jdbc.datasource-creator", "dbcp-alternative");

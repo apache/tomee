@@ -479,16 +479,6 @@
       <repositories>
         <repository>
           <snapshots>
-            <enabled>false</enabled>
-          </snapshots>
-          <releases>
-            <enabled>true</enabled>
-          </releases>
-          <id>Apache Staging</id>
-          <url>https://repository.apache.org/service/local/staging/deploy/maven2</url>
-        </repository>
-        <repository>
-          <snapshots>
             <enabled>true</enabled>
           </snapshots>
           <releases>
