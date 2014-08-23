@@ -169,7 +169,7 @@ public class CdiScanner implements ScannerService {
             for (final String className : beans.alternativeClasses) {
                 final Class<?> clazz = load(PropertyPlaceHolderHelper.simpleValue(className), classLoader);
                 if (clazz != null) {
-                    alternativesManager.addXmlStereoTypeAlternative(clazz);
+                    alternativesManager.addXmlClazzAlternative(clazz);
                     classes.add(clazz);
                 } else if (shouldThrowCouldNotLoadException(startupObject)) {
                     throw new WebBeansConfigurationException("Could not load alternative class: " + className);
