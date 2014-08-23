@@ -79,7 +79,7 @@ public class ProvisioningClassLoaderConfigurer implements ClassLoaderConfigurer 
             String line;
             while ((line = reader.readLine()) != null) {
                 line = PropertyPlaceHolderHelper.SUBSTITUTOR.replace(line.trim());
-                if (line.startsWith("#")) {
+                if (line.startsWith("#") || line.isEmpty()) {
                     continue;
                 }
 
