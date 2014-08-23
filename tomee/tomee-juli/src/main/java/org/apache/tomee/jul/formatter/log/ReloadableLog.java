@@ -17,7 +17,6 @@
 package org.apache.tomee.jul.formatter.log;
 
 import org.apache.juli.logging.Log;
-import org.apache.openejb.loader.SystemInstance;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
