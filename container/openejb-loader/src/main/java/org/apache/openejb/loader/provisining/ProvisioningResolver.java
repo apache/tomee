@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.loader.provisining;
 
+import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 
@@ -45,23 +46,30 @@ public class ProvisioningResolver {
         resolvers.put("http", new HttpResolver());
         resolvers.put("https", new HttpResolver());
 
-        final String userOnes = SystemInstance.get().getProperty("openejb.provisinig.archive-resolvers");
-        if (userOnes != null) {
-            for (final String u : userOnes.split(" *, *")) {
-                final String c = u.trim();
-                if (!c.isEmpty()) {
-                    continue;
-                }
-                try {
-                    final ArchiveResolver instance = ArchiveResolver.class.cast(ProvisioningResolver.class.getClassLoader().loadClass(c));
-                    addResolver(instance);
-                } catch (final ClassNotFoundException e) {
-                    throw new IllegalArgumentException(e);
+        if (SystemInstance.isInitialized()) {
+            final String userOnes = SystemInstance.get().getProperty("openejb.provisinig.archive-resolvers");
+            if (userOnes != null) {
+                for (final String u : userOnes.split(" *, *")) {
+                    final String c = u.trim();
+                    if (!c.isEmpty()) {
+                        continue;
+                    }
+                    try {
+                        final ArchiveResolver instance = ArchiveResolver.class.cast(ProvisioningResolver.class.getClassLoader().loadClass(c));
+                        addResolver(instance);
+                    } catch (final ClassNotFoundException e) {
+                        throw new IllegalArgumentException(e);
+                    }
                 }
             }
-        }
 
-        SystemInstance.get().fireEvent(new ProvisiningResolverCreated(this));
+            SystemInstance.get().fireEvent(new ProvisiningResolverCreated(this));
+        }
+        for (final ArchiveResolver ar : resolvers.values()) {
+            if (ProvisioningResolverAware.class.isInstance(ar)) {
+                ProvisioningResolverAware.class.cast(ar).setResolver(this);
+            }
+        }
     }
 
     public void addResolver(final ArchiveResolver resolver) {
@@ -135,6 +143,7 @@ public class ProvisioningResolver {
             BufferedInputStream is = null;
             try {
                 is = new BufferedInputStream(resolverStream);
+                Files.mkdirs(file.getParentFile());
                 IO.copy(is, file);
                 return file.getAbsolutePath();
             } catch (final IOException ioe) {
