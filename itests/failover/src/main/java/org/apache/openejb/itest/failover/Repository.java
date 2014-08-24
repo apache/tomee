@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.itest.failover;
 
-import org.apache.openejb.loader.ProvisioningUtil;
-import org.apache.openejb.resolver.Resolver;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.loader.provisining.ProvisioningResolver;
 import org.apache.openejb.util.Join;
 
 import java.io.File;
@@ -26,21 +26,23 @@ import java.io.File;
  * @version $Rev$ $Date$
  */
 public final class Repository {
-    private static final Resolver RESOLVER = new Resolver();
+    private static final ProvisioningResolver RESOLVER = new ProvisioningResolver();
 
     public static File getArtifact(final String groupId, final String artifactId, final String type) {
-        final String oldCache = System.getProperty(ProvisioningUtil.OPENEJB_DEPLOYER_CACHE_FOLDER);
-        System.setProperty(ProvisioningUtil.OPENEJB_DEPLOYER_CACHE_FOLDER, System.getProperty("openejb.itest.failover.cache", "target/cache"));
+        final String oldCache = System.getProperty(ProvisioningResolver.OPENEJB_DEPLOYER_CACHE_FOLDER);
+        final String property = System.getProperty("openejb.itest.failover.cache", "target/cache");
+        new File(property).mkdirs(); // ensure cache folder exists otherwise copy will fail
+        System.setProperty(ProvisioningResolver.OPENEJB_DEPLOYER_CACHE_FOLDER, property);
         final String path;
         try {
-            path = RESOLVER.resolve("mvn:" + groupId + ":" + artifactId + ":" + guessVersion(groupId, artifactId) + ":" + type);
+            path = RESOLVER.realLocation("mvn:" + groupId + ":" + artifactId + ":" + guessVersion(groupId, artifactId) + ":" + type).iterator().next();
         } catch (final Exception e) {
             throw new RuntimeException(e);
         } finally {
             if (oldCache == null) {
-                System.clearProperty(ProvisioningUtil.OPENEJB_DEPLOYER_CACHE_FOLDER);
+                System.clearProperty(ProvisioningResolver.OPENEJB_DEPLOYER_CACHE_FOLDER);
             } else {
-                System.setProperty(ProvisioningUtil.OPENEJB_DEPLOYER_CACHE_FOLDER, oldCache);
+                System.setProperty(ProvisioningResolver.OPENEJB_DEPLOYER_CACHE_FOLDER, oldCache);
             }
         }
 

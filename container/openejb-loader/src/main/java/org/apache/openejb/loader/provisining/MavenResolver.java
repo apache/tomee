@@ -30,8 +30,9 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Properties;
 
-public class MavenResolver implements ArchiveResolver {
+public class MavenResolver implements ArchiveResolver, ProvisioningResolverAware {
     private static final String REPO1 = "http://repo1.maven.org/maven2/";
     private static final String APACHE_SNAPSHOT = "https://repository.apache.org/snapshots/";
     private static final String SNAPSHOT_SUFFIX = "-SNAPSHOT";
@@ -41,6 +42,8 @@ public class MavenResolver implements ArchiveResolver {
         FACTORY.setNamespaceAware(false);
         FACTORY.setValidating(false);
     }
+
+    private ProvisioningResolver resolver;
 
     @Override
     public String prefix() {
@@ -73,6 +76,9 @@ public class MavenResolver implements ArchiveResolver {
     }
 
     private InputStream resolveStream(final String repo1Url) throws MalformedURLException {
+        if (resolver != null) {
+            return resolver.resolveStream(repo1Url);
+        }
         return SystemInstance.get().getComponent(ProvisioningResolver.class).resolveStream(repo1Url);
     }
 
@@ -115,7 +121,13 @@ public class MavenResolver implements ArchiveResolver {
     }
 
     private static String m2Home() {
-        return SystemInstance.get().getProperty("openejb.m2.home", System.getProperty("user.home") + "/.m2/repository/");
+        final Properties properties;
+        if (SystemInstance.isInitialized()) {
+            properties = SystemInstance.get().getProperties();
+        } else {
+            properties = System.getProperties();
+        }
+        return properties.getProperty("openejb.m2.home", System.getProperty("user.home") + "/.m2/repository/");
     }
 
     private String mvnArtifactPath(final String toParse, final String snapshotBase) throws MalformedURLException {
@@ -197,6 +209,11 @@ public class MavenResolver implements ArchiveResolver {
             // no-op: not parseable so ignoring
         }
         return defaultVersion;
+    }
+
+    @Override
+    public void setResolver(final ProvisioningResolver resolver) {
+        this.resolver = resolver;
     }
 
     private static class QuickMvnMetadataParser extends DefaultHandler {
