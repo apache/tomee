@@ -18,6 +18,7 @@ package org.apache.openejb.arquillian.common;
 
 import org.apache.openejb.loader.ProvisioningUtil;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.loader.provisining.ProvisioningResolver;
 import org.apache.tomee.util.QuickServerXmlParser;
 import org.codehaus.swizzle.stream.ReplaceStringsInputStream;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
@@ -37,6 +38,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -86,7 +88,7 @@ public class Setup {
             return; // in this case we don't want to override the conf
         }
 
-        final Map<String, String> replacements = new HashMap<String, String>();
+        final Map<String, String> replacements = new HashMap<>();
         replacements.put(ports.http(), String.valueOf(configuration.getHttpPort()));
         replacements.put(ports.https(), String.valueOf(configuration.getHttpsPort()));
         replacements.put(ports.stop(), String.valueOf(configuration.getStopPort()));
@@ -151,9 +153,9 @@ public class Setup {
     }
 
     public static File downloadFile(final String artifactName, final String altUrl) {
-        final String cache = SystemInstance.get().getOptions().get(ProvisioningUtil.OPENEJB_DEPLOYER_CACHE_FOLDER, (String) null);
+        final String cache = SystemInstance.get().getOptions().get(ProvisioningResolver.OPENEJB_DEPLOYER_CACHE_FOLDER, (String) null);
         if (cache == null) { // let the user override it
-            System.setProperty(ProvisioningUtil.OPENEJB_DEPLOYER_CACHE_FOLDER, "target");
+            System.setProperty(ProvisioningResolver.OPENEJB_DEPLOYER_CACHE_FOLDER, "target");
         }
 
         try {
@@ -164,7 +166,7 @@ public class Setup {
             return artifact.getAbsoluteFile();
         } finally {
             if (cache == null) {
-                System.clearProperty(ProvisioningUtil.OPENEJB_DEPLOYER_CACHE_FOLDER);
+                System.clearProperty(ProvisioningResolver.OPENEJB_DEPLOYER_CACHE_FOLDER);
             }
         }
     }
@@ -193,7 +195,7 @@ public class Setup {
         InputStream in = IO.read(file);
 
         if (escape) {
-            final Map<String, String> escaped = new HashMap<String, String>();
+            final Map<String, String> escaped = new HashMap<>();
             for (final Map.Entry<String, String> entry : replacements.entrySet()) {
                 final String key = entry.getKey();
                 final String value = entry.getValue();
@@ -351,14 +353,24 @@ public class Setup {
             return;
         }
 
+        try { // initializing the SystemInstance because we'll need it for configuration
+            if (!SystemInstance.isInitialized()) {
+                SystemInstance.init(new Properties());
+            }
+        } catch (final Exception e) {
+            // no-op
+        }
+
         final File libFolder = new File(tomeeHome, "lib");
         for (final String lib : libs.split("\n")) {
-            final String location = ProvisioningUtil.realLocation(lib.trim());
-            final File from = new File(location);
-            try {
-                org.apache.openejb.loader.IO.copy(from, new File(libFolder, from.getName()));
-            } catch (final IOException e) {
-                throw new IllegalArgumentException(e);
+            final Set<String> locations = ProvisioningUtil.realLocation(lib.trim());
+            for (final String location : locations) {
+                final File from = new File(location);
+                try {
+                    org.apache.openejb.loader.IO.copy(from, new File(libFolder, from.getName()));
+                } catch (final IOException e) {
+                    throw new IllegalArgumentException(e);
+                }
             }
         }
     }

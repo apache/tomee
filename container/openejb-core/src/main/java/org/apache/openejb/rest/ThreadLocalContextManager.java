@@ -43,7 +43,8 @@ public class ThreadLocalContextManager {
     public static final ThreadLocalSecurityContext SECURITY_CONTEXT = new ThreadLocalSecurityContext();
     public static final ThreadLocalContextResolver CONTEXT_RESOLVER = new ThreadLocalContextResolver();
     public static final ThreadLocalProviders PROVIDERS = new ThreadLocalProviders();
-    public static final ThreadLocal<Application> APPLICATION = new ThreadLocal<Application>();
+    public static final ThreadLocal<Application> APPLICATION = new ThreadLocal<>();
+    public static final ThreadLocal<Application> CONFIGURATION = new ThreadLocal<Application>();
     public static final ThreadLocal<Map<String, Object>> OTHERS = new ThreadLocal<Map<String, Object>>();
 
     public static void reset() {

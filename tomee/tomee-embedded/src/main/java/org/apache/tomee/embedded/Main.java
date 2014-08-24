@@ -17,6 +17,8 @@
 package org.apache.tomee.embedded;
 
 import java.io.File;
+import java.util.Set;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -60,17 +62,20 @@ public class Main {
                 }
                 int i = 0;
                 for (final String path : line.getOptionValues(PATH)) {
-                    final File file = new File(ProvisioningUtil.realLocation(path));
-                    if (!file.exists()) {
-                        System.err.println(file.getAbsolutePath() + " does not exist, skipping");
-                        continue;
-                    }
+                    final Set<String> locations = ProvisioningUtil.realLocation(path);
+                    for (final String location : locations) {
+                        final File file = new File(location);
+                        if (!file.exists()) {
+                            System.err.println(file.getAbsolutePath() + " does not exist, skipping");
+                            continue;
+                        }
 
-                    String name = file.getName().replaceAll("\\.[A-Za-z]+$", "");
-                    if (contexts != null) {
-                        name = contexts[i++];
+                        String name = file.getName().replaceAll("\\.[A-Za-z]+$", "");
+                        if (contexts != null) {
+                            name = contexts[i++];
+                        }
+                        container.deploy(name, file, true);
                     }
-                    container.deploy(name, file, true);
                 }
             }
 

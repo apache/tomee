@@ -27,6 +27,7 @@ import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.ProvisioningUtil;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.loader.provisining.ProvisioningResolver;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.PropertyPlaceHolderHelper;
 import org.apache.xbean.asm5.ClassWriter;
@@ -111,7 +112,7 @@ public class ServiceClasspathTest extends Assert {
     }
 
     private void createEnvrt() {
-        new File(SystemInstance.get().getBase().getDirectory(), ProvisioningUtil.cache()).mkdirs();
+        new File(SystemInstance.get().getBase().getDirectory(), ProvisioningResolver.cache()).mkdirs();
     }
 
     @Test

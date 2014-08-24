@@ -42,8 +42,10 @@ import org.codehaus.plexus.util.FileUtils;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -93,7 +95,7 @@ public class JarsTxtMojo extends AbstractMojo {
         try {
             writer = new FileWriter(outputFile);
 
-            final TreeSet<String> set = new TreeSet<String>();
+            final TreeSet<String> set = new TreeSet<>();
 
             for (final Artifact a : (Set<Artifact>) project.getArtifacts()) {
                 if (!acceptScope(a.getScope()) || !acceptType(a.getType())) {
@@ -138,7 +140,7 @@ public class JarsTxtMojo extends AbstractMojo {
 
             if (additionals != null) {
                 if (placeHolders == null) {
-                    placeHolders = new HashMap<String, String>();
+                    placeHolders = new HashMap<>();
                 }
 
                 final StrSubstitutor lookup = new StrSubstitutor(StrLookup.mapLookup(placeHolders));
@@ -174,7 +176,15 @@ public class JarsTxtMojo extends AbstractMojo {
     }
 
     private Set<URL> urls(final String line, final StrSubstitutor lookup) {
-        return Files.listJars(ProvisioningUtil.realLocation(lookup.replace(line)));
+        final Set<URL> urls = new HashSet<>();
+        for (final String location : ProvisioningUtil.realLocation(lookup.replace(line))) { // should have 1 item
+            try {
+                urls.add(new File(location).toURI().toURL());
+            } catch (final MalformedURLException e) {
+                throw new IllegalArgumentException(e);
+            }
+        }
+        return urls;
     }
 
     private String version(final Artifact a) {

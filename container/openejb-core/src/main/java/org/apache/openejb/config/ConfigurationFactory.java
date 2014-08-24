@@ -114,6 +114,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -784,7 +785,10 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                     final String[] paths = cp.split(File.pathSeparator);
                     final List<URL> urls = new ArrayList<>();
                     for (final String path : paths) {
-                        urls.add(new File(PropertyPlaceHolderHelper.value(ProvisioningUtil.realLocation(path))).toURI().normalize().toURL());
+                        final Set<String> values = ProvisioningUtil.realLocation(PropertyPlaceHolderHelper.value(path));
+                        for (final String v : values) {
+                            urls.add(new File(v).toURI().normalize().toURL());
+                        }
                     }
                     deployments.setClasspath(new URLClassLoaderFirst(urls.toArray(new URL[urls.size()]), ParentClassLoaderFinder.Helper.get()));
                 }
@@ -1254,16 +1258,17 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         final FileUtils base = SystemInstance.get().getBase();
         final String[] strings = rawstring.split(File.pathSeparator);
-        final URI[] classpath = new URI[strings.length];
+        final Collection<URI> classpath = new LinkedList<>();
 
-        for (int i = 0; i < strings.length; i++) {
-            final String string = strings[i];
-            final String pathname = ProvisioningUtil.realLocation(PropertyPlaceHolderHelper.simpleValue(string));
-            final File file = base.getFile(pathname, false);
-            classpath[i] = file.toURI();
+        for (final String string : strings) {
+            final Set<String> locations = ProvisioningUtil.realLocation(PropertyPlaceHolderHelper.simpleValue(string));
+            for (final String location : locations) {
+                final File file = base.getFile(location, false);
+                classpath.add(file.toURI());
+            }
         }
 
-        return classpath;
+        return classpath.toArray(new URI[classpath.size()]);
     }
 
     private String overrideKey(final org.apache.openejb.config.Service service) {

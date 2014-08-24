@@ -18,13 +18,13 @@ package org.apache.openejb.arquillian.common;
 
 import org.apache.openejb.loader.ProvisioningUtil;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.loader.provisining.HttpResolver;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URI;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -36,13 +36,15 @@ public class MavenCache {
 
         // initializing the SystemInstance because we'll need it for configuration
         try {
-            SystemInstance.get().init(new Properties());
+            if (!SystemInstance.isInitialized()) {
+                SystemInstance.init(new Properties());
+            }
         } catch (final Exception e) {
             // no-op
         }
 
         try {
-            return new File(ProvisioningUtil.realLocation(artifactInfo.startsWith("mvn") ? "" : "mvn:" + artifactInfo));
+            return new File(ProvisioningUtil.realLocation(artifactInfo.startsWith("mvn") ? "" : "mvn:" + artifactInfo).iterator().next());
         } catch (final Exception e) {
             // ignored
         }
@@ -64,7 +66,7 @@ public class MavenCache {
         InputStream is = null;
         OutputStream os = null;
         try {
-            is = ProvisioningUtil.inputStreamTryingProxies(new URI(source));
+            is = new HttpResolver().resolve(source);
             try {
                 file = File.createTempFile("dload", ".fil");
             } catch (final Throwable e) {
@@ -84,7 +86,8 @@ public class MavenCache {
                 os.write(buffer, 0, bytesRead);
             }
         } catch (final Exception e) {
-            throw new DownloadException("Unable to download " + source + " to " + file.getAbsolutePath(), e);
+            throw new DownloadException("Unable to download " + source + " to "
+                    + (file == null ? "null" : file.getAbsolutePath()), e);
         } finally {
             if (is != null) {
                 try {

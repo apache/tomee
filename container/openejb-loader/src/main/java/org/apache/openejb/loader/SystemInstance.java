@@ -18,6 +18,7 @@ package org.apache.openejb.loader;
 
 import org.apache.openejb.loader.event.ComponentAdded;
 import org.apache.openejb.loader.event.ComponentRemoved;
+import org.apache.openejb.loader.provisining.ProvisioningResolver;
 import org.apache.openejb.observer.ObserverManager;
 
 import java.io.File;
@@ -287,6 +288,13 @@ public final class SystemInstance {
         System.getProperties().putAll(system.getProperties()); // if the user read System.getProperties() instead of our properties, used in bval-tomee tck for instance
         initialized = true;
         get().setProperty("openejb.profile.custom", Boolean.toString(!get().isDefaultProfile()));
+
+        initDefaultComponents();
+    }
+
+    private static void initDefaultComponents() {
+        final SystemInstance systemInstance = get();
+        systemInstance.components.put(ProvisioningResolver.class, new ProvisioningResolver());
     }
 
     private static void readUserSystemProperties() {

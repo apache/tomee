@@ -34,8 +34,8 @@ import org.apache.openejb.config.sys.Deployments;
 import org.apache.openejb.config.sys.JaxbOpenejb;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
-import org.apache.openejb.loader.ProvisioningUtil;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.loader.provisining.ProvisioningResolver;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
@@ -77,7 +77,7 @@ public class DeployerEjb implements Deployer {
     public static final String OPENEJB_VALUE_BINARIES = "openejb.deployer.binaries.value";
 
     public static final String OPENEJB_APP_AUTODEPLOY = "openejb.app.autodeploy";
-    public static final ThreadLocal<Boolean> AUTO_DEPLOY = new ThreadLocal<Boolean>();
+    public static final ThreadLocal<Boolean> AUTO_DEPLOY = new ThreadLocal<>();
 
     private static final File uniqueFile;
     private static final boolean oldWarDeployer = "old".equalsIgnoreCase(SystemInstance.get().getOptions().get("openejb.deployer.war", "new"));
@@ -163,7 +163,7 @@ public class DeployerEjb implements Deployer {
         if ("true".equalsIgnoreCase(properties.getProperty(OPENEJB_USE_BINARIES, "false"))) {
             file = copyBinaries(properties);
         } else {
-            file = new File(realLocation(rawLocation));
+            file = new File(realLocation(rawLocation).iterator().next());
         }
 
         final boolean autoDeploy = Boolean.parseBoolean(properties.getProperty(OPENEJB_APP_AUTODEPLOY, "false"));
@@ -185,7 +185,7 @@ public class DeployerEjb implements Deployer {
             appModule = deploymentLoader.load(file);
 
             // Add any alternate deployment descriptors to the modules
-            final Map<String, DeploymentModule> modules = new TreeMap<String, DeploymentModule>();
+            final Map<String, DeploymentModule> modules = new TreeMap<>();
             for (final DeploymentModule module : appModule.getEjbModules()) {
                 modules.put(module.getModuleId(), module);
             }
@@ -274,7 +274,7 @@ public class DeployerEjb implements Deployer {
     }
 
     private static File copyBinaries(final Properties props) throws OpenEJBException {
-        final File dump = ProvisioningUtil.cacheFile(props.getProperty(OPENEJB_PATH_BINARIES, "dump.war"));
+        final File dump = ProvisioningResolver.cacheFile(props.getProperty(OPENEJB_PATH_BINARIES, "dump.war"));
         if (dump.exists()) {
             Files.delete(dump);
             final String name = dump.getName();
@@ -363,11 +363,11 @@ public class DeployerEjb implements Deployer {
     public void undeploy(final String moduleId) throws UndeployException, NoSuchApplicationException {
         AppInfo appInfo = assembler.getAppInfo(moduleId);
         if (appInfo == null) {
-            appInfo = assembler.getAppInfo(realLocation(moduleId));
+            appInfo = assembler.getAppInfo(realLocation(moduleId).iterator().next());
             if (appInfo == null) {
                 appInfo = assembler.getAppInfo(new File(moduleId).getAbsolutePath());
                 if (appInfo == null) {
-                    appInfo = assembler.getAppInfo(new File(realLocation(moduleId)).getAbsolutePath());
+                    appInfo = assembler.getAppInfo(new File(realLocation(moduleId).iterator().next()).getAbsolutePath());
                 }
             }
         }

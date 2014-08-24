@@ -340,7 +340,7 @@ public class Files {
     // return the token as url if simply a path otheriwse if ending by *.jar returning the list of
     // files in the folder
     public static Set<URL> listJars(final String path) {
-        final Set<URL> set = new HashSet<URL>();
+        final Set<URL> set = new HashSet<>();
 
         String token = path;
         if (token.endsWith("*.jar")) {

@@ -30,9 +30,11 @@ import org.apache.xbean.finder.filter.Filters;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -107,7 +109,7 @@ public class ProvisioningClassLoaderConfigurer implements ClassLoaderConfigurer 
 
                     }
 
-                    final Set<URL> repos = Files.listJars(ProvisioningUtil.realLocation(location));
+                    final Set<URL> repos = toUrls(ProvisioningUtil.realLocation(location));
                     toAdd.addAll(repos);
 
                     if (validJar) {
@@ -129,5 +131,17 @@ public class ProvisioningClassLoaderConfigurer implements ClassLoaderConfigurer 
         if (toExclude.size() > 0) {
             excluded = Filters.prefixes(toExclude.toArray(new String[toExclude.size()]));
         }
+    }
+
+    private static Set<URL> toUrls(final Set<String> strings) {
+        final Set<URL> urls = new HashSet<>();
+        for (final String s : strings) {
+            try {
+                urls.add(new File(s).toURI().toURL());
+            } catch (final MalformedURLException e) {
+                throw new IllegalArgumentException(e);
+            }
+        }
+        return urls;
     }
 }
