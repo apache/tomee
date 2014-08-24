@@ -36,6 +36,9 @@ public final class ProvisioningUtil {
     private static final String DESTINATION_KEY = "destination";
     private static final String JAR_KEY = "jar";
 
+    // lazy since shouldn't be useful in a real tomee/openejb
+    private static volatile ProvisioningResolver DEFAULT_PROVISIONING_RESOLVER = null;
+
     private ProvisioningUtil() {
         // no-op
     }
@@ -141,12 +144,16 @@ public final class ProvisioningUtil {
     }
 
     public static Set<String> realLocation(final String location) {
-        if (!SystemInstance.isInitialized()) {
-            try {
-                SystemInstance.init(new Properties());
-            } catch (final Exception e) {
-                throw new IllegalStateException(e);
+        final boolean initialized = SystemInstance.isInitialized();
+        if (!initialized) {
+            if (DEFAULT_PROVISIONING_RESOLVER == null) {
+                synchronized (ProvisioningUtil.class) {
+                    if (DEFAULT_PROVISIONING_RESOLVER == null) {
+                        DEFAULT_PROVISIONING_RESOLVER = new ProvisioningResolver();
+                    }
+                }
             }
+            return DEFAULT_PROVISIONING_RESOLVER.realLocation(location);
         }
         return SystemInstance.get().getComponent(ProvisioningResolver.class).realLocation(location);
     }
