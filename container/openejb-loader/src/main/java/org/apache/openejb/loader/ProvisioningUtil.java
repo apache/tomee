@@ -141,6 +141,13 @@ public final class ProvisioningUtil {
     }
 
     public static Set<String> realLocation(final String location) {
+        if (!SystemInstance.isInitialized()) {
+            try {
+                SystemInstance.init(new Properties());
+            } catch (final Exception e) {
+                throw new IllegalStateException(e);
+            }
+        }
         return SystemInstance.get().getComponent(ProvisioningResolver.class).realLocation(location);
     }
 }
