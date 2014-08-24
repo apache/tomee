@@ -69,6 +69,9 @@ public class Beans {
     protected List<String> duplicatedDecorators;
 
     @XmlTransient
+    protected List<String> startupBeans;
+
+    @XmlTransient
     protected Alternatives duplicatedAlternatives;
 
     @XmlTransient
@@ -119,6 +122,15 @@ public class Beans {
 
     public void setBeanDiscoveryMode(final String beanDiscoveryMode) {
         this.beanDiscoveryMode = beanDiscoveryMode;
+    }
+
+    /**
+     * only for ApplicationComposer
+     * @param clazz the class to add
+     */
+    public Beans managedClass(final String clazz) {
+        addManagedClass(null, clazz);
+        return this;
     }
 
     public void addManagedClass(final URL url, final String clazz) {
@@ -364,6 +376,13 @@ public class Beans {
             duplicatedAlternatives = new Alternatives();
         }
         return duplicatedAlternatives;
+    }
+
+    public List<String> getStartupBeans() {
+        if (startupBeans == null) {
+            startupBeans = new LinkedList<>();
+        }
+        return startupBeans;
     }
 
     public void removeDuplicates() {

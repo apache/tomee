@@ -1311,6 +1311,14 @@ public class AnnotationDeployer implements DynamicDeployer {
                     final org.apache.openejb.jee.ManagedBean managedBean = new CompManagedBean(name, BeanContext.Comp.class);
                     managedBean.setTransactionType(TransactionType.BEAN);
                     ejbModule.getEjbJar().addEnterpriseBean(managedBean);
+
+                    if ("true".equals(SystemInstance.get().getProperty("openejb.cdi.support.@Startup", "true"))) {
+                        final List<Annotated<Class<?>>> forceStart = finder.findMetaAnnotatedClasses(Startup.class);
+                        final List<String> startupBeans = beans.getStartupBeans();
+                        for (final Annotated<Class<?>> clazz : forceStart) {
+                            startupBeans.add(clazz.get().getName());
+                        }
+                    }
                 } else {
                     managedClasses = new HashMap<>();
                 }

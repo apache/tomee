@@ -88,6 +88,7 @@ import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.spi.Extension;
+import javax.inject.Inject;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import java.io.File;
@@ -332,7 +333,12 @@ public final class ApplicationComposers {
             ejbDeployment.setDeploymentId(testClass.getName());
 
             final EjbModule ejbModule = new EjbModule(ejbJar, openejbJar);
-            ejbModule.setFinder(new FinderFactory.OpenEJBAnnotationFinder(new ClassesArchive(ancestors(testClass))));
+            final FinderFactory.OpenEJBAnnotationFinder finder = new FinderFactory.OpenEJBAnnotationFinder(new ClassesArchive(ancestors(testClass)));
+            ejbModule.setFinder(finder);
+            if (finder.findMetaAnnotatedFields(Inject.class).size()
+                    + finder.findMetaAnnotatedMethods(Inject.class).size() > 0) { // activate cdi to avoid WARNINGs
+                ejbModule.setBeans(new Beans());
+            }
             appModule.getEjbModules().add(ejbModule);
         }
 
