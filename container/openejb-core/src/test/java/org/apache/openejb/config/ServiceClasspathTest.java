@@ -25,7 +25,6 @@ import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
-import org.apache.openejb.loader.ProvisioningUtil;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.loader.provisining.ProvisioningResolver;
 import org.apache.openejb.util.Join;
