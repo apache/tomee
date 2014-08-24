@@ -178,7 +178,7 @@ public class ProvisioningResolver {
     }
 
     // used when a resolver wants to use a local file by calling back this facade resolver
-    public static class LocalInputStream extends InputStream {
+    public static final class LocalInputStream extends InputStream {
         private final String path;
 
         private LocalInputStream(final String path) {
