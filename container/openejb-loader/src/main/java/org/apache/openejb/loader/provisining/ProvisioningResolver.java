@@ -175,7 +175,11 @@ public class ProvisioningResolver {
     }
 
     public static File cacheFile(final String path) {
-        return new File(SystemInstance.get().getBase().getDirectory(), cache() + File.separator + path);
+        final String cache = cache();
+        if (new File(cache).isAbsolute()) {
+            return new File(cache, path);
+        }
+        return new File(SystemInstance.get().getBase().getDirectory(), cache + File.separator + path);
     }
 
     @Override
