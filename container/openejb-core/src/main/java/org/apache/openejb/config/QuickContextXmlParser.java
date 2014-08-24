@@ -17,7 +17,6 @@
 
 package org.apache.openejb.config;
 
-import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.ProvisioningUtil;
 import org.apache.openejb.util.PropertyPlaceHolderHelper;
 import org.xml.sax.Attributes;
@@ -27,6 +26,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -57,7 +57,7 @@ public class QuickContextXmlParser extends DefaultHandler {
     }
 
     public Collection<URL> getAdditionalURLs() {
-        final Set<URL> set = new LinkedHashSet<URL>();
+        final Set<URL> set = new LinkedHashSet<>();
 
         if (virtualClasspath != null) {
             final StringTokenizer tkn = new StringTokenizer(virtualClasspath, ";");
@@ -67,7 +67,14 @@ public class QuickContextXmlParser extends DefaultHandler {
                     continue;
                 }
 
-                set.addAll(Files.listJars(ProvisioningUtil.realLocation(PropertyPlaceHolderHelper.simpleValue(token))));
+                final Set<String> locations = ProvisioningUtil.realLocation(PropertyPlaceHolderHelper.simpleValue(token));
+                for (final String location : locations) {
+                    try {
+                        set.add(new File(location).toURI().toURL());
+                    } catch (final MalformedURLException e) {
+                        throw new IllegalArgumentException(e);
+                    }
+                }
             }
         }
 

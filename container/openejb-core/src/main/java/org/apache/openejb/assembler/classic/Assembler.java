@@ -551,11 +551,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     public AppInfo getAppInfo(final String path) {
-        return deployedApplications.get(ProvisioningUtil.realLocation(path));
+        return deployedApplications.get(ProvisioningUtil.realLocation(path).iterator().next());
     }
 
     public boolean isDeployed(final String path) {
-        return deployedApplications.containsKey(ProvisioningUtil.realLocation(path));
+        return deployedApplications.containsKey(ProvisioningUtil.realLocation(path).iterator().next());
     }
 
     public Collection<AppInfo> getDeployedApplications() {
