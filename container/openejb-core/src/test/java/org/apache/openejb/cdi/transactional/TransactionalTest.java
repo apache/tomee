@@ -110,7 +110,6 @@ public class TransactionalTest {
     @Test
     public void dontRollbackException() throws Exception {
         final AtomicInteger status = new AtomicInteger();
-        final TransactionManager transactionManager = OpenEJB.getTransactionManager();
         try {
             bean.anotherException(status);
             fail();
@@ -134,9 +133,7 @@ public class TransactionalTest {
             assertHasTx();
             try {
                 ut.begin();
-            } catch (final NotSupportedException e) {
-                fail();
-            } catch (final SystemException e) {
+            } catch (final NotSupportedException | SystemException e) {
                 fail();
             }
         }
@@ -184,9 +181,7 @@ public class TransactionalTest {
                         status.set(state);
                     }
                 });
-            } catch (final RollbackException e) {
-                fail();
-            } catch (final SystemException e) {
+            } catch (final RollbackException | SystemException e) {
                 fail();
             }
             throw new AnotherException();

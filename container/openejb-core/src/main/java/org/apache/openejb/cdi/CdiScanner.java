@@ -62,8 +62,8 @@ public class CdiScanner implements ScannerService {
         RequiredInterceptor.class, RequiredNewInterceptor.class, SupportsInterceptor.class
     };
 
-    // TODO add all annotated class
     private final Set<Class<?>> classes = new HashSet<>();
+    private final Set<Class<?>> startupClasses = new HashSet<>();
 
     private WebBeansContext webBeansContext;
 
@@ -220,11 +220,17 @@ public class CdiScanner implements ScannerService {
                         if (scanModeAnnotated) {
                             if (isBean(clazz)) {
                                 classes.add(clazz);
+                                if (beans.startupClasses.contains(name)) {
+                                    startupClasses.add(clazz);
+                                }
                             }
                         } else {
                             final ClassLoader loader = clazz.getClassLoader();
                             if (!filterByClassLoader || comparator.isSame(loader) || loader.equals(scl) && isNotEarWebApp) {
                                 classes.add(clazz);
+                                if (beans.startupClasses.contains(name)) {
+                                    startupClasses.add(clazz);
+                                }
                             }
                         }
                     }
@@ -323,5 +329,9 @@ public class CdiScanner implements ScannerService {
     @Override
     public void release() {
         classes.clear();
+    }
+
+    public Set<Class<?>> getStartupClasses() {
+        return startupClasses;
     }
 }

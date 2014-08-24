@@ -263,6 +263,8 @@ public class EjbJarInfoBuilder {
             ejbJar.beans.duplicatedInterceptors.addAll(beans.getDuplicatedInterceptors());
             ejbJar.beans.duplicatedDecorators.addAll(beans.getDuplicatedDecorators());
 
+            ejbJar.beans.startupClasses.addAll(beans.getStartupBeans());
+
             final Map<URL, String> discoveryModeByUrl = new HashMap<>();
             if (CompositeBeans.class.isInstance(beans)) {
                 discoveryModeByUrl.putAll(CompositeBeans.class.cast(beans).getDiscoveryByUrl());

@@ -43,11 +43,15 @@ import org.apache.webbeans.util.WebBeansConstants;
 import org.apache.webbeans.util.WebBeansUtil;
 
 import javax.el.ELResolver;
+import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.jsp.JspApplicationContext;
 import javax.servlet.jsp.JspFactory;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -153,6 +157,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             injectionService.setAppContext(stuff.getAppContext());
 
             //Deploy the beans
+            CdiScanner cdiScanner = null;
             try {
                 //Load Extensions
                 webBeansContext.getExtensionLoader().loadExtensionServices(Thread.currentThread().getContextClassLoader()); // init in OpenEJBLifecycle
@@ -164,12 +169,12 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
                 logger.debug("Scanning classpaths for beans artifacts.");
 
                 if (scannerService instanceof CdiScanner) {
-                    final CdiScanner service = (CdiScanner) scannerService;
-                    service.setContext(webBeansContext);
-                    service.init(startupObject);
+                    cdiScanner = CdiScanner.class.cast(scannerService);
+                    cdiScanner.setContext(webBeansContext);
+                    cdiScanner.init(startupObject);
                 } else {
-                    final CdiScanner cdiScanner = new CdiScanner();
-                    ((CdiScanner) scannerService).setContext(webBeansContext);
+                    cdiScanner = new CdiScanner();
+                    cdiScanner.setContext(webBeansContext);
                     cdiScanner.init(startupObject);
                 }
 
@@ -177,7 +182,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
                 this.scannerService.scan();
 
                 // just to let us write custom CDI Extension using our internals easily
-                CURRENT_APP_INFO.set(StartupObject.class.cast(startupObject).getAppInfo());
+                CURRENT_APP_INFO.set(stuff.getAppInfo());
 
                 //Deploy bean from XML. Also configures deployments, interceptors, decorators.
                 deployer.deploy(scannerService);
@@ -188,11 +193,14 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
                 CURRENT_APP_INFO.remove();
             }
 
+            final Collection<Class<?>> ejbs = new ArrayList<>(stuff.getBeanContexts().size());
             for (final BeanContext bc : stuff.getBeanContexts()) {
                 final CdiEjbBean cdiEjbBean = bc.get(CdiEjbBean.class);
                 if (cdiEjbBean == null) {
                     continue;
                 }
+
+                ejbs.add(bc.getManagedClass());
 
                 if (AbstractProducer.class.isInstance(cdiEjbBean)) {
                     AbstractProducer.class.cast(cdiEjbBean).defineInterceptorStack(cdiEjbBean, cdiEjbBean.getAnnotatedType(), cdiEjbBean.getWebBeansContext());
@@ -206,6 +214,13 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             if (beanManager instanceof WebappBeanManager) {
                 ((WebappBeanManager) beanManager).afterStart();
             }
+
+            for (final Class<?> clazz : cdiScanner.getStartupClasses()) {
+                if (ejbs.contains(clazz)) {
+                    continue;
+                }
+                starts(beanManager, clazz);
+            }
         } finally {
             Thread.currentThread().setContextClassLoader(oldCl);
 
@@ -214,6 +229,17 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         }
 
         logger.info("OpenWebBeans Container has started, it took {0} ms.", Long.toString(System.currentTimeMillis() - begin));
+    }
+
+    private void starts(final BeanManager beanManager, final Class<?> clazz) {
+        final Bean<?> bean = beanManager.resolve(beanManager.getBeans(clazz));
+        if (!beanManager.isNormalScope(bean.getScope())) {
+            throw new IllegalStateException("Only normal scoped beans can use @Startup - likely @ApplicationScoped");
+        }
+
+        final CreationalContext<Object> creationalContext = beanManager.createCreationalContext(null);
+        beanManager.getReference(bean, clazz, creationalContext).toString();
+        // don't release now, will be done by the context - why we restrict it to normal scoped beans
     }
 
     @Override

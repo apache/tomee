@@ -19,23 +19,27 @@ package org.apache.openejb.assembler.classic;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @version $Rev$ $Date$
  */
 public class BeansInfo extends InfoObject {
 
-    public final List<String> interceptors = new ArrayList<String>();
-    public final List<String> decorators = new ArrayList<String>();
-    public final List<String> alternativeClasses = new ArrayList<String>();
-    public final List<String> alternativeStereotypes = new ArrayList<String>();
+    public final List<String> interceptors = new ArrayList<>();
+    public final List<String> decorators = new ArrayList<>();
+    public final List<String> alternativeClasses = new ArrayList<>();
+    public final List<String> alternativeStereotypes = new ArrayList<>();
 
-    public final List<String> duplicatedInterceptors = new ArrayList<String>();
-    public final List<String> duplicatedDecorators = new ArrayList<String>();
-    public final List<String> duplicatedAlternativeClasses = new ArrayList<String>();
-    public final List<String> duplicatedAlternativeStereotypes = new ArrayList<String>();
+    public final List<String> duplicatedInterceptors = new ArrayList<>();
+    public final List<String> duplicatedDecorators = new ArrayList<>();
+    public final List<String> duplicatedAlternativeClasses = new ArrayList<>();
+    public final List<String> duplicatedAlternativeStereotypes = new ArrayList<>();
+
+    public final Set<String> startupClasses = new HashSet<>();
 
     public String version = "1.1";
     public String discoveryMode;
@@ -48,7 +52,7 @@ public class BeansInfo extends InfoObject {
     }
 
     public static class BDAInfo extends InfoObject {
-        public final List<String> managedClasses = new ArrayList<String>();
+        public final List<String> managedClasses = new ArrayList<>();
         public String discoveryMode;
         public URI uri;
     }
