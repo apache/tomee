@@ -23,12 +23,19 @@ import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.JAXRSServiceImpl;
 import org.apache.cxf.jaxrs.ext.ResourceComparator;
+import org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper;
 import org.apache.cxf.jaxrs.lifecycle.ResourceProvider;
 import org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider;
 import org.apache.cxf.jaxrs.model.ClassResourceInfo;
 import org.apache.cxf.jaxrs.model.MethodDispatcher;
 import org.apache.cxf.jaxrs.model.OperationResourceInfo;
+import org.apache.cxf.jaxrs.provider.BinaryDataProvider;
+import org.apache.cxf.jaxrs.provider.DataSourceProvider;
+import org.apache.cxf.jaxrs.provider.FormEncodingProvider;
 import org.apache.cxf.jaxrs.provider.JAXBElementProvider;
+import org.apache.cxf.jaxrs.provider.MultipartProvider;
+import org.apache.cxf.jaxrs.provider.PrimitiveTextProvider;
+import org.apache.cxf.jaxrs.provider.SourceProvider;
 import org.apache.cxf.service.invoker.Invoker;
 import org.apache.cxf.transport.DestinationFactory;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
@@ -316,7 +323,7 @@ public class CxfRsHttpListener implements RsHttpListener {
                     }
                 }
 
-                final Collection<Object> instance = ServiceInfos.resolve(services, new String[]{clazz.getName()}, ProviderFactory.INSTANCE);
+                final Collection<Object> instance = ServiceInfos.resolve(services, new String[]{clazz.getName()}, OpenEJBProviderFactory.INSTANCE);
                 if (instance != null && !instance.isEmpty()) {
                     instances.add(instance.iterator().next());
                 } else {
@@ -338,6 +345,15 @@ public class CxfRsHttpListener implements RsHttpListener {
         instances.add(new JsrProvider()); // is this one really mandatory?
         instances.add(new WadlDocumentMessageBodyWriter());
         instances.add(EJBAccessExceptionMapper.INSTANCE);
+
+        // CXF defaults: cause we don't put defaults in the Bus
+        instances.add(new WebApplicationExceptionMapper());
+        instances.add(new BinaryDataProvider<>());
+        instances.add(new SourceProvider<>());
+        instances.add(new DataSourceProvider<>());
+        instances.add(new FormEncodingProvider<>());
+        instances.add(new PrimitiveTextProvider<>());
+        instances.add(new MultipartProvider());
     }
 
     private Object newProvider(final Class<?> clazz) throws IllegalAccessException, InstantiationException {
@@ -638,7 +654,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         final Collection<Object> additionalProviders = ignoreAutoProviders ? Collections.emptyList() : givenAdditionalProviders;
         List<Object> providers = null;
         if (providersConfig != null) {
-            providers = ServiceInfos.resolve(services, providersConfig.toArray(new String[providersConfig.size()]), ProviderFactory.INSTANCE);
+            providers = ServiceInfos.resolve(services, providersConfig.toArray(new String[providersConfig.size()]), OpenEJBProviderFactory.INSTANCE);
             if (providers != null && additionalProviders != null && !additionalProviders.isEmpty()) {
                 providers.addAll(providers(services, additionalProviders, ctx));
             }
@@ -675,9 +691,8 @@ public class CxfRsHttpListener implements RsHttpListener {
         return providers;
     }
 
-    private static class ProviderFactory implements ServiceInfos.Factory {
-
-        private static final ServiceInfos.Factory INSTANCE = new ProviderFactory();
+    private static class OpenEJBProviderFactory implements ServiceInfos.Factory {
+        private static final ServiceInfos.Factory INSTANCE = new OpenEJBProviderFactory();
 
         @Override
         public Object newInstance(final Class<?> clazz) throws Exception {
