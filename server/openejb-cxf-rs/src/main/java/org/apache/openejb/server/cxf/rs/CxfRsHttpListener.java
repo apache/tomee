@@ -686,8 +686,8 @@ public class CxfRsHttpListener implements RsHttpListener {
         jaxb.setMarshallerProperties(jaxbProperties);
 
         final List<Object> providers = new ArrayList<>(4);
-        providers.add(jaxb);
         providers.add(new FleeceProvider<>());
+        providers.add(jaxb);
         return providers;
     }
 
