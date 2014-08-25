@@ -172,8 +172,10 @@ public class DeployerEjb implements Deployer {
         if (WebAppDeployer.Helper.isWebApp(file) && !oldWarDeployer) {
             AUTO_DEPLOY.set(autoDeploy);
             try {
-                return SystemInstance.get().getComponent(WebAppDeployer.class)
-                    .deploy(host, contextRoot(properties, file.getAbsolutePath()), file);
+                final AppInfo appInfo = SystemInstance.get().getComponent(WebAppDeployer.class)
+                        .deploy(host, contextRoot(properties, file.getAbsolutePath()), file);
+                saveIfNeeded(properties, file, appInfo);
+                return appInfo;
             } finally {
                 AUTO_DEPLOY.remove();
             }
@@ -240,10 +242,7 @@ public class DeployerEjb implements Deployer {
 
             assembler.createApplication(appInfo);
 
-            if (SAVE_DEPLOYMENTS || "true".equalsIgnoreCase(properties.getProperty(OPENEJB_DEPLOYER_SAVE_DEPLOYMENTS, "false"))) {
-                appInfo.properties.setProperty("save-deployment","true");
-                saveDeployment(file, true);
-            }
+            saveIfNeeded(properties, file, appInfo);
 
             return appInfo;
 
@@ -270,6 +269,13 @@ public class DeployerEjb implements Deployer {
                 throw (OpenEJBException) e;
             }
             throw new OpenEJBException(e);
+        }
+    }
+
+    private void saveIfNeeded(Properties properties, File file, AppInfo appInfo) {
+        if (SAVE_DEPLOYMENTS || "true".equalsIgnoreCase(properties.getProperty(OPENEJB_DEPLOYER_SAVE_DEPLOYMENTS, "false"))) {
+            appInfo.properties.setProperty("save-deployment","true");
+            saveDeployment(file, true);
         }
     }
 
