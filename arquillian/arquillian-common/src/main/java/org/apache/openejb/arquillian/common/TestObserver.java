@@ -118,7 +118,12 @@ public class TestObserver {
     }
 
     private BeanContext beanContext() {
-        final String className = testClass.get().getName();
+        final TestClass tc = testClass.get();
+        if (tc == null) {
+            return null;
+        }
+
+        final String className = tc.getName();
         final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
         for (final AppContext app : containerSystem.getAppContexts()) {
             final BeanContext context = containerSystem.getBeanContext(app.getId() + "_" + className);
