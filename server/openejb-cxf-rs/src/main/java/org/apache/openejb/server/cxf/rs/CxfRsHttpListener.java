@@ -346,7 +346,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         instances.add(new WadlDocumentMessageBodyWriter());
         instances.add(EJBAccessExceptionMapper.INSTANCE);
 
-        // CXF defaults: cause we don't put defaults in the Bus
+        // CXF defaults: cause we need to handle it here as much as possible to try to not leak
         instances.add(new WebApplicationExceptionMapper());
         instances.add(new BinaryDataProvider<>());
         instances.add(new SourceProvider<>());
