@@ -104,7 +104,7 @@
     <maven-bundle-plugin.version>2.3.7</maven-bundle-plugin.version>
 
     <!-- This is used by a manifest classpath entry -->
-    <xbeanVersion>3.19-SNAPSHOT</xbeanVersion>
+    <xbeanVersion>4.0</xbeanVersion>
 
     <!-- OSGi bundles properties -->
     <openejb.bundle.activator/>

@@ -21,7 +21,7 @@ import org.apache.cxf.binding.BindingFactoryManager;
 import org.apache.cxf.jaxrs.JAXRSBindingFactory;
 import org.apache.cxf.transport.DestinationFactory;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
-import org.apache.openejb.cdi.WebBeansContextCreated;
+import org.apache.openejb.cdi.WebBeansContextBeforeDeploy;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.observer.Observes;
 import org.apache.openejb.rest.AbstractRestThreadLocalProxy;
@@ -43,7 +43,6 @@ import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
-import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Context;
@@ -91,24 +90,59 @@ public class CxfRSService extends RESTService {
         return NAME;
     }
 
-    public void integrateCDIAndJaxRsInjections(@Observes final WebBeansContextCreated event) {
+    public void integrateCDIAndJaxRsInjections(@Observes final WebBeansContextBeforeDeploy event) {
         contextCDIIntegration(event.getContext());
     }
 
     private void contextCDIIntegration(final WebBeansContext wbc) {
+        if (!enabled) {
+            return;
+        }
+
         final BeanManagerImpl beanManagerImpl = wbc.getBeanManagerImpl();
-        beanManagerImpl.addAdditionalQualifier(Context.class);
-        beanManagerImpl.addInternalBean(new ContextBean<>(SecurityContext.class, ThreadLocalContextManager.SECURITY_CONTEXT));
-        beanManagerImpl.addInternalBean(new ContextBean<>(UriInfo.class, ThreadLocalContextManager.URI_INFO));
-        beanManagerImpl.addInternalBean(new ContextBean<>(HttpServletRequest.class, ThreadLocalContextManager.HTTP_SERVLET_REQUEST));
-        beanManagerImpl.addInternalBean(new ContextBean<>(HttpServletResponse.class, ThreadLocalContextManager.HTTP_SERVLET_RESPONSE));
-        beanManagerImpl.addInternalBean(new ContextBean<>(HttpHeaders.class, ThreadLocalContextManager.HTTP_HEADERS));
-        beanManagerImpl.addInternalBean(new ContextBean<>(Request.class, ThreadLocalContextManager.REQUEST));
-        beanManagerImpl.addInternalBean(new ContextBean<>(ServletRequest.class, ThreadLocalContextManager.SERVLET_REQUEST));
-        beanManagerImpl.addInternalBean(new ContextBean<>(ServletContext.class, ThreadLocalContextManager.SERVLET_CONTEXT));
-        beanManagerImpl.addInternalBean(new ContextBean<>(ServletConfig.class, ThreadLocalContextManager.SERVLET_CONFIG));
-        beanManagerImpl.addInternalBean(new ContextBean<>(Providers.class, ThreadLocalContextManager.PROVIDERS));
-        beanManagerImpl.addInternalBean(new ContextBean<>(ContextResolver.class, ThreadLocalContextManager.CONTEXT_RESOLVER));
+        if (!beanManagerImpl.getAdditionalQualifiers().contains(Context.class)) {
+            beanManagerImpl.addAdditionalQualifier(Context.class);
+        }
+        if (!hasBean(beanManagerImpl, SecurityContext.class)) {
+            beanManagerImpl.addInternalBean(new ContextBean<>(SecurityContext.class, ThreadLocalContextManager.SECURITY_CONTEXT));
+        }
+        if (!hasBean(beanManagerImpl, UriInfo.class)) {
+            beanManagerImpl.addInternalBean(new ContextBean<>(UriInfo.class, ThreadLocalContextManager.URI_INFO));
+        }
+        if (!hasBean(beanManagerImpl, HttpServletRequest.class)) {
+            beanManagerImpl.addInternalBean(new ContextBean<>(HttpServletRequest.class, ThreadLocalContextManager.HTTP_SERVLET_REQUEST));
+        }
+        if (!hasBean(beanManagerImpl, HttpServletResponse.class)) {
+            beanManagerImpl.addInternalBean(new ContextBean<>(HttpServletResponse.class, ThreadLocalContextManager.HTTP_SERVLET_RESPONSE));
+        }
+        if (!hasBean(beanManagerImpl, HttpHeaders.class)) {
+            beanManagerImpl.addInternalBean(new ContextBean<>(HttpHeaders.class, ThreadLocalContextManager.HTTP_HEADERS));
+        }
+        if (!hasBean(beanManagerImpl, Request.class)) {
+            beanManagerImpl.addInternalBean(new ContextBean<>(Request.class, ThreadLocalContextManager.REQUEST));
+        }
+        /* HttpServletRequest impl it
+        if (!hasBean(beanManagerImpl, ServletRequest.class)) {
+            beanManagerImpl.addInternalBean(new ContextBean<>(ServletRequest.class, ThreadLocalContextManager.SERVLET_REQUEST));
+        }
+        */
+        if (!hasBean(beanManagerImpl, ServletContext.class)) {
+            beanManagerImpl.addInternalBean(new ContextBean<>(ServletContext.class, ThreadLocalContextManager.SERVLET_CONTEXT));
+        }
+        if (!hasBean(beanManagerImpl, ServletConfig.class)) {
+            beanManagerImpl.addInternalBean(new ContextBean<>(ServletConfig.class, ThreadLocalContextManager.SERVLET_CONFIG));
+        }
+        if (!hasBean(beanManagerImpl, Providers.class)) {
+            beanManagerImpl.addInternalBean(new ContextBean<>(Providers.class, ThreadLocalContextManager.PROVIDERS));
+        }
+        if (!hasBean(beanManagerImpl, ContextResolver.class)) {
+            beanManagerImpl.addInternalBean(new ContextBean<>(ContextResolver.class, ThreadLocalContextManager.CONTEXT_RESOLVER));
+        }
+        beanManagerImpl.getInjectionResolver().clearCaches(); // hasBean() usage can have cached several things
+    }
+
+    private static boolean hasBean(final BeanManagerImpl beanManagerImpl, final Class<?> type) {
+        return beanManagerImpl.getInjectionResolver().implResolveByType(false, type).isEmpty();
     }
 
     @Override
@@ -211,7 +245,7 @@ public class CxfRSService extends RESTService {
 
         @Override
         public Set<InjectionPoint> getInjectionPoints() {
-            return Collections.<InjectionPoint>emptySet();
+            return Collections.emptySet();
         }
 
         @Override
@@ -221,7 +255,7 @@ public class CxfRSService extends RESTService {
 
         @Override
         public Set<Class<? extends Annotation>> getStereotypes() {
-            return Collections.<Class<? extends Annotation>>emptySet();
+            return Collections.emptySet();
         }
 
         @Override

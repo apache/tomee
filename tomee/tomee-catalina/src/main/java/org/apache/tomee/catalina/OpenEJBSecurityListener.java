@@ -16,7 +16,6 @@
  */
 package org.apache.tomee.catalina;
 
-import org.apache.catalina.Realm;
 import org.apache.catalina.connector.Request;
 
 import javax.servlet.AsyncEvent;
@@ -24,6 +23,8 @@ import javax.servlet.AsyncListener;
 import java.io.IOException;
 
 public class OpenEJBSecurityListener implements AsyncListener {
+    public static final ThreadLocal<Request> requests = new ThreadLocal<>();
+
     private TomcatSecurityService securityService;
     private Object oldState;
     private Request request;
@@ -54,25 +55,16 @@ public class OpenEJBSecurityListener implements AsyncListener {
     }
 
     public void enter() {
+        requests.set(request);
         if (securityService != null && request.getWrapper() != null) {
-            final Realm realm = request.getContext().getRealm();
-            if (realm instanceof TomEERealm) {
-                ((TomEERealm) realm).enter(request);
-            }
             oldState = securityService.enterWebApp(request.getWrapper().getRealm(), request.getPrincipal(), request.getWrapper().getRunAs());
         }
     }
 
     public void exit() {
+        requests.remove();
         if (securityService != null) {
-            try {
-                securityService.exitWebApp(oldState);
-            } finally {
-                final Realm realm = request.getContext().getRealm();
-                if (realm instanceof TomEERealm) {
-                    ((TomEERealm) realm).exit();
-                }
-            }
+            securityService.exitWebApp(oldState);
         }
     }
 }

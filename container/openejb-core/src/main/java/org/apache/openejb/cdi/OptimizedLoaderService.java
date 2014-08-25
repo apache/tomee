@@ -28,6 +28,7 @@ import javax.enterprise.inject.spi.Extension;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -80,7 +81,37 @@ public class OptimizedLoaderService implements LoaderService {
                 }
             }
         }
+
+        final Collection<Extension> extensionCopy = new ArrayList<>(list);
+
+        final Iterator<Extension> it = list.iterator();
+        while (it.hasNext()) {
+            if (it.hasNext()) {
+                if (isFiltered(extensionCopy, it.next())) {
+                    it.remove();
+                }
+            }
+        }
         return list;
+    }
+
+    // mainly intended to avoid conflicts between internal and overrided spec extensions
+    private boolean isFiltered(final Collection<Extension> extensions, final Extension next) {
+        final String name = next.getClass().getName();
+        switch (name) {
+            case "org.apache.bval.cdi.BValExtension":
+                for (final Extension e : extensions) {
+                    final String en = e.getClass().getName();
+
+                    // org.hibernate.validator.internal.cdi.ValidationExtension but allowing few evolutions of packages
+                    if (en.startsWith("org.hibernate.validator.") && en.endsWith("ValidationExtension")) {
+                        return true;
+                    }
+                }
+                break;
+            default:
+        }
+        return false;
     }
 
     private <T> List<T> loadWebBeansPlugins(final ClassLoader loader) {

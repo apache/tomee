@@ -16,6 +16,11 @@
  */
 package org.apache.openejb.server.httpd;
 
+import org.apache.openejb.loader.SystemInstance;
+
+import org.apache.openejb.cdi.Proxys;
+
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -26,12 +31,20 @@ import java.util.Map;
  * @version $Revision$ $Date$
  */
 public class HttpListenerRegistry implements HttpListener {
-    private final Map<String, HttpListener> registry = new LinkedHashMap<String, HttpListener>();
-    private final Map<String, Collection<HttpListener>> filterRegistry = new LinkedHashMap<String, Collection<HttpListener>>();
-    private final ThreadLocal<FilterListener> currentFilterListener = new ThreadLocal<FilterListener>();
+    private final Map<String, HttpListener> registry = new LinkedHashMap<>();
+    private final Map<String, Collection<HttpListener>> filterRegistry = new LinkedHashMap<>();
+    private final ThreadLocal<FilterListener> currentFilterListener = new ThreadLocal<>();
+    private final ThreadLocal<HttpRequest> request = new ThreadLocal<>();
 
     public HttpListenerRegistry() {
-        // no-op
+        final SystemInstance systemInstance = SystemInstance.get();
+        if (systemInstance.getComponent(HttpServletRequest.class) == null) {
+            systemInstance.setComponent(HttpServletRequest.class, Proxys.threadLocalProxy(HttpServletRequest.class, request));
+        }
+        if (systemInstance.getComponent(HttpSession.class) == null) {
+            systemInstance.setComponent(javax.servlet.http.HttpSession.class, Proxys.threadLocalRequestSessionProxy(request));
+        }
+        // servlet context is unknown in this module
     }
 
     @Override
@@ -42,10 +55,11 @@ public class HttpListenerRegistry implements HttpListener {
         // first look filters
         Map<String, Collection<HttpListener>> filters;
         synchronized (filterRegistry) {
-            filters = new HashMap<String, Collection<HttpListener>>(filterRegistry);
+            filters = new HashMap<>(filterRegistry);
         }
 
         try {
+            this.request.set(request);
             boolean lastWasCurrent = false;
             for (Map.Entry<String, Collection<HttpListener>> entry : filters.entrySet()) {
                 String pattern = entry.getKey();
@@ -62,7 +76,7 @@ public class HttpListenerRegistry implements HttpListener {
             // then others
             Map<String, HttpListener> listeners;
             synchronized (registry) {
-                listeners = new HashMap<String, HttpListener>(registry);
+                listeners = new HashMap<>(registry);
             }
 
             for (final Map.Entry<String, HttpListener> entry : listeners.entrySet()) {

@@ -96,7 +96,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
     private String virtualHost = "localhost";
     private String auth = "NONE";
     private String realm = "PropertiesLogin";
-    private boolean enabled = true;
+    protected boolean enabled = true;
     private final String wildcard = SystemInstance.get().getProperty("openejb.rest.wildcard", ".*"); // embedded = regex, tomee = servlet
 
     public void afterApplicationCreated(final AppInfo appInfo, final WebAppInfo webApp) {

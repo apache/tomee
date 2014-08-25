@@ -78,6 +78,7 @@ import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.assembler.classic.event.NewEjbAvailableAfterApplicationCreated;
 import org.apache.openejb.cdi.CdiBuilder;
 import org.apache.openejb.cdi.OpenEJBLifecycle;
+import org.apache.openejb.cdi.Proxys;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentLoader;
@@ -96,6 +97,7 @@ import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.httpd.BeginWebBeansListener;
 import org.apache.openejb.server.httpd.EndWebBeansListener;
+import org.apache.openejb.server.httpd.HttpSession;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -111,6 +113,7 @@ import org.apache.tomcat.util.descriptor.web.FilterDef;
 import org.apache.tomcat.util.descriptor.web.FilterMap;
 import org.apache.tomcat.util.descriptor.web.ResourceBase;
 import org.apache.tomcat.util.scan.StandardJarScanFilter;
+import org.apache.tomee.catalina.cdi.ServletContextHandler;
 import org.apache.tomee.catalina.cluster.ClusterObserver;
 import org.apache.tomee.catalina.cluster.TomEEClusterListener;
 import org.apache.tomee.catalina.environment.Hosts;
@@ -133,6 +136,7 @@ import javax.naming.Reference;
 import javax.naming.StringRefAddr;
 import javax.servlet.ServletContext;
 import javax.servlet.SessionTrackingMode;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspApplicationContext;
 import javax.servlet.jsp.JspFactory;
 import javax.sql.DataSource;
@@ -310,6 +314,21 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
         configurationFactory = new ConfigurationFactory();
         deploymentLoader = new DeploymentLoader();
+
+        setComponentsUsedByCDI();
+    }
+
+    private void setComponentsUsedByCDI() {
+        final SystemInstance systemInstance = SystemInstance.get();
+        if (systemInstance.getComponent(HttpServletRequest.class) == null) {
+            systemInstance.setComponent(HttpServletRequest.class, Proxys.threadLocalProxy(HttpServletRequest.class, OpenEJBSecurityListener.requests));
+        }
+        if (systemInstance.getComponent(HttpSession.class) == null) {
+            systemInstance.setComponent(javax.servlet.http.HttpSession.class, Proxys.threadLocalRequestSessionProxy(OpenEJBSecurityListener.requests));
+        }
+        if (systemInstance.getComponent(ServletContext.class) == null) {
+            systemInstance.setComponent(ServletContext.class, Proxys.handlerProxy(ServletContext.class, new ServletContextHandler()));
+        }
     }
 
     private void manageCluster(final Cluster cluster) {

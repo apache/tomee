@@ -22,8 +22,12 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.webbeans.component.BuiltInOwbBean;
+import org.apache.webbeans.component.SimpleProducerFactory;
+import org.apache.webbeans.component.WebBeansType;
 import org.apache.webbeans.config.BeansDeployer;
 import org.apache.webbeans.config.OpenWebBeansConfiguration;
 import org.apache.webbeans.config.WebBeansContext;
@@ -32,6 +36,7 @@ import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.intercept.InterceptorResolutionService;
 import org.apache.webbeans.portable.AbstractProducer;
 import org.apache.webbeans.portable.InjectionTargetImpl;
+import org.apache.webbeans.portable.ProviderBasedProducer;
 import org.apache.webbeans.portable.events.discovery.BeforeShutdownImpl;
 import org.apache.webbeans.spi.ContainerLifecycle;
 import org.apache.webbeans.spi.ContextsService;
@@ -46,10 +51,15 @@ import javax.el.ELResolver;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
+import javax.inject.Provider;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspApplicationContext;
 import javax.servlet.jsp.JspFactory;
+import java.io.ObjectStreamException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Properties;
@@ -66,8 +76,6 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
 
     //Logger instance
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_CDI, OpenEJBLifecycle.class);
-
-    public static final String OPENEJB_CDI_SKIP_CLASS_NOT_FOUND = "openejb.cdi.skip-class-not-found";
 
     /**
      * Discover bean classes
@@ -184,6 +192,9 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
                 // just to let us write custom CDI Extension using our internals easily
                 CURRENT_APP_INFO.set(stuff.getAppInfo());
 
+                addInternalBeans(); // before next event which can register custom beans (JAX-RS)
+                SystemInstance.get().fireEvent(new WebBeansContextBeforeDeploy(webBeansContext));
+
                 //Deploy bean from XML. Also configures deployments, interceptors, decorators.
                 deployer.deploy(scannerService);
             } catch (final Exception e1) {
@@ -229,6 +240,26 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         }
 
         logger.info("OpenWebBeans Container has started, it took {0} ms.", Long.toString(System.currentTimeMillis() - begin));
+    }
+
+    private void addInternalBeans() {
+        beanManager.getInjectionResolver().clearCaches();
+
+        if (!hasBean(beanManager, HttpServletRequest.class)) {
+            beanManager.addInternalBean(new InternalBean<>(webBeansContext, HttpServletRequest.class));
+        }
+        if (!hasBean(beanManager, HttpSession.class)) {
+            beanManager.addInternalBean(new InternalBean<>(webBeansContext, HttpSession.class));
+        }
+        if (!hasBean(beanManager, ServletContext.class)) {
+            beanManager.addInternalBean(new InternalBean<>(webBeansContext, ServletContext.class));
+        }
+
+        beanManager.getInjectionResolver().clearCaches(); // hasBean() usage can have cached several things
+    }
+
+    private static boolean hasBean(final BeanManagerImpl beanManagerImpl, final Class<?> type) {
+        return !beanManagerImpl.getInjectionResolver().implResolveByType(false, type).isEmpty();
     }
 
     private void starts(final BeanManager beanManager, final Class<?> clazz) {
@@ -399,5 +430,43 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             return object;
         }
         return object;
+    }
+
+    public static class InternalBean<T> extends BuiltInOwbBean<T> {
+        private final Class<T> type;
+
+        protected InternalBean(final WebBeansContext webBeansContext, final Class<T> type) {
+            super(webBeansContext, WebBeansType.MANAGED, type,
+                    new SimpleProducerFactory<T>(
+                            new ProviderBasedProducer<>(webBeansContext, type, new OpenEJBComponentProvider<T>(webBeansContext, type), false)));
+            this.type = type;
+        }
+
+        @Override
+        public Class<?> proxyableType() {
+            return null;
+        }
+    }
+
+    private static class OpenEJBComponentProvider<T> implements Provider<T>, Serializable {
+        private Class<T> type;
+        private transient WebBeansContext webBeansContext;
+
+        public OpenEJBComponentProvider(final WebBeansContext webBeansContext, final Class<T> type) {
+            this.webBeansContext = webBeansContext;
+            this.type = type;
+        }
+
+        @Override
+        public T get() {
+            if (webBeansContext == null) {
+                webBeansContext = WebBeansContext.currentInstance();
+            }
+            return SystemInstance.get().getComponent(type);
+        }
+
+        Object readResolve() throws ObjectStreamException {
+            return get();
+        }
     }
 }
