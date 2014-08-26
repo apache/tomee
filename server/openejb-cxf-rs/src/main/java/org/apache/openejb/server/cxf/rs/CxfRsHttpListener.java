@@ -307,6 +307,9 @@ public class CxfRsHttpListener implements RsHttpListener {
         for (final Object o : additionalProviders) {
             if (o instanceof Class<?>) {
                 final Class<?> clazz = (Class<?>) o;
+                if ("false".equalsIgnoreCase(SystemInstance.get().getProperty(clazz.getName() + ".activated", "true"))) {
+                    continue;
+                }
 
                 if (bm != null && bm.isInUse()) {
                     try {
@@ -334,6 +337,9 @@ public class CxfRsHttpListener implements RsHttpListener {
                     }
                 }
             } else {
+                if ("false".equalsIgnoreCase(SystemInstance.get().getProperty(o.getClass().getName() + ".activated", "true"))) {
+                    continue;
+                }
                 instances.add(o);
             }
         }
@@ -685,7 +691,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         jaxbProperties.put(Marshaller.JAXB_FRAGMENT, true);
         jaxb.setMarshallerProperties(jaxbProperties);
 
-        final List<Object> providers = new ArrayList<>(4);
+        final List<Object> providers = new ArrayList<>(2);
         providers.add(new FleeceProvider<>());
         providers.add(jaxb);
         return providers;
