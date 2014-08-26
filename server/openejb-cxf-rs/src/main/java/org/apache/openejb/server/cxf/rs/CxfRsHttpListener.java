@@ -352,14 +352,15 @@ public class CxfRsHttpListener implements RsHttpListener {
         instances.add(new WadlDocumentMessageBodyWriter());
         instances.add(EJBAccessExceptionMapper.INSTANCE);
 
-        // CXF defaults: cause we need to handle it here as much as possible to try to not leak
-        instances.add(new WebApplicationExceptionMapper());
-        instances.add(new BinaryDataProvider<>());
-        instances.add(new SourceProvider<>());
-        instances.add(new DataSourceProvider<>());
-        instances.add(new FormEncodingProvider<>());
-        instances.add(new PrimitiveTextProvider<>());
-        instances.add(new MultipartProvider());
+        if ("true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.jaxrs.cxf.add-cxf-providers", "false")) {
+            instances.add(new WebApplicationExceptionMapper());
+            instances.add(new BinaryDataProvider<>());
+            instances.add(new SourceProvider<>());
+            instances.add(new DataSourceProvider<>());
+            instances.add(new FormEncodingProvider<>());
+            instances.add(new PrimitiveTextProvider<>());
+            instances.add(new MultipartProvider());
+        }
     }
 
     private Object newProvider(final Class<?> clazz) throws IllegalAccessException, InstantiationException {
