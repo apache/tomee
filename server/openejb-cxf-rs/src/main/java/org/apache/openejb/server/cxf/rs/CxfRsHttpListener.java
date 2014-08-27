@@ -352,7 +352,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         instances.add(new WadlDocumentMessageBodyWriter());
         instances.add(EJBAccessExceptionMapper.INSTANCE);
 
-        if ("true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.jaxrs.cxf.add-cxf-providers", "false")) {
+        if ("true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.jaxrs.cxf.add-cxf-providers", "false"))) {
             instances.add(new WebApplicationExceptionMapper());
             instances.add(new BinaryDataProvider<>());
             instances.add(new SourceProvider<>());
