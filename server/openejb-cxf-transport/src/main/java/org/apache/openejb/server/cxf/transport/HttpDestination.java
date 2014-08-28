@@ -30,6 +30,10 @@ public class HttpDestination extends AbstractHTTPDestination {
         super(bus, registry, endpointInfo, path, true);
     }
 
+    public DestinationRegistry getRegistry() {
+        return registry;
+    }
+
     @Override
     public Logger getLogger() {
         return Logger.getLogger(HttpDestination.class.getName());

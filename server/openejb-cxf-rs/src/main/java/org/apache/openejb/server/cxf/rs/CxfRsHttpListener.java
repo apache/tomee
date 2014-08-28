@@ -38,7 +38,6 @@ import org.apache.cxf.jaxrs.provider.PrimitiveTextProvider;
 import org.apache.cxf.jaxrs.provider.SourceProvider;
 import org.apache.cxf.service.invoker.Invoker;
 import org.apache.cxf.transport.DestinationFactory;
-import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.apache.cxf.transport.servlet.BaseUrlHelper;
 import org.apache.fleece.jaxrs.FleeceProvider;
 import org.apache.fleece.jaxrs.JsrProvider;
@@ -59,6 +58,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.rest.ThreadLocalContextManager;
+import org.apache.openejb.server.cxf.transport.HttpDestination;
 import org.apache.openejb.server.cxf.transport.util.CxfUtil;
 import org.apache.openejb.server.httpd.HttpRequest;
 import org.apache.openejb.server.httpd.HttpRequestImpl;
@@ -121,7 +121,7 @@ public class CxfRsHttpListener implements RsHttpListener {
 
     private final DestinationFactory transportFactory;
     private final String wildcard;
-    private AbstractHTTPDestination destination;
+    private HttpDestination destination;
     private Server server;
     private String context = "";
     private String servlet = "";
@@ -168,6 +168,10 @@ public class CxfRsHttpListener implements RsHttpListener {
         }
 
         httpRequest.setAttribute("org.apache.cxf.transport.endpoint.address", baseURL);
+        if (null == destination.getRegistry().checkRestfulRequest(httpRequest.getRequestURL().toString())) {
+            serveStaticContent(httpRequest, httpResponse, httpRequest.getPathInfo());
+            return;
+        }
 
         // delegate invocation
         final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
@@ -293,7 +297,7 @@ public class CxfRsHttpListener implements RsHttpListener {
             }
 
             server = factory.create();
-            destination = (AbstractHTTPDestination) server.getDestination();
+            destination = (HttpDestination) server.getDestination();
         } finally {
             if (oldLoader != null) {
                 CxfUtil.clearBusLoader(oldLoader);
@@ -474,7 +478,7 @@ public class CxfRsHttpListener implements RsHttpListener {
                 this.servlet = this.context.substring(servletIdx);
                 this.context = this.context.substring(0, servletIdx);
             }
-            destination = (AbstractHTTPDestination) server.getDestination();
+            destination = (HttpDestination) server.getDestination();
 
             final String base;
             if (prefix.endsWith("/")) {
