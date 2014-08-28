@@ -880,10 +880,16 @@ public final class ApplicationComposers {
                 // no-op
             }
 
-            final Context context = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
-            for (final String entry : globalJndiEntries) {
-                context.unbind(entry);
+            final ContainerSystem component = SystemInstance.get().getComponent(ContainerSystem.class);
+
+            if (null != component) {
+                final Context context = component.getJNDIContext();
+
+                for (final String entry : globalJndiEntries) {
+                    context.unbind(entry);
+                }
             }
+
             globalJndiEntries.clear();
 
             try {

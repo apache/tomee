@@ -273,7 +273,8 @@ public class DeployerEjb implements Deployer {
     }
 
     private void saveIfNeeded(final Properties properties, final File file, final AppInfo appInfo) {
-        if (SAVE_DEPLOYMENTS || "true".equalsIgnoreCase(properties.getProperty(OPENEJB_DEPLOYER_SAVE_DEPLOYMENTS, "false"))) {
+        if ((SAVE_DEPLOYMENTS && null == properties.getProperty(OPENEJB_DEPLOYER_SAVE_DEPLOYMENTS))
+            || "true".equalsIgnoreCase(properties.getProperty(OPENEJB_DEPLOYER_SAVE_DEPLOYMENTS, "false"))) {
             appInfo.properties.setProperty("save-deployment","true");
             saveDeployment(file, true);
         }
@@ -402,9 +403,16 @@ public class DeployerEjb implements Deployer {
     }
 
     private void reload(final AppInfo info) {
+
         if (info.webAppAlone) {
-            SystemInstance.get().getComponent(WebAppDeployer.class).reload(info.path);
-        } else {
+            final WebAppDeployer component = SystemInstance.get().getComponent(WebAppDeployer.class);
+
+            if (null != component) {
+                component.reload(info.path);
+                return;
+            }
+        }
+
             try {
                 assembler.destroyApplication(info);
                 assembler.createApplication(info);
@@ -413,4 +421,3 @@ public class DeployerEjb implements Deployer {
             }
         }
     }
-}
