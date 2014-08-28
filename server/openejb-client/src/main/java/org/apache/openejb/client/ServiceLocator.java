@@ -58,9 +58,7 @@ public class ServiceLocator {
     public Object lookup(final String name) {
         try {
             return context.lookup(name);
-        } catch (NamingException e) {
-            throw new IllegalArgumentException(e);
-        } catch (RuntimeException e) {
+        } catch (NamingException | RuntimeException e) {
             throw new IllegalArgumentException(e);
         }
     }

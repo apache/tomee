@@ -252,9 +252,7 @@ public abstract class BaseContext implements EJBContext, Serializable {
         try {
             jndiEnc = (Context) jndiEnc.lookup("comp/env");
             return jndiEnc.lookup(name);
-        } catch (final NamingException e) {
-            throw new IllegalArgumentException(e);
-        } catch (final RuntimeException e) {
+        } catch (final NamingException | RuntimeException e) {
             throw new IllegalArgumentException(e);
         }
     }

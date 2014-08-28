@@ -408,9 +408,6 @@ public class SocketConnectionFactory implements ConnectionFactory {
 
                 return new Output(this.out);
 
-            } catch (IOException e) {
-                throw this.failure("Cannot open output stream to server: " + e.getClass().getName(), e);
-
             } catch (Throwable e) {
                 throw this.failure("Cannot open output stream to server: " + e.getClass().getName(), e);
             }

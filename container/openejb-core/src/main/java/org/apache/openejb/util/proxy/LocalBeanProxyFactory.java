@@ -71,9 +71,7 @@ public class LocalBeanProxyFactory implements Opcodes {
             } finally {
                 field.setAccessible(false);
             }
-        } catch (final NoSuchFieldException e) {
-            throw new IllegalArgumentException(e);
-        } catch (final IllegalAccessException e) {
+        } catch (final NoSuchFieldException | IllegalAccessException e) {
             throw new IllegalArgumentException(e);
         }
     }
@@ -87,9 +85,7 @@ public class LocalBeanProxyFactory implements Opcodes {
             } finally {
                 field.setAccessible(false);
             }
-        } catch (final NoSuchFieldException e) {
-            throw new IllegalArgumentException(e);
-        } catch (final IllegalAccessException e) {
+        } catch (final NoSuchFieldException | IllegalAccessException e) {
             throw new IllegalArgumentException(e);
         }
     }

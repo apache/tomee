@@ -958,10 +958,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                             notLoaded.addAll(finder.getResourcesNotLoaded());
                         }
                     }
-                } catch (final IllegalArgumentException iae) {
+                } catch (final IllegalArgumentException | MalformedURLException iae) {
                     logger.debug("can't look for server event listener for module " + ejb.getModuleUri(), iae);
-                } catch (final MalformedURLException mue) {
-                    logger.debug("can't look for server event listener for module " + ejb.getModuleUri(), mue);
                 } catch (final Exception e) {
                     logger.error("can't look for server event listener for module " + ejb.getJarLocation());
                 }

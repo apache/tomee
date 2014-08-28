@@ -661,10 +661,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
             try {
                 detectAndAddModuleToApplication(appId, tmpClassLoader, ejbModules, clientModules, resouceModules, webModules, entry);
-            } catch (final UnsupportedOperationException e) {
-                // Ignore it as per the javaee spec EE.8.4.2 section 1.d.iii
-                logger.info("Ignoring unknown module type: " + entry.getKey());
-            } catch (final UnknownModuleTypeException e) {
+            } catch (final UnsupportedOperationException | UnknownModuleTypeException e) {
                 // Ignore it as per the javaee spec EE.8.4.2 section 1.d.iii
                 logger.info("Ignoring unknown module type: " + entry.getKey());
             } catch (final Exception e) {

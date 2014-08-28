@@ -619,9 +619,7 @@ public class JndiEncBuilder {
             try {
                 final Class<?> target = classLoader.loadClass(injection.className.trim());
                 return IntrospectionSupport.getPropertyType(target, injection.propertyName.trim());
-            } catch (final ClassNotFoundException e) {
-                // ignore
-            } catch (final NoSuchFieldException e) {
+            } catch (final ClassNotFoundException | NoSuchFieldException e) {
                 // ignore
             }
         }

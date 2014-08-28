@@ -96,10 +96,8 @@ public final class TomEEClassLoaderEnricher implements WebAppEnricher {
                         continue;
                     }
                     urls.add(file.toURI().toURL());
-                } catch (final Exception e) {
+                } catch (final Exception | NoClassDefFoundError e) {
                     // ignore
-                } catch (final NoClassDefFoundError error) {
-                    // no-op
                 }
             }
         }

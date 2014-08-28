@@ -272,9 +272,7 @@ class SaxOpenejb extends StackHandler {
                 try {
                     final Openejb importedOpenEJB = parse(new InputSource(is));
                     merge(openejb, importedOpenEJB);
-                } catch (final ParserConfigurationException e) {
-                    throw new SAXException(e);
-                } catch (final IOException e) {
+                } catch (final ParserConfigurationException | IOException e) {
                     throw new SAXException(e);
                 }
             }

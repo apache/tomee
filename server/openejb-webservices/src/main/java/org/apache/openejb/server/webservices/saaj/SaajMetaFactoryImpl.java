@@ -52,9 +52,7 @@ public class SaajMetaFactoryImpl extends SAAJMetaFactory {
                 } else {
                     throw new SOAPException("Error calling factory method: " + methodName, e);
                 }
-            } catch (IllegalArgumentException e) {
-                throw new SOAPException("Error calling factory method: " + methodName, e);
-            } catch (IllegalAccessException e) {
+            } catch (IllegalArgumentException | IllegalAccessException e) {
                 throw new SOAPException("Error calling factory method: " + methodName, e);
             } finally {
                 method.setAccessible(accessibility);

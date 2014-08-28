@@ -75,9 +75,7 @@ public class CxfContainerClassLoader extends ClassLoader {
             // some additional cxf classes can be provided by apps
             try {
                 return tccl().loadClass(name);
-            } catch (final Exception e) {
-                // no-op: try tccl
-            } catch (final Error err) {
+            } catch (final Exception | Error e) {
                 // no-op: try tccl
             }
 

@@ -220,8 +220,7 @@ public class BasicMdbBean implements BasicMdbObject, MessageDrivenBean, MessageL
             final String actual = (String) jndiContext.lookup("java:comp/env/stateless/references/JNDI_access_to_java_comp_env");
 
             policy.allow(OperationsPolicy.JNDI_access_to_java_comp_env);
-        } catch (final IllegalStateException ignored) {
-        } catch (final javax.naming.NamingException ignored) {
+        } catch (final IllegalStateException | javax.naming.NamingException ignored) {
         }
 
         /*[11] Test lookup /////////*/

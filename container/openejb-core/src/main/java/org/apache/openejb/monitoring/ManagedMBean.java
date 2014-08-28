@@ -151,9 +151,7 @@ public class ManagedMBean implements DynamicMBean {
                     s = member.getName();
                 }
                 scan(member.get(), s);
-            } catch (final IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (final InvocationTargetException e) {
+            } catch (final IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
             }
         } else {

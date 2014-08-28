@@ -125,9 +125,7 @@ public class JarsTxtMojo extends AbstractMojo {
                     final Artifact artifact = factory.createDependencyArtifact(a.getGroupId(), a.getArtifactId(), VersionRange.createFromVersion(a.getVersion()), a.getType(), a.getClassifier(), a.getScope());
                     try {
                         resolver.resolve(artifact, remoteRepos, local);
-                    } catch (final ArtifactResolutionException e) {
-                        throw new MojoExecutionException(e.getMessage(), e);
-                    } catch (ArtifactNotFoundException e) {
+                    } catch (final ArtifactResolutionException | ArtifactNotFoundException e) {
                         throw new MojoExecutionException(e.getMessage(), e);
                     }
                     final File file = artifact.getFile();

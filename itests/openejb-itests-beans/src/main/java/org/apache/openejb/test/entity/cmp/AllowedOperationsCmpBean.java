@@ -297,8 +297,7 @@ public class AllowedOperationsCmpBean implements EntityBean {
             jndiContext.lookup("java:comp/env/stateless/references/JNDI_access_to_java_comp_env");
 
             policy.allow(OperationsPolicy.JNDI_access_to_java_comp_env);
-        } catch (final IllegalStateException ise) {
-        } catch (final NamingException ne) {
+        } catch (final IllegalStateException | NamingException ise) {
         }
 
         allowedOperationsTable.put(methodName, policy);

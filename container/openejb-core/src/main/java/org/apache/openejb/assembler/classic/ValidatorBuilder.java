@@ -482,9 +482,7 @@ public final class ValidatorBuilder {
                 injectionTarget.preDestroy(instance);
                 injectionTarget.dispose(instance);
                 context.release();
-            } catch (final Exception e) {
-                // no-op
-            } catch (final NoClassDefFoundError e) {
+            } catch (final Exception | NoClassDefFoundError e) {
                 // no-op
             }
         }

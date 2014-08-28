@@ -64,9 +64,7 @@ public class TomEEMyFacesContainerInitializer implements ServletContainerInitial
         try {
             ctx.getClassLoader().loadClass("com.sun.faces.context.SessionMap");
             return;
-        } catch (final ClassNotFoundException cnfe) {
-            // no-op
-        } catch (final NoClassDefFoundError error) {
+        } catch (final ClassNotFoundException | NoClassDefFoundError cnfe) {
             // no-op
         }
 

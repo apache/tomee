@@ -96,9 +96,7 @@ public class WsServlet implements Servlet {
 
             try {
                 service.onMessage(httpRequest, httpResponse);
-            } catch (IOException e) {
-                throw e;
-            } catch (ServletException e) {
+            } catch (IOException | ServletException e) {
                 throw e;
             } catch (Exception e) {
                 throw new ServletException("Error processing webservice request", e);

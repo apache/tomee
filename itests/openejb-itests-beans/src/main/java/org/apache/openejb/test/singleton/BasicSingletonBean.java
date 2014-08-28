@@ -248,8 +248,7 @@ public class BasicSingletonBean implements SessionBean, TimedObject {
             final String actual = (String) jndiContext.lookup("java:comp/env/singleton/references/JNDI_access_to_java_comp_env");
 
             policy.allow(OperationsPolicy.JNDI_access_to_java_comp_env);
-        } catch (final IllegalStateException ise) {
-        } catch (final NamingException ne) {
+        } catch (final IllegalStateException | NamingException ise) {
         }
 
         /*[11] Test lookup /////////*/

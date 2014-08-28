@@ -327,8 +327,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             final Collection<URL> urls = NewLoaderLogic.applyBuiltinExcludes(new UrlSet(Assembler.class.getClassLoader()).excludeJvm()).getUrls();
             Extensions.installExtensions(new ResourceFinder("META-INF", urls.toArray(new URL[urls.size()])));
             return;
-        } catch (final MalformedURLException e) {
-            // no-op
         } catch (final IOException e) {
             // no-op
         }
@@ -2099,9 +2097,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             try {
                 LocalMBeanServer.get().registerMBean(new DynamicMBeanWrapper(new JMXContainer(serviceInfo, (Container) service)), objectName);
                 containerObjectNames.add(objectName);
-            } catch (final Exception e) {
-                // no-op
-            } catch (final NoClassDefFoundError ncdfe) { // OSGi
+            } catch (final Exception | NoClassDefFoundError e) {
                 // no-op
             }
         }

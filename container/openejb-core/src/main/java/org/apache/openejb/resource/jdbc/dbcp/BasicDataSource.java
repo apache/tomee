@@ -83,9 +83,7 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
     private void registerAsMbean(final String name) {
         try {
             jmxDs = new JMXBasicDataSource(name, this);
-        } catch (final Exception e) {
-            jmxDs = null;
-        } catch (final NoClassDefFoundError ncdfe) { // OSGi
+        } catch (final Exception | NoClassDefFoundError e) {
             jmxDs = null;
         }
     }

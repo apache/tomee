@@ -741,9 +741,7 @@ public class ReadDescriptors implements DynamicDeployer {
             try {
                 final Connector10 connector10 = (Connector10) JaxbJavaee.unmarshalJavaee(Connector10.class, IO.read(url));
                 connector = Connector.newConnector(connector10);
-            } catch (final ParserConfigurationException e1) {
-                throw new OpenEJBException("Cannot parse the ra.xml file: " + url.toExternalForm(), e);
-            } catch (final SAXException e1) {
+            } catch (final ParserConfigurationException | SAXException e1) {
                 throw new OpenEJBException("Cannot parse the ra.xml file: " + url.toExternalForm(), e);
             } catch (final JAXBException e1) {
                 throw new OpenEJBException("Cannot unmarshall the ra.xml file: " + url.toExternalForm(), e);

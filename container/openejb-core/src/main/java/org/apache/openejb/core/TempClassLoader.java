@@ -139,9 +139,7 @@ public class TempClassLoader extends URLClassLoader {
                 if (c != null) {
                     return c;
                 }
-            } catch (final ClassNotFoundException ignored) {
-                // no-op
-            } catch (final NoClassDefFoundError ignored) {
+            } catch (final ClassNotFoundException | NoClassDefFoundError ignored) {
                 // no-op
             }
         }

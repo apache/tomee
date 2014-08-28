@@ -150,9 +150,7 @@ public class Agent {
             // The AgentJar is loaded into the system classpath, and this class could
             // be in a child classloader, so we need to double check the system classpath
             checkSystemClassPath();
-        } catch (final ClassNotFoundException e) {
-            // not a Sun VM
-        } catch (final NoSuchMethodException e) {
+        } catch (final ClassNotFoundException | NoSuchMethodException e) {
             // not a Sun VM
         }
     }

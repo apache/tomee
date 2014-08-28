@@ -56,9 +56,7 @@ public class MBeanDeployer implements DynamicDeployer {
 
         try { // for OSGi environment, javax.management is imported by the JRE
             mbeanClasses.add((Class<? extends Annotation>) cl.loadClass("javax.management.MBean"));
-        } catch (final NoClassDefFoundError noClassDefFoundError) {
-            // ignored
-        } catch (final ClassNotFoundException e) {
+        } catch (final NoClassDefFoundError | ClassNotFoundException noClassDefFoundError) {
             // ignored
         }
 

@@ -374,15 +374,11 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
             } else {
                 tx.rollback();
             }
-        } catch (final IllegalStateException e) {
+        } catch (final IllegalStateException | javax.transaction.SystemException e) {
 
             logger.error("The TransactionManager reported an exception while attempting to rollback the transaction: " + e.getMessage());
             throw new SystemException(e);
 
-        } catch (final javax.transaction.SystemException e) {
-
-            logger.error("The TransactionManager reported an exception while attempting to rollback the transaction: " + e.getMessage());
-            throw new SystemException(e);
         }
     }
 }

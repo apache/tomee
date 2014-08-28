@@ -129,9 +129,7 @@ public class RemoteTomEEEJBContainer extends EJBContainer {
                 } // else suppose already deployed
 
                 return instance;
-            } catch (final OpenEJBException e) {
-                throw new EJBException(e);
-            } catch (final MalformedURLException e) {
+            } catch (final OpenEJBException | MalformedURLException e) {
                 throw new EJBException(e);
             } catch (final ValidationException ve) {
                 throw ve;

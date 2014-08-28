@@ -76,9 +76,7 @@ public class HttpConnectionFactory implements ConnectionFactory {
             if (params.containsKey("sslKeyStore") || params.containsKey("sslTrustStore")) {
                 try {
                     ((HttpsURLConnection) httpURLConnection).setSSLSocketFactory(new SSLContextBuilder(params).build().getSocketFactory());
-                } catch (final NoSuchAlgorithmException e) {
-                    throw new ClientRuntimeException(e.getMessage(), e);
-                } catch (final KeyManagementException e) {
+                } catch (final NoSuchAlgorithmException | KeyManagementException e) {
                     throw new ClientRuntimeException(e.getMessage(), e);
                 }
             }

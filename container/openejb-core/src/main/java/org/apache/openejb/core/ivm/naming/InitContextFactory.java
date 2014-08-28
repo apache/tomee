@@ -90,8 +90,6 @@ public class InitContextFactory implements InitialContextFactory {
 
             OpenEJB.init(props);
 
-        } catch (final OpenEJBException e) {
-            throw new NamingException("Cannot initailize OpenEJB", e);
         } catch (final Exception e) {
             throw new NamingException("Cannot initailize OpenEJB", e);
         }

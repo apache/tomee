@@ -191,10 +191,8 @@ public class SQLLoginModule implements LoginModule {
 
         try {
             handler.handle(callbacks);
-        } catch (final IOException ioe) {
+        } catch (final IOException | UnsupportedCallbackException ioe) {
             throw (LoginException) new LoginException().initCause(ioe);
-        } catch (final UnsupportedCallbackException uce) {
-            throw (LoginException) new LoginException().initCause(uce);
         }
 
         assert callbacks.length == 2;

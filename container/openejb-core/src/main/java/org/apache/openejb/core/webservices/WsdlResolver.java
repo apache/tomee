@@ -73,13 +73,8 @@ public class WsdlResolver implements WSDLLocator {
             }
             importedUri = importUrl.toURI().toString();
 
-        } catch (final MalformedURLException e) {
-            //
-        } catch (final URISyntaxException e) {
-            //
-        } catch (final IOException e) {
-            //
-
+        } catch (final URISyntaxException | IOException e) {
+            // no-op
         }
         return inputSource;
 

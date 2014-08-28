@@ -46,11 +46,7 @@ public class JavaeeInstanceManager implements InstanceManager {
             final Object object = webContext.newInstance(clazz);
             postConstruct(object, clazz);
             return object;
-        } catch (final OpenEJBException e) {
-            throw (InstantiationException) new InstantiationException(e.getMessage()).initCause(e);
-        } catch (final WebBeansConfigurationException e) {
-            throw (InstantiationException) new InstantiationException(e.getMessage()).initCause(e);
-        } catch (final WebBeansCreationException e) {
+        } catch (final OpenEJBException | WebBeansCreationException | WebBeansConfigurationException e) {
             throw (InstantiationException) new InstantiationException(e.getMessage()).initCause(e);
         }
     }

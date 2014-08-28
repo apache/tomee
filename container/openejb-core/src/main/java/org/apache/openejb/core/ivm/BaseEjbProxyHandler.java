@@ -207,9 +207,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
             if (clazz.isInterface() && getBeanContext().getInterfaceType(clazz) == InterfaceType.BUSINESS_REMOTE) {
                 try {
                     list.add(contextClassLoader.loadClass(clazz.getName()));
-                } catch (final ClassNotFoundException e) {
-                    list.add(clazz);
-                } catch (final NoClassDefFoundError e) {
+                } catch (final ClassNotFoundException | NoClassDefFoundError e) {
                     list.add(clazz);
                 }
             } else {

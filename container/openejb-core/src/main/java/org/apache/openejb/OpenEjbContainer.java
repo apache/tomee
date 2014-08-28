@@ -353,11 +353,7 @@ public final class OpenEjbContainer extends EJBContainer {
                 }
                 return openEjbContainer;
 
-            } catch (final OpenEJBException e) {
-
-                throw new EJBException(e);
-
-            } catch (final MalformedURLException e) {
+            } catch (final OpenEJBException | MalformedURLException e) {
 
                 throw new EJBException(e);
 

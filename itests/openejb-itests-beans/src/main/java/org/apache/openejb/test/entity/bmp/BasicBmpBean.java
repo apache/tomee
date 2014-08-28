@@ -332,9 +332,7 @@ public class BasicBmpBean implements javax.ejb.EntityBean {
             } finally {
                 con.close();
             }
-        } catch (final NamingException e) {
-            throw new EJBException(e);
-        } catch (final SQLException e) {
+        } catch (final NamingException | SQLException e) {
             throw new EJBException(e);
         }
     }
@@ -508,8 +506,7 @@ public class BasicBmpBean implements javax.ejb.EntityBean {
             final String actual = (String) jndiContext.lookup("java:comp/env/stateless/references/JNDI_access_to_java_comp_env");
 
             policy.allow(policy.JNDI_access_to_java_comp_env);
-        } catch (final IllegalStateException ise) {
-        } catch (final javax.naming.NamingException ne) {
+        } catch (final IllegalStateException | NamingException ise) {
         }
 
         allowedOperationsTable.put(methodName, policy);

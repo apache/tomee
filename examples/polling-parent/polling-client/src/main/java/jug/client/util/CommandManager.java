@@ -55,9 +55,7 @@ public class CommandManager {
                     // command ignored
                 }
             }
-        } catch (RuntimeException e) {
-            LOGGER.log(Level.SEVERE, "an error occured while getting commands", e);
-        } catch (IOException e) {
+        } catch (RuntimeException | IOException e) {
             LOGGER.log(Level.SEVERE, "an error occured while getting commands", e);
         }
     }

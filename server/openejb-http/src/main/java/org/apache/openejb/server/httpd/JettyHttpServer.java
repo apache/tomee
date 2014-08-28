@@ -112,9 +112,7 @@ public class JettyHttpServer implements HttpServer {
                     final HttpRequest httpRequest = new ServletRequestAdapter(req, res, servletContext);
                     final HttpResponse httpResponse = new ServletResponseAdapter(res);
                     JettyHttpServer.this.listener.onMessage(httpRequest, httpResponse);
-                } catch (IOException e) {
-                    throw e;
-                } catch (ServletException e) {
+                } catch (IOException | ServletException e) {
                     throw e;
                 } catch (Exception e) {
                     throw new ServletException(e);

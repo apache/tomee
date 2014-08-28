@@ -372,10 +372,7 @@ public class MdbContainer implements RpcContainer {
             // invoke the target method
             returnValue = _invoke(instance, targetMethod, args, deployInfo, type, mdbCallContext);
             return returnValue;
-        } catch (final ApplicationException e) {
-            openEjbException = e;
-            throw e;
-        } catch (final SystemException e) {
+        } catch (final ApplicationException | SystemException e) {
             openEjbException = e;
             throw e;
         } finally {

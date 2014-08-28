@@ -1062,12 +1062,8 @@ public class ResourceFinder {
                         return resourceURL;
                     }
                 }
-            } catch (final MalformedURLException e) {
+            } catch (final SecurityException | IOException e) {
                 // Keep iterating through the URL list
-            } catch (final IOException e) {
-                // no-op
-            } catch (final SecurityException e) {
-                // no-op
             }
         }
         return null;

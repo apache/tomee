@@ -127,9 +127,7 @@ public class OpenEJBContextConfig extends ContextConfig {
 
         try { // if no jaxws classes are here don't try anything
             OpenEJBContextConfig.class.getClassLoader().loadClass("org.apache.openejb.server.webservices.WsServlet");
-        } catch (final ClassNotFoundException e) {
-            return;
-        } catch (final NoClassDefFoundError e) {
+        } catch (final ClassNotFoundException | NoClassDefFoundError e) {
             return;
         }
 
@@ -203,9 +201,7 @@ public class OpenEJBContextConfig extends ContextConfig {
                             context.removeChild(child);
                         }
                     }
-                } catch (final NoClassDefFoundError e) {
-                    context.removeChild(child);
-                } catch (final ClassNotFoundException e) {
+                } catch (final NoClassDefFoundError | ClassNotFoundException e) {
                     context.removeChild(child);
                 }
             }
@@ -403,9 +399,7 @@ public class OpenEJBContextConfig extends ContextConfig {
             final ServletContainerInitializer instance = (ServletContainerInitializer) myfacesInitializer.newInstance();
             context.addServletContainerInitializer(instance, getJsfClasses(context));
             context.addApplicationListener(TOMEE_MYFACES_CONTEXT_LISTENER); // cleanup listener
-        } catch (final Exception ignored) {
-            // no-op
-        } catch (final NoClassDefFoundError error) {
+        } catch (final Exception | NoClassDefFoundError ignored) {
             // no-op
         }
     }
@@ -465,9 +459,7 @@ public class OpenEJBContextConfig extends ContextConfig {
                 final ServletContainerInitializer instance = (ServletContainerInitializer) initializer.newInstance();
                 typeInitializerMap.put(Class.forName("org.springframework.web.WebApplicationInitializer", true, loader), Collections.singleton(instance));
                 initializerClassMap.put(instance, new HashSet<Class<?>>());
-            } catch (final Exception ignored) {
-                // no-op
-            } catch (final NoClassDefFoundError error) {
+            } catch (final Exception | NoClassDefFoundError ignored) {
                 // no-op
             }
 
@@ -626,8 +618,6 @@ public class OpenEJBContextConfig extends ContextConfig {
             try {
                 is = new URL(url).openStream();
                 super.processAnnotationsStream(is, fragment, handlesTypeOnly);
-            } catch (final MalformedURLException e) {
-                throw new IllegalArgumentException(e);
             } catch (final IOException e) {
                 throw new IllegalArgumentException(e);
             } finally {

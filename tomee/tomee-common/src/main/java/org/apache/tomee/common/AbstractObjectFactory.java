@@ -96,8 +96,8 @@ public abstract class AbstractObjectFactory implements ObjectFactory {
         final Context externalContext = getContext(jndiProviderId);
         synchronized (externalContext) {
             /* According to the JNDI SPI specification multiple threads may not access the same JNDI
-            Context *instance* concurrently. Since we don't know the origines of the federated context we must
-            synchonrize access to it.  JNDI SPI Sepecifiation 1.2 Section 2.2
+            Context *instance* concurrently. Since we don't know the origins of the federated context we must
+            synchronize access to it. JNDI SPI Specification 1.2 Section 2.2
             */
             return externalContext.lookup(jndiName);
         }

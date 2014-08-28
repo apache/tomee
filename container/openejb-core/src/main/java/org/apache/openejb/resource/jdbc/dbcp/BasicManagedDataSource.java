@@ -63,9 +63,7 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
             try {
                 try {
                     Thread.currentThread().getContextClassLoader().loadClass(xaDataSource);
-                } catch (final ClassNotFoundException cnfe) {
-                    setJndiXaDataSource(xaDataSource);
-                } catch (final NoClassDefFoundError ncdfe) {
+                } catch (final ClassNotFoundException | NoClassDefFoundError cnfe) {
                     setJndiXaDataSource(xaDataSource);
                 }
             } catch (final Throwable th) {
@@ -87,9 +85,7 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
     private void registerAsMbean(final String name) {
         try {
             jmxDs = new JMXBasicDataSource(name, this);
-        } catch (final Exception e) {
-            jmxDs = null;
-        } catch (final NoClassDefFoundError ncdfe) { // OSGi
+        } catch (final Exception | NoClassDefFoundError e) {
             jmxDs = null;
         }
     }

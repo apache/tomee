@@ -71,8 +71,6 @@ public class MulticastConnectionFactory implements ConnectionFactory {
         try {
             serviceURI = unwrap(serviceURI); // cut group:
             serviceURI = unwrap(serviceURI); // cut ejb:
-        } catch (URISyntaxException e) {
-            throw new IllegalArgumentException("Invalid ejb service uri " + serviceURI.toString(), e);
         } catch (Exception e) {
             throw new IllegalArgumentException("Invalid ejb service uri " + serviceURI.toString(), e);
         }

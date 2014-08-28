@@ -75,9 +75,7 @@ public class DynamicMBeanWrapper implements DynamicMBean, MBeanRegistration {
             OPENEJB_API_TO_JAVAX.put(ManagedAttribute.class, (Class<? extends Annotation>) loader.loadClass("javax.management.ManagedAttribute"));
             OPENEJB_API_TO_JAVAX.put(NotificationInfo.class, (Class<? extends Annotation>) loader.loadClass("javax.management.NotificationInfo"));
             OPENEJB_API_TO_JAVAX.put(NotificationInfos.class, (Class<? extends Annotation>) loader.loadClass("javax.management.NotificationInfos"));
-        } catch (final ClassNotFoundException cnfe) {
-            // ignored
-        } catch (final NoClassDefFoundError ncdfe) {
+        } catch (final ClassNotFoundException | NoClassDefFoundError cnfe) {
             // ignored
         }
     }
@@ -347,11 +345,7 @@ public class DynamicMBeanWrapper implements DynamicMBean, MBeanRegistration {
             Thread.currentThread().setContextClassLoader(classloader);
             try {
                 return getters.get(attribute).invoke(instance);
-            } catch (final IllegalArgumentException e) {
-                logger.error("can't get " + attribute + " value", e);
-            } catch (final IllegalAccessException e) {
-                logger.error("can't get " + attribute + " value", e);
-            } catch (final InvocationTargetException e) {
+            } catch (final IllegalArgumentException | InvocationTargetException | IllegalAccessException e) {
                 logger.error("can't get " + attribute + " value", e);
             } finally {
                 Thread.currentThread().setContextClassLoader(oldCl);
@@ -369,11 +363,7 @@ public class DynamicMBeanWrapper implements DynamicMBean, MBeanRegistration {
             Thread.currentThread().setContextClassLoader(classloader);
             try {
                 setters.get(attribute.getName()).invoke(instance, attribute.getValue());
-            } catch (final IllegalArgumentException e) {
-                logger.error("can't set " + attribute + " value", e);
-            } catch (final IllegalAccessException e) {
-                logger.error("can't set " + attribute + " value", e);
-            } catch (final InvocationTargetException e) {
+            } catch (final IllegalArgumentException | InvocationTargetException | IllegalAccessException e) {
                 logger.error("can't set " + attribute + " value", e);
             } finally {
                 Thread.currentThread().setContextClassLoader(oldCl);
@@ -419,11 +409,7 @@ public class DynamicMBeanWrapper implements DynamicMBean, MBeanRegistration {
             Thread.currentThread().setContextClassLoader(classloader);
             try {
                 return operations.get(actionName).invoke(instance, params);
-            } catch (final IllegalArgumentException e) {
-                logger.error(actionName + "can't be invoked", e);
-            } catch (final IllegalAccessException e) {
-                logger.error(actionName + "can't be invoked", e);
-            } catch (final InvocationTargetException e) {
+            } catch (final IllegalArgumentException | InvocationTargetException | IllegalAccessException e) {
                 logger.error(actionName + "can't be invoked", e);
             } finally {
                 Thread.currentThread().setContextClassLoader(oldCl);

@@ -49,15 +49,9 @@ public class TomEEFacesConfigResourceProviderFactory extends DefaultFacesConfigR
             } else {
                 returnValue = resolveFacesConfigResourceProviderFromService(externalContext);
             }
-        } catch (final ClassNotFoundException e) {
+        } catch (final ClassNotFoundException | NoClassDefFoundError e) {
             // ignore
-        } catch (final NoClassDefFoundError e) {
-            // ignore
-        } catch (final InstantiationException e) {
-            getLogger().log(Level.SEVERE, "", e);
-        } catch (final IllegalAccessException e) {
-            getLogger().log(Level.SEVERE, "", e);
-        } catch (final InvocationTargetException e) {
+        } catch (final InstantiationException | InvocationTargetException | IllegalAccessException e) {
             getLogger().log(Level.SEVERE, "", e);
         } catch (final PrivilegedActionException e) {
             throw new FacesException(e);

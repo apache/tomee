@@ -128,9 +128,7 @@ public class WebContext {
             creationalContext = null;
             try {
                 o = beanClass.newInstance();
-            } catch (final InstantiationException e) {
-                throw new OpenEJBException(e);
-            } catch (final IllegalAccessException e) {
+            } catch (final InstantiationException | IllegalAccessException e) {
                 throw new OpenEJBException(e);
             }
         } else {

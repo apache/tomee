@@ -64,8 +64,6 @@ public class ConfigUtils {
                     if (file != null && file.exists() && file.isFile()) {
                         return file.getAbsolutePath();
                     }
-                } catch (final FileNotFoundException ignored) {
-                    // no-op
                 } catch (final IOException ignored) {
                     // no-op
                 }
@@ -78,8 +76,6 @@ public class ConfigUtils {
                     if (file != null && file.exists() && file.isFile()) {
                         return file.getAbsolutePath();
                     }
-                } catch (final FileNotFoundException ignored) {
-                    // no-op
                 } catch (final IOException ignored) {
                     // no-op
                 }

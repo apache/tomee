@@ -91,8 +91,6 @@ public class EjbRpcProvider extends RPCProvider {
             Object result = container.invoke(ejbDeployment.getDeploymentID(), InterfaceType.SERVICE_ENDPOINT, callInterface, operation.getMethod(), arguments, null);
 
             interceptor.createResult(result);
-        } catch (InvalidateReferenceException e) {
-            interceptor.createExceptionResult(e.getCause());
         } catch (ApplicationException e) {
             interceptor.createExceptionResult(e.getCause());
         } catch (Throwable throwable) {

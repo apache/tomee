@@ -394,9 +394,7 @@ public class GeronimoConnectionManagerFactory {
                 if (current instanceof AbstractSinglePoolConnectionInterceptor) {
                     try {
                         foundLock = (ReadWriteLock) AbstractSinglePoolConnectionInterceptor.class.getField("resizeLock").get(current);
-                    } catch (final IllegalAccessException e) {
-                        // no-op
-                    } catch (final NoSuchFieldException e) {
+                    } catch (final IllegalAccessException | NoSuchFieldException e) {
                         // no-op
                     }
                     break;

@@ -1243,9 +1243,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                     final Class target = classLoader.loadClass(injection.getInjectionTargetClass().trim());
                     final Class type = IntrospectionSupport.getPropertyType(target, injection.getInjectionTargetName().trim());
                     return type.getName();
-                } catch (final ClassNotFoundException e) {
-                    // ignore
-                } catch (final NoSuchFieldException e) {
+                } catch (final ClassNotFoundException | NoSuchFieldException e) {
                     // ignore
                 }
             }

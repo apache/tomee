@@ -567,14 +567,7 @@ public class MultipointServer {
                     if (key.isWritable())
                         doWrite(key);
 
-                } catch (CancelledKeyException ex) {
-                    synchronized (connect) {
-                        final Session session = (Session) key.attachment();
-                        if (session.state != State.CLOSED) {
-                            close(key);
-                        }
-                    }
-                } catch (ClosedChannelException ex) {
+                } catch (CancelledKeyException | ClosedChannelException ex) {
                     synchronized (connect) {
                         final Session session = (Session) key.attachment();
                         if (session.state != State.CLOSED) {

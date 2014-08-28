@@ -241,16 +241,7 @@ public class CheckClasses extends ValidationBase {
                     klass.toString();
                 }
             }
-        } catch (final ClassNotFoundException e) {
-            /*
-            # 0 - Referring Class name
-            # 1 - Dependent Class name
-            # 2 - Element (home, ejb-class, remote)
-            # 3 - Bean name
-            */
-            final String missingClass = e.getMessage();
-            fail(b, "missing.dependent.class", className, missingClass, type, b.getEjbName());
-        } catch (final NoClassDefFoundError e) {
+        } catch (final ClassNotFoundException | NoClassDefFoundError e) {
             /*
             # 0 - Referring Class name
             # 1 - Dependent Class name

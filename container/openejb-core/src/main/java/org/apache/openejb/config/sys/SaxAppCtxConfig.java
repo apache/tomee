@@ -131,9 +131,7 @@ public class SaxAppCtxConfig {
                 if (file.exists()) {
                     try {
                         parse(module, new InputSource(new FileInputStream(file)), envEntriesDeployer, beanPropertiesDeployer);
-                    } catch (final ParserConfigurationException e) {
-                        throw new SAXException(e);
-                    } catch (final IOException e) {
+                    } catch (final ParserConfigurationException | IOException e) {
                         throw new SAXException(e);
                     }
                 } else { // try in the classpath
@@ -143,9 +141,7 @@ public class SaxAppCtxConfig {
                         if (is != null) {
                             try {
                                 parse(module, new InputSource(is), envEntriesDeployer, beanPropertiesDeployer);
-                            } catch (final ParserConfigurationException e) {
-                                throw new SAXException(e);
-                            } catch (final IOException e) {
+                            } catch (final ParserConfigurationException | IOException e) {
                                 throw new SAXException(e);
                             }
                         } else {

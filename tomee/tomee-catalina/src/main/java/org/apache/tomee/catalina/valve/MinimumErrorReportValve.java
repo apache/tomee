@@ -58,9 +58,7 @@ public class MinimumErrorReportValve extends ErrorReportValve {
                         "</body>\n" +
                         "</html>\n");
             }
-        } catch (final IOException e) {
-            // Ignore
-        } catch (final IllegalStateException e) {
+        } catch (final IOException | IllegalStateException e) {
             // Ignore
         }
     }

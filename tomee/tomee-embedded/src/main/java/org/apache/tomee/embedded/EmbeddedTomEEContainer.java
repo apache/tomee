@@ -164,10 +164,7 @@ public final class EmbeddedTomEEContainer extends EJBContainer {
                 }
 
                 return tomEEContainer;
-            } catch (final OpenEJBException e) {
-                tomEEContainer.close();
-                throw new EJBException(e);
-            } catch (final MalformedURLException e) {
+            } catch (final OpenEJBException | MalformedURLException e) {
                 tomEEContainer.close();
                 throw new EJBException(e);
             } catch (final ValidationException ve) {

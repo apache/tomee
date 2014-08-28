@@ -244,10 +244,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
         } finally {
             try {
                 afterInvoke(txPolicy, callContext);
-            } catch (final SystemException e) {
-                callContext.setDiscardInstance(true);
-                throw e;
-            } catch (final RuntimeException e) {
+            } catch (final SystemException | RuntimeException e) {
                 callContext.setDiscardInstance(true);
                 throw e;
             }

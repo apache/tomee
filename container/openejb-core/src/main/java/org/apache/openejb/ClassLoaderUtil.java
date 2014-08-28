@@ -460,10 +460,8 @@ public class ClassLoaderUtil {
             } else {
                 logger.error("Unable to clear Sun JarFileFactory cache after 5 attempts", e);
             }
-        } catch (final ClassNotFoundException e) {
+        } catch (final ClassNotFoundException | NoSuchFieldException e) {
             // not a sun vm
-        } catch (final NoSuchFieldException e) {
-            // different version of sun vm?
         } catch (final Throwable e) {
             logger.error("Unable to clear Sun JarFileFactory cache", e);
         }
