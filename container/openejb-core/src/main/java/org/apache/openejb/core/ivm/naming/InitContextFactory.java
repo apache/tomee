@@ -19,7 +19,6 @@ package org.apache.openejb.core.ivm.naming;
 
 import org.apache.openejb.EnvProps;
 import org.apache.openejb.OpenEJB;
-import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
