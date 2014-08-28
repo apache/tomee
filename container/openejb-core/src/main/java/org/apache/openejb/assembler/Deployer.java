@@ -25,12 +25,18 @@ import org.apache.openejb.assembler.classic.AppInfo;
 import java.util.Collection;
 import java.util.Properties;
 
-// The signature of this intf must never change without caution
+// The signature of this interface must never change without caution
 // it is used in many tools either internal or external (intellij idea)
 public interface Deployer {
     String FILENAME = "filename";
     String ALT_DD = "altDD";
 
+    /**
+     * Returns a unique file per runtime. Clients can test for the existence of this file
+     * to determine if the deployer is on the local machine.
+     *
+     * @return String - The canonical pathname
+     */
     String getUniqueFile();
 
     Collection<AppInfo> getDeployedApps();

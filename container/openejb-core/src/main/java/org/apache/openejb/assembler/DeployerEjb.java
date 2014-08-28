@@ -106,7 +106,7 @@ public class DeployerEjb implements Deployer {
                     throw new OpenEJBRuntimeException(e);
                 }
             } else {
-                throw new OpenEJBRuntimeException("can't create unique file, please set java.io.tmpdir to a writable folder or create work folder", e);
+                throw new OpenEJBRuntimeException("cannot create unique file, please set java.io.tmpdir to a writable folder or create work folder", e);
             }
         }
         uniqueFile = unique;
@@ -272,14 +272,14 @@ public class DeployerEjb implements Deployer {
         }
     }
 
-    private void saveIfNeeded(Properties properties, File file, AppInfo appInfo) {
+    private void saveIfNeeded(final Properties properties, final File file, final AppInfo appInfo) {
         if (SAVE_DEPLOYMENTS || "true".equalsIgnoreCase(properties.getProperty(OPENEJB_DEPLOYER_SAVE_DEPLOYMENTS, "false"))) {
             appInfo.properties.setProperty("save-deployment","true");
             saveDeployment(file, true);
         }
     }
 
-    private static File copyBinaries(final Properties props) throws OpenEJBException {
+    private synchronized File copyBinaries(final Properties props) throws OpenEJBException {
         final File dump = ProvisioningResolver.cacheFile(props.getProperty(OPENEJB_PATH_BINARIES, "dump.war"));
         if (dump.exists()) {
             Files.delete(dump);
@@ -314,7 +314,7 @@ public class DeployerEjb implements Deployer {
             config = null;
         }
         if (config == null || !config.getParentFile().exists()) {
-            LOGGER.info("can't save the added app because the conf folder doesn't exist, it will not be present next time you'll start");
+            LOGGER.info("Cannot save the added app because the conf folder does not exist, it will not be present on a restart");
             return;
         }
 
@@ -359,7 +359,7 @@ public class DeployerEjb implements Deployer {
             os = IO.write(config);
             JaxbOpenejb.marshal(AdditionalDeployments.class, additionalDeployments, os);
         } catch (final Exception e) {
-            LOGGER.error("can't save the added app, will not be present next time you'll start", e);
+            LOGGER.error("cannot save the added app, will not be present next time you'll start", e);
         } finally {
             IO.close(os);
         }
