@@ -132,7 +132,7 @@ public final class ApplicationComposers {
     private ThreadContext previous;
     private MockHttpSession session;
     private MockServletContext servletContext;
-    private Collection<String> globalJndiEntries = new ArrayList<String>();
+    private final Collection<String> globalJndiEntries = new ArrayList<String>();
 
     public ApplicationComposers(final Class<?> klass, final Object... additionalModules) {
         testClass = klass;
@@ -814,10 +814,16 @@ public final class ApplicationComposers {
                 // no-op
             }
 
-            final Context context = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
-            for (final String entry : globalJndiEntries) {
-                context.unbind(entry);
+            final ContainerSystem component = SystemInstance.get().getComponent(ContainerSystem.class);
+
+            if (null != component) {
+                final Context context = component.getJNDIContext();
+
+                for (final String entry : globalJndiEntries) {
+                    context.unbind(entry);
+                }
             }
+
             globalJndiEntries.clear();
 
             try {

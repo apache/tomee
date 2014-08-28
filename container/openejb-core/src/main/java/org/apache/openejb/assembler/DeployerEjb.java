@@ -173,7 +173,7 @@ public class DeployerEjb implements Deployer {
             AUTO_DEPLOY.set(autoDeploy);
             try {
                 final AppInfo appInfo = SystemInstance.get().getComponent(WebAppDeployer.class)
-                        .deploy(host, contextRoot(properties, file.getAbsolutePath()), file);
+                    .deploy(host, contextRoot(properties, file.getAbsolutePath()), file);
                 saveIfNeeded(properties, file, appInfo);
                 return appInfo;
             } finally {
@@ -273,7 +273,8 @@ public class DeployerEjb implements Deployer {
     }
 
     private void saveIfNeeded(final Properties properties, final File file, final AppInfo appInfo) {
-        if (SAVE_DEPLOYMENTS || "true".equalsIgnoreCase(properties.getProperty(OPENEJB_DEPLOYER_SAVE_DEPLOYMENTS, "false"))) {
+        if ((SAVE_DEPLOYMENTS && null == properties.getProperty(OPENEJB_DEPLOYER_SAVE_DEPLOYMENTS))
+            || "true".equalsIgnoreCase(properties.getProperty(OPENEJB_DEPLOYER_SAVE_DEPLOYMENTS, "false"))) {
             appInfo.properties.setProperty("save-deployment", "true");
             saveDeployment(file, true);
         }
@@ -402,15 +403,21 @@ public class DeployerEjb implements Deployer {
     }
 
     private void reload(final AppInfo info) {
+
         if (info.webAppAlone) {
-            SystemInstance.get().getComponent(WebAppDeployer.class).reload(info.path);
-        } else {
-            try {
-                assembler.destroyApplication(info);
-                assembler.createApplication(info);
-            } catch (final Exception e) {
-                throw new OpenEJBRuntimeException(e);
+            final WebAppDeployer component = SystemInstance.get().getComponent(WebAppDeployer.class);
+
+            if (null != component) {
+                component.reload(info.path);
+                return;
             }
+        }
+
+        try {
+            assembler.destroyApplication(info);
+            assembler.createApplication(info);
+        } catch (final Exception e) {
+            throw new OpenEJBRuntimeException(e);
         }
     }
 }
