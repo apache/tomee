@@ -83,17 +83,22 @@ public class DeployerEjbTest {
 
     @Before
     public void before() throws Exception {
+        removeDeployments();
+        System.setProperty(OPENEJB_DEPLOYER_SAVE_DEPLOYMENTS, Boolean.TRUE.toString());
+    }
+
+    private void removeDeployments() throws IOException {
         final File deployments = new File(SystemInstance.get().getBase().getDirectory("conf", false), "deployments.xml");
         if (deployments.exists()) {
             Files.delete(deployments);
         }
-        System.setProperty(OPENEJB_DEPLOYER_SAVE_DEPLOYMENTS, Boolean.TRUE.toString());
     }
 
     @After
     public void after() throws Exception {
         System.setProperty(OPENEJB_DEPLOYER_SAVE_DEPLOYMENTS, Boolean.FALSE.toString());
         OpenEJB.destroy();
+        removeDeployments();
     }
 
     private Deployer getDeployer() throws NamingException {
