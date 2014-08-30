@@ -32,7 +32,6 @@ import org.apache.openejb.core.interceptor.InterceptorStack;
 import org.apache.openejb.core.ivm.ContextHandler;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
 import org.apache.openejb.core.timer.EjbTimerService;
-import org.apache.openejb.core.timer.EjbTimerServiceImpl;
 import org.apache.openejb.core.transaction.EjbTransactionUtil;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.core.transaction.TransactionPolicyFactory;
