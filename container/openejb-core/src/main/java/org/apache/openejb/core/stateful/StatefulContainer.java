@@ -382,10 +382,7 @@ public class StatefulContainer implements RpcContainer {
             return true;
         }
         final Index<EntityManagerFactory, Map> factories = beanContext.getExtendedEntityManagerFactories();
-        if (factories != null && factories.size() > 0) {
-            return false;
-        }
-        return beanContext.isPassivable();
+        return !(factories != null && factories.size() > 0) && beanContext.isPassivable();
     }
 
     protected ProxyInfo createEJBObject(final BeanContext beanContext, final Method callMethod, final Object[] args, final InterfaceType interfaceType) throws OpenEJBException {

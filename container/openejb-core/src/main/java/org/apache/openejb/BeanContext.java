@@ -101,7 +101,6 @@ public class BeanContext extends DeploymentContext {
     public static final String USER_INTERCEPTOR_KEY = "org.apache.openejb.default.system.interceptors";
     public static final String USER_INTERCEPTOR_SEPARATOR = ",| |;";
 
-    private final boolean isPassivatingScope = true;
     private ConstructorInjectionBean<Object> constructorInjectionBean;
     private final boolean passivable;
 
@@ -1767,7 +1766,7 @@ public class BeanContext extends DeploymentContext {
     public boolean isPassivatingScope() {
         final CdiEjbBean<?> bean = get(CdiEjbBean.class);
         if (bean == null) {
-            return isPassivatingScope;
+            return true;
         }
 
         if (ConversationScoped.class == bean.getScope()) {
@@ -1778,7 +1777,7 @@ public class BeanContext extends DeploymentContext {
             }
         }
 
-        return isPassivatingScope;
+        return true;
     }
 
     public boolean isPassivable() {
@@ -1786,8 +1785,8 @@ public class BeanContext extends DeploymentContext {
     }
 
     public void stop() {
-        if (ejbTimerService != null && ejbTimerService instanceof EjbTimerServiceImpl) {
-            ((EjbTimerServiceImpl) ejbTimerService).stop();
+        if (ejbTimerService != null) {
+            ejbTimerService.stop();
         }
     }
 
