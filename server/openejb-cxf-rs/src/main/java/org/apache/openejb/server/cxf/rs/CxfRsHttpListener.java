@@ -103,6 +103,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 
+import static java.util.Arrays.asList;
+
 public class CxfRsHttpListener implements RsHttpListener {
 
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_RS, CxfRsHttpListener.class);
@@ -116,6 +118,7 @@ public class CxfRsHttpListener implements RsHttpListener {
     public static final String RESOURCE_COMPARATOR_KEY = CXF_JAXRS_PREFIX + "resourceComparator";
 
     private static final String GLOBAL_PROVIDERS = SystemInstance.get().getProperty(PROVIDERS_KEY);
+    private static final boolean TRY_STATIC_RESOURCES = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.jaxrs.static-first", "true"));
 
     private static final Map<String, String> STATIC_CONTENT_TYPES;
 
@@ -132,6 +135,7 @@ public class CxfRsHttpListener implements RsHttpListener {
     static {
         STATIC_CONTENT_TYPES = new HashMap<>();
         STATIC_CONTENT_TYPES.put("html", "text/html");
+        STATIC_CONTENT_TYPES.put("htm", "text/html");
         STATIC_CONTENT_TYPES.put("xhtml", "text/html");
         STATIC_CONTENT_TYPES.put("txt", "text/plain");
         STATIC_CONTENT_TYPES.put("css", "text/css");
@@ -149,11 +153,6 @@ public class CxfRsHttpListener implements RsHttpListener {
 
     @Override
     public void onMessage(final HttpRequest httpRequest, final HttpResponse httpResponse) throws Exception {
-        if (matchPath(httpRequest)) {
-            serveStaticContent(httpRequest, httpResponse, httpRequest.getPathInfo());
-            return;
-        }
-
         // fix the address (to manage multiple connectors)
         if (HttpRequestImpl.class.isInstance(httpRequest)) {
             final HttpRequestImpl requestImpl = HttpRequestImpl.class.cast(httpRequest);
@@ -162,15 +161,20 @@ public class CxfRsHttpListener implements RsHttpListener {
         }
 
         String baseURL = BaseUrlHelper.getBaseURL(httpRequest);
-
         if (!baseURL.endsWith("/")) {
             baseURL += "/";
         }
-
         httpRequest.setAttribute("org.apache.cxf.transport.endpoint.address", baseURL);
-        if (null == destination.getRegistry().checkRestfulRequest(httpRequest.getRequestURL().toString())) {
-            serveStaticContent(httpRequest, httpResponse, httpRequest.getPathInfo());
-            return;
+
+        boolean matchedStatic = false;
+        if (TRY_STATIC_RESOURCES || (matchedStatic = matchPath(httpRequest))) {
+            final String pathInfo = httpRequest.getPathInfo();
+            if (serveStaticContent(httpRequest, httpResponse, pathInfo)) {
+                if (matchedStatic) { // we should have gotten the resource
+                    throw new ServletException("Static resource " + pathInfo + " is not available");
+                }
+                return; // ok that's a surely rest service
+            }
         }
 
         // delegate invocation
@@ -202,12 +206,20 @@ public class CxfRsHttpListener implements RsHttpListener {
         return false;
     }
 
-    protected void serveStaticContent(final HttpServletRequest request,
+    protected boolean serveStaticContent(final HttpServletRequest request,
                                       final HttpServletResponse response,
                                       final String pathInfo) throws ServletException {
-        final InputStream is = request.getServletContext().getResourceAsStream(pathInfo);
+        InputStream is = request.getServletContext().getResourceAsStream(pathInfo);
+        if (is == null && "/".equals(pathInfo)) {
+            for (final String n : asList("/index.html", "/index.htm")) {
+                is = request.getServletContext().getResourceAsStream(n);
+                if (is != null) {
+                    break;
+                }
+            }
+        }
         if (is == null) {
-            throw new ServletException("Static resource " + pathInfo + " is not available");
+            return false;
         }
         try {
             final int ind = pathInfo.lastIndexOf(".");
@@ -221,10 +233,11 @@ public class CxfRsHttpListener implements RsHttpListener {
             final ServletOutputStream os = response.getOutputStream();
             IOUtils.copy(is, os);
             os.flush();
+            response.setStatus(HttpURLConnection.HTTP_OK);
         } catch (final IOException ex) {
             throw new ServletException("Static resource " + pathInfo + " can not be written to the output stream");
         }
-
+        return true;
     }
 
     @Override
