@@ -70,6 +70,13 @@ public class DeployerEjbTest {
                 file.deleteOnExit();
             }
         }
+
+        try { // will make other tests failling otherwise since it would leak config
+            Files.delete(SystemInstance.get().getBase().getDirectory("conf", false));
+            Files.delete(SystemInstance.get().getBase().getDirectory("apps", false));
+        } catch (final IOException e) {
+            // no-op
+        }
     }
 
     @Module
