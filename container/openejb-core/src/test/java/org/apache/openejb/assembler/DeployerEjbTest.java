@@ -70,6 +70,22 @@ public class DeployerEjbTest {
                 file.deleteOnExit();
             }
         }
+
+
+        final FileUtils base = SystemInstance.get().getBase();
+        if (null != base) {
+            try {
+                Files.delete(base.getDirectory("apps", false));
+            } catch (final Exception e) {
+                //Ignore
+            }
+            try {
+                Files.delete(base.getDirectory("conf", false));
+            } catch (final Exception e) {
+                //Ignore
+            }
+        }
+
     }
 
     @Module
