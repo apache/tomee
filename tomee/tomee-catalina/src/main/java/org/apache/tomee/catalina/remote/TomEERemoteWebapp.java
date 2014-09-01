@@ -41,7 +41,7 @@ public class TomEERemoteWebapp extends IgnoredStandardContext {
         setName(CONTEXT_NAME);
         setPath(CONTEXT_NAME);
         setLoader(new ServerClassLoaderLoader(this));
-        addValve(new OpenEJBValve()); // ensure security context is resetted (ThreadLocal) for each request
+        addValve(new OpenEJBValve()); // Ensure security context is reset (ThreadLocal) for each request
     }
 
     @Override

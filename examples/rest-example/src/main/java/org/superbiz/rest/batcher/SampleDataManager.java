@@ -66,10 +66,10 @@ public class SampleDataManager {
     // a bit ugly but at least we clean data
     @Schedule(second = "0", minute = "30", hour = "*", persistent = false)
     private void cleanData() {
-        LOGGER.info("cleaning data");
+        LOGGER.info("Cleaning data");
         deleteAll();
         createSomeData();
-        LOGGER.info("data resetted");
+        LOGGER.info("Data reset");
     }
 
     private void deleteAll() {
