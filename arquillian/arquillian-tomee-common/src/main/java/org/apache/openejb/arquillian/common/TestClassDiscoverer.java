@@ -19,65 +19,130 @@ package org.apache.openejb.arquillian.common;
 
 import org.apache.openejb.config.AdditionalBeanDiscoverer;
 import org.apache.openejb.config.AppModule;
+import org.apache.openejb.config.ConnectorModule;
 import org.apache.openejb.config.EjbModule;
+import org.apache.openejb.config.WebModule;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.ManagedBean;
 import org.apache.openejb.jee.TransactionType;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.xbean.finder.IAnnotationFinder;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import static java.util.Arrays.asList;
 
 public class TestClassDiscoverer implements AdditionalBeanDiscoverer {
     @Override
     public AppModule discover(final AppModule module) {
+        final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+
+        final Set<Class<? extends Annotation>> testMarkers = new HashSet<Class<? extends Annotation>>();
+        for (final String s : asList("org.junit.Test", "org.testng.annotations.Test")) {
+            try {
+                testMarkers.add((Class<? extends Annotation>) contextClassLoader.loadClass(s));
+            } catch (final Throwable e) {
+                // no-op: deployment = false
+            }
+        }
+
+        final Set<Class<?>> testClasses = new HashSet<Class<?>>();
+        if (!testMarkers.isEmpty()) {
+            addTests(testMarkers, module.getEarLibFinder(), testClasses);
+            for (final WebModule web : module.getWebModules()) {
+                addTests(testMarkers, web.getFinder(), testClasses);
+            }
+            for (final EjbModule ejb : module.getEjbModules()) {
+                addTests(testMarkers, ejb.getFinder(), testClasses);
+            }
+            for (final ConnectorModule connector : module.getConnectorModules()) {
+                addTests(testMarkers, connector.getFinder(), testClasses);
+            }
+        }
+
+        // keep it since CukeSpace doesn't rely on JUnit or TestNG @Test so it stays mandatory
         final File file = module.getFile();
         final String line = findTestName(file, module.getClassLoader());
-        if (line == null) {
-            return module;
-        }
-
-        final String name;
-        final int endIndex = line.indexOf('#');
-        if (endIndex > 0) {
-            name = line.substring(0, endIndex);
-            if (file != null && !file.getName().equals(line.substring(endIndex + 1, line.length()))) {
-                // skip
-                return module;
+        if (line != null) {
+            String name;
+            final int endIndex = line.indexOf('#');
+            if (endIndex > 0) {
+                name = line.substring(0, endIndex);
+                if (file != null && !file.getName().equals(line.substring(endIndex + 1, line.length()))) {
+                    name = null;
+                }
+            } else {
+                name = line;
             }
-        } else {
-            name = line;
-        }
 
-        try {
-            // call some reflection methods to make it fail if some dep are missing...
-            Class<?> current = module.getClassLoader().loadClass(name);
-            while (current != null) {
-                current.getDeclaredFields();
-                current.getDeclaredMethods();
-                current.getCanonicalName();
-                current = current.getSuperclass();
+            if (name != null) {
+                try {
+                    // call some reflection methods to make it fail if some dep are missing...
+                    testClasses.add(module.getClassLoader().loadClass(name));
+                } catch (final Throwable e) {
+                    // no-op
+                }
             }
-        } catch (final ClassNotFoundException e) {
-            return module;
-        } catch (final NoClassDefFoundError ncdfe) {
-            return module;
         }
 
-        final EjbJar ejbJar = new EjbJar();
-        final OpenejbJar openejbJar = new OpenejbJar();
-        final String ejbName = module.getModuleId() + "_" + name;
-        final ManagedBean bean = ejbJar.addEnterpriseBean(new ManagedBean(ejbName, name, true));
-        bean.localBean();
-        bean.setTransactionType(TransactionType.BEAN);
-        final EjbDeployment ejbDeployment = openejbJar.addEjbDeployment(bean);
-        ejbDeployment.setDeploymentId(ejbName);
-        module.getEjbModules().add(new EjbModule(ejbJar, openejbJar));
+        final Iterator<Class<?>> it = testClasses.iterator();
+        while (it.hasNext()) {
+            try {
+                // call some reflection methods to make it fail if some dep are missing...
+                Class<?> current = it.next();
+                while (current != null) {
+                    current.getDeclaredFields();
+                    current.getDeclaredMethods();
+                    current.getCanonicalName();
+                    current = current.getSuperclass();
+                    // TODO: more validations
+                }
+            } catch (final NoClassDefFoundError ncdfe) {
+                it.remove();
+            }
+        }
+
+        for (final Class<?> test : testClasses) {
+            final EjbJar ejbJar = new EjbJar();
+            final OpenejbJar openejbJar = new OpenejbJar();
+            final String name = test.getName();
+            final String ejbName = module.getModuleId() + "_" + name;
+            final ManagedBean bean = ejbJar.addEnterpriseBean(new ManagedBean(ejbName, name, true));
+            bean.localBean();
+            bean.setTransactionType(TransactionType.BEAN);
+            final EjbDeployment ejbDeployment = openejbJar.addEjbDeployment(bean);
+            ejbDeployment.setDeploymentId(ejbName);
+            module.getEjbModules().add(new EjbModule(ejbJar, openejbJar));
+        }
+
         return module;
+    }
+
+    private static void addTests(final Set<Class<? extends Annotation>> testMarkers, final IAnnotationFinder finder, final Set<Class<?>> testClasses) {
+        if (finder == null) {
+            return;
+        }
+        for (final Class<? extends Annotation> marker : testMarkers) {
+            final List<Method> annotatedMethods = finder.findAnnotatedMethods(marker);
+            for (final Method m : annotatedMethods) {
+                try {
+                    testClasses.add(m.getDeclaringClass());
+                } catch (final NoClassDefFoundError e) {
+                    // no-op
+                }
+            }
+        }
     }
 
     private String findTestName(final File folder, final ClassLoader classLoader) {
