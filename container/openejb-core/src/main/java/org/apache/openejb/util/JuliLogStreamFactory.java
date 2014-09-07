@@ -123,8 +123,8 @@ public class JuliLogStreamFactory implements LogStreamFactory {
             }
             value.addLogger(rootLogger);
             Reflections.invokeByReflection(Reflections.get(value, "systemContext"), "addLocalLogger", new Class<?>[]{Logger.class}, new Object[]{rootLogger});
-            Reflections.invokeByReflection(Logger.global, "setLogManager", new Class<?>[]{LogManager.class}, new Object[]{value});
-            value.addLogger(Logger.global);
+            Reflections.invokeByReflection(Logger.getGlobal(), "setLogManager", new Class<?>[]{LogManager.class}, new Object[]{value});
+            value.addLogger(Logger.getGlobal());
         } catch (final Throwable e) {
             // no-op
         }
