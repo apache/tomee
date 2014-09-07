@@ -53,8 +53,8 @@ public class OpenEJBExtension implements LoadableExtension {
         final Logger logger = Logger.getLogger(name);
         final Handler[] handlers = logger.getHandlers();
         if (handlers != null) {
-            for (int i = 0; i < handlers.length; i++) {
-                logger.removeHandler(handlers[i]);
+            for (final Handler handler : handlers) {
+                logger.removeHandler(handler);
             }
         }
         logger.setUseParentHandlers(false);
