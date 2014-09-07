@@ -18,10 +18,17 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.jee.Beans;
+import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.Handler;
+import org.apache.openejb.jee.HandlerChain;
+import org.apache.openejb.jee.PortComponent;
+import org.apache.openejb.jee.Servlet;
+import org.apache.openejb.jee.SessionBean;
+import org.apache.openejb.jee.WebserviceDescription;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.xbean.finder.Annotated;
 import org.apache.xbean.finder.AnnotationFinder;
-import org.apache.xbean.finder.AsynchronousInheritanceAnnotationFinder;
 import org.apache.xbean.finder.IAnnotationFinder;
 import org.apache.xbean.finder.UrlSet;
 import org.apache.xbean.finder.archive.Archive;
@@ -38,16 +45,17 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+
+import static org.apache.openejb.util.Classes.ancestors;
 
 public class FinderFactory {
 
     private static final FinderFactory factory = new FinderFactory();
-    public static final String TOMEE_JAXRS_DEPLOY_UNDECLARED_PROP = "tomee.jaxrs.deploy.undeclared";
-    public static final String ASYNC_SCAN = "openejb.scanning.inheritance.asynchronous";
-    public static final String SKIP_LINK = "openejb.finder.skip.link";
     public static final String FORCE_LINK = "openejb.finder.force.link";
+    private static volatile boolean MODULE_LIMITED = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.finder.module-scoped", "false"));
 
     private static FinderFactory get() {
         final FinderFactory factory = SystemInstance.get().getComponent(FinderFactory.class);
@@ -63,18 +71,27 @@ public class FinderFactory {
     }
 
     public IAnnotationFinder create(final DeploymentModule module) throws Exception {
-        final AnnotationFinder finder;
+        OpenEJBAnnotationFinder finder;
         if (module instanceof WebModule) {
             final WebModule webModule = (WebModule) module;
-            final AnnotationFinder annotationFinder = newFinder(new WebappAggregatedArchive(webModule, webModule.getScannableUrls()));
-            enableFinderOptions(annotationFinder);
-            finder = annotationFinder;
+            finder = newFinder(new WebappAggregatedArchive(webModule, webModule.getScannableUrls()));
+            if (!finder.foundSomething()) { // test case (AppComposer with new WebApp())
+                finder = fallbackAnnotationFinder(module);
+            }
+            finder.link();
         } else if (module instanceof ConnectorModule) {
             final ConnectorModule connectorModule = (ConnectorModule) module;
-            finder = newFinder(new ConfigurableClasspathArchive(connectorModule, connectorModule.getLibraries())).link();
+            finder = newFinder(new ConfigurableClasspathArchive(connectorModule, connectorModule.getLibraries()));
+            if (!finder.foundSomething()) { // test case
+                finder = fallbackAnnotationFinder(module);
+            }
+            finder.link();
         } else if (module instanceof AppModule) {
             final Collection<URL> urls = NewLoaderLogic.applyBuiltinExcludes(new UrlSet(AppModule.class.cast(module).getAdditionalLibraries())).getUrls();
             finder = newFinder(new WebappAggregatedArchive(module.getClassLoader(), module.getAltDDs(), urls));
+            if (!finder.foundSomething()) { // test case
+                finder = fallbackAnnotationFinder(module);
+            }
         } else if (module.getJarLocation() != null) {
             final String location = module.getJarLocation();
             final File file = new File(location);
@@ -97,24 +114,149 @@ public class FinderFactory {
             } else {
                 finder = newFinder(new DebugArchive(new ConfigurableClasspathArchive(module.getClassLoader(), url)));
             }
-            if ("true".equals(SystemInstance.get().getProperty(FORCE_LINK, module.getProperties().getProperty(FORCE_LINK, "false")))) {
-                finder.link();
-            } else {
-                finder.enableMetaAnnotations(); // needed to stay compliant
-                enableSubclassing(finder);
+            if (!finder.foundSomething()) { // test case too, should be removed in absolute. Next else should be hit but if jar location was set we are here.
+                finder = fallbackAnnotationFinder(module);
             }
+            finder.link();
         } else {
-            finder = new AnnotationFinder(new ClassesArchive());
+            // TODO: error. Here it means we'll not find anything so helping a bit (if you hit it outside a test fix it)
+            finder = fallbackAnnotationFinder(module);
         }
 
-        return new ModuleLimitedFinder(finder);
+        return MODULE_LIMITED ? new ModuleLimitedFinder(finder) : finder;
     }
 
-    private static AnnotationFinder newFinder(final Archive archive) {
-        if ("true".equals(SystemInstance.get().getProperty(ASYNC_SCAN, "true"))) {
-            return new AsynchronousInheritanceAnnotationFinder(archive);
+    private OpenEJBAnnotationFinder fallbackAnnotationFinder(DeploymentModule module) {
+        final OpenEJBAnnotationFinder finder = new OpenEJBAnnotationFinder(new ClassesArchive(ensureMinimalClasses(module)));
+        finder.enableMetaAnnotations();
+        return finder;
+    }
+
+    public static Class<?>[] ensureMinimalClasses(final DeploymentModule module) {
+        final Collection<Class<?>> finderClasses = new HashSet<Class<?>>();
+        if (EjbModule.class.isInstance(module)) {
+            final EjbModule ejb = EjbModule.class.cast(module);
+            final EnterpriseBean[] enterpriseBeans = ejb.getEjbJar().getEnterpriseBeans();
+
+            ClassLoader classLoader = ejb.getClassLoader();
+            if (classLoader == null) {
+                classLoader = Thread.currentThread().getContextClassLoader();
+            }
+
+            for (final EnterpriseBean bean : enterpriseBeans) {
+                final String name;
+                if (SessionBean.class.isInstance(bean)) {
+                    final SessionBean sessionBean = SessionBean.class.cast(bean);
+                    if (sessionBean.getProxy() == null) {
+                        name = sessionBean.getEjbClass();
+                    } else {
+                        name = sessionBean.getProxy();
+                    }
+                } else {
+                    name = bean.getEjbClass();
+                }
+                try {
+                    final Class<?> clazz = classLoader.loadClass(name);
+                    finderClasses.addAll(ancestors(clazz));
+                } catch (final ClassNotFoundException e) {
+                    // no-op
+                }
+            }
+            if (ejb.getWebservices() != null) {
+                for (final WebserviceDescription webservice : ejb.getWebservices().getWebserviceDescription()) {
+                    for (final PortComponent port : webservice.getPortComponent()) {
+                        if (port.getHandlerChains() == null) {
+                            continue;
+                        }
+                        for (final HandlerChain handlerChain : port.getHandlerChains().getHandlerChain()) {
+                            for (final Handler handler : handlerChain.getHandler()) {
+                                if (handler.getHandlerClass() != null) {
+                                    try {
+                                        finderClasses.addAll(ancestors(classLoader.loadClass(handler.getHandlerClass())));
+                                    } catch (final ClassNotFoundException e) {
+                                        // no-op
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            for (final org.apache.openejb.jee.Interceptor interceptor : ejb.getEjbJar().getInterceptors()) {
+                try {
+                    finderClasses.addAll(ancestors(classLoader.loadClass(interceptor.getInterceptorClass())));
+                } catch (final ClassNotFoundException e) {
+                    // no-op
+                }
+            }
+
+            final Beans beans = ejb.getBeans();
+            if (beans != null && ejb.getEjbJar() != null) {
+                for (final String name : beans.getManagedClasses()) {
+                    try {
+                        finderClasses.addAll(ancestors(classLoader.loadClass(name)));
+                    } catch (final ClassNotFoundException e) {
+                        // no-op
+                    }
+                }
+                for (final String name : beans.getInterceptors()) {
+                    try {
+                        finderClasses.addAll(ancestors(classLoader.loadClass(name)));
+                    } catch (final ClassNotFoundException e) {
+                        // no-op
+                    }
+                }
+                for (final String name : beans.getAlternativeClasses()) {
+                    try {
+                        finderClasses.addAll(ancestors(classLoader.loadClass(name)));
+                    } catch (final ClassNotFoundException e) {
+                        // no-op
+                    }
+                }
+                for (final String name : beans.getDecorators()) {
+                    try {
+                        finderClasses.addAll(ancestors(classLoader.loadClass(name)));
+                    } catch (final ClassNotFoundException e) {
+                        // no-op
+                    }
+                }
+            }
+        } else if (WebModule.class.isInstance(module)) {
+            final WebModule web = WebModule.class.cast(module);
+            final ClassLoader classLoader = web.getClassLoader();
+            if (web.getWebApp() != null) {
+                for (final Servlet s : web.getWebApp().getServlet()) {
+                    final String servletClass = s.getServletClass();
+                    if (servletClass == null) {
+                        continue;
+                    }
+                    try {
+                        finderClasses.addAll(ancestors(classLoader.loadClass(servletClass)));
+                    } catch (final ClassNotFoundException e) {
+                        // no-op
+                    }
+                }
+                for (final String s : web.getRestClasses()) {
+                    try {
+                        finderClasses.addAll(ancestors(classLoader.loadClass(s)));
+                    } catch (final ClassNotFoundException e) {
+                        // no-op
+                    }
+                }
+                for (final String s : web.getEjbWebServices()) {
+                    try {
+                        finderClasses.addAll(ancestors(classLoader.loadClass(s)));
+                    } catch (final ClassNotFoundException e) {
+                        // no-op
+                    }
+                }
+            }
         }
-        return new AnnotationFinder(archive);
+        return finderClasses.toArray(new Class<?>[finderClasses.size()]);
+    }
+
+    private static OpenEJBAnnotationFinder newFinder(final Archive archive) {
+        return new OpenEJBAnnotationFinder(archive);
     }
 
     public static final class DebugArchive implements Archive {
@@ -145,51 +287,10 @@ public class FinderFactory {
         }
     }
 
-    public static AnnotationFinder enableFinderOptions(final AnnotationFinder annotationFinder) {
-        if (annotationFinder.hasMetaAnnotations()) {
-            annotationFinder.enableMetaAnnotations();
-        }
-        enableSubclassing(annotationFinder);
-
-        return annotationFinder;
-    }
-
-    private static void enableSubclassing(final AnnotationFinder annotationFinder) {
-        if (enableFindSubclasses()) {
-            // for @HandleTypes we need interface impl, impl of abstract classes too
-            annotationFinder.enableFindSubclasses();
-            annotationFinder.enableFindImplementations();
-        }
-    }
-
-    private static boolean enableFindSubclasses() {
-        return SystemInstance.get().getOptions().get(FORCE_LINK, false)
-            || !SystemInstance.get().getOptions().get(SKIP_LINK, false)
-            && (isTomEE() || isJaxRsInstalled() && SystemInstance.get().getOptions().get(TOMEE_JAXRS_DEPLOY_UNDECLARED_PROP, false));
-    }
-
-    public static boolean isTomEE() {
-        try { // since Tomcat 7.0.47
-            FinderFactory.class.getClassLoader().loadClass("javax.websocket.Endpoint");
-            return true;
-        } catch (final Throwable e) {
-            return false;
-        }
-    }
-
-    public static boolean isJaxRsInstalled() {
-        try {
-            FinderFactory.class.getClassLoader().loadClass("org.apache.openejb.server.rest.RsRegistry");
-            return true;
-        } catch (final Throwable e) {
-            return false;
-        }
-    }
-
     public static class ModuleLimitedFinder implements IAnnotationFinder {
-        private final IAnnotationFinder delegate;
+        private final OpenEJBAnnotationFinder delegate;
 
-        public ModuleLimitedFinder(final IAnnotationFinder delegate) {
+        public ModuleLimitedFinder(final OpenEJBAnnotationFinder delegate) {
             this.delegate = delegate;
         }
 
@@ -211,7 +312,7 @@ public class FinderFactory {
         @Override
         public List<Class<?>> findAnnotatedClasses(final Class<? extends Annotation> annotation) {
             try {
-                return filter(delegate.findAnnotatedClasses(annotation), new ClassPredicate<Object>(getAnnotatedClassNames()));
+                return filter(delegate.findAnnotatedClasses(annotation), new ClassPredicate(getAnnotatedClassNames()));
             } catch (final TypeNotPresentException tnpe) {
                 throw handleException(tnpe, annotation);
             }
@@ -243,7 +344,7 @@ public class FinderFactory {
 
         @Override
         public List<Class<?>> findInheritedAnnotatedClasses(final Class<? extends Annotation> annotation) {
-            return filter(delegate.findInheritedAnnotatedClasses(annotation), new ClassPredicate<Object>(getAnnotatedClassNames()));
+            return filter(delegate.findInheritedAnnotatedClasses(annotation), new ClassPredicate(getAnnotatedClassNames()));
         }
 
         @Override
@@ -263,7 +364,7 @@ public class FinderFactory {
 
         @Override
         public List<Class<?>> findClassesInPackage(final String packageName, final boolean recursive) {
-            return filter(delegate.findClassesInPackage(packageName, recursive), new ClassPredicate<Object>(getAnnotatedClassNames()));
+            return filter(delegate.findClassesInPackage(packageName, recursive), new ClassPredicate(getAnnotatedClassNames()));
         }
 
         @Override
@@ -403,6 +504,52 @@ public class FinderFactory {
             protected String name(final Annotated<Field> field) {
                 return field.get().getDeclaringClass().getName();
             }
+        }
+    }
+
+    public static class OpenEJBAnnotationFinder extends AnnotationFinder {
+        private static final String[] JVM_SCANNING_CONFIG = SystemInstance.get().getProperty("openejb.scanning.xbean.jvm", "java.").split(",");
+
+        public OpenEJBAnnotationFinder(final Archive archive) {
+            super(archive);
+        }
+
+        @Override
+        protected boolean isJvm(final String name) {
+            return sharedIsJvm(name);
+        }
+
+        // don't reuse URLClassLoaderFirst one since this one can kill scanning perf
+        // using a raw but efficient impl
+        public static boolean sharedIsJvm(final String name) {
+            for (final String s : JVM_SCANNING_CONFIG) {
+                if (name.startsWith(s)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public boolean foundSomething() {
+            return !classInfos.isEmpty();
+        }
+    }
+
+    public static class DoLoadClassesArchive extends ClassesArchive {
+        public DoLoadClassesArchive(final ClassLoader loader, final Collection<String> classes) {
+            super(load(loader, classes));
+        }
+
+        private static Iterable<Class<?>> load(final ClassLoader loader, final Collection<String> classes) {
+            final Collection<Class<?>> loaded = new ArrayList<Class<?>>(classes.size());
+            for (final String n : classes) {
+                try {
+                    loaded.add(loader.loadClass(n));
+                } catch (final ClassNotFoundException e) {
+                    // no-op
+                }
+            }
+            return loaded;
         }
     }
 }

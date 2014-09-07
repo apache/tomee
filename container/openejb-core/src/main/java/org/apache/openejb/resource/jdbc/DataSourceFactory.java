@@ -83,15 +83,15 @@ public class DataSourceFactory {
         final Properties properties = asProperties(definition);
 
         final boolean flushable = SystemInstance.get().getOptions().get(GLOBAL_FLUSH_PROPERTY,
-            "true".equalsIgnoreCase((String) properties.remove(FLUSHABLE_PROPERTY)));
+                "true".equalsIgnoreCase((String) properties.remove(FLUSHABLE_PROPERTY)));
         final FlushableDataSourceHandler.FlushConfig flushConfig;
         if (flushable) {
             properties.remove("flushable"); // don't let it wrap the delegate again
 
             flushConfig = new FlushableDataSourceHandler.FlushConfig(
-                name, configuredManaged,
-                impl, PropertiesHelper.propertiesToString(properties),
-                maxWaitTime, timeBetweenEvictionRuns, minEvictableIdleTime);
+                    name, configuredManaged,
+                    impl, PropertiesHelper.propertiesToString(properties),
+                    maxWaitTime, timeBetweenEvictionRuns, minEvictableIdleTime);
         } else {
             flushConfig = null;
         }
@@ -124,7 +124,7 @@ public class DataSourceFactory {
         }
 
         final boolean logSql = SystemInstance.get().getOptions().get(GLOBAL_LOG_SQL_PROPERTY,
-            "true".equalsIgnoreCase((String) properties.remove(LOG_SQL_PROPERTY)));
+                "true".equalsIgnoreCase((String) properties.remove(LOG_SQL_PROPERTY)));
         final DataSourceCreator creator = creator(properties.remove(DATA_SOURCE_CREATOR_PROP), logSql);
 
         final boolean useContainerLoader = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.resources.use-container-loader", "true")) && (impl == null || impl.getClassLoader() == DataSourceFactory.class.getClassLoader());
@@ -196,9 +196,9 @@ public class DataSourceFactory {
 
     private static CommonDataSource makeFlushable(final CommonDataSource ds, final FlushableDataSourceHandler.FlushConfig flushConfig) {
         return (CommonDataSource) Proxy.newProxyInstance(
-            Thread.currentThread().getContextClassLoader(),
-            new Class<?>[]{DataSource.class.isInstance(ds) ? DataSource.class : XADataSource.class, Flushable.class},
-            new FlushableDataSourceHandler(ds, flushConfig));
+                Thread.currentThread().getContextClassLoader(),
+                new Class<?>[]{DataSource.class.isInstance(ds) ? DataSource.class : XADataSource.class, Flushable.class},
+                new FlushableDataSourceHandler(ds, flushConfig));
     }
 
     public static void setCreatedWith(final DataSourceCreator creator, final CommonDataSource ds) {
@@ -207,7 +207,7 @@ public class DataSourceFactory {
 
     public static DataSource makeItLogging(final CommonDataSource ds) {
         return (DataSource) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
-            new Class<?>[]{DataSource.class}, new LoggingSqlDataSource(ds));
+                new Class<?>[]{DataSource.class}, new LoggingSqlDataSource(ds));
     }
 
     private static void normalizeJdbcUrl(final Properties properties) {
@@ -256,7 +256,7 @@ public class DataSourceFactory {
         final DataSourceCreator defaultCreator = SystemInstance.get().getComponent(DataSourceCreator.class);
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
         if (creatorName != null && creatorName instanceof String
-            && (defaultCreator == null || !creatorName.equals(defaultCreator.getClass().getName()))) {
+                && (defaultCreator == null || !creatorName.equals(defaultCreator.getClass().getName()))) {
             String clazz = KNOWN_CREATORS.get(creatorName);
             if (clazz == null) {
                 clazz = (String) creatorName;
@@ -271,11 +271,8 @@ public class DataSourceFactory {
             }
         }
         if (defaultCreator instanceof DefaultDataSourceCreator && willBeProxied) {
-            try { // this one is proxiable, not the default one (legacy)
-                return new DbcpDataSourceCreator();
-            } catch (final Throwable e) {
-                LOGGER.error("can't create '" + creatorName + "', the default one will be used: " + defaultCreator, e);
-            }
+            // this one is proxiable, not the default one (legacy)
+            return new DbcpDataSourceCreator();
         }
         return defaultCreator;
     }
@@ -292,7 +289,7 @@ public class DataSourceFactory {
             final String initialPoolSize = properties.getProperty("initialPoolSize");
             final String maxPoolSize = properties.getProperty("maxPoolSize");
             if ((null == initialPoolSize || "-1".equals(initialPoolSize))
-                && ("-1".equals(maxPoolSize) || maxPoolSize == null)) {
+                    && ("-1".equals(maxPoolSize) || maxPoolSize == null)) {
                 property = "false";
             }
         }
@@ -345,13 +342,18 @@ public class DataSourceFactory {
             return o;
         }
 
-        if (Proxy.isProxyClass(o.getClass())) {
+        Object ds = o;
+        while (Proxy.isProxyClass(ds.getClass())) {
             final InvocationHandler handler = Proxy.getInvocationHandler(o);
-            if (handler instanceof LoggingSqlDataSource) {
-                return ((LoggingSqlDataSource) handler).getDelegate();
+            if (LoggingSqlDataSource.class.isInstance(handler)) {
+                ds = LoggingSqlDataSource.class.cast(handler).getDelegate();
+            } else if (FlushableDataSourceHandler.class.isInstance(handler)) {
+                ds = FlushableDataSourceHandler.class.cast(handler).getDelegate();
+            } else {
+                break;
             }
         }
 
-        return o;
+        return ds;
     }
 }

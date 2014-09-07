@@ -91,6 +91,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 
+import static java.util.Arrays.asList;
+
 public class CxfRsHttpListener implements RsHttpListener {
 
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_RS, CxfRsHttpListener.class);
@@ -103,6 +105,7 @@ public class CxfRsHttpListener implements RsHttpListener {
     public static final String STATIC_SUB_RESOURCE_RESOLUTION_KEY = "staticSubresourceResolution";
     public static final String RESOURCE_COMPARATOR_KEY = CXF_JAXRS_PREFIX + "resourceComparator";
 
+    private static final boolean TRY_STATIC_RESOURCES = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.jaxrs.static-first", "true"));
     private static final String GLOBAL_PROVIDERS = SystemInstance.get().getProperty(PROVIDERS_KEY);
 
     private static final Map<String, String> STATIC_CONTENT_TYPES;
@@ -153,11 +156,6 @@ public class CxfRsHttpListener implements RsHttpListener {
 
     @Override
     public void onMessage(final HttpRequest httpRequest, final HttpResponse httpResponse) throws Exception {
-        if (matchPath(httpRequest)) {
-            serveStaticContent(httpRequest, httpResponse, httpRequest.getPathInfo());
-            return;
-        }
-
         // fix the address (to manage multiple connectors)
         if (HttpRequestImpl.class.isInstance(httpRequest)) {
             final HttpRequestImpl requestImpl = HttpRequestImpl.class.cast(httpRequest);
@@ -166,12 +164,21 @@ public class CxfRsHttpListener implements RsHttpListener {
         }
 
         String baseURL = BaseUrlHelper.getBaseURL(httpRequest);
-
         if (!baseURL.endsWith("/")) {
             baseURL += "/";
         }
-
         httpRequest.setAttribute("org.apache.cxf.transport.endpoint.address", baseURL);
+
+        boolean matchedStatic = false;
+        if (TRY_STATIC_RESOURCES || (matchedStatic = matchPath(httpRequest))) {
+            final String pathInfo = httpRequest.getPathInfo();
+            if (serveStaticContent(httpRequest, httpResponse, pathInfo)) {
+                if (matchedStatic) { // we should have gotten the resource
+                    throw new ServletException("Static resource " + pathInfo + " is not available");
+                }
+                return; // ok that's a surely rest service
+            }
+        }
 
         // delegate invocation
         final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
@@ -202,12 +209,20 @@ public class CxfRsHttpListener implements RsHttpListener {
         return false;
     }
 
-    protected void serveStaticContent(final HttpServletRequest request,
-                                      final HttpServletResponse response,
-                                      final String pathInfo) throws ServletException {
-        final InputStream is = request.getServletContext().getResourceAsStream(pathInfo);
+    protected boolean serveStaticContent(final HttpServletRequest request,
+                                         final HttpServletResponse response,
+                                         final String pathInfo) throws ServletException {
+        InputStream is = request.getServletContext().getResourceAsStream(pathInfo);
+        if (is == null && "/".equals(pathInfo)) {
+            for (final String n : asList("/index.html", "/index.htm")) {
+                is = request.getServletContext().getResourceAsStream(n);
+                if (is != null) {
+                    break;
+                }
+            }
+        }
         if (is == null) {
-            throw new ServletException("Static resource " + pathInfo + " is not available");
+            return false;
         }
         try {
             final int ind = pathInfo.lastIndexOf(".");
@@ -221,18 +236,21 @@ public class CxfRsHttpListener implements RsHttpListener {
             final ServletOutputStream os = response.getOutputStream();
             IOUtils.copy(is, os);
             os.flush();
+            response.setStatus(HttpURLConnection.HTTP_OK);
         } catch (final IOException ex) {
             throw new ServletException("Static resource " + pathInfo + " can not be written to the output stream");
         }
-
+        return true;
     }
 
+    @Deprecated
     @Override
     public void deploySingleton(final String contextRoot, final String fullContext, final Object o, final Application appInstance,
                                 final Collection<Object> additionalProviders, final ServiceConfiguration configuration) {
         deploy(contextRoot, o.getClass(), fullContext, new SingletonResourceProvider(o), o, appInstance, null, additionalProviders, configuration);
     }
 
+    @Deprecated
     @Override
     public void deployPojo(final ClassLoader loader,
                            final String contextRoot,
@@ -248,6 +266,7 @@ public class CxfRsHttpListener implements RsHttpListener {
             null, app, null, additionalProviders, configuration);
     }
 
+    @Deprecated
     @Override
     public void deployEJB(final String contextRoot,
                           final String fullContext,
@@ -304,6 +323,10 @@ public class CxfRsHttpListener implements RsHttpListener {
         for (final Object o : additionalProviders) {
             if (o instanceof Class<?>) {
                 final Class<?> clazz = (Class<?>) o;
+                if ("false".equalsIgnoreCase(SystemInstance.get().getProperty(clazz.getName() + ".activated", "true"))) {
+                    continue;
+                }
+
                 final Collection<Object> instance = ServiceInfos.resolve(services, new String[]{clazz.getName()}, ProviderFactory.INSTANCE);
                 if (instance != null && !instance.isEmpty()) {
                     instances.add(instance.iterator().next());
@@ -315,6 +338,10 @@ public class CxfRsHttpListener implements RsHttpListener {
                     }
                 }
             } else {
+                if ("false".equalsIgnoreCase(SystemInstance.get().getProperty(o.getClass().getName() + ".activated", "true"))) {
+                    continue;
+                }
+
                 instances.add(o);
             }
         }

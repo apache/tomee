@@ -29,6 +29,7 @@ import java.util.concurrent.Callable;
 
 public class EntityManagerFactoryCallable implements Callable<EntityManagerFactory> {
     public static final String OPENEJB_JPA_INIT_ENTITYMANAGER = "openejb.jpa.init-entitymanager";
+    public static final String OPENJPA_ENTITY_MANAGER_FACTORY_POOL = "openjpa.EntityManagerFactoryPool";
 
     private final String persistenceProviderClassName;
     private final PersistenceUnitInfoImpl unitInfo;
@@ -53,11 +54,14 @@ public class EntityManagerFactoryCallable implements Callable<EntityManagerFacto
             if (!ValidationMode.NONE.equals(unitInfo.getValidationMode())) {
                 properties.put("javax.persistence.validator.ValidatorFactory", new ValidatorFactoryWrapper());
             }
+
+            customizeProperties(properties);
+
             final EntityManagerFactory emf = persistenceProvider.createContainerEntityManagerFactory(unitInfo, properties);
 
             if (unitInfo.getProperties() != null
-                && "true".equalsIgnoreCase(unitInfo.getProperties().getProperty(OPENEJB_JPA_INIT_ENTITYMANAGER))
-                || SystemInstance.get().getOptions().get(OPENEJB_JPA_INIT_ENTITYMANAGER, false)) {
+                    && "true".equalsIgnoreCase(unitInfo.getProperties().getProperty(OPENEJB_JPA_INIT_ENTITYMANAGER))
+                    || SystemInstance.get().getOptions().get(OPENEJB_JPA_INIT_ENTITYMANAGER, false)) {
                 emf.createEntityManager().close();
             }
 
@@ -72,6 +76,13 @@ public class EntityManagerFactoryCallable implements Callable<EntityManagerFacto
             return emf;
         } finally {
             Thread.currentThread().setContextClassLoader(old);
+        }
+    }
+
+    private void customizeProperties(final Map<String, Object> properties) {
+        final String pool = SystemInstance.get().getProperty(OPENJPA_ENTITY_MANAGER_FACTORY_POOL);
+        if (pool != null) {
+            properties.put(OPENJPA_ENTITY_MANAGER_FACTORY_POOL, pool);
         }
     }
 

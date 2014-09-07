@@ -39,10 +39,13 @@ import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
+
+import static java.util.Arrays.asList;
 
 /**
  * @version $Rev$ $Date$
@@ -76,8 +79,7 @@ public class DynamicSubclass implements Opcodes {
                 // no-op
             }
 
-            final byte[] bytes = generateBytes(abstractClass);
-            return LocalBeanProxyFactory.Unsafe.defineClass(abstractClass, proxyName, bytes);
+            return LocalBeanProxyFactory.Unsafe.defineClass(abstractClass, proxyName, generateBytes(abstractClass));
 
         } catch (final Exception e) {
             throw new InternalError(DynamicSubclass.class.getSimpleName() + ".createSubclass: " + Debug.printStackTrace(e));
@@ -170,33 +172,38 @@ public class DynamicSubclass implements Opcodes {
         return classToProxy.getName() + IMPL_SUFFIX;
     }
 
-    private static void getNonPrivateMethods(Class<?> clazz, final Map<String, List<Method>> methodMap) {
-        while (clazz != null) {
-            for (final Method method : clazz.getDeclaredMethods()) {
-                final int modifiers = method.getModifiers();
+    private static void getNonPrivateMethods(final Class<?> impl, final Map<String, List<Method>> methodMap) {
+        final Class<?>[] interfaces = impl.getInterfaces();
+        final Collection<Class<?>> api = new ArrayList<Class<?>>(interfaces.length + 1);
+        api.add(impl);
+        api.addAll(asList(interfaces));
 
-                if (Modifier.isFinal(modifiers)
-                    || Modifier.isPrivate(modifiers)
-                    || Modifier.isStatic(modifiers)) {
-                    continue;
-                }
+        for (Class<?> clazz : api) {
+            while (clazz != null && clazz != Object.class) {
+                for (final Method method : clazz.getDeclaredMethods()) {
+                    final int modifiers = method.getModifiers();
 
-                List<Method> methods = methodMap.get(method.getName());
-                if (methods == null) {
-                    methods = new ArrayList<Method>();
-                    methods.add(method);
-                    methodMap.put(method.getName(), methods);
-                } else {
-                    if (isOverridden(methods, method)) { //NOPMD
-                        // method is overridden in superclass, so do nothing
-                    } else {
-                        // method is not overridden, so add it
+                    if (Modifier.isFinal(modifiers)
+                            || Modifier.isPrivate(modifiers)
+                            || Modifier.isStatic(modifiers)) {
+                        continue;
+                    }
+
+                    List<Method> methods = methodMap.get(method.getName());
+                    if (methods == null) {
+                        methods = new ArrayList<Method>();
                         methods.add(method);
+                        methodMap.put(method.getName(), methods);
+                    } else {
+                        if (!isOverridden(methods, method)) {
+                            // method is not overridden, so add it
+                            methods.add(method);
+                        }
                     }
                 }
-            }
 
-            clazz = clazz.getSuperclass();
+                clazz = clazz.getSuperclass();
+            }
         }
     }
 
@@ -268,7 +275,7 @@ public class DynamicSubclass implements Opcodes {
 
     public static class MoveAnnotationsVisitor extends MethodVisitor {
 
-        private MethodVisitor newMethod;
+        private final MethodVisitor newMethod;
 
         public MoveAnnotationsVisitor(final MethodVisitor movedMethod, final MethodVisitor newMethod) {
             super(Opcodes.ASM5, movedMethod);

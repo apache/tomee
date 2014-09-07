@@ -52,7 +52,7 @@ public class LazyRealm extends LifecycleBase implements Realm {
     private boolean cdi;
 
     private volatile Realm delegate;
-    private Container container;
+    private Context container;
 
     private CreationalContext<Object> creationalContext;
 
@@ -103,7 +103,11 @@ public class LazyRealm extends LifecycleBase implements Realm {
                             throw new TomEERuntimeException(e);
                         }
                     } else {
-                        final BeanManager bm = WebBeansContext.currentInstance().getBeanManagerImpl();
+                        final WebBeansContext webBeansContext = WebBeansContext.currentInstance();
+                        if (webBeansContext == null) {
+                            return null; // too early to have a cdi bean, skip these methods - mainly init() but @PostConstruct works then
+                        }
+                        final BeanManager bm = webBeansContext.getBeanManagerImpl();
                         final Set<Bean<?>> beans = bm.getBeans(clazz);
                         final Bean<?> bean = bm.resolve(beans);
                         creationalContext = bm.createCreationalContext(null);
@@ -128,7 +132,7 @@ public class LazyRealm extends LifecycleBase implements Realm {
     @Override
     protected void initInternal() throws LifecycleException {
         final Realm r = instance();
-        if (Lifecycle.class.isInstance(r)) {
+        if (r != null && Lifecycle.class.isInstance(r)) {
             Lifecycle.class.cast(r).init();
         }
     }
@@ -136,7 +140,7 @@ public class LazyRealm extends LifecycleBase implements Realm {
     @Override
     protected void startInternal() throws LifecycleException {
         final Realm r = instance();
-        if (Lifecycle.class.isInstance(r)) {
+        if (r != null && Lifecycle.class.isInstance(r)) {
             Lifecycle.class.cast(r).start();
         }
         setState(LifecycleState.STARTING);
@@ -145,7 +149,7 @@ public class LazyRealm extends LifecycleBase implements Realm {
     @Override
     protected void stopInternal() throws LifecycleException {
         final Realm r = instance();
-        if (Lifecycle.class.isInstance(r)) {
+        if (r != null && Lifecycle.class.isInstance(r)) {
             Lifecycle.class.cast(r).stop();
         }
         setState(LifecycleState.STOPPING);
@@ -154,7 +158,7 @@ public class LazyRealm extends LifecycleBase implements Realm {
     @Override
     protected void destroyInternal() throws LifecycleException {
         final Realm r = instance();
-        if (Lifecycle.class.isInstance(r)) {
+        if (r != null && Lifecycle.class.isInstance(r)) {
             Lifecycle.class.cast(r).destroy();
         }
     }
@@ -162,7 +166,7 @@ public class LazyRealm extends LifecycleBase implements Realm {
     @Override
     public Container getContainer() {
         if (delegate != null) {
-            return instance().getContainer();
+            return delegate.getContainer();
         }
         return container;
     }
@@ -181,20 +185,28 @@ public class LazyRealm extends LifecycleBase implements Realm {
         });
 
         if (delegate != null) {
-            instance().setContainer(container);
+            delegate.setContainer(container);
         } else {
-            this.container = container;
+            this.container = Context.class.cast(container);
         }
     }
 
     @Override
     public String getInfo() {
+        final Realm instance = instance();
+        if (instance == null) {
+            return getClass().getName() + "/1.0";
+        }
         return instance().getInfo();
     }
 
     @Override
     public void addPropertyChangeListener(final PropertyChangeListener listener) {
-        instance().addPropertyChangeListener(listener);
+        final Realm instance = instance();
+        if (instance == null) {
+            return;
+        }
+        instance.addPropertyChangeListener(listener);
     }
 
     @Override
@@ -230,8 +242,8 @@ public class LazyRealm extends LifecycleBase implements Realm {
 
     @Override
     public boolean hasResourcePermission(final Request request, final Response response,
-                                         final SecurityConstraint[] constraint, final Context context) throws IOException {
-        return instance().hasResourcePermission(request, response, constraint, context);
+                                         final SecurityConstraint[] securityConstraints, final Context context) throws IOException {
+        return instance().hasResourcePermission(request, response, securityConstraints, context);
     }
 
     @Override
@@ -240,12 +252,17 @@ public class LazyRealm extends LifecycleBase implements Realm {
     }
 
     @Override
-    public boolean hasUserDataPermission(final Request request, final Response response, final SecurityConstraint[] constraint) throws IOException {
-        return instance().hasUserDataPermission(request, response, constraint);
+    public boolean hasUserDataPermission(final Request request, final Response response,
+                                         final SecurityConstraint[] securityConstraints) throws IOException {
+        return instance().hasUserDataPermission(request, response, securityConstraints);
     }
 
     @Override
     public void removePropertyChangeListener(final PropertyChangeListener listener) {
-        instance().removePropertyChangeListener(listener);
+        final Realm instance = instance();
+        if (instance == null) {
+            return;
+        }
+        instance.removePropertyChangeListener(listener);
     }
 }

@@ -51,7 +51,8 @@ public class JuliLogStreamFactory implements LogStreamFactory {
 
         // if embedded case enhance a bit logging if not set
         final Options options = SystemInstance.get().getOptions();
-        if ((!tomee || embedded) && System.getProperty("java.util.logging.manager") == null) {
+        final boolean forceLogs = options.get("openejb.jul.forceReload", false);
+        if ((!tomee || embedded || forceLogs) && System.getProperty("java.util.logging.manager") == null) {
             System.setProperty("java.util.logging.manager", OpenEJBLogManager.class.getName());
             if (options.get(OPENEJB_LOG_COLOR_PROP, false) && isNotIDE()) {
                 consoleHandlerClazz = ConsoleColorHandler.class.getName();
@@ -65,7 +66,7 @@ public class JuliLogStreamFactory implements LogStreamFactory {
                 consoleHandlerClazz = ConsoleHandler.class.getName();
             }
 
-            if (options.get("openejb.jul.forceReload", false)) {
+            if (forceLogs) {
                 useOpenEJBHandler = options.get("openejb.jul.forceReload.use-openejb-handler", true);
                 try {
                     final Field logManager = LogManager.class.getDeclaredField("manager");

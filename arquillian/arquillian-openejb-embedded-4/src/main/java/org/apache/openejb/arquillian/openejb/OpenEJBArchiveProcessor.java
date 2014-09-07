@@ -34,7 +34,6 @@ import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.util.classloader.URLClassLoaderFirst;
-import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.archive.ClassesArchive;
 import org.apache.xbean.finder.archive.CompositeArchive;
 import org.apache.xbean.finder.archive.FilteredArchive;
@@ -200,10 +199,11 @@ public class OpenEJBArchiveProcessor {
 
         final org.apache.xbean.finder.archive.Archive finderArchive = finderArchive(beansXml, archive, tempClassLoader, additionalPaths);
 
-        ejbModule.setFinder(new FinderFactory.ModuleLimitedFinder(new AnnotationFinder(finderArchive)));
+        ejbModule.setFinder(new FinderFactory.ModuleLimitedFinder(new FinderFactory.OpenEJBAnnotationFinder(finderArchive)));
         if (appModule.isWebapp()) { // war
             appModule.getWebModules().iterator().next().setFinder(ejbModule.getFinder());
         }
+
         appModule.getEjbModules().add(ejbModule);
 
         {

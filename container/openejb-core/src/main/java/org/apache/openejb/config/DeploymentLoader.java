@@ -108,6 +108,8 @@ public class DeploymentLoader implements DeploymentFilterable {
     private static final Collection<String> KNOWN_DESCRIPTORS = Arrays.asList("app-ctx.xml", "module.properties", "application.properties", "web.xml", "ejb-jar.xml", "openejb-jar.xml", "env-entries.properties", "beans.xml", "ra.xml", "application.xml", "application-client.xml", "persistence-fragment.xml", "persistence.xml", "validation.xml", NewLoaderLogic.EXCLUSION_FILE);
     private static String ALTDD = SystemInstance.get().getOptions().get(OPENEJB_ALTDD_PREFIX, (String) null);
 
+    private volatile List<URL> containerUrls = null;
+
     public AppModule load(final File jarFile) throws OpenEJBException {
         // verify we have a valid file
         final String jarPath;
@@ -918,6 +920,34 @@ public class DeploymentLoader implements DeploymentFilterable {
         // determine war class path
 
         final List<URL> webUrls = new ArrayList<URL>();
+        if (containerUrls == null) {
+            if ("true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.scan.webapp.container", "false"))) {
+                synchronized (this) {
+                    if (containerUrls == null) {
+                        try {
+                            UrlSet urlSet = new UrlSet(ParentClassLoaderFinder.Helper.get());
+                            urlSet = URLs.cullSystemJars(urlSet);
+                            urlSet = NewLoaderLogic.applyBuiltinExcludes(urlSet);
+                            containerUrls = urlSet.getUrls();
+
+                            final Iterator<URL> it = containerUrls.iterator();
+                            while (it.hasNext()) { // remove lib/
+                                final File file = URLs.toFile(it.next());
+                                // TODO: see if websocket should be added in default.exclusions
+                                if (file.isDirectory() || file.getName().endsWith("tomcat-websocket.jar")) {
+                                    it.remove();
+                                }
+                            }
+                        } catch (final Exception e) {
+                            logger.error(e.getMessage(), e);
+                        }
+                    }
+                }
+            } else {
+                containerUrls = Collections.emptyList();
+            }
+        }
+        webUrls.addAll(containerUrls);
 
         // add these urls first to ensure we load classes from here first
         final String externalRepos = SystemInstance.get().getProperty("tomee." + warFile.getName().replace(".war", "") + ".externalRepositories");
@@ -1121,7 +1151,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         try {
             finder = FinderFactory.createFinder(appModule);
         } catch (final Exception e) {
-            finder = new FinderFactory.ModuleLimitedFinder(new org.apache.xbean.finder.AnnotationFinder(new WebappAggregatedArchive(appModule.getClassLoader(), appModule.getAltDDs(), xmls)));
+            finder = new FinderFactory.ModuleLimitedFinder(new FinderFactory.OpenEJBAnnotationFinder(new WebappAggregatedArchive(appModule.getClassLoader(), appModule.getAltDDs(), xmls)));
         }
         appModule.setEarLibFinder(finder);
 

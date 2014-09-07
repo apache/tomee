@@ -32,7 +32,6 @@ import org.apache.openejb.core.interceptor.InterceptorStack;
 import org.apache.openejb.core.ivm.ContextHandler;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
 import org.apache.openejb.core.timer.EjbTimerService;
-import org.apache.openejb.core.timer.EjbTimerServiceImpl;
 import org.apache.openejb.core.transaction.EjbTransactionUtil;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.core.transaction.TransactionPolicyFactory;
@@ -101,7 +100,6 @@ public class BeanContext extends DeploymentContext {
     public static final String USER_INTERCEPTOR_KEY = "org.apache.openejb.default.system.interceptors";
     public static final String USER_INTERCEPTOR_SEPARATOR = ",| |;";
 
-    private boolean isPassivatingScope = true;
     private ConstructorInjectionBean<Object> constructorInjectionBean;
 
     public boolean isDynamicallyImplemented() {
@@ -1756,7 +1754,7 @@ public class BeanContext extends DeploymentContext {
     public boolean isPassivatingScope() {
         final CdiEjbBean<?> bean = get(CdiEjbBean.class);
         if (bean == null) {
-            return isPassivatingScope;
+            return true;
         }
 
         if (ConversationScoped.class == bean.getScope()) {
@@ -1767,12 +1765,12 @@ public class BeanContext extends DeploymentContext {
             }
         }
 
-        return isPassivatingScope;
+        return true;
     }
 
     public void stop() {
-        if (ejbTimerService != null && ejbTimerService instanceof EjbTimerServiceImpl) {
-            ((EjbTimerServiceImpl) ejbTimerService).stop();
+        if (ejbTimerService != null) {
+            ejbTimerService.stop();
         }
     }
 

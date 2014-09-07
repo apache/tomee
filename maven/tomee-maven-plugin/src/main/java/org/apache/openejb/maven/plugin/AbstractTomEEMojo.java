@@ -908,6 +908,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         if (docBases != null && !docBases.isEmpty()) {
             if ("war".equals(packaging)) {
                 appName = destinationName().replace(".war", "");
+                if (appName.startsWith("/")) {
+                    appName = appName.substring(1);
+                }
                 strings.add("-Dtomee." + appName + ".docBases=" + filesToString(docBases));
                 strings.add("-Dtomee." + appName + ".docBases.cache=false"); // doesn't work for dev if activated
             } else {
@@ -918,6 +921,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         if (externalRepositories != null && !externalRepositories.isEmpty()) {
             if ("war".equals(packaging)) {
                 appName = appName == null ? destinationName().replace(".war", "") : appName;
+                if (appName.startsWith("/")) {
+                    appName = appName.substring(1);
+                }
                 strings.add("-Dtomee." + appName + ".externalRepositories=" + filesToString(externalRepositories));
             } else {
                 getLog().warn("externalRepositories parameter only valid for a war");

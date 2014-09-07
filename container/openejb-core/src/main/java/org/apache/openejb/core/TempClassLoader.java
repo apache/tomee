@@ -26,11 +26,15 @@ import org.apache.xbean.asm5.shade.commons.EmptyVisitor;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -76,6 +80,22 @@ public class TempClassLoader extends URLClassLoader {
     }
 
     @Override
+    public URL getResource(final String name) {
+        if (!name.startsWith("java/") && !name.startsWith("javax/") && name.endsWith(".class")) {
+            try {
+                final List<URL> urls = Collections.list(getResources(name));
+                if (urls.isEmpty()) {
+                    return null;
+                }
+                Collections.sort(urls, new ResourceComparator(getParent(), name));
+                return urls.iterator().next();
+            } catch (final IOException e) {
+                return super.getResource(name);
+            }
+        }
+        return super.getResource(name);
+    }
+
     public Enumeration<URL> getResources(final String name) throws IOException {
         return URLClassLoaderFirst.filterResources(name, super.getResources(name));
     }
@@ -235,5 +255,77 @@ public class TempClassLoader extends URLClassLoader {
             this.isEnum = (access & Opcodes.ACC_ENUM) != 0;
         }
 
+    }
+
+    // let maven resources go after other ones (arquillian tomee embedded and @WebXXX needs it absolutely)
+    private static final class ResourceComparator implements Comparator<URL> {
+        private static final boolean FORCE_MAVEN_FIRST = "true".equals(SystemInstance.get().getProperty("openejb.classloader.force-maven", "false"));
+        private static final ClassLoader STOP_LOADER = getSystemClassLoader().getParent();
+
+        private final ClassLoader loader;
+        private final String name;
+
+        private ResourceComparator(final ClassLoader loader, final String name) {
+            this.loader = loader;
+            this.name = name;
+        }
+
+        @Override
+        public int compare(final URL o1, final URL o2) {
+            if (o1.equals(o2)) {
+                return 0;
+            }
+
+            final int weight1 = weight(o1);
+            final int weight2 = weight(o2);
+            if (weight1 == weight2) {
+                final String s1 = o1.toExternalForm().replace(File.separatorChar, '/');
+                final String s2 = o2.toExternalForm().replace(File.separatorChar, '/');
+                if (FORCE_MAVEN_FIRST) { // tomee maven plugin dev feature
+                    if (s1.contains("/target/classes/")) {
+                        return -1;
+                    }
+                    if (s2.contains("/target/classes/")) {
+                        return 1;
+                    }
+                    if (s1.contains("/target/test-classes/")) {
+                        return -1;
+                    }
+                    if (s2.contains("/target/test-classes/")) {
+                        return 1;
+                    }
+                }
+                if (s1.contains("/WEB-INF/classes/")) {
+                    return -1;
+                }
+                if (s2.contains("/WEB-INF/classes/")) {
+                    return 1;
+                }
+                return s1.compareTo(s2);
+            }
+            // tomee embedded case, we can load with system loader instead of webapp loader
+            return weight1 - weight2;
+        }
+
+        private int weight(final URL url) {
+            int w = 0;
+            ClassLoader c = loader;
+            while (c != null) {
+                try {
+                    if (Collections.list(c.getResources(name)).contains(url)) {
+                        w++;
+                    } else {
+                        break;
+                    }
+                } catch (final IOException e) {
+                    break;
+                }
+                c = c.getParent();
+                if (c == STOP_LOADER) {
+                    break;
+                }
+            }
+            return w;
+        }
     }
 }

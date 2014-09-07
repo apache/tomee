@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -62,6 +63,9 @@ public class Beans {
     protected Alternatives duplicatedAlternatives;
 
     @XmlTransient
+    protected List<String> startupBeans;
+
+    @XmlTransient
     private final List<String> managedClasses = new ArrayList<String>();
 
     @XmlElementWrapper(name = "interceptors")
@@ -84,6 +88,13 @@ public class Beans {
 
     public void addManagedClass(final Class clazz) {
         addManagedClass(clazz.getName());
+    }
+
+    public List<String> getStartupBeans() {
+        if (startupBeans == null) {
+            startupBeans = new LinkedList<String>();
+        }
+        return startupBeans;
     }
 
     public List<String> getInterceptors() {
