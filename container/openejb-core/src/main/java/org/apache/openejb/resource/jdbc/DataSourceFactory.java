@@ -272,7 +272,7 @@ public class DataSourceFactory {
         }
         if (defaultCreator instanceof DefaultDataSourceCreator && willBeProxied) {
             try { // this one is proxiable, not the default one (legacy)
-                return (DataSourceCreator) loader.loadClass(DbcpDataSourceCreator.class.getName()).newInstance();
+                return new DbcpDataSourceCreator();
             } catch (final Throwable e) {
                 LOGGER.error("can't create '" + creatorName + "', the default one will be used: " + defaultCreator, e);
             }
