@@ -797,7 +797,7 @@ public final class ApplicationComposers {
         final String[] value = jarsAnnotation.value();
         final Collection<File> files = new ArrayList<File>(value.length);
         for (final String v : value) {
-            int size = files.size();
+            final int size = files.size();
             for (final URL path : classpathAppsUrls) {
                 final File file = URLs.toFile(path);
                 if (file.getName().startsWith(v) && file.getName().endsWith(".jar")) {

@@ -230,7 +230,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -300,11 +299,11 @@ public class AnnotationDeployer implements DynamicDeployer {
     private static final Collection<String> API_CLASSES = new ArrayList<String>(WEB_CLASSES.length + JSF_CLASSES.length);
 
     static {
-        API_CLASSES.addAll(Arrays.asList(JSF_CLASSES));
-        API_CLASSES.addAll(Arrays.asList(WEB_CLASSES));
+        API_CLASSES.addAll(asList(JSF_CLASSES));
+        API_CLASSES.addAll(asList(WEB_CLASSES));
     }
 
-    public static final Set<String> knownResourceEnvTypes = new TreeSet<String>(Arrays.asList(
+    public static final Set<String> knownResourceEnvTypes = new TreeSet<String>(asList(
             "javax.ejb.EJBContext",
             "javax.ejb.SessionContext",
             "javax.ejb.EntityContext",
@@ -319,7 +318,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             "javax.validation.ValidatorFactory"
     ));
 
-    public static final Set<String> knownEnvironmentEntries = new TreeSet<String>(Arrays.asList(
+    public static final Set<String> knownEnvironmentEntries = new TreeSet<String>(asList(
             "boolean", "java.lang.Boolean",
             "char", "java.lang.Character",
             "byte", "java.lang.Byte",
@@ -813,7 +812,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 classLoader = Thread.currentThread().getContextClassLoader();
             }
 
-            final List<String> allowedTypes = Arrays.asList(new String[]{Boolean.class.getName(), String.class.getName(), Integer.class.getName(), Double.class.getName(), Byte.class.getName(), Short.class.getName(), Long.class.getName(), Float.class.getName(), Character.class.getName()});
+            final List<String> allowedTypes = asList(new String[]{Boolean.class.getName(), String.class.getName(), Integer.class.getName(), Double.class.getName(), Byte.class.getName(), Short.class.getName(), Long.class.getName(), Float.class.getName(), Character.class.getName()});
 
             try {
                 final Class<?> clazz = classLoader.loadClass(realClassName(cls));
@@ -1731,7 +1730,7 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         private boolean isValidEjbAnnotationUsage(final Class annotationClass, final Annotated<Class<?>> beanClass, final String ejbName, final EjbModule ejbModule) {
-            final List<Class<? extends Annotation>> annotations = new ArrayList(Arrays.asList(Singleton.class, Stateless.class, Stateful.class, MessageDriven.class));
+            final List<Class<? extends Annotation>> annotations = new ArrayList(asList(Singleton.class, Stateless.class, Stateful.class, MessageDriven.class));
             annotations.remove(annotationClass);
 
             final boolean b = true;
@@ -2922,7 +2921,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             all.local.addAll(xml.local);
             all.remote.addAll(xml.remote);
 
-            final List<Class<?>> classes = strict ? new ArrayList(Arrays.asList(beanClass)) : Classes.ancestors(beanClass);
+            final List<Class<?>> classes = strict ? new ArrayList(asList(beanClass)) : Classes.ancestors(beanClass);
 
             for (final Class<?> clazz : classes) {
 
@@ -3009,10 +3008,10 @@ public class AnnotationDeployer implements DynamicDeployer {
                  */
                 final BusinessInterfaces bean = new BusinessInterfaces();
                 if (local != null) {
-                    bean.local.addAll(Arrays.asList(local.value()));
+                    bean.local.addAll(asList(local.value()));
                 }
                 if (remote != null) {
-                    bean.remote.addAll(Arrays.asList(remote.value()));
+                    bean.remote.addAll(asList(remote.value()));
                 }
 
                 if (strict) {
@@ -3304,7 +3303,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                     if (rolesAllowed != null) {
                         final MethodPermission methodPermission = new MethodPermission();
-                        methodPermission.getRoleName().addAll(Arrays.asList(rolesAllowed.value()));
+                        methodPermission.getRoleName().addAll(asList(rolesAllowed.value()));
                         methodPermission.getMethod().add(new org.apache.openejb.jee.Method(ejbName, clazz.getName(), "*"));
                         assemblyDescriptor.getMethodPermission().add(methodPermission);
 
@@ -3370,7 +3369,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 checkConflictingSecurityAnnotations(method, ejbName, ejbModule, seen);
                 final RolesAllowed rolesAllowed = method.getAnnotation(RolesAllowed.class);
                 final MethodPermission methodPermission = new MethodPermission();
-                methodPermission.getRoleName().addAll(Arrays.asList(rolesAllowed.value()));
+                methodPermission.getRoleName().addAll(asList(rolesAllowed.value()));
                 methodPermission.getMethod().add(new org.apache.openejb.jee.Method(ejbName, method.get()));
                 assemblyDescriptor.getMethodPermission().add(methodPermission);
 
@@ -3422,7 +3421,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             final List<String> annotations = new ArrayList<String>();
-            for (final Class<? extends Annotation> annotation : Arrays.asList(RolesAllowed.class, PermitAll.class, DenyAll.class)) {
+            for (final Class<? extends Annotation> annotation : asList(RolesAllowed.class, PermitAll.class, DenyAll.class)) {
                 if (method.getAnnotation(annotation) != null) {
                     annotations.add("@" + annotation.getSimpleName());
                 }
@@ -3463,7 +3462,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                 final Schedules schedulesAnnotation = method.getAnnotation(Schedules.class);
                 if (schedulesAnnotation != null) {
-                    scheduleAnnotationList.addAll(Arrays.asList(schedulesAnnotation.value()));
+                    scheduleAnnotationList.addAll(asList(schedulesAnnotation.value()));
                 }
 
                 final Schedule scheduleAnnotation = method.getAnnotation(Schedule.class);
@@ -3666,7 +3665,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             final List<EJB> ejbList = new ArrayList<EJB>();
             for (final Annotated<Class<?>> clazz : annotationFinder.findMetaAnnotatedClasses(EJBs.class)) {
                 final EJBs ejbs = clazz.getAnnotation(EJBs.class);
-                ejbList.addAll(Arrays.asList(ejbs.value()));
+                ejbList.addAll(asList(ejbs.value()));
             }
             for (final Annotated<Class<?>> clazz : annotationFinder.findMetaAnnotatedClasses(EJB.class)) {
                 final EJB e = clazz.getAnnotation(EJB.class);
@@ -3700,7 +3699,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             final List<Resource> resourceList = new ArrayList<Resource>();
             for (final Annotated<Class<?>> clazz : annotationFinder.findMetaAnnotatedClasses(Resources.class)) {
                 final Resources resources = clazz.getAnnotation(Resources.class);
-                resourceList.addAll(Arrays.asList(resources.value()));
+                resourceList.addAll(asList(resources.value()));
             }
             for (final Annotated<Class<?>> clazz : annotationFinder.findMetaAnnotatedClasses(Resource.class)) {
                 final Resource resource = clazz.getAnnotation(Resource.class);
@@ -3742,7 +3741,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             final List<WebServiceRef> webservicerefList = new ArrayList<WebServiceRef>();
             for (final Annotated<Class<?>> clazz : annotationFinder.findMetaAnnotatedClasses(WebServiceRefs.class)) {
                 final WebServiceRefs webServiceRefs = clazz.getAnnotation(WebServiceRefs.class);
-                webservicerefList.addAll(Arrays.asList(webServiceRefs.value()));
+                webservicerefList.addAll(asList(webServiceRefs.value()));
             }
             for (final Annotated<Class<?>> clazz : annotationFinder.findMetaAnnotatedClasses(WebServiceRef.class)) {
                 final WebServiceRef webServiceRef = clazz.getAnnotation(WebServiceRef.class);
@@ -3779,7 +3778,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             final List<PersistenceUnit> persistenceUnitList = new ArrayList<PersistenceUnit>();
             for (final Annotated<Class<?>> clazz : annotationFinder.findMetaAnnotatedClasses(PersistenceUnits.class)) {
                 final PersistenceUnits persistenceUnits = clazz.getAnnotation(PersistenceUnits.class);
-                persistenceUnitList.addAll(Arrays.asList(persistenceUnits.value()));
+                persistenceUnitList.addAll(asList(persistenceUnits.value()));
             }
             for (final Annotated<Class<?>> clazz : annotationFinder.findMetaAnnotatedClasses(PersistenceUnit.class)) {
                 final PersistenceUnit persistenceUnit = clazz.getAnnotation(PersistenceUnit.class);
@@ -3807,7 +3806,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             final List<PersistenceContext> persistenceContextList = new ArrayList<PersistenceContext>();
             for (final Annotated<Class<?>> clazz : annotationFinder.findMetaAnnotatedClasses(PersistenceContexts.class)) {
                 final PersistenceContexts persistenceContexts = clazz.getAnnotation(PersistenceContexts.class);
-                persistenceContextList.addAll(Arrays.asList(persistenceContexts.value()));
+                persistenceContextList.addAll(asList(persistenceContexts.value()));
                 pcFactory.addAnnotations(clazz.get());
             }
             for (final Annotated<Class<?>> clazz : annotationFinder.findMetaAnnotatedClasses(PersistenceContext.class)) {

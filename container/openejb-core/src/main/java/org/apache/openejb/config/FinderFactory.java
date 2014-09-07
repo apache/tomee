@@ -126,7 +126,7 @@ public class FinderFactory {
         return MODULE_LIMITED ? new ModuleLimitedFinder(finder) : finder;
     }
 
-    private OpenEJBAnnotationFinder fallbackAnnotationFinder(DeploymentModule module) {
+    private OpenEJBAnnotationFinder fallbackAnnotationFinder(final DeploymentModule module) {
         final OpenEJBAnnotationFinder finder = new OpenEJBAnnotationFinder(new ClassesArchive(ensureMinimalClasses(module)));
         finder.enableMetaAnnotations();
         return finder;

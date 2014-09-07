@@ -108,7 +108,7 @@ public class DeploymentLoader implements DeploymentFilterable {
     private static final Collection<String> KNOWN_DESCRIPTORS = Arrays.asList("app-ctx.xml", "module.properties", "application.properties", "web.xml", "ejb-jar.xml", "openejb-jar.xml", "env-entries.properties", "beans.xml", "ra.xml", "application.xml", "application-client.xml", "persistence-fragment.xml", "persistence.xml", "validation.xml", NewLoaderLogic.EXCLUSION_FILE);
     private static String ALTDD = SystemInstance.get().getOptions().get(OPENEJB_ALTDD_PREFIX, (String) null);
 
-    private volatile List<URL> containerUrls = null;
+    private volatile List<URL> containerUrls;
 
     public AppModule load(final File jarFile) throws OpenEJBException {
         // verify we have a valid file
