@@ -145,6 +145,7 @@
     - http://docs.codehaus.org/display/MAVENUSER/POM+Element+for+Source+File+Encoding
     -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <!-- Apache Commons -->
     <commons-beanutils.version>1.8.3</commons-beanutils.version>
