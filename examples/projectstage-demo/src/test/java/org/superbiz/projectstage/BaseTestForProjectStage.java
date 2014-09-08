@@ -25,7 +25,6 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.superbiz.Manager;
 import org.superbiz.ManagerFactory;
@@ -33,10 +32,8 @@ import org.superbiz.projectstage.util.ProjectStageProducer;
 
 import javax.inject.Inject;
 
-import static org.junit.Assert.assertEquals;
-
 @RunWith(Arquillian.class)
-public class BaseTestForProjectStage {
+public abstract class BaseTestForProjectStage {
 
     @Inject
     protected Manager manager;
@@ -50,8 +47,5 @@ public class BaseTestForProjectStage {
                          .addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
     }
 
-    @Test
-    public void checkManagerValue() {
-        assertEquals(ProjectStageProducer.value("org.apache.deltaspike.ProjectStage"), manager.name());
-    }
+    public abstract void checkManagerValue();
 }

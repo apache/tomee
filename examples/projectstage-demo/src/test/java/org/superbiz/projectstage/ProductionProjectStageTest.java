@@ -19,11 +19,21 @@ package org.superbiz.projectstage;
 import org.apache.deltaspike.core.api.projectstage.ProjectStage;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Test;
+import org.superbiz.projectstage.util.ProjectStageProducer;
+
+import static org.junit.Assert.assertEquals;
 
 public class ProductionProjectStageTest extends BaseTestForProjectStage {
 
     @Deployment
     public static WebArchive war() {
         return BaseTestForProjectStage.war(ProjectStage.Production.toString());
+    }
+
+
+    @Test
+    public void checkManagerValue() {
+        assertEquals(ProjectStageProducer.value("org.apache.deltaspike.ProjectStage"), manager.name());
     }
 }

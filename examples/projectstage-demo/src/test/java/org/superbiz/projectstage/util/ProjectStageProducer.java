@@ -35,7 +35,7 @@ public final class ProjectStageProducer implements ConfigSourceProvider {
     static {
         try {
             PROPERTIES.load(ProjectStageProducer.class.getResourceAsStream("/project-stage.properties"));
-        } catch (IOException e) {
+        } catch (final IOException e) {
             // no-op
         }
     }
