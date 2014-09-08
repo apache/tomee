@@ -120,7 +120,7 @@ public class ManagedConnection implements InvocationHandler {
 
                         try {
                             setAutoCommit(false);
-                        } catch (final SQLException xae) { // we are alreay in a transaction so this can't be called from a user perspective - some XA DataSource prevents it in their code
+                        } catch (final SQLException xae) { // we are already in a transaction so this can't be called from a user perspective - some XA DataSource prevents it in their code
                             final String message = "Can't set auto commit to false cause the XA datasource doesn't support it, this is likely an issue";
                             if (LOGGER.isDebugEnabled()) { // we don't want to print the exception by default
                                 LOGGER.warning(message, xae);
