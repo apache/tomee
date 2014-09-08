@@ -77,9 +77,9 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
 
     protected boolean isTestable(final Archive<?> archive, final DeploymentDescription deploymentDescription) {
         return deploymentDescription != null
-                && deploymentDescription.isArchiveDeployment()
-                && (deploymentDescription.getArchive() == archive || deploymentDescription.getTestableArchive() == archive)
-                && deploymentDescription.testable();
+            && deploymentDescription.isArchiveDeployment()
+            && (deploymentDescription.getArchive() == archive || deploymentDescription.getTestableArchive() == archive)
+            && deploymentDescription.testable();
     }
 
     @Override
@@ -99,11 +99,10 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
 
         // with multiple containers we don't want it so let the user eb able to skip it
         if (configuration.getExportConfAsSystemProperty()) {
-            final ObjectMap map = new ObjectMap(configuration);
             //
             // Export the config back out to properties
             //
-            for (final Map.Entry<String, Object> entry : map.entrySet()) {
+            for (final Map.Entry<String, Object> entry : new ObjectMap(configuration).entrySet()) {
                 for (final String prefix : prefixes.value()) {
                     try {
                         final String property = prefix + "." + entry.getKey();
@@ -131,8 +130,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
             randomPorts.add(i);
         }
 
-        final ObjectMap map = new ObjectMap(configuration);
-        for (final Map.Entry<String, Object> entry : map.entrySet()) {
+        for (final Map.Entry<String, Object> entry : new ObjectMap(configuration).entrySet()) {
             if (!entry.getKey().toLowerCase().endsWith("port")) {
                 continue;
             }
@@ -369,8 +367,8 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
             name = name.substring(0, name.length() - ".war".length());
         }
         return archive.add(
-                new StringAsset(testClass.get().getJavaClass().getName() + '#' + name),
-                ArchivePaths.create("arquillian-tomee-info.txt"));
+            new StringAsset(testClass.get().getJavaClass().getName() + '#' + name),
+            ArchivePaths.create("arquillian-tomee-info.txt"));
     }
 
     protected Deployer deployer() throws NamingException {
@@ -386,7 +384,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         } catch (final RuntimeException ne) { // surely "org.apache.openejb.client.ClientRuntimeException: Invalid response from server: -1"
             if (retry > 1) {
                 try { // wait a bit before retrying
-                    Thread.sleep(200);
+                    Thread.sleep(500);
                 } catch (final InterruptedException ignored) {
                     // no-op
                 }
@@ -420,19 +418,22 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
     @Override
     public void undeploy(final Archive<?> archive) throws DeploymentException {
         final DeployedApp deployed = moduleIds.remove(archive.getName());
-        try {
-            deployer().undeploy(deployed.path);
-        } catch (final Exception e) {
-            e.printStackTrace();
-            throw new DeploymentException("Unable to undeploy " + archive.getName(), e);
-        } finally {
-            LOGGER.info("cleaning " + deployed.file.getAbsolutePath());
-            Files.tryTodelete(deployed.file); // "i" folder
+        if (null != deployed) {
+            try {
+                deployer().undeploy(deployed.path);
+            } catch (final Exception e) {
+                final String msg = "Unable to undeploy " + archive.getName();
+                LOGGER.log(Level.SEVERE, msg, e);
+                throw new DeploymentException(msg, e);
+            } finally {
+                LOGGER.info("cleaning " + deployed.file.getAbsolutePath());
+                Files.tryTodelete(deployed.file); // "i" folder
 
-            final File pathFile = new File(deployed.path);
-            if (!deployed.path.equals(deployed.file.getAbsolutePath()) && pathFile.exists()) {
-                LOGGER.info("cleaning " + pathFile);
-                Files.delete(pathFile);
+                final File pathFile = new File(deployed.path);
+                if (!deployed.path.equals(deployed.file.getAbsolutePath()) && pathFile.exists()) {
+                    LOGGER.info("cleaning " + pathFile);
+                    Files.delete(pathFile);
+                }
             }
         }
     }
