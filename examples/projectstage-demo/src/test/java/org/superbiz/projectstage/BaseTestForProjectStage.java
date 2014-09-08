@@ -36,7 +36,7 @@ import javax.inject.Inject;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Arquillian.class)
-public abstract class BaseTestForProjectStage {
+public class BaseTestForProjectStage {
 
     @Inject
     protected Manager manager;
