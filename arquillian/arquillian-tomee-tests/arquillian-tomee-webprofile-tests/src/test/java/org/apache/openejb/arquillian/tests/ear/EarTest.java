@@ -63,7 +63,7 @@ public class EarTest {
         System.out.println();
 
         final EnterpriseArchive ear = ShrinkWrap.create(EnterpriseArchive.class, "red.ear").addAsModule(ejbJar).addAsModule(webapp);
-        ear.addAsLibraries(JarLocation.jarLocation(EarTest.class)).addAsLibraries(JarLocation.jarLocation(Test.class));
+        ear.addAsLibraries(JarLocation.jarLocation(ShrinkWrap.class)).addAsLibraries(JarLocation.jarLocation(Test.class));
 
         System.out.println(ear.toString(true));
         System.out.println();
