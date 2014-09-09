@@ -63,7 +63,7 @@ public class EarTest {
         System.out.println();
 
         final EnterpriseArchive ear = ShrinkWrap.create(EnterpriseArchive.class, "red.ear").addAsModule(ejbJar).addAsModule(webapp);
-        ear.addAsLibraries(JarLocation.jarLocation(EarTest.class));
+        ear.addAsLibraries(JarLocation.jarLocation(EarTest.class)).addAsLibraries(JarLocation.jarLocation(Test.class));
 
         System.out.println(ear.toString(true));
         System.out.println();
@@ -78,7 +78,7 @@ public class EarTest {
 
         System.out.println(servlet.toExternalForm());
         final String slurp = IO.slurp(servlet);
-        Assert.assertEquals(Test.class.getName(), slurp);
+        Assert.assertEquals("A message from: " + Test.class.getName(), slurp);
         System.out.println(slurp);
     }
 
@@ -93,7 +93,7 @@ public class EarTest {
         }
 
         public String getMessage() {
-            return Test.class.getName();
+            return "A message from: " + Test.class.getName();
         }
     }
 
