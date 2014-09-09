@@ -20,6 +20,7 @@ package org.apache.openejb.cdi;
 import org.apache.openejb.util.reflection.Reflections;
 import org.apache.webbeans.component.BuiltInOwbBean;
 import org.apache.webbeans.component.ExtensionBean;
+import org.apache.webbeans.component.OwbBean;
 import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.context.creational.CreationalContextImpl;
 import org.apache.webbeans.event.EventMetadataImpl;
@@ -35,6 +36,7 @@ import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.InjectionTarget;
 import javax.enterprise.inject.spi.ObserverMethod;
+import javax.enterprise.inject.spi.PassivationCapable;
 import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -43,6 +45,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 public class WebappBeanManager extends BeanManagerImpl {
     private final WebappWebBeansContext webappCtx;
+    private final InheritedBeanFilter filter;
     private Set<Bean<?>> deploymentBeans;
     private boolean started/* = false*/;
 
@@ -51,6 +54,7 @@ public class WebappBeanManager extends BeanManagerImpl {
         webappCtx = ctx;
         deploymentBeans = super.getBeans(); // use the parent one while starting
         Reflections.set(this, "injectionResolver", new WebAppInjectionResolver(ctx));
+        filter = new InheritedBeanFilter(this);
     }
 
     @Override
@@ -65,7 +69,7 @@ public class WebappBeanManager extends BeanManagerImpl {
     @Override
     public <T> Set<ObserverMethod<? super T>> resolveObserverMethods(final T event, final EventMetadataImpl metadata) {
         final Class<?> eventClass = event.getClass();
-        final Set<ObserverMethod<? super T>> set = new HashSet<ObserverMethod<? super T>>();
+        final Set<ObserverMethod<? super T>> set = new HashSet<>();
         set.addAll(getNotificationManager().resolveObservers(event, metadata, false));
 
         if (isEvent(eventClass)) {
@@ -241,9 +245,9 @@ public class WebappBeanManager extends BeanManagerImpl {
             // probably not yet merged (afterStart())
             // so reuse parent beans
             // this can happen for validations
-            return new IteratorSet<Bean<?>>(
-                new MultipleIterator<Bean<?>>(
-                    InheritedBeanFilter.INSTANCE,
+            return new IteratorSet<>(
+                new MultipleIterator<>(
+                    filter,
                     deploymentBeans.iterator(),
                     getParentBm().getComponents().iterator()));
         }
@@ -271,9 +275,9 @@ public class WebappBeanManager extends BeanManagerImpl {
     }
 
     private Set<Bean<?>> mergeBeans() {
-        final Set<Bean<?>> allBeans = new CopyOnWriteArraySet<Bean<?>>(); // override parent one with a "webapp" bean list
+        final Set<Bean<?>> allBeans = new CopyOnWriteArraySet<>(); // override parent one with a "webapp" bean list
         for (final Bean<?> bean : getParentBm().getBeans()) {
-            if (InheritedBeanFilter.INSTANCE.accept(bean)) {
+            if (filter.accept(bean)) {
                 allBeans.add(bean);
             }
         }
@@ -285,8 +289,9 @@ public class WebappBeanManager extends BeanManagerImpl {
         // no-op
     }
 
-    private static boolean isEvent(final Class<?> eventClass) {
-        return !WebBeansUtil.isDefaultExtensionBeanEventType(eventClass) && !WebBeansUtil.isExtensionEventType(eventClass);
+    private boolean isEvent(final Class<?> eventClass) {
+        return !WebBeansUtil.isDefaultExtensionBeanEventType(eventClass)
+                && !webappCtx.getWebBeansUtil().isContainerEventType(eventClass);
     }
 
     private interface Filter<A> {
@@ -294,15 +299,31 @@ public class WebappBeanManager extends BeanManagerImpl {
     }
 
     private static final class InheritedBeanFilter implements Filter<Bean<?>> {
-        private static final InheritedBeanFilter INSTANCE = new InheritedBeanFilter();
+        private final BeanManagerImpl beanManager;
 
-        private InheritedBeanFilter() {
-            // no-op
+        private InheritedBeanFilter(final BeanManagerImpl beanManager) {
+            this.beanManager = beanManager;
         }
 
         @Override
         public boolean accept(final Bean<?> bean) {
-            return !BuiltInOwbBean.class.isInstance(bean) && !ExtensionBean.class.isInstance(bean);
+            if (BuiltInOwbBean.class.isInstance(bean) || ExtensionBean.class.isInstance(bean)) {
+                return false;
+            }
+            if (OwbBean.class.isInstance(bean)) {
+                if (hasBean(OwbBean.class.cast(bean).getId())) {
+                    return false;
+                }
+            } else if (PassivationCapable.class.isInstance(bean)) {
+                if (hasBean(PassivationCapable.class.cast(bean).getId())) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private boolean hasBean(final String id) {
+            return beanManager.getPassivationCapableBean(id) != null;
         }
     }
 

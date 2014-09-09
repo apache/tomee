@@ -44,7 +44,6 @@ import java.net.URL;
 /**
  * @version $Rev$ $Date$
  */
-@SuppressWarnings("UseOfSystemOutOrSystemErr")
 @RunWith(Arquillian.class)
 public class EarTest {
 
@@ -56,7 +55,6 @@ public class EarTest {
 
         final JavaArchive ejbJar = ShrinkWrap.create(JavaArchive.class, "beans.jar");
         ejbJar.addClass(Bean.class);
-        ejbJar.addClass(EarTest.class);
 
         final WebArchive webapp = ShrinkWrap.create(WebArchive.class, "green.war").addClass(Hello.class);
         System.out.println(webapp.toString(true));
@@ -64,9 +62,6 @@ public class EarTest {
 
         final EnterpriseArchive ear = ShrinkWrap.create(EnterpriseArchive.class, "red.ear").addAsModule(ejbJar).addAsModule(webapp);
         ear.addAsLibraries(JarLocation.jarLocation(Test.class));
-
-        System.out.println(ear.toString(true));
-        System.out.println();
 
         return ear;
     }
@@ -79,7 +74,6 @@ public class EarTest {
         System.out.println(servlet.toExternalForm());
         final String slurp = IO.slurp(servlet);
         Assert.assertEquals(Test.class.getName(), slurp);
-        System.out.println(slurp);
     }
 
 

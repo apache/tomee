@@ -25,7 +25,6 @@ import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.core.ivm.IntraVmProxy;
 import org.apache.openejb.util.proxy.ProxyManager;
 import org.apache.webbeans.component.AbstractOwbBean;
-import org.apache.webbeans.component.InjectionTargetBean;
 import org.apache.webbeans.component.OwbBean;
 import org.apache.webbeans.component.ProducerFieldBean;
 import org.apache.webbeans.component.ProducerMethodBean;
@@ -286,17 +285,17 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
 
         final Set<ObserverMethod<?>> observerMethods;
         if (bean.isEnabled()) {
-            observerMethods = new ObserverMethodsBuilder<T, InjectionTargetBean<T>>(webBeansContext, bean.getAnnotatedType()).defineObserverMethods(bean);
+            observerMethods = new ObserverMethodsBuilder<T>(webBeansContext, bean.getAnnotatedType()).defineObserverMethods(bean);
         } else {
-            observerMethods = new HashSet<ObserverMethod<?>>();
+            observerMethods = new HashSet<>();
         }
 
         final WebBeansUtil webBeansUtil = webBeansContext.getWebBeansUtil();
 
-        final Set<ProducerMethodBean<?>> producerMethods = new ProducerMethodBeansBuilder(bean.getWebBeansContext(), bean.getAnnotatedType()).defineProducerMethods(bean);
         final Set<ProducerFieldBean<?>> producerFields = new ProducerFieldBeansBuilder(bean.getWebBeansContext(), bean.getAnnotatedType()).defineProducerFields(bean);
+        final Set<ProducerMethodBean<?>> producerMethods = new ProducerMethodBeansBuilder(bean.getWebBeansContext(), bean.getAnnotatedType()).defineProducerMethods(bean, producerFields);
 
-        final Map<ProducerMethodBean<?>, AnnotatedMethod<?>> annotatedMethods = new HashMap<ProducerMethodBean<?>, AnnotatedMethod<?>>();
+        final Map<ProducerMethodBean<?>, AnnotatedMethod<?>> annotatedMethods = new HashMap<>();
         for (final ProducerMethodBean<?> producerMethod : producerMethods) {
             final AnnotatedMethod<?> method = webBeansContext.getAnnotatedElementFactory().newAnnotatedMethod(producerMethod.getCreatorMethod(), annotatedType);
             webBeansUtil.inspectErrorStack("There are errors that are added by ProcessProducer event observers for "
@@ -305,7 +304,7 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
             annotatedMethods.put(producerMethod, method);
         }
 
-        final Map<ProducerFieldBean<?>, AnnotatedField<?>> annotatedFields = new HashMap<ProducerFieldBean<?>, AnnotatedField<?>>();
+        final Map<ProducerFieldBean<?>, AnnotatedField<?>> annotatedFields = new HashMap<>();
         for (final ProducerFieldBean<?> producerField : producerFields) {
             webBeansUtil.inspectErrorStack("There are errors that are added by ProcessProducer event observers for"
                 + " ProducerFields. Look at logs for further details");
@@ -316,7 +315,7 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
                     webBeansContext.getAnnotatedElementFactory().newAnnotatedType(producerField.getBeanClass())));
         }
 
-        final Map<ObserverMethod<?>, AnnotatedMethod<?>> observerMethodsMap = new HashMap<ObserverMethod<?>, AnnotatedMethod<?>>();
+        final Map<ObserverMethod<?>, AnnotatedMethod<?>> observerMethodsMap = new HashMap<>();
         for (final ObserverMethod<?> observerMethod : observerMethods) {
             final ObserverMethodImpl<?> impl = (ObserverMethodImpl<?>) observerMethod;
             final AnnotatedMethod<?> method = impl.getObserverMethod();
