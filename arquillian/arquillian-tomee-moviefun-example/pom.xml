@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.apache.openejb</groupId>
     <artifactId>arquillian</artifactId>
-    <version>1.7.1-SNAPSHOT</version>
+    <version>1.7.1</version>
   </parent>
   <artifactId>arquillian-tomee-moviefun-example</artifactId>
   <packaging>war</packaging>
