@@ -35,6 +35,7 @@ import javax.naming.Binding;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingEnumeration;
 import javax.sql.DataSource;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -60,6 +61,7 @@ public class HsqlService implements ServerService, SelfManaging {
     private static final java.lang.String sc_key_address = "server.address";
     private static final java.lang.String sc_key_database = "server.database";
     private static final java.lang.String sc_key_no_system_exit = "server.no_system_exit";
+	private static final String DRIVER_NAME = HsqlDatabaseProperties.PRODUCT_NAME + " Driver";
 
     private int port = ServerConfiguration.getDefaultPort(ServerConstants.SC_PROTOCOL_HSQL, false);
     private String ip = ServerConstants.SC_DEFAULT_ADDRESS;
@@ -179,7 +181,7 @@ public class HsqlService implements ServerService, SelfManaging {
 
     private String getPath(final String driver, final String url) {
         // is this connectoion using the hsql driver?
-        if (!HsqlDatabaseProperties.PRODUCT_NAME.equals(driver)) {
+        if ((!HsqlDatabaseProperties.PRODUCT_NAME.equals(driver)) && (!DRIVER_NAME.equals(driver)))  {
             return null;
         }
 
