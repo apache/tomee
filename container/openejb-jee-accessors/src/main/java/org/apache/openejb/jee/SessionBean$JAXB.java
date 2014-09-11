@@ -25,9 +25,12 @@ import org.metatype.sxc.util.XoXMLStreamWriter;
 import javax.xml.XMLConstants;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.namespace.QName;
+
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.apache.openejb.jee.AroundInvoke$JAXB.readAroundInvoke;
 import static org.apache.openejb.jee.AroundInvoke$JAXB.writeAroundInvoke;
@@ -91,7 +94,19 @@ import static org.apache.openejb.jee.TransactionType$JAXB.toStringTransactionTyp
 })
 public class SessionBean$JAXB
     extends JAXBObject<SessionBean> {
+	
+	private static final Set<String> sessionBeanClasses;
 
+	static {
+		sessionBeanClasses = new HashSet<String>();
+		sessionBeanClasses.add("org.apache.openejb.jee.SessionBean");
+		sessionBeanClasses.add("org.apache.openejb.jee.ManagedBean");
+		sessionBeanClasses.add("org.apache.openejb.config.CompManagedBean");
+		sessionBeanClasses.add("org.apache.openejb.jee.StatefulBean");
+		sessionBeanClasses.add("org.apache.openejb.jee.StatelessBean");
+		sessionBeanClasses.add("org.apache.openejb.jee.SingletonBean");
+		
+	}
 
     public SessionBean$JAXB() {
         super(SessionBean.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "session-beanType".intern()), Text$JAXB.class, Icon$JAXB.class, Empty$JAXB.class, SessionType$JAXB.class, Timeout$JAXB.class, NamedMethod$JAXB.class, Timer$JAXB.class, ConcurrencyManagementType$JAXB.class, ConcurrentMethod$JAXB.class, InitMethod$JAXB.class, RemoveMethod$JAXB.class, AsyncMethod$JAXB.class, TransactionType$JAXB.class, AroundInvoke$JAXB.class, AroundTimeout$JAXB.class, EnvEntry$JAXB.class, EjbRef$JAXB.class, EjbLocalRef$JAXB.class, ServiceRef$JAXB.class, ResourceRef$JAXB.class, ResourceEnvRef$JAXB.class, MessageDestinationRef$JAXB.class, PersistenceContextRef$JAXB.class, PersistenceUnitRef$JAXB.class, LifecycleCallback$JAXB.class, DataSource$JAXB.class, SecurityRoleRef$JAXB.class, SecurityIdentity$JAXB.class);
@@ -828,7 +843,8 @@ public class SessionBean$JAXB
         }
 
         final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
-        if (SessionBean.class != sessionBean.getClass()) {
+        
+        if (! sessionBeanClasses.contains(sessionBean.getClass().getName())) {
             context.unexpectedSubclass(writer, sessionBean, SessionBean.class);
             return;
         }
