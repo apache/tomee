@@ -323,15 +323,15 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
 
     private class AsynchronousCall implements Callable {
 
-        private Method method;
+        private final Method method;
 
-        private Object[] args;
+        private final Object[] args;
 
-        private Object proxy;
+        private final Object proxy;
 
-        private String requestId;
+        private final String requestId;
 
-        private EJBResponse response;
+        private final EJBResponse response;
 
         public AsynchronousCall(final Method method, final Object[] args, final Object proxy, final String requestId, final EJBResponse response) {
             this.method = method;
@@ -355,15 +355,15 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
 
     private class FutureAdapter<T> implements Future<T> {
 
-        private Future<T> target;
+        private final Future<T> target;
 
-        private String requestId;
+        private final String requestId;
 
-        private EJBResponse response;
+        private final EJBResponse response;
 
         private volatile boolean canceled;
 
-        private AtomicBoolean lastMayInterruptIfRunningValue = new AtomicBoolean(false);
+        private final AtomicBoolean lastMayInterruptIfRunningValue = new AtomicBoolean(false);
 
         public FutureAdapter(final Future<T> target, final EJBResponse response, final String requestId) {
             this.target = target;
@@ -452,10 +452,7 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
 
         @Override
         public boolean isDone() {
-            if (canceled) {
-                return false;
-            }
-            return target.isDone();
+            return !canceled && target.isDone();
         }
     }
 }
