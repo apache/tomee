@@ -32,6 +32,13 @@ public class PropertyPlaceHolderTest {
     }
 
     @Test
+    public void cipher() {
+        SystemInstance.get().setProperty("PropertyPlaceHolderTest", "cipher:Static3DES:xMH5uM1V9vQzVUv5LG7YLA==");
+
+        assertEquals("Passw0rd", PropertyPlaceHolderHelper.simpleValue("${PropertyPlaceHolderTest}"));
+    }
+
+    @Test
     public void simpleReplace() {
         SystemInstance.get().setProperty("PropertyPlaceHolderTest", "ok");
 
