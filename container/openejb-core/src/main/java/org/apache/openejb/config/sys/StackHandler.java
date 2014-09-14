@@ -193,6 +193,7 @@ public class StackHandler extends DefaultHandler {
         public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
             super.startElement(uri, localName, qName, attributes);
             service.setJndi(attributes.getValue("jndi"));
+            service.setPropertiesProvider(attributes.getValue("property-provider"));
 
             final String aliases = attributes.getValue("aliases");
             if (aliases != null) {
@@ -211,6 +212,7 @@ public class StackHandler extends DefaultHandler {
             final List<String> attributes = super.getAttributes();
             attributes.add("jndi");
             attributes.add("aliases");
+            attributes.add("properties-provider");
             return attributes;
         }
     }

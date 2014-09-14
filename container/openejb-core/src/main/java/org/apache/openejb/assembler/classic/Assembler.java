@@ -2661,6 +2661,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         final ObjectRecipe serviceRecipe = new ObjectRecipe(info.className, info.factoryMethod, constructorArgs, null);
         serviceRecipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
         serviceRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
+        serviceRecipe.allow(Option.PRIVATE_PROPERTIES);
         return serviceRecipe;
     }
 
