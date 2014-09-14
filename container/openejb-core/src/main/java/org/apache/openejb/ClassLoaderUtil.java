@@ -29,7 +29,9 @@ import org.apache.openejb.util.classloader.URLClassLoaderFirst;
 import org.apache.xbean.recipe.ObjectRecipe;
 
 import java.beans.Introspector;
+import java.io.Closeable;
 import java.io.File;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamClass;
@@ -153,6 +155,14 @@ public class ClassLoaderUtil {
         //Clear open jar files belonging to this ClassLoader
         for (final String jar : getClosedJarFiles(classLoader)) {
             clearSunJarFileFactoryCache(jar);
+        }
+
+        if (Closeable.class.isInstance(classLoader)) {
+            try {
+                Closeable.class.cast(classLoader).close();
+            } catch (final IOException e) {
+                // no-op
+            }
         }
     }
 
