@@ -43,7 +43,7 @@ public class GreetingService {
         return new Greet(greeting.doSomething(message.getValue()));
     }
 
-    @XmlRootElement // for xml only, useless for json (fleece is the default)
+    @XmlRootElement // for xml only, useless for json (johnzon is the default)
     public static class Greet {
         private String message;
 

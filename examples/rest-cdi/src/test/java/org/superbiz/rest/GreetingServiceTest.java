@@ -17,17 +17,21 @@
 package org.superbiz.rest;
 
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.fleece.jaxrs.FleeceProvider;
+import org.apache.johnzon.jaxrs.JohnzonProvider;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Classes;
+import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.Module;
+import org.apache.openejb.testng.PropertiesBuilder;
+import org.apache.openejb.util.NetworkUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
+import java.util.Properties;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
@@ -35,6 +39,13 @@ import static org.junit.Assert.assertEquals;
 @EnableServices(value = "jaxrs", httpDebug = true)
 @RunWith(ApplicationComposer.class)
 public class GreetingServiceTest {
+    private int port;
+
+    @Configuration
+    public Properties randomPort() {
+        port = NetworkUtil.getNextAvailablePort();
+        return new PropertiesBuilder().p("httpejbd.port", Integer.toString(port)).build();
+    }
 
     @Module
     @Classes(value = {GreetingService.class, Greeting.class}, cdi = true) // This enables the CDI magic
@@ -44,7 +55,7 @@ public class GreetingServiceTest {
 
     @Test
     public void getXml() throws IOException {
-        final String message = WebClient.create("http://localhost:4204").path("/test/greeting/")
+        final String message = WebClient.create("http://localhost:" + port).path("/test/greeting/")
                 .accept(MediaType.APPLICATION_XML_TYPE)
                 .get(GreetingService.Greet.class).getMessage();
         assertEquals("Hi REST!", message);
@@ -52,7 +63,7 @@ public class GreetingServiceTest {
 
     @Test
     public void postXml() throws IOException {
-        final String message = WebClient.create("http://localhost:4204").path("/test/greeting/")
+        final String message = WebClient.create("http://localhost:" + port).path("/test/greeting/")
                 .accept(MediaType.APPLICATION_XML_TYPE)
                 .post(new Request("Hi REST!"), GreetingService.Greet.class).getMessage();
         assertEquals("hi rest!", message);
@@ -60,7 +71,7 @@ public class GreetingServiceTest {
 
     @Test
     public void getJson() throws IOException {
-        final String message = WebClient.create("http://localhost:4204", asList(new FleeceProvider<GreetingService.Greet>())).path("/test/greeting/")
+        final String message = WebClient.create("http://localhost:" + port, asList(new JohnzonProvider<GreetingService.Greet>())).path("/test/greeting/")
                 .accept(MediaType.APPLICATION_JSON_TYPE)
                 .get(GreetingService.Greet.class).getMessage();
         assertEquals("Hi REST!", message);
@@ -68,7 +79,7 @@ public class GreetingServiceTest {
 
     @Test
     public void postJson() throws IOException {
-        final String message = WebClient.create("http://localhost:4204", asList(new FleeceProvider<GreetingService.Greet>())).path("/test/greeting/")
+        final String message = WebClient.create("http://localhost:" + port, asList(new JohnzonProvider<GreetingService.Greet>())).path("/test/greeting/")
                 .accept(MediaType.APPLICATION_JSON_TYPE)
                 .post(new Request("Hi REST!"), GreetingService.Greet.class).getMessage();
         assertEquals("hi rest!", message);
