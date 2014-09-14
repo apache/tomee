@@ -69,7 +69,6 @@ public class SslTomEETest {
         final Container container = new Container();
         container.setup(configuration);
         container.start();
-
         try {
             assertEquals(8443, ManagementFactory.getPlatformMBeanServer().getAttribute(new ObjectName("Tomcat:type=ProtocolHandler,port=8443"), "port"));
         } finally {

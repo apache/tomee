@@ -925,11 +925,12 @@ public class DeploymentLoader implements DeploymentFilterable {
                             urlSet = NewLoaderLogic.applyBuiltinExcludes(urlSet);
                             containerUrls = urlSet.getUrls();
 
+                            final boolean skipContainerFolders = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.scan.webapp.container.skip-folder", "true"));
                             final Iterator<URL> it = containerUrls.iterator();
                             while (it.hasNext()) { // remove lib/
                                 final File file = URLs.toFile(it.next());
                                 // TODO: see if websocket should be added in default.exclusions
-                                if (file.isDirectory() || file.getName().endsWith("tomcat-websocket.jar")) {
+                                if ((skipContainerFolders && file.isDirectory()) || file.getName().endsWith("tomcat-websocket.jar")) {
                                     it.remove();
                                 }
                             }

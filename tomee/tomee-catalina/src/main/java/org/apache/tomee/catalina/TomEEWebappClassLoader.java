@@ -340,7 +340,7 @@ public class TomEEWebappClassLoader extends WebappClassLoader {
 
     @Override
     public String toString() {
-        return "LazyStop" + super.toString();
+        return "TomEE" + super.toString();
     }
 
     public static void initContext(final ClassLoaderConfigurer configurer) {

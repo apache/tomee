@@ -47,6 +47,8 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.tomee.catalina.TomEERuntimeException;
 import org.apache.tomee.catalina.TomcatLoader;
+import org.apache.tomee.catalina.TomcatWebAppBuilder;
+import org.apache.tomee.catalina.session.FastNonSecureRandom;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
@@ -64,29 +66,36 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * @version $Rev$ $Date$
  */
-public class Container {
+public class Container implements AutoCloseable {
     static {
         // org.apache.naming
         Assembler.installNaming("org.apache.naming", true);
     }
 
-    private final Map<String, String> moduleIds = new HashMap<String, String>(); // TODO: manage multimap
-    private final Map<String, AppContext> appContexts = new HashMap<String, AppContext>(); // TODO: manage multimap
-    private final Map<String, AppInfo> infos = new HashMap<String, AppInfo>(); // TODO: manage multimap
+    private final Map<String, String> moduleIds = new HashMap<>(); // TODO: manage multimap
+    private final Map<String, AppContext> appContexts = new HashMap<>(); // TODO: manage multimap
+    private final Map<String, AppInfo> infos = new HashMap<>(); // TODO: manage multimap
     protected Configuration configuration;
     private File base;
     private ConfigurationFactory configurationFactory;
     private Assembler assembler;
     private Tomcat tomcat;
 
+    // start the container directly
+    public Container(final Configuration configuration) throws Exception {
+        setup(configuration);
+        start();
+    }
+
     public Container() {
-        configuration = new Configuration();
-        configuration.setHttpPort(23880);
-        configuration.setStopPort(23881);
+        this.configuration = new Configuration();
+        this.configuration.setHttpPort(23880);
+        this.configuration.setStopPort(23881);
     }
 
     private static boolean sameApplication(final File file, final WebAppInfo webApp) {
@@ -302,9 +311,7 @@ public class Container {
     }
 
     private String getBaseDir() {
-
-        File file = null;
-
+        File file;
         try {
 
             final String dir = configuration.getDir();
@@ -331,7 +338,7 @@ public class Container {
             return file.getAbsolutePath();
 
         } catch (final IOException e) {
-            throw new TomEERuntimeException("Failed to get or create base dir: " + file, e);
+            throw new TomEERuntimeException("Failed to get or create base dir: " + configuration.getDir(), e);
         }
     }
 
@@ -495,8 +502,57 @@ public class Container {
         return dir;
     }
 
+    public Tomcat getTomcat() {
+        return tomcat;
+    }
+
     public void await() {
         tomcat.getServer().await();
+    }
+
+    @Override
+    public void close() throws Exception {
+        final CountDownLatch end = new CountDownLatch(1);
+        new Thread() {
+            {
+                setName("tomee-embedded-await-" + hashCode());
+            }
+
+            @Override
+            public void run() {
+                try {
+                    Container.this.await();
+                    end.countDown();
+                } catch (final Exception e) {
+                    throw new IllegalStateException(e);
+                }
+            }
+        }.start();
+        new Thread() {
+            {
+                setName("tomee-embedded-stop-" + hashCode());
+            }
+
+            @Override
+            public void run() {
+                try {
+                    Container.this.stop();
+                } catch (final Exception e) {
+                    throw new IllegalStateException(e);
+                }
+            }
+        }.start();
+        end.await();
+    }
+
+    public org.apache.catalina.Context addContext(final String context, final String path) {
+        final File root = new File(path);
+        if (!root.exists()) {
+            Files.mkdirs(root);
+        }
+        final org.apache.catalina.Context ctx = getTomcat().addContext(context, root.getAbsolutePath()); // we don't want to be relative
+        SystemInstance.get().getComponent(TomcatWebAppBuilder.class).init(StandardContext.class.cast(ctx));
+        return ctx;
     }
 
     private static class TomcatWithFastSessionIDs extends Tomcat {
@@ -512,7 +568,7 @@ public class Container {
                         StandardManager m = (StandardManager) StandardContext.class.cast(c).getManager();
                         if (m == null) {
                             m = new StandardManager();
-                            m.setSecureRandomClass("org.apache.catalina.startup.FastNonSecureRandom");
+                            m.setSecureRandomClass(FastNonSecureRandom.class.getName());
                             StandardContext.class.cast(c).setManager(m);
                         }
                     }

@@ -71,7 +71,7 @@ public final class EmbeddedTomEEContainer extends EJBContainer {
         deployedIds.clear();
 
         try {
-            tomEEContainer.container.stop();
+            tomEEContainer.container.close();
         } catch (final Exception ex) {
             errors.add(ex);
             Logger.getInstance(LogCategory.OPENEJB, EmbeddedTomEEContainer.class).error(ex.getMessage(), ex);
