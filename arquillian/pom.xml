@@ -34,7 +34,6 @@
   <properties>
     <version.arquillian>1.1.5.Final</version.arquillian>
     <version.shrinkwrap.descriptor>2.0.0-alpha-6</version.shrinkwrap.descriptor>
-    <version.shrinkwrap.shrinkwrap>1.1.3</version.shrinkwrap.shrinkwrap>
     <test.coverage.skip>true</test.coverage.skip>
   </properties>
 

@@ -47,10 +47,7 @@ public class Main {
 
         // run TomEE
         try {
-            final Container container = new Container();
-            container.setup(createConfiguration(line));
-            container.start();
-
+            final Container container = new Container(createConfiguration(line));
             if (line.hasOption(PATH)) {
                 final String[] contexts;
                 if (line.hasOption(CONTEXT)) {

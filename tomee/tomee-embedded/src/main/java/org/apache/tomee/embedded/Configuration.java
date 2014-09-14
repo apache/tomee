@@ -16,6 +16,8 @@
  */
 package org.apache.tomee.embedded;
 
+import org.apache.openejb.util.NetworkUtil;
+
 import java.io.File;
 import java.util.Properties;
 
@@ -48,6 +50,11 @@ public class Configuration {
 
     public void setHttpPort(final int httpPort) {
         this.httpPort = httpPort;
+    }
+
+    public Configuration randomHttpPort() {
+        this.httpPort = NetworkUtil.getNextAvailablePort();
+        return this;
     }
 
     public int getStopPort() {
@@ -179,5 +186,13 @@ public class Configuration {
 
     public void setSslProtocol(final String sslProtocol) {
         this.sslProtocol = sslProtocol;
+    }
+
+    public Configuration property(final String key, final String value) {
+        if (properties == null) {
+            properties = new Properties();
+        }
+        properties.setProperty(key, value);
+        return this;
     }
 }
