@@ -55,7 +55,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>arquillian-openejb-embedded-4</artifactId>
+      <artifactId>arquillian-openejb-embedded-5</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>

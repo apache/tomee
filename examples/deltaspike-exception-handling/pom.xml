@@ -78,7 +78,7 @@
       is dependent on any OpenEJB classes. -->
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>arquillian-openejb-embedded-4</artifactId>
+      <artifactId>arquillian-openejb-embedded-5</artifactId>
       <version>5.0.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>

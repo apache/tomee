@@ -62,7 +62,7 @@
     <!-- to test with OpenEJB embedded and Arquillian
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>arquillian-openejb-embedded-4</artifactId>
+      <artifactId>arquillian-openejb-embedded-5</artifactId>
       <version>[OPENEJB]</version>
       <scope>test</scope>
     </dependency>
