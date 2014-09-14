@@ -47,8 +47,8 @@ public class URLClassLoaderFirst extends URLClassLoader {
     private static final boolean SKIP_JMS = skipLib("org.apache.activemq.broker.BrokerFactory");
 
     // - will not match anything, that's the desired default behavior
-    public static final Collection<String> FORCED_SKIP = new ArrayList<String>();
-    public static final Collection<String> FORCED_LOAD = new ArrayList<String>();
+    public static final Collection<String> FORCED_SKIP = new ArrayList<>();
+    public static final Collection<String> FORCED_LOAD = new ArrayList<>();
 
     static {
         LOCK = new ReentrantLock();

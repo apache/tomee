@@ -266,9 +266,6 @@ public class DeploymentLoader implements DeploymentFilterable {
             // We can safely destroy this class loader in either case, as it was not use by any modules
             if (null != doNotUseClassLoader) {
                 ClassLoaderUtil.destroyClassLoader(doNotUseClassLoader);
-
-                //Really try and flush this classloader out
-//                System.gc();
             }
         }
     }
@@ -420,13 +417,13 @@ public class DeploymentLoader implements DeploymentFilterable {
             }
 
             final ClassLoaderConfigurer configurer = QuickJarsTxtParser.parse(new File(appDir, "META-INF/" + QuickJarsTxtParser.FILE_NAME));
-            final Collection<URL> jarsXmlLib = new ArrayList<URL>();
+            final Collection<URL> jarsXmlLib = new ArrayList<>();
             if (configurer != null) {
                 for (final URL url : configurer.additionalURLs()) {
                     try {
                         detectAndAddModuleToApplication(appId, tmpClassLoader,
                             ejbModules, clientModules, resouceModules, webModules,
-                            new ImmutablePair<String, URL>(URLs.toFile(url).getAbsolutePath(), url));
+                            new ImmutablePair<>(URLs.toFile(url).getAbsolutePath(), url));
                     } catch (final Exception e) {
                         jarsXmlLib.add(url);
                     }
@@ -493,7 +490,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 iterator.remove();
             }
 
-            final List<URL> classPath = new ArrayList<URL>();
+            final List<URL> classPath = new ArrayList<>();
             classPath.addAll(ejbModules.values());
             classPath.addAll(clientModules.values());
             classPath.addAll(rarLibs.values());
@@ -602,14 +599,14 @@ public class DeploymentLoader implements DeploymentFilterable {
             final Properties p = new Properties();
             p.put(appModule.getModuleId(), appModule.getJarLocation());
             final FileUtils base = new FileUtils(appModule.getModuleId(), appModule.getModuleId(), p);
-            final List<URL> filteredUrls = new ArrayList<URL>();
+            final List<URL> filteredUrls = new ArrayList<>();
             DeploymentsResolver.loadFromClasspath(base, filteredUrls, appModule.getClassLoader());
             addPersistenceUnits(appModule, filteredUrls.toArray(new URL[filteredUrls.size()]));
 
             final Object pXmls = appModule.getAltDDs().get("persistence.xml");
 
             for (final WebModule webModule : appModule.getWebModules()) {
-                final List<URL> foundRootUrls = new ArrayList<URL>();
+                final List<URL> foundRootUrls = new ArrayList<>();
                 final List<URL> scannableUrls = webModule.getScannableUrls();
                 for (final URL url : scannableUrls) {
                     if (!addPersistenceUnits(appModule, url).isEmpty()) {
