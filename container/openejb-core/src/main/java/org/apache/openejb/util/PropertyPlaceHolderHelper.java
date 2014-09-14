@@ -51,16 +51,21 @@ public final class PropertyPlaceHolderHelper {
     }
 
     public static String simpleValue(final String raw) {
-        if (raw == null || !raw.contains(PREFIX) || !raw.contains(SUFFIX)) {
-            return raw;
+        if (raw == null) {
+            return null;
+        }
+        if (!raw.contains(PREFIX) || !raw.contains(SUFFIX)) {
+            return decryptIfNeeded(raw.replace(PREFIX, "").replace(SUFFIX, ""));
         }
 
         String value = SUBSTITUTOR.replace(raw);
         if (!value.equals(raw) && value.startsWith("java:")) {
             value = value.substring(5);
         }
+        return decryptIfNeeded(value.replace(PREFIX, "").replace(SUFFIX, ""));
+    }
 
-        final String replace = value.replace(PREFIX, "").replace(SUFFIX, "");
+    private static String decryptIfNeeded(String replace) {
         if (replace.startsWith(CIPHER_PREFIX)) {
             final String algo = replace.substring(CIPHER_PREFIX.length(), replace.indexOf(':', CIPHER_PREFIX.length() + 1));
             PasswordCipher cipher = null;
