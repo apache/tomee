@@ -114,9 +114,9 @@
       <artifactId>cxf-rt-rs-extension-providers</artifactId>
       <version>${cxf.version}</version>
     </dependency>
-    <dependency> <!-- FleeceProvider, WadlDocumentMessageBodyWriter and JsrProvider -->
-      <groupId>org.apache.fleece</groupId>
-      <artifactId>fleece-jaxrs</artifactId>
+    <dependency> <!-- JohnzonProvider, WadlDocumentMessageBodyWriter and JsrProvider -->
+      <groupId>org.apache.johnzon</groupId>
+      <artifactId>johnzon-jaxrs</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
   </dependencies>

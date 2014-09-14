@@ -39,9 +39,9 @@ import org.apache.cxf.jaxrs.provider.SourceProvider;
 import org.apache.cxf.service.invoker.Invoker;
 import org.apache.cxf.transport.DestinationFactory;
 import org.apache.cxf.transport.servlet.BaseUrlHelper;
-import org.apache.fleece.jaxrs.FleeceProvider;
-import org.apache.fleece.jaxrs.JsrProvider;
-import org.apache.fleece.jaxrs.WadlDocumentMessageBodyWriter;
+import org.apache.johnzon.jaxrs.JohnzonProvider;
+import org.apache.johnzon.jaxrs.JsrProvider;
+import org.apache.johnzon.jaxrs.WadlDocumentMessageBodyWriter;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.Injection;
 import org.apache.openejb.api.internal.Internal;
@@ -710,7 +710,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         jaxb.setMarshallerProperties(jaxbProperties);
 
         final List<Object> providers = new ArrayList<>(2);
-        providers.add(new FleeceProvider<>());
+        providers.add(new JohnzonProvider<>());
         providers.add(jaxb);
         return providers;
     }
