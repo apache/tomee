@@ -29,7 +29,9 @@ import org.apache.openejb.util.classloader.URLClassLoaderFirst;
 import org.apache.xbean.recipe.ObjectRecipe;
 
 import java.beans.Introspector;
+import java.io.Closeable;
 import java.io.File;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamClass;
@@ -154,6 +156,14 @@ public class ClassLoaderUtil {
         for (final String jar : getClosedJarFiles(classLoader)) {
             clearSunJarFileFactoryCache(jar);
         }
+
+        if (Closeable.class.isInstance(classLoader)) {
+            try {
+                Closeable.class.cast(classLoader).close();
+            } catch (final IOException e) {
+                // no-op
+            }
+        }
     }
 
     /**
@@ -203,8 +213,6 @@ public class ClassLoaderUtil {
 
     @SuppressWarnings({"UseOfObsoleteCollectionType", "PMD.AvoidCallingFinalize"})
     public boolean finalizeNativeLibs(final ClassLoader cl) {
-
-        boolean res = false;
         final Class classClassLoader = ClassLoader.class;
         Field nativeLibraries = null;
 
@@ -215,7 +223,7 @@ public class ClassLoaderUtil {
         }
 
         if (nativeLibraries == null) {
-            return res;
+            return false;
         }
 
         nativeLibraries.setAccessible(true);
@@ -228,10 +236,9 @@ public class ClassLoaderUtil {
         }
 
         if (!(obj instanceof Vector)) {
-            return res;
+            return false;
         }
 
-        res = true;
         final Vector javaLangClassLoaderNativeLibrary = (Vector) obj;
         Method finalize;
 
@@ -245,7 +252,7 @@ public class ClassLoaderUtil {
                     finalize.setAccessible(true);
 
                     try {
-                        finalize.invoke(lib, new Object[0]);
+                        finalize.invoke(lib);
                     } catch (final Throwable e) {
                         //Ignore
                     }
@@ -254,7 +261,7 @@ public class ClassLoaderUtil {
                 //Ignore
             }
         }
-        return res;
+        return true;
     }
 
     public static void destroyClassLoader(final String appId) {
