@@ -47,7 +47,6 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.tomee.catalina.TomEERuntimeException;
 import org.apache.tomee.catalina.TomcatLoader;
-import org.apache.tomee.catalina.TomcatWebAppBuilder;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
@@ -554,9 +553,7 @@ public class Container implements Closeable {
         if (!root.exists()) {
             Files.mkdirs(root);
         }
-        final org.apache.catalina.Context ctx = getTomcat().addContext(context, root.getAbsolutePath()); // we don't want to be relative
-        SystemInstance.get().getComponent(TomcatWebAppBuilder.class).init(StandardContext.class.cast(ctx));
-        return ctx;
+        return getTomcat().addContext(context, root.getAbsolutePath()); // we don't want to be relative
     }
 
     private static class TomcatWithFastSessionIDs extends Tomcat {
