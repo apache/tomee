@@ -21,6 +21,7 @@ import org.apache.openejb.Extensions;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.Vendor;
 import org.apache.openejb.api.Proxy;
+import org.apache.openejb.api.resource.PropertiesResourceProvider;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.BmpEntityContainerInfo;
@@ -1182,15 +1183,20 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             props.putAll(overrides);
 
             // force user properties last
-            if (service.getPropertiesProvider() != null) {
+            String propertiesProvider = service.getPropertiesProvider();
+            if (propertiesProvider == null) {
+                propertiesProvider = SystemInstance.get().getProperty(PropertiesResourceProvider.class.getName());
+            }
+            if (propertiesProvider != null) {
                 // don't trim them, user wants to handle it himself, let him do it
-                final ObjectRecipe recipe = new ObjectRecipe(service.getPropertiesProvider());
+                final ObjectRecipe recipe = new ObjectRecipe(propertiesProvider);
                 recipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
                 recipe.allow(Option.PRIVATE_PROPERTIES);
                 recipe.allow(Option.FIELD_INJECTION);
                 recipe.allow(Option.NAMED_PARAMETERS);
                 recipe.allow(Option.IGNORE_MISSING_PROPERTIES);
                 recipe.setFactoryMethod("provides");
+                recipe.setProperty("serviceId", service.getId());
                 recipe.setProperties(props);
                 recipe.setProperty("properties", props); // let user get all config
                 final Properties p = Properties.class.cast(recipe.create());
