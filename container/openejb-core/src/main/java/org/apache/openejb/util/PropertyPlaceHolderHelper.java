@@ -19,6 +19,9 @@ package org.apache.openejb.util;
 
 import org.apache.commons.lang3.text.StrLookup;
 import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.openejb.cipher.PasswordCipher;
+import org.apache.openejb.cipher.PasswordCipherException;
+import org.apache.openejb.cipher.PasswordCipherFactory;
 import org.apache.openejb.loader.SystemInstance;
 
 import java.util.Map;
@@ -31,6 +34,12 @@ public final class PropertyPlaceHolderHelper {
 
     private static final PropertiesLookup RESOLVER = new PropertiesLookup();
     public static final StrSubstitutor SUBSTITUTOR = new StrSubstitutor(RESOLVER);
+    static {
+        SUBSTITUTOR.setEnableSubstitutionInVariables(true);
+        SUBSTITUTOR.setValueDelimiter(System.getProperty("openejb.placehodler.delimiter", ":-")); // default one of [lang3]
+    }
+
+    public static final String CIPHER_PREFIX = "cipher:";
 
     private PropertyPlaceHolderHelper() {
         // no-op
@@ -42,15 +51,36 @@ public final class PropertyPlaceHolderHelper {
     }
 
     public static String simpleValue(final String raw) {
-        if (raw == null || !raw.contains(PREFIX) || !raw.contains(SUFFIX)) {
-            return raw;
+        if (raw == null) {
+            return null;
+        }
+        if (!raw.contains(PREFIX) || !raw.contains(SUFFIX)) {
+            return decryptIfNeeded(raw.replace(PREFIX, "").replace(SUFFIX, ""));
         }
 
         String value = SUBSTITUTOR.replace(raw);
         if (!value.equals(raw) && value.startsWith("java:")) {
             value = value.substring(5);
         }
-        return value;
+        return decryptIfNeeded(value.replace(PREFIX, "").replace(SUFFIX, ""));
+    }
+
+    private static String decryptIfNeeded(String replace) {
+        if (replace.startsWith(CIPHER_PREFIX)) {
+            final String algo = replace.substring(CIPHER_PREFIX.length(), replace.indexOf(':', CIPHER_PREFIX.length() + 1));
+            PasswordCipher cipher = null;
+            try {
+                cipher = PasswordCipherFactory.getPasswordCipher(algo);
+            } catch (final PasswordCipherException ex) {
+                try {
+                    cipher = PasswordCipher.class.cast(Thread.currentThread().getContextClassLoader().loadClass(algo).newInstance());
+                } catch (final Exception e) {
+                    throw new IllegalArgumentException(e);
+                }
+            }
+            return cipher.decrypt(replace.substring(CIPHER_PREFIX.length() + algo.length()).toCharArray());
+        }
+        return replace;
     }
 
     public static String value(final String aw) {
@@ -107,7 +137,7 @@ public final class PropertyPlaceHolderHelper {
                 return value;
             }
 
-            return key;
+            return null;
         }
 
         public synchronized void reload() {
