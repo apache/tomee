@@ -226,7 +226,7 @@ public class Installer implements InstallerInterface {
             return;
         }
 
-        if (!indeJsp.contains("tomcat7Url")) { // check the user didn't replaced the file, can be improved
+        if (!indeJsp.contains("tomcatUrl")) { // check the user didn't replaced the file, can be improved
             alerts.addWarning("webapps/ROOT/index.jsp was modified");
             return;
         }
