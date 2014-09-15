@@ -125,6 +125,6 @@ public class TomEEUndeployTest {
 
     @After
     public void stop() throws Exception {
-        container.stop();
+        container.close();
     }
 }

@@ -82,7 +82,7 @@ public class SslTomEETest {
         try {
             assertFalse(ManagementFactory.getPlatformMBeanServer().isRegistered(new ObjectName("Tomcat:type=ProtocolHandler,port=8443")));
         } finally {
-            container.stop();
+            container.close();
         }
 
     }

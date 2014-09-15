@@ -65,7 +65,6 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * @version $Rev$ $Date$
@@ -511,37 +510,7 @@ public class Container implements AutoCloseable {
 
     @Override
     public void close() throws Exception {
-        final CountDownLatch end = new CountDownLatch(1);
-        new Thread() {
-            {
-                setName("tomee-embedded-await-" + hashCode());
-            }
-
-            @Override
-            public void run() {
-                try {
-                    Container.this.await();
-                    end.countDown();
-                } catch (final Exception e) {
-                    throw new IllegalStateException(e);
-                }
-            }
-        }.start();
-        new Thread() {
-            {
-                setName("tomee-embedded-stop-" + hashCode());
-            }
-
-            @Override
-            public void run() {
-                try {
-                    Container.this.stop();
-                } catch (final Exception e) {
-                    throw new IllegalStateException(e);
-                }
-            }
-        }.start();
-        end.await();
+        stop();
     }
 
     public org.apache.catalina.Context addContext(final String context, final String path) {
