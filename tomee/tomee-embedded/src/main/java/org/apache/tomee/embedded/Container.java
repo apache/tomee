@@ -20,7 +20,6 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Server;
 import org.apache.catalina.Service;
 import org.apache.catalina.connector.Connector;
-import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.startup.CatalinaProperties;
@@ -258,7 +257,7 @@ public class Container implements Closeable {
         if (configuration.getProperties() != null) {
             properties.putAll(configuration.getProperties());
         }
-        if (properties.getProperty("openejb.system.apps") == null)  { // will make startup faster and it is rarely useful for embedded case
+        if (properties.getProperty("openejb.system.apps") == null) { // will make startup faster and it is rarely useful for embedded case
             properties.setProperty("openejb.system.apps", "false");
         }
 
