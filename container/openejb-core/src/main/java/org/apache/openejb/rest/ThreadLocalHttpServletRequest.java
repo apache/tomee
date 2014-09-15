@@ -29,6 +29,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpUpgradeHandler;
 import javax.servlet.http.Part;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -69,6 +70,11 @@ public class ThreadLocalHttpServletRequest extends AbstractRestThreadLocalProxy<
     @Override
     public int getContentLength() {
         return get().getContentLength();
+    }
+
+    @Override
+    public long getContentLengthLong() {
+        return get().getContentLengthLong();
     }
 
     @Override
@@ -282,6 +288,11 @@ public class ThreadLocalHttpServletRequest extends AbstractRestThreadLocalProxy<
     }
 
     @Override
+    public <T extends HttpUpgradeHandler> T upgrade(final Class<T> httpUpgradeHandlerClass) throws IOException, ServletException {
+        return get().upgrade(httpUpgradeHandlerClass);
+    }
+
+    @Override
     public Collection<Part> getParts() throws IOException, ServletException {
         return get().getParts();
     }
@@ -329,6 +340,11 @@ public class ThreadLocalHttpServletRequest extends AbstractRestThreadLocalProxy<
     @Override
     public HttpSession getSession() {
         return get().getSession();
+    }
+
+    @Override
+    public String changeSessionId() {
+        return get().changeSessionId();
     }
 
     @Override

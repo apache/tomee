@@ -17,6 +17,7 @@
 package org.apache.openejb.server.httpd;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -26,6 +27,16 @@ public class ServletByteArrayOutputStream extends ServletOutputStream {
 
     public ServletByteArrayOutputStream() {
         outputStream = new ByteArrayOutputStream();
+    }
+
+    @Override
+    public boolean isReady() {
+        return true;
+    }
+
+    @Override
+    public void setWriteListener(final WriteListener listener) {
+        // no-op
     }
 
     @Override

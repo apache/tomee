@@ -64,6 +64,11 @@ public class ThreadLocalServletRequest extends AbstractRestThreadLocalProxy<Serv
     }
 
     @Override
+    public long getContentLengthLong() {
+        return get().getContentLengthLong();
+    }
+
+    @Override
     public String getContentType() {
         return get().getContentType();
     }

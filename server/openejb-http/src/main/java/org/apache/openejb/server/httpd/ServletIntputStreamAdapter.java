@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.server.httpd;
 
+import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 
 import java.io.ByteArrayInputStream;
@@ -24,6 +25,7 @@ import java.io.InputStream;
 
 public class ServletIntputStreamAdapter extends ServletInputStream {
     private InputStream intputStream;
+    private boolean finished;
 
     public ServletIntputStreamAdapter(InputStream is) {
         intputStream = is;
@@ -31,6 +33,23 @@ public class ServletIntputStreamAdapter extends ServletInputStream {
 
     @Override
     public int read() throws IOException {
-        return intputStream.read();
+        final int read = intputStream.read();
+        finished = read == -1;
+        return read;
+    }
+
+    @Override
+    public boolean isFinished() {
+        return finished;
+    }
+
+    @Override
+    public boolean isReady() {
+        return true;
+    }
+
+    @Override
+    public void setReadListener(final ReadListener listener) {
+        // no-op
     }
 }

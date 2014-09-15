@@ -16,12 +16,14 @@
  */
 package org.apache.openejb.server.httpd;
 
+import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 public class ServletByteArrayIntputStream extends ServletInputStream {
     private final ByteArrayInputStream intputStream;
+    private boolean finished;
 
     public ServletByteArrayIntputStream(byte[] body) {
         intputStream = new ByteArrayInputStream(body);
@@ -29,10 +31,27 @@ public class ServletByteArrayIntputStream extends ServletInputStream {
 
     @Override
     public int read() throws IOException {
-        return intputStream.read();
+        final int read = intputStream.read();
+        finished = read == -1;
+        return read;
     }
 
     public ByteArrayInputStream getIntputStream() {
         return intputStream;
+    }
+
+    @Override
+    public boolean isFinished() {
+        return finished;
+    }
+
+    @Override
+    public boolean isReady() {
+        return true;
+    }
+
+    @Override
+    public void setReadListener(final ReadListener listener) {
+        // no-op
     }
 }

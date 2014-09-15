@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+// Note: better to use a filter to handle correctly static resources
 public class RsServlet extends HttpServlet {
     private HttpListener listener;
     private ServletConfig servletConfig;

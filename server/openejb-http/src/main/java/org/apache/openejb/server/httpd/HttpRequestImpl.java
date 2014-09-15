@@ -33,6 +33,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSessionEvent;
+import javax.servlet.http.HttpUpgradeHandler;
 import javax.servlet.http.Part;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -162,7 +163,7 @@ public class HttpRequestImpl implements HttpRequest {
 
     @Override
     public Enumeration<String> getHeaderNames() {
-        return new ArrayEnumeration(new ArrayList<String>(headers.keySet()));
+        return new ArrayEnumeration(new ArrayList<>(headers.keySet()));
     }
 
     @Override
@@ -215,6 +216,11 @@ public class HttpRequestImpl implements HttpRequest {
     @Override
     public Part getPart(String s) throws IOException, ServletException {
         return parts.get(s);
+    }
+
+    @Override
+    public <T extends HttpUpgradeHandler> T upgrade(final Class<T> httpUpgradeHandlerClass) throws IOException, ServletException {
+        throw new UnsupportedOperationException("upgrade not supported");
     }
 
     @Override
@@ -294,6 +300,11 @@ public class HttpRequestImpl implements HttpRequest {
 
     public int getContentLength() {
         return length;
+    }
+
+    @Override
+    public long getContentLengthLong() {
+        return getContentLength();
     }
 
     public String getContentType() {
@@ -885,6 +896,17 @@ public class HttpRequestImpl implements HttpRequest {
 
     public HttpSession getSession() {
         return getSession(true);
+    }
+
+    @Override
+    public String changeSessionId() {
+        if (session != null) {
+            if (HttpSessionImpl.class.isInstance(session)) {
+                HttpSessionImpl.class.cast(session).newSessionId();
+            }
+            return session.getId();
+        }
+        return null;
     }
 
     @Override

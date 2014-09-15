@@ -201,6 +201,11 @@ public class ThreadLocalHttpServletResponse extends AbstractRestThreadLocalProxy
     }
 
     @Override
+    public void setContentLengthLong(final long length) {
+        get().setContentLengthLong(length);
+    }
+
+    @Override
     public void setContentType(final String type) {
         get().setContentType(type);
     }

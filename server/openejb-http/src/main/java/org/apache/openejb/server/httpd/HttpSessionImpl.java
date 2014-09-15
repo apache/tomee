@@ -16,12 +16,16 @@
  */
 package org.apache.openejb.server.httpd;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSessionContext;
-
 import org.apache.openejb.client.ArrayEnumeration;
 
-import java.util.*;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSessionContext;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentMap;
 
 public class HttpSessionImpl implements HttpSession {
@@ -35,6 +39,10 @@ public class HttpSessionImpl implements HttpSession {
 
     public HttpSessionImpl() {
         this(null);
+    }
+
+    public void newSessionId() {
+        this.sessionId = UUID.randomUUID().toString();
     }
 
     @Override

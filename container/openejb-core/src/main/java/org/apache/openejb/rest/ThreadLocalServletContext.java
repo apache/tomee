@@ -256,6 +256,11 @@ public class ThreadLocalServletContext extends AbstractRestThreadLocalProxy<Serv
     }
 
     @Override
+    public String getVirtualServerName() {
+        return get().getVirtualServerName();
+    }
+
+    @Override
     public SessionCookieConfig getSessionCookieConfig() {
         return get().getSessionCookieConfig();
     }

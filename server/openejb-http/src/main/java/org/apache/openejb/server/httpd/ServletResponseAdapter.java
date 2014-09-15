@@ -178,6 +178,11 @@ public class ServletResponseAdapter implements HttpResponse {
         response.setContentLength(i);
     }
 
+    @Override
+    public void setContentLengthLong(long length) {
+        response.setContentLengthLong(length);
+    }
+
     public void setContentType(String type) {
         response.setContentType(type);
     }

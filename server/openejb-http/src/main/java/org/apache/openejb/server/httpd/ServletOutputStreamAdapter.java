@@ -17,7 +17,7 @@
 package org.apache.openejb.server.httpd;
 
 import javax.servlet.ServletOutputStream;
-
+import javax.servlet.WriteListener;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -31,5 +31,15 @@ public class ServletOutputStreamAdapter extends ServletOutputStream {
     @Override
     public void write(int b) throws IOException {
         outputStream.write(b);
+    }
+
+    @Override
+    public boolean isReady() {
+        return true;
+    }
+
+    @Override
+    public void setWriteListener(final WriteListener listener) {
+        // no-op
     }
 }

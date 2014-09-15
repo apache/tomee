@@ -346,6 +346,11 @@ public class HttpResponseImpl implements HttpResponse {
         // no-op
     }
 
+    @Override
+    public void setContentLengthLong(final long length) {
+        // no-op
+    }
+
     /**
      * resets the data to be sent to the browser with the response code and response
      * string

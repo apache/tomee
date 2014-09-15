@@ -17,12 +17,19 @@
  */
 package org.apache.openejb.server.httpd;
 
-import javax.servlet.*;
+import javax.servlet.AsyncContext;
+import javax.servlet.DispatcherType;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpUpgradeHandler;
 import javax.servlet.http.Part;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -106,6 +113,11 @@ public class ServletRequestAdapter implements HttpRequest {
         }
     }
 
+    @Override
+    public String changeSessionId() {
+        return request.changeSessionId();
+    }
+
     public String getHeader(String name) {
         return request.getHeader(name);
     }
@@ -135,6 +147,11 @@ public class ServletRequestAdapter implements HttpRequest {
 
     public int getContentLength() {
         return request.getContentLength();
+    }
+
+    @Override
+    public long getContentLengthLong() {
+        return request.getContentLengthLong();
     }
 
     public String getContentType() {
@@ -200,19 +217,17 @@ public class ServletRequestAdapter implements HttpRequest {
     }
 
     public String getMethod() {
-        /*
-        try { // to check it is supported
-            return Method.valueOf(request.getMethod()).name();
-        } catch (IllegalArgumentException e) {
-            return Method.UNSUPPORTED.name();
-        }
-        */
         return request.getMethod(); // some method can be added so don't filter it
     }
 
     @Override
     public Part getPart(String s) throws IOException, ServletException {
         return request.getPart(s);
+    }
+
+    @Override
+    public <T extends HttpUpgradeHandler> T upgrade(final Class<T> httpUpgradeHandlerClass) throws IOException, ServletException {
+        return request.upgrade(httpUpgradeHandlerClass);
     }
 
     @Override
@@ -304,9 +319,7 @@ public class ServletRequestAdapter implements HttpRequest {
     }
 
     public Object getAttribute(String s) {
-        Object o = request.getAttribute(s);
-
-        return o;
+        return request.getAttribute(s);
     }
 
     @Override
