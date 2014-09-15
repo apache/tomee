@@ -65,7 +65,7 @@ public final class PropertyPlaceHolderHelper {
         return decryptIfNeeded(value.replace(PREFIX, "").replace(SUFFIX, ""));
     }
 
-    private static String decryptIfNeeded(String replace) {
+    private static String decryptIfNeeded(final String replace) {
         if (replace.startsWith(CIPHER_PREFIX)) {
             final String algo = replace.substring(CIPHER_PREFIX.length(), replace.indexOf(':', CIPHER_PREFIX.length() + 1));
             PasswordCipher cipher = null;
