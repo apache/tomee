@@ -222,7 +222,7 @@ public class CxfRsHttpListener implements RsHttpListener {
     }
 
     public InputStream findStaticContent(final HttpServletRequest request, final String[] welcomeFiles) throws ServletException {
-        String pathInfo = request.getRequestURI().substring(request.getServletContext().getContextPath().length());
+        String pathInfo = request.getRequestURI().substring(request.getContextPath().length());
         for (final char c : URL_SEP) {
             final int indexOf = pathInfo.indexOf(c);
             if (indexOf > 0) {
