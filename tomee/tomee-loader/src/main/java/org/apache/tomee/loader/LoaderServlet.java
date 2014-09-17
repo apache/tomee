@@ -16,13 +16,13 @@
  */
 package org.apache.tomee.loader;
 
-import java.util.Properties;
-import java.util.Enumeration;
-import java.io.File;
 import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
+import java.io.File;
+import java.util.Enumeration;
+import java.util.Properties;
 
 /**
  * The sole purpose of this class is to call the {@link TomcatEmbedder#embed} method
@@ -30,9 +30,9 @@ import javax.servlet.http.HttpServlet;
  * This class gets the location of this webapp and assumes that it is
  * the tomee.war file then calls the embedder.
  *
- * This method of bootstrapping is mutually exclussive to the {@link OpenEJBListener} approach
+ * This method of bootstrapping is mutually exclusive to the {@link OpenEJBListener} approach
  */
-@Deprecated // use tomee-overlay-runner or another way to ensure you deterministicly work
+@Deprecated // use tomee-overlay-runner or another way to ensure you work deterministically
 public class LoaderServlet extends HttpServlet {
     
     //Default serial version id

@@ -146,7 +146,7 @@ public class Container implements Closeable {
     }
 
     public void start() throws Exception {
-        if (base == null) {
+        if (base == null || !base.exists()) {
             setup(configuration);
         }
 
@@ -341,10 +341,22 @@ public class Container implements Closeable {
     }
 
     public void stop() throws Exception {
-        tomcat.stop();
-        tomcat.destroy();
-        deleteTree(base);
-        base = null;
+        try {
+            tomcat.stop();
+        } catch (final LifecycleException e) {
+            e.printStackTrace();
+        }
+        try {
+            tomcat.destroy();
+        } catch (final LifecycleException e) {
+            e.printStackTrace();
+        }
+        try {
+            deleteTree(base);
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+
         OpenEJB.destroy();
         // don't set base = null here to be able to use base after to clean up from outside of this class
     }

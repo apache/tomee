@@ -237,7 +237,10 @@ public class TomcatLoader implements Loader {
 
         // add common lib even in ear "lib" part (if the ear provides myfaces for instance)
         for (final URL url : classLoaderEnricher.enrichment(null)) { // we rely on the fact we know what the impl does with null but that's fine
-            SystemInstance.get().getComponent(ClassLoaderEnricher.class).addUrl(url);
+            final ClassLoaderEnricher enricher = SystemInstance.get().getComponent(ClassLoaderEnricher.class);
+            if (null != enricher) {
+                enricher.addUrl(url);
+            }
         }
 
         // optional services

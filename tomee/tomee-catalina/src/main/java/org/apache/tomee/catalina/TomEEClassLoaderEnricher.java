@@ -118,7 +118,13 @@ public final class TomEEClassLoaderEnricher implements WebAppEnricher {
         }
 
         // from config
-        urls.addAll(Arrays.asList(SystemInstance.get().getComponent(ClassLoaderEnricher.class).applicationEnrichment()));
+        final ClassLoaderEnricher classLoaderEnricher = SystemInstance.get().getComponent(ClassLoaderEnricher.class);
+        if (null != classLoaderEnricher) {
+            final URL[] enrichment = classLoaderEnricher.applicationEnrichment();
+            if (null != enrichment && enrichment.length > 0) {
+                urls.addAll(Arrays.asList(enrichment));
+            }
+        }
 
         return urls.toArray(new URL[urls.size()]);
     }
