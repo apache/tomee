@@ -204,7 +204,7 @@ public class Container implements Closeable {
         if (!configuration.isSkipHttp()) {
             final Connector connector = new Connector(Http11Protocol.class.getName());
             connector.setPort(configuration.getHttpPort());
-            connector.setAttribute("connectionTimeout", "3000");
+            connector.setAttribute("connectionTimeout", "5000");
             tomcat.getService().addConnector(connector);
             tomcat.setConnector(connector);
         }
@@ -322,7 +322,10 @@ public class Container implements Closeable {
             }
 
             try {
-                file = File.createTempFile("apache-tomee", "-home");
+
+                final File target = new File("target");
+                file = File.createTempFile("apache-tomee", "-home", target.exists() ? target : null);
+
             } catch (final Throwable e) {
 
                 final File tmp = new File("tmp");
@@ -341,6 +344,12 @@ public class Container implements Closeable {
     }
 
     public void stop() throws Exception {
+
+        final Connector connector = tomcat.getConnector();
+        if (null != connector) {
+            connector.stop();
+        }
+
         try {
             tomcat.stop();
         } catch (final LifecycleException e) {
@@ -523,6 +532,7 @@ public class Container implements Closeable {
     @Override
     public void close() throws IOException {
         final CountDownLatch end = new CountDownLatch(1);
+        final Container container = Container.this;
         new Thread() {
             {
                 setName("tomee-embedded-await-" + hashCode());
@@ -531,27 +541,20 @@ public class Container implements Closeable {
             @Override
             public void run() {
                 try {
-                    Container.this.await();
+                    container.await();
                     end.countDown();
                 } catch (final Exception e) {
                     throw new IllegalStateException(e);
                 }
             }
         }.start();
-        new Thread() {
-            {
-                setName("tomee-embedded-stop-" + hashCode());
-            }
 
-            @Override
-            public void run() {
-                try {
-                    Container.this.stop();
-                } catch (final Exception e) {
-                    throw new IllegalStateException(e);
-                }
-            }
-        }.start();
+        try {
+            container.stop();
+        } catch (final Exception e) {
+            throw new IOException("Failed to stop container", e);
+        }
+
         try {
             end.await();
         } catch (final InterruptedException e) {

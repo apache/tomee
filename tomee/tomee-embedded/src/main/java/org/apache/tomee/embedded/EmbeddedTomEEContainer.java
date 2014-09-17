@@ -38,14 +38,15 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 public final class EmbeddedTomEEContainer extends EJBContainer {
     public static final String TOMEE_EJBCONTAINER_HTTP_PORT = "tomee.ejbcontainer.http.port";
-    private static EmbeddedTomEEContainer tomEEContainer;
+    private static final AtomicReference<EmbeddedTomEEContainer> tomEEContainer = new AtomicReference<EmbeddedTomEEContainer>();
     private static final List<String> CONTAINER_NAMES = Arrays.asList(EmbeddedTomEEContainer.class.getName(), "tomee-embedded", "embedded-tomee");
 
-    private Container container = new Container();
-    private Collection<String> deployedIds = new ArrayList<String>();
+    private final Container container = new Container();
+    private final Collection<String> deployedIds = new ArrayList<String>();
 
     private EmbeddedTomEEContainer() {
         // no-op
@@ -59,9 +60,9 @@ public final class EmbeddedTomEEContainer extends EJBContainer {
     public void close() {
         final Collection<Exception> errors = new ArrayList<Exception>();
         for (final String id : deployedIds) {
-            if (tomEEContainer.container.getAppContexts(id) != null) {
+            if (tomEEContainer.get().container.getAppContexts(id) != null) {
                 try {
-                    tomEEContainer.container.undeploy(id);
+                    tomEEContainer.get().container.undeploy(id);
                 } catch (final Exception ex) {
                     Logger.getInstance(LogCategory.OPENEJB, EmbeddedTomEEContainer.class).error(ex.getMessage(), ex);
                     errors.add(ex);
@@ -71,12 +72,13 @@ public final class EmbeddedTomEEContainer extends EJBContainer {
         deployedIds.clear();
 
         try {
-            tomEEContainer.container.close();
+            tomEEContainer.get().container.close();
         } catch (final Exception ex) {
             errors.add(ex);
             Logger.getInstance(LogCategory.OPENEJB, EmbeddedTomEEContainer.class).error(ex.getMessage(), ex);
+        }finally {
+            tomEEContainer.set(null);
         }
-        tomEEContainer = null;
 
         if (!errors.isEmpty()) {
             throw Exceptions.newEJBException(new TomEERuntimeException(errors.toString()));
@@ -85,7 +87,7 @@ public final class EmbeddedTomEEContainer extends EJBContainer {
 
     @Override
     public Context getContext() {
-        return tomEEContainer.container.getJndiContext();
+        return tomEEContainer.get().container.getJndiContext();
     }
 
     public static class EmbeddedTomEEContainerProvider implements EJBContainerProvider {
@@ -105,14 +107,14 @@ public final class EmbeddedTomEEContainer extends EJBContainer {
                 return null;
             }
 
-            if (tomEEContainer != null) {
-                return tomEEContainer;
+            if (tomEEContainer.get() != null) {
+                return tomEEContainer.get();
             }
 
             final String appId = (String) properties.get(EJBContainer.APP_NAME);
             final Object modules = properties.get(EJBContainer.MODULES);
 
-            tomEEContainer = new EmbeddedTomEEContainer();
+            tomEEContainer.set(new EmbeddedTomEEContainer());
             final Configuration configuration = new Configuration();
             if (properties.containsKey(TOMEE_EJBCONTAINER_HTTP_PORT)) {
                 int port;
@@ -130,54 +132,54 @@ public final class EmbeddedTomEEContainer extends EJBContainer {
                 configuration.setHttpPort(port);
             }
             System.setProperty(TOMEE_EJBCONTAINER_HTTP_PORT, Integer.toString(configuration.getHttpPort()));
-            tomEEContainer.container.setup(configuration);
+            tomEEContainer.get().container.setup(configuration);
             try {
-                tomEEContainer.container.start();
+                tomEEContainer.get().container.start();
 
                 if (modules instanceof File) {
-                    tomEEContainer.deployedIds.add(tomEEContainer.container.deploy(appId, ((File) modules), appId != null).getId());
+                    tomEEContainer.get().deployedIds.add(tomEEContainer.get().container.deploy(appId, ((File) modules), appId != null).getId());
                 } else if (modules instanceof String) {
-                    tomEEContainer.deployedIds.add(tomEEContainer.container.deploy(appId, new File((String) modules), appId != null).getId());
+                    tomEEContainer.get().deployedIds.add(tomEEContainer.get().container.deploy(appId, new File((String) modules), appId != null).getId());
                 } else if (modules instanceof String[]) {
                     for (final String path : (String[]) modules) {
-                        tomEEContainer.deployedIds.add(tomEEContainer.container.deploy(appId, new File(path), appId != null).getId());
+                        tomEEContainer.get().deployedIds.add(tomEEContainer.get().container.deploy(appId, new File(path), appId != null).getId());
                     }
                 } else if (modules instanceof File[]) {
                     for (final File file : (File[]) modules) {
-                        tomEEContainer.deployedIds.add(tomEEContainer.container.deploy(appId, file, appId != null).getId());
+                        tomEEContainer.get().deployedIds.add(tomEEContainer.get().container.deploy(appId, file, appId != null).getId());
                     }
                 } else {
                     SystemInstance.get().getProperties().putAll(properties);
-                    final Collection<File> files = tomEEContainer.container.getConfigurationFactory().getModulesFromClassPath(null, Thread.currentThread().getContextClassLoader());
+                    final Collection<File> files = tomEEContainer.get().container.getConfigurationFactory().getModulesFromClassPath(null, Thread.currentThread().getContextClassLoader());
                     if (files.size() == 0) {
                         try {
-                            tomEEContainer.close();
+                            tomEEContainer.get().close();
                         } catch (final Exception e) {
                             // no-op
                         }
-                        tomEEContainer = null;
+                        tomEEContainer.set(null);
                         throw Exceptions.newNoModulesFoundException();
                     }
                     for (final File file : files) {
-                        tomEEContainer.deployedIds.add(tomEEContainer.container.deploy(appId, file, appId != null).getId());
+                        tomEEContainer.get().deployedIds.add(tomEEContainer.get().container.deploy(appId, file, appId != null).getId());
                     }
                 }
 
-                return tomEEContainer;
+                return tomEEContainer.get();
             } catch (final OpenEJBException e) {
-                tomEEContainer.close();
+                tomEEContainer.get().close();
                 throw new EJBException(e);
             } catch (final MalformedURLException e) {
-                tomEEContainer.close();
+                tomEEContainer.get().close();
                 throw new EJBException(e);
             } catch (final ValidationException ve) {
-                if (tomEEContainer != null) {
-                    tomEEContainer.close();
+                if (tomEEContainer.get() != null) {
+                    tomEEContainer.get().close();
                 }
                 throw ve;
             } catch (final Exception e) {
-                if (tomEEContainer != null) {
-                    tomEEContainer.close();
+                if (tomEEContainer.get() != null) {
+                    tomEEContainer.get().close();
                 }
                 if (e instanceof EJBException) {
                     throw (EJBException) e;

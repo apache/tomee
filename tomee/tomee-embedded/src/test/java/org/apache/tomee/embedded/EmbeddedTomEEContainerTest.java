@@ -47,7 +47,7 @@ public class EmbeddedTomEEContainerTest {
             assertNotNull(container);
             assertNotNull(container.getContext());
             final URL url = new URL("http://127.0.0.1:" + System.getProperty(EmbeddedTomEEContainer.TOMEE_EJBCONTAINER_HTTP_PORT) + "/test/index.html");
-            assertEquals("true", getOk(url, 5));
+            assertEquals("true", getOk(url, 2));
 
         } finally {
 
