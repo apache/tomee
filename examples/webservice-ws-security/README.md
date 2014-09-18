@@ -628,7 +628,7 @@ Title: Webservice Ws Security
     -------------------------------------------------------
     Running org.superbiz.calculator.CalculatorTest
     Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-    http://openejb.apache.org/
+    http://tomee.apache.org/
     INFO - openejb.home = /Users/dblevins/examples/webservice-ws-security
     INFO - openejb.base = /Users/dblevins/examples/webservice-ws-security
     INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)

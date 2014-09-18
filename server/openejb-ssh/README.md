@@ -6,4 +6,4 @@
 * start the server
 * ssh can be configured in conf/ssh.properties
 
-Note: it uses JAAS for authentication, further details on http://openejb.apache.org/tomee-jaas.html
+Note: it uses JAAS for authentication, further details on http://tomee.apache.org/tomee-jaas.html

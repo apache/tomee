@@ -252,7 +252,7 @@ Title: Testing Security
     -------------------------------------------------------
     Running org.superbiz.injection.secure.MovieTest
     Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-    http://openejb.apache.org/
+    http://tomee.apache.org/
     INFO - openejb.home = /Users/dblevins/examples/testing-security
     INFO - openejb.base = /Users/dblevins/examples/testing-security
     INFO - Using 'javax.ejb.embeddable.EJBContainer=true'

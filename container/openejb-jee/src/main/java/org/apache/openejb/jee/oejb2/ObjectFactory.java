@@ -54,7 +54,7 @@ public class ObjectFactory {
     private final static QName _MessageDestination_QNAME = new QName("http://geronimo.apache.org/xml/ns/naming-1.2", "message-destination");
     private final static QName _Module_QNAME = new QName("http://geronimo.apache.org/xml/ns/deployment-1.2", "module");
     private final static QName _Clustering_QNAME = new QName("http://geronimo.apache.org/xml/ns/j2ee/application-1.2", "clustering");
-    private final static QName _KeyGenerator_QNAME = new QName("http://openejb.apache.org/xml/ns/pkgen-2.1", "key-generator");
+    private final static QName _KeyGenerator_QNAME = new QName("http://tomee.apache.org/xml/ns/pkgen-2.1", "key-generator");
     private final static QName _Environment_QNAME = new QName("http://geronimo.apache.org/xml/ns/deployment-1.2", "environment");
     private final static QName _Security_QNAME = new QName("http://geronimo.apache.org/xml/ns/j2ee/application-1.2", "security");
     private final static QName _Security2_QNAME = new QName("http://geronimo.apache.org/xml/ns/security-2.0", "security");
@@ -68,7 +68,7 @@ public class ObjectFactory {
     private final static QName _CmpConnectionFactory_QNAME = new QName("http://geronimo.apache.org/xml/ns/naming-1.2", "cmp-connection-factory");
     private final static QName _ClientEnvironment_QNAME = new QName("http://geronimo.apache.org/xml/ns/deployment-1.2", "client-environment");
     private final static QName _GbeanRef_QNAME = new QName("http://geronimo.apache.org/xml/ns/naming-1.2", "gbean-ref");
-    private final static QName _OpenejbJar_QNAME = new QName("http://openejb.apache.org/xml/ns/openejb-jar-2.2", "openejb-jar");
+    private final static QName _OpenejbJar_QNAME = new QName("http://tomee.apache.org/xml/ns/openejb-jar-2.2", "openejb-jar");
     private final static QName _EjbRef_QNAME = new QName("http://geronimo.apache.org/xml/ns/naming-1.2", "ejb-ref");
     private final static QName _WebContainer_QNAME = new QName("http://geronimo.apache.org/xml/ns/naming-1.2", "web-container");
     private final static QName _OpenejbClusteringWadi_QNAME = new QName("http://geronimo.apache.org/xml/ns/openejb-clustering-wadi-1.2", "openejb-clustering-wadi");
@@ -630,7 +630,7 @@ public class ObjectFactory {
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link KeyGeneratorType }{@code >}}
      */
-    @XmlElementDecl(namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1", name = "key-generator")
+    @XmlElementDecl(namespace = "http://tomee.apache.org/xml/ns/pkgen-2.1", name = "key-generator")
     public JAXBElement<KeyGeneratorType> createKeyGenerator(final KeyGeneratorType value) {
         return new JAXBElement<KeyGeneratorType>(_KeyGenerator_QNAME, KeyGeneratorType.class, null, value);
     }
@@ -748,7 +748,7 @@ public class ObjectFactory {
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link OpenejbJarType }{@code >}}
      */
-    @XmlElementDecl(namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", name = "openejb-jar")
+    @XmlElementDecl(namespace = "http://tomee.apache.org/xml/ns/openejb-jar-2.2", name = "openejb-jar")
     public JAXBElement<OpenejbJarType> createOpenejbJar(final OpenejbJarType value) {
         return new JAXBElement<OpenejbJarType>(_OpenejbJar_QNAME, OpenejbJarType.class, null, value);
     }

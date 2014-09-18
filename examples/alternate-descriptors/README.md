@@ -106,7 +106,7 @@ As noted in [the documentation](../../alternate-descriptors.html), several prefi
     -------------------------------------------------------
     Running org.superbiz.altdd.MoviesTest
     Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-    http://openejb.apache.org/
+    http://tomee.apache.org/
     INFO - openejb.home = /Users/dblevins/examples/alternate-descriptors
     INFO - openejb.base = /Users/dblevins/examples/alternate-descriptors
     INFO - Using 'javax.ejb.embeddable.EJBContainer=true'

@@ -191,7 +191,7 @@ Here we see the outbound resource adapter used in a stateless session bean to sc
     -------------------------------------------------------
     Running org.superbiz.quartz.QuartzMdbTest
     Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-    http://openejb.apache.org/
+    http://tomee.apache.org/
     INFO - openejb.home = /Users/dblevins/examples/quartz-app/quartz-beans
     INFO - openejb.base = /Users/dblevins/examples/quartz-app/quartz-beans
     INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)

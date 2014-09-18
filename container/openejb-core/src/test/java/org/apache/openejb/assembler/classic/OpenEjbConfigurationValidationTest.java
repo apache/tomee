@@ -48,7 +48,7 @@ import java.util.Set;
  * Keeps the Info Objects inline with the concept of a basic AST (Abstract Syntax Tree)
  * which is produced by the ConfigurationFactory and built by the Assembler,
  * <p/>
- * See http://openejb.apache.org/configuration-and-assembly.html
+ * See http://tomee.apache.org/configuration-and-assembly.html
  *
  * @version $Rev$ $Date$
  */

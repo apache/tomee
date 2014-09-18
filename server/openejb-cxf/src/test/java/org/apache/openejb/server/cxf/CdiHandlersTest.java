@@ -67,7 +67,7 @@ public class CdiHandlersTest {
     @Test
     public void checkHandlersAreCDIBeans() throws MalformedURLException {
         SimpleHandler.reset();
-        final Service service = Service.create(new URL("http://localhost:" + port + "/test/ws?wsdl"), new QName("http://cxf.server.openejb.apache.org/", "MyHandledWebserviceService"));
+        final Service service = Service.create(new URL("http://localhost:" + port + "/test/ws?wsdl"), new QName("http://cxf.server.tomee.apache.org/", "MyHandledWebserviceService"));
         final MyHandledWsApi servicePort = service.getPort(MyHandledWsApi.class);
         servicePort.test();
         assertTrue(SimpleHandler.close);

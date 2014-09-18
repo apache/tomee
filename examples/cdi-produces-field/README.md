@@ -224,7 +224,7 @@ inject resources, such as persistence contexts. One caveat to using producer fie
 	-------------------------------------------------------
 	Running org.superbiz.cdi.produces.field.LoggerTest
 	INFO - ********************************************************************************
-	INFO - OpenEJB http://openejb.apache.org/
+	INFO - OpenEJB http://tomee.apache.org/
 	INFO - Startup: Thu May 10 01:28:19 CDT 2012
 	INFO - Copyright 1999-2012 (C) Apache OpenEJB Project, All Rights Reserved.
 	INFO - Version: 4.0.0-beta-3-SNAPSHOT

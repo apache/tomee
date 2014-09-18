@@ -47,18 +47,18 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "sequence-tableType", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1", propOrder = {
+@XmlType(name = "sequence-tableType", namespace = "http://tomee.apache.org/xml/ns/pkgen-2.1", propOrder = {
     "tableName",
     "sequenceName",
     "batchSize"
 })
 public class SequenceTableType {
 
-    @XmlElement(name = "table-name", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1", required = true)
+    @XmlElement(name = "table-name", namespace = "http://tomee.apache.org/xml/ns/pkgen-2.1", required = true)
     protected String tableName;
-    @XmlElement(name = "sequence-name", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1", required = true)
+    @XmlElement(name = "sequence-name", namespace = "http://tomee.apache.org/xml/ns/pkgen-2.1", required = true)
     protected String sequenceName;
-    @XmlElement(name = "batch-size", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1")
+    @XmlElement(name = "batch-size", namespace = "http://tomee.apache.org/xml/ns/pkgen-2.1")
     protected int batchSize;
 
     /**

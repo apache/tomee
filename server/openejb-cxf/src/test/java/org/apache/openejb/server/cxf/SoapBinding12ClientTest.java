@@ -79,9 +79,9 @@ public class SoapBinding12ClientTest {
         protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
             if ("GET".equals(req.getMethod())) {
                 resp.getWriter().write("<?xml version='1.0' encoding='UTF-8'?>" +
-                    "<wsdl:definitions xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:wsdl=\"http://schemas.xmlsoap.org/wsdl/\" xmlns:tns=\"http://cxf.server.openejb.apache.org/\" xmlns:soap12=\"http://schemas.xmlsoap.org/wsdl/soap12/\" xmlns:soap=\"http://schemas.xmlsoap.org/wsdl/soap/\" xmlns:ns1=\"http://schemas.xmlsoap.org/soap/http\" name=\"MyWebservice12Service\" targetNamespace=\"http://cxf.server.openejb.apache.org/\">\n" +
+                    "<wsdl:definitions xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:wsdl=\"http://schemas.xmlsoap.org/wsdl/\" xmlns:tns=\"http://cxf.server.tomee.apache.org/\" xmlns:soap12=\"http://schemas.xmlsoap.org/wsdl/soap12/\" xmlns:soap=\"http://schemas.xmlsoap.org/wsdl/soap/\" xmlns:ns1=\"http://schemas.xmlsoap.org/soap/http\" name=\"MyWebservice12Service\" targetNamespace=\"http://cxf.server.tomee.apache.org/\">\n" +
                     "  <wsdl:types>\n" +
-                    "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:tns=\"http://cxf.server.openejb.apache.org/\" elementFormDefault=\"unqualified\" targetNamespace=\"http://cxf.server.openejb.apache.org/\" version=\"1.0\">\n" +
+                    "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:tns=\"http://cxf.server.tomee.apache.org/\" elementFormDefault=\"unqualified\" targetNamespace=\"http://cxf.server.tomee.apache.org/\" version=\"1.0\">\n" +
                     "<xs:element name=\"input\" type=\"tns:input\"/>\n" +
                     "<xs:element name=\"output\" type=\"tns:output\"/>\n" +
                     "<xs:element name=\"test\" type=\"tns:test\"/>\n" +
@@ -146,7 +146,7 @@ public class SoapBinding12ClientTest {
                 resp.getWriter().write("" +
                     "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\">" +
                     "  <soap:Body>" +
-                    "    <ns2:testResponse xmlns:ns2=\"http://cxf.server.openejb.apache.org/\">" +
+                    "    <ns2:testResponse xmlns:ns2=\"http://cxf.server.tomee.apache.org/\">" +
                     "      <return><attribute>ok</attribute></return>" +
                     "    </ns2:testResponse>" +
                     "  </soap:Body>" +

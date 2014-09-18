@@ -63,7 +63,7 @@ public class WsRsTest {
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                 "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +
                 "  <soap:Body>\n" +
-                "    <ns1:hello xmlns:ns1=\"http://wsrs.jaxws.tests.arquillian.openejb.apache.org/\"/>\n" +
+                "    <ns1:hello xmlns:ns1=\"http://wsrs.jaxws.tests.arquillian.tomee.apache.org/\"/>\n" +
                 "  </soap:Body>\n" +
                 "</soap:Envelope>"));
 
@@ -73,7 +73,7 @@ public class WsRsTest {
         final String expected = "" +
                 "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
                 "<soap:Body>" +
-                "<ns:helloResponse xmlns:ns=\"http://wsrs.jaxws.tests.arquillian.openejb.apache.org/\">" +
+                "<ns:helloResponse xmlns:ns=\"http://wsrs.jaxws.tests.arquillian.tomee.apache.org/\">" +
                 "<return>hola</return>" +
                 "</ns:helloResponse>" +
                 "</soap:Body>" +

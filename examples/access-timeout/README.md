@@ -164,7 +164,7 @@ The `@Asynchronous` method is not a critical part of `@AccessTimeout`, but serve
     -------------------------------------------------------
     Running org.superbiz.accesstimeout.BusyBeeTest
     Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-    http://openejb.apache.org/
+    http://tomee.apache.org/
     INFO - openejb.home = /Users/dblevins/examples/access-timeout
     INFO - openejb.base = /Users/dblevins/examples/access-timeout
     INFO - Using 'javax.ejb.embeddable.EJBContainer=true'

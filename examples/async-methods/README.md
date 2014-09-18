@@ -93,7 +93,7 @@ It waits for the processing to complete (if its not completed already) and gets 
     -------------------------------------------------------
     Running org.superbiz.async.JobProcessorTest
     Apache OpenEJB 4.0.0-SNAPSHOT    build: 20110801-04:02
-    http://openejb.apache.org/
+    http://tomee.apache.org/
     INFO - openejb.home = G:\Workspace\fullproject\openejb3\examples\async-methods
     INFO - openejb.base = G:\Workspace\fullproject\openejb3\examples\async-methods
     INFO - Using 'javax.ejb.embeddable.EJBContainer=true'

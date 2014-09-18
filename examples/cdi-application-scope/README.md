@@ -104,7 +104,7 @@ the whole application.
     -------------------------------------------------------
     Running org.superbiz.cdi.applicationscope.RestaurantTest
     Apache OpenEJB 4.0.0-beta-2-SNAPSHOT    build: 20111224-11:09
-    http://openejb.apache.org/
+    http://tomee.apache.org/
     INFO - openejb.home = C:\Users\Daniel\workspaces\openejb\openejb\examples\cdi-application-scope
     INFO - openejb.base = C:\Users\Daniel\workspaces\openejb\openejb\examples\cdi-application-scope
     INFO - Using 'javax.ejb.embeddable.EJBContainer=true'

@@ -173,7 +173,7 @@ Shows how to begin, commit and rollback transactions using a UserTransaction via
     -------------------------------------------------------
     Running org.superbiz.injection.tx.MoviesTest
     INFO - ********************************************************************************
-    INFO - OpenEJB http://openejb.apache.org/
+    INFO - OpenEJB http://tomee.apache.org/
     INFO - Startup: Sat Jul 21 16:39:28 EDT 2012
     INFO - Copyright 1999-2012 (C) Apache OpenEJB Project, All Rights Reserved.
     INFO - Version: 4.1.0
@@ -211,7 +211,7 @@ Shows how to begin, commit and rollback transactions using a UserTransaction via
     INFO - Adjusting PersistenceUnit movie-unit <non-jta-data-source> to Resource ID 'movieDatabaseNonJta' from 'movieDatabaseUnmanaged'
     INFO - Enterprise application "/home/boto/dev/ws/openejb_trunk/openejb/examples/testing-transactions-bmt" loaded.
     INFO - Assembling app: /home/boto/dev/ws/openejb_trunk/openejb/examples/testing-transactions-bmt
-    SEVERE - JAVA AGENT NOT INSTALLED. The JPA Persistence Provider requested installation of a ClassFileTransformer which requires a JavaAgent.  See http://openejb.apache.org/3.0/javaagent.html
+    SEVERE - JAVA AGENT NOT INSTALLED. The JPA Persistence Provider requested installation of a ClassFileTransformer which requires a JavaAgent.  See http://tomee.apache.org/3.0/javaagent.html
     INFO - PersistenceUnit(name=movie-unit, provider=org.apache.openjpa.persistence.PersistenceProviderImpl) - provider time 399ms
     INFO - Jndi(name="java:global/testing-transactions-bmt/Movies!org.superbiz.injection.tx.Movies")
     INFO - Jndi(name="java:global/testing-transactions-bmt/Movies")

@@ -162,7 +162,7 @@ echo Using JRE_HOME:         "%JRE_HOME%"
 rem Use the environment variables as an example
 rem Each command line option is prefixed with PR_
 
-set "PR_DESCRIPTION=Apache TomEE - http://http://openejb.apache.org/"
+set "PR_DESCRIPTION=Apache TomEE - http://tomee.apache.org/"
 set "PR_INSTALL=%EXECUTABLE%"
 set "PR_LOGPATH=%CATALINA_BASE%\logs"
 set "PR_CLASSPATH=%CATALINA_HOME%\bin\bootstrap.jar;%CATALINA_BASE%\bin\tomcat-juli.jar;%CATALINA_HOME%\bin\tomcat-juli.jar"

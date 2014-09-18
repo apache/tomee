@@ -67,7 +67,7 @@ public class CdiPojoTest {
     @Test
     public void checkInjection() throws MalformedURLException {
         final MyWsApi api = Service.create(new URL("http://localhost:" + port + "/test/ws?wsdl"),
-            new QName("http://cxf.server.openejb.apache.org/", "MyWebserviceService"))
+            new QName("http://cxf.server.tomee.apache.org/", "MyWebserviceService"))
             .getPort(MyWsApi.class);
         assertEquals("ok", api.test());
     }

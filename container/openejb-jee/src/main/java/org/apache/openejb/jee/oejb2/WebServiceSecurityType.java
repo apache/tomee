@@ -42,8 +42,8 @@ import org.apache.openejb.jee.oejb3.PropertiesAdapter;
  *       &lt;sequence>
  *         &lt;element name="security-realm-name" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="realm-name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="transport-guarantee" type="{http://openejb.apache.org/xml/ns/openejb-jar-2.2}transport-guaranteeType"/>
- *         &lt;element name="auth-method" type="{http://openejb.apache.org/xml/ns/openejb-jar-2.2}auth-methodType"/>
+ *         &lt;element name="transport-guarantee" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}transport-guaranteeType"/>
+ *         &lt;element name="auth-method" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}auth-methodType"/>
  *         &lt;element name="http-method" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>

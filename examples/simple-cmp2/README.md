@@ -216,7 +216,7 @@ The majority of work in CMP2 is done in the xml:
     -------------------------------------------------------
     Running org.superbiz.cmp2.MoviesTest
     Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-    http://openejb.apache.org/
+    http://tomee.apache.org/
     INFO - openejb.home = /Users/dblevins/examples/simple-cmp2/target
     INFO - openejb.base = /Users/dblevins/examples/simple-cmp2/target
     INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)

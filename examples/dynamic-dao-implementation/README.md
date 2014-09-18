@@ -306,7 +306,7 @@ Dynamic finder can have as much as you want field constraints. For String like i
     -------------------------------------------------------
     Running org.superbiz.dynamic.DynamicUserDaoTest
     Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-    http://openejb.apache.org/
+    http://tomee.apache.org/
     INFO - openejb.home = /Users/dblevins/examples/dynamic-dao-implementation
     INFO - openejb.base = /Users/dblevins/examples/dynamic-dao-implementation
     INFO - Using 'javax.ejb.embeddable.EJBContainer=true'

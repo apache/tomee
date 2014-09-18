@@ -48,7 +48,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *       &lt;sequence>
  *         &lt;element name="ejb-name" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element ref="{http://geronimo.apache.org/xml/ns/naming-1.2}resource-adapter"/>
- *         &lt;element name="activation-config" type="{http://openejb.apache.org/xml/ns/openejb-jar-2.2}activation-configType" minOccurs="0"/>
+ *         &lt;element name="activation-config" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}activation-configType" minOccurs="0"/>
  *         &lt;group ref="{http://geronimo.apache.org/xml/ns/naming-1.2}jndiEnvironmentRefsGroup"/>
  *       &lt;/sequence>
  *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />

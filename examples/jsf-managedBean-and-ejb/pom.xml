@@ -24,7 +24,7 @@
   <packaging>war</packaging>
   <name>OpenEJB :: Web Examples :: JSF - ManangedBean and EJB</name>
   <version>1.1.0-SNAPSHOT</version>
-  <url>http://openejb.apache.org</url>
+  <url>http://tomee.apache.org</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>

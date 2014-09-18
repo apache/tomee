@@ -20,8 +20,8 @@
 
 <!-- $Rev$ $Date$ -->
 
-<beans xmlns:s="http://openejb.apache.org/schemas/server" xmlns:c="http://openejb.apache.org/schemas/core"
-    xmlns:l="http://openejb.apache.org/schemas/loader">
+<beans xmlns:s="http://tomee.apache.org/schemas/server" xmlns:c="http://tomee.apache.org/schemas/core"
+    xmlns:l="http://tomee.apache.org/schemas/loader">
     <s:server id="server" init-method="init">
         <property name="serviceManager" ref="serviceManager" />
         <property name="propertiesService" ref="propertiesService" />

@@ -111,7 +111,7 @@ as java class, we added a `beans.xml` file to turn our project into a Java EE mo
     -------------------------------------------------------
     Running org.superbiz.mbean.GuessHowManyMBeanTest
     Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-    http://openejb.apache.org/
+    http://tomee.apache.org/
     INFO - openejb.home = /Users/dblevins/examples/mbean-auto-registration
     INFO - openejb.base = /Users/dblevins/examples/mbean-auto-registration
     INFO - Using 'javax.ejb.embeddable.EJBContainer=true'

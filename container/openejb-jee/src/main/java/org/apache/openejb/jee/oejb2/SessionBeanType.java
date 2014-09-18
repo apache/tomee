@@ -48,11 +48,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *         &lt;element name="jndi-name" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="local-jndi-name" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="cache-size" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
- *         &lt;group ref="{http://openejb.apache.org/xml/ns/openejb-jar-2.2}tssGroup" minOccurs="0"/>
+ *         &lt;group ref="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}tssGroup" minOccurs="0"/>
  *         &lt;group ref="{http://geronimo.apache.org/xml/ns/naming-1.2}jndiEnvironmentRefsGroup"/>
  *         &lt;element name="web-service-address" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="web-service-virtual-host" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="web-service-security" type="{http://openejb.apache.org/xml/ns/openejb-jar-2.2}web-service-securityType" minOccurs="0"/>
+ *         &lt;element name="web-service-security" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}web-service-securityType" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
  *     &lt;/restriction>
@@ -96,7 +96,7 @@ public class SessionBeanType implements EnterpriseBean, RpcBean {
     protected Integer cacheSize;
     @XmlElement(name = "tss-link")
     protected String tssLink;
-    @XmlElement(name = "tss", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
+    @XmlElement(name = "tss", namespace = "http://tomee.apache.org/xml/ns/openejb-jar-2.2")
     protected PatternType tss;
 
     @XmlElement(name = "properties")

@@ -243,8 +243,8 @@ public class MainImpl implements Main {
                 "For example 'openejb deploy --help'.\n" +
                 "\n" +
                 "Apache OpenEJB -- EJB Container System and Server.\n" +
-                "For additional information, see http://openejb.apache.org\n" +
-                "Bug Reports to <users@openejb.apache.org>";
+                "For additional information, see http://tomee.apache.org\n" +
+                "Bug Reports to <users@tomee.apache.org>";
 
 
             if (!printHeader) {

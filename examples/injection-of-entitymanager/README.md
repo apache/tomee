@@ -179,7 +179,7 @@ When we run our test case we should see output similar to the following.
     -------------------------------------------------------
     Running org.superbiz.injection.jpa.MoviesTest
     Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-    http://openejb.apache.org/
+    http://tomee.apache.org/
     INFO - openejb.home = /Users/dblevins/examples/injection-of-entitymanager
     INFO - openejb.base = /Users/dblevins/examples/injection-of-entitymanager
     INFO - Using 'javax.ejb.embeddable.EJBContainer=true'

@@ -149,7 +149,7 @@ Running the example should generate output similar to the following
     -------------------------------------------------------
     Running org.superbiz.stateless.basic.CalculatorTest
     Infos - ********************************************************************************
-    Infos - OpenEJB http://openejb.apache.org/
+    Infos - OpenEJB http://tomee.apache.org/
     Infos - Startup: Tue Aug 14 13:28:12 CEST 2012
     Infos - Copyright 1999-2012 (C) Apache OpenEJB Project, All Rights Reserved.
     Infos - Version: 4.1.0

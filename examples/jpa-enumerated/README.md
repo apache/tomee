@@ -212,7 +212,7 @@ Which will generate output similar to the following:
     -------------------------------------------------------
     Running org.superbiz.jpa.enums.MoviesTest
     Apache OpenEJB 4.0.0-beta-2    build: 20120115-08:26
-    http://openejb.apache.org/
+    http://tomee.apache.org/
     INFO - openejb.home = /Users/dblevins/openejb/examples/jpa-enumerated
     INFO - openejb.base = /Users/dblevins/openejb/examples/jpa-enumerated
     INFO - Using 'javax.ejb.embeddable.EJBContainer=true'

@@ -197,7 +197,7 @@ Title: Troubleshooting
     Running org.superbiz.troubleshooting.MoviesTest
     2011-10-29 11:50:19,482 - DEBUG - Using default 'openejb.nobanner=true'
     Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-    http://openejb.apache.org/
+    http://tomee.apache.org/
     2011-10-29 11:50:19,482 - INFO  - openejb.home = /Users/dblevins/examples/troubleshooting
     2011-10-29 11:50:19,482 - INFO  - openejb.base = /Users/dblevins/examples/troubleshooting
     2011-10-29 11:50:19,483 - DEBUG - Using default 'openejb.assembler=org.apache.openejb.assembler.classic.Assembler'

@@ -19,8 +19,8 @@
 
 <!-- $Rev$ $Date$ -->
 
-<openejb-jar xmlns="http://openejb.apache.org/xml/ns/openejb-jar-2.2"
-  xmlns:pkgen="http://openejb.apache.org/xml/ns/pkgen-2.1"
+<openejb-jar xmlns="http://tomee.apache.org/xml/ns/openejb-jar-2.2"
+  xmlns:pkgen="http://tomee.apache.org/xml/ns/pkgen-2.1"
   xmlns:naming="http://geronimo.apache.org/xml/ns/naming-1.2"
   xmlns:sys="http://geronimo.apache.org/xml/ns/deployment-1.2">
     <environment>

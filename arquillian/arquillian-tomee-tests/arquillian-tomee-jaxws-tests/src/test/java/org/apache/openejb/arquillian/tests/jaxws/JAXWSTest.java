@@ -45,7 +45,7 @@ public class JAXWSTest {
 
     @Test
     public void invoke() throws Exception {
-        final Service service = Service.create(new URL(url.toExternalForm() + "webservices/HelloWS?wsdl"), new QName("http://jaxws.tests.arquillian.openejb.apache.org/", "HelloWSService"));
+        final Service service = Service.create(new URL(url.toExternalForm() + "webservices/HelloWS?wsdl"), new QName("http://jaxws.tests.arquillian.tomee.apache.org/", "HelloWSService"));
         final Hello hello = service.getPort(Hello.class);
         assertEquals("hi foo!", hello.hi("foo"));
     }

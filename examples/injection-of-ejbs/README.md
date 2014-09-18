@@ -159,7 +159,7 @@ JNDI API.
     -------------------------------------------------------
     Running org.superbiz.injection.EjbDependencyTest
     Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-    http://openejb.apache.org/
+    http://tomee.apache.org/
     INFO - openejb.home = /Users/dblevins/examples/injection-of-ejbs
     INFO - openejb.base = /Users/dblevins/examples/injection-of-ejbs
     INFO - Using 'javax.ejb.embeddable.EJBContainer=true'

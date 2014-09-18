@@ -659,7 +659,7 @@ public class Installer implements InstallerInterface {
 
                 systemPropertiesWriter.write("# all this properties are added at JVM system properties at startup\n");
                 systemPropertiesWriter.write("# here some default Apache TomEE system properties\n");
-                systemPropertiesWriter.write("# for more information please see http://openejb.apache.org/properties-listing.html\n");
+                systemPropertiesWriter.write("# for more information please see http://tomee.apache.org/properties-listing.html\n");
 
                 systemPropertiesWriter.write("\n");
                 systemPropertiesWriter.write("# openejb.check.classloader = false\n");

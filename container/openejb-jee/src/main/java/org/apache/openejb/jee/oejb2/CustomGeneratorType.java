@@ -47,15 +47,15 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "custom-generatorType", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1", propOrder = {
+@XmlType(name = "custom-generatorType", namespace = "http://tomee.apache.org/xml/ns/pkgen-2.1", propOrder = {
     "generatorName",
     "primaryKeyClass"
 })
 public class CustomGeneratorType {
 
-    @XmlElement(name = "generator-name", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1", required = true)
+    @XmlElement(name = "generator-name", namespace = "http://tomee.apache.org/xml/ns/pkgen-2.1", required = true)
     protected String generatorName;
-    @XmlElement(name = "primary-key-class", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1", required = true)
+    @XmlElement(name = "primary-key-class", namespace = "http://tomee.apache.org/xml/ns/pkgen-2.1", required = true)
     protected String primaryKeyClass;
 
     /**

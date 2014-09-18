@@ -124,7 +124,7 @@
     <div id="poweredby" class="smalltext">
         Powered by
         <a href="http://tomcat.apache.org" class="smalltext">Apache Tomcat</a> and
-        <a href="http://openejb.apache.org" class="smalltext">Apache OpenEJB</a>.
+        <a href="http://tomee.apache.org" class="smalltext">Apache TomEE</a>.
         <br/>
     </div>
 

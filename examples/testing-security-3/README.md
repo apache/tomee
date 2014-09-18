@@ -275,7 +275,7 @@ Title: Testing Security 3
     -------------------------------------------------------
     Running org.superbiz.injection.secure.MovieTest
     INFO - ********************************************************************************
-    INFO - OpenEJB http://openejb.apache.org/
+    INFO - OpenEJB http://tomee.apache.org/
     INFO - Startup: Fri Jul 20 08:42:53 EDT 2012
     INFO - Copyright 1999-2012 (C) Apache OpenEJB Project, All Rights Reserved.
     INFO - Version: 4.1.0
@@ -312,7 +312,7 @@ Title: Testing Security 3
     INFO - Adjusting PersistenceUnit movie-unit <non-jta-data-source> to Resource ID 'movieDatabaseNonJta' from 'movieDatabaseUnmanaged'
     INFO - Enterprise application "/home/boto/dev/ws/openejb_trunk/openejb/examples/testing-security-3" loaded.
     INFO - Assembling app: /home/boto/dev/ws/openejb_trunk/openejb/examples/testing-security-3
-    SEVERE - JAVA AGENT NOT INSTALLED. The JPA Persistence Provider requested installation of a ClassFileTransformer which requires a JavaAgent.  See http://openejb.apache.org/3.0/javaagent.html
+    SEVERE - JAVA AGENT NOT INSTALLED. The JPA Persistence Provider requested installation of a ClassFileTransformer which requires a JavaAgent.  See http://tomee.apache.org/3.0/javaagent.html
     INFO - PersistenceUnit(name=movie-unit, provider=org.apache.openjpa.persistence.PersistenceProviderImpl) - provider time 268ms
     INFO - Jndi(name="java:global/testing-security-3/Movies!org.superbiz.injection.secure.Movies")
     INFO - Jndi(name="java:global/testing-security-3/Movies")
