@@ -100,6 +100,9 @@ public class TomcatWebappDeployer implements WebAppDeployer {
 
         if (context == null) {
             webAppInfo.contextRoot = file.getName();
+            if ("ROOT".equals(webAppInfo.contextRoot)) {
+                webAppInfo.contextRoot = "";
+            }
         } else {
             webAppInfo.contextRoot = context;
         }

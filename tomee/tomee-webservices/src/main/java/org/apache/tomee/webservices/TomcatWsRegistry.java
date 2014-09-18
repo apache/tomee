@@ -104,7 +104,10 @@ public class TomcatWsRegistry implements WsRegistry {
             throw new IllegalArgumentException("Invalid virtual host '" + virtualHost + "'.  Do you have a matchiing Host entry in the server.xml?");
         }
 
-        if (!contextRoot.startsWith("/")) {
+        if ("ROOT".equals(contextRoot)) { // doesn't happen in tomee itself but with all our tooling around
+            contextRoot = "";
+        }
+        if (!contextRoot.startsWith("/") && !contextRoot.isEmpty()) {
             contextRoot = "/" + contextRoot;
         }
 
@@ -209,15 +212,14 @@ public class TomcatWsRegistry implements WsRegistry {
         // - new way (/<webappcontext>/webservices/<name>) if webcontext is specified
         if (context != null) {
             String root = context;
-            if (!root.startsWith("/")) {
+            if ("ROOT".equals(root)) {
+                root = "";
+            }
+            if (!root.startsWith("/") && !root.isEmpty()) {
                 root = '/' + root;
             }
 
-            Context webAppContext = Context.class.cast(host.findChild(root));
-            if (webAppContext == null && "/".equals(root)) {
-                webAppContext = Context.class.cast(host.findChild(root.substring(1)));
-            }
-
+            final Context webAppContext = Context.class.cast(host.findChild(root));
             if (webAppContext != null) {
                 // sub context = '/' means the service address is provided by webservices
                 if (WEBSERVICE_SUB_CONTEXT.equals("/") && path.startsWith("/")) {
@@ -350,10 +352,12 @@ public class TomcatWsRegistry implements WsRegistry {
             final StringBuilder fullContextpath;
             if (!WEBSERVICE_OLDCONTEXT_ACTIVE && !fakeDeployment) {
                 String contextPath = context.getName();
-                if (contextPath != null && !contextPath.startsWith("/")) {
-                    contextPath = "/" + contextPath;
-                } else if (contextPath == null) {
-                    contextPath = "/";
+                if (contextPath == null ||  !contextPath.isEmpty()) {
+                    if (contextPath != null && !contextPath.startsWith("/")) {
+                        contextPath = "/" + contextPath;
+                    } else if (contextPath == null) {
+                        contextPath = "/";
+                    }
                 }
 
                 fullContextpath = new StringBuilder(contextPath);
