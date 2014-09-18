@@ -40,10 +40,10 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;choice>
  *         &lt;element name="uuid" type="{http://geronimo.apache.org/xml/ns/deployment-1.2}emptyType"/>
- *         &lt;element name="sequence-table" type="{http://openejb.apache.org/xml/ns/pkgen-2.1}sequence-tableType"/>
- *         &lt;element name="auto-increment-table" type="{http://openejb.apache.org/xml/ns/pkgen-2.1}auto-increment-tableType"/>
- *         &lt;element name="sql-generator" type="{http://openejb.apache.org/xml/ns/pkgen-2.1}sql-generatorType"/>
- *         &lt;element name="custom-generator" type="{http://openejb.apache.org/xml/ns/pkgen-2.1}custom-generatorType"/>
+ *         &lt;element name="sequence-table" type="{http://tomee.apache.org/xml/ns/pkgen-2.1}sequence-tableType"/>
+ *         &lt;element name="auto-increment-table" type="{http://tomee.apache.org/xml/ns/pkgen-2.1}auto-increment-tableType"/>
+ *         &lt;element name="sql-generator" type="{http://tomee.apache.org/xml/ns/pkgen-2.1}sql-generatorType"/>
+ *         &lt;element name="custom-generator" type="{http://tomee.apache.org/xml/ns/pkgen-2.1}custom-generatorType"/>
  *       &lt;/choice>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -51,7 +51,7 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "key-generatorType", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1", propOrder = {
+@XmlType(name = "key-generatorType", namespace = "http://tomee.apache.org/xml/ns/pkgen-2.1", propOrder = {
     "uuid",
     "sequenceTable",
     "autoIncrementTable",
@@ -60,15 +60,15 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class KeyGeneratorType {
 
-    @XmlElement(name = "uuid", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1")
+    @XmlElement(name = "uuid", namespace = "http://tomee.apache.org/xml/ns/pkgen-2.1")
     protected EmptyType uuid;
-    @XmlElement(name = "sequence-table", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1")
+    @XmlElement(name = "sequence-table", namespace = "http://tomee.apache.org/xml/ns/pkgen-2.1")
     protected SequenceTableType sequenceTable;
-    @XmlElement(name = "auto-increment-table", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1")
+    @XmlElement(name = "auto-increment-table", namespace = "http://tomee.apache.org/xml/ns/pkgen-2.1")
     protected AutoIncrementTableType autoIncrementTable;
-    @XmlElement(name = "sql-generator", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1")
+    @XmlElement(name = "sql-generator", namespace = "http://tomee.apache.org/xml/ns/pkgen-2.1")
     protected SqlGeneratorType sqlGenerator;
-    @XmlElement(name = "custom-generator", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1")
+    @XmlElement(name = "custom-generator", namespace = "http://tomee.apache.org/xml/ns/pkgen-2.1")
     protected CustomGeneratorType customGenerator;
 
     /**

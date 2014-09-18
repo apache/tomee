@@ -36,7 +36,7 @@ import java.util.List;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="activation-config-property" type="{http://openejb.apache.org/xml/ns/openejb-jar-2.2}activation-config-propertyType" maxOccurs="unbounded"/>
+ *         &lt;element name="activation-config-property" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}activation-config-propertyType" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>

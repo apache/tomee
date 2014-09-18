@@ -41,8 +41,8 @@ public class NamespaceFilter extends XMLFilterImpl {
         ns.put("alt-dd", "http://geronimo.apache.org/xml/ns/j2ee/application-1.2");
         ns.put("application", "http://geronimo.apache.org/xml/ns/j2ee/application-1.2");
         ns.put("attribute", "http://geronimo.apache.org/xml/ns/deployment-1.2");
-        ns.put("auto-increment-table", "http://openejb.apache.org/xml/ns/pkgen-2.1");
-        ns.put("batch-size", "http://openejb.apache.org/xml/ns/pkgen-2.1");
+        ns.put("auto-increment-table", "http://tomee.apache.org/xml/ns/pkgen-2.1");
+        ns.put("batch-size", "http://tomee.apache.org/xml/ns/pkgen-2.1");
         ns.put("binding-name", "http://geronimo.apache.org/xml/ns/naming-1.2");
         ns.put("client-environment", "http://geronimo.apache.org/xml/ns/deployment-1.2");
         ns.put("clustering", "http://geronimo.apache.org/xml/ns/j2ee/application-1.2");
@@ -51,7 +51,7 @@ public class NamespaceFilter extends XMLFilterImpl {
         ns.put("credentials-name", "http://geronimo.apache.org/xml/ns/naming-1.2");
         ns.put("css", "http://geronimo.apache.org/xml/ns/naming-1.2");
         ns.put("css-link", "http://geronimo.apache.org/xml/ns/naming-1.2");
-        ns.put("custom-generator", "http://openejb.apache.org/xml/ns/pkgen-2.1");
+        ns.put("custom-generator", "http://tomee.apache.org/xml/ns/pkgen-2.1");
         ns.put("dependencies", "http://geronimo.apache.org/xml/ns/deployment-1.2");
         ns.put("dependency", "http://geronimo.apache.org/xml/ns/deployment-1.2");
         ns.put("ejb", "http://geronimo.apache.org/xml/ns/j2ee/application-1.2");
@@ -65,16 +65,16 @@ public class NamespaceFilter extends XMLFilterImpl {
         ns.put("gbean", "http://geronimo.apache.org/xml/ns/deployment-1.2");
         ns.put("gbean-link", "http://geronimo.apache.org/xml/ns/naming-1.2");
         ns.put("gbean-ref", "http://geronimo.apache.org/xml/ns/naming-1.2");
-        ns.put("generator-name", "http://openejb.apache.org/xml/ns/pkgen-2.1");
+        ns.put("generator-name", "http://tomee.apache.org/xml/ns/pkgen-2.1");
         ns.put("hidden-classes", "http://geronimo.apache.org/xml/ns/deployment-1.2");
         ns.put("host", "http://geronimo.apache.org/xml/ns/naming-1.2");
-        ns.put("identity-column", "http://openejb.apache.org/xml/ns/pkgen-2.1");
+        ns.put("identity-column", "http://tomee.apache.org/xml/ns/pkgen-2.1");
         ns.put("import", "http://geronimo.apache.org/xml/ns/deployment-1.2");
         ns.put("internal-path", "http://geronimo.apache.org/xml/ns/j2ee/application-1.2");
         ns.put("inverse-classloading", "http://geronimo.apache.org/xml/ns/deployment-1.2");
         ns.put("java", "http://geronimo.apache.org/xml/ns/j2ee/application-1.2");
         ns.put("key", "http://geronimo.apache.org/xml/ns/naming-1.2");
-        ns.put("key-generator", "http://openejb.apache.org/xml/ns/pkgen-2.1");
+        ns.put("key-generator", "http://tomee.apache.org/xml/ns/pkgen-2.1");
         ns.put("message-destination", "http://geronimo.apache.org/xml/ns/naming-1.2");
         ns.put("message-destination-link", "http://geronimo.apache.org/xml/ns/naming-1.2");
         ns.put("message-destination-name", "http://geronimo.apache.org/xml/ns/naming-1.2");
@@ -90,7 +90,7 @@ public class NamespaceFilter extends XMLFilterImpl {
         ns.put("port", "http://geronimo.apache.org/xml/ns/naming-1.2");
         ns.put("port-completion", "http://geronimo.apache.org/xml/ns/naming-1.2");
         ns.put("port-name", "http://geronimo.apache.org/xml/ns/naming-1.2");
-        ns.put("primary-key-class", "http://openejb.apache.org/xml/ns/pkgen-2.1");
+        ns.put("primary-key-class", "http://tomee.apache.org/xml/ns/pkgen-2.1");
         ns.put("private-classes", "http://geronimo.apache.org/xml/ns/deployment-1.2");
         ns.put("property", "http://geronimo.apache.org/xml/ns/naming-1.2");
         ns.put("protocol", "http://geronimo.apache.org/xml/ns/naming-1.2");
@@ -102,23 +102,23 @@ public class NamespaceFilter extends XMLFilterImpl {
         ns.put("resource-env-ref", "http://geronimo.apache.org/xml/ns/naming-1.2");
         ns.put("resource-link", "http://geronimo.apache.org/xml/ns/naming-1.2");
         ns.put("resource-ref", "http://geronimo.apache.org/xml/ns/naming-1.2");
-        ns.put("return-type", "http://openejb.apache.org/xml/ns/pkgen-2.1");
+        ns.put("return-type", "http://tomee.apache.org/xml/ns/pkgen-2.1");
         ns.put("security", "http://geronimo.apache.org/xml/ns/security-2.0");
-        ns.put("sequence-name", "http://openejb.apache.org/xml/ns/pkgen-2.1");
-        ns.put("sequence-table", "http://openejb.apache.org/xml/ns/pkgen-2.1");
+        ns.put("sequence-name", "http://tomee.apache.org/xml/ns/pkgen-2.1");
+        ns.put("sequence-table", "http://tomee.apache.org/xml/ns/pkgen-2.1");
         ns.put("server-environment", "http://geronimo.apache.org/xml/ns/deployment-1.2");
         ns.put("service", "http://geronimo.apache.org/xml/ns/deployment-1.2");
         ns.put("service-completion", "http://geronimo.apache.org/xml/ns/naming-1.2");
         ns.put("service-name", "http://geronimo.apache.org/xml/ns/naming-1.2");
         ns.put("service-ref", "http://geronimo.apache.org/xml/ns/naming-1.2");
         ns.put("service-ref-name", "http://geronimo.apache.org/xml/ns/naming-1.2");
-        ns.put("sql", "http://openejb.apache.org/xml/ns/pkgen-2.1");
-        ns.put("sql-generator", "http://openejb.apache.org/xml/ns/pkgen-2.1");
+        ns.put("sql", "http://tomee.apache.org/xml/ns/pkgen-2.1");
+        ns.put("sql-generator", "http://tomee.apache.org/xml/ns/pkgen-2.1");
         ns.put("suppress-default-environment", "http://geronimo.apache.org/xml/ns/deployment-1.2");
         ns.put("type", "http://geronimo.apache.org/xml/ns/deployment-1.2");
         ns.put("uri", "http://geronimo.apache.org/xml/ns/naming-1.2");
         ns.put("url", "http://geronimo.apache.org/xml/ns/naming-1.2");
-        ns.put("uuid", "http://openejb.apache.org/xml/ns/pkgen-2.1");
+        ns.put("uuid", "http://tomee.apache.org/xml/ns/pkgen-2.1");
         ns.put("value", "http://geronimo.apache.org/xml/ns/naming-1.2");
         ns.put("web", "http://geronimo.apache.org/xml/ns/j2ee/application-1.2");
         ns.put("web-container", "http://geronimo.apache.org/xml/ns/naming-1.2");
@@ -136,7 +136,7 @@ public class NamespaceFilter extends XMLFilterImpl {
         duplicates.put("name", Arrays.asList("http://geronimo.apache.org/xml/ns/deployment-1.2", "http://geronimo.apache.org/xml/ns/naming-1.2", "http://geronimo.apache.org/xml/ns/security-2.0"));
         duplicates.put("pattern", Arrays.asList("http://geronimo.apache.org/xml/ns/deployment-1.2", "http://geronimo.apache.org/xml/ns/naming-1.2"));
         duplicates.put("version", Arrays.asList("http://geronimo.apache.org/xml/ns/deployment-1.2", "http://geronimo.apache.org/xml/ns/naming-1.2"));
-        duplicates.put("table-name", Arrays.asList("http://openejb.apache.org/xml/ns/openejb-jar-2.2", "http://openejb.apache.org/xml/ns/pkgen-2.1"));
+        duplicates.put("table-name", Arrays.asList("http://tomee.apache.org/xml/ns/openejb-jar-2.2", "http://tomee.apache.org/xml/ns/pkgen-2.1"));
     }
 
     public NamespaceFilter(final XMLReader xmlReader) {
@@ -153,18 +153,18 @@ public class NamespaceFilter extends XMLFilterImpl {
     //String uri, String localName, String qName, Attributes atts
     public void startElement(String uri, final String localName, final String qname, final Attributes atts) throws SAXException {
 
-        if (uri.startsWith("http://openejb.apache.org/xml/ns/openejb-jar-2")) {
-            uri = "http://openejb.apache.org/xml/ns/openejb-jar-2.2";
+        if (uri.startsWith("http://tomee.apache.org/xml/ns/openejb-jar-2")) {
+            uri = "http://tomee.apache.org/xml/ns/openejb-jar-2.2";
         } else if (uri.startsWith("http://www.openejb.org/xml/ns/openejb-jar-2")) {
-            uri = "http://openejb.apache.org/xml/ns/openejb-jar-2.2";
+            uri = "http://tomee.apache.org/xml/ns/openejb-jar-2.2";
         } else if (uri.startsWith("http://openejb.org/xml/ns/openejb-jar-2")) {
-            uri = "http://openejb.apache.org/xml/ns/openejb-jar-2.2";
-        } else if (uri.startsWith("http://openejb.apache.org/xml/ns/pkgen-2")) {
-            uri = "http://openejb.apache.org/xml/ns/pkgen-2.1";
+            uri = "http://tomee.apache.org/xml/ns/openejb-jar-2.2";
+        } else if (uri.startsWith("http://tomee.apache.org/xml/ns/pkgen-2")) {
+            uri = "http://tomee.apache.org/xml/ns/pkgen-2.1";
         } else if (uri.startsWith("http://www.openejb.org/xml/ns/pkgen-2")) {
-            uri = "http://openejb.apache.org/xml/ns/pkgen-2.1";
+            uri = "http://tomee.apache.org/xml/ns/pkgen-2.1";
         } else if (uri.startsWith("http://openejb.org/xml/ns/pkgen-2")) {
-            uri = "http://openejb.apache.org/xml/ns/pkgen-2.1";
+            uri = "http://tomee.apache.org/xml/ns/pkgen-2.1";
         } else if (uri.startsWith("http://geronimo.apache.org/xml/ns/deployment-1")) {
             uri = "http://geronimo.apache.org/xml/ns/deployment-1.2";
         } else if (uri.startsWith("http://geronimo.apache.org/xml/ns/j2ee/application-1")) {
@@ -178,7 +178,7 @@ public class NamespaceFilter extends XMLFilterImpl {
         final String previousNs = visibleNamespaces.peek();
 
         final String correctNamespace = ns.get(localName);
-        final boolean correctable = (uri.equals("http://openejb.apache.org/xml/ns/openejb-jar-2.2") || uri.equals("http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0"));
+        final boolean correctable = (uri.equals("http://tomee.apache.org/xml/ns/openejb-jar-2.2") || uri.equals("http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0"));
         if (correctable && correctNamespace != null) {
             uri = correctNamespace;
         } else if (duplicates.containsKey(localName)) {

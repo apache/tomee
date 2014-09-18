@@ -54,15 +54,15 @@ import java.util.Properties;
  *             &lt;complexContent>
  *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *                 &lt;choice maxOccurs="unbounded" minOccurs="0">
- *                   &lt;element name="session" type="{http://openejb.apache.org/xml/ns/openejb-jar-2.2}session-beanType"/>
- *                   &lt;element name="entity" type="{http://openejb.apache.org/xml/ns/openejb-jar-2.2}entity-beanType"/>
- *                   &lt;element name="message-driven" type="{http://openejb.apache.org/xml/ns/openejb-jar-2.2}message-driven-beanType"/>
+ *                   &lt;element name="session" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}session-beanType"/>
+ *                   &lt;element name="entity" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}entity-beanType"/>
+ *                   &lt;element name="message-driven" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}message-driven-beanType"/>
  *                 &lt;/choice>
  *               &lt;/restriction>
  *             &lt;/complexContent>
  *           &lt;/complexType>
  *         &lt;/element>
- *         &lt;element name="relationships" type="{http://openejb.apache.org/xml/ns/openejb-jar-2.2}relationshipsType" minOccurs="0"/>
+ *         &lt;element name="relationships" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}relationshipsType" minOccurs="0"/>
  *         &lt;element ref="{http://geronimo.apache.org/xml/ns/naming-1.2}message-destination" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element ref="{http://geronimo.apache.org/xml/ns/j2ee/application-1.2}security" minOccurs="0"/>
  *         &lt;element ref="{http://geronimo.apache.org/xml/ns/deployment-1.2}service" maxOccurs="unbounded" minOccurs="0"/>
@@ -73,7 +73,7 @@ import java.util.Properties;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "openejb-jarType", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", propOrder = {
+@XmlType(name = "openejb-jarType", namespace = "http://tomee.apache.org/xml/ns/openejb-jar-2.2", propOrder = {
     "environment",
     "properties",
     "cmpConnectionFactory",

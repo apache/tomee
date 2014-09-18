@@ -65,7 +65,7 @@ public final class ClientInjections {
                 + object.getClass().getName()
                 + ".  Ensure that class was annotated with @"
                 + LocalClient.class.getName() + " and was successfully discovered and deployed. "
-                + " See http://openejb.apache.org/3.0/local-client-injection.html");
+                + " See http://tomee.apache.org/3.0/local-client-injection.html");
         }
 
         return new InjectionProcessor(object, injections, ctx);

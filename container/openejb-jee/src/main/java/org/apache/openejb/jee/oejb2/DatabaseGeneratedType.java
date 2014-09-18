@@ -52,12 +52,12 @@ import java.util.List;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "database-generatedType", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1", propOrder = {
+@XmlType(name = "database-generatedType", namespace = "http://tomee.apache.org/xml/ns/pkgen-2.1", propOrder = {
     "identityColumn"
 })
 public class DatabaseGeneratedType {
 
-    @XmlElement(name = "identity-column", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1", required = true)
+    @XmlElement(name = "identity-column", namespace = "http://tomee.apache.org/xml/ns/pkgen-2.1", required = true)
     protected List<String> identityColumn;
 
     /**

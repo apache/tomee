@@ -46,15 +46,15 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "sql-generatorType", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1", propOrder = {
+@XmlType(name = "sql-generatorType", namespace = "http://tomee.apache.org/xml/ns/pkgen-2.1", propOrder = {
     "sql",
     "returnType"
 })
 public class SqlGeneratorType {
 
-    @XmlElement(name = "sql", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1", required = true)
+    @XmlElement(name = "sql", namespace = "http://tomee.apache.org/xml/ns/pkgen-2.1", required = true)
     protected String sql;
-    @XmlElement(name = "return-type", namespace = "http://openejb.apache.org/xml/ns/pkgen-2.1", required = true)
+    @XmlElement(name = "return-type", namespace = "http://tomee.apache.org/xml/ns/pkgen-2.1", required = true)
     protected String returnType;
 
     /**
