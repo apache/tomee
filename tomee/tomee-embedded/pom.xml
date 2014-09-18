@@ -80,10 +80,6 @@
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
-          <artifactId>tomcat-juli</artifactId>
-          <groupId>org.apache.tomcat</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>javaee-api</artifactId>
           <groupId>org.apache.openejb</groupId>
         </exclusion>

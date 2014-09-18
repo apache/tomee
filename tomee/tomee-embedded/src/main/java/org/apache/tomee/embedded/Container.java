@@ -65,6 +65,7 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * @version $Rev$ $Date$
@@ -146,7 +147,7 @@ public class Container implements AutoCloseable {
     }
 
     public void start() throws Exception {
-        if (base == null) {
+        if (base == null || !base.exists()) {
             setup(configuration);
         }
 
@@ -257,7 +258,7 @@ public class Container implements AutoCloseable {
         if (configuration.getProperties() != null) {
             properties.putAll(configuration.getProperties());
         }
-        if (properties.getProperty("openejb.system.apps") == null)  { // will make startup faster and it is rarely useful for embedded case
+        if (properties.getProperty("openejb.system.apps") == null) { // will make startup faster and it is rarely useful for embedded case
             properties.setProperty("openejb.system.apps", "false");
         }
 
@@ -322,8 +323,9 @@ public class Container implements AutoCloseable {
             }
 
             try {
-                file = File.createTempFile("apache-tomee", "-home");
-            } catch (final Throwable e) {
+                final File target = new File("target");
+                file = File.createTempFile("apache-tomee", "-home", target.exists() ? target : null);
+            } catch (final Exception e) {
 
                 final File tmp = new File("tmp");
                 if (!tmp.exists() && !tmp.mkdirs()) {
@@ -341,10 +343,28 @@ public class Container implements AutoCloseable {
     }
 
     public void stop() throws Exception {
-        tomcat.stop();
-        tomcat.destroy();
-        deleteTree(base);
-        base = null;
+
+        final Connector connector = tomcat.getConnector();
+        if (null != connector) {
+            connector.stop();
+        }
+
+        try {
+            tomcat.stop();
+        } catch (final LifecycleException e) {
+            e.printStackTrace();
+        }
+        try {
+            tomcat.destroy();
+        } catch (final LifecycleException e) {
+            e.printStackTrace();
+        }
+        try {
+            deleteTree(base);
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+
         OpenEJB.destroy();
         // don't set base = null here to be able to use base after to clean up from outside of this class
     }
@@ -509,8 +529,36 @@ public class Container implements AutoCloseable {
     }
 
     @Override
-    public void close() throws Exception {
-        stop();
+    public void close() throws IOException {
+        final CountDownLatch end = new CountDownLatch(1);
+        final Container container = Container.this;
+        new Thread() {
+            {
+                setName("tomee-embedded-await-" + hashCode());
+            }
+
+            @Override
+            public void run() {
+                try {
+                    container.await();
+                    end.countDown();
+                } catch (final Exception e) {
+                    throw new IllegalStateException(e);
+                }
+            }
+        }.start();
+
+        try {
+            stop();
+        } catch (final Exception e) {
+            throw new IOException("Failed to stop container", e);
+        }
+
+        try {
+            end.await();
+        } catch (final InterruptedException e) {
+            Thread.interrupted();
+        }
     }
 
     public org.apache.catalina.Context addContext(final String context, final String path) {

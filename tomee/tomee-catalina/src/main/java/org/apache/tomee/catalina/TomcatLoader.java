@@ -105,8 +105,10 @@ public class TomcatLoader implements Loader {
      */
     private static ServiceManager manager;
 
-    /** other services */
-    private static final List<ServerService> services = new ArrayList<ServerService> ();
+    /**
+     * other services
+     */
+    private static final List<ServerService> services = new ArrayList<ServerService>();
 
     /**
      * this method will be split in two to be able to use SystemInstance in between both invocations
@@ -236,8 +238,12 @@ public class TomcatLoader implements Loader {
         SystemInstance.get().setComponent(WebAppEnricher.class, classLoaderEnricher);
 
         // add common lib even in ear "lib" part (if the ear provides myfaces for instance)
-        for (final URL url : classLoaderEnricher.enrichment(null)) { // we rely on the fact we know what the impl does with null but that's fine
-            SystemInstance.get().getComponent(ClassLoaderEnricher.class).addUrl(url);
+
+        final ClassLoaderEnricher enricher = SystemInstance.get().getComponent(ClassLoaderEnricher.class);
+        if (null != enricher) {
+            for (final URL url : classLoaderEnricher.enrichment(null)) { // we rely on the fact we know what the impl does with null but that's fine
+                enricher.addUrl(url);
+            }
         }
 
         // optional services
@@ -255,7 +261,7 @@ public class TomcatLoader implements Loader {
 
         final Properties ejbServerProps = new Properties();
         ejbServerProps.putAll(properties);
-        for (final String prop : new String[] { "serializer", "gzip" }) { // ensure -Dejbd.xxx are read
+        for (final String prop : new String[]{"serializer", "gzip"}) { // ensure -Dejbd.xxx are read
             final String value = SystemInstance.get().getProperty("ejbd." + prop);
             if (value != null) {
                 ejbServerProps.put(prop, value);
