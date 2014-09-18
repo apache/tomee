@@ -23,7 +23,6 @@ import org.apache.catalina.Host;
 import org.apache.catalina.Service;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.ApplicationFilterConfig;
-import org.apache.catalina.core.StandardContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.cxf.rs.CxfRsHttpListener;
 import org.apache.openejb.server.httpd.HttpListener;
@@ -31,17 +30,17 @@ import org.apache.openejb.server.httpd.util.HttpUtil;
 import org.apache.openejb.server.rest.RsRegistry;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.reflection.Reflections;
 import org.apache.tomcat.util.descriptor.web.FilterDef;
 import org.apache.tomcat.util.descriptor.web.FilterMap;
 import org.apache.tomee.catalina.environment.Hosts;
 import org.apache.tomee.loader.TomcatHelper;
 
-import java.lang.reflect.Field;
+import java.lang.reflect.Constructor;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -144,28 +143,12 @@ public class TomcatRsRegistry implements RsRegistry {
     private void addFilterConfig(final Context context, final FilterDef filterDef) {
         // hack to force filter to get a config otherwise it is ignored in the http routing
         try {
-            final Field def = StandardContext.class.getDeclaredField("filterDefs");
-            if (!def.isAccessible()) {
-                def.setAccessible(true);
+            final Constructor<ApplicationFilterConfig> cons = ApplicationFilterConfig.class.getDeclaredConstructor(Context.class, FilterDef.class);
+            if (!cons.isAccessible()) {
+                cons.setAccessible(true);
             }
-            final Field config = StandardContext.class.getDeclaredField("filterConfigs");
-            if (!config.isAccessible()) {
-                config.setAccessible(true);
-            }
-            final Object oldDefs = def.get(context);
-            final Map<String, ApplicationFilterConfig> oldConfig = new HashMap<>((Map<String, ApplicationFilterConfig>) config.get(context));
-            try {
-                final Map<String, FilterDef> tempDef = new HashMap<>();
-                tempDef.put(filterDef.getFilterName(), filterDef);
-                def.set(context, tempDef);
-
-                StandardContext.class.cast(context).filterStart();
-                // update configs
-                oldConfig.putAll((Map<String, ApplicationFilterConfig>) config.get(context));
-            } finally {
-                def.set(context, oldDefs);
-                config.set(context, oldConfig);
-            }
+            final ApplicationFilterConfig config = cons.newInstance(context, filterDef);
+            ((Map<String, ApplicationFilterConfig>) Reflections.get(context, "filterConfigs")).put(filterDef.getFilterName(), config);
         } catch (final Exception e) {
             throw new IllegalStateException(e);
         }
