@@ -31,12 +31,5 @@
   <artifactId>openejb-api</artifactId>
   <name>OpenEJB :: Container :: API</name>
 
-  <dependencies>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>mbean-annotation-api</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-  </dependencies>
 </project>
 
