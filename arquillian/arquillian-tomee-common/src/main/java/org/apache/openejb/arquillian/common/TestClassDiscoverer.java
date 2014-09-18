@@ -18,6 +18,7 @@
 package org.apache.openejb.arquillian.common;
 
 import org.apache.openejb.config.AdditionalBeanDiscoverer;
+import org.apache.openejb.config.AnnotationDeployer;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConnectorModule;
 import org.apache.openejb.config.EjbModule;
@@ -101,6 +102,12 @@ public class TestClassDiscoverer implements AdditionalBeanDiscoverer {
             try {
                 // call some reflection methods to make it fail if some dep are missing...
                 Class<?> current = it.next();
+
+                if (!AnnotationDeployer.isInstantiable(current)) {
+                    it.remove();
+                    continue;
+                }
+
                 while (current != null) {
                     current.getDeclaredFields();
                     current.getDeclaredMethods();
