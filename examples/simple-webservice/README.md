@@ -189,7 +189,7 @@ When run you should see output similar to the following.
     -------------------------------------------------------
     Running org.superbiz.calculator.ws.CalculatorTest
     INFO - ********************************************************************************
-    INFO - OpenEJB http://openejb.apache.org/
+    INFO - OpenEJB http://tomee.apache.org/
     INFO - Startup: Sat Feb 18 19:11:50 PST 2012
     INFO - Copyright 1999-2012 (C) Apache OpenEJB Project, All Rights Reserved.
     INFO - Version: 4.0.0-beta-3

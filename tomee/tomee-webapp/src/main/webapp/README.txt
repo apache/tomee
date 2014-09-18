@@ -1,7 +1,7 @@
 ===============================================
 OpenEJB Plugin for Tomcat
 
-OpenEJB ${pom.version}      http://openejb.apache.org/
+OpenEJB ${pom.version}      http://tomee.apache.org/
 -----------------------------------------------
 ___________________
 Installation
@@ -17,9 +17,9 @@ Support
 ===================
  
  Any problems with this release can be reported to our user
- mailing list at users@openejb.apache.org 
+ mailing list at users@tomee.apache.org 
  Follow this link for other subscription and list information:
- http://openejb.apache.org/mailing-lists.html
+ http://tomee.apache.org/mailing-lists.html
 
 =========================================================================
 ==  Cryptographic Software Notice                                      ==

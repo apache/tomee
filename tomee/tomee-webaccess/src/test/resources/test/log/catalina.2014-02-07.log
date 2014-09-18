@@ -13,7 +13,7 @@ INFO: Optional service not installed: org.apache.tomee.webservices.TomeeJaxWsSer
 Feb 07, 2014 10:40:05 PM org.apache.openejb.OpenEJB$Instance <init>
 INFO: ********************************************************************************
 Feb 07, 2014 10:40:05 PM org.apache.openejb.OpenEJB$Instance <init>
-INFO: OpenEJB http://openejb.apache.org/
+INFO: OpenEJB http://tomee.apache.org/
 Feb 07, 2014 10:40:05 PM org.apache.openejb.OpenEJB$Instance <init>
 INFO: Startup: Fri Feb 07 22:40:05 EST 2014
 Feb 07, 2014 10:40:05 PM org.apache.openejb.OpenEJB$Instance <init>

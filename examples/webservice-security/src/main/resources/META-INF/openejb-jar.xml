@@ -16,7 +16,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<openejb-jar xmlns="http://openejb.apache.org/xml/ns/openejb-jar-2.2">
+<openejb-jar xmlns="http://tomee.apache.org/xml/ns/openejb-jar-2.2">
   <enterprise-beans>
     <session>
       <ejb-name>CalculatorImpl</ejb-name>

@@ -155,7 +155,7 @@ Title: Lookup Of Ejbs with Descriptor
     -------------------------------------------------------
     Running org.superbiz.ejblookup.EjbDependencyTest
     Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-    http://openejb.apache.org/
+    http://tomee.apache.org/
     INFO - openejb.home = /Users/dblevins/examples/lookup-of-ejbs-with-descriptor
     INFO - openejb.base = /Users/dblevins/examples/lookup-of-ejbs-with-descriptor
     INFO - Using 'javax.ejb.embeddable.EJBContainer=true'

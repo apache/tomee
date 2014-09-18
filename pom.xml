@@ -54,23 +54,23 @@
   <mailingLists>
     <mailingList>
       <name>OpenEJB Commits List</name>
-      <subscribe>commits-subscribe@openejb.apache.org</subscribe>
-      <unsubscribe>commits-unsubscribe@openejb.apache.org</unsubscribe>
-      <post>commits@openejb.apache.org</post>
+      <subscribe>commits-subscribe@tomee.apache.org</subscribe>
+      <unsubscribe>commits-unsubscribe@tomee.apache.org</unsubscribe>
+      <post>commits@tomee.apache.org</post>
       <archive>http://mail-archives.apache.org/mod_mbox/openejb-commits/</archive>
     </mailingList>
     <mailingList>
       <name>OpenEJB Developer List</name>
-      <subscribe>dev-subscribe@openejb.apache.org</subscribe>
-      <unsubscribe>dev-unsubscribe@openejb.apache.org</unsubscribe>
-      <post>dev@openejb.apache.org</post>
+      <subscribe>dev-subscribe@tomee.apache.org</subscribe>
+      <unsubscribe>dev-unsubscribe@tomee.apache.org</unsubscribe>
+      <post>dev@tomee.apache.org</post>
       <archive>http://mail-archives.apache.org/mod_mbox/openejb-dev/</archive>
     </mailingList>
     <mailingList>
       <name>OpenEJB Users List</name>
-      <subscribe>users-subscribe@openejb.apache.org</subscribe>
-      <unsubscribe>users-unsubscribe@openejb.apache.org</unsubscribe>
-      <post>users@openejb.apache.org</post>
+      <subscribe>users-subscribe@tomee.apache.org</subscribe>
+      <unsubscribe>users-unsubscribe@tomee.apache.org</unsubscribe>
+      <post>users@tomee.apache.org</post>
       <archive>http://mail-archives.apache.org/mod_mbox/openejb-users/</archive>
     </mailingList>
   </mailingLists>
@@ -80,7 +80,7 @@
     <notifiers>
       <notifier>
         <configuration>
-          <address>commits@openejb.apache.org</address>
+          <address>commits@tomee.apache.org</address>
         </configuration>
       </notifier>
     </notifiers>
@@ -2032,7 +2032,7 @@
   <distributionManagement>
     <site>
       <id>openejb-website</id>
-      <url>scp://people.apache.org/www/openejb.apache.org/openejb/maven</url>
+      <url>scp://people.apache.org/www/tomee.apache.org/openejb/maven</url>
     </site>
   </distributionManagement>
 

@@ -354,7 +354,7 @@ Title: Transaction Rollback
     -------------------------------------------------------
     Running org.superbiz.txrollback.MoviesTest
     Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-    http://openejb.apache.org/
+    http://tomee.apache.org/
     INFO - openejb.home = /Users/dblevins/examples/transaction-rollback
     INFO - openejb.base = /Users/dblevins/examples/transaction-rollback
     INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
@@ -392,7 +392,7 @@ Title: Transaction Rollback
     INFO - Closing DataSource: movieDatabase
     INFO - Closing DataSource: movieDatabaseNonJta
     Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-    http://openejb.apache.org/
+    http://tomee.apache.org/
     INFO - openejb.home = /Users/dblevins/examples/transaction-rollback
     INFO - openejb.base = /Users/dblevins/examples/transaction-rollback
     INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
@@ -429,7 +429,7 @@ Title: Transaction Rollback
     INFO - Closing DataSource: movieDatabase
     INFO - Closing DataSource: movieDatabaseNonJta
     Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-    http://openejb.apache.org/
+    http://tomee.apache.org/
     INFO - openejb.home = /Users/dblevins/examples/transaction-rollback
     INFO - openejb.base = /Users/dblevins/examples/transaction-rollback
     INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
@@ -466,7 +466,7 @@ Title: Transaction Rollback
     INFO - Closing DataSource: movieDatabase
     INFO - Closing DataSource: movieDatabaseNonJta
     Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-    http://openejb.apache.org/
+    http://tomee.apache.org/
     INFO - openejb.home = /Users/dblevins/examples/transaction-rollback
     INFO - openejb.base = /Users/dblevins/examples/transaction-rollback
     INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
@@ -503,7 +503,7 @@ Title: Transaction Rollback
     INFO - Closing DataSource: movieDatabase
     INFO - Closing DataSource: movieDatabaseNonJta
     Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-    http://openejb.apache.org/
+    http://tomee.apache.org/
     INFO - openejb.home = /Users/dblevins/examples/transaction-rollback
     INFO - openejb.base = /Users/dblevins/examples/transaction-rollback
     INFO - Using 'javax.ejb.embeddable.EJBContainer=true'

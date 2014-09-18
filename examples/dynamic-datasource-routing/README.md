@@ -339,7 +339,7 @@ your databases you can use it and see how it is simple:
     -------------------------------------------------------
     Running org.superbiz.dynamicdatasourcerouting.DynamicDataSourceTest
     Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-    http://openejb.apache.org/
+    http://tomee.apache.org/
     INFO - openejb.home = /Users/dblevins/examples/dynamic-datasource-routing
     INFO - openejb.base = /Users/dblevins/examples/dynamic-datasource-routing
     INFO - Using 'javax.ejb.embeddable.EJBContainer=true'

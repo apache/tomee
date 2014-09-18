@@ -10,6 +10,6 @@ OPTIONS
 
 OpenEJB -- EJB Container System and EJB Server.
 For OpenEJB updates and additional information, visit
-http://openejb.apache.org
+http://tomee.apache.org
 
-Bug Reports to <users@openejb.apache.org>
+Bug Reports to <users@tomee.apache.org>

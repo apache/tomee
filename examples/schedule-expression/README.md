@@ -128,7 +128,7 @@ The test class acquires an instance from the context and waits for 5 seconds to 
     -------------------------------------------------------
     Running org.superbiz.corn.FarmerBrownTest
     Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-    http://openejb.apache.org/
+    http://tomee.apache.org/
     INFO - openejb.home = /Users/dblevins/examples/schedule-expression
     INFO - openejb.base = /Users/dblevins/examples/schedule-expression
     INFO - Using 'javax.ejb.embeddable.EJBContainer=true'

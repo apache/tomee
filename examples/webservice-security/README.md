@@ -80,7 +80,7 @@ Title: Webservice Security
 
 ## openejb-jar.xml
 
-    <openejb-jar xmlns="http://openejb.apache.org/xml/ns/openejb-jar-2.2">
+    <openejb-jar xmlns="http://tomee.apache.org/xml/ns/openejb-jar-2.2">
       <enterprise-beans>
         <session>
           <ejb-name>CalculatorImpl</ejb-name>
@@ -150,7 +150,7 @@ Title: Webservice Security
     -------------------------------------------------------
     Running org.superbiz.calculator.CalculatorTest
     Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-    http://openejb.apache.org/
+    http://tomee.apache.org/
     INFO - openejb.home = /Users/dblevins/examples/webservice-security
     INFO - openejb.base = /Users/dblevins/examples/webservice-security
     INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)

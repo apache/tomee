@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<openejb-jar xmlns="http://openejb.apache.org/xml/ns/openejb-jar-2.2" xmlns:dep="http://geronimo.apache.org/xml/ns/deployment-1.2">
+<openejb-jar xmlns="http://tomee.apache.org/xml/ns/openejb-jar-2.2" xmlns:dep="http://geronimo.apache.org/xml/ns/deployment-1.2">
   <dep:environment>
     <dep:moduleId>
       <dep:groupId>org.foo</dep:groupId>

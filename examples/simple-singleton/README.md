@@ -237,7 +237,7 @@ Which should create output like the following.
     -------------------------------------------------------
     Running org.superbiz.registry.ComponentRegistryTest
     INFO - ********************************************************************************
-    INFO - OpenEJB http://openejb.apache.org/
+    INFO - OpenEJB http://tomee.apache.org/
     INFO - Startup: Sun Jun 09 03:46:51 IDT 2013
     INFO - Copyright 1999-2013 (C) Apache OpenEJB Project, All Rights Reserved.
     INFO - Version: 4.6.0-SNAPSHOT
@@ -288,7 +288,7 @@ Which should create output like the following.
     Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.431 sec
     Running org.superbiz.registry.PropertiesRegistryTest
     INFO - ********************************************************************************
-    INFO - OpenEJB http://openejb.apache.org/
+    INFO - OpenEJB http://tomee.apache.org/
     INFO - Startup: Sun Jun 09 03:46:52 IDT 2013
     INFO - Copyright 1999-2013 (C) Apache OpenEJB Project, All Rights Reserved.
     INFO - Version: 4.6.0-SNAPSHOT

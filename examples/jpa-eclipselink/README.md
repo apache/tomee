@@ -62,7 +62,7 @@ The entity itself is simply a pojo annotated with `@Entity`.  We create one pojo
 ## Database Operations
 
 This is the bean responsible for database operations; it allows us to persist or delete entities.
-For more information we recommend you to see [injection-of-entitymanager](http://openejb.apache.org/examples-trunk/injection-of-entitymanager/README.html)
+For more information we recommend you to see [injection-of-entitymanager](http://tomee.apache.org/examples-trunk/injection-of-entitymanager/README.html)
 
 
     package org.superbiz.eclipselink;
@@ -169,7 +169,7 @@ When we run our test case we should see output similar to the following.
     -------------------------------------------------------
     Running org.superbiz.eclipselink.MoviesTest
     Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-    http://openejb.apache.org/
+    http://tomee.apache.org/
     INFO - openejb.home = /Users/dblevins/examples/jpa-eclipselink
     INFO - openejb.base = /Users/dblevins/examples/jpa-eclipselink
     INFO - Using 'javax.ejb.embeddable.EJBContainer=true'

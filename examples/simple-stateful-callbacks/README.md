@@ -213,7 +213,7 @@ This example shows how to create a stateful session bean that uses the @PrePassi
     -------------------------------------------------------
     Running org.superbiz.counter.CounterCallbacksTest
     INFO - ********************************************************************************
-    INFO - OpenEJB http://openejb.apache.org/
+    INFO - OpenEJB http://tomee.apache.org/
     INFO - Startup: Sat Jul 21 08:18:28 EDT 2012
     INFO - Copyright 1999-2012 (C) Apache OpenEJB Project, All Rights Reserved.
     INFO - Version: 4.1.0

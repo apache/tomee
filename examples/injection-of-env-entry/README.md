@@ -206,7 +206,7 @@ Do not use `<env-entry-type>java.lang.Enum</env-entry-type>` or it will not work
     -------------------------------------------------------
     Running org.superbiz.injection.enventry.ConfigurationTest
     Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-    http://openejb.apache.org/
+    http://tomee.apache.org/
     INFO - openejb.home = /Users/dblevins/examples/injection-of-env-entry
     INFO - openejb.base = /Users/dblevins/examples/injection-of-env-entry
     INFO - Using 'javax.ejb.embeddable.EJBContainer=true'

@@ -90,7 +90,7 @@ Title: Dynamic Implementation
     -------------------------------------------------------
     Running org.superbiz.dynamic.SocialTest
     Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-    http://openejb.apache.org/
+    http://tomee.apache.org/
     INFO - openejb.home = /Users/dblevins/examples/dynamic-implementation
     INFO - openejb.base = /Users/dblevins/examples/dynamic-implementation
     INFO - Using 'javax.ejb.embeddable.EJBContainer=true'

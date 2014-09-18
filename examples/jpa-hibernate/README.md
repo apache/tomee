@@ -154,7 +154,7 @@ Title: JPA Hibernate
     -------------------------------------------------------
     Running org.superbiz.injection.h3jpa.MoviesTest
     Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-    http://openejb.apache.org/
+    http://tomee.apache.org/
     INFO - openejb.home = /Users/dblevins/examples/jpa-hibernate
     INFO - openejb.base = /Users/dblevins/examples/jpa-hibernate
     INFO - Using 'javax.ejb.embeddable.EJBContainer=true'

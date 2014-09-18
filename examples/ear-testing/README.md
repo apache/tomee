@@ -180,7 +180,7 @@ The test code is the same as always:
     -------------------------------------------------------
     Running org.superbiz.logic.MoviesTest
     Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-    http://openejb.apache.org/
+    http://tomee.apache.org/
     INFO - openejb.home = /Users/dblevins/examples/ear-testing/business-logic
     INFO - openejb.base = /Users/dblevins/examples/ear-testing/business-logic
     INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)

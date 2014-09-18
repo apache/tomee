@@ -16,9 +16,9 @@ Notice:    Licensed to the Apache Software Foundation (ASF) under one
            specific language governing permissions and limitations
            under the License.
 
-If there is a particular example that you do not see here please feel free to [ask](mailto:dev@openejb.apache.org?subject=Example+request), the odds are good that someone will create it for you.  
+If there is a particular example that you do not see here please feel free to [ask](mailto:dev@tomee.apache.org?subject=Example+request), the odds are good that someone will create it for you.  
 All the examples show source code, but some are better documented than others.
-If you need a little more help understanding an example then please drop us a [line](mailto:dev@openejb.apache.org?subject=Example+request) or visit us on IRC freenode.net #openejb
+If you need a little more help understanding an example then please drop us a [line](mailto:dev@tomee.apache.org?subject=Example+request) or visit us on IRC freenode.net #openejb
 
 {row
 {span-one-third

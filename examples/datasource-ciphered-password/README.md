@@ -58,7 +58,7 @@ Then you simply declare this encryption for your datasource:
 
 # Documentation
 
-For more information please see the [documentation](http://openejb.apache.org/3.0/datasource-password-encryption.html)
+For more information please see the [documentation](http://tomee.apache.org/3.0/datasource-password-encryption.html)
 
 # Full Test Source
 
@@ -171,7 +171,7 @@ For more information please see the [documentation](http://openejb.apache.org/3.
     -------------------------------------------------------
     Running org.superbiz.DataSourceCipheredExampleTest
     Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-    http://openejb.apache.org/
+    http://tomee.apache.org/
     INFO - openejb.home = /Users/dblevins/examples/datasource-ciphered-password
     INFO - openejb.base = /Users/dblevins/examples/datasource-ciphered-password
     INFO - Using 'javax.ejb.embeddable.EJBContainer=true'

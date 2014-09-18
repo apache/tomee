@@ -185,7 +185,7 @@ Both examples demonstrate the same, in that two driver versions can be loaded an
     INFO - Optional service not installed: org.apache.tomee.webservices.TomeeJaxRsService
     INFO - Optional service not installed: org.apache.tomee.webservices.TomeeJaxWsService
     INFO - ********************************************************************************
-    INFO - OpenEJB http://openejb.apache.org/
+    INFO - OpenEJB http://tomee.apache.org/
     INFO - Startup: Thu Apr 17 14:19:55 CEST 2014
     INFO - Copyright 1999-2013 (C) Apache OpenEJB Project, All Rights Reserved.
     INFO - Version: 4.6.1-SNAPSHOT

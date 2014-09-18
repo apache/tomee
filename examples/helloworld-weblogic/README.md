@@ -101,7 +101,7 @@ Title: Helloworld Weblogic
     -------------------------------------------------------
     Running org.superbiz.hello.HelloTest
     Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-    http://openejb.apache.org/
+    http://tomee.apache.org/
     INFO - openejb.home = /Users/dblevins/examples/helloworld-weblogic
     INFO - openejb.base = /Users/dblevins/examples/helloworld-weblogic
     INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)

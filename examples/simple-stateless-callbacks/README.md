@@ -173,7 +173,7 @@ This example shows how to create a stateless session bean that uses the @PostCon
     -------------------------------------------------------
     Running org.superbiz.stateless.basic.CalculatorTest
     INFO - ********************************************************************************
-    INFO - OpenEJB http://openejb.apache.org/
+    INFO - OpenEJB http://tomee.apache.org/
     INFO - Startup: Sat Jul 21 09:23:38 EDT 2012
     INFO - Copyright 1999-2012 (C) Apache OpenEJB Project, All Rights Reserved.
     INFO - Version: 4.1.0
