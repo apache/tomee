@@ -33,7 +33,7 @@
   <artifactId>openejb</artifactId>
   <packaging>pom</packaging>
 
-  <version>4.7.1-SNAPSHOT</version>
+  <version>4.7.2-SNAPSHOT</version>
 
   <name>Apache OpenEJB</name>
   <description>Apache OpenEJB is an open source, modular, configurable and extendable EJB Container System and EJB
@@ -96,8 +96,8 @@
     <test.complexity.coverage.minimun>0</test.complexity.coverage.minimun>
     <test.branch.coverage.minimun>0</test.branch.coverage.minimun>
     <test.coverage.skip>false</test.coverage.skip>
-    <openejb.version>4.7.1-SNAPSHOT</openejb.version>
-    <tomee.version>1.7.1-SNAPSHOT</tomee.version>
+    <openejb.version>4.7.2-SNAPSHOT</openejb.version>
+    <tomee.version>1.7.2-SNAPSHOT</tomee.version>
 
     <openjpa.version>2.4.0-nonfinal-1598334</openjpa.version>
     <org.apache.openwebbeans.version>1.2.6</org.apache.openwebbeans.version>

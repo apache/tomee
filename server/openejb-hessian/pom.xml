@@ -25,7 +25,7 @@ limitations under the License.
   <parent>
     <artifactId>server</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.7.1-SNAPSHOT</version>
+    <version>4.7.2-SNAPSHOT</version>
   </parent>
 
   <artifactId>openejb-hessian</artifactId>
@@ -35,7 +35,7 @@ limitations under the License.
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-http</artifactId>
-      <version>4.7.1-SNAPSHOT</version>
+      <version>4.7.2-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

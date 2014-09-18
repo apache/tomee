@@ -22,7 +22,7 @@
   <parent>
     <artifactId>container</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.7.1-SNAPSHOT</version>
+    <version>4.7.2-SNAPSHOT</version>
   </parent>
   <artifactId>mbean-annotation-api</artifactId>
   <name>OpenEJB :: Container :: MBean Annotation API</name>
