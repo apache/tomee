@@ -411,6 +411,9 @@ public class Container implements AutoCloseable {
                     if (sameApplication(file, webApp)) {
                         webApp.moduleId = name;
                         webApp.contextRoot = lastPart(name, webApp.contextRoot);
+                        if ("ROOT".equals(webApp.contextRoot)) {
+                            webApp.contextRoot = "";
+                        }
                     }
                 }
             }

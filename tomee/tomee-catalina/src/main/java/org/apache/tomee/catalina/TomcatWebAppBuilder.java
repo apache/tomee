@@ -495,6 +495,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 if (standardContext.getPath() == null) {
                     if (webApp.contextRoot != null && webApp.contextRoot.startsWith("/")) {
                         standardContext.setPath(webApp.contextRoot);
+                    } else if (isRoot(webApp.contextRoot)) {
+                        standardContext.setPath("");
                     } else {
                         standardContext.setPath("/" + webApp.contextRoot);
                     }
@@ -555,7 +557,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     }
 
     private static boolean isRoot(final String name) {
-        return "/ROOT".equals(name) || "ROOT".equals(name) || name == null || name.isEmpty();
+        return "/ROOT".equals(name) || "ROOT".equals(name) || name == null || name.isEmpty() || "ROOT.war".equals(name);
     }
 
     public void deployWar(final StandardContext standardContext, final String host, final AppInfo info) {
