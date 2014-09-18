@@ -5452,7 +5452,7 @@ public class AnnotationDeployer implements DynamicDeployer {
         return classes;
     }
 
-    private static boolean isInstantiable(final Class<?> clazz) {
+    public static boolean isInstantiable(final Class<?> clazz) {
         final int modifiers = clazz.getModifiers();
         return !Modifier.isAbstract(modifiers) && !(clazz.getEnclosingClass() != null && !Modifier.isStatic(modifiers))
             && Modifier.isPublic(modifiers);
