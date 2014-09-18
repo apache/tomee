@@ -204,13 +204,13 @@ public class CxfRsHttpListener implements RsHttpListener {
         }
     }
 
-    private boolean matchPath(final HttpServletRequest request) {
+    public boolean matchPath(final HttpServletRequest request) {
         if (staticResourcesList.isEmpty()) {
             return false;
         }
 
-        String path = request.getPathInfo();
-        if (path == null) {
+        String path = request.getRequestURI().substring(request.getContextPath().length());
+        if (path == null || path.isEmpty()) {
             path = "/";
         }
         for (final Pattern pattern : staticResourcesList) {

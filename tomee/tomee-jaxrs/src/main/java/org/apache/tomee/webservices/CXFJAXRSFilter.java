@@ -59,7 +59,7 @@ public class CXFJAXRSFilter implements Filter {
         final HttpServletRequest httpServletRequest = HttpServletRequest.class.cast(request);
         final HttpServletResponse httpServletResponse = HttpServletResponse.class.cast(response);
 
-        if (CxfRsHttpListener.TRY_STATIC_RESOURCES) {
+        if (CxfRsHttpListener.TRY_STATIC_RESOURCES || delegate.matchPath(httpServletRequest)) {
             final InputStream staticContent = delegate.findStaticContent(httpServletRequest, welcomeFiles);
             if (staticContent != null) {
                 chain.doFilter(request, response);
