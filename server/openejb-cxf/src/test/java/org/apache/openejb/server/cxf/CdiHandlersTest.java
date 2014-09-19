@@ -16,8 +16,6 @@
  */
 package org.apache.openejb.server.cxf;
 
-import org.apache.cxf.endpoint.Client;
-import org.apache.cxf.frontend.ClientProxy;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.server.cxf.handler.SimpleHandler;
@@ -34,7 +32,6 @@ import org.junit.runner.RunWith;
 import javax.jws.HandlerChain;
 import javax.jws.WebService;
 import javax.xml.namespace.QName;
-import javax.xml.ws.Endpoint;
 import javax.xml.ws.Service;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -67,7 +64,7 @@ public class CdiHandlersTest {
     @Test
     public void checkHandlersAreCDIBeans() throws MalformedURLException {
         SimpleHandler.reset();
-        final Service service = Service.create(new URL("http://localhost:" + port + "/test/ws?wsdl"), new QName("http://cxf.server.tomee.apache.org/", "MyHandledWebserviceService"));
+        final Service service = Service.create(new URL("http://localhost:" + port + "/test/ws?wsdl"), new QName("http://cxf.server.openejb.apache.org/", "MyHandledWebserviceService"));
         final MyHandledWsApi servicePort = service.getPort(MyHandledWsApi.class);
         servicePort.test();
         assertTrue(SimpleHandler.close);
