@@ -470,7 +470,7 @@ public class Installer implements InstallerInterface {
         final String newCatalinaSh = catalinaShOriginal.replace("# ----- Execute The Requested Command",
                 "# Add OpenEJB javaagent\n" +
                         "if [ -r \"$CATALINA_HOME\"/" + openejbJavaagentPath + " ]; then\n" +
-                        "  JAVA_OPTS=\"\"-javaagent:$CATALINA_HOME/" + openejbJavaagentPath + "\" $JAVA_OPTS\"\n" +
+                        "  JAVA_OPTS=\"'-javaagent:$CATALINA_HOME/" + openejbJavaagentPath + "' $JAVA_OPTS\"\n" +
                         "fi\n" +
                         "\n" +
                         "# ----- Execute The Requested Command");
