@@ -32,6 +32,7 @@ import org.apache.cxf.jaxrs.model.OperationResourceInfo;
 import org.apache.cxf.jaxrs.model.ProviderInfo;
 import org.apache.cxf.jaxrs.model.wadl.WadlGenerator;
 import org.apache.cxf.jaxrs.provider.JAXBElementProvider;
+import org.apache.cxf.jaxrs.provider.json.JSONProvider;
 import org.apache.cxf.service.invoker.Invoker;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
@@ -673,6 +674,7 @@ public class CxfRsHttpListener implements RsHttpListener {
 
         final List<Object> providers = new ArrayList<Object>(4);
         providers.add(jaxb);
+        providers.add(new JSONProvider());
         return providers;
     }
 
