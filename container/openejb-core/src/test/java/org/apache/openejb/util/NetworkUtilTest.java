@@ -20,6 +20,7 @@ package org.apache.openejb.util;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.net.InetAddress;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -57,5 +58,15 @@ public class NetworkUtilTest {
         Assert.assertTrue(success);
 
         System.out.println("Thread safe port list = " + list);
+    }
+
+    @Test
+    public void testLocal() throws Exception {
+        Assert.assertTrue(NetworkUtil.isLocalAddress(InetAddress.getLocalHost()));
+    }
+
+    @Test
+    public void testLocalhost() throws Exception {
+        Assert.assertTrue(NetworkUtil.isLocalAddress("localhost"));
     }
 }
