@@ -213,7 +213,8 @@ public class DeploymentsResolver implements DeploymentFilterable {
      * 2- Loading the resource is the default behaviour in case of not defining a value for any class-path pattern
      * This appears in step 3 of the above algorithm.
      */
-    public static void loadFromClasspath(final FileUtils ignored, final List<URL> jarList, final ClassLoader classLoader) {
+    public static List<URL> loadFromClasspath(final ClassLoader classLoader) {
+        final List<URL> jarList = new ArrayList<>(16);
         final Options options = SystemInstance.get().getOptions();
         final String include = options.get(CLASSPATH_INCLUDE, ".*");
         final String exclude = options.get(CLASSPATH_EXCLUDE, "");
@@ -271,9 +272,9 @@ public class DeploymentsResolver implements DeploymentFilterable {
             final int size = urls.size();
             if (size == 0 && include.length() > 0) {
                 logger.warning("No classpath URLs matched.  Current settings: " + CLASSPATH_EXCLUDE + "='" + exclude + "', " + CLASSPATH_INCLUDE + "='" + include + "'");
-                return;
+                return jarList;
             } else if (size == 0 && !filterDescriptors && prefiltered.getUrls().size() == 0) {
-                return;
+                return jarList;
             } else if (size < 20) {
                 logger.debug("Inspecting classpath for applications: " + urls.size() + " urls.");
             } else {
@@ -299,7 +300,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
             }
 
             final long begin = System.currentTimeMillis();
-            processUrls("DeploymentsResolver1", urls, classLoader, requireDescriptors, ignored, jarList);
+            processUrls("DeploymentsResolver1", urls, classLoader, requireDescriptors, jarList);
             final long end = System.currentTimeMillis();
             final long time = end - begin;
 
@@ -310,7 +311,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
                 if (filterSystemApps) {
                     unchecked = unchecked.exclude(".*/openejb-[^/]+(.(jar|ear|war)(./)?|/target/classes/?)");
                 }
-                processUrls("DeploymentsResolver2", unchecked.getUrls(), classLoader, EnumSet.allOf(RequireDescriptors.class), ignored, jarList);
+                processUrls("DeploymentsResolver2", unchecked.getUrls(), classLoader, EnumSet.allOf(RequireDescriptors.class), jarList);
             }
 
             if (logger.isDebugEnabled()) {
@@ -325,7 +326,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
             }
 
             if (urls.size() == 0) {
-                return;
+                return jarList;
             }
 
             if (time < 1000) {
@@ -360,13 +361,28 @@ public class DeploymentsResolver implements DeploymentFilterable {
             logger.warning("Unable to search classpath for modules: Received Exception: " + e1.getClass().getName() + " " + e1.getMessage(), e1);
         }
 
+        return jarList;
+    }
+
+    @Deprecated
+    public static void loadFromClasspath(final FileUtils ignored, final List<URL> jarList, final ClassLoader classLoader) {
+        jarList.addAll(loadFromClasspath(classLoader));
+    }
+
+    @Deprecated
+    public static void processUrls(final String caller,
+                                   final List<URL> urls,
+                                   final ClassLoader classLoader,
+                                   final Set<RequireDescriptors> requireDescriptors,
+                                   final FileUtils ignored, // don't use it, it will be removed since we already suppose it is null in several places
+                                   final List<URL> jarList) {
+        processUrls(caller, urls, classLoader, requireDescriptors, jarList);
     }
 
     public static void processUrls(final String caller,
                                    final List<URL> urls,
                                    final ClassLoader classLoader,
                                    final Set<RequireDescriptors> requireDescriptors,
-                                   final FileUtils ignored, // don't use it, it will be removed since we already suppose it is null in several places
                                    final List<URL> jarList) {
         for (final URL url : urls) {
 

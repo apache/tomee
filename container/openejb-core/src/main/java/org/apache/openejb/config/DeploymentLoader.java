@@ -1064,7 +1064,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         return urls.getUrls();
     }
 
-    private void addBeansXmls(final WebModule webModule) {
+    public static void addBeansXmls(final WebModule webModule) {
         final List<URL> urls = webModule.getScannableUrls();
         // parent returns nothing when calling getresources because we don't want here to be fooled by maven classloader
         final URLClassLoader loader = new URLClassLoader(urls.toArray(new URL[urls.size()]), new EmptyResourcesClassLoader());
@@ -1093,7 +1093,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         }
     }
 
-    private Beans mergeBeansXml(final CompositeBeans current, final URL url) {
+    private static Beans mergeBeansXml(final CompositeBeans current, final URL url) {
         try {
             final Beans beans;
             try {

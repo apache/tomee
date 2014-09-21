@@ -158,7 +158,7 @@ public class TomcatJndiBuilder {
         ContextAccessController.setWritable(name, namingToken);
         Context root = null;
         try {
-            root = (Context) ContextBindings.getClassLoader();
+            root = ContextBindings.getClassLoader();
         } catch (final NamingException ignored) { // shouldn't occur
             // no-op
         }

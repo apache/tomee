@@ -2233,7 +2233,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      * @param standardContext context
      * @return context info
      */
-    private ContextInfo addContextInfo(final String host, final StandardContext standardContext) {
+    public ContextInfo addContextInfo(final String host, final StandardContext standardContext) {
         String contextRoot = standardContext.getName();
         if (!contextRoot.startsWith("/")) {
             contextRoot = "/" + contextRoot;

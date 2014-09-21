@@ -45,9 +45,12 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import static org.apache.openejb.util.Classes.ancestors;
 
@@ -259,6 +262,30 @@ public class FinderFactory {
 
     private static OpenEJBAnnotationFinder newFinder(final Archive archive) {
         return new OpenEJBAnnotationFinder(archive);
+    }
+
+    public static Map<String, String> urlByClass(final IAnnotationFinder finder) {
+        final IAnnotationFinder limitedFinder;
+        if (finder instanceof FinderFactory.ModuleLimitedFinder) {
+            limitedFinder = ((FinderFactory.ModuleLimitedFinder) finder).getDelegate();
+        } else {
+            limitedFinder = finder;
+        }
+        if (limitedFinder instanceof AnnotationFinder) {
+            final Archive archive = ((AnnotationFinder) limitedFinder).getArchive();
+            if (archive instanceof WebappAggregatedArchive) {
+                final Map<URL, List<String>> index = ((WebappAggregatedArchive) archive).getClassesMap();
+                final Map<String, String> urlByClasses = new HashMap<String, String>();
+                for (final Map.Entry<URL, List<String>> entry : index.entrySet()) {
+                    final String url = entry.getKey().toExternalForm();
+                    for (final String current : entry.getValue()) {
+                        urlByClasses.put(current, url);
+                    }
+                }
+                return urlByClasses;
+            }
+        }
+        return Collections.emptyMap();
     }
 
     public static final class DebugArchive implements Archive {

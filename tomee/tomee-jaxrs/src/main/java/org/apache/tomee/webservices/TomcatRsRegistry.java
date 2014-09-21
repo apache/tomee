@@ -34,6 +34,7 @@ import org.apache.openejb.util.reflection.Reflections;
 import org.apache.tomcat.util.descriptor.web.FilterDef;
 import org.apache.tomcat.util.descriptor.web.FilterMap;
 import org.apache.tomee.catalina.environment.Hosts;
+import org.apache.tomee.catalina.registration.Registrations;
 import org.apache.tomee.loader.TomcatHelper;
 
 import java.lang.reflect.Constructor;
@@ -131,27 +132,13 @@ public class TomcatRsRegistry implements RsRegistry {
         filterMap.setFilterName(filterDef.getFilterName());
         context.addFilterMap(filterMap);
 
-        addFilterConfig(context, filterDef);
+        Registrations.addFilterConfig(context, filterDef);
 
         path = address(connectors, host.getName(), webContext);
         final String key = address(connectors, host.getName(), completePath);
         listeners.put(key, listener);
 
         return new AddressInfo(path, key);
-    }
-
-    private void addFilterConfig(final Context context, final FilterDef filterDef) {
-        // hack to force filter to get a config otherwise it is ignored in the http routing
-        try {
-            final Constructor<ApplicationFilterConfig> cons = ApplicationFilterConfig.class.getDeclaredConstructor(Context.class, FilterDef.class);
-            if (!cons.isAccessible()) {
-                cons.setAccessible(true);
-            }
-            final ApplicationFilterConfig config = cons.newInstance(context, filterDef);
-            ((Map<String, ApplicationFilterConfig>) Reflections.get(context, "filterConfigs")).put(filterDef.getFilterName(), config);
-        } catch (final Exception e) {
-            throw new IllegalStateException(e);
-        }
     }
 
     private CxfRsHttpListener findCxfRsHttpListener(final HttpListener listener) {

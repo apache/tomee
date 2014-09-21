@@ -50,15 +50,6 @@ public class ServerListener implements LifecycleListener {
     private static final AtomicBoolean listenerInstalled = new AtomicBoolean(false);
 
     public void lifecycleEvent(final LifecycleEvent event) {
-
-        // Bootstrap
-        install(event);
-
-        // Notify
-        SystemInstance.get().fireEvent(event);
-    }
-
-    private void install(final LifecycleEvent event) {
         if (Lifecycle.BEFORE_INIT_EVENT.equals(event.getType()) && StandardServer.class.isInstance(event.getSource())) {
             installServerInfo();
         }

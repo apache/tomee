@@ -1218,22 +1218,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
 
                 if (urlByClasses == null) { // try to reuse scanning info, maybe some better indexing can be a nice idea
-                    if (finder instanceof FinderFactory.ModuleLimitedFinder) {
-                        final IAnnotationFinder limitedFinder = ((FinderFactory.ModuleLimitedFinder) finder).getDelegate();
-                        if (limitedFinder instanceof AnnotationFinder) {
-                            final Archive archive = ((AnnotationFinder) limitedFinder).getArchive();
-                            if (archive instanceof WebappAggregatedArchive) {
-                                final Map<URL, List<String>> index = ((WebappAggregatedArchive) archive).getClassesMap();
-                                urlByClasses = new HashMap<String, String>();
-                                for (final Map.Entry<URL, List<String>> entry : index.entrySet()) {
-                                    final String url = entry.getKey().toExternalForm();
-                                    for (final String current : entry.getValue()) {
-                                        urlByClasses.put(current, url);
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    urlByClasses = FinderFactory.urlByClass(finder);
                 }
 
                 final List<Annotated<Class<?>>> found = finder.findMetaAnnotatedClasses(clazz);

@@ -100,28 +100,39 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
 
             final String type = event.getType();
 
-            if (INIT_EVENT.equals(type) || Lifecycle.BEFORE_INIT_EVENT.equals(type)) {
-                contextListener.init(standardContext);
-            } else if (Lifecycle.BEFORE_START_EVENT.equals(type)) {
-                contextListener.beforeStart(standardContext);
-            } else if (Lifecycle.BEFORE_START_EVENT.equals(type)) {
-                contextListener.beforeStart(standardContext);
-            } else if (Lifecycle.START_EVENT.equals(type)) {
-                standardContext.addParameter("openejb.start.late", "true");
-                contextListener.start(standardContext);
-            } else if (Lifecycle.AFTER_START_EVENT.equals(type)) {
-                contextListener.afterStart(standardContext);
-                standardContext.removeParameter("openejb.start.late");
-            } else if (Lifecycle.BEFORE_STOP_EVENT.equals(type)) {
-                contextListener.beforeStop(standardContext);
-            } else if (Lifecycle.STOP_EVENT.equals(type)) {
-                contextListener.stop(standardContext);
-            } else if (Lifecycle.AFTER_STOP_EVENT.equals(type)) {
-                contextListener.afterStop(standardContext);
-            } else if (DESTROY_EVENT.equals(type) || Lifecycle.AFTER_DESTROY_EVENT.equals(type)) {
-                contextListener.destroy(standardContext);
-            } else if (Lifecycle.CONFIGURE_START_EVENT.equals(type)) {
-                contextListener.configureStart(standardContext);
+            switch (type) { // better than if cause it prevent duplicates
+                case INIT_EVENT:
+                case Lifecycle.BEFORE_INIT_EVENT:
+                    contextListener.init(standardContext);
+                    break;
+                case Lifecycle.BEFORE_START_EVENT:
+                    contextListener.beforeStart(standardContext);
+                    break;
+                case Lifecycle.START_EVENT:
+                    standardContext.addParameter("openejb.start.late", "true");
+                    contextListener.start(standardContext);
+                    break;
+                case Lifecycle.AFTER_START_EVENT:
+                    contextListener.afterStart(standardContext);
+                    standardContext.removeParameter("openejb.start.late");
+                    break;
+                case Lifecycle.BEFORE_STOP_EVENT:
+                    contextListener.beforeStop(standardContext);
+                    break;
+                case Lifecycle.STOP_EVENT:
+                    contextListener.stop(standardContext);
+                    break;
+                case Lifecycle.AFTER_STOP_EVENT:
+                    contextListener.afterStop(standardContext);
+                    break;
+                case DESTROY_EVENT:
+                case Lifecycle.AFTER_DESTROY_EVENT:
+                    contextListener.destroy(standardContext);
+                    break;
+                case Lifecycle.CONFIGURE_START_EVENT:
+                    contextListener.configureStart(standardContext);
+                    break;
+                default:
             }
         } else if (StandardHost.class.isInstance(source)) {
             final StandardHost standardHost = (StandardHost) source;
@@ -151,6 +162,9 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
                 contextListener.afterStop(standardServer);
             }
         }
+
+        // Notify
+        SystemInstance.get().fireEvent(event); // here this way we are sure we get it even in embedded mode. TODO: we miss then few boot events, is it an issue.
     }
 
     private static boolean hasChild(final StandardHost host, final String name) {
