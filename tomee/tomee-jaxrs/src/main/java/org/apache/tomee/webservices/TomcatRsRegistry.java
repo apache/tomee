@@ -21,18 +21,22 @@ import org.apache.catalina.Context;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
 import org.apache.catalina.Service;
-import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.Connector;
+import org.apache.catalina.core.ApplicationFilterConfig;
+import org.apache.catalina.deploy.FilterDef;
+import org.apache.catalina.deploy.FilterMap;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.server.cxf.rs.CxfRsHttpListener;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.httpd.util.HttpUtil;
 import org.apache.openejb.server.rest.RsRegistry;
-import org.apache.openejb.server.rest.RsServlet;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.reflection.Reflections;
 import org.apache.tomee.catalina.environment.Hosts;
 import org.apache.tomee.loader.TomcatHelper;
 
+import java.lang.reflect.Constructor;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -99,11 +103,17 @@ public class TomcatRsRegistry implements RsRegistry {
             throw new IllegalStateException("Invalid context '" + webContext + "'.  Cannot find context in host " + host.getName());
         }
 
-        final Wrapper wrapper = context.createWrapper();
-        final String name = "rest_" + listener.hashCode();
-        wrapper.setName(name);
-        wrapper.setServletClass(RsServlet.class.getName());
-        wrapper.setAsyncSupported(true);
+        final CxfRsHttpListener cxfRsHttpListener = findCxfRsHttpListener(listener);
+        final String description = "tomee-jaxrs-" + listener;
+
+        final FilterDef filterDef = new FilterDef();
+        filterDef.setAsyncSupported("true");
+        filterDef.setDescription(description);
+        filterDef.setFilterName(description);
+        filterDef.setDisplayName(description);
+        filterDef.setFilter(new CXFJAXRSFilter(cxfRsHttpListener, context.findWelcomeFiles()));
+        filterDef.setFilterClass(CXFJAXRSFilter.class.getName());
+        context.addFilterDef(filterDef);
 
         String mapping = completePath;
         if (!completePath.endsWith("/*")) { // respect servlet spec (!= from our embedded listeners)
@@ -113,13 +123,15 @@ public class TomcatRsRegistry implements RsRegistry {
             mapping = mapping + "/*";
         }
 
-        context.addChild(wrapper);
-        wrapper.addMapping(removeWebContext(webContext, mapping));
-        context.addServletMapping(mapping, name);
+        final String urlPattern = removeWebContext(webContext, mapping);
+        cxfRsHttpListener.setUrlPattern(urlPattern.substring(0, urlPattern.length() - 1));
 
-        final String listenerId = wrapper.getName() + RsServlet.class.getName() + listener.hashCode();
-        wrapper.addInitParameter(HttpListener.class.getName(), listenerId);
-        context.getServletContext().setAttribute(listenerId, listener);
+        final FilterMap filterMap = new FilterMap();
+        filterMap.addURLPattern(urlPattern);
+        filterMap.setFilterName(filterDef.getFilterName());
+        context.addFilterMap(filterMap);
+
+        addFilterConfig(context, filterDef);
 
         path = address(connectors, host.getName(), webContext);
         final String key = address(connectors, host.getName(), completePath);
@@ -128,12 +140,23 @@ public class TomcatRsRegistry implements RsRegistry {
         return new AddressInfo(path, key);
     }
 
-    private static Context findContext(final Container host, final String webContext) {
-        Context webapp = Context.class.cast(host.findChild(webContext));
-        if (webapp == null && "/".equals(webContext)) { // ROOT
-            webapp = Context.class.cast(host.findChild(""));
+    private void addFilterConfig(final Context context, final FilterDef filterDef) {
+        // hack to force filter to get a config otherwise it is ignored in the http routing
+        try {
+            final Constructor<ApplicationFilterConfig> cons = ApplicationFilterConfig.class.getDeclaredConstructor(Context.class, FilterDef.class);
+            if (!cons.isAccessible()) {
+                cons.setAccessible(true);
+            }
+            final ApplicationFilterConfig config = cons.newInstance(context, filterDef);
+            ((Map<String, ApplicationFilterConfig>) Reflections.get(context, "filterConfigs")).put(filterDef.getFilterName(), config);
+        } catch (final Exception e) {
+            throw new IllegalStateException(e);
         }
-        return webapp;
+    }
+
+    private CxfRsHttpListener findCxfRsHttpListener(final HttpListener listener) {
+        // can we have some unwrapping to do here? normally no
+        return CxfRsHttpListener.class.cast(listener);
     }
 
     private static String removeWebContext(final String webContext, final String completePath) {
@@ -141,6 +164,14 @@ public class TomcatRsRegistry implements RsRegistry {
             return completePath;
         }
         return completePath.substring(webContext.length());
+    }
+
+    private static Context findContext(final Container host, final String webContext) {
+        Context webapp = Context.class.cast(host.findChild(webContext));
+        if (webapp == null && "/".equals(webContext)) { // ROOT
+            webapp = Context.class.cast(host.findChild(""));
+        }
+        return webapp;
     }
 
     private static String address(final Collection<Connector> connectors, final String host, final String path) {

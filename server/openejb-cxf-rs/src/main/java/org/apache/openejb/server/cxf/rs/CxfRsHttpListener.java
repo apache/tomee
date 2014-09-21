@@ -57,6 +57,7 @@ import org.apache.openejb.server.cxf.transport.util.CxfUtil;
 import org.apache.openejb.server.httpd.HttpRequest;
 import org.apache.openejb.server.httpd.HttpRequestImpl;
 import org.apache.openejb.server.httpd.HttpResponse;
+import org.apache.openejb.server.httpd.ServletRequestAdapter;
 import org.apache.openejb.server.rest.EJBRestServiceInfo;
 import org.apache.openejb.server.rest.RsHttpListener;
 import org.apache.openejb.util.LogCategory;
@@ -92,8 +93,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 
-import static java.util.Arrays.asList;
-
 public class CxfRsHttpListener implements RsHttpListener {
 
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_RS, CxfRsHttpListener.class);
@@ -106,10 +105,11 @@ public class CxfRsHttpListener implements RsHttpListener {
     public static final String STATIC_SUB_RESOURCE_RESOLUTION_KEY = "staticSubresourceResolution";
     public static final String RESOURCE_COMPARATOR_KEY = CXF_JAXRS_PREFIX + "resourceComparator";
 
-    private static final boolean TRY_STATIC_RESOURCES = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.jaxrs.static-first", "true"));
+    public static final boolean TRY_STATIC_RESOURCES = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.jaxrs.static-first", "true"));
     private static final String GLOBAL_PROVIDERS = SystemInstance.get().getProperty(PROVIDERS_KEY);
 
     private static final Map<String, String> STATIC_CONTENT_TYPES;
+    private static final String[] DEFAULT_WELCOME_FILES = new String[]{ "/index.html", "/index.htm" };
 
     private final HTTPTransportFactory transportFactory;
     private final String wildcard;
@@ -119,6 +119,8 @@ public class CxfRsHttpListener implements RsHttpListener {
     private String servlet = "";
     private final Collection<Pattern> staticResourcesList = new CopyOnWriteArrayList<Pattern>();
     private final List<ObjectName> jmxNames = new ArrayList<ObjectName>();
+
+    private static final char[] URL_SEP = new char[] { '?', '#', ';' };
 
     static {
         STATIC_CONTENT_TYPES = new HashMap<String, String>();
@@ -150,9 +152,15 @@ public class CxfRsHttpListener implements RsHttpListener {
         }
     }
 
+    private String pattern;
+
     public CxfRsHttpListener(final HTTPTransportFactory httpTransportFactory, final String star) {
         transportFactory = httpTransportFactory;
         wildcard = star;
+    }
+
+    public void setUrlPattern(final String pattern) {
+        this.pattern = pattern;
     }
 
     @Override
@@ -163,12 +171,6 @@ public class CxfRsHttpListener implements RsHttpListener {
             requestImpl.initPathFromContext(context);
             requestImpl.initServletPath(servlet);
         }
-
-        String baseURL = BaseUrlHelper.getBaseURL(httpRequest);
-        if (!baseURL.endsWith("/")) {
-            baseURL += "/";
-        }
-        httpRequest.setAttribute("org.apache.cxf.transport.endpoint.address", baseURL);
 
         boolean matchedStatic = false;
         if (TRY_STATIC_RESOURCES || (matchedStatic = matchPath(httpRequest))) {
@@ -181,19 +183,32 @@ public class CxfRsHttpListener implements RsHttpListener {
             }
         }
 
-        // delegate invocation
+        doInvoke(httpRequest, httpResponse);
+    }
+
+    // normal endpoint without static resource handling
+    public void doInvoke(final HttpRequest httpRequest, final HttpResponse httpResponse) throws IOException {
+        String baseURL = BaseUrlHelper.getBaseURL(pattern != null ? new ServletRequestAdapter(httpRequest) {
+            @Override // we have a filter so we need the computed servlet path to not break CXF
+            public String getServletPath() {
+                return pattern;
+            }
+        } : httpRequest);
+        if (!baseURL.endsWith("/")) {
+            baseURL += "/";
+        }
+        httpRequest.setAttribute("org.apache.cxf.transport.endpoint.address", baseURL);
+
         final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());
         try {
             destination.invoke(null, httpRequest.getServletContext(), httpRequest, httpResponse);
         } finally {
-            if (oldLoader != null) {
-                CxfUtil.clearBusLoader(oldLoader);
-            }
+            CxfUtil.clearBusLoader(oldLoader);
         }
     }
 
-    private boolean matchPath(final HttpServletRequest request) {
+    public boolean matchPath(final HttpServletRequest request) {
         if (staticResourcesList.isEmpty()) {
             return false;
         }
@@ -210,18 +225,30 @@ public class CxfRsHttpListener implements RsHttpListener {
         return false;
     }
 
-    protected boolean serveStaticContent(final HttpServletRequest request,
-                                         final HttpServletResponse response,
-                                         final String pathInfo) throws ServletException {
+    public InputStream findStaticContent(final HttpServletRequest request, final String[] welcomeFiles) throws ServletException {
+        String pathInfo = request.getRequestURI().substring(request.getContextPath().length());
+        for (final char c : URL_SEP) {
+            final int indexOf = pathInfo.indexOf(c);
+            if (indexOf > 0) {
+                pathInfo = pathInfo.substring(0, indexOf);
+            }
+        }
         InputStream is = request.getServletContext().getResourceAsStream(pathInfo);
-        if (is == null && "/".equals(pathInfo)) {
-            for (final String n : asList("/index.html", "/index.htm")) {
+        if (is == null && ("/".equals(pathInfo) || pathInfo.isEmpty())) {
+            for (final String n : welcomeFiles) {
                 is = request.getServletContext().getResourceAsStream(n);
                 if (is != null) {
                     break;
                 }
             }
         }
+        return is;
+    }
+
+    public boolean serveStaticContent(final HttpServletRequest request,
+                                      final HttpServletResponse response,
+                                      final String pathInfo) throws ServletException {
+        final InputStream is = findStaticContent(request, DEFAULT_WELCOME_FILES);
         if (is == null) {
             return false;
         }
