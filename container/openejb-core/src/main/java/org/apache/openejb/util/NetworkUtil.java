@@ -18,7 +18,10 @@
 package org.apache.openejb.util;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.ServerSocket;
+import java.net.SocketException;
 import java.util.Collection;
 
 public final class NetworkUtil {
@@ -92,5 +95,37 @@ public final class NetworkUtil {
 
     public static String getLocalAddress(final String start, final String end) {
         return start + "localhost:" + getNextAvailablePort() + end;
+    }
+
+    public static boolean isLocalAddress(final String addr) {
+        try {
+            return isLocalAddress(InetAddress.getByName(addr));
+        } catch (final Exception e) {
+            return false;
+        }
+    }
+
+    public static boolean isLocalAddress(final InetAddress addr) {
+
+        if (addr.isAnyLocalAddress() || addr.isLoopbackAddress()) {
+            return true;
+        }
+
+        // Check if the address is defined on any interface
+        try {
+            return NetworkInterface.getByInetAddress(addr) != null;
+        } catch (final SocketException e) {
+            return false;
+        }
+    }
+
+    private static final class LastPort {
+        private final int port;
+        private final long time;
+
+        private LastPort(final int port, final long time) {
+            this.port = port;
+            this.time = time;
+        }
     }
 }

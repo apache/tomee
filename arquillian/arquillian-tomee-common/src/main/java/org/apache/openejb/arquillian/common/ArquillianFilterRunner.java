@@ -38,13 +38,13 @@ import java.io.IOException;
 public class ArquillianFilterRunner implements Filter {
     private static final String ARQUILLIAN_SERVLET_RUNNER = "org.jboss.arquillian.protocol.servlet.runner.ServletTestRunner";
 
-    private HttpServlet deletage;
+    private HttpServlet delegate;
 
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
         try {
-            deletage = HttpServlet.class.cast(Thread.currentThread().getContextClassLoader().loadClass(ARQUILLIAN_SERVLET_RUNNER).newInstance());
-            deletage.init();
+            delegate = HttpServlet.class.cast(Thread.currentThread().getContextClassLoader().loadClass(ARQUILLIAN_SERVLET_RUNNER).newInstance());
+            delegate.init();
         } catch (final Exception e) {
             // no-op: can happen if the servlet is not present, that's a normal case
         }
@@ -52,15 +52,15 @@ public class ArquillianFilterRunner implements Filter {
 
     @Override
     public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse, final FilterChain filterChain) throws IOException, ServletException {
-        if (deletage != null) {
-            deletage.service(servletRequest, servletResponse);
+        if (delegate != null) {
+            delegate.service(servletRequest, servletResponse);
         }
     }
 
     @Override
     public void destroy() {
-        if (deletage != null) {
-            deletage.destroy();
+        if (delegate != null) {
+            delegate.destroy();
         }
     }
 }

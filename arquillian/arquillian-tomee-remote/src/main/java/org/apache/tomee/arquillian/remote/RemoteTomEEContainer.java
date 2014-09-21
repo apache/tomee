@@ -24,6 +24,7 @@ import org.apache.openejb.arquillian.common.Setup;
 import org.apache.openejb.arquillian.common.TomEEContainer;
 import org.apache.openejb.assembler.Deployer;
 import org.apache.openejb.config.RemoteServer;
+import org.apache.openejb.util.NetworkUtil;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
 import org.jboss.arquillian.protocol.servlet.ServletMethodExecutor;
 import org.jboss.shrinkwrap.api.Archive;
@@ -75,7 +76,15 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
 
         if (Setup.isRunning(configuration.getHost(), httpPort)) {
 
-            logger.info(String.format("TomEE found running on port %s", httpPort));
+            String host = "local";
+
+            if (!NetworkUtil.isLocalAddress(configuration.getHost())) {
+                //Supply at least this property so that the archive is transmitted on deploy
+                deployerProperties.setProperty("openejb.deployer.binaries.use", "true");
+                host = "remote";
+            }
+
+            logger.info(String.format("TomEE found running on %s port %s", host, httpPort));
 
             return;
         }

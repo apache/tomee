@@ -28,8 +28,11 @@ import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.arquillian.test.spi.TestEnricher;
 
 import java.lang.reflect.Method;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class TomEEInjectionEnricher implements TestEnricher {
+
     @Inject
     private Instance<TestClass> testClass;
 
@@ -49,6 +52,9 @@ public class TomEEInjectionEnricher implements TestEnricher {
                 return app;
             }
         }
+
+        Logger.getLogger(TomEEInjectionEnricher.class.getName()).log(Level.WARNING, "Failed to find AppContext for: " + className);
+
         return null;
     }
 
