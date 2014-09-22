@@ -787,8 +787,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             } catch (final Exception e) {
                 logger.error("can't instantiate '" + sessionManager + "', StandardManager will be used", e);
             }
-        } else if (standardContext.getCluster() == null) { // else let it use the cluster to create the manager
-            standardContext.setManager(new StandardManager());
         }
 
         final LifecycleListener[] listeners = standardContext.findLifecycleListeners();
