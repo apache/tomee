@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tomee.application.composer.internal;
+package org.apache.tomee.embedded.internal;
 
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
@@ -24,27 +24,24 @@ import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.webresources.StandardRoot;
 import org.apache.openejb.config.WebModule;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.observer.Observes;
 import org.apache.openejb.util.URLs;
+import org.apache.tomee.catalina.TomcatWebAppBuilder;
 
 import java.io.File;
 import java.net.URL;
 
 public class StandardContextCustomizer {
     private final WebModule module;
-    private boolean enriched = false;
 
     public StandardContextCustomizer(final WebModule webModule) {
         module = webModule;
     }
 
     public void customize(final @Observes LifecycleEvent event) {
-        if (enriched) {
-            return;
-        }
-
         final Object data = event.getSource();
-        if (!StandardContext.class.isInstance(data) || !Lifecycle.BEFORE_START_EVENT.equals(event.getType())) {
+        if (!StandardContext.class.isInstance(data)) {
             return;
         }
 
@@ -52,18 +49,25 @@ public class StandardContextCustomizer {
         if (!module.getContextRoot().equals(context.getPath())) {
             return;
         }
-        context.setResources(new StandardRoot(context));
 
-        final WebResourceRoot resources = context.getResources();
-        for (final URL url : module.getScannableUrls()) {
-            final File file = URLs.toFile(url);
-            if (file.isDirectory()) {
-                resources.createWebResourceSet(WebResourceRoot.ResourceSetType.RESOURCE_JAR, "/WEB-INF/classes", file.getAbsolutePath(), "", "/");
-            } else {
-                resources.createWebResourceSet(WebResourceRoot.ResourceSetType.RESOURCE_JAR, "/WEB-INF/lib", file.getAbsolutePath(), "", "/");
-            }
+        switch (event.getType()) {
+            case Lifecycle.BEFORE_START_EVENT:
+                context.setResources(new StandardRoot(context));
+
+                final WebResourceRoot resources = context.getResources();
+                for (final URL url : module.getScannableUrls()) {
+                    final File file = URLs.toFile(url);
+                    if (file.isDirectory()) {
+                        resources.createWebResourceSet(WebResourceRoot.ResourceSetType.RESOURCE_JAR, "/WEB-INF/classes", file.getAbsolutePath(), "", "/");
+                    } else {
+                        resources.createWebResourceSet(WebResourceRoot.ResourceSetType.RESOURCE_JAR, "/WEB-INF/lib", file.getAbsolutePath(), "", "/");
+                    }
+                }
+                break;
+            case Lifecycle.CONFIGURE_START_EVENT:
+                SystemInstance.get().getComponent(TomcatWebAppBuilder.class).setFinderOnContextConfig(StandardContext.class.cast(data), module.appModule());
+                break;
+            default:
         }
-
-        enriched = true;
     }
 }

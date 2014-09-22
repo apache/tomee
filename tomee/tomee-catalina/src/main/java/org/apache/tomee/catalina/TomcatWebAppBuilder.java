@@ -1149,22 +1149,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                         }
                     }
 
-                    OpenEJBContextConfig openEJBContextConfig = null;
-                    for (final LifecycleListener listener : standardContext.findLifecycleListeners()) {
-                        if (OpenEJBContextConfig.class.isInstance(listener)) {
-                            openEJBContextConfig = OpenEJBContextConfig.class.cast(listener);
-                            break;
-                        }
-                    }
-                    if (openEJBContextConfig != null) {
-                        for (final EjbModule ejbModule : appModule.getEjbModules()) {
-                            if (ejbModule.getFile() != null && warPath(standardContext).equals(rootPath(ejbModule.getFile()))) {
-                                openEJBContextConfig.finder(ejbModule.getFinder(), ejbModule.getClassLoader());
-                                break;
-                            }
-                        }
-                    }
-
+                    setFinderOnContextConfig(standardContext, appModule);
 
                     appContext = a.createApplication(contextInfo.appInfo, classLoader);
                     // todo add watched resources to context
@@ -1328,6 +1313,24 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         // register realm to have it in TomcatSecurityService
         final Realm realm = standardContext.getRealm();
         realms.put(standardContext.getName(), realm);
+    }
+
+    public void setFinderOnContextConfig(final StandardContext standardContext, final AppModule appModule) {
+        OpenEJBContextConfig openEJBContextConfig = null;
+        for (final LifecycleListener listener : standardContext.findLifecycleListeners()) {
+            if (OpenEJBContextConfig.class.isInstance(listener)) {
+                openEJBContextConfig = OpenEJBContextConfig.class.cast(listener);
+                break;
+            }
+        }
+        if (openEJBContextConfig != null) {
+            for (final EjbModule ejbModule : appModule.getEjbModules()) {
+                if (ejbModule.getFile() != null && warPath(standardContext).equals(rootPath(ejbModule.getFile()))) {
+                    openEJBContextConfig.finder(ejbModule.getFinder(), ejbModule.getClassLoader());
+                    break;
+                }
+            }
+        }
     }
 
     private static File rootPath(final File file) {

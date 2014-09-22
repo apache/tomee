@@ -44,6 +44,13 @@ public class Configuration {
     private String keyAlias;
     private String sslProtocol;
 
+    private boolean deployOpenEjbApp = false;
+
+    /**
+     * when needed temp file only (deployClasspathAsWebapp() for instance)
+     */
+    private String tempDir = new File(System.getProperty("java.io.tmpdir"), "tomee-embedded_" + System.currentTimeMillis()).getAbsolutePath();
+
     public int getHttpPort() {
         return httpPort;
     }
@@ -193,6 +200,27 @@ public class Configuration {
             properties = new Properties();
         }
         properties.setProperty(key, value);
+        return this;
+    }
+
+    public String getTempDir() {
+        return tempDir;
+    }
+
+    public void setTempDir(final String tempDir) {
+        this.tempDir = tempDir;
+    }
+
+    public boolean isDeployOpenEjbApp() {
+        return deployOpenEjbApp;
+    }
+
+    public void setDeployOpenEjbApp(final boolean deployOpenEjbApp) {
+        this.deployOpenEjbApp = deployOpenEjbApp;
+    }
+
+    public Configuration http(final int port) {
+        setHttpPort(port);
         return this;
     }
 }

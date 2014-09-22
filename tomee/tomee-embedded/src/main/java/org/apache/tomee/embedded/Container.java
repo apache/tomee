@@ -28,6 +28,7 @@ import org.apache.catalina.startup.Tomcat;
 import org.apache.coyote.http11.Http11Protocol;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
+import org.apache.openejb.Injector;
 import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
@@ -38,21 +39,40 @@ import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
+import org.apache.openejb.config.AnnotationDeployer;
+import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.config.DeploymentLoader;
+import org.apache.openejb.config.DeploymentsResolver;
+import org.apache.openejb.config.EjbModule;
+import org.apache.openejb.config.FinderFactory;
+import org.apache.openejb.config.NewLoaderLogic;
+import org.apache.openejb.config.WebModule;
+import org.apache.openejb.jee.Beans;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.ManagedBean;
+import org.apache.openejb.jee.TransactionType;
+import org.apache.openejb.jee.WebApp;
+import org.apache.openejb.jee.oejb3.EjbDeployment;
+import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.loader.provisining.ProvisioningResolver;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.tomee.catalina.TomEERuntimeException;
 import org.apache.tomee.catalina.TomcatLoader;
 import org.apache.tomee.catalina.session.FastNonSecureRandom;
+import org.apache.tomee.embedded.internal.StandardContextCustomizer;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
+import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.log.NullLogChute;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
+import org.apache.xbean.finder.filter.Filters;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
@@ -62,9 +82,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -86,15 +111,121 @@ public class Container implements AutoCloseable {
     private Tomcat tomcat;
 
     // start the container directly
-    public Container(final Configuration configuration) throws Exception {
+    public Container(final Configuration configuration) {
         setup(configuration);
-        start();
+        try {
+            start();
+        } catch (final Exception e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     public Container() {
         this.configuration = new Configuration();
         this.configuration.setHttpPort(23880);
         this.configuration.setStopPort(23881);
+    }
+
+    public Container deployClasspathAsWebApp() {
+        return deployClasspathAsWebApp("");
+    }
+
+    public Container deployClasspathAsWebApp(final String context, final String... dependencies) {
+        final List<URL> jarList = DeploymentsResolver.loadFromClasspath(Thread.currentThread().getContextClassLoader());
+        if (dependencies != null) {
+            for (final String dep : dependencies) {
+                final Set<String> strings = SystemInstance.get().getComponent(ProvisioningResolver.class).realLocation(dep);
+                for (final String path : strings) {
+                    try {
+                        jarList.add(new File(path).toURI().toURL());
+                    } catch (final MalformedURLException e) {
+                        throw new IllegalArgumentException(e);
+                    }
+                }
+            }
+        }
+
+        return deployPathsAsWebapp(context, jarList);
+    }
+
+    public Container deployPathsAsWebapp(final String context, final List<URL> jarList) {
+        final ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        final SystemInstance systemInstance = SystemInstance.get();
+
+        String contextRoot = context == null ? "" : context;
+        if (!contextRoot.isEmpty() && !contextRoot.startsWith("/")) {
+            contextRoot = "/" + context;
+        }
+
+        final WebModule webModule = new WebModule(new WebApp(), contextRoot, loader, fakeRootDir().getAbsolutePath(), contextRoot);
+        webModule.setUrls(jarList);
+        webModule.setAddedUrls(Collections.<URL>emptyList());
+        webModule.setRarUrls(Collections.<URL>emptyList());
+        webModule.setScannableUrls(jarList);
+        try {
+            webModule.setFinder(FinderFactory.createFinder(webModule));
+        } catch (final Exception e) {
+            throw new IllegalArgumentException(e);
+        }
+
+        DeploymentLoader.addBeansXmls(webModule);
+
+        final AppModule app = new AppModule(loader, null);
+        app.setStandloneWebModule();
+        try {
+            DeploymentLoader.addWebModule(webModule, app);
+        } catch (final OpenEJBException e) {
+            throw new IllegalStateException(e);
+        }
+
+        addCallersAsEjbModule(loader, app);
+
+        systemInstance.addObserver(new StandardContextCustomizer(webModule));
+
+        try {
+            final AppInfo appInfo = configurationFactory.configureApplication(app);
+            systemInstance.getComponent(Assembler.class).createApplication(appInfo);
+        } catch (final Exception e) {
+            throw new IllegalStateException(e);
+        }
+
+        return this;
+    }
+
+    private static void addCallersAsEjbModule(final ClassLoader loader, final AppModule app) {
+        final Set<String> callers = NewLoaderLogic.callers(Filters.classes(Container.class.getName()));
+        if (callers.isEmpty()) {
+            return;
+        }
+        final EjbJar ejbJar = new EjbJar();
+        final OpenejbJar openejbJar = new OpenejbJar();
+
+        for (final String caller : callers) {
+            try {
+                if (!AnnotationDeployer.isInstantiable(loader.loadClass(caller))) {
+                    continue;
+                }
+            } catch (final ClassNotFoundException e) {
+                continue;
+            }
+
+            final String name = caller.replace("$", "_");
+            final ManagedBean bean = ejbJar.addEnterpriseBean(new ManagedBean(caller.replace("$", "_"), caller, true));
+            bean.localBean();
+            bean.setTransactionType(TransactionType.BEAN);
+            final EjbDeployment ejbDeployment = openejbJar.addEjbDeployment(bean);
+            ejbDeployment.setDeploymentId(name);
+        }
+        final EjbModule ejbModule = new EjbModule(ejbJar, openejbJar);
+        ejbModule.setBeans(new Beans());
+        app.getEjbModules().add(ejbModule);
+    }
+
+    private File fakeRootDir() {
+        final File root = new File(configuration.getTempDir());
+        Files.mkdirs(root);
+        Files.deleteOnExit(root);
+        return root;
     }
 
     private static boolean sameApplication(final File file, final WebAppInfo webApp) {
@@ -327,7 +458,7 @@ public class Container implements AutoCloseable {
                 file = File.createTempFile("apache-tomee", "-home", target.exists() ? target : null);
             } catch (final Exception e) {
 
-                final File tmp = new File("tmp");
+                final File tmp = new File(configuration.getTempDir());
                 if (!tmp.exists() && !tmp.mkdirs()) {
                     throw new IOException("Failed to create local tmp directory: " + tmp.getAbsolutePath());
                 }
@@ -488,12 +619,14 @@ public class Container implements AutoCloseable {
     }
 
     private void copyTemplateTo(final File targetDir, final String filename) throws Exception {
-        Velocity.setProperty(Velocity.RUNTIME_LOG_LOGSYSTEM, new NullLogChute());
-        Velocity.setProperty(Velocity.RESOURCE_LOADER, "class");
-        Velocity.setProperty("class.resource.loader.description", "Velocity Classpath Resource Loader");
-        Velocity.setProperty("class.resource.loader.class", ClasspathResourceLoader.class.getName());
-        Velocity.init();
-        final Template template = Velocity.getTemplate("/org/apache/tomee/configs/" + filename);
+        // don't break apps using Velocity facade
+        final VelocityEngine engine = new VelocityEngine();
+        engine.setProperty(Velocity.RUNTIME_LOG_LOGSYSTEM, new NullLogChute());
+        engine.setProperty(Velocity.RESOURCE_LOADER, "class");
+        engine.setProperty("class.resource.loader.description", "Velocity Classpath Resource Loader");
+        engine.setProperty("class.resource.loader.class", ClasspathResourceLoader.class.getName());
+        engine.init();
+        final Template template = engine.getTemplate("/org/apache/tomee/configs/" + filename);
         final VelocityContext context = new VelocityContext();
         context.put("tomcatHttpPort", Integer.toString(configuration.getHttpPort()));
         context.put("tomcatShutdownPort", Integer.toString(configuration.getStopPort()));
@@ -532,7 +665,7 @@ public class Container implements AutoCloseable {
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         final CountDownLatch end = new CountDownLatch(1);
         final Container container = Container.this;
         new Thread() {
@@ -554,7 +687,7 @@ public class Container implements AutoCloseable {
         try {
             stop();
         } catch (final Exception e) {
-            throw new IOException("Failed to stop container", e);
+            throw new IllegalStateException("Failed to stop container", e);
         }
 
         try {
@@ -570,6 +703,15 @@ public class Container implements AutoCloseable {
             Files.mkdirs(root);
         }
         return getTomcat().addContext(context, root.getAbsolutePath()); // we don't want to be relative
+    }
+
+    public Container inject(final Object instance) {
+        Injector.inject(instance);
+        return this;
+    }
+
+    public Configuration getConfiguration() {
+        return configuration;
     }
 
     private static class TomcatWithFastSessionIDs extends Tomcat {

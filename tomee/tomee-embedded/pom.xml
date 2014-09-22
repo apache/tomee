@@ -96,6 +96,11 @@
       <classifier>tomcat</classifier>
     </dependency>
     <dependency>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat-websocket-api</artifactId>
+      <version>${tomcat.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-myfaces</artifactId>
       <version>${project.version}</version>
@@ -246,6 +251,16 @@
           <groupId>org.apache.openejb</groupId>
         </exclusion>
       </exclusions>
+    </dependency>
+    <dependency> <!-- now in webprofile -->
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>tomee-jaxrs</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat-websocket</artifactId>
+      <version>${tomcat.version}</version>
     </dependency>
     <dependency>
       <groupId>commons-io</groupId>

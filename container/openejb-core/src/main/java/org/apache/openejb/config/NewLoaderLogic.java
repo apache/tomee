@@ -86,6 +86,10 @@ public class NewLoaderLogic {
     }
 
     public static Set<String> callers() {
+        return callers(Filters.classes("javax.ejb.embeddable.EJBContainer", "javax.naming.InitialContext"));
+    }
+
+    public static Set<String> callers(final Filter start) {
 
         final Set<String> callers = new LinkedHashSet<String>();
 
@@ -94,9 +98,6 @@ public class NewLoaderLogic {
         // Yank out everything until we find a known ENTRY point
         // if we don't find one, so be it, this is only a convenience
         {
-            // Entry points are the following:
-            final Filter start = Filters.classes("javax.ejb.embeddable.EJBContainer", "javax.naming.InitialContext");
-
             final Iterator<StackTraceElement> iterator = elements.iterator();
             while (iterator.hasNext()) {
                 final StackTraceElement element = iterator.next();

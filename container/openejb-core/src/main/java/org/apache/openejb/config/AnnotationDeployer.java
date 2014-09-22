@@ -5421,8 +5421,10 @@ public class AnnotationDeployer implements DynamicDeployer {
 
     public static boolean isInstantiable(final Class<?> clazz) {
         final int modifiers = clazz.getModifiers();
-        return !Modifier.isAbstract(modifiers) && !(clazz.getEnclosingClass() != null && !Modifier.isStatic(modifiers))
-            && Modifier.isPublic(modifiers);
+        return !Modifier.isAbstract(modifiers)
+                && !(clazz.getEnclosingClass() != null
+                && !Modifier.isStatic(modifiers))
+                && Modifier.isPublic(modifiers) && !clazz.isEnum();
     }
 
     private static boolean isEJB(final Class<?> clazz) {
