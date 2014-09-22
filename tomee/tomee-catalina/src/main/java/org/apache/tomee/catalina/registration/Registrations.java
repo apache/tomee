@@ -24,7 +24,7 @@ import org.apache.tomcat.util.descriptor.web.FilterDef;
 import java.lang.reflect.Constructor;
 import java.util.Map;
 
-public class Registrations {
+public final class Registrations {
     private Registrations() {
         // no-op
     }
