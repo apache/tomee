@@ -61,7 +61,10 @@ el-api
 eclipselink-
 ehcache-
 FastInfoset
-fleece-
+jce.jar
+jfr.jar
+jfxrt.jar
+johnzon-
 fusemq-leveldb-
 geronimo-
 google-
@@ -126,6 +129,7 @@ log4j-
 logkit-
 lucene-analyzers-
 lucene-core-
+management-agent.jar
 maven-
 mbean-annotation-api-
 mimepull-
@@ -198,6 +202,7 @@ spring-
 sshd-
 stax-api-
 stax2-api-
+sunec.jar
 surefire-
 swizzle-
 sxc-
@@ -227,7 +232,7 @@ webbeans-ee
 webbeans-ejb
 webbeans-impl
 webbeans-spi
-websocket-api
+tomcat-websocket-api
 woodstox-core-asl-
 ws-commons-util-
 wsdl4j-
@@ -245,3 +250,4 @@ xmlsec-
 xmltooling-
 xmlunit-
 ziplock-
+zipfs.jar
