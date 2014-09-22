@@ -35,7 +35,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.websocket.ClientEndpoint;
 import javax.websocket.CloseReason;
 import javax.websocket.ContainerProvider;
-import javax.websocket.DeploymentException;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
@@ -48,7 +47,6 @@ import javax.ws.rs.core.Application;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
@@ -72,7 +70,9 @@ public class ClasspathAsWebappTest {
         MyInitializer.found = null;
         MyBean.VALUE = null;
         try (final Container container = new Container(
-                    new Configuration().http(NetworkUtil.getNextAvailablePort()))
+                    new Configuration()
+                            .http(NetworkUtil.getNextAvailablePort())
+                            .property("openejb.additional.include", "tomee-"))
                 .deployPathsAsWebapp("", asList(JarLocation.jarLocation(MyInitializer.class).toURI().toURL()))
                 .inject(this)) {
 
@@ -87,6 +87,13 @@ public class ClasspathAsWebappTest {
             }
             try {
                 assertEquals("WebServlet", IO.slurp(new URL("http://localhost:" + container.getConfiguration().getHttpPort() + "/w")));
+            } catch (final IOException e) {
+                fail(e.getMessage());
+            }
+
+            // JSP
+            try {
+                assertEquals("JSP", IO.slurp(new URL("http://localhost:" + container.getConfiguration().getHttpPort() + "/?test=JSP")).trim());
             } catch (final IOException e) {
                 fail(e.getMessage());
             }

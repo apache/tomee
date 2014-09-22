@@ -20,11 +20,21 @@
 package org.apache.tomee.loader;
 
 import org.apache.openejb.config.NewLoaderLogic;
+import org.apache.openejb.util.URLs;
 import org.apache.tomcat.JarScanFilter;
 import org.apache.tomcat.JarScanType;
+import org.apache.tomcat.JarScannerCallback;
 import org.apache.tomcat.util.scan.StandardJarScanner;
+import org.apache.xbean.finder.ClassLoaders;
 import org.apache.xbean.finder.filter.Filter;
 import org.apache.xbean.finder.filter.Filters;
+
+import javax.servlet.ServletContext;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.util.Set;
 
 // todo: share common tld parsing, tomcat has a built in method for it, ensure we reuse it
 public class TomEEJarScanner extends StandardJarScanner {
@@ -41,6 +51,43 @@ public class TomEEJarScanner extends StandardJarScanner {
         super.setJarScanFilter(jarScanFilter);
         if (!TomEEFilter.class.isInstance(jarScanFilter)) {
             configureFilter(jarScanFilter);
+        }
+    }
+
+    @Override
+    public void scan(final JarScanType scanType, final ServletContext context, final JarScannerCallback callback) {
+        super.scan(scanType, context, callback);
+        embeddedSurefireScanning(scanType, context, callback);
+    }
+
+    private void embeddedSurefireScanning(final JarScanType scanType, final ServletContext context, final JarScannerCallback callback) {
+        if (isScanClassPath() && System.getProperty("surefire.real.class.path") != null) {
+            Method process = null;
+            try {
+                final Set<URL> urls = ClassLoaders.findUrls(context.getClassLoader().getParent());
+                final boolean scanAllDirectories = isScanAllDirectories();
+                for (final URL url : urls) {
+                    final File cpe = URLs.toFile(url);
+                    if ((cpe.getName().endsWith(".jar") ||
+                            scanType == JarScanType.PLUGGABILITY ||
+                            scanAllDirectories) &&
+                            getJarScanFilter().check(scanType, cpe.getName())) {
+                        try {
+                            if (process == null) {
+                                process = StandardJarScanner.class.getDeclaredMethod("process", JarScanType.class, JarScannerCallback.class, URL.class, String.class, boolean.class);
+                                if (!process.isAccessible()) {
+                                    process.setAccessible(true);
+                                }
+                            }
+                            process.invoke(this, scanType, callback, url, null, true);
+                        } catch (final Exception ioe) {
+                            // no-op
+                        }
+                    }
+                }
+            } catch (final IOException e) {
+                // no-op
+            }
         }
     }
 
@@ -62,7 +109,7 @@ public class TomEEJarScanner extends StandardJarScanner {
                     return false;
                 }
             }
-            if (jarName.startsWith("fleece-")) {
+            if (jarName.startsWith("johnzon-")) {
                 return false; // but we scan it in openejb scnaning
             }
             return !NewLoaderLogic.skip(jarName) && (delegate == null || delegate.check(jarScanType, jarName));

@@ -33,6 +33,7 @@ public class Main {
     public static final String PATH = "path";
     public static final String CONTEXT = "context";
     public static final String DIRECTORY = "directory";
+    public static final String AS_WAR = "as-war";
 
     public static void main(final String[] args) {
         final CommandLineParser parser = new PosixParser();
@@ -50,14 +51,15 @@ public class Main {
         // run TomEE
         try {
             final Container container = new Container(createConfiguration(line));
+            final String[] contexts;
+            if (line.hasOption(CONTEXT)) {
+                contexts = line.getOptionValues(CONTEXT);
+            } else {
+                contexts = null;
+            }
+
+            int i = 0;
             if (line.hasOption(PATH)) {
-                final String[] contexts;
-                if (line.hasOption(CONTEXT)) {
-                    contexts = line.getOptionValues(CONTEXT);
-                } else {
-                    contexts = null;
-                }
-                int i = 0;
                 for (final String path : line.getOptionValues(PATH)) {
                     final Set<String> locations = ProvisioningUtil.realLocation(path);
                     for (final String location : locations) {
@@ -74,6 +76,9 @@ public class Main {
                         container.deploy(name, file, true);
                     }
                 }
+            }
+            if (line.hasOption(AS_WAR)) {
+                container.deployClasspathAsWebApp(contexts == null || i == contexts.length ? "" : contexts[i]);
             }
 
             Runtime.getRuntime().addShutdownHook(new Thread() {
