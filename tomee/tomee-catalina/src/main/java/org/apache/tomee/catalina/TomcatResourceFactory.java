@@ -22,8 +22,10 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
 import javax.naming.CompositeName;
+import javax.naming.InvalidNameException;
 import javax.naming.NamingException;
 import javax.naming.Reference;
+import javax.naming.spi.NamingManager;
 import javax.naming.spi.ObjectFactory;
 
 public class TomcatResourceFactory {
@@ -33,9 +35,14 @@ public class TomcatResourceFactory {
     private String appName;
     private String factory;
     private Reference reference;
+    private CompositeName name;
 
     public void setJndiName(final String jndiName) {
-        this.jndiName = jndiName;
+        try {
+            name = new CompositeName(jndiName);
+        } catch (final InvalidNameException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     public void setAppName(final String appName) {
@@ -70,9 +77,13 @@ public class TomcatResourceFactory {
                 if (instance instanceof ObjectFactory) {
                     // not really used as expected but it matches a bit more than before
                     // context is null since it can't be used at this moment (see TomcatWebAppBuilder lifecycle)
-                    return ((ObjectFactory) instance).getObjectInstance(reference, new CompositeName(jndiName), null, null);
+                    return ((ObjectFactory) instance).getObjectInstance(reference, name, null, null);
                 }
             }
+            if (reference != null) {
+                return NamingManager.getObjectInstance(reference, name, null, null);
+            }
+            throw new IllegalStateException("nothing to create the resource " + jndiName);
         } catch (final Exception e) {
             LOGGER.error("Can't create resource " + jndiName, e);
         } finally {
