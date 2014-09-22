@@ -283,13 +283,12 @@ public class NewLoaderLogic {
             }
         }
 
+        exclusions = excludes.toArray(new String[excludes.size()]);
         getFilter(); // ensure filter is initialized
 
-        final String[] asArray = excludes.toArray(new String[excludes.size()]);
+        logExclusions(exclusions);
 
-        logExclusions(asArray);
-
-        return asArray;
+        return exclusions;
     }
 
     @SuppressWarnings("unchecked")
