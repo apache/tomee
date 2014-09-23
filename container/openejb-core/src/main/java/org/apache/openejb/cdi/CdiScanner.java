@@ -73,11 +73,11 @@ public class CdiScanner implements ScannerService {
 
     @Override
     public void init(final Object object) {
-        if (!(object instanceof StartupObject)) {
+        if (!StartupObject.class.isInstance (object)) {
             return;
         }
 
-        final StartupObject startupObject = (StartupObject) object;
+        final StartupObject startupObject = StartupObject.class.cast(object);
         final AppInfo appInfo = startupObject.getAppInfo();
         final ClassLoader classLoader = startupObject.getClassLoader();
         final ClassLoaderComparator comparator;
@@ -108,7 +108,7 @@ public class CdiScanner implements ScannerService {
             }
 
             // fail fast
-            final StringBuilder errors = new StringBuilder("You can't define multiple times the same class in beans.xml: ");
+            final StringBuilder errors = new StringBuilder("You must not declare the same class multiple times in the beans.xml: ");
             if (addErrors(errors, "alternative classes", beans.duplicatedAlternativeClasses)
                 || addErrors(errors, "alternative stereotypes", beans.duplicatedAlternativeStereotypes)
                 || addErrors(errors, "decorators", beans.duplicatedDecorators)

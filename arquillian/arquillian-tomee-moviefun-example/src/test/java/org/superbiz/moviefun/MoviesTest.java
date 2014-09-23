@@ -39,10 +39,10 @@ public class MoviesTest {
         final Properties props = new Properties();
         props.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*arquillian-tomee-moviefun-example.*"); // arquillian-tomee excluded by default
         ejbContainer = EJBContainer.createEJBContainer(props);
-        Object object = ejbContainer.getContext().lookup("java:global/arquillian-tomee-moviefun-example/Movies!org.superbiz.moviefun.MoviesRemote");
+        final Object object = ejbContainer.getContext().lookup("java:global/arquillian-tomee-moviefun-example/Movies!org.superbiz.moviefun.MoviesRemote");
 
-        assertTrue(object instanceof MoviesRemote);
-        movies = (MoviesRemote) object;
+        assertTrue(MoviesRemote.class.isInstance(object));
+        movies = MoviesRemote.class.cast(object);
     }
 
     @AfterClass
@@ -60,7 +60,7 @@ public class MoviesTest {
 
     @Test
     public void testShouldAddAMovie() throws Exception {
-        Movie movie = new Movie();
+        final Movie movie = new Movie();
         movie.setDirector("Michael Bay");
         movie.setGenre("Action");
         movie.setRating(9);
@@ -69,7 +69,7 @@ public class MoviesTest {
         movies.addMovie(movie);
 
         assertEquals(1, movies.count());
-        List<Movie> moviesFound = movies.findByTitle("Bad Boys");
+        final List<Movie> moviesFound = movies.findByTitle("Bad Boys");
 
         assertEquals(1, moviesFound.size());
         assertEquals("Michael Bay", moviesFound.get(0).getDirector());

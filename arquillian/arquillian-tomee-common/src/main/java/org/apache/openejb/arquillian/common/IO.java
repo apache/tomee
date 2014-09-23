@@ -226,17 +226,17 @@ public class IO {
             return null;
         }
         try {
-            if (closeable instanceof Flushable) {
-                ((Flushable) closeable).flush();
+            if (Flushable.class.isInstance(closeable)) {
+                Flushable.class.cast(closeable).flush();
             }
         } catch (final IOException e) {
             try {
                 closeable.close();
             } catch (final IOException e2) {
                 // no-op
-            } finally {
-                return e;
             }
+
+            return e;
         }
         try {
             closeable.close();

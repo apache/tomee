@@ -60,7 +60,7 @@ public class CdiBuilder {
         singletonService.initialize(new StartupObject(appContext, appInfo, allDeployments, webContext));
     }
 
-    public static ThreadSingletonService initializeOWB(final ClassLoader classLoader) {
+    public static synchronized ThreadSingletonService initializeOWB(final ClassLoader classLoader) {
         logger.info("Created new singletonService " + SINGLETON_SERVICE);
         SystemInstance.get().setComponent(ThreadSingletonService.class, SINGLETON_SERVICE);
         try {

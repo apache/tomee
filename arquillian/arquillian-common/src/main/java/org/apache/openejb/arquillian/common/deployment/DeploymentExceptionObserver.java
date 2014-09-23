@@ -34,8 +34,8 @@ public class DeploymentExceptionObserver {
 
         Throwable current = t.getCause();
         while (current != null) {
-            if (current instanceof Exception) {
-                PARENT_EXCEPTIONS.put(current.getClass(), (Exception) current);
+            if (Exception.class.isInstance(current)) {
+                PARENT_EXCEPTIONS.put(current.getClass(), Exception.class.cast(current));
             }
             if (current.getCause() != current) {
                 current = current.getCause();

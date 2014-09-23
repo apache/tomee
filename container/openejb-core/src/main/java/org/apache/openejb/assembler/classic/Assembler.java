@@ -1242,7 +1242,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         WebBeansContext webBeansContext = appContext.get(WebBeansContext.class);
         if (webBeansContext == null) {
             webBeansContext = appContext.getWebBeansContext();
+        }else{
+            if(null == appContext.getWebBeansContext()){
+                appContext.setWebBeansContext(webBeansContext);
+            }
+
+            return;
         }
+
         if (webBeansContext == null) {
 
             final Map<Class<?>, Object> services = new HashMap<Class<?>, Object>();
@@ -1264,10 +1271,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             appContext.setCdiEnabled(false);
             OpenEJBTransactionService.class.cast(services.get(TransactionService.class)).setWebBeansContext(webBeansContext);
-        }
 
-        appContext.set(WebBeansContext.class, webBeansContext);
-        appContext.setWebBeansContext(webBeansContext);
+            appContext.set(WebBeansContext.class, webBeansContext);
+            appContext.setWebBeansContext(webBeansContext);
+        }
     }
 
     private TransactionPolicyFactory createTransactionPolicyFactory(final EjbJarInfo ejbJar, final ClassLoader classLoader) {

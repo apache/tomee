@@ -239,8 +239,8 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
         }
 
         final ClassLoader cl = appContext.get().getClassLoader();
-        if (cl instanceof SWClassLoader) {
-            ((SWClassLoader) cl).close();
+        if (SWClassLoader.class.isInstance(cl)) {
+            SWClassLoader.class.cast(cl).close();
         }
 
         try {

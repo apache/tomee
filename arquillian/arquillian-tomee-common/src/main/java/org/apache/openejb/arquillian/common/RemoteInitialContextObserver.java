@@ -122,7 +122,7 @@ public class RemoteInitialContextObserver {
             }
 
             if (err != null) {
-                if (err instanceof InvocationTargetException) {
+                if (InvocationTargetException.class.isInstance(err)) {
                     throw err.getCause();
                 }
                 throw err;

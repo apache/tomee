@@ -41,7 +41,7 @@ public class EmbeddedTomEEContainerTest {
 
     @Deployment
     public static WebArchive createDeployment() {
-        return ShrinkWrap.create(WebArchive.class, "test.war")
+        return ShrinkWrap.create(WebArchive.class, "EmbeddedTomEEContainerTest.war")
                 .addClasses(AnEJB.class, AServlet.class, ARestService.class)
                 .setWebXML(new StringAsset(Descriptors.create(WebAppDescriptor.class).version("3.0").exportAsString()));
     }
@@ -59,8 +59,9 @@ public class EmbeddedTomEEContainerTest {
 
     @Test
     public void servletIsDeployed() throws Exception {
-        final String read = IOUtils.toString(new URL(url.toExternalForm() + "a-servlet").openStream());
-        assertEquals("ok=true", read);
+        final String url = this.url.toExternalForm() + "a-servlet";
+        final String read = IOUtils.toString(new URL(url).openStream());
+        assertEquals("Failed to find: " + url,"ok=true", read);
     }
 
     @Test
