@@ -123,10 +123,10 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
 
     @Override
     public void startApplication(final Object startupObject) {
-        if (startupObject instanceof ServletContextEvent) {
-            startServletContext((ServletContext) getServletContext(startupObject)); // TODO: check it is relevant
+        if (ServletContextEvent.class.isInstance( startupObject)) {
+            startServletContext(ServletContext.class.cast(getServletContext(startupObject))); // TODO: check it is relevant
             return;
-        } else if (!(startupObject instanceof StartupObject)) {
+        } else if (!StartupObject.class.isInstance(startupObject)) {
             logger.debug("startupObject is not of StartupObject type; ignored");
             return;
         }
@@ -176,7 +176,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
                 //Scanning process
                 logger.debug("Scanning classpaths for beans artifacts.");
 
-                if (scannerService instanceof CdiScanner) {
+                if (CdiScanner.class.isInstance(scannerService)) {
                     cdiScanner = CdiScanner.class.cast(scannerService);
                     cdiScanner.setContext(webBeansContext);
                     cdiScanner.init(startupObject);
@@ -284,8 +284,8 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             }
 
             //Fire shut down
-            if (beanManager instanceof WebappBeanManager) {
-                ((WebappBeanManager) beanManager).beforeStop();
+            if (WebappBeanManager.class.isInstance(beanManager)) {
+                WebappBeanManager.class.cast(beanManager).beforeStop();
             }
             this.beanManager.fireEvent(new BeforeShutdownImpl(), true);
 
@@ -419,14 +419,14 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
     }
 
     /**
-     * Returns servelt context otherwise throws exception.
+     * Returns servlet context otherwise throws exception.
      *
      * @param object object
      * @return servlet context
      */
     private Object getServletContext(Object object) {
-        if (object instanceof ServletContextEvent) {
-            object = ((ServletContextEvent) object).getServletContext();
+        if (ServletContextEvent.class.isInstance(object)) {
+            object = ServletContextEvent.class.cast(object).getServletContext();
             return object;
         }
         return object;

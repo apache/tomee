@@ -171,7 +171,7 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
         configurationFactory = (ConfigurationFactory) SystemInstance.get().getComponent(OpenEjbConfigurationFactory.class);
 
         if ("true".equalsIgnoreCase(PROPERTIES.getProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE))
-                && SystemInstance.get().getComponent(WebAppBuilder.class) == null) {
+            && SystemInstance.get().getComponent(WebAppBuilder.class) == null) {
             SystemInstance.get().setComponent(WebAppBuilder.class, new LightweightWebAppBuilder());
         }
 
@@ -239,8 +239,8 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
         }
 
         final ClassLoader cl = appContext.get().getClassLoader();
-        if (cl instanceof SWClassLoader) {
-            ((SWClassLoader) cl).close();
+        if (SWClassLoader.class.isInstance(cl)) {
+            SWClassLoader.class.cast(cl).close();
         }
 
         try {

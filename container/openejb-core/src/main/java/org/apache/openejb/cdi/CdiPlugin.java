@@ -329,7 +329,7 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
         final BeanManagerImpl beanManager = webBeansContext.getBeanManagerImpl();
 
         //Fires ProcessManagedBean
-        webBeansContext.getBeanManagerImpl().fireEvent(new GProcessSessionBean(Bean.class.cast(bean), annotatedType, bc.getEjbName(), bean.getEjbType()), true);
+        beanManager.fireEvent(new GProcessSessionBean(Bean.class.cast(bean), annotatedType, bc.getEjbName(), bean.getEjbType()), true);
         webBeansUtil.inspectErrorStack("There are errors that are added by ProcessSessionBean event observers for managed beans. Look at logs for further details");
 
         //Fires ProcessProducerMethod

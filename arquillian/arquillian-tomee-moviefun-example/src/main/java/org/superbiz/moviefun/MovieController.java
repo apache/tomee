@@ -214,7 +214,7 @@ public class MovieController implements Serializable {
         }
 
         String getStringKey(final long value) {
-            final StringBuffer sb = new StringBuffer();
+            final StringBuilder sb = new StringBuilder();
             sb.append(value);
             return sb.toString();
         }
@@ -223,8 +223,8 @@ public class MovieController implements Serializable {
             if (object == null) {
                 return null;
             }
-            if (object instanceof Movie) {
-                final Movie o = (Movie) object;
+            if (Movie.class.isInstance(object)) {
+                final Movie o = Movie.class.cast(object);
                 return getStringKey(o.getId());
             } else {
                 throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + MovieController.class.getName());

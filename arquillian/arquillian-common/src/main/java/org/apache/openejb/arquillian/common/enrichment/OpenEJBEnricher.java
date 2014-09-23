@@ -71,12 +71,12 @@ public final class OpenEJBEnricher {
                 }
                 OWBInjector.inject(bm, testInstance, cc);
             } catch (final Throwable t) {
-                LOGGER.log(Level.SEVERE, "Can't inject in " + testInstance.getClass(), t);
-                if (t instanceof RuntimeException) {
-                    throw (RuntimeException) t;
+                LOGGER.log(Level.SEVERE, "Failed injection on: " + testInstance.getClass(), t);
+                if (RuntimeException.class.isInstance(t)) {
+                    throw RuntimeException.class.cast(t);
                 }
-                if (t instanceof Exception) {
-                    throw new OpenEJBRuntimeException((Exception) t);
+                if (Exception.class.isInstance(t)) {
+                    throw new OpenEJBRuntimeException(Exception.class.cast(t));
                 }
                 // ignoring other cases for the moment, let manage some OWB API change without making all tests failing
             }

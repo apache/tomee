@@ -54,6 +54,11 @@
       <version>${version.arquillian}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.openwebbeans</groupId>
+      <artifactId>openwebbeans-impl</artifactId>
+      <scope>provided</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.apache.openejb</groupId>

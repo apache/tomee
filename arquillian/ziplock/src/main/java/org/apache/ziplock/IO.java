@@ -174,8 +174,8 @@ public class IO {
             return;
         }
         try {
-            if (closeable instanceof Flushable) {
-                ((Flushable) closeable).flush();
+            if (Flushable.class.isInstance(closeable)) {
+                Flushable.class.cast(closeable).flush();
             }
         } catch (final IOException e) {
             // no-op
