@@ -78,17 +78,23 @@ public class MultipleDeploymentsTest extends Assert {
         int size = appContexts.size();
         assertEquals("Unexpected app count", 4, size);
 
+        AppContext found = null;
+
         for (final AppContext app : appContexts) {
             final BeanContext context = containerSystem.getBeanContext(app.getId() + "_" + className);
             if (context != null) {
                 if (context.getBeanClass().getClassLoader() == loader) {
                     System.out.println("Found '" + className + "' in app: " + app.getId());
                     size--;
+                    found = app;
                 }
             }
         }
 
         assertEquals("Found " + (4 - size) + " matching contexts", 3, size);
+
+        assertNotNull(found);
+        assertEquals("Unexpected context: " + found.getId(), "orange", found.getId());
 
         assertNotNull(testMe);
         assertEquals("Unexpected message", MSG, testMe.getMessage());
