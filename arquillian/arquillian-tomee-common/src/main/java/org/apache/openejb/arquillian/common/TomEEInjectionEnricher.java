@@ -71,7 +71,9 @@ public class TomEEInjectionEnricher implements TestEnricher {
             }
         }
 
-        Logger.getLogger(TomEEInjectionEnricher.class.getName()).log(Level.WARNING, "Failed to find AppContext for: " + clazzName);
+        if (deployment != null && deployment.get() != null && deployment.get().getDescription().testable()) {
+            Logger.getLogger(TomEEInjectionEnricher.class.getName()).log(Level.WARNING, "Failed to find AppContext for: " + clazzName);
+        }
 
         return null;
     }
