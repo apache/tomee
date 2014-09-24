@@ -16,6 +16,10 @@
  */
 package org.apache.openejb.arquillian.embedded;
 
+import org.apache.openejb.AppContext;
+import org.apache.openejb.BeanContext;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
 import org.apache.tomee.catalina.environment.Hosts;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
@@ -28,6 +32,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
+import java.util.List;
 
 @RunWith(Arquillian.class)
 public class MultipleDeploymentsTest extends Assert {
@@ -64,18 +69,49 @@ public class MultipleDeploymentsTest extends Assert {
     @Test
     @OperateOnDeployment("orange")
     public void testOrange() throws Exception {
+
+        final String className = TestMe.class.getName();
+        final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+        final List<AppContext> appContexts = containerSystem.getAppContexts();
+        final ClassLoader loader = this.getClass().getClassLoader();
+
+        int size = appContexts.size();
+        assertEquals("Unexpected app count", 4, size);
+
+        for (final AppContext app : appContexts) {
+            final BeanContext context = containerSystem.getBeanContext(app.getId() + "_" + className);
+            if (context != null) {
+                if (context.getBeanClass().getClassLoader() == loader) {
+                    System.out.println("Found '" + className + "' in app: " + app.getId());
+                    size--;
+                }
+            }
+        }
+
+        assertEquals("Found " + (4 - size) + " matching contexts", 3, size);
+
         assertNotNull(testMe);
         assertEquals("Unexpected message", MSG, testMe.getMessage());
+
+
     }
 
     @Test
     @OperateOnDeployment("green")
-    public void testMap() throws Exception {
+    public void testGreen() throws Exception {
+        assertNull("Value should be null", testMe);
+    }
 
-        //TODO - Should this actually work as TestMe.class has not been added to 'green'?
+    @Test
+    @OperateOnDeployment("blue")
+    public void testBlue() throws Exception {
+        assertNull("Value should be null", testMe);
+    }
 
-        assertNotNull(testMe);
-        assertEquals("Unexpected message", MSG, testMe.getMessage());
+    @Test
+    @OperateOnDeployment("yellow")
+    public void testYellow() throws Exception {
+        assertNull("Value should be null", testMe);
     }
 
     public static class TestMe {
