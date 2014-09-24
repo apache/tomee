@@ -55,25 +55,29 @@ public class WsRsTest {
 
     @Deployment(testable = false)
     public static WebArchive createDeployment() {
+
+        //JAXWS and JAXRS are "servlets" so if one (JAXRS here) binds to /* then the other
+        //one is not accessible depending deployment order, this is basically adding @ApplicationPath("/api")
+
+        final String xml = Descriptors.create(WebAppDescriptor.class)
+            .version(WebAppVersionType._3_0)
+            .getOrCreateServlet()
+            .servletName("jaxrs")
+            .servletClass(Application.class.getName())
+            .createInitParam()
+            .paramName(Application.class.getName())
+            .paramValue(Application.class.getName())
+            .up()
+            .up()
+            .getOrCreateServletMapping()
+            .servletName("jaxrs")
+            .urlPattern("/api")
+            .up()
+            .exportAsString();
+
         return ShrinkWrap.create(WebArchive.class, WsRsTest.class.getName().concat(".war"))
-                .addClasses(Bean.class)
-                // jaxws and jaxrs are "servlets" so if one (jaxrs here) binds to /* then the other one is not accessible depending deployment order
-                .setWebXML(new StringAsset(
-                        Descriptors.create(WebAppDescriptor.class)
-                            .version(WebAppVersionType._3_0)
-                            .getOrCreateServlet()
-                                .servletName("jaxrs")
-                                .servletClass(Application.class.getName())
-                                .createInitParam()
-                                    .paramName(Application.class.getName())
-                                    .paramValue(Application.class.getName())
-                                .up()
-                            .up()
-                            .getOrCreateServletMapping()
-                                .servletName("jaxrs")
-                                .urlPattern("/api")
-                            .up()
-                            .exportAsString()));
+            .addClasses(Bean.class)
+            .setWebXML(new StringAsset(xml));
     }
 
     @Test
@@ -82,24 +86,24 @@ public class WsRsTest {
 
         final HttpPost post = new HttpPost(uri);
         post.setEntity(new StringEntity("" +
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +
-                "  <soap:Body>\n" +
-                "    <ns1:hello xmlns:ns1=\"http://wsrs.jaxws.tests.arquillian.openejb.apache.org/\"/>\n" +
-                "  </soap:Body>\n" +
-                "</soap:Envelope>"));
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+            "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +
+            "  <soap:Body>\n" +
+            "    <ns1:hello xmlns:ns1=\"http://wsrs.jaxws.tests.arquillian.openejb.apache.org/\"/>\n" +
+            "  </soap:Body>\n" +
+            "</soap:Envelope>"));
 
         final HttpResponse response = client.execute(post);
         final String body = asString(response);
 
         final String expected = "" +
-                "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
-                "<soap:Body>" +
-                "<ns:helloResponse xmlns:ns=\"http://wsrs.jaxws.tests.arquillian.openejb.apache.org/\">" +
-                "<return>hola</return>" +
-                "</ns:helloResponse>" +
-                "</soap:Body>" +
-                "</soap:Envelope>";
+            "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+            "<soap:Body>" +
+            "<ns:helloResponse xmlns:ns=\"http://wsrs.jaxws.tests.arquillian.openejb.apache.org/\">" +
+            "<return>hola</return>" +
+            "</ns:helloResponse>" +
+            "</soap:Body>" +
+            "</soap:Envelope>";
 
         Assert.assertEquals(expected, body.replaceAll("ns[0-9]*", "ns"));
     }

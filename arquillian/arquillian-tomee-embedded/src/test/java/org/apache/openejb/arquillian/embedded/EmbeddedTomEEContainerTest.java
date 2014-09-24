@@ -26,10 +26,12 @@ import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.webcommon30.WebAppVersionType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.ejb.EJB;
+import javax.ws.rs.core.Application;
 import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
@@ -41,9 +43,29 @@ public class EmbeddedTomEEContainerTest {
 
     @Deployment
     public static WebArchive createDeployment() {
-        return ShrinkWrap.create(WebArchive.class, "EmbeddedTomEEContainerTest.war")
+
+        //JAXWS and JAXRS are "servlets" so if one (JAXRS here) binds to /* then the other
+        //one is not accessible depending deployment order, this is basically adding @ApplicationPath("/api")
+
+        final String xml = Descriptors.create(WebAppDescriptor.class)
+            .version(WebAppVersionType._3_0)
+            .getOrCreateServlet()
+            .servletName("jaxrs")
+            .servletClass(Application.class.getName())
+            .createInitParam()
+            .paramName(Application.class.getName())
+            .paramValue(Application.class.getName())
+            .up()
+            .up()
+            .getOrCreateServletMapping()
+            .servletName("jaxrs")
+            .urlPattern("/api")
+            .up()
+            .exportAsString();
+
+        return ShrinkWrap.create(WebArchive.class, EmbeddedTomEEContainerTest.class.getName().concat(".war"))
             .addClasses(AnEJB.class, AServlet.class, ARestService.class)
-            .setWebXML(new StringAsset(Descriptors.create(WebAppDescriptor.class).version("3.0").exportAsString()));
+            .setWebXML(new StringAsset(xml));
     }
 
     @EJB
@@ -66,7 +88,7 @@ public class EmbeddedTomEEContainerTest {
 
     @Test
     public void restServiceIsDeployed() throws Exception {
-        final String read = IOUtils.toString(new URL(url.toExternalForm() + "rest/foo").openStream());
+        final String read = IOUtils.toString(new URL(url.toExternalForm() + "api/rest/foo").openStream());
         assertEquals("foo", read);
     }
 }
