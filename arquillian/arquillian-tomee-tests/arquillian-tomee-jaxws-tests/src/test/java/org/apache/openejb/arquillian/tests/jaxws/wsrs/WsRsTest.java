@@ -93,7 +93,7 @@ public class WsRsTest {
         Assert.assertEquals("hola", body);
     }
 
-    public static String asString(HttpResponse execute) throws IOException {
+    public static String asString(final HttpResponse execute) throws IOException {
         final InputStream in = execute.getEntity().getContent();
         try {
             return IO.slurp(in);

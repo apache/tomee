@@ -237,10 +237,10 @@
           <artifactId>openwebbeans-ee-common</artifactId>
           <groupId>org.apache.openwebbeans</groupId>
         </exclusion>
-        <exclusion>
-          <artifactId>openwebbeans-spi</artifactId>
-          <groupId>org.apache.openwebbeans</groupId>
-        </exclusion>
+        <!--<exclusion>-->
+          <!--<artifactId>openwebbeans-spi</artifactId>-->
+          <!--<groupId>org.apache.openwebbeans</groupId>-->
+        <!--</exclusion>-->
         <exclusion>
           <artifactId>openwebbeans-ejb</artifactId>
           <groupId>org.apache.openwebbeans</groupId>

@@ -47,8 +47,7 @@ public class TomEEInjectionEnricher implements TestEnricher {
 
     private AppContext getAppContext(final Object instance) {
         final String className = instance.getClass().getName();
-        final ContainerSystem containerSystem =
-SystemInstance.get().getComponent(ContainerSystem.class);
+        final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
         final List<AppContext> appContexts = containerSystem.getAppContexts();
         final ClassLoader loader = instance.getClass().getClassLoader();
 
@@ -61,16 +60,14 @@ SystemInstance.get().getComponent(ContainerSystem.class);
             }
         }
 
-        Logger.getLogger(TomEEInjectionEnricher.class.getName()).log(Level.WARNING, "Failed to find
-AppContext for: " + className);
+        Logger.getLogger(TomEEInjectionEnricher.class.getName()).log(Level.SEVERE, "Failed to find AppContext for: " + className);
 
         return null;
     }
 
     @Override
     public Object[] resolve(final Method method) {
-        return OpenEJBEnricher.resolve(getAppContext(method.getDeclaringClass().getName()),
-testClass.get(), method);
+        return OpenEJBEnricher.resolve(getAppContext(method.getDeclaringClass().getName()), testClass.get(), method);
     }
 }
 
