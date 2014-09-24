@@ -22,6 +22,7 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.arquillian.common.enrichment.OpenEJBEnricher;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
+import org.jboss.arquillian.container.spi.client.deployment.Deployment;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.test.spi.TestClass;
@@ -33,41 +34,50 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class TomEEInjectionEnricher implements TestEnricher {
-
     @Inject
     private Instance<TestClass> testClass;
+
+    @Inject
+    private Instance<Deployment> deployment;
 
     @Override
     public void enrich(final Object o) {
         if (!SystemInstance.isInitialized()) {
             return;
         }
-        OpenEJBEnricher.enrich(o, getAppContext(o));
+        OpenEJBEnricher.enrich(o, getAppContext(o.getClass()));
     }
 
-    private AppContext getAppContext(final Object instance) {
-        final String className = instance.getClass().getName();
+    private AppContext getAppContext(final Class<?> clazz) {
+        final String clazzName = clazz.getName();
         final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+        if (deployment != null && deployment.get() != null) {
+            final BeanContext context = containerSystem.getBeanContext(deployment.get().getDescription().getName() + "_" + clazzName);
+            if (context != null) {
+                return context.getModuleContext().getAppContext();
+            }
+        }
+
         final List<AppContext> appContexts = containerSystem.getAppContexts();
-        final ClassLoader loader = instance.getClass().getClassLoader();
+        final ClassLoader loader = clazz.getClassLoader();
 
         for (final AppContext app : appContexts) {
-            final BeanContext context = containerSystem.getBeanContext(app.getId() + "_" + className);
+            final BeanContext context = containerSystem.getBeanContext(app.getId() + "_" + clazzName);
             if (context != null) {
+                // in embedded mode we have deployment so we dont go here were AppLoader would just be everywhere
                 if (context.getBeanClass().getClassLoader() == loader) {
                     return app;
                 }
             }
         }
 
-        Logger.getLogger(TomEEInjectionEnricher.class.getName()).log(Level.SEVERE, "Failed to find AppContext for: " + className);
+        Logger.getLogger(TomEEInjectionEnricher.class.getName()).log(Level.WARNING, "Failed to find AppContext for: " + clazzName);
 
         return null;
     }
 
     @Override
     public Object[] resolve(final Method method) {
-        return OpenEJBEnricher.resolve(getAppContext(method.getDeclaringClass().getName()), testClass.get(), method);
+        return OpenEJBEnricher.resolve(getAppContext(method.getDeclaringClass()), testClass.get(), method);
     }
 }
-
