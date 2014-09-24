@@ -110,6 +110,9 @@ public class LazyRealm extends LifecycleBase implements Realm {
                         final BeanManager bm = webBeansContext.getBeanManagerImpl();
                         final Set<Bean<?>> beans = bm.getBeans(clazz);
                         final Bean<?> bean = bm.resolve(beans);
+                        if (bean == null) {
+                            return null;
+                        }
                         creationalContext = bm.createCreationalContext(null);
                         instance = bm.getReference(bean, clazz, creationalContext);
                     }
