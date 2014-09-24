@@ -58,12 +58,9 @@ public class MultipleDeploymentsTest extends Assert {
         return ShrinkWrap.create(WebArchive.class, "yellow.war");
     }
 
-    @Inject
-    private TestMe testMe;
-
     @Test
     @OperateOnDeployment("orange")
-    public void testOrange() throws Exception {
+    public void testOrange(final TestMe testMe) throws Exception {
         assertNotNull(testMe);
         assertEquals("Unexpected message", MSG, testMe.getMessage());
     }
@@ -71,11 +68,7 @@ public class MultipleDeploymentsTest extends Assert {
     @Test
     @OperateOnDeployment("green")
     public void testMap() throws Exception {
-
-        //TODO - Should this actually work as TestMe.class has not been added to 'green'?
-
-        assertNotNull(testMe);
-        assertEquals("Unexpected message", MSG, testMe.getMessage());
+        // no-op
     }
 
     public static class TestMe {
