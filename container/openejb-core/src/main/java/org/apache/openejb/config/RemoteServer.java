@@ -24,6 +24,7 @@ import org.apache.openejb.util.Join;
 import org.apache.openejb.util.Pipe;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
@@ -514,13 +515,13 @@ public class RemoteServer {
             System.out.print("Waiting for TomEE shutdown.");
         }
 
-        final boolean b = connect(portShutdown, tries);
+        final boolean b = disconnect(portShutdown, tries);
 
             if (verbose) {
             System.out.println();
             }
 
-        if (b) {
+        if (!b) {
             //We need to know about this
             System.out.println("SEVERE: Failed to shutdown TomEE running on port " + portStartup + " using shutdown port: " + portShutdown);
         }
@@ -584,17 +585,60 @@ public class RemoteServer {
         } catch (final Exception e) {
             if (tries < 2) {
                 if (verbose) {
-                    System.out.println("[] CONNECT ATTEMPTS FAILED ( " + (this.tries - tries) + " tries)");
+                    System.out.println("[] CONNECT ATTEMPTS FAILED ( " + (this.tries - tries) + " ATTEMPTS)");
                 }
                 return false;
             } else {
                 try {
                     Thread.sleep(1000);
                 } catch (final Exception e2) {
-                    e.printStackTrace();
+                    e2.printStackTrace();
                 }
                 return connect(port, --tries);
             }
+        } finally {
+            if (s != null) {
+                try {
+                    s.close();
+                } catch (final Exception ignored) {
+                    // no-op
+                }
+            }
+        }
+
+        return true;
+    }
+
+    private boolean disconnect(final int port, int tries) {
+        if (verbose) {
+            System.out.println("[] DISCONNECT ATTEMPT " + (this.tries - tries) + " on port: " + port);
+        }
+
+        Socket s = null;
+        try {
+            s = new Socket();
+            s.connect(new InetSocketAddress(this.host, port), 500);
+            s.getOutputStream().close();
+
+            if (verbose) {
+                System.out.println("[] NOT DISCONNECTED AFTER ( " + (this.tries - tries) + " ATTEMPTS)");
+            }
+
+            if (tries < 2) {
+                //Give up
+                return false;
+            } else {
+                try {
+                    Thread.sleep(1000);
+                } catch (final Exception e2) {
+                    e2.printStackTrace();
+                }
+
+                return disconnect(port, --tries);
+            }
+
+        } catch (final IOException e) {
+            //This is what we want
         } finally {
             if (s != null) {
                 try {
