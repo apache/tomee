@@ -39,7 +39,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * NOTE: don't add inner classes or anonymous one or dependency without updating ExecMojo
+ * NOTE: Do not add inner or anonymous classes or a dependency without updating ExecMojo
  *
  * @version $Rev$ $Date$
  */
@@ -81,7 +81,7 @@ public class RemoteServer {
     }
 
     public RemoteServer(final int tries, final boolean verbose) {
-        this.tries = tries;
+        this.tries = (tries < 1 ? 1 : (tries > 3600 ? 3600 : tries)); //Wait at least 1 second to start or stop, but not more than an hour.
         this.verbose = verbose;
         home = getHome();
         tomcat = (home != null) && (new File(new File(home, "bin"), "catalina.sh").exists());
@@ -109,7 +109,11 @@ public class RemoteServer {
         } else if (args[0].equalsIgnoreCase(STOP)) {
             final RemoteServer remoteServer = new RemoteServer();
             remoteServer.serverHasAlreadyBeenStarted = false;
-            remoteServer.stop();
+            try {
+                remoteServer.forceStop();
+            } catch (final Exception e) {
+                e.printStackTrace(System.err);
+            }
         } else {
             throw new OpenEJBRuntimeException("valid arguments are 'start' or 'stop'");
         }
@@ -478,44 +482,60 @@ public class RemoteServer {
     }
 
     public boolean stop() {
-        try {
-            shutdown(5);
+        if (sendShutdown(5)) {
             return true;
-        } catch (final Exception e) {
-            if (verbose && !serverHasAlreadyBeenStarted) {
-                e.printStackTrace(System.err);
+        } else {
+            if (verbose) {
+                notSent();
             }
-        }
 
-        return false;
+            return false;
+        }
+    }
+
+    private void notSent() {
+        System.out.println("Failed to send the shutdown notification - TomEE is likely shut down already");
     }
 
     public void forceStop() throws Exception {
-        shutdown(5);
+        if (sendShutdown(5)) {
 
-        // check tomcat was effectively shutted down
-        // we can have some concurrent shutdown commands (catalina shutdown hook for instance)
-        // so we can have to wait here since it is important to be synchronous in this method
-        waitForServerShutdown();
+            // Check TomEE was effectively shut down after getting the message
+            // There can be concurrent shutdown operations (catalina shutdown hook for instance),
+            // so we have to wait here since it is important to be synchronous in this method
+            waitForServerShutdown();
+        } else {
+            if (verbose) {
+                notSent();
+            }
+        }
     }
 
-    private void waitForServerShutdown() throws InterruptedException {
+    private void waitForServerShutdown() throws Exception {
+
         if (verbose) {
             System.out.print("Waiting for TomEE shutdown.");
         }
-        while (connect(portShutdown, tries)) {
-            Thread.sleep(1000);
-            if (verbose) {
-                System.out.print(".");
-            }
-        }
+
+        final boolean b = connect(portShutdown, tries);
+
         if (verbose) {
             System.out.println();
         }
+
+        if (b) {
+            //We need to know about this
+            System.out.println("SEVERE: Failed to shutdown TomEE running on port " + portStartup + " using shutdown port: " + portShutdown);
+        }
     }
 
-    // same as catalina.sh stop {@see org.apache.catalina.startup.Catalina#stopServer}
-    private void shutdown(int attempts) throws Exception {
+    /**
+     * Send the shutdown message to the running server
+     *
+     * @param attempts How many times to try to send the message before giving up
+     * @return True is the message was sent, else false if unable to connect after the defined number of attempts
+     */
+    private boolean sendShutdown(int attempts) {
         Socket socket = null;
         OutputStream stream = null;
         try {
@@ -528,10 +548,14 @@ public class RemoteServer {
             stream.flush();
         } catch (final Exception e) {
             if (attempts > 0) {
-                Thread.sleep(1000);
-                shutdown(--attempts);
+                try {
+                    Thread.sleep(1000);
+                } catch (final InterruptedException ie) {
+                    return false;
+                }
+                return sendShutdown(--attempts);
             } else {
-                throw e;
+                return false;
             }
         } finally {
             IO.close(stream);
@@ -543,6 +567,8 @@ public class RemoteServer {
                 }
             }
         }
+
+        return true;
     }
 
     private boolean connect(final int port, int tries) {

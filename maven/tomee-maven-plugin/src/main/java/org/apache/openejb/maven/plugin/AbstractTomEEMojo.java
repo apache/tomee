@@ -123,6 +123,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     @Parameter(property = "tomee-plugin.shutdown", defaultValue = "8005")
     protected int tomeeShutdownPort;
 
+    @Parameter(property = "tomee-plugin.shutdown.attempts", defaultValue = "60")
+    protected int tomeeShutdownAttempts;
+
     @Parameter(property = "tomee-plugin.shutdown-command", defaultValue = "SHUTDOWN")
     protected String tomeeShutdownCommand;
 
@@ -757,7 +760,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         System.setProperty("server.shutdown.port", Integer.toString(tomeeShutdownPort));
         System.setProperty("server.shutdown.command", tomeeShutdownCommand);
 
-        server = new RemoteServer(getConnectAttempts(), false);
+        server = new RemoteServer(getConnectAttempts(), debug);
         server.setAdditionalClasspath(getAdditionalClasspath());
 
         addShutdownHooks(server); // some shutdown hooks are always added (see UpdatableTomEEMojo)
@@ -1023,7 +1026,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     }
 
     protected int getConnectAttempts() {
-        return Integer.MAX_VALUE;
+        return (tomeeShutdownAttempts == 0 ? 60 : tomeeShutdownAttempts);
     }
 
     protected boolean getWaitTomEE() {
