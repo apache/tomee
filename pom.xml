@@ -128,7 +128,7 @@
     <version.shrinkwrap.descriptor>2.0.0-alpha-6</version.shrinkwrap.descriptor>
     <version.shrinkwrap.shrinkwrap>1.1.2</version.shrinkwrap.shrinkwrap>
 
-    <tomcat.version>8.0.12</tomcat.version>
+    <tomcat.version>8.0.14</tomcat.version>
 
     <cxf.version>3.1.0-SNAPSHOT</cxf.version>
     <!--2.6.4 requires wss4j 1.6.8-->
