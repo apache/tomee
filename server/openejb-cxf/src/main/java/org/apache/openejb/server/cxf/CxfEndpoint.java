@@ -96,11 +96,19 @@ public abstract class CxfEndpoint {
 
     protected Service doServiceCreate() {
         final Level level = FACTORY_BEAN_LOG.getLevel();
-        FACTORY_BEAN_LOG.setLevel(Level.SEVERE);
+        try {
+            FACTORY_BEAN_LOG.setLevel(Level.SEVERE);
+        } catch (final UnsupportedOperationException uoe) {
+             // no-op
+        }
         try {
             service = serviceFactory.create();
         } finally {
-            FACTORY_BEAN_LOG.setLevel(level);
+            try {
+                FACTORY_BEAN_LOG.setLevel(level);
+            } catch (final UnsupportedOperationException uoe) {
+                 // no-op
+            }
         }
         return service;
     }
