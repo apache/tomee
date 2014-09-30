@@ -32,8 +32,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
+import static java.lang.Thread.sleep;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class JAXRSReloadTest {
     private static File JAXRS_APP = new File("target/tests/webapps/app-jaxrs");
@@ -80,8 +82,23 @@ public class JAXRSReloadTest {
 
     @Test
     public void simpleStart() throws Exception {
+        // eager check setup is ok and it works (avoid to mix redeployment checks with simple deployment)
         assertThat(IO.slurp(new URL(url + "/app-jaxrs/ping")).trim(), is("pong"));
-        mojo.reload();
-        assertThat(IO.slurp(new URL(url + "/app-jaxrs/ping")).trim(), is("pong"));
+
+        long lastTime = 0;
+        for (int i = 0; i < 10; i++) {
+            sleep(100); // just to make time more explicit
+            mojo.reload();
+
+            // it still works
+            assertThat(IO.slurp(new URL(url + "/app-jaxrs/ping")).trim(), is("pong"));
+
+            // we redeployed since we have a new deployment date
+            final long time = Long.parseLong(IO.slurp(new URL(url + "/app-jaxrs/ping/time")).trim());
+            if (i > 0) {
+                assertTrue(time >= lastTime);
+            }
+            lastTime = time;
+        }
     }
 }

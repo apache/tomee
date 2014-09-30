@@ -21,8 +21,16 @@ import javax.ws.rs.Path;
 
 @Path("ping")
 public class Endpoint {
+    private static final long TIME_MILLIS = System.currentTimeMillis();
+
     @GET
     public String ping() {
         return "pong";
+    }
+
+    @GET
+    @Path("time")
+    public long time() {
+        return TIME_MILLIS;
     }
 }
