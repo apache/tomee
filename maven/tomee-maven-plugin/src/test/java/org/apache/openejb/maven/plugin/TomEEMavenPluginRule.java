@@ -87,7 +87,10 @@ public class TomEEMavenPluginRule implements MethodRule {
             final TestTomEEMojo testMojo = newMojo();
 
             for (final Field f : testInstance.getClass().getDeclaredFields()) {
-                if (f.getAnnotation(Url.class) != null) {
+                if (f.getAnnotation(Mojo.class) != null) {
+                    f.setAccessible(true);
+                    f.set(testInstance, testMojo);
+                } else if (f.getAnnotation(Url.class) != null) {
                     f.setAccessible(true);
                     f.set(testInstance, "http://localhost:" + testMojo.tomeeHttpPort);
                 } else if (f.getAnnotation(Config.class) != null) {
@@ -95,7 +98,7 @@ public class TomEEMavenPluginRule implements MethodRule {
 
                     final Field mojoField = AbstractTomEEMojo.class.getDeclaredField(f.getName());
                     mojoField.setAccessible(true);
-                    f.set(mojoField, f.get(testInstance));
+                    mojoField.set(testMojo, f.get(testInstance));
                 }
             }
 

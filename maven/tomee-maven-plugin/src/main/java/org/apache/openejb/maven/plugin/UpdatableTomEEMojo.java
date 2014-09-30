@@ -216,7 +216,7 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
         return RELOAD_CMD.equalsIgnoreCase(line);
     }
 
-    protected synchronized void reload() {
+    public synchronized void reload() {
         if (deployOpenEjbApplication) {
             String path = deployedFile.getAbsolutePath();
             if (path.endsWith(".war") || path.endsWith(".ear")) {
