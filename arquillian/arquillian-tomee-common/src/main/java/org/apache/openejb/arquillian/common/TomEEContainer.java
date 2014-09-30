@@ -77,9 +77,9 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
 
     protected boolean isTestable(final Archive<?> archive, final DeploymentDescription deploymentDescription) {
         return deploymentDescription != null
-            && deploymentDescription.isArchiveDeployment()
-            && (deploymentDescription.getArchive() == archive || deploymentDescription.getTestableArchive() == archive)
-            && deploymentDescription.testable();
+                && deploymentDescription.isArchiveDeployment()
+                && (deploymentDescription.getArchive() == archive || deploymentDescription.getTestableArchive() == archive)
+                && deploymentDescription.testable();
     }
 
     @Override
@@ -99,10 +99,11 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
 
         // with multiple containers we don't want it so let the user eb able to skip it
         if (configuration.getExportConfAsSystemProperty()) {
+            final ObjectMap map = new ObjectMap(configuration);
             //
             // Export the config back out to properties
             //
-            for (final Map.Entry<String, Object> entry : new ObjectMap(configuration).entrySet()) {
+            for (final Map.Entry<String, Object> entry : map.entrySet()) {
                 for (final String prefix : prefixes.value()) {
                     try {
                         final String property = prefix + "." + entry.getKey();
@@ -130,7 +131,8 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
             randomPorts.add(i);
         }
 
-        for (final Map.Entry<String, Object> entry : new ObjectMap(configuration).entrySet()) {
+        final ObjectMap map = new ObjectMap(configuration);
+        for (final Map.Entry<String, Object> entry : map.entrySet()) {
             if (!entry.getKey().toLowerCase().endsWith("port")) {
                 continue;
             }
@@ -252,11 +254,9 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
             final File file = dumpFile(archive);
 
             final String fileName = file.getName();
-            if (fileName.endsWith(".war")) { // ??
-                final File extracted = new File(file.getParentFile(), fileName.substring(0, fileName.length() - 4));
-                if (extracted.exists()) {
-                    extracted.deleteOnExit();
-                }
+            if (fileName.endsWith(".war") || fileName.endsWith(".ear")) {
+                // extracted folder, TODO: openejb work dir is ignored here
+                Files.deleteOnExit(new File(file.getParentFile(), fileName.substring(0, fileName.length() - 4)));
             }
 
             final AppInfo appInfo;
@@ -315,7 +315,6 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
 
             return new ProtocolMetaData().addContext(httpContext);
         } catch (final Exception e) {
-            e.printStackTrace();
             throw new DeploymentException("Unable to deploy", e);
         }
     }
@@ -329,20 +328,37 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         Files.deleteOnExit(new File(tmpDir));
 
         File file;
-        int i = 0;
-        do { // be sure we don't override something existing
-            file = new File(tmpDir + File.separator + i++ + File.separator + archive.getName());
-        } while (file.getParentFile().exists()); // we will delete the parent (to clean even complicated unpacking)
+        if (configuration.isSingleDumpByArchiveName()) {
+            file = new File(tmpDir + File.separator + archive.getName());
+        } else {
+            int i = 0;
+            do { // be sure we don't override something existing
+                file = new File(tmpDir + File.separator + i++ + File.separator + archive.getName());
+            } while (file.getParentFile().exists()); // we will delete the parent (to clean even complicated unpacking)
+        }
         if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
             LOGGER.warning("can't create " + file.getParent());
         }
 
         Files.deleteOnExit(file.getParentFile());
 
+        final Assignable finalArchive;
         if (isTestable(archive, deployment.get())) {
-            archiveWithTestInfo(archive).as(ZipExporter.class).exportTo(file, true);
+            finalArchive = archiveWithTestInfo(archive);
         } else {
-            archive.as(ZipExporter.class).exportTo(file, true);
+            finalArchive = archive;
+        }
+
+        long size = -1;
+        if (file.exists()) {
+            size = file.length();
+        }
+        finalArchive.as(ZipExporter.class).exportTo(file, true);
+        if (size > 0 && size != file.length()) {
+            LOGGER.warning("\nFile overwritten but size doesn't match: (now) "
+                    + file.length() + "/(before) " + size + " name="+ file.getName()
+                    + (configuration.isSingleDumpByArchiveName() ? " maybe set singleDumpByArchiveName to false" : "")
+                    + "\n");
         }
 
         return file;
@@ -367,8 +383,8 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
             name = name.substring(0, name.length() - ".war".length());
         }
         return archive.add(
-            new StringAsset(testClass.get().getJavaClass().getName() + '#' + name),
-            ArchivePaths.create("arquillian-tomee-info.txt"));
+                new StringAsset(testClass.get().getJavaClass().getName() + '#' + name),
+                ArchivePaths.create("arquillian-tomee-info.txt"));
     }
 
     protected Deployer deployer() throws NamingException {
@@ -384,7 +400,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         } catch (final RuntimeException ne) { // surely "org.apache.openejb.client.ClientRuntimeException: Invalid response from server: -1"
             if (retry > 1) {
                 try { // wait a bit before retrying
-                    Thread.sleep(500);
+                    Thread.sleep(200);
                 } catch (final InterruptedException ignored) {
                     // no-op
                 }
@@ -418,14 +434,16 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
     @Override
     public void undeploy(final Archive<?> archive) throws DeploymentException {
         final DeployedApp deployed = moduleIds.remove(archive.getName());
-        if (null != deployed) {
-            try {
-                deployer().undeploy(deployed.path);
-            } catch (final Exception e) {
-                final String msg = "Unable to undeploy " + archive.getName();
-                LOGGER.log(Level.SEVERE, msg, e);
-                throw new DeploymentException(msg, e);
-            } finally {
+        try {
+            if (deployed == null) {
+                LOGGER.warning(archive.getName() + " was not deployed");
+                return;
+            }
+            deployer().undeploy(deployed.path);
+        } catch (final Exception e) {
+            throw new DeploymentException("Unable to undeploy " + archive.getName(), e);
+        } finally {
+            if (deployed != null && !configuration.isSingleDumpByArchiveName()) {
                 LOGGER.info("cleaning " + deployed.file.getAbsolutePath());
                 Files.tryTodelete(deployed.file); // "i" folder
 
