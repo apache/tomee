@@ -45,6 +45,7 @@ public class TomEEConfiguration implements ContainerConfiguration {
     protected String properties = "";
     protected String webContextToUseWithEars;
     protected boolean keepServerXmlAsThis;
+    protected boolean singleDumpByArchiveName = false;
 
     public boolean isUnpackWars() {
         return unpackWars;
@@ -210,5 +211,13 @@ public class TomEEConfiguration implements ContainerConfiguration {
 
     public void setKeepServerXmlAsThis(final boolean keepServerXmlAsThis) {
         this.keepServerXmlAsThis = keepServerXmlAsThis;
+    }
+
+    public boolean isSingleDumpByArchiveName() {
+        return singleDumpByArchiveName;
+    }
+
+    public void setSingleDumpByArchiveName(final boolean singleDumpByArchiveName) {
+        this.singleDumpByArchiveName = singleDumpByArchiveName;
     }
 }

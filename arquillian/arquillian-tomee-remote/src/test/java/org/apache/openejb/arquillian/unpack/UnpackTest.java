@@ -38,7 +38,7 @@ public class UnpackTest extends Assert {
     @Deployment
     public static WebArchive createDeployment() {
         return ShrinkWrap
-                .create(WebArchive.class, "unpacktest.war")
+                .create(WebArchive.class, "test.war")
                 .addAsLibraries(JarLocation.jarLocation(Test.class))
                 .addClass(TestServlet.class)
                 .addClass(TestEjb.class)

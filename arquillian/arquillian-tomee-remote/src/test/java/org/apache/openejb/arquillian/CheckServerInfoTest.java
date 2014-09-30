@@ -32,7 +32,7 @@ import static org.junit.Assert.assertTrue;
 public class CheckServerInfoTest {
     @Deployment
     public static WebArchive war() {
-        return ShrinkWrap.create(WebArchive.class).addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("foo.txt"));
+        return ShrinkWrap.create(WebArchive.class, "info.war").addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("foo.txt"));
     }
 
     @Test

@@ -254,11 +254,9 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
             final File file = dumpFile(archive);
 
             final String fileName = file.getName();
-            if (fileName.endsWith(".war")) { // ??
-                final File extracted = new File(file.getParentFile(), fileName.substring(0, fileName.length() - 4));
-                if (extracted.exists()) {
-                    extracted.deleteOnExit();
-                }
+            if (fileName.endsWith(".war") || fileName.endsWith(".ear")) {
+                // extracted folder, TODO: openejb work dir is ignored here
+                Files.deleteOnExit(new File(file.getParentFile(), fileName.substring(0, fileName.length() - 4)));
             }
 
             final AppInfo appInfo;
@@ -330,20 +328,37 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         Files.deleteOnExit(new File(tmpDir));
 
         File file;
-        int i = 0;
-        do { // be sure we don't override something existing
-            file = new File(tmpDir + File.separator + i++ + File.separator + archive.getName());
-        } while (file.getParentFile().exists()); // we will delete the parent (to clean even complicated unpacking)
+        if (configuration.isSingleDumpByArchiveName()) {
+            file = new File(tmpDir + File.separator + archive.getName());
+        } else {
+            int i = 0;
+            do { // be sure we don't override something existing
+                file = new File(tmpDir + File.separator + i++ + File.separator + archive.getName());
+            } while (file.getParentFile().exists()); // we will delete the parent (to clean even complicated unpacking)
+        }
         if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
             LOGGER.warning("can't create " + file.getParent());
         }
 
         Files.deleteOnExit(file.getParentFile());
 
+        final Assignable finalArchive;
         if (isTestable(archive, deployment.get())) {
-            archiveWithTestInfo(archive).as(ZipExporter.class).exportTo(file, true);
+            finalArchive = archiveWithTestInfo(archive);
         } else {
-            archive.as(ZipExporter.class).exportTo(file, true);
+            finalArchive = archive;
+        }
+
+        long size = -1;
+        if (file.exists()) {
+            size = file.length();
+        }
+        finalArchive.as(ZipExporter.class).exportTo(file, true);
+        if (size > 0 && size != file.length()) {
+            LOGGER.warning("\nFile overwritten but size doesn't match: (now) "
+                    + file.length() + "/(before) " + size + " name="+ file.getName()
+                    + (configuration.isSingleDumpByArchiveName() ? " maybe set singleDumpByArchiveName to false" : "")
+                    + "\n");
         }
 
         return file;
@@ -428,13 +443,15 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         } catch (final Exception e) {
             throw new DeploymentException("Unable to undeploy " + archive.getName(), e);
         } finally {
-            LOGGER.info("cleaning " + deployed.file.getAbsolutePath());
-            Files.tryTodelete(deployed.file); // "i" folder
+            if (deployed != null && !configuration.isSingleDumpByArchiveName()) {
+                LOGGER.info("cleaning " + deployed.file.getAbsolutePath());
+                Files.tryTodelete(deployed.file); // "i" folder
 
-            final File pathFile = new File(deployed.path);
-            if (!deployed.path.equals(deployed.file.getAbsolutePath()) && pathFile.exists()) {
-                LOGGER.info("cleaning " + pathFile);
-                Files.delete(pathFile);
+                final File pathFile = new File(deployed.path);
+                if (!deployed.path.equals(deployed.file.getAbsolutePath()) && pathFile.exists()) {
+                    LOGGER.info("cleaning " + pathFile);
+                    Files.delete(pathFile);
+                }
             }
         }
     }
