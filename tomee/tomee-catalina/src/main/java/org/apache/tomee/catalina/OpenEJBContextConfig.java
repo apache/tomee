@@ -656,16 +656,19 @@ public class OpenEJBContextConfig extends ContextConfig {
     }
 
     private boolean isIncludedIn(final String filePath, final File classAsFile) throws MalformedURLException {
-        final File file = URLs.toFile(new URL(filePath));
+        final File toFile = URLs.toFile(new URL(filePath));
+        File file;
+        try { // symb links
+            file = toFile.getCanonicalFile();
+        } catch (final IOException e) {
+            file = toFile;
+        }
 
         File current = classAsFile;
         while (current != null && current.exists()) {
             if (current.equals(file)) {
                 final File parent = current.getParentFile();
-                if ("classes".equals(current.getName()) && parent != null && "WEB-INF".equals(parent.getName())) {
-                    return false;
-                }
-                return true;
+                return !("classes".equals(current.getName()) && parent != null && "WEB-INF".equals(parent.getName()));
             }
             current = current.getParentFile();
             if (BASE.equals(current)) {
