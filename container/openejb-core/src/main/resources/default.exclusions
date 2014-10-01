@@ -223,6 +223,7 @@ tomcat-tribes
 tomcat-servlet
 tomcat-spdy
 tomcat-util
+tomcat-websocket-api
 tomee-
 tools.jar
 twitter4j-
@@ -232,7 +233,7 @@ webbeans-ee
 webbeans-ejb
 webbeans-impl
 webbeans-spi
-tomcat-websocket-api
+websocket-api
 woodstox-core-asl-
 ws-commons-util-
 wsdl4j-
