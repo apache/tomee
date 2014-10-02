@@ -73,7 +73,7 @@ public class ClasspathAsWebappTest {
                     new Configuration()
                             .http(NetworkUtil.getNextAvailablePort())
                             .property("openejb.additional.include", "tomee-"))
-                .deployPathsAsWebapp("", asList(JarLocation.jarLocation(MyInitializer.class).toURI().toURL()))
+                .deployPathsAsWebapp("", asList(JarLocation.jarLocation(MyInitializer.class).toURI().toURL()), null)
                 .inject(this)) {
 
             // Servlet (initializer, servlet)

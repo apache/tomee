@@ -258,14 +258,18 @@ public class DeploymentsResolver implements DeploymentFilterable {
                 }
             }
 
-            final List<URL> urls = new ArrayList<URL>();
             final boolean isWindows = System.getProperty("os.name", "unknown").toLowerCase().startsWith("windows");
-
-            for (final URL url : urlSet.getUrls()) {
-                final String ef = isWindows ? url.toExternalForm().toLowerCase() : url.toExternalForm();
-                final URL u = new URL(ef);
-                if (!urls.contains(u)) {
-                    urls.add(u);
+            final List<URL> urls;
+            if (!isWindows) {
+                urls = urlSet.getUrls();
+            } else {
+                urls = new ArrayList<URL>();
+                for (final URL url : urlSet.getUrls()) {
+                    final String ef = url.toExternalForm().toLowerCase();
+                    final URL u = new URL(ef);
+                    if (!urls.contains(u)) {
+                        urls.add(u);
+                    }
                 }
             }
 

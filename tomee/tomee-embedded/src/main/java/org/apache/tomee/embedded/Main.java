@@ -33,6 +33,7 @@ public class Main {
     public static final String PATH = "path";
     public static final String CONTEXT = "context";
     public static final String DIRECTORY = "directory";
+    public static final String DOC_BASE = "doc-base";
     public static final String AS_WAR = "as-war";
 
     public static void main(final String[] args) {
@@ -78,7 +79,8 @@ public class Main {
                 }
             }
             if (line.hasOption(AS_WAR)) {
-                container.deployClasspathAsWebApp(contexts == null || i == contexts.length ? "" : contexts[i]);
+                container.deployClasspathAsWebApp(contexts == null || i == contexts.length ? "" : contexts[i],
+                        line.hasOption(DOC_BASE) ? new File(line.getOptionValue(DOC_BASE)) : null);
             }
 
             Runtime.getRuntime().addShutdownHook(new Thread() {

@@ -216,31 +216,8 @@ public class DeploymentLoader implements DeploymentFilterable {
                 final AppModule appModule = new AppModule(webModule.getClassLoader(), file.getAbsolutePath(), new Application(), true);
                 addWebModule(webModule, appModule);
 
-                final Map<String, Object> otherDD = new HashMap<String, Object>();
-                final List<URL> urls = webModule.getScannableUrls();
-                final ResourceFinder finder = new ResourceFinder("", urls.toArray(new URL[urls.size()]));
-                otherDD.putAll(getDescriptors(finder, false));
+                addWebModuleDescriptors(baseUrl, webModule, appModule);
 
-                // "persistence.xml" is done separately since we manage a list of url and not s single url
-                try {
-                    final List<URL> persistenceXmls = finder.findAll(ddDir + "persistence.xml");
-                    if (persistenceXmls.size() >= 1) {
-                        final URL old = (URL) otherDD.get("persistence.xml");
-                        if (old != null && !persistenceXmls.contains(old)) {
-                            persistenceXmls.add(old);
-                        }
-                        otherDD.put("persistence.xml", persistenceXmls);
-                    }
-                } catch (final IOException e) {
-                    // ignored
-                }
-
-                addConnectorModules(appModule, webModule);
-
-                addWebPersistenceDD("persistence.xml", otherDD, appModule);
-                addWebPersistenceDD("persistence-fragment.xml", otherDD, appModule);
-                addPersistenceUnits(appModule, baseUrl);
-                addWebFragments(webModule, urls);
                 appModule.setStandloneWebModule();
                 appModule.setDelegateFirst(true); // force it for webapps
                 return appModule;
@@ -270,7 +247,35 @@ public class DeploymentLoader implements DeploymentFilterable {
         }
     }
 
-    private void addConnectorModules(final AppModule appModule, final WebModule webModule) throws OpenEJBException {
+    public static void addWebModuleDescriptors(final URL baseUrl, final WebModule webModule, final AppModule appModule) throws OpenEJBException {
+        final Map<String, Object> otherDD = new HashMap<String, Object>();
+        final List<URL> urls = webModule.getScannableUrls();
+        final ResourceFinder finder = new ResourceFinder("", urls.toArray(new URL[urls.size()]));
+        otherDD.putAll(getDescriptors(finder, false));
+
+        // "persistence.xml" is done separately since we manage a list of url and not s single url
+        try {
+            final List<URL> persistenceXmls = finder.findAll(ddDir + "persistence.xml");
+            if (persistenceXmls.size() >= 1) {
+                final URL old = (URL) otherDD.get("persistence.xml");
+                if (old != null && !persistenceXmls.contains(old)) {
+                    persistenceXmls.add(old);
+                }
+                otherDD.put("persistence.xml", persistenceXmls);
+            }
+        } catch (final IOException e) {
+            // ignored
+        }
+
+        addConnectorModules(appModule, webModule);
+
+        addWebPersistenceDD("persistence.xml", otherDD, appModule);
+        addWebPersistenceDD("persistence-fragment.xml", otherDD, appModule);
+        addPersistenceUnits(appModule, baseUrl);
+        addWebFragments(webModule, urls);
+    }
+
+    private static void addConnectorModules(final AppModule appModule, final WebModule webModule) throws OpenEJBException {
         // WEB-INF
         if (webModule.getAltDDs().containsKey("ra.xml")) {
             final String jarLocation = new File(webModule.getJarLocation(), "/WEB-INF/classes").getAbsolutePath();
@@ -325,7 +330,7 @@ public class DeploymentLoader implements DeploymentFilterable {
     }
 
     @SuppressWarnings("unchecked")
-    private void addWebPersistenceDD(final String name, final Map<String, Object> otherDD, final AppModule appModule) {
+    private static void addWebPersistenceDD(final String name, final Map<String, Object> otherDD, final AppModule appModule) {
         if (otherDD.containsKey(name)) {
             List<URL> persistenceUrls = (List<URL>) appModule.getAltDDs().get(name);
             if (persistenceUrls == null) {

@@ -56,6 +56,9 @@ public class StandardContextCustomizer {
             case Lifecycle.BEFORE_START_EVENT:
                 final WebResourceRoot resources = new StandardRoot(context);
                 context.setResources(resources);
+                if (!module.getProperties().containsKey("fakeJarLocation")) {
+                    context.setDocBase(module.getJarLocation());
+                }
 
                 // move last fake folder, tomcat is broken without it so we can't remove it
                 final List allResources = List.class.cast(Reflections.get(resources, "allResources"));
@@ -67,9 +70,11 @@ public class StandardContextCustomizer {
                     final String absolutePath = file.getAbsolutePath();
                     if (file.isDirectory()) {
                         resources.createWebResourceSet(WebResourceRoot.ResourceSetType.CLASSES_JAR, "/WEB-INF/classes", absolutePath, "", "/");
-                        resources.createWebResourceSet(WebResourceRoot.ResourceSetType.RESOURCE_JAR, "/", absolutePath, "", "/META-INF/resources");
+                        if (new File(file, "META-INF/resources").exists()) {
+                            resources.createWebResourceSet(WebResourceRoot.ResourceSetType.RESOURCE_JAR, "/", absolutePath, "", "/META-INF/resources");
+                        }
                     } else {
-                        resources.createWebResourceSet(WebResourceRoot.ResourceSetType.CLASSES_JAR, "/WEB-INF/lib", absolutePath, "", "/");
+                        resources.createWebResourceSet(WebResourceRoot.ResourceSetType.CLASSES_JAR, "/WEB-INF/lib", absolutePath, null, "/");
                         resources.createWebResourceSet(WebResourceRoot.ResourceSetType.RESOURCE_JAR, "/", url, "/META-INF/resources");
                     }
                 }

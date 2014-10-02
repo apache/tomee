@@ -127,10 +127,10 @@ public class Container implements AutoCloseable {
     }
 
     public Container deployClasspathAsWebApp() {
-        return deployClasspathAsWebApp("");
+        return deployClasspathAsWebApp("", null);
     }
 
-    public Container deployClasspathAsWebApp(final String context, final String... dependencies) {
+    public Container deployClasspathAsWebApp(final String context, final File docBase, final String... dependencies) {
         final List<URL> jarList = DeploymentsResolver.loadFromClasspath(Thread.currentThread().getContextClassLoader());
         if (dependencies != null) {
             for (final String dep : dependencies) {
@@ -145,10 +145,10 @@ public class Container implements AutoCloseable {
             }
         }
 
-        return deployPathsAsWebapp(context, jarList);
+        return deployPathsAsWebapp(context, jarList, docBase);
     }
 
-    public Container deployPathsAsWebapp(final String context, final List<URL> jarList) {
+    public Container deployPathsAsWebapp(final String context, final List<URL> jarList, final File docBase) {
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
         final SystemInstance systemInstance = SystemInstance.get();
 
@@ -157,7 +157,10 @@ public class Container implements AutoCloseable {
             contextRoot = "/" + context;
         }
 
-        final WebModule webModule = new WebModule(new WebApp(), contextRoot, loader, fakeRootDir().getAbsolutePath(), contextRoot);
+        final WebModule webModule = new WebModule(new WebApp(), contextRoot, loader, docBase == null ? fakeRootDir().getAbsolutePath() : docBase.getAbsolutePath(), contextRoot);
+        if (docBase == null) {
+            webModule.getProperties().put("fakeJarLocation", "true");
+        }
         webModule.setUrls(jarList);
         webModule.setAddedUrls(Collections.<URL>emptyList());
         webModule.setRarUrls(Collections.<URL>emptyList());
@@ -174,7 +177,8 @@ public class Container implements AutoCloseable {
         app.setStandloneWebModule();
         try {
             DeploymentLoader.addWebModule(webModule, app);
-        } catch (final OpenEJBException e) {
+            DeploymentLoader.addWebModuleDescriptors(new File(webModule.getJarLocation()).toURI().toURL(), webModule, app);
+        } catch (final Exception e) {
             throw new IllegalStateException(e);
         }
 
@@ -184,7 +188,7 @@ public class Container implements AutoCloseable {
 
         try {
             final AppInfo appInfo = configurationFactory.configureApplication(app);
-            systemInstance.getComponent(Assembler.class).createApplication(appInfo);
+            systemInstance.getComponent(Assembler.class).createApplication(appInfo, loader /* don't recreate a classloader */);
         } catch (final Exception e) {
             throw new IllegalStateException(e);
         }
@@ -193,7 +197,7 @@ public class Container implements AutoCloseable {
     }
 
     private static void addCallersAsEjbModule(final ClassLoader loader, final AppModule app) {
-        final Set<String> callers = NewLoaderLogic.callers(Filters.classes(Container.class.getName()));
+        final Set<String> callers = NewLoaderLogic.callers(Filters.classes(Container.class.getName(), "org.apache.openejb.maven.plugins.TomEEEmbeddedMojo"));
         if (callers.isEmpty()) {
             return;
         }
