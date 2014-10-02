@@ -45,7 +45,7 @@ public class TomEEConfiguration implements ContainerConfiguration {
     protected String properties = "";
     protected String webContextToUseWithEars;
     protected boolean keepServerXmlAsThis;
-    protected boolean singleDumpByArchiveName = false;
+    protected boolean singleDumpByArchiveName;
 
     public boolean isUnpackWars() {
         return unpackWars;
