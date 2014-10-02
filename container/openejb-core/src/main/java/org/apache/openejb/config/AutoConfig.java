@@ -102,6 +102,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import static java.util.Arrays.asList;
+
 public class AutoConfig implements DynamicDeployer, JndiConstants {
 
     public static final String ORIGIN_ANNOTATION = "Annotation";
@@ -1360,11 +1362,43 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             final String prefix = app.getModuleId() + "/";
 
             String jtaDataSourceId = null;
-            if (!resourceLocal) {
+            String nonJtaDataSourceId = null;
+
+            // first try exact matching without JtaManaged which is not mandatory actually (custom DS + JTADataSourceWrapperFactory)
+            final String jtaWithJavaAndSlash = replaceJavaAndSlash(unit.getJtaDataSource());
+            for (final String potentialName : asList(prefix + jtaWithJavaAndSlash, jtaWithJavaAndSlash)) {
+                final ResourceInfo jtaInfo = configFactory.getResourceInfo(potentialName);
+                if (jtaInfo != null) {
+                    if (!"false".equalsIgnoreCase(jtaInfo.properties.getProperty("JtaManaged")) // don't test true since it can be missing
+                            && (jtaInfo.types.contains("DataSource") || jtaInfo.types.contains(DataSource.class.getName()))) {
+                        jtaDataSourceId = jtaInfo.id;
+                        break;
+                    } else {
+                        logger.warning("Found matching datasource: " + jtaInfo.id + " but this one is not a JTA datasource");
+                    }
+                }
+            }
+
+            final String nonJtaWithJavaAndSlash = replaceJavaAndSlash(unit.getNonJtaDataSource());
+            for (final String potentialName : asList(prefix + nonJtaWithJavaAndSlash, nonJtaWithJavaAndSlash)) {
+                final ResourceInfo info = configFactory.getResourceInfo(potentialName);
+                if (info != null) {
+                    if (!"true".equalsIgnoreCase(info.properties.getProperty("JtaManaged"))
+                            && (info.types.contains("DataSource") || info.types.contains(DataSource.class.getName()))) {
+                        nonJtaDataSourceId = info.id;
+                        break;
+                    } else {
+                        logger.warning("Found matching datasource: " + info.id + " but this one is a JTA datasource");
+                    }
+                }
+            }
+
+            // then that's ok to force configuration
+            if (jtaDataSourceId == null && !resourceLocal) {
                 required.put("JtaManaged", "true");
-                jtaDataSourceId = findResourceId(prefix + replaceJavaAndSlash(unit.getJtaDataSource()), "DataSource", required, null);
+                jtaDataSourceId = findResourceId(prefix + jtaWithJavaAndSlash, "DataSource", required, null);
                 if (jtaDataSourceId == null) { // test with javax.sql.DataSource before DataSource since RA can register resources without our shortcut
-                    jtaDataSourceId = findResourceId(replaceJavaAndSlash(unit.getJtaDataSource()), "javax.sql.DataSource", required, null);
+                    jtaDataSourceId = findResourceId(jtaWithJavaAndSlash, "javax.sql.DataSource", required, null);
                 }
                 /* this shouldn't be mandatory anymore since our DataSource has as alias javax.sql.DataSource
                 if (jtaDataSourceId == null) {
@@ -1373,10 +1407,12 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 */
             }
 
-            required.put("JtaManaged", "false");
-            String nonJtaDataSourceId = findResourceId(prefix + replaceJavaAndSlash(unit.getNonJtaDataSource()), "DataSource", required, null);
             if (nonJtaDataSourceId == null) {
-                nonJtaDataSourceId = findResourceId(replaceJavaAndSlash(unit.getNonJtaDataSource()), "DataSource", required, null);
+                required.put("JtaManaged", "false");
+                nonJtaDataSourceId = findResourceId(prefix + nonJtaWithJavaAndSlash, "DataSource", required, null);
+                if (nonJtaDataSourceId == null) {
+                    nonJtaDataSourceId = findResourceId(nonJtaWithJavaAndSlash, "DataSource", required, null);
+                }
             }
 
             if ((jtaDataSourceId != null || resourceLocal) && nonJtaDataSourceId != null) {
@@ -1431,8 +1467,8 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             //
 
             required.put("JtaManaged", ServiceUtils.ANY);
-            final String possibleJta = findResourceId(replaceJavaAndSlash(unit.getJtaDataSource()), "DataSource", required, null);
-            final String possibleNonJta = findResourceId(replaceJavaAndSlash(unit.getNonJtaDataSource()), "DataSource", required, null);
+            final String possibleJta = findResourceId(jtaWithJavaAndSlash, "DataSource", required, null);
+            final String possibleNonJta = findResourceId(nonJtaWithJavaAndSlash, "DataSource", required, null);
             if (possibleJta != null && possibleJta.equals(possibleNonJta)) {
                 final ResourceInfo dataSource = configFactory.getResourceInfo(possibleJta);
 
@@ -2289,7 +2325,8 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             for (final Resource r : appModule.getResources()) {
                 final String type = r.getType();
                 if (type != null) {
-                    for (final String t : type.trim().split(",")) {
+                    final String[] types = type.trim().split(",");
+                    for (final String t : types) {
                         List<String> ids = resourceIdsByType.get(t);
                         if (ids == null) {
                             ids = new ArrayList<String>();
