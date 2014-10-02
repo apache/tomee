@@ -41,7 +41,7 @@ public class StandardContextCustomizer {
         module = webModule;
     }
 
-    public void customize(final @Observes LifecycleEvent event) {
+    public void customize(@Observes final LifecycleEvent event) {
         final Object data = event.getSource();
         if (!StandardContext.class.isInstance(data)) {
             return;
