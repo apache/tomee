@@ -51,7 +51,7 @@ public class PersistenceTest
     private EntityManager em;
 
     @Test
-    @Transactional(TransactionMode.COMMIT)
+    @Transactional(TransactionMode.COMMIT) // default with persistence extension
     @UsingDataSet("datasets/users.yml")
     @ShouldMatchDataSet("datasets/expected-users.yml")
     public void seriouslyYouAlreadyForgotOpenEJB_questionMark() throws Exception
