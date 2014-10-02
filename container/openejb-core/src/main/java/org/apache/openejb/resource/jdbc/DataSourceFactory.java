@@ -17,6 +17,8 @@
 
 package org.apache.openejb.resource.jdbc;
 
+import org.apache.openejb.cipher.PasswordCipherException;
+import org.apache.openejb.cipher.PasswordCipherFactory;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.resource.XAResourceWrapper;
@@ -50,6 +52,8 @@ import java.util.Properties;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
+import static java.util.Arrays.asList;
+
 /**
  * @version $Rev$ $Date$
  */
@@ -63,6 +67,8 @@ public class DataSourceFactory {
     public static final String GLOBAL_FLUSH_PROPERTY = "openejb.jdbc.flushable";
     public static final String POOL_PROPERTY = "openejb.datasource.pool";
     public static final String DATA_SOURCE_CREATOR_PROP = "DataSourceCreator";
+
+    private static final Map<CommonDataSource, AlternativeDriver> driverByDataSource = new HashMap<CommonDataSource, AlternativeDriver>();
 
     private static final Map<CommonDataSource, DataSourceCreator> creatorByDataSource = new HashMap<CommonDataSource, DataSourceCreator>();
     private static final Map<String, String> KNOWN_CREATORS = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER) {{
@@ -114,23 +120,37 @@ public class DataSourceFactory {
 
         final String jdbcUrl = properties.getProperty("JdbcUrl");
 
+        final AlternativeDriver driver;
         if (Driver.class.isAssignableFrom(impl) && jdbcUrl != null) {
             try {
-                final AlternativeDriver driver = new AlternativeDriver((Driver) impl.newInstance(), jdbcUrl);
+                driver = new AlternativeDriver((Driver) impl.newInstance(), jdbcUrl);
                 driver.register();
             } catch (final SQLException e) {
                 throw new IllegalStateException(e);
             }
+        } else {
+            driver = null;
         }
 
         final boolean logSql = SystemInstance.get().getOptions().get(GLOBAL_LOG_SQL_PROPERTY,
                 "true".equalsIgnoreCase((String) properties.remove(LOG_SQL_PROPERTY)));
         final DataSourceCreator creator = creator(properties.remove(DATA_SOURCE_CREATOR_PROP), logSql);
 
-        final boolean useContainerLoader = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.resources.use-container-loader", "true")) && (impl == null || impl.getClassLoader() == DataSourceFactory.class.getClassLoader());
+        boolean useContainerLoader = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.resources.use-container-loader", "true")) && (impl == null || impl.getClassLoader() == DataSourceFactory.class.getClassLoader());
         final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         if (useContainerLoader) {
-            Thread.currentThread().setContextClassLoader(DataSourceFactory.class.getClassLoader());
+            final ClassLoader containerLoader = DataSourceFactory.class.getClassLoader();
+            Thread.currentThread().setContextClassLoader(containerLoader);
+            try {
+                useContainerLoader = basicChecksThatDataSourceCanBeCreatedFromContainerLoader(properties, containerLoader);
+            } finally {
+                Thread.currentThread().setContextClassLoader(oldLoader);
+            }
+            if (useContainerLoader) {
+                Thread.currentThread().setContextClassLoader(containerLoader);
+            } else {
+                LOGGER.info("Can't use container loader to create datasource " + name + " so using application one");
+            }
         }
 
         try {
@@ -178,6 +198,9 @@ public class DataSourceFactory {
 
             // ds and creator are associated here, not after the proxying of the next if if active
             setCreatedWith(creator, ds);
+            if (driver != null) {
+                driverByDataSource.put(ds, driver);
+            }
 
             if (logSql) {
                 ds = makeItLogging(ds);
@@ -192,6 +215,34 @@ public class DataSourceFactory {
                 Thread.currentThread().setContextClassLoader(oldLoader);
             }
         }
+    }
+
+    private static boolean basicChecksThatDataSourceCanBeCreatedFromContainerLoader(final Properties properties, final ClassLoader containerLoader) {
+        // check basic some classes can be loaded from container otherwise don't force it
+        try {
+            for (final String property : asList("JdbcDriver", "driverClassName")) {
+                final String value = properties.getProperty(property);
+                if (value != null) {
+                    Class.forName(value, false, containerLoader);
+                }
+            }
+        } catch (final ClassNotFoundException cnfe) {
+            return false;
+        } catch (final NoClassDefFoundError cnfe) {
+            return false;
+        }
+
+        // also password cipher can be loaded from apps
+        try {
+            final String cipher = properties.getProperty("PasswordCipher");
+            if (cipher != null && !"PlainText".equals(cipher) && !"Static3DES".equals(cipher)) {
+                PasswordCipherFactory.getPasswordCipher(cipher);
+            }
+        } catch (final PasswordCipherException cnfe) {
+            return false;
+        }
+
+        return true;
     }
 
     private static CommonDataSource makeFlushable(final CommonDataSource ds, final FlushableDataSourceHandler.FlushConfig flushConfig) {
@@ -334,6 +385,11 @@ public class DataSourceFactory {
         }
         final DataSourceCreator remove = creatorByDataSource.remove(instance);
         remove.destroy(instance);
+
+        final AlternativeDriver driver = driverByDataSource.remove(instance);
+        if (driver != null) {
+            driver.deregister();
+        }
     }
 
     // remove proxy added by us in front of the datasource returned by the creator
