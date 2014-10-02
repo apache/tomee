@@ -121,11 +121,9 @@ public final class NetworkUtil {
 
     private static final class LastPort {
         private final int port;
-        private final long time;
 
-        private LastPort(final int port, final long time) {
+        private LastPort(final int port) {
             this.port = port;
-            this.time = time;
         }
     }
 }
