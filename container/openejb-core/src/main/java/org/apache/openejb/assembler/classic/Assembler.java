@@ -1946,7 +1946,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             final Collection<File> urls = new ArrayList<File>();
             for (final URL url : ClassLoaders.findUrls(parent)) { // need to convert it to file since urls can be file:/xxx or jar:file:///xxx
                 try {
-                    urls.add(URLs.toFile(url));
+                    urls.add(URLs.toFile(url).getCanonicalFile());
                 } catch (final Exception error) {
                     if (logger.isDebugEnabled()) {
                         logger.debug("Can't determine url for: " + url.toExternalForm(), error);
@@ -1957,7 +1957,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             boolean allIsIntheClasspath = true;
             for (final URL url : filtered) {
                 try {
-                    if (!urls.contains(URLs.toFile(url))) {
+                    if (!urls.contains(URLs.toFile(url).getCanonicalFile())) {
                         allIsIntheClasspath = false;
                         break;
                     }
