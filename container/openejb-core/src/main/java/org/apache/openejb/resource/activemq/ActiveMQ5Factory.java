@@ -22,6 +22,7 @@ import org.apache.activemq.broker.BrokerFactoryHandler;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.ra.ActiveMQResourceAdapter;
 import org.apache.activemq.store.PersistenceAdapter;
+import org.apache.activemq.store.PersistenceAdapterFactory;
 import org.apache.activemq.store.jdbc.JDBCPersistenceAdapter;
 import org.apache.activemq.store.kahadb.KahaDBPersistenceAdapter;
 import org.apache.activemq.store.memory.MemoryPersistenceAdapter;
@@ -36,6 +37,7 @@ import org.apache.xbean.propertyeditor.PropertyEditors;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -89,6 +91,8 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
 
             if (persistenceAdapter != null) {
                 broker.setPersistenceAdapter(persistenceAdapter);
+                // if user didn't set persistent to true then setPersistenceAdapter() alone is ignored so forcing it with the factory
+                broker.setPersistenceFactory(new ProvidedPersistenceAdapterPersistenceAdapterFactory(persistenceAdapter));
                 broker.setPersistent(true);
                 tomeeConfig(broker);
             } else {
@@ -315,5 +319,18 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
 
     public Collection<BrokerService> getBrokers() {
         return brokers.values();
+    }
+
+    private static class ProvidedPersistenceAdapterPersistenceAdapterFactory implements PersistenceAdapterFactory {
+        private final PersistenceAdapter instance;
+
+        public ProvidedPersistenceAdapterPersistenceAdapterFactory(final PersistenceAdapter persistenceAdapter) {
+            this.instance = persistenceAdapter;
+        }
+
+        @Override
+        public PersistenceAdapter createPersistenceAdapter() throws IOException {
+            return instance;
+        }
     }
 }
