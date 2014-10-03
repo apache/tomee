@@ -1365,6 +1365,10 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             // first try exact matching without JtaManaged which is not mandatory actually (custom DS + JTADataSourceWrapperFactory)
             final String jtaWithJavaAndSlash = replaceJavaAndSlash(unit.getJtaDataSource());
             for (final String potentialName : asList(prefix + jtaWithJavaAndSlash, jtaWithJavaAndSlash)) {
+                if(potentialName == null) {
+                    // If unit.getJtaDataSource() is null, one of the potentialName is also null.
+                    continue;
+                }
                 final ResourceInfo jtaInfo = configFactory.getResourceInfo(potentialName);
                 if (jtaInfo != null) {
                     if (!"false".equalsIgnoreCase(jtaInfo.properties.getProperty("JtaManaged")) // don't test true since it can be missing
@@ -1379,6 +1383,10 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
             final String nonJtaWithJavaAndSlash = replaceJavaAndSlash(unit.getNonJtaDataSource());
             for (final String potentialName : asList(prefix + nonJtaWithJavaAndSlash, nonJtaWithJavaAndSlash)) {
+                if(potentialName == null) {
+                    // If unit.getNonJtaDataSource() is null, one of the potentialName is also null.
+                    continue;
+                }
                 final ResourceInfo info = configFactory.getResourceInfo(potentialName);
                 if (info != null) {
                     if (!"true".equalsIgnoreCase(info.properties.getProperty("JtaManaged"))
