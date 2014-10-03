@@ -1628,7 +1628,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                     required.clear();
                     required.put("JtaManaged", "false");
 
-                    for (final String key : Arrays.asList("JdbcDriver", "JdbcUrl")) {
+                    for (final String key : asList("JdbcDriver", "JdbcUrl")) {
                         if (jtaProperties.containsKey(key)) {
                             required.put(key, jtaProperties.get(key));
                         }
@@ -1690,7 +1690,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                     required.clear();
                     required.put("JtaManaged", "true");
 
-                    for (final String key : Arrays.asList("JdbcDriver", "JdbcUrl")) {
+                    for (final String key : asList("JdbcDriver", "JdbcUrl")) {
                         if (nonJtaProperties.containsKey(key)) {
                             required.put(key, nonJtaProperties.get(key));
                         }
