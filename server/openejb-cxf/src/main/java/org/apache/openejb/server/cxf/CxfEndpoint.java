@@ -214,11 +214,19 @@ public abstract class CxfEndpoint {
         }
 
         final Level level = SERVER_IMPL_LOGGER.getLevel();
-        SERVER_IMPL_LOGGER.setLevel(Level.SEVERE);
+        try {
+            SERVER_IMPL_LOGGER.setLevel(Level.SEVERE);
+        } catch (final UnsupportedOperationException uoe) {
+            // no-op
+        }
         try {
             server = svrFactory.create();
         } finally {
-            SERVER_IMPL_LOGGER.setLevel(level);
+            try {
+                SERVER_IMPL_LOGGER.setLevel(level);
+            } catch (final UnsupportedOperationException uoe) {
+                // no-op
+            }
         }
 
         init();
