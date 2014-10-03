@@ -44,7 +44,7 @@ public class Configuration {
     private String keyAlias;
     private String sslProtocol;
 
-    private boolean deployOpenEjbApp = false;
+    private boolean deployOpenEjbApp;
 
     /**
      * when needed temp file only (deployClasspathAsWebapp() for instance)
