@@ -41,7 +41,7 @@ public abstract class AbstractGenericJpaRepository<T extends AbstractDomainObjec
     {
         Class currentClass = getClass();
 
-        if (currentClass.getName().contains("$$"))
+        while (currentClass.getName().contains("$$"))
         { //we are in a proxy
             currentClass = currentClass.getSuperclass();
         }

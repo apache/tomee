@@ -18,10 +18,11 @@
  */
 package org.superbiz.deltaspike.repository.jpa;
 
-import org.apache.deltaspike.jpa.api.transaction.Transactional;
 import org.superbiz.deltaspike.domain.Feedback;
 import org.superbiz.deltaspike.repository.FeedbackRepository;
 import org.superbiz.deltaspike.repository.Repository;
+
+import javax.transaction.Transactional;
 
 @Transactional
 @Repository

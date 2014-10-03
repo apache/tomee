@@ -18,10 +18,9 @@
  */
 package org.superbiz.deltaspike.service;
 
-import org.apache.deltaspike.jpa.api.transaction.Transactional;
-
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Stereotype;
+import javax.transaction.Transactional;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;

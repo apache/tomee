@@ -23,25 +23,23 @@
 http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
              version="2.0">
 
-    <persistence-unit name="demoApplicationPU" transaction-type="RESOURCE_LOCAL">
-        <!-- needed by tomee 1.6.0+-->
-        <non-jta-data-source>demoDS</non-jta-data-source>
+  <persistence-unit name="demoApplicationPU">
+    <!-- @MappedSuperclass classes - see OPENJPA-1926 -->
+    <class>org.superbiz.deltaspike.domain.AbstractDomainObject</class>
 
-        <!-- config of (non-)jta-data-source isn't needed if there is just one -->
+    <!-- entities -->
+    <class>org.superbiz.deltaspike.domain.User</class>
+    <class>org.superbiz.deltaspike.domain.Feedback</class>
+    <class>org.superbiz.deltaspike.domain.Comment</class>
 
-        <!-- @MappedSuperclass classes - see OPENJPA-1926 -->
-        <class>org.superbiz.deltaspike.domain.AbstractDomainObject</class>
+    <exclude-unlisted-classes>true</exclude-unlisted-classes>
 
-        <!-- entities -->
-        <class>org.superbiz.deltaspike.domain.User</class>
-        <class>org.superbiz.deltaspike.domain.Feedback</class>
-        <class>org.superbiz.deltaspike.domain.Comment</class>
-
-        <properties>
-            <property name="openjpa.DataCache" value="true"/>
-            <property name="openjpa.DynamicEnhancementAgent" value="true"/>
-            <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
-            <property name="openjpa.jdbc.QuerySQLCache" value="true(EnableStatistics=true)"/>
-        </properties>
-    </persistence-unit>
+    <properties>
+      <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
+      <!--
+      <property name="openjpa.DataCache" value="true"/>
+      <property name="openjpa.jdbc.QuerySQLCache" value="true(EnableStatistics=true)"/>
+      -->
+    </properties>
+  </persistence-unit>
 </persistence>
