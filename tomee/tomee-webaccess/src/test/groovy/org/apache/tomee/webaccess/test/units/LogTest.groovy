@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-package org.apache.tomee.webaccess.test
+package org.apache.tomee.webaccess.test.units
 
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.CloseableHttpClient
