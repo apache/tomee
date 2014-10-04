@@ -755,6 +755,8 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
      */
     @SuppressWarnings("ReturnInsideFinallyBlock")
     public void ejbTimeout(final TimerData timerData) {
+        final Thread thread = Thread.currentThread();
+        final ClassLoader loader = thread.getContextClassLoader(); // container loader
         try {
             Timer timer = getTimer(timerData.getId());
             // quartz can be backed by some advanced config (jdbc for instance)
@@ -789,6 +791,10 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                     if (ejbTimeout == null) {
                         return;
                     }
+
+                    // if app registered Synchronization we need it for commit()/rollback()
+                    // so forcing it and not relying on container for it
+                    thread.setContextClassLoader(deployment.getClassLoader() != null ? deployment.getClassLoader() : loader);
 
                     SetAccessible.on(ejbTimeout);
                     container.invoke(deployment.getDeploymentID(),
@@ -846,6 +852,8 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
             log.warning("Error occured while calling ejbTimeout", e);
             throw e;
         } finally {
+            thread.setContextClassLoader(loader);
+
             // clean up the timer store
             //TODO shall we do all this via Quartz listener ???
             if (timerData.getType() == TimerType.SingleAction) {
