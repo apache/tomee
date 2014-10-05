@@ -19,6 +19,7 @@ package org.apache.tomee.embedded;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.JarLocation;
 import org.apache.openejb.util.NetworkUtil;
+import org.junit.Rule;
 import org.junit.Test;
 
 import javax.ejb.EJB;
@@ -45,9 +46,11 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Application;
 import java.io.IOException;
+import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -65,6 +68,9 @@ public class ClasspathAsWebappTest {
     @EJB
     private Task2 anEjb;
 
+    @Rule
+    public final ThreadStackRule debugWatcher = new ThreadStackRule();
+
     @Test
     public void run() throws MalformedURLException {
         MyInitializer.found = null;
@@ -78,6 +84,13 @@ public class ClasspathAsWebappTest {
 
             // Servlet (initializer, servlet)
             assertNotNull(MyInitializer.found);
+            final Iterator<Class<?>> it = MyInitializer.found.iterator();
+            while (it.hasNext()) { // ThreadStackRule defines one for instance
+                final Class<?> next = it.next();
+                if (next.getEnclosingClass() != null && !Modifier.isStatic(next.getModifiers())) {
+                    it.remove();
+                }
+            }
             assertEquals(1, MyInitializer.found.size());
             assertEquals(Task1.class, MyInitializer.found.iterator().next());
             try {
