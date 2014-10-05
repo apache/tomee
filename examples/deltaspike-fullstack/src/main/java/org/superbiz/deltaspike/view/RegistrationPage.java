@@ -26,7 +26,7 @@ import org.apache.myfaces.extensions.validator.crossval.annotation.Equals;
 import org.superbiz.deltaspike.WebappMessageBundle;
 import org.superbiz.deltaspike.domain.User;
 import org.superbiz.deltaspike.domain.validation.Full;
-import org.superbiz.deltaspike.service.UserService;
+import org.superbiz.deltaspike.repository.UserRepository;
 import org.superbiz.deltaspike.view.config.Pages;
 
 import javax.inject.Inject;
@@ -40,7 +40,7 @@ public class RegistrationPage implements Serializable
     private static final long serialVersionUID = 3844502441069448490L;
 
     @Inject
-    private UserService userService;
+    private UserRepository userService;
 
     @Inject
     private GroupedConversation conversation;
@@ -70,7 +70,7 @@ public class RegistrationPage implements Serializable
 
     public Class<? extends Pages> login()
     {
-        User user = this.userService.loadUser(this.user.getUserName());
+        User user = this.userService.findByUserName(this.user.getUserName());
         if (user != null && user.getPassword().equals(this.user.getPassword()))
         {
             this.webappMessages.addInfo().msgLoginSuccessful();

@@ -49,13 +49,13 @@ public class FeedbackPage implements Serializable
     @PostConstruct
     protected void init()
     {
-        this.feedback = this.feedbackRepository.createNewEntity();
+        this.feedback = new Feedback();
     }
 
     @PreRenderView
     public void reloadFeedbackList()
     {
-        this.feedbackList = this.feedbackRepository.loadAll();
+        this.feedbackList = this.feedbackRepository.findAll();
     }
 
     public void save()

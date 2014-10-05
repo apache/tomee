@@ -18,9 +18,11 @@
  */
 package org.superbiz.deltaspike.repository;
 
+import org.apache.deltaspike.data.api.EntityRepository;
+import org.apache.deltaspike.data.api.Repository;
 import org.superbiz.deltaspike.domain.User;
 
-public interface UserRepository extends GenericRepository<User>
-{
-    User loadUser(String userName);
+@Repository
+public interface UserRepository extends EntityRepository<User, Long> {
+    User findByUserName(String userName);
 }

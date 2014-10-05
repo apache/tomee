@@ -18,8 +18,10 @@
  */
 package org.superbiz.deltaspike.repository;
 
+import org.apache.deltaspike.data.api.EntityRepository;
+import org.apache.deltaspike.data.api.Repository;
 import org.superbiz.deltaspike.domain.Feedback;
 
-public interface FeedbackRepository extends GenericRepository<Feedback>
-{
+@Repository
+public interface FeedbackRepository extends EntityRepository<Feedback, Long> {
 }
