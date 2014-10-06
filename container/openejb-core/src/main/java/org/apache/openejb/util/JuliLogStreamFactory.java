@@ -161,13 +161,15 @@ public class JuliLogStreamFactory implements LogStreamFactory {
         public String getProperty(final String name) {
             final String parentValue = super.getProperty(name);
 
-            if (SystemInstance.get().getProperties().containsKey(name)) {
-                return SystemInstance.get().getProperty(name);
-            }
+            if (SystemInstance.isInitialized()) {
+                if (SystemInstance.get().getProperties().containsKey(name)) {
+                    return SystemInstance.get().getProperty(name);
+                }
 
-            final String propertyKeyValue = "logging" + reverseProperty(name);
-            if (SystemInstance.get().getProperties().containsKey(propertyKeyValue)) {
-                return SystemInstance.get().getProperty(propertyKeyValue);
+                final String propertyKeyValue = "logging" + reverseProperty(name);
+                if (SystemInstance.get().getProperties().containsKey(propertyKeyValue)) {
+                    return SystemInstance.get().getProperty(propertyKeyValue);
+                }
             }
 
             // if it is one of ours loggers and no value is defined let set our nice logging style
@@ -182,17 +184,18 @@ public class JuliLogStreamFactory implements LogStreamFactory {
             }
             return parentValue;
         }
+    }
 
-        private static String reverseProperty(final String name) {
-            if (name.contains(".") && !name.endsWith(".")) {
-                final int idx = name.lastIndexOf('.');
-                return name.substring(idx) + "." + name.substring(0, idx);
-            }
-            return name;
+    private static String reverseProperty(final String name) {
+        if (name.contains(".") && !name.endsWith(".")) {
+            final int idx = name.lastIndexOf('.');
+            return name.substring(idx) + "." + name.substring(0, idx);
         }
+        return name;
+    }
 
-        private static boolean isOverridableLogger(final String name) {
-            return useOpenEJBHandler
+    private static boolean isOverridableLogger(final String name) {
+        return useOpenEJBHandler
                 || name.toLowerCase().contains("openejb")
                 || name.toLowerCase().contains("transaction")
                 || name.toLowerCase().contains("cxf")
@@ -202,7 +205,6 @@ public class JuliLogStreamFactory implements LogStreamFactory {
                 || name.startsWith("net.sf.ehcache.")
                 || name.startsWith("org.quartz.")
                 || name.startsWith("org.hibernate.");
-        }
     }
 
     public static class OpenEJBSimpleLayoutHandler extends ConsoleHandler {
