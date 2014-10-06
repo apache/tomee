@@ -85,21 +85,35 @@ public class Logger {
             factoryName = "org.apache.openejb.util.PaxLogStreamFactory";
         }
 
-        if (factoryName != null) {
+        // we can be called before having SystemInstance so we need this hack to set some specific environment
+        // without changing LogStreamFactory contract
+        final String specialKey = "openejb.jul.forceReload";
+        final String original = System.getProperty(specialKey);
+        System.setProperty(specialKey, config.getProperty(specialKey, SystemInstance.isInitialized() ?  SystemInstance.get().getOptions().get(specialKey, (String) null) : null));
 
-            logStreamFactory = createFactory(factoryName);
+        try {
+            if (factoryName != null) {
+
+                logStreamFactory = createFactory(factoryName);
+            }
+
+            if (isLog4jImplied()) {
+                logStreamFactory = createFactory("org.apache.openejb.util.Log4jLogStreamFactory");
+            }
+
+            //Fall back -> JUL
+            if (logStreamFactory == null) {
+                logStreamFactory = new JuliLogStreamFactory();
+            }
+
+            checkForIgnoredLog4jConfig();
+        } finally {
+            if (original == null) {
+                System.clearProperty(specialKey);
+            } else {
+                System.setProperty(specialKey, original);
+            }
         }
-
-        if (isLog4jImplied()) {
-            logStreamFactory = createFactory("org.apache.openejb.util.Log4jLogStreamFactory");
-        }
-
-        //Fall back -> JUL
-        if (logStreamFactory == null) {
-            logStreamFactory = new JuliLogStreamFactory();
-        }
-
-        checkForIgnoredLog4jConfig();
     }
 
     private static void checkForIgnoredLog4jConfig() {
