@@ -18,6 +18,7 @@
 
 package org.apache.tomee.webaccess.test.units
 
+import groovy.json.JsonSlurper
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.CloseableHttpClient
 import org.apache.tomee.webaccess.rest.ApplicationConfig
@@ -59,8 +60,12 @@ class LogTest {
     @Test
     void test() throws Exception {
         Utilities.withClient(deploymentURL, { CloseableHttpClient client ->
-            Assert.assertEquals('{"files":["catalina.2014-02-07.log","localhost_access_log.2014-02-07.txt"]}',
+            def json = new JsonSlurper().parseText(
                     Utilities.getBody(client.execute(new HttpGet("${deploymentURL.toURI()}rest/log/list-files")))
+            )
+            Assert.assertEquals(
+                    new JsonSlurper().parseText('{"files":["catalina.2014-02-07.log","localhost_access_log.2014-02-07.txt"]}'),
+                    json
             )
             Utilities.getBody(client.execute(new HttpGet("${deploymentURL.toURI()}rest/keep-alive")))
         })
