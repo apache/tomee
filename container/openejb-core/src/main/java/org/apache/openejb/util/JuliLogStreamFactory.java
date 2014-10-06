@@ -53,7 +53,6 @@ public class JuliLogStreamFactory implements LogStreamFactory {
         final Options options = SystemInstance.get().getOptions();
         final boolean forceLogs = options.get("openejb.jul.forceReload", false);
         if ((!tomee || embedded || forceLogs) && System.getProperty("java.util.logging.manager") == null) {
-            System.setProperty("java.util.logging.manager", OpenEJBLogManager.class.getName());
             if (options.get(OPENEJB_LOG_COLOR_PROP, false) && isNotIDE()) {
                 consoleHandlerClazz = org.apache.openejb.log.ConsoleColorHandler.class.getName();
             } else {
@@ -93,6 +92,8 @@ public class JuliLogStreamFactory implements LogStreamFactory {
                     // no-op
                 }
             }
+            // do it last since otherwise it can lock
+            System.setProperty("java.util.logging.manager", OpenEJBLogManager.class.getName());
         }
 
         try {
