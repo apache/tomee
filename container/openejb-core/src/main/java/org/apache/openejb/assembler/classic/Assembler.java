@@ -2811,7 +2811,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     transformers.add(classFileTransformer);
                 }
             } else if (!logged.getAndSet(true)) {
-                SystemInstance.get().getComponent(Assembler.class).logger.warning("assembler.noAgent");
+                SystemInstance.get().getComponent(Assembler.class).logger.info("assembler.noAgent");
             }
         }
 
@@ -2825,7 +2825,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                         instrumentation.removeTransformer(transformer);
                     }
                 } else {
-                    SystemInstance.get().getComponent(Assembler.class).logger.error("assembler.noAgent");
+                    SystemInstance.get().getComponent(Assembler.class).logger.info("assembler.noAgent");
                 }
             }
         }
