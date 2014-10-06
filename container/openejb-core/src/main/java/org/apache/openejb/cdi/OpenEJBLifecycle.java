@@ -169,9 +169,6 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
 
             //Deploy the beans
             try {
-                //Load Extensions
-                webBeansContext.getExtensionLoader().loadExtensionServices(Thread.currentThread().getContextClassLoader()); // init in OpenEJBLifecycle
-
                 //Initialize contexts
                 this.contextsService.init(startupObject);
 

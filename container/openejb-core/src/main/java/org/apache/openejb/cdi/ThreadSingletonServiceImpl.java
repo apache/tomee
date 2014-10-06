@@ -121,9 +121,9 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         services.put(ELAdaptor.class, new CustomELAdapter(appContext));
         services.put(ScannerService.class, new CdiScanner());
         final LoaderService loaderService = SystemInstance.get().getComponent(LoaderService.class);
-        if (loaderService == null) {
+        if (loaderService == null && !properties.containsKey(LoaderService.class.getName())) {
             services.put(LoaderService.class, new OptimizedLoaderService());
-        } else {
+        } else if (loaderService != null) {
             services.put(LoaderService.class, loaderService);
         }
 
