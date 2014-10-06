@@ -43,10 +43,18 @@ public final class ValidatorUtil {
 
     public static ValidatorFactory validatorFactory() {
         try {
-            return (ValidatorFactory) new InitialContext().lookup("java:comp/ValidatorFactory");
+            return lookupFactory();
         } catch (final NamingException e) {
-            return proxy(ValidatorFactory.class, "java:comp/ValidatorFactory");
+            return tryJndiLaterFactory();
         }
+    }
+
+    public static ValidatorFactory lookupFactory() throws NamingException {
+        return (ValidatorFactory) new InitialContext().lookup("java:comp/ValidatorFactory");
+    }
+
+    public static ValidatorFactory tryJndiLaterFactory() {
+        return proxy(ValidatorFactory.class, "java:comp/ValidatorFactory");
     }
 
     public static Validator validator() {
@@ -113,7 +121,9 @@ public final class ValidatorUtil {
                                     }
                                 }
                             }
-                            break;
+                            if (ClassLoader.getSystemClassLoader() != appContextClassLoader) {
+                                break;
+                            } // else we surely have a single AppContext so let's try WebContext
                         }
                         for (final WebContext web : appContext.getWebContexts()) {
                             final ClassLoader webClassLoader = web.getClassLoader();

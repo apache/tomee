@@ -36,16 +36,13 @@ import org.apache.openejb.Injection;
 import org.apache.openejb.JndiConstants;
 import org.apache.openejb.MethodContext;
 import org.apache.openejb.NoSuchApplicationException;
-import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.UndeployException;
-import org.apache.openejb.api.DestroyableResource;
 import org.apache.openejb.assembler.classic.event.AssemblerAfterApplicationCreated;
 import org.apache.openejb.assembler.classic.event.AssemblerBeforeApplicationDestroyed;
 import org.apache.openejb.assembler.classic.event.AssemblerCreated;
 import org.apache.openejb.assembler.classic.event.AssemblerDestroyed;
-import org.apache.openejb.assembler.classic.event.BeanContextsInitializedEvent;
 import org.apache.openejb.assembler.classic.event.ContainerSystemPostCreate;
 import org.apache.openejb.assembler.classic.event.ContainerSystemPreDestroy;
 import org.apache.openejb.assembler.monitoring.JMXContainer;
@@ -95,7 +92,6 @@ import org.apache.openejb.jpa.integration.MakeTxLookup;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.JarLocation;
 import org.apache.openejb.loader.Options;
-import org.apache.openejb.loader.ProvisioningUtil;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.monitoring.DynamicMBeanWrapper;
 import org.apache.openejb.monitoring.LocalMBeanServer;
@@ -227,7 +223,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     public static final String TIMER_STORE_CLASS = "timerStore.class";
     private static final ReentrantLock lock = new ReentrantLock(true);
     public static final String OPENEJB_TIMERS_ON = "openejb.timers.on";
-
+    public static final Class<?>[] VALIDATOR_FACTORY_INTERFACES = new Class<?>[]{ValidatorFactory.class};
+    public static final Class<?>[] VALIDATOR_INTERFACES = new Class<?>[]{Validator.class};
     private final boolean skipLoaderIfPossible;
 
     Messages messages = new Messages(Assembler.class.getPackage().getName());
@@ -325,8 +322,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             final Collection<URL> urls = NewLoaderLogic.applyBuiltinExcludes(new UrlSet(Assembler.class.getClassLoader()).excludeJvm()).getUrls();
             Extensions.installExtensions(new ResourceFinder("META-INF", urls.toArray(new URL[urls.size()])));
             return;
-        } catch (final MalformedURLException e) {
-            // no-op
         } catch (final IOException e) {
             // no-op
         }
@@ -475,8 +470,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
      */
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     public void buildContainerSystem(final OpenEjbConfiguration configInfo) throws Exception {
-        if (SystemInstance.get().getOptions().get(OPENEJB_JPA_DEPLOY_TIME_ENHANCEMENT_PROP, false)) {
-            SystemInstance.get().addObserver(new DeployTimeEnhancer());
+        final SystemInstance systemInstance = SystemInstance.get();
+        if (systemInstance.getOptions().get(OPENEJB_JPA_DEPLOY_TIME_ENHANCEMENT_PROP, false)) {
+            systemInstance.addObserver(new DeployTimeEnhancer());
         }
 
         for (final ServiceInfo serviceInfo : configInfo.facilities.services) {
@@ -517,14 +513,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             } catch (final Throwable e) {
                 logger.error("appNotDeployed", e, appInfo.path);
 
-                final DeploymentExceptionManager exceptionManager = SystemInstance.get().getComponent(DeploymentExceptionManager.class);
+                final DeploymentExceptionManager exceptionManager = systemInstance.getComponent(DeploymentExceptionManager.class);
                 if (exceptionManager != null && e instanceof Exception) {
                     exceptionManager.saveDeploymentException(appInfo, (Exception) e);
                 }
             }
         }
 
-        SystemInstance.get().fireEvent(new ContainerSystemPostCreate());
+        systemInstance.fireEvent(new ContainerSystemPostCreate());
     }
 
     private void createJavaGlobal() {
@@ -533,10 +529,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         } catch (final NamingException e) {
             // no-op
         }
-    }
-
-    public boolean isDeployed(final String path) {
-        return deployedApplications.containsKey(ProvisioningUtil.realLocation(path));
     }
 
     public Collection<AppInfo> getDeployedApplications() {
@@ -623,7 +615,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         return createApplication(appInfo, classLoader, true);
     }
 
-    public AppContext createApplication(final AppInfo appInfo, ClassLoader classLoader, final boolean start) throws OpenEJBException, IOException, NamingException {
+    private AppContext createApplication(final AppInfo appInfo, ClassLoader classLoader, final boolean start) throws OpenEJBException, IOException, NamingException {
         // The path is used in the UrlCache, command line deployer, JNDI name templates, tomcat integration and a few other places
         if (appInfo.appId == null) {
             throw new IllegalArgumentException("AppInfo.appId cannot be null");
@@ -635,13 +627,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         Extensions.addExtensions(classLoader, appInfo.eventClassesNeedingAppClassloader);
 
         logger.info("createApplication.start", appInfo.path);
-
-        //        try {
-        //            Thread.sleep(5000);
-        //        } catch (InterruptedException e) {
-        //            e.printStackTrace();
-        //            Thread.interrupted();
-        //        }
 
         // To start out, ensure we don't already have any beans deployed with duplicate IDs.  This
         // is a conflict we can't handle.
@@ -698,23 +683,41 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             final Context containerSystemContext = containerSystem.getJNDIContext();
 
-            if (!SystemInstance.get().hasProperty("openejb.geronimo")) {
+            final Map<String, LazyValidatorFactory> lazyValidatorFactories = new HashMap<String, LazyValidatorFactory>();
+            final Map<String, LazyValidator> lazyValidators = new HashMap<String, LazyValidator>();
+            final boolean isGeronimo = SystemInstance.get().hasProperty("openejb.geronimo");
+
+            // try to not create N times the same validator for a single app
+            final Map<ComparableValidationConfig, ValidatorFactory> validatorFactoriesByConfig = new HashMap<ComparableValidationConfig, ValidatorFactory>();
+            if (!isGeronimo) {
                 // Bean Validation
                 // ValidatorFactory needs to be put in the map sent to the entity manager factory
                 // so it has to be constructed before
                 final List<CommonInfoObject> vfs = listCommonInfoObjectsForAppInfo(appInfo);
-
                 final Map<String, ValidatorFactory> validatorFactories = new HashMap<String, ValidatorFactory>();
+
                 for (final CommonInfoObject info : vfs) {
-                    ValidatorFactory factory = null;
-                    try {
-                        factory = ValidatorBuilder.buildFactory(classLoader, info.validationInfo);
-                    } catch (final ValidationException ve) {
-                        logger.warning("can't build the validation factory for module " + info.uniqueId, ve);
+                    final ComparableValidationConfig conf = new ComparableValidationConfig(
+                            info.validationInfo.providerClassName, info.validationInfo.messageInterpolatorClass,
+                            info.validationInfo.traversableResolverClass, info.validationInfo.constraintFactoryClass,
+                            info.validationInfo.propertyTypes, info.validationInfo.constraintMappings
+                    );
+                    ValidatorFactory factory = validatorFactoriesByConfig.get(conf);
+                    if (factory == null) {
+                        try { // lazy cause of CDI :(
+                            final LazyValidatorFactory handler = new LazyValidatorFactory(classLoader, info.validationInfo);
+                            factory = (ValidatorFactory) Proxy.newProxyInstance(
+                                    appContext.getClassLoader(), VALIDATOR_FACTORY_INTERFACES, handler);
+                            lazyValidatorFactories.put(info.uniqueId, handler);
+                        } catch (final ValidationException ve) {
+                            logger.warning("can't build the validation factory for module " + info.uniqueId, ve);
+                            continue;
+                        }
+                        validatorFactoriesByConfig.put(conf, factory);
+                    } else {
+                        lazyValidatorFactories.put(info.uniqueId, LazyValidatorFactory.class.cast(Proxy.getInvocationHandler(factory)));
                     }
-                    if (factory != null) {
-                        validatorFactories.put(info.uniqueId, factory);
-                    }
+                    validatorFactories.put(info.uniqueId, factory);
                 }
 
                 // validators bindings
@@ -726,9 +729,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
                         Validator validator;
                         try {
-                            validator = factory.usingContext().getValidator();
+                            final LazyValidator lazyValidator = new LazyValidator(factory);
+                            validator = (Validator) Proxy.newProxyInstance(appContext.getClassLoader(), VALIDATOR_INTERFACES, lazyValidator);
+                            lazyValidators.put(id, lazyValidator);
                         } catch (final Exception e) {
-                            validator = (Validator) Proxy.newProxyInstance(appContext.getClassLoader(), new Class<?>[]{Validator.class}, new LazyValidator(factory));
+                            logger.error(e.getMessage(), e);
+                            continue;
                         }
 
                         containerSystemContext.bind(VALIDATOR_NAMING_CONTEXT + id, validator);
@@ -738,6 +744,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                         throw new OpenEJBException(e);
                     }
                 }
+
+                validatorFactories.clear();
             }
 
             // JPA - Persistence Units MUST be processed first since they will add ClassFileTransformers
@@ -747,7 +755,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             for (final PersistenceUnitInfo info : appInfo.persistenceUnits) {
                 final ReloadableEntityManagerFactory factory;
                 try {
-                    factory = persistenceBuilder.createEntityManagerFactory(info, classLoader);
+                    factory = persistenceBuilder.createEntityManagerFactory(info, classLoader, validatorFactoriesByConfig);
                     containerSystem.getJNDIContext().bind(PERSISTENCE_UNIT_NAMING_CONTEXT + info.id, factory);
                     units.put(info.name, PERSISTENCE_UNIT_NAMING_CONTEXT + info.id);
                 } catch (final NameAlreadyBoundException e) {
@@ -800,9 +808,31 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 appContext.getBindings().put("app/BeanManager", appContext.getBeanManager());
             }
 
-            // before starting everything, give the user the opportunity to hack on the AppContext/BeanContext
-            final SystemInstance systemInstance = SystemInstance.get();
-            systemInstance.fireEvent(new BeanContextsInitializedEvent(appInfo, appContext, allDeployments));
+            // now cdi is started we can try to bind real validator factory and validator
+            if (!isGeronimo) {
+                for (final Entry<String, LazyValidator> lazyValidator : lazyValidators.entrySet()) {
+                    final String id = lazyValidator.getKey();
+                    final ValidatorFactory factory = lazyValidatorFactories.get(lazyValidator.getKey()).getFactory();
+                    try {
+                        final String factoryName = VALIDATOR_FACTORY_NAMING_CONTEXT + id;
+                        containerSystemContext.unbind(factoryName);
+                        containerSystemContext.bind(factoryName, factory);
+
+                        final String validatoryName = VALIDATOR_NAMING_CONTEXT + id;
+                        try { // do it after factory cause of TCKs which expects validator to be created later
+                            final Validator val = lazyValidator.getValue().getValidator();
+                            containerSystemContext.unbind(validatoryName);
+                            containerSystemContext.bind(validatoryName, val);
+                        } catch (final Exception e) {
+                            logger.error(e.getMessage(), e);
+                        }
+                    } catch (final NameAlreadyBoundException e) {
+                        throw new OpenEJBException("ValidatorFactory already exists for module " + id, e);
+                    } catch (final Exception e) {
+                        throw new OpenEJBException(e);
+                    }
+                }
+            }
 
             startEjbs(start, allDeployments);
 
@@ -849,6 +879,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
 
             // WebApp
+            final SystemInstance systemInstance = SystemInstance.get();
 
             final WebAppBuilder webAppBuilder = systemInstance.getComponent(WebAppBuilder.class);
             if (webAppBuilder != null) {
@@ -1245,7 +1276,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }else{
             if(null == appContext.getWebBeansContext()){
                 appContext.setWebBeansContext(webBeansContext);
-            }
+        }
 
             return;
         }
@@ -1272,9 +1303,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             appContext.setCdiEnabled(false);
             OpenEJBTransactionService.class.cast(services.get(TransactionService.class)).setWebBeansContext(webBeansContext);
 
-            appContext.set(WebBeansContext.class, webBeansContext);
-            appContext.setWebBeansContext(webBeansContext);
-        }
+        appContext.set(WebBeansContext.class, webBeansContext);
+        appContext.setWebBeansContext(webBeansContext);
+    }
     }
 
     private TransactionPolicyFactory createTransactionPolicyFactory(final EjbJarInfo ejbJar, final ClassLoader classLoader) {
@@ -1493,12 +1524,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
             } catch (final Exception e) {
                 logger.debug("Not processing resource on destroy: " + className, e);
-            }
-        } else if (DestroyableResource.class.isInstance(object)) {
-            try {
-                DestroyableResource.class.cast(object).destroyResource();
-            } catch (final RuntimeException e) {
-                logger.error(e.getMessage(), e);
             }
         } else if (logger.isDebugEnabled() && !DataSource.class.isInstance(object)) {
             logger.debug("Not processing resource on destroy: " + className);
@@ -1917,11 +1942,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         jars.addAll(Arrays.asList(SystemInstance.get().getComponent(ClassLoaderEnricher.class).applicationEnrichment()));
 
         // Create the class loader
-        final ParentClassLoaderFinder parentFinder = SystemInstance.get().getComponent(ParentClassLoaderFinder.class);
-        ClassLoader parent = OpenEJB.class.getClassLoader();
-        if (parentFinder != null) {
-            parent = parentFinder.getParentClassLoader(parent);
-        }
+        final ClassLoader parent = ParentClassLoaderFinder.Helper.get();
 
         final String prefix;
         if (appInfo.webAppAlone) {
@@ -1943,7 +1964,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         // try to get the app BM from the AppClassLoader having stored it in a map).
         // since we don't really need to create a classloader here when starting from classpath just let skip this step
         if (skipLoaderIfPossible) { // TODO: maybe use a boolean to know if all urls comes from the classpath to avoid this validation
-            final Collection<File> urls = new ArrayList<File>();
+            if ("classpath.ear".equals(appInfo.appId)) {
+                return parent;
+            }
+
+            final Collection<File> urls = new HashSet<File>();
             for (final URL url : ClassLoaders.findUrls(parent)) { // need to convert it to file since urls can be file:/xxx or jar:file:///xxx
                 try {
                     urls.add(URLs.toFile(url).getCanonicalFile());
@@ -1959,23 +1984,37 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 try {
                     if (!urls.contains(URLs.toFile(url).getCanonicalFile())) {
                         allIsIntheClasspath = false;
+                        if (logger.isDebugEnabled()) {
+                            logger.debug(url.toExternalForm() + " (" + URLs.toFile(url)
+                                + ") is not in the classloader so we'll create a dedicated classloader for this app");
+                        }
                         break;
                     }
                 } catch (final Exception ignored) {
                     allIsIntheClasspath = false;
+                    if (logger.isDebugEnabled()) {
+                        logger.debug(url.toExternalForm() + " (" + URLs.toFile(url) + ") is not in the classloader", ignored);
+                    }
                     break;
                 }
             }
 
             if (allIsIntheClasspath) {
+                logger.info("Not creating another application classloader for " + appInfo.appId);
                 return parent;
             } else if (logger.isDebugEnabled()) {
                 logger.debug("Logging all urls from the app since we don't skip the app classloader creation:");
                 for (final URL url : filtered) {
                     logger.debug(" -> " + url.toExternalForm());
                 }
+                logger.debug("Logging all urls from the classloader since we don't skip the app classloader creation:");
+                for (final File url : urls) {
+                    logger.debug(" -> " + url.getAbsolutePath());
+                }
             }
         }
+
+        logger.info("Creating dedicated application classloader for " + appInfo.appId);
 
         if (!appInfo.delegateFirst) {
             return ClassLoaderUtil.createClassLoader(appInfo.path, filtered, parent);
@@ -2048,7 +2087,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 containerObjectNames.add(objectName);
             } catch (final Exception e) {
                 // no-op
-            } catch (final NoClassDefFoundError ncdfe) { // OSGi
+            } catch (final NoClassDefFoundError ncdfe) {
                 // no-op
             }
         }

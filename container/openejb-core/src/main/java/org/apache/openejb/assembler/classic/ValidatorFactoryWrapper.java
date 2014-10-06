@@ -21,6 +21,7 @@ import org.apache.openejb.bval.ValidatorUtil;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
+import javax.naming.NamingException;
 import javax.validation.ConstraintValidatorFactory;
 import javax.validation.MessageInterpolator;
 import javax.validation.TraversableResolver;
@@ -28,12 +29,26 @@ import javax.validation.Validator;
 import javax.validation.ValidatorContext;
 import javax.validation.ValidatorFactory;
 import java.io.Serializable;
+import java.util.Map;
 
 public class ValidatorFactoryWrapper implements ValidatorFactory, Serializable {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, ValidatorFactoryWrapper.class);
 
-    private static ValidatorFactory factory() {
-        return ValidatorUtil.validatorFactory();
+    private final Map<ComparableValidationConfig, ValidatorFactory> fallbackValidators;
+
+    private ValidatorFactory factory() {
+        try {
+            return ValidatorUtil.lookupFactory();
+        } catch (final NamingException e) { // in absolute we should sort them to get the closest one of the persistence-unit?
+            if (!fallbackValidators.isEmpty()) {
+                return fallbackValidators.values().iterator().next();
+            }
+            return ValidatorUtil.tryJndiLaterFactory();
+        }
+    }
+
+    public ValidatorFactoryWrapper(final Map<ComparableValidationConfig, ValidatorFactory> validators) {
+        fallbackValidators = validators;
     }
 
     @Override

@@ -32,6 +32,8 @@ import javax.persistence.SharedCacheMode;
 import javax.persistence.ValidationMode;
 import javax.persistence.spi.PersistenceUnitTransactionType;
 import javax.sql.DataSource;
+import javax.validation.ValidatorFactory;
+import java.util.Map;
 
 public class PersistenceBuilder {
 
@@ -46,7 +48,8 @@ public class PersistenceBuilder {
         this.persistenceClassLoaderHandler = persistenceClassLoaderHandler;
     }
 
-    public ReloadableEntityManagerFactory createEntityManagerFactory(final PersistenceUnitInfo info, final ClassLoader classLoader) throws Exception {
+    public ReloadableEntityManagerFactory createEntityManagerFactory(final PersistenceUnitInfo info, final ClassLoader classLoader,
+                                                                     final Map<ComparableValidationConfig, ValidatorFactory> validators) throws Exception {
         final PersistenceUnitInfoImpl unitInfo = new PersistenceUnitInfoImpl(persistenceClassLoaderHandler);
 
         // Persistence Unit Id
@@ -147,7 +150,7 @@ public class PersistenceBuilder {
         final String persistenceProviderClassName = unitInfo.getPersistenceProviderClassName();
         unitInfo.setPersistenceProviderClassName(persistenceProviderClassName);
 
-        final EntityManagerFactoryCallable callable = new EntityManagerFactoryCallable(persistenceProviderClassName, unitInfo, classLoader);
+        final EntityManagerFactoryCallable callable = new EntityManagerFactoryCallable(persistenceProviderClassName, unitInfo, classLoader, validators);
         return new ReloadableEntityManagerFactory(classLoader, callable, unitInfo);
     }
 

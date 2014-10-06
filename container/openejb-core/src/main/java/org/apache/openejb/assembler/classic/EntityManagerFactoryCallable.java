@@ -23,6 +23,7 @@ import org.apache.openejb.persistence.PersistenceUnitInfoImpl;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.ValidationMode;
 import javax.persistence.spi.PersistenceProvider;
+import javax.validation.ValidatorFactory;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -33,12 +34,15 @@ public class EntityManagerFactoryCallable implements Callable<EntityManagerFacto
 
     private final String persistenceProviderClassName;
     private final PersistenceUnitInfoImpl unitInfo;
+    private final Map<ComparableValidationConfig, ValidatorFactory> potentialValidators;
     private ClassLoader appClassLoader;
 
-    public EntityManagerFactoryCallable(final String persistenceProviderClassName, final PersistenceUnitInfoImpl unitInfo, final ClassLoader cl) {
+    public EntityManagerFactoryCallable(final String persistenceProviderClassName, final PersistenceUnitInfoImpl unitInfo,
+                                        final ClassLoader cl, final Map<ComparableValidationConfig, ValidatorFactory> validators) {
         this.persistenceProviderClassName = persistenceProviderClassName;
         this.unitInfo = unitInfo;
         this.appClassLoader = cl;
+        this.potentialValidators = validators;
     }
 
     @Override
@@ -52,7 +56,7 @@ public class EntityManagerFactoryCallable implements Callable<EntityManagerFacto
             // Create entity manager factories with the validator factory
             final Map<String, Object> properties = new HashMap<String, Object>();
             if (!ValidationMode.NONE.equals(unitInfo.getValidationMode())) {
-                properties.put("javax.persistence.validator.ValidatorFactory", new ValidatorFactoryWrapper());
+                properties.put("javax.persistence.validation.factory", new ValidatorFactoryWrapper(potentialValidators));
             }
 
             customizeProperties(properties);
@@ -60,8 +64,8 @@ public class EntityManagerFactoryCallable implements Callable<EntityManagerFacto
             final EntityManagerFactory emf = persistenceProvider.createContainerEntityManagerFactory(unitInfo, properties);
 
             if (unitInfo.getProperties() != null
-                    && "true".equalsIgnoreCase(unitInfo.getProperties().getProperty(OPENEJB_JPA_INIT_ENTITYMANAGER))
-                    || SystemInstance.get().getOptions().get(OPENEJB_JPA_INIT_ENTITYMANAGER, false)) {
+                && "true".equalsIgnoreCase(unitInfo.getProperties().getProperty(OPENEJB_JPA_INIT_ENTITYMANAGER))
+                || SystemInstance.get().getOptions().get(OPENEJB_JPA_INIT_ENTITYMANAGER, false)) {
                 emf.createEntityManager().close();
             }
 
@@ -79,6 +83,7 @@ public class EntityManagerFactoryCallable implements Callable<EntityManagerFacto
         }
     }
 
+    // properties that have to be passed to properties parameters and not unit properties
     private void customizeProperties(final Map<String, Object> properties) {
         final String pool = SystemInstance.get().getProperty(OPENJPA_ENTITY_MANAGER_FACTORY_POOL);
         if (pool != null) {
