@@ -286,7 +286,12 @@ public class Container implements AutoCloseable {
             setup(configuration);
         }
 
-        Logger.configure();
+        final Properties props = configuration.getProperties();
+        if (props != null) {
+            Logger.configure(configuration.getProperties());
+        } else {
+            Logger.configure();
+        }
 
         final File conf = new File(base, "conf");
         final File webapps = new File(base, "webapps");
@@ -307,7 +312,7 @@ public class Container implements AutoCloseable {
         } else {
             copyFileTo(conf, "server.xml");
         }
-        final Properties props = configuration.getProperties();
+
         if (props != null && !props.isEmpty()) {
             final FileWriter systemProperties = new FileWriter(new File(conf, "system.properties"));
             try {

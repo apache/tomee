@@ -33,11 +33,8 @@ import java.util.ResourceBundle;
 public class Logger {
     private static final String SUFFIX = ".Messages";
     private static final String OPENEJB = "org.apache.openejb";
+    private static final Properties EMPTY_PROPS = new Properties();
     private static LogStreamFactory logStreamFactory;
-
-    static {
-        configure();
-    }
 
     // don't return the instance since it needs to stay private but export which one is used to allow integration with other libs (as tomcat ;))
     @SuppressWarnings("UnusedDeclaration")
@@ -49,12 +46,19 @@ public class Logger {
     }
 
     public static synchronized void configure() {
+        configure(EMPTY_PROPS);
+    }
+
+    public static synchronized void configure(final Properties config) {
         if (logStreamFactory != null) {
             return;
         }
 
         //See if user factory has been specified
-        String factoryName = SystemInstance.get().getOptions().get("openejb.log.factory", JuliLogStreamFactory.class.getName());
+        final String julFqn = JuliLogStreamFactory.class.getName();
+        String factoryName = config.getProperty("openejb.log.factory",
+                SystemInstance.isInitialized() ?  SystemInstance.get().getOptions().get("openejb.log.factory", julFqn) : julFqn);
+
         if ("jul".equalsIgnoreCase(factoryName) || "juli".equalsIgnoreCase(factoryName)) {
             factoryName = JuliLogStreamFactory.class.getName();
         } else if ("slf4j".equalsIgnoreCase(factoryName)) {
@@ -251,6 +255,8 @@ public class Logger {
      * @return Logger
      */
     public static Logger getInstance(final LogCategory category, final String baseName) {
+        configure();
+
         try {
             return loggerCache.compute(new Object[]{category, baseName});
         } catch (final InterruptedException e) {

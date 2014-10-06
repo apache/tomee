@@ -198,7 +198,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
                 //Deploy bean from XML. Also configures deployments, interceptors, decorators.
                 deployer.deploy(scannerService);
             } catch (final Exception e1) {
-                Assembler.logger.error("CDI Beans module deployment failed", e1);
+                SystemInstance.get().getComponent(Assembler.class).logger.error("CDI Beans module deployment failed", e1);
                 throw new OpenEJBRuntimeException(e1);
             } finally {
                 CURRENT_APP_INFO.remove();
