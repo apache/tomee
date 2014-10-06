@@ -92,6 +92,7 @@ import org.apache.openejb.jpa.integration.MakeTxLookup;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.JarLocation;
 import org.apache.openejb.loader.Options;
+import org.apache.openejb.loader.ProvisioningUtil;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.monitoring.DynamicMBeanWrapper;
 import org.apache.openejb.monitoring.LocalMBeanServer;
@@ -529,6 +530,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         } catch (final NamingException e) {
             // no-op
         }
+    }
+
+    public boolean isDeployed(final String path) {
+        return deployedApplications.containsKey(ProvisioningUtil.realLocation(path));
     }
 
     public Collection<AppInfo> getDeployedApplications() {

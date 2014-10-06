@@ -59,18 +59,24 @@ public class ComparableValidationConfig {
 
         final ComparableValidationConfig that = (ComparableValidationConfig) o;
 
-        if (constraintFactoryClass != null ? !constraintFactoryClass.equals(that.constraintFactoryClass) : that.constraintFactoryClass != null)
+        if (constraintFactoryClass != null ? !constraintFactoryClass.equals(that.constraintFactoryClass) : that.constraintFactoryClass != null) {
             return false;
-        if (constraintMappings != null ? !constraintMappings.equals(that.constraintMappings) : that.constraintMappings != null)
+        }
+        if (constraintMappings != null ? !constraintMappings.equals(that.constraintMappings) : that.constraintMappings != null) {
             return false;
-        if (messageInterpolatorClass != null ? !messageInterpolatorClass.equals(that.messageInterpolatorClass) : that.messageInterpolatorClass != null)
+        }
+        if (messageInterpolatorClass != null ? !messageInterpolatorClass.equals(that.messageInterpolatorClass) : that.messageInterpolatorClass != null) {
             return false;
-        if (propertyTypes != null ? !propertyTypes.equals(that.propertyTypes) : that.propertyTypes != null)
+        }
+        if (propertyTypes != null ? !propertyTypes.equals(that.propertyTypes) : that.propertyTypes != null) {
             return false;
-        if (providerClassName != null ? !providerClassName.equals(that.providerClassName) : that.providerClassName != null)
+        }
+        if (providerClassName != null ? !providerClassName.equals(that.providerClassName) : that.providerClassName != null) {
             return false;
-        if (traversableResolverClass != null ? !traversableResolverClass.equals(that.traversableResolverClass) : that.traversableResolverClass != null)
+        }
+        if (traversableResolverClass != null ? !traversableResolverClass.equals(that.traversableResolverClass) : that.traversableResolverClass != null) {
             return false;
+        }
         return true;
     }
 
