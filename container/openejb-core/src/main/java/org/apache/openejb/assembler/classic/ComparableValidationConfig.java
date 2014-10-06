@@ -73,24 +73,36 @@ public class ComparableValidationConfig {
 
         final ComparableValidationConfig that = (ComparableValidationConfig) o;
 
-        if (executableValidationEnabled != that.executableValidationEnabled) return false;
-        if (constraintFactoryClass != null ? !constraintFactoryClass.equals(that.constraintFactoryClass) : that.constraintFactoryClass != null)
+        if (executableValidationEnabled != that.executableValidationEnabled) {
             return false;
-        if (constraintMappings != null ? !constraintMappings.equals(that.constraintMappings) : that.constraintMappings != null)
+        }
+        if (constraintFactoryClass != null ? !constraintFactoryClass.equals(that.constraintFactoryClass) : that.constraintFactoryClass != null) {
             return false;
-        if (messageInterpolatorClass != null ? !messageInterpolatorClass.equals(that.messageInterpolatorClass) : that.messageInterpolatorClass != null)
+        }
+        if (constraintMappings != null ? !constraintMappings.equals(that.constraintMappings) : that.constraintMappings != null) {
             return false;
-        if (parameterNameProviderClass != null ? !parameterNameProviderClass.equals(that.parameterNameProviderClass) : that.parameterNameProviderClass != null)
+        }
+        if (messageInterpolatorClass != null ? !messageInterpolatorClass.equals(that.messageInterpolatorClass) : that.messageInterpolatorClass != null) {
             return false;
-        if (propertyTypes != null ? !propertyTypes.equals(that.propertyTypes) : that.propertyTypes != null)
+        }
+        if (parameterNameProviderClass != null ? !parameterNameProviderClass.equals(that.parameterNameProviderClass) : that.parameterNameProviderClass != null) {
             return false;
-        if (providerClassName != null ? !providerClassName.equals(that.providerClassName) : that.providerClassName != null)
+        }
+        if (propertyTypes != null ? !propertyTypes.equals(that.propertyTypes) : that.propertyTypes != null) {
             return false;
-        if (traversableResolverClass != null ? !traversableResolverClass.equals(that.traversableResolverClass) : that.traversableResolverClass != null)
+        }
+        if (providerClassName != null ? !providerClassName.equals(that.providerClassName) : that.providerClassName != null) {
             return false;
-        if (validatedTypes != null ? !validatedTypes.equals(that.validatedTypes) : that.validatedTypes != null)
+        }
+        if (traversableResolverClass != null ? !traversableResolverClass.equals(that.traversableResolverClass) : that.traversableResolverClass != null) {
             return false;
-        if (version != null ? !version.equals(that.version) : that.version != null) return false;
+        }
+        if (validatedTypes != null ? !validatedTypes.equals(that.validatedTypes) : that.validatedTypes != null) {
+            return false;
+        }
+        if (version != null ? !version.equals(that.version) : that.version != null) {
+            return false;
+        }
         return true;
     }
 
