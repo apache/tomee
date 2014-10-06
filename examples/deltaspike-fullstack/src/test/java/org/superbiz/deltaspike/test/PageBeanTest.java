@@ -26,20 +26,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.superbiz.deltaspike.WebappMessageBundle;
 import org.superbiz.deltaspike.domain.User;
-import org.superbiz.deltaspike.domain.validation.UniqueUserName;
 import org.superbiz.deltaspike.repository.UserRepository;
 import org.superbiz.deltaspike.view.RegistrationPage;
 import org.superbiz.deltaspike.view.config.Pages;
 
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
-import java.util.Set;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import javax.persistence.PersistenceException;
 
 @RunWith(CdiTestRunner.class)
 public class PageBeanTest
@@ -59,26 +52,21 @@ public class PageBeanTest
     @Inject
     private ContextControl contextControl;
 
-    @Inject
-    private Validator validator;
-
-    @Test
+    @Test(expected = PersistenceException.class)
     public void duplicatedUser()
     {
         final String userName = "tomee";
         final String firstName = "Apache";
         final String lastName = "TomEE";
 
-        this.userRepository.save(new User(userName, firstName, lastName));
-        final Set<ConstraintViolation<User>> error = validator.validate(new User(userName, firstName, lastName), UniqueUserName.class);
-        assertNotNull(error);
-        assertEquals(1, error.size());
+        this.userRepository.saveAndFlush(new User(userName, firstName, lastName));
+        this.userRepository.saveAndFlush(new User(userName, firstName + "2", lastName + "2"));
     }
 
     @Test
     public void saveUser()
     {
-        final String userName = "gp";
+        final String userName = "GP";
         final String firstName = "Gerhard";
         final String lastName = "Petracek";
         this.windowContext.activateWindow("testWindow");
