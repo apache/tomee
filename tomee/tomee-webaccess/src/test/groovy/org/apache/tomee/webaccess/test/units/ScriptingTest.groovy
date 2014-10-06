@@ -18,6 +18,7 @@
 
 package org.apache.tomee.webaccess.test.units
 
+import groovy.json.JsonSlurper
 import org.apache.http.impl.client.CloseableHttpClient
 import org.apache.http.message.BasicNameValuePair
 import org.apache.tomee.webaccess.rest.ApplicationConfig
@@ -56,12 +57,15 @@ class ScriptingTest {
     @Test
     void test() throws Exception {
         Utilities.withClient(deploymentURL, { CloseableHttpClient client ->
-            Assert.assertEquals(
-                    '{"output":"Hi there!"}',
+            def json = new JsonSlurper().parseText(
                     Utilities.post(deploymentURL, client, 'rest/scripting',
                             new BasicNameValuePair('engine', 'js'),
                             new BasicNameValuePair('script', 'print("Hi there!");')
                     )
+            )
+            Assert.assertEquals(
+                    'Hi there!',
+                    json.output as String
             )
             def result = Utilities.post(deploymentURL, client, 'rest/scripting',
                     new BasicNameValuePair('engine', 'js'),
