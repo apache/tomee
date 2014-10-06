@@ -87,7 +87,10 @@ public class Logger {
         // without changing LogStreamFactory contract
         final String specialKey = "openejb.jul.forceReload";
         final String original = System.getProperty(specialKey);
-        System.setProperty(specialKey, config.getProperty(specialKey, SystemInstance.isInitialized() ? SystemInstance.get().getOptions().get(specialKey, (String) null) : null));
+        final String property = config.getProperty(specialKey, SystemInstance.isInitialized() ? SystemInstance.get().getOptions().get(specialKey, (String) null) : null);
+        if (property != null) {
+            System.setProperty(specialKey, property);
+        }
 
         try {
             if (factoryName != null) {
