@@ -217,7 +217,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     public static final String OPENEJB_URL_PKG_PREFIX = IvmContext.class.getPackage().getName();
-    public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, Assembler.class);
+    public final Logger logger;
     public static final String OPENEJB_JPA_DEPLOY_TIME_ENHANCEMENT_PROP = "openejb.jpa.deploy-time-enhancement";
     public static final String PROPAGATE_APPLICATION_EXCEPTIONS = "openejb.propagate.application-exceptions";
     private static final String GLOBAL_UNIQUE_ID = "global";
@@ -289,6 +289,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     public Assembler(final JndiFactory jndiFactory) {
+        logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, Assembler.class);
         skipLoaderIfPossible = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.classloader.skip-app-loader-if-possible", "true"));
         persistenceClassLoaderHandler = new PersistenceClassLoaderHandlerImpl();
 
@@ -1147,7 +1148,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         return ejbs;
     }
 
-    private static TimerStore newTimerStore(final BeanContext beanContext) {
+    private TimerStore newTimerStore(final BeanContext beanContext) {
         for (final DeploymentContext context : Arrays.asList(beanContext, beanContext.getModuleContext(), beanContext.getModuleContext().getAppContext())) {
             final String timerStoreClass = context.getProperties().getProperty(TIMER_STORE_CLASS);
             if (timerStoreClass != null) {
@@ -1493,7 +1494,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         return resources;
     }
 
-    private static void destroyResource(final String name, final String className, final Object object) {
+    private void destroyResource(final String name, final String className, final Object object) {
         if (object instanceof ResourceAdapter) {
             final ResourceAdapter resourceAdapter = (ResourceAdapter) object;
             try {
@@ -2664,6 +2665,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     private static void logUnusedProperties(final Map<String, Object> unsetProperties, final ServiceInfo info) {
+        Logger logger = null;
         for (final String property : unsetProperties.keySet()) {
             //TODO: DMB: Make more robust later
             if (property.equalsIgnoreCase("Definition")) {
@@ -2703,6 +2705,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 continue; // inline service (no sp)
             }
 
+            if (logger == null) {
+                logger = SystemInstance.get().getComponent(Assembler.class).logger;
+            }
             logger.getChildLogger("service").warning("unusedProperty", property, info.id);
         }
     }
@@ -2779,7 +2784,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     transformers.add(classFileTransformer);
                 }
             } else if (!logged.getAndSet(true)) {
-                logger.warning("assembler.noAgent");
+                SystemInstance.get().getComponent(Assembler.class).logger.warning("assembler.noAgent");
             }
         }
 
@@ -2793,7 +2798,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                         instrumentation.removeTransformer(transformer);
                     }
                 } else {
-                    logger.error("assembler.noAgent");
+                    SystemInstance.get().getComponent(Assembler.class).logger.error("assembler.noAgent");
                 }
             }
         }

@@ -22,6 +22,7 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.BeansDeployer;
@@ -193,7 +194,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
                 //Deploy bean from XML. Also configures deployments, interceptors, decorators.
                 deployer.deploy(scannerService);
             } catch (final Exception e1) {
-                Assembler.logger.error("CDI Beans module deployment failed", e1);
+                SystemInstance.get().getComponent(Assembler.class).logger.error("CDI Beans module deployment failed", e1);
                 throw new OpenEJBRuntimeException(e1);
             } finally {
                 CURRENT_APP_INFO.remove();
