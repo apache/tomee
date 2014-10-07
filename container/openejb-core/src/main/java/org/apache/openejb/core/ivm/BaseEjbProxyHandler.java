@@ -233,7 +233,19 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
     @Override
     public Object invoke(final Object proxy, Method method, Object[] args) throws Throwable {
-        isValidReference(method);
+        try {
+            isValidReference(method);
+        } catch (final IllegalStateException ise) {
+            // bean was undeployed
+            if (method.getName().equals("writeReplace")) { // session serialization, we just need to replace this
+                final BeanContext beanContext = beanContextRef.get();
+                final Object id = beanContext.getDeploymentID();
+                if (beanContext != null && id != null) {
+                    return _writeReplace(proxy);
+                }
+            }
+            throw ise;
+        }
 
         if (args == null) {
             args = new Object[]{};
