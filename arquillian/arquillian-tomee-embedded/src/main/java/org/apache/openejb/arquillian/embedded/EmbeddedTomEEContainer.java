@@ -167,11 +167,18 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
             throw new DeploymentException("Unable to undeploy", e);
         }
         final File file = ARCHIVES.remove(archive);
-        final File folder = new File(file.getParentFile(), file.getName().substring(0, file.getName().length() - 5));
+        final File folder = new File(file.getParentFile(), file.getName().substring(0, file.getName().length() - 4));
         if (folder.exists()) {
             Files.delete(folder);
         }
         Files.delete(file);
+        if (!configuration.isSingleDumpByArchiveName()) {
+            final File parentFile = file.getParentFile();
+            final File[] parentChildren = parentFile.listFiles();
+            if (parentChildren == null || parentChildren.length == 0) {
+                Files.delete(file.getParentFile());
+            }
+        }
     }
 
     private void startCdiContexts(final String name) {
