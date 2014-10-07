@@ -279,14 +279,14 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
                 }
 
                 if (appInfo != null) {
-                    moduleIds.put(archiveName, new DeployedApp(appInfo.path, file.getParentFile()));
+                    moduleIds.put(archiveName, new DeployedApp(appInfo.path, file));
                     Files.deleteOnExit(file); // "i" folder
                 } else {
                     LOGGER.severe("appInfo was not found for " + file.getPath() + ", available are: " + apps());
                     throw new OpenEJBException("can't get appInfo");
                 }
             } catch (final OpenEJBException re) { // clean up in undeploy needs it
-                moduleIds.put(archiveName, new DeployedApp(file.getPath(), file.getParentFile()));
+                moduleIds.put(archiveName, new DeployedApp(file.getPath(), file));
                 throw re;
             }
 
@@ -353,7 +353,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         if (file.exists()) {
             size = file.length();
         }
-        finalArchive.as(ZipExporter.class).exportTo(file, true);
+        finalArchive.as(ZipExporter.class).exportTo(file, configuration.isSingleDumpByArchiveName());
         if (size > 0 && size != file.length()) {
             LOGGER.warning("\nFile overwritten but size doesn't match: (now) "
                     + file.length() + "/(before) " + size + " name="+ file.getName()
@@ -445,12 +445,17 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         } finally {
             if (deployed != null && !configuration.isSingleDumpByArchiveName()) {
                 LOGGER.info("cleaning " + deployed.file.getAbsolutePath());
-                Files.tryTodelete(deployed.file); // "i" folder
+                Files.delete(deployed.file); // "i" folder
 
                 final File pathFile = new File(deployed.path);
                 if (!deployed.path.equals(deployed.file.getAbsolutePath()) && pathFile.exists()) {
                     LOGGER.info("cleaning " + pathFile);
                     Files.delete(pathFile);
+                }
+                final File parentFile = deployed.file.getParentFile();
+                final File[] parentChildren = parentFile.listFiles();
+                if (parentChildren == null || parentChildren.length == 0) {
+                    Files.delete(deployed.file.getParentFile());
                 }
             }
         }
