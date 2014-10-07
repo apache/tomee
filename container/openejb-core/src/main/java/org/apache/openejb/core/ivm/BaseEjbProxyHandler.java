@@ -239,8 +239,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
             // bean was undeployed
             if (method.getName().equals("writeReplace")) { // session serialization, we just need to replace this
                 final BeanContext beanContext = beanContextRef.get();
-                final Object id = beanContext.getDeploymentID();
-                if (beanContext != null && id != null) {
+                if (beanContext != null) {
                     return _writeReplace(proxy);
                 }
             }
