@@ -33,6 +33,14 @@ import java.util.Map;
  * @version $Rev$ $Date$
  */
 public class BasicJaccProvider extends JaccProvider {
+    static {
+        // force preloading to avoid to loop under SecurityManager
+        try {
+            Class.forName(PolicyContext.class.getName());
+        } catch (final ClassNotFoundException e) {
+            // no-op
+        }
+    }
 
     private final Map<String, BasicPolicyConfiguration> configurations = new HashMap<String, BasicPolicyConfiguration>();
 
