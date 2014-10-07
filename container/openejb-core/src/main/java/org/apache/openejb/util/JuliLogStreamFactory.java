@@ -19,6 +19,7 @@ package org.apache.openejb.util;
 
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.log.ConsoleColorHandler;
 import org.apache.openejb.log.SingleLineFormatter;
 import org.apache.openejb.util.reflection.Reflections;
 import org.apache.webbeans.logger.WebBeansLoggerFacade;
@@ -53,10 +54,13 @@ public class JuliLogStreamFactory implements LogStreamFactory {
         final Options options = SystemInstance.get().getOptions();
         final boolean forceLogs = options.get("openejb.jul.forceReload", false);
         if ((!tomee || embedded || forceLogs) && System.getProperty("java.util.logging.manager") == null) {
-            if (options.get(OPENEJB_LOG_COLOR_PROP, false) && isNotIDE()) {
-                consoleHandlerClazz = org.apache.openejb.log.ConsoleColorHandler.class.getName();
-            } else {
-                consoleHandlerClazz = OpenEJBSimpleLayoutHandler.class.getName();
+            consoleHandlerClazz = System.getProperty("openejb.jul.consoleHandlerClazz");
+            if (consoleHandlerClazz == null) {
+                if (options.get(OPENEJB_LOG_COLOR_PROP, false) && isNotIDE()) {
+                    consoleHandlerClazz = ConsoleColorHandler.class.getName();
+                } else {
+                    consoleHandlerClazz = OpenEJBSimpleLayoutHandler.class.getName();
+                }
             }
 
             try { // check it will not fail later (case when a framework change the JVM classloading)

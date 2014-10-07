@@ -85,11 +85,16 @@ public class Logger {
         // we can be called before having SystemInstance so we need this hack to set some specific
         // environment
         // without changing LogStreamFactory contract
-        final String specialKey = "openejb.jul.forceReload";
-        final String original = System.getProperty(specialKey);
-        final String property = config.getProperty(specialKey, SystemInstance.isInitialized() ? SystemInstance.get().getOptions().get(specialKey, (String) null) : null);
-        if (property != null) {
-            System.setProperty(specialKey, property);
+        final String[] specialKeys = new String[] { "openejb.jul.forceReload", "openejb.jul.consoleHandlerClazz" };
+        final String[] originals = new String[specialKeys.length];
+        for (int i = 0; i < specialKeys.length; i++) {
+            originals[i] = System.getProperty(specialKeys[i]);
+            final String property = config.getProperty(
+                    specialKeys[i],
+                    SystemInstance.isInitialized() ? SystemInstance.get().getOptions().get(specialKeys[i], (String) null) : null);
+            if (property != null) {
+                System.setProperty(specialKeys[i], property);
+            }
         }
 
         try {
@@ -109,10 +114,12 @@ public class Logger {
 
             checkForIgnoredLog4jConfig();
         } finally {
-            if (original == null) {
-                System.clearProperty(specialKey);
-            } else {
-                System.setProperty(specialKey, original);
+            for (int i = 0; i < specialKeys.length; i++) {
+                if (originals[i] == null) {
+                    System.clearProperty(specialKeys[i]);
+                } else {
+                    System.setProperty(specialKeys[i], originals[i]);
+                }
             }
         }
     }
