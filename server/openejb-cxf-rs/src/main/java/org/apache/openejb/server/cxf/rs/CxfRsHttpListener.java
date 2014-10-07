@@ -64,7 +64,11 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.proxy.ProxyEJB;
 import org.apache.webbeans.config.WebBeansContext;
+import org.apache.webbeans.container.BeanManagerImpl;
+import org.apache.webbeans.context.creational.CreationalContextImpl;
 
+import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.Bean;
 import javax.management.ObjectName;
 import javax.management.openmbean.TabularData;
 import javax.naming.Context;
@@ -86,6 +90,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -119,6 +124,7 @@ public class CxfRsHttpListener implements RsHttpListener {
     private String servlet = "";
     private final Collection<Pattern> staticResourcesList = new CopyOnWriteArrayList<Pattern>();
     private final List<ObjectName> jmxNames = new ArrayList<ObjectName>();
+    private final Collection<CreationalContext<?>> toRelease = new LinkedHashSet<CreationalContext<?>>();
 
     private static final char[] URL_SEP = new char[] { '?', '#', ';' };
 
@@ -275,7 +281,8 @@ public class CxfRsHttpListener implements RsHttpListener {
     @Override
     public void deploySingleton(final String contextRoot, final String fullContext, final Object o, final Application appInstance,
                                 final Collection<Object> additionalProviders, final ServiceConfiguration configuration) {
-        deploy(contextRoot, o.getClass(), fullContext, new SingletonResourceProvider(o), o, appInstance, null, additionalProviders, configuration);
+        deploy(contextRoot, o.getClass(), fullContext, new SingletonResourceProvider(o),
+                o, appInstance, null, additionalProviders, configuration, null);
     }
 
     @Deprecated
@@ -291,7 +298,7 @@ public class CxfRsHttpListener implements RsHttpListener {
                            final Collection<Object> additionalProviders,
                            final ServiceConfiguration configuration) {
         deploy(contextRoot, loadedClazz, fullContext, new OpenEJBPerRequestPojoResourceProvider(loader, loadedClazz, injections, context, owbCtx),
-            null, app, null, additionalProviders, configuration);
+            null, app, null, additionalProviders, configuration, null);
     }
 
     @Deprecated
@@ -303,16 +310,18 @@ public class CxfRsHttpListener implements RsHttpListener {
                           final ServiceConfiguration configuration) {
         final Object proxy = ProxyEJB.subclassProxy(beanContext);
 
-        deploy(contextRoot, beanContext.getBeanClass(), fullContext, new NoopResourceProvider(beanContext.getBeanClass(), proxy), proxy, null, new OpenEJBEJBInvoker(Collections.singleton(beanContext)), additionalProviders, configuration);
+        deploy(contextRoot, beanContext.getBeanClass(), fullContext, new NoopResourceProvider(beanContext.getBeanClass(), proxy),
+                proxy, null, new OpenEJBEJBInvoker(Collections.singleton(beanContext)), additionalProviders, configuration, beanContext.getWebBeansContext());
     }
 
     private void deploy(final String contextRoot, final Class<?> clazz, final String address, final ResourceProvider rp, final Object serviceBean,
-                        final Application app, final Invoker invoker, final Collection<Object> additionalProviders, final ServiceConfiguration configuration) {
+                        final Application app, final Invoker invoker, final Collection<Object> additionalProviders, final ServiceConfiguration configuration,
+                        final WebBeansContext webBeansContext) {
         final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());
         try {
             final JAXRSServerFactoryBean factory = newFactory(address);
-            configureFactory(additionalProviders, configuration, factory);
+            configureFactory(additionalProviders, configuration, factory, webBeansContext);
             factory.setResourceClasses(clazz);
             context = contextRoot;
             if (context == null) {
@@ -346,35 +355,57 @@ public class CxfRsHttpListener implements RsHttpListener {
         }
     }
 
-    private Collection<Object> providers(final Collection<ServiceInfo> services, final Collection<Object> additionalProviders) {
+    private Collection<Object> providers(final Collection<ServiceInfo> services, final Collection<Object> additionalProviders, final WebBeansContext ctx) {
         final Collection<Object> instances = new ArrayList<Object>();
+        final BeanManagerImpl bm = ctx == null ? null : ctx.getBeanManagerImpl();
         for (final Object o : additionalProviders) {
             if (o instanceof Class<?>) {
                 final Class<?> clazz = (Class<?>) o;
-                if ("false".equalsIgnoreCase(SystemInstance.get().getProperty(clazz.getName() + ".activated", "true"))) {
+                final String name = clazz.getName();
+                if (shouldSkipProvider(name)) {
                     continue;
                 }
 
-                final Collection<Object> instance = ServiceInfos.resolve(services, new String[]{clazz.getName()}, ProviderFactory.INSTANCE);
+                if (bm != null && bm.isInUse()) {
+                    try {
+                        final Set<Bean<?>> beans = bm.getBeans(clazz);
+                        if (beans != null && !beans.isEmpty()) {
+                            final Bean<?> bean = bm.resolve(beans);
+                            final CreationalContextImpl<?> creationalContext = bm.createCreationalContext(bean);
+                            instances.add(bm.getReference(bean, clazz, creationalContext));
+                            toRelease.add(creationalContext);
+                            continue;
+                        }
+                    } catch (final Throwable th) {
+                        LOGGER.info("Can't use CDI to create provider " + name);
+                    }
+                }
+
+                final Collection<Object> instance = ServiceInfos.resolve(services, new String[]{name}, ProviderFactory.INSTANCE);
                 if (instance != null && !instance.isEmpty()) {
                     instances.add(instance.iterator().next());
                 } else {
                     try {
                         instances.add(newProvider(clazz));
                     } catch (final Exception e) {
-                        LOGGER.error("can't instantiate " + clazz.getName(), e);
+                        LOGGER.error("can't instantiate " + name, e);
                     }
                 }
             } else {
-                if ("false".equalsIgnoreCase(SystemInstance.get().getProperty(o.getClass().getName() + ".activated", "true"))) {
+                final String name = o.getClass().getName();
+                if (shouldSkipProvider(name)) {
                     continue;
                 }
-
                 instances.add(o);
             }
         }
 
         return instances;
+    }
+
+    private static boolean shouldSkipProvider(final String name) {
+        return "false".equalsIgnoreCase(SystemInstance.get().getProperty(name + ".activated", "true"))
+                || name.startsWith("org.apache.wink.common.internal.");
     }
 
     private static void addMandatoryProviders(final Collection<Object> instances) {
@@ -390,6 +421,14 @@ public class CxfRsHttpListener implements RsHttpListener {
         // unregister all MBeans
         for (final ObjectName objectName : jmxNames) {
             LocalMBeanServer.unregisterSilently(objectName);
+        }
+
+        for (final CreationalContext<?> cc : toRelease) {
+            try {
+                cc.release();
+            } catch (final Exception e) {
+                LOGGER.warning(e.getMessage(), e);
+            }
         }
 
         final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
@@ -418,7 +457,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());
         try {
             final JAXRSServerFactoryBean factory = newFactory(prefix);
-            configureFactory(additionalProviders, serviceConfiguration, factory);
+            configureFactory(additionalProviders, serviceConfiguration, factory, owbCtx);
             factory.setApplication(application);
 
             final List<Class<?>> classes = new ArrayList<Class<?>>();
@@ -603,7 +642,10 @@ public class CxfRsHttpListener implements RsHttpListener {
         return factory;
     }
 
-    private void configureFactory(final Collection<Object> givenAdditionalProviders, final ServiceConfiguration serviceConfiguration, final JAXRSServerFactoryBean factory) {
+    private void configureFactory(final Collection<Object> givenAdditionalProviders,
+                                  final ServiceConfiguration serviceConfiguration,
+                                  final JAXRSServerFactoryBean factory,
+                                  final WebBeansContext ctx) {
         CxfUtil.configureEndpoint(factory, serviceConfiguration, CXF_JAXRS_PREFIX);
 
         final Collection<ServiceInfo> services = serviceConfiguration.getAvailableServices();
@@ -670,13 +712,13 @@ public class CxfRsHttpListener implements RsHttpListener {
         if (providersConfig != null) {
             providers = ServiceInfos.resolve(services, providersConfig.toArray(new String[providersConfig.size()]), ProviderFactory.INSTANCE);
             if (providers != null && additionalProviders != null && !additionalProviders.isEmpty()) {
-                providers.addAll(providers(services, additionalProviders));
+                providers.addAll(providers(services, additionalProviders, ctx));
             }
         }
         if (providers == null) {
             providers = new ArrayList<Object>(4);
             if (additionalProviders != null && !additionalProviders.isEmpty()) {
-                providers.addAll(providers(services, additionalProviders));
+                providers.addAll(providers(services, additionalProviders, ctx));
             } else {
                 providers.addAll(defaultProviders());
             }
