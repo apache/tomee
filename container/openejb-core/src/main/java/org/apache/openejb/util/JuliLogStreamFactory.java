@@ -51,10 +51,10 @@ public class JuliLogStreamFactory implements LogStreamFactory {
         final boolean embedded = is("org.apache.tomee.embedded.Container");
 
         // if embedded case enhance a bit logging if not set
-        final Options options = SystemInstance.get().getOptions();
+        final Options options = SystemInstance.isInitialized() ? SystemInstance.get().getOptions() : new Options(System.getProperties());
         final boolean forceLogs = options.get("openejb.jul.forceReload", false);
         if ((!tomee || embedded || forceLogs) && System.getProperty("java.util.logging.manager") == null) {
-            consoleHandlerClazz = System.getProperty("openejb.jul.consoleHandlerClazz");
+            consoleHandlerClazz = options.get("openejb.jul.consoleHandlerClazz", (String) null);
             if (consoleHandlerClazz == null) {
                 if (options.get(OPENEJB_LOG_COLOR_PROP, false) && isNotIDE()) {
                     consoleHandlerClazz = ConsoleColorHandler.class.getName();
