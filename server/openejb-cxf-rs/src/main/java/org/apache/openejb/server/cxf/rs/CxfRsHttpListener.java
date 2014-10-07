@@ -351,7 +351,8 @@ public class CxfRsHttpListener implements RsHttpListener {
         for (final Object o : additionalProviders) {
             if (o instanceof Class<?>) {
                 final Class<?> clazz = (Class<?>) o;
-                if ("false".equalsIgnoreCase(SystemInstance.get().getProperty(clazz.getName() + ".activated", "true"))) {
+                final String name = clazz.getName();
+                if (shouldSkipProvider(name)) {
                     continue;
                 }
 
@@ -366,22 +367,23 @@ public class CxfRsHttpListener implements RsHttpListener {
                             continue;
                         }
                     } catch (final Throwable th) {
-                        LOGGER.info("Can't use CDI to create provider " + clazz.getName());
+                        LOGGER.info("Can't use CDI to create provider " + name);
                     }
                 }
 
-                final Collection<Object> instance = ServiceInfos.resolve(services, new String[]{clazz.getName()}, OpenEJBProviderFactory.INSTANCE);
+                final Collection<Object> instance = ServiceInfos.resolve(services, new String[]{name}, OpenEJBProviderFactory.INSTANCE);
                 if (instance != null && !instance.isEmpty()) {
                     instances.add(instance.iterator().next());
                 } else {
                     try {
                         instances.add(newProvider(clazz));
                     } catch (final Exception e) {
-                        LOGGER.error("can't instantiate " + clazz.getName(), e);
+                        LOGGER.error("can't instantiate " + name, e);
                     }
                 }
             } else {
-                if ("false".equalsIgnoreCase(SystemInstance.get().getProperty(o.getClass().getName() + ".activated", "true"))) {
+                final String name = o.getClass().getName();
+                if (shouldSkipProvider(name)) {
                     continue;
                 }
                 instances.add(o);
@@ -389,6 +391,11 @@ public class CxfRsHttpListener implements RsHttpListener {
         }
 
         return instances;
+    }
+
+    private static boolean shouldSkipProvider(final String name) {
+        return "false".equalsIgnoreCase(SystemInstance.get().getProperty(name + ".activated", "true"))
+                || name.startsWith("org.apache.wink.common.internal.");
     }
 
     private static void addMandatoryProviders(final Collection<Object> instances) {
