@@ -94,8 +94,7 @@ public class CdiScanner implements ScannerService {
 
         for (final EjbJarInfo ejbJar : appInfo.ejbJars) {
             final BeansInfo beans = ejbJar.beans;
-
-            if (beans == null) {
+            if (beans == null || "false".equalsIgnoreCase(ejbJar.properties.getProperty("openejb.cdi.activated"))) {
                 continue;
             }
 

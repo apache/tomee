@@ -45,6 +45,7 @@ import org.apache.openejb.config.sys.Openejb;
 import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.WebContext;
 import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.injection.FallbackPropertyInjector;
 import org.apache.openejb.jee.Application;
@@ -334,6 +335,7 @@ public final class ApplicationComposers {
             ejbDeployment.setDeploymentId(testClass.getName());
 
             final EjbModule ejbModule = new EjbModule(ejbJar, openejbJar);
+            ejbModule.getProperties().setProperty("openejb.cdi.activated", "false");
             final FinderFactory.OpenEJBAnnotationFinder finder = new FinderFactory.OpenEJBAnnotationFinder(new ClassesArchive(ancestors(testClass)));
             ejbModule.setFinder(finder);
             if (finder.findMetaAnnotatedFields(Inject.class).size()
@@ -752,22 +754,7 @@ public final class ApplicationComposers {
 
         final BeanContext context = containerSystem.getBeanContext(testClass.getName());
 
-        final ThreadContext callContext = new ThreadContext(context, null, Operation.INJECTION);
-        final ThreadContext oldContext = ThreadContext.enter(callContext);
-        try {
-            final InjectionProcessor processor = new InjectionProcessor(inputTestInstance, context.getInjections(), context.getJndiContext());
-
-            processor.createInstance();
-            try {
-                OWBInjector.inject(appContext.getBeanManager(), inputTestInstance, null);
-            } catch (final Throwable t) {
-                // TODO handle this differently
-                // this is temporary till the injector can be rewritten
-                t.printStackTrace();
-            }
-        } finally {
-            ThreadContext.exit(oldContext);
-        }
+        enrich(inputTestInstance, context);
 
         System.setProperty(Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
@@ -796,6 +783,39 @@ public final class ApplicationComposers {
 
         // switch back since next test will use another instance
         testClassFinders.put(this, testClassFinder);
+    }
+
+    private void enrich(final Object inputTestInstance, final BeanContext context) throws org.apache.openejb.OpenEJBException {
+        final ThreadContext callContext = new ThreadContext(context, null, Operation.INJECTION);
+        final ThreadContext oldContext = ThreadContext.enter(callContext);
+        try {
+            final InjectionProcessor processor = new InjectionProcessor(inputTestInstance, context.getInjections(), context.getJndiContext());
+            processor.createInstance();
+
+            Throwable error = null;
+            try {
+                OWBInjector.inject(appContext.getBeanManager(), inputTestInstance, null);
+            } catch (final Throwable t) {
+                error = t;
+            }
+            for (final WebContext web : appContext.getWebContexts()) {
+                try {
+                    OWBInjector.inject(web.getWebBeansContext().getBeanManagerImpl(), inputTestInstance, null);
+                    // hourra, we enriched correctly the test then cleanup error state and quit
+                    error = null;
+                    break;
+                } catch (final Throwable t) {
+                    if (error == null) {
+                        error = t;
+                    } // else keep original one
+                }
+            }
+            if (error != null) {
+                error.printStackTrace();
+            }
+        } finally {
+            ThreadContext.exit(oldContext);
+        }
     }
 
     private Collection<File> findFiles(final Jars jarsAnnotation) {
