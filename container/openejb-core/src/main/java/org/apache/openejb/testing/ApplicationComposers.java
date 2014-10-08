@@ -61,6 +61,7 @@ import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.jee.oejb3.PojoDeployment;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
@@ -496,9 +497,33 @@ public final class ApplicationComposers {
                         ejbModule.setBeans(beans(new Beans(), cdiDecorators, cdiInterceptors, cdiAlternatives));
                     }
 
+                    final JaxrsProviders providers = method.getAnnotation(JaxrsProviders.class);
+                    final Class<?>[] providersClasses = providers == null ? null : providers.value();
+                    if (providers != null) {
+                        if (classes == null) {
+                            classes = providersClasses;
+                        } else {
+                            final Collection<Class<?>> newClasses = new ArrayList<Class<?>>(asList(classes));
+                            newClasses.addAll(asList(providersClasses));
+                            classes = newClasses.toArray(new Class<?>[newClasses.size()]);
+                        }
+                    }
+
                     final IAnnotationFinder finder = finderFromClasses(webModule, classes, findFiles(jarsAnnotation));
                     webModule.setFinder(finder);
                     ejbModule.setFinder(webModule.getFinder());
+
+                    if (providersClasses != null) {
+                        OpenejbJar openejbJar = ejbModule.getOpenejbJar();
+                        if (openejbJar == null) {
+                            openejbJar = new OpenejbJar();
+                            ejbModule.setOpenejbJar(openejbJar);
+                        }
+                        final PojoDeployment pojoDeployment = new PojoDeployment();
+                        pojoDeployment.setClassName(providers.applicationName());
+                        pojoDeployment.getProperties().setProperty("cxf.jaxrs.providers", Join.join(",", providersClasses).replace("class ", ""));
+                        openejbJar.getPojoDeployment().add(pojoDeployment);
+                    }
                 } else if (obj instanceof WebModule) { // will add the ejbmodule too
                     webModulesNb++;
 
