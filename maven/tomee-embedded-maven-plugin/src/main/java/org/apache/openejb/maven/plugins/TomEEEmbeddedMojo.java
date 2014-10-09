@@ -143,7 +143,7 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
         final String logFactory = System.getProperty("openejb.log.factory");
         MavenLogStreamFactory.setLogger(getLog());
         if (mavenLog) {
-            System.setProperty("openejb.log.factory", "org.apache.openejb.maven.util.MavenLogStreamFactory");
+            System.setProperty("openejb.log.factory", MavenLogStreamFactory.class.getName()); // this line also preload the class (<cinit>)
             System.setProperty("openejb.jul.forceReload", "true");
         }
 

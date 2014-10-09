@@ -46,6 +46,7 @@ public class TomEELog implements Log {
                     case "org.apache.openejb.util.Log4j2LogStreamFactory":
                     case "org.apache.openejb.util.Log4jLogStreamFactory":
                     case "org.apache.openejb.util.Slf4jLogStreamFactory":
+                    case "org.apache.openejb.maven.util.MavenLogStreamFactory":
                         defaultLogger = false;
                         break;
                     default:

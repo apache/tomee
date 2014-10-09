@@ -17,12 +17,23 @@
 package org.apache.openejb.maven.util;
 
 import org.apache.maven.plugin.logging.Log;
+import org.apache.openejb.log.logger.AbstractDelegatingLogger;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.LogStream;
 import org.apache.openejb.util.LogStreamFactory;
+import org.apache.webbeans.logger.WebBeansLoggerFacade;
+import org.apache.webbeans.logger.WebBeansLoggerFactory;
+
+import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 public class MavenLogStreamFactory implements LogStreamFactory {
     private static Log logger;
+    static {
+        System.setProperty(WebBeansLoggerFacade.OPENWEBBEANS_LOGGING_FACTORY_PROP, OWBMavenLogFactory.class.getName());
+    }
 
     @Override
     public LogStream createLogStream(final LogCategory logCategory) {
@@ -31,6 +42,88 @@ public class MavenLogStreamFactory implements LogStreamFactory {
 
     public static void setLogger(Log logger) {
         MavenLogStreamFactory.logger = logger;
+    }
+
+    public static Log currentLogger() {
+        return logger;
+    }
+
+    public static class MavenLogger extends AbstractDelegatingLogger {
+        public MavenLogger(final String name, final String resourceBundleName) {
+            super(name, resourceBundleName);
+        }
+
+        @Override
+        public Level getLevel() {
+            if (logger.isDebugEnabled()) {
+                return Level.FINER;
+            } else if (logger.isInfoEnabled()) {
+                return Level.INFO;
+            } else if (logger.isWarnEnabled()) {
+                return Level.WARNING;
+            } else if (logger.isErrorEnabled()) {
+                return Level.SEVERE;
+            }
+            return Level.OFF;
+        }
+
+        @Override
+        public boolean isLoggable(final Level level) {
+            final int i = level.intValue();
+            if (i == Level.OFF.intValue()) {
+                return false;
+            } else if (i >= Level.SEVERE.intValue()) {
+                return logger.isErrorEnabled();
+            } else if (i >= Level.WARNING.intValue()) {
+                return logger.isWarnEnabled();
+            } else if (i >= Level.INFO.intValue()) {
+                return logger.isInfoEnabled();
+            }
+            return logger.isDebugEnabled();
+        }
+
+        @Override
+        protected void internalLogFormatted(final String msg, final LogRecord record) {
+            final Level level = record.getLevel();
+            final Throwable t = record.getThrown();
+            if (Level.FINE.equals(level) || Level.FINER.equals(level) || Level.CONFIG.equals(level)) {
+                if (t == null) {
+                    logger.debug(msg);
+                } else {
+                    logger.debug(msg, t);
+                }
+            } else if (Level.INFO.equals(level)) {
+                if (t == null) {
+                    logger.info(msg);
+                } else {
+                    logger.info(msg, t);
+                }
+            } else if (Level.WARNING.equals(level)) {
+                if (t == null) {
+                    logger.warn(msg);
+                } else {
+                    logger.warn(msg, t);
+                }
+            } else if (Level.ALL.equals(level) || Level.SEVERE.equals(level)) {
+                if (t == null) {
+                    logger.error(msg);
+                } else {
+                    logger.error(msg, t);
+                }
+            }
+        }
+    }
+
+    public static class OWBMavenLogFactory implements WebBeansLoggerFactory {
+        @Override
+        public Logger getLogger(final Class<?> clazz, final Locale desiredLocale) {
+            return new MavenLogger(clazz.getName(), "openwebbeans/Messages");
+        }
+
+        @Override
+        public Logger getLogger(final Class<?> clazz) {
+            return new MavenLogger(clazz.getName(), "openwebbeans/Messages");
+        }
     }
 
     private static class MavenLogStream implements LogStream {

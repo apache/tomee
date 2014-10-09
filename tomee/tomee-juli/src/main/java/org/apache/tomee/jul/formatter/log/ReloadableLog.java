@@ -41,6 +41,7 @@ public final class ReloadableLog {
         private static final String LOG4J_IMPL = "org.apache.tomee.loader.log.Log4jLog";
         private static final String LOG4J2_IMPL = "org.apache.tomee.loader.log.Log4j2Log";
         private static final String SLF4J_IMPL = "org.apache.tomee.loader.log.Slf4jLog";
+        private static final String MAVEN_IMPL = "org.apache.openejb.maven.util.TomEEMavenLog";
 
         private volatile String factory;
         private final String name;
@@ -64,6 +65,11 @@ public final class ReloadableLog {
                     if (f != null) {
                         factory = f;
                     }
+
+                    final Log log = delegate.get();
+                    if (factory == null && log != null) {
+                        return log;
+                    }
                 }
                 switch (factory) {
                     case "org.apache.openejb.util.Log4jLogStreamFactory":
@@ -74,6 +80,9 @@ public final class ReloadableLog {
                         break;
                     case "org.apache.openejb.util.Slf4jLogStreamFactory":
                         delegate.set(newInstance(SLF4J_IMPL));
+                        break;
+                    case "org.apache.openejb.maven.util.MavenLogStreamFactory":
+                        delegate.set(newInstance(MAVEN_IMPL));
                         break;
                     default:
                         delegate.set(new JULLogger(name));
