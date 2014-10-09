@@ -29,11 +29,14 @@ import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.core.ProvidedClassLoaderFinder;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.maven.util.MavenLogStreamFactory;
+import org.apache.openejb.util.JuliLogStreamFactory;
 import org.apache.tomee.embedded.Configuration;
 import org.apache.tomee.embedded.Container;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -43,6 +46,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.logging.LogManager;
+import java.util.logging.SimpleFormatter;
 
 /**
  * Run an Embedded TomEE.
@@ -137,6 +142,9 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
         final Properties originalSystProp = new Properties();
         originalSystProp.putAll(System.getProperties());
 
+        // we use MavenLogStreamFactory but if user set some JUL config in properties we want to respect them
+        configureJULIfNeeded();
+
         final Thread thread = Thread.currentThread();
         final ClassLoader loader = thread.getContextClassLoader();
 
@@ -209,6 +217,29 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
             }
             thread.setContextClassLoader(loader);
             System.setProperties(originalSystProp);
+        }
+    }
+
+    private void configureJULIfNeeded() {
+        if (containerProperties != null && "true".equalsIgnoreCase(containerProperties.get("openejb.jul.forceReload"))) {
+            System.getProperties().putAll(containerProperties);
+            new JuliLogStreamFactory(); // easiest way to support forceReload, note this doesn't do that much ATM
+            final String simpleFormat = containerProperties.get("java.util.logging.SimpleFormatter.format");
+            if (simpleFormat != null) {
+                try {
+                    final Field field = SimpleFormatter.class.getDeclaredField("format");
+                    field.setAccessible(true);
+                    final int modifiers = field.getModifiers();
+                    if (Modifier.isFinal(modifiers)) {
+                        final Field modifiersField = Field.class.getDeclaredField("modifiers");
+                        modifiersField.setAccessible(true);
+                        modifiersField.setInt(field, modifiers & ~Modifier.FINAL);
+                    }
+                    field.set(null, simpleFormat);
+                } catch (final Throwable ignored) {
+                    // no-op: don't block for it
+                }
+            }
         }
     }
 
