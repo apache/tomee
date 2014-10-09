@@ -48,7 +48,11 @@ public class StandardContextCustomizer {
         }
 
         final StandardContext context = StandardContext.class.cast(data);
-        if (!module.getContextRoot().equals(context.getPath())) {
+        final String contextRoot = module.getContextRoot();
+        final String path = context.getPath();
+        final boolean rightPath = (path.isEmpty() && contextRoot.equals(path))
+                || (contextRoot.startsWith("/") ? contextRoot : '/' + contextRoot).equals(path);
+        if (!rightPath) {
             return;
         }
 
