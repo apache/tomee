@@ -174,10 +174,7 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
             Runtime.getRuntime().addShutdownHook(hook);
 
             if (!classpathAsWar) {
-                if (context != null) {
-                    getLog().warn("Context will be ignored since not using classpathAsWar");
-                }
-                container.deploy(context == null ? warFile.getName() : context, warFile);
+                container.deploy(context == null ? warFile.getName() : context, warFile, true);
             } else {
                 if (useProjectClasspath) {
                     thread.setContextClassLoader(createClassLoader(loader));
