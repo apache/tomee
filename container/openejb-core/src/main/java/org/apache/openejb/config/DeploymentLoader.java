@@ -1678,7 +1678,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         return map;
     }
 
-    protected Map<String, URL> getWebDescriptors(final File warFile) throws IOException {
+    public static Map<String, URL> getWebDescriptors(final File warFile) throws IOException {
         final Map<String, URL> descriptors = new TreeMap<String, URL>();
 
         // xbean resource finder has a bug when you use any uri but "META-INF"

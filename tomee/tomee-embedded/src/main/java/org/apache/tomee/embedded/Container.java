@@ -157,7 +157,8 @@ public class Container implements AutoCloseable {
             contextRoot = "/" + context;
         }
 
-        final WebModule webModule = new WebModule(new WebApp(), contextRoot, loader, docBase == null ? fakeRootDir().getAbsolutePath() : docBase.getAbsolutePath(), contextRoot);
+        final File jarLocation = docBase == null ? fakeRootDir() : docBase;
+        final WebModule webModule = new WebModule(new WebApp(), contextRoot, loader, jarLocation.getAbsolutePath(), contextRoot);
         if (docBase == null) {
             webModule.getProperties().put("fakeJarLocation", "true");
         }
@@ -176,6 +177,7 @@ public class Container implements AutoCloseable {
         final AppModule app = new AppModule(loader, null);
         app.setStandloneWebModule();
         try {
+            webModule.getAltDDs().putAll(DeploymentLoader.getWebDescriptors(jarLocation));
             DeploymentLoader.addWebModule(webModule, app);
             DeploymentLoader.addWebModuleDescriptors(new File(webModule.getJarLocation()).toURI().toURL(), webModule, app);
         } catch (final Exception e) {
