@@ -290,7 +290,10 @@ public class Container implements AutoCloseable {
 
         final Properties props = configuration.getProperties();
         if (props != null) {
-            Logger.configure(configuration.getProperties());
+            // inherit from system props
+            final Properties properties = new Properties(System.getProperties());
+            properties.putAll(configuration.getProperties());
+            Logger.configure(properties);
         } else {
             Logger.configure();
         }
