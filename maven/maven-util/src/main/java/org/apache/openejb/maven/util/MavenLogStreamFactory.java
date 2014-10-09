@@ -33,6 +33,15 @@ public class MavenLogStreamFactory implements LogStreamFactory {
     private static Log logger;
     static {
         System.setProperty(WebBeansLoggerFacade.OPENWEBBEANS_LOGGING_FACTORY_PROP, OWBMavenLogFactory.class.getName());
+        try {
+            if (System.getProperty("openjpa.Log") == null) {
+                MavenLogStreamFactory.class.getClassLoader().loadClass("org.apache.openjpa.lib.log.LogFactoryAdapter");
+                System.setProperty("openjpa.Log", "org.apache.openejb.maven.util.OpenJPALog");
+            }
+        } catch (final Exception ignored) {
+            // no-op: openjpa is not at the classpath
+        }
+
     }
 
     @Override
