@@ -33,7 +33,6 @@ import java.util.ResourceBundle;
 public class Logger {
     private static final String SUFFIX = ".Messages";
     private static final String OPENEJB = "org.apache.openejb";
-    private static final Properties EMPTY_PROPS = new Properties();
     private static LogStreamFactory logStreamFactory;
 
     // don't return the instance since it needs to stay private but export which one is used to allow integration with other libs (as tomcat ;))
@@ -46,7 +45,7 @@ public class Logger {
     }
 
     public static synchronized void configure() {
-        configure(EMPTY_PROPS);
+        configure(System.getProperties());
     }
 
     public static synchronized void configure(final Properties config) {

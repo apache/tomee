@@ -124,6 +124,9 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     private MavenProject project;
 
+    @Parameter(property = "tomee-embedded-plugin.mavenLog", defaultValue = "true")
+    private boolean mavenLog;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (!classpathAsWar && "pom".equals(packaging)) {
@@ -131,11 +134,18 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
             return;
         }
 
-        final ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        final Properties originalSystProp = new Properties();
+        originalSystProp.putAll(System.getProperties());
+
+        final Thread thread = Thread.currentThread();
+        final ClassLoader loader = thread.getContextClassLoader();
 
         final String logFactory = System.getProperty("openejb.log.factory");
         MavenLogStreamFactory.setLogger(getLog());
-        System.setProperty("openejb.log.factory", "org.apache.openejb.maven.util.MavenLogStreamFactory");
+        if (mavenLog) {
+            System.setProperty("openejb.log.factory", "org.apache.openejb.maven.util.MavenLogStreamFactory");
+            System.setProperty("openejb.jul.forceReload", "true");
+        }
 
         final Container container = new Container();
         final Configuration config  = getConfig();
@@ -167,10 +177,10 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
                 if (context != null) {
                     getLog().warn("Context will be ignored since not using classpathAsWar");
                 }
-                container.deploy(warFile.getName(), warFile);
+                container.deploy(context == null ? warFile.getName() : context, warFile);
             } else {
                 if (useProjectClasspath) {
-                    Thread.currentThread().setContextClassLoader(createClassLoader(loader));
+                    thread.setContextClassLoader(createClassLoader(loader));
                 }
                 container.deployClasspathAsWebApp(context, docBase); // null is handled properly so no issue here
             }
@@ -200,7 +210,8 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
             } else {
                 System.setProperty("openejb.log.factory", logFactory);
             }
-            Thread.currentThread().setContextClassLoader(loader);
+            thread.setContextClassLoader(loader);
+            System.setProperties(originalSystProp);
         }
     }
 

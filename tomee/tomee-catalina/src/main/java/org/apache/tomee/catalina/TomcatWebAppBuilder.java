@@ -454,16 +454,22 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
             StandardContext standardContext;
             {
+                final ClassLoader containerLoader = Helper.get();
                 final Host host = hosts.getDefault();
                 if (StandardHost.class.isInstance(host)) {
                     try {
-                        standardContext = StandardContext.class.cast(ParentClassLoaderFinder.Helper.get().loadClass(StandardHost.class.cast(host).getContextClass()).newInstance());
+                        standardContext = StandardContext.class.cast(containerLoader.loadClass(StandardHost.class.cast(host).getContextClass()).newInstance());
                     } catch (final Throwable th) {
                         logger.warning("Can't use context class specified, using default StandardContext", th);
                         standardContext = new StandardContext();
                     }
                 } else {
                     standardContext = new StandardContext();
+                }
+                // should be optional but in maven parent is app loader and not maven loader which is the real parent
+                final ClassLoader currentParent = standardContext.getParentClassLoader();
+                if (currentParent == null || isParent(currentParent, containerLoader)) {
+                    standardContext.setParentClassLoader(containerLoader);
                 }
             }
             if (contextXml != null) {
@@ -554,6 +560,17 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 }
             }
         }
+    }
+
+    private static boolean isParent(final ClassLoader parent, final ClassLoader child) {
+        ClassLoader current = child;
+        while (current != null) {
+            if (current == parent) {
+                return true;
+            }
+            current = current.getParent();
+        }
+        return child.getParent() == null && child != ClassLoader.getSystemClassLoader(); // maven ClassRealm classloader...yeah that's not awesome
     }
 
     private static boolean isRoot(final String name) {
