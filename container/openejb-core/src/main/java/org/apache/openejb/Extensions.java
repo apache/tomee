@@ -109,7 +109,7 @@ public final class Extensions {
 
         // ensure we support multiple class by file
         public List<String> findAvailableStrings(final String uri) throws IOException {
-            List<String> strings = super.findAvailableStrings(uri);
+            final List<String> strings = super.findAvailableStrings(uri);
             if (!strings.isEmpty()) {
                 final List<String> copy = new ArrayList<String>(strings);
                 strings.clear();

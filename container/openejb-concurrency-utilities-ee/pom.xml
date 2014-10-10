@@ -30,7 +30,7 @@
   <name>OpenEJB :: Container :: Concurrency Utilities EE</name>
 
   <properties>
-    <test.complexity.coverage.minimun>0.68</test.complexity.coverage.minimun>
+    <test.complexity.coverage.minimun>0.67</test.complexity.coverage.minimun>
     <test.branch.coverage.minimun>0.4</test.branch.coverage.minimun>
   </properties>
   <dependencies>

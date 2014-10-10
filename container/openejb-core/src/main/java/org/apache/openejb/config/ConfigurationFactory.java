@@ -21,80 +21,21 @@ import org.apache.openejb.Extensions;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.Vendor;
 import org.apache.openejb.api.Proxy;
-import org.apache.openejb.assembler.classic.AppInfo;
-import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.assembler.classic.BmpEntityContainerInfo;
-import org.apache.openejb.assembler.classic.ClientInfo;
-import org.apache.openejb.assembler.classic.CmpEntityContainerInfo;
-import org.apache.openejb.assembler.classic.ConnectionManagerInfo;
-import org.apache.openejb.assembler.classic.ConnectorInfo;
-import org.apache.openejb.assembler.classic.ContainerInfo;
-import org.apache.openejb.assembler.classic.ContainerSystemInfo;
-import org.apache.openejb.assembler.classic.DeploymentExceptionManager;
-import org.apache.openejb.assembler.classic.EjbJarInfo;
-import org.apache.openejb.assembler.classic.FacilitiesInfo;
-import org.apache.openejb.assembler.classic.HandlerChainInfo;
-import org.apache.openejb.assembler.classic.HandlerInfo;
-import org.apache.openejb.assembler.classic.JndiContextInfo;
-import org.apache.openejb.assembler.classic.ManagedContainerInfo;
-import org.apache.openejb.assembler.classic.MdbContainerInfo;
-import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
-import org.apache.openejb.assembler.classic.OpenEjbConfigurationFactory;
-import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
-import org.apache.openejb.assembler.classic.ResourceInfo;
-import org.apache.openejb.assembler.classic.SecurityServiceInfo;
-import org.apache.openejb.assembler.classic.ServiceInfo;
-import org.apache.openejb.assembler.classic.SingletonSessionContainerInfo;
-import org.apache.openejb.assembler.classic.StatefulSessionContainerInfo;
-import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
-import org.apache.openejb.assembler.classic.TransactionServiceInfo;
-import org.apache.openejb.assembler.classic.WebAppInfo;
+import org.apache.openejb.assembler.classic.*;
 import org.apache.openejb.component.ClassLoaderEnricher;
-import org.apache.openejb.config.sys.AbstractService;
-import org.apache.openejb.config.sys.AdditionalDeployments;
-import org.apache.openejb.config.sys.ConnectionManager;
-import org.apache.openejb.config.sys.Container;
-import org.apache.openejb.config.sys.Deployments;
-import org.apache.openejb.config.sys.JaxbOpenejb;
-import org.apache.openejb.config.sys.JndiProvider;
-import org.apache.openejb.config.sys.Openejb;
-import org.apache.openejb.config.sys.ProxyFactory;
-import org.apache.openejb.config.sys.Resource;
-import org.apache.openejb.config.sys.SecurityService;
+import org.apache.openejb.config.sys.*;
 import org.apache.openejb.config.sys.Service;
-import org.apache.openejb.config.sys.ServiceProvider;
-import org.apache.openejb.config.sys.TransactionManager;
 import org.apache.openejb.core.ParentClassLoaderFinder;
-import org.apache.openejb.jee.Application;
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.EnterpriseBean;
-import org.apache.openejb.jee.EnvEntry;
-import org.apache.openejb.jee.Handler;
-import org.apache.openejb.jee.HandlerChain;
-import org.apache.openejb.jee.HandlerChains;
-import org.apache.openejb.jee.ParamValue;
-import org.apache.openejb.jee.SessionBean;
-import org.apache.openejb.loader.FileUtils;
-import org.apache.openejb.loader.Files;
-import org.apache.openejb.loader.IO;
-import org.apache.openejb.loader.Options;
-import org.apache.openejb.loader.ProvisioningUtil;
-import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.jee.*;
+import org.apache.openejb.loader.*;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.resource.jdbc.DataSourceFactory;
 import org.apache.openejb.resource.jdbc.pool.DataSourceCreator;
 import org.apache.openejb.resource.jdbc.pool.DefaultDataSourceCreator;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.Messages;
-import org.apache.openejb.util.PropertyPlaceHolderHelper;
-import org.apache.openejb.util.SuperProperties;
-import org.apache.openejb.util.URISupport;
-import org.apache.openejb.util.URLs;
+import org.apache.openejb.util.*;
 import org.apache.openejb.util.classloader.URLClassLoaderFirst;
 import org.apache.openejb.util.proxy.QueryProxy;
 import org.apache.xbean.finder.MetaAnnotatedClass;
-import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
@@ -106,17 +47,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 import static org.apache.openejb.config.DeploymentsResolver.DEPLOYMENTS_CLASSPATH_PROPERTY;
 import static org.apache.openejb.config.ServiceUtils.implies;
@@ -1303,7 +1234,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             // because we just have the service properties, not our defaults
             final Properties properties = service.getProperties();
             if ((properties.containsKey("JdbcDriver") || properties.containsKey("JdbcUrl") || properties.containsKey("url"))
-                && (properties.containsKey("JtaManaged") || properties.containsKey("UserName") || properties.containsKey("Password"))) {
+                    && (properties.containsKey("JtaManaged") || properties.containsKey("UserName") || properties.containsKey("Password"))) {
                 service.setType("javax.sql.DataSource");
             }
         }
@@ -1614,7 +1545,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
             // both null or the same id
             if (refA == null && refB == null ||
-                refA != null && refA.equals(refB)) {
+                    refA != null && refA.equals(refB)) {
                 return EQUAL;
             }
 
