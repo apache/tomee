@@ -49,6 +49,7 @@ public class CustomExceptionMapperTest {
         properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
         properties.setProperty(DeploymentLoader.OPENEJB_ALTDD_PREFIX, "em");
         properties.setProperty("httpejbd.port", Integer.toString(port));
+        properties.setProperty("cxf.jaxrs.skip-provider-scanning", "true");
         container = EJBContainer.createEJBContainer(properties);
     }
 

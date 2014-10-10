@@ -708,7 +708,8 @@ public class CxfRsHttpListener implements RsHttpListener {
 
         // another property to configure the scanning of providers but this one is consistent with current cxf config
         // the other one is more generic but need another file
-        final boolean ignoreAutoProviders = "false".equalsIgnoreCase(serviceConfiguration.getProperties().getProperty(CXF_JAXRS_PREFIX + "skip-provider-scanning"));
+        final String key = CXF_JAXRS_PREFIX + "skip-provider-scanning";
+        final boolean ignoreAutoProviders = "true".equalsIgnoreCase(SystemInstance.get().getProperty(key, serviceConfiguration.getProperties().getProperty(key, "false")));
         final Collection<Object> additionalProviders = ignoreAutoProviders ? Collections.emptyList() : givenAdditionalProviders;
         List<Object> providers = null;
         if (providersConfig != null) {

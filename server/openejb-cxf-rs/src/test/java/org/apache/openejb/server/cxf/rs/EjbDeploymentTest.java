@@ -51,6 +51,7 @@ public class EjbDeploymentTest {
         properties.setProperty("httpejbd.port", Integer.toString(port));
         properties.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*openejb-cxf-rs.*");
         properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
+        properties.setProperty("cxf.jaxrs.skip-provider-scanning", "true");
         container = EJBContainer.createEJBContainer(properties);
         service = (RESTIsCoolTwo) container.getContext().lookup("java:/global/openejb-cxf-rs/RESTIsCoolTwo");
     }

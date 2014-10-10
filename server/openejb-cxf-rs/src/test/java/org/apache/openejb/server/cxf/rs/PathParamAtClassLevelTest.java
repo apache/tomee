@@ -45,6 +45,7 @@ public class PathParamAtClassLevelTest {
         final Properties properties = new Properties();
         properties.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*openejb-cxf-rs.*");
         properties.setProperty("httpejbd.port", Integer.toString(port));
+        properties.setProperty("cxf.jaxrs.skip-provider-scanning", "true");
         properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
         container = EJBContainer.createEJBContainer(properties);
     }
