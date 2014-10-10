@@ -214,114 +214,61 @@ public class DeploymentsResolver implements DeploymentFilterable {
      * This appears in step 3 of the above algorithm.
      */
     public static List<URL> loadFromClasspath(final ClassLoader classLoader) {
-        final List<URL> jarList = new ArrayList<>(16);
-        final Options options = SystemInstance.get().getOptions();
-        final String include = options.get(CLASSPATH_INCLUDE, ".*");
-        final String exclude = options.get(CLASSPATH_EXCLUDE, "");
-        final Set<RequireDescriptors> requireDescriptors = options.getAll(CLASSPATH_REQUIRE_DESCRIPTOR, RequireDescriptors.CLIENT);
-        final boolean filterDescriptors = options.get(CLASSPATH_FILTER_DESCRIPTORS, false);
-        final boolean filterSystemApps = options.get(CLASSPATH_FILTER_SYSTEMAPPS, true);
+        final ClasspathSearcher searchResult = new ClasspathSearcher().loadUrls(classLoader);
+        if (searchResult.prefiltered == null || searchResult.urlSet == null) { // an error occured
+            return new ArrayList<>(); // allow iterator to fully work compared to emptyList()
+        }
 
         try {
-            UrlSet urlSet = new UrlSet(classLoader);
+            final List<URL> jarList = new ArrayList<>(searchResult.urls.size());
 
-            urlSet = URLs.cullSystemJars(urlSet);
-
-            // save the prefiltered list of jars before excluding system apps
-            // so that we can choose not to filter modules with descriptors on the full list
-            final UrlSet prefiltered = urlSet;
-
-            Filter includeFilter = Filters.patterns(include);
-
-            // we should exclude system apps before and apply user properties after
-            if (!".*".equals(include) || !"".equals(exclude)) { // if we are using default this will not do anything
-                // the next line should probably replaced by:
-                // final Filter filter = new ExcludeIncludeFilter(includeFilter, Filters.patterns(exclude));
-                final Filter filter;
-                if (EXCLUDE_INCLUDE_ORDER.startsWith("include")) { // this test should be simply enough
-                    filter = new IncludeExcludeFilter(includeFilter, Filters.patterns(exclude));
-                } else {
-                    filter = new ExcludeIncludeFilter(includeFilter, Filters.patterns(exclude));
-                }
-
-                // filter using user parameters
-                urlSet = urlSet.filter(filter);
-            } else {
-                includeFilter = null;
-            }
-
-            if (prefiltered.size() == urlSet.size()) {
-                urlSet = NewLoaderLogic.applyBuiltinExcludes(urlSet, includeFilter);
-
-                if (filterSystemApps) {
-                    urlSet = urlSet.exclude(".*/openejb-[^/]+(.(jar|ear|war)(!/)?|/target/(test-)?classes/?)");
-                }
-            }
-
-            final boolean isWindows = System.getProperty("os.name", "unknown").toLowerCase().startsWith("windows");
-            final List<URL> urls;
-            if (!isWindows) {
-                urls = urlSet.getUrls();
-            } else {
-                urls = new ArrayList<URL>();
-                for (final URL url : urlSet.getUrls()) {
-                    final String ef = url.toExternalForm().toLowerCase();
-                    final URL u = new URL(ef);
-                    if (!urls.contains(u)) {
-                        urls.add(u);
-                    }
-                }
-            }
-
-            final int size = urls.size();
-            if (size == 0 && include.length() > 0) {
-                logger.warning("No classpath URLs matched.  Current settings: " + CLASSPATH_EXCLUDE + "='" + exclude + "', " + CLASSPATH_INCLUDE + "='" + include + "'");
+            final int size = searchResult.urls.size();
+            if (size == 0 && searchResult.include.length() > 0) {
+                logger.warning("No classpath URLs matched.  Current settings: " +
+                        CLASSPATH_EXCLUDE + "='" + searchResult.exclude + "', " +
+                        CLASSPATH_INCLUDE + "='" + searchResult.include + "'");
                 return jarList;
-            } else if (size == 0 && !filterDescriptors && prefiltered.getUrls().size() == 0) {
+            } else if (size == 0 && !searchResult.filterDescriptors && searchResult.prefiltered.getUrls().size() == 0) {
                 return jarList;
             } else if (size < 20) {
-                logger.debug("Inspecting classpath for applications: " + urls.size() + " urls.");
+                logger.debug("Inspecting classpath for applications: " + size + " urls.");
             } else {
                 // Has the user allowed some module types to be discoverable via scraping?
-                final boolean willScrape = requireDescriptors.size() < RequireDescriptors.values().length;
+                final boolean willScrape = searchResult.requireDescriptors.size() < RequireDescriptors.values().length;
 
                 if (size < 50 && willScrape) {
                     logger.info("Inspecting classpath for applications: " +
-                        urls.size() +
-                        " urls. Consider adjusting your exclude/include.  Current settings: " +
-                        CLASSPATH_EXCLUDE +
-                        "='" +
-                        exclude +
-                        "', " +
-                        CLASSPATH_INCLUDE +
-                        "='" +
-                        include +
-                        "'");
+                            size +
+                            " urls. Consider adjusting your exclude/include.  " +
+                            "Current settings: " + CLASSPATH_EXCLUDE + "='" + searchResult.exclude + "', " +
+                            CLASSPATH_INCLUDE + "='" + searchResult.include + "'");
                 } else if (willScrape) {
-                    logger.warning("Inspecting classpath for applications: " + urls.size() + " urls.");
-                    logger.warning("ADJUST THE EXCLUDE/INCLUDE!!!.  Current settings: " + CLASSPATH_EXCLUDE + "='" + exclude + "', " + CLASSPATH_INCLUDE + "='" + include + "'");
+                    logger.warning("Inspecting classpath for applications: " + size + " urls.");
+                    logger.warning("ADJUST THE EXCLUDE/INCLUDE!!!.  Current settings: " +
+                            CLASSPATH_EXCLUDE + "='" + searchResult.exclude + "', " +
+                            CLASSPATH_INCLUDE + "='" + searchResult.include + "'");
                 }
             }
 
             final long begin = System.currentTimeMillis();
-            processUrls("DeploymentsResolver1", urls, classLoader, requireDescriptors, jarList);
+            processUrls("DeploymentsResolver1", searchResult.urls, classLoader, searchResult.requireDescriptors, jarList);
             final long end = System.currentTimeMillis();
             final long time = end - begin;
 
             UrlSet unchecked = new UrlSet();
 
-            if (!filterDescriptors) {
-                unchecked = NewLoaderLogic.applyBuiltinExcludes(prefiltered.exclude(urlSet));
-                if (filterSystemApps) {
+            if (!searchResult.filterDescriptors) {
+                unchecked = NewLoaderLogic.applyBuiltinExcludes(searchResult.prefiltered.exclude(searchResult.prefiltered));
+                if (searchResult.filterSystemApps) {
                     unchecked = unchecked.exclude(".*/openejb-[^/]+(.(jar|ear|war)(./)?|/target/classes/?)");
                 }
                 processUrls("DeploymentsResolver2", unchecked.getUrls(), classLoader, EnumSet.allOf(RequireDescriptors.class), jarList);
             }
 
             if (logger.isDebugEnabled()) {
-                final int urlCount = urlSet.getUrls().size() + unchecked.getUrls().size();
+                final int urlCount = searchResult.urlSet.getUrls().size() + unchecked.getUrls().size();
                 logger.debug("DeploymentsResolver: URLs after filtering: " + urlCount);
-                for (final URL url : urlSet.getUrls()) {
+                for (final URL url : searchResult.urlSet.getUrls()) {
                     logger.debug("Annotations path: " + url);
                 }
                 for (final URL url : unchecked.getUrls()) {
@@ -329,30 +276,27 @@ public class DeploymentsResolver implements DeploymentFilterable {
                 }
             }
 
-            if (urls.size() == 0) {
+            final int urlSize = searchResult.urls.size();
+            if (urlSize == 0) {
                 return jarList;
             }
 
             if (time < 1000) {
-                logger.debug("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + time / urls.size() + " milliseconds per url.");
-            } else if (time < 4000 || urls.size() < 3) {
-                logger.info("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + time / urls.size() + " milliseconds per url.");
+                logger.debug("Searched " + urlSize + " classpath urls in " + time + " milliseconds.  Average " + time / urlSize + " milliseconds per url.");
+            } else if (time < 4000 || urlSize < 3) {
+                logger.info("Searched " + urlSize + " classpath urls in " + time + " milliseconds.  Average " + time / urlSize + " milliseconds per url.");
             } else if (time < 10000) {
-                logger.warning("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + time / urls.size() + " milliseconds per url.");
+                logger.warning("Searched " + urlSize + " classpath urls in " + time + " milliseconds.  Average " + time / urlSize + " milliseconds per url.");
                 logger.warning("Consider adjusting your " +
-                    CLASSPATH_EXCLUDE +
-                    " and " +
-                    CLASSPATH_INCLUDE +
-                    " settings.  Current settings: exclude='" +
-                    exclude +
-                    "', include='" +
-                    include +
-                    "'");
+                    CLASSPATH_EXCLUDE + " and " + CLASSPATH_INCLUDE + " settings.  Current settings: exclude='" +
+                        searchResult.exclude + "', include='" + searchResult.include + "'");
             } else {
-                logger.fatal("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + time / urls.size() + " milliseconds per url.  TOO LONG!");
-                logger.fatal("ADJUST THE EXCLUDE/INCLUDE!!!.  Current settings: " + CLASSPATH_EXCLUDE + "='" + exclude + "', " + CLASSPATH_INCLUDE + "='" + include + "'");
+                logger.fatal("Searched " + urlSize + " classpath urls in " + time + " milliseconds.  Average " + time / urlSize + " milliseconds per url.  TOO LONG!");
+                logger.fatal("ADJUST THE EXCLUDE/INCLUDE!!!.  Current settings: " +
+                        CLASSPATH_EXCLUDE + "='" + searchResult.exclude + "', " +
+                        CLASSPATH_INCLUDE + "='" + searchResult.include + "'");
                 final List<String> list = new ArrayList<String>();
-                for (final URL url : urls) {
+                for (final URL url : searchResult.urls) {
                     list.add(url.toExternalForm());
                 }
                 Collections.sort(list);
@@ -360,12 +304,11 @@ public class DeploymentsResolver implements DeploymentFilterable {
                     logger.info("Matched: " + url);
                 }
             }
+            return jarList;
         } catch (final IOException e1) {
-            e1.printStackTrace();
             logger.warning("Unable to search classpath for modules: Received Exception: " + e1.getClass().getName() + " " + e1.getMessage(), e1);
         }
-
-        return jarList;
+        return new ArrayList<>();
     }
 
     @Deprecated
@@ -426,6 +369,91 @@ public class DeploymentsResolver implements DeploymentFilterable {
             } catch (final UnknownModuleTypeException ignore) {
                 // no-op
             }
+        }
+    }
+
+    public static class ClasspathSearcher {
+        // config used for scanning
+        private final String include;
+        private final String exclude;
+        private final boolean filterSystemApps;
+        private final Set<RequireDescriptors> requireDescriptors;
+        private final boolean filterDescriptors;
+
+        // set got
+        private UrlSet urlSet;
+        private UrlSet prefiltered;
+
+        // final result
+        private List<URL> urls;
+
+        public ClasspathSearcher() {
+            final Options options = SystemInstance.get().getOptions();
+            include = options.get(CLASSPATH_INCLUDE, ".*");
+            exclude = options.get(CLASSPATH_EXCLUDE, "");
+            filterSystemApps = options.get(CLASSPATH_FILTER_SYSTEMAPPS, true);
+            requireDescriptors = options.getAll(CLASSPATH_REQUIRE_DESCRIPTOR, RequireDescriptors.CLIENT);
+            filterDescriptors = options.get(CLASSPATH_FILTER_DESCRIPTORS, false);
+        }
+
+        public List<URL> getUrls() {
+            return urls;
+        }
+
+        public ClasspathSearcher loadUrls(final ClassLoader classLoader) {
+            try {
+                urlSet = URLs.cullSystemJars(new UrlSet(classLoader));
+
+                // save the prefiltered list of jars before excluding system apps
+                // so that we can choose not to filter modules with descriptors on the full list
+                prefiltered = urlSet;
+
+                Filter includeFilter = Filters.patterns(include);
+
+                // we should exclude system apps before and apply user properties after
+                if (!".*".equals(include) || !"".equals(exclude)) { // if we are using default this will not do anything
+                    // the next line should probably replaced by:
+                    // final Filter filter = new ExcludeIncludeFilter(includeFilter, Filters.patterns(exclude));
+                    final Filter filter;
+                    if (EXCLUDE_INCLUDE_ORDER.startsWith("include")) { // this test should be simply enough
+                        filter = new IncludeExcludeFilter(includeFilter, Filters.patterns(exclude));
+                    } else {
+                        filter = new ExcludeIncludeFilter(includeFilter, Filters.patterns(exclude));
+                    }
+
+                    // filter using user parameters
+                    urlSet = urlSet.filter(filter);
+                } else {
+                    includeFilter = null;
+                }
+
+                if (prefiltered.size() == urlSet.size()) {
+                    urlSet = NewLoaderLogic.applyBuiltinExcludes(urlSet, includeFilter);
+
+                    if (filterSystemApps) {
+                        urlSet = urlSet.exclude(".*/openejb-[^/]+(.(jar|ear|war)(!/)?|/target/(test-)?classes/?)");
+                    }
+                }
+
+                final boolean isWindows = System.getProperty("os.name", "unknown").toLowerCase().startsWith("windows");
+                if (!isWindows) {
+                    urls = urlSet.getUrls();
+                } else {
+                    urls = new ArrayList<>();
+                    for (final URL url : urlSet.getUrls()) {
+                        final String ef = url.toExternalForm().toLowerCase();
+                        final URL u = new URL(ef);
+                        if (!urls.contains(u)) {
+                            urls.add(u);
+                        }
+                    }
+                }
+
+                return this;
+            } catch (final IOException e1) {
+                logger.warning("Unable to search classpath", e1);
+            }
+            return this;
         }
     }
 }

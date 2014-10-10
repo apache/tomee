@@ -131,7 +131,7 @@ public class Container implements AutoCloseable {
     }
 
     public Container deployClasspathAsWebApp(final String context, final File docBase, final String... dependencies) {
-        final List<URL> jarList = DeploymentsResolver.loadFromClasspath(Thread.currentThread().getContextClassLoader());
+        final List<URL> jarList = new DeploymentsResolver.ClasspathSearcher().loadUrls(Thread.currentThread().getContextClassLoader()).getUrls();
         if (dependencies != null) {
             for (final String dep : dependencies) {
                 final Set<String> strings = SystemInstance.get().getComponent(ProvisioningResolver.class).realLocation(dep);
