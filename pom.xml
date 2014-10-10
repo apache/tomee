@@ -322,6 +322,18 @@
           <artifactId>maven-doap-plugin</artifactId>
           <version>1.1</version>
         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-remote-resources-plugin</artifactId>
+          <version>1.5</version>
+          <dependencies>
+            <dependency>
+              <groupId>org.apache.maven.shared</groupId>
+              <artifactId>maven-filtering</artifactId>
+              <version>1.2</version>
+            </dependency>
+          </dependencies>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -338,7 +350,8 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <reuseForks>false</reuseForks> <!-- to be removed when all test lifecycles are fixed -->
+          <reuseForks>false</reuseForks>
+          <!-- to be removed when all test lifecycles are fixed -->
         </configuration>
       </plugin>
       <plugin>
@@ -569,7 +582,7 @@
           </plugin>
         </plugins>
       </build>
-	  
+
       <repositories>
         <repository>
           <releases>
@@ -579,7 +592,7 @@
           <url>http://snapshots.repository.codehaus.org/</url>
         </repository>
       </repositories>
-	  
+
       <pluginRepositories>
         <pluginRepository>
           <releases>
@@ -590,7 +603,7 @@
         </pluginRepository>
       </pluginRepositories>
     </profile>
-	
+
     <profile>
       <id>rat</id>
       <modules>
@@ -1563,8 +1576,8 @@
         <version>2.2.1</version>
         <exclusions>
           <exclusion>
-             <groupId>org.quartz-scheduler</groupId>
-             <artifactId>quartz</artifactId>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
           </exclusion>
           <exclusion>
             <groupId>javax.transaction</groupId>
@@ -1945,7 +1958,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.9</version>
+        <version>2.10.1</version>
         <configuration>
           <aggregate>true</aggregate>
           <additionalJOption>-J-Xmx1024m</additionalJOption>
