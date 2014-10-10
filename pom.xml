@@ -309,6 +309,18 @@
           <artifactId>maven-doap-plugin</artifactId>
           <version>1.1</version>
         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-remote-resources-plugin</artifactId>
+          <version>1.5</version>
+          <dependencies>
+            <dependency>
+              <groupId>org.apache.maven.shared</groupId>
+              <artifactId>maven-filtering</artifactId>
+              <version>1.2</version>
+            </dependency>
+          </dependencies>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -621,7 +633,7 @@
           </plugin>
         </plugins>
       </build>
-	  
+
       <repositories>
         <repository>
           <releases>
@@ -631,7 +643,7 @@
           <url>http://snapshots.repository.codehaus.org/</url>
         </repository>
       </repositories>
-	  
+
       <pluginRepositories>
         <pluginRepository>
           <releases>
@@ -642,7 +654,7 @@
         </pluginRepository>
       </pluginRepositories>
     </profile>
-	
+
     <profile>
       <id>rat</id>
       <modules>
@@ -2041,7 +2053,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.9</version>
+        <version>2.10.1</version>
         <configuration>
           <aggregate>true</aggregate>
           <additionalJOption>-J-Xmx1024m</additionalJOption>
