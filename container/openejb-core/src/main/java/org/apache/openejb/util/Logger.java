@@ -663,8 +663,11 @@ public class Logger {
      * @return String
      */
     private String getMessage(final String key, final String baseName) {
-        try {
+        if (key == null) { // hehe, can happen
+            return "null";
+        }
 
+        try {
             final ResourceBundle bundle = bundleCache.compute(baseName);
             if (bundle != null) {
                 try {
