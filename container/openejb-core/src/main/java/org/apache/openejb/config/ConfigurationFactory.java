@@ -96,7 +96,6 @@ import org.apache.openejb.util.classloader.URLClassLoaderFirst;
 import org.apache.openejb.util.proxy.QueryProxy;
 import org.apache.xbean.finder.IAnnotationFinder;
 import org.apache.xbean.finder.MetaAnnotatedClass;
-import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
