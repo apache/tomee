@@ -326,14 +326,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     private void installExtensions() {
         try {
             final Collection<URL> urls = NewLoaderLogic.applyBuiltinExcludes(new UrlSet(Assembler.class.getClassLoader()).excludeJvm()).getUrls();
-            Extensions.installExtensions(new ResourceFinder("META-INF", urls.toArray(new URL[urls.size()])));
+            Extensions.installExtensions(new Extensions.Finder("META-INF", urls.toArray(new URL[urls.size()])));
             return;
         } catch (final IOException e) {
             // no-op
         }
 
         // if an error occurred do it brutely
-        Extensions.installExtensions(new ResourceFinder("META-INF"));
+        Extensions.installExtensions(new Extensions.Finder("META-INF"));
     }
 
     private void setConfiguration(final OpenEjbConfiguration config) {

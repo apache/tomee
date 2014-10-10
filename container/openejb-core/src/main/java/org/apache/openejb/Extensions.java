@@ -23,9 +23,13 @@ import org.apache.openejb.util.Logger;
 import org.apache.xbean.finder.ResourceFinder;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import static java.util.Arrays.asList;
 
 /**
  * The Extensions API mimics the equivalent CDI Extension/@Observes API
@@ -58,7 +62,7 @@ public final class Extensions {
         // no-op
     }
 
-    public static Collection<Class<?>> findExtensions(final ResourceFinder finder) {
+    public static Collection<Class<?>> findExtensions(final Finder finder) {
         try {
             return finder.findAvailableClasses("org.apache.openejb.extension");
         } catch (final IOException e) {
@@ -67,7 +71,7 @@ public final class Extensions {
         }
     }
 
-    public static void installExtensions(final ResourceFinder finder) {
+    public static void installExtensions(final Finder finder) {
         try {
             final List<Class<?>> classes = finder.findAvailableClasses("org.apache.openejb.extension");
             addExtensions(classes);
@@ -95,6 +99,26 @@ public final class Extensions {
             } catch (final Throwable t) {
                 LOGGER.error("Extension construction failed" + clazz.getName(), t);
             }
+        }
+    }
+
+    public static class Finder extends ResourceFinder {
+        public Finder(final String path, final URL... urls) {
+            super(path, urls);
+        }
+
+        // ensure we support multiple class by file
+        public List<String> findAvailableStrings(final String uri) throws IOException {
+            List<String> strings = super.findAvailableStrings(uri);
+            if (!strings.isEmpty()) {
+                final List<String> copy = new ArrayList<>(strings);
+                strings.clear();
+                for (final String s : copy) {
+                    strings.addAll(asList(s.replace("\r", "").split("\n")));
+                }
+            }
+
+            return strings;
         }
     }
 }
