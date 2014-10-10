@@ -24,6 +24,7 @@ import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.ConnectorModule;
 import org.apache.openejb.config.DeploymentLoader;
 import org.apache.openejb.config.EjbModule;
+import org.apache.openejb.config.FinderFactory;
 import org.apache.openejb.config.NewLoaderLogic;
 import org.apache.openejb.config.PersistenceModule;
 import org.apache.openejb.config.ValidationFailedException;
@@ -52,11 +53,13 @@ import org.apache.openejb.util.ServiceManagerProxy;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.web.lifecycle.test.MockHttpSession;
 import org.apache.webbeans.web.lifecycle.test.MockServletContext;
+import org.apache.xbean.finder.archive.ClassesArchive;
 import org.apache.xbean.naming.context.ContextFlyweight;
 
 import javax.ejb.EJBException;
 import javax.ejb.embeddable.EJBContainer;
 import javax.ejb.spi.EJBContainerProvider;
+import javax.inject.Inject;
 import javax.naming.Context;
 import javax.naming.Name;
 import javax.naming.NameNotFoundException;
@@ -83,6 +86,7 @@ import java.util.logging.LogManager;
 
 import static org.apache.openejb.cdi.ScopeHelper.startContexts;
 import static org.apache.openejb.cdi.ScopeHelper.stopContexts;
+import static org.apache.openejb.util.Classes.ancestors;
 
 /**
  * @version $Rev$ $Date$
@@ -305,7 +309,10 @@ public final class OpenEjbContainer extends EJBContainer {
                     ejbDeployment.setDeploymentId(name);
                 }
 
-                appModule.getEjbModules().add(new EjbModule(ejbJar, openejbJar));
+                final EjbModule ejbModule = new EjbModule(ejbJar, openejbJar);
+                ejbModule.getProperties().setProperty("openejb.cdi.activated", "false"); // BeanManagerImpl will likely be empty
+                ejbModule.setBeans(new Beans()); // avoid warnings but not effectvely used
+                appModule.getEjbModules().add(ejbModule);
 
 
                 final AppInfo appInfo;
