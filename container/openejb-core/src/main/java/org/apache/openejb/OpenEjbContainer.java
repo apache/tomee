@@ -574,7 +574,7 @@ public final class OpenEjbContainer extends EJBContainer {
         private static boolean isOtherProvider(final Map<?, ?> properties) {
             final Object provider = properties.get(EJBContainer.PROVIDER);
             return provider != null && !provider.equals(OpenEjbContainer.class) && !provider.equals(OpenEjbContainer.class.getName())
-                && !"openejb".equals(provider);
+                    && !"openejb".equals(provider);
         }
 
         private boolean match(final String s, final File file) {
