@@ -324,6 +324,21 @@ public class JaxbJavaee {
             super(xmlReader);
         }
 
+        private static String eeUri(final String uri) {
+            // if ee 7 then switch back on ee 6 to not break compatibility - to rework surely when we'll be fully ee 7
+            return "http://xmlns.jcp.org/xml/ns/javaee".equals(uri) ? "http://java.sun.com/xml/ns/javaee": uri;
+        }
+
+        @Override
+        public void startElement(final String uri, final String localName, final String qName, final Attributes atts) throws SAXException {
+            super.startElement(eeUri(uri), localName, qName, atts);
+        }
+
+        @Override
+        public void endElement(final String uri, final String localName, final String qName) throws SAXException {
+            super.endElement(eeUri(uri), localName, qName);
+        }
+
         @Override
         public InputSource resolveEntity(final String publicId, final String systemId) throws SAXException, IOException {
             final Set<String> publicIds = currentPublicId.get();
