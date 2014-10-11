@@ -152,6 +152,7 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.spi.DeploymentException;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanRegistrationException;
 import javax.management.MBeanServer;
@@ -945,6 +946,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             return appContext;
         } catch (final ValidationException ve) {
+            throw ve;
+        } catch (final DeploymentException ve) {
             throw ve;
         } catch (final Throwable t) {
             try {

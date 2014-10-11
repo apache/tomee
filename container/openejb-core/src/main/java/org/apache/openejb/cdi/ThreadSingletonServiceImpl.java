@@ -46,6 +46,7 @@ import org.apache.webbeans.spi.TransactionService;
 import org.apache.webbeans.spi.adaptor.ELAdaptor;
 import org.apache.webbeans.web.intercept.RequestScopedBeanInterceptorHandler;
 
+import javax.enterprise.inject.spi.DeploymentException;
 import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.Comparator;
@@ -168,7 +169,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
             try {
                 webBeansContext.getService(ContainerLifecycle.class).startApplication(startupObject);
             } catch (final Exception e) {
-                throw new OpenEJBRuntimeException("couldn't start owb context", e);
+                throw new DeploymentException("couldn't start owb context", e);
             }
         } finally {
             contextExited(old);
