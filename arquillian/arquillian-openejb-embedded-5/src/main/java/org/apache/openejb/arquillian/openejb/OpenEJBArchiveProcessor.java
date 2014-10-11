@@ -27,6 +27,7 @@ import org.apache.openejb.config.FinderFactory;
 import org.apache.openejb.config.ReadDescriptors;
 import org.apache.openejb.config.WebModule;
 import org.apache.openejb.config.WebappAggregatedArchive;
+import org.apache.openejb.jee.Beans;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.ManagedBean;
 import org.apache.openejb.jee.TransactionType;
@@ -172,6 +173,8 @@ public class OpenEJBArchiveProcessor {
             final EjbDeployment ejbDeployment = openejbJar.addEjbDeployment(bean);
             ejbDeployment.setDeploymentId(ejbName);
             final EjbModule e = new EjbModule(ejbJar, openejbJar);
+            e.getProperties().setProperty("openejb.cdi.activated", "false");
+            e.setBeans(new Beans());
             e.setClassLoader(tempClassLoader);
             appModule.getEjbModules().add(e);
             testDD = e.getAltDDs();

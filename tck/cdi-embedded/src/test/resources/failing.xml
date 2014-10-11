@@ -18,7 +18,7 @@
 <suite name="CDI TCK" verbose="0">
   <test name="CDI TCK">
     <classes>
-      <class name="org.jboss.cdi.tck.tests.extensions.alternative.deployment.AlternativeInLibraryWithExtensionTest"/>
+      <class name="org.jboss.cdi.tck.tests.lookup.clientProxy.unproxyable.interceptor.InterceptedBeanProxyTest"/>
     </classes>
   </test>
 </suite>
