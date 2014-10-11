@@ -151,7 +151,6 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
 
             return new ProtocolMetaData().addContext(httpContext);
         } catch (final Exception e) {
-            e.printStackTrace();
             throw new DeploymentException("Unable to deploy", e);
         }
     }
