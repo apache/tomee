@@ -16,10 +16,11 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Properties;
 
-public class ComparableValidationConfig {
+public class ComparableValidationConfig implements Serializable {
     private final String providerClassName;
     private final String messageInterpolatorClass;
     private final String traversableResolverClass;
