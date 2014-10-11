@@ -35,7 +35,7 @@ import java.util.Map;
 public class ValidatorFactoryWrapper implements ValidatorFactory, Serializable {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, ValidatorFactoryWrapper.class);
 
-    private transient final Map<ComparableValidationConfig, ValidatorFactory> fallbackValidators;
+    private transient Map<ComparableValidationConfig, ValidatorFactory> fallbackValidators;
 
     private ValidatorFactory factory() {
         try {
