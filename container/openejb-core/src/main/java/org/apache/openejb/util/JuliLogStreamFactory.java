@@ -109,7 +109,11 @@ public class JuliLogStreamFactory implements LogStreamFactory {
             // no-op: openjpa is not at the classpath so don't trigger it loading with our logger
         }
 
-        System.setProperty(WebBeansLoggerFacade.class.getName(), "org.apache.webbeans.logger.JULLoggerFactory");
+        try {
+            System.setProperty(WebBeansLoggerFacade.class.getName(), "org.apache.webbeans.logger.JULLoggerFactory");
+        } catch (final Throwable th) {
+            // ignored, surely arquillian remote only so OWB is not here
+        }
     }
 
     private static void setRootLogger(final OpenEJBLogManager value) {
