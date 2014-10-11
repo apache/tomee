@@ -26,23 +26,31 @@ import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
-import org.apache.webbeans.annotation.AnnotationManager;
+import org.apache.webbeans.annotation.AnyLiteral;
+import org.apache.webbeans.annotation.DefaultLiteral;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.context.creational.CreationalContextImpl;
 import org.apache.webbeans.inject.OWBInjector;
-import org.apache.webbeans.portable.AnnotatedElementFactory;
 import org.jboss.arquillian.test.spi.TestClass;
 
 import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.spi.AnnotatedMethod;
+import javax.enterprise.inject.spi.Annotated;
+import javax.enterprise.inject.spi.AnnotatedCallable;
 import javax.enterprise.inject.spi.AnnotatedParameter;
 import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.spi.InjectionPoint;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static java.util.Arrays.asList;
 
 public final class OpenEJBEnricher {
     private static final Logger LOGGER = Logger.getLogger(OpenEJBEnricher.class.getName());
@@ -110,7 +118,7 @@ public final class OpenEJBEnricher {
         return null;
     }
 
-    public static Object[] resolve(final AppContext appContext, final TestClass testClass, final Method method) { // suppose all is a CDI bean...
+    public static Object[] resolve(final AppContext appContext, final TestClass ignored, final Method method) { // suppose all is a CDI bean...
         final Object[] values = new Object[method.getParameterTypes().length];
 
         if (appContext == null) {
@@ -122,20 +130,10 @@ public final class OpenEJBEnricher {
             return values;
         }
 
-        final Class<?> clazz;
-        if (testClass != null) {
-            clazz = testClass.getJavaClass();
-        } else {
-            clazz = method.getDeclaringClass();
-        }
-
-        final AnnotatedElementFactory factory = beanManager.getWebBeansContext().getAnnotatedElementFactory();
-        final AnnotatedMethod<?> am = factory.newAnnotatedMethod(method, factory.newAnnotatedType(clazz));
-
         final Class<?>[] parameterTypes = method.getParameterTypes();
         for (int i = 0; i < parameterTypes.length; i++) {
             try {
-                values[i] = getParamInstance(beanManager, i, am);
+                values[i] = getParamInstance(beanManager, i, method);
             } catch (final Exception e) {
                 LOGGER.info(e.getMessage());
             }
@@ -143,23 +141,125 @@ public final class OpenEJBEnricher {
         return values;
     }
 
-    private static <T> T getParamInstance(final BeanManagerImpl manager, final int position, final AnnotatedMethod<?> am) {
-        final AnnotationManager annotationManager = manager.getWebBeansContext().getAnnotationManager();
+    private static <T> T getParamInstance(final BeanManagerImpl manager, final int position, final Method method) {
+        final CreationalContextImpl<?> creational = manager.createCreationalContext(null);
+        return (T) manager.getInjectableReference(new MethodParamInjectionPoint(method, position, manager), creational);
+    }
 
-        final AnnotatedParameter<?> ap = am.getParameters().get(position);
+    private static class MethodParamInjectionPoint implements InjectionPoint {
+        private final Method method;
+        private final int position;
+        private final Set<Annotation> qualifiers = new HashSet<>();
 
-        final Type baseType = ap.getBaseType();
-        final Set<Bean<?>> beans = manager.getBeans(baseType, annotationManager.getInterceptorBindingMetaAnnotations(ap.getAnnotations()));
-        if (beans == null) {
+        private MethodParamInjectionPoint(final Method method, final int position, final BeanManager beanManager) {
+            this.method = method;
+            this.position = position;
+
+            for (final Annotation annotation : method.getParameterAnnotations()[position]) {
+                if (beanManager.isQualifier(annotation.annotationType())) {
+                    qualifiers.add(annotation);
+                }
+            }
+            qualifiers.add(new DefaultLiteral());
+            qualifiers.add(new AnyLiteral());
+        }
+
+        @Override
+        public Type getType() {
+            if (method.getGenericParameterTypes().length > 0) {
+                return method.getGenericParameterTypes()[position];
+            }
+            return method.getParameterTypes()[position];
+        }
+
+        @Override
+        public Set<Annotation> getQualifiers() {
+            return qualifiers;
+        }
+
+        @Override
+        public Bean<?> getBean() {
             return null;
         }
-        final Bean<?> bean = manager.resolve(beans);
-        if (bean == null) {
+
+        @Override
+        public Member getMember() {
+            return method;
+        }
+
+        @Override
+        public Annotated getAnnotated() {
+            return new ParamAnnotated(method, position);
+        }
+
+        @Override
+        public boolean isDelegate() {
+            return false;
+        }
+
+        @Override
+        public boolean isTransient() {
+            return false;
+        }
+    }
+
+    private static class ParamAnnotated implements AnnotatedParameter<Object> {
+        private final Method method;
+        private final int position;
+        private final Set<Type> types = new HashSet<>();
+        private final Set<Annotation> annotations;
+
+        private ParamAnnotated(final Method method, final int position) {
+            this.method = method;
+            this.position = position;
+
+            types.add(getBaseType());
+            types.add(Object.class);
+
+            annotations = new HashSet<Annotation>(asList(method.getParameterAnnotations()[position]));
+        }
+
+        @Override
+        public int getPosition() {
+            return position;
+        }
+
+        @Override
+        public AnnotatedCallable<Object> getDeclaringCallable() {
             return null;
         }
 
-        // note: without a scope it can leak but that's what the user asked!
-        final CreationalContextImpl<?> creational = manager.createCreationalContext(null); // null since we don't want the test class be the owner
-        return (T) manager.getReference(bean, baseType, creational);
+        @Override
+        public Type getBaseType() {
+            if (method.getGenericParameterTypes().length > 0) {
+                return method.getGenericParameterTypes()[position];
+            }
+            return method.getParameterTypes()[position];
+        }
+
+        @Override
+        public Set<Type> getTypeClosure() {
+            return types;
+        }
+
+        @Override
+        public <T extends Annotation> T getAnnotation(final Class<T> annotationType) {
+            for (final Annotation a : annotations) {
+                if (a.annotationType().getName().equals(annotationType.getName())) {
+                    return (T) a;
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public Set<Annotation> getAnnotations() {
+            return annotations;
+        }
+
+        @Override
+        public boolean isAnnotationPresent(final Class<? extends Annotation> annotationType) {
+            return getAnnotation(annotationType) != null;
+        }
     }
 }
