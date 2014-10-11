@@ -19,6 +19,7 @@ package org.apache.openejb.arquillian.openejb;
 import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.cdi.CompositeBeans;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.DeploymentLoader;
 import org.apache.openejb.config.EjbModule;
@@ -96,6 +97,7 @@ public class OpenEJBArchiveProcessor {
         }
 
         final List<URL> additionalPaths = new ArrayList<URL>();
+        final List<AssetSource> beansXmlMerged = new ArrayList<>();
 
         final String prefix;
         if (WebArchive.class.isInstance(archive)) {
@@ -115,6 +117,14 @@ public class OpenEJBArchiveProcessor {
                 } else if (ArchiveAsset.class.isInstance(asset)) {
                     final Archive<?> nestedArchive = ArchiveAsset.class.cast(asset).getArchive();
                     if (!isExcluded(nestedArchive.getName())) {
+                        final Node bXmlNode = nestedArchive.get(META_INF + BEANS_XML);
+                        if (bXmlNode != null) {
+                            try {
+                                beansXmlMerged.add(new AssetSource(bXmlNode.getAsset(), new URL("jar:file://!/WEB-INF/lib/" + nestedArchive.getName() + "!/META-INF/beans.xml")));
+                            } catch (final MalformedURLException e) {
+                                // shouldn't occur
+                            }
+                        }
                         archive.merge(nestedArchive);
                     }
                 }
@@ -198,7 +208,12 @@ public class OpenEJBArchiveProcessor {
             beansXml = archive.get(WEB_INF_CLASSES.concat(META_INF).concat(BEANS_XML));
         }
         if (beansXml != null) {
-            ejbModule.getAltDDs().put(BEANS_XML, new AssetSource(beansXml.getAsset()));
+            try {
+                beansXmlMerged.add(new AssetSource(beansXml.getAsset(), new URL("jar:file://!/WEB-INF/classes/beans.xml")));
+            } catch (final MalformedURLException e) {
+                // shouldn't occur
+            }
+            ejbModule.getAltDDs().put(BEANS_XML, beansXmlMerged);
         }
 
         final org.apache.xbean.finder.archive.Archive finderArchive = finderArchive(beansXml, archive, tempClassLoader, additionalPaths);
@@ -222,17 +237,17 @@ public class OpenEJBArchiveProcessor {
                     try {
                         appModule.getAltDDs().put(PERSISTENCE_XML, Arrays.asList(get(File.class, "file", asset).toURI().toURL()));
                     } catch (final MalformedURLException e) {
-                        appModule.getAltDDs().put(PERSISTENCE_XML, Arrays.asList(new AssetSource(persistenceXml.getAsset())));
+                        appModule.getAltDDs().put(PERSISTENCE_XML, Arrays.asList(new AssetSource(persistenceXml.getAsset(), null)));
                     }
                 } else if (ClassLoaderAsset.class.isInstance(asset)) {
                     final URL url = get(ClassLoader.class, "classLoader", asset).getResource(get(String.class, "resourceName", asset));
                     if (url != null) {
                         appModule.getAltDDs().put(PERSISTENCE_XML, Arrays.asList(url));
                     } else {
-                        appModule.getAltDDs().put(PERSISTENCE_XML, Arrays.asList(new AssetSource(persistenceXml.getAsset())));
+                        appModule.getAltDDs().put(PERSISTENCE_XML, Arrays.asList(new AssetSource(persistenceXml.getAsset(), null)));
                     }
                 } else {
-                    appModule.getAltDDs().put(PERSISTENCE_XML, Arrays.asList(new AssetSource(persistenceXml.getAsset())));
+                    appModule.getAltDDs().put(PERSISTENCE_XML, Arrays.asList(new AssetSource(persistenceXml.getAsset(), null)));
                 }
             }
         }
@@ -240,7 +255,7 @@ public class OpenEJBArchiveProcessor {
         {
             final Node openejbJarXml = archive.get(prefix.concat(OPENEJB_JAR_XML));
             if (openejbJarXml != null) {
-                ejbModule.getAltDDs().put(OPENEJB_JAR_XML, new AssetSource(openejbJarXml.getAsset()));
+                ejbModule.getAltDDs().put(OPENEJB_JAR_XML, new AssetSource(openejbJarXml.getAsset(), null));
             }
         }
 
@@ -251,15 +266,15 @@ public class OpenEJBArchiveProcessor {
                 validationXml = archive.get(WEB_INF_CLASSES.concat(META_INF).concat(VALIDATION_XML));
             }
             if (validationXml != null) {
-                testDD.put(VALIDATION_XML, new AssetSource(validationXml.getAsset())); // use same config otherwise behavior is weird
-                ejbModule.getAltDDs().put(VALIDATION_XML, new AssetSource(validationXml.getAsset()));
+                testDD.put(VALIDATION_XML, new AssetSource(validationXml.getAsset(), null)); // use same config otherwise behavior is weird
+                ejbModule.getAltDDs().put(VALIDATION_XML, new AssetSource(validationXml.getAsset(), null));
             }
         }
 
         {
             final Node resourcesXml = archive.get(prefix.concat(RESOURCES_XML));
             if (resourcesXml != null) {
-                ejbModule.getAltDDs().put(RESOURCES_XML, new AssetSource(resourcesXml.getAsset()));
+                ejbModule.getAltDDs().put(RESOURCES_XML, new AssetSource(resourcesXml.getAsset(), null));
             }
         }
 
@@ -366,10 +381,11 @@ public class OpenEJBArchiveProcessor {
         return name.substring(1, name.length() - 6);
     }
 
-    private static final class AssetSource implements ReadDescriptors.Source {
+    private static final class AssetSource extends ReadDescriptors.UrlSource {
         private Asset asset;
 
-        private AssetSource(final Asset asset) {
+        private AssetSource(final Asset asset, final URL url) {
+            super(url);
             this.asset = asset;
         }
 

@@ -18,6 +18,7 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.cdi.CompositeBeans;
 import org.apache.openejb.config.sys.JSonConfigReader;
 import org.apache.openejb.config.sys.JaxbOpenejb;
 import org.apache.openejb.config.sys.Resources;
@@ -472,7 +473,36 @@ public class ReadDescriptors implements DynamicDeployer {
             }
         } else if (raw instanceof Beans) {
             ejbModule.setBeans((Beans) raw);
+        } else if (List.class.isInstance(raw)) {
+            final CompositeBeans compositeBeans = new CompositeBeans();
+            final List list = List.class.cast(raw);
+            if (!list.isEmpty()) {
+                for (final Object o : list) {
+                    try {
+                        final UrlSource urlSource = UrlSource.class.cast(o);
+                        mergeBeansXml(compositeBeans, readBeans(urlSource.get()), urlSource.getUrl());
+                    } catch (final IOException e) {
+                        throw new OpenEJBException(e);
+                    }
+                }
+                ejbModule.setBeans(compositeBeans);
+            }
         }
+    }
+
+    private static Beans mergeBeansXml(final CompositeBeans current, final Beans beans, final URL url) {
+        current.getAlternativeClasses().addAll(beans.getAlternativeClasses());
+        current.getAlternativeStereotypes().addAll(beans.getAlternativeStereotypes());
+        current.getDecorators().addAll(beans.getDecorators());
+        current.getInterceptors().addAll(beans.getInterceptors());
+        current.getScan().getExclude().addAll(beans.getScan().getExclude());
+
+        // check is done here since later we lost the data of the origin
+        ReadDescriptors.checkDuplicatedByBeansXml(beans, current);
+
+        final String beanDiscoveryMode = beans.getBeanDiscoveryMode();
+        current.getDiscoveryByUrl().put(url, beanDiscoveryMode == null ? "ALL" : beanDiscoveryMode);
+        return current;
     }
 
     private void readCmpOrm(final EjbModule ejbModule) throws OpenEJBException {
@@ -862,6 +892,10 @@ public class ReadDescriptors implements DynamicDeployer {
         @Override
         public InputStream get() throws IOException {
             return IO.read(url);
+        }
+
+        public URL getUrl() {
+            return url;
         }
     }
 

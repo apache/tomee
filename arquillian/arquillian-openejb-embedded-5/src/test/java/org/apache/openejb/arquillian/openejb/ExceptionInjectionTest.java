@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.arquillian.openejb;
 
-import org.apache.openejb.OpenEJBException;
 import org.apache.webbeans.exception.WebBeansConfigurationException;
 import org.jboss.arquillian.container.spi.client.container.DeploymentException;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -43,10 +42,10 @@ public class ExceptionInjectionTest {
     private WebBeansConfigurationException owbException;
 
     @ArquillianResource
-    private OpenEJBException oejbException;
+    private javax.enterprise.inject.spi.DeploymentException oejbException;
 
     @Deployment(testable = false)
-    @ShouldThrowException(OpenEJBException.class)
+    @ShouldThrowException(javax.enterprise.inject.spi.DeploymentException.class)
     public static WebArchive war() {
         return ShrinkWrap.create(WebArchive.class)
                 .addAsWebInfResource(new StringAsset(Descriptors.create(BeansDescriptor.class)

@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.arquillian.tests.exception;
 
-import org.apache.openejb.OpenEJBRuntimeException;
 import org.jboss.arquillian.container.spi.client.container.DeploymentException;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.ShouldThrowException;
@@ -39,10 +38,10 @@ public class DeploymentExceptionErrorTest {
     private DeploymentException de;
 
     @ArquillianResource
-    private OpenEJBRuntimeException oejbException;
+    private javax.enterprise.inject.spi.DeploymentException oejbException;
 
     @Deployment(testable = false)
-    @ShouldThrowException(OpenEJBRuntimeException.class)
+    @ShouldThrowException(javax.enterprise.inject.spi.DeploymentException.class)
     public static WebArchive war() {
         return ShrinkWrap.create(WebArchive.class)
                     .addAsWebInfResource(new StringAsset(Descriptors.create(BeansDescriptor.class)
