@@ -18,43 +18,51 @@ package org.apache.openejb.tck.cdi.embedded;
 
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.context.AbstractContext;
-import org.apache.webbeans.context.ContextFactory;
-import org.apache.webbeans.context.RequestContext;
+import org.apache.webbeans.spi.ContextsService;
+import org.jboss.cdi.tck.spi.Contexts;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.spi.Context;
 
 /**
  * @version $Rev$ $Date$
  */
-public class ContextsImpl implements org.jboss.jsr299.tck.spi.Contexts<AbstractContext> {
-
-    public AbstractContext getRequestContext() {
-        ContextFactory contextFactory = WebBeansContext.currentInstance().getContextFactory();
-        RequestContext ctx = (RequestContext) contextFactory.getStandardContext(RequestScoped.class);
-
-        if (ctx == null) {
-            contextFactory.initRequestContext(null);
+public class ContextsImpl implements Contexts<Context> {
+    @Override
+    public Context getRequestContext() {
+        final ContextsService contextService = WebBeansContext.currentInstance().getContextsService();
+        final Context ctx = contextService.getCurrentContext(RequestScoped.class);
+        if (ctx == null || !ctx.isActive()) {
+            contextService.startContext(RequestScoped.class, null);
         }
-
-        return (AbstractContext) contextFactory.getStandardContext(RequestScoped.class);
+        return contextService.getCurrentContext(RequestScoped.class);
     }
 
-    public void setActive(AbstractContext context) {
-        context.setActive(true);
-
+    @Override
+    public void setActive(final Context context) {
+        if (AbstractContext.class.isInstance(context)) {
+            AbstractContext.class.cast(context).setActive(true);
+        }
     }
 
-    public void setInactive(AbstractContext context) {
-        context.setActive(false);
+    @Override
+    public void setInactive(final Context context) {
+        if (AbstractContext.class.isInstance(context)) {
+            AbstractContext.class.cast(context).setActive(false);
+        }
     }
 
-    public AbstractContext getDependentContext() {
-        ContextFactory contextFactory = WebBeansContext.currentInstance().getContextFactory();
-        return (AbstractContext) contextFactory.getStandardContext(Dependent.class);
+    @Override
+    public Context getDependentContext() {
+        final ContextsService contextService = WebBeansContext.currentInstance().getContextsService();
+        return contextService.getCurrentContext(Dependent.class);
     }
 
-    public void destroyContext(AbstractContext context) {
-        context.destroy();
+    @Override
+    public void destroyContext(final Context context) {
+        if (AbstractContext.class.isInstance(context)) {
+            AbstractContext.class.cast(context).destroy();
+        }
     }
 }

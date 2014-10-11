@@ -15,7 +15,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>tck</artifactId>
     <groupId>org.apache.openejb</groupId>
@@ -29,6 +30,17 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>javaee-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.myfaces.core</groupId>
+      <artifactId>myfaces-api</artifactId>
+      <version>${myfaces.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
@@ -39,26 +51,51 @@
       <artifactId>tck-common</artifactId>
       <version>${openejb.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-core</artifactId>
-      <version>${openejb.version}</version>
-    </dependency>
 
     <dependency>
-      <groupId>org.jboss.jsr299.tck</groupId>
-      <artifactId>jsr299-tck-impl</artifactId>
-      <version>1.0.4.SP1</version>
+      <groupId>org.jboss.cdi.tck</groupId>
+      <artifactId>cdi-tck-impl</artifactId>
+      <version>1.2.2.Final</version>
       <exclusions>
         <exclusion>
-          <groupId>org.testng</groupId>
-          <artifactId>testng</artifactId>
+          <groupId>javax.enterprise</groupId>
+          <artifactId>cdi-api</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>org.jboss.ejb3</groupId>
-          <artifactId>jboss-ejb3-api</artifactId>
+          <groupId>javax.faces</groupId>
+          <artifactId>jsf-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.servlet</groupId>
+          <artifactId>javax.servlet-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.servlet.jsp</groupId>
+          <artifactId>jsp-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.transaction</groupId>
+          <artifactId>jta</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.testng</groupId>
+      <artifactId>arquillian-testng-container</artifactId>
+      <version>${version.arquillian}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>arquillian-openejb-embedded-5</artifactId>
+      <version>${openejb.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.shrinkwrap.descriptors</groupId>
+      <artifactId>shrinkwrap-descriptors-impl-javaee</artifactId>
+      <version>2.0.0-alpha-3</version>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
@@ -66,7 +103,6 @@
       <artifactId>testng</artifactId>
       <scope>test</scope>
     </dependency>
-
   </dependencies>
 
   <build>

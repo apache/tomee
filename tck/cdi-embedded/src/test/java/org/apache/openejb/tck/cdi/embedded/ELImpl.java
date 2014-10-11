@@ -16,25 +16,27 @@
  */
 package org.apache.openejb.tck.cdi.embedded;
 
+import org.jboss.cdi.tck.spi.EL;
+
 import javax.el.ELContext;
+import javax.enterprise.inject.spi.BeanManager;
 
 /**
  * @version $Rev$ $Date$
  */
-public class ELImpl implements org.jboss.jsr299.tck.spi.EL {
-
+public class ELImpl implements EL {
     @Override
-    public <T> T evaluateValueExpression(String expression, Class<T> expectedType) {
+    public <T> T evaluateValueExpression(final BeanManager beanManager, final String s, final Class<T> tClass) {
         return null;
     }
 
     @Override
-    public <T> T evaluateMethodExpression(String expression, Class<T> expectedType, Class<?>[] expectedParamTypes, Object[] expectedParams) {
+    public <T> T evaluateMethodExpression(final BeanManager beanManager, final String s, final Class<T> tClass, final Class<?>[] classes, final Object[] objects) {
         return null;
     }
 
     @Override
-    public ELContext createELContext() {
+    public ELContext createELContext(final BeanManager beanManager) {
         return null;
     }
 }
