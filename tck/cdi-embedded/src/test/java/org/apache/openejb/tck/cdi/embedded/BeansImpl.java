@@ -29,9 +29,9 @@ import java.io.ObjectOutputStream;
 /**
 * @version $Rev$ $Date$
 */
-public class BeansImpl implements Beans {
+public class BeansImpl extends org.apache.webbeans.test.tck.BeansImpl {
     public boolean isProxy(final Object instance) {
-        return instance instanceof IntraVmProxy || instance.getClass().getName().contains("$Owb");
+        return instance instanceof IntraVmProxy || super.isProxy(instance);
     }
 
     @Override
