@@ -34,13 +34,13 @@ import java.util.Map;
 public class ValidatorFactoryWrapper implements ValidatorFactory, Serializable {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, ValidatorFactoryWrapper.class);
 
-    private final Map<ComparableValidationConfig, ValidatorFactory> fallbackValidators;
+    private transient final Map<ComparableValidationConfig, ValidatorFactory> fallbackValidators;
 
     private ValidatorFactory factory() {
         try {
             return ValidatorUtil.lookupFactory();
         } catch (final NamingException e) { // in absolute we should sort them to get the closest one of the persistence-unit?
-            if (!fallbackValidators.isEmpty()) {
+            if (fallbackValidators != null && !fallbackValidators.isEmpty()) {
                 return fallbackValidators.values().iterator().next();
             }
             return ValidatorUtil.tryJndiLaterFactory();
