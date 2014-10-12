@@ -1113,7 +1113,11 @@ public class HttpRequestImpl implements HttpRequest {
 
         @Override
         public void invalidate() {
-            listener.sessionDestroyed(new HttpSessionEvent(session));
+            try {
+                listener.sessionDestroyed(new HttpSessionEvent(session));
+            } finally {
+                super.invalidate();
+            }
         }
     }
 }
