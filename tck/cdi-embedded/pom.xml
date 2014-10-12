@@ -103,6 +103,12 @@
       <version>${openejb.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.openwebbeans</groupId>
+      <artifactId>openwebbeans-jsf</artifactId>
+      <version>${org.apache.openwebbeans.version}</version>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.testng</groupId>
@@ -122,6 +128,12 @@
           <suiteXmlFiles>
             <suiteXmlFile>src/test/resources/passing.xml</suiteXmlFile>
           </suiteXmlFiles>
+          <systemPropertyVariables>
+            <!-- this is a nice perf optimization to have by default but TCKs play with it -->
+            <openejb.cdi.applicationScope.cached>false</openejb.cdi.applicationScope.cached>
+            <!-- not supported by the spec -->
+            <openejb.cdi.producer.interception>false</openejb.cdi.producer.interception>
+          </systemPropertyVariables>
         </configuration>
       </plugin>
     </plugins>
