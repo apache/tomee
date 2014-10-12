@@ -160,8 +160,10 @@ public final class OpenEJBEnricher {
                     qualifiers.add(annotation);
                 }
             }
-            qualifiers.add(new DefaultLiteral());
-            qualifiers.add(new AnyLiteral());
+            if (qualifiers.isEmpty()) {
+                qualifiers.add(DefaultLiteral.INSTANCE);
+            }
+            qualifiers.add(AnyLiteral.INSTANCE);
         }
 
         @Override
