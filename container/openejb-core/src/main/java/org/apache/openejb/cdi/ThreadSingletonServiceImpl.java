@@ -18,7 +18,6 @@
 package org.apache.openejb.cdi;
 
 import org.apache.openejb.AppContext;
-import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.cdi.transactional.TransactionContext;

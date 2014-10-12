@@ -268,7 +268,9 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
 
     private static Class<?> loadFromUrls(final ClassLoader loader, final String url, final String path) throws ClassNotFoundException {
         final String classname;
-        if ("jar:file://!/WEB-INF/classes/".equals(url) && path.contains("classes/")) {
+        if (path.startsWith("archive:") && path.contains(".war/")) {
+            classname = path.substring(path.indexOf(".war") + ".war".length() + 1);
+        } else if ("jar:file://!/WEB-INF/classes/".equals(url) && path.contains("classes/")) {
             classname = path.substring(path.lastIndexOf("classes/") + "classes/".length());
         } else {
             classname = path.substring(url.length());

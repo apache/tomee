@@ -19,10 +19,10 @@ package org.apache.openejb.arquillian.openejb;
 import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
-import org.apache.openejb.cdi.CompositeBeans;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.DeploymentLoader;
 import org.apache.openejb.config.EjbModule;
+import org.apache.openejb.config.EmptyEjbJar;
 import org.apache.openejb.config.FinderFactory;
 import org.apache.openejb.config.ReadDescriptors;
 import org.apache.openejb.config.WebModule;
@@ -49,6 +49,7 @@ import org.jboss.shrinkwrap.api.asset.Asset;
 import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
 import org.jboss.shrinkwrap.api.asset.FileAsset;
 import org.jboss.shrinkwrap.api.asset.UrlAsset;
+import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.impl.base.filter.IncludeRegExpPaths;
 
@@ -62,6 +63,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -97,10 +99,20 @@ public class OpenEJBArchiveProcessor {
             javaClass = null;
         }
 
+        final ClassLoader parent;
+        if (javaClass == null) {
+            parent = Thread.currentThread().getContextClassLoader();
+        } else {
+            parent = javaClass.getClassLoader();
+        }
+
         final List<URL> additionalPaths = new ArrayList<URL>();
         final List<AssetSource> beansXmlMerged = new ArrayList<>();
+        CompositeArchive earArchive = null;
+        Map<URL, List<String>> earMap = null;
 
         final String prefix;
+        final boolean isEar = EnterpriseArchive.class.isInstance(archive);
         if (WebArchive.class.isInstance(archive)) {
             prefix = WEB_INF;
 
@@ -131,14 +143,42 @@ public class OpenEJBArchiveProcessor {
                 }
             }
         } else {
-            prefix = META_INF;
-        }
+            if (isEar) { // mainly for CDi TCKs
+                earMap = new HashMap<>();
+                final Map<ArchivePath, Node> jars = archive.getContent(new IncludeRegExpPaths("/.*\\.jar"));
+                final List<org.apache.xbean.finder.archive.Archive> archives = new ArrayList<>(jars.size());
+                for (final Map.Entry<ArchivePath, Node> node : jars.entrySet()) {
+                    final Asset asset = node.getValue().getAsset();
+                    if (ArchiveAsset.class.isInstance(asset)) {
+                        final Archive<?> libArchive = ArchiveAsset.class.cast(asset).getArchive();
+                        if (!isExcluded(libArchive.getName())) {
+                            final List<Class<?>> earClasses = new ArrayList<>();
+                            final List<String> earClassNames = new ArrayList<>();
+                            final Map<ArchivePath, Node> content = libArchive.getContent(new IncludeRegExpPaths(".*.class"));
+                            for (final Map.Entry<ArchivePath, Node> classNode : content.entrySet()) {
+                                final String classname = name(classNode.getKey().get());
+                                try {
+                                    earClasses.add(parent.loadClass(classname));
+                                    earClassNames.add(classname);
+                                } catch (final ClassNotFoundException e) {
+                                    LOGGER.fine("Can't load class " + classname);
+                                } catch (final NoClassDefFoundError ncdfe) {
+                                    // no-op
+                                }
+                            }
+                            try { // ends with !/META-INF/beans.xml to force it to be used as a cdi module
+                                earMap.put(new URL("jar:file://!/lib/" + archive.getName() + (libArchive.get(META_INF + BEANS_XML) != null ? "!/META-INF/beans.xml" : "")), earClassNames);
+                            } catch (final MalformedURLException e) {
+                                // no-op
+                            }
+                            archives.add(new ClassesArchive(earClasses));
+                        }
+                    } // else TODO
+                }
+                earArchive = new CompositeArchive(archives);
+            }
 
-        final ClassLoader parent;
-        if (javaClass == null) {
-            parent = Thread.currentThread().getContextClassLoader();
-        } else {
-            parent = javaClass.getClassLoader();
+            prefix = META_INF;
         }
 
         final URL[] urls = additionalPaths.toArray(new URL[additionalPaths.size()]);
@@ -159,6 +199,57 @@ public class OpenEJBArchiveProcessor {
             final WebModule webModule = new WebModule(new WebApp(), contextRoot(archive.getName()), loader, "", appModule.getModuleId());
             webModule.setUrls(additionalPaths);
             appModule.getWebModules().add(webModule);
+        } else if (isEar) { // mainly for CDi TCKs
+            final FinderFactory.OpenEJBAnnotationFinder earLibFinder = new FinderFactory.OpenEJBAnnotationFinder(new SimpleWebappAggregatedArchive(earArchive, earMap));
+            appModule.setEarLibFinder(earLibFinder);
+
+            final EjbModule earCdiModule = new EjbModule(appModule.getClassLoader(), DeploymentLoader.EAR_SCOPED_CDI_BEANS + appModule.getModuleId(), new EjbJar(), new OpenejbJar());
+            earCdiModule.setBeans(new Beans());
+            earCdiModule.setFinder(earLibFinder);
+            earCdiModule.setEjbJar(new EmptyEjbJar());
+            appModule.getEjbModules().add(earCdiModule);
+
+            for (final Map.Entry<ArchivePath, Node> node : archive.getContent(new IncludeRegExpPaths("/.*\\.war")).entrySet()) {
+                final Asset asset = node.getValue().getAsset();
+                if (ArchiveAsset.class.isInstance(asset)) {
+                    final Archive<?> webArchive = ArchiveAsset.class.cast(asset).getArchive();
+                    if (WebArchive.class.isInstance(webArchive)) {
+                        /* TODO: libs
+                        final Map<ArchivePath, Node> libs = archive.getContent(new IncludeRegExpPaths("/WEB-INF/lib/.*\\.jar"));
+                        */
+
+                        final Map<String, Object> altDD = new HashMap<String, Object>();
+                        final Node beansXml = findBeansXml(webArchive, new ArrayList<AssetSource>(), WEB_INF, altDD);
+                        final SWClassLoader webLoader = new SWClassLoader(WEB_INF_CLASSES, parent, webArchive);
+                        final FinderFactory.OpenEJBAnnotationFinder finder = new FinderFactory.OpenEJBAnnotationFinder(
+                                finderArchive(beansXml, webArchive, webLoader, Collections.<URL>emptyList()));
+
+                        final WebModule webModule = new WebModule(new WebApp(), contextRoot(webArchive.getName()), loader, "", appModule.getModuleId());
+                        webModule.setUrls(Collections.<URL>emptyList());
+                        webModule.setScannableUrls(Collections.<URL>emptyList());
+                        webModule.setFinder(finder);
+
+                        final EjbModule ejbModule = new EjbModule(webLoader, webModule.getModuleId(), null, new EjbJar(), new OpenejbJar());
+                        ejbModule.getAltDDs().putAll(altDD);
+                        ejbModule.setFinder(finder);
+                        ejbModule.setClassLoader(webLoader);
+                        ejbModule.setWebapp(true);
+
+                        appModule.getEjbModules().add(ejbModule);
+                        appModule.getWebModules().add(webModule);
+
+                        addPersistenceXml(archive, WEB_INF, appModule);
+                        addOpenEJbJarXml(archive, WEB_INF, ejbModule);
+                        addValidationXml(archive, WEB_INF, new HashMap<String, Object>(), ejbModule);
+                        addResourcesXml(archive, WEB_INF, ejbModule);
+                        addEnvEntries(archive, WEB_INF, appModule, ejbModule);
+                    }
+                }
+            }
+        }
+
+        if (isEar) { // adding the test class as lib class can break test if tested against the web part of the ear
+            return appModule;
         }
 
         // add the test as a managed bean to be able to inject into it easily
@@ -206,6 +297,28 @@ public class OpenEJBArchiveProcessor {
         final EjbModule ejbModule = new EjbModule(ejbJar);
         ejbModule.setClassLoader(tempClassLoader);
 
+        final Node beansXml = findBeansXml(archive, beansXmlMerged, prefix, ejbModule.getAltDDs());
+        final org.apache.xbean.finder.archive.Archive finderArchive = finderArchive(beansXml, archive, tempClassLoader, additionalPaths);
+        ejbModule.setFinder(new FinderFactory.ModuleLimitedFinder(new FinderFactory.OpenEJBAnnotationFinder(finderArchive)));
+        if (appModule.isWebapp()) { // war
+            appModule.getWebModules().iterator().next().setFinder(ejbModule.getFinder());
+        }
+        appModule.getEjbModules().add(ejbModule);
+
+        addPersistenceXml(archive, prefix, appModule);
+        addOpenEJbJarXml(archive, prefix, ejbModule);
+        addValidationXml(archive, prefix, testDD, ejbModule);
+        addResourcesXml(archive, prefix, ejbModule);
+        addEnvEntries(archive, prefix, appModule, ejbModule);
+
+        if (!appModule.isWebapp()) {
+            appModule.getAdditionalLibraries().addAll(additionalPaths);
+        }
+
+        return appModule;
+    }
+
+    private static Node findBeansXml(final Archive<?> archive, final List<AssetSource> beansXmlMerged, final String prefix, final Map<String, Object> altDD) {
         Node beansXml = archive.get(prefix.concat(BEANS_XML));
         if (beansXml == null && WEB_INF.equals(prefix)) {
             beansXml = archive.get(WEB_INF_CLASSES.concat(META_INF).concat(BEANS_XML));
@@ -216,96 +329,83 @@ public class OpenEJBArchiveProcessor {
             } catch (final MalformedURLException e) {
                 // shouldn't occur
             }
-            ejbModule.getAltDDs().put(BEANS_XML, beansXmlMerged);
+            altDD.put(BEANS_XML, beansXmlMerged);
         }
+        return beansXml;
+    }
 
-        final org.apache.xbean.finder.archive.Archive finderArchive = finderArchive(beansXml, archive, tempClassLoader, additionalPaths);
-
-        ejbModule.setFinder(new FinderFactory.ModuleLimitedFinder(new FinderFactory.OpenEJBAnnotationFinder(finderArchive)));
-        if (appModule.isWebapp()) { // war
-            appModule.getWebModules().iterator().next().setFinder(ejbModule.getFinder());
+    private static void addPersistenceXml(final Archive<?> archive, final String prefix, final AppModule appModule) {
+        Node persistenceXml = archive.get(prefix.concat(PERSISTENCE_XML));
+        if (persistenceXml == null && WEB_INF.equals(prefix)) {
+            persistenceXml = archive.get(WEB_INF_CLASSES.concat(META_INF).concat(PERSISTENCE_XML));
         }
-        appModule.getEjbModules().add(ejbModule);
-
-        {
-            Node persistenceXml = archive.get(prefix.concat(PERSISTENCE_XML));
-            if (persistenceXml == null && WEB_INF.equals(prefix)) {
-                persistenceXml = archive.get(WEB_INF_CLASSES.concat(META_INF).concat(PERSISTENCE_XML));
-            }
-            if (persistenceXml != null) {
-                final Asset asset = persistenceXml.getAsset();
-                if (UrlAsset.class.isInstance(asset)) {
-                    appModule.getAltDDs().put(PERSISTENCE_XML, Arrays.asList(get(URL.class, "url", asset)));
-                } else if (FileAsset.class.isInstance(asset)) {
-                    try {
-                        appModule.getAltDDs().put(PERSISTENCE_XML, Arrays.asList(get(File.class, "file", asset).toURI().toURL()));
-                    } catch (final MalformedURLException e) {
-                        appModule.getAltDDs().put(PERSISTENCE_XML, Arrays.asList(new AssetSource(persistenceXml.getAsset(), null)));
-                    }
-                } else if (ClassLoaderAsset.class.isInstance(asset)) {
-                    final URL url = get(ClassLoader.class, "classLoader", asset).getResource(get(String.class, "resourceName", asset));
-                    if (url != null) {
-                        appModule.getAltDDs().put(PERSISTENCE_XML, Arrays.asList(url));
-                    } else {
-                        appModule.getAltDDs().put(PERSISTENCE_XML, Arrays.asList(new AssetSource(persistenceXml.getAsset(), null)));
-                    }
+        if (persistenceXml != null) {
+            final Asset asset = persistenceXml.getAsset();
+            if (UrlAsset.class.isInstance(asset)) {
+                appModule.getAltDDs().put(PERSISTENCE_XML, Arrays.asList(get(URL.class, "url", asset)));
+            } else if (FileAsset.class.isInstance(asset)) {
+                try {
+                    appModule.getAltDDs().put(PERSISTENCE_XML, Arrays.asList(get(File.class, "file", asset).toURI().toURL()));
+                } catch (final MalformedURLException e) {
+                    appModule.getAltDDs().put(PERSISTENCE_XML, Arrays.asList(new AssetSource(persistenceXml.getAsset(), null)));
+                }
+            } else if (ClassLoaderAsset.class.isInstance(asset)) {
+                final URL url = get(ClassLoader.class, "classLoader", asset).getResource(get(String.class, "resourceName", asset));
+                if (url != null) {
+                    appModule.getAltDDs().put(PERSISTENCE_XML, Arrays.asList(url));
                 } else {
                     appModule.getAltDDs().put(PERSISTENCE_XML, Arrays.asList(new AssetSource(persistenceXml.getAsset(), null)));
                 }
+            } else {
+                appModule.getAltDDs().put(PERSISTENCE_XML, Arrays.asList(new AssetSource(persistenceXml.getAsset(), null)));
             }
         }
+    }
 
-        {
-            final Node openejbJarXml = archive.get(prefix.concat(OPENEJB_JAR_XML));
-            if (openejbJarXml != null) {
-                ejbModule.getAltDDs().put(OPENEJB_JAR_XML, new AssetSource(openejbJarXml.getAsset(), null));
+    private static void addOpenEJbJarXml(final Archive<?> archive, final String prefix, final EjbModule ejbModule) {
+        final Node openejbJarXml = archive.get(prefix.concat(OPENEJB_JAR_XML));
+        if (openejbJarXml != null) {
+            ejbModule.getAltDDs().put(OPENEJB_JAR_XML, new AssetSource(openejbJarXml.getAsset(), null));
+        }
+    }
+
+    private static void addValidationXml(final Archive<?> archive, final String prefix, final Map<String, Object> testDD, final EjbModule ejbModule) {
+        Node validationXml = archive.get(prefix.concat(VALIDATION_XML));
+        // bval tcks
+        if (validationXml == null && WEB_INF == prefix) { // we can use == here
+            validationXml = archive.get(WEB_INF_CLASSES.concat(META_INF).concat(VALIDATION_XML));
+        }
+        if (validationXml != null) {
+            testDD.put(VALIDATION_XML, new AssetSource(validationXml.getAsset(), null)); // use same config otherwise behavior is weird
+            ejbModule.getAltDDs().put(VALIDATION_XML, new AssetSource(validationXml.getAsset(), null));
+        }
+    }
+
+    private static void addResourcesXml(final Archive<?> archive, final String prefix, final EjbModule ejbModule) {
+        final Node resourcesXml = archive.get(prefix.concat(RESOURCES_XML));
+        if (resourcesXml != null) {
+            ejbModule.getAltDDs().put(RESOURCES_XML, new AssetSource(resourcesXml.getAsset(), null));
+        }
+    }
+
+    private static void addEnvEntries(final Archive<?> archive, final String prefix, final AppModule appModule, final EjbModule ejbModule) {
+        final Node envEntriesProperties = archive.get(prefix.concat(ENV_ENTRIES_PROPERTIES));
+        if (envEntriesProperties != null) {
+            InputStream is = null;
+            final Properties properties = new Properties();
+            try {
+                is = envEntriesProperties.getAsset().openStream();
+                properties.load(is);
+                ejbModule.getAltDDs().put(ENV_ENTRIES_PROPERTIES, properties);
+
+                // do it for test class too
+                appModule.getEjbModules().iterator().next().getAltDDs().put(ENV_ENTRIES_PROPERTIES, properties);
+            } catch (final Exception e) {
+                LOGGER.log(Level.SEVERE, "can't read env-entries.properties", e);
+            } finally {
+                IO.close(is);
             }
         }
-
-        {
-            Node validationXml = archive.get(prefix.concat(VALIDATION_XML));
-            // bval tcks
-            if (validationXml == null && WEB_INF == prefix) { // we can use == here
-                validationXml = archive.get(WEB_INF_CLASSES.concat(META_INF).concat(VALIDATION_XML));
-            }
-            if (validationXml != null) {
-                testDD.put(VALIDATION_XML, new AssetSource(validationXml.getAsset(), null)); // use same config otherwise behavior is weird
-                ejbModule.getAltDDs().put(VALIDATION_XML, new AssetSource(validationXml.getAsset(), null));
-            }
-        }
-
-        {
-            final Node resourcesXml = archive.get(prefix.concat(RESOURCES_XML));
-            if (resourcesXml != null) {
-                ejbModule.getAltDDs().put(RESOURCES_XML, new AssetSource(resourcesXml.getAsset(), null));
-            }
-        }
-
-        {
-            final Node envEntriesProperties = archive.get(prefix.concat(ENV_ENTRIES_PROPERTIES));
-            if (envEntriesProperties != null) {
-                InputStream is = null;
-                final Properties properties = new Properties();
-                try {
-                    is = envEntriesProperties.getAsset().openStream();
-                    properties.load(is);
-                    ejbModule.getAltDDs().put(ENV_ENTRIES_PROPERTIES, properties);
-
-                    // do it for test class too
-                    appModule.getEjbModules().iterator().next().getAltDDs().put(ENV_ENTRIES_PROPERTIES, properties);
-                } catch (final Exception e) {
-                    LOGGER.log(Level.SEVERE, "can't read env-entries.properties", e);
-                } finally {
-                    IO.close(is);
-                }
-            }
-        }
-
-        if (!appModule.isWebapp()) {
-            appModule.getAdditionalLibraries().addAll(additionalPaths);
-        }
-
-        return appModule;
     }
 
     private static String contextRoot(final String name) {

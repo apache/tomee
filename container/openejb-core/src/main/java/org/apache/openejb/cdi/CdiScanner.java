@@ -226,7 +226,7 @@ public class CdiScanner implements ScannerService {
                             }
                         } else {
                             final ClassLoader loader = clazz.getClassLoader();
-                            if (!filterByClassLoader || comparator.isSame(loader) || loader.equals(scl) && isNotEarWebApp) {
+                            if (!filterByClassLoader || comparator.isSame(loader) || (loader.equals(scl) && isNotEarWebApp)) {
                                 classes.add(clazz);
                                 if (beans.startupClasses.contains(name)) {
                                     startupClasses.add(clazz);

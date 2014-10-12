@@ -1641,7 +1641,8 @@ public class AnnotationDeployer implements DynamicDeployer {
             final Map<URL, List<String>> map = aggregatedArchive.getClassesMap();
 
             for (final Map.Entry<URL, List<String>> entry : map.entrySet()) {
-                final URL beansXml = hasBeansXml(entry.getKey());
+                final URL key = entry.getKey();
+                final URL beansXml = hasBeansXml(key);
                 if (beansXml != null) {
                     classes.put(beansXml, entry.getValue());
                 }

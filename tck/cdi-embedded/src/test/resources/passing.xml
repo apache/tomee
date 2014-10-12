@@ -49,13 +49,6 @@
   </listeners>
 
   <test name="JSR-346 TCK">
-    <groups>
-      <run>
-        <exclude name="integration" />
-        <exclude name="javaee-full" />
-      </run>
-    </groups>
-
     <packages>
       <package name="org.jboss.cdi.tck.tests.*">
         <!-- CHALLENGED TCK TESTS: clarifying this in the EG -->

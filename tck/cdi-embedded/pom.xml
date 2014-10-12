@@ -109,6 +109,12 @@
       <version>${org.apache.openwebbeans.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-http</artifactId>
+      <version>${openejb.version}</version>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.testng</groupId>
@@ -133,6 +139,10 @@
             <openejb.cdi.applicationScope.cached>false</openejb.cdi.applicationScope.cached>
             <!-- not supported by the spec -->
             <openejb.cdi.producer.interception>false</openejb.cdi.producer.interception>
+            <!-- for ear we need WebAppDeployer -->
+            <org.apache.openejb.assembler.classic.WebAppBuilder>org.apache.openejb.web.LightweightWebAppBuilder</org.apache.openejb.assembler.classic.WebAppBuilder>
+            <!-- archives are well formed and all classes are in app loader -->
+            <openejb.cdi.filter.classloader>false</openejb.cdi.filter.classloader>
           </systemPropertyVariables>
         </configuration>
       </plugin>

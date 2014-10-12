@@ -35,12 +35,19 @@ public final class ServiceManagers {
             final ServerService[] daemons = SimpleServiceManager.class.cast(smp).getDaemons();
             for (final ServerService ss : daemons) {
                 if ("httpejbd".equals(ss.getName())) {
-                    final HTTPContext httpContext = new HTTPContext(ss.getIP(), ss.getPort());
-                    httpContext.add(new Servlet("ArquillianServletRunner", info.appId));
-                    return new ProtocolMetaData().addContext(httpContext);
+                    if (info.webApps.size() == 1) {
+                        return newHttpProtocolMetaData(ss, info.webApps.iterator().next().contextRoot);
+                    }
+                    return newHttpProtocolMetaData(ss, info.appId);
                 }
             }
         }
         return null;
+    }
+
+    private static ProtocolMetaData newHttpProtocolMetaData(final ServerService ss, final String contextRoot) {
+        final HTTPContext httpContext = new HTTPContext(ss.getIP(), ss.getPort());
+        httpContext.add(new Servlet("ArquillianServletRunner", contextRoot));
+        return new ProtocolMetaData().addContext(httpContext);
     }
 }
