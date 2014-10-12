@@ -168,7 +168,7 @@ public final class OpenEJBEnricher {
         return (T) manager.getInjectableReference(new MethodParamInjectionPoint(method, position, manager), creational);
     }
 
-    private static class MethodParamInjectionPoint implements InjectionPoint {
+    private static final class MethodParamInjectionPoint implements InjectionPoint {
         private final Method method;
         private final int position;
         private final Set<Annotation> qualifiers = new HashSet<>();
@@ -227,7 +227,7 @@ public final class OpenEJBEnricher {
         }
     }
 
-    private static class ParamAnnotated implements AnnotatedParameter<Object> {
+    private static final class ParamAnnotated implements AnnotatedParameter<Object> {
         private final Method method;
         private final int position;
         private final Set<Type> types = new HashSet<>();
