@@ -53,6 +53,12 @@
     </dependency>
 
     <dependency>
+      <groupId>org.jboss.shrinkwrap.descriptors</groupId>
+      <artifactId>shrinkwrap-descriptors-impl-javaee</artifactId>
+      <version>2.0.0-alpha-3</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-porting</artifactId>
       <version>${org.apache.openwebbeans.version}</version>
@@ -95,12 +101,6 @@
       <groupId>org.apache.openejb</groupId>
       <artifactId>arquillian-openejb-embedded-5</artifactId>
       <version>${openejb.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.shrinkwrap.descriptors</groupId>
-      <artifactId>shrinkwrap-descriptors-impl-javaee</artifactId>
-      <version>2.0.0-alpha-3</version>
       <scope>test</scope>
     </dependency>
 
