@@ -48,7 +48,7 @@ public class TomEEAnnotationProvider extends DefaultAnnotationProvider {
         final Map<Class<? extends Annotation>, Set<Class<?>>> map = new HashMap<Class<? extends Annotation>, Set<Class<?>>>();
 
         final Map<ClassLoader, Map<String, Set<String>>> jsfClasses = builder.getJsfClasses();
-        if (builder == null) {
+        if (jsfClasses == null) {
             throw new IllegalStateException("JsfClasses not found in WebAppBuilder");
         }
 
