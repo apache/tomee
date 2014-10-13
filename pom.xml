@@ -208,6 +208,11 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
           <version>2.7</version>
+          <configuration>
+            <nonFilteredFileExtensions>
+              <nonFilteredFileExtension>exe</nonFilteredFileExtension>
+            </nonFilteredFileExtensions>
+          </configuration>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
