@@ -230,6 +230,15 @@
       <resource>
         <directory>src/main/resources</directory>
         <filtering>true</filtering>
+        <excludes>
+          <!--
+          This file is encoded in UTF-16LE so it causes trouble
+          as the default encoding is UTF-8. However as it's 
+          obviously only used as an input file for the corresponding
+          properties we're just ignoring it here. 
+          -->
+          <exclude>**/Messages_hi_input.txt</exclude>
+        </excludes>
       </resource>
     </resources>
     <testResources>
