@@ -154,6 +154,11 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
+        <configuration>
+          <nonFilteredFileExtensions>
+            <nonFilteredFileExtension>exe</nonFilteredFileExtension>
+          </nonFilteredFileExtensions>
+        </configuration>
         <executions>
           <execution>
             <id>filter-resources</id>
