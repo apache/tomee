@@ -231,6 +231,9 @@
       <resource>
         <directory>src/main/resources</directory>
         <filtering>true</filtering>
+        <excludes>
+          <exclude>**/Messages_hi_input.txt</exclude>
+        </excludes>
       </resource>
     </resources>
     <testResources>
@@ -308,7 +311,7 @@
         <configuration>
           <reuseForks>false</reuseForks>
           <testNGArtifactName>none:none</testNGArtifactName>
-          <argLine> 
+          <argLine>
             -javaagent:${basedir}/target/openejb-javaagent-${project.version}.jar
             -Dopenejb.classloader.forced-skip=org.apache.openejb.jee.,org.apache.openejb.api.
             -Dopenejb.classloader.forced-load=org.apache.openejb
