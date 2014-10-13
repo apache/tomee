@@ -46,7 +46,7 @@ public class EarUnpackTest extends TestCase {
             Archives.jarArchive(ear, contents);
 
             final AppInfo appInfo = factory.configureApplication(ear);
-            assertEquals(2, appInfo.ejbJars.size());
+            assertEquals(1, appInfo.ejbJars.size());
             assertEquals("orange", appInfo.ejbJars.get(0).moduleId);
         }
 
@@ -56,7 +56,7 @@ public class EarUnpackTest extends TestCase {
             Archives.jarArchive(ear, contents);
 
             final AppInfo appInfo = factory.configureApplication(ear);
-            assertEquals(2, appInfo.ejbJars.size());
+            assertEquals(1, appInfo.ejbJars.size());
             assertEquals("yellow", appInfo.ejbJars.get(0).moduleId);
         }
 
