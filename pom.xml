@@ -371,6 +371,7 @@
             <Implementation-Version>${project.version}</Implementation-Version>
             <Include-Resource>{maven-resources}</Include-Resource>
           </instructions>
+          <failOnError>false</failOnError>
         </configuration>
         <executions>
           <execution>
