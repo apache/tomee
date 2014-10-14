@@ -29,12 +29,12 @@ public class Activator implements BundleActivator {
     private ServiceManagerExtender manager;
     private ServiceRegistration registration;
 
-    public void start(BundleContext bundleContext) throws Exception {
+    public void start(final BundleContext bundleContext) throws Exception {
         manager = new ServiceManagerExtender(bundleContext);
         registration = bundleContext.registerService(ServiceManager.class.getName(), manager, null);
     }
 
-    public void stop(BundleContext bundleContext) throws Exception {
+    public void stop(final BundleContext bundleContext) throws Exception {
         if (manager != null) {
             manager.shutdown();
         }
