@@ -19,6 +19,7 @@ package org.apache.openejb.junit;
 import org.apache.openejb.junit.ejbs.BasicEjbLocal;
 import org.apache.openejb.junit.jee.EJBContainerRule;
 import org.apache.openejb.junit.jee.config.Properties;
+import org.apache.openejb.junit.jee.config.Property;
 import org.apache.openejb.junit.jee.InjectRule;
 import org.apache.openejb.config.DeploymentFilterable;
 import org.junit.ClassRule;
@@ -34,7 +35,8 @@ import static org.junit.Assert.assertNotNull;
 
 @Properties({
     // FallbackPropertyInjector for ejb to test config
-    @org.apache.openejb.junit.jee.config.Property(key = DeploymentFilterable.CLASSPATH_EXCLUDE, value = "jar:.*")
+    @Property(key = DeploymentFilterable.CLASSPATH_EXCLUDE, value = "jar:.*"),
+    @Property(key = DeploymentFilterable.CLASSPATH_INCLUDE, value = ".*openejb-junit.*")
 })
 public class TestEJBContainerRule {
     @ClassRule

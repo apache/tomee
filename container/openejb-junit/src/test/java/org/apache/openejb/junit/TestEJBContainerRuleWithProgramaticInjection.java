@@ -33,7 +33,8 @@ import static org.junit.Assert.assertNotNull;
 
 @Properties({
     // FallbackPropertyInjector for ejb to test config
-    @Property(key = DeploymentFilterable.CLASSPATH_EXCLUDE, value = "jar:.*")
+    @Property(key = DeploymentFilterable.CLASSPATH_EXCLUDE, value = "jar:.*"),
+    @Property(key = DeploymentFilterable.CLASSPATH_INCLUDE, value = ".*openejb-junit.*")
 })
 public class TestEJBContainerRuleWithProgramaticInjection {
     @ClassRule
