@@ -16,64 +16,68 @@
  */
 package org.apache.openejb.config;
 
-import junit.framework.TestCase;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.util.Archives;
+import org.junit.Test;
 
 import javax.ejb.Singleton;
 import java.io.File;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * @version $Rev$ $Date$
  */
-public class EarModuleNamesTest extends TestCase {
+public class EarModuleNamesTest {
 
+    @Test
     public void testDefaultIdEjbJar() throws Exception {
         final File appsDir = Files.tmpdir();
 
         final Assembler assembler = new Assembler();
         final ConfigurationFactory factory = new ConfigurationFactory();
 
-        final File ear = new File(appsDir, "colors.ear");
+        final File ear = new File(appsDir, "testDefaultIdEjbJar.ear");
 
         final Map<String, Object> contents = new HashMap<String, Object>();
-        contents.put("orange.jar", Archives.jarArchive(Orange.class));
+        contents.put("testDefaultIdEjbJar.jar", Archives.jarArchive(Orange.class));
         Archives.jarArchive(ear, contents);
 
         final AppInfo appInfo = factory.configureApplication(ear);
-        assertEquals(appInfo.ejbJars.size(), 2);
-        assertEquals("orange", appInfo.ejbJars.get(0).moduleId);
+        assertEquals(appInfo.ejbJars.size(), 1);
+        assertEquals("testDefaultIdEjbJar", appInfo.ejbJars.get(0).moduleId);
     }
 
+    @Test
     public void testDefaultIdWebapp() throws Exception {
         final File appsDir = Files.tmpdir();
 
         final Assembler assembler = new Assembler();
         final ConfigurationFactory factory = new ConfigurationFactory();
 
-        final File ear = new File(appsDir, "colors.ear");
+        final File ear = new File(appsDir, "testDefaultIdWebapp.ear");
 
         final Map<String, Object> contents = new HashMap<String, Object>();
-        contents.put("orange.war", Archives.jarArchive(Orange.class));
+        contents.put("testDefaultIdWebapp.war", Archives.jarArchive(Orange.class));
         Archives.jarArchive(ear, contents);
 
         final AppInfo appInfo = factory.configureApplication(ear);
-        assertEquals(appInfo.ejbJars.size(), 2);
-        assertEquals("orange", appInfo.webApps.get(0).moduleId);
+        assertEquals(appInfo.ejbJars.size(), 1);
+        assertEquals("testDefaultIdWebapp", appInfo.webApps.get(0).moduleId);
     }
 
+    @Test
     public void testModuleNameEjbJar() throws Exception {
         final File appsDir = Files.tmpdir();
 
         final Assembler assembler = new Assembler();
         final ConfigurationFactory factory = new ConfigurationFactory();
 
-        final File ear = new File(appsDir, "colors.ear");
+        final File ear = new File(appsDir, "testModuleNameEjbJar.ear");
         final Map<String, Object> contents = new HashMap<String, Object>();
 
         final Map<String, Object> metaInf = new HashMap<String, Object>();
@@ -84,84 +88,87 @@ public class EarModuleNamesTest extends TestCase {
         Archives.jarArchive(ear, contents);
 
         final AppInfo appInfo = factory.configureApplication(ear);
-        assertEquals(appInfo.ejbJars.size(), 2);
+        assertEquals(appInfo.ejbJars.size(), 1);
         assertEquals("orange", appInfo.ejbJars.get(0).moduleId);
     }
 
+    @Test
     public void testModuleNameAppClient() throws Exception {
         final File appsDir = Files.tmpdir();
 
         final Assembler assembler = new Assembler();
         final ConfigurationFactory factory = new ConfigurationFactory();
 
-        final File ear = new File(appsDir, "colors.ear");
+        final File ear = new File(appsDir, "testModuleNameAppClient.ear");
         final Map<String, Object> contents = new HashMap<String, Object>();
 
         final Map<String, Object> metaInf = new HashMap<String, Object>();
-        metaInf.put("META-INF/application-client.xml", "<application-client><module-name>orange</module-name></application-client>");
-        final File ejbJar = Archives.jarArchive(metaInf, "orange", Orange.class);
+        metaInf.put("META-INF/application-client.xml", "<application-client><module-name>testModuleNameAppClient</module-name></application-client>");
+        final File ejbJar = Archives.jarArchive(metaInf, "testModuleNameAppClient", Orange.class);
         contents.put("green.jar", ejbJar);
 
         Archives.jarArchive(ear, contents);
 
         final AppInfo appInfo = factory.configureApplication(ear);
         assertEquals(appInfo.clients.size(), 1);
-        assertEquals("orange", appInfo.clients.get(0).moduleId);
+        assertEquals("testModuleNameAppClient", appInfo.clients.get(0).moduleId);
     }
 
+    @Test
     public void testModuleNameWebapp() throws Exception {
         final File appsDir = Files.tmpdir();
-
         final Assembler assembler = new Assembler();
         final ConfigurationFactory factory = new ConfigurationFactory();
 
-        final File ear = new File(appsDir, "colors.ear");
+        final File ear = new File(appsDir, "testModuleNameWebapp.ear");
         final Map<String, Object> contents = new HashMap<String, Object>();
 
         final Map<String, Object> metaInf = new HashMap<String, Object>();
-        metaInf.put("WEB-INF/web.xml", "<webapp><module-name>orange</module-name></webapp>");
-        final File ejbJar = Archives.jarArchive(metaInf, "orange", Orange.class);
+        metaInf.put("WEB-INF/web.xml", "<webapp><module-name>testModuleNameWebapp</module-name></webapp>");
+        final File ejbJar = Archives.jarArchive(metaInf, "testModuleNameWebapp", Orange.class);
         contents.put("green.war", ejbJar);
 
         Archives.jarArchive(ear, contents);
 
         final AppInfo appInfo = factory.configureApplication(ear);
         assertEquals(appInfo.webApps.size(), 1);
-        assertEquals("orange", appInfo.webApps.get(0).moduleId);
+        assertEquals("testModuleNameWebapp", appInfo.webApps.get(0).moduleId);
     }
 
+    @Test
     public void testIdEjbJar() throws Exception {
         final File appsDir = Files.tmpdir();
 
         final Assembler assembler = new Assembler();
         final ConfigurationFactory factory = new ConfigurationFactory();
 
-        final File ear = new File(appsDir, "colors.ear");
+        final File ear = new File(appsDir, "testIdEjbJar.ear");
 
         final Map<String, Object> metaInf = new HashMap<String, Object>();
-        metaInf.put("META-INF/ejb-jar.xml", "<ejb-jar id=\"orange\" />");
-        final File ejbJar = Archives.jarArchive(metaInf, "orange", Orange.class);
+        metaInf.put("META-INF/ejb-jar.xml", "<ejb-jar id=\"testIdEjbJar\" />");
+        final File ejbJar = Archives.jarArchive(metaInf, "testIdEjbJar", Orange.class);
 
         final Map<String, Object> contents = new HashMap<String, Object>();
         contents.put("green.jar", ejbJar);
         Archives.jarArchive(ear, contents);
 
         final AppInfo appInfo = factory.configureApplication(ear);
-        assertEquals(appInfo.ejbJars.size(), 2);
-        assertEquals("orange", appInfo.ejbJars.get(0).moduleId);
+        assertEquals(appInfo.ejbJars.size(), 1);
+        assertEquals("testIdEjbJar", appInfo.ejbJars.get(0).moduleId);
     }
 
+    @Test
     public void testIdApplicationClient() throws Exception {
         final File appsDir = Files.tmpdir();
 
         final Assembler assembler = new Assembler();
         final ConfigurationFactory factory = new ConfigurationFactory();
 
-        final File ear = new File(appsDir, "colors.ear");
+        final File ear = new File(appsDir, "testIdApplicationClient.ear");
 
         final Map<String, Object> metaInf = new HashMap<String, Object>();
-        metaInf.put("META-INF/application-client.xml", "<application-client id=\"orange\" />");
-        final File jar = Archives.jarArchive(metaInf, "orange", Orange.class);
+        metaInf.put("META-INF/application-client.xml", "<application-client id=\"testIdApplicationClient\" />");
+        final File jar = Archives.jarArchive(metaInf, "testIdApplicationClient", Orange.class);
 
         final Map<String, Object> contents = new HashMap<String, Object>();
         contents.put("green.jar", jar);
@@ -169,28 +176,29 @@ public class EarModuleNamesTest extends TestCase {
 
         final AppInfo appInfo = factory.configureApplication(ear);
         assertEquals(appInfo.clients.size(), 1);
-        assertEquals("orange", appInfo.clients.get(0).moduleId);
+        assertEquals("testIdApplicationClient", appInfo.clients.get(0).moduleId);
     }
 
+    @Test
     public void testIdWebapp() throws Exception {
         final File appsDir = Files.tmpdir();
 
         final Assembler assembler = new Assembler();
         final ConfigurationFactory factory = new ConfigurationFactory();
 
-        final File ear = new File(appsDir, "colors.ear");
+        final File ear = new File(appsDir, "testIdWebapp.ear");
         final Map<String, Object> contents = new HashMap<String, Object>();
 
         final Map<String, Object> metaInf = new HashMap<String, Object>();
-        metaInf.put("WEB-INF/web.xml", "<webapp id=\"orange\" />");
-        final File ejbJar = Archives.jarArchive(metaInf, "orange", Orange.class);
+        metaInf.put("WEB-INF/web.xml", "<webapp id=\"testIdWebapp\" />");
+        final File ejbJar = Archives.jarArchive(metaInf, "testIdWebapp", Orange.class);
         contents.put("green.war", ejbJar);
 
         Archives.jarArchive(ear, contents);
 
         final AppInfo appInfo = factory.configureApplication(ear);
         assertEquals(appInfo.webApps.size(), 1);
-        assertEquals("orange", appInfo.webApps.get(0).moduleId);
+        assertEquals("testIdWebapp", appInfo.webApps.get(0).moduleId);
     }
 
 
