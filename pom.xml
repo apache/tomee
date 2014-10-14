@@ -181,9 +181,9 @@
     <version.hsqldb>2.3.2</version.hsqldb>
     <version.axiom>1.2.14</version.axiom>
     <version.xalan>2.7.1</version.xalan>
-    <version.hibernate>4.2.12.Final</version.hibernate>
+    <version.hibernate>4.2.15.Final</version.hibernate>
     <version.eclipselink>2.4.2</version.eclipselink>
-    <version.groovy>2.3.0</version.groovy>
+    <version.groovy>2.3.7</version.groovy>
 
     <!-- arquillian related -->
     <version.arquillian.bom>1.1.5.Final</version.arquillian.bom>
@@ -560,7 +560,7 @@
             <configuration>
               <linkXRef>true</linkXRef>
               <sourceEncoding>utf-8</sourceEncoding>
-              <targetJdk>1.6</targetJdk>
+              <targetJdk>1.7</targetJdk>
               <printFailingErrors>true</printFailingErrors>
               <rulesets>
                 <ruleset>${style.config.dir}/pmd/openejb-empty.xml</ruleset>
@@ -1414,7 +1414,7 @@
       <dependency>
         <groupId>org.apache.geronimo.javamail</groupId>
         <artifactId>geronimo-javamail_1.4_mail</artifactId>
-        <version>1.8.3</version>
+        <version>1.8.4</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.geronimo.javamail</groupId>
@@ -1654,7 +1654,7 @@
       <dependency>
         <groupId>org.apache.sshd</groupId>
         <artifactId>sshd-core</artifactId>
-        <version>0.9.0</version>
+        <version>0.12.0</version>
       </dependency>
       <dependency>
         <groupId>jline</groupId>
@@ -1873,12 +1873,12 @@
       <dependency>
         <groupId>org.apache.derby</groupId>
         <artifactId>derbynet</artifactId>
-        <version>10.10.2.0</version>
+        <version>10.11.1.1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.derby</groupId>
         <artifactId>derbyclient</artifactId>
-        <version>10.10.2.0</version>
+        <version>10.11.1.1</version>
       </dependency>
       <dependency>
         <groupId>org.codehaus.groovy</groupId>
