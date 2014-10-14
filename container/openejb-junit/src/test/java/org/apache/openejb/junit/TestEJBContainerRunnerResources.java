@@ -29,7 +29,8 @@ import javax.naming.Context;
 import static org.junit.Assert.assertNotNull;
 
 @Properties({ // just a small conf to go faster
-    @Property(key = DeploymentFilterable.CLASSPATH_EXCLUDE, value = "jar:.*")
+    @Property(key = DeploymentFilterable.CLASSPATH_EXCLUDE, value = "jar:.*"),
+    @Property(key = DeploymentFilterable.CLASSPATH_INCLUDE, value = ".*openejb-junit.*")
 })
 @RunWith(EJBContainerRunner.class)
 public class TestEJBContainerRunnerResources {
