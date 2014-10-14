@@ -100,6 +100,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -107,6 +108,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -467,8 +469,10 @@ public final class ApplicationComposers {
                 Class<?>[] cdiAlternatives = null;
                 Class<?>[] cdiDecorators = null;
                 boolean cdi = false;
+                boolean innerClassesAsBean = false;
                 if (classesAnnotation != null) {
                     classes = classesAnnotation.value();
+                    innerClassesAsBean = classesAnnotation.innerClassesAsBean();
                     cdiInterceptors = classesAnnotation.cdiInterceptors();
                     cdiDecorators = classesAnnotation.cdiDecorators();
                     cdiAlternatives = classesAnnotation.cdiAlternatives();
@@ -507,6 +511,25 @@ public final class ApplicationComposers {
                         } else {
                             final Collection<Class<?>> newClasses = new ArrayList<>(asList(classes));
                             newClasses.addAll(asList(providersClasses));
+                            classes = newClasses.toArray(new Class<?>[newClasses.size()]);
+                        }
+                    }
+                    if (innerClassesAsBean) {
+                        final Collection<Class<?>> inners = new LinkedList<Class<?>>();
+                        for (final Class<?> clazz : testClass.getClasses()) {
+                            final int modifiers = clazz.getModifiers();
+                            try {
+                                if (Modifier.isPublic(modifiers) && Modifier.isStatic(modifiers) && clazz.getConstructor() != null) {
+                                    inners.add(clazz);
+                                }
+                            } catch (final NoSuchMethodException nsme) {
+                                // no-op, skip it
+                            }
+                        }
+
+                        if (!inners.isEmpty()) {
+                            final Collection<Class<?>> newClasses = new ArrayList<Class<?>>(asList(classes));
+                            newClasses.addAll(inners);
                             classes = newClasses.toArray(new Class<?>[newClasses.size()]);
                         }
                     }

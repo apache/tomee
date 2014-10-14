@@ -34,4 +34,7 @@ public @interface Classes {
     Class<?>[] cdiAlternatives() default {};
 
     boolean cdi() default false;
+
+    // only for WebApp ATM
+    boolean innerClassesAsBean() default false;
 }
