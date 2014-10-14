@@ -95,7 +95,7 @@ public abstract class BasicURLClassPath implements ClassPath {
     }
 
     protected Object getURLClassPath(final URLClassLoader loader) throws Exception {
-        return getUcpField().get(loader);
+        return this.getUcpField().get(loader);
     }
 
     private Field getUcpField() throws Exception {
@@ -103,14 +103,14 @@ public abstract class BasicURLClassPath implements ClassPath {
             ucpField = AccessController.doPrivileged(new PrivilegedAction<Field>() {
                 @Override
                 public Field run() {
-                    Field ucp = null;
                     try {
-                        ucp = URLClassLoader.class.getDeclaredField("ucp");
+                        final Field ucp = URLClassLoader.class.getDeclaredField("ucp");
                         ucp.setAccessible(true);
+                        return ucp;
                     } catch (final Exception e2) {
                         e2.printStackTrace();
                     }
-                    return ucp;
+                    return null;
                 }
             });
         }

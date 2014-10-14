@@ -409,9 +409,9 @@ public class ObserverManager {
                 }
 
                 if (t instanceof InvocationTargetException && t.getCause() != null) {
-                    logger().log(Level.SEVERE, "error invoking " + observer, t.getCause());
+                    ObserverManager.logger().log(Level.SEVERE, "error invoking " + observer, t.getCause());
                 } else {
-                    logger().log(Level.SEVERE, "error invoking " + observer, t);
+                    ObserverManager.logger().log(Level.SEVERE, "error invoking " + observer, t);
                 }
             } catch (final IllegalAccessException e) {
                 e.printStackTrace();
