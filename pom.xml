@@ -562,6 +562,7 @@
               <sourceEncoding>utf-8</sourceEncoding>
               <targetJdk>1.7</targetJdk>
               <printFailingErrors>true</printFailingErrors>
+              <failurePriority>2</failurePriority>
               <rulesets>
                 <ruleset>${style.config.dir}/pmd/openejb-empty.xml</ruleset>
                 <ruleset>rulesets/java/finalizers.xml</ruleset>
