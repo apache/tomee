@@ -101,7 +101,7 @@
     <jcs.version>2.0-SNAPSHOT</jcs.version>
 
     <!-- Maven module versions -->
-    <maven-bundle-plugin.version>2.5.3</maven-bundle-plugin.version>
+    <maven-bundle-plugin.version>2.3.7</maven-bundle-plugin.version>
 
     <!-- This is used by a manifest classpath entry -->
     <xbeanVersion>4.0</xbeanVersion>
