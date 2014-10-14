@@ -14,27 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.openejb.testing;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.apache.openejb.jee.WebApp;
+import org.apache.openejb.junit.ApplicationComposer;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Classes {
-    Class<?>[] value() default {};
+import javax.inject.Inject;
 
-    Class<?>[] cdiInterceptors() default {};
+import static org.junit.Assert.assertNotNull;
 
-    Class<?>[] cdiDecorators() default {};
+@RunWith(ApplicationComposer.class)
+public class AddInnerTest {
+    @Module
+    @Classes(innerClassesAsBean = true, cdi = true)
+    public WebApp web() {
+        return new WebApp();
+    }
 
-    Class<?>[] cdiAlternatives() default {};
+    @Inject
+    private Injectable notNull;
 
-    boolean cdi() default false;
+    @Test
+    public void run() {
+        assertNotNull(notNull);
+    }
 
-    // only for WebApp ATM
-    boolean innerClassesAsBean() default false;
+    public static class Injectable {}
 }
