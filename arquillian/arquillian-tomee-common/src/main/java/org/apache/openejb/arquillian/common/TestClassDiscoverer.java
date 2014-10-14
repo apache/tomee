@@ -141,13 +141,17 @@ public class TestClassDiscoverer implements AdditionalBeanDiscoverer {
             return;
         }
         for (final Class<? extends Annotation> marker : testMarkers) {
-            final List<Method> annotatedMethods = finder.findAnnotatedMethods(marker);
-            for (final Method m : annotatedMethods) {
-                try {
-                    testClasses.add(m.getDeclaringClass());
-                } catch (final NoClassDefFoundError e) {
-                    // no-op
+            try {
+                final List<Method> annotatedMethods = finder.findAnnotatedMethods(marker);
+                for (final Method m : annotatedMethods) {
+                    try {
+                        testClasses.add(m.getDeclaringClass());
+                    } catch (final NoClassDefFoundError e) {
+                        // no-op
+                    }
                 }
+            } catch (final NoClassDefFoundError ncdfe) {
+                // no-op
             }
         }
     }
