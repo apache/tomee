@@ -143,8 +143,8 @@ public class RemoteServer {
                 waitFor(p);
             } else {
                 p.destroy();
+            }
         }
-    }
     }
 
     public void start() {
@@ -336,9 +336,9 @@ public class RemoteServer {
 
                 // kill3UNIXDebug();
                 final ProcessBuilder pb = new ProcessBuilder(args)
-                    .redirectOutput(ProcessBuilder.Redirect.INHERIT)
-                    .redirectError(ProcessBuilder.Redirect.INHERIT)
-                    .directory(home.getAbsoluteFile());
+                        .redirectOutput(ProcessBuilder.Redirect.INHERIT)
+                        .redirectError(ProcessBuilder.Redirect.INHERIT)
+                        .directory(home.getAbsoluteFile());
 
                 Process p = pb.start();
 
@@ -355,17 +355,17 @@ public class RemoteServer {
                 throw (RuntimeException) new OpenEJBRuntimeException("Cannot start the server.  Exception: " + e.getClass().getName() + ": " + e.getMessage()).initCause(e);
             }
 
-                if (debug) {
-                    if (!connect(port, Integer.MAX_VALUE)) {
+            if (debug) {
+                if (!connect(port, Integer.MAX_VALUE)) {
                     destroy();
-                        throw new OpenEJBRuntimeException("Could not connect to server");
-                    }
-                } else {
-                    if (!connect(port, tries)) {
-                    destroy();
-                        throw new OpenEJBRuntimeException("Could not connect to server");
-                    }
+                    throw new OpenEJBRuntimeException("Could not connect to server");
                 }
+            } else {
+                if (!connect(port, tries)) {
+                    destroy();
+                    throw new OpenEJBRuntimeException("Could not connect to server");
+                }
+            }
 
         } else {
             if (verbose) {
@@ -487,8 +487,8 @@ public class RemoteServer {
                 notSent();
             }
 
-        return false;
-    }
+            return false;
+        }
     }
 
     private void notSent() {
@@ -501,11 +501,11 @@ public class RemoteServer {
             // Check TomEE was effectively shut down after getting the message
             // There can be concurrent shutdown operations (catalina shutdown hook for instance),
             // so we have to wait here since it is important to be synchronous in this method
-        waitForServerShutdown();
+            waitForServerShutdown();
         } else {
             if (verbose) {
                 notSent();
-    }
+            }
         }
     }
 
@@ -517,15 +517,15 @@ public class RemoteServer {
 
         final boolean b = disconnect(portShutdown, tries);
 
-            if (verbose) {
+        if (verbose) {
             System.out.println();
-            }
+        }
 
         if (!b) {
             //We need to know about this
             System.out.println("SEVERE: Failed to shutdown TomEE running on port " + portStartup + " using shutdown port: " + portShutdown);
         }
-        }
+    }
 
     /**
      * Send the shutdown message to the running server
@@ -547,7 +547,7 @@ public class RemoteServer {
         } catch (final Exception e) {
             if (attempts > 0) {
                 try {
-                Thread.sleep(1000);
+                    Thread.sleep(1000);
                 } catch (final InterruptedException ie) {
                     return false;
                 }
