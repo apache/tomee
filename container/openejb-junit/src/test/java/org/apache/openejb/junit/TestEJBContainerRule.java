@@ -20,6 +20,7 @@ import org.apache.openejb.config.DeploymentFilterable;
 import org.apache.openejb.junit.ejbs.BasicEjbLocal;
 import org.apache.openejb.junit.jee.EJBContainerRule;
 import org.apache.openejb.junit.jee.InjectRule;
+import org.apache.openejb.junit.jee.config.Property;
 import org.apache.openejb.junit.jee.config.Properties;
 import org.junit.ClassRule;
 import org.junit.Rule;
