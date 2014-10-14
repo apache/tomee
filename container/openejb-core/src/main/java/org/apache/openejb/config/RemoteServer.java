@@ -52,6 +52,7 @@ public class RemoteServer {
     public static final String SERVER_SHUTDOWN_PORT = "server.shutdown.port";
     public static final String SERVER_SHUTDOWN_HOST = "server.shutdown.host";
     public static final String SERVER_SHUTDOWN_COMMAND = "server.shutdown.command";
+    public static final String SOCKET_TIMEOUT = "server.socket.timeout";
     public static final String OPENEJB_SERVER_DEBUG = "openejb.server.debug";
     public static final String START = "start";
     public static final String STOP = "stop";
@@ -76,6 +77,7 @@ public class RemoteServer {
     private final String command;
     private File home;
     private int portStartup;
+    private final int connectTimeout;
 
     public RemoteServer() {
         this(options.get("connect.tries", 60), options.get("verbose", false));
@@ -91,6 +93,7 @@ public class RemoteServer {
         portStartup = portShutdown;
         command = options.get(SERVER_SHUTDOWN_COMMAND, "SHUTDOWN");
         host = options.get(SERVER_SHUTDOWN_HOST, "localhost");
+        connectTimeout = options.get(SOCKET_TIMEOUT, 1000);
     }
 
     public void init(final Properties props) {
@@ -577,7 +580,7 @@ public class RemoteServer {
         Socket s = null;
         try {
             s = new Socket();
-            s.connect(new InetSocketAddress(this.host, port), 1000);
+            s.connect(new InetSocketAddress(this.host, port), connectTimeout);
             s.getOutputStream().close();
             if (verbose) {
                 System.out.println("[] CONNECTED IN " + (this.tries - tries));
@@ -591,8 +594,8 @@ public class RemoteServer {
             } else {
                 try {
                     Thread.sleep(1000);
-                } catch (final Exception e2) {
-                    e2.printStackTrace();
+                } catch (final InterruptedException e2) {
+                    Thread.interrupted();
                 }
                 return connect(port, --tries);
             }
@@ -617,7 +620,7 @@ public class RemoteServer {
         Socket s = null;
         try {
             s = new Socket();
-            s.connect(new InetSocketAddress(this.host, port), 500);
+            s.connect(new InetSocketAddress(this.host, port), connectTimeout);
             s.getOutputStream().close();
 
             if (verbose) {
@@ -630,8 +633,8 @@ public class RemoteServer {
             } else {
                 try {
                     Thread.sleep(1000);
-                } catch (final Exception e2) {
-                    e2.printStackTrace();
+                } catch (final InterruptedException e2) {
+                    Thread.interrupted();
                 }
 
                 return disconnect(port, --tries);
