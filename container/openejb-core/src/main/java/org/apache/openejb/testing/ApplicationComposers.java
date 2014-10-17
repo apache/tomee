@@ -877,7 +877,6 @@ public final class ApplicationComposers {
                 final File file = URLs.toFile(path);
                 if (file.getName().startsWith(v) && file.getName().endsWith(".jar")) {
                     files.add(file);
-                    break;
                 }
             }
             if (size == files.size()) {
