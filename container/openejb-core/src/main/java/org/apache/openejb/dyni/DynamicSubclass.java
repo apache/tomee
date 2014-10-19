@@ -79,7 +79,7 @@ public class DynamicSubclass implements Opcodes {
                 // no-op
             }
 
-            return LocalBeanProxyFactory.Unsafe.defineClass(abstractClass, proxyName, generateBytes(abstractClass));
+            return LocalBeanProxyFactory.Unsafe.defineClass(cl, abstractClass, proxyName, generateBytes(abstractClass));
 
         } catch (final Exception e) {
             throw new InternalError(DynamicSubclass.class.getSimpleName() + ".createSubclass: " + Debug.printStackTrace(e));

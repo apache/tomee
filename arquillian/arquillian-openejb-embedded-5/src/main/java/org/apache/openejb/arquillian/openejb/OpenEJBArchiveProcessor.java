@@ -91,7 +91,7 @@ public class OpenEJBArchiveProcessor {
     private static final String ENV_ENTRIES_PROPERTIES = "env-entries.properties";
     public static final String WEB_INF_CLASSES = "/WEB-INF/classes/";
 
-    public static AppModule createModule(final Archive<?> archive, final TestClass testClass) {
+    public static AppModule createModule(final Archive<?> archive, final TestClass testClass, final Closeables closeables) {
         final Class<?> javaClass;
         if (testClass != null) {
             javaClass = testClass.getJavaClass();
@@ -143,7 +143,7 @@ public class OpenEJBArchiveProcessor {
                 }
             }
         } else {
-            if (isEar) { // mainly for CDi TCKs
+            if (isEar) { // mainly for CDI TCKs
                 earMap = new HashMap<>();
                 final Map<ArchivePath, Node> jars = archive.getContent(new IncludeRegExpPaths("/.*\\.jar"));
                 final List<org.apache.xbean.finder.archive.Archive> archives = new ArrayList<>(jars.size());
@@ -183,13 +183,19 @@ public class OpenEJBArchiveProcessor {
 
         final URL[] urls = additionalPaths.toArray(new URL[additionalPaths.size()]);
 
-        final ClassLoader loader;
+        final SWClassLoader loader;
         if (!WEB_INF.equals(prefix)) {
-            loader = new SWClassLoader("", new URLClassLoader(urls, parent), archive);
+            final URLClassLoader swParent = new URLClassLoader(urls, parent);
+            closeables.add(swParent);
+            loader = new SWClassLoader("", swParent, archive);
         } else {
-            loader = new SWClassLoader(WEB_INF_CLASSES, new URLClassLoaderFirst(urls, parent), archive);
+            final URLClassLoaderFirst swParent = new URLClassLoaderFirst(urls, parent);
+            closeables.add(swParent);
+            loader = new SWClassLoader(WEB_INF_CLASSES, swParent, archive);
         }
+        closeables.add(loader);
         final URLClassLoader tempClassLoader = ClassLoaderUtil.createTempClassLoader(loader);
+        closeables.add(tempClassLoader);
 
         final AppModule appModule = new AppModule(loader, archive.getName());
         if (WEB_INF.equals(prefix)) {
@@ -199,8 +205,8 @@ public class OpenEJBArchiveProcessor {
             final WebModule webModule = new WebModule(new WebApp(), contextRoot(archive.getName()), loader, "", appModule.getModuleId());
             webModule.setUrls(additionalPaths);
             appModule.getWebModules().add(webModule);
-        } else if (isEar) { // mainly for CDi TCKs
-            final FinderFactory.OpenEJBAnnotationFinder earLibFinder = new FinderFactory.OpenEJBAnnotationFinder(new SimpleWebappAggregatedArchive(earArchive, earMap));
+        } else if (isEar) { // mainly for CDI TCKs
+            final FinderFactory.OpenEJBAnnotationFinder earLibFinder = new FinderFactory.OpenEJBAnnotationFinder(new SimpleWebappAggregatedArchive(tempClassLoader, earArchive, earMap));
             appModule.setEarLibFinder(earLibFinder);
 
             final EjbModule earCdiModule = new EjbModule(appModule.getClassLoader(), DeploymentLoader.EAR_SCOPED_CDI_BEANS + appModule.getModuleId(), new EjbJar(), new OpenejbJar());
@@ -218,9 +224,11 @@ public class OpenEJBArchiveProcessor {
                         final Map<ArchivePath, Node> libs = archive.getContent(new IncludeRegExpPaths("/WEB-INF/lib/.*\\.jar"));
                         */
 
-                        final Map<String, Object> altDD = new HashMap<String, Object>();
+                        final Map<String, Object> altDD = new HashMap<>();
                         final Node beansXml = findBeansXml(webArchive, new ArrayList<AssetSource>(), WEB_INF, altDD);
                         final SWClassLoader webLoader = new SWClassLoader(WEB_INF_CLASSES, parent, webArchive);
+                        closeables.add(webLoader);
+
                         final FinderFactory.OpenEJBAnnotationFinder finder = new FinderFactory.OpenEJBAnnotationFinder(
                                 finderArchive(beansXml, webArchive, webLoader, Collections.<URL>emptyList()));
 
@@ -442,11 +450,11 @@ public class OpenEJBArchiveProcessor {
             }
         }
 
-        final Map<URL, List<String>> classesByUrl = new HashMap<URL, List<String>>();
+        final Map<URL, List<String>> classesByUrl = new HashMap<>();
 
-        final List<org.apache.xbean.finder.archive.Archive> archives = new ArrayList<org.apache.xbean.finder.archive.Archive>();
+        final List<org.apache.xbean.finder.archive.Archive> archives = new ArrayList<>();
         for (final URL url : DeploymentLoader.filterWebappUrls(additionalPaths.toArray(new URL[additionalPaths.size()]), null)) {
-            final List<String> currentClasses = new ArrayList<String>();
+            final List<String> currentClasses = new ArrayList<>();
             final org.apache.xbean.finder.archive.Archive newArchive = new FilteredArchive(new JarArchive(cl, url), new WebappAggregatedArchive.ScanXmlSaverFilter(false, null, currentClasses));
             classesByUrl.put(url, currentClasses);
             archives.add(newArchive);
@@ -454,7 +462,7 @@ public class OpenEJBArchiveProcessor {
 
         archives.add(new ClassesArchive(classes));
         if (beansXml != null) {
-            final List<String> mainClasses = new ArrayList<String>();
+            final List<String> mainClasses = new ArrayList<>();
             for (final Class<?> clazz : classes) {
                 mainClasses.add(clazz.getName());
             }
@@ -467,7 +475,7 @@ public class OpenEJBArchiveProcessor {
             }
         }
 
-        return new SimpleWebappAggregatedArchive(new CompositeArchive(archives), classesByUrl);
+        return new SimpleWebappAggregatedArchive(cl, new CompositeArchive(archives), classesByUrl);
     }
 
     private static boolean isExcluded(final String archiveName) {
@@ -503,8 +511,8 @@ public class OpenEJBArchiveProcessor {
         private final CompositeArchive delegate;
         private final Map<URL, List<String>> classesMap;
 
-        public SimpleWebappAggregatedArchive(final CompositeArchive archive, final Map<URL, List<String>> map) {
-            super(Thread.currentThread().getContextClassLoader(), new HashMap<String, Object>(), new ArrayList<URL>());
+        public SimpleWebappAggregatedArchive(final ClassLoader cl, final CompositeArchive archive, final Map<URL, List<String>> map) {
+            super(cl, new HashMap<String, Object>(), new ArrayList<URL>());
 
             delegate = archive;
             classesMap = map;

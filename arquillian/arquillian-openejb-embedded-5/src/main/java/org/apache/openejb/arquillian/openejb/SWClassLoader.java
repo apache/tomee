@@ -44,7 +44,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
-public class SWClassLoader extends ClassLoader {
+public class SWClassLoader extends ClassLoader implements Closeable {
     static {
         try {
             final Field handler = URL.class.getDeclaredField("handlers");
@@ -197,7 +197,8 @@ public class SWClassLoader extends ClassLoader {
         }
     }
 
-    public void close() {
+    @Override
+    public void close() throws IOException {
         ArchiveStreamHandler.reset(archive.getName());
         for (final Closeable cl : closeables) {
             try {

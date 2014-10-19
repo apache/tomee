@@ -134,7 +134,7 @@ public class LocalBeanProxyFactory implements Opcodes {
             }
 
             final byte[] proxyBytes = generateProxy(classToProxy, classFileName, interfaces);
-            return Unsafe.defineClass(classToProxy, proxyName, proxyBytes);
+            return Unsafe.defineClass(cl, classToProxy, proxyName, proxyBytes);
 
         } catch (final Exception e) {
             throw new InternalError("LocalBeanProxyFactory.createProxy: " + Debug.printStackTrace(e));
@@ -814,8 +814,9 @@ public class LocalBeanProxyFactory implements Opcodes {
             }
         }
 
-        public static Class defineClass(final Class<?> clsToProxy, final String proxyName, final byte[] proxyBytes) throws IllegalAccessException, InvocationTargetException {
-            return (Class<?>) defineClass.invoke(unsafe, proxyName, proxyBytes, 0, proxyBytes.length, clsToProxy.getClassLoader(), clsToProxy.getProtectionDomain());
+        // it is super important to pass a classloader as first parameter otherwise if API class is in a "permanent" classloader then it will leak
+        public static Class defineClass(final ClassLoader loader, final Class<?> clsToProxy, final String proxyName, final byte[] proxyBytes) throws IllegalAccessException, InvocationTargetException {
+            return (Class<?>) defineClass.invoke(unsafe, proxyName, proxyBytes, 0, proxyBytes.length, loader, clsToProxy.getProtectionDomain());
         }
     }
 

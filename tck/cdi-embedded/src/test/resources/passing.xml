@@ -35,6 +35,8 @@
 <!-- OWB one ATM, remove exclude groups to be openejb ;) -->
 <suite name="JSR-346-TCK" verbose="2" configfailurepolicy="continue" >
   <listeners>
+    <!-- debug -->
+    <listener class-name="org.apache.openejb.tck.cdi.embedded.GCListener"/>
     <!-- Required - avoid randomly mixed test method execution -->
     <listener class-name="org.jboss.cdi.tck.impl.testng.SingleTestClassMethodInterceptor"/>
     <!-- Optional - intended for debug purpose only -->

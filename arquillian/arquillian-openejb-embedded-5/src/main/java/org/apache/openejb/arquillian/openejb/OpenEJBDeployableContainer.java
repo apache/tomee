@@ -113,8 +113,15 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
     private InstanceProducer<HttpSession> sessionProducer;
 
     @Inject
+    @DeploymentScoped
+    private InstanceProducer<Closeables> closeablesProducer;
+
+    @Inject
     @SuiteScoped
     private InstanceProducer<ClassLoader> classLoader;
+
+    @Inject
+    private Instance<Closeables> closeables;
 
     @Inject
     private Instance<ServletContext> servletContext;
@@ -178,9 +185,11 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
         contextProducer.set(initialContext);
 
         containerArchives = ArquillianUtil.toDeploy(properties);
+        final Closeables globalScopeCloseables = new Closeables();
+        SystemInstance.get().setComponent(Closeables.class, globalScopeCloseables);
         for (final Archive<?> archive : containerArchives) {
             try {
-                quickDeploy(archive, testClass.get());
+                quickDeploy(archive, testClass.get(), globalScopeCloseables);
             } catch (final DeploymentException e) {
                 Logger.getLogger(OpenEJBDeployableContainer.class.getName()).log(Level.SEVERE, e.getMessage(), e);
             }
@@ -190,13 +199,16 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
     @Override
     public ProtocolMetaData deploy(final Archive<?> archive) throws DeploymentException {
         try {
-            final DeploymentInfo info = quickDeploy(archive, testClass.get());
+            final Closeables cl = new Closeables();
+            closeablesProducer.set(cl);
+            final DeploymentInfo info = quickDeploy(archive, testClass.get(), cl);
 
             servletContextProducer.set(info.appServletContext);
             sessionProducer.set(info.appSession);
             appInfoProducer.set(info.appInfo);
             appContextProducer.set(info.appCtx);
-            classLoader.set(info.appCtx.getClassLoader());
+            final ClassLoader loader = info.appCtx.getWebContexts().isEmpty() ? info.appCtx.getClassLoader() : info.appCtx.getWebContexts().iterator().next().getClassLoader();
+            classLoader.set(loader == null ? info.appCtx.getClassLoader() : loader);
         } catch (final Exception e) {
             throw new DeploymentException("can't deploy " + archive.getName(), e);
         }
@@ -211,9 +223,9 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
         return new ProtocolMetaData();
     }
 
-    private DeploymentInfo quickDeploy(final Archive<?> archive, final TestClass testClass) throws DeploymentException {
+    private DeploymentInfo quickDeploy(final Archive<?> archive, final TestClass testClass, final Closeables cls) throws DeploymentException {
         try {
-            final AppModule module = OpenEJBArchiveProcessor.createModule(archive, testClass);
+            final AppModule module = OpenEJBArchiveProcessor.createModule(archive, testClass, cls);
             final AppInfo appInfo = configurationFactory.configureApplication(module);
             final AppContext appCtx = assembler.createApplication(appInfo, module.getClassLoader());
 
@@ -230,17 +242,21 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
 
     @Override
     public void undeploy(final Archive<?> archive) throws DeploymentException {
+        final Closeables cl = closeables.get();
+        if (cl != null) {
+            try {
+                cl.close();
+            } catch (final IOException e) {
+                // no-op
+            }
+        }
+
         // reset classloader for next text
         // otherwise if it was closed something can fail
         classLoader.set(OpenEJBDeployableContainer.class.getClassLoader());
 
         if (appContext.get() == null) {
             return;
-        }
-
-        final ClassLoader cl = appContext.get().getClassLoader();
-        if (SWClassLoader.class.isInstance(cl)) {
-            SWClassLoader.class.cast(cl).close();
         }
 
         try {
@@ -259,8 +275,11 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
             if (initialContext != null) {
                 initialContext.close();
             }
+            SystemInstance.get().getComponent(Closeables.class).close();
         } catch (final NamingException e) {
             throw new LifecycleException("can't close the OpenEJB container", e);
+        } catch (final IOException e) {
+            // no-op: close() of classloaders, not a big deal at this moment
         } finally {
             OpenEJB.destroy();
         }
