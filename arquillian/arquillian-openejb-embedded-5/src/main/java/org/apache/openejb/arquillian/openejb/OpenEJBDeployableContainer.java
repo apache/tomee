@@ -275,7 +275,10 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
             if (initialContext != null) {
                 initialContext.close();
             }
-            SystemInstance.get().getComponent(Closeables.class).close();
+            Closeables closeables = SystemInstance.get().getComponent(Closeables.class);
+            if (closeables != null) {
+                closeables.close();
+            }
         } catch (final NamingException e) {
             throw new LifecycleException("can't close the OpenEJB container", e);
         } catch (final IOException e) {
