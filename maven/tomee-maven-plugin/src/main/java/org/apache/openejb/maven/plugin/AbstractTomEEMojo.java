@@ -31,6 +31,7 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.config.RemoteServer;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
@@ -253,6 +254,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
     @Parameter
     protected List<String> javaagents;
+
+    @Parameter(property = "tomee-plugin.persist-javaagents", defaultValue = "false")
+    protected boolean persistJavaagents;
 
     @Parameter
     protected List<String> webapps;
@@ -501,12 +505,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                     content = content.replace(SimpleFormatter.class.getName(), "org.apache.tomee.jul.formatter.SimpleTomEEFormatter");
                 }
 
-                final FileWriter writer = new FileWriter(loggingProperties);
-                try {
-                    writer.write(content);
-                } finally {
-                    IO.close(writer);
-                }
+                doWrite(loggingProperties, content);
             } catch (final Exception e) {
                 getLog().error("Can't set SimpleTomEEFormatter", e);
             }
@@ -951,32 +950,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             strings.addAll(Arrays.asList(args.split(" ")));
         }
         if (javaagents != null) {
-            for (final String rawJavaagent : javaagents) {
-                final String javaagent;
-                final String args;
-                int argsIdx = rawJavaagent.indexOf('=');
-                if (argsIdx < 0) {
-                    argsIdx = rawJavaagent.indexOf('?');
-                }
-                if (argsIdx > 0) {
-                    javaagent = rawJavaagent.substring(0, argsIdx);
-                    args = rawJavaagent.substring(argsIdx);
-                } else {
-                    javaagent = rawJavaagent;
-                    args = "";
-                }
-
-                if (!new File(javaagent).isFile()) {
-                    try {
-                        strings.add("-javaagent:" + mvnToFile(javaagent, "jar") + args);
-                    } catch (final Exception e) {
-                        getLog().warn("Can't find " + javaagent);
-                        strings.add("-javaagent:" + javaagent);
-                    }
-                } else {
-                    strings.add("-javaagent:" + javaagent);
-                }
-            }
+            addJavaagents(strings);
         }
 
         if (forceReloadable) {
@@ -1018,6 +992,75 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         }
 
         return strings;
+    }
+
+    private void addJavaagents(final List<String> strings) {
+        final String existingJavaagent = "'-javaagent:$CATALINA_HOME/lib/openejb-javaagent.jar'";
+        final StringBuilder javaagentString = new StringBuilder(existingJavaagent);
+
+        for (final String rawJavaagent : javaagents) {
+            final String javaagent;
+            final String args;
+            int argsIdx = rawJavaagent.indexOf('=');
+            if (argsIdx < 0) {
+                argsIdx = rawJavaagent.indexOf('?');
+            }
+            if (argsIdx > 0) {
+                javaagent = rawJavaagent.substring(0, argsIdx);
+                args = rawJavaagent.substring(argsIdx);
+            } else {
+                javaagent = rawJavaagent;
+                args = "";
+            }
+
+            String path = javaagent;
+            if (!new File(javaagent).isFile()) {
+                try {
+                    final File jar = mvnToFile(javaagent, "jar");
+                    if (persistJavaagents) {
+                        final File javaagentFolder = new File(catalinaBase, "javaagent");
+                        Files.mkdirs(javaagentFolder);
+                        final String name = jar.getName();
+                        path = "$CATALINA_HOME/javaagent/" + name;
+                        IO.copy(jar, new File(javaagentFolder, name));
+                    }
+                    strings.add("-javaagent:" + jar.getAbsolutePath() + args);
+                } catch (final Exception e) {
+                    getLog().warn("Can't find " + javaagent);
+                    strings.add("-javaagent:" + javaagent);
+                }
+            } else {
+                strings.add("-javaagent:" + javaagent);
+            }
+
+            if (persistJavaagents) {
+                javaagentString.append(" -javaagent:").append(path).append(args);
+            }
+        }
+
+        if (persistJavaagents) {
+            try {
+                {
+                    final File catalinaSh = new File(catalinaBase, "bin/catalina.sh");
+                    final String content = IO.slurp(catalinaSh).replace(existingJavaagent, javaagentString.toString());
+                    doWrite(catalinaSh, content);
+                }
+                {
+                    final File catalinaBat = new File(catalinaBase, "bin/catalina.bat");
+                    final String content = IO.slurp(catalinaBat)
+                            .replace(
+                                    "\"-javaagent:%CATALINA_HOME%\\lib\\openejb-javaagent.jar\"",
+                                    javaagentString.toString()
+                                            .replace('\'', '"')
+                                            .replace('/', '\\')
+                                            .replace("$CATALINA_HOME", "%CATALINA_HOME%"));
+
+                    doWrite(catalinaBat, content);
+                }
+            } catch (final IOException ioe) {
+                throw new OpenEJBRuntimeException(ioe);
+            }
+        }
     }
 
     private void forceDefaultForNiceWebAppDevelopment() {
@@ -1252,6 +1295,15 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             if (!appsFolder.exists() && !appsFolder.mkdirs()) {
                 throw new RuntimeException("Failed to create: " + appsFolder);
             }
+        }
+    }
+
+    private static void doWrite(final File file, final String content) throws IOException {
+        final FileWriter writer = new FileWriter(file);
+        try {
+            writer.write(content);
+        } finally {
+            IO.close(writer);
         }
     }
 

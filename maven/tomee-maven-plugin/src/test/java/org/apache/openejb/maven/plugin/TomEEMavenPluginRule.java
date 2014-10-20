@@ -18,6 +18,7 @@ package org.apache.openejb.maven.plugin;
 
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.DefaultArtifactRepository;
 import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
@@ -28,6 +29,7 @@ import org.apache.maven.settings.io.xpp3.SettingsXpp3Reader;
 import org.apache.openejb.config.RemoteServer;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.util.NetworkUtil;
+import org.apache.openejb.util.OpenEjbVersion;
 import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
@@ -50,20 +52,20 @@ import java.util.concurrent.atomic.AtomicReference;
  * The basic usage is:
  *
  *
-public class TomEEMavenPluginTest {
-  @Rule
-  public TomEEMavenPluginRule TMPRule = new TomEEMavenPluginRule();
+ public class TomEEMavenPluginTest {
+@Rule
+public TomEEMavenPluginRule TMPRule = new TomEEMavenPluginRule();
 
-  @Url // get the base http url injected
-  private String url;
+@Url // get the base http url injected
+private String url;
 
-  @Config
-  private String tomeeHost = "localhost";
+@Config
+private String tomeeHost = "localhost";
 
-  @Test
-  public void simpleStart() throws Exception {
-    assertThat(IO.slurp(new URL(url + "/docs")), containsString("Apache Tomcat"));
-  }
+@Test
+public void simpleStart() throws Exception {
+assertThat(IO.slurp(new URL(url + "/docs")), containsString("Apache Tomcat"));
+}
 }
  *
  * @Url specifies you want the http url base injected (without any webapp context)
@@ -90,12 +92,12 @@ public class TomEEMavenPluginRule implements MethodRule {
             final TestTomEEMojo testMojo = newMojo();
 
             for (final Field f : testInstance.getClass().getDeclaredFields()) {
-                if (f.getAnnotation(Mojo.class) != null) {
-                    f.setAccessible(true);
-                    f.set(testInstance, testMojo);
-                } else if (f.getAnnotation(Url.class) != null) {
+                if (f.getAnnotation(Url.class) != null) {
                     f.setAccessible(true);
                     f.set(testInstance, "http://localhost:" + testMojo.tomeeHttpPort);
+                } else if (f.getAnnotation(Mojo.class) != null) {
+                    f.setAccessible(true);
+                    f.set(testInstance, testMojo);
                 } else if (f.getAnnotation(Config.class) != null) {
                     f.setAccessible(true);
 
@@ -119,15 +121,14 @@ public class TomEEMavenPluginRule implements MethodRule {
     }
 
     protected static abstract class TestTomEEMojo extends StartTomEEMojo {
-        final AtomicReference<Throwable> ex = new AtomicReference<>();
+        final AtomicReference<Throwable> ex = new AtomicReference<Throwable>();
 
         protected abstract void asserts() throws Throwable;
 
         public void runTest() throws Throwable {
             execute();
-            final Throwable throwable = ex.get();
-            if (throwable != null) {
-                throw throwable;
+            if (ex.get() != null) {
+                throw ex.get();
             }
         }
 
@@ -150,8 +151,11 @@ public class TomEEMavenPluginRule implements MethodRule {
         final File settingsXml = new File(System.getProperty("user.home") + "/.m2/settings.xml");
         if (settingsXml.exists()) {
             try {
-                try (final FileReader reader = new FileReader(settingsXml)) {
+                final FileReader reader = new FileReader(settingsXml);
+                try {
                     tomEEMojo.settings = new SettingsXpp3Reader().read(reader, false);
+                } finally {
+                    reader.close();
                 }
             } catch (final Exception e) {
                 // no-op
@@ -177,7 +181,7 @@ public class TomEEMavenPluginRule implements MethodRule {
         // our well known web profile ;)
         tomEEMojo.tomeeGroupId = "org.apache.openejb";
         tomEEMojo.tomeeArtifactId = "apache-tomee";
-        tomEEMojo.tomeeVersion = "-1";
+        tomEEMojo.tomeeVersion = "2" + OpenEjbVersion.get().getVersion().substring(1);
         tomEEMojo.tomeeClassifier = "webprofile";
         tomEEMojo.tomeeType = "zip";
 
@@ -208,28 +212,28 @@ public class TomEEMavenPluginRule implements MethodRule {
         tomEEMojo.checkStarted = true;
 
         // we mock all the artifact resolution in test
-        tomEEMojo.remoteRepos = new LinkedList<>();
+        tomEEMojo.remoteRepos = new LinkedList<ArtifactRepository>();
         tomEEMojo.local = new DefaultArtifactRepository("local", tomEEMojo.settings.getLocalRepository(), new DefaultRepositoryLayout());
 
         tomEEMojo.factory = ArtifactFactory.class.cast(Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[]{ArtifactFactory.class}, new InvocationHandler() {
             @Override
             public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
                 return new DefaultArtifact(
-                    tomEEMojo.tomeeGroupId,
-                    tomEEMojo.tomeeArtifactId,
-                    VersionRange.createFromVersion(tomEEMojo.tomeeVersion),
-                    "provided",
-                    tomEEMojo.tomeeType,
-                    tomEEMojo.tomeeClassifier,
-                    null) {
+                        String.class.cast(args[0]),
+                        String.class.cast(args[1]),
+                        VersionRange.class.cast(args[2]),
+                        String.class.cast(args[5]),
+                        String.class.cast(args[3]),
+                        args[4] == null ? "" : String.class.cast(args[4]),
+                        null) {
                     @Override
                     public File getFile() {
                         return new File(
-                            tomEEMojo.settings.getLocalRepository(),
-                            getGroupId().replace('.', '/')
-                                + '/' + getArtifactId().replace('.', '/')
-                                + '/' + getVersion()
-                                + '/' + getArtifactId().replace('.', '/') + '-' + getVersion() + '-' + getClassifier() + '.' + getType());
+                                tomEEMojo.settings.getLocalRepository(),
+                                getGroupId().replace('.', '/')
+                                        + '/' + getArtifactId().replace('.', '/')
+                                        + '/' + getVersion()
+                                        + '/' + getArtifactId().replace('.', '/') + '-' + getVersion() + (args[4] == null ? "" : '-' + getClassifier()) + '.' + getType());
                     }
                 };
             }
