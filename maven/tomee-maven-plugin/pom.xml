@@ -81,6 +81,13 @@
       <classifier>webprofile</classifier>
       <type>zip</type>
     </dependency>
+    <dependency>
+      <groupId>org.apache.sirona</groupId>
+      <artifactId>sirona-javaagent</artifactId>
+      <version>0.2-incubating</version>
+      <scope>test</scope>
+      <classifier>shaded</classifier>
+    </dependency>
   </dependencies>
 
   <properties>

@@ -216,21 +216,21 @@ public class TomEEMavenPluginRule implements MethodRule {
             @Override
             public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
                 return new DefaultArtifact(
-                    tomEEMojo.tomeeGroupId,
-                    tomEEMojo.tomeeArtifactId,
-                    VersionRange.createFromVersion(tomEEMojo.tomeeVersion),
-                    "provided",
-                    tomEEMojo.tomeeType,
-                    tomEEMojo.tomeeClassifier,
+                    String.class.cast(args[0]),
+                    String.class.cast(args[1]),
+                    VersionRange.class.cast(args[2]),
+                    String.class.cast(args[5]),
+                    String.class.cast(args[3]),
+                    args[4] == null ? "" : String.class.cast(args[4]),
                     null) {
                     @Override
                     public File getFile() {
                         return new File(
-                            tomEEMojo.settings.getLocalRepository(),
-                            getGroupId().replace('.', '/')
-                                + '/' + getArtifactId().replace('.', '/')
-                                + '/' + getVersion()
-                                + '/' + getArtifactId().replace('.', '/') + '-' + getVersion() + '-' + getClassifier() + '.' + getType());
+                                tomEEMojo.settings.getLocalRepository(),
+                                getGroupId().replace('.', '/')
+                                        + '/' + getArtifactId().replace('.', '/')
+                                        + '/' + getVersion()
+                                        + '/' + getArtifactId().replace('.', '/') + '-' + getVersion() + (args[4] == null ? "" : '-' + getClassifier()) + '.' + getType());
                     }
                 };
             }
