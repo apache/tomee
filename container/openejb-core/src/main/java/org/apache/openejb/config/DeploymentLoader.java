@@ -111,9 +111,14 @@ public class DeploymentLoader implements DeploymentFilterable {
     private static String ALTDD = SystemInstance.get().getOptions().get(OPENEJB_ALTDD_PREFIX, (String) null);
     private volatile List<URL> containerUrls = null;
 
+    @Deprecated // use load(File, ExternalConfiguration)
+    public AppModule load(final File jarFile) throws OpenEJBException {
+        return load(jarFile, null);
+    }
+
     /**
      * @param jarFile the app file (war, jar, ear)
-     * @param additionalAppDescriptors potentially some more desriptor, used *only* today for context.xml of tomcat
+     * @param config potentially some more config, mainly used when linking to another system like tomcat to enrich the conf we can guess
      * @return the loaded module
      */
     public AppModule load(final File jarFile, final ExternalConfiguration config) throws OpenEJBException {

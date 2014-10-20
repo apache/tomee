@@ -44,7 +44,7 @@ public class CheckDescriptorLocationTest {
 
         final File jarFile = Archives.jarArchive(map, FILENAME_PREFIX, FooBean.class);
         final DeploymentLoader loader = new DeploymentLoader();
-        final AppModule appModule = loader.load(jarFile);
+        final AppModule appModule = loader.load(jarFile, null);
 
         return appModule;
     }
@@ -62,7 +62,7 @@ public class CheckDescriptorLocationTest {
         final File warFile = WebArchives.warArchive(map, FILENAME_PREFIX, FooBean.class);
 
         final DeploymentLoader loader = new DeploymentLoader();
-        final AppModule appModule = loader.load(warFile);
+        final AppModule appModule = loader.load(warFile, null);
 
         return appModule;
     }
@@ -80,7 +80,7 @@ public class CheckDescriptorLocationTest {
         final File warFile = WebArchives.warArchive(map, FILENAME_PREFIX, FooBean.class);
 
         final DeploymentLoader loader = new DeploymentLoader();
-        final AppModule appModule = loader.load(warFile);
+        final AppModule appModule = loader.load(warFile, null);
 
         return appModule;
     }
