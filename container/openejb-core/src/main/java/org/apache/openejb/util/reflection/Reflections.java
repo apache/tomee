@@ -21,6 +21,7 @@ import org.apache.openejb.OpenEJBRuntimeException;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 public final class Reflections {
     private Reflections() {
@@ -61,16 +62,31 @@ public final class Reflections {
     }
 
     public static void set(final Object instance, final String field, final Object value) {
-        Class<?> clazz = instance.getClass();
+        set(instance.getClass(), instance, field, value);
+    }
+
+    public static void set(final Class<?> inClazz, final Object instance, final String field, final Object value) {
+        Class<?> clazz = inClazz;
         while (clazz != null) {
             try {
                 final Field f = clazz.getDeclaredField(field);
                 final boolean acc = f.isAccessible();
                 f.setAccessible(true);
+                Field modifiersField = null;
+                final int modifiers = f.getModifiers();
+                final boolean isFinal = Modifier.isFinal(modifiers);
                 try {
+                    if (isFinal) {
+                        modifiersField = Field.class.getDeclaredField("modifiers");
+                        modifiersField.setAccessible(true);
+                        modifiersField.setInt(f, modifiers & ~Modifier.FINAL);
+                    }
                     f.set(instance, value);
                     return;
                 } finally {
+                    if (isFinal && modifiersField != null) {
+                        modifiersField.setInt(f, modifiers);
+                    }
                     f.setAccessible(acc);
                 }
             } catch (final NoSuchFieldException nsfe) {
