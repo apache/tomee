@@ -129,13 +129,13 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
+          <argLine>-Xmx512m -XX:PermSize=512m -XX:MaxPermSize=512m</argLine>
           <useFile>false</useFile>
           <disableXmlReport>true</disableXmlReport>
           <suiteXmlFiles>
             <suiteXmlFile>src/test/resources/passing.xml</suiteXmlFile>
           </suiteXmlFiles>
           <systemPropertyVariables>
-            <argLine>-Xmx512m -XX:MaxPermSize=512m</argLine>
             <!-- this is a nice perf optimization to have by default but TCKs play with it -->
             <openejb.cdi.applicationScope.cached>false</openejb.cdi.applicationScope.cached>
             <!-- not supported by the spec -->
