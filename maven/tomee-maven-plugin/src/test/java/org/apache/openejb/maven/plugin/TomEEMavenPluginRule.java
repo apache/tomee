@@ -22,6 +22,7 @@ import org.apache.maven.artifact.repository.DefaultArtifactRepository;
 import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.versioning.VersionRange;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.io.xpp3.SettingsXpp3Reader;
 import org.apache.openejb.config.RemoteServer;
@@ -37,8 +38,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -154,6 +157,12 @@ public class TomEEMavenPluginRule implements MethodRule {
                 // no-op
             }
         }
+        tomEEMojo.project = new MavenProject() {
+            @Override
+            public Set getArtifacts() {
+                return Collections.emptySet();
+            }
+        };
         if (tomEEMojo.settings == null) {
             tomEEMojo.settings = new Settings();
         }

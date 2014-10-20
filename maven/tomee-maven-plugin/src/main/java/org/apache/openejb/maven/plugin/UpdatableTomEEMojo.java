@@ -54,9 +54,6 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
     @Parameter
     private List<Synch> synchronizations;
 
-    @Parameter(property = "tomee-plugin.buildDir", defaultValue = "${project.build.directory}", readonly = true)
-    private File buildDir;
-
     @Parameter(property = "tomee-plugin.baseDir", defaultValue = "${project.basedir}", readonly = true)
     private File baseDir;
 
@@ -114,7 +111,7 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
         // defaults values for main synchronization block
         final String destination = destinationName().replaceAll("\\.[jew]ar", "");
         if (synchronization.getBinariesDir() == null) {
-            synchronization.setBinariesDir(new File(buildDir, "classes"));
+            synchronization.setBinariesDir(classes);
         }
         if (synchronization.getResourcesDir() == null) {
             synchronization.setResourcesDir(new File(baseDir, "src/main/webapp"));
