@@ -78,7 +78,7 @@ public class DeploymentsElementTest extends Assert {
         final OpenEjbConfiguration configuration = server.init();
 
         assertEquals(1, configuration.containerSystem.applications.size());
-        assertEquals(2, configuration.containerSystem.applications.get(0).ejbJars.size());
+        assertEquals(1, configuration.containerSystem.applications.get(0).ejbJars.size());
         assertEquals(1, configuration.containerSystem.applications.get(0).ejbJars.get(0).enterpriseBeans.size());
         assertEquals("Orange", configuration.containerSystem.applications.get(0).ejbJars.get(0).enterpriseBeans.get(0).ejbName);
     }
@@ -105,7 +105,7 @@ public class DeploymentsElementTest extends Assert {
         final OpenEjbConfiguration configuration = server.init();
 
         assertEquals(1, configuration.containerSystem.applications.size());
-        assertEquals(2, configuration.containerSystem.applications.get(0).ejbJars.size());
+        assertEquals(1, configuration.containerSystem.applications.get(0).ejbJars.size());
         assertEquals(1, configuration.containerSystem.applications.get(0).ejbJars.get(0).enterpriseBeans.size());
         assertEquals("Orange", configuration.containerSystem.applications.get(0).ejbJars.get(0).enterpriseBeans.get(0).ejbName);
     }
@@ -136,7 +136,7 @@ public class DeploymentsElementTest extends Assert {
         final OpenEjbConfiguration configuration = server.init();
 
         assertEquals(1, configuration.containerSystem.applications.size());
-        assertEquals(2, configuration.containerSystem.applications.get(0).ejbJars.size());
+        assertEquals(1, configuration.containerSystem.applications.get(0).ejbJars.size());
         assertEquals(1, configuration.containerSystem.applications.get(0).ejbJars.get(0).enterpriseBeans.size());
         assertEquals("Orange", configuration.containerSystem.applications.get(0).ejbJars.get(0).enterpriseBeans.get(0).ejbName);
     }
@@ -165,7 +165,7 @@ public class DeploymentsElementTest extends Assert {
         final OpenEjbConfiguration configuration = server.init();
 
         assertEquals(1, configuration.containerSystem.applications.size());
-        assertEquals(2, configuration.containerSystem.applications.get(0).ejbJars.size());
+        assertEquals(1, configuration.containerSystem.applications.get(0).ejbJars.size());
         assertEquals(1, configuration.containerSystem.applications.get(0).ejbJars.get(0).enterpriseBeans.size());
         assertEquals("Orange", configuration.containerSystem.applications.get(0).ejbJars.get(0).enterpriseBeans.get(0).ejbName);
     }
@@ -198,7 +198,7 @@ public class DeploymentsElementTest extends Assert {
         final OpenEjbConfiguration configuration = server.init();
 
         assertEquals(1, configuration.containerSystem.applications.size());
-        assertEquals(2, configuration.containerSystem.applications.get(0).ejbJars.size());
+        assertEquals(1, configuration.containerSystem.applications.get(0).ejbJars.size());
         assertEquals(1, configuration.containerSystem.applications.get(0).ejbJars.get(0).enterpriseBeans.size());
         assertEquals("Orange", configuration.containerSystem.applications.get(0).ejbJars.get(0).enterpriseBeans.get(0).ejbName);
     }
@@ -229,7 +229,7 @@ public class DeploymentsElementTest extends Assert {
         final OpenEjbConfiguration configuration = server.init();
 
         assertEquals(1, configuration.containerSystem.applications.size());
-        assertEquals(2, configuration.containerSystem.applications.get(0).ejbJars.size());
+        assertEquals(1, configuration.containerSystem.applications.get(0).ejbJars.size());
         assertEquals(1, configuration.containerSystem.applications.get(0).ejbJars.get(0).enterpriseBeans.size());
         assertEquals("Orange", configuration.containerSystem.applications.get(0).ejbJars.get(0).enterpriseBeans.get(0).ejbName);
     }
@@ -275,7 +275,7 @@ public class DeploymentsElementTest extends Assert {
         final OpenEjbConfiguration configuration = server.init();
 
         assertEquals(1, configuration.containerSystem.applications.size());
-        assertEquals(2, configuration.containerSystem.applications.get(0).ejbJars.size());
+        assertEquals(1, configuration.containerSystem.applications.get(0).ejbJars.size());
         assertEquals(1, configuration.containerSystem.applications.get(0).ejbJars.get(0).enterpriseBeans.size());
         assertEquals("Yellow", configuration.containerSystem.applications.get(0).ejbJars.get(0).enterpriseBeans.get(0).ejbName);
     }
