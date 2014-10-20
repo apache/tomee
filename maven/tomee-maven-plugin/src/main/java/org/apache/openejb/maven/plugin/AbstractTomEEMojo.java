@@ -29,6 +29,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 import org.apache.openejb.config.RemoteServer;
 import org.apache.openejb.loader.Files;
@@ -40,6 +41,7 @@ import org.apache.tomee.util.QuickServerXmlParser;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -48,8 +50,13 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -213,6 +220,12 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     @Parameter(property = "tomee-plugin.quick-session", defaultValue = "true")
     protected boolean quickSession;
 
+    @Parameter
+    protected List<String> customizers;
+
+    @Parameter(defaultValue = "${project}", readonly = true, required = true)
+    protected MavenProject project;
+
     /**
      * force webapp to be reloadable
      */
@@ -236,6 +249,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
     @Parameter
     protected List<String> apps;
+
+    @Parameter(property = "tomee-plugin.classes", defaultValue = "${project.build.outputDirectory}", readonly = true)
+    protected File classes;
 
     @Parameter(defaultValue = "${project.build.directory}/${project.build.finalName}.${project.packaging}")
     protected File warFile;
@@ -350,9 +366,73 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             if (!skipCurrentProject) {
                 copyWar();
             }
+
+            if (customizers != null) {
+                final Thread thread = Thread.currentThread();
+                final ClassLoader currentLoader = thread.getContextClassLoader();
+                final ClassLoader tccl = createClassLoader(currentLoader);
+                thread.setContextClassLoader(tccl);
+                try {
+                    // a customizer is a Runnable with or without a constructor taking a File as parameter (catalina base)
+                    // one goal is to avoid coupling as much as possible with this plugin
+                    //
+                    // if really needed we could introduce a Customizer interface but then it has more impacts on your packaging/config
+                    for (final String customizer : customizers) {
+                        try {
+                            final Class<?> clazz = tccl.loadClass(customizer);
+                            try {
+                                final Constructor<?> cons = clazz.getConstructor(File.class);
+                                Runnable.class.cast(cons.newInstance(catalinaBase)).run();
+                            } catch (final NoSuchMethodException e) {
+                                try {
+                                    Runnable.class.cast(clazz.newInstance()).run();
+                                } catch (final Exception e1) {
+                                    throw new MojoExecutionException("can't create customizer: " + currentLoader, e);
+                                }
+                            }
+                        } catch (final ClassNotFoundException e) {
+                            throw new MojoExecutionException("can't find customizer: " + currentLoader, e);
+                        } catch (final InvocationTargetException e) {
+                            throw new MojoExecutionException("can't create customizer: " + currentLoader, e);
+                        } catch (final InstantiationException e) {
+                            throw new MojoExecutionException("can't create customizer: " + currentLoader, e);
+                        } catch (final IllegalAccessException e) {
+                            throw new MojoExecutionException("can't create customizer: " + currentLoader, e);
+                        }
+                    }
+                } finally {
+                    try {
+                        if (tccl != null && Closeable.class.isInstance(tccl)) {
+                            Closeable.class.cast(tccl).close();
+                        }
+                    } catch (final IOException e) {
+                        // no-op
+                    }
+                    thread.setContextClassLoader(currentLoader);
+                }
+            }
         }
 
         run();
+    }
+
+    private ClassLoader createClassLoader(final ClassLoader parent) {
+        final List<URL> urls = new ArrayList<URL>();
+        for (final Artifact artifact : (Collection<Artifact>) project.getArtifacts()) {
+            try {
+                urls.add(artifact.getFile().toURI().toURL());
+            } catch (final MalformedURLException e) {
+                getLog().warn("can't use artifact " + artifact.toString());
+            }
+        }
+        if (classes != null && classes.exists()) {
+            try {
+                urls.add(classes.toURI().toURL());
+            } catch (final MalformedURLException e) {
+                getLog().warn("can't use path " + classes.getAbsolutePath());
+            }
+        }
+        return new URLClassLoader(urls.toArray(new URL[urls.size()]), parent);
     }
 
     protected void fixConfig() {
