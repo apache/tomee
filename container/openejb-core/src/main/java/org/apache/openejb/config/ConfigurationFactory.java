@@ -808,7 +808,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         logger.debug("Beginning load: " + jarFile.getAbsolutePath());
 
         try {
-            final AppModule appModule = deploymentLoader.load(jarFile);
+            final AppModule appModule = deploymentLoader.load(jarFile, null);
             final AppInfo appInfo = configureApplication(appModule);
 
             // TODO This is temporary -- we need to do this in AppInfoBuilder
@@ -869,7 +869,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             logger.info("Beginning load: " + jarFile.getAbsolutePath());
 
             try {
-                final AppModule module = deploymentLoader.load(jarFile);
+                final AppModule module = deploymentLoader.load(jarFile, null);
 
                 collection.getAdditionalLibraries().addAll(module.getAdditionalLibraries());
                 collection.getClientModules().addAll(module.getClientModules());

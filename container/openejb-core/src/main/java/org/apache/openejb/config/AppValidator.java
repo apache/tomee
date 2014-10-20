@@ -288,7 +288,7 @@ public class AppValidator {
             for (final Object obj : line.getArgList()) {
                 final String module = (String) obj;
                 final File file = new File(module);
-                final AppModule appModule = deploymentLoader.load(file);
+                final AppModule appModule = deploymentLoader.load(file, null);
                 validator.validate(appModule);
             }
         } catch (final Exception e) {

@@ -184,7 +184,7 @@ public class DeployerEjb implements Deployer {
         AppInfo appInfo = null;
 
         try {
-            appModule = deploymentLoader.load(file);
+            appModule = deploymentLoader.load(file, null);
 
             // Add any alternate deployment descriptors to the modules
             final Map<String, DeploymentModule> modules = new TreeMap<>();

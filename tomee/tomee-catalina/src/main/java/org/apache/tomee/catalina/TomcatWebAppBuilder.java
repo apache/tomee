@@ -31,7 +31,9 @@ import org.apache.catalina.Realm;
 import org.apache.catalina.Service;
 import org.apache.catalina.UserDatabase;
 import org.apache.catalina.Valve;
+import org.apache.catalina.WebResource;
 import org.apache.catalina.WebResourceRoot;
+import org.apache.catalina.WebResourceSet;
 import org.apache.catalina.core.ContainerBase;
 import org.apache.catalina.core.NamingContextListener;
 import org.apache.catalina.core.StandardContext;
@@ -94,6 +96,7 @@ import org.apache.openejb.core.ivm.naming.SystemComponentReference;
 import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.loader.IO;
+import org.apache.openejb.loader.ProvisioningUtil;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.httpd.BeginWebBeansListener;
 import org.apache.openejb.server.httpd.EndWebBeansListener;
@@ -101,7 +104,9 @@ import org.apache.openejb.server.httpd.HttpSession;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.URLs;
 import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
+import org.apache.openejb.util.reflection.Reflections;
 import org.apache.tomcat.InstanceManager;
 import org.apache.tomcat.JarScanFilter;
 import org.apache.tomcat.util.descriptor.web.ApplicationParameter;
@@ -155,6 +160,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -165,6 +171,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import static java.util.Arrays.asList;
 import static org.apache.tomee.catalina.Contexts.warPath;
 
 /**
@@ -1948,7 +1955,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     final AppInfo appInfo;
                     try {
                         file = file.getCanonicalFile().getAbsoluteFile();
-                        final AppModule appModule = deploymentLoader.load(file);
+                        final AppModule appModule = deploymentLoader.load(file, null);
 
                         // Ignore any standalone web modules - this happens when the app is unpaked and doesn't have a WEB-INF dir
                         if (appModule.getDeploymentModule().size() == 1 && appModule.getWebModules().size() == 1) {
@@ -2056,7 +2063,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         final TomcatDeploymentLoader tomcatDeploymentLoader = new TomcatDeploymentLoader(standardContext, id);
         final AppModule appModule;
         try {
-            appModule = tomcatDeploymentLoader.load(Contexts.warPath(standardContext));
+            appModule = tomcatDeploymentLoader.load(Contexts.warPath(standardContext), configuredClasspath(standardContext));
         } catch (final OpenEJBException e) {
             throw new TomEERuntimeException(e);
         }
@@ -2065,6 +2072,63 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         loadWebModule(appModule, standardContext);
 
         return appModule;
+    }
+
+    private static DeploymentLoader.ExternalConfiguration configuredClasspath(final StandardContext standardContext) {
+        final Loader loader = standardContext.getLoader();
+        if (loader != null) {
+            final ClassLoader cl = standardContext.getLoader().getClassLoader();
+            if (cl == null) {
+                return null;
+            }
+
+            final Collection<String> cp = new LinkedList<>();
+
+            final String name = loader.getClass().getName();
+            // no more in tomcat 8 but keep it while we maintain t7 integration
+            if ("org.apache.catalina.loader.VirtualWebappLoader".equals(name)
+                    || "org.apache.tomee.catalina.ProvisioningWebappLoader".equals(name)) {
+                final Object virtualClasspath = Reflections.get(loader, "virtualClasspath");
+                if (virtualClasspath != null) {
+                    for (final String str : virtualClasspath.toString().split(";")) {
+                        cp.addAll(ProvisioningUtil.realLocation(str));
+                    }
+                }
+            } else {
+                final WebResourceRoot webResources = standardContext.getResources();
+                if (webResources != null) { // to enhance
+                    for (final WebResourceSet[] sets : asList(webResources.getPreResources(), webResources.getPostResources(), webResources.getJarResources())) {
+                        for (final WebResourceSet wr : sets) {
+                            final URL base = wr.getBaseUrl();
+                            if (base != null) {
+                                final File baseFile = URLs.toFile(base);
+                                if (baseFile.isDirectory()) {
+                                    final String[] libs = wr.list("/WEB-INF/lib/");
+                                    if (libs != null) {
+                                        for (final String resource : libs) {
+                                            cp.add(new File(baseFile, resource).getAbsolutePath());
+                                        }
+                                    }
+
+                                    final WebResource classes = wr.getResource("/WEB-INF/classes/");
+                                    if (classes != null) {
+                                        final String path = classes.getCanonicalPath();
+                                        if (path != null) {
+                                            cp.add(path);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (!cp.isEmpty()) {
+                return new DeploymentLoader.ExternalConfiguration(cp.toArray(new String[cp.size()]));
+            }
+        }
+        return null;
     }
 
     /**
