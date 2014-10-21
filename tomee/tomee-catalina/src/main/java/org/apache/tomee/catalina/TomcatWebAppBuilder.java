@@ -2147,7 +2147,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 final Object virtualClasspath = Reflections.get(loader, "virtualClasspath");
                 if (virtualClasspath != null) {
                     for (final String str : virtualClasspath.toString().split(";")) {
-                        cp.add(ProvisioningUtil.realLocation(str));
+                        final String realLocation = ProvisioningUtil.realLocation(str);
+                        if (realLocation != null && !realLocation.isEmpty()) {
+                            cp.add(realLocation);
+                        }
                     }
                 }
             }
