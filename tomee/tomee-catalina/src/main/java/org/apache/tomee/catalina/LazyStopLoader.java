@@ -158,4 +158,8 @@ public class LazyStopLoader implements Loader, Lifecycle {
     public ClassLoader getStopClassLoader() {
         return classLoader;
     }
+
+    public Loader getDelegateLoader() {
+        return delegate;
+    }
 }

@@ -2075,7 +2075,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     }
 
     private static DeploymentLoader.ExternalConfiguration configuredClasspath(final StandardContext standardContext) {
-        final Loader loader = standardContext.getLoader();
+        Loader loader = standardContext.getLoader();
+        if (loader != null && LazyStopLoader.class.isInstance(loader)) {
+            loader = LazyStopLoader.class.cast(loader).getDelegateLoader();
+        }
         if (loader != null) {
             final ClassLoader cl = standardContext.getLoader().getClassLoader();
             if (cl == null) {
