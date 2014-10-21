@@ -81,6 +81,7 @@
   <dependencySets>
     <dependencySet>
       <outputDirectory>lib</outputDirectory>
+      <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}</outputFileNameMapping>
       <scope>runtime</scope>
       <excludes>
         <exclude>*:pom</exclude>
