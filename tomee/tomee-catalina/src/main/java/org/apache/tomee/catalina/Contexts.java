@@ -70,6 +70,7 @@ public class Contexts {
             container = container.getParent();
         }
 
+        String baseName = null;
         if (standardContext.getDocBase() != null) {
             File file = new File(standardContext.getDocBase());
             if (!file.isAbsolute()) {
@@ -91,11 +92,18 @@ public class Contexts {
             if (path == null) {
                 throw new IllegalStateException("Can't find docBase");
             } else {
-                docBase = new File(new ContextName(path, standardContext.getWebappVersion()).getBaseName());
+                baseName = new ContextName(path, standardContext.getWebappVersion()).getBaseName();
+                docBase = new File(baseName);
             }
         }
 
-        if (!docBase.exists()) { // for old compatibility, will be removed soon
+        if (!docBase.exists() && baseName != null) { // for old compatibility, will be removed soon
+            if (Host.class.isInstance(container)) {
+                final File file = new File(Host.class.cast(container).getAppBaseFile(), baseName);
+                if (file.exists()) {
+                    return file;
+                }
+            }
             return oldRealWarPath(standardContext);
         }
 

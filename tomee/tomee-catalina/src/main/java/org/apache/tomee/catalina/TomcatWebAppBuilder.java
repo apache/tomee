@@ -780,6 +780,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         initJ2EEInfo(standardContext);
 
         File warFile = Contexts.warPath(standardContext);
+        if (!warFile.exists()) {
+            return;
+        }
+
         if (!warFile.isDirectory()) {
             try {
                 warFile = DeploymentLoader.unpack(warFile);
