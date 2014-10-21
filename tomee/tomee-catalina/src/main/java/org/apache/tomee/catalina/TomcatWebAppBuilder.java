@@ -105,6 +105,7 @@ import org.apache.openejb.core.ivm.naming.SystemComponentReference;
 import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.loader.IO;
+import org.apache.openejb.loader.ProvisioningUtil;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.httpd.BeginWebBeansListener;
 import org.apache.openejb.server.httpd.EndWebBeansListener;
@@ -160,6 +161,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -2037,7 +2039,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     final AppInfo appInfo;
                     try {
                         file = file.getCanonicalFile().getAbsoluteFile();
-                        final AppModule appModule = deploymentLoader.load(file);
+                        final AppModule appModule = deploymentLoader.load(file, null);
 
                         // Ignore any standalone web modules - this happens when the app is unpaked and doesn't have a WEB-INF dir
                         if (appModule.getDeploymentModule().size() == 1 && appModule.getWebModules().size() == 1) {
@@ -2126,6 +2128,37 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         return file;
     }
 
+    private static DeploymentLoader.ExternalConfiguration configuredClasspath(final StandardContext standardContext) {
+        Loader loader = standardContext.getLoader();
+        if (loader != null && LazyStopLoader.class.isInstance(loader)) {
+            loader = LazyStopLoader.class.cast(loader).getDelegateLoader();
+        }
+        if (loader != null) {
+            final ClassLoader cl = standardContext.getLoader().getClassLoader();
+            if (cl == null) {
+                return null;
+            }
+
+            final Collection<String> cp = new LinkedList<String>();
+
+            final String name = loader.getClass().getName();
+            if ("org.apache.catalina.loader.VirtualWebappLoader".equals(name)
+                    || "org.apache.tomee.catalina.ProvisioningWebappLoader".equals(name)) {
+                final Object virtualClasspath = Reflections.get(loader, "virtualClasspath");
+                if (virtualClasspath != null) {
+                    for (final String str : virtualClasspath.toString().split(";")) {
+                        cp.add(ProvisioningUtil.realLocation(str));
+                    }
+                }
+            }
+
+            if (!cp.isEmpty()) {
+                return new DeploymentLoader.ExternalConfiguration(cp.toArray(new String[cp.size()]));
+            }
+        }
+        return null;
+    }
+
     /**
      * Creates an openejb {@link AppModule} instance
      * from given tomcat context.
@@ -2145,7 +2178,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         final TomcatDeploymentLoader tomcatDeploymentLoader = new TomcatDeploymentLoader(standardContext, id);
         final AppModule appModule;
         try {
-            appModule = tomcatDeploymentLoader.load(Contexts.warPath(standardContext));
+            appModule = tomcatDeploymentLoader.load(Contexts.warPath(standardContext), configuredClasspath(standardContext));
         } catch (final OpenEJBException e) {
             throw new TomEERuntimeException(e);
         }

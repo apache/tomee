@@ -110,7 +110,12 @@ public class DeploymentLoader implements DeploymentFilterable {
 
     private volatile List<URL> containerUrls;
 
+    @Deprecated
     public AppModule load(final File jarFile) throws OpenEJBException {
+        return load(jarFile, null);
+    }
+
+    public AppModule load(final File jarFile, final ExternalConfiguration config) throws OpenEJBException {
         // verify we have a valid file
         final String jarPath;
         try {
@@ -210,7 +215,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 final File file = URLs.toFile(baseUrl);
 
                 // Standalone Web Module
-                final WebModule webModule = createWebModule(file.getAbsolutePath(), baseUrl, getOpenEJBClassLoader(), getContextRoot(), getModuleName());
+                final WebModule webModule = createWebModule(file.getAbsolutePath(), baseUrl, getOpenEJBClassLoader(), getContextRoot(), getModuleName(), config);
                 // important to use the webapp classloader here otherwise each time we'll check something using loadclass it will fail (=== empty classloader)
                 final AppModule appModule = new AppModule(webModule.getClassLoader(), file.getAbsolutePath(), new Application(), true);
                 addWebModule(webModule, appModule);
@@ -775,12 +780,12 @@ public class DeploymentLoader implements DeploymentFilterable {
         return ejbModule;
     }
 
-    private WebModule createWebModule(final String jar, final URL warUrl, final ClassLoader parentClassLoader, final String contextRoot, final String moduleName) throws OpenEJBException {
-        return createWebModule(jar, URLs.toFilePath(warUrl), parentClassLoader, contextRoot, moduleName);
+    private WebModule createWebModule(final String jar, final URL warUrl, final ClassLoader parentClassLoader, final String contextRoot, final String moduleName, final ExternalConfiguration config) throws OpenEJBException {
+        return createWebModule(jar, URLs.toFilePath(warUrl), parentClassLoader, contextRoot, moduleName, config);
     }
 
     public void addWebModule(final AppModule appModule, final URL warUrl, final ClassLoader parentClassLoader, final String contextRoot, final String moduleName) throws OpenEJBException {
-        final WebModule webModule = createWebModule(appModule.getJarLocation(), URLs.toFilePath(warUrl), parentClassLoader, contextRoot, moduleName);
+        final WebModule webModule = createWebModule(appModule.getJarLocation(), URLs.toFilePath(warUrl), parentClassLoader, contextRoot, moduleName, null);
         addWebModule(webModule, appModule);
     }
 
@@ -894,7 +899,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
     }
 
-    public WebModule createWebModule(final String appId, final String warPath, final ClassLoader parentClassLoader, final String contextRoot, final String moduleName) throws OpenEJBException {
+    public WebModule createWebModule(final String appId, final String warPath, final ClassLoader parentClassLoader, final String contextRoot, final String moduleName, final ExternalConfiguration config) throws OpenEJBException {
         File warFile = new File(warPath);
         if (!warFile.isDirectory()) {
             warFile = unpack(warFile);
@@ -989,10 +994,18 @@ public class DeploymentLoader implements DeploymentFilterable {
         webUrls.addAll(addedUrls);
 
         // context.xml can define some additional libraries
-        final File contextXml = new File(warFile, "META-INF/context.xml");
-        if (contextXml.exists()) {
-            final QuickContextXmlParser parser = QuickContextXmlParser.parse(contextXml);
-            webUrls.addAll(parser.getAdditionalURLs());
+        if (config != null) { // we don't test all !=null inline to show that config will get extra params in the future and that it is hierarchic
+            if (config.getClasspath() != null) {
+                final Set<URL> contextXmlUrls = new LinkedHashSet<URL>();
+                for (final String location : config.getClasspath()) {
+                    try {
+                        webUrls.add(new File(location).toURI().toURL());
+                    } catch (final MalformedURLException e) {
+                        throw new IllegalArgumentException(e);
+                    }
+                }
+                webUrls.addAll(contextXmlUrls);
+            }
         }
 
         final ClassLoaderConfigurer configurer = QuickJarsTxtParser.parse(new File(warFile, "WEB-INF/" + QuickJarsTxtParser.FILE_NAME));
@@ -2048,5 +2061,17 @@ public class DeploymentLoader implements DeploymentFilterable {
 
     public static void reloadAltDD() {
         ALTDD = SystemInstance.get().getOptions().get(OPENEJB_ALTDD_PREFIX, (String) null);
+    }
+
+    public static class ExternalConfiguration {
+        private final String[] classpath;
+
+        public ExternalConfiguration(final String[] classpath) {
+            this.classpath = classpath;
+        }
+
+        public String[] getClasspath() {
+            return classpath;
+        }
     }
 }
