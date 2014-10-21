@@ -64,8 +64,8 @@ class ScriptingTest {
                     )
             )
             Assert.assertEquals(
-                    'Hi there!',
-                    json.output as String
+                    'Hi there!'.trim(),
+                    (json.output as String).trim()
             )
             def result = Utilities.post(deploymentURL, client, 'rest/scripting',
                     new BasicNameValuePair('engine', 'js'),
