@@ -2087,39 +2087,33 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
             final Collection<String> cp = new LinkedList<>();
 
-            final String name = loader.getClass().getName();
-            // no more in tomcat 8 but keep it while we maintain t7 integration
-            if ("org.apache.catalina.loader.VirtualWebappLoader".equals(name)
-                    || "org.apache.tomee.catalina.ProvisioningWebappLoader".equals(name)) {
-                final Object virtualClasspath = Reflections.get(loader, "virtualClasspath");
-                if (virtualClasspath != null) {
-                    for (final String str : virtualClasspath.toString().split(";")) {
-                        cp.addAll(ProvisioningUtil.realLocation(str));
-                    }
-                }
-            } else {
-                final WebResourceRoot webResources = standardContext.getResources();
-                if (webResources != null) { // to enhance
-                    for (final WebResourceSet[] sets : asList(webResources.getPreResources(), webResources.getPostResources(), webResources.getJarResources())) {
-                        for (final WebResourceSet wr : sets) {
-                            final URL base = wr.getBaseUrl();
-                            if (base != null) {
-                                final File baseFile = URLs.toFile(base);
-                                if (baseFile.isDirectory()) {
-                                    final String[] libs = wr.list("/WEB-INF/lib/");
-                                    if (libs != null) {
-                                        for (final String resource : libs) {
-                                            cp.add(new File(baseFile, resource).getAbsolutePath());
-                                        }
+            final WebResourceRoot webResources = standardContext.getResources();
+            if (webResources != null) { // to enhance
+                for (final WebResourceSet[] sets : asList(webResources.getPreResources(), webResources.getPostResources(), webResources.getJarResources())) {
+                    for (final WebResourceSet wr : sets) {
+                        final URL base = wr.getBaseUrl();
+                        if (base != null) {
+                            final File baseFile = URLs.toFile(base);
+                            if (baseFile.isDirectory()) {
+                                final String[] libs = wr.list("/WEB-INF/lib/");
+                                if (libs != null) {
+                                    for (final String resource : libs) {
+                                        cp.add(new File(baseFile, resource).getAbsolutePath());
                                     }
+                                }
 
-                                    final WebResource classes = wr.getResource("/WEB-INF/classes/");
-                                    if (classes != null) {
-                                        final String path = classes.getCanonicalPath();
-                                        if (path != null) {
-                                            cp.add(path);
-                                        }
+                                final WebResource classes = wr.getResource("/WEB-INF/classes/");
+                                if (classes != null) {
+                                    final String path = classes.getCanonicalPath();
+                                    if (path != null) {
+                                        cp.add(path);
                                     }
+                                }
+                            } else if (baseFile.exists() && baseFile.getName().endsWith(".jar") && wr.getResource("/WEB-INF/classes/").exists()) {
+                                try {
+                                    cp.add(baseFile.getCanonicalPath());
+                                } catch (final IOException e) {
+                                    throw new IllegalStateException(e);
                                 }
                             }
                         }
