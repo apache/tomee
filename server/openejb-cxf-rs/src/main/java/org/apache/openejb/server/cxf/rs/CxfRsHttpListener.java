@@ -84,6 +84,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Application;
 import javax.xml.bind.Marshaller;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
@@ -94,6 +95,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -103,6 +105,8 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
+
+import static org.apache.openejb.loader.JarLocation.jarLocation;
 
 public class CxfRsHttpListener implements RsHttpListener {
 
@@ -345,8 +349,8 @@ public class CxfRsHttpListener implements RsHttpListener {
         }
     }
 
-    private Collection<Object> providers(final Collection<ServiceInfo> services, final Collection<Object> additionalProviders, final WebBeansContext ctx) {
-        final Collection<Object> instances = new ArrayList<>();
+    private List<Object> providers(final Collection<ServiceInfo> services, final Collection<Object> additionalProviders, final WebBeansContext ctx) {
+        final List<Object> instances = new ArrayList<>();
         final BeanManagerImpl bm = ctx == null ? null : ctx.getBeanManagerImpl();
         for (final Object o : additionalProviders) {
             if (o instanceof Class<?>) {
@@ -715,13 +719,13 @@ public class CxfRsHttpListener implements RsHttpListener {
         if (providersConfig != null) {
             providers = ServiceInfos.resolve(services, providersConfig.toArray(new String[providersConfig.size()]), OpenEJBProviderFactory.INSTANCE);
             if (providers != null && additionalProviders != null && !additionalProviders.isEmpty()) {
-                providers.addAll(providers(services, additionalProviders, ctx));
+                providers.addAll(sortProviders(serviceConfiguration, ctx, additionalProviders));
             }
         }
         if (providers == null) {
             providers = new ArrayList<>(4);
             if (additionalProviders != null && !additionalProviders.isEmpty()) {
-                providers.addAll(providers(services, additionalProviders, ctx));
+                providers.addAll(sortProviders(serviceConfiguration, ctx, additionalProviders));
             } else {
                 providers.addAll(defaultProviders());
             }
@@ -738,6 +742,53 @@ public class CxfRsHttpListener implements RsHttpListener {
         factory.setProviders(providers);
     }
 
+    private List<Object> sortProviders(final ServiceConfiguration serviceConfiguration, final WebBeansContext ctx,
+                                       final Collection<Object> additionalProviders) {
+        final Collection<ServiceInfo> services = serviceConfiguration.getAvailableServices();
+        final List<Object> loadedProviders = providers(services, additionalProviders, ctx);
+        if ("true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.cxf.rs.skip-provider-sorting", "false"))) {
+            return loadedProviders;
+        }
+
+        final String comparatorKey = CXF_JAXRS_PREFIX + "provider-comparator";
+        final String comparatorClass = serviceConfiguration.getProperties()
+                                           .getProperty(comparatorKey, SystemInstance.get().getProperty(comparatorKey));
+
+        Comparator<Object> comparator = null;
+        if (comparatorClass == null) {
+            comparator = DefaultProviderComparator.INSTANCE;
+        } else {
+            final BeanManagerImpl bm = ctx.getBeanManagerImpl();
+            if (bm != null && bm.isInUse()) {
+                try {
+                    final Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(comparatorClass);
+                    final Set<Bean<?>> beans = bm.getBeans(clazz);
+                    if (beans != null && !beans.isEmpty()) {
+                        final Bean<?> bean = bm.resolve(beans);
+                        final CreationalContextImpl<?> creationalContext = bm.createCreationalContext(bean);
+                        comparator = Comparator.class.cast(bm.getReference(bean, clazz, creationalContext));
+                        toRelease.add(creationalContext);
+                    }
+                } catch (final Throwable th) {
+                    LOGGER.debug("Can't use CDI to load comparator " + comparatorClass);
+                }
+            }
+
+            if (comparator == null) {
+                comparator = Comparator.class.cast(ServiceInfos.resolve(services, comparatorClass));
+            }
+            if (comparator == null) {
+                try {
+                    comparator = Comparator.class.cast(Thread.currentThread().getContextClassLoader().loadClass(comparatorClass).newInstance());
+                } catch (final Exception e) {
+                    throw new IllegalArgumentException(e);
+                }
+            }
+        }
+        Collections.sort(loadedProviders, comparator);
+        return loadedProviders;
+    }
+
     private static List<Object> defaultProviders() {
         final JAXBElementProvider jaxb = new JAXBElementProvider();
         final Map<String, Object> jaxbProperties = new HashMap<>();
@@ -748,6 +799,73 @@ public class CxfRsHttpListener implements RsHttpListener {
         providers.add(new JohnzonProvider<>());
         providers.add(jaxb);
         return providers;
+    }
+
+    // we use Object cause an app with a custom comparator can desire to compare instances
+    private static final class DefaultProviderComparator implements Comparator<Object> {
+        private static final DefaultProviderComparator INSTANCE = new DefaultProviderComparator();
+        private static final ClassLoader SYSTEM_LOADER = ClassLoader.getSystemClassLoader();
+        private static final ClassLoader OPENEJB_LOADER = DefaultProviderComparator.class.getClassLoader();
+
+        @Override
+        public int compare(final Object o1, final Object o2) {
+            if (o1 == o2 || (o1 != null && o1.equals(o2))) {
+                return 0;
+            }
+            if (o1 == null) {
+                return -1;
+            }
+            if (o2 == null) {
+                return 1;
+            }
+
+            final Class<?> c1 = o1.getClass();
+            final Class<?> c2 = o2.getClass();
+
+            final ClassLoader classLoader1 = c1.getClassLoader();
+            final ClassLoader classLoader2 = c2.getClassLoader();
+
+            final boolean loadersNotNull = classLoader1 != null && classLoader2 != null;
+
+            if (classLoader1 != classLoader2
+                    && loadersNotNull
+                    && !classLoader1.equals(classLoader2) && !classLoader2.equals(classLoader1)) {
+                if (isParent(classLoader1, classLoader2)) {
+                    return 1;
+                }
+                if (isParent(classLoader2, classLoader1)) {
+                    return -1;
+                }
+            } else {
+                final File l1 = jarLocation(c1);
+                final File l2 = jarLocation(c2);
+                if (l1 == null) {
+                    return 1;
+                }
+                if (l2 == null) {
+                    return -1;
+                }
+
+                try { // WEB-INF/classes will be before WEB-INF/lib automatically
+                    return l1.getCanonicalPath().compareTo(l2.getCanonicalPath());
+                } catch (final IOException e) {
+                    // no-op: sort by class name
+                }
+            }
+
+            return c1.getName().compareTo(c2.getName());
+        }
+
+        private static boolean isParent(final ClassLoader l1, ClassLoader l2) {
+            ClassLoader current = l2;
+            while (current != null && current != SYSTEM_LOADER) {
+                if (current.equals(l1) || l1.equals(current)) {
+                    return true;
+                }
+                current = current.getParent();
+            }
+            return false;
+        }
     }
 
     private static class OpenEJBProviderFactory implements ServiceInfos.Factory {
