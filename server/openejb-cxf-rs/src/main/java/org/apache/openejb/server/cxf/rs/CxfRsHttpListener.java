@@ -800,7 +800,6 @@ public class CxfRsHttpListener implements RsHttpListener {
     private static final class DefaultProviderComparator implements Comparator<Object> {
         private static final DefaultProviderComparator INSTANCE = new DefaultProviderComparator();
         private static final ClassLoader SYSTEM_LOADER = ClassLoader.getSystemClassLoader();
-        private static final ClassLoader OPENEJB_LOADER = DefaultProviderComparator.class.getClassLoader();
 
         @Override
         public int compare(final Object o1, final Object o2) {
