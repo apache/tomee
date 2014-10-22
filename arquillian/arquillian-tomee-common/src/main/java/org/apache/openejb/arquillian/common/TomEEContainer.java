@@ -330,17 +330,17 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         File file;
         if (configuration.isSingleDumpByArchiveName()) {
             file = new File(tmpDir + File.separator + archive.getName());
+            Files.deleteOnExit(file);
         } else {
             int i = 0;
             do { // be sure we don't override something existing
                 file = new File(tmpDir + File.separator + i++ + File.separator + archive.getName());
             } while (file.getParentFile().exists()); // we will delete the parent (to clean even complicated unpacking)
+            Files.deleteOnExit(file.getParentFile());
         }
         if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
             LOGGER.warning("can't create " + file.getParent());
         }
-
-        Files.deleteOnExit(file.getParentFile());
 
         final Assignable finalArchive;
         if (isTestable(archive, deployment.get())) {
