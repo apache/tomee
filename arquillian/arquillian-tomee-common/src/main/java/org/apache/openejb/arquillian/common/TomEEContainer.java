@@ -353,7 +353,9 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         if (file.exists()) {
             size = file.length();
         }
-        finalArchive.as(ZipExporter.class).exportTo(file, !configuration.isSingleDumpByArchiveName());
+        if (!configuration.isSingleDumpByArchiveName() || !file.exists()) {
+            finalArchive.as(ZipExporter.class).exportTo(file, true);
+        }
         if (size > 0 && size != file.length()) {
             LOGGER.warning("\nFile overwritten but size doesn't match: (now) "
                     + file.length() + "/(before) " + size + " name="+ file.getName()
