@@ -82,8 +82,9 @@ public final class CxfUtil {
         Thread.currentThread().setContextClassLoader(CxfUtil.class.getClassLoader());
         try { // create the bus reusing cxf logic but skipping factory lookup
             final Bus bus = BusFactory.newInstance(CXFBusFactory.class.getName()).createBus();
-            final BindingFactoryManager bfm = bus.getExtension(BindingFactoryManager.class);
+            CXFBusImpl.class.cast(bus).setId(SystemInstance.get().getProperty("openejb.cxf.bus.id", "openejb.cxf.bus"));
 
+            final BindingFactoryManager bfm = bus.getExtension(BindingFactoryManager.class);
             if (BindingFactoryManagerImpl.class.isInstance(bfm) && !usingBindingFactoryMap) {
                 BindingFactoryManagerImpl.class.cast(bfm).setMapProvider(new MapProvider<String, BindingFactory>() {
                     @Override
@@ -255,40 +256,39 @@ public final class CxfUtil {
                 } catch (final Throwable th) {
                     // no-op
                 }
+
+                manager.init();
+                manager.register();
             }
         }
 
-        if (bus instanceof CXFBusImpl) {
-            final ServiceConfiguration configuration = new ServiceConfiguration(SystemInstance.get().getProperties(),
-                SystemInstance.get().getComponent(OpenEjbConfiguration.class).facilities.services);
+        final ServiceConfiguration configuration = new ServiceConfiguration(SystemInstance.get().getProperties(),
+            SystemInstance.get().getComponent(OpenEjbConfiguration.class).facilities.services);
 
-            final CXFBusImpl busImpl = (CXFBusImpl) bus;
-            final Collection<ServiceInfo> serviceInfos = configuration.getAvailableServices();
-            final Properties properties = configuration.getProperties();
-            if (properties == null || properties.isEmpty()) {
-                return;
-            }
-
-            final String featuresIds = properties.getProperty(BUS_PREFIX + FEATURES);
-            if (featuresIds != null) {
-                final List<AbstractFeature> features = createFeatures(serviceInfos, featuresIds);
-                if (features != null) {
-                    features.addAll(busImpl.getFeatures());
-                    busImpl.setFeatures(features);
-                }
-            }
-
-            final Properties busProperties = ServiceInfos.serviceProperties(serviceInfos, properties.getProperty(BUS_PREFIX + ENDPOINT_PROPERTIES));
-            if (busProperties != null) {
-                busImpl.getProperties().putAll(PropertiesHelper.map(busProperties));
-            }
-
-            configureInterceptors(busImpl, BUS_PREFIX, serviceInfos, configuration.getProperties());
-
-            SystemInstance.get().getProperties().setProperty(BUS_CONFIGURED_FLAG, "true");
-
-            busImpl.setId(SystemInstance.get().getProperty("openejb.cxf.bus.id", "openejb.cxf.bus"));
+        final CXFBusImpl busImpl = (CXFBusImpl) bus;
+        final Collection<ServiceInfo> serviceInfos = configuration.getAvailableServices();
+        final Properties properties = configuration.getProperties();
+        if (properties == null || properties.isEmpty()) {
+            return;
         }
+
+        final String featuresIds = properties.getProperty(BUS_PREFIX + FEATURES);
+        if (featuresIds != null) {
+            final List<AbstractFeature> features = createFeatures(serviceInfos, featuresIds);
+            if (features != null) {
+                features.addAll(busImpl.getFeatures());
+                busImpl.setFeatures(features);
+            }
+        }
+
+        final Properties busProperties = ServiceInfos.serviceProperties(serviceInfos, properties.getProperty(BUS_PREFIX + ENDPOINT_PROPERTIES));
+        if (busProperties != null) {
+            busImpl.getProperties().putAll(PropertiesHelper.map(busProperties));
+        }
+
+        configureInterceptors(busImpl, BUS_PREFIX, serviceInfos, configuration.getProperties());
+
+        SystemInstance.get().getProperties().setProperty(BUS_CONFIGURED_FLAG, "true");
     }
 
     private static class ClientAwareBusHandler implements InvocationHandler {
