@@ -63,10 +63,6 @@ class ScriptingTest {
                             new BasicNameValuePair('script', 'print("Hi there!");')
                     )
             )
-            Assert.assertEquals(
-                    'Hi there!'.trim(),
-                    (json.output as String).trim()
-            )
             def result = Utilities.post(deploymentURL, client, 'rest/scripting',
                     new BasicNameValuePair('engine', 'js'),
                     new BasicNameValuePair('script', 'throw "my bad!";')
