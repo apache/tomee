@@ -18,7 +18,6 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBRuntimeException;
-import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.Pipe;
@@ -38,6 +37,8 @@ import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+
+//import org.apache.openejb.loader.IO;
 
 /**
  * NOTE: Do not add inner or anonymous classes or a dependency without updating ExecMojo
@@ -559,7 +560,13 @@ public class RemoteServer {
                 return false;
             }
         } finally {
-            IO.close(stream);
+            if (null != stream) {
+                try {
+                    stream.close();
+                } catch (final Exception e) {
+                    // Ignore
+                }
+            }
             if (socket != null) {
                 try {
                     socket.close();
