@@ -16,7 +16,11 @@
  */
 package org.apache.openejb.server.cxf.rs;
 
+import org.apache.cxf.BusException;
 import org.apache.cxf.common.logging.LogUtils;
+import org.apache.cxf.endpoint.Endpoint;
+import org.apache.cxf.endpoint.EndpointException;
+import org.apache.cxf.endpoint.ManagedEndpoint;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.endpoint.ServerImpl;
 import org.apache.cxf.helpers.IOUtils;
@@ -42,6 +46,7 @@ import org.apache.cxf.transport.servlet.BaseUrlHelper;
 import org.apache.johnzon.jaxrs.JohnzonProvider;
 import org.apache.johnzon.jaxrs.JsrProvider;
 import org.apache.johnzon.jaxrs.WadlDocumentMessageBodyWriter;
+import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.Injection;
 import org.apache.openejb.api.internal.Internal;
@@ -65,7 +70,9 @@ import org.apache.openejb.server.httpd.HttpRequestImpl;
 import org.apache.openejb.server.httpd.HttpResponse;
 import org.apache.openejb.server.httpd.ServletRequestAdapter;
 import org.apache.openejb.server.rest.EJBRestServiceInfo;
+import org.apache.openejb.server.rest.InternalApplication;
 import org.apache.openejb.server.rest.RsHttpListener;
+import org.apache.openejb.util.AppFinder;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.proxy.ProxyEJB;
@@ -314,7 +321,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());
         try {
-            final JAXRSServerFactoryBean factory = newFactory(address);
+            final JAXRSServerFactoryBean factory = newFactory(address, createServiceJmxName(clazz.getClassLoader()), createEndpointName(app));
             configureFactory(additionalProviders, configuration, factory, webBeansContext);
             factory.setResourceClasses(clazz);
             context = contextRoot;
@@ -461,7 +468,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());
         try {
-            final JAXRSServerFactoryBean factory = newFactory(prefix);
+            final JAXRSServerFactoryBean factory = newFactory(prefix, createServiceJmxName(classLoader), createEndpointName(application));
             configureFactory(additionalProviders, serviceConfiguration, factory, owbCtx);
             factory.setApplication(application);
 
@@ -510,6 +517,7 @@ public class CxfRsHttpListener implements RsHttpListener {
             } catch (final UnsupportedOperationException e) {
                 //ignore
             }
+
             try {
                 server = factory.create();
             } finally {
@@ -547,6 +555,25 @@ public class CxfRsHttpListener implements RsHttpListener {
                 CxfUtil.clearBusLoader(oldLoader);
             }
         }
+    }
+
+    private static String createEndpointName(final Application application) {
+        if (application == null) {
+            return "jaxrs-application";
+        }
+        if (InternalApplication.class.isInstance(application)) {
+            final Application original = InternalApplication.class.cast(application).getOriginal();
+            if (original != null) {
+                return original.getClass().getSimpleName();
+            }
+            return "jaxrs-application";
+        }
+        return application.getClass().getSimpleName();
+    }
+
+    private static String createServiceJmxName(final ClassLoader classLoader) {
+        final AppContext app = AppFinder.findAppContextOrWeb(classLoader, AppFinder.AppContextTransformer.INSTANCE);
+        return app == null ? "application" : app.getId();
     }
 
     private void logEndpoints(final Application application, final String prefix,
@@ -640,8 +667,16 @@ public class CxfRsHttpListener implements RsHttpListener {
         resourcesToLog.clear();
     }
 
-    private JAXRSServerFactoryBean newFactory(final String prefix) {
-        final JAXRSServerFactoryBean factory = new JAXRSServerFactoryBean();
+    private JAXRSServerFactoryBean newFactory(final String prefix, final String service, final String endpoint) {
+        final JAXRSServerFactoryBean factory = new JAXRSServerFactoryBean() {
+            @Override
+            protected Endpoint createEndpoint() throws BusException, EndpointException {
+                final Endpoint created = super.createEndpoint();
+                created.put(ManagedEndpoint.SERVICE_NAME, service);
+                created.put(ManagedEndpoint.ENDPOINT_NAME, endpoint);
+                return created;
+            }
+        };
         factory.setDestinationFactory(transportFactory);
         factory.setBus(CxfUtil.getBus());
         factory.setAddress(prefix);

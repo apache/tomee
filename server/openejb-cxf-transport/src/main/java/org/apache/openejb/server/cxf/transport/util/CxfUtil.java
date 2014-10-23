@@ -81,6 +81,8 @@ public final class CxfUtil {
         Thread.currentThread().setContextClassLoader(CxfUtil.class.getClassLoader());
         try { // create the bus reusing cxf logic but skipping factory lookup
             final Bus bus = BusFactory.newInstance(CXFBusFactory.class.getName()).createBus();
+            bus.setId(SystemInstance.get().getProperty("openejb.cxf.bus.id", "openejb.cxf.bus"));
+
             final BindingFactoryManager bfm = bus.getExtension(BindingFactoryManager.class);
             bindingFactoryMap = (Map<String, BindingFactory>) Reflections.get(bfm, "bindingFactories");
 
@@ -243,6 +245,10 @@ public final class CxfUtil {
                 } catch (final Throwable th) {
                     // no-op
                 }
+
+                // failed when bus was constructed or even if passed we switch the MBeanServer
+                manager.init();
+                manager.register();
             }
         }
 
@@ -272,8 +278,6 @@ public final class CxfUtil {
         configureInterceptors(bus, BUS_PREFIX, serviceInfos, configuration.getProperties());
 
         SystemInstance.get().getProperties().setProperty(BUS_CONFIGURED_FLAG, "true");
-
-        bus.setId(SystemInstance.get().getProperty("openejb.cxf.bus.id", "openejb.cxf.bus"));
     }
 
     private static class ClientAwareBusHandler implements InvocationHandler {
