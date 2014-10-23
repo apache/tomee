@@ -171,7 +171,7 @@ public class TomEEMavenPluginRule implements MethodRule {
             tomEEMojo.settings = new Settings();
         }
         tomEEMojo.settings.setOffline(true);
-        if (tomEEMojo.settings.getLocalRepository() == null) {
+        if (tomEEMojo.settings.getLocalRepository() == null || "".equals(tomEEMojo.settings.getLocalRepository())) {
             tomEEMojo.settings.setLocalRepository(System.getProperty("user.home") + "/.m2/repository");
         }
 
