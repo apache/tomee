@@ -66,8 +66,10 @@ public class DeploymentsElementTest extends Assert {
     public void deploymentsDir_Ear_Packed_ApplicationXml() throws Exception {
         final Server server = new Server();
         final File apps = server.deploymentsDir("myapps");
+        
+        final String appName = "deploymentsDir_Ear_Packed_ApplicationXml";
 
-        final File ear = new File(apps, "colors.ear");
+        final File ear = new File(apps, appName + ".ear");
         {
             final Map<String, Object> contents = new HashMap<String, Object>();
             contents.put("foo.jar", Archives.jarArchive(Orange.class));
@@ -78,7 +80,7 @@ public class DeploymentsElementTest extends Assert {
         final OpenEjbConfiguration configuration = server.init();
 
         assertEquals(1, configuration.containerSystem.applications.size());
-        assertEquals(2, configuration.containerSystem.applications.get(0).ejbJars.size());
+        assertEquals(1, configuration.containerSystem.applications.get(0).ejbJars.size());
         assertEquals(1, configuration.containerSystem.applications.get(0).ejbJars.get(0).enterpriseBeans.size());
         assertEquals("Orange", configuration.containerSystem.applications.get(0).ejbJars.get(0).enterpriseBeans.get(0).ejbName);
     }
@@ -95,7 +97,9 @@ public class DeploymentsElementTest extends Assert {
         final Server server = new Server();
         final File apps = server.deploymentsDir("myapps");
 
-        final File ear = new File(apps, "colors.ear");
+        final String appName = "deploymentsDir_Ear_Packed_NoApplicationXml";
+
+        final File ear = new File(apps, appName + ".ear");
         {
             final Map<String, Object> contents = new HashMap<String, Object>();
             contents.put("foo.jar", Archives.jarArchive(Orange.class));
@@ -105,7 +109,7 @@ public class DeploymentsElementTest extends Assert {
         final OpenEjbConfiguration configuration = server.init();
 
         assertEquals(1, configuration.containerSystem.applications.size());
-        assertEquals(2, configuration.containerSystem.applications.get(0).ejbJars.size());
+        assertEquals(1, configuration.containerSystem.applications.get(0).ejbJars.size());
         assertEquals(1, configuration.containerSystem.applications.get(0).ejbJars.get(0).enterpriseBeans.size());
         assertEquals("Orange", configuration.containerSystem.applications.get(0).ejbJars.get(0).enterpriseBeans.get(0).ejbName);
     }
@@ -123,7 +127,9 @@ public class DeploymentsElementTest extends Assert {
         final Server server = new Server();
         final File apps = server.deploymentsDir("myapps");
 
-        final File ear = new File(server.getBase(), "colors.ear");
+        final String appName = "deploymentsDir_Ear_Unpacked_ApplicationXml";
+
+        final File ear = new File(server.getBase(), appName + ".ear");
         {
             final Map<String, Object> contents = new HashMap<String, Object>();
             contents.put("foo.jar", Archives.jarArchive(Orange.class));
@@ -131,12 +137,12 @@ public class DeploymentsElementTest extends Assert {
             Archives.jarArchive(ear, contents);
         }
 
-        Zips.unzip(ear, Files.mkdir(apps, "colors"));
+        Zips.unzip(ear, Files.mkdir(apps, appName));
 
         final OpenEjbConfiguration configuration = server.init();
 
         assertEquals(1, configuration.containerSystem.applications.size());
-        assertEquals(2, configuration.containerSystem.applications.get(0).ejbJars.size());
+        assertEquals(1, configuration.containerSystem.applications.get(0).ejbJars.size());
         assertEquals(1, configuration.containerSystem.applications.get(0).ejbJars.get(0).enterpriseBeans.size());
         assertEquals("Orange", configuration.containerSystem.applications.get(0).ejbJars.get(0).enterpriseBeans.get(0).ejbName);
     }
@@ -153,19 +159,21 @@ public class DeploymentsElementTest extends Assert {
         final Server server = new Server();
         final File apps = server.deploymentsDir("myapps");
 
-        final File ear = new File(server.getBase(), "colors.ear");
+        final String appName = "deploymentsDir_Ear_Unpacked_NoApplicationXml";
+
+        final File ear = new File(server.getBase(), appName + ".ear");
         {
             final Map<String, Object> contents = new HashMap<String, Object>();
             contents.put("foo.jar", Archives.jarArchive(Orange.class));
             Archives.jarArchive(ear, contents);
         }
 
-        Zips.unzip(ear, Files.mkdir(apps, "colors"));
+        Zips.unzip(ear, Files.mkdir(apps, appName));
 
         final OpenEjbConfiguration configuration = server.init();
 
         assertEquals(1, configuration.containerSystem.applications.size());
-        assertEquals(2, configuration.containerSystem.applications.get(0).ejbJars.size());
+        assertEquals(1, configuration.containerSystem.applications.get(0).ejbJars.size());
         assertEquals(1, configuration.containerSystem.applications.get(0).ejbJars.get(0).enterpriseBeans.size());
         assertEquals("Orange", configuration.containerSystem.applications.get(0).ejbJars.get(0).enterpriseBeans.get(0).ejbName);
     }
@@ -184,7 +192,9 @@ public class DeploymentsElementTest extends Assert {
         final Server server = new Server();
         final File apps = server.deploymentsDir("myapps");
 
-        final File ear = new File(server.getBase(), "colors.ear");
+        final String appName = "deploymentsDir_Ear_Packed_Unpacked_ApplicationXml";
+
+        final File ear = new File(server.getBase(), appName + ".ear");
         {
             final Map<String, Object> contents = new HashMap<String, Object>();
             contents.put("foo.jar", Archives.jarArchive(Orange.class));
@@ -192,13 +202,13 @@ public class DeploymentsElementTest extends Assert {
             Archives.jarArchive(ear, contents);
         }
 
-        IO.copy(ear, Files.path(apps, "colors.ear"));  // packed
-        Zips.unzip(ear, Files.mkdir(apps, "colors"));  // unpacked
+        IO.copy(ear, Files.path(apps, appName + ".ear"));  // packed
+        Zips.unzip(ear, Files.mkdir(apps, appName));  // unpacked
 
         final OpenEjbConfiguration configuration = server.init();
 
         assertEquals(1, configuration.containerSystem.applications.size());
-        assertEquals(2, configuration.containerSystem.applications.get(0).ejbJars.size());
+        assertEquals(1, configuration.containerSystem.applications.get(0).ejbJars.size());
         assertEquals(1, configuration.containerSystem.applications.get(0).ejbJars.get(0).enterpriseBeans.size());
         assertEquals("Orange", configuration.containerSystem.applications.get(0).ejbJars.get(0).enterpriseBeans.get(0).ejbName);
     }
@@ -216,20 +226,22 @@ public class DeploymentsElementTest extends Assert {
         final Server server = new Server();
         final File apps = server.deploymentsDir("myapps");
 
-        final File ear = new File(server.getBase(), "colors.ear");
+        final String appName = "deploymentsDir_Ear_Packed_Unpacked_NoApplicationXml";
+
+        final File ear = new File(server.getBase(), appName + ".ear");
         {
             final Map<String, Object> contents = new HashMap<String, Object>();
             contents.put("foo.jar", Archives.jarArchive(Orange.class));
             Archives.jarArchive(ear, contents);
         }
 
-        IO.copy(ear, Files.path(apps, "colors.ear"));  // packed
-        Zips.unzip(ear, Files.mkdir(apps, "colors"));  // unpacked
+        IO.copy(ear, Files.path(apps, appName + ".ear"));  // packed
+        Zips.unzip(ear, Files.mkdir(apps, appName));  // unpacked
 
         final OpenEjbConfiguration configuration = server.init();
 
         assertEquals(1, configuration.containerSystem.applications.size());
-        assertEquals(2, configuration.containerSystem.applications.get(0).ejbJars.size());
+        assertEquals(1, configuration.containerSystem.applications.get(0).ejbJars.size());
         assertEquals(1, configuration.containerSystem.applications.get(0).ejbJars.get(0).enterpriseBeans.size());
         assertEquals("Orange", configuration.containerSystem.applications.get(0).ejbJars.get(0).enterpriseBeans.get(0).ejbName);
     }
@@ -250,32 +262,34 @@ public class DeploymentsElementTest extends Assert {
         final Server server = new Server();
         final File apps = server.deploymentsDir("myapps");
 
+        final String appName = "deploymentsDir_Ear_Packed_Unpacked_Modified";
+
         { // Unpacked version -- Orange
 
-            final File ear = new File(server.getBase(), "colors.ear");
+            final File ear = new File(server.getBase(), appName + ".ear");
             final Map<String, Object> contents = new HashMap<String, Object>();
             contents.put("foo.jar", Archives.jarArchive(Orange.class));
             contents.put("META-INF/application.xml", "<application><module><ejb>foo.jar</ejb></module></application>");
             Archives.jarArchive(ear, contents);
-            Zips.unzip(ear, Files.mkdir(apps, "colors"));  // unpacked
+            Zips.unzip(ear, Files.mkdir(apps, appName));  // unpacked
         }
 
         Thread.sleep(100);
 
         { // Packed version -- Yellow
 
-            final File ear = new File(server.getBase(), "colors.ear");
+            final File ear = new File(server.getBase(), appName + ".ear");
             final Map<String, Object> contents = new HashMap<String, Object>();
             contents.put("foo.jar", Archives.jarArchive(Yellow.class));
             contents.put("META-INF/application.xml", "<application><module><ejb>foo.jar</ejb></module></application>");
             Archives.jarArchive(ear, contents);
-            Zips.unzip(ear, Files.mkdir(apps, "colors"));  // unpacked
+            Zips.unzip(ear, Files.mkdir(apps, appName));  // unpacked
         }
 
         final OpenEjbConfiguration configuration = server.init();
 
         assertEquals(1, configuration.containerSystem.applications.size());
-        assertEquals(2, configuration.containerSystem.applications.get(0).ejbJars.size());
+        assertEquals(1, configuration.containerSystem.applications.get(0).ejbJars.size());
         assertEquals(1, configuration.containerSystem.applications.get(0).ejbJars.get(0).enterpriseBeans.size());
         assertEquals("Yellow", configuration.containerSystem.applications.get(0).ejbJars.get(0).enterpriseBeans.get(0).ejbName);
     }
