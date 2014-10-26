@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
@@ -83,14 +84,21 @@ public class TempClassLoader extends URLClassLoader {
     public URL getResource(final String name) {
         if (!name.startsWith("java/") && !name.startsWith("javax/") && name.endsWith(".class")) {
             try {
-                final List<URL> urls = Collections.list(getResources(name));
-                if (urls.isEmpty()) {
+                final Enumeration<URL> resources = getResources(name);
+                if (!resources.hasMoreElements()) {
                     return null;
                 }
-                if (urls.size() > 1) {
-                    Collections.sort(urls, new ResourceComparator(getParent(), name));
+                final URL url = resources.nextElement();
+                if (resources.hasMoreElements()) { // avoid useless allocations
+                    final List<URL> l = new ArrayList<>(2);
+                    l.add(url);
+                    while (resources.hasMoreElements()) {
+                        l.add(resources.nextElement());
+                    }
+                    Collections.sort(l, new ResourceComparator(getParent(), name));
+                    return l.iterator().next();
                 }
-                return urls.iterator().next();
+                return url;
             } catch (final IOException e) {
                 return super.getResource(name);
             }
