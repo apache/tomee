@@ -87,7 +87,9 @@ public class TempClassLoader extends URLClassLoader {
                 if (urls.isEmpty()) {
                     return null;
                 }
-                Collections.sort(urls, new ResourceComparator(getParent(), name));
+                if (urls.size() > 1) {
+                    Collections.sort(urls, new ResourceComparator(getParent(), name));
+                }
                 return urls.iterator().next();
             } catch (final IOException e) {
                 return super.getResource(name);
