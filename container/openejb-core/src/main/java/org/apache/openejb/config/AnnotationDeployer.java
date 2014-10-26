@@ -25,6 +25,7 @@ import org.apache.openejb.api.RemoteClient;
 import org.apache.openejb.cdi.CdiBeanInfo;
 import org.apache.openejb.config.rules.CheckClasses;
 import org.apache.openejb.core.EmptyResourcesClassLoader;
+import org.apache.openejb.core.TempClassLoader;
 import org.apache.openejb.core.webservices.JaxWsUtils;
 import org.apache.openejb.dyni.DynamicSubclass;
 import org.apache.openejb.jee.ActivationConfig;
@@ -5508,7 +5509,11 @@ public class AnnotationDeployer implements DynamicDeployer {
             final ClassLoader loader = clazz.getClassLoader();
             final URL url;
             if (loader != null) {
-                url = loader.getResource(classFileName);
+                if (TempClassLoader.class.isInstance(loader)) {
+                    url = TempClassLoader.class.cast(loader).getInternalResource(classFileName);
+                } else { // shouldn't occur
+                    url = loader.getResource(classFileName);
+                }
             } else {
                 url = clazz.getResource(classFileName);
             }

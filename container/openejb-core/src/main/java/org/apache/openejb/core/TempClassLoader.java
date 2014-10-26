@@ -80,8 +80,7 @@ public class TempClassLoader extends URLClassLoader {
         return this.loadClass(name, false);
     }
 
-    @Override
-    public URL getResource(final String name) {
+    public URL getInternalResource(final String name) {
         if (!name.startsWith("java/") && !name.startsWith("javax/") && name.endsWith(".class")) {
             try {
                 final Enumeration<URL> resources = getResources(name);
