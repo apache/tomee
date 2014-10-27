@@ -53,19 +53,22 @@ import java.util.Set;
 // Note: this class is a fork from OpenJPA
 public class TempClassLoader extends URLClassLoader {
     private static final ClassLoader PARENT_LOADER = ParentClassLoaderFinder.Helper.get();
+    private static final URL[] EMPTY_URLS = new URL[0];
 
     private final Set<Skip> skip;
     private final ClassLoader system;
     private final boolean embedded;
+    private final boolean parentURLClassLoader;
 
     // 80% of class files are smaller then 6k
     private final ByteArrayOutputStream bout = new ByteArrayOutputStream(6 * 1024);
 
     public TempClassLoader(final ClassLoader parent) {
-        super(new URL[0], parent);
+        super(EMPTY_URLS, parent);
         this.skip = SystemInstance.get().getOptions().getAll("openejb.tempclassloader.skip", Skip.NONE);
         this.system = ClassLoader.getSystemClassLoader();
         this.embedded = this.getClass().getClassLoader() == this.system;
+        this.parentURLClassLoader = URLClassLoader.class.isInstance(parent);
     }
 
     /*
@@ -78,6 +81,16 @@ public class TempClassLoader extends URLClassLoader {
     @Override
     public Class loadClass(final String name) throws ClassNotFoundException {
         return this.loadClass(name, false);
+    }
+
+    @Override
+    public URL getResource(final String name) {
+        // try specific url first
+        final URL url = parentURLClassLoader ? URLClassLoader.class.cast(getParent()).findResource(name) : null;
+        if (url != null) {
+            return url;
+        }
+        return super.getResource(name);
     }
 
     public URL getInternalResource(final String name) {
