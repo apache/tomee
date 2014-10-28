@@ -66,6 +66,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.concurrent.CountDownLatch;
 import java.util.logging.SimpleFormatter;
@@ -875,7 +876,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                 getLog().info("Waiting for command: " + availableCommands());
 
                 String line;
-                while ((line = reader.nextLine()) != null) {
+                while ((line = getNextLine(reader)) != null) {
 
                     if (isQuit(line)) {
                         break;
@@ -896,6 +897,14 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             } catch (final InterruptedException e) {
                 // no-op
             }
+        }
+    }
+
+    private String getNextLine(final Scanner reader) {
+        try {
+            return reader.nextLine();
+        } catch (final NoSuchElementException e) {
+            return null;
         }
     }
 
