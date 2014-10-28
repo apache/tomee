@@ -905,7 +905,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         try {
             return reader.nextLine();
         } catch (final NoSuchElementException e) {
-            return null;
+            return "ignore";
         }
     }
 
