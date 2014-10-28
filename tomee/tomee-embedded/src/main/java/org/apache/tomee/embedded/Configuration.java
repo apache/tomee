@@ -19,6 +19,7 @@ package org.apache.tomee.embedded;
 import org.apache.openejb.util.NetworkUtil;
 
 import java.io.File;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -31,6 +32,7 @@ public class Configuration {
     private String host = "localhost";
     protected String dir;
     private File serverXml;
+    private boolean keepServerXmlAsThis;
     private Properties properties;
     private boolean quickSession = true;
     private boolean skipHttp;
@@ -45,6 +47,9 @@ public class Configuration {
     private String sslProtocol;
 
     private boolean deployOpenEjbApp;
+
+    private Map<String, String> users;
+    private Map<String, String> roles;
 
     /**
      * when needed temp file only (deployClasspathAsWebapp() for instance)
@@ -222,5 +227,29 @@ public class Configuration {
     public Configuration http(final int port) {
         setHttpPort(port);
         return this;
+    }
+
+    public Map<String, String> getUsers() {
+        return users;
+    }
+
+    public void setUsers(final Map<String, String> users) { // useful for tools like maven plugin
+        this.users = users;
+    }
+
+    public Map<String, String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(final Map<String, String> roles) {
+        this.roles = roles;
+    }
+
+    public boolean isKeepServerXmlAsThis() {
+        return keepServerXmlAsThis;
+    }
+
+    public void setKeepServerXmlAsThis(final boolean keepServerXmlAsThis) {
+        this.keepServerXmlAsThis = keepServerXmlAsThis;
     }
 }

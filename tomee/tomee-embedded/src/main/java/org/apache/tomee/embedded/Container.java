@@ -16,13 +16,17 @@
  */
 package org.apache.tomee.embedded;
 
+import org.apache.catalina.Engine;
+import org.apache.catalina.Host;
 import org.apache.catalina.LifecycleException;
+import org.apache.catalina.Manager;
 import org.apache.catalina.Server;
 import org.apache.catalina.Service;
 import org.apache.catalina.connector.Connector;
-import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardServer;
+import org.apache.catalina.session.ManagerBase;
 import org.apache.catalina.session.StandardManager;
+import org.apache.catalina.startup.Catalina;
 import org.apache.catalina.startup.CatalinaProperties;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.coyote.http11.Http11Protocol;
@@ -64,8 +68,9 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.tomee.catalina.TomEERuntimeException;
 import org.apache.tomee.catalina.TomcatLoader;
-import org.apache.tomee.catalina.session.FastNonSecureRandom;
+import org.apache.tomee.catalina.session.QuickSessionManager;
 import org.apache.tomee.embedded.internal.StandardContextCustomizer;
+import org.apache.tomee.util.QuickServerXmlParser;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
@@ -73,6 +78,7 @@ import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.log.NullLogChute;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.apache.xbean.finder.filter.Filters;
+import org.codehaus.swizzle.stream.ReplaceStringsInputStream;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
@@ -108,7 +114,7 @@ public class Container implements AutoCloseable {
     private File base;
     private ConfigurationFactory configurationFactory;
     private Assembler assembler;
-    private Tomcat tomcat;
+    private InternalTomcat tomcat;
 
     // start the container directly
     public Container(final Configuration configuration) {
@@ -259,7 +265,7 @@ public class Container implements AutoCloseable {
         if (configuration.isQuickSession()) {
             tomcat = new TomcatWithFastSessionIDs();
         } else {
-            tomcat = new Tomcat();
+            tomcat = new InternalTomcat();
         }
 
         // create basic installation in setup to be able to handle anything the caller does between setup() and start()
@@ -301,21 +307,53 @@ public class Container implements AutoCloseable {
         final File conf = new File(base, "conf");
         final File webapps = new File(base, "webapps");
 
+        final String catalinaBase = base.getAbsolutePath();
+
+        // set the env before calling anoything on tomcat or Catalina!!
+        System.setProperty("catalina.base", catalinaBase);
+        System.setProperty("openejb.deployments.classpath", "false");
+        System.setProperty("catalina.home", catalinaBase);
+        System.setProperty("catalina.base", catalinaBase);
+        System.setProperty("openejb.home", catalinaBase);
+        System.setProperty("openejb.base", catalinaBase);
+        System.setProperty("openejb.servicemanager.enabled", "false");
+
         copyFileTo(conf, "catalina.policy");
         copyTemplateTo(conf, "catalina.properties");
         copyFileTo(conf, "context.xml");
         copyFileTo(conf, "openejb.xml");
         copyFileTo(conf, "tomcat-users.xml");
         copyFileTo(conf, "web.xml");
+
+        final boolean initialized;
         if (configuration.hasServerXml()) {
-            final FileOutputStream fos = new FileOutputStream(new File(conf, "server.xml"));
+            final File file = new File(conf, "server.xml");
+            final FileOutputStream fos = new FileOutputStream(file);
             try {
                 IO.copy(configuration.getServerXmlFile(), fos);
             } finally {
                 IO.close(fos);
             }
+
+            // respect config (host/port) of the Configuration
+            final QuickServerXmlParser ports = QuickServerXmlParser.parse(file);
+            if (configuration.isKeepServerXmlAsThis()) {
+                // force ports to be able to stop the server and get @ArquillianResource
+                configuration.setHttpPort(Integer.parseInt(ports.http()));
+                configuration.setStopPort(Integer.parseInt(ports.stop()));
+            } else {
+                final Map<String, String> replacements = new HashMap<String, String>();
+                replacements.put(ports.http(), String.valueOf(configuration.getHttpPort()));
+                replacements.put(ports.https(), String.valueOf(configuration.getHttpsPort()));
+                replacements.put(ports.stop(), String.valueOf(configuration.getStopPort()));
+                IO.copy(IO.slurp(new ReplaceStringsInputStream(IO.read(file), replacements)).getBytes(), file);
+            }
+
+            tomcat.server(createServer(file.getAbsolutePath()));
+            initialized = true;
         } else {
             copyFileTo(conf, "server.xml");
+            initialized = false;
         }
 
         if (props != null && !props.isEmpty()) {
@@ -337,17 +375,19 @@ public class Container implements AutoCloseable {
             System.setProperty("java.util.logging.config.file", logging.getAbsolutePath());
         }
         */
-        System.setProperty("catalina.base", base.getAbsolutePath());
 
         // Trigger loading of catalina.properties
         CatalinaProperties.getProperty("foo");
 
         tomcat.setBaseDir(base.getAbsolutePath());
-        tomcat.getHost().setAppBase(webapps.getAbsolutePath());
         tomcat.setHostname(configuration.getHost());
-        tomcat.getEngine().setDefaultHost(configuration.getHost());
+        if (!initialized) {
+            tomcat.getHost().setAppBase(webapps.getAbsolutePath());
+            tomcat.getEngine().setDefaultHost(configuration.getHost());
+            tomcat.setHostname(configuration.getHost());
+        }
 
-        if (!configuration.isSkipHttp()) {
+        if (tomcat.getRawConnector() == null && !configuration.isSkipHttp()) {
             final Connector connector = new Connector(Http11Protocol.class.getName());
             connector.setPort(configuration.getHttpPort());
             connector.setAttribute("connectionTimeout", "3000");
@@ -383,14 +423,21 @@ public class Container implements AutoCloseable {
         // Bootstrap Tomcat
         Logger.getInstance(LogCategory.OPENEJB_STARTUP, Container.class).info("Starting TomEE from: " + base.getAbsolutePath()); // create it after Logger is configured
 
-        final String catalinaBase = base.getAbsolutePath();
-        System.setProperty("openejb.deployments.classpath", "false");
-        System.setProperty("catalina.home", catalinaBase);
-        System.setProperty("catalina.base", catalinaBase);
-        System.setProperty("openejb.home", catalinaBase);
-        System.setProperty("openejb.base", catalinaBase);
-        System.setProperty("openejb.servicemanager.enabled", "false");
-
+        if (configuration.getUsers() != null) {
+            for (final Map.Entry<String, String> user : configuration.getUsers().entrySet()) {
+                tomcat.addUser(user.getKey(), user.getValue());
+            }
+        }
+        if (configuration.getRoles() != null) {
+            for (final Map.Entry<String, String> user : configuration.getRoles().entrySet()) {
+                for (final String role : user.getValue().split(" *, *")) {
+                    tomcat.addRole(user.getKey(), role);
+                }
+            }
+        }
+        if (!initialized) {
+            tomcat.init();
+        }
         tomcat.start();
 
         // Bootstrap OpenEJB
@@ -405,6 +452,9 @@ public class Container implements AutoCloseable {
         }
         if (properties.getProperty("openejb.system.apps") == null) { // will make startup faster and it is rarely useful for embedded case
             properties.setProperty("openejb.system.apps", "false");
+        }
+        if (configuration.isQuickSession()) {
+            properties.put("openejb.session.manager", QuickSessionManager.class.getName());
         }
 
         try {
@@ -448,6 +498,29 @@ public class Container implements AutoCloseable {
 
         assembler = SystemInstance.get().getComponent(Assembler.class);
         configurationFactory = new ConfigurationFactory();
+    }
+
+    private static Server createServer(final String serverXml) {
+        final Catalina catalina = new Catalina() {
+            // skip few init we don't need *here*
+            @Override
+            protected void initDirs() {
+                // no-op
+            }
+
+            @Override
+            protected void initStreams() {
+                // no-op
+            }
+
+            @Override
+            protected void initNaming() {
+                // no-op
+            }
+        };
+        catalina.setConfigFile(serverXml);
+        catalina.load();
+        return catalina.getServer();
     }
 
     public ConfigurationFactory getConfigurationFactory() {
@@ -728,7 +801,33 @@ public class Container implements AutoCloseable {
         return configuration;
     }
 
-    private static class TomcatWithFastSessionIDs extends Tomcat {
+    private static class InternalTomcat extends Tomcat {
+        private void server(final Server s) {
+            server = s;
+            if (service == null) {
+                final Service[] services = server.findServices();
+                if (services.length > 0) {
+                    service = services[0];
+                    if (service.getContainer() != null) {
+                        engine = Engine.class.cast(service.getContainer());
+                        final org.apache.catalina.Container[] hosts = engine.findChildren();
+                        if (hosts.length > 0) {
+                            host = Host.class.cast(hosts[0]);
+                        }
+                    }
+                }
+                if (service.findConnectors().length > 0) {
+                    connector = service.findConnectors()[0];
+                }
+            }
+        }
+
+        public Connector getRawConnector() {
+            return connector;
+        }
+    }
+
+    private static class TomcatWithFastSessionIDs extends InternalTomcat {
 
         @Override
         public void start() throws LifecycleException {
@@ -738,11 +837,14 @@ public class Container implements AutoCloseable {
                 final org.apache.catalina.Container e = service.getContainer();
                 for (final org.apache.catalina.Container h : e.findChildren()) {
                     for (final org.apache.catalina.Container c : h.findChildren()) {
-                        StandardManager m = (StandardManager) StandardContext.class.cast(c).getManager();
+                        Manager m = ((org.apache.catalina.Context) c).getManager();
                         if (m == null) {
                             m = new StandardManager();
-                            m.setSecureRandomClass(FastNonSecureRandom.class.getName());
-                            StandardContext.class.cast(c).setManager(m);
+                            ((org.apache.catalina.Context) c).setManager(m);
+                        }
+                        if (m instanceof ManagerBase) {
+                            ((ManagerBase) m).setSecureRandomClass(
+                                    "org.apache.catalina.startup.FastNonSecureRandom");
                         }
                     }
                 }
@@ -750,5 +852,4 @@ public class Container implements AutoCloseable {
             super.start();
         }
     }
-
 }

@@ -800,7 +800,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         if (sessionManager != null) {
             if (sessionManagerClass == null) {
                 try { // the manager should be in standardclassloader
-                    sessionManagerClass = TomcatHelper.getServer().getParentClassLoader().loadClass(sessionManager);
+                    sessionManagerClass = ParentClassLoaderFinder.Helper.get().loadClass(sessionManager);
                 } catch (final ClassNotFoundException e) {
                     logger.error("can't find '" + sessionManager + "', StandardManager will be used", e);
                     sessionManagerClass = StandardManager.class;

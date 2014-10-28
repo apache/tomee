@@ -132,6 +132,15 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
     @Parameter(property = "tomee-embedded-plugin.mavenLog", defaultValue = "true")
     private boolean mavenLog;
 
+    @Parameter(property = "tomee-embedded-plugin.keepServerXmlAsThis", defaultValue = "false")
+    private boolean keepServerXmlAsThis;
+
+    @Parameter
+    private Map<String, String> users;
+
+    @Parameter
+    private Map<String, String> roles;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (!classpathAsWar && "pom".equals(packaging)) {
