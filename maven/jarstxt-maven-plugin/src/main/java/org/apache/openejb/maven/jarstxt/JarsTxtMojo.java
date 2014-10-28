@@ -125,7 +125,7 @@ public class JarsTxtMojo extends AbstractMojo {
                         resolver.resolve(artifact, remoteRepos, local);
                     } catch (final ArtifactResolutionException e) {
                         throw new MojoExecutionException(e.getMessage(), e);
-                    } catch (ArtifactNotFoundException e) {
+                    } catch (final ArtifactNotFoundException e) {
                         throw new MojoExecutionException(e.getMessage(), e);
                     }
                     final File file = artifact.getFile();
@@ -160,13 +160,13 @@ public class JarsTxtMojo extends AbstractMojo {
             }
 
             writer.flush();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             getLog().error(e.getMessage(), e);
         } finally {
             if (writer != null) {
                 try {
                     writer.close();
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     // no-op
                 }
             }

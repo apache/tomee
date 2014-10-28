@@ -18,11 +18,11 @@
 package org.apache.openejb.maven.plugin;
 
 public class TomEEException extends RuntimeException {
-    public TomEEException(String s) {
+    public TomEEException(final String s) {
         super(s);
     }
 
-    public TomEEException(String message, Exception e) {
+    public TomEEException(final String message, final Exception e) {
         super(message, e);
     }
 }

@@ -45,7 +45,7 @@ public class StopTomEEMojo extends AbstractTomEEMojo {
     protected void serverCmd(final RemoteServer server, final List<String> strings) {
         try {
             server.forceStop();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             getLog().error(e.getMessage(), e);
         }
     }

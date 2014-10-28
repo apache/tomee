@@ -22,7 +22,7 @@ import javax.naming.InitialContext;
 import java.util.Properties;
 
 public abstract class AbstractCommandMojo extends AbstractAddressMojo {
-    protected Object lookup(String name) {
+    protected Object lookup(final String name) {
         final Properties props = new Properties();
         props.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
         props.put(Context.PROVIDER_URL, "http://" + tomeeHost + ":" + tomeeHttpPort + "/tomee/ejb");
@@ -38,7 +38,7 @@ public abstract class AbstractCommandMojo extends AbstractAddressMojo {
 
         try {
             return new InitialContext(props).lookup(name);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new TomEEException(e.getMessage(), e);
         }
     }

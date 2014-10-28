@@ -42,8 +42,8 @@ public final class Zips {
             prefix += File.separator;
         }
 
-        for (String entry : entries) {
-            File f = new File(dir, entry);
+        for (final String entry : entries) {
+            final File f = new File(dir, entry);
             zip(out, f, prefix);
         }
         IO.close(out);
@@ -53,7 +53,7 @@ public final class Zips {
         if (f.isDirectory()) {
             final File[] files = f.listFiles();
             if (files != null) {
-                for (File child : files) {
+                for (final File child : files) {
                     zip(out, child, prefix);
                 }
             }

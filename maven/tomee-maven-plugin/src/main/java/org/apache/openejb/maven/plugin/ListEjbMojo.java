@@ -46,9 +46,9 @@ public class ListEjbMojo extends AbstractCommandMojo {
         final Collection<AppInfo> infos = deployer.getDeployedApps();
         final Lines lines = new Lines();
         lines.add(new Line("Name", "Class", "Interface Type", "Bean Type"));
-        for (AppInfo info : infos) {
-            for (EjbJarInfo ejbJar : info.ejbJars) {
-                for (EnterpriseBeanInfo bean : ejbJar.enterpriseBeans) {
+        for (final AppInfo info : infos) {
+            for (final EjbJarInfo ejbJar : info.ejbJars) {
+                for (final EnterpriseBeanInfo bean : ejbJar.enterpriseBeans) {
                     lines.add(new Line(bean.ejbDeploymentId, bean.ejbClass, getType(bean), componentType(bean)));
                 }
             }
@@ -86,19 +86,19 @@ public class ListEjbMojo extends AbstractCommandMojo {
     private static class LogPrinterStream extends PrintStream {
         private Log logger;
 
-        public LogPrinterStream(Log log) {
+        public LogPrinterStream(final Log log) {
             super(new NullOuputStream());
             logger = log;
         }
 
         @Override
-        public void print(String s) {
+        public void print(final String s) {
             logger.info(s.replace(System.getProperty("line.separator"), ""));
         }
 
         private static class NullOuputStream extends OutputStream {
             @Override
-            public void write(int b) throws IOException {
+            public void write(final int b) throws IOException {
                 // no-op
             }
         }

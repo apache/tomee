@@ -61,7 +61,7 @@ public class BuildTomEEMojo extends AbstractTomEEMojo {
             getLog().info("Zipping Custom TomEE Distribution");
             try {
                 zip(catalinaBase, zipFile);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new MojoExecutionException(e.getMessage(), e);
             }
 

@@ -56,7 +56,7 @@ public class DeployMojo extends AbstractDeployMojo {
                 fis = new FileInputStream(path);
                 IO.copy(fis, baos);
                 archive = baos.toByteArray();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new TomEEException(e.getMessage(), e);
             } finally {
                 IO.close(fis);
@@ -70,7 +70,7 @@ public class DeployMojo extends AbstractDeployMojo {
                 prop.put(DeployerEjb.OPENEJB_PATH_BINARIES, new File(path).getName());
                 prop.put(DeployerEjb.OPENEJB_VALUE_BINARIES, archive);
                 deployer.deploy(path, prop);
-            } catch (OpenEJBException e) {
+            } catch (final OpenEJBException e) {
                 throw new TomEEException(e.getMessage(), e);
             }
         } else {
@@ -82,7 +82,7 @@ public class DeployMojo extends AbstractDeployMojo {
                     prop.putAll(systemVariables);
                     deployer.deploy(path, prop);
                 }
-            } catch (OpenEJBException e) {
+            } catch (final OpenEJBException e) {
                 throw new TomEEException(e.getMessage(), e);
             }
         }

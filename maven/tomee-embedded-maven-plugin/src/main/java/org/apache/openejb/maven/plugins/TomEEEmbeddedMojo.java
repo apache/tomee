@@ -81,7 +81,7 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
                     try {
                         container.undeploy(warFile.getAbsolutePath());
                         container.stop();
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         getLog().error("can't stop TomEE", e);
                     } finally {
                         latch.countDown();
@@ -92,13 +92,13 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
             container.deploy(warFile.getName(), warFile);
 
             getLog().info("TomEE embedded started on " + config.getHost() + ":" + config.getHttpPort());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             getLog().error("can't start TomEE", e);
         }
 
         try {
             latch.await();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             Thread.interrupted();
         } finally {
             System.clearProperty("openejb.log.factory");
@@ -107,7 +107,7 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
 
     private Configuration getConfig() { // lazy way but it works fine
         final Configuration config = new Configuration();
-        for (Field field : getClass().getDeclaredFields()) {
+        for (final Field field : getClass().getDeclaredFields()) {
             try {
                 final Field configField = Configuration.class.getDeclaredField(field.getName());
                 field.setAccessible(true);
@@ -118,9 +118,9 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
                     configField.set(config, value);
                     getLog().info("using " + field.getName()  + " = " + value);
                 }
-            } catch (NoSuchFieldException nsfe) {
+            } catch (final NoSuchFieldException nsfe) {
                 // ignored
-            } catch (Exception e) {
+            } catch (final Exception e) {
                  getLog().warn("can't initialize attribute " + field.getName());
             }
 

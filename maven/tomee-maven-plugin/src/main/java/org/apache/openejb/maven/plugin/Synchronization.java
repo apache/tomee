@@ -32,7 +32,7 @@ public class Synchronization extends AbstractSynchronizable {
         return resourcesDir;
     }
 
-    public void setResourcesDir(File resourcesDir) {
+    public void setResourcesDir(final File resourcesDir) {
         this.resourcesDir = resourcesDir;
     }
 
@@ -40,7 +40,7 @@ public class Synchronization extends AbstractSynchronizable {
         return binariesDir;
     }
 
-    public void setBinariesDir(File binariesDir) {
+    public void setBinariesDir(final File binariesDir) {
         this.binariesDir = binariesDir;
     }
 
@@ -48,7 +48,7 @@ public class Synchronization extends AbstractSynchronizable {
         return targetBinariesDir;
     }
 
-    public void setTargetBinariesDir(File targetBinariesDir) {
+    public void setTargetBinariesDir(final File targetBinariesDir) {
         this.targetBinariesDir = targetBinariesDir;
     }
 
@@ -56,7 +56,7 @@ public class Synchronization extends AbstractSynchronizable {
         return targetResourcesDir;
     }
 
-    public void setTargetResourcesDir(File targetResourcesDir) {
+    public void setTargetResourcesDir(final File targetResourcesDir) {
         this.targetResourcesDir = targetResourcesDir;
     }
 
