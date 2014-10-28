@@ -50,7 +50,7 @@ public class PersistJavaagentTest {
         // artifact was copied
         assertEquals(1, new File(catalinaBase, "javaagent").listFiles(new FilenameFilter() {
             @Override
-            public boolean accept(File dir, String name) {
+            public boolean accept(final File dir, final String name) {
                 return name.startsWith("sirona-") && name.endsWith("-shaded.jar");
             }
         }).length);

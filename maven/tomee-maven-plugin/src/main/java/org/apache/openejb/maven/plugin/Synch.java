@@ -28,7 +28,7 @@ public class Synch extends AbstractSynchronizable {
         return source;
     }
 
-    public void setSource(File source) {
+    public void setSource(final File source) {
         this.source = source;
     }
 
@@ -36,7 +36,7 @@ public class Synch extends AbstractSynchronizable {
         return target;
     }
 
-    public void setTarget(File target) {
+    public void setTarget(final File target) {
         this.target = target;
     }
 

@@ -200,7 +200,7 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
             }
 
             getLog().info("TomEE embedded started on " + config.getHost() + ":" + config.getHttpPort());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             getLog().error("can't start TomEE", e);
         }
 

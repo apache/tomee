@@ -35,7 +35,7 @@ public abstract class AbstractSynchronizable {
         return updateInterval;
     }
 
-    public void setUpdateInterval(int updateInterval) {
+    public void setUpdateInterval(final int updateInterval) {
         this.updateInterval = updateInterval;
     }
 
@@ -46,7 +46,7 @@ public abstract class AbstractSynchronizable {
         return extensions;
     }
 
-    public void setExtensions(List<String> extensions) {
+    public void setExtensions(final List<String> extensions) {
         this.extensions = extensions;
     }
 
@@ -54,7 +54,7 @@ public abstract class AbstractSynchronizable {
         return regex;
     }
 
-    public void setRegex(String regex) {
+    public void setRegex(final String regex) {
         this.regex = regex;
     }
 
@@ -65,7 +65,7 @@ public abstract class AbstractSynchronizable {
         return updateOnlyExtensions;
     }
 
-    public void setUpdateOnlyExtensions(List<String> updateOnlyExtensions) {
+    public void setUpdateOnlyExtensions(final List<String> updateOnlyExtensions) {
         this.updateOnlyExtensions = updateOnlyExtensions;
     }
 }

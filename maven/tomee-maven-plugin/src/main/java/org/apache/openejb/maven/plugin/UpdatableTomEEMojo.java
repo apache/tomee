@@ -237,10 +237,10 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
         @Override
         public void run() {
             int updated = 0;
-            for (Synchronizer s : delegates) {
+            for (final Synchronizer s : delegates) {
                 try {
                     updated += s.call();
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     getLog().error(e.getMessage(), e);
                 }
             }
@@ -301,7 +301,7 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
 
             final Collection<File> files = Files.collect(source, fileFilter);
             int updated = 0;
-            for (File file : files) {
+            for (final File file : files) {
                 if (file.isDirectory()
                         || file.lastModified() < lastUpdate) {
                     continue;
@@ -338,7 +338,7 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
                 if (!output.setLastModified(ts)) {
                     getLog().debug("Can't update last modified date of " + file);
                 }
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 getLog().error(e);
             }
 
@@ -360,7 +360,7 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
         try {
             final Context context = new InitialContext(properties);
             return (Deployer) context.lookup("openejb/DeployerBusinessRemote");
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             throw new OpenEJBRuntimeException("Can't lookup Deployer", e);
         }
     }
@@ -382,7 +382,7 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
                 return true;
             }
 
-            for (String suffix : suffixes) {
+            for (final String suffix : suffixes) {
                 if (file.getName().endsWith(suffix)) {
                     return true;
                 }

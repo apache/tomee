@@ -80,7 +80,7 @@ public class OpenEJBEmbeddedMojo extends AbstractMojo {
                 }));
                 try {
                     latch.await();
-                } catch (InterruptedException e) {
+                } catch (final InterruptedException e) {
                     // ignored
                 }
             }
@@ -94,19 +94,19 @@ public class OpenEJBEmbeddedMojo extends AbstractMojo {
 
     private ClassLoader createClassLoader(final ClassLoader parent) {
         final List<URL> urls = new ArrayList<URL>();
-        for (Artifact artifact : (Set<Artifact>) project.getArtifacts()) {
+        for (final Artifact artifact : (Set<Artifact>) project.getArtifacts()) {
             try {
                 urls.add(artifact.getFile().toURI().toURL());
-            } catch (MalformedURLException e) {
+            } catch (final MalformedURLException e) {
                 getLog().warn("can't use artifact " + artifact.toString());
             }
         }
-        for (String str : modules.split(",")) {
+        for (final String str : modules.split(",")) {
             final File file = new File(str);
             if (file.exists()) {
                 try {
                     urls.add(file.toURI().toURL());
-                } catch (MalformedURLException e) {
+                } catch (final MalformedURLException e) {
                     getLog().warn("can't use path " + str);
                 }
             } else {

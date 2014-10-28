@@ -160,13 +160,13 @@ public class JarsTxtMojo extends AbstractMojo {
             }
 
             writer.flush();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             getLog().error(e.getMessage(), e);
         } finally {
             if (writer != null) {
                 try {
                     writer.close();
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     // no-op
                 }
             }
