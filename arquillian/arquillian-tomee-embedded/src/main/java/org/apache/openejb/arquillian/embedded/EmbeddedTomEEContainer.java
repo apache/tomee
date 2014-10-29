@@ -44,6 +44,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.servlet.http.HttpSession;
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -95,6 +96,13 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
         configuration.setClientAuth(tomeeConfiguration.getClientAuth());
         configuration.setKeyAlias(tomeeConfiguration.getKeyAlias());
         configuration.setSslProtocol(tomeeConfiguration.getSslProtocol());
+
+        if (tomeeConfiguration.getRoles() != null) {
+            configuration.setRoles(new HashMap<String, String>(Map.class.cast(tomeeConfiguration.getRolesAsProperties())));
+        }
+        if (tomeeConfiguration.getUsers() != null) {
+            configuration.setUsers(new HashMap<String, String>(Map.class.cast(tomeeConfiguration.getUsersAsProperties())));
+        }
 
         return configuration;
     }
