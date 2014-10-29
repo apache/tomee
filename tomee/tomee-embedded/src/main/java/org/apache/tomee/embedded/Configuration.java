@@ -19,6 +19,7 @@ package org.apache.tomee.embedded;
 import org.apache.openejb.util.NetworkUtil;
 
 import java.io.File;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -43,6 +44,9 @@ public class Configuration {
     private String clientAuth;
     private String keyAlias;
     private String sslProtocol;
+
+    private Map<String, String> users;
+    private Map<String, String> roles;
 
     public int getHttpPort() {
         return httpPort;
@@ -194,5 +198,21 @@ public class Configuration {
         }
         properties.setProperty(key, value);
         return this;
+    }
+
+    public Map<String, String> getUsers() {
+        return users;
+    }
+
+    public void setUsers(final Map<String, String> users) { // useful for tools like maven plugin
+        this.users = users;
+    }
+
+    public Map<String, String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(final Map<String, String> roles) {
+        this.roles = roles;
     }
 }

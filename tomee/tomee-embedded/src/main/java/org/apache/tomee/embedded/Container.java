@@ -241,6 +241,19 @@ public class Container implements Closeable {
         // Bootstrap Tomcat
         Logger.getInstance(LogCategory.OPENEJB_STARTUP, Container.class).info("Starting TomEE from: " + base.getAbsolutePath()); // create it after Logger is configured
 
+        if (configuration.getUsers() != null) {
+            for (final Map.Entry<String, String> user : configuration.getUsers().entrySet()) {
+                tomcat.addUser(user.getKey(), user.getValue());
+            }
+        }
+        if (configuration.getRoles() != null) {
+            for (final Map.Entry<String, String> user : configuration.getRoles().entrySet()) {
+                for (final String role : user.getValue().split(" *, *")) {
+                    tomcat.addRole(user.getKey(), role);
+                }
+            }
+        }
+
         final String catalinaBase = base.getAbsolutePath();
         System.setProperty("openejb.deployments.classpath", "false");
         System.setProperty("catalina.home", catalinaBase);

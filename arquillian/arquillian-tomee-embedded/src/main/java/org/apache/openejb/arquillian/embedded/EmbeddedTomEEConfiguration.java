@@ -20,6 +20,7 @@ import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.arquillian.common.IO;
 import org.apache.openejb.arquillian.common.Prefixes;
 import org.apache.openejb.arquillian.common.TomEEConfiguration;
+import org.jboss.arquillian.config.descriptor.api.Multiline;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -40,6 +41,8 @@ public class EmbeddedTomEEConfiguration extends TomEEConfiguration {
     private String clientAuth;
     private String keyAlias;
     private String sslProtocol;
+    private String users;
+    private String roles;
 
     public int getHttpsPort() {
         return httpsPort;
@@ -105,6 +108,32 @@ public class EmbeddedTomEEConfiguration extends TomEEConfiguration {
         this.sslProtocol = sslProtocol;
     }
 
+    public String getUsers() {
+        return users;
+    }
+
+    public Properties getUsersAsProperties() {
+        return toProperties(users);
+    }
+
+    @Multiline
+    public void setUsers(final String users) {
+        this.users = users;
+    }
+
+    public String getRoles() {
+        return roles;
+    }
+
+    public Properties getRolesAsProperties() {
+        return toProperties(roles);
+    }
+
+    @Multiline
+    public void setRoles(final String roles) {
+        this.roles = roles;
+    }
+
     @Override
     public int[] portsAlreadySet() {
         final List<Integer> value = new ArrayList<Integer>();
@@ -125,8 +154,16 @@ public class EmbeddedTomEEConfiguration extends TomEEConfiguration {
             return new Properties();
         }
 
+        return toProperties(properties);
+    }
+
+    private static Properties toProperties(final String value) {
+        if (value == null || value.isEmpty()) {
+            return null;
+        }
+
         final Properties properties = new Properties();
-        final ByteArrayInputStream bais = new ByteArrayInputStream(getProperties().getBytes());
+        final ByteArrayInputStream bais = new ByteArrayInputStream(value.getBytes());
         try {
             properties.load(bais);
         } catch (final IOException e) {
