@@ -883,6 +883,10 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                         break;
                     }
 
+                    if("ignore".equals(line)){
+                        continue;
+                    }
+
                     if (!handleLine(line.trim())) {
                         System.out.flush();
                         getLog().warn("Command '" + line + "' not understood. Use one of " + availableCommands());
