@@ -218,7 +218,7 @@ public class TomcatSecurityService extends AbstractSecurityService {
     }
 
     @CallerPrincipal
-    protected static class TomcatUser implements Principal {
+    public static class TomcatUser implements Principal {
         private final Realm realm;
         private final Principal tomcatPrincipal;
 
