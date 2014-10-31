@@ -359,7 +359,7 @@ public class DataSourceFactory {
     }
 
     public static boolean knows(final Object object) {
-        return object instanceof CommonDataSource && creatorByDataSource.containsKey(object);
+        return object instanceof CommonDataSource && creatorByDataSource.containsKey(realInstance(object));
     }
 
     // TODO: should we get a get and a clear method instead of a single one?
