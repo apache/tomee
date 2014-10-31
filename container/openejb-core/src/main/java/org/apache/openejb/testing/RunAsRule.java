@@ -28,8 +28,16 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-public class RunAsRule implements TestRule {
+public class RunAsRule extends BeanContextBaseRule implements TestRule {
     private final ThreadLocal<String> role = new ThreadLocal<>();
+
+    public RunAsRule() {
+        this(null);
+    }
+
+    public RunAsRule(final Object o) {
+        super(o);
+    }
 
     public void role(final String role) {
         this.role.set(role);
@@ -43,18 +51,13 @@ public class RunAsRule implements TestRule {
                 final RunAs annotation = description.getAnnotation(RunAs.class);
                 final As as = description.getAnnotation(As.class);
                 String currentRole = role.get();
+                role.remove(); // no more needed
                 if (annotation == null && as == null && currentRole == null) {
-                    role.remove();
                     base.evaluate();
                     return;
                 }
 
-                final ThreadContext threadContext = ThreadContext.getThreadContext();
-                if (threadContext == null) {
-                    throw new IllegalStateException("No context arounding RunAs rule, start ApplicationComposerRule before please");
-                }
-
-                final BeanContext beanContext = threadContext.getBeanContext();
+                final BeanContext beanContext = getBeanContext();
                 if (currentRole == null) {
                     if (annotation == null) {
                         currentRole = as.value();
@@ -62,13 +65,17 @@ public class RunAsRule implements TestRule {
                         currentRole = annotation.value();
                     }
                 }
+                final String runAs = beanContext.getRunAs();
+                final String runAsUser = beanContext.getRunAsUser();
                 beanContext.setRunAs(currentRole);
                 final ThreadContext old = ThreadContext.enter(new ThreadContext(beanContext, null));
                 try {
                     base.evaluate();
                 } finally {
-                    role.remove(); // reset for next test
+                    // reset for next test
                     ThreadContext.exit(old);
+                    beanContext.setRunAs(runAs);
+                    beanContext.setRunAsUser(runAsUser);
                 }
             }
         };

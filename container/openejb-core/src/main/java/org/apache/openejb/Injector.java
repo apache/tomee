@@ -91,7 +91,7 @@ public class Injector {
         return false;
     }
 
-    private static BeanContext resolve(Class<?> clazz) {
+    public static BeanContext resolve(Class<?> clazz) {
 
         final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
 
