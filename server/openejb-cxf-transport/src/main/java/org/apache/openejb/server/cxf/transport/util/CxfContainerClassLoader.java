@@ -115,18 +115,18 @@ public class CxfContainerClassLoader extends ClassLoader {
     @Override
     public boolean equals(final Object o) {
         final ClassLoader classLoader = tccl();
-        if (classLoader != null) {
-            return classLoader.equals(o);
+        if (classLoader == null || CxfContainerClassLoader.class.isInstance(classLoader)) { // avoid loop
+            return CONTAINER_LOADER.equals(o);
         }
-        return CONTAINER_LOADER.equals(o);
+        return classLoader.equals(o);
     }
 
     @Override
     public int hashCode() {
         final ClassLoader classLoader = tccl();
-        if (classLoader != null) {
-            return classLoader.hashCode();
+        if (classLoader == null || CxfContainerClassLoader.class.isInstance(classLoader)) { // avoid loop
+            return CONTAINER_LOADER.hashCode();
         }
-        return CONTAINER_LOADER.hashCode();
+        return classLoader.hashCode();
     }
 }
