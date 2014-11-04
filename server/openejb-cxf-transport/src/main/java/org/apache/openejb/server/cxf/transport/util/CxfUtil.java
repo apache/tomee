@@ -227,7 +227,9 @@ public final class CxfUtil {
         final Bus bus = getBus();
 
         // ensure cxf classes are loaded from container to avoid conflicts with app
-        bus.setExtension(new CxfContainerClassLoader(), ClassLoader.class);
+        if ("true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.cxf.CxfContainerClassLoader", "true"))) {
+            bus.setExtension(new CxfContainerClassLoader(), ClassLoader.class);
+        }
 
         // activate jmx, by default isEnabled() == false in InstrumentationManagerImpl
         if ("true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.cxf.jmx", "true"))) {
