@@ -689,7 +689,10 @@ public class JndiBuilder {
         final Context globalContext = application.getGlobalJndiContext();
 
         final String appName = application.isStandaloneModule() ? "" : application.getId() + "/";
-        final String moduleName = cdi.getModuleName() + "/";
+        String moduleName = cdi.getModuleName() + "/";
+        if (moduleName.startsWith("/")) {
+            moduleName = moduleName.substring(1);
+        }
         String beanName = cdi.getEjbName();
         if (intrface != null) {
             beanName = beanName + "!" + intrface.getName();
