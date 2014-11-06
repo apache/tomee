@@ -22,7 +22,9 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Application;
+import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.SecurityContext;
@@ -44,7 +46,8 @@ public class ThreadLocalContextManager {
     public static final ThreadLocalContextResolver CONTEXT_RESOLVER = new ThreadLocalContextResolver();
     public static final ThreadLocalProviders PROVIDERS = new ThreadLocalProviders();
     public static final ThreadLocal<Application> APPLICATION = new ThreadLocal<>();
-    public static final ThreadLocal<Application> CONFIGURATION = new ThreadLocal<Application>();
+    public static final ThreadLocal<Configuration> CONFIGURATION = new ThreadLocal<>();
+    public static final ThreadLocal<ResourceInfo> RESOURCE_INFO = new ThreadLocal<>();
     public static final ThreadLocal<Map<String, Object>> OTHERS = new ThreadLocal<Map<String, Object>>();
 
     public static void reset() {
@@ -60,6 +63,8 @@ public class ThreadLocalContextManager {
         CONTEXT_RESOLVER.remove();
         PROVIDERS.remove();
         APPLICATION.remove();
+        CONFIGURATION.remove();
+        RESOURCE_INFO.remove();
 
         final Map<String, Object> map = OTHERS.get();
         if (map != null) {
@@ -91,6 +96,12 @@ public class ThreadLocalContextManager {
             return ThreadLocalContextManager.SERVLET_CONFIG;
         } else if (ServletContext.class.equals(type)) {
             return ThreadLocalContextManager.SERVLET_CONTEXT;
+        } else if (ResourceInfo.class.equals(type)) {
+            return ThreadLocalContextManager.REQUEST;
+        } else if (Application.class.equals(type)) {
+            return ThreadLocalContextManager.APPLICATION;
+        } else if (Configuration.class.equals(type)) {
+            return ThreadLocalContextManager.CONFIGURATION;
         }
         return null;
     }

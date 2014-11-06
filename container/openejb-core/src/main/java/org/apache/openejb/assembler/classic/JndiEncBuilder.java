@@ -71,6 +71,7 @@ import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.SecurityContext;
@@ -327,6 +328,10 @@ public class JndiEncBuilder {
                     reference = new ObjectReference(ThreadLocalContextManager.SERVLET_CONTEXT);
                 } else if (HttpServletResponse.class.equals(type)) {
                     reference = new ObjectReference(ThreadLocalContextManager.HTTP_SERVLET_RESPONSE);
+                } else if (javax.ws.rs.container.ResourceInfo.class.equals(type)) {
+                    reference = new ObjectReference(ThreadLocalContextManager.RESOURCE_INFO);
+                } else if (Configuration.class.equals(type)) {
+                    reference = new ObjectReference(ThreadLocalContextManager.CONFIGURATION);
                 } else {
                     reference = new MapObjectReference(ThreadLocalContextManager.OTHERS, referenceInfo.referenceType);
                 }
