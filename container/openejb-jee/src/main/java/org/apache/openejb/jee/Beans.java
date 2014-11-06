@@ -77,6 +77,9 @@ public class Beans {
     @XmlTransient
     private final Map<URL, List<String>> managedClasses = new HashMap<>();
 
+    @XmlTransient
+    private final Map<URL, List<String>> notManagedClasses = new HashMap<>();
+
     @XmlElementWrapper(name = "interceptors")
     @XmlElement(name = "class")
     protected List<String> interceptors;
@@ -144,6 +147,10 @@ public class Beans {
 
     public Map<URL, List<String>> getManagedClasses() {
         return managedClasses;
+    }
+
+    public Map<URL, List<String>> getNotManagedClasses() {
+        return notManagedClasses;
     }
 
     @Deprecated

@@ -40,6 +40,7 @@ import org.apache.webbeans.intercept.InterceptorsManager;
 import org.apache.webbeans.spi.BDABeansXmlScanner;
 import org.apache.webbeans.spi.BeanArchiveService;
 import org.apache.webbeans.spi.ScannerService;
+import org.apache.webbeans.xml.DefaultBeanArchiveInformation;
 
 import java.lang.annotation.Annotation;
 import java.net.MalformedURLException;
@@ -183,58 +184,11 @@ public class CdiScanner implements ScannerService {
             final BeanArchiveService beanArchiveService = webBeansContext.getBeanArchiveService();
             final boolean openejb = OpenEJBBeanInfoService.class.isInstance(beanArchiveService);
 
-            for (final BeansInfo.BDAInfo next : beans.bdas) {
-                final BeanArchiveService.BeanArchiveInformation information;
-                if (openejb) {
-                    final OpenEJBBeanInfoService beanInfoService = OpenEJBBeanInfoService.class.cast(beanArchiveService);
-                    information = beanInfoService.createBeanArchiveInformation(beans, classLoader, next.discoveryMode == null? "ALL" : next.discoveryMode); // this fallback is 100% for tests, TODO: get rid of it (AppComposer)
-                    // TODO: log a warn is discoveryModes.get(key) == null
-                    try {
-                        beanInfoService.getBeanArchiveInfo().put(next.uri == null ? null : next.uri.toURL(), information);
-                    } catch (final MalformedURLException e) {
-                        throw new IllegalStateException(e);
-                    }
-                } else {
-                    try {
-                        information = beanArchiveService.getBeanArchiveInformation(next.uri.toURL());
-                    } catch (MalformedURLException e) {
-                        throw new IllegalStateException(e);
-                    }
-                }
-
-                final boolean scanModeAnnotated = BeanArchiveService.BeanDiscoveryMode.ANNOTATED.equals(information.getBeanDiscoveryMode());
-                final boolean noScan = BeanArchiveService.BeanDiscoveryMode.NONE.equals(information.getBeanDiscoveryMode());
-                final boolean isNotEarWebApp = startupObject.getWebContext() == null;
-
-                if (!noScan) {
-                    for (final String name : next.managedClasses) {
-                        if (information.isClassExcluded(name)) {
-                            continue;
-                        }
-
-                        final Class clazz = load(name, classLoader);
-                        if (clazz == null) {
-                            continue;
-                        }
-
-                        if (scanModeAnnotated) {
-                            if (isBean(clazz)) {
-                                classes.add(clazz);
-                                if (beans.startupClasses.contains(name)) {
-                                    startupClasses.add(clazz);
-                                }
-                            }
-                        } else {
-                            final ClassLoader loader = clazz.getClassLoader();
-                            if (!filterByClassLoader || comparator.isSame(loader) || (loader.equals(scl) && isNotEarWebApp)) {
-                                classes.add(clazz);
-                                if (beans.startupClasses.contains(name)) {
-                                    startupClasses.add(clazz);
-                                }
-                            }
-                        }
-                    }
-                }
+            for (final BeansInfo.BDAInfo bda : beans.bdas) {
+                handleBda(startupObject, classLoader, comparator, beans, scl, filterByClassLoader, beanArchiveService, openejb, bda);
+            }
+            for (final BeansInfo.BDAInfo bda : beans.noDescriptorBdas) {
+                handleBda(startupObject, classLoader, comparator, beans, scl, filterByClassLoader, beanArchiveService, openejb, bda);
             }
 
             if (startupObject.getBeanContexts() != null) { // ensure ejbs are in managed beans otherwise they will not be deployed in CDI
@@ -247,6 +201,63 @@ public class CdiScanner implements ScannerService {
                     final Class<?> load = load(name, classLoader);
                     if (load != null && !classes.contains(load)) {
                         classes.add(load);
+                    }
+                }
+            }
+        }
+    }
+
+    private void handleBda(final StartupObject startupObject, final ClassLoader classLoader, final ClassLoaderComparator comparator,
+                           final BeansInfo beans, final ClassLoader scl, final boolean filterByClassLoader,
+                           final BeanArchiveService beanArchiveService, final boolean openejb,
+                           final BeansInfo.BDAInfo bda) {
+        BeanArchiveService.BeanArchiveInformation information;
+        if (openejb) {
+            final OpenEJBBeanInfoService beanInfoService = OpenEJBBeanInfoService.class.cast(beanArchiveService);
+            information = beanInfoService.createBeanArchiveInformation(beans, classLoader, bda.discoveryMode == null? "ALL" : bda.discoveryMode); // this fallback is 100% for tests, TODO: get rid of it (AppComposer)
+            // TODO: log a warn is discoveryModes.get(key) == null
+            try {
+                beanInfoService.getBeanArchiveInfo().put(bda.uri == null ? null : bda.uri.toURL(), information);
+            } catch (final MalformedURLException e) {
+                throw new IllegalStateException(e);
+            }
+        } else {
+            try {
+                information = beanArchiveService.getBeanArchiveInformation(bda.uri.toURL());
+            } catch (final MalformedURLException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+
+        final boolean scanModeAnnotated = BeanArchiveService.BeanDiscoveryMode.ANNOTATED.equals(information.getBeanDiscoveryMode());
+        final boolean noScan = BeanArchiveService.BeanDiscoveryMode.NONE.equals(information.getBeanDiscoveryMode());
+        final boolean isNotEarWebApp = startupObject.getWebContext() == null;
+
+        if (!noScan) {
+            for (final String name : bda.managedClasses) {
+                if (information.isClassExcluded(name)) {
+                    continue;
+                }
+
+                final Class clazz = load(name, classLoader);
+                if (clazz == null) {
+                    continue;
+                }
+
+                if (scanModeAnnotated) {
+                    if (isBean(clazz)) {
+                        classes.add(clazz);
+                        if (beans.startupClasses.contains(name)) {
+                            startupClasses.add(clazz);
+                        }
+                    }
+                } else {
+                    final ClassLoader loader = clazz.getClassLoader();
+                    if (!filterByClassLoader || comparator.isSame(loader) || (loader.equals(scl) && isNotEarWebApp)) {
+                        classes.add(clazz);
+                        if (beans.startupClasses.contains(name)) {
+                            startupClasses.add(clazz);
+                        }
                     }
                 }
             }

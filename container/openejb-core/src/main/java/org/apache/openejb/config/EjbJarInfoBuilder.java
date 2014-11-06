@@ -99,6 +99,7 @@ import org.apache.openejb.jee.oejb3.RoleMapping;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
+import org.apache.webbeans.spi.BeanArchiveService;
 
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -283,6 +284,19 @@ public class EjbJarInfoBuilder {
                     bdaInfo.uri = null;
                 }
                 ejbJar.beans.bdas.add(bdaInfo);
+            }
+            for (final Map.Entry<URL, List<String>> next : beans.getNotManagedClasses().entrySet()) {
+                final URL key = next.getKey();
+
+                final BeansInfo.BDAInfo bdaInfo = new BeansInfo.BDAInfo();
+                bdaInfo.managedClasses.addAll(next.getValue());
+                bdaInfo.discoveryMode = BeanArchiveService.BeanDiscoveryMode.ANNOTATED.name();
+                try {
+                    bdaInfo.uri = key == null ? null : key.toURI();
+                } catch (final URISyntaxException e) {
+                    bdaInfo.uri = null;
+                }
+                ejbJar.beans.noDescriptorBdas.add(bdaInfo);
             }
         }
 

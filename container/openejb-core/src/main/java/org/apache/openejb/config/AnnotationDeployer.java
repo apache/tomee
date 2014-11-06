@@ -1283,7 +1283,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                 if (beans != null) {
                     managedClasses = beans.getManagedClasses();
-                    managedClasses.putAll(getBeanClasses(finder));
+                    getBeanClasses(finder, managedClasses, beans.getNotManagedClasses());
 
                     // passing jar location to be able to manage maven classes/test-classes which have the same moduleId
                     String id = ejbModule.getModuleId();
@@ -1614,7 +1614,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             return name != null && name.length() != 0;
         }
 
-        private Map<URL, List<String>> getBeanClasses(final IAnnotationFinder finder) {
+        private void getBeanClasses(final IAnnotationFinder finder, final Map<URL, List<String>> classes, final Map<URL, List<String>> notManaged) {
 
             //  What we're hoping in this method is to get lucky and find
             //  that our 'finder' instances is an AnnotationFinder that is
@@ -1631,11 +1631,10 @@ public class AnnotationDeployer implements DynamicDeployer {
             final AnnotationFinder annotationFinder = AnnotationFinder.class.cast(delegate);
 
             final Archive archive = annotationFinder.getArchive();
-            final Map<URL, List<String>> classes = new HashMap<>();
 
             if (!WebappAggregatedArchive.class.isInstance(archive)) {
                 classes.put(null, annotationFinder.getAnnotatedClassNames());
-                return classes;
+                return;
             }
 
             final WebappAggregatedArchive aggregatedArchive = (WebappAggregatedArchive) archive;
@@ -1646,10 +1645,11 @@ public class AnnotationDeployer implements DynamicDeployer {
                 final URL beansXml = hasBeansXml(key);
                 if (beansXml != null) {
                     classes.put(beansXml, entry.getValue());
+                } else {
+                    notManaged.put(entry.getKey(), entry.getValue());
                 }
             }
-
-            return classes;
+            return;
         }
 
         public static URL hasBeansXml(final URL url) {
