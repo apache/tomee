@@ -97,7 +97,7 @@ public class ThreadLocalContextManager {
         } else if (ServletContext.class.equals(type)) {
             return ThreadLocalContextManager.SERVLET_CONTEXT;
         } else if (ResourceInfo.class.equals(type)) {
-            return ThreadLocalContextManager.REQUEST;
+            return ThreadLocalContextManager.RESOURCE_INFO;
         } else if (Application.class.equals(type)) {
             return ThreadLocalContextManager.APPLICATION;
         } else if (Configuration.class.equals(type)) {
