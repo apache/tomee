@@ -46,8 +46,8 @@ public class ThreadLocalContextManager {
     public static final ThreadLocalContextResolver CONTEXT_RESOLVER = new ThreadLocalContextResolver();
     public static final ThreadLocalProviders PROVIDERS = new ThreadLocalProviders();
     public static final ThreadLocal<Application> APPLICATION = new ThreadLocal<>();
-    public static final ThreadLocal<Configuration> CONFIGURATION = new ThreadLocal<>();
-    public static final ThreadLocal<ResourceInfo> RESOURCE_INFO = new ThreadLocal<>();
+    public static final ThreadLocalConfiguration CONFIGURATION = new ThreadLocalConfiguration();
+    public static final ThreadLocalResourceInfo RESOURCE_INFO = new ThreadLocalResourceInfo();
     public static final ThreadLocal<Map<String, Object>> OTHERS = new ThreadLocal<Map<String, Object>>();
 
     public static void reset() {
