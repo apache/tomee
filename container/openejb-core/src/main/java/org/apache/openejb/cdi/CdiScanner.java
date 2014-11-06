@@ -29,6 +29,8 @@ import org.apache.openejb.cdi.transactional.RequiredInterceptor;
 import org.apache.openejb.cdi.transactional.RequiredNewInterceptor;
 import org.apache.openejb.cdi.transactional.SupportsInterceptor;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.PropertyPlaceHolderHelper;
 import org.apache.openejb.util.classloader.ClassLoaderComparator;
 import org.apache.openejb.util.classloader.DefaultClassLoaderComparator;
@@ -234,6 +236,16 @@ public class CdiScanner implements ScannerService {
         final boolean isNotEarWebApp = startupObject.getWebContext() == null;
 
         if (!noScan) {
+            if (scanModeAnnotated /* && bda.managedClasses.size() > 50 */) {
+                try {
+                    Logger.getInstance(LogCategory.OPENEJB, CdiScanner.class.getName())
+                            .info("No beans.xml in " + bda.uri.toASCIIString()
+                                    + " looking all classes to find CDI beans, maybe think to add a beans.xml");
+                } catch (final Exception ex) {
+                    // no-op: not a big deal
+                }
+            }
+
             for (final String name : bda.managedClasses) {
                 if (information.isClassExcluded(name)) {
                     continue;
