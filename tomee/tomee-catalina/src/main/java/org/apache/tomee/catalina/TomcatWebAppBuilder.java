@@ -1642,15 +1642,15 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         } catch (final NamingException e) {
             // no-op
         } finally {
+            // required for Pojo Web Services because when Assembler creates the application
+            // the CoreContainerSystem does not contain the WebContext
+            // see also the start method getContainerSystem().addWebDeployment(webContext);
+            for (final WebAppInfo webApp : contextInfo.appInfo.webApps) {
+                SystemInstance.get().fireEvent(new AfterApplicationCreated(contextInfo.appInfo, webApp));
+            }
+
             thread.setContextClassLoader(originalLoader);
             ContextAccessController.setReadOnly(listenerName);
-        }
-
-        // required for Pojo Web Services because when Assembler creates the application
-        // the CoreContainerSystem does not contain the WebContext
-        // see also the start method getContainerSystem().addWebDeployment(webContext);
-        for (final WebAppInfo webApp : contextInfo.appInfo.webApps) {
-            SystemInstance.get().fireEvent(new AfterApplicationCreated(contextInfo.appInfo, webApp));
         }
 
         if (!TomcatVersion.hasAnnotationProcessingSupport()) {
