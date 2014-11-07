@@ -240,7 +240,8 @@ public class CdiScanner implements ScannerService {
                 try {
                     Logger.getInstance(LogCategory.OPENEJB, CdiScanner.class.getName())
                             .info("No beans.xml in " + bda.uri.toASCIIString()
-                                    + " looking all classes to find CDI beans, maybe think to add a beans.xml");
+                                    + " looking all classes to find CDI beans, maybe think to add a beans.xml or "
+                                    + "add it to exclusions.list");
                 } catch (final Exception ex) {
                     // no-op: not a big deal
                 }
