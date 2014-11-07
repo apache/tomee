@@ -17,6 +17,9 @@
 
 package org.apache.openejb.rest;
 
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.SecurityService;
+
 import javax.ws.rs.core.SecurityContext;
 import java.security.Principal;
 
@@ -27,12 +30,20 @@ public class ThreadLocalSecurityContext extends AbstractRestThreadLocalProxy<Sec
         super(SecurityContext.class);
     }
 
+    private static SecurityService service() {
+        return SystemInstance.get().getComponent(SecurityService.class);
+    }
+
     public String getAuthenticationScheme() {
         return get().getAuthenticationScheme();
     }
 
     public Principal getUserPrincipal() {
-        return get().getUserPrincipal();
+        final Principal callerPrincipal = service().getCallerPrincipal();
+        if (callerPrincipal == null) {
+            return get().getUserPrincipal();
+        }
+        return callerPrincipal;
     }
 
     public boolean isSecure() {
@@ -40,7 +51,6 @@ public class ThreadLocalSecurityContext extends AbstractRestThreadLocalProxy<Sec
     }
 
     public boolean isUserInRole(final String role) {
-        return get().isUserInRole(role);
+        return service().isCallerInRole(role) || get().isUserInRole(role);
     }
-
 }
