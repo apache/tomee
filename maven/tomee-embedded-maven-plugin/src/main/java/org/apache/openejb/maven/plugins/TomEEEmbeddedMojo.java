@@ -141,6 +141,12 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
     @Parameter
     private Map<String, String> roles;
 
+    /**
+     * force webapp to be reloadable
+     */
+    @Parameter(property = "tomee-plugin.jsp-development", defaultValue = "true")
+    protected boolean forceJspDevelopment;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (!classpathAsWar && "pom".equals(packaging)) {
@@ -299,6 +305,12 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
             final Properties props = new Properties();
             props.putAll(containerProperties);
             config.setProperties(props);
+        }
+        if (forceJspDevelopment) {
+            if (config.getProperties() == null) {
+                config.setProperties(new Properties());
+            }
+            config.getProperties().put("tomee.jsp-development", "true");
         }
         return config;
     }
