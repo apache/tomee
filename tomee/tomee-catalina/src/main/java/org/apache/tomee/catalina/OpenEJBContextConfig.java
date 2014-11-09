@@ -379,9 +379,13 @@ public class OpenEJBContextConfig extends ContextConfig {
         }
 
         if ("true".equalsIgnoreCase(SystemInstance.get().getProperty("tomee.jsp-development", "true"))) {
-            final Wrapper jsp = Wrapper.class.cast(context.findChild("jsp"));
-            if (jsp != null) {
-                jsp.addInitParameter("development", "true");
+            for (final Container c : context.findChildren()) {
+                if (Wrapper.class.isInstance(c)) {
+                    final Wrapper servlet = Wrapper.class.cast(c);
+                    if ("org.apache.jasper.servlet.JspServlet".equals(servlet.getServletClass())) {
+                        servlet.addInitParameter("development", "true");
+                    }
+                }
             }
         }
 
