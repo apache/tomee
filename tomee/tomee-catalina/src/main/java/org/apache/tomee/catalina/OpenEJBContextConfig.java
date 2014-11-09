@@ -369,6 +369,17 @@ public class OpenEJBContextConfig extends ContextConfig {
             return;
         }
 
+        if ("true".equalsIgnoreCase(SystemInstance.get().getProperty("tomee.jsp-development", "true"))) {
+            for (final Container c : context.findChildren()) {
+                if (Wrapper.class.isInstance(c)) {
+                    final Wrapper servlet = Wrapper.class.cast(c);
+                    if ("org.apache.jasper.servlet.JspServlet".equals(servlet.getServletClass())) {
+                        servlet.addInitParameter("development", "true");
+                    }
+                }
+            }
+        }
+
         final ClassLoader classLoader = context.getLoader().getClassLoader();
 
         // add myfaces auto-initializer if mojarra is not present
