@@ -174,7 +174,7 @@ public class TestClassDiscoverer implements AdditionalBeanDiscoverer {
                 try {
                     is = new FileInputStream(info);
                 } catch (final FileNotFoundException e) {
-                    e.printStackTrace();
+                    // no-op
                 }
             }
         }
@@ -187,7 +187,7 @@ public class TestClassDiscoverer implements AdditionalBeanDiscoverer {
             try {
                 return org.apache.openejb.loader.IO.slurp(is);
             } catch (final IOException e) {
-                e.printStackTrace();
+                // no-op
             } finally {
                 org.apache.openejb.loader.IO.close(is);
             }
