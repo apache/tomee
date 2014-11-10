@@ -115,7 +115,6 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
             // this property is not mandatory by default but depending the protocol it can be relevant so adding it by default
             SystemInstance.get().setProperty("org.apache.openejb.servlet.filters", ArquillianFilterRunner.class.getName() + "=/ArquillianServletRunner");
         } catch (final Exception e) {
-            e.printStackTrace();
             throw new LifecycleException("Something went wrong", e);
         }
     }
@@ -142,10 +141,14 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
             final File file = new File(tempDir, name);
             */
             final String name = archive.getName();
-            final File file = this.dumpFile(archive);
-            ARCHIVES.put(archive, file);
+            final Dump dump = this.dumpFile(archive);
+            final File file = dump.getFile();
 
-            this.container.deploy(name, file);
+            if (dump.isCreated() || !configuration.isSingleDeploymentByArchiveName(name)) {
+                ARCHIVES.put(archive, file);
+                this.container.deploy(name, file);
+            }
+
             final AppInfo info = this.container.getInfo(name);
             final String context = this.getArchiveNameWithoutExtension(archive);
 
@@ -159,7 +162,6 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
 
             return new ProtocolMetaData().addContext(httpContext);
         } catch (final Exception e) {
-            e.printStackTrace();
             throw new DeploymentException("Unable to deploy", e);
         }
     }
@@ -168,10 +170,13 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
     public void undeploy(final Archive<?> archive) throws DeploymentException {
         final String name = archive.getName();
         stopCdiContexts(name);
+        if (configuration.isSingleDeploymentByArchiveName(name)) {
+            return;
+        }
+
         try {
             this.container.undeploy(name);
         } catch (final Exception e) {
-            e.printStackTrace();
             throw new DeploymentException("Unable to undeploy", e);
         }
         final File file = ARCHIVES.remove(archive);

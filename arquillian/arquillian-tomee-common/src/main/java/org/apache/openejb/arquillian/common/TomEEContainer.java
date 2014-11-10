@@ -251,10 +251,11 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
     @Override
     public ProtocolMetaData deploy(final Archive<?> archive) throws DeploymentException {
         try {
-            final File file = dumpFile(archive);
+            final Dump dump = dumpFile(archive);
+            final File file = dump.getFile();
 
             final String fileName = file.getName();
-            if (fileName.endsWith(".war") || fileName.endsWith(".ear")) {
+            if (dump.isCreated() && (fileName.endsWith(".war") || fileName.endsWith(".ear"))) {
                 // extracted folder, TODO: openejb work dir is ignored here
                 Files.deleteOnExit(new File(file.getParentFile(), fileName.substring(0, fileName.length() - 4)));
             }
@@ -262,26 +263,40 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
             final AppInfo appInfo;
             final String archiveName = archive.getName();
             try {
-                final Properties deployerProperties = getDeployerProperties();
-                if (deployerProperties == null) {
-                    appInfo = deployer().deploy(file.getAbsolutePath());
-                } else {
-                    final Properties props = new Properties();
-                    props.putAll(deployerProperties);
+                if (dump.isCreated() || !configuration.isSingleDeploymentByArchiveName(archiveName)) {
+                    final Properties deployerProperties = getDeployerProperties();
+                    if (deployerProperties == null) {
+                        appInfo = deployer().deploy(file.getAbsolutePath());
+                    } else {
+                        final Properties props = new Properties();
+                        props.putAll(deployerProperties);
 
-                    if ("true".equalsIgnoreCase(deployerProperties.getProperty(DeployerEjb.OPENEJB_USE_BINARIES, "false"))) {
-                        final byte[] slurpBinaries = IO.slurpBytes(file);
-                        props.put(DeployerEjb.OPENEJB_VALUE_BINARIES, slurpBinaries);
-                        props.put(DeployerEjb.OPENEJB_PATH_BINARIES, archive.getName());
+                        if ("true".equalsIgnoreCase(deployerProperties.getProperty(DeployerEjb.OPENEJB_USE_BINARIES, "false"))) {
+                            final byte[] slurpBinaries = IO.slurpBytes(file);
+                            props.put(DeployerEjb.OPENEJB_VALUE_BINARIES, slurpBinaries);
+                            props.put(DeployerEjb.OPENEJB_PATH_BINARIES, archive.getName());
+                        }
+
+                        appInfo = deployer().deploy(file.getAbsolutePath(), props);
                     }
 
-                    appInfo = deployer().deploy(file.getAbsolutePath(), props);
+                    if (appInfo != null) {
+                        moduleIds.put(archiveName, new DeployedApp(appInfo.path, file));
+                        Files.deleteOnExit(file); // "i" folder
+                    }
+                } else {
+                    final String path = moduleIds.get(archiveName).path;
+                    AppInfo selected = null;
+                    for (final AppInfo info : deployer().getDeployedApps()) {
+                        if (path.equals(info.path)) {
+                            selected = info;
+                            break;
+                        }
+                    }
+                    appInfo = selected;
                 }
 
-                if (appInfo != null) {
-                    moduleIds.put(archiveName, new DeployedApp(appInfo.path, file));
-                    Files.deleteOnExit(file); // "i" folder
-                } else {
+                if (appInfo == null) {
                     LOGGER.severe("appInfo was not found for " + file.getPath() + ", available are: " + apps());
                     throw new OpenEJBException("can't get appInfo");
                 }
@@ -323,7 +338,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         return null;
     }
 
-    protected File dumpFile(final Archive<?> archive) {
+    protected Dump dumpFile(final Archive<?> archive) {
         final String tmpDir = configuration.getAppWorkingDir();
         Files.deleteOnExit(new File(tmpDir));
 
@@ -353,8 +368,13 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         if (file.exists()) {
             size = file.length();
         }
+
+        final boolean created;
         if (!configuration.isSingleDumpByArchiveName() || !file.exists()) {
             finalArchive.as(ZipExporter.class).exportTo(file, true);
+            created = true;
+        } else {
+            created = false;
         }
         if (size > 0 && size != file.length()) {
             LOGGER.warning("\nFile overwritten but size doesn't match: (now) "
@@ -363,7 +383,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
                     + "\n");
         }
 
-        return file;
+        return new Dump(file, created);
     }
 
     private Collection<String> apps() {
@@ -435,15 +455,20 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
 
     @Override
     public void undeploy(final Archive<?> archive) throws DeploymentException {
-        final DeployedApp deployed = moduleIds.remove(archive.getName());
+        final String archiveName = archive.getName();
+        if (configuration.isSingleDeploymentByArchiveName(archiveName)) {
+            return;
+        }
+
+        final DeployedApp deployed = moduleIds.remove(archiveName);
         try {
             if (deployed == null) {
-                LOGGER.warning(archive.getName() + " was not deployed");
+                LOGGER.warning(archiveName + " was not deployed");
                 return;
             }
             deployer().undeploy(deployed.path);
         } catch (final Exception e) {
-            throw new DeploymentException("Unable to undeploy " + archive.getName(), e);
+            throw new DeploymentException("Unable to undeploy " + archiveName, e);
         } finally {
             if (deployed != null && !configuration.isSingleDumpByArchiveName()) {
                 LOGGER.info("cleaning " + deployed.file.getAbsolutePath());
@@ -480,6 +505,24 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         public DeployedApp(final String path, final File file) {
             this.path = path;
             this.file = file;
+        }
+    }
+
+    protected final class Dump {
+        private final File file;
+        private final boolean created;
+
+        public Dump(final File file, final boolean created) {
+            this.file = file;
+            this.created = created;
+        }
+
+        public File getFile() {
+            return file;
+        }
+
+        public boolean isCreated() {
+            return created;
         }
     }
 }

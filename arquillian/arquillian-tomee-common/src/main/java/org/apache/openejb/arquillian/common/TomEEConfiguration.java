@@ -22,7 +22,12 @@ import org.jboss.arquillian.container.spi.ConfigurationException;
 import org.jboss.arquillian.container.spi.client.container.ContainerConfiguration;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+
+import static java.util.Arrays.asList;
 
 @SuppressWarnings("UnusedDeclaration")
 public class TomEEConfiguration implements ContainerConfiguration {
@@ -46,6 +51,7 @@ public class TomEEConfiguration implements ContainerConfiguration {
     protected String webContextToUseWithEars;
     protected boolean keepServerXmlAsThis;
     protected boolean singleDumpByArchiveName;
+    protected Collection<String> singleDeploymentByArchiveName = Collections.emptyList();
 
     public boolean isUnpackWars() {
         return unpackWars;
@@ -219,5 +225,15 @@ public class TomEEConfiguration implements ContainerConfiguration {
 
     public void setSingleDumpByArchiveName(final boolean singleDumpByArchiveName) {
         this.singleDumpByArchiveName = singleDumpByArchiveName;
+    }
+
+    public boolean isSingleDeploymentByArchiveName(final String name) {
+        return singleDeploymentByArchiveName.contains(name) || singleDeploymentByArchiveName.contains("*") || singleDeploymentByArchiveName.contains("true");
+    }
+
+    public void setSingleDeploymentByArchiveName(final String singleDeploymentByArchiveName) {
+        this.singleDeploymentByArchiveName = singleDeploymentByArchiveName == null || singleDeploymentByArchiveName.trim().isEmpty() ?
+                Collections.<String>emptyList() : new HashSet<String>(asList(singleDeploymentByArchiveName.split(" *, *")));
+        this.singleDumpByArchiveName = true; // implied otherwise what would be the sense?
     }
 }
