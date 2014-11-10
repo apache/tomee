@@ -42,7 +42,6 @@ import org.apache.webbeans.intercept.InterceptorsManager;
 import org.apache.webbeans.spi.BDABeansXmlScanner;
 import org.apache.webbeans.spi.BeanArchiveService;
 import org.apache.webbeans.spi.ScannerService;
-import org.apache.webbeans.xml.DefaultBeanArchiveInformation;
 
 import java.lang.annotation.Annotation;
 import java.net.MalformedURLException;

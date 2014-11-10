@@ -17,12 +17,9 @@
 package org.apache.openejb.testing;
 
 import org.apache.openejb.BeanContext;
-import org.apache.openejb.OpenEJB;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.transaction.EjbTransactionUtil;
-import org.apache.openejb.core.transaction.JtaTransactionPolicyFactory;
 import org.apache.openejb.core.transaction.TransactionPolicy;
-import org.apache.openejb.core.transaction.TransactionPolicyFactory;
 import org.apache.openejb.core.transaction.TransactionType;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;

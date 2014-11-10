@@ -20,15 +20,8 @@ package org.apache.openejb.rest;
 
 import javax.ws.rs.RuntimeType;
 import javax.ws.rs.core.Configuration;
-import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.Feature;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
 import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
