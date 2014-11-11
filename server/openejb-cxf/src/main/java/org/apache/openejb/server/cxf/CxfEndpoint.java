@@ -41,9 +41,11 @@ import org.apache.openejb.server.cxf.transport.util.CxfUtil;
 import javax.naming.Context;
 import javax.xml.transform.Source;
 import javax.xml.ws.Binding;
+import javax.xml.ws.WebServiceFeature;
 import javax.xml.ws.handler.Handler;
 import javax.xml.ws.http.HTTPBinding;
 import javax.xml.ws.soap.SOAPBinding;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -292,6 +294,21 @@ public abstract class CxfEndpoint {
                     + ", please check configuration of service [id=" + databinding + "]");
             }
             serviceFactory.setDataBinding((DataBinding) instance);
+        }
+
+        final String wsFeatures = beanConfig.getProperty(prefix + "wsFeatures");
+        if (wsFeatures != null) {
+            final Collection<Object> instances = ServiceInfos.resolve(availableServices, wsFeatures.split(" *, *"));
+            if (instances != null && !instances.isEmpty()) {
+                final List<WebServiceFeature> features = new ArrayList<WebServiceFeature>(instances.size());
+                for (final Object i : instances) {
+                    if (!WebServiceFeature.class.isInstance(i)) {
+                        throw new IllegalArgumentException("Not a WebServiceFeature: " + i);
+                    }
+                    features.add(WebServiceFeature.class.cast(i));
+                }
+                serviceFactory.setWsFeatures(features);
+            }
         }
 
         return serviceFactory;
