@@ -546,6 +546,8 @@ public final class ApplicationComposers {
                         final PojoDeployment pojoDeployment = new PojoDeployment();
                         pojoDeployment.setClassName(providers.applicationName());
                         pojoDeployment.getProperties().setProperty("cxf.jaxrs.providers", Join.join(",", providersClasses).replace("class ", ""));
+                        // it is specified so skip scanning otherwise we'll get them twice
+                        pojoDeployment.getProperties().setProperty("cxf.jaxrs.skip-provider-scanning", "true");
                         openejbJar.getPojoDeployment().add(pojoDeployment);
                     }
                 } else if (obj instanceof WebModule) { // will add the ejbmodule too
