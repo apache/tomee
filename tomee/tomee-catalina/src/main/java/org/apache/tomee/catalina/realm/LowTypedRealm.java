@@ -18,6 +18,7 @@ package org.apache.tomee.catalina.realm;
 
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
+import org.apache.catalina.CredentialHandler;
 import org.apache.catalina.Realm;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.Request;
@@ -183,6 +184,16 @@ public class LowTypedRealm implements Realm {
     @Override
     public boolean hasUserDataPermission(final Request request, final Response response, final SecurityConstraint[] constraint) throws IOException {
         return (Boolean) invoke(hasUserDataMethod, request.getRequest(), response.getResponse(), constraint);
+    }
+
+    @Override
+    public CredentialHandler getCredentialHandler() {
+        return null;
+    }
+
+    @Override
+    public void setCredentialHandler(final CredentialHandler credentialHandler) {
+        // no-op: ignored, impl should handle it
     }
 
     private Object invoke(final Method method, final Object... args) {

@@ -18,6 +18,7 @@ package org.apache.tomee.catalina.realm;
 
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
+import org.apache.catalina.CredentialHandler;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
@@ -53,6 +54,7 @@ public class LazyRealm extends LifecycleBase implements Realm {
 
     private volatile Realm delegate;
     private Context container;
+    private CredentialHandler credentialHandler;
 
     private CreationalContext<Object> creationalContext;
 
@@ -126,6 +128,7 @@ public class LazyRealm extends LifecycleBase implements Realm {
                         delegate = new LowTypedRealm(instance);
                     }
                     delegate.setContainer(container);
+                    delegate.setCredentialHandler(credentialHandler);
                 }
             }
         }
@@ -191,6 +194,20 @@ public class LazyRealm extends LifecycleBase implements Realm {
             delegate.setContainer(container);
         } else {
             this.container = Context.class.cast(container);
+        }
+    }
+
+    @Override
+    public CredentialHandler getCredentialHandler() {
+        return credentialHandler;
+    }
+
+    @Override
+    public void setCredentialHandler(final CredentialHandler credentialHandler) {
+        this.credentialHandler = credentialHandler;
+        final Realm r = instance();
+        if (r != null) {
+            r.setCredentialHandler(credentialHandler);
         }
     }
 
