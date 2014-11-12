@@ -20,9 +20,16 @@ import org.jboss.arquillian.config.descriptor.api.Multiline;
 import org.jboss.arquillian.container.spi.ConfigurationException;
 import org.jboss.arquillian.container.spi.client.container.ContainerConfiguration;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+
+import static java.util.Arrays.asList;
+
 public class OpenEJBConfiguration implements ContainerConfiguration {
     private String properties = "";
     private String preloadClasses;
+    private Collection<String> singleDeploymentByArchiveName = Collections.emptyList();
 
     @Override
     public void validate() throws ConfigurationException {
@@ -44,5 +51,14 @@ public class OpenEJBConfiguration implements ContainerConfiguration {
 
     public void setPreloadClasses(final String preloadClasses) {
         this.preloadClasses = preloadClasses;
+    }
+
+    public boolean isSingleDeploymentByArchiveName(final String name) {
+        return singleDeploymentByArchiveName.contains(name) || singleDeploymentByArchiveName.contains("*") || singleDeploymentByArchiveName.contains("true");
+    }
+
+    public void setSingleDeploymentByArchiveName(final String singleDeploymentByArchiveName) {
+        this.singleDeploymentByArchiveName = singleDeploymentByArchiveName == null || singleDeploymentByArchiveName.trim().isEmpty() ?
+                Collections.<String>emptyList() : new HashSet<String>(asList(singleDeploymentByArchiveName.split(" *, *")));
     }
 }
