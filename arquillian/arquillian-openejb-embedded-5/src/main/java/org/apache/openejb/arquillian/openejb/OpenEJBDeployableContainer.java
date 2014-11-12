@@ -60,6 +60,8 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -81,6 +83,8 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
             // ignored
         }
     }
+
+    private static final ConcurrentMap<String, DeploymentInfo> DEPLOYMENT_INFO = new ConcurrentHashMap<String, DeploymentInfo>();
 
     // config
     private Properties properties;
@@ -138,6 +142,8 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
     @Inject
     private Instance<TestClass> testClass;
 
+    private OpenEJBConfiguration configuration;
+
     @Override
     public Class<OpenEJBConfiguration> getConfigurationClass() {
         return OpenEJBConfiguration.class;
@@ -146,6 +152,7 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
     @Override
     public void setup(final OpenEJBConfiguration openEJBConfiguration) {
         properties = new Properties();
+        configuration = openEJBConfiguration;
 
         final ByteArrayInputStream bais = new ByteArrayInputStream(openEJBConfiguration.getProperties().getBytes());
         try {
@@ -224,20 +231,28 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
     }
 
     private DeploymentInfo quickDeploy(final Archive<?> archive, final TestClass testClass, final Closeables cls) throws DeploymentException {
-        try {
-            final AppModule module = OpenEJBArchiveProcessor.createModule(archive, testClass, cls);
-            final AppInfo appInfo = configurationFactory.configureApplication(module);
-            final AppContext appCtx = assembler.createApplication(appInfo, module.getClassLoader());
+        final String name = archive.getName();
+        DeploymentInfo info = DEPLOYMENT_INFO.get(name);
+        if (info == null) {
+            try {
+                final AppModule module = OpenEJBArchiveProcessor.createModule(archive, testClass, cls);
+                final AppInfo appInfo = configurationFactory.configureApplication(module);
+                final AppContext appCtx = assembler.createApplication(appInfo, module.getClassLoader());
 
-            final ServletContext appServletContext = new MockServletContext();
-            final HttpSession appSession = new MockHttpSession();
+                final ServletContext appServletContext = new MockServletContext();
+                final HttpSession appSession = new MockHttpSession();
 
-            startContexts(appCtx.getWebBeansContext().getContextsService(), appServletContext, appSession);
+                startContexts(appCtx.getWebBeansContext().getContextsService(), appServletContext, appSession);
 
-            return new DeploymentInfo(appServletContext, appSession, appInfo, appCtx);
-        } catch (final Exception e) {
-            throw new DeploymentException("can't deploy " + archive.getName(), e);
+                info = new DeploymentInfo(appServletContext, appSession, appInfo, appCtx);
+                if (configuration.isSingleDeploymentByArchiveName(name)) {
+                    DEPLOYMENT_INFO.putIfAbsent(name, info);
+                }
+            } catch (final Exception e) {
+                throw new DeploymentException("can't deploy " + name, e);
+            }
         }
+        return info;
     }
 
     @Override
@@ -260,7 +275,9 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
         }
 
         try {
-            assembler.destroyApplication(info.get().path);
+            if (!configuration.isSingleDeploymentByArchiveName(archive.getName())) {
+                assembler.destroyApplication(info.get().path);
+            }
             stopContexts(appContext.get().getWebBeansContext().getContextsService(), servletContext.get(), session.get());
         } catch (final Exception e) {
             throw new DeploymentException("can't undeploy " + archive.getName(), e);
