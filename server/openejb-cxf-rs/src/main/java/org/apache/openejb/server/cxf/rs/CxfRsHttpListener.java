@@ -57,12 +57,16 @@ import org.apache.openejb.api.jmx.ManagedOperation;
 import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
 import org.apache.openejb.assembler.classic.util.ServiceInfos;
+import org.apache.openejb.core.WebContext;
 import org.apache.openejb.dyni.DynamicSubclass;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.rest.ThreadLocalContextManager;
+import org.apache.openejb.server.cxf.rs.event.ExtensionProviderRegistration;
+import org.apache.openejb.server.cxf.rs.event.ServerCreated;
+import org.apache.openejb.server.cxf.rs.event.ServerDestroyed;
 import org.apache.openejb.server.cxf.transport.HttpDestination;
 import org.apache.openejb.server.cxf.transport.util.CxfUtil;
 import org.apache.openejb.server.httpd.HttpRequest;
@@ -349,11 +353,33 @@ public class CxfRsHttpListener implements RsHttpListener {
 
             server = factory.create();
             destination = (HttpDestination) server.getDestination();
+
+            fireServerCreated(oldLoader);
         } finally {
             if (oldLoader != null) {
                 CxfUtil.clearBusLoader(oldLoader);
             }
         }
+    }
+
+    private void fireServerCreated(final ClassLoader oldLoader) {
+        final Object ctx = AppFinder.findAppContextOrWeb(oldLoader, new AppFinder.Transformer<Object>() {
+            @Override
+            public Object from(final AppContext appCtx) {
+                return appCtx;
+            }
+
+            @Override
+            public Object from(final WebContext webCtx) {
+                return webCtx;
+            }
+        });
+        final AppContext appCtx = AppContext.class.isInstance(ctx) ? AppContext.class.cast(ctx) : WebContext.class.cast(ctx).getAppContext();
+        WebContext webContext = appCtx == ctx ? null : WebContext.class.cast(ctx);
+        if (webContext == null && appCtx.getWebContexts().size() == 1 && appCtx.getWebContexts().get(0).getClassLoader() == oldLoader) {
+            webContext = appCtx.getWebContexts().get(0);
+        }
+        SystemInstance.get().fireEvent(new ServerCreated(server, appCtx, webContext));
     }
 
     private List<Object> providers(final Collection<ServiceInfo> services, final Collection<Object> additionalProviders, final WebBeansContext ctx) {
@@ -447,6 +473,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());
         try {
             server.destroy();
+            SystemInstance.get().fireEvent(new ServerDestroyed(server));
         } catch (final RuntimeException ise) {
             LOGGER.warning("Can't stop correctly the endpoint " + server);
             if (LOGGER.isDebugEnabled()) {
@@ -520,6 +547,7 @@ public class CxfRsHttpListener implements RsHttpListener {
 
             try {
                 server = factory.create();
+                fireServerCreated(oldLoader);
             } finally {
                 try {
                     SERVER_IMPL_LOGGER.setLevel(level);
@@ -769,6 +797,8 @@ public class CxfRsHttpListener implements RsHttpListener {
         if (!ignoreAutoProviders) {
             addMandatoryProviders(providers);
         }
+
+        SystemInstance.get().fireEvent(new ExtensionProviderRegistration(providers));
 
         LOGGER.info("Using providers:");
         for (final Object provider : providers) {
