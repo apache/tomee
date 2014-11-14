@@ -491,7 +491,7 @@ public class DynamicMBeanWrapper implements DynamicMBean, MBeanRegistration {
     private static class AnnotationHandler implements InvocationHandler {
         private final Object delegate;
 
-        public AnnotationHandler(final Object javaxAnnotation) {
+        public AnnotationHandler(final  Object javaxAnnotation) {
             delegate = javaxAnnotation;
         }
 
