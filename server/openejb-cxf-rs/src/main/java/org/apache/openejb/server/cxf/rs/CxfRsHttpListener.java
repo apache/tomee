@@ -794,7 +794,8 @@ public class CxfRsHttpListener implements RsHttpListener {
             addMandatoryProviders(providers);
         }
 
-        SystemInstance.get().fireEvent(new ExtensionProviderRegistration(providers));
+        SystemInstance.get().fireEvent(new ExtensionProviderRegistration(
+                AppFinder.findAppContextOrWeb(Thread.currentThread().getContextClassLoader(), AppFinder.AppContextTransformer.INSTANCE), providers));
 
         LOGGER.info("Using providers:");
         for (final Object provider : providers) {
