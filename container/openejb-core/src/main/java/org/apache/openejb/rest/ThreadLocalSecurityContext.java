@@ -41,7 +41,10 @@ public class ThreadLocalSecurityContext extends AbstractRestThreadLocalProxy<Sec
     public Principal getUserPrincipal() {
         final Principal callerPrincipal = service().getCallerPrincipal();
         if (callerPrincipal == null) {
-            return get().getUserPrincipal();
+            final SecurityContext securityContext = get();
+            if (securityContext != null) {
+                return securityContext.getUserPrincipal();
+            }
         }
         return callerPrincipal;
     }
