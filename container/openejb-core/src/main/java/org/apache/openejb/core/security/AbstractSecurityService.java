@@ -267,6 +267,10 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
     @Override
     public Principal getCallerPrincipal() {
         final ThreadContext threadContext = ThreadContext.getThreadContext();
+        if (threadContext == null) {
+            return null;
+        }
+
         final SecurityContext securityContext = threadContext.get(SecurityContext.class);
         final Set<Principal> principals = securityContext.subject.getPrincipals();
 
