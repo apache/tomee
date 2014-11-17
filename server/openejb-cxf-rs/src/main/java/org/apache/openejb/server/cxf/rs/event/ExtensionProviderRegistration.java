@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.server.cxf.rs.event;
 
+import org.apache.openejb.AppContext;
 import org.apache.openejb.observer.Event;
 
 import java.util.List;
@@ -25,9 +26,15 @@ import java.util.List;
 @Event
 public class ExtensionProviderRegistration {
     private final List<Object> providers;
+    private final AppContext appContext;
 
-    public ExtensionProviderRegistration(final List<Object> existings) {
+    public ExtensionProviderRegistration(final AppContext ctx, final List<Object> existings) {
+        this.appContext = ctx;
         this.providers = existings;
+    }
+
+    public AppContext getAppContext() {
+        return appContext;
     }
 
     public List<Object> getProviders() {
