@@ -44,6 +44,7 @@ import org.apache.openejb.assembler.classic.event.AssemblerAfterApplicationCreat
 import org.apache.openejb.assembler.classic.event.AssemblerBeforeApplicationDestroyed;
 import org.apache.openejb.assembler.classic.event.AssemblerCreated;
 import org.apache.openejb.assembler.classic.event.AssemblerDestroyed;
+import org.apache.openejb.assembler.classic.event.BeforeStartEjbs;
 import org.apache.openejb.assembler.classic.event.ContainerSystemPostCreate;
 import org.apache.openejb.assembler.classic.event.ContainerSystemPreDestroy;
 import org.apache.openejb.assembler.monitoring.JMXContainer;
@@ -1199,6 +1200,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     public void startEjbs(final boolean start, final List<BeanContext> allDeployments) throws OpenEJBException {
         // now that everything is configured, deploy to the container
         if (start) {
+            SystemInstance.get().fireEvent(new BeforeStartEjbs(allDeployments));
+
             final Collection<BeanContext> toStart = new ArrayList<BeanContext>();
 
             // deploy
