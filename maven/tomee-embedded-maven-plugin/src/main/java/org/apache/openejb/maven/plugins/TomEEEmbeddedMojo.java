@@ -32,6 +32,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.core.ProvidedClassLoaderFinder;
+import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.maven.util.MavenLogStreamFactory;
@@ -232,7 +233,9 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
                 }
             }
 
-            if (applications != null) {
+            if (applications != null && !applications.isEmpty()) {
+                Files.mkdirs(applicationCopyFolder);
+
                 for (final String app : applications) {
                     final String renameStr = "?name=";
                     final int nameIndex = app.lastIndexOf(renameStr);
