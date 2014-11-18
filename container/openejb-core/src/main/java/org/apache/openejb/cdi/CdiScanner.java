@@ -22,6 +22,7 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.BeansInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
+import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.PropertyPlaceHolderHelper;
 import org.apache.openejb.util.classloader.ClassLoaderComparator;
@@ -69,6 +70,7 @@ public class CdiScanner implements ScannerService {
     }
 
     // TODO add all annotated class
+    private ClassLoader containerLoader;
     private final Set<Class<?>> classes = new HashSet<Class<?>>();
 
     @Override
@@ -76,6 +78,7 @@ public class CdiScanner implements ScannerService {
         if (!StartupObject.class.isInstance (object)) {
             return;
         }
+        containerLoader = ParentClassLoaderFinder.Helper.get();
 
         final StartupObject startupObject = StartupObject.class.cast(object);
         final AppInfo appInfo = startupObject.getAppInfo();
@@ -245,11 +248,18 @@ public class CdiScanner implements ScannerService {
             return;
         }
 
+        final boolean isNotEarWebApp = startupObject.getWebContext() == null;
         final ClassLoader cl = clazz.getClassLoader();
+
         // 1. this classloader is the good one
         // 2. the classloader is the appclassloader one and we are in the ear parent
+        // 3. it is a container class so if it is here it is designed
+        //
+        // main case it tries to filter is ear one ie lib classes shouldn't be in webapp classes
+        // but embedded other cases should still work
         if (!filterByClassLoader
-            || comparator.isSame(cl) || cl.equals(scl) && startupObject.getWebContext() == null) {
+                || comparator.isSame(cl)
+                || ((cl.equals(scl) || cl == containerLoader) && isNotEarWebApp)) {
             classes.add(clazz);
         } else {
             it.remove();
