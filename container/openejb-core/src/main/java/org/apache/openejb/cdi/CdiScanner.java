@@ -28,6 +28,7 @@ import org.apache.openejb.cdi.transactional.NotSupportedInterceptor;
 import org.apache.openejb.cdi.transactional.RequiredInterceptor;
 import org.apache.openejb.cdi.transactional.RequiredNewInterceptor;
 import org.apache.openejb.cdi.transactional.SupportsInterceptor;
+import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -68,6 +69,7 @@ public class CdiScanner implements ScannerService {
     private final Set<Class<?>> startupClasses = new HashSet<>();
 
     private WebBeansContext webBeansContext;
+    private ClassLoader containerLoader;
 
     public void setContext(final WebBeansContext webBeansContext) {
         this.webBeansContext = webBeansContext;
@@ -78,6 +80,7 @@ public class CdiScanner implements ScannerService {
         if (!StartupObject.class.isInstance (object)) {
             return;
         }
+        containerLoader = ParentClassLoaderFinder.Helper.get();
 
         final StartupObject startupObject = StartupObject.class.cast(object);
         final AppInfo appInfo = startupObject.getAppInfo();
@@ -265,7 +268,11 @@ public class CdiScanner implements ScannerService {
                     }
                 } else {
                     final ClassLoader loader = clazz.getClassLoader();
-                    if (!filterByClassLoader || comparator.isSame(loader) || (loader.equals(scl) && isNotEarWebApp)) {
+                    // main case it tries to filter is ear one ie lib classes shouldn't be in webapp classes
+                    // but embedded case should still work
+                    if (!filterByClassLoader
+                            || comparator.isSame(loader)
+                            || ((loader.equals(scl) || loader == containerLoader) && isNotEarWebApp)) {
                         classes.add(clazz);
                         if (beans.startupClasses.contains(name)) {
                             startupClasses.add(clazz);
