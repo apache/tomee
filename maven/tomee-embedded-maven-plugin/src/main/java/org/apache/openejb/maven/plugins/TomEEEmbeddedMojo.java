@@ -32,6 +32,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.core.ProvidedClassLoaderFinder;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.maven.util.MavenLogStreamFactory;
 import org.apache.openejb.util.JuliLogStreamFactory;
@@ -168,6 +169,9 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
     @Parameter(property = "tomee-plugin.skip-current-project", defaultValue = "false")
     private boolean skipCurrentProject;
 
+    @Parameter(property = "tomee-plugin.application-copy", defaultValue = "${project.build.directory}/tomee-embedded/applications")
+    private File applicationCopyFolder;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (!classpathAsWar && "pom".equals(packaging)) {
@@ -233,8 +237,14 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
                     final String renameStr = "?name=";
                     final int nameIndex = app.lastIndexOf(renameStr);
                     final String coordinates = nameIndex > 0 ? app.substring(0, nameIndex) : app;
-                    final File file = mvnToFile(coordinates);
-                    container.deploy(nameIndex > 0 ? app.substring(nameIndex + renameStr.length() + 1) : file.getName(), file);
+                    File file = mvnToFile(coordinates);
+                    final String name = nameIndex > 0 ? app.substring(nameIndex + renameStr.length() + 1) : file.getName();
+                    if (applicationCopyFolder != null) {
+                        final File copy = new File(applicationCopyFolder, name);
+                        IO.copy(file, copy);
+                        file = copy;
+                    }
+                    container.deploy(name, file);
                 }
             }
 
