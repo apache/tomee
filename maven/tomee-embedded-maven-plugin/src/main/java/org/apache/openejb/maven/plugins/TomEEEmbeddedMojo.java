@@ -18,9 +18,14 @@ package org.apache.openejb.maven.plugins;
 
 import org.apache.catalina.LifecycleState;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
@@ -34,7 +39,6 @@ import org.apache.tomee.embedded.Configuration;
 import org.apache.tomee.embedded.Container;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
@@ -46,7 +50,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.logging.LogManager;
 import java.util.logging.SimpleFormatter;
 
 /**
@@ -145,7 +148,25 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
      * force webapp to be reloadable
      */
     @Parameter(property = "tomee-plugin.jsp-development", defaultValue = "true")
-    protected boolean forceJspDevelopment;
+    private boolean forceJspDevelopment;
+
+    @Component
+    private ArtifactFactory factory;
+
+    @Component
+    private ArtifactResolver resolver;
+
+    @Parameter(defaultValue = "${localRepository}", readonly = true)
+    private ArtifactRepository local;
+
+    @Parameter(defaultValue = "${project.remoteArtifactRepositories}", readonly = true)
+    private List<ArtifactRepository> remoteRepos;
+
+    @Parameter
+    private List<String> applications;
+
+    @Parameter(property = "tomee-plugin.skip-current-project", defaultValue = "false")
+    private boolean skipCurrentProject;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -171,7 +192,7 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
         }
 
         final Container container = new Container();
-        final Configuration config  = getConfig();
+        final Configuration config = getConfig();
         container.setup(config);
 
         final Thread hook = new Thread() {
@@ -196,13 +217,25 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
 
             Runtime.getRuntime().addShutdownHook(hook);
 
-            if (!classpathAsWar) {
-                container.deploy('/' + (context == null ? warFile.getName() : context), warFile, true);
-            } else {
-                if (useProjectClasspath) {
-                    thread.setContextClassLoader(createClassLoader(loader));
+            if (!skipCurrentProject) {
+                if (!classpathAsWar) {
+                    container.deploy('/' + (context == null ? warFile.getName() : context), warFile, true);
+                } else {
+                    if (useProjectClasspath) {
+                        thread.setContextClassLoader(createClassLoader(loader));
+                    }
+                    container.deployClasspathAsWebApp(context, docBase); // null is handled properly so no issue here
                 }
-                container.deployClasspathAsWebApp(context, docBase); // null is handled properly so no issue here
+            }
+
+            if (applications != null) {
+                for (final String app : applications) {
+                    final String renameStr = "?name=";
+                    final int nameIndex = app.lastIndexOf(renameStr);
+                    final String coordinates = nameIndex > 0 ? app.substring(0, nameIndex) : app;
+                    final File file = mvnToFile(coordinates);
+                    container.deploy(nameIndex > 0 ? app.substring(nameIndex + renameStr.length() + 1) : file.getName(), file);
+                }
             }
 
             getLog().info("TomEE embedded started on " + config.getHost() + ":" + config.getHttpPort());
@@ -234,6 +267,30 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
             System.setProperties(originalSystProp);
         }
     }
+
+    private File mvnToFile(final String lib) throws Exception {
+        final String[] infos = lib.split(":");
+        final String classifier;
+        final String type;
+        if (infos.length < 3) {
+            throw new MojoExecutionException("format for librairies should be <groupId>:<artifactId>:<version>[:<type>[:<classifier>]]");
+        }
+        if (infos.length >= 4) {
+            type = infos[3];
+        } else {
+            type = "war";
+        }
+        if (infos.length == 5) {
+            classifier = infos[4];
+        } else {
+            classifier = null;
+        }
+
+        final Artifact artifact = factory.createDependencyArtifact(infos[0], infos[1], VersionRange.createFromVersion(infos[2]), type, classifier, "compile");
+        resolver.resolve(artifact, remoteRepos, local);
+        return artifact.getFile();
+    }
+
 
     private void configureJULIfNeeded() {
         if (containerProperties != null && "true".equalsIgnoreCase(containerProperties.get("openejb.jul.forceReload"))) {
@@ -297,7 +354,7 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
             } catch (final NoSuchFieldException nsfe) {
                 // ignored
             } catch (final Exception e) {
-                 getLog().warn("can't initialize attribute " + field.getName());
+                getLog().warn("can't initialize attribute " + field.getName());
             }
 
         }
