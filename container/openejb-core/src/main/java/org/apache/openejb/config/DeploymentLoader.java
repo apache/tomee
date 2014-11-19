@@ -1112,8 +1112,8 @@ public class DeploymentLoader implements DeploymentFilterable {
         }
         if (!complete.getDiscoveryByUrl().isEmpty()) {
             complete.removeDuplicates();
-            webModule.getAltDDs().put("beans.xml", complete);
         }
+        webModule.getAltDDs().put("beans.xml", complete);
     }
 
     private static Beans mergeBeansXml(final CompositeBeans current, final URL url) {

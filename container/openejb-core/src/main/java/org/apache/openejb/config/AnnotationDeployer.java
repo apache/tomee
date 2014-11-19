@@ -1649,7 +1649,6 @@ public class AnnotationDeployer implements DynamicDeployer {
                     notManaged.put(entry.getKey(), entry.getValue());
                 }
             }
-            return;
         }
 
         public static URL hasBeansXml(final URL url) {
@@ -1674,7 +1673,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                         }
                     }
                 }
-                return url;
+                return null;
             }
             if (url.getPath().endsWith("!/META-INF/beans.xml")) {
                 return url;

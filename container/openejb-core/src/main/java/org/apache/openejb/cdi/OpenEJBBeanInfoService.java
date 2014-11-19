@@ -42,67 +42,70 @@ public class OpenEJBBeanInfoService implements BeanArchiveService {
     }
 
     public DefaultBeanArchiveInformation createBeanArchiveInformation(final BeansInfo info, final ClassLoader loader, final String mode) {
-        if (info.version != null && !"1.0".equals(info.version) && info.discoveryMode == null) {
+        if (info != null && info.version != null && !"1.0".equals(info.version) && info.discoveryMode == null) {
             throw new WebBeansConfigurationException("beans.xml with version 1.1 and higher must declare a bean-discovery-mode!");
         }
 
         final DefaultBeanArchiveInformation information = new DefaultBeanArchiveInformation();
-        information.setVersion(info.version);
+        information.setVersion(info == null ? "1.1" : info.version);
         information.setBeanDiscoveryMode(mode == null ? BeanDiscoveryMode.ANNOTATED : BeanDiscoveryMode.valueOf(mode.trim().toUpperCase(Locale.ENGLISH)));
-        information.setDecorators(info.decorators);
-        information.setInterceptors(info.interceptors);
-        information.getAlternativeClasses().addAll(info.alternativeClasses);
-        information.getAlternativeStereotypes().addAll(info.alternativeStereotypes);
+        information.setDecorators(info == null ? Collections.<String>emptyList() : info.decorators);
+        information.setInterceptors(info == null ? Collections.<String>emptyList() : info.interceptors);
+        if (info != null) {
+            information.getAlternativeClasses().addAll(info.alternativeClasses);
+            information.getAlternativeStereotypes().addAll(info.alternativeStereotypes);
 
-        for (final BeansInfo.ExclusionEntryInfo exclusionInfo : info.excludes) {
-            boolean skip = false;
-            for (final String n : exclusionInfo.exclusion.availableClasses) {
-                if (!isClassAvailable(loader, n)) {
-                    skip = true;
-                    break;
-                }
-            }
-            if (!skip) {
-                for (final String n : exclusionInfo.exclusion.notAvailableClasses) {
-                    if (isClassAvailable(loader, n)) {
+            for (final BeansInfo.ExclusionEntryInfo exclusionInfo : info.excludes) {
+                boolean skip = false;
+                for (final String n : exclusionInfo.exclusion.availableClasses) {
+                    if (!isClassAvailable(loader, n)) {
                         skip = true;
                         break;
                     }
                 }
-            }
-            if (!skip) {
-                for (final String n : exclusionInfo.exclusion.systemPropertiesPresence) {
-                    // our system instance is more powerful here
-                    if (SystemInstance.get().getProperty(n) == null) {
-                        skip = true;
-                        break;
+                if (!skip) {
+                    for (final String n : exclusionInfo.exclusion.notAvailableClasses) {
+                        if (isClassAvailable(loader, n)) {
+                            skip = true;
+                            break;
+                        }
                     }
                 }
-            }
-            if (!skip) {
-                for (final String n : exclusionInfo.exclusion.systemProperties.stringPropertyNames()) {
-                    // our system instance is more powerful here
-                    if (!exclusionInfo.exclusion.systemProperties.getProperty(n).equals(SystemInstance.get().getProperty(n))) {
-                        skip = true;
-                        break;
+                if (!skip) {
+                    for (final String n : exclusionInfo.exclusion.systemPropertiesPresence) {
+                        // our system instance is more powerful here
+                        if (SystemInstance.get().getProperty(n) == null) {
+                            skip = true;
+                            break;
+                        }
                     }
                 }
-            }
-            if (skip) {
-                continue;
-            }
+                if (!skip) {
+                    for (final String n : exclusionInfo.exclusion.systemProperties.stringPropertyNames()) {
+                        // our system instance is more powerful here
+                        if (!exclusionInfo.exclusion.systemProperties.getProperty(n).equals(SystemInstance.get().getProperty(n))) {
+                            skip = true;
+                            break;
+                        }
+                    }
+                }
+                if (skip) {
+                    continue;
+                }
 
-            final String name = exclusionInfo.name;
-            if (name.endsWith(".*")) {
-                information.addClassExclude(name.substring(0, name.length() - 2));
-            }
-            else if (name.endsWith(".**")) {
-                information.addPackageExclude(name.substring(0, name.length() - 3));
-            }
-            else {
-                information.addClassExclude(name);
+                final String name = exclusionInfo.name;
+                if (name.endsWith(".*")) {
+                    information.addClassExclude(name.substring(0, name.length() - 2));
+                }
+                else if (name.endsWith(".**")) {
+                    information.addPackageExclude(name.substring(0, name.length() - 3));
+                }
+                else {
+                    information.addClassExclude(name);
+                }
             }
         }
+
         return information;
     }
 
