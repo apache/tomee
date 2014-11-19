@@ -100,7 +100,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
     private final String wildcard = SystemInstance.get().getProperty("openejb.rest.wildcard", ".*"); // embedded = regex, tomee = servlet
 
     public void afterApplicationCreated(final AppInfo appInfo, final WebAppInfo webApp) {
-        final WebContext webContext = containerSystem.getWebContext(webApp.moduleId);
+        final WebContext webContext = containerSystem.getWebContextByHost(webApp.moduleId, webApp.host != null ? webApp.host : virtualHost);
         if (webContext == null) {
             return;
         }
@@ -457,12 +457,22 @@ public abstract class RESTService implements ServerService, SelfManaging {
         }
 
         final RsHttpListener listener = createHttpListener();
-        final RsRegistry.AddressInfo address = rsRegistry.createRsHttpListener(contextRoot, listener, classLoader, nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost, auth, realm);
+        final String host = findHost(contextRoot, appInfo.webApps);
+        final RsRegistry.AddressInfo address = rsRegistry.createRsHttpListener(contextRoot, listener, classLoader, nopath.substring(NOPATH_PREFIX.length() - 1), host, auth, realm);
 
         services.add(new DeployedService(address.complete, contextRoot, application.getClass().getName()));
         listener.deployApplication(application, address.complete.substring(0, address.complete.length() - wildcard.length()), nopath.substring(NOPATH_PREFIX.length(), nopath.length() - wildcard.length()), additionalProviders, restEjbs, // app config
             classLoader, injections, context, owbCtx, // injection/webapp context
             new ServiceConfiguration(configuration, appInfo.services)); // deployment config
+    }
+
+    private String findHost(final String context, final Collection<WebAppInfo> webs) {
+        for (final WebAppInfo web : webs) {
+            if (context.equals(web.contextRoot)) {
+                return web.host != null ? web.host : virtualHost;
+            }
+        }
+        return virtualHost;
     }
 
     private static String appPrefix(final WebAppInfo info, final Class<?> appClazz) {

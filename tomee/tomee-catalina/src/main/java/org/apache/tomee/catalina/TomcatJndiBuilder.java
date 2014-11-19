@@ -171,11 +171,12 @@ public class TomcatJndiBuilder {
             }
         }
 
-        WebContext webContext = cs.getWebContext(path);
+        final String hostname = org.apache.tomee.catalina.Contexts.getHostname(standardContext);
+        WebContext webContext = cs.getWebContextByHost(path, hostname);
         if (webContext == null) { // tomee-embedded deployment
-            webContext = cs.getWebContext(standardContext.getPath().replaceFirst("/", ""));
+            webContext = cs.getWebContextByHost(standardContext.getPath().replaceFirst("/", ""), hostname);
             if (webContext == null) {
-                webContext = cs.getWebContext(standardContext.getPath());
+                webContext = cs.getWebContextByHost(standardContext.getPath(), hostname);
             }
         }
 
@@ -186,7 +187,7 @@ public class TomcatJndiBuilder {
             if (webContext == null && contextInfo != null && contextInfo.appInfo != null) { // can happen if deployed from apps/
                 for (final WebAppInfo webAppInfo : contextInfo.appInfo.webApps) {
                     if (webAppInfo.path != null && webAppInfo.path.replace(File.separatorChar, '/').equals(standardContext.getDocBase())) {
-                        webContext = cs.getWebContext(webAppInfo.moduleId);
+                        webContext = cs.getWebContextByHost(webAppInfo.moduleId, hostname);
                         if (webContext != null) {
                             break;
                         }

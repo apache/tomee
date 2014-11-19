@@ -640,7 +640,7 @@ class AppInfoBuilder {
             final Persistence persistence = persistenceModule.getPersistence();
             for (final PersistenceUnit persistenceUnit : persistence.getPersistenceUnit()) {
                 final PersistenceUnitInfo info = new PersistenceUnitInfo();
-                info.id = persistenceUnit.getName() + " " + rootUrl.hashCode();
+                info.id = appModule.persistenceUnitId(rootUrl, persistenceUnit.getName());
                 info.name = persistenceUnit.getName();
                 info.watchedResources.addAll(persistenceModule.getWatchedResources());
                 info.persistenceUnitRootUrl = rootUrl;

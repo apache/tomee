@@ -163,13 +163,15 @@ public class TomcatRsRegistry implements RsRegistry {
         if (webContext == null) {
             return completePath;
         }
-        return completePath.substring(webContext.length());
+        return completePath.substring((webContext.length() > 0 && !webContext.startsWith("/") ? 1 : 0) + webContext.length());
     }
 
     private static Context findContext(final Container host, final String webContext) {
         Context webapp = Context.class.cast(host.findChild(webContext));
         if (webapp == null && "/".equals(webContext)) { // ROOT
             webapp = Context.class.cast(host.findChild(""));
+        } else if (webapp == null && webContext.length() > 0 && !webContext.startsWith("/")) {
+            webapp = Context.class.cast(host.findChild("/" + webContext));
         }
         return webapp;
     }

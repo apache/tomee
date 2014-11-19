@@ -1612,7 +1612,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
             // add context to WebDeploymentInfo
             if (currentWebAppInfo != null) {
-                final WebContext webContext = getContainerSystem().getWebContext(currentWebAppInfo.moduleId);
+                final WebContext webContext = getContainerSystem().getWebContextByHost(currentWebAppInfo.moduleId, Contexts.getHostname(standardContext));
                 if (webContext != null) {
                     webContext.setJndiEnc(comp);
                 }

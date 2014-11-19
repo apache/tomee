@@ -192,7 +192,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         for (final PersistenceModule module : appModule.getPersistenceModules()) {
             final String rootUrl = module.getRootUrl();
             for (final PersistenceUnit unit : module.getPersistence().getPersistenceUnit()) {
-                unit.setId(unit.getName() + " " + rootUrl.hashCode());
+                unit.setId(appModule.persistenceUnitId(rootUrl, unit.getName()));
                 persistenceUnits.add(rootUrl, unit.getName(), unit);
             }
         }

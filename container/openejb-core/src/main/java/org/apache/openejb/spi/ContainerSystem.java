@@ -35,6 +35,9 @@ public interface ContainerSystem {
 
     Container[] containers();
 
+    WebContext getWebContextByHost(String id, String host);
+
+    @Deprecated // user getWebContextByHost
     WebContext getWebContext(String id);
 
     Context getJNDIContext();

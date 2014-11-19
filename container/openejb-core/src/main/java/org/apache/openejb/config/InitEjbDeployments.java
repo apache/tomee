@@ -30,8 +30,10 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.StringTemplate;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -67,11 +69,23 @@ public class InitEjbDeployments implements DynamicDeployer {
         contextData.put("appId", appModule.getModuleId());
 
         for (final EjbModule ejbModule : appModule.getEjbModules()) {
+            contextData.put("host", ejbModule.isWebapp() ? findHost(ejbModule.getModuleId(), appModule.getWebModules()) : appModule.uniqueHostIfExists());
+            contextData.put("hash", Integer.toString(ejbModule.hashCode()));
             contextData.put("ejbJarId", ejbModule.getModuleId());
             deploy(ejbModule, contextData, abstractSchemaNames);
         }
         contextData.clear();
         return appModule;
+    }
+
+    private String findHost(final String id, final Collection<WebModule> webModules) {
+        for (final WebModule w: webModules) {
+            if (w.getModuleId().equals(id)) {
+                final String host = w.getHost();
+                return host != null ? host : "localhost";
+            }
+        }
+        return "localhost";
     }
 
     public EjbModule deploy(final EjbModule ejbModule) throws OpenEJBException {
