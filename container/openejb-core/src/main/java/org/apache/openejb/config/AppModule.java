@@ -79,6 +79,29 @@ public class AppModule implements DeploymentModule {
         this(classLoader, jarLocation, null, false);
     }
 
+    // shared between org.apache.openejb.config.AutoConfig.resolvePersistenceRefs() and org.apache.openejb.config.AppInfoBuilder.buildPersistenceModules()
+    public String persistenceUnitId(final String rootUrl, final String name) {
+        return name + " " + rootUrl.hashCode() + uniqueHostIfExists();
+    }
+
+    public String uniqueHostIfExists() {
+        final boolean hasWebApps = !getWebModules().isEmpty();
+        if (isWebapp() && hasWebApps) {
+            return getWebModules().iterator().next().getHost();
+        } else if (hasWebApps) {
+            String id = null;
+            for (final WebModule web : getWebModules()) {
+                if (id == null) {
+                    id = web.getHost();
+                } else if (!id.equals(web.getHost())) {
+                    return ""; // find something better as in org.apache.openejb.config.InitEjbDeployments
+                }
+            }
+            return id;
+        }
+        return "";
+    }
+
     public <T extends DeploymentModule> AppModule(final T... modules) {
         final T firstModule = modules[0];
 

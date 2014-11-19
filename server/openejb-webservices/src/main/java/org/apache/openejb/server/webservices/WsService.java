@@ -346,7 +346,7 @@ public abstract class WsService implements ServerService, SelfManaging {
     }
 
     public void afterApplicationCreated(final AppInfo appInfo, final WebAppInfo webApp) {
-        final WebContext webContext = containerSystem.getWebContext(webApp.moduleId);
+        final WebContext webContext = containerSystem.getWebContextByHost(webApp.moduleId, webApp.host != null ? webApp.host : virtualHost);
         if (webContext == null)
             return;
 

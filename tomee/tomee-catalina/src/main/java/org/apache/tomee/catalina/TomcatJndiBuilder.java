@@ -164,9 +164,10 @@ public class TomcatJndiBuilder {
         }
 
         // classical deployment - needed because can be overriden through META-INF/context.xml
+        final String hostname = org.apache.tomee.catalina.Contexts.getHostname(standardContext);
         String path = standardContext.findParameter(TomcatWebAppBuilder.OPENEJB_WEBAPP_MODULE_ID);
         if (path == null) { // standardContext not created by OpenEJB
-            path = org.apache.tomee.catalina.Contexts.getHostname(standardContext);
+            path = hostname;
             if (standardContext.getPath().startsWith("/")) {
                 path += standardContext.getPath();
             } else {
@@ -174,11 +175,11 @@ public class TomcatJndiBuilder {
             }
         }
 
-        WebContext webContext = cs.getWebContext(path);
+        WebContext webContext = cs.getWebContextByHost(path, hostname);
         if (webContext == null) { // tomee-embedded deployment
-            webContext = cs.getWebContext(standardContext.getPath().replaceFirst("/", ""));
+            webContext = cs.getWebContextByHost(standardContext.getPath().replaceFirst("/", ""), hostname);
             if (webContext == null) {
-                webContext = cs.getWebContext(standardContext.getPath());
+                webContext = cs.getWebContextByHost(standardContext.getPath(), hostname);
             }
         }
 
@@ -189,7 +190,7 @@ public class TomcatJndiBuilder {
             if (webContext == null && contextInfo != null && contextInfo.appInfo != null) { // can happen if deployed from apps/
                 for (final WebAppInfo webAppInfo : contextInfo.appInfo.webApps) {
                     if (webAppInfo.path != null && webAppInfo.path.replace(File.separatorChar, '/').equals(standardContext.getDocBase())) {
-                        webContext = cs.getWebContext(webAppInfo.moduleId);
+                        webContext = cs.getWebContextByHost(webAppInfo.moduleId, hostname);
                         if (webContext != null) {
                             break;
                         }

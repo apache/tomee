@@ -27,6 +27,7 @@ import org.apache.openejb.spi.ContainerSystem;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -39,7 +40,7 @@ public class CoreContainerSystem implements ContainerSystem {
     private final Map<Object, AppContext> apps = new ConcurrentHashMap<Object, AppContext>();
     private final Map<Object, BeanContext> deployments = new ConcurrentHashMap<Object, BeanContext>();
     private final Map<Object, Container> containers = new ConcurrentHashMap<Object, Container>();
-    private final Map<String, WebContext> webDeployments = new ConcurrentHashMap<String, WebContext>();
+    private final Map<String, List<WebContext>> webDeployments = new ConcurrentHashMap<String, List<WebContext>>();
     private final Context jndiContext;
 
     /**
@@ -116,16 +117,44 @@ public class CoreContainerSystem implements ContainerSystem {
     }
 
     @Override
+    public WebContext getWebContextByHost(final String id, final String host) {
+        final List<WebContext> webContexts = webDeployments.get(id);
+        if (webContexts == null || webContexts.isEmpty()) {
+            return null;
+        }
+        if (webContexts.size() == 1 && webContexts.get(0).getHost() == null) {
+            return webContexts.get(0);
+        }
+        for (final WebContext web : webContexts) {
+            if (web.getHost() != null && web.getHost().equals(host)) {
+                return web;
+            }
+        }
+        return null;
+    }
+
+    @Override
     public WebContext getWebContext(final String id) {
-        return webDeployments.get(id);
+        final List<WebContext> webContexts = webDeployments.get(id);
+        return webContexts != null && !webContexts.isEmpty() ? webContexts.get(0) : null;
     }
 
     public WebContext[] WebDeployments() {
-        return webDeployments.values().toArray(new WebContext[webDeployments.size()]);
+        final Collection<WebContext> all = new ArrayList<>(webDeployments.size());
+        for (final Collection<WebContext> list : webDeployments.values()) {
+            all.addAll(list);
+        }
+        return all.toArray(new WebContext[all.size()]);
     }
 
     public void addWebContext(final WebContext webDeployment) {
-        this.webDeployments.put(webDeployment.getId(), webDeployment);
+        final String id = webDeployment.getId();
+        List<WebContext> list = this.webDeployments.get(id);
+        if (list == null) {
+            list = new ArrayList<WebContext>();
+            this.webDeployments.put(id, list);
+        }
+        list.add(webDeployment);
     }
 
     public void removeWebContext(final WebContext info) {
