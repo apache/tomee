@@ -33,6 +33,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.container.ResourceContext;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Configuration;
@@ -170,6 +171,9 @@ public final class Contexts {
             } else if (ResourceInfo.class.equals(type)) {
                 final ResourceInfo config = JAXRSUtils.createContextValue(exchange.getInMessage(), null, ResourceInfo.class);
                 ThreadLocalContextManager.RESOURCE_INFO.set(config);
+            } else if (ResourceContext.class.equals(type)) {
+                final ResourceContext config = JAXRSUtils.createContextValue(exchange.getInMessage(), null, ResourceContext.class);
+                ThreadLocalContextManager.RESOURCE_CONTEXT.set(config);
             } else {
                 final Message message = exchange.getInMessage();
                 final ContextProvider<?> provider = ProviderFactory.getInstance(message).createContextProvider(type, message);

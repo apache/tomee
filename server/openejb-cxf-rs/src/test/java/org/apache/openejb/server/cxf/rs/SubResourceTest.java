@@ -31,11 +31,14 @@ import org.junit.runner.RunWith;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.container.ResourceContext;
+import javax.ws.rs.core.Context;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(ApplicationComposer.class)
 public class SubResourceTest {
@@ -68,10 +71,15 @@ public class SubResourceTest {
 
     @Path("/sub1")
     public static class Endpoint1 {
+        @Context
+        private ResourceContext rc;
+
         @Path("sub{i}")
         public Endpoint2 uno(@PathParam("i") final int discr) {
             if (2 == discr) {
-                return new Endpoint2();
+                final Endpoint2 resource = rc.getResource(Endpoint2.class);
+                assertNotNull(resource);
+                return resource;
             }
             return null;
         }

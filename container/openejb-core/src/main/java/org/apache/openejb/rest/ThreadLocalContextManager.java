@@ -22,6 +22,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.container.ResourceContext;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Configuration;
@@ -48,6 +49,7 @@ public class ThreadLocalContextManager {
     public static final ThreadLocal<Application> APPLICATION = new ThreadLocal<>();
     public static final ThreadLocalConfiguration CONFIGURATION = new ThreadLocalConfiguration();
     public static final ThreadLocalResourceInfo RESOURCE_INFO = new ThreadLocalResourceInfo();
+    public static final ThreadLocalResourceContext RESOURCE_CONTEXT = new ThreadLocalResourceContext();
     public static final ThreadLocal<Map<String, Object>> OTHERS = new ThreadLocal<Map<String, Object>>();
 
     public static void reset() {
@@ -65,6 +67,7 @@ public class ThreadLocalContextManager {
         APPLICATION.remove();
         CONFIGURATION.remove();
         RESOURCE_INFO.remove();
+        RESOURCE_CONTEXT.remove();
 
         final Map<String, Object> map = OTHERS.get();
         if (map != null) {
@@ -75,33 +78,35 @@ public class ThreadLocalContextManager {
 
     public static Object findThreadLocal(final Class<?> type) {
         if (Request.class.equals(type)) {
-            return ThreadLocalContextManager.REQUEST;
+            return REQUEST;
         } else if (UriInfo.class.equals(type)) {
-            return ThreadLocalContextManager.URI_INFO;
+            return URI_INFO;
         } else if (HttpHeaders.class.equals(type)) {
-            return ThreadLocalContextManager.HTTP_HEADERS;
+            return HTTP_HEADERS;
         } else if (SecurityContext.class.equals(type)) {
-            return ThreadLocalContextManager.SECURITY_CONTEXT;
+            return SECURITY_CONTEXT;
         } else if (ContextResolver.class.equals(type)) {
-            return ThreadLocalContextManager.CONTEXT_RESOLVER;
+            return CONTEXT_RESOLVER;
         } else if (Providers.class.equals(type)) {
-            return ThreadLocalContextManager.PROVIDERS;
+            return PROVIDERS;
         } else if (ServletRequest.class.equals(type)) {
-            return ThreadLocalContextManager.SERVLET_REQUEST;
+            return SERVLET_REQUEST;
         } else if (HttpServletRequest.class.equals(type)) {
-            return ThreadLocalContextManager.HTTP_SERVLET_REQUEST;
+            return HTTP_SERVLET_REQUEST;
         } else if (HttpServletResponse.class.equals(type)) {
-            return ThreadLocalContextManager.HTTP_SERVLET_RESPONSE;
+            return HTTP_SERVLET_RESPONSE;
         } else if (ServletConfig.class.equals(type)) {
-            return ThreadLocalContextManager.SERVLET_CONFIG;
+            return SERVLET_CONFIG;
         } else if (ServletContext.class.equals(type)) {
-            return ThreadLocalContextManager.SERVLET_CONTEXT;
+            return SERVLET_CONTEXT;
         } else if (ResourceInfo.class.equals(type)) {
-            return ThreadLocalContextManager.RESOURCE_INFO;
+            return RESOURCE_INFO;
+        } else if (ResourceContext.class.equals(type)) {
+            return RESOURCE_CONTEXT;
         } else if (Application.class.equals(type)) {
-            return ThreadLocalContextManager.APPLICATION;
+            return APPLICATION;
         } else if (Configuration.class.equals(type)) {
-            return ThreadLocalContextManager.CONFIGURATION;
+            return CONFIGURATION;
         }
         return null;
     }
