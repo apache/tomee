@@ -59,20 +59,18 @@ public class WebappBeanManager extends BeanManagerImpl {
 
     @Override
     public void fireEvent(final Object event, final EventMetadataImpl metadata, final boolean isLifecycleEvent) {
-        final Class<?> eventClass = event.getClass();
         getNotificationManager().fireEvent(event, metadata, isLifecycleEvent);
-        if (isEvent(eventClass)) {
+        if (isEvent(event)) {
             getParentBm().getNotificationManager().fireEvent(event, metadata, isLifecycleEvent);
         }
     }
 
     @Override
     public <T> Set<ObserverMethod<? super T>> resolveObserverMethods(final T event, final EventMetadataImpl metadata) {
-        final Class<?> eventClass = event.getClass();
         final Set<ObserverMethod<? super T>> set = new HashSet<>();
         set.addAll(getNotificationManager().resolveObservers(event, metadata, false));
 
-        if (isEvent(eventClass)) {
+        if (isEvent(event)) {
             set.addAll(getParentBm().getNotificationManager().resolveObservers(event, metadata, false));
         } // else nothing since extensions are loaded by classloader so we already have it
 
@@ -260,6 +258,11 @@ public class WebappBeanManager extends BeanManagerImpl {
     }
 
     @Override
+    public <T> void addAdditionalAnnotatedType(Object extension, AnnotatedType<T> inAnnotatedType, String id) {
+        super.addAdditionalAnnotatedType(extension, inAnnotatedType, id);
+    }
+
+    @Override
     public Bean<?> getPassivationCapableBean(final String id) {
         final Bean<?> bean = super.getPassivationCapableBean(id);
         if (bean == null) {
@@ -289,9 +292,9 @@ public class WebappBeanManager extends BeanManagerImpl {
         // no-op
     }
 
-    private boolean isEvent(final Class<?> eventClass) {
-        return !WebBeansUtil.isDefaultExtensionBeanEventType(eventClass)
-                && !webappCtx.getWebBeansUtil().isContainerEventType(eventClass);
+    private boolean isEvent(final Object event) {
+        return !WebBeansUtil.isDefaultExtensionBeanEventType(event.getClass())
+                && !webappCtx.getWebBeansUtil().isContainerEventType(event);
     }
 
     private interface Filter<A> {
