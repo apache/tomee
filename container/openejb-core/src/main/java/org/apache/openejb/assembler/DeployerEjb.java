@@ -350,9 +350,12 @@ public class DeployerEjb implements Deployer {
                         break;
                     } else { // exploded dirs
                         final String jar = deps.getFile();
-                        if (jar != null && jar.length() > 3 && jar.substring(0, jar.length() - 4).equals(deps.getDir())) {
-                            it.remove();
-                            break;
+                        if (jar != null && jar.length() > 3) {
+                            final String substring = jar.substring(0, jar.length() - 4);
+                            if (substring.equals(current.getDir()) || substring.equals(current.getFile())) {
+                                it.remove();
+                                break;
+                            }
                         }
                     }
                 }
