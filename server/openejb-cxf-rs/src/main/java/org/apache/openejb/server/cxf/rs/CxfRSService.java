@@ -45,6 +45,7 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.container.ResourceContext;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
@@ -142,6 +143,9 @@ public class CxfRSService extends RESTService {
         }
         if (!hasBean(beanManagerImpl, ResourceInfo.class)) {
             beanManagerImpl.addInternalBean(new ContextBean<>(ResourceInfo.class, ThreadLocalContextManager.RESOURCE_INFO));
+        }
+        if (!hasBean(beanManagerImpl, ResourceContext.class)) {
+            beanManagerImpl.addInternalBean(new ContextBean<>(ResourceContext.class, ThreadLocalContextManager.RESOURCE_CONTEXT));
         }
         beanManagerImpl.getInjectionResolver().clearCaches(); // hasBean() usage can have cached several things
     }
