@@ -40,6 +40,7 @@ import org.apache.openejb.assembler.classic.util.ServiceInfos;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.server.cxf.transport.OpenEJBHttpDestinationFactory;
+import org.apache.openejb.server.cxf.transport.event.BusCreated;
 import org.apache.openejb.util.PropertiesHelper;
 import org.apache.openejb.util.reflection.Reflections;
 
@@ -220,19 +221,20 @@ public final class CxfUtil {
     }
 
     public static void configureBus() {
-        if (SystemInstance.get().getProperties().containsKey(BUS_CONFIGURED_FLAG)) { // jaxws and jaxrs for instance
+        final SystemInstance systemInstance = SystemInstance.get();
+        if (systemInstance.getProperties().containsKey(BUS_CONFIGURED_FLAG)) { // jaxws and jaxrs for instance
             return;
         }
 
         final Bus bus = getBus();
 
         // ensure cxf classes are loaded from container to avoid conflicts with app
-        if ("true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.cxf.CxfContainerClassLoader", "true"))) {
+        if ("true".equalsIgnoreCase(systemInstance.getProperty("openejb.cxf.CxfContainerClassLoader", "true"))) {
             bus.setExtension(new CxfContainerClassLoader(), ClassLoader.class);
         }
 
         // activate jmx, by default isEnabled() == false in InstrumentationManagerImpl
-        if ("true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.cxf.jmx", "true"))) {
+        if ("true".equalsIgnoreCase(systemInstance.getProperty("openejb.cxf.jmx", "true"))) {
             final InstrumentationManager mgr = bus.getExtension(InstrumentationManager.class);
             if (InstrumentationManagerImpl.class.isInstance(mgr)) {
                 bus.setExtension(LocalMBeanServer.get(), MBeanServer.class); // just to keep everything consistent
@@ -254,13 +256,13 @@ public final class CxfUtil {
             }
         }
 
-        final ServiceConfiguration configuration = new ServiceConfiguration(SystemInstance.get().getProperties(),
-            SystemInstance.get().getComponent(OpenEjbConfiguration.class).facilities.services);
+        final ServiceConfiguration configuration = new ServiceConfiguration(systemInstance.getProperties(),
+            systemInstance.getComponent(OpenEjbConfiguration.class).facilities.services);
 
         final Collection<ServiceInfo> serviceInfos = configuration.getAvailableServices();
-        final Properties properties = configuration.getProperties();
-        if (properties == null || properties.isEmpty()) {
-            return;
+        Properties properties = configuration.getProperties();
+        if (properties == null) {
+            properties = new Properties();
         }
 
         final String featuresIds = properties.getProperty(BUS_PREFIX + FEATURES);
@@ -279,7 +281,8 @@ public final class CxfUtil {
 
         configureInterceptors(bus, BUS_PREFIX, serviceInfos, configuration.getProperties());
 
-        SystemInstance.get().getProperties().setProperty(BUS_CONFIGURED_FLAG, "true");
+        systemInstance.getProperties().setProperty(BUS_CONFIGURED_FLAG, "true");
+        systemInstance.fireEvent(new BusCreated(bus));
     }
 
     private static class ClientAwareBusHandler implements InvocationHandler {
