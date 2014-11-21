@@ -67,11 +67,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 @SuppressWarnings("UnusedDeclaration")
 public abstract class WsService implements ServerService, SelfManaging {
@@ -90,7 +93,7 @@ public abstract class WsService implements ServerService, SelfManaging {
     private String transportGuarantee;
     private String authMethod;
     private String virtualHost;
-    private final Set<AppInfo> deployedApplications = new HashSet<AppInfo>();
+    private final ConcurrentMap<AppInfo, Collection<BeanContext>> deployedApplications = new ConcurrentHashMap<AppInfo, Collection<BeanContext>>();
     private final Set<WebAppInfo> deployedWebApps = new HashSet<WebAppInfo>();
     private final Map<String, String> ejbLocations = new TreeMap<String, String>();
     private final Map<String, String> ejbAddresses = new TreeMap<String, String>();
@@ -196,7 +199,7 @@ public abstract class WsService implements ServerService, SelfManaging {
     public void stop() throws ServiceException {
         if (assembler != null) {
             SystemInstance.get().removeObserver(this);
-            for (final AppInfo appInfo : new ArrayList<AppInfo>(deployedApplications)) {
+            for (final AppInfo appInfo : new ArrayList<AppInfo>(deployedApplications.keySet())) {
                 undeploy(new AssemblerBeforeApplicationDestroyed(appInfo, null));
             }
             assembler = null;
@@ -218,17 +221,23 @@ public abstract class WsService implements ServerService, SelfManaging {
 
     // handle webapp ejbs of ears - called before afterApplicationCreated for ear so dont add app to deployedApplications here
     public void newEjbToDeploy(final @Observes NewEjbAvailableAfterApplicationCreated event) {
-        deployApp(event.getApp(), event.getBeanContexts());
+        final AppInfo app = event.getApp();
+        if (!deployedApplications.containsKey(app)) {
+            deployedApplications.putIfAbsent(app, new LinkedList<BeanContext>());
+        }
+        deployApp(app, event.getBeanContexts());
     }
 
     public void deploy(final @Observes AssemblerAfterApplicationCreated event) {
         final AppInfo appInfo = event.getApp();
-        if (deployedApplications.add(appInfo)) {
+        if (deployedApplications.put(appInfo, new LinkedList<BeanContext>()) == null) {
             deployApp(appInfo, event.getContext().getBeanContexts());
         }
     }
 
     private void deployApp(final AppInfo appInfo, final Collection<BeanContext> ejbs) {
+        final Collection<BeanContext> alreadyDeployed = deployedApplications.get(appInfo);
+
         final Map<String, String> webContextByEjb = new HashMap<String, String>();
         for (final WebAppInfo webApp : appInfo.webApps) {
             for (final String ejb : webApp.ejbWebServices) {
@@ -270,7 +279,7 @@ public abstract class WsService implements ServerService, SelfManaging {
                     }
 
                     final PortInfo portInfo = ports.get(bean.ejbName);
-                    if (portInfo == null)
+                    if (portInfo == null || alreadyDeployed.contains(beanContext))
                         continue;
 
                     final ClassLoader old = Thread.currentThread().getContextClassLoader();
@@ -306,6 +315,7 @@ public abstract class WsService implements ServerService, SelfManaging {
                                 context = ejbJar.moduleName;
                             }
                             final List<String> addresses = wsRegistry.addWsContainer(container, classLoader, context, virtualHost, location, realm, transport, auth);
+                            alreadyDeployed.add(beanContext);
 
                             // one of the registered addresses to be the canonical address
                             final String address = HttpUtil.selectSingleAddress(addresses);
@@ -428,7 +438,7 @@ public abstract class WsService implements ServerService, SelfManaging {
 
     public void undeploy(@Observes final AssemblerBeforeApplicationDestroyed event) {
         final AppInfo appInfo = event.getApp();
-        if (deployedApplications.remove(appInfo)) {
+        if (deployedApplications.remove(appInfo) != null) {
             for (final EjbJarInfo ejbJar : appInfo.ejbJars) {
                 final Map<String, PortInfo> ports = new TreeMap<String, PortInfo>();
                 for (final PortInfo port : ejbJar.portInfos) {
