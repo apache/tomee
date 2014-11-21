@@ -57,6 +57,6 @@ public class PersistJavaagentTest {
 
         // catalina.sh was updated
         final String catalinaSh = IO.slurp(new File(catalinaBase, "bin/catalina.sh"));
-        assertTrue(catalinaSh.contains("-javaagent:$CATALINA_HOME/javaagent/sirona-javaagent"));
+        assertTrue(catalinaSh, catalinaSh.contains("-javaagent:$CATALINA_HOME/javaagent/sirona-javaagent"));
     }
 }
