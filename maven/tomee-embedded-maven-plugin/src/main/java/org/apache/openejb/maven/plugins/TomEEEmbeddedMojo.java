@@ -172,7 +172,7 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
 
     @Parameter(property = "tomee-plugin.application-copy", defaultValue = "${project.build.directory}/tomee-embedded/applications")
     private File applicationCopyFolder;
-z
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (!classpathAsWar && "pom".equals(packaging)) {
