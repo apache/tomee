@@ -1293,7 +1293,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             }
 
             if (unit.getJtaDataSource() == null && unit.getNonJtaDataSource() == null
-                    && "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.force-unit-type", unit.getProperty("openejb.force-unit-type", "false")))) {
+                    && "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.force-unit-type", unit.getProperty("openejb.force-unit-type", "true")))) {
                 unit.setTransactionType(TransactionType.JTA); // 8.2.1.5 of JPA 2.0 spec
             }
 
