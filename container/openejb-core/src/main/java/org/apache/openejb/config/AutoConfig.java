@@ -1278,6 +1278,9 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
             // if jta datasource is specified it can be used as model fo rnon jta datasource
             final boolean resourceLocal = TransactionType.RESOURCE_LOCAL.equals(unit.getTransactionType()) && unit.getJtaDataSource() == null;
+            if (resourceLocal && isDataSourcePropertiesConfigured(unit.getProperties())) {
+                continue;
+            }
 
             final Properties required = new Properties();
 
@@ -1739,6 +1742,11 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 setNonJtaDataSource(unit, nonJtaDataSourceId);
             }
         }
+    }
+
+    private boolean isDataSourcePropertiesConfigured(final Properties properties) {
+        return "true".equals(SystemInstance.get().getProperty("openejb.guess.resource-local-datasource-properties-configured", "true")) &&
+                (properties.containsKey("javax.persistence.jdbc.driver") || properties.containsKey("javax.persistence.jdbc.url"));
     }
 
     private static void suffixAliases(final ResourceInfo ri, final String suffix) {
