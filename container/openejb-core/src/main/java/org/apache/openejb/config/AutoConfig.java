@@ -1278,7 +1278,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
             // if jta datasource is specified it can be used as model fo rnon jta datasource
             final boolean resourceLocal = TransactionType.RESOURCE_LOCAL.equals(unit.getTransactionType()) && unit.getJtaDataSource() == null;
-            if (resourceLocal && isDataSourcePropertiesConfigured(unit.getProperties())) {
+            if (resourceLocal && unit.getNonJtaDataSource() == null && isDataSourcePropertiesConfigured(unit.getProperties())) {
                 continue;
             }
 
