@@ -245,7 +245,6 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
     @Parameter
     protected List<String> endorsedLibs;
-
     
     @Parameter
     protected List<String> javaagents;
