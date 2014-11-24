@@ -1271,12 +1271,16 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 logger.info("Configuring PersistenceUnit(name=" + unit.getName() + ")");
             }
 
-            if (unit.getJtaDataSource() == null && unit.getNonJtaDataSource() == null) {
+            if (unit.getJtaDataSource() == null && unit.getNonJtaDataSource() == null
+                    && "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.force-unit-type", unit.getProperty("openejb.force-unit-type", "true")))) {
                 unit.setTransactionType(TransactionType.JTA); // 8.2.1.5 of JPA 2.0 spec
             }
 
             // if jta datasource is specified it can be used as model fo rnon jta datasource
             final boolean resourceLocal = TransactionType.RESOURCE_LOCAL.equals(unit.getTransactionType()) && unit.getJtaDataSource() == null;
+            if (resourceLocal && unit.getNonJtaDataSource() == null && isDataSourcePropertiesConfigured(unit.getProperties())) {
+                continue;
+            }
 
             final Properties required = new Properties();
 
@@ -1738,6 +1742,11 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 setNonJtaDataSource(unit, nonJtaDataSourceId);
             }
         }
+    }
+
+    private boolean isDataSourcePropertiesConfigured(final Properties properties) {
+        return "true".equals(SystemInstance.get().getProperty("openejb.guess.resource-local-datasource-properties-configured", "true")) &&
+                (properties.containsKey("javax.persistence.jdbc.driver") || properties.containsKey("javax.persistence.jdbc.url"));
     }
 
     private static void suffixAliases(final ResourceInfo ri, final String suffix) {

@@ -1013,7 +1013,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     }
 
     private void addJavaagents(final List<String> strings) {
-        final String existingJavaagent = "'-javaagent:$CATALINA_HOME/lib/openejb-javaagent.jar'";
+        final String existingJavaagent = "\\\"-javaagent:$CATALINA_HOME/lib/openejb-javaagent.jar\\\"";
         final StringBuilder javaagentString = new StringBuilder(existingJavaagent);
 
         for (final String rawJavaagent : javaagents) {
