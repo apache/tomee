@@ -254,6 +254,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     protected List<String> libs;
 
     @Parameter
+    protected List<String> endorsedLibs;
+    
+    @Parameter
     protected List<String> javaagents;
 
     @Parameter(property = "tomee-plugin.persist-javaagents", defaultValue = "false")
@@ -348,6 +351,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                 removeDefaultWebapps(removeTomeeWebapp, existingWebapps);
             }
             copyLibs(libs, new File(catalinaBase, libDir), "jar");
+            copyLibs(endorsedLibs, new File(catalinaBase, "endorsed"), "jar");
             copyLibs(webapps, new File(catalinaBase, webappDir), "war");
             copyLibs(apps, new File(catalinaBase, appDir), "jar");
             overrideConf(config, "conf");
