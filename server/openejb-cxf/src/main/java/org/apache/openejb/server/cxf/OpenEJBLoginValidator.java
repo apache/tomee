@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.server.cxf;
 
+import org.apache.openejb.core.security.AbstractSecurityService;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.ws.security.WSPasswordCallback;
@@ -54,7 +55,9 @@ public class OpenEJBLoginValidator extends UsernameTokenValidator {
             securityService.disassociate();
 
             token = securityService.login(user, password);
-            securityService.associate(token);
+            if (AbstractSecurityService.class.isInstance(securityService) && AbstractSecurityService.class.cast(securityService).currentState() == null) {
+                securityService.associate(token);
+            }
 
         } catch (final LoginException e) {
             throw new SecurityException("cannot log user " + user, e);
