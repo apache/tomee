@@ -44,7 +44,7 @@
     <dependency>
       <groupId>org.jboss.jsr299.tck</groupId>
       <artifactId>jsr299-tck-impl</artifactId>
-      <version>1.0.4.SP1</version>
+      <version>${cditck.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.testng</groupId>

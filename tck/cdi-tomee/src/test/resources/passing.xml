@@ -22,7 +22,21 @@
       <package name="org.jboss.jsr299.tck.interceptors.tests.*"/>
     </packages>
     <classes>
-      <class name="org.jboss.jsr299.tck.tests.context.passivating.broken.dependentScopedProducerFieldReturnsNonSerializableObjectForInjectionIntoStatefulSessionBean.EnterpriseBeanWithIllegalDependencyTest">
+        <!-- ERROR in TCK, see CDITCK-265 -->
+        <class name="org.jboss.jsr299.tck.tests.implementation.producer.field.lifecycle.ProducerFieldLifecycleTest">
+            <methods>
+                <exclude name=".*"></exclude>
+            </methods>
+        </class>
+
+        <!-- ERROR in TCK, see CDITCK-458 -->
+        <class name="org.jboss.jsr299.tck.tests.extensions.processBean.ProcessBeanTest">
+            <methods>
+                <exclude name=".*"></exclude>
+            </methods>
+        </class>
+
+        <class name="org.jboss.jsr299.tck.tests.context.passivating.broken.dependentScopedProducerFieldReturnsNonSerializableObjectForInjectionIntoStatefulSessionBean.EnterpriseBeanWithIllegalDependencyTest">
         <methods>
           <exclude name="test"/>
         </methods>

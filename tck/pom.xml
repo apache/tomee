@@ -27,6 +27,7 @@
   <name>OpenEJB :: TCK</name>
 
   <properties>
+    <cditck.version>1.0.6.Final</cditck.version>
     <test.coverage.skip>true</test.coverage.skip>
   </properties>
 
