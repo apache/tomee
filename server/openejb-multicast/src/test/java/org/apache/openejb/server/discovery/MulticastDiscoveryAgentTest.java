@@ -26,6 +26,7 @@ import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  * @version $Rev$ $Date$
@@ -36,6 +37,11 @@ public class MulticastDiscoveryAgentTest extends TestCase {
     //public void testNothing(){}
 
     public void test() throws Exception {
+        if ("true".equals(System.getProperty("skipMulticastTests"))) {
+            Logger.getLogger(this.getClass().getName()).warning("Skipping MulticastTest " + this.getClass().getName());
+            return;
+        }
+        
         final MulticastDiscoveryAgent[] agents = {agent("red"), agent("green"), agent("yellow"), agent("blue")};
 
         final MulticastSearch multicast = new MulticastSearch();
