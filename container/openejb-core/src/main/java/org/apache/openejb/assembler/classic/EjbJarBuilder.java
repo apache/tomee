@@ -49,7 +49,7 @@ public class EjbJarBuilder {
         final InjectionBuilder injectionBuilder = new InjectionBuilder(classLoader);
         final List<Injection> moduleInjections = injectionBuilder.buildInjections(ejbJar.moduleJndiEnc);
         moduleInjections.addAll(appInjections);
-        final Context moduleJndiContext = new JndiEncBuilder(ejbJar.moduleJndiEnc, moduleInjections, null, ejbJar.moduleName, ejbJar.moduleUri, ejbJar.uniqueId, classLoader)
+        final Context moduleJndiContext = new JndiEncBuilder(ejbJar.moduleJndiEnc, moduleInjections, null, ejbJar.moduleName, ejbJar.moduleUri, ejbJar.uniqueId, classLoader, context.getProperties())
             .build(JndiEncBuilder.JndiScope.module);
 
         final HashMap<String, BeanContext> deployments = new HashMap<String, BeanContext>();

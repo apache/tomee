@@ -120,7 +120,8 @@ public class DeployerEjb implements Deployer {
 
     public DeployerEjb() {
         deploymentLoader = new DeploymentLoader();
-        configurationFactory = new ConfigurationFactory();
+        final ConfigurationFactory component = SystemInstance.get().getComponent(ConfigurationFactory.class);
+        configurationFactory = component == null ? new ConfigurationFactory() : component;
         assembler = (Assembler) SystemInstance.get().getComponent(org.apache.openejb.spi.Assembler.class);
     }
 

@@ -19,6 +19,7 @@ package org.apache.openejb.server.cxf;
 import org.apache.cxf.binding.soap.saaj.SAAJInInterceptor;
 import org.apache.cxf.binding.soap.saaj.SAAJOutInterceptor;
 import org.apache.cxf.endpoint.Endpoint;
+import org.apache.cxf.interceptor.InterceptorProvider;
 import org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor;
 import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;
 import org.apache.openejb.core.webservices.PortData;
@@ -99,7 +100,7 @@ public class ConfigureCxfSecurity {
         return cl.loadClass(validator).newInstance();
     }
 
-    public static final void setupWSS4JChain(Endpoint endpoint, Map<String, Object> inProps, Map<String, Object> outProps) {
+    public static final void setupWSS4JChain(InterceptorProvider endpoint, Map<String, Object> inProps, Map<String, Object> outProps) {
 
         if (null != inProps && !inProps.isEmpty()) {
             endpoint.getInInterceptors().add(new SAAJInInterceptor());

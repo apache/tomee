@@ -201,6 +201,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         if (SystemInstance.get().getComponent(ClassLoaderEnricher.class) == null) {
             SystemInstance.get().setComponent(ClassLoaderEnricher.class, new ClassLoaderEnricher());
         }
+        SystemInstance.get().setComponent(ConfigurationFactory.class, this);
 
         // annotation deployer encapsulate some logic, to be able to push to it some config
         // we give the ability here to get the internal deployer to push the config values
@@ -695,11 +696,14 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         return configureService(container, infoClass);
     }
 
-    private void loadPropertiesDeclaredConfiguration(final Openejb openejb) {
+    public static void loadPropertiesDeclaredConfiguration(final Openejb openejb) {
 
         final Properties sysProps = new Properties(System.getProperties());
         sysProps.putAll(SystemInstance.get().getProperties());
+        fillOpenEjb(openejb, sysProps);
+    }
 
+    public static void fillOpenEjb(final Openejb openejb, final Properties sysProps) {
         for (final Map.Entry<Object, Object> entry : sysProps.entrySet()) {
 
             final Object o = entry.getValue();
@@ -725,7 +729,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
     }
 
-    protected Object toConfigDeclaration(final String name, String value) throws URISyntaxException, OpenEJBException {
+    protected static Object toConfigDeclaration(final String name, String value) throws URISyntaxException, OpenEJBException {
         //        value = value.replaceFirst("(.)#", "$1%23");
         value = value.replaceFirst("(provider=[^#=&]+)#", "$1%23");
 
@@ -734,7 +738,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         return toConfigDeclaration(name, uri);
     }
 
-    public Object toConfigDeclaration(final String id, final URI uri) throws OpenEJBException {
+    public static Object toConfigDeclaration(final String id, final URI uri) throws OpenEJBException {
         final String serviceType;
         try {
             serviceType = uri.getHost();

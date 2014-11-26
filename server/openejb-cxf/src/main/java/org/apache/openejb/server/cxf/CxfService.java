@@ -22,8 +22,11 @@ import org.apache.cxf.binding.soap.SoapTransportFactory;
 import org.apache.cxf.transport.DestinationFactory;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
+import org.apache.openejb.core.ivm.naming.JaxWsServiceReference;
 import org.apache.openejb.core.webservices.PortData;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.cxf.client.SaajInterceptor;
+import org.apache.openejb.server.cxf.client.WebServiceInjectionConfigurator;
 import org.apache.openejb.server.cxf.ejb.EjbWsContainer;
 import org.apache.openejb.server.cxf.pojo.PojoWsContainer;
 import org.apache.openejb.server.cxf.transport.util.CxfUtil;
@@ -53,6 +56,10 @@ public class CxfService extends WsService {
         SaajInterceptor.registerInterceptors();
 
         transportFactory = new SoapTransportFactory();
+
+        if (SystemInstance.get().getComponent(JaxWsServiceReference.WebServiceClientCustomizer.class) == null) {
+            SystemInstance.get().setComponent(JaxWsServiceReference.WebServiceClientCustomizer.class, new WebServiceInjectionConfigurator());
+        }
     }
 
     @Override

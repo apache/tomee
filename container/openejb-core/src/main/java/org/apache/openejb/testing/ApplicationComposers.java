@@ -701,6 +701,16 @@ public final class ApplicationComposers {
             appModule = newModule;
         }
 
+        // config for the app
+        for (final Map.Entry<Object, List<Method>> method : findAnnotatedMethods(configs, ApplicationConfiguration.class).entrySet()) {
+            for (final Method m : method.getValue()) {
+                final Object o = m.invoke(method.getKey());
+                if (Properties.class.isInstance(o)) {
+                    appModule.getProperties().putAll(Properties.class.cast(o));
+                }
+            }
+        }
+
         // copy ejb into beans if cdi is activated and init finder
         for (final EjbModule ejb : appModule.getEjbModules()) {
             final EnterpriseBean[] enterpriseBeans = ejb.getEjbJar().getEnterpriseBeans();

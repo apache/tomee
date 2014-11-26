@@ -1303,7 +1303,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
                 // jndi bindings
                 webContext.getBindings().putAll(appContext.getBindings());
-                webContext.getBindings().putAll(getJndiBuilder(classLoader, webAppInfo, injections).buildBindings(JndiEncBuilder.JndiScope.comp));
+                webContext.getBindings().putAll(getJndiBuilder(classLoader, webAppInfo, injections, appContext.getProperties()).buildBindings(JndiEncBuilder.JndiScope.comp));
 
                 final JavaeeInstanceManager instanceManager = new JavaeeInstanceManager(webContext);
                 standardContext.setInstanceManager(instanceManager);
@@ -1496,8 +1496,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         return (TomEEWebappClassLoader) old;
     }
 
-    private JndiEncBuilder getJndiBuilder(final ClassLoader classLoader, final WebAppInfo webAppInfo, final Set<Injection> injections) throws OpenEJBException {
-        return new JndiEncBuilder(webAppInfo.jndiEnc, injections, webAppInfo.moduleId, "Bean", null, webAppInfo.uniqueId, classLoader);
+    private JndiEncBuilder getJndiBuilder(final ClassLoader classLoader, final WebAppInfo webAppInfo, final Set<Injection> injections, final Properties props) throws OpenEJBException {
+        return new JndiEncBuilder(webAppInfo.jndiEnc, injections, webAppInfo.moduleId, "Bean", null, webAppInfo.uniqueId, classLoader, props);
     }
 
     /**

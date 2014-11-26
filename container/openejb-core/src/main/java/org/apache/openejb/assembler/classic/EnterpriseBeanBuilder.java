@@ -145,7 +145,8 @@ class EnterpriseBeanBuilder {
         }
 
         // build the enc
-        final JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(bean.jndiEnc, injections, transactionType, moduleContext.getId(), null, moduleContext.getUniqueId(), moduleContext.getClassLoader());
+        final JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(bean.jndiEnc, injections, transactionType, moduleContext.getId(), null,
+                moduleContext.getUniqueId(), moduleContext.getClassLoader(), moduleContext.getAppContext() == null ? moduleContext.getProperties() : moduleContext.getAppContext().getProperties());
         final Context compJndiContext = jndiEncBuilder.build(JndiEncBuilder.JndiScope.comp);
         bind(compJndiContext, "module", moduleContext.getModuleJndiContext());
         bind(compJndiContext, "app", moduleContext.getAppContext().getAppJndiContext());
