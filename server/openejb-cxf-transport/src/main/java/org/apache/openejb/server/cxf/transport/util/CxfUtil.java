@@ -28,8 +28,8 @@ import org.apache.cxf.configuration.spring.MapProvider;
 import org.apache.cxf.databinding.DataBinding;
 import org.apache.cxf.endpoint.AbstractEndpointFactory;
 import org.apache.cxf.feature.AbstractFeature;
-import org.apache.cxf.interceptor.AbstractBasicInterceptorProvider;
 import org.apache.cxf.interceptor.Interceptor;
+import org.apache.cxf.interceptor.InterceptorProvider;
 import org.apache.cxf.management.InstrumentationManager;
 import org.apache.cxf.management.jmx.InstrumentationManagerImpl;
 import org.apache.cxf.message.Message;
@@ -188,7 +188,7 @@ public final class CxfUtil {
         }
     }
 
-    public static void configureInterceptors(final AbstractBasicInterceptorProvider abip, final String prefix, final Collection<ServiceInfo> availableServices, final Properties beanConfig) {
+    public static void configureInterceptors(final InterceptorProvider abip, final String prefix, final Collection<ServiceInfo> availableServices, final Properties beanConfig) {
         // interceptors
         final String inInterceptorsIds = beanConfig.getProperty(prefix + IN_INTERCEPTORS);
         if (inInterceptorsIds != null && !inInterceptorsIds.trim().isEmpty()) {

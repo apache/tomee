@@ -20,8 +20,11 @@ package org.apache.openejb.server.cxf;
 import org.apache.cxf.Bus;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
+import org.apache.openejb.core.ivm.naming.JaxWsServiceReference;
 import org.apache.openejb.core.webservices.PortData;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.cxf.client.SaajInterceptor;
+import org.apache.openejb.server.cxf.client.WebServiceInjectionConfigurator;
 import org.apache.openejb.server.cxf.ejb.EjbWsContainer;
 import org.apache.openejb.server.cxf.pojo.PojoWsContainer;
 import org.apache.openejb.server.cxf.transport.HttpTransportFactory;
@@ -54,6 +57,10 @@ public class CxfService extends WsService {
         SaajInterceptor.registerInterceptors();
 
         initBusTransport(CxfUtil.getBus());
+
+        if (SystemInstance.get().getComponent(JaxWsServiceReference.WebServiceClientCustomizer.class) == null) {
+            SystemInstance.get().setComponent(JaxWsServiceReference.WebServiceClientCustomizer.class, new WebServiceInjectionConfigurator());
+        }
     }
 
     private void initBusTransport(final Bus bus) {

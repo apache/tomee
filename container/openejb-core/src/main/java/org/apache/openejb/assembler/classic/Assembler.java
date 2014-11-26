@@ -662,11 +662,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         injections.addAll(injectionBuilder.buildInjections(appInfo.globalJndiEnc));
         injections.addAll(injectionBuilder.buildInjections(appInfo.appJndiEnc));
 
-        final JndiEncBuilder globalBuilder = new JndiEncBuilder(appInfo.globalJndiEnc, injections, appInfo.appId, null, GLOBAL_UNIQUE_ID, classLoader);
+        final JndiEncBuilder globalBuilder = new JndiEncBuilder(appInfo.globalJndiEnc, injections, appInfo.appId, null, GLOBAL_UNIQUE_ID, classLoader, appInfo.properties);
         final Map<String, Object> globalBindings = globalBuilder.buildBindings(JndiEncBuilder.JndiScope.global);
         final Context globalJndiContext = globalBuilder.build(globalBindings);
 
-        final JndiEncBuilder appBuilder = new JndiEncBuilder(appInfo.appJndiEnc, injections, appInfo.appId, null, appInfo.appId, classLoader);
+        final JndiEncBuilder appBuilder = new JndiEncBuilder(appInfo.appJndiEnc, injections, appInfo.appId, null, appInfo.appId, classLoader, appInfo.properties);
         final Map<String, Object> appBindings = appBuilder.buildBindings(JndiEncBuilder.JndiScope.app);
         final Context appJndiContext = appBuilder.build(appBindings);
 
@@ -849,7 +849,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 final List<Injection> clientInjections = injectionBuilder.buildInjections(clientInfo.jndiEnc);
 
                 // build the enc
-                final JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(clientInfo.jndiEnc, clientInjections, "Bean", clientInfo.moduleId, null, clientInfo.uniqueId, classLoader);
+                final JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(clientInfo.jndiEnc, clientInjections, "Bean", clientInfo.moduleId, null, clientInfo.uniqueId, classLoader, new Properties());
                 // if there is at least a remote client classes
                 // or if there is no local client classes
                 // then, we can set the client flag

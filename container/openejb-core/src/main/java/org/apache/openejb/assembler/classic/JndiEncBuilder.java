@@ -88,6 +88,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
 
@@ -112,15 +113,17 @@ public class JndiEncBuilder {
     private final String uniqueId;
     private final Collection<Injection> injections;
     private final ClassLoader classLoader;
+    private final Properties properties;
 
     private boolean useCrossClassLoaderRef = true;
     private boolean client;
 
-    public JndiEncBuilder(final JndiEncInfo jndiEnc, final Collection<Injection> injections, final String moduleId, final URI moduleUri, final String uniqueId, final ClassLoader classLoader) throws OpenEJBException {
-        this(jndiEnc, injections, null, moduleId, moduleUri, uniqueId, classLoader);
+    public JndiEncBuilder(final JndiEncInfo jndiEnc, final Collection<Injection> injections, final String moduleId, final URI moduleUri, final String uniqueId, final ClassLoader classLoader, final Properties appProperties) throws OpenEJBException {
+        this(jndiEnc, injections, null, moduleId, moduleUri, uniqueId, classLoader, appProperties);
     }
 
-    public JndiEncBuilder(final JndiEncInfo jndiEnc, final Collection<Injection> injections, final String transactionType, final String moduleId, final URI moduleUri, final String uniqueId, final ClassLoader classLoader) throws OpenEJBException {
+    public JndiEncBuilder(final JndiEncInfo jndiEnc, final Collection<Injection> injections, final String transactionType, final String moduleId,
+                          final URI moduleUri, final String uniqueId, final ClassLoader classLoader, final Properties appProperties) throws OpenEJBException {
         this.jndiEnc = jndiEnc;
         this.injections = injections;
         beanManagedTransactions = transactionType != null && transactionType.equalsIgnoreCase("Bean");
@@ -130,6 +133,8 @@ public class JndiEncBuilder {
 
         this.uniqueId = uniqueId;
         this.classLoader = classLoader;
+
+        this.properties = appProperties;
     }
 
     public boolean isUseCrossClassLoaderRef() {
@@ -492,7 +497,8 @@ public class JndiEncBuilder {
                     wsdlUrl,
                     portRefs,
                     handlerChains,
-                    injections);
+                    injections,
+                    properties);
                 bindings.put(normalize(referenceInfo.referenceName), reference);
             } else {
                 final ServiceRefData serviceRefData = new ServiceRefData(referenceInfo.id,

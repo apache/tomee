@@ -112,11 +112,11 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
 
             final Map<String, Object> bindings = new HashMap<String, Object>();
             bindings.putAll(appContext.getBindings());
-            bindings.putAll(new JndiEncBuilder(webAppInfo.jndiEnc, injections, webAppInfo.moduleId, "Bean", null, webAppInfo.uniqueId, classLoader).buildBindings(JndiEncBuilder.JndiScope.comp));
+            bindings.putAll(new JndiEncBuilder(webAppInfo.jndiEnc, injections, webAppInfo.moduleId, "Bean", null, webAppInfo.uniqueId, classLoader, appInfo.properties).buildBindings(JndiEncBuilder.JndiScope.comp));
 
             final WebContext webContext = new WebContext(appContext);
             webContext.setBindings(bindings);
-            webContext.getBindings().putAll(new JndiEncBuilder(webAppInfo.jndiEnc, injections, webAppInfo.moduleId, "Bean", null, webAppInfo.uniqueId, classLoader).buildBindings(JndiEncBuilder.JndiScope.comp));
+            webContext.getBindings().putAll(new JndiEncBuilder(webAppInfo.jndiEnc, injections, webAppInfo.moduleId, "Bean", null, webAppInfo.uniqueId, classLoader, appInfo.properties).buildBindings(JndiEncBuilder.JndiScope.comp));
             webContext.setJndiEnc(WebInitialContext.create(bindings, appContext.getGlobalJndiContext()));
             webContext.setClassLoader(classLoader);
             webContext.setId(webAppInfo.moduleId);

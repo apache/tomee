@@ -33,6 +33,7 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Properties;
 
 public class WsFactory extends AbstractObjectFactory {
     public Object getObjectInstance(final Object object, final Name name, final Context context, final Hashtable environment) throws Exception {
@@ -103,6 +104,8 @@ public class WsFactory extends AbstractObjectFactory {
                 injections = Collections.emptyList();
             }
 
+            final Properties properties = new Properties();
+            properties.putAll(environment);
             final JaxWsServiceReference serviceReference = new JaxWsServiceReference(serviceId,
                     serviceQName,
                     serviceClass, portQName,
@@ -110,7 +113,8 @@ public class WsFactory extends AbstractObjectFactory {
                     wsdlUrl,
                     portRefs,
                     handlerChains,
-                    injections);
+                    injections,
+                    properties);
             value = serviceReference.getObject();
         }
 

@@ -40,6 +40,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 public class JaxWsServiceReference extends Reference {
@@ -51,11 +52,17 @@ public class JaxWsServiceReference extends Reference {
     private final URL wsdlUrl;
     private final List<HandlerChainData> handlerChains = new ArrayList<HandlerChainData>();
     private final Collection<Injection> injections;
+    private final Properties properties;
     private PortAddressRegistry portAddressRegistry;
     private final List<PortRefData> portRefs = new ArrayList<PortRefData>();
 
-    public JaxWsServiceReference(final String id, final QName serviceQName, final Class<? extends Service> serviceClass, final QName portQName, final Class<?> referenceClass, final URL wsdlUrl, final List<PortRefData> portRefs, final List<HandlerChainData> handlerChains, final Collection<Injection> injections) {
+    public JaxWsServiceReference(final String id, final QName serviceQName, final Class<? extends Service> serviceClass,
+                                 final QName portQName, final Class<?> referenceClass, final URL wsdlUrl,
+                                 final List<PortRefData> portRefs, final List<HandlerChainData> handlerChains,
+                                 final Collection<Injection> injections,
+                                 final Properties properties) {
         this.id = id;
+        this.properties = properties;
         this.serviceQName = serviceQName;
         this.serviceClass = serviceClass;
         this.portQName = portQName;
@@ -148,13 +155,18 @@ public class JaxWsServiceReference extends Reference {
 
         // register the service data so it can be fetched when the service is passed over the EJBd protocol
         final ServiceRefData serviceRefData = new ServiceRefData(id,
-            serviceQName,
-            serviceClass, portQName,
-            referenceClass,
-            wsdlUrl,
-            handlerChains,
-            portRefs);
+                serviceQName,
+                serviceClass, portQName,
+                referenceClass,
+                wsdlUrl,
+                handlerChains,
+                portRefs);
         ServiceRefData.putServiceRefData(port, serviceRefData);
+
+        final WebServiceClientCustomizer customizer = SystemInstance.get().getComponent(WebServiceClientCustomizer.class);
+        if (customizer != null) {
+            customizer.customize(port, properties == null ? new Properties() : properties);
+        }
 
         return port;
     }
@@ -167,5 +179,9 @@ public class JaxWsServiceReference extends Reference {
             }
         }
         return portAddressRegistry;
+    }
+
+    public interface WebServiceClientCustomizer {
+        void customize(Object port, Properties properties);
     }
 }
