@@ -17,9 +17,12 @@
  */
 package org.apache.openejb.util;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.File;
 import java.net.InetAddress;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
@@ -27,8 +30,25 @@ import java.util.concurrent.TimeUnit;
 
 public class NetworkUtilTest {
 
+    private static File f = null;
+
+    @BeforeClass
+    public static void beforeClass() throws Exception {
+        f = File.createTempFile("tomee", "lock");
+    }
+
+    @AfterClass
+    public static void afterClass() {
+        if (null != f && !f.delete()) {
+            f.deleteOnExit();
+        }
+    }
+
+
     @Test
-    public void test() throws Exception {
+    public void testNext() throws Exception {
+
+        NetworkUtil.clearLockFile();
 
         final int count = 20;
         final CountDownLatch latch = new CountDownLatch(count);
@@ -40,7 +60,7 @@ public class NetworkUtilTest {
                 public void run() {
                     final int nextAvailablePort = NetworkUtil.getNextAvailablePort();
                     if (list.contains(nextAvailablePort)) {
-                        if ((System.currentTimeMillis() - start) > 10000) {
+                        if ((System.currentTimeMillis() - start) < 10000) {
                             Assert.fail("Got a duplicate port with ten seconds");
                         }
                     } else {
@@ -57,7 +77,42 @@ public class NetworkUtilTest {
         final boolean success = latch.await(15, TimeUnit.SECONDS);
         Assert.assertTrue(success);
 
-        System.out.println("Thread safe port list = " + list);
+        System.out.println("VM safe port list = " + list);
+    }
+
+    @Test
+    public void testNextLock() throws Exception {
+
+        System.setProperty(NetworkUtil.TOMEE_LOCK_FILE, f.getAbsolutePath());
+
+        final int count = 20;
+        final CountDownLatch latch = new CountDownLatch(count);
+        final long start = System.currentTimeMillis();
+        final CopyOnWriteArrayList<Integer> list = new CopyOnWriteArrayList<Integer>();
+
+        for (int i = 0; i < count; i++) {
+            final Thread thread = new Thread(new Runnable() {
+                public void run() {
+                    final int nextAvailablePort = NetworkUtil.getNextAvailablePort();
+                    if (list.contains(nextAvailablePort)) {
+                        if ((System.currentTimeMillis() - start) < 10000) {
+                            Assert.fail("Got a duplicate port with ten seconds");
+                        }
+                    } else {
+                        list.add(nextAvailablePort);
+                    }
+
+                    latch.countDown();
+                }
+            }, "test-thread-" + count);
+            thread.setDaemon(false);
+            thread.start();
+        }
+
+        final boolean success = latch.await(15, TimeUnit.SECONDS);
+        Assert.assertTrue(success);
+
+        System.out.println("Machine safe port list = " + list);
     }
 
     @Test
