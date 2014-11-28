@@ -25,6 +25,7 @@ import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.Module;
 import org.apache.openejb.testng.PropertiesBuilder;
 import org.apache.openejb.util.NetworkUtil;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -57,6 +58,7 @@ public class CustomHttpMethodTest {
             final URL url = new URL("http://localhost:" + nextAvailablePort + "/custom");
             final HttpURLConnection connection = HttpURLConnection.class.cast(url.openConnection());
             connection.setRequestMethod("OPTIONS");
+            Assert.assertNotNull("Connection is null", connection);
             final InputStream inputStream = connection.getInputStream();
             IO.slurp(inputStream);
             assertEquals("OPTIONS", method.get());
