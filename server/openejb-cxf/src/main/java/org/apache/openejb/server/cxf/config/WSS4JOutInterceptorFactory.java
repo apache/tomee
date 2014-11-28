@@ -16,13 +16,13 @@
  */
 package org.apache.openejb.server.cxf.config;
 
-import org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor;
+import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;
 
 /**
  * @version $Rev$ $Date$
  */
-public class WSS4JInInterceptorFactory extends WSS4JInterceptorFactoryBase {
-    public WSS4JInInterceptor create() {
-        return new WSS4JInInterceptor(getAndDestroyMap());
+public class WSS4JOutInterceptorFactory extends WSS4JInterceptorFactoryBase {
+    public WSS4JOutInterceptor create() {
+        return new WSS4JOutInterceptor(getAndDestroyMap());
     }
 }

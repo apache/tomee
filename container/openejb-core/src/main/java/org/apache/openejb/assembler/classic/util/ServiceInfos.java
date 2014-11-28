@@ -134,48 +134,48 @@ public final class ServiceInfos {
     }
 
     public static Object build(final Collection<ServiceInfo> services, final ServiceInfo info, final ObjectRecipe serviceRecipe) {
+        if ("org.apache.openejb.config.sys.MapFactory".equals(info.className)) {
+            return info.properties;
+        }
+
         if (!info.properties.containsKey("properties")) {
             info.properties.put("properties", new UnsetPropertiesRecipe());
         }
 
-        // we can't ask to have a setter for existing code
+        // we can't ask for having a setter for existing code
         serviceRecipe.allow(Option.FIELD_INJECTION);
         serviceRecipe.allow(Option.PRIVATE_PROPERTIES);
 
-        if ("org.apache.openejb.config.sys.MapFactory".equals(info.className)) {
-            serviceRecipe.setProperty("prop", info.properties);
-        } else {
-            for (final Map.Entry<Object, Object> entry : info.properties.entrySet()) { // manage links
-                final String key = entry.getKey().toString();
-                final Object value = entry.getValue();
-                if (value instanceof String) {
-                    final String valueStr = value.toString();
-                    if (valueStr.startsWith("$")) {
-                        serviceRecipe.setProperty(key, resolve(services, valueStr.substring(1)));
-                    } else if (valueStr.startsWith("@")) {
-                        final Context jndiContext = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
+        for (final Map.Entry<Object, Object> entry : info.properties.entrySet()) { // manage links
+            final String key = entry.getKey().toString();
+            final Object value = entry.getValue();
+            if (value instanceof String) {
+                final String valueStr = value.toString();
+                if (valueStr.startsWith("$")) {
+                    serviceRecipe.setProperty(key, resolve(services, valueStr.substring(1)));
+                } else if (valueStr.startsWith("@")) {
+                    final Context jndiContext = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
+                    try {
+                        serviceRecipe.setProperty(key, jndiContext.lookup(JndiConstants.OPENEJB_RESOURCE_JNDI_PREFIX + valueStr.substring(1)));
+                    } catch (final NamingException e) {
                         try {
-                            serviceRecipe.setProperty(key, jndiContext.lookup(JndiConstants.OPENEJB_RESOURCE_JNDI_PREFIX + valueStr.substring(1)));
-                        } catch (final NamingException e) {
-                            try {
-                                serviceRecipe.setProperty(key, jndiContext.lookup(valueStr.substring(1)));
-                            } catch (final NamingException e1) {
-                                Logger.getInstance(LogCategory.OPENEJB, ServiceInfos.class).warning("Value " + valueStr + " starting with @ but doesn't point to an existing resource, using raw value");
-                                serviceRecipe.setProperty(key, value);
-                            }
+                            serviceRecipe.setProperty(key, jndiContext.lookup(valueStr.substring(1)));
+                        } catch (final NamingException e1) {
+                            Logger.getInstance(LogCategory.OPENEJB, ServiceInfos.class).warning("Value " + valueStr + " starting with @ but doesn't point to an existing resource, using raw value");
+                            serviceRecipe.setProperty(key, value);
                         }
-                    } else {
-                        serviceRecipe.setProperty(key, value);
                     }
                 } else {
-                    serviceRecipe.setProperty(key, entry.getValue());
+                    serviceRecipe.setProperty(key, value);
                 }
+            } else {
+                serviceRecipe.setProperty(key, entry.getValue());
             }
         }
 
         final Object service = serviceRecipe.create();
 
-        SystemInstance.get().addObserver(service);
+        SystemInstance.get().addObserver(service); // TODO: remove it? in all case the observer should remove itself when done
         Assembler.logUnusedProperties(serviceRecipe, info);
 
         return service;
