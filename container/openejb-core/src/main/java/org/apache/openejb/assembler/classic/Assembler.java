@@ -2163,6 +2163,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     public void createService(final ServiceInfo serviceInfo) throws OpenEJBException {
         final ObjectRecipe serviceRecipe = createRecipe(serviceInfo);
+        serviceRecipe.setProperty("properties", new UnsetPropertiesRecipe());
 
         final Object service = serviceRecipe.create();
         SystemInstance.get().addObserver(service);
