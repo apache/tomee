@@ -163,7 +163,8 @@ public final class NetworkUtil {
                 if (!checkLockFile(port)) {
                     try {
                         ss.close();
-                    } catch (final Exception ignored) {
+                    } catch (final Exception e) {
+                        //Ignore
                     }
                     continue;
                 }
@@ -191,7 +192,8 @@ public final class NetworkUtil {
                 final File f = new File(lf);
                 try {
                     lockFile = (!f.exists() && !f.createNewFile() ? null : (f.isFile() ? f : null));
-                } catch (final IOException ignored) {
+                } catch (final IOException e) {
+                    //Ignore
                 }
             }
         }
@@ -260,35 +262,35 @@ public final class NetworkUtil {
                     fileChannel.write(ByteBuffer.wrap(baos.toByteArray()));
                 }
 
-            } catch (final Exception ignored) {
+            } catch (final Exception e) {
                 result = false;
             } finally {
                 if (null != lock) {
                     try {
                         lock.release();
-                    } catch (final Exception ignored) {
-
+                    } catch (final Exception e) {
+                        //Ignore
                     }
                 }
                 if (null != baos) {
                     try {
                         baos.close();
-                    } catch (final Exception ignored) {
-
+                    } catch (final Exception e) {
+                        //Ignore
                     }
                 }
                 if (null != bais) {
                     try {
                         bais.close();
-                    } catch (final Exception ignored) {
-
+                    } catch (final Exception e) {
+                        //Ignore
                     }
                 }
                 if (null != raf) {
                     try {
                         raf.close();
-                    } catch (final Exception ignored) {
-
+                    } catch (final Exception e) {
+                        //Ignore
                     }
                 }
             }
