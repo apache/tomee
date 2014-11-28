@@ -20,9 +20,7 @@ package org.apache.openejb.server.cxf.client;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
-import org.apache.openejb.assembler.classic.OpenEjbConfigurationFactory;
 import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.sys.Openejb;
@@ -39,8 +37,6 @@ import java.util.List;
 import java.util.Properties;
 
 import static java.util.Arrays.asList;
-import static org.apache.openejb.server.cxf.ConfigureCxfSecurity.getPropsFromProperties;
-import static org.apache.openejb.server.cxf.ConfigureCxfSecurity.setupWSS4JChain;
 import static org.apache.openejb.server.cxf.transport.util.CxfUtil.configureInterceptors;
 
 /**
@@ -61,7 +57,9 @@ public class WebServiceInjectionConfigurator implements JaxWsServiceReference.We
     @Override
     public void customize(final Object o, final Properties properties) {
         try {
-            configure(ClientProxy.getClient(o), properties);
+            if (!javax.xml.ws.Service.class.isInstance(o)) {
+                configure(ClientProxy.getClient(o), properties);
+            }
         } catch (final Exception e) {
             Logger.getInstance(LogCategory.CXF, WebServiceInjectionConfigurator.class.getName())
                     .error(e.getMessage(), e);
@@ -74,11 +72,6 @@ public class WebServiceInjectionConfigurator implements JaxWsServiceReference.We
         }
 
         for (final String suffix : asList("", client.getEndpoint().getEndpointInfo().getName().toString() + ".")) {
-            // wss4j which is historically quite particular
-            setupWSS4JChain(client,
-                    getPropsFromProperties(properties, "cxf.jaxws.client.wss4j.in." + suffix),
-                    getPropsFromProperties(properties, "cxf.jaxws.client.wss4j.out." + suffix));
-
             // here (ie at runtime) we have no idea which services were linked to the app
             // so using tomee.xml ones for now (not that shocking since we externalize the config with this class)
             final OpenEjbConfiguration config = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
@@ -104,6 +97,13 @@ public class WebServiceInjectionConfigurator implements JaxWsServiceReference.We
 
         final Collection<ServiceInfo> info = new ArrayList<ServiceInfo>(services.size());
         for (final Service s : services) {
+            final String prefix = s.getId() + ".";
+            for (final String key : properties.stringPropertyNames()) {
+                if (key.startsWith(prefix)) {
+                    s.getProperties().put(key.substring(prefix.length()), properties.getProperty(key));
+                }
+            }
+
             try {
                 info.add(cf.configureService(s, ServiceInfo.class));
             } catch (final OpenEJBException e) {

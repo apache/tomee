@@ -21,11 +21,13 @@ import java.util.Map;
 import java.util.Properties;
 
 public final class MapFactory {
-    private MapFactory() {
-        // no-op
+    private Properties props = new Properties();
+
+    public Map<?, ?> create() {
+        return props;
     }
 
-    public static Map<?, ?> create(final Properties props) {
+    public Properties getProps() {
         return props;
     }
 }

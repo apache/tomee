@@ -61,7 +61,8 @@ public class ObserverManager {
         }
 
         try {
-            if (observers.add(new Observer(observer))) {
+            final Observer wrapper = new Observer(observer);
+            if (wrapper.after.size() + wrapper.before.size() + wrapper.methods.size() > 0 && observers.add(wrapper)) {
                 methods.clear();
                 fireEvent(new ObserverAdded(observer));
                 return true;
