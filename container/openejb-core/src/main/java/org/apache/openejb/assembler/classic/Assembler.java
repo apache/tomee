@@ -956,7 +956,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 if (si.factoryMethod != null) {
                     query.put("factory-name", si.factoryMethod);
                 }
-                if (si.constructorArgs != null) {
+                if (si.constructorArgs != null && !si.constructorArgs.isEmpty()) {
                     query.put("constructor", Join.join(",", si.constructorArgs));
                 }
                 appInfo.properties.put(si.id, "new://Service?" + URISupport.createQueryString(query));
