@@ -57,7 +57,7 @@ public class EjbWsContainer extends CxfWsContainer {
 
     @Override
     protected String getFakeUrl() {
-        return beanContext.getEjbName();
+        return beanContext.getEjbName().replace('/', '-') + "_ejb" + beanContext.hashCode();
     }
 
     protected ObjectName registerMBean() {
