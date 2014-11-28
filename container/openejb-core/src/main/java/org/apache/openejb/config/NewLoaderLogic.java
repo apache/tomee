@@ -34,7 +34,6 @@ import org.apache.xbean.finder.filter.Filter;
 import org.apache.xbean.finder.filter.Filters;
 import org.apache.xbean.finder.filter.IncludeExcludeFilter;
 import org.apache.xbean.finder.filter.PatternFilter;
-import org.apache.xbean.finder.filter.PrefixFilter;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -53,6 +52,8 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import static java.util.Arrays.asList;
 
 /**
  * @version $Rev$ $Date$
@@ -200,6 +201,14 @@ public class NewLoaderLogic {
         return false;
     }
 
+    public static boolean skip(final String name) {
+        getExclusions();
+        if (filter != null && filter.accept(name)) {
+            return true;
+        }
+        return false;
+    }
+
     public static UrlSet applyBuiltinExcludes(final UrlSet urlSet, final Filter includeFilter, final Filter excludeFilter) throws MalformedURLException {
         getExclusions(); // force init
 
@@ -294,12 +303,11 @@ public class NewLoaderLogic {
     @SuppressWarnings("unchecked")
     public static Filter getFilter() {
         if (filter == null) {
-            final List<Filter> filters = new ArrayList<Filter>();
-            for (final String s : getExclusions()) {
-                filters.add(new PrefixOrStringFilter(s));
+            synchronized (NewLoaderLogic.class) {
+                if (filter == null) {
+                    filter = new OptimizedExclusionFilter(getExclusions());
+                }
             }
-
-            filter = Filters.optimize(filters);
         }
         return filter;
     }
@@ -547,23 +555,26 @@ public class NewLoaderLogic {
 
     }
 
-    private static class PrefixOrStringFilter extends PrefixFilter {
+    private static class OptimizedExclusionFilter implements Filter {
+        private final Set<String> included = new HashSet<String>();
 
-        protected final String simplePrefix;
-
-        public PrefixOrStringFilter(final String s) {
-            super(s);
-            if (s.endsWith("-")) {
-                simplePrefix = s.substring(0, s.length() - 1);
-            } else {
-                simplePrefix = s;
+        public OptimizedExclusionFilter(final String[] exclusions) {
+            included.addAll(asList(exclusions));
+            for (final String e : exclusions) {
+                if (e.endsWith("-")) {
+                    included.add(e.substring(0, e.length() - 1) + ".jar");
+                }
             }
         }
 
         @Override
         public boolean accept(final String name) {
-            return super.accept(name)
-                || name.endsWith(".jar") && name.substring(0, name.length() - ".jar".length()).equals(simplePrefix);
+            for (int i = 1; i <= name.length(); i++) {
+                if (included.contains(name.substring(0, i))) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
