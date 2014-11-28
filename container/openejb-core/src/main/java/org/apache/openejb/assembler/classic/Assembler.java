@@ -126,6 +126,7 @@ import org.apache.openejb.util.PropertyPlaceHolderHelper;
 import org.apache.openejb.util.References;
 import org.apache.openejb.util.SafeToolkit;
 import org.apache.openejb.util.SuperProperties;
+import org.apache.openejb.util.URISupport;
 import org.apache.openejb.util.URLs;
 import org.apache.openejb.util.classloader.ClassLoaderAwareHandler;
 import org.apache.openejb.util.classloader.URLClassLoaderFirst;
@@ -192,6 +193,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -644,6 +646,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     private AppContext createApplication(final AppInfo appInfo, ClassLoader classLoader, final boolean start) throws OpenEJBException, IOException, NamingException {
+        try {
+            mergeServices(appInfo);
+        } catch (final URISyntaxException e) {
+            logger.info("Can't merge resources.xml services and appInfo.properties");
+        }
+
         // The path is used in the UrlCache, command line deployer, JNDI name templates, tomcat integration and a few other places
         if (appInfo.appId == null) {
             throw new IllegalArgumentException("AppInfo.appId cannot be null");
@@ -957,6 +965,34 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 logger.debug("createApplication.undeployFailed", e1, appInfo.path);
             }
             throw new OpenEJBException(messages.format("createApplication.failed", appInfo.path), t);
+        }
+    }
+
+    public static void mergeServices(final AppInfo appInfo) throws URISyntaxException {
+        // used lazily by JaxWsServiceObjectFactory so merge both to keep same config
+        // note: we could do the same for resources
+        for (final ServiceInfo si : appInfo.services) {
+            if (!appInfo.properties.containsKey(si.id)) {
+                final Map<String, String> query = new HashMap<>();
+                if (si.types != null && !si.types.isEmpty()) {
+                    query.put("type", si.types.iterator().next());
+                }
+                if (si.className != null) {
+                    query.put("class-name", si.className);
+                }
+                if (si.factoryMethod != null) {
+                    query.put("factory-name", si.factoryMethod);
+                }
+                if (si.constructorArgs != null) {
+                    query.put("constructor", Join.join(",", si.constructorArgs));
+                }
+                appInfo.properties.put(si.id, "new://Service?" + URISupport.createQueryString(query));
+                if (si.properties != null) {
+                    for (final String k : si.properties.stringPropertyNames()) {
+                        appInfo.properties.setProperty(si.id + "." + k, si.properties.getProperty(k));
+                    }
+                }
+            }
         }
     }
 
