@@ -48,7 +48,7 @@ public final class NetworkUtil {
     private static final ByteBuffer buf = ByteBuffer.allocate(512);
     public static final int PORT_MIN = 1024;
     public static final int PORT_MAX = 65535;
-    private static File lockFile = null;
+    private static File lockFile;
 
     private NetworkUtil() {
         // no-op
