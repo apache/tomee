@@ -53,12 +53,12 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import static java.util.Arrays.asList;
-
 /**
  * @version $Rev$ $Date$
  */
 public class NewLoaderLogic {
+
+    private static final Object lock = new Object();
 
     private static final Logger logger = DeploymentLoader.logger;
     public static final String DEFAULT_EXCLUSIONS_ALIAS = "default-list";
@@ -123,13 +123,13 @@ public class NewLoaderLogic {
         // We don't want any of the classes after that
         {
             final Filter end = Filters.packages(
-                "junit.",
-                "org.junit.",
-                "org.testng.",
-                "org.apache.maven.",
-                "org.eclipse.",
-                "com.intellij.",
-                "org.scalatest."
+                    "junit.",
+                    "org.junit.",
+                    "org.testng.",
+                    "org.apache.maven.",
+                    "org.eclipse.",
+                    "com.intellij.",
+                    "org.scalatest."
             );
 
             // Everything between here and the end is part
@@ -149,9 +149,9 @@ public class NewLoaderLogic {
         // Finally filter out everything that we definitely don't want
         {
             final Filter unwanted = Filters.packages(
-                "java.",
-                "javax.",
-                "sun.reflect."
+                    "java.",
+                    "javax.",
+                    "sun.reflect."
             );
 
             final Iterator<String> classes = callers.iterator();
@@ -303,7 +303,7 @@ public class NewLoaderLogic {
     @SuppressWarnings("unchecked")
     public static Filter getFilter() {
         if (filter == null) {
-            synchronized (NewLoaderLogic.class) {
+            synchronized (lock) {
                 if (filter == null) {
                     filter = new OptimizedExclusionFilter(getExclusions());
                 }
@@ -455,9 +455,9 @@ public class NewLoaderLogic {
             // If the user filtered out too much, that's a problem
             if (urlSet.size() == 0) {
                 final String message = String.format("Classpath Include/Exclude resulted in zero URLs.  There were %s possible URLs before filtering and 0 after: include=\"%s\", exclude=\"%s\"",
-                    beforeFiltering.size(),
-                    include,
-                    exclude);
+                        beforeFiltering.size(),
+                        include,
+                        exclude);
                 logger.error(message);
                 logger.info("Eligible Classpath before filtering:");
 
@@ -520,25 +520,25 @@ public class NewLoaderLogic {
             } else if (time < 10000) {
                 logger.warning("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + time / urls.size() + " milliseconds per url.");
                 logger.warning("Consider adjusting your " +
-                    DeploymentFilterable.CLASSPATH_EXCLUDE +
-                    " and " +
-                    DeploymentFilterable.CLASSPATH_INCLUDE +
-                    " settings.  Current settings: exclude='" +
-                    exclude +
-                    "', include='" +
-                    include +
-                    "'");
+                        DeploymentFilterable.CLASSPATH_EXCLUDE +
+                        " and " +
+                        DeploymentFilterable.CLASSPATH_INCLUDE +
+                        " settings.  Current settings: exclude='" +
+                        exclude +
+                        "', include='" +
+                        include +
+                        "'");
             } else {
                 logger.fatal("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + time / urls.size() + " milliseconds per url.  TOO LONG!");
                 logger.fatal("ADJUST THE EXCLUDE/INCLUDE!!!.  Current settings: " +
-                    DeploymentFilterable.CLASSPATH_EXCLUDE +
-                    "='" +
-                    exclude +
-                    "', " +
-                    DeploymentFilterable.CLASSPATH_INCLUDE +
-                    "='" +
-                    include +
-                    "'");
+                        DeploymentFilterable.CLASSPATH_EXCLUDE +
+                        "='" +
+                        exclude +
+                        "', " +
+                        DeploymentFilterable.CLASSPATH_INCLUDE +
+                        "='" +
+                        include +
+                        "'");
                 final List<String> list = new ArrayList<String>();
                 for (final URL url : urls) {
                     list.add(url.toExternalForm());
@@ -559,7 +559,7 @@ public class NewLoaderLogic {
         private final Set<String> included = new HashSet<String>();
 
         public OptimizedExclusionFilter(final String[] exclusions) {
-            included.addAll(asList(exclusions));
+            included.addAll(Arrays.asList(exclusions));
             for (final String e : exclusions) {
                 if (e.endsWith("-")) {
                     included.add(e.substring(0, e.length() - 1) + ".jar");
