@@ -187,12 +187,12 @@ public class WsDeployer implements DynamicDeployer {
                         webserviceDescription.getPortComponent().add(portComponent);
                     }
 
-                    // default portId == moduleId.servletName
+                    // default portId == host.moduleId.servletName
                     if (portComponent.getId() == null) {
-                        portComponent.setId(webModule.getModuleId() + "." + servlet.getServletName());
+                        portComponent.setId(webModule.getHost() + "." + webModule.getModuleId() + "." + servlet.getServletName());
                     }
                     if (webserviceDescription.getId() == null) {
-                        webserviceDescription.setId(webModule.getModuleId() + "." + servlet.getServletName());
+                        webserviceDescription.setId(webModule.getHost() + "." + webModule.getModuleId() + "." + servlet.getServletName());
                     }
 
                     // set port values from annotations if not already set
