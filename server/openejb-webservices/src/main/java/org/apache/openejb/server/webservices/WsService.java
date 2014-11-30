@@ -416,7 +416,7 @@ public abstract class WsService implements ServerService, SelfManaging {
                     }
 
                     // give servlet a reference to the webservice container
-                    final List<String> addresses = wsRegistry.setWsContainer(container, classLoader, webApp.contextRoot, virtualHost, servlet, realm, transport, auth);
+                    final List<String> addresses = wsRegistry.setWsContainer(container, classLoader, webApp.contextRoot, host(webApp), servlet, realm, transport, auth);
 
                     // one of the registered addresses to be the connonical address
                     final String address = HttpUtil.selectSingleAddress(addresses);
@@ -434,6 +434,10 @@ public abstract class WsService implements ServerService, SelfManaging {
                 Thread.currentThread().setContextClassLoader(old);
             }
         }
+    }
+
+    private String host(final WebAppInfo webApp) {
+        return webApp.host == null ? virtualHost : webApp.host;
     }
 
     public void undeploy(@Observes final AssemblerBeforeApplicationDestroyed event) {
@@ -509,7 +513,7 @@ public abstract class WsService implements ServerService, SelfManaging {
                     // clear servlet's reference to the webservice container
                     if (this.wsRegistry != null) {
                         try {
-                            this.wsRegistry.clearWsContainer(webApp.contextRoot, virtualHost, servlet);
+                            this.wsRegistry.clearWsContainer(webApp.contextRoot, host(webApp), servlet);
                         } catch (final IllegalArgumentException ignored) {
                             // no-op
                         }
