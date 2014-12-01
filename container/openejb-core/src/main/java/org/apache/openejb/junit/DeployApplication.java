@@ -42,6 +42,8 @@ public class DeployApplication extends Statement {
             public Void call() throws Exception {
                 try {
                     next.evaluate();
+                } catch (final Error e) {
+                    throw e;
                 } catch (final Throwable throwable) {
                     if (throwable instanceof Exception) {
                         throw (Exception) throwable;
