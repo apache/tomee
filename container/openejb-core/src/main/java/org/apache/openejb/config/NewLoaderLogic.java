@@ -67,7 +67,7 @@ public class NewLoaderLogic {
     public static final String EXCLUSION_FILE = "exclusions.list";
 
     private static String[] exclusions;
-    private static Filter filter;
+    private static volatile Filter filter;
 
     public static UrlSet filterArchives(final Filter filter, final ClassLoader classLoader, UrlSet urlSet) {
 
