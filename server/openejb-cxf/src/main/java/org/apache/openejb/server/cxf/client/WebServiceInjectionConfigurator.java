@@ -33,6 +33,10 @@ import org.apache.openejb.util.Logger;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceFeature;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -104,9 +108,32 @@ public class WebServiceInjectionConfigurator implements JaxWsServiceReference.We
         for (final String suffix : asList("", client.getEndpoint().getEndpointInfo().getName().toString() + ".")) {
             // here (ie at runtime) we have no idea which services were linked to the app
             // so using tomee.xml ones for now (not that shocking since we externalize the config with this class)
-            final List<ServiceInfo> services = createServiceInfos(properties);
-            configureInterceptors(client, CXF_JAXWS_CLIENT_PREFIX + suffix, services, properties);
+            configureInterceptors(client, CXF_JAXWS_CLIENT_PREFIX + suffix, lazyServiceInfoList(properties), properties);
         }
+    }
+
+    private List<ServiceInfo> lazyServiceInfoList(final Properties properties) { // don't create service info if not needed, ie no conf
+        return List.class.cast(
+                Proxy.newProxyInstance(
+                        Thread.currentThread().getContextClassLoader(),
+                        new Class<?>[] { List.class },
+                        new InvocationHandler() {
+                            private List<ServiceInfo> list = null;
+
+                            @Override
+                            public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+                                if (list == null) {
+                                    list = createServiceInfos(properties);
+                                }
+                                try {
+                                    return method.invoke(list, args);
+                                } catch (final InvocationTargetException ite) {
+                                    throw ite.getCause();
+                                }
+                            }
+                        }
+                )
+        );
     }
 
     private List<ServiceInfo> createServiceInfos(final Properties properties) {
