@@ -42,7 +42,7 @@ public class Warmup {
                 "org.apache.tomee.jasper.TomEETldScanner",
                 "javax.el.ExpressionFactory",
                 "javax.faces.component.UIViewRoot",
-                "javax.imageio.ImageIO",
+                // "javax.imageio.ImageIO", // bug in jvm < 1.7.0_60 -> deadlocks
                 "javax.naming.spi.NamingManager",
                 "javax.servlet.ServletOutputStream",
                 "org.apache.bval.jsr303.ApacheValidatorFactory",
