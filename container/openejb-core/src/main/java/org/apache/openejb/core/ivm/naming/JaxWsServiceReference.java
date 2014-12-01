@@ -32,6 +32,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
+import javax.xml.ws.WebServiceFeature;
 import javax.xml.ws.handler.HandlerResolver;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -144,10 +145,18 @@ public class JaxWsServiceReference extends Reference {
             instance.setHandlerResolver(handlerResolver);
         }
 
+        final WebServiceClientCustomizer customizer = SystemInstance.get().getComponent(WebServiceClientCustomizer.class);
+        final Properties configuration = properties == null ? new Properties() : properties;
+
         final Object port;
         if (referenceClass != null && !Service.class.isAssignableFrom(referenceClass)) {
+            final WebServiceFeature[] features = customizer == null ? null : customizer.features(serviceQName, configuration);
             // do port lookup
-            port = instance.getPort(referenceClass);
+            if (features == null || features.length == 0) {
+                port = instance.getPort(referenceClass);
+            } else {
+                port = instance.getPort(referenceClass, features);
+            }
         } else {
             // return service
             port = instance;
@@ -155,17 +164,16 @@ public class JaxWsServiceReference extends Reference {
 
         // register the service data so it can be fetched when the service is passed over the EJBd protocol
         final ServiceRefData serviceRefData = new ServiceRefData(id,
-            serviceQName,
-            serviceClass, portQName,
-            referenceClass,
-            wsdlUrl,
-            handlerChains,
-            portRefs);
+                serviceQName,
+                serviceClass, portQName,
+                referenceClass,
+                wsdlUrl,
+                handlerChains,
+                portRefs);
         ServiceRefData.putServiceRefData(port, serviceRefData);
 
-        final WebServiceClientCustomizer customizer = SystemInstance.get().getComponent(WebServiceClientCustomizer.class);
         if (customizer != null) {
-            customizer.customize(port, properties == null ? new Properties() : properties);
+            customizer.customize(port, configuration);
         }
 
         return port;
@@ -182,6 +190,19 @@ public class JaxWsServiceReference extends Reference {
     }
 
     public interface WebServiceClientCustomizer {
+        /**
+         * @param qname QName of the webservice
+         * @param properties app configuration
+         * @return ws features associated with this endpoint
+         */
+        WebServiceFeature[] features(QName qname, Properties properties);
+
+        /**
+         * Note: it is recommanded to use same key type as in features() impl (ie qname)
+         *
+         * @param port the client instance
+         * @param properties configuration of the application
+         */
         void customize(Object port, Properties properties);
     }
 }

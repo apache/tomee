@@ -22,6 +22,7 @@ import org.apache.cxf.frontend.ClientProxy;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.ServiceInfo;
+import org.apache.openejb.assembler.classic.util.ServiceInfos;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.sys.Openejb;
 import org.apache.openejb.config.sys.Service;
@@ -30,9 +31,12 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
+import javax.xml.namespace.QName;
+import javax.xml.ws.WebServiceFeature;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
@@ -54,6 +58,31 @@ import static org.apache.openejb.server.cxf.transport.util.CxfUtil.configureInte
  * Note: resources.xml are ignored for now (to be enhanced)
  */
 public class WebServiceInjectionConfigurator implements JaxWsServiceReference.WebServiceClientCustomizer {
+    private static final String CXF_JAXWS_CLIENT_PREFIX = "cxf.jaxws.client.";
+
+    @Override
+    public WebServiceFeature[] features(final QName qname, final Properties properties) {
+        Collection<WebServiceFeature> list = null;
+        for (final String suffix : asList("", (qname == null ? "_" : qname.toString()) + ".")) {
+            final String wsFeatures = properties.getProperty(CXF_JAXWS_CLIENT_PREFIX + suffix + "wsFeatures");
+            if (wsFeatures != null) {
+                final Collection<Object> instances = ServiceInfos.resolve(createServiceInfos(properties), wsFeatures.split(" *, *"));
+                if (instances != null && !instances.isEmpty()) {
+                    for (final Object i : instances) {
+                        if (!WebServiceFeature.class.isInstance(i)) {
+                            throw new IllegalArgumentException("Not a WebServiceFeature: " + i);
+                        }
+                        if (list == null) { // lazy to avoid useless allocation in most of cases
+                            list = new LinkedList<WebServiceFeature>();
+                        }
+                        list.add(WebServiceFeature.class.cast(i));
+                    }
+                }
+            }
+        }
+        return list != null ? list.toArray(new WebServiceFeature[list.size()]) : null;
+    }
+
     @Override
     public void customize(final Object o, final Properties properties) {
         try {
@@ -75,10 +104,17 @@ public class WebServiceInjectionConfigurator implements JaxWsServiceReference.We
             // here (ie at runtime) we have no idea which services were linked to the app
             // so using tomee.xml ones for now (not that shocking since we externalize the config with this class)
             final OpenEjbConfiguration config = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
-            final List<ServiceInfo> services = new ArrayList<ServiceInfo>(config.facilities != null && config.facilities.services != null ? config.facilities.services : Collections.<ServiceInfo>emptyList());
+            final List<ServiceInfo> services = new ArrayList<>(config.facilities != null && config.facilities.services != null ? config.facilities.services : Collections.<ServiceInfo>emptyList());
             services.addAll(getServices(properties));
-            configureInterceptors(client, "cxf.jaxws.client." + suffix, services, properties);
+            configureInterceptors(client, CXF_JAXWS_CLIENT_PREFIX + suffix, services, properties);
         }
+    }
+
+    private List<ServiceInfo> createServiceInfos(final Properties properties) {
+        final OpenEjbConfiguration config = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
+        final List<ServiceInfo> services = new ArrayList<>(config.facilities != null && config.facilities.services != null ? config.facilities.services : Collections.<ServiceInfo>emptyList());
+        services.addAll(getServices(properties));
+        return services;
     }
 
     private Collection<ServiceInfo> getServices(final Properties properties) {
@@ -95,7 +131,7 @@ public class WebServiceInjectionConfigurator implements JaxWsServiceReference.We
             return Collections.emptyList();
         }
 
-        final Collection<ServiceInfo> info = new ArrayList<ServiceInfo>(services.size());
+        final Collection<ServiceInfo> info = new ArrayList<>(services.size());
         for (final Service s : services) {
             final String prefix = s.getId() + ".";
             for (final String key : properties.stringPropertyNames()) {
