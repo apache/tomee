@@ -19,6 +19,7 @@ package org.apache.tomee.embedded;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.JarLocation;
 import org.apache.openejb.util.NetworkUtil;
+import org.apache.openejb.util.classloader.URLClassLoaderFirst;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -78,6 +79,7 @@ public class ClasspathAsWebappTest {
         try (final Container container = new Container(
                     new Configuration()
                             .http(NetworkUtil.getNextAvailablePort())
+                            .property("openejb.classloader.forced-load", "org.apache.tomee.embedded.")
                             .property("openejb.additional.include", "tomee-"))
                 .deployPathsAsWebapp("", asList(JarLocation.jarLocation(MyInitializer.class).toURI().toURL()), null)
                 .inject(this)) {

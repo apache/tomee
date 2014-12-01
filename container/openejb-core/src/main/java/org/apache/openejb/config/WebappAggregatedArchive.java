@@ -39,7 +39,7 @@ public class WebappAggregatedArchive implements Archive, ScanConstants {
     private boolean scanXmlExists; // faster than using an empty handler
     private final Archive archive;
 
-    public WebappAggregatedArchive(final Module module, final Iterable<URL> urls) {
+    public WebappAggregatedArchive(final Module module, final Iterable<URL> urls, final Filter filter) {
         final List<Archive> archives = new ArrayList<Archive>();
 
         final URL scanXml = (URL) module.getAltDDs().get(ScanConstants.SCAN_XML_NAME);
@@ -54,12 +54,17 @@ public class WebappAggregatedArchive implements Archive, ScanConstants {
 
         for (final URL url : urls) {
             final List<String> classes = new ArrayList<String>();
-            final Archive archive = new FilteredArchive(new ConfigurableClasspathArchive(module.getClassLoader(), Arrays.asList(url)), new ScanXmlSaverFilter(scanXmlExists, handler, classes));
+            final Archive archive = new FilteredArchive(
+                    new ConfigurableClasspathArchive(module.getClassLoader(), Arrays.asList(url)), new ScanXmlSaverFilter(scanXmlExists, handler, classes, filter));
             map.put(url, classes);
             archives.add(archive);
         }
 
         archive = new CompositeArchive(archives);
+    }
+
+    public WebappAggregatedArchive(final Module module, final Iterable<URL> urls) {
+        this(module, urls, null);
     }
 
     public WebappAggregatedArchive(final ClassLoader classLoader, final Map<String, Object> altDDs, final Collection<URL> xmls) {
@@ -89,32 +94,37 @@ public class WebappAggregatedArchive implements Archive, ScanConstants {
         private final boolean scanXmlExists;
         private final ScanUtil.ScanHandler handler;
         private final List<String> classes;
+        private final Filter otherFilter;
 
-        public ScanXmlSaverFilter(final boolean scanXmlExists, final ScanUtil.ScanHandler handler, final List<String> classes) {
+        public ScanXmlSaverFilter(final boolean scanXmlExists, final ScanUtil.ScanHandler handler, final List<String> classes, final Filter otherFilter) {
             this.scanXmlExists = scanXmlExists;
             this.handler = handler;
             this.classes = classes;
+            this.otherFilter = otherFilter;
         }
 
         @Override
         public boolean accept(final String name) {
+            final boolean accept = otherFilter == null || otherFilter.accept(name);
             if (scanXmlExists) {
                 for (final String packageName : handler.getPackages()) {
-                    if (name.startsWith(packageName)) {
+                    if (name.startsWith(packageName) && accept) {
                         classes.add(name);
                         return true;
                     }
                 }
                 for (final String className : handler.getClasses()) {
-                    if (className.equals(name)) {
+                    if (className.equals(name) && accept) {
                         classes.add(name);
                         return true;
                     }
                 }
                 return false;
             }
-            classes.add(name);
-            return true;
+            if (accept) {
+                classes.add(name);
+            }
+            return accept;
         }
     }
 }

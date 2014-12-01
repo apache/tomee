@@ -105,7 +105,9 @@ public class Main {
         options.addOption(null, CONTEXT, true, "Context name for applications (same order than paths)");
         options.addOption("p", PORT, true, "TomEE http port");
         options.addOption("s", SHUTDOWN, true, "TomEE shutdown port");
-        options.addOption("d", DIRECTORY, true, "TomEE shutdown port");
+        options.addOption("d", DIRECTORY, true, "TomEE directory");
+        options.addOption("c", AS_WAR, false, "deploy classpath as war");
+        options.addOption("b", DOC_BASE, true, "when deploy classpath as war, the doc base");
         return options;
     }
 

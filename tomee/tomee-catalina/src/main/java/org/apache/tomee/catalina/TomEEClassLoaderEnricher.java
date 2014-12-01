@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -48,6 +49,7 @@ public final class TomEEClassLoaderEnricher implements WebAppEnricher {
     public static final String TOMEE_WEBAPP_CLASSLOADER_ENRICHMENT_PREFIXES = "tomee.webapp.classloader.enrichment.prefixes";
 
     private static final String[] JAR_TO_ADD_CLASS_HELPERS;
+    private static final boolean SKIP_VALIDATION;
 
     private static final String[] DEFAULT_PREFIXES_TO_ADD = new String[]{
             "openwebbeans-jsf", // to be able to provide jsf impl
@@ -78,6 +80,7 @@ public final class TomEEClassLoaderEnricher implements WebAppEnricher {
         }
         JAR_TO_ADD_CLASS_HELPERS = classes.toArray(new String[classes.size()]);
         PREFIXES_TO_ADD = prefixes.toArray(new String[prefixes.size()]);
+        SKIP_VALIDATION = SystemInstance.get().getOptions().get("tomee.api.validation.skip", false);
     }
 
     @Override
@@ -150,10 +153,14 @@ public final class TomEEClassLoaderEnricher implements WebAppEnricher {
             {"javax.inject.Inject", null, null}, // CDI
             {"javax.ws.rs.Path", null, null},
             {"javax.ejb.EJB", null, null}, // EJB
-            {"javax.annotation.PostConstruct", "javax.annotation.Priority", "You provide javax.annotation API 1.2 so we'll tolerate new classes but it should surely be upgraded in the container"} // javax.annotation
+            {"javax.annotation.PostConstruct", null, null} // javax.annotation
     };
 
     public static boolean validateJarFile(final File file) throws IOException {
+        if (SKIP_VALIDATION) {
+            return true;
+        }
+
         final ClassLoader parent = TomEEClassLoaderEnricher.class.getClassLoader();
 
         JarFile jarFile = null;
@@ -192,6 +199,16 @@ public final class TomEEClassLoaderEnricher implements WebAppEnricher {
                             return true;
                         }
                     }
+                    final URLClassLoader tmpLoader = new URLClassLoader(new URL[]{ file.toURI().toURL() });
+                    final URL resource = tmpLoader.getResource(entry);
+                    try {
+                        if (resource != null && resource.equals(parent.getResource(entry))) {
+                            continue;
+                        }
+                    } finally {
+                        tmpLoader.close();
+                    }
+
                     LOGGER.warning("jar '" + file.getAbsolutePath() + "' contains offending class: " + name[0]
                             + ". It will be ignored.");
                     return !"true".equals(SystemInstance.get().getProperty("openejb.api." + name[0] + ".validation", "true"));

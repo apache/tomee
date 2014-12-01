@@ -1678,8 +1678,10 @@ public class AnnotationDeployer implements DynamicDeployer {
             if (url.getPath().endsWith("!/META-INF/beans.xml")) {
                 return url;
             }
+
+            URLClassLoader loader = null;
             try {
-                final URLClassLoader loader = new URLClassLoader(new URL[]{url}, new EmptyResourcesClassLoader());
+                loader = new URLClassLoader(new URL[]{url}, new EmptyResourcesClassLoader());
                 final String[] paths = {
                     "META-INF/beans.xml",
                     "WEB-INF/beans.xml",
@@ -1695,6 +1697,14 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             } catch (final Exception e) {
                 // no-op
+            } finally {
+                try {
+                    if (loader != null) {
+                        loader.close();
+                    }
+                } catch (final IOException e) {
+                    // no-op
+                }
             }
             return null;
         }
