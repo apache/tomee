@@ -413,7 +413,10 @@ public class RemoteServer {
             final Field f = server.get().getClass().getDeclaredField("pid");
             f.setAccessible(true);
             final int pid = (Integer) f.get(server.get());
-            Pipe.pipe(Runtime.getRuntime().exec("kill -3 " + pid));
+            new ProcessBuilder("kill",  "-3",  Integer.toString(pid))
+                    .redirectOutput(ProcessBuilder.Redirect.INHERIT)
+                    .redirectError(ProcessBuilder.Redirect.INHERIT)
+                    .start();
         } catch (final Exception e1) {
             e1.printStackTrace();
         }
