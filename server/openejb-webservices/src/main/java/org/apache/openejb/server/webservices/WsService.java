@@ -270,6 +270,8 @@ public abstract class WsService implements ServerService, SelfManaging {
             }
             contextData.put("ejbJarId", ejbJar.moduleName);
 
+            final String host = host(ejbJar, appInfo);
+
             for (final EnterpriseBeanInfo bean : ejbJar.enterpriseBeans) {
                 if (bean instanceof StatelessBeanInfo || bean instanceof SingletonBeanInfo) {
 
@@ -314,7 +316,8 @@ public abstract class WsService implements ServerService, SelfManaging {
                             if (context == null && !OLD_WEBSERVICE_DEPLOYMENT) {
                                 context = ejbJar.moduleName;
                             }
-                            final List<String> addresses = wsRegistry.addWsContainer(container, classLoader, context, virtualHost, location, realm, transport, auth);
+
+                            final List<String> addresses = wsRegistry.addWsContainer(container, classLoader, context, host, location, realm, transport, auth);
                             alreadyDeployed.add(beanContext);
 
                             // one of the registered addresses to be the canonical address
@@ -342,6 +345,18 @@ public abstract class WsService implements ServerService, SelfManaging {
                 afterApplicationCreated(appInfo, webApp);
             }
         } // else called because of ear case where new ejbs are deployed in webapps
+    }
+
+    private String host(final EjbJarInfo jar, final AppInfo app) {
+        for (final WebAppInfo web : app.webApps) {
+            if (jar.moduleId.equals(web.moduleId)) {
+                if (web.host != null) {
+                    return web.host;
+                }
+                break;
+            }
+        }
+        return virtualHost;
     }
 
     protected void setWsdl(final HttpListener listener, final String wsdl) {
