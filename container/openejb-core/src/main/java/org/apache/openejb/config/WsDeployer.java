@@ -416,10 +416,21 @@ public class WsDeployer implements DynamicDeployer {
                 wsdlUrl = new URL(baseUrl, wsdlFile);
             }
 
+
             final Definition definition = readWsdl(wsdlUrl);
             module.getAltDDs().put(wsdlFile, definition);
             return definition;
         } catch (final Exception e) {
+            if (module.getClassLoader() != null) {
+                final URL wsdlUrl = module.getClassLoader().getResource(wsdlFile.startsWith("classpath:") ? wsdlFile.substring("classpath:".length()) : wsdlFile);
+                try {
+                    final Definition definition = readWsdl(wsdlUrl);
+                    module.getAltDDs().put(wsdlFile, definition);
+                    return definition;
+                } catch (final OpenEJBException e1) {
+                    // no-op
+                }
+            }
             logger.error("Unable to read wsdl file " + wsdlFile);
         }
 
