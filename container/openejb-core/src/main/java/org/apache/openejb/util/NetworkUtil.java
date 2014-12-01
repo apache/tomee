@@ -30,7 +30,6 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
@@ -45,7 +44,6 @@ public final class NetworkUtil {
     public static final int[] RANDOM = new int[] { 0 };
 
     private static final ReentrantLock lock = new ReentrantLock();
-    private static final Set<LastPort> lastPort = new HashSet<LastPort>();
     private static final ByteBuffer buf = ByteBuffer.allocate(512);
     public static final int PORT_MIN = 1024;
     public static final int PORT_MAX = 65535;
@@ -76,11 +74,10 @@ public final class NetworkUtil {
         l.lock();
 
         try {
-            purgeLast();
             int port;
             ServerSocket s = null;
             try {
-                s = create(portList);
+                s = create(portList, null);
                 port = s.getLocalPort();
             } catch (final IOException ioe) {
                 port = -1;
@@ -100,13 +97,12 @@ public final class NetworkUtil {
         }
     }
 
-    public static synchronized int getNextAvailablePort(final int min, final int max, final Collection<Integer> excluded) {
-
+    public static synchronized int getNextAvailablePort(final int min, final int max, final Collection<Integer> excluded, final Collection<LastPort> lastPorts) {
         final ReentrantLock l = lock;
         l.lock();
 
         try {
-            purgeLast();
+            purgeLast(lastPorts);
             int port = -1;
             ServerSocket s = null;
             for (int i = min; i <= max; i++) {
@@ -116,7 +112,7 @@ public final class NetworkUtil {
                 }
 
                 try {
-                    s = create(new int[]{i});
+                    s = create(new int[]{ i }, lastPorts);
                     port = s.getLocalPort();
                     break;
 
@@ -139,7 +135,14 @@ public final class NetworkUtil {
         }
     }
 
-    private static void purgeLast() {
+    public static synchronized int getNextAvailablePort(final int min, final int max, final Collection<Integer> excluded) {
+        return getNextAvailablePort(min, max, excluded, null);
+    }
+
+    private static void purgeLast(final Collection<LastPort> lastPort) {
+        if (lastPort == null) {
+            return;
+        }
         final Iterator<LastPort> it = lastPort.iterator();
         while (it.hasNext()) {
             final LastPort last = it.next();
@@ -149,14 +152,15 @@ public final class NetworkUtil {
         }
     }
 
-    private static ServerSocket create(final int[] ports) throws IOException {
+    private static ServerSocket create(final int[] ports, final Collection<LastPort> lastPort) throws IOException {
 
         for (final int port : ports) {
             try {
-
                 final LastPort lp = new LastPort(port, System.currentTimeMillis());
-                if (lastPort.contains(lp)) {
-                    continue;
+                if (lastPort != null) {
+                    if (lastPort.contains(lp)) {
+                        continue;
+                    }
                 }
 
                 final ServerSocket ss = new ServerSocket(port);
@@ -170,7 +174,9 @@ public final class NetworkUtil {
                     continue;
                 }
 
-                lastPort.add(lp);
+                if (lastPort != null) {
+                    lastPort.add(lp);
+                }
 
                 return ss;
 
