@@ -42,6 +42,7 @@ public final class NetworkUtil {
      * Lock file property name
      */
     public static final String TOMEE_LOCK_FILE = "TOMEE_LOCK_FILE";
+    public static final int[] RANDOM = new int[] { 0 };
 
     private static final ReentrantLock lock = new ReentrantLock();
     private static final Set<LastPort> lastPort = new HashSet<LastPort>();
@@ -63,7 +64,7 @@ public final class NetworkUtil {
         final ReentrantLock l = lock;
         l.lock();
         try {
-            return getNextAvailablePort(PORT_MIN, PORT_MAX, null);
+            return getNextAvailablePort(RANDOM);
         } finally {
             l.unlock();
         }
