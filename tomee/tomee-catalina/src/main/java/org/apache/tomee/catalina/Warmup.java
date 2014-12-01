@@ -43,7 +43,7 @@ public class Warmup {
                 "java.util.concurrent.atomic.AtomicLong",
                 "javax.el.ExpressionFactory",
                 "javax.faces.component.UIViewRoot",
-                "javax.imageio.ImageIO",
+                // "javax.imageio.ImageIO", // easily create deadlocks
                 "javax.naming.spi.NamingManager",
                 "javax.servlet.ServletOutputStream",
                 "org.apache.bval.jsr303.ApacheValidatorFactory",
