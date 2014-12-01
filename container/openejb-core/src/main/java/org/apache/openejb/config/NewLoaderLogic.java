@@ -58,8 +58,6 @@ import java.util.Set;
  */
 public class NewLoaderLogic {
 
-    private static final Object lock = new Object();
-
     private static final Logger logger = DeploymentLoader.logger;
     public static final String DEFAULT_EXCLUSIONS_ALIAS = "default-list";
     public static final String ADDITIONAL_EXCLUDES = SystemInstance.get().getOptions().get("openejb.additional.exclude", (String) null);
@@ -67,7 +65,7 @@ public class NewLoaderLogic {
     public static final String EXCLUSION_FILE = "exclusions.list";
 
     private static String[] exclusions;
-    private static Filter filter;
+    private static volatile Filter filter;
 
     public static UrlSet filterArchives(final Filter filter, final ClassLoader classLoader, UrlSet urlSet) {
 
@@ -303,7 +301,7 @@ public class NewLoaderLogic {
     @SuppressWarnings("unchecked")
     public static Filter getFilter() {
         if (filter == null) {
-            synchronized (lock) {
+            synchronized (NewLoaderLogic.class) {
                 if (filter == null) {
                     filter = new OptimizedExclusionFilter(getExclusions());
                 }
