@@ -701,7 +701,7 @@ public final class ApplicationComposers {
         }
 
         // config for the app
-        for (final Map.Entry<Object, List<Method>> method : findAnnotatedMethods(configs, ApplicationConfiguration.class).entrySet()) {
+        for (final Map.Entry<Object, List<Method>> method : findAnnotatedMethods(new HashMap<Object, List<Method>>(), ApplicationConfiguration.class).entrySet()) {
             for (final Method m : method.getValue()) {
                 final Object o = m.invoke(method.getKey());
                 if (Properties.class.isInstance(o)) {
