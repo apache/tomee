@@ -47,6 +47,7 @@ public final class NetworkUtil {
     private static final ByteBuffer buf = ByteBuffer.allocate(512);
     public static final int PORT_MIN = 1024;
     public static final int PORT_MAX = 65535;
+    public static final int EVICTION_TIMEOUT = Integer.getInteger("openejb.network.random-port.cache-timeout", 10000);
     private static File lockFile;
 
     private NetworkUtil() {
@@ -146,7 +147,7 @@ public final class NetworkUtil {
         final Iterator<LastPort> it = lastPort.iterator();
         while (it.hasNext()) {
             final LastPort last = it.next();
-            if ((System.currentTimeMillis() - last.time) >= 10000) {
+            if ((System.currentTimeMillis() - last.time) >= EVICTION_TIMEOUT) {
                 it.remove();
             }
         }
@@ -158,7 +159,7 @@ public final class NetworkUtil {
             try {
                 final LastPort lp = new LastPort(port, System.currentTimeMillis());
                 if (lastPort != null) {
-                    if (lastPort.contains(lp)) {
+                    if (lastPort.contains(lp)) { // actually doesn't mean much things excepted "it has been locked recently"
                         continue;
                     }
                 }
@@ -363,7 +364,7 @@ public final class NetworkUtil {
         }
     }
 
-    private static final class LastPort {
+    public static final class LastPort {
         private final int port;
         private final long time;
 
