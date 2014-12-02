@@ -29,13 +29,12 @@ import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
-
-import static java.util.Arrays.asList;
 
 /**
  * TODO: this class is no more an utility class (static)
@@ -112,7 +111,7 @@ public final class NetworkUtil {
                         retry = 0;
                     }
                     if (retry <= 0) { // 0 retry -> -1
-                        throw new IllegalStateException("Can't find a port matching list " + asList(portList) + (isRandom ? " with " + originalRetryCount + " retries" : ""));
+                        throw new IllegalStateException("Failed to find a port matching list " + Arrays.toString(portList) + (isRandom ? " with " + originalRetryCount + " retries" : ""));
                     }
                 } finally {
                     if (s != null) {
