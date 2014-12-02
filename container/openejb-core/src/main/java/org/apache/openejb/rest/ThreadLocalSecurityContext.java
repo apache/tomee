@@ -54,6 +54,13 @@ public class ThreadLocalSecurityContext extends AbstractRestThreadLocalProxy<Sec
     }
 
     public boolean isUserInRole(final String role) {
-        return service().isCallerInRole(role) || get().isUserInRole(role);
+        if (service().isCallerInRole(role)) {
+            return true;
+        }
+        final SecurityContext sc = get();
+        if (sc != null) {
+            return sc.isUserInRole(role);
+        }
+        return false;
     }
 }
