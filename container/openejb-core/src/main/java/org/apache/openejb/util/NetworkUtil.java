@@ -185,16 +185,24 @@ public final class NetworkUtil {
 
     private static ServerSocket create(final int[] ports, final Collection<LastPort> lastPort) throws IOException {
 
-        for (final int port : ports) {
+        for (int port : ports) {
             try {
+
+                final ServerSocket ss = new ServerSocket(port);
+                port = ss.getLocalPort();
+
                 final LastPort lp = new LastPort(port, System.currentTimeMillis());
+
                 if (lastPort != null) {
-                    if (lastPort.contains(lp)) { // actually doesn't mean much things excepted "it has been locked recently"
+                    if (lastPort.contains(lp)) {
+                        try {
+                            ss.close();
+                        } catch (final Exception e) {
+                            //Ignore
+                        }
                         continue;
                     }
                 }
-
-                final ServerSocket ss = new ServerSocket(port);
 
                 if (!checkLockFile(port)) {
                     try {

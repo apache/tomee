@@ -62,7 +62,7 @@ public class NetworkUtilTest {
         for (int i = 0; i < count; i++) {
             final Thread thread = new Thread(new Runnable() {
                 public void run() {
-                    final int nextAvailablePort = NetworkUtil.getNextAvailablePort(NetworkUtil.PORT_MIN, NetworkUtil.PORT_MAX, Collections.<Integer>emptyList(), lastPorts);
+                    final int nextAvailablePort = NetworkUtil.getNextAvailablePort();
                     if (list.contains(nextAvailablePort)) {
                         if ((System.currentTimeMillis() - start) < 10000) {
                             Assert.fail("Got a duplicate port with ten seconds");
