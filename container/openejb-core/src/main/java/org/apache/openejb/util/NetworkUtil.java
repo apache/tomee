@@ -35,17 +35,25 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * TODO: this class is no more an utility class (static)
+ * and should be rewritten to get a config + state
+ * -> listOfPorts with release(port) method (otherwise caching makes half of usages broken)
+ * -> lockFile
+ * -> minPort/maxPort
+ * -> ...
+ */
 public final class NetworkUtil {
 
     /**
      * Lock file property name
      */
     public static final String TOMEE_LOCK_FILE = "TOMEE_LOCK_FILE";
-    //public static final int[] RANDOM = new int[]{0};
+    public static final int[] RANDOM = new int[]{0};
 
     private static final ReentrantLock lock = new ReentrantLock();
     private static final ByteBuffer buf = ByteBuffer.allocate(512);
-    public static final int PORT_MIN = 1024;
+    public static final int PORT_MIN = 1025;
     public static final int PORT_MAX = 65535;
     public static final int EVICTION_TIMEOUT = Integer.getInteger("openejb.network.random-port.cache-timeout", 10000);
     private static File lockFile;
@@ -59,11 +67,22 @@ public final class NetworkUtil {
         lockFile = null;
     }
 
-    public static synchronized int getNextAvailablePort() {
+    public static synchronized int getNextAvailablePortInDefaultRange() {
         final ReentrantLock l = lock;
         l.lock();
         try {
             return getNextAvailablePort(PORT_MIN, PORT_MAX, null);
+        } finally {
+            l.unlock();
+        }
+    }
+
+    // fully random by default to avoid to get PORT_MIN, PORT_MIN, PORT_MIN locally/on a dev machine
+    public static synchronized int getNextAvailablePort() {
+        final ReentrantLock l = lock;
+        l.lock();
+        try {
+            return getNextAvailablePort(RANDOM);
         } finally {
             l.unlock();
         }
@@ -74,25 +93,31 @@ public final class NetworkUtil {
         final ReentrantLock l = lock;
         l.lock();
 
+        int retry = Integer.getInteger("openejb.network.random-port.retries", 10);
+        ServerSocket s = null;
         try {
-            int port;
-            ServerSocket s = null;
-            try {
-                s = create(portList, null);
-                port = s.getLocalPort();
-            } catch (final IOException ioe) {
-                port = -1;
-            } finally {
-                if (s != null) {
-                    try {
-                        s.close();
-                    } catch (final Throwable e) {
-                        //Ignore
+            do {
+                try {
+                    s = create(portList, null);
+                    return s.getLocalPort();
+                } catch (final IOException ioe) {
+                    // particular case where iteration is not really the meaning of the config
+                    if (portList == RANDOM || (portList.length == 1 && portList[0] == 0)) {
+                        retry--;
+                    }
+                    if (retry <= 0) { // 0 retry -> -1
+                        return -1;
+                    }
+                } finally {
+                    if (s != null) {
+                        try {
+                            s.close();
+                        } catch (final Throwable e) {
+                            //Ignore
+                        }
                     }
                 }
-            }
-
-            return port;
+            } while (true);
         } finally {
             l.unlock();
         }

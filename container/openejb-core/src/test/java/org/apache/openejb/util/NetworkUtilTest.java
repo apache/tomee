@@ -58,10 +58,11 @@ public class NetworkUtilTest {
         final long start = System.currentTimeMillis();
         final CopyOnWriteArrayList<Integer> list = new CopyOnWriteArrayList<Integer>();
 
+        final List<NetworkUtil.LastPort> lastPorts = new ArrayList<NetworkUtil.LastPort>();
         for (int i = 0; i < count; i++) {
             final Thread thread = new Thread(new Runnable() {
                 public void run() {
-                    final int nextAvailablePort = NetworkUtil.getNextAvailablePort();
+                    final int nextAvailablePort = NetworkUtil.getNextAvailablePort(NetworkUtil.PORT_MIN, NetworkUtil.PORT_MAX, Collections.<Integer>emptyList(), lastPorts);
                     if (list.contains(nextAvailablePort)) {
                         if ((System.currentTimeMillis() - start) < 10000) {
                             Assert.fail("Got a duplicate port with ten seconds");
