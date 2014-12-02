@@ -88,7 +88,7 @@
   <scm>
     <connection>scm:git:https://git-wip-us.apache.org/repos/asf/tomee.git</connection>
     <developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/tomee.git</developerConnection>
-    <url>http://git-wip-us.apache.org/repos/asf/tomee.git/url>
+    <url>http://git-wip-us.apache.org/repos/asf/tomee.git</url>
   </scm>
 
   <properties>
