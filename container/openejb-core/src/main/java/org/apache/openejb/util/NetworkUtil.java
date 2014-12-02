@@ -35,6 +35,8 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 
+import static java.util.Arrays.asList;
+
 /**
  * TODO: this class is no more an utility class (static)
  * and should be rewritten to get a config + state
@@ -93,7 +95,8 @@ public final class NetworkUtil {
         final ReentrantLock l = lock;
         l.lock();
 
-        int retry = Integer.getInteger("openejb.network.random-port.retries", 10);
+        final int originalRetryCount = Integer.getInteger("openejb.network.random-port.retries", 10);
+        int retry = originalRetryCount;
         ServerSocket s = null;
         try {
             do {
@@ -102,11 +105,14 @@ public final class NetworkUtil {
                     return s.getLocalPort();
                 } catch (final IOException ioe) {
                     // particular case where iteration is not really the meaning of the config
-                    if (portList == RANDOM || (portList.length == 1 && portList[0] == 0)) {
+                    final boolean isRandom = portList == RANDOM || (portList.length == 1 && portList[0] == 0);
+                    if (isRandom) {
                         retry--;
+                    } else { // otherwise infinite loop
+                        retry = 0;
                     }
                     if (retry <= 0) { // 0 retry -> -1
-                        return -1;
+                        throw new IllegalStateException("Can't find a port matching list " + asList(portList) + (isRandom ? " with " + originalRetryCount + " retries" : ""));
                     }
                 } finally {
                     if (s != null) {
