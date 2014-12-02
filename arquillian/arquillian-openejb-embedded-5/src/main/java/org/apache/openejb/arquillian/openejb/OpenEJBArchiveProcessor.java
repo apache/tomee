@@ -455,7 +455,8 @@ public class OpenEJBArchiveProcessor {
         final List<org.apache.xbean.finder.archive.Archive> archives = new ArrayList<>();
         for (final URL url : DeploymentLoader.filterWebappUrls(additionalPaths.toArray(new URL[additionalPaths.size()]), null)) {
             final List<String> currentClasses = new ArrayList<>();
-            final org.apache.xbean.finder.archive.Archive newArchive = new FilteredArchive(new JarArchive(cl, url), new WebappAggregatedArchive.ScanXmlSaverFilter(false, null, currentClasses));
+            final org.apache.xbean.finder.archive.Archive newArchive = new FilteredArchive(new JarArchive(cl, url),
+                    new WebappAggregatedArchive.ScanXmlSaverFilter(false, null, currentClasses, null));
             classesByUrl.put(url, currentClasses);
             archives.add(newArchive);
         }
@@ -468,7 +469,7 @@ public class OpenEJBArchiveProcessor {
             }
             // look org.apache.openejb.config.AnnotationDeployer.DiscoverAnnotatedBeans.hasBeansXml()
             try {
-                final URL key = new URL("jar:file://!/WEB-INF/classes/"); // no host avoid host resolution in hashcode()
+                final URL key = new URL("jar:file://!/WEB-INF/beans.xml"); // no host avoid host resolution in hashcode()
                 classesByUrl.put(key, mainClasses);
             } catch (final MalformedURLException mue) {
                 // no-op

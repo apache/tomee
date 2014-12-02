@@ -1652,7 +1652,11 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         public static URL hasBeansXml(final URL url) {
-            if (url.getPath().endsWith("WEB-INF/classes/")) {
+            final String urlPath = url.getPath();
+            if (urlPath.endsWith("/WEB-INF/beans.xml")) {
+                return url;
+            }
+            if (urlPath.endsWith("WEB-INF/classes/")) {
                 {
                     final File file = new File(URLs.toFile(url).getParent(), "beans.xml");
                     if (file.exists()) {
