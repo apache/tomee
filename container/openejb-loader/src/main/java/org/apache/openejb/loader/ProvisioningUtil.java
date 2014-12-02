@@ -74,7 +74,9 @@ public final class ProvisioningUtil {
     }
 
     public static File cacheFile(final String path) {
-        return new File(SystemInstance.get().getBase().getDirectory(), cache() + File.separator + path);
+        File cacheDir = new File(SystemInstance.get().getBase().getDirectory(), cache());
+        cacheDir.mkdirs();
+        return new File(cacheDir, path);
     }
 
     public static String copyTryingProxies(final URI source, final File destination) throws Exception {
