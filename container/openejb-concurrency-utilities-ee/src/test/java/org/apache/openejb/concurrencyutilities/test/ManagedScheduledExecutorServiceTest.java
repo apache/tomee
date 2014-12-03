@@ -115,6 +115,7 @@ public class ManagedScheduledExecutorServiceTest {
             }
         );
 
+        assertNotNull(future);
         assertFalse(future.isDone());
         assertFalse(future.isCancelled());
 
