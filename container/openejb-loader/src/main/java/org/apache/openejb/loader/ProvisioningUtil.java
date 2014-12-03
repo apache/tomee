@@ -74,8 +74,10 @@ public final class ProvisioningUtil {
     }
 
     public static File cacheFile(final String path) {
-        File cacheDir = new File(SystemInstance.get().getBase().getDirectory(), cache());
-        cacheDir.mkdirs();
+        final File cacheDir = new File(SystemInstance.get().getBase().getDirectory(), cache());
+        if (!cacheDir.exists() && !cacheDir.mkdirs()) {
+            throw new RuntimeException("Failed to create the directory: " + cacheDir);
+        }
         return new File(cacheDir, path);
     }
 
@@ -242,7 +244,7 @@ public final class ProvisioningUtil {
 
         String artifactVersion;
         if (snapshotBase != null && snapshotBase.startsWith(HTTP_PREFIX) && version.endsWith(SNAPSHOT_SUFFIX)) {
-            final String meta = new StringBuilder(snapshotBase).append(builder.toString()).append("maven-metadata.xml").toString();
+            final String meta = snapshotBase + builder.toString() + "maven-metadata.xml";
             final URL url = new URL(meta);
             final ByteArrayOutputStream out = new ByteArrayOutputStream();
             InputStream is = null;
