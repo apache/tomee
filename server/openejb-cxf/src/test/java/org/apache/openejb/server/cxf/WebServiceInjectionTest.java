@@ -161,11 +161,6 @@ public class WebServiceInjectionTest {
             super(wsdlDocumentLocation, serviceName);
         }
 
-        public MyWebservice_Service(final URL wsdlDocumentLocation, final QName serviceName, final WebServiceFeature... features) {
-            super(wsdlDocumentLocation, serviceName, features);
-        }
-
-
         static URL getWsdl() throws WebServiceException {
             try {
                 return new URL("http://wsdl");
