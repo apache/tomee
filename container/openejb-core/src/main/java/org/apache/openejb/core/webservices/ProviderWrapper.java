@@ -18,6 +18,7 @@
 package org.apache.openejb.core.webservices;
 
 import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.core.ivm.naming.JaxWsServiceReference;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -63,9 +64,9 @@ public class ProviderWrapper extends Provider {
     // Magic to get our provider wrapper installed with the PortRefData
     //
 
-    private static ThreadLocal<ProviderWrapperData> threadPortRefs = new ThreadLocal<ProviderWrapperData>();
+    private static final ThreadLocal<ProviderWrapperData> threadPortRefs = new ThreadLocal<ProviderWrapperData>();
 
-    public static void beforeCreate(final List<PortRefData> portRefData) {
+    public static void beforeCreate(final List<PortRefData> portRefData, final JaxWsServiceReference.WebServiceClientCustomizer customizer, final Properties properties) {
         // Axis JAXWS api is non compliant and checks system property before classloader
         // so we replace system property so this wrapper is selected.  The original value
         // is saved into an openejb property so we can load the class in the find method
@@ -83,7 +84,7 @@ public class ProviderWrapper extends Provider {
         } else {
             Thread.currentThread().setContextClassLoader(new ProviderClassLoader());
         }
-        threadPortRefs.set(new ProviderWrapperData(portRefData, oldClassLoader));
+        threadPortRefs.set(new ProviderWrapperData(portRefData, oldClassLoader, customizer, properties));
     }
 
     public static void afterCreate() {
@@ -94,10 +95,14 @@ public class ProviderWrapper extends Provider {
     private static class ProviderWrapperData {
         private final List<PortRefData> portRefData;
         private final ClassLoader callerClassLoader;
+        private final JaxWsServiceReference.WebServiceClientCustomizer customizer;
+        private final Properties properties;
 
-        public ProviderWrapperData(final List<PortRefData> portRefData, final ClassLoader callerClassLoader) {
+        public ProviderWrapperData(final List<PortRefData> portRefData, final ClassLoader callerClassLoader, final JaxWsServiceReference.WebServiceClientCustomizer customizer, final Properties properties) {
             this.portRefData = portRefData;
             this.callerClassLoader = callerClassLoader;
+            this.customizer = customizer;
+            this.properties = properties;
         }
     }
 
@@ -145,12 +150,12 @@ public class ProviderWrapper extends Provider {
                                                            final List<Element> referenceParameters) {
 
         return (W3CEndpointReference) invoke21Delegate(delegate, createW3CEndpointReference,
-            address,
-            serviceName,
-            portName,
-            metadata,
-            wsdlDocumentLocation,
-            referenceParameters);
+                address,
+                serviceName,
+                portName,
+                metadata,
+                wsdlDocumentLocation,
+                referenceParameters);
     }
 
     public EndpointReference readEndpointReference(final Source source) {
@@ -164,15 +169,32 @@ public class ProviderWrapper extends Provider {
 
     private class ServiceDelegateWrapper extends ServiceDelegate {
         private final ServiceDelegate serviceDelegate;
+        private final JaxWsServiceReference.WebServiceClientCustomizer customizer;
+        private final Properties configuration;
 
         public ServiceDelegateWrapper(final ServiceDelegate serviceDelegate) {
             this.serviceDelegate = serviceDelegate;
+            final ProviderWrapperData providerWrapperData = threadPortRefs.get();
+            if (providerWrapperData != null) {
+                this.customizer = providerWrapperData.customizer;
+                this.configuration = providerWrapperData.properties;
+            } else {
+                this.customizer = null;
+                this.configuration = null;
+            }
+        }
+
+        private <T> T customizePort(final T port) {
+            if (customizer != null && configuration != null) {
+                customizer.customize(port, configuration);
+            }
+            return port;
         }
 
         public <T> T getPort(final QName portName, final Class<T> serviceEndpointInterface) {
             final T t = serviceDelegate.getPort(portName, serviceEndpointInterface);
             setProperties((BindingProvider) t, portName);
-            return t;
+            return customizePort(t);
         }
 
         public <T> T getPort(final Class<T> serviceEndpointInterface) {
@@ -189,7 +211,7 @@ public class ProviderWrapper extends Provider {
             }
 
             setProperties((BindingProvider) t, qname);
-            return t;
+            return customizePort(t);
         }
 
         public void addPort(final QName portName, final String bindingId, final String endpointAddress) {
@@ -211,32 +233,32 @@ public class ProviderWrapper extends Provider {
         @SuppressWarnings({"unchecked"})
         public <T> Dispatch<T> createDispatch(final QName portName, final Class<T> type, final Service.Mode mode, final WebServiceFeature... features) {
             return (Dispatch<T>) invoke21Delegate(serviceDelegate, createDispatchInterface,
-                portName,
-                type,
-                mode,
-                features);
+                    portName,
+                    type,
+                    mode,
+                    features);
         }
 
         @SuppressWarnings({"unchecked"})
         public Dispatch<Object> createDispatch(final QName portName, final JAXBContext context, final Service.Mode mode, final WebServiceFeature... features) {
             return (Dispatch<Object>) invoke21Delegate(serviceDelegate, createDispatchJaxBContext,
-                portName,
-                context,
-                mode,
-                features);
+                    portName,
+                    context,
+                    mode,
+                    features);
         }
 
         @SuppressWarnings({"unchecked"})
         public Dispatch<Object> createDispatch(
-            final EndpointReference endpointReference,
-            final JAXBContext context,
-            final Service.Mode mode,
-            final WebServiceFeature... features) {
+                final EndpointReference endpointReference,
+                final JAXBContext context,
+                final Service.Mode mode,
+                final WebServiceFeature... features) {
             return (Dispatch<Object>) invoke21Delegate(serviceDelegate, createDispatchReferenceJaxB,
-                endpointReference,
-                context,
-                mode,
-                features);
+                    endpointReference,
+                    context,
+                    mode,
+                    features);
         }
 
         @SuppressWarnings({"unchecked"})
@@ -245,54 +267,42 @@ public class ProviderWrapper extends Provider {
                                               final Service.Mode mode,
                                               final WebServiceFeature... features) {
             return (Dispatch<T>) invoke21Delegate(serviceDelegate, createDispatchReferenceClass,
-                endpointReference,
-                type,
-                mode,
-                features);
+                    endpointReference,
+                    type,
+                    mode,
+                    features);
 
         }
 
         @SuppressWarnings({"unchecked"})
         public <T> T getPort(final QName portName, final Class<T> serviceEndpointInterface, final WebServiceFeature... features) {
-            return (T) invoke21Delegate(serviceDelegate, serviceGetPortByQName,
-                portName,
-                serviceEndpointInterface,
-                features);
+            return customizePort((T) invoke21Delegate(serviceDelegate, serviceGetPortByQName, portName, serviceEndpointInterface, features));
         }
 
         @SuppressWarnings({"unchecked"})
         public <T> T getPort(final EndpointReference endpointReference, final Class<T> serviceEndpointInterface, final WebServiceFeature... features) {
-            return (T) invoke21Delegate(serviceDelegate, serviceGetPortByEndpointReference,
-                endpointReference,
-                serviceEndpointInterface,
-                features);
+            return customizePort((T) invoke21Delegate(serviceDelegate, serviceGetPortByEndpointReference, endpointReference, serviceEndpointInterface, features));
         }
 
         @SuppressWarnings({"unchecked"})
         public <T> T getPort(final Class<T> serviceEndpointInterface, final WebServiceFeature... features) {
-            return (T) invoke21Delegate(serviceDelegate, serviceGetPortByInterface,
-                serviceEndpointInterface,
-                features);
+            return customizePort((T) invoke21Delegate(serviceDelegate, serviceGetPortByInterface, serviceEndpointInterface, features));
         }
 
         public QName getServiceName() {
-            final QName qName = serviceDelegate.getServiceName();
-            return qName;
+            return serviceDelegate.getServiceName();
         }
 
         public Iterator<QName> getPorts() {
-            final Iterator<QName> ports = serviceDelegate.getPorts();
-            return ports;
+            return serviceDelegate.getPorts();
         }
 
         public URL getWSDLDocumentLocation() {
-            final URL documentLocation = serviceDelegate.getWSDLDocumentLocation();
-            return documentLocation;
+            return serviceDelegate.getWSDLDocumentLocation();
         }
 
         public HandlerResolver getHandlerResolver() {
-            final HandlerResolver handlerResolver = serviceDelegate.getHandlerResolver();
-            return handlerResolver;
+            return serviceDelegate.getHandlerResolver();
         }
 
         public void setHandlerResolver(final HandlerResolver handlerResolver) {
@@ -300,8 +310,7 @@ public class ProviderWrapper extends Provider {
         }
 
         public Executor getExecutor() {
-            final Executor executor = serviceDelegate.getExecutor();
-            return executor;
+            return serviceDelegate.getExecutor();
         }
 
         public void setExecutor(final Executor executor) {
@@ -530,12 +539,12 @@ public class ProviderWrapper extends Provider {
         Method method = null;
         try {
             method = Provider.class.getMethod("createW3CEndpointReference",
-                String.class,
-                QName.class,
-                QName.class,
-                List.class,
-                String.class,
-                List.class);
+                    String.class,
+                    QName.class,
+                    QName.class,
+                    List.class,
+                    String.class,
+                    List.class);
         } catch (final NoSuchMethodException e) {
             // no-op
         }
@@ -544,9 +553,9 @@ public class ProviderWrapper extends Provider {
         method = null;
         try {
             method = Provider.class.getMethod("getPort",
-                EndpointReference.class,
-                Class.class,
-                WebServiceFeature[].class);
+                    EndpointReference.class,
+                    Class.class,
+                    WebServiceFeature[].class);
         } catch (final NoSuchMethodException e) {
             // no-op
         }
@@ -564,10 +573,10 @@ public class ProviderWrapper extends Provider {
         method = null;
         try {
             method = ServiceDelegate.class.getMethod("createDispatch",
-                EndpointReference.class,
-                JAXBContext.class,
-                Service.Mode.class,
-                WebServiceFeature[].class);
+                    EndpointReference.class,
+                    JAXBContext.class,
+                    Service.Mode.class,
+                    WebServiceFeature[].class);
         } catch (final NoSuchMethodException e) {
             // no-op
         }
@@ -576,10 +585,10 @@ public class ProviderWrapper extends Provider {
         method = null;
         try {
             method = ServiceDelegate.class.getMethod("createDispatch",
-                EndpointReference.class,
-                Class.class,
-                Service.Mode.class,
-                WebServiceFeature[].class);
+                    EndpointReference.class,
+                    Class.class,
+                    Service.Mode.class,
+                    WebServiceFeature[].class);
         } catch (final NoSuchMethodException e) {
             // no-op
         }
@@ -588,10 +597,10 @@ public class ProviderWrapper extends Provider {
         method = null;
         try {
             method = ServiceDelegate.class.getMethod("createDispatch",
-                QName.class,
-                JAXBContext.class,
-                Service.Mode.class,
-                WebServiceFeature[].class);
+                    QName.class,
+                    JAXBContext.class,
+                    Service.Mode.class,
+                    WebServiceFeature[].class);
         } catch (final NoSuchMethodException e) {
             // no-op
         }
@@ -600,10 +609,10 @@ public class ProviderWrapper extends Provider {
         method = null;
         try {
             method = ServiceDelegate.class.getMethod("createDispatch",
-                QName.class,
-                Class.class,
-                Service.Mode.class,
-                WebServiceFeature[].class);
+                    QName.class,
+                    Class.class,
+                    Service.Mode.class,
+                    WebServiceFeature[].class);
         } catch (final NoSuchMethodException e) {
             // no-op
         }
@@ -612,9 +621,9 @@ public class ProviderWrapper extends Provider {
         method = null;
         try {
             method = ServiceDelegate.class.getMethod("getPort",
-                EndpointReference.class,
-                Class.class,
-                WebServiceFeature[].class);
+                    EndpointReference.class,
+                    Class.class,
+                    WebServiceFeature[].class);
         } catch (final NoSuchMethodException e) {
             // no-op
         }
@@ -623,9 +632,9 @@ public class ProviderWrapper extends Provider {
         method = null;
         try {
             method = ServiceDelegate.class.getMethod("getPort",
-                QName.class,
-                Class.class,
-                WebServiceFeature[].class);
+                    QName.class,
+                    Class.class,
+                    WebServiceFeature[].class);
         } catch (final NoSuchMethodException e) {
             // no-op
         }
@@ -634,8 +643,8 @@ public class ProviderWrapper extends Provider {
         method = null;
         try {
             method = ServiceDelegate.class.getMethod("getPort",
-                Class.class,
-                WebServiceFeature[].class);
+                    Class.class,
+                    WebServiceFeature[].class);
         } catch (final NoSuchMethodException e) {
             // no-op
         }

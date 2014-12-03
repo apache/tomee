@@ -38,7 +38,7 @@ public class ProviderWrapperTest extends TestCase {
         assertNotNull("provider is null", provider);
         assertFalse("provider should not be an instance of ProviderWrapper", provider instanceof ProviderWrapper);
 
-        ProviderWrapper.beforeCreate(null);
+        ProviderWrapper.beforeCreate(null, null, null);
         try {
             provider = Provider.provider();
             assertNotNull("provider is null", provider);

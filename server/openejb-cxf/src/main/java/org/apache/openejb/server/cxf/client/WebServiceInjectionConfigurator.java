@@ -28,8 +28,6 @@ import org.apache.openejb.config.sys.Openejb;
 import org.apache.openejb.config.sys.Service;
 import org.apache.openejb.core.ivm.naming.JaxWsServiceReference;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceFeature;
@@ -89,15 +87,14 @@ public class WebServiceInjectionConfigurator implements JaxWsServiceReference.We
 
     @Override
     public void customize(final Object o, final Properties properties) {
+        final Client client;
         try {
-            if (!javax.xml.ws.Service.class.isInstance(o)) {
-                final Client client = ClientProxy.getClient(o);
-                configure(client, properties);
-            }
+            client = ClientProxy.getClient(o);
         } catch (final Exception e) {
-            Logger.getInstance(LogCategory.CXF, WebServiceInjectionConfigurator.class.getName())
-                    .error(e.getMessage(), e);
+            return;
         }
+
+        configure(client, properties);
     }
 
     private void configure(final Client client, final Properties properties) {
