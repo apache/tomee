@@ -123,7 +123,10 @@ public class JaxWsServiceReference extends Reference {
             }
         }
 
-        ProviderWrapper.beforeCreate(ports);
+        final WebServiceClientCustomizer customizer = SystemInstance.get().getComponent(WebServiceClientCustomizer.class);
+        final Properties configuration = properties == null ? new Properties() : properties;
+
+        ProviderWrapper.beforeCreate(ports, customizer, properties);
         Service instance;
         try {
             instance = null;
@@ -144,9 +147,6 @@ public class JaxWsServiceReference extends Reference {
             final HandlerResolver handlerResolver = new HandlerResolverImpl(handlerChains, injections, new InitialContext());
             instance.setHandlerResolver(handlerResolver);
         }
-
-        final WebServiceClientCustomizer customizer = SystemInstance.get().getComponent(WebServiceClientCustomizer.class);
-        final Properties configuration = properties == null ? new Properties() : properties;
 
         final Object port;
         if (referenceClass != null && !Service.class.isAssignableFrom(referenceClass)) {
@@ -171,10 +171,6 @@ public class JaxWsServiceReference extends Reference {
                 handlerChains,
                 portRefs);
         ServiceRefData.putServiceRefData(port, serviceRefData);
-
-        if (customizer != null) {
-            customizer.customize(port, configuration);
-        }
 
         return port;
     }

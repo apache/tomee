@@ -21,6 +21,8 @@ import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.apache.cxf.message.Message;
+import org.apache.cxf.ws.addressing.impl.MAPAggregatorImpl;
+import org.apache.cxf.ws.addressing.soap.MAPCodec;
 import org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor;
 import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;
 import org.apache.openejb.config.sys.MapFactory;
@@ -37,7 +39,16 @@ import org.junit.runner.RunWith;
 
 import javax.ejb.Singleton;
 import javax.jws.WebService;
+import javax.xml.namespace.QName;
+import javax.xml.ws.Service;
+import javax.xml.ws.WebEndpoint;
+import javax.xml.ws.WebServiceClient;
+import javax.xml.ws.WebServiceException;
+import javax.xml.ws.WebServiceFeature;
 import javax.xml.ws.WebServiceRef;
+import javax.xml.ws.soap.AddressingFeature;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Iterator;
 import java.util.Properties;
 
@@ -57,10 +68,20 @@ public class WebServiceInjectionTest {
     @WebServiceRef
     private MyWsApi api;
 
+    @WebServiceRef
+    private MyWebservice_Service service;
+
     @Test
-    public void checkInjection() {
+    public void checkConfiguration() {
         // assertEquals("ok", api.test()); // local call so skip it but check config which is actually the only interesting thing
         final Client client = ClientProxy.getClient(api);
+        testPort(client);
+
+        testPort(ClientProxy.getClient(service.getMyWsApi()));
+        testPortWithFeature(ClientProxy.getClient(service.getMyWsApi(new AddressingFeature())));
+    }
+
+    private void testPort(final Client client) {
         assertNotNull(client);
         assertEquals(2, client.getOutInterceptors().size());
         assertEquals(1, client.getInInterceptors().size());
@@ -74,6 +95,23 @@ public class WebServiceInjectionTest {
         assertEquals("b", WSS4JInInterceptor.class.cast(wss4jin).getProperties().get("a"));
     }
 
+    private void testPortWithFeature(final Client client) {
+        assertNotNull(client);
+        assertEquals(4, client.getOutInterceptors().size());
+        assertEquals(3, client.getInInterceptors().size());
+        final Iterator<Interceptor<? extends Message>> Out = client.getOutInterceptors().iterator();
+        assertTrue(MAPAggregatorImpl.class.isInstance(Out.next()));
+        assertTrue(MAPCodec.class.isInstance(Out.next()));
+        assertTrue(LoggingOutInterceptor.class.isInstance(Out.next()));
+        final Interceptor<? extends Message> wss4jout = Out.next();
+        assertTrue(WSS4JOutInterceptor.class.isInstance(wss4jout));
+
+        final Iterator<Interceptor<? extends Message>> iteratorIn = client.getInInterceptors().iterator();
+        assertTrue(MAPAggregatorImpl.class.isInstance(iteratorIn.next()));
+        assertTrue(MAPCodec.class.isInstance(iteratorIn.next()));
+        assertTrue(WSS4JInInterceptor.class.isInstance(iteratorIn.next()));
+    }
+
     @ApplicationConfiguration
     public Properties props() {
         // return new PropertiesBuilder().p("cxf.jaxws.client.out-interceptors", LoggingOutInterceptor.class.getName()).build();
@@ -81,6 +119,9 @@ public class WebServiceInjectionTest {
         return new PropertiesBuilder()
                 .p("cxf.jaxws.client.{http://cxf.server.openejb.apache.org/}MyWebservicePort.in-interceptors", "wss4jin")
                 .p("cxf.jaxws.client.{http://cxf.server.openejb.apache.org/}MyWebservicePort.out-interceptors", "loo,wss4jout")
+
+                .p("cxf.jaxws.client.{http://cxf.server.openejb.apache.org/}myWebservice.in-interceptors", "wss4jin")
+                .p("cxf.jaxws.client.{http://cxf.server.openejb.apache.org/}myWebservice.out-interceptors", "loo,wss4jout")
 
                 .p("loo", "new://Service?class-name=" + LoggingOutInterceptor.class.getName())
 
@@ -108,5 +149,36 @@ public class WebServiceInjectionTest {
         public String test() {
             return "ok";
         }
+    }
+
+    @WebServiceClient(name = "MyWebservice")
+    public static class MyWebservice_Service extends Service {
+        public MyWebservice_Service() {
+            super(getWsdl(), new QName("http://cxf.server.openejb.apache.org/", "MyWebservice_Service"));
+        }
+
+        public MyWebservice_Service(final URL wsdlDocumentLocation, final QName serviceName) {
+            super(wsdlDocumentLocation, serviceName);
+        }
+
+        public MyWebservice_Service(final URL wsdlDocumentLocation, final QName serviceName, final WebServiceFeature... features) {
+            super(wsdlDocumentLocation, serviceName, features);
+        }
+
+
+        static URL getWsdl() throws WebServiceException {
+            try {
+                return new URL("http://wsdl");
+            } catch (final MalformedURLException ex) {
+                throw new WebServiceException(ex);
+            }
+        }
+
+        @WebEndpoint(name = "myWebserviceWS")
+        public MyWsApi getMyWsApi(final WebServiceFeature... features) {
+            return super.getPort(new QName("http://cxf.server.openejb.apache.org/", "myWebservice"), MyWsApi.class, features);
+        }
+
+
     }
 }

@@ -18,6 +18,7 @@
 package org.apache.openejb.core.webservices;
 
 import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.core.ivm.naming.JaxWsServiceReference;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -65,7 +66,7 @@ public class ProviderWrapper extends Provider {
 
     private static final ThreadLocal<ProviderWrapperData> threadPortRefs = new ThreadLocal<ProviderWrapperData>();
 
-    public static void beforeCreate(final List<PortRefData> portRefData) {
+    public static void beforeCreate(final List<PortRefData> portRefData, final JaxWsServiceReference.WebServiceClientCustomizer customizer, final Properties properties) {
         // Axis JAXWS api is non compliant and checks system property before classloader
         // so we replace system property so this wrapper is selected.  The original value
         // is saved into an openejb property so we can load the class in the find method
@@ -83,7 +84,7 @@ public class ProviderWrapper extends Provider {
         } else {
             Thread.currentThread().setContextClassLoader(new ProviderClassLoader());
         }
-        threadPortRefs.set(new ProviderWrapperData(portRefData, oldClassLoader));
+        threadPortRefs.set(new ProviderWrapperData(portRefData, oldClassLoader, customizer, properties));
     }
 
     public static void afterCreate() {
@@ -94,10 +95,14 @@ public class ProviderWrapper extends Provider {
     private static class ProviderWrapperData {
         private final List<PortRefData> portRefData;
         private final ClassLoader callerClassLoader;
+        private final JaxWsServiceReference.WebServiceClientCustomizer customizer;
+        private final Properties properties;
 
-        public ProviderWrapperData(final List<PortRefData> portRefData, final ClassLoader callerClassLoader) {
+        public ProviderWrapperData(final List<PortRefData> portRefData, final ClassLoader callerClassLoader, final JaxWsServiceReference.WebServiceClientCustomizer customizer, final Properties properties) {
             this.portRefData = portRefData;
             this.callerClassLoader = callerClassLoader;
+            this.customizer = customizer;
+            this.properties = properties;
         }
     }
 
@@ -164,15 +169,32 @@ public class ProviderWrapper extends Provider {
 
     private class ServiceDelegateWrapper extends ServiceDelegate {
         private final ServiceDelegate serviceDelegate;
+        private final JaxWsServiceReference.WebServiceClientCustomizer customizer;
+        private final Properties configuration;
 
         public ServiceDelegateWrapper(final ServiceDelegate serviceDelegate) {
             this.serviceDelegate = serviceDelegate;
+            final ProviderWrapperData providerWrapperData = threadPortRefs.get();
+            if (providerWrapperData != null) {
+                this.customizer = providerWrapperData.customizer;
+                this.configuration = providerWrapperData.properties;
+            } else {
+                this.customizer = null;
+                this.configuration = null;
+            }
+        }
+
+        private <T> T customizePort(final T port) {
+            if (customizer != null && configuration != null) {
+                customizer.customize(port, configuration);
+            }
+            return port;
         }
 
         public <T> T getPort(final QName portName, final Class<T> serviceEndpointInterface) {
             final T t = serviceDelegate.getPort(portName, serviceEndpointInterface);
             setProperties((BindingProvider) t, portName);
-            return t;
+            return customizePort(t);
         }
 
         public <T> T getPort(final Class<T> serviceEndpointInterface) {
@@ -189,7 +211,7 @@ public class ProviderWrapper extends Provider {
             }
 
             setProperties((BindingProvider) t, qname);
-            return t;
+            return customizePort(t);
         }
 
         public void addPort(final QName portName, final String bindingId, final String endpointAddress) {
@@ -254,45 +276,33 @@ public class ProviderWrapper extends Provider {
 
         @SuppressWarnings({"unchecked"})
         public <T> T getPort(final QName portName, final Class<T> serviceEndpointInterface, final WebServiceFeature... features) {
-            return (T) invoke21Delegate(serviceDelegate, serviceGetPortByQName,
-                portName,
-                serviceEndpointInterface,
-                features);
+            return customizePort((T) invoke21Delegate(serviceDelegate, serviceGetPortByQName, portName, serviceEndpointInterface, features));
         }
 
         @SuppressWarnings({"unchecked"})
         public <T> T getPort(final EndpointReference endpointReference, final Class<T> serviceEndpointInterface, final WebServiceFeature... features) {
-            return (T) invoke21Delegate(serviceDelegate, serviceGetPortByEndpointReference,
-                endpointReference,
-                serviceEndpointInterface,
-                features);
+            return customizePort((T) invoke21Delegate(serviceDelegate, serviceGetPortByEndpointReference, endpointReference, serviceEndpointInterface, features));
         }
 
         @SuppressWarnings({"unchecked"})
         public <T> T getPort(final Class<T> serviceEndpointInterface, final WebServiceFeature... features) {
-            return (T) invoke21Delegate(serviceDelegate, serviceGetPortByInterface,
-                serviceEndpointInterface,
-                features);
+            return customizePort((T) invoke21Delegate(serviceDelegate, serviceGetPortByInterface, serviceEndpointInterface, features));
         }
 
         public QName getServiceName() {
-            final QName qName = serviceDelegate.getServiceName();
-            return qName;
+            return serviceDelegate.getServiceName();
         }
 
         public Iterator<QName> getPorts() {
-            final Iterator<QName> ports = serviceDelegate.getPorts();
-            return ports;
+            return serviceDelegate.getPorts();
         }
 
         public URL getWSDLDocumentLocation() {
-            final URL documentLocation = serviceDelegate.getWSDLDocumentLocation();
-            return documentLocation;
+            return serviceDelegate.getWSDLDocumentLocation();
         }
 
         public HandlerResolver getHandlerResolver() {
-            final HandlerResolver handlerResolver = serviceDelegate.getHandlerResolver();
-            return handlerResolver;
+            return serviceDelegate.getHandlerResolver();
         }
 
         public void setHandlerResolver(final HandlerResolver handlerResolver) {
@@ -300,8 +310,7 @@ public class ProviderWrapper extends Provider {
         }
 
         public Executor getExecutor() {
-            final Executor executor = serviceDelegate.getExecutor();
-            return executor;
+            return serviceDelegate.getExecutor();
         }
 
         public void setExecutor(final Executor executor) {
