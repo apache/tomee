@@ -19,8 +19,6 @@
 package org.apache.openejb.rest;
 
 import javax.ws.rs.container.ResourceContext;
-import javax.ws.rs.container.ResourceInfo;
-import java.lang.reflect.Method;
 
 public class ThreadLocalResourceContext extends AbstractRestThreadLocalProxy<ResourceContext>
     implements ResourceContext {

@@ -21,7 +21,6 @@ import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.util.Join;
-import org.apache.openejb.util.Pipe;
 
 import java.io.File;
 import java.io.IOException;
