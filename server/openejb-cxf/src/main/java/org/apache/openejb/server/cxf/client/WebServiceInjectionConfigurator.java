@@ -89,14 +89,14 @@ public class WebServiceInjectionConfigurator implements JaxWsServiceReference.We
 
     @Override
     public void customize(final Object o, final Properties properties) {
+        final Client client;
         try {
-            if (!javax.xml.ws.Service.class.isInstance(o)) {
-                configure(ClientProxy.getClient(o), properties);
-            }
+            client = ClientProxy.getClient(o);
         } catch (final Exception e) {
-            Logger.getInstance(LogCategory.CXF, WebServiceInjectionConfigurator.class.getName())
-                    .error(e.getMessage(), e);
+            return;
         }
+
+        configure(client, properties);
     }
 
     private void configure(final Client client, final Properties properties) {
