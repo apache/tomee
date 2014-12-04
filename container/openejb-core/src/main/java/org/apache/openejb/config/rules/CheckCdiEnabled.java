@@ -24,7 +24,7 @@ import javax.inject.Inject;
 
 public class CheckCdiEnabled extends ValidationBase {
     public void validate(final EjbModule ejbModule) {
-        if (ejbModule.getFinder() == null) {
+        if (ejbModule.getFinder() == null || ejbModule.getProperties().containsKey("openejb.cdi.activated")) {
             return;
         }
 

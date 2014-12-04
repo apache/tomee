@@ -27,6 +27,7 @@ import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
+import org.apache.openejb.cdi.CdiScanner;
 import org.apache.openejb.cdi.OptimizedLoaderService;
 import org.apache.openejb.cdi.ScopeHelper;
 import org.apache.openejb.config.AppModule;
@@ -499,6 +500,7 @@ public final class ApplicationComposers {
                     webModule.getAltDDs().putAll(descriptorsToMap(method.getAnnotation(Descriptors.class)));
 
                     final EjbModule ejbModule = DeploymentLoader.addWebModule(webModule, appModule);
+                    ejbModule.getProperties().put(CdiScanner.OPENEJB_CDI_FILTER_CLASSLOADER, "false");
                     if (cdi) {
                         ejbModule.setBeans(beans(new Beans(), cdiDecorators, cdiInterceptors, cdiAlternatives));
                     }
