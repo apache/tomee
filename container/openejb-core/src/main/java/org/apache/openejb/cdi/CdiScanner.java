@@ -183,7 +183,9 @@ public class CdiScanner implements ScannerService {
 
             // here for ears we need to skip classes in the parent classloader
             final ClassLoader scl = ClassLoader.getSystemClassLoader();
-            final boolean filterByClassLoader = "true".equals(SystemInstance.get().getProperty(OPENEJB_CDI_FILTER_CLASSLOADER, "true"));
+            final boolean filterByClassLoader = "true".equals(
+                    ejbJar.properties.getProperty(OPENEJB_CDI_FILTER_CLASSLOADER,
+                            SystemInstance.get().getProperty(OPENEJB_CDI_FILTER_CLASSLOADER, "true")));
 
             final BeanArchiveService beanArchiveService = webBeansContext.getBeanArchiveService();
             final boolean openejb = OpenEJBBeanInfoService.class.isInstance(beanArchiveService);
