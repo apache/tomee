@@ -18,6 +18,7 @@
 package org.apache.openejb;
 
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.reflection.Reflections;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.xbean.finder.ResourceFinder;
@@ -104,7 +105,10 @@ public final class Extensions {
 
     public static class Finder extends ResourceFinder {
         public Finder(final String path, final URL... urls) {
-            super(path, urls == null ? new URL[0] : urls);
+            super(path, urls);
+            if (urls == null || urls.length == 0) {
+                Reflections.set(this, "urls", new URL[0]);
+            }
         }
 
         // ensure we support multiple class by file
