@@ -179,8 +179,8 @@
           <suiteXmlFiles>
             <suiteXmlFile>${project.build.directory}/dependency/beanvalidation-tck-tests-suite.xml</suiteXmlFile>
           </suiteXmlFiles>
-          <parallel>methods</parallel>
-          <threadCount>4</threadCount>
+          <parallel>classes</parallel>
+          <threadCount>1</threadCount>
         </configuration>
       </plugin>
     </plugins>
