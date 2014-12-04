@@ -53,11 +53,15 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+
+import static java.util.Collections.singletonList;
 
 /**
  * A class to take care of HTTP Requests.  It parses headers, content, form and url
@@ -106,12 +110,12 @@ public class HttpRequestImpl implements HttpRequest {
     /**
      * the URL (or query) parameters for this page
      */
-    private final Map<String, String> queryParams = new HashMap<String, String>();
+    private final Map<String, List<String>> queryParams = new HashMap<String, List<String>>();
 
     /**
      * All form and query parameters.  Query parameters override form parameters.
      */
-    private final Map<String, String> parameters = new HashMap<String, String>();
+    private final Map<String, List<String>> parameters = new HashMap<String, List<String>>();
 
     private final Map<String, Part> parts = new HashMap<String, Part>();
 
@@ -189,20 +193,6 @@ public class HttpRequestImpl implements HttpRequest {
         return new HashMap<String, String>(formParams);
     }
 
-    public Map<String, String> getQueryParameters() {
-        return new HashMap<String, String>(queryParams);
-    }
-
-    /**
-     * Gets a URL (or query) parameter based on the name passed in.
-     *
-     * @param name The name of the URL (or query) parameter
-     * @return The value of the URL (or query) parameter
-     */
-    public String getQueryParameter(final String name) {
-        return queryParams.get(name);
-    }
-
     /**
      * Gets the request method.
      *
@@ -238,8 +228,10 @@ public class HttpRequestImpl implements HttpRequest {
     @Override
     public String getQueryString() {
         final StringBuilder str = new StringBuilder("");
-        for (final Map.Entry<String, String> q : queryParams.entrySet()) {
-            str.append(q.getKey()).append("=").append(q.getValue()).append("&");
+        for (final Map.Entry<String, List<String>> q : queryParams.entrySet()) {
+            for (final String v : q.getValue()) {
+                str.append(q.getKey()).append("=").append(v).append("&");
+            }
         }
         final String out = str.toString();
         if (out.isEmpty()) {
@@ -351,8 +343,10 @@ public class HttpRequestImpl implements HttpRequest {
         readHeaders(di);
         readBody(di);
 
-        parameters.putAll(this.getFormParameters());
-        parameters.putAll(this.getQueryParameters());
+        for (final Map.Entry<String, String> formParameters : getFormParameters().entrySet()) {
+            parameters.put(formParameters.getKey(), singletonList(formParameters.getValue()));
+        }
+        parameters.putAll(queryParams);
 
         if (headers.containsKey("Cookie")) {
             final String cookie = headers.get("Cookie");
@@ -513,8 +507,12 @@ public class HttpRequestImpl implements HttpRequest {
                 value = URLDecoder.decode(param.nextToken());
             }
 
-            //System.out.println("[] "+name+" = "+value);
-            queryParams.put(name, value);
+            List<String> list = queryParams.get(name);
+            if (list == null) {
+                list = new LinkedList<String>();
+                queryParams.put(name, list);
+            }
+            list.add(value);
         }
     }
 
@@ -926,14 +924,16 @@ public class HttpRequestImpl implements HttpRequest {
     }
 
     public String getParameter(final String name) {
-        return parameters.get(name);
+        final List<String> strings = parameters.get(name);
+        return strings == null ? null : strings.iterator().next();
     }
 
     @Override
     public Map<String, String[]> getParameterMap() {
         final Map<String, String[]> params = new HashMap<String, String[]>();
-        for (final Map.Entry<String, String> p : parameters.entrySet()) {
-            params.put(p.getKey(), new String[]{p.getValue()});
+        for (final Map.Entry<String, List<String>> p : parameters.entrySet()) {
+            final List<String> values = p.getValue();
+            params.put(p.getKey(), values.toArray(new String[values.size()]));
         }
         return params;
     }
@@ -945,7 +945,8 @@ public class HttpRequestImpl implements HttpRequest {
 
     @Override
     public String[] getParameterValues(final String s) {
-        return new String[]{parameters.get(s)};
+        final List<String> strings = parameters.get(s);
+        return strings == null ? null : strings.toArray(new String[strings.size()]);
     }
 
     @Override
@@ -963,8 +964,13 @@ public class HttpRequestImpl implements HttpRequest {
         return path;
     }
 
+    @Deprecated // TODO should be dropped, do we drop axis module as well?
     public Map<String, String> getParameters() {
-        return new HashMap<String, String>(parameters);
+        final HashMap<String, String> converted = new HashMap<String, String>(parameters.size());
+        for (final Map.Entry<String, List<String>> entry : parameters.entrySet()) {
+            converted.put(entry.getKey(), entry.getValue().iterator().next());
+        }
+        return converted;
     }
 
     public String getRemoteAddr() {
