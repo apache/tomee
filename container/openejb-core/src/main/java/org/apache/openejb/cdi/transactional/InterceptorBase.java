@@ -30,6 +30,8 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 
 public abstract class InterceptorBase implements Serializable {
+    private static final IllegalStateException ILLEGAL_STATE_EXCEPTION = new IllegalStateException("Can't use UserTransaction from @Transaction call");
+
     protected Object intercept(final InvocationContext ic) throws Exception {
         Exception error = null;
         TransactionPolicy policy = null;
@@ -38,7 +40,7 @@ public abstract class InterceptorBase implements Serializable {
         final RuntimeException oldEx;
         final IllegalStateException illegalStateException;
         if (forbidsUt) {
-            illegalStateException = new IllegalStateException("Can't use UserTransaction from @Transaction call");
+            illegalStateException = ILLEGAL_STATE_EXCEPTION;
             oldEx = CoreUserTransaction.error(illegalStateException);
         } else {
             illegalStateException = null;
