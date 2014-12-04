@@ -928,7 +928,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         final List<URL> libs = appModule.getAdditionalLibraries();
         if (libs != null && libs.size() > 0) {
-            final Extensions.Finder finder = new Extensions.Finder("META-INF", libs.toArray(new URL[libs.size()]));
+            final Extensions.Finder finder = new Extensions.Finder("META-INF", false, libs.toArray(new URL[libs.size()]));
             extensions.addAll(Extensions.findExtensions(finder));
             notLoaded.addAll(finder.getResourcesNotLoaded());
         }
@@ -938,7 +938,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 if (uri.isAbsolute()) {
                     final URL url = uri.toURL();
                     if (libs != null && !libs.contains(url)) {
-                        final Extensions.Finder finder = new Extensions.Finder("META-INF", url);
+                        final Extensions.Finder finder = new Extensions.Finder("META-INF", false , url);
                         extensions.addAll(Extensions.findExtensions(finder));
                         notLoaded.addAll(finder.getResourcesNotLoaded());
                     }
@@ -954,7 +954,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         for (final WebModule web : appModule.getWebModules()) {
             final List<URL> webLibs = web.getScannableUrls();
             if (webLibs != null && webLibs.size() > 0) {
-                final Extensions.Finder finder = new Extensions.Finder("META-INF", webLibs.toArray(new URL[webLibs.size()]));
+                final Extensions.Finder finder = new Extensions.Finder("META-INF", false, webLibs.toArray(new URL[webLibs.size()]));
                 extensions.addAll(Extensions.findExtensions(finder));
                 notLoaded.addAll(finder.getResourcesNotLoaded());
             }
