@@ -274,12 +274,10 @@ public class NewLoaderLogic {
         excludes.addAll(Arrays.asList(exclusions));
 
         if (ADDITIONAL_EXCLUDES != null) {
-            for (final String exclude : ADDITIONAL_EXCLUDES.split(",")) {
-                excludes.add(exclude.trim());
-            }
+            Collections.addAll(excludes, ADDITIONAL_EXCLUDES.split("[ \t\r\n]*,[ \t\n\n]*"));
         }
         if (ADDITIONAL_INCLUDE != null) { // include = not excluded
-            for (final String rawInclude : ADDITIONAL_INCLUDE.split(",")) {
+            for (final String rawInclude : ADDITIONAL_INCLUDE.split("[ \t\r\n]*,[ \t\n\n]*")) {
                 final String include = rawInclude.trim();
                 final Iterator<String> excluded = excludes.iterator();
                 while (excluded.hasNext()) {

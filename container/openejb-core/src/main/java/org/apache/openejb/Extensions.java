@@ -104,7 +104,7 @@ public final class Extensions {
 
     public static class Finder extends ResourceFinder {
         public Finder(final String path, final URL... urls) {
-            super(path, urls);
+            super(path, urls == null ? new URL[0] : urls);
         }
 
         // ensure we support multiple class by file
