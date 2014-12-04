@@ -9,6 +9,12 @@ akka-cluster-
 akka-remote-
 antlr-
 aopalliance-
+# Arquillian embedded jar (enrichment)
+arquillian-core.jar
+arquillian-testng.jar
+arquillian-junit.jar
+arquillian-transaction.jar
+# normal Arquillian jars (ie maven ones)
 arquillian-common
 arquillian-config-
 arquillian-core-api-
