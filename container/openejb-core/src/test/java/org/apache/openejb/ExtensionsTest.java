@@ -27,7 +27,7 @@ import static org.junit.Assert.assertEquals;
 public class ExtensionsTest {
     @Test
     public void supportsMultipleLines() throws IOException {
-        final List<Class<?>> classes = new Extensions.Finder("META-INF").findAvailableClasses("multiple");
+        final List<Class<?>> classes = new Extensions.Finder("META-INF", true).findAvailableClasses("multiple");
         assertEquals(asList(C1.class, C2.class), classes);
     }
 

@@ -104,9 +104,9 @@ public final class Extensions {
     }
 
     public static class Finder extends ResourceFinder {
-        public Finder(final String path, final URL... urls) {
+        public Finder(final String path, final boolean useLoader, final URL... urls) {
             super(path, urls);
-            if (urls == null || urls.length == 0) {
+            if (!useLoader && (urls == null || urls.length == 0)) {
                 Reflections.set(this, "urls", new URL[0]);
             }
         }
