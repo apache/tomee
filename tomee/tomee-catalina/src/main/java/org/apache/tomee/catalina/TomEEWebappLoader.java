@@ -70,6 +70,13 @@ public class TomEEWebappLoader extends WebappLoader {
 
     @Override
     protected void startInternal() throws LifecycleException {
+        if (getClassLoader() != null) {
+            final TomEEWebappClassLoader webappClassLoader = TomEEWebappClassLoader.class.cast(getClassLoader());
+            if (webappClassLoader.isStopped()) {
+                webappClassLoader.internalStop();
+            }
+        }
+
         final Context context = getContext();
 
         ClassLoaderConfigurer configurer = ClassLoaderUtil.configurer(context.getName());

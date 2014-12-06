@@ -95,7 +95,7 @@ public class JuliLogStreamFactory implements LogStreamFactory {
         }
 
         try {
-            System.setProperty(WebBeansLoggerFacade.class.getName(), "org.apache.webbeans.logger.JULLoggerFactory");
+            System.setProperty(WebBeansLoggerFacade.class.getName(), "org.apache.openejb.cdi.logging.ContainerJULLoggerFactory");
         } catch (final Throwable th) {
             // ignored, surely arquillian remote only so OWB is not here
         }

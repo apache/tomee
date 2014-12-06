@@ -21,9 +21,10 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.WebResource;
 import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.WebResourceSet;
-import org.apache.catalina.loader.WebappClassLoader;
+import org.apache.catalina.loader.ParallelWebappClassLoader;
 import org.apache.catalina.webresources.DirResourceSet;
 import org.apache.catalina.webresources.StandardRoot;
+import org.apache.juli.ClassLoaderLogManager;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.classloader.ClassLoaderConfigurer;
 import org.apache.openejb.classloader.CompositeClassLoaderConfigurer;
@@ -50,16 +51,32 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.LogManager;
 
-public class TomEEWebappClassLoader extends WebappClassLoader {
+// TODO: rework it
+// constraint: be able to use EM in web components (contextDestroyed() listener for instance) and opposite (link TWAB/Assembler)
+// issue: StandardRoot is not lazy stopped
+// proposals:
+// - change the Assembler TWAB.undeployWebapps call to be correct.
+// - lazy stop StandardRoot
+// - integrate more finely with StandardContext to be able to ensure we are called when expected
+public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, TomEEWebappClassLoader.class.getName());
-    private static final ThreadLocal<ClassLoaderConfigurer> INIT_CONFIGURER = new ThreadLocal<ClassLoaderConfigurer>();
-    private static final ThreadLocal<Context> CONTEXT = new ThreadLocal<Context>();
+    private static final ThreadLocal<ClassLoaderConfigurer> INIT_CONFIGURER = new ThreadLocal<>();
+    private static final ThreadLocal<Context> CONTEXT = new ThreadLocal<>();
 
     public static final String TOMEE_WEBAPP_FIRST = "tomee.webapp-first";
 
+    static {
+        boolean result = ClassLoader.registerAsParallelCapable();
+        if (!result) {
+            LOGGER.warning("Can't register // tomee webapp classloader");
+        }
+    }
+
     private boolean restarting;
-    private boolean forceStopPhase = Boolean.parseBoolean(SystemInstance.get().getProperty("tomee.webappclassloader.force-stop-phase", "false"));
+    private boolean forceStopPhase = Boolean.parseBoolean(SystemInstance.get().getProperty("tomee.webappclassloader.force-stop-phase", "true"));
     private ClassLoaderConfigurer configurer;
     private final int hashCode;
     private Collection<File> additionalRepos;
@@ -85,7 +102,7 @@ public class TomEEWebappClassLoader extends WebappClassLoader {
     @Override
     public void stop() throws LifecycleException {
         // in our destroyapplication method we need a valid classloader to TomcatWebAppBuilder.afterStop()
-        if (forceStopPhase && restarting) {
+        if (forceStopPhase || restarting) {
             internalStop();
         }
     }
@@ -174,25 +191,20 @@ public class TomEEWebappClassLoader extends WebappClassLoader {
         return !"org.apache.tomee.mojarra.TomEEInjectionProvider".equals(name) && URLClassLoaderFirst.shouldSkip(name);
     }
 
-    @Override
-    protected void checkStateForClassLoading(final String className) throws ClassNotFoundException {
-        if (stopped) { // keep same error than parent
-            super.checkStateForClassLoading(className);
-        }
-    }
-
     public void internalStop() throws LifecycleException {
-        if (getState().isAvailable()) {
-            // reset classloader because of tomcat classloaderlogmanager
-            // to be sure we reset the right loggers
-            final ClassLoader loader = Thread.currentThread().getContextClassLoader();
-            Thread.currentThread().setContextClassLoader(this);
-            try {
-                super.stop();
-            } finally {
-                Thread.currentThread().setContextClassLoader(loader);
-            }
+        if (stopped) {
+            return;
+        }
+        // reset classloader because of tomcat classloaderlogmanager
+        // to be sure we reset the right loggers
+        final Thread thread = Thread.currentThread();
+        final ClassLoader loader = thread.getContextClassLoader();
+        thread.setContextClassLoader(this);
+        try {
+            super.stop();
             stopped = true;
+        } finally {
+            thread.setContextClassLoader(loader);
         }
     }
 
@@ -206,6 +218,10 @@ public class TomEEWebappClassLoader extends WebappClassLoader {
 
     public boolean isRestarting() {
         return restarting;
+    }
+
+    public boolean isStopped() {
+        return stopped;
     }
 
     public synchronized void initAdditionalRepos() {
@@ -314,7 +330,7 @@ public class TomEEWebappClassLoader extends WebappClassLoader {
         }
 
         if ("META-INF/services/javax.servlet.ServletContainerInitializer".equals(name)) {
-            final Collection<URL> list = new ArrayList<URL>(Collections.list(super.getResources(name)));
+            final Collection<URL> list = new ArrayList<>(Collections.list(super.getResources(name)));
             final Iterator<URL> it = list.iterator();
             while (it.hasNext()) {
                 final URL next = it.next();
@@ -339,8 +355,30 @@ public class TomEEWebappClassLoader extends WebappClassLoader {
     }
 
     @Override
-    public String toString() {
-        return "TomEE" + super.toString();
+    public TomEEWebappClassLoader copyWithoutTransformers() {
+        final TomEEWebappClassLoader result = new TomEEWebappClassLoader(getParent());
+        result.additionalRepos = additionalRepos;
+        result.configurer = configurer;
+        super.copyStateWithoutTransformers(result);
+        try {
+            result.start();
+        } catch (LifecycleException e) {
+            throw new IllegalStateException(e);
+        }
+
+        return result;
+    }
+
+    @Override
+    public void destroy() {
+        try {
+            super.destroy();
+        } finally {
+            final LogManager lm = LogManager.getLogManager();
+            if (ClassLoaderLogManager.class.isInstance(lm)) { // weak ref but ensure it is really removed otherwise in some cases we leak
+                Map.class.cast(Reflections.get(lm, "classLoaderLoggers")).remove(this);
+            }
+        }
     }
 
     public static void initContext(final ClassLoaderConfigurer configurer) {

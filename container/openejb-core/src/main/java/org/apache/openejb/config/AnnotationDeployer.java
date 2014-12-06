@@ -184,6 +184,9 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
+import javax.enterprise.context.NormalScope;
+import javax.enterprise.inject.Stereotype;
+import javax.inject.Scope;
 import javax.interceptor.ExcludeClassInterceptors;
 import javax.interceptor.ExcludeDefaultInterceptors;
 import javax.interceptor.Interceptors;
@@ -1643,10 +1646,44 @@ public class AnnotationDeployer implements DynamicDeployer {
             for (final Map.Entry<URL, List<String>> entry : map.entrySet()) {
                 final URL key = entry.getKey();
                 final URL beansXml = hasBeansXml(key);
+                final List<String> value = entry.getValue();
                 if (beansXml != null) {
-                    classes.put(beansXml, entry.getValue());
-                } else {
-                    notManaged.put(entry.getKey(), entry.getValue());
+                    classes.put(beansXml, value);
+                } else if (!value.isEmpty()) {
+                    final Set<String> potentialClasses = new HashSet<>();
+
+                    final Set<Class<?>> newMarkers = new HashSet<>(finder.findAnnotatedClasses(Stereotype.class));
+                    newMarkers.addAll(finder.findAnnotatedClasses(NormalScope.class));
+                    newMarkers.addAll(finder.findAnnotatedClasses(Scope.class));
+
+                    do {
+                        final Set<Class<?>> loopMarkers = new HashSet<>(newMarkers);
+                        newMarkers.clear();
+                        for (final Class<?> marker : loopMarkers) {
+                            potentialClasses.add(marker.getName());
+
+                            final List<Class<?>> found = finder.findAnnotatedClasses(Class.class.cast(marker));
+                            for (final Class<?> c : found) {
+                                if (c.isAnnotation()) {
+                                    newMarkers.add(c);
+                                }
+                                potentialClasses.add(c.getName());
+                            }
+                        }
+                    } while (!newMarkers.isEmpty());
+                    if (potentialClasses.isEmpty()) {
+                        continue;
+                    }
+
+                    // intersection
+                    final List<String> diff = new ArrayList<>(entry.getValue());
+                    diff.removeAll(potentialClasses);
+
+                    final List<String> copy = new ArrayList<>(entry.getValue());
+                    copy.removeAll(diff);
+
+                    // just keep the potential ones to not load all classes during boot
+                    notManaged.put(entry.getKey(), copy);
                 }
             }
         }

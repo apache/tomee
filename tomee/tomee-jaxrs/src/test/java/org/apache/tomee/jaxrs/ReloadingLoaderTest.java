@@ -81,7 +81,12 @@ public class ReloadingLoaderTest {
             }
         });
 
-        loader = new TomEEWebappClassLoader(ParentClassLoaderFinder.Helper.get());
+        loader = new TomEEWebappClassLoader(ParentClassLoaderFinder.Helper.get()) {
+            @Override
+            protected void clearReferences() {
+                // no-op: this test should be reworked to support it but in real life a loader is not stopped/started
+            }
+        };
         loader.init();
         final StandardRoot resources = new StandardRoot();
         loader.setResources(resources);
@@ -116,6 +121,7 @@ public class ReloadingLoaderTest {
     public void cleanUp() throws LifecycleException {
         loader.stop();
     }
+
     @Test
     public void tomcatClassLoaderParentShouldntBeNulAfterAStopStartOtherwiseReloadIsBroken() throws Exception {
         final CxfRSService server = new CxfRSService();
@@ -161,7 +167,7 @@ public class ReloadingLoaderTest {
                 {}});
             resources.start();
             loader.start();
-            // TomcatWebAppBuilder ill catch start event from StandardCo1ntext and force a classloader
+            // TomcatWebAppBuilder ill catch start event from StandardContext and force a classloader
             Reflections.set(loader, "parent", ParentClassLoaderFinder.Helper.get());
 
             server.afterApplicationCreated(new AssemblerAfterApplicationCreated(info, context, Collections.<BeanContext>emptyList()));

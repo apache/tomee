@@ -293,7 +293,14 @@ public abstract class JaxbOpenejb {
     public static <T> JAXBContext getContext(final Class<T> type) throws JAXBException {
         JAXBContext jaxbContext = jaxbContexts.get(type);
         if (jaxbContext == null) {
-            jaxbContext = JAXBContextFactory.newInstance(type);
+            final Thread thread = Thread.currentThread();
+            final ClassLoader old = thread.getContextClassLoader();
+            thread.setContextClassLoader(JaxbOpenejb.class.getClassLoader());
+            try {
+                jaxbContext = JAXBContextFactory.newInstance(type);
+            } finally {
+                thread.setContextClassLoader(old);
+            }
             jaxbContexts.put(type, jaxbContext);
         }
         return jaxbContext;
