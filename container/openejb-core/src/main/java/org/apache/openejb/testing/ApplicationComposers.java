@@ -68,6 +68,7 @@ import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.Join;
+import org.apache.openejb.util.NetworkUtil;
 import org.apache.openejb.util.ServiceManagerProxy;
 import org.apache.openejb.util.URLs;
 import org.apache.openejb.web.LightweightWebAppBuilder;
@@ -279,6 +280,15 @@ public final class ApplicationComposers {
             }
         }
 
+        for (final ClassFinder finder : testClassFinders.values()) {
+            for (final Field field : finder.findAnnotatedFields(RandomPort.class)) {
+                final Class<?> type = field.getType();
+                if (int.class != type && URL.class != type) {
+                    throw new IllegalArgumentException("@RandomPort is only supported for int fields");
+                }
+            }
+        }
+
         if (appModules > 1) {
             final String gripe = "Test class should have no more than one @Module method that returns " + Application.class.getName();
             errors.add(new Exception(gripe));
@@ -409,6 +419,34 @@ public final class ApplicationComposers {
         }
 
         SystemInstance.init(configuration);
+        for (final Map.Entry<Object, ClassFinder> finder : testClassFinders.entrySet()) {
+            for (final Field field : finder.getValue().findAnnotatedFields(RandomPort.class)) {
+                if (!field.isAccessible()) {
+                    field.setAccessible(true);
+                }
+
+                final String key = field.getAnnotation(RandomPort.class).value() + ".port";
+                final String existing = SystemInstance.get().getProperty(key);
+                final int random;
+                if (existing == null) {
+                    random = NetworkUtil.getNextAvailablePort();
+                    SystemInstance.get().setProperty(key, Integer.toString(random));
+                } else {
+                    random = Integer.parseInt(existing);
+                }
+                if (int.class == field.getType()) {
+                    field.set(finder.getKey(), random);
+                } else if (URL.class == field.getType()) {
+                    field.set(finder.getKey(), new URL("http://localhost:" + random + "/"));
+                }
+            }
+        }
+        for (final Map.Entry<Object, ClassFinder> finder : testClassFinders.entrySet()) {
+            if (!finder.getValue().findAnnotatedClasses(SimpleLog.class).isEmpty()) {
+                SystemInstance.get().setProperty("openejb.jul.forceReload", "true");
+                break;
+            }
+        }
 
         final CdiExtensions cdiExtensions = testClass.getAnnotation(CdiExtensions.class);
         if (cdiExtensions != null) {
