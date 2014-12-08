@@ -588,7 +588,11 @@ public class Container implements AutoCloseable {
         final Properties initProps = new Properties();
         initProps.putAll(System.getProperties());
         initProps.putAll(properties);
-        SystemInstance.init(initProps);
+        if (SystemInstance.isInitialized()) {
+            SystemInstance.get().getProperties().putAll(initProps);
+        } else {
+            SystemInstance.init(initProps);
+        }
         SystemInstance.get().setComponent(StandardServer.class, (StandardServer) tomcat.getServer());
         SystemInstance.get().setComponent(Server.class, tomcat.getServer()); // needed again cause of init()
 
