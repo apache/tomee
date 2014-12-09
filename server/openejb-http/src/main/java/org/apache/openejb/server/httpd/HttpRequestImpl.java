@@ -260,7 +260,7 @@ public class HttpRequestImpl implements HttpRequest {
 
     @Override
     public StringBuffer getRequestURL() {
-        return new StringBuffer(uri.getScheme() + "://" + uri.getHost() + ":" + uri.getPort() + uri.getPath());
+        return new StringBuffer(uri.getScheme() + "://" + uri.getHost() + ":" + uri.getPort() + uri.getRawPath());
     }
 
     @Override

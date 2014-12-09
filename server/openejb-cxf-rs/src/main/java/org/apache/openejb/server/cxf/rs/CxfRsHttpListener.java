@@ -388,7 +388,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         if (webContext == null && appCtx.getWebContexts().size() == 1 && appCtx.getWebContexts().get(0).getClassLoader() == oldLoader) {
             webContext = appCtx.getWebContexts().get(0);
         }
-        SystemInstance.get().fireEvent(new ServerCreated(server, appCtx, webContext));
+        SystemInstance.get().fireEvent(new ServerCreated(server, appCtx, webContext, this.context));
     }
 
     private List<Object> providers(final Collection<ServiceInfo> services, final Collection<Object> additionalProviders, final WebBeansContext ctx) {
@@ -535,6 +535,11 @@ public class CxfRsHttpListener implements RsHttpListener {
             factory.setResourceClasses(classes);
             factory.setInvoker(new AutoJAXRSInvoker(restEjbs));
 
+            this.context = webContext;
+            if (!webContext.startsWith("/")) {
+                this.context = "/" + webContext;
+            } // /webcontext/servlet for event firing
+
             final Level level = SERVER_IMPL_LOGGER.getLevel();
             try {
                 SERVER_IMPL_LOGGER.setLevel(Level.OFF);
@@ -552,10 +557,6 @@ public class CxfRsHttpListener implements RsHttpListener {
                 }
             }
 
-            this.context = webContext;
-            if (!webContext.startsWith("/")) {
-                this.context = "/" + webContext;
-            }
             final int servletIdx = 1 + this.context.substring(1).indexOf('/');
             if (servletIdx > 0) {
                 this.servlet = this.context.substring(servletIdx);
