@@ -26,11 +26,17 @@ public class ServerCreated {
     private final Server server;
     private final AppContext appContext;
     private final WebContext webContext;
+    private final String mapping;
 
-    public ServerCreated(final Server server, final AppContext appContext, final WebContext webContext) {
+    public ServerCreated(final Server server, final AppContext appContext, final WebContext webContext, final String mapping) {
         this.server = server;
         this.appContext = appContext;
         this.webContext = webContext;
+        this.mapping = mapping;
+    }
+
+    public String getMapping() {
+        return mapping;
     }
 
     public Server getServer() {
