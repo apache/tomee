@@ -137,7 +137,7 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask {
             }
 
             final ThreadContext oldCtx;
-            if (threadContext != null) {
+            if (threadContext != null) { // point A
                 final ThreadContext newContext = new ThreadContext(threadContext);
                 newContext.set(Context.class, this);
                 if (securityContext != null) {
@@ -158,7 +158,7 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask {
         }
 
         public void exit() {
-            if (currentContext.threadContext != null) {
+            if (threadContext != null) { // ensure we use the same condition as point A, see OPENEJB-2109
                 ThreadContext.exit(currentContext.threadContext);
             }
 

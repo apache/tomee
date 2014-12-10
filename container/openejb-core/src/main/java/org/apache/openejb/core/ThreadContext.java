@@ -44,8 +44,9 @@ public class ThreadContext {
         }
 
         // set the thread context class loader
-        newContext.oldClassLoader = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader(newContext.beanContext.getClassLoader());
+        final Thread thread = Thread.currentThread();
+        newContext.oldClassLoader = thread.getContextClassLoader();
+        thread.setContextClassLoader(newContext.beanContext.getClassLoader());
 
         // update thread local
         final ThreadContext oldContext = threadStorage.get();
