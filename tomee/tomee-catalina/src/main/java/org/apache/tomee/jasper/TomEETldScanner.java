@@ -7180,7 +7180,7 @@ public class TomEETldScanner extends TldScanner {
 
     private static URL findJar(final String s) {
         try {
-            return PATHS.findTomEELibJar("myfaces-impl").toURI().toURL();
+            return PATHS.findTomEELibJar(s).toURI().toURL();
         } catch (final Exception e) {
             // no-op
         }
