@@ -105,12 +105,12 @@ public class TomEEJarScanner extends StandardJarScanner {
                 if (INCLUDE.accept(jarName)) {
                     return true;
                 }
-                if (jarName.startsWith("tomcat-websocket")) {
+                if (jarName.startsWith("tomcat-websocket") || jarName.startsWith("myfaces-impl") /* see org.apache.tomee.jasper.TomEETldScanner.scanPlatform */) {
                     return false;
                 }
             }
             if (jarName.startsWith("johnzon-")) {
-                return false; // but we scan it in openejb scnaning
+                return false; // but we scan it in openejb scanning
             }
             return !NewLoaderLogic.skip(jarName) && (delegate == null || delegate.check(jarScanType, jarName));
         }
