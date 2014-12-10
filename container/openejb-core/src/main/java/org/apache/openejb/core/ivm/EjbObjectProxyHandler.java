@@ -288,7 +288,7 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
 
                         throw ae;
                     } finally {
-                        if (oldCtx != null) {
+                        if (threadContext != null) {
                             ThreadContext.exit(oldCtx);
                         }
                         if (!associate) {

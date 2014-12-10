@@ -350,7 +350,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
 
                         throw ae;
                     } finally {
-                        if (oldCtx != null) {
+                        if (currentCtx != null) {
                             ThreadContext.exit(oldCtx);
                         }
                         if (!associate) {
