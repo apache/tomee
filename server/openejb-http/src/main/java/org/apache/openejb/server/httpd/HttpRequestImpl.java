@@ -18,6 +18,7 @@ package org.apache.openejb.server.httpd;
 
 import org.apache.openejb.core.security.jaas.UserPrincipal;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.ArrayEnumeration;
 import org.apache.openejb.util.Logger;
 
@@ -868,7 +869,7 @@ public class HttpRequestImpl implements HttpRequest {
 
     @Override
     public boolean isUserInRole(final String s) {
-        return true; // TODO?
+        return SystemInstance.get().getComponent(SecurityService.class).isCallerInRole(s);
     }
 
     @Override
