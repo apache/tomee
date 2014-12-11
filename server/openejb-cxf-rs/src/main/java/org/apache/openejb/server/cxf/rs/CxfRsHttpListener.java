@@ -140,6 +140,7 @@ public class CxfRsHttpListener implements RsHttpListener {
     private final Collection<Pattern> staticResourcesList = new CopyOnWriteArrayList<Pattern>();
     private final List<ObjectName> jmxNames = new ArrayList<ObjectName>();
     private final Collection<CreationalContext<?>> toRelease = new LinkedHashSet<CreationalContext<?>>();
+    private final Collection<CdiSingletonResourceProvider> singletons = new LinkedHashSet<CdiSingletonResourceProvider>();
 
     private static final char[] URL_SEP = new char[] { '?', '#', ';' };
 
@@ -466,6 +467,13 @@ public class CxfRsHttpListener implements RsHttpListener {
                 LOGGER.warning(e.getMessage(), e);
             }
         }
+        for (final CdiSingletonResourceProvider provider : singletons) {
+            try {
+                provider.release();
+            } catch (final Exception e) {
+                LOGGER.warning(e.getMessage(), e);
+            }
+        }
 
         final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());
@@ -502,33 +510,38 @@ public class CxfRsHttpListener implements RsHttpListener {
             for (final Class<?> clazz : application.getClasses()) {
                 if (!additionalProviders.contains(clazz) && !clazz.isInterface()) {
                     classes.add(clazz);
+
+                    final EJBRestServiceInfo restServiceInfo = getEjbRestServiceInfo(restEjbs, clazz);
+
+                    if (restServiceInfo != null) {
+                        final Object proxy = ProxyEJB.subclassProxy(restServiceInfo.context);
+                        factory.setResourceProvider(clazz, new NoopResourceProvider(restServiceInfo.context.getBeanClass(), proxy));
+                    } else {
+                        factory.setResourceProvider(clazz, new OpenEJBPerRequestPojoResourceProvider(
+                                classLoader, clazz, injections, context, owbCtx));
+                    }
                 }
             }
 
             for (final Object o : application.getSingletons()) {
                 if (!additionalProviders.contains(o)) {
-                    final Class<?> clazz = o.getClass();
+                    final Class<?> clazz = realClass(o.getClass());
                     classes.add(clazz);
-                }
-            }
 
-            for (final Class<?> clazz : classes) {
-                String name = clazz.getName();
-                EJBRestServiceInfo restServiceInfo = restEjbs.get(name);
+                    final EJBRestServiceInfo restServiceInfo = getEjbRestServiceInfo(restEjbs, clazz);
 
-                if (name.endsWith(DynamicSubclass.IMPL_SUFFIX)) {
-                    name = name.substring(0, name.length() - DynamicSubclass.IMPL_SUFFIX.length());
-                    restServiceInfo = restEjbs.get(name);
-                    if (restServiceInfo != null) { // AutoJAXRSInvoker relies on it
-                        restEjbs.put(clazz.getName(), restServiceInfo);
+                    if (restServiceInfo != null) {
+                        final Object proxy = ProxyEJB.subclassProxy(restServiceInfo.context);
+                        factory.setResourceProvider(clazz, new NoopResourceProvider(restServiceInfo.context.getBeanClass(), proxy));
+                    } else {
+                        if (owbCtx.getBeanManagerImpl().isInUse()) {
+                            final CdiSingletonResourceProvider provider = new CdiSingletonResourceProvider(classLoader, clazz, o, injections, context, owbCtx);
+                            singletons.add(provider);
+                            factory.setResourceProvider(clazz, provider);
+                        } else {
+                            factory.setResourceProvider(clazz, new SingletonResourceProvider(o));
+                        }
                     }
-                }
-
-                if (restServiceInfo != null) {
-                    final Object proxy = ProxyEJB.subclassProxy(restServiceInfo.context);
-                    factory.setResourceProvider(clazz, new NoopResourceProvider(restServiceInfo.context.getBeanClass(), proxy));
-                } else {
-                    factory.setResourceProvider(clazz, new OpenEJBPerRequestPojoResourceProvider(classLoader, clazz, injections, context, owbCtx));
                 }
             }
 
@@ -580,6 +593,31 @@ public class CxfRsHttpListener implements RsHttpListener {
                 CxfUtil.clearBusLoader(oldLoader);
             }
         }
+    }
+
+    private EJBRestServiceInfo getEjbRestServiceInfo(Map<String, EJBRestServiceInfo> restEjbs, Class<?> clazz) {
+        String name = clazz.getName();
+        EJBRestServiceInfo restServiceInfo = restEjbs.get(name);
+
+        if (name.endsWith(DynamicSubclass.IMPL_SUFFIX)) {
+            name = name.substring(0, name.length() - DynamicSubclass.IMPL_SUFFIX.length());
+            restServiceInfo = restEjbs.get(name);
+            if (restServiceInfo != null) { // AutoJAXRSInvoker relies on it
+                restEjbs.put(clazz.getName(), restServiceInfo);
+            }
+        }
+        return restServiceInfo;
+    }
+
+    private static Class<?> realClass(final Class<?> aClass) {
+        Class<?> result = aClass;
+        while (result.getName().contains("$$")) {
+            result = result.getSuperclass();
+            if (result == null) {
+                return aClass;
+            }
+        }
+        return result;
     }
 
     private static String createEndpointName(final Application application) {
