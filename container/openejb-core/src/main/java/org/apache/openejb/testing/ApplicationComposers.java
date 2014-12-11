@@ -66,7 +66,9 @@ import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.jee.oejb3.PojoDeployment;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.rest.RESTResourceFinder;
 import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.testing.rest.ContextProvider;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.NetworkUtil;
 import org.apache.openejb.util.ServiceManagerProxy;
@@ -847,6 +849,15 @@ public final class ApplicationComposers {
                 field.set(inputTestInstance, new InitialContext(new Properties() {{
                     setProperty(Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
                 }}));
+            } else if (ContextProvider.class.isAssignableFrom(type)) {
+                RESTResourceFinder finder = SystemInstance.get().getComponent(RESTResourceFinder.class);
+                if (finder == null || !ContextProvider.class.isInstance(finder)) {
+                    finder = new ContextProvider(finder);
+                    SystemInstance.get().setComponent(RESTResourceFinder.class, finder);
+                }
+
+                field.setAccessible(true);
+                field.set(inputTestInstance, finder);
             } else {
                 throw new IllegalArgumentException("can't find value for type " + type.getName());
             }
