@@ -19,13 +19,22 @@ package org.apache.openejb.testing;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.junit.ApplicationComposer;
+import org.apache.openejb.rest.ThreadLocalContextManager;
+import org.apache.openejb.testing.rest.ContextProvider;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
+import javax.ws.rs.core.SecurityContext;
+
+import java.security.Principal;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(ApplicationComposer.class)
 public class AppComposerContextInjectionTest {
@@ -37,6 +46,9 @@ public class AppComposerContextInjectionTest {
     @AppResource
     private Context context;
 
+    @AppResource
+    private ContextProvider provider;
+
     @Test
     public void lookupShouldWorkOnOpenEJBNames() throws NamingException {
         assertEquals("ok", MyBean.class.cast(context.lookup("MyBeanLocalBean")).ok());
@@ -45,6 +57,37 @@ public class AppComposerContextInjectionTest {
     @Test
     public void lookupShouldWorkOnGlobalNames() throws NamingException {
         assertEquals("ok", MyBean.class.cast(context.lookup("java:global/AppComposerContextInjectionTest/bean/MyBean")).ok());
+    }
+
+    @Test
+    public void jaxrs() throws NamingException {
+        assertNotNull(provider);
+        assertNull(provider.find(SecurityContext.class));
+        final SecurityContext securityContext = new SecurityContext() {
+            @Override
+            public Principal getUserPrincipal() {
+                return null;
+            }
+
+            @Override
+            public boolean isUserInRole(final String s) {
+                return "foo".equals(s);
+            }
+
+            @Override
+            public boolean isSecure() {
+                return false;
+            }
+
+            @Override
+            public String getAuthenticationScheme() {
+                return null;
+            }
+        };
+        provider.register(SecurityContext.class, securityContext);
+        assertNotNull(provider.find(SecurityContext.class));
+        assertTrue(SecurityContext.class.cast(ThreadLocalContextManager.findThreadLocal(SecurityContext.class)).isUserInRole("foo"));
+        assertFalse(SecurityContext.class.cast(ThreadLocalContextManager.findThreadLocal(SecurityContext.class)).isUserInRole("bar"));
     }
 
     public static class MyBean {
