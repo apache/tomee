@@ -35,10 +35,12 @@ import org.apache.cxf.transport.http.HttpDestinationFactory;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.ServiceInfo;
+import org.apache.openejb.assembler.classic.event.AssemblerDestroyed;
 import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
 import org.apache.openejb.assembler.classic.util.ServiceInfos;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.monitoring.LocalMBeanServer;
+import org.apache.openejb.observer.Observes;
 import org.apache.openejb.server.cxf.transport.OpenEJBHttpDestinationFactory;
 import org.apache.openejb.server.cxf.transport.event.BusCreated;
 import org.apache.openejb.util.PropertiesHelper;
@@ -52,6 +54,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
 public final class CxfUtil {
@@ -66,7 +69,7 @@ public final class CxfUtil {
     public static final String DEBUG = "debug";
     public static final String BUS_PREFIX = "org.apache.openejb.cxf.bus.";
     public static final String BUS_CONFIGURED_FLAG = "openejb.cxf.bus.configured";
-    private static final Bus DEFAULT_BUS = initDefaultBus(); // has to be initializd after bindingFactoryMap
+    private static final AtomicReference<Bus> DEFAULT_BUS = new AtomicReference<Bus>();
     private static Map<String, BindingFactory> bindingFactoryMap;
 
     private CxfUtil() {
@@ -92,6 +95,8 @@ public final class CxfUtil {
             // ensure client proxies can use app classes
             CXFBusFactory.setDefaultBus(Bus.class.cast(Proxy.newProxyInstance(CxfUtil.class.getClassLoader(), new Class<?>[]{Bus.class}, new ClientAwareBusHandler())));
 
+            SystemInstance.get().addObserver(new LifecycleManager());
+
             return bus; // we keep as internal the real bus and just expose to cxf the client aware bus to be able to cast it easily
         } finally {
             Thread.currentThread().setContextClassLoader(cl);
@@ -99,7 +104,18 @@ public final class CxfUtil {
     }
 
     public static Bus getBus() {
-        return DEFAULT_BUS;
+        Bus bus = DEFAULT_BUS.get();
+        if (bus == null) {
+            synchronized (DEFAULT_BUS) { // synch could be better "in case off
+                // " but with our lifecycle it is far enough since it is thread safe
+                bus = DEFAULT_BUS.get();
+                if (bus == null) {
+                    bus = initDefaultBus();
+                    DEFAULT_BUS.set(bus);
+                }
+            }
+        }
+        return bus;
     }
 
     public static ClassLoader initBusLoader() {
@@ -302,6 +318,20 @@ public final class CxfUtil {
             }
 
             return method.invoke(bus, args);
+        }
+    }
+
+    public static class LifecycleManager {
+        public void destroy(@Observes final AssemblerDestroyed ignored) {
+            final SystemInstance systemInstance = SystemInstance.get();
+            final Bus bus = getBus();
+            if ("true".equalsIgnoreCase(systemInstance.getProperty("openejb.cxf.jmx", "true"))) {
+                final InstrumentationManager mgr = bus.getExtension(InstrumentationManager.class);
+                if (InstrumentationManagerImpl.class.isInstance(mgr)) {
+                    mgr.shutdown();
+                }
+            }
+            systemInstance.removeObserver(this);
         }
     }
 }
