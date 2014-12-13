@@ -47,7 +47,7 @@
     <listener class-name="org.testng.reporters.FailedReporter"/>
     <listener class-name="org.testng.reporters.XMLReporter"/>
     <listener class-name="org.testng.reporters.EmailableReporter"/>
-    <listener class-name="org.testng.reporters.TestHTMLReporter"/>
+    <listener class-name="org.apache.openejb.tck.cdi.embedded.HTMLReporter"/>
   </listeners>
 
   <test name="JSR-346 TCK">

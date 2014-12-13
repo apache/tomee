@@ -18,12 +18,9 @@ package org.apache.openejb.tck.cdi.embedded;
 
 import org.apache.openejb.core.ivm.IntraVmCopyMonitor;
 import org.apache.openejb.core.ivm.IntraVmProxy;
-import org.jboss.cdi.tck.spi.Beans;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 /**
@@ -46,12 +43,5 @@ public class BeansImpl extends org.apache.webbeans.test.tck.BeansImpl {
         } finally {
             IntraVmCopyMonitor.postPassivationOperation();
         }
-    }
-
-    @Override
-    public Object activate(final byte[] bytes) throws IOException, ClassNotFoundException {
-        final ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-        final ObjectInputStream is = new ObjectInputStream(bais);
-        return is.readObject();
     }
 }

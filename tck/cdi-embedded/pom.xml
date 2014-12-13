@@ -135,6 +135,12 @@
           <suiteXmlFiles>
             <suiteXmlFile>src/test/resources/passing.xml</suiteXmlFile>
           </suiteXmlFiles>
+          <properties>
+            <property> <!-- broken cause @RequestScoped beans are parameter and testng logs parameters -->
+              <name>usedefaultlisteners</name>
+              <value>false</value>
+            </property>
+          </properties>
           <systemPropertyVariables>
             <!-- this is a nice perf optimization to have by default but TCKs play with it -->
             <openejb.cdi.applicationScope.cached>false</openejb.cdi.applicationScope.cached>
