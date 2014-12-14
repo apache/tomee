@@ -139,6 +139,17 @@
           <exclude name="testBeanAttributesForManagedBeanWithModifiedAnnotatedType"/>
         </methods>
       </class>
+      <!-- CDITCK-459 -->
+      <class name="org.jboss.cdi.tck.tests.implementation.enterprise.newBean.NewEnterpriseBeanTest">
+        <methods>
+          <exclude name="testNewBeanCreatedForFieldInjectionPoint"/>
+          <exclude name="testNewBeanCreatedForInitializerInjectionPoint"/>
+          <exclude name="testNewBeanCreatedForConstructorInjectionPoint"/>
+          <exclude name="testNewBeanCreatedForProducerMethod"/>
+          <exclude name="testNewBeanCreatedForObserverMethod"/>
+          <exclude name="testNewBeanCreatedForDisposerMethod"/>
+        </methods>
+      </class>
     </classes>
   </test>
 </suite>
