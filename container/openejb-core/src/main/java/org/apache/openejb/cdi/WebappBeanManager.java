@@ -24,6 +24,7 @@ import org.apache.webbeans.component.OwbBean;
 import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.context.creational.CreationalContextImpl;
 import org.apache.webbeans.event.EventMetadataImpl;
+import org.apache.webbeans.util.Asserts;
 import org.apache.webbeans.util.WebBeansUtil;
 
 import javax.el.ELResolver;
@@ -31,6 +32,7 @@ import javax.el.ExpressionFactory;
 import javax.enterprise.context.spi.Context;
 import javax.enterprise.context.spi.Contextual;
 import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.UnsatisfiedResolutionException;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.InjectionPoint;
@@ -44,6 +46,7 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 public class WebappBeanManager extends BeanManagerImpl {
+    private static final ThreadLocal<Boolean> USE_PARENT_BM = new ThreadLocal<>();
     private final WebappWebBeansContext webappCtx;
     private final InheritedBeanFilter filter;
     private Set<Bean<?>> deploymentBeans;
@@ -79,11 +82,31 @@ public class WebappBeanManager extends BeanManagerImpl {
 
     @Override
     public Object getInjectableReference(final InjectionPoint injectionPoint, final CreationalContext<?> ctx) {
-        try {
-            return super.getInjectableReference(injectionPoint, ctx);
-        } catch (final RuntimeException e) {
+        Asserts.assertNotNull(injectionPoint, "injectionPoint parameter can not be null");
+        if(injectionPoint == null)  {
+            return null;
+        }
+
+        final Boolean existing = USE_PARENT_BM.get();
+        if (existing != null && existing) { // shortcut the whole logic to keep the threadlocal set up correctly
             return getParentBm().getInjectableReference(injectionPoint, ctx);
         }
+
+        // we can do it cause there is caching but we shouldn't - easy way to overide OWB actually
+        final Bean<Object> injectedBean = (Bean<Object>)getInjectionResolver().getInjectionPointBean(injectionPoint);
+        try {
+            if (injectedBean != null && injectedBean == getParentBm().getInjectionResolver().getInjectionPointBean(injectionPoint)) {
+                USE_PARENT_BM.set(true);
+                try {
+                    return getParentBm().getInjectableReference(injectionPoint, ctx);
+                } finally {
+                    USE_PARENT_BM.remove();
+                }
+            }
+        } catch (final UnsatisfiedResolutionException ure) {
+            // skip, use this bean
+        }
+        return super.getInjectableReference(injectionPoint, ctx);
     }
 
     @Override
