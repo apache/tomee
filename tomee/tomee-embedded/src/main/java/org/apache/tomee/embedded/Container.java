@@ -46,6 +46,7 @@ import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.config.AnnotationDeployer;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.config.ContainerClassesFilter;
 import org.apache.openejb.config.DeploymentLoader;
 import org.apache.openejb.config.DeploymentsResolver;
 import org.apache.openejb.config.EjbModule;
@@ -67,7 +68,6 @@ import org.apache.openejb.loader.provisining.ProvisioningResolver;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.classloader.URLClassLoaderFirst;
 import org.apache.tomee.catalina.TomEERuntimeException;
 import org.apache.tomee.catalina.TomcatLoader;
 import org.apache.tomee.catalina.session.QuickSessionManager;
@@ -79,7 +79,6 @@ import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.log.NullLogChute;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
-import org.apache.xbean.finder.filter.Filter;
 import org.apache.xbean.finder.filter.Filters;
 import org.codehaus.swizzle.stream.ReplaceStringsInputStream;
 
@@ -179,7 +178,8 @@ public class Container implements AutoCloseable {
             webModule.setFinder(
                 new FinderFactory.OpenEJBAnnotationFinder(
                     // skip container classes in scanning for shades
-                    new WebappAggregatedArchive(webModule, jarList, jarList.size() == 1 ? new ContainerFilter(configuration.getProperties()) /* shade */ : null))
+                    new WebappAggregatedArchive(webModule, jarList,
+                            jarList.size() == 1 ? new ContainerClassesFilter(configuration.getProperties()) /* shade */ : null))
                         .link());
         } catch (final Exception e) {
             throw new IllegalArgumentException(e);
@@ -209,97 +209,6 @@ public class Container implements AutoCloseable {
         }
 
         return this;
-    }
-
-    private static boolean isContainer(final String[] forced, final String[] skipped, final String name) { // TODO: use caching and split name on '.', should be faster
-        if (forced != null && startsWith(forced, name)) {
-            return false;
-        }
-        if (skipped != null && startsWith(skipped, name)) {
-            return true;
-        }
-
-        if (URLClassLoaderFirst.shouldSkip(name)) {
-            return true;
-        }
-        if (name.startsWith("javax.")) {
-            return true; // embedded case, no enrichment or whatever
-        }
-        if (name.startsWith("org.")) {
-            final String org = name.substring("org.".length());
-            if (org.startsWith("apache.")) {
-                final String sub = org.substring("apache.".length());
-                if (sub.startsWith("myfaces.")) {
-                    return !sub.contains("cdi.");
-                }
-                if (sub.startsWith("cxf.")
-                        || sub.startsWith("oro.")
-                        || sub.startsWith("ws.")
-                        || sub.startsWith("jcp.")
-                        || sub.startsWith("openejb.")
-                        || sub.startsWith("tomee.")
-                        || sub.startsWith("tomcat.")
-                        || sub.startsWith("juli.")
-                        || sub.startsWith("johnzon.")
-                        || sub.startsWith("activemq.")
-                        || sub.startsWith("neethi.")
-                        || sub.startsWith("xml.")
-                        || sub.startsWith("velocity.")
-                        || sub.startsWith("wss4j.")
-                        || sub.startsWith("commons.logging.")) {
-                    return true;
-                }
-            }
-            if (org.startsWith("metatype.sxc.")
-                    || org.startsWith("openejb.")
-                    || org.startsWith("slf4j.")
-                    || org.startsWith("fusesource.hawtbuf.")
-                    || org.startsWith("objectweb.howl.")) {
-                return true;
-            }
-            if (org.startsWith("joda.time.")) {
-                return true;
-            }
-            if (org.startsWith("opensaml.")) {
-                return true;
-            }
-            if (org.startsWith("codehaus.stax2.")) {
-                return true;
-            }
-            if (org.startsWith("jvnet.mimepull.")) {
-                return true;
-            }
-            if (org.startsWith("jasypt.")) {
-                return true;
-            }
-            if (org.startsWith("junit.")) {
-                return true;
-            }
-            if (org.startsWith("hamcrest.")) {
-                return true;
-            }
-            if (org.startsWith("swizzle.")) {
-                return true;
-            }
-        }
-        if (name.startsWith("com.")) {
-            final String com = name.substring("com.".length());
-            if (com.startsWith("ctc.wstx.") || com.startsWith("ibm.wsdl.")) {
-                return true;
-            }
-        }
-        return name.startsWith("net.sf.ehcache.")
-                || name.startsWith("junit.")
-                || name.startsWith("serp.");
-    }
-
-    private static boolean startsWith(String[] forced, String name) {
-        for (final String prefix : forced) {
-            if (name.startsWith(prefix)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private static void addCallersAsEjbModule(final ClassLoader loader, final AppModule app) {
@@ -952,23 +861,6 @@ public class Container implements AutoCloseable {
                 }
             }
             super.start();
-        }
-    }
-
-    private static class ContainerFilter implements Filter {
-        private final String[] forced;
-        private final String[] skipped;
-
-        public ContainerFilter(final Properties properties) {
-            final String forcedStr = properties == null ? null : properties.getProperty("openejb.classloader.forced-load");
-            forced = forcedStr != null ? forcedStr.split(" *, *") : null;
-            final String skippedStr = properties == null ? null : properties.getProperty("openejb.classloader.forced-skip");
-            skipped = skippedStr != null ? skippedStr.split(" *, *") : null;
-        }
-
-        @Override
-        public boolean accept(final String name) {
-            return !isContainer(forced, skipped, name);
         }
     }
 }

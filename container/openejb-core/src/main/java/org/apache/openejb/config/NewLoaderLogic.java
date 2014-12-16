@@ -561,7 +561,7 @@ public class NewLoaderLogic {
 
     }
 
-    private static class OptimizedExclusionFilter implements Filter {
+    public static class OptimizedExclusionFilter implements Filter {
         private final Set<String> included = new HashSet<>();
 
         public OptimizedExclusionFilter(final String[] exclusions) {
