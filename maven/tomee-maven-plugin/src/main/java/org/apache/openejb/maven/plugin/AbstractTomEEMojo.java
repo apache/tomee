@@ -36,6 +36,7 @@ import org.apache.openejb.config.RemoteServer;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Zips;
+import org.apache.openejb.maven.plugin.cli.Args;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.OpenEjbVersion;
 import org.apache.tomee.util.QuickServerXmlParser;
@@ -965,7 +966,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             }
         }
         if (args != null) {
-            strings.addAll(Arrays.asList(args.split(" ")));
+            strings.addAll(Args.parse(args));
         }
         if (javaagents != null) {
             addJavaagents(strings);
