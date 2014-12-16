@@ -66,6 +66,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -117,31 +118,7 @@ public class OpenEJBArchiveProcessor {
             prefix = WEB_INF;
 
             final Map<ArchivePath, Node> content = archive.getContent(new IncludeRegExpPaths("/WEB-INF/lib/.*"));
-            for (final Map.Entry<ArchivePath, Node> node : content.entrySet()) {
-                final Asset asset = node.getValue().getAsset();
-                if (UrlAsset.class.isInstance(asset)) {
-                    additionalPaths.add(get(URL.class, "url", asset));
-                } else if (FileAsset.class.isInstance(asset)) {
-                    try {
-                        additionalPaths.add(get(File.class, "file", asset).toURI().toURL());
-                    } catch (final MalformedURLException e) {
-                        LOGGER.log(Level.SEVERE, "can't add a library to the deployment", e);
-                    }
-                } else if (ArchiveAsset.class.isInstance(asset)) {
-                    final Archive<?> nestedArchive = ArchiveAsset.class.cast(asset).getArchive();
-                    if (!isExcluded(nestedArchive.getName())) {
-                        final Node bXmlNode = nestedArchive.get(META_INF + BEANS_XML);
-                        if (bXmlNode != null) {
-                            try {
-                                beansXmlMerged.add(new AssetSource(bXmlNode.getAsset(), new URL("jar:file://!/WEB-INF/lib/" + nestedArchive.getName() + "!/META-INF/beans.xml")));
-                            } catch (final MalformedURLException e) {
-                                // shouldn't occur
-                            }
-                        }
-                        archive.merge(nestedArchive);
-                    }
-                }
-            }
+            analyzeWebArchive(archive, additionalPaths, beansXmlMerged, content);
         } else {
             if (isEar) { // mainly for CDI TCKs
                 earMap = new HashMap<>();
@@ -220,17 +197,19 @@ public class OpenEJBArchiveProcessor {
                 if (ArchiveAsset.class.isInstance(asset)) {
                     final Archive<?> webArchive = ArchiveAsset.class.cast(asset).getArchive();
                     if (WebArchive.class.isInstance(webArchive)) {
-                        /* TODO: libs
-                        final Map<ArchivePath, Node> libs = archive.getContent(new IncludeRegExpPaths("/WEB-INF/lib/.*\\.jar"));
-                        */
-
                         final Map<String, Object> altDD = new HashMap<>();
                         final Node beansXml = findBeansXml(webArchive, new ArrayList<AssetSource>(), WEB_INF, altDD);
                         final SWClassLoader webLoader = new SWClassLoader(WEB_INF_CLASSES, parent, webArchive);
                         closeables.add(webLoader);
 
+                        final List<URL> webappAdditionalPaths = new LinkedList<URL>();
+                        final List<AssetSource> webAppBeansXmlMerged = new ArrayList<>();
+                        analyzeWebArchive(
+                                webArchive, webappAdditionalPaths, webAppBeansXmlMerged,
+                                webArchive.getContent(new IncludeRegExpPaths("/.*\\.jar")));
+
                         final FinderFactory.OpenEJBAnnotationFinder finder = new FinderFactory.OpenEJBAnnotationFinder(
-                                finderArchive(beansXml, webArchive, webLoader, Collections.<URL>emptyList()));
+                                finderArchive(beansXml, webArchive, webLoader, webappAdditionalPaths));
 
                         final WebModule webModule = new WebModule(new WebApp(), contextRoot(webArchive.getName()), loader, "", appModule.getModuleId());
                         webModule.setUrls(Collections.<URL>emptyList());
@@ -324,6 +303,34 @@ public class OpenEJBArchiveProcessor {
         }
 
         return appModule;
+    }
+
+    private static void analyzeWebArchive(Archive<?> archive, List<URL> additionalPaths, List<AssetSource> beansXmlMerged, Map<ArchivePath, Node> content) {
+        for (final Map.Entry<ArchivePath, Node> node : content.entrySet()) {
+            final Asset asset = node.getValue().getAsset();
+            if (UrlAsset.class.isInstance(asset)) {
+                additionalPaths.add(get(URL.class, "url", asset));
+            } else if (FileAsset.class.isInstance(asset)) {
+                try {
+                    additionalPaths.add(get(File.class, "file", asset).toURI().toURL());
+                } catch (final MalformedURLException e) {
+                    LOGGER.log(Level.SEVERE, "can't add a library to the deployment", e);
+                }
+            } else if (ArchiveAsset.class.isInstance(asset)) {
+                final Archive<?> nestedArchive = ArchiveAsset.class.cast(asset).getArchive();
+                if (!isExcluded(nestedArchive.getName())) {
+                    final Node bXmlNode = nestedArchive.get(META_INF + BEANS_XML);
+                    if (bXmlNode != null) {
+                        try {
+                            beansXmlMerged.add(new AssetSource(bXmlNode.getAsset(), new URL("jar:file://!/WEB-INF/lib/" + nestedArchive.getName() + "!/META-INF/beans.xml")));
+                        } catch (final MalformedURLException e) {
+                            // shouldn't occur
+                        }
+                    }
+                    archive.merge(nestedArchive);
+                }
+            }
+        }
     }
 
     private static Node findBeansXml(final Archive<?> archive, final List<AssetSource> beansXmlMerged, final String prefix, final Map<String, Object> altDD) {

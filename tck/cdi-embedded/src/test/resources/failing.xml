@@ -18,7 +18,7 @@
 <suite name="CDI TCK" verbose="0">
   <test name="CDI TCK">
     <classes>
-      <class name="org.jboss.cdi.tck.tests.implementation.enterprise.newBean.NewEnterpriseBeanTest"/>
+      <class name="org.jboss.cdi.tck.tests.alternative.selection.enterprise.EnterpriseSelectedAlternative02Test"/>
     </classes>
   </test>
 </suite>
