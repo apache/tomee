@@ -885,8 +885,10 @@ public class HttpRequestImpl implements HttpRequest {
 
     @Override
     public void login(final String s, final String s1) throws ServletException {
+        final SecurityService component = SystemInstance.get().getComponent(SecurityService.class);
         try {
-            SystemInstance.get().getComponent(SecurityService.class).login(s, s1);
+            final Object uuid = component.login(s, s1);
+            component.associate(uuid);
         } catch (final LoginException e) {
             throw new ServletException(e);
         }
@@ -894,7 +896,15 @@ public class HttpRequestImpl implements HttpRequest {
 
     @Override
     public void logout() throws ServletException {
-        // no-op
+        final SecurityService component = SystemInstance.get().getComponent(SecurityService.class);
+        try {
+            final Object disassociate = component.disassociate();
+            if (disassociate != null) {
+                component.logout(disassociate);
+            }
+        } catch (final LoginException e) {
+            throw new SecurityException(e);
+        }
     }
 
     public HttpSession getSession() {

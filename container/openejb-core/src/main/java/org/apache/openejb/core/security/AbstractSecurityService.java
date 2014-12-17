@@ -272,12 +272,19 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
     public Principal getCallerPrincipal() {
         final ThreadContext threadContext = ThreadContext.getThreadContext();
         if (threadContext == null) {
+            final Identity id = clientIdentity.get();
+            if (id != null) {
+                return getCallerPrincipal(id.getSubject().getPrincipals());
+            }
             return null;
         }
 
         final SecurityContext securityContext = threadContext.get(SecurityContext.class);
         final Set<Principal> principals = securityContext.subject.getPrincipals();
+        return getCallerPrincipal(principals);
+    }
 
+    private Principal getCallerPrincipal(final Set<Principal> principals) {
         if (!principals.isEmpty()) {
             for (final Principal principal : principals) {
                 if (principal.getClass().isAnnotationPresent(CallerPrincipal.class)) {
