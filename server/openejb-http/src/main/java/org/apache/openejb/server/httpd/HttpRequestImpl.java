@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.server.httpd;
 
-import org.apache.openejb.core.security.jaas.UserPrincipal;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.ArrayEnumeration;
@@ -856,7 +855,7 @@ public class HttpRequestImpl implements HttpRequest {
 
     @Override
     public Principal getUserPrincipal() {
-        return new UserPrincipal("");
+        return SystemInstance.get().getComponent(SecurityService.class).getCallerPrincipal();
     }
 
     @Override
