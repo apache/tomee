@@ -22,6 +22,7 @@ import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.ArrayEnumeration;
 import org.apache.openejb.util.Logger;
 
+import javax.security.auth.login.LoginException;
 import javax.servlet.AsyncContext;
 import javax.servlet.DispatcherType;
 import javax.servlet.RequestDispatcher;
@@ -874,7 +875,11 @@ public class HttpRequestImpl implements HttpRequest {
 
     @Override
     public void login(final String s, final String s1) throws ServletException {
-        // no-op
+        try {
+            SystemInstance.get().getComponent(SecurityService.class).login(s, s1);
+        } catch (final LoginException e) {
+            throw new ServletException(e);
+        }
     }
 
     @Override
