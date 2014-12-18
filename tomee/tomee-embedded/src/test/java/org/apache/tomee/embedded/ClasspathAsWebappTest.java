@@ -79,7 +79,7 @@ public class ClasspathAsWebappTest {
         try (final Container container = new Container(
                     new Configuration()
                             .http(NetworkUtil.getNextAvailablePort())
-                            .property("openejb.classloader.forced-load", "org.apache.tomee.embedded.")
+                            .property("openejb.container.additional.exclude", "org.apache.tomee.embedded.")
                             .property("openejb.additional.include", "tomee-"))
                 .deployPathsAsWebapp("", asList(JarLocation.jarLocation(MyInitializer.class).toURI().toURL()), null)
                 .inject(this)) {
