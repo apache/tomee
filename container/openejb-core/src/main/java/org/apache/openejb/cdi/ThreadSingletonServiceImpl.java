@@ -30,8 +30,10 @@ import org.apache.openejb.util.classloader.MultipleClassLoader;
 import org.apache.webbeans.config.OpenWebBeansConfiguration;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
+import org.apache.webbeans.corespi.se.DefaultApplicationBoundaryService;
 import org.apache.webbeans.intercept.ApplicationScopedBeanInterceptorHandler;
 import org.apache.webbeans.intercept.NormalScopedBeanInterceptorHandler;
+import org.apache.webbeans.spi.ApplicationBoundaryService;
 import org.apache.webbeans.spi.BeanArchiveService;
 import org.apache.webbeans.spi.ContainerLifecycle;
 import org.apache.webbeans.spi.ContextsService;
@@ -135,6 +137,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         services.put(TransactionService.class, new OpenEJBTransactionService());
         services.put(ELAdaptor.class, new CustomELAdapter(appContext));
         services.put(ScannerService.class, new CdiScanner());
+        services.put(ApplicationBoundaryService.class, new DefaultApplicationBoundaryService());
         final LoaderService loaderService = SystemInstance.get().getComponent(LoaderService.class);
         if (loaderService == null && !properties.containsKey(LoaderService.class.getName())) {
             services.put(LoaderService.class, new OptimizedLoaderService());
