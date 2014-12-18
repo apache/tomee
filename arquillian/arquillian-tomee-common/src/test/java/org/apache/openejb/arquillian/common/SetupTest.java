@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.arquillian.common;
 
+import org.apache.openejb.loader.*;
+import org.apache.openejb.loader.Files;
 import org.apache.openejb.testng.PropertiesBuilder;
 import org.junit.Test;
 
@@ -44,6 +46,34 @@ public class SetupTest {
     @Test
     public void ambiguousReplace() throws IOException {
         replaceTest(111, 1111, 11111, 3333, 4444, 5555);
+    }
+
+    @Test
+    public void synchronizeFolders() throws IOException {
+        final File root = new File("target/SetupTest/synchronizeFolders/");
+        Files.delete(root); // clean up
+        final File source = org.apache.openejb.loader.Files.mkdirs(new File(root, "conf"));
+        for (int i = 0; i < 10; i++) {
+            final FileWriter w = new FileWriter(new File(source, "file-" + i));
+            w.write(Integer.toString(i));
+            w.close();
+        }
+
+        Setup.synchronizeFolder(root,new File(root, "conf").getAbsolutePath(), "conf-copy");
+        final File target = new File(root, "conf-copy");
+        assertEquals(10, target.listFiles().length);
+
+        // sub folders
+        final File subFolder = org.apache.openejb.loader.Files.mkdirs(new File(source, "conf.d"));
+        for (int i = 0; i < 10; i++) {
+            final FileWriter w = new FileWriter(new File(subFolder, "file-" + i));
+            w.write(Integer.toString(i));
+            w.close();
+        }
+
+        Setup.synchronizeFolder(root,new File(root, "conf").getAbsolutePath(), "conf-copy2");
+        assertEquals(11, new File(root, "conf-copy2").listFiles().length);
+        assertEquals(10, new File(root, "conf-copy2/conf.d").listFiles().length);
     }
 
     private File write(final String file, final String s1) throws IOException {

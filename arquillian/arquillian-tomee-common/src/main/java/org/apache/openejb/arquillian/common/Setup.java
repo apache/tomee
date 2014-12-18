@@ -312,13 +312,26 @@ public class Setup {
             final File confSrc = new File(src);
             if (confSrc.exists()) {
                 final File conf = new File(tomeeHome, dir);
-                final Collection<File> files = org.apache.openejb.loader.Files.collect(confSrc, new DirectFileOnlyFilter(confSrc));
+                final Collection<File> files = org.apache.openejb.loader.Files.collect(confSrc, TrueFilter.INSTANCE);
                 files.remove(confSrc);
                 for (final File f : files) {
-                    try {
-                        org.apache.openejb.loader.IO.copy(f, new File(conf, relativize(f, confSrc)));
-                    } catch (final Exception e) {
-                        LOGGER.log(Level.WARNING, "Ignoring copy of " + f.getAbsolutePath(), e);
+                    if (f.equals(confSrc) || f.getName().startsWith(".")) {
+                        continue;
+                    }
+
+                    final String relativize = relativize(f, confSrc);
+                    if (f.isDirectory()) {
+                        final String path = dir + '/' + relativize;
+                        Files.mkdir(new File(tomeeHome, path));
+                        synchronizeFolder(tomeeHome, f.getAbsolutePath(), path);
+                    } else {
+                        try {
+                            final File to = new File(conf, relativize);
+                            Files.mkdir(to.getParentFile());
+                            org.apache.openejb.loader.IO.copy(f, to);
+                        } catch (final Exception e) {
+                            LOGGER.log(Level.WARNING, "Ignoring copy of " + f.getAbsolutePath(), e);
+                        }
                     }
                 }
             } else {
@@ -375,16 +388,12 @@ public class Setup {
         }
     }
 
-    private static class DirectFileOnlyFilter implements FileFilter {
-        private final File accepted;
-
-        public DirectFileOnlyFilter(final File confSrc) {
-            accepted = confSrc;
-        }
+    private static class TrueFilter implements FileFilter {
+        private static final TrueFilter INSTANCE = new TrueFilter();
 
         @Override
         public boolean accept(final File pathname) {
-            return pathname.isFile() && pathname.getParentFile().equals(accepted);
+            return true;
         }
     }
 }
