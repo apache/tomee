@@ -69,36 +69,32 @@ public final class OpenEJBEnricher {
 
         final BeanContext context = SystemInstance.get().getComponent(ContainerSystem.class).getBeanContext(ctx.getId() + "_" + testInstance.getClass().getName());
 
-        final BeanManagerImpl bm = findBeanManager(ctx);
-        if (bm != null && bm.isInUse()) {
+        final WebBeansContext appWBC = ctx.getWebBeansContext();
+        final BeanManagerImpl bm = appWBC.getBeanManagerImpl();
+
+        boolean ok = false;
+        for (final WebContext web : ctx.getWebContexts()) {
+            final WebBeansContext webBeansContext = web.getWebBeansContext();
+            final BeanManagerImpl webAppBm = webBeansContext.getBeanManagerImpl();
+            if (webBeansContext != appWBC && webAppBm.isInUse()) {
+                try {
+                    doInject(testInstance, context, webAppBm);
+                    ok = true;
+                    break;
+                } catch (final Exception e) {
+                    // no-op, try next
+                }
+            }
+        }
+        if (bm != null && bm.isInUse() && !ok) {
             try {
                 doInject(testInstance, context, bm);
-            } catch (final Throwable t) {
-                boolean ok = false;
-                if (ctx != null) {
-                    for (final WebContext web : ctx.getWebContexts()) {
-                        final WebBeansContext webBeansContext = web.getWebBeansContext();
-                        if (webBeansContext != bm.getWebBeansContext()) {
-                            try {
-                                doInject(testInstance, context, webBeansContext.getBeanManagerImpl());
-                                ok = true;
-                                break;
-                            } catch (final Exception e) {
-                                // no-op, try next
-                            }
-                        }
-                    }
+            } catch (final Exception e) {
+                LOGGER.log(Level.SEVERE, "Failed injection on: " + testInstance.getClass(), e);
+                if (RuntimeException.class.isInstance(e)) {
+                    throw RuntimeException.class.cast(e);
                 }
-                if (!ok) {
-                    LOGGER.log(Level.SEVERE, "Failed injection on: " + testInstance.getClass(), t);
-                    if (RuntimeException.class.isInstance(t)) {
-                        throw RuntimeException.class.cast(t);
-                    }
-                    if (Exception.class.isInstance(t)) {
-                        throw new OpenEJBRuntimeException(Exception.class.cast(t));
-                    }
-                }
-                // ignoring other cases for the moment, let manage some OWB API change without making all tests failing
+                throw new OpenEJBRuntimeException(e);
             }
         }
 
