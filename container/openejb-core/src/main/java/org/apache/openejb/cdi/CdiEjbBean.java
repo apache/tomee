@@ -43,6 +43,7 @@ import javax.enterprise.inject.Typed;
 import javax.enterprise.inject.spi.AnnotatedMethod;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.DefinitionException;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.InjectionTarget;
 import javax.enterprise.inject.spi.SessionBeanType;
@@ -67,7 +68,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
 
     private final BeanContext beanContext;
     private final boolean isDependentAndStateful;
-    private final boolean scopeNeedsPassivation;
+    private final boolean passivable;
 
     // initialized a bit later in the lifecycle but could be final otherwise
     private BeanContext.BusinessLocalBeanHome homeLocalBean;
@@ -84,8 +85,20 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
         this.beanContext = beanContext;
         beanContext.set(Bean.class, this);
         passivatingId = beanContext.getDeploymentID() + getReturnType().getName();
-        isDependentAndStateful = getScope().equals(Dependent.class) && BeanType.STATEFUL.equals(beanContext.getComponentType());
-        scopeNeedsPassivation = webBeansContext.getBeanManagerImpl().isPassivatingScope(getScope()) && BeanType.STATEFUL.equals(beanContext.getComponentType());
+
+        final boolean stateful = BeanType.STATEFUL.equals(beanContext.getComponentType());
+        isDependentAndStateful = getScope().equals(Dependent.class) && stateful;
+        if (webBeansContext.getBeanManagerImpl().isPassivatingScope(getScope()) && stateful) {
+            if (!getBeanContext().isPassivable()) {
+                throw new DefinitionException(
+                        getBeanContext().getBeanClass()
+                                + " is a not apssivation-capable @Stateful with a scope "
+                                + getScope().getSimpleName() + " which need passivation");
+            }
+            passivable = true;
+        } else {
+            passivable = false;
+        }
     }
 
     @Override
@@ -95,7 +108,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
 
     @Override
     public boolean isPassivationCapable() {
-        return getBeanContext().isPassivable() && scopeNeedsPassivation /* for TCKs mainly */;
+        return passivable;
     }
 
     public BeanContext getBeanContext() {

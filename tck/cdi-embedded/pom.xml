@@ -151,14 +151,12 @@
             <ejbd.disabled>true</ejbd.disabled>
             <ejbds.disabled>true</ejbds.disabled>
 
-            <!-- this is a nice perf optimization to have by default but TCKs play with it -->
             <openejb.cdi.applicationScope.cached>false</openejb.cdi.applicationScope.cached>
-            <!-- not supported by the spec -->
             <openejb.cdi.producer.interception>false</openejb.cdi.producer.interception>
-            <!-- for ear we need WebAppDeployer -->
-            <org.apache.openejb.assembler.classic.WebAppBuilder>org.apache.openejb.web.LightweightWebAppBuilder</org.apache.openejb.assembler.classic.WebAppBuilder>
-            <!-- archives are well formed and all classes are in app loader -->
             <openejb.cdi.filter.classloader>false</openejb.cdi.filter.classloader>
+
+            <openejb.deploymentId.format>{appId}/{ejbJarId}/{ejbName}</openejb.deploymentId.format>
+            <org.apache.openejb.assembler.classic.WebAppBuilder>org.apache.openejb.web.LightweightWebAppBuilder</org.apache.openejb.assembler.classic.WebAppBuilder>
           </systemPropertyVariables>
         </configuration>
       </plugin>

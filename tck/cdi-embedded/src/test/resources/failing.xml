@@ -18,7 +18,7 @@
 <suite name="CDI TCK" verbose="0">
   <test name="CDI TCK">
     <classes>
-      <class name="org.jboss.cdi.tck.interceptors.tests.bindings.aroundConstruct.ejb.SessionBeanConstructorInterceptionTest" />
+      <class name="org.jboss.cdi.tck.tests.context.passivating.enterprise.invalid.StatefulSessionBeanXmlDescriptorTest" />
     </classes>
   </test>
 </suite>
