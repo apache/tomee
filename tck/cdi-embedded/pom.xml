@@ -147,9 +147,9 @@
             <topic>new://Resource?type=Topic</topic>
             <jdbc>new://Resource?type=DataSource</jdbc>
 
-            <admin.enabled>false</admin.enabled>
-            <ejbd.enabled>false</ejbd.enabled>
-            <ejbds.enabled>false</ejbds.enabled>
+            <admin.disabled>true</admin.disabled>
+            <ejbd.disabled>true</ejbd.disabled>
+            <ejbds.disabled>true</ejbds.disabled>
 
             <!-- this is a nice perf optimization to have by default but TCKs play with it -->
             <openejb.cdi.applicationScope.cached>false</openejb.cdi.applicationScope.cached>
