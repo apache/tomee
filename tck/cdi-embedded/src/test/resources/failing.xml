@@ -18,7 +18,7 @@
 <suite name="CDI TCK" verbose="0">
   <test name="CDI TCK">
     <classes>
-      <class name="org.jboss.cdi.tck.tests.context.passivating.broken.decorator.enterprise.EnterpriseBeanWithNonPassivatingDecoratorTest"/>
+      <class name="org.jboss.cdi.tck.tests.context.passivating.dependency.resource.webservice.WebResourcePassivationCapableDependencyTest"/>
     </classes>
   </test>
 </suite>

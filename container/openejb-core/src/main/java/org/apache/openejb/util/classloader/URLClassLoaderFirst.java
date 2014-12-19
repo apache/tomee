@@ -45,6 +45,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
     // first skip container APIs if not in the jaxrs or plus version
     private static final boolean SKIP_JAXWS = skipLib("org.apache.cxf.jaxws.support.JaxWsImplementorInfo");
     private static final boolean SKIP_JMS = skipLib("org.apache.activemq.broker.BrokerFactory");
+    private static final boolean EMBEDDED = "true".equals(SystemInstance.get().getProperty("openejb.embedded"));
 
     // - will not match anything, that's the desired default behavior
     public static final Collection<String> FORCED_SKIP = new ArrayList<>();
@@ -504,10 +505,10 @@ public class URLClassLoaderFirst extends URLClassLoader {
         if (name.startsWith("javax.")) {
             final String sub = name.substring("javax.".length());
             if (sub.startsWith("jws.")) {
-                return SKIP_JAXWS;
+                return SKIP_JAXWS || EMBEDDED;
             }
             if (sub.startsWith("jms.")) {
-                return SKIP_JMS;
+                return SKIP_JMS || EMBEDDED;
             }
         }
         return ParentClassLoaderFinder.Helper.get().getResource(name.replace('.', '/') + ".class") != null;
