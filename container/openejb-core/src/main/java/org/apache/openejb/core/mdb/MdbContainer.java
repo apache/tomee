@@ -79,18 +79,22 @@ public class MdbContainer implements RpcContainer {
     private final Class messageListenerInterface;
     private final Class activationSpecClass;
     private final int instanceLimit;
+    private final boolean failOnUnknowActivationSpec;
 
     private final ConcurrentMap<Object, BeanContext> deployments = new ConcurrentHashMap<Object, BeanContext>();
     private final XAResourceWrapper xaResourceWrapper;
     private final InboundRecovery inboundRecovery;
 
-    public MdbContainer(final Object containerID, final SecurityService securityService, final ResourceAdapter resourceAdapter, final Class messageListenerInterface, final Class activationSpecClass, final int instanceLimit) {
+    public MdbContainer(final Object containerID, final SecurityService securityService, final ResourceAdapter resourceAdapter,
+                        final Class messageListenerInterface, final Class activationSpecClass, final int instanceLimit,
+                        final boolean failOnUnknowActivationSpec) {
         this.containerID = containerID;
         this.securityService = securityService;
         this.resourceAdapter = resourceAdapter;
         this.messageListenerInterface = messageListenerInterface;
         this.activationSpecClass = activationSpecClass;
         this.instanceLimit = instanceLimit;
+        this.failOnUnknowActivationSpec = failOnUnknowActivationSpec;
         xaResourceWrapper = SystemInstance.get().getComponent(XAResourceWrapper.class);
         inboundRecovery = SystemInstance.get().getComponent(InboundRecovery.class);
     }
@@ -213,7 +217,12 @@ public class MdbContainer implements RpcContainer {
             unusedProperties.remove("destinationType");
             unusedProperties.remove("beanClass");
             if (!unusedProperties.isEmpty()) {
-                throw new IllegalArgumentException("No setter found for the activation spec properties: " + unusedProperties);
+                final String text = "No setter found for the activation spec properties: " + unusedProperties;
+                if (failOnUnknowActivationSpec) {
+                    throw new IllegalArgumentException(text);
+                } else {
+                    logger.warning(text);
+                }
             }
 
 

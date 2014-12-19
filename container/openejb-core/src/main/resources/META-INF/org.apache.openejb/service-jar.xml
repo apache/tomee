@@ -462,7 +462,7 @@
           id="Default MDB Container"
           service="Container"
           types="MESSAGE"
-          constructor="id, securityService, ResourceAdapter, MessageListenerInterface, ActivationSpecClass, InstanceLimit"
+          constructor="id, securityService, ResourceAdapter, MessageListenerInterface, ActivationSpecClass, InstanceLimit, FailOnUnknowActivationSpec"
           class-name="org.apache.openejb.core.mdb.MdbContainer">
 
     # The resource adapter delivers messages to the container
@@ -481,6 +481,10 @@
     # allowed to exist for each MDB deployment.
 
     InstanceLimit 10
+
+    # log a warning if true or throw an exception if false is an activation spec can't be respected
+
+    FailOnUnknowActivationSpec = true
 
   </ServiceProvider>
 
