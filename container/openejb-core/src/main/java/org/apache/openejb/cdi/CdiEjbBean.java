@@ -27,10 +27,12 @@ import org.apache.openejb.util.proxy.ProxyManager;
 import org.apache.webbeans.component.BeanAttributesImpl;
 import org.apache.webbeans.component.InterceptedMarker;
 import org.apache.webbeans.component.creation.BeanAttributesBuilder;
+import org.apache.webbeans.config.DeploymentValidationService;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.InjectionTargetFactoryImpl;
 import org.apache.webbeans.context.creational.CreationalContextImpl;
 import org.apache.webbeans.ejb.common.component.BaseEjbBean;
+import org.apache.webbeans.intercept.InterceptorResolutionService;
 import org.apache.webbeans.portable.InjectionTargetImpl;
 
 import javax.ejb.NoSuchEJBException;
@@ -60,7 +62,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
-public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker {
+public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, DeploymentValidationService.BeanInterceptorInfoProvider {
     private final Map<Integer, Object> dependentSFSBToBeRemoved = new ConcurrentHashMap<Integer, Object>();
 
     private final BeanContext beanContext;
@@ -82,6 +84,11 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker {
         beanContext.set(Bean.class, this);
         passivatingId = beanContext.getDeploymentID() + getReturnType().getName();
         isDependentAndStateful = getScope().equals(Dependent.class) && BeanType.STATEFUL.equals(beanContext.getComponentType());
+    }
+
+    @Override
+    public InterceptorResolutionService.BeanInterceptorInfo interceptorInfo() {
+        return EjbInjectionTargetImpl.class.cast(getInjectionTarget()).getInterceptorInfo();
     }
 
     public BeanContext getBeanContext() {
