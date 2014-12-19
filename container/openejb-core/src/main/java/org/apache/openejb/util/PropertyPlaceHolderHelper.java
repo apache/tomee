@@ -122,12 +122,11 @@ public final class PropertyPlaceHolderHelper {
     }
 
     private static class PropertiesLookup extends StrLookup<Object> {
-        private static Properties PROPERTIES = SystemInstance.get().getProperties();
         private static final Map<String, String> ENV = System.getenv();
 
         @Override
         public synchronized String lookup(final String key) {
-            String value = PROPERTIES.getProperty(key);
+            String value = SystemInstance.get().getProperties().getProperty(key);
             if (value != null) {
                 return value;
             }
@@ -141,7 +140,7 @@ public final class PropertyPlaceHolderHelper {
         }
 
         public synchronized void reload() {
-            PROPERTIES = SystemInstance.get().getProperties();
+            //no-op
         }
     }
 }
