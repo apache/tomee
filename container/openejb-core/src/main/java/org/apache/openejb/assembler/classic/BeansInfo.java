@@ -53,8 +53,9 @@ public class BeansInfo extends InfoObject {
     }
 
     public static class BDAInfo extends InfoObject {
-        public final List<String> managedClasses = new ArrayList<>();
+        public final Set<String> managedClasses = new HashSet<>();
         public String discoveryMode;
         public URI uri;
+        public boolean noBeansXmlButExtension;
     }
 }

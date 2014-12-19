@@ -47,21 +47,23 @@ public class ArchiveResourceIteratorFactory implements ResourceIteratorFactory {
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
         final Collection<Resource> resources = new ArrayList<Resource>();
         if (SWClassLoader.class.isInstance(loader)) {
-            final Archive<?> archive = SWClassLoader.class.cast(loader).getArchive();
+            final Archive<?>[] archives = SWClassLoader.class.cast(loader).getArchives();
             final ClassLoader parent = loader.getParent();
-            final Map<ArchivePath, Node> content = archive.getContent(new Filter<ArchivePath>() {
-                @Override
-                public boolean include(final ArchivePath object) {
-                    final String currentPath = classloaderPath(object);
+            for (final Archive<?> archive : archives) {
+                final Map<ArchivePath, Node> content = archive.getContent(new Filter<ArchivePath>() {
+                    @Override
+                    public boolean include(final ArchivePath object) {
+                        final String currentPath = classloaderPath(object);
 
-                    return !(parent != null && parent.getResource(currentPath) != null)
-                            && currentPath.startsWith('/' + path) && currentPath.endsWith(suffix);
+                        return !(parent != null && parent.getResource(currentPath) != null)
+                                && currentPath.startsWith('/' + path) && currentPath.endsWith(suffix);
 
+                    }
+                });
+
+                for (final Map.Entry<ArchivePath, Node> entry : content.entrySet()) {
+                    resources.add(new SWResource(entry.getKey(), entry.getValue()));
                 }
-            });
-
-            for (final Map.Entry<ArchivePath, Node> entry : content.entrySet()) {
-                resources.add(new SWResource(entry.getKey(), entry.getValue()));
             }
         }
         return resources;

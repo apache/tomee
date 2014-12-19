@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.arquillian.openejb;
 
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Enumerator;
 import org.apache.openejb.util.reflection.Reflections;
 import org.jboss.shrinkwrap.api.Archive;
@@ -27,6 +28,7 @@ import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
 import org.jboss.shrinkwrap.api.asset.FileAsset;
 import org.jboss.shrinkwrap.api.asset.UrlAsset;
 
+import javax.enterprise.inject.spi.Extension;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
@@ -37,11 +39,13 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public class SWClassLoader extends ClassLoader implements Closeable {
@@ -55,23 +59,36 @@ public class SWClassLoader extends ClassLoader implements Closeable {
         }
     }
 
-    private final Archive<?> archive;
+    private final Archive<?>[] archives;
     private final String prefix;
     private final Collection<Closeable> closeables = new ArrayList<Closeable>();
 
-    public SWClassLoader(final String prefix, final ClassLoader parent, final Archive<?> ar) {
+    public SWClassLoader(final String prefix, final ClassLoader parent, final Archive<?>... ar) {
         super(parent);
         this.prefix = prefix;
-        this.archive = ar;
-        ArchiveStreamHandler.set(ar, prefix, closeables);
+        this.archives = ar;
+        for (final Archive<?> a : ar) {
+            ArchiveStreamHandler.set(a, prefix, closeables);
+        }
     }
 
     @Override
     public Enumeration<URL> getResources(final String name) throws IOException {
-        if (name != null && !name.contains("META-INF/services/javax")) { // we want to avoid duplicates but we need container stuff, see bval tcks
-            final Node node = findNode(name);
-            if (node != null) {
-                return enumerator(new URL(null, "archive:" + archive.getName() + "/" + name, new ArchiveStreamHandler()));
+        if (name == null) {
+            return super.getResources(name);
+        }
+        final boolean cdiExtensions = name.startsWith("META-INF/services/" + Extension.class.getName());
+        if (cdiExtensions || !name.contains("META-INF/services/javax")) {
+            final List<Archive<?>> node = findNodes(name);
+            if (!node.isEmpty()) {
+                final List<URL> urls = new ArrayList<>();
+                for (final Archive<?> i : node) {
+                    urls.add(new URL(null, "archive:" + i.getName() + "/" + name, new ArchiveStreamHandler()));
+                }
+                return enumerator(urls);
+            }
+            if (cdiExtensions && "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.arquillian.cdi.extension.skip-externals", "true"))) {
+                return enumerator(Collections.<URL>emptyList());
             }
         }
         return super.getResources(name);
@@ -79,37 +96,45 @@ public class SWClassLoader extends ClassLoader implements Closeable {
 
     @Override
     protected Enumeration<URL> findResources(final String name) throws IOException {
-        final Node node = findNode(name);
-        if (node != null) {
-            return enumerator(new URL(null, "archive:" + archive.getName() + "/" + name, new ArchiveStreamHandler()));
+        final List<Archive<?>> node = findNodes(name);
+        if (!node.isEmpty()) {
+            final List<URL> urls = new ArrayList<>();
+            for (final Archive<?> i : node) {
+                urls.add(new URL(null, "archive:" + i.getName() + "/" + name, new ArchiveStreamHandler()));
+            }
+            return enumerator(urls);
         }
         return super.findResources(name);
     }
 
-    private Node findNode(final String name) {
+    private LinkedList<Archive<?>> findNodes(final String name) {
         ArchivePath path = ArchivePaths.create(prefix + name);
-        Node node = archive.get(path);
-        if (node == null) {
-            path = ArchivePaths.create(name);
-            node = archive.get(path);
-
-
+        final LinkedList<Archive<?>> items = new LinkedList<>();
+        for (final Archive<?> a : archives) {
+            Node node = a.get(path);
+            if (node == null) {
+                node = a.get(ArchivePaths.create(name));
+            }
+            if (node != null) {
+                items.add(a);
+            }
         }
-        return node;
+        return items;
     }
 
-    private static Enumeration<URL> enumerator(final URL url) {
-        return new Enumerator(Arrays.asList(url));
+    private static Enumeration<URL> enumerator(final List<URL> urls) {
+        return new Enumerator(urls);
     }
 
     @Override
     protected URL findResource(final String name) {
-        final Node node = findNode(name);
-        if (node != null) {
+        final LinkedList<Archive<?>> node = findNodes(name);
+        if (!node.isEmpty()) {
+            final Archive<?> i = node.getLast();
             try {
-                return new URL(null, "archive:" + archive.getName() + "/" + name, new ArchiveStreamHandler());
+                return new URL(null, "archive:" + i.getName() + "/" + name, new ArchiveStreamHandler());
             } catch (final MalformedURLException e) {
-                // no-op: let reuse parent method
+                throw new IllegalArgumentException(e);
             }
         }
         return super.findResource(name);
@@ -199,7 +224,9 @@ public class SWClassLoader extends ClassLoader implements Closeable {
 
     @Override
     public void close() throws IOException {
-        ArchiveStreamHandler.reset(archive.getName());
+        for (final Archive<?> a : archives) {
+            ArchiveStreamHandler.reset(a.getName());
+        }
         for (final Closeable cl : closeables) {
             try {
                 cl.close();
@@ -210,7 +237,7 @@ public class SWClassLoader extends ClassLoader implements Closeable {
     }
 
     // to let frameworks using TCCL use the archive directly
-    public Archive<?> getArchive() {
-        return archive;
+    public Archive<?>[] getArchives() {
+        return archives;
     }
 }

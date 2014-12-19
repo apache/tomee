@@ -26,9 +26,11 @@ import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.OpenEjbConfigurationFactory;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
+import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentFilterable;
+import org.apache.openejb.config.WebModule;
 import org.apache.openejb.core.LocalInitialContext;
 import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.loader.IO;
@@ -56,6 +58,7 @@ import javax.naming.NamingException;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import java.io.ByteArrayInputStream;
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
@@ -238,6 +241,22 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
             try {
                 final AppModule module = OpenEJBArchiveProcessor.createModule(archive, testClass, cls);
                 final AppInfo appInfo = configurationFactory.configureApplication(module);
+
+                final WebAppBuilder webAppBuilder = SystemInstance.get().getComponent(WebAppBuilder.class);
+                if (webAppBuilder != null && LightweightWebAppBuilder.class.isInstance(webAppBuilder)) {
+                    // for now we keep the same classloader, open to discussion if we should recreate it, not sure it does worth it
+                    final LightweightWebAppBuilder lightweightWebAppBuilder = LightweightWebAppBuilder.class.cast(webAppBuilder);
+                    for (final WebModule w : module.getWebModules()) {
+                        final String moduleId = w.getModuleId();
+                        lightweightWebAppBuilder.setClassLoader(moduleId, w.getClassLoader());
+                        cls.add(new Closeable() {
+                            @Override
+                            public void close() throws IOException {
+                                lightweightWebAppBuilder.removeClassLoader(moduleId);
+                            }
+                        });
+                    }
+                }
                 final AppContext appCtx = assembler.createApplication(appInfo, module.getClassLoader());
 
                 final ServletContext appServletContext = new MockServletContext();

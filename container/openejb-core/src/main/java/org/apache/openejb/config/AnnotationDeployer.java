@@ -186,6 +186,7 @@ import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.enterprise.context.NormalScope;
 import javax.enterprise.inject.Stereotype;
+import javax.enterprise.inject.spi.Extension;
 import javax.inject.Scope;
 import javax.interceptor.ExcludeClassInterceptors;
 import javax.interceptor.ExcludeDefaultInterceptors;
@@ -1667,10 +1668,44 @@ public class AnnotationDeployer implements DynamicDeployer {
                                 if (c.isAnnotation()) {
                                     newMarkers.add(c);
                                 }
-                                potentialClasses.add(c.getName());
+                                if (value.contains(c.getName())) {
+                                    potentialClasses.add(c.getName());
+                                }
                             }
                         }
                     } while (!newMarkers.isEmpty());
+
+                    newMarkers.clear();
+                    newMarkers.add(Stateful.class);
+                    newMarkers.add(Singleton.class);
+                    newMarkers.add(Stateless.class);
+                    newMarkers.add(MessageDriven.class);
+
+                    boolean ejb = false;
+                    for (final Class<?> marker : newMarkers) {
+                        final List<Class<?>> found = finder.findAnnotatedClasses(Class.class.cast(marker));
+                        for (final Class<?> c : found) {
+                            if (value.contains(c.getName())) {
+                                potentialClasses.add(c.getName());
+                                ejb = true;
+                            }
+                        }
+                    }
+                    if (ejb) {
+                        final List<Class<? extends Extension>> extensions = finder.findImplementations(Extension.class);
+                        boolean skip = false;
+                        for (final Class<?> c : extensions) {
+                            if (value.contains(c.getName())) {
+                                // legacy mode, we should check META-INF/services/... but this mode + having an Extension should be enough
+                                skip = true;
+                                continue;
+                            }
+                        }
+                        if (skip) {
+                            continue;
+                        }
+                    }
+
                     if (potentialClasses.isEmpty()) {
                         continue;
                     }

@@ -1125,21 +1125,25 @@ public class DeploymentLoader implements DeploymentFilterable {
                 return current;
             }
 
-            current.getAlternativeClasses().addAll(beans.getAlternativeClasses());
-            current.getAlternativeStereotypes().addAll(beans.getAlternativeStereotypes());
-            current.getDecorators().addAll(beans.getDecorators());
-            current.getInterceptors().addAll(beans.getInterceptors());
-            current.getScan().getExclude().addAll(beans.getScan().getExclude());
-
-            // check is done here since later we lost the data of the origin
-            ReadDescriptors.checkDuplicatedByBeansXml(beans, current);
-
-            final String beanDiscoveryMode = beans.getBeanDiscoveryMode();
-            current.getDiscoveryByUrl().put(url, beanDiscoveryMode == null ? "ALL" : beanDiscoveryMode);
+            doMerge(url, current, beans);
         } catch (final OpenEJBException e) {
             logger.error("Unable to read beans.xml from: " + url.toExternalForm(), e);
         }
         return current;
+    }
+
+    public static void doMerge(final URL url, final CompositeBeans current, final Beans beans) {
+        current.getAlternativeClasses().addAll(beans.getAlternativeClasses());
+        current.getAlternativeStereotypes().addAll(beans.getAlternativeStereotypes());
+        current.getDecorators().addAll(beans.getDecorators());
+        current.getInterceptors().addAll(beans.getInterceptors());
+        current.getScan().getExclude().addAll(beans.getScan().getExclude());
+
+        // check is done here since later we lost the data of the origin
+        ReadDescriptors.checkDuplicatedByBeansXml(beans, current);
+
+        final String beanDiscoveryMode = beans.getBeanDiscoveryMode();
+        current.getDiscoveryByUrl().put(url, beanDiscoveryMode == null ? "ALL" : beanDiscoveryMode);
     }
 
     private void addBeansXmls(final AppModule appModule) {

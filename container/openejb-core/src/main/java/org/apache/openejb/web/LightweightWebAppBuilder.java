@@ -96,9 +96,18 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
     private final Map<WebAppInfo, DeployedWebObjects> servletDeploymentInfo = new HashMap<WebAppInfo, DeployedWebObjects>();
     private final Map<WebAppInfo, List<Object>> listeners = new HashMap<WebAppInfo, List<Object>>();
     private final Map<WebAppInfo, ServletContextEvent> servletContextEvents = new HashMap<WebAppInfo, ServletContextEvent>();
+    private final Map<String, ClassLoader> loaderByWebContext = new HashMap<String, ClassLoader>();
+
+    public void setClassLoader(final String id, final ClassLoader loader) {
+        loaderByWebContext.put(id, loader);
+    }
+
+    public void removeClassLoader(final String id) {
+        loaderByWebContext.remove(id);
+    }
 
     @Override
-    public void deployWebApps(final AppInfo appInfo, final ClassLoader classLoader) throws Exception {
+    public void deployWebApps(final AppInfo appInfo, final ClassLoader appClassLoader) throws Exception {
 
         final CoreContainerSystem cs = (CoreContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
         final AppContext appContext = cs.getAppContext(appInfo.appId);
@@ -107,6 +116,11 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
         }
 
         for (final WebAppInfo webAppInfo : appInfo.webApps) {
+            ClassLoader classLoader = loaderByWebContext.get(webAppInfo.moduleId);
+            if (classLoader == null) {
+                classLoader = appClassLoader;
+            }
+
             final Set<Injection> injections = new HashSet<Injection>(appContext.getInjections());
             injections.addAll(new InjectionBuilder(classLoader).buildInjections(webAppInfo.jndiEnc));
 
@@ -132,7 +146,7 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
                 final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
                 final List<BeanContext> beanContexts = assembler.initEjbs(classLoader, appInfo, appContext, injections, new ArrayList<BeanContext>(), webAppInfo.moduleId);
                 appContext.getBeanContexts().addAll(beanContexts);
-                new CdiBuilder().build(appInfo, appContext, appContext.getBeanContexts(), webContext);
+                new CdiBuilder().build(appInfo, appContext, beanContexts, webContext);
                 assembler.startEjbs(true, beanContexts);
             }
 

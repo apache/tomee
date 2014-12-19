@@ -19,10 +19,10 @@ package org.apache.openejb.arquillian.openejb;
 import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.cdi.CompositeBeans;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.DeploymentLoader;
 import org.apache.openejb.config.EjbModule;
-import org.apache.openejb.config.EmptyEjbJar;
 import org.apache.openejb.config.FinderFactory;
 import org.apache.openejb.config.ReadDescriptors;
 import org.apache.openejb.config.WebModule;
@@ -111,6 +111,8 @@ public class OpenEJBArchiveProcessor {
         final List<AssetSource> beansXmlMerged = new ArrayList<>();
         CompositeArchive earArchive = null;
         Map<URL, List<String>> earMap = null;
+        final List<Archive> earLibsArchives = new ArrayList<>();
+        final CompositeBeans earBeans = new CompositeBeans();
 
         final String prefix;
         final boolean isEar = EnterpriseArchive.class.isInstance(archive);
@@ -129,6 +131,7 @@ public class OpenEJBArchiveProcessor {
                     if (ArchiveAsset.class.isInstance(asset)) {
                         final Archive<?> libArchive = ArchiveAsset.class.cast(asset).getArchive();
                         if (!isExcluded(libArchive.getName())) {
+                            earLibsArchives.add(libArchive);
                             final List<Class<?>> earClasses = new ArrayList<>();
                             final List<String> earClassNames = new ArrayList<>();
                             final Map<ArchivePath, Node> content = libArchive.getContent(new IncludeRegExpPaths(".*.class"));
@@ -144,7 +147,16 @@ public class OpenEJBArchiveProcessor {
                                 }
                             }
                             try { // ends with !/META-INF/beans.xml to force it to be used as a cdi module *with bda*
-                                earMap.put(new URL("jar:file://!/lib/" + libArchive.getName() + (libArchive.get(META_INF + BEANS_XML) != null ? "!/META-INF/beans.xml" : "")), earClassNames);
+                                final Node beansNode = libArchive.get(META_INF + BEANS_XML);
+                                final URL arUrl = new URL("jar:file://!/lib/" + libArchive.getName() + (beansNode != null ? "!/META-INF/beans.xml" : ""));
+                                if (beansNode != null) {
+                                    try {
+                                        DeploymentLoader.doMerge(arUrl, earBeans, ReadDescriptors.readBeans(beansNode.getAsset().openStream()));
+                                    } catch (final OpenEJBException e) {
+                                        throw new IllegalArgumentException(e);
+                                    }
+                                }
+                                earMap.put(arUrl, earClassNames);
                             } catch (final MalformedURLException e) {
                                 // no-op
                             }
@@ -160,14 +172,16 @@ public class OpenEJBArchiveProcessor {
 
         final URL[] urls = additionalPaths.toArray(new URL[additionalPaths.size()]);
 
+        final URLClassLoaderFirst swParent = new URLClassLoaderFirst(urls, parent);
+        closeables.add(swParent);
+
         final SWClassLoader loader;
         if (!WEB_INF.equals(prefix)) {
-            final URLClassLoader swParent = new URLClassLoader(urls, parent);
-            closeables.add(swParent);
-            loader = new SWClassLoader("", swParent, archive);
+            if (!isEar) {
+                earLibsArchives.add(archive);
+            }
+            loader = new SWClassLoader("", swParent, earLibsArchives.toArray(new Archive<?>[earLibsArchives.size()]));
         } else {
-            final URLClassLoaderFirst swParent = new URLClassLoaderFirst(urls, parent);
-            closeables.add(swParent);
             loader = new SWClassLoader(WEB_INF_CLASSES, swParent, archive);
         }
         closeables.add(loader);
@@ -187,9 +201,9 @@ public class OpenEJBArchiveProcessor {
             appModule.setEarLibFinder(earLibFinder);
 
             final EjbModule earCdiModule = new EjbModule(appModule.getClassLoader(), DeploymentLoader.EAR_SCOPED_CDI_BEANS + appModule.getModuleId(), new EjbJar(), new OpenejbJar());
-            earCdiModule.setBeans(new Beans());
+            earCdiModule.setBeans(earBeans);
             earCdiModule.setFinder(earLibFinder);
-            earCdiModule.setEjbJar(new EmptyEjbJar());
+            earCdiModule.setEjbJar(new EjbJar()); // EmptyEjbJar would prevent to add scanned EJBs but this is *here* an aggregator so we need to be able to do so
             appModule.getEjbModules().add(earCdiModule);
 
             for (final Map.Entry<ArchivePath, Node> node : archive.getContent(new IncludeRegExpPaths("/.*\\.war")).entrySet()) {
@@ -211,7 +225,7 @@ public class OpenEJBArchiveProcessor {
                         final FinderFactory.OpenEJBAnnotationFinder finder = new FinderFactory.OpenEJBAnnotationFinder(
                                 finderArchive(beansXml, webArchive, webLoader, webappAdditionalPaths));
 
-                        final WebModule webModule = new WebModule(new WebApp(), contextRoot(webArchive.getName()), loader, "", appModule.getModuleId());
+                        final WebModule webModule = new WebModule(new WebApp(), contextRoot(webArchive.getName()), webLoader, "", appModule.getModuleId());
                         webModule.setUrls(Collections.<URL>emptyList());
                         webModule.setScannableUrls(Collections.<URL>emptyList());
                         webModule.setFinder(finder);

@@ -35,6 +35,7 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.PropertyPlaceHolderHelper;
 import org.apache.openejb.util.classloader.ClassLoaderComparator;
 import org.apache.openejb.util.classloader.DefaultClassLoaderComparator;
+import org.apache.openejb.util.reflection.Reflections;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.decorator.DecoratorsManager;
 import org.apache.webbeans.exception.WebBeansConfigurationException;
@@ -50,8 +51,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
@@ -192,23 +195,41 @@ public class CdiScanner implements ScannerService {
             final BeanArchiveService beanArchiveService = webBeansContext.getBeanArchiveService();
             final boolean openejb = OpenEJBBeanInfoService.class.isInstance(beanArchiveService);
 
+            final Map<BeansInfo.BDAInfo, BeanArchiveService.BeanArchiveInformation> infoByBda = new HashMap<>();
             for (final BeansInfo.BDAInfo bda : beans.bdas) {
-                handleBda(startupObject, classLoader, comparator, beans, scl, filterByClassLoader, beanArchiveService, openejb, bda);
+                infoByBda.put(bda, handleBda(startupObject, classLoader, comparator, beans, scl, filterByClassLoader, beanArchiveService, openejb, bda));
             }
             for (final BeansInfo.BDAInfo bda : beans.noDescriptorBdas) {
+                // infoByBda.put() not needed since we know it means annotated
                 handleBda(startupObject, classLoader, comparator, beans, scl, filterByClassLoader, beanArchiveService, openejb, bda);
             }
 
-            if (startupObject.getBeanContexts() != null) { // ensure ejbs are in managed beans otherwise they will not be deployed in CDI
+            if (startupObject.getBeanContexts() != null) {
                 for (final BeanContext bc : startupObject.getBeanContexts()) {
                     final String name = bc.getBeanClass().getName();
                     if (BeanContext.Comp.class.getName().equals(name)) {
                         continue;
                     }
 
-                    final Class<?> load = load(name, classLoader);
-                    if (load != null && !classes.contains(load)) {
-                        classes.add(load);
+                    boolean cdi = false;
+                    for (final BeansInfo.BDAInfo bda : beans.bdas) {
+                        final BeanArchiveService.BeanArchiveInformation info = infoByBda.get(bda);
+                        if (info.getBeanDiscoveryMode() == BeanArchiveService.BeanDiscoveryMode.NONE) {
+                            continue;
+                        }
+                        if (bda.managedClasses.contains(name)) {
+                            classes.add(load(name, classLoader));
+                            cdi = true;
+                            break;
+                        }
+                    }
+                    if (!cdi) {
+                        for (final BeansInfo.BDAInfo bda : beans.noDescriptorBdas) {
+                            if (bda.managedClasses.contains(name)) {
+                                classes.add(load(name, classLoader));
+                                break;
+                            }
+                        }
                     }
                 }
             }
@@ -228,7 +249,7 @@ public class CdiScanner implements ScannerService {
         }
     }
 
-    private void handleBda(final StartupObject startupObject, final ClassLoader classLoader, final ClassLoaderComparator comparator,
+    private BeanArchiveService.BeanArchiveInformation handleBda(final StartupObject startupObject, final ClassLoader classLoader, final ClassLoaderComparator comparator,
                            final BeansInfo beans, final ClassLoader scl, final boolean filterByClassLoader,
                            final BeanArchiveService beanArchiveService, final boolean openejb,
                            final BeansInfo.BDAInfo bda) {
@@ -298,6 +319,8 @@ public class CdiScanner implements ScannerService {
                 }
             }
         }
+
+        return information;
     }
 
     // TODO: reusing our finder would be a good idea to avoid reflection we already did!
