@@ -143,8 +143,8 @@ public class OpenEJBArchiveProcessor {
                                     // no-op
                                 }
                             }
-                            try { // ends with !/META-INF/beans.xml to force it to be used as a cdi module
-                                earMap.put(new URL("jar:file://!/lib/" + archive.getName() + (libArchive.get(META_INF + BEANS_XML) != null ? "!/META-INF/beans.xml" : "")), earClassNames);
+                            try { // ends with !/META-INF/beans.xml to force it to be used as a cdi module *with bda*
+                                earMap.put(new URL("jar:file://!/lib/" + libArchive.getName() + (libArchive.get(META_INF + BEANS_XML) != null ? "!/META-INF/beans.xml" : "")), earClassNames);
                             } catch (final MalformedURLException e) {
                                 // no-op
                             }
