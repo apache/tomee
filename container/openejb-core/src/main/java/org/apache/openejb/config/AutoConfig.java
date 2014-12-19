@@ -394,9 +394,16 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
                 final Properties properties = mdb.getActivationConfig().toProperties();
 
-                String destination = properties.getProperty("destinationName");
+                String destination = properties.getProperty("destinationName", properties.getProperty("destinationLookup"));
 
                 if (destination != null) {
+                    if (destination.startsWith("openejb:Resource/")) {
+                        destination = destination.substring("openejb:Resource/".length());
+                    }
+                    if (destination.startsWith("java:openejb/Resource/")) {
+                        destination = destination.substring("java:openejb/Resource/".length());
+                    }
+
                     mdb.getActivationConfig().addProperty("destination", destination);
 
                     // Remove destinationName as it is not in the standard ActivationSpec 
@@ -404,9 +411,11 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                     final Iterator<ActivationConfigProperty> iterator = list.iterator();
                     while (iterator.hasNext()) {
                         final ActivationConfigProperty configProperty = iterator.next();
-                        if (configProperty.getActivationConfigPropertyName().equals("destinationName")) {
+                        final String activationConfigPropertyName = configProperty.getActivationConfigPropertyName();
+                        if (activationConfigPropertyName.equals("destinationName")
+                                || activationConfigPropertyName.equals("destinationLookup")) {
                             iterator.remove();
-                            break;
+                            break; // we suppose we have only one of both we should be the case
                         }
                     }
                 } else {

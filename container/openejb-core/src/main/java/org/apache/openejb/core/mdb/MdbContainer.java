@@ -202,7 +202,8 @@ public class MdbContainer implements RpcContainer {
             objectRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
             objectRecipe.disallow(Option.FIELD_INJECTION);
 
-            final Map<String, String> activationProperties = beanContext.getActivationProperties();
+            final Map<String, String> beanContextActivationProperties = beanContext.getActivationProperties();
+            final Map<String, String> activationProperties = beanContextActivationProperties;
             for (final Map.Entry<String, String> entry : activationProperties.entrySet()) {
                 objectRecipe.setMethodProperty(entry.getKey(), entry.getValue());
             }

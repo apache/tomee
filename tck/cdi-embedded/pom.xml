@@ -142,8 +142,10 @@
             </property>
           </properties>
           <systemPropertyVariables>
-            <MDB>new://Container?type=Message</MDB>
-            <MDB.FailOnUnknowActivationSpec>false</MDB.FailOnUnknowActivationSpec>
+            <jms>new://Resource?type=javax.jms.ConnectionFactory</jms>
+            <queue>new://Resource?type=Queue</queue>
+            <topic>new://Resource?type=Topic</topic>
+            <jdbc>new://Resource?type=DataSource</jdbc>
             <!-- this is a nice perf optimization to have by default but TCKs play with it -->
             <openejb.cdi.applicationScope.cached>false</openejb.cdi.applicationScope.cached>
             <!-- not supported by the spec -->
