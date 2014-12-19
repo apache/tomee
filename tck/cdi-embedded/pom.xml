@@ -111,7 +111,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-http</artifactId>
+      <artifactId>openejb-cxf</artifactId>
       <version>${openejb.version}</version>
       <scope>test</scope>
     </dependency>

@@ -21,6 +21,8 @@ import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.Injection;
 import org.apache.openejb.InjectionProcessor;
+import org.apache.openejb.core.WebContext;
+import org.apache.openejb.core.ivm.naming.Reference;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.PassthroughFactory;
@@ -46,6 +48,7 @@ public class CdiResourceInjectionService implements ResourceInjectionService {
 
     private final CdiPlugin ejbPlugin;
     private final List<BeanContext> compContexts = new ArrayList<BeanContext>();
+    private volatile AppContext appCtx;
 
     public CdiResourceInjectionService(final WebBeansContext context) {
         ejbPlugin = CdiPlugin.class.cast(context.getPluginLoader().getEjbPlugin());
@@ -57,6 +60,7 @@ public class CdiResourceInjectionService implements ResourceInjectionService {
                 compContexts.add(beanContext);
             }
         }
+        this.appCtx = appModule;
     }
 
     @Override
@@ -67,16 +71,33 @@ public class CdiResourceInjectionService implements ResourceInjectionService {
         try {
             return type.cast(new InitialContext().lookup(name));
         } catch (final NamingException e) {
-
-            for (final BeanContext beanContext : compContexts) {
-                try {
-                    final String relativeName = name.replace("java:", "");
-                    return type.cast(beanContext.getJndiContext().lookup(relativeName));
-                } catch (final NamingException e1) {
-                    // fine for now
+            // no-op: try next
+        }
+        final String noJavaPrefix = name.replace("java:", "");
+        for (final BeanContext beanContext : compContexts) {
+            try {
+                return type.cast(beanContext.getJndiContext().lookup(noJavaPrefix));
+            } catch (final NamingException e1) {
+                // fine for now
+            }
+        }
+        if (appCtx != null) { // depending envrt bindings can be missing from InitialContext (embedded for instance)
+            for (final WebContext w : appCtx.getWebContexts()) {
+                final Object instance = w.getBindings().get(noJavaPrefix);
+                if (instance != null) {
+                    if (Reference.class.isInstance(instance)) {
+                        try {
+                            return type.cast(Reference.class.cast(instance).getObject());
+                        } catch (final NamingException e) {
+                            // no-op: try next
+                        }
+                    }
+                    if (type.isInstance(instance)) {
+                        return type.cast(instance);
+                    }
+                    // else a javax.naming.Reference we don't handle yet surely
                 }
             }
-//            throw new WebBeansException("Could not look up resource at " + resourceReference.getJndiName(), e);
         }
         return null;
     }
