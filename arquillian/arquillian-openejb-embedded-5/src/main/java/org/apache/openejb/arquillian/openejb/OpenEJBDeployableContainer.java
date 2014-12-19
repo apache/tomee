@@ -85,6 +85,7 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
     }
 
     private static final ConcurrentMap<String, DeploymentInfo> DEPLOYMENT_INFO = new ConcurrentHashMap<String, DeploymentInfo>();
+    public static final AppContext NO_APP_CTX = new AppContext(null, SystemInstance.get(), null, null, null, false);
 
     // config
     private Properties properties;
@@ -270,15 +271,18 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
         // otherwise if it was closed something can fail
         classLoader.set(OpenEJBDeployableContainer.class.getClassLoader());
 
-        if (appContext.get() == null) {
+        final AppContext ctx = appContext.get();
+        if (ctx == null) {
             return;
+        } else {
+            appContextProducer.set(NO_APP_CTX); // release all references of the previous one - classloaders whatever arquillian Instance impl is etc
         }
 
         try {
             if (!configuration.isSingleDeploymentByArchiveName(archive.getName())) {
                 assembler.destroyApplication(info.get().path);
             }
-            stopContexts(appContext.get().getWebBeansContext().getContextsService(), servletContext.get(), session.get());
+            stopContexts(ctx.getWebBeansContext().getContextsService(), servletContext.get(), session.get());
         } catch (final Exception e) {
             throw new DeploymentException("can't undeploy " + archive.getName(), e);
         }

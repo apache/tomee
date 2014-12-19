@@ -67,6 +67,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
 
     private final BeanContext beanContext;
     private final boolean isDependentAndStateful;
+    private final boolean scopeNeedsPassivation;
 
     // initialized a bit later in the lifecycle but could be final otherwise
     private BeanContext.BusinessLocalBeanHome homeLocalBean;
@@ -84,11 +85,17 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
         beanContext.set(Bean.class, this);
         passivatingId = beanContext.getDeploymentID() + getReturnType().getName();
         isDependentAndStateful = getScope().equals(Dependent.class) && BeanType.STATEFUL.equals(beanContext.getComponentType());
+        scopeNeedsPassivation = webBeansContext.getBeanManagerImpl().isPassivatingScope(getScope()) && BeanType.STATEFUL.equals(beanContext.getComponentType());
     }
 
     @Override
     public InterceptorResolutionService.BeanInterceptorInfo interceptorInfo() {
         return EjbInjectionTargetImpl.class.cast(getInjectionTarget()).getInterceptorInfo();
+    }
+
+    @Override
+    public boolean isPassivationCapable() {
+        return getBeanContext().isPassivable() && scopeNeedsPassivation /* for TCKs mainly */;
     }
 
     public BeanContext getBeanContext() {
@@ -423,7 +430,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
         }
 
         public T createNewPojo(final CreationalContext<T> creationalContext) {
-            return (T) super.newInstance(CreationalContextImpl.class.cast(creationalContext));
+            return (T) super.produce(CreationalContextImpl.class.cast(creationalContext));
         }
 
         private static boolean isDynamicBean(final Bean<?> bean) {

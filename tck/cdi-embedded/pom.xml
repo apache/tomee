@@ -129,7 +129,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <argLine>-Xmx2048m -XX:PermSize=512m -XX:MaxPermSize=512m</argLine>
+          <argLine>-Xmx2048m -XX:PermSize=512m -XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:+CMSPermGenSweepingEnabled</argLine>
           <useFile>false</useFile>
           <disableXmlReport>true</disableXmlReport>
           <suiteXmlFiles>
@@ -146,6 +146,11 @@
             <queue>new://Resource?type=Queue</queue>
             <topic>new://Resource?type=Topic</topic>
             <jdbc>new://Resource?type=DataSource</jdbc>
+
+            <admin.enabled>false</admin.enabled>
+            <ejbd.enabled>false</ejbd.enabled>
+            <ejbds.enabled>false</ejbds.enabled>
+
             <!-- this is a nice perf optimization to have by default but TCKs play with it -->
             <openejb.cdi.applicationScope.cached>false</openejb.cdi.applicationScope.cached>
             <!-- not supported by the spec -->

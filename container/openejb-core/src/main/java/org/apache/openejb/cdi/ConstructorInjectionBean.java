@@ -64,7 +64,7 @@ public class ConstructorInjectionBean<T> extends InjectionTargetBean<T> { // TOD
         if (passivationCapable != null) {
             this.passivationCapable = passivationCapable;
         } else {
-            this.passivationCapable = isPassivationCapable();
+            this.passivationCapable = super.isPassivationCapable();
         }
     }
 
