@@ -47,6 +47,8 @@ import org.apache.webbeans.spi.ScannerService;
 import java.lang.annotation.Annotation;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -208,6 +210,19 @@ public class CdiScanner implements ScannerService {
                     if (load != null && !classes.contains(load)) {
                         classes.add(load);
                     }
+                }
+            }
+
+            if ("true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.cdi.debug", "false"))) {
+                final Logger logger =  Logger.getInstance(LogCategory.OPENEJB, CdiScanner.class.getName());
+                logger.info("CDI beans for " + startupObject.getAppInfo().appId + (startupObject.getWebContext() != null ? " webcontext = " + startupObject.getWebContext().getContextRoot() : ""));
+                final List<String> names = new ArrayList<>(classes.size());
+                for (final Class<?> c : classes) {
+                    names.add(c.getName());
+                }
+                Collections.sort(names);
+                for (final String c : names) {
+                    logger.info("    " + c);
                 }
             }
         }
