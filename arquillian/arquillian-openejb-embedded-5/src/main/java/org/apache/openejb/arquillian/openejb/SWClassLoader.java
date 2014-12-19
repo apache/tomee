@@ -20,13 +20,13 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Enumerator;
 import org.apache.openejb.util.reflection.Reflections;
 import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.ArchivePath;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.Node;
 import org.jboss.shrinkwrap.api.asset.Asset;
 import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
 import org.jboss.shrinkwrap.api.asset.FileAsset;
 import org.jboss.shrinkwrap.api.asset.UrlAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 import javax.enterprise.inject.spi.Extension;
 import java.io.Closeable;
@@ -60,15 +60,13 @@ public class SWClassLoader extends ClassLoader implements Closeable {
     }
 
     private final Archive<?>[] archives;
-    private final String prefix;
     private final Collection<Closeable> closeables = new ArrayList<Closeable>();
 
-    public SWClassLoader(final String prefix, final ClassLoader parent, final Archive<?>... ar) {
+    public SWClassLoader(final ClassLoader parent, final Archive<?>... ar) {
         super(parent);
-        this.prefix = prefix;
         this.archives = ar;
         for (final Archive<?> a : ar) {
-            ArchiveStreamHandler.set(a, prefix, closeables);
+            ArchiveStreamHandler.set(a, closeables);
         }
     }
 
@@ -108,13 +106,9 @@ public class SWClassLoader extends ClassLoader implements Closeable {
     }
 
     private LinkedList<Archive<?>> findNodes(final String name) {
-        ArchivePath path = ArchivePaths.create(prefix + name);
         final LinkedList<Archive<?>> items = new LinkedList<>();
         for (final Archive<?> a : archives) {
-            Node node = a.get(path);
-            if (node == null) {
-                node = a.get(ArchivePaths.create(name));
-            }
+            final Node node = a.get(ArchivePaths.create((WebArchive.class.isInstance(a) ? "/WEB-INF/classes/" : "") + name));
             if (node != null) {
                 items.add(a);
             }
@@ -142,35 +136,26 @@ public class SWClassLoader extends ClassLoader implements Closeable {
 
     private static class ArchiveStreamHandler extends URLStreamHandler {
         public static final Map<String, Archive<?>> archives = new HashMap<String, Archive<?>>();
-        public static final Map<String, String> prefixes = new HashMap<String, String>();
         public static final Map<String, Collection<Closeable>> closeables = new HashMap<String, Collection<Closeable>>();
 
-        public static void set(final Archive<?> ar, final String p, final Collection<Closeable> c) {
+        public static void set(final Archive<?> ar, final Collection<Closeable> c) {
             final String archiveName = ar.getName();
             archives.put(archiveName, ar);
-            prefixes.put(archiveName, p);
             closeables.put(archiveName, c);
         }
 
         public static void reset(final String archiveName) {
             archives.remove(archiveName);
-            prefixes.remove(archiveName);
             closeables.remove(archiveName);
         }
 
         @Override
         protected URLConnection openConnection(final URL u) throws IOException {
             final String arName = key(u);
-            if (!prefixes.containsKey(arName)) {
-                throw new IOException(u.toExternalForm() + " not found");
-            }
 
-            String path = prefixes.get(arName) + path(arName, u);
-            Node node = archives.get(arName).get(path);
-            if (node == null) {
-                path = path(arName, u);
-                node = archives.get(arName).get(path);
-            }
+            final Archive<?> archive = archives.get(arName);
+            final String path = path(archive.getName(), WebArchive.class.isInstance(archive) ? "/WEB-INF/classes/" : "", u);
+            final Node node = archive.get(path);
             if (node == null) {
                 throw new IOException(u.toExternalForm() + " not found");
             }
@@ -200,13 +185,13 @@ public class SWClassLoader extends ClassLoader implements Closeable {
             };
         }
 
-        private static String path(final String arName, final URL url) {
+        private static String path(final String arName, final String prefix, final URL url) {
             final String p = url.getPath();
             final String out = p.substring(arName.length(), p.length());
-            if (prefixes.get(arName).endsWith("/") && out.startsWith("/")) {
-                return out.substring(1);
+            if (prefix.endsWith("/") && out.startsWith("/")) {
+                return prefix + out.substring(1);
             }
-            return out;
+            return prefix + out;
         }
 
         private static String key(final URL url) {
