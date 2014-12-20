@@ -40,6 +40,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.InjectionPoint;
+import javax.enterprise.inject.spi.PassivationCapable;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -213,11 +214,12 @@ public class CxfRSService extends RESTService {
         public static final AnnotationLiteral<Context> INSTANCE = new ContextLiteral();
     }
 
-    private static class ContextBean<T> implements Bean<T> {
+    private static class ContextBean<T> implements Bean<T>, PassivationCapable {
         private final Class<T> type;
         private final Set<Type> types;
         private final Set<Annotation> qualifiers;
         private final T proxy;
+        private final String id;
 
         public ContextBean(final Class<T> type, final AbstractRestThreadLocalProxy<T> proxy) {
             this.type = type;
@@ -225,6 +227,12 @@ public class CxfRSService extends RESTService {
                 (T) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[]{type, Serializable.class}, new DelegateHandler(proxy));
             this.types = new HashSet<Type>(asList(Object.class, type));
             this.qualifiers = new HashSet<Annotation>(asList(ContextLiteral.INSTANCE, AnyLiteral.INSTANCE));
+            this.id = ContextBean.class.getName() + "#" + type.getName();
+        }
+
+        @Override
+        public String getId() {
+            return id;
         }
 
         @Override

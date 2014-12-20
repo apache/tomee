@@ -46,6 +46,7 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 public class WebappBeanManager extends BeanManagerImpl {
+    private static final Annotation[] EMPTY_ANNOTATIONS = new Annotation[0];
     private static final ThreadLocal<Boolean> USE_PARENT_BM = new ThreadLocal<>();
     private final WebappWebBeansContext webappCtx;
     private final InheritedBeanFilter filter;
@@ -325,9 +326,9 @@ public class WebappBeanManager extends BeanManagerImpl {
     }
 
     private static final class InheritedBeanFilter implements Filter<Bean<?>> {
-        private final BeanManagerImpl beanManager;
+        private final WebappBeanManager beanManager;
 
-        private InheritedBeanFilter(final BeanManagerImpl beanManager) {
+        private InheritedBeanFilter(final WebappBeanManager beanManager) {
             this.beanManager = beanManager;
         }
 
@@ -337,15 +338,24 @@ public class WebappBeanManager extends BeanManagerImpl {
                 return false;
             }
             if (OwbBean.class.isInstance(bean)) {
-                if (hasBean(OwbBean.class.cast(bean).getId())) {
-                    return false;
+                final OwbBean owbBean = OwbBean.class.cast(bean);
+                if (owbBean.isPassivationCapable())
+                {
+                    if (hasBean(owbBean.getId()))
+                    {
+                        return false;
+                    }
                 }
             } else if (PassivationCapable.class.isInstance(bean)) {
                 if (hasBean(PassivationCapable.class.cast(bean).getId())) {
                     return false;
                 }
             }
-            return true;
+
+            final Set<Annotation> qualifiers = bean.getQualifiers();
+            return beanManager.getParentBm().getBeans(
+                    bean.getBeanClass(),
+                    qualifiers.isEmpty() ? EMPTY_ANNOTATIONS : qualifiers.toArray(new Annotation[qualifiers.size()])).isEmpty();
         }
 
         private boolean hasBean(final String id) {
