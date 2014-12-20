@@ -443,7 +443,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
         }
 
         public T createNewPojo(final CreationalContext<T> creationalContext) {
-            return (T) super.produce(CreationalContextImpl.class.cast(creationalContext));
+            return (T) super.newInstance(CreationalContextImpl.class.cast(creationalContext));
         }
 
         private static boolean isDynamicBean(final Bean<?> bean) {
