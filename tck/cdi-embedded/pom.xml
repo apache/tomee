@@ -115,6 +115,12 @@
       <version>${openejb.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-cxf-rs</artifactId>
+      <version>${openejb.version}</version>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.testng</groupId>
