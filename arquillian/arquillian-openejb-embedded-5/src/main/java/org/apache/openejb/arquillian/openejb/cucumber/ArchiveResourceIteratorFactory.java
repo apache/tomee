@@ -84,13 +84,18 @@ public class ArchiveResourceIteratorFactory implements ResourceIteratorFactory {
         }
 
         @Override
+        public String getAbsolutePath() {
+            return path;
+        }
+
+        @Override
         public InputStream getInputStream() throws IOException {
             return node.getAsset().openStream();
         }
 
         @Override
-        public String getClassName() {
-            return path.replace('/', '.');
+        public String getClassName(final String extension) {
+            return path.replace('/', '.') + extension;
         }
     }
 

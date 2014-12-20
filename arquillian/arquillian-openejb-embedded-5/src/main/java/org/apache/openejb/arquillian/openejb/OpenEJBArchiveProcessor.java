@@ -93,7 +93,14 @@ public class OpenEJBArchiveProcessor {
     private static final String PERSISTENCE_XML = "persistence.xml";
     private static final String OPENEJB_JAR_XML = "openejb-jar.xml";
     private static final String ENV_ENTRIES_PROPERTIES = "env-entries.properties";
-    public static final String WEB_INF_CLASSES = "/WEB-INF/classes/";
+    private static final String WEB_INF_CLASSES = "/WEB-INF/classes/";
+
+    private static final ClassLoader EMPTY_LOADER = new ClassLoader() {
+        @Override
+        public URL getResource(final String name) {
+            return null;
+        }
+    };
 
     public static AppModule createModule(final Archive<?> archive, final TestClass testClass, final Closeables closeables) {
         final Class<?> javaClass;
@@ -163,7 +170,7 @@ public class OpenEJBArchiveProcessor {
                         final Map<String, Object> altDD = new HashMap<>();
                         final Node beansXml = findBeansXml(webArchive, WEB_INF);
 
-                        final List<URL> webappAdditionalPaths = new LinkedList<URL>();
+                        final List<URL> webappAdditionalPaths = new LinkedList<>();
                         final CompositeBeans webAppBeansXml = new CompositeBeans();
                         final List<Archive> webAppArchives = new LinkedList<Archive>();
                         final Map<URL, List<String>> webAppClassesByUrl = new HashMap<URL, List<String>>();
@@ -331,10 +338,10 @@ public class OpenEJBArchiveProcessor {
                             new WebappAggregatedArchive.ScanXmlSaverFilter(false, null, classes, null)));
                     additionalPaths.add(url);
 
-                    final URLClassLoader loader = new URLClassLoader(new URL[] { url }, ClassLoader.getSystemClassLoader().getParent());
-                    for (final String beans : asList("/META-INF/beans.xml", "/META-INF/beans.xml")) {
+                    final URLClassLoader loader = new URLClassLoader(new URL[] { url }, EMPTY_LOADER);
+                    for (final String beans : asList("META-INF/beans.xml", "/META-INF/beans.xml")) {
                         final URL u = loader.getResource(beans);
-                        if (beans != null) {
+                        if (u != null) {
                             try {
                                 DeploymentLoader.doMerge(u, earBeans, ReadDescriptors.readBeans(u.openStream()));
                             } catch (final OpenEJBException e) {
