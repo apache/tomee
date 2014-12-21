@@ -20,8 +20,10 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 public final class Args {
-    public static Collection<String> parse(final String raw) {
+    public static Collection<String> parse(String raw) {
         final Collection<String> result = new LinkedList<String>();
+
+        raw = raw.trim().replace("\r", "").replace("\n", "");
 
         Character end = null;
         boolean escaped = false;
