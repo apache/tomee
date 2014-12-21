@@ -285,8 +285,8 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
             homeLocalBean = null;
             remote = null;
         } else {
-            final Class<?> mainInterface = classes.get(0);
-            final List<Class> interfaces = ProxyInterfaceResolver.getInterfaces(beanContext.getBeanClass(), mainInterface, classes);
+            final Class<?> mainInterface = beanContext.getBusinessRemoteInterface();
+            final List<Class> interfaces = ProxyInterfaceResolver.getInterfaces(beanContext.getBeanClass(), mainInterface, beanContext.getBusinessRemoteInterfaces());
             remote = beanContext.getBusinessRemoteHome(interfaces, mainInterface);
             home = null;
             homeLocalBean = null;
