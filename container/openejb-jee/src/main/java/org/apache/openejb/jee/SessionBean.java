@@ -921,9 +921,6 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
     }
 
     public Boolean getPassivationCapable() {
-        if (passivationCapable == null) {
-            return true;
-        }
         return passivationCapable;
     }
 
