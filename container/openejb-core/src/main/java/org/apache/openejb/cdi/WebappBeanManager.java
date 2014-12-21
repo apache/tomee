@@ -353,7 +353,7 @@ public class WebappBeanManager extends BeanManagerImpl {
             }
 
             final Set<Annotation> qualifiers = bean.getQualifiers();
-            return beanManager.getParentBm().getBeans(
+            return getBeans(
                     bean.getBeanClass(),
                     qualifiers.isEmpty() ? EMPTY_ANNOTATIONS : qualifiers.toArray(new Annotation[qualifiers.size()])).isEmpty();
         }
