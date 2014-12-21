@@ -186,7 +186,8 @@ public class OpenEJBArchiveProcessor {
                         final FinderFactory.OpenEJBAnnotationFinder finder = new FinderFactory.OpenEJBAnnotationFinder(
                                 finderArchive(beansXml, webArchive, webLoader, webAppArchive, webAppClassesByUrl, webAppBeansXml));
 
-                        final WebModule webModule = new WebModule(new WebApp(), contextRoot(webArchive.getName()), webLoader, "", appModule.getModuleId());
+                        final String contextRoot = contextRoot(webArchive.getName());
+                        final WebModule webModule = new WebModule(new WebApp(), contextRoot, webLoader, "", appModule.getModuleId() + "_" + contextRoot);
                         webModule.setUrls(Collections.<URL>emptyList());
                         webModule.setScannableUrls(Collections.<URL>emptyList());
                         webModule.setFinder(finder);

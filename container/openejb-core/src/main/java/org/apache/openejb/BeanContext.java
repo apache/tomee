@@ -865,7 +865,8 @@ public class BeanContext extends DeploymentContext {
             throw new IllegalArgumentException("No interface classes were specified");
         }
         for (final Class clazz : interfaces) {
-            if (!getBusinessLocalInterfaces().contains(clazz)) {
+            if (!getBusinessLocalInterfaces().contains(clazz)
+                    && !getBusinessRemoteInterfaces().contains(clazz) /* for CDI mainly */) {
                 throw new IllegalArgumentException("Not a business interface of this bean:" + clazz.getName());
             }
         }

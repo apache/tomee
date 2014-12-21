@@ -73,6 +73,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
     // initialized a bit later in the lifecycle but could be final otherwise
     private BeanContext.BusinessLocalBeanHome homeLocalBean;
     private BeanContext.BusinessLocalHome home;
+    private BeanContext.BusinessRemoteHome remote;
 
     public CdiEjbBean(final BeanContext beanContext, final WebBeansContext webBeansContext, final AnnotatedType<T> at) {
         this(beanContext, webBeansContext, beanContext.getManagedClass(), at, new EjbInjectionTargetFactory<T>(at, webBeansContext));
@@ -223,8 +224,10 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
             final T instance;
             if (homeLocalBean != null) {
                 instance = (T) homeLocalBean.create();
-            } else {
+            } else if (home != null) {
                 instance = (T) home.create();
+            } else /*if (remote != null)*/ {
+                instance = (T) remote.create();
             }
 
             if (isDependentAndStateful) {
@@ -273,12 +276,21 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
         if (noLocalInterface && beanContext.isLocalbean()) {
             homeLocalBean = beanContext.getBusinessLocalBeanHome();
             home = null;
+            remote = null;
         } else if (!noLocalInterface) {
             final Class<?> mainInterface = classes.get(0);
             final List<Class> interfaces = ProxyInterfaceResolver.getInterfaces(beanContext.getBeanClass(), mainInterface, classes);
+            interfaces.addAll(beanContext.getBusinessRemoteInterfaces());
             home = beanContext.getBusinessLocalHome(interfaces, mainInterface);
             homeLocalBean = null;
-        } // else remote
+            remote = null;
+        } else {
+            final Class<?> mainInterface = classes.get(0);
+            final List<Class> interfaces = ProxyInterfaceResolver.getInterfaces(beanContext.getBeanClass(), mainInterface, classes);
+            remote = beanContext.getBusinessRemoteHome(interfaces, mainInterface);
+            home = null;
+            homeLocalBean = null;
+        }
     }
 
     private static class EJBBeanAttributesImpl<T> extends BeanAttributesImpl<T> {
@@ -309,6 +321,13 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
             final List<Class> cl = beanContext.getBusinessLocalInterfaces();
             if (cl != null && !cl.isEmpty()) {
                 for (final Class<?> c : cl) {
+                    ejbTypes.add(c);
+                }
+            }
+
+            final List<Class> clRemote = beanContext.getBusinessRemoteInterfaces();
+            if (clRemote != null && !clRemote.isEmpty()) {
+                for (final Class<?> c : clRemote) {
                     ejbTypes.add(c);
                 }
             }

@@ -31,7 +31,6 @@ import org.apache.webbeans.annotation.AnyLiteral;
 import org.apache.webbeans.annotation.DefaultLiteral;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
-import org.apache.webbeans.context.creational.CreationalContextImpl;
 import org.apache.webbeans.inject.OWBInjector;
 import org.jboss.arquillian.test.spi.TestClass;
 
@@ -46,7 +45,9 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -143,24 +144,44 @@ public final class OpenEJBEnricher {
             return values;
         }
 
-        final BeanManagerImpl beanManager = findBeanManager(appContext);
-        if (beanManager == null) {
+        final List<BeanManager> beanManagers = new ArrayList<>();
+        final BeanManager bm = findBeanManager(appContext);
+        if (bm != null) {
+            if (appContext != null) { // then add web bean manager first, TODO: selection of the webapp containing the test?
+                for (final WebContext web : appContext.getWebContexts()) {
+                    final WebBeansContext webBeansContext = web.getWebBeansContext();
+                    final BeanManagerImpl webAppBm = webBeansContext.getBeanManagerImpl();
+                    if (bm != webAppBm) {
+                        beanManagers.add(webAppBm);
+                    }
+                }
+            }
+            beanManagers.add(bm);
+        }
+        if (beanManagers.isEmpty()) {
             return values;
         }
 
         final Class<?>[] parameterTypes = method.getParameterTypes();
         for (int i = 0; i < parameterTypes.length; i++) {
-            try {
-                values[i] = getParamInstance(beanManager, i, method);
-            } catch (final Exception e) {
-                LOGGER.info(e.getMessage());
+            Exception ex = null;
+            for (final BeanManager beanManager : beanManagers) {
+                try {
+                    values[i] = getParamInstance(beanManager, i, method);
+                    break;
+                } catch (final Exception e) {
+                    ex = e;
+                }
+            }
+            if (ex != null) {
+                LOGGER.info(ex.getMessage());
             }
         }
         return values;
     }
 
-    private static <T> T getParamInstance(final BeanManagerImpl manager, final int position, final Method method) {
-        final CreationalContextImpl<?> creational = manager.createCreationalContext(null);
+    private static <T> T getParamInstance(final BeanManager manager, final int position, final Method method) {
+        final CreationalContext<?> creational = manager.createCreationalContext(null); // TODO: release in @After
         return (T) manager.getInjectableReference(new MethodParamInjectionPoint(method, position, manager), creational);
     }
 

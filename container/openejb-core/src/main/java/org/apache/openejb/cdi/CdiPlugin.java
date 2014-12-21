@@ -37,8 +37,6 @@ import org.apache.webbeans.config.WebBeansFinder;
 import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.event.ObserverMethodImpl;
 import org.apache.webbeans.exception.WebBeansConfigurationException;
-import org.apache.webbeans.intercept.InterceptorResolutionService;
-import org.apache.webbeans.portable.InjectionTargetImpl;
 import org.apache.webbeans.portable.events.discovery.BeforeShutdownImpl;
 import org.apache.webbeans.portable.events.generics.GProcessSessionBean;
 import org.apache.webbeans.proxy.NormalScopeProxyFactory;
@@ -61,9 +59,7 @@ import javax.enterprise.inject.spi.AnnotatedField;
 import javax.enterprise.inject.spi.AnnotatedMethod;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.Decorator;
 import javax.enterprise.inject.spi.InjectionPoint;
-import javax.enterprise.inject.spi.Interceptor;
 import javax.enterprise.inject.spi.ObserverMethod;
 import javax.enterprise.inject.spi.PassivationCapable;
 import javax.enterprise.inject.spi.Producer;
@@ -505,6 +501,13 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
         final BeanContext beanContext = cdiEjbBean.getBeanContext();
 
         for (final Class intface : beanContext.getBusinessLocalInterfaces()) {
+            try {
+                return intface.getMethod(declaredMethod.getName(), declaredMethod.getParameterTypes());
+            } catch (final NoSuchMethodException ignore) {
+                // no-op
+            }
+        }
+        for (final Class intface : beanContext.getBusinessRemoteInterfaces()) {
             try {
                 return intface.getMethod(declaredMethod.getName(), declaredMethod.getParameterTypes());
             } catch (final NoSuchMethodException ignore) {
