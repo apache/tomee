@@ -44,6 +44,7 @@ import java.lang.annotation.Annotation;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -187,6 +188,14 @@ public class CdiScanner implements ScannerService {
         }
     }
 
+    private void addClasses(final Collection<String> list, final ClassLoader loader) {
+        for (final String s : list) {
+            final Class<?> load = load(s, loader);
+            if (load != null) {
+                classes.add(load);
+            }
+        }
+    }
     private BeanArchiveService.BeanArchiveInformation handleBda(final StartupObject startupObject, final ClassLoader classLoader, final ClassLoaderComparator comparator,
                            final BeansInfo beans, final ClassLoader scl, final boolean filterByClassLoader,
                            final BeanArchiveService beanArchiveService, final boolean openejb,
@@ -208,6 +217,10 @@ public class CdiScanner implements ScannerService {
                 throw new IllegalStateException(e);
             }
         }
+        addClasses(information.getAlternativeClasses(), classLoader);
+        addClasses(information.getDecorators(), classLoader);
+        addClasses(information.getInterceptors(), classLoader);
+        addClasses(information.getAlternativeStereotypes(), classLoader);
 
         final boolean scanModeAnnotated = BeanArchiveService.BeanDiscoveryMode.ANNOTATED.equals(information.getBeanDiscoveryMode());
         final boolean noScan = BeanArchiveService.BeanDiscoveryMode.NONE.equals(information.getBeanDiscoveryMode());
