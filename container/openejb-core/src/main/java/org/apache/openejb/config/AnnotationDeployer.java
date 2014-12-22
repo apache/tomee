@@ -1287,7 +1287,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                 if (beans != null) {
                     managedClasses = beans.getManagedClasses();
-                    getBeanClasses(finder, managedClasses, beans.getNotManagedClasses());
+                    getBeanClasses(beans.getUri(), finder, managedClasses, beans.getNotManagedClasses());
 
                     // passing jar location to be able to manage maven classes/test-classes which have the same moduleId
                     String id = ejbModule.getModuleId();
@@ -1618,7 +1618,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             return name != null && name.length() != 0;
         }
 
-        private void getBeanClasses(final IAnnotationFinder finder, final Map<URL, List<String>> classes, final Map<URL, List<String>> notManaged) {
+        private void getBeanClasses(final String uri, final IAnnotationFinder finder, final Map<URL, List<String>> classes, final Map<URL, List<String>> notManaged) {
 
             //  What we're hoping in this method is to get lucky and find
             //  that our 'finder' instances is an AnnotationFinder that is
@@ -1637,7 +1637,11 @@ public class AnnotationDeployer implements DynamicDeployer {
             final Archive archive = annotationFinder.getArchive();
 
             if (!WebappAggregatedArchive.class.isInstance(archive)) {
-                classes.put(null, annotationFinder.getAnnotatedClassNames());
+                try {
+                    classes.put(uri == null ? null : new URL(uri), annotationFinder.getAnnotatedClassNames());
+                } catch (final MalformedURLException e) {
+                    throw new IllegalStateException(e);
+                }
                 return;
             }
 

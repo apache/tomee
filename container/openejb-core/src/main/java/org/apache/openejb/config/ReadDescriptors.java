@@ -467,6 +467,9 @@ public class ReadDescriptors implements DynamicDeployer {
             try {
                 final Beans beans = readBeans(data.get());
                 checkDuplicatedByBeansXml(beans, beans);
+                if (UrlSource.class.isInstance(data)) {
+                    beans.setUri(UrlSource.class.cast(data).getUrl().toExternalForm());
+                }
                 ejbModule.setBeans(beans);
             } catch (final IOException e) {
                 throw new OpenEJBException(e);

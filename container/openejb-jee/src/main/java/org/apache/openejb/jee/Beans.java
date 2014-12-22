@@ -100,6 +100,17 @@ public class Beans {
     @XmlElement
     protected Scan scan;
 
+    @XmlTransient
+    private String uri;
+
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(final String uri) {
+        this.uri = uri;
+    }
+
     public Scan getScan() {
         if (scan == null) {
             scan = new Scan();
