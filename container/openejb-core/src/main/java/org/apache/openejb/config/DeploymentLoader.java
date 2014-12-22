@@ -1133,10 +1133,7 @@ public class DeploymentLoader implements DeploymentFilterable {
     }
 
     public static void doMerge(final URL url, final CompositeBeans current, final Beans beans) {
-        current.getAlternativeClasses().addAll(beans.getAlternativeClasses());
-        current.getAlternativeStereotypes().addAll(beans.getAlternativeStereotypes());
-        current.getDecorators().addAll(beans.getDecorators());
-        current.getInterceptors().addAll(beans.getInterceptors());
+        current.mergeClasses(url, beans);
         current.getScan().getExclude().addAll(beans.getScan().getExclude());
 
         // check is done here since later we lost the data of the origin

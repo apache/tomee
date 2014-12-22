@@ -278,7 +278,7 @@ public class ReadDescriptors implements DynamicDeployer {
         final Source value = getSource(module.getAltDDs().get("validation.xml"));
         if (value != null) {
             try {
-                final ValidationConfigType validationConfigType = JaxbOpenejb.unmarshal(ValidationConfigType.class, ((Source) value).get(), false);
+                final ValidationConfigType validationConfigType = JaxbOpenejb.unmarshal(ValidationConfigType.class, value.get(), false);
                 module.setValidationConfig(validationConfigType);
             } catch (final Exception e) {
                 logger.warning("can't read validation.xml to construct a validation factory, it will be ignored");
@@ -335,7 +335,7 @@ public class ReadDescriptors implements DynamicDeployer {
 
                     String filePath = "<error: could not be written>";
                     try {
-                        File tempFile = null;
+                        File tempFile;
                         try {
                             tempFile = File.createTempFile("openejb-jar-", ".xml");
                         } catch (final Throwable e) {
@@ -491,10 +491,7 @@ public class ReadDescriptors implements DynamicDeployer {
     }
 
     private static Beans mergeBeansXml(final CompositeBeans current, final Beans beans, final URL url) {
-        current.getAlternativeClasses().addAll(beans.getAlternativeClasses());
-        current.getAlternativeStereotypes().addAll(beans.getAlternativeStereotypes());
-        current.getDecorators().addAll(beans.getDecorators());
-        current.getInterceptors().addAll(beans.getInterceptors());
+        current.mergeClasses(url, beans);
         current.getScan().getExclude().addAll(beans.getScan().getExclude());
 
         // check is done here since later we lost the data of the origin

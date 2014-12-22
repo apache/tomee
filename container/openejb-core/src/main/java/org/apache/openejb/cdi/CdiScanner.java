@@ -32,14 +32,9 @@ import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.PropertyPlaceHolderHelper;
 import org.apache.openejb.util.classloader.ClassLoaderComparator;
 import org.apache.openejb.util.classloader.DefaultClassLoaderComparator;
-import org.apache.openejb.util.reflection.Reflections;
 import org.apache.webbeans.config.WebBeansContext;
-import org.apache.webbeans.decorator.DecoratorsManager;
-import org.apache.webbeans.exception.WebBeansConfigurationException;
-import org.apache.webbeans.inject.AlternativesManager;
 import org.apache.webbeans.intercept.InterceptorsManager;
 import org.apache.webbeans.spi.BDABeansXmlScanner;
 import org.apache.webbeans.spi.BeanArchiveService;
@@ -49,7 +44,6 @@ import java.lang.annotation.Annotation;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -72,6 +66,7 @@ public class CdiScanner implements ScannerService {
 
     private final Set<Class<?>> classes = new HashSet<>();
     private final Set<Class<?>> startupClasses = new HashSet<>();
+    private final Set<URL> beansXml = new HashSet<>();
 
     private WebBeansContext webBeansContext;
     private ClassLoader containerLoader;
@@ -98,8 +93,6 @@ public class CdiScanner implements ScannerService {
         }
 
         final WebBeansContext webBeansContext = startupObject.getWebBeansContext();
-        final AlternativesManager alternativesManager = webBeansContext.getAlternativesManager();
-        final DecoratorsManager decoratorsManager = webBeansContext.getDecoratorsManager();
         final InterceptorsManager interceptorsManager = webBeansContext.getInterceptorsManager();
 
         // "manual" extension to avoid to add it through SPI mecanism
@@ -124,68 +117,6 @@ public class CdiScanner implements ScannerService {
                 continue;
             }
 
-            // fail fast
-            final StringBuilder errors = new StringBuilder("You must not declare the same class multiple times in the beans.xml: ");
-            if (addErrors(errors, "alternative classes", beans.duplicatedAlternativeClasses)
-                || addErrors(errors, "alternative stereotypes", beans.duplicatedAlternativeStereotypes)
-                || addErrors(errors, "decorators", beans.duplicatedDecorators)
-                || addErrors(errors, "interceptors", beans.duplicatedInterceptors)) {
-                throw new WebBeansConfigurationException(errors.toString());
-            }
-            // no more need of errors so clear them
-            beans.duplicatedAlternativeStereotypes.clear();
-            beans.duplicatedAlternativeClasses.clear();
-            beans.duplicatedDecorators.clear();
-            beans.duplicatedInterceptors.clear();
-
-            for (final String className : beans.interceptors) {
-                final Class<?> clazz = load(PropertyPlaceHolderHelper.simpleValue(className), classLoader);
-
-                if (clazz != null) {
-                    if (!interceptorsManager.isInterceptorClassEnabled(clazz)) {
-                        interceptorsManager.addEnabledInterceptorClass(clazz);
-                        classes.add(clazz);
-                    } /* else { don't do it, check is done when we know the beans.xml path --> org.apache.openejb.config.DeploymentLoader.addBeansXmls
-                        throw new WebBeansConfigurationException("Interceptor class : " + clazz.getName() + " is already defined");
-                    }*/
-                } else if (shouldThrowCouldNotLoadException(startupObject)) {
-                    throw new WebBeansConfigurationException("Could not load interceptor class: " + className);
-                }
-            }
-
-            for (final String className : beans.decorators) {
-                final Class<?> clazz = load(PropertyPlaceHolderHelper.simpleValue(className), classLoader);
-                if (clazz != null) {
-                    if (!decoratorsManager.isDecoratorEnabled(clazz)) {
-                        decoratorsManager.addEnabledDecorator(clazz);
-                        classes.add(clazz);
-                    } // same than interceptors regarding throw new WebBeansConfigurationException("Decorator class : " + clazz.getName() + " is already defined");
-                } else if (shouldThrowCouldNotLoadException(startupObject)) {
-                    throw new WebBeansConfigurationException("Could not load decorator class: " + className);
-                }
-            }
-
-
-            for (final String className : beans.alternativeStereotypes) {
-                final Class<?> clazz = load(PropertyPlaceHolderHelper.simpleValue(className), classLoader);
-                if (clazz != null) {
-                    alternativesManager.addXmlStereoTypeAlternative(clazz);
-                    classes.add(clazz);
-                } else if (shouldThrowCouldNotLoadException(startupObject)) {
-                    throw new WebBeansConfigurationException("Could not load alternativeStereotype class: " + className);
-                }
-            }
-
-            for (final String className : beans.alternativeClasses) {
-                final Class<?> clazz = load(PropertyPlaceHolderHelper.simpleValue(className), classLoader);
-                if (clazz != null) {
-                    alternativesManager.addXmlClazzAlternative(clazz);
-                    classes.add(clazz);
-                } else if (shouldThrowCouldNotLoadException(startupObject)) {
-                    throw new WebBeansConfigurationException("Could not load alternative class: " + className);
-                }
-            }
-
             // here for ears we need to skip classes in the parent classloader
             final ClassLoader scl = ClassLoader.getSystemClassLoader();
             final boolean filterByClassLoader = "true".equals(
@@ -197,6 +128,13 @@ public class CdiScanner implements ScannerService {
 
             final Map<BeansInfo.BDAInfo, BeanArchiveService.BeanArchiveInformation> infoByBda = new HashMap<>();
             for (final BeansInfo.BDAInfo bda : beans.bdas) {
+                if (bda.uri != null) {
+                    try {
+                        beansXml.add(bda.uri.toURL());
+                    } catch (final MalformedURLException e) {
+                        // no-op
+                    }
+                }
                 infoByBda.put(bda, handleBda(startupObject, classLoader, comparator, beans, scl, filterByClassLoader, beanArchiveService, openejb, bda));
             }
             for (final BeansInfo.BDAInfo bda : beans.noDescriptorBdas) {
@@ -256,7 +194,7 @@ public class CdiScanner implements ScannerService {
         BeanArchiveService.BeanArchiveInformation information;
         if (openejb) {
             final OpenEJBBeanInfoService beanInfoService = OpenEJBBeanInfoService.class.cast(beanArchiveService);
-            information = beanInfoService.createBeanArchiveInformation(beans, classLoader, bda.discoveryMode == null? "ALL" : bda.discoveryMode); // this fallback is 100% for tests, TODO: get rid of it (AppComposer)
+            information = beanInfoService.createBeanArchiveInformation(bda, beans, classLoader);
             // TODO: log a warn is discoveryModes.get(key) == null
             try {
                 beanInfoService.getBeanArchiveInfo().put(bda.uri == null ? null : bda.uri.toURL(), information);
@@ -276,7 +214,7 @@ public class CdiScanner implements ScannerService {
         final boolean isNotEarWebApp = startupObject.getWebContext() == null;
 
         if (!noScan) {
-            if (scanModeAnnotated /* && bda.managedClasses.size() > 50 */) {
+            if (scanModeAnnotated) {
                 try {
                     Logger.getInstance(LogCategory.OPENEJB, CdiScanner.class.getName())
                             .info("No beans.xml in " + bda.uri.toASCIIString()
@@ -340,24 +278,6 @@ public class CdiScanner implements ScannerService {
         return false;
     }
 
-    private static boolean shouldThrowCouldNotLoadException(final StartupObject startupObject) {
-        final AppInfo appInfo = startupObject.getAppInfo();
-        return appInfo.webAppAlone || appInfo.webApps.size() == 0 || startupObject.isFromWebApp();
-    }
-
-    private boolean addErrors(final StringBuilder errors, final String msg, final List<String> list) {
-        if (!list.isEmpty()) {
-            errors.append("[ ").append(msg).append(" --> ");
-            for (final String s : list) {
-                errors.append(s).append(" ");
-            }
-            errors.append("]");
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     public boolean isBDABeansXmlScanningEnabled() {
         return false;
     }
@@ -388,7 +308,7 @@ public class CdiScanner implements ScannerService {
 
     @Override
     public Set<URL> getBeanXmls() {
-        return Collections.emptySet(); // Unused
+        return beansXml;
     }
 
     @Override

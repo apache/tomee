@@ -18,7 +18,7 @@
 <suite name="CDI TCK" verbose="0">
   <test name="CDI TCK">
     <classes>
-      <class name="org.jboss.cdi.tck.tests.extensions.lifecycle.events.ContainerLifeCycleEventRuntimeInvocationTest" />
+      <class name="org.jboss.cdi.tck.tests.extensions.lifecycle.processBeanAttributes.specialization.VetoTest" />
     </classes>
   </test>
 </suite>

@@ -32,28 +32,24 @@ import java.util.Set;
 public class OpenEJBBeanInfoService implements BeanArchiveService {
     private Map<URL, BeanArchiveInformation> beanArchiveInfo = new HashMap<>();
 
-    public void register(final URL url, final BeansInfo info, final ClassLoader loader, final String mode) {
-        final DefaultBeanArchiveInformation information = createBeanArchiveInformation(info, loader, mode);
-        beanArchiveInfo.put(url, information);
-    }
-
     public Map<URL, BeanArchiveInformation> getBeanArchiveInfo() {
         return beanArchiveInfo;
     }
 
-    public DefaultBeanArchiveInformation createBeanArchiveInformation(final BeansInfo info, final ClassLoader loader, final String mode) {
+    public DefaultBeanArchiveInformation createBeanArchiveInformation(final BeansInfo.BDAInfo bda, final BeansInfo info, final ClassLoader loader) {
+        final String mode = bda.discoveryMode == null? "ALL" : bda.discoveryMode;
         if (info != null && info.version != null && !"1.0".equals(info.version) && info.discoveryMode == null) {
             throw new WebBeansConfigurationException("beans.xml with version 1.1 and higher must declare a bean-discovery-mode!");
         }
 
         final DefaultBeanArchiveInformation information = new DefaultBeanArchiveInformation();
         information.setVersion(info == null ? "1.1" : info.version);
-        information.setBeanDiscoveryMode(mode == null ? BeanDiscoveryMode.ANNOTATED : BeanDiscoveryMode.valueOf(mode.trim().toUpperCase(Locale.ENGLISH)));
-        information.setDecorators(info == null ? Collections.<String>emptyList() : info.decorators);
-        information.setInterceptors(info == null ? Collections.<String>emptyList() : info.interceptors);
+        information.setBeanDiscoveryMode(BeanDiscoveryMode.valueOf(mode.trim().toUpperCase(Locale.ENGLISH)));
+        information.setDecorators(bda.decorators);
+        information.setInterceptors(bda.interceptors);
         if (info != null) {
-            information.getAlternativeClasses().addAll(info.alternativeClasses);
-            information.getAlternativeStereotypes().addAll(info.alternativeStereotypes);
+            information.getAlternativeClasses().addAll(bda.alternatives);
+            information.getAlternativeStereotypes().addAll(bda.stereotypeAlternatives);
 
             for (final BeansInfo.ExclusionEntryInfo exclusionInfo : info.excludes) {
                 boolean skip = false;

@@ -101,6 +101,7 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 import org.apache.webbeans.spi.BeanArchiveService;
 
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -115,6 +116,14 @@ import java.util.Map;
  * @version $Revision$ $Date$
  */
 public class EjbJarInfoBuilder {
+    private static final URL DEFAULT_BEANS_XML_KEY;
+    static {
+        try {
+            DEFAULT_BEANS_XML_KEY = new URL("jar:file://!/META-INF/beans.xml");
+        } catch (final MalformedURLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
 
     public static Messages messages = new Messages("org.apache.openejb.util.resources");
     public static Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
@@ -144,8 +153,8 @@ public class EjbJarInfoBuilder {
             throw new OpenEJBException(message);
         }
 
-        final Map<String, EnterpriseBeanInfo> infos = new HashMap<String, EnterpriseBeanInfo>();
-        final Map<String, EnterpriseBean> items = new HashMap<String, EnterpriseBean>();
+        final Map<String, EnterpriseBeanInfo> infos = new HashMap<>();
+        final Map<String, EnterpriseBean> items = new HashMap<>();
 
         final EjbJarInfo ejbJar = new EjbJarInfo();
         ejbJar.path = jar.getJarLocation();
@@ -254,11 +263,6 @@ public class EjbJarInfoBuilder {
                 }
             }
 
-            ejbJar.beans.interceptors.addAll(beans.getInterceptors());
-            ejbJar.beans.decorators.addAll(beans.getDecorators());
-            ejbJar.beans.alternativeClasses.addAll(beans.getAlternativeClasses());
-            ejbJar.beans.alternativeStereotypes.addAll(beans.getAlternativeStereotypes());
-
             ejbJar.beans.duplicatedAlternativeClasses.addAll(beans.getDuplicatedAlternatives().getClasses());
             ejbJar.beans.duplicatedAlternativeStereotypes.addAll(beans.getDuplicatedAlternatives().getStereotypes());
             ejbJar.beans.duplicatedInterceptors.addAll(beans.getDuplicatedInterceptors());
@@ -267,40 +271,69 @@ public class EjbJarInfoBuilder {
             ejbJar.beans.startupClasses.addAll(beans.getStartupBeans());
 
             final Map<URL, String> discoveryModeByUrl = new HashMap<>();
+            final CompositeBeans composite;
             if (CompositeBeans.class.isInstance(beans)) {
-                discoveryModeByUrl.putAll(CompositeBeans.class.cast(beans).getDiscoveryByUrl());
+                composite = CompositeBeans.class.cast(beans);
+                discoveryModeByUrl.putAll(composite.getDiscoveryByUrl());
             } else {
-                discoveryModeByUrl.put(null, beans.getBeanDiscoveryMode());
+                composite = null;
+                discoveryModeByUrl.put(DEFAULT_BEANS_XML_KEY, beans.getBeanDiscoveryMode());
             }
             for (final Map.Entry<URL, List<String>> next : beans.getManagedClasses().entrySet()) {
                 final URL key = next.getKey();
 
                 final BeansInfo.BDAInfo bdaInfo = new BeansInfo.BDAInfo();
-                bdaInfo.managedClasses.addAll(next.getValue());
                 bdaInfo.discoveryMode = discoveryModeByUrl.get(key);
-                try {
-                    bdaInfo.uri = key == null ? null : key.toURI();
-                } catch (final URISyntaxException e) {
-                    bdaInfo.uri = null;
-                }
+                merge(composite, key == null ? DEFAULT_BEANS_XML_KEY : key, bdaInfo, next.getValue());
                 ejbJar.beans.bdas.add(bdaInfo);
             }
             for (final Map.Entry<URL, List<String>> next : beans.getNotManagedClasses().entrySet()) {
                 final URL key = next.getKey();
 
                 final BeansInfo.BDAInfo bdaInfo = new BeansInfo.BDAInfo();
-                bdaInfo.managedClasses.addAll(next.getValue());
                 bdaInfo.discoveryMode = BeanArchiveService.BeanDiscoveryMode.ANNOTATED.name();
-                try {
-                    bdaInfo.uri = key == null ? null : key.toURI();
-                } catch (final URISyntaxException e) {
-                    bdaInfo.uri = null;
-                }
+                merge(composite, key == null ? DEFAULT_BEANS_XML_KEY : key, bdaInfo, next.getValue());
                 ejbJar.beans.noDescriptorBdas.add(bdaInfo);
+            }
+
+            // app composer case mainly,we should really not use it anywhere else
+            if (composite == null && ejbJar.beans.bdas.size() == 1) {
+                final BeansInfo.BDAInfo bda = ejbJar.beans.bdas.iterator().next();
+                bda.alternatives.addAll(beans.getAlternativeClasses());
+                bda.interceptors.addAll(beans.getInterceptors());
+                bda.decorators.addAll(beans.getDecorators());
+                bda.stereotypeAlternatives.addAll(beans.getAlternativeStereotypes());
             }
         }
 
         return ejbJar;
+    }
+
+    private void merge(final CompositeBeans composite, final URL key, final BeansInfo.BDAInfo bdaInfo, final List<String> managedClasses) {
+        bdaInfo.managedClasses.addAll(managedClasses);
+        try {
+            bdaInfo.uri = key == null ? null : key.toURI();
+        } catch (final URISyntaxException e) {
+            bdaInfo.uri = null;
+        }
+        if (composite != null) {
+            final Collection<String> interceptors = composite.getInterceptorsByUrl().get(key);
+            if (interceptors != null) {
+                bdaInfo.interceptors.addAll(interceptors);
+            }
+            final Collection<String> decorators = composite.getDecoratorsByUrl().get(key);
+            if (decorators != null) {
+                bdaInfo.decorators.addAll(decorators);
+            }
+            final Collection<String> alternatives = composite.getAlternativesByUrl().get(key);
+            if (alternatives != null) {
+                bdaInfo.alternatives.addAll(alternatives);
+            }
+            final Collection<String> alternativeStereotypes = composite.getAlternativeStereotypesByUrl().get(key);
+            if (alternativeStereotypes != null) {
+                bdaInfo.stereotypeAlternatives.addAll(alternativeStereotypes);
+            }
+        }
     }
 
     private void initJndiNames(final Map<String, EjbDeployment> ejbds, final EnterpriseBeanInfo info) {
@@ -483,7 +516,7 @@ public class EjbJarInfoBuilder {
     }
 
     private void copySchedules(final List<Timer> timers, final List<MethodScheduleInfo> scheduleInfos) {
-        final Map<NamedMethod, MethodScheduleInfo> methodScheduleInfoMap = new HashMap<NamedMethod, MethodScheduleInfo>();
+        final Map<NamedMethod, MethodScheduleInfo> methodScheduleInfoMap = new HashMap<>();
         for (final Timer timer : timers) {
             final NamedMethod timeoutMethod = timer.getTimeoutMethod();
             MethodScheduleInfo methodScheduleInfo = methodScheduleInfoMap.get(timer.getTimeoutMethod());
@@ -604,7 +637,7 @@ public class EjbJarInfoBuilder {
             return Collections.emptyList();
         }
 
-        final List<MethodInfo> mi = new ArrayList<MethodInfo>(ms.size());
+        final List<MethodInfo> mi = new ArrayList<>(ms.size());
         for (final Method method : ms) {
             final MethodInfo methodInfo = getMethodInfo(method, ejbds);
             mi.add(methodInfo);
@@ -639,7 +672,7 @@ public class EjbJarInfoBuilder {
     }
 
     private EnterpriseBeanInfo initSessionBean(final SessionBean s, final EjbJarInfo ejbJar, final Map m) throws OpenEJBException {
-        EnterpriseBeanInfo bean = null;
+        EnterpriseBeanInfo bean;
 
         if (s.getSessionType() == SessionType.STATEFUL) {
             bean = new StatefulBeanInfo();
@@ -672,11 +705,8 @@ public class EjbJarInfoBuilder {
         } else if (s.getSessionType() == SessionType.MANAGED) {
             bean = new ManagedBeanInfo();
             final ManagedBeanInfo managed = (ManagedBeanInfo) bean;
-            if (s instanceof ManagedBean) { // this way we support managed beans in ejb-jar.xml (not in the spec but can be useful)
-                managed.hidden = ((ManagedBean) s).isHidden();
-            } else {
-                managed.hidden = true;
-            }
+            // this way we support managed beans in ejb-jar.xml (not in the spec but can be useful)
+            managed.hidden = !(s instanceof ManagedBean) || ((ManagedBean) s).isHidden();
 
             copyCallbacks(s.getPostActivate(), managed.postActivate);
             copyCallbacks(s.getPrePassivate(), managed.prePassivate);
