@@ -25,19 +25,21 @@ import org.apache.webbeans.ejb.common.component.EjbBeanBuilder;
 
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.AnnotatedType;
+import javax.enterprise.inject.spi.BeanAttributes;
 import java.util.List;
 
 public class OpenEJBBeanBuilder<A> extends EjbBeanBuilder<A, CdiEjbBean<A>> {
     private final BeanContext beanContext;
 
-    public OpenEJBBeanBuilder(final BeanContext bc, final WebBeansContext webBeansContext, final AnnotatedType<A> annotatedType) {
-        super(webBeansContext, annotatedType, BeanAttributesBuilder.forContext(webBeansContext).newBeanAttibutes(annotatedType).build());
+    public OpenEJBBeanBuilder(final BeanContext bc, final WebBeansContext webBeansContext, final AnnotatedType<A> annotatedType,
+                              final BeanAttributes<A> attributes) {
+        super(webBeansContext, annotatedType, attributes);
         this.beanContext = bc;
     }
 
     @Override
     protected CdiEjbBean<A> createBean(final Class<A> beanClass, final boolean beanEnabled) {
-        return new CdiEjbBean<A>(beanContext, webBeansContext, annotatedType);
+        return new CdiEjbBean<A>(beanContext, webBeansContext, annotatedType, beanAttributes);
     }
 
     @Override

@@ -46,7 +46,7 @@ public class StereotypeTest {
 
     @Test
     public void assertVehicleInjected() {
-        assertEquals("the fatest", journey.vehicle());
+        assertEquals("the fastest", journey.vehicle());
     }
 
     @Test

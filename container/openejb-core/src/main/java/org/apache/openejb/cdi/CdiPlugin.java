@@ -59,6 +59,7 @@ import javax.enterprise.inject.spi.AnnotatedField;
 import javax.enterprise.inject.spi.AnnotatedMethod;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanAttributes;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.ObserverMethod;
 import javax.enterprise.inject.spi.PassivationCapable;
@@ -273,9 +274,9 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
     }
 
     @Override
-    public <T> Bean<T> defineSessionBean(final Class<T> clazz, final AnnotatedType<T> annotatedType) {
+    public <T> Bean<T> defineSessionBean(final Class<T> clazz, final BeanAttributes<T> attributes, final AnnotatedType<T> annotatedType) {
         final BeanContext bc = findBeanContext(webBeansContext, clazz);
-        final CdiEjbBean<T> bean = new OpenEJBBeanBuilder<T>(bc, webBeansContext, annotatedType).createBean(clazz, !annotatedType.isAnnotationPresent(Vetoed.class));
+        final CdiEjbBean<T> bean = new OpenEJBBeanBuilder<T>(bc, webBeansContext, annotatedType, attributes).createBean(clazz, !annotatedType.isAnnotationPresent(Vetoed.class));
 
         bc.set(CdiEjbBean.class, bean);
         bc.set(CurrentCreationalContext.class, new CurrentCreationalContext());

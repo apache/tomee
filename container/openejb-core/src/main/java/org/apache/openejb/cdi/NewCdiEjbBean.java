@@ -18,6 +18,7 @@
 package org.apache.openejb.cdi;
 
 import org.apache.webbeans.annotation.NewLiteral;
+import org.apache.webbeans.component.BeanAttributesImpl;
 import org.apache.webbeans.component.NewBean;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.InjectionTargetFactoryImpl;
@@ -39,7 +40,9 @@ public class NewCdiEjbBean<T> extends CdiEjbBean<T> implements NewBean<T> {
     private final String id;
 
     public NewCdiEjbBean(final CdiEjbBean<T> that) {
-        super(that.getBeanContext(), that.getWebBeansContext(), that.getBeanContext().getManagedClass(), that.getAnnotatedType(), new NewEjbInjectionTargetFactory<T>(that.getAnnotatedType(), that.getWebBeansContext(), that.getInjectionTarget()));
+        super(that.getBeanContext(), that.getWebBeansContext(), that.getBeanContext().getManagedClass(), that.getAnnotatedType(),
+                new NewEjbInjectionTargetFactory<T>(that.getAnnotatedType(), that.getWebBeansContext(), that.getInjectionTarget()),
+                new BeanAttributesImpl<T>(that));
         this.id = that.getId() + "NewBean";
         initInternals();
     }

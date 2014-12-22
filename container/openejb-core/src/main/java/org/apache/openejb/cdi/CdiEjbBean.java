@@ -26,7 +26,6 @@ import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
 import org.apache.webbeans.component.BeanAttributesImpl;
 import org.apache.webbeans.component.InterceptedMarker;
-import org.apache.webbeans.component.creation.BeanAttributesBuilder;
 import org.apache.webbeans.config.DeploymentValidationService;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.InjectionTargetFactoryImpl;
@@ -43,6 +42,7 @@ import javax.enterprise.inject.Typed;
 import javax.enterprise.inject.spi.AnnotatedMethod;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanAttributes;
 import javax.enterprise.inject.spi.DefinitionException;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.InjectionTarget;
@@ -75,14 +75,16 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
     private BeanContext.BusinessLocalHome home;
     private BeanContext.BusinessRemoteHome remote;
 
-    public CdiEjbBean(final BeanContext beanContext, final WebBeansContext webBeansContext, final AnnotatedType<T> at) {
-        this(beanContext, webBeansContext, beanContext.getManagedClass(), at, new EjbInjectionTargetFactory<T>(at, webBeansContext));
+    public CdiEjbBean(final BeanContext beanContext, final WebBeansContext webBeansContext, final AnnotatedType<T> at,
+                      final BeanAttributes<T> attributes) {
+        this(beanContext, webBeansContext, beanContext.getManagedClass(), at, new EjbInjectionTargetFactory<T>(at, webBeansContext), attributes);
         EjbInjectionTargetImpl.class.cast(getInjectionTarget()).setCdiEjbBean(this);
     }
 
-    public CdiEjbBean(final BeanContext beanContext, final WebBeansContext webBeansContext, final Class beanClass, final AnnotatedType<T> at, final InjectionTargetFactoryImpl<T> factory) {
+    public CdiEjbBean(final BeanContext beanContext, final WebBeansContext webBeansContext, final Class beanClass, final AnnotatedType<T> at,
+                      final InjectionTargetFactoryImpl<T> factory, final BeanAttributes<T> attributes) {
         super(webBeansContext, toSessionType(beanContext.getComponentType()), at, new EJBBeanAttributesImpl<T>(beanContext,
-            BeanAttributesBuilder.forContext(webBeansContext).newBeanAttibutes(at).build()), beanClass, factory);
+                attributes), beanClass, factory);
         this.beanContext = beanContext;
         beanContext.set(Bean.class, this);
         passivatingId = beanContext.getDeploymentID() + getReturnType().getName();
@@ -297,7 +299,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
         private final BeanContext beanContext;
         private final Set<Type> ejbTypes;
 
-        public EJBBeanAttributesImpl(final BeanContext bc, final BeanAttributesImpl<T> beanAttributes) {
+        public EJBBeanAttributesImpl(final BeanContext bc, final BeanAttributes<T> beanAttributes) {
             super(beanAttributes, false);
             this.beanContext = bc;
             this.ejbTypes = new HashSet<Type>();
