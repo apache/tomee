@@ -53,6 +53,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletRequestEvent;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionEvent;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -342,14 +343,13 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         if (currentSessionContext == null) {
             currentSessionContext = newSessionContext(session);
             sessionCtxManager.addNewSessionContext(sessionId, currentSessionContext);
+            webBeansContext.getBeanManagerImpl().fireEvent(session, InitializedLiteral.SESSION);
         }
         //Activate
         currentSessionContext.setActive(true);
 
         //Set thread local
         sessionContext.set(currentSessionContext);
-
-        webBeansContext.getBeanManagerImpl().fireEvent(session, InitializedLiteral.SESSION);
     }
 
     private SessionContext newSessionContext(final HttpSession session) {
@@ -385,8 +385,13 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             //Destroy context
             if (context != null) {
                 context.destroy();
+                pushRequestReleasable(new Runnable() { // call it at the end of the request
+                    @Override
+                    public void run() {
+                        webBeansContext.getBeanManagerImpl().fireEvent(session, DestroyedLiteral.SESSION);
+                    }
+                });
             }
-            webBeansContext.getBeanManagerImpl().fireEvent(session, DestroyedLiteral.SESSION);
 
             //Clear thread locals
             sessionContext.set(null);

@@ -23,6 +23,7 @@
 
   <container qualifier="openejb" default="true">
     <configuration>
+      <property name="startDefaultScopes">false</property>
       <property name="properties">
         Default\ JMS\ Resource\ Adapter = new://Resource?type=ActiveMQResourceAdapter
 

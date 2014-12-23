@@ -29,11 +29,20 @@ import static java.util.Arrays.asList;
 public class OpenEJBConfiguration implements ContainerConfiguration {
     private String properties = "";
     private String preloadClasses;
+    private boolean startDefaultScopes;
     private Collection<String> singleDeploymentByArchiveName = Collections.emptyList();
 
     @Override
     public void validate() throws ConfigurationException {
         // no-op
+    }
+
+    public boolean isStartDefaultScopes() {
+        return startDefaultScopes;
+    }
+
+    public void setStartDefaultScopes(final boolean startDefaultScopes) {
+        this.startDefaultScopes = startDefaultScopes;
     }
 
     public String getProperties() {

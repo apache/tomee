@@ -39,19 +39,23 @@ public class HttpListenerRegistry implements HttpListener {
     private final ThreadLocal<HttpRequest> request = new ThreadLocal<>();
 
     public HttpListenerRegistry() {
+        HttpServletRequest mock = null;
         final SystemInstance systemInstance = SystemInstance.get();
-        HttpRequestImpl mockRequest = null;
-        try {
-            mockRequest = new HttpRequestImpl(new URI("http://mock/"));
-            mockRequest.parseURI(new StringTokenizer("mock\n"));  // will do http://mock/mock, we don't really care
-        } catch (final Exception e) {
-            // no-op
+        if ("true".equalsIgnoreCase(systemInstance.getProperty("openejb.http.mock-request", "false"))) {
+            HttpRequestImpl mockRequest = null;
+            try {
+                mockRequest = new HttpRequestImpl(new URI("http://mock/"));
+                mockRequest.parseURI(new StringTokenizer("mock\n"));  // will do http://mock/mock, we don't really care
+                mock = mockRequest;
+            } catch (final Exception e) {
+                // no-op
+            }
         }
         if (systemInstance.getComponent(HttpServletRequest.class) == null) {
-            systemInstance.setComponent(HttpServletRequest.class, Proxys.threadLocalProxy(HttpServletRequest.class, request, mockRequest));
+            systemInstance.setComponent(HttpServletRequest.class, Proxys.threadLocalProxy(HttpServletRequest.class, request, mock));
         }
         if (systemInstance.getComponent(HttpSession.class) == null) {
-            systemInstance.setComponent(javax.servlet.http.HttpSession.class, Proxys.threadLocalRequestSessionProxy(request, mockRequest.getSession()));
+            systemInstance.setComponent(javax.servlet.http.HttpSession.class, Proxys.threadLocalRequestSessionProxy(request, mock != null ? mock.getSession() : null));
         }
         if (systemInstance.getComponent(ServletContext.class) == null) { // a poor impl but at least we set something
             systemInstance.setComponent(ServletContext.class, new EmbeddedServletContext());

@@ -34,16 +34,12 @@ public final class ScopeHelper {
     }
 
     public static void startContexts(final ContextsService contextsService, final ServletContext servletContext, final HttpSession session) throws Exception {
-        contextsService.startContext(Singleton.class, null);
-        contextsService.startContext(ApplicationScoped.class, null);
         contextsService.startContext(SessionScoped.class, session);
         contextsService.startContext(RequestScoped.class, null);
         contextsService.startContext(ConversationScoped.class, null);
     }
 
     public static void stopContexts(final ContextsService contextsService, final ServletContext servletContext, final HttpSession session) throws Exception {
-        contextsService.endContext(Singleton.class, null);
-        contextsService.endContext(ApplicationScoped.class, null);
         contextsService.endContext(SessionScoped.class, session);
         contextsService.endContext(RequestScoped.class, null);
         contextsService.endContext(ConversationScoped.class, null);

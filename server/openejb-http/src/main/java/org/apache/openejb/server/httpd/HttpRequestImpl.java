@@ -836,14 +836,14 @@ public class HttpRequestImpl implements HttpRequest {
     public HttpSession getSession(boolean create) {
         if (session == null && create) {
             session = new HttpSessionImpl(SESSIONS);
+            if (begin != null) {
+                begin.sessionCreated(new HttpSessionEvent(session));
+                session = new SessionInvalidateListener(session, end);
+            }
+
             final HttpSession previous = SESSIONS.putIfAbsent(session.getId(), session);
             if (previous != null) {
                 session = previous;
-            }
-
-            if (begin != null) {
-                begin.sessionCreated(new HttpSessionEvent(session));
-                return new SessionInvalidateListener(session, end);
             }
         }
         return session;

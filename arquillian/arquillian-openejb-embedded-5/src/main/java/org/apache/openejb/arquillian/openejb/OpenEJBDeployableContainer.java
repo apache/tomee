@@ -288,7 +288,9 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
                 final ServletContext appServletContext = new MockServletContext();
                 final HttpSession appSession = new MockHttpSession();
 
-                startContexts(appCtx.getWebBeansContext().getContextsService(), appServletContext, appSession);
+                if (configuration.isStartDefaultScopes()) {
+                    startContexts(appCtx.getWebBeansContext().getContextsService(), appServletContext, appSession);
+                }
 
                 info = new DeploymentInfo(appServletContext, appSession, appInfo, appCtx);
                 if (configuration.isSingleDeploymentByArchiveName(name)) {
@@ -327,7 +329,9 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
             if (!configuration.isSingleDeploymentByArchiveName(archive.getName())) {
                 assembler.destroyApplication(info.get().path);
             }
-            stopContexts(ctx.getWebBeansContext().getContextsService(), servletContext.get(), session.get());
+            if (configuration.isStartDefaultScopes()) {
+                stopContexts(ctx.getWebBeansContext().getContextsService(), servletContext.get(), session.get());
+            }
         } catch (final Exception e) {
             throw new DeploymentException("can't undeploy " + archive.getName(), e);
         }

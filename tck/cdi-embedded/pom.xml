@@ -164,6 +164,7 @@
             <openejb.cdi.producer.interception>false</openejb.cdi.producer.interception>
             <openejb.cdi.filter.classloader>false</openejb.cdi.filter.classloader>
 
+            <openejb.http.mock-request>true</openejb.http.mock-request>
             <openejb.deploymentId.format>{appId}/{ejbJarId}/{ejbName}</openejb.deploymentId.format>
             <org.apache.openejb.assembler.classic.WebAppBuilder>org.apache.openejb.web.LightweightWebAppBuilder</org.apache.openejb.assembler.classic.WebAppBuilder>
           </systemPropertyVariables>
