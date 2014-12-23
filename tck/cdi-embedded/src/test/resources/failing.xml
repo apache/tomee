@@ -19,7 +19,7 @@
   <test name="CDI TCK">
     <!-- -Dopenejb.cdi.filter.classloader=false -Dorg.apache.openejb.assembler.classic.WebAppBuilder=org.apache.openejb.web.LightweightWebAppBuilder -Dopenejb.cdi.debug=true -Dopenejb.http.mock-request=true  -->
     <classes>
-      <class name="org.jboss.cdi.tck.tests.context.session.event.SessionScopeEventTest" />
+      <class name="org.jboss.cdi.tck.tests.interceptors.definition.broken.finalClassInterceptor.FinalMethodClassLevelInterceptorTest" />
     </classes>
   </test>
 </suite>

@@ -70,13 +70,16 @@ import javax.ejb.Timer;
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Decorator;
+import javax.enterprise.inject.spi.DeploymentException;
 import javax.enterprise.inject.spi.Interceptor;
 import javax.naming.Context;
 import javax.persistence.EntityManagerFactory;
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -119,6 +122,7 @@ public class BeanContext extends DeploymentContext {
             return;
         }
 
+        boolean hasInterceptor = false;
         for (final Map.Entry<Method, InterceptorResolutionService.BusinessMethodInterceptorInfo> entry : info.getBusinessMethodsInfo().entrySet()) {
             final Interceptor<?>[] interceptors = entry.getValue().getCdiInterceptors();
             if (interceptors == null) {
@@ -128,8 +132,41 @@ public class BeanContext extends DeploymentContext {
             for (final Interceptor<?> i : interceptors) {
                 addCdiMethodInterceptor(entry.getKey(), InterceptorData.scan(i.getBeanClass()));
             }
+            hasInterceptor = hasInterceptor || interceptors.length > 0;
             entry.getValue().setEjbInterceptors(new ArrayList<Interceptor<?>>());
             entry.getValue().setCdiInterceptors(new ArrayList<Interceptor<?>>());
+        }
+
+        if (hasInterceptor) { // 100% for TCKs, doesn't make any sense
+            for (final Method m : getManagedClass().getDeclaredMethods()) {
+                boolean inApi = false;
+                final Set<Type> types = cdiEjbBean.getTypes();
+                for (final Type t : types) {
+                    if (t == Object.class || t == Serializable.class) {
+                        continue;
+                    }
+                    if (m.getDeclaringClass() == t) {
+                        inApi = true;
+                        break;
+                    }
+                    if (Class.class.isInstance(t)) {
+                        try {
+                            Class.class.cast(t).getMethod(m.getName(), m.getParameterTypes());
+                            inApi = true;
+                            break;
+                        } catch (final NoSuchMethodException e) {
+                            // no-op
+                        }
+                    }
+                }
+                if (inApi) {
+                    continue;
+                }
+                final int modifiers = m.getModifiers();
+                if (Modifier.isFinal(modifiers) && !Modifier.isStatic(modifiers) && Modifier.isPublic(modifiers)) {
+                    throw new DeploymentException("We need to proxy " + getManagedClass() + " but " + m + " is final");
+                }
+            }
         }
 
         if (info.getSelfInterceptorBean() != null) { // handled by openejb
