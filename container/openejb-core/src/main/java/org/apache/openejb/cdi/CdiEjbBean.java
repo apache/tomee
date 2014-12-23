@@ -68,6 +68,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
+import static java.util.Arrays.asList;
+
 public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, DeploymentValidationService.BeanInterceptorInfoProvider {
     private final Map<Integer, Object> dependentSFSBToBeRemoved = new ConcurrentHashMap<Integer, Object>();
 
@@ -340,6 +342,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
             if (cl != null && !cl.isEmpty()) {
                 for (final Class<?> c : cl) {
                     ejbTypes.add(c);
+                    ejbTypes.addAll(asList(c.getInterfaces()));
                 }
             }
 
