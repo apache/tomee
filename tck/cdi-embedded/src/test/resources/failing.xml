@@ -18,7 +18,7 @@
 <suite name="CDI TCK" verbose="0">
   <test name="CDI TCK">
     <classes>
-      <class name="org.jboss.cdi.tck.tests.implementation.enterprise.broken.statelessInterceptor.InterceptorAnnotatedStatelessSessionBeanTest" />
+      <class name="org.jboss.cdi.tck.tests.implementation.producer.field.definition.broken.enterprise.nonstatic.NonStaticFieldOfSessionBeanTest" />
     </classes>
   </test>
 </suite>

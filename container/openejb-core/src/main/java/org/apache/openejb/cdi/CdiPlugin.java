@@ -60,6 +60,7 @@ import javax.enterprise.inject.spi.AnnotatedMethod;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanAttributes;
+import javax.enterprise.inject.spi.DefinitionException;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.ObserverMethod;
 import javax.enterprise.inject.spi.PassivationCapable;
@@ -307,6 +308,9 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
 
         final Map<ProducerFieldBean<?>, AnnotatedField<?>> annotatedFields = new HashMap<>();
         for (final ProducerFieldBean<?> producerField : producerFields) {
+            if (!Modifier.isStatic(producerField.getCreatorField().getModifiers())) {
+                throw new DefinitionException("In an EJB all producer fields should be static");
+            }
             webBeansUtil.inspectErrorStack("There are errors that are added by ProcessProducer event observers for"
                 + " ProducerFields. Look at logs for further details");
 
