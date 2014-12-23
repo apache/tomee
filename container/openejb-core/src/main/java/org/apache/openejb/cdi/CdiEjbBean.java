@@ -22,6 +22,7 @@ import org.apache.openejb.BeanType;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.ProxyInterfaceResolver;
 import org.apache.openejb.core.ivm.BaseEjbProxyHandler;
+import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
 import org.apache.webbeans.component.BeanAttributesImpl;
@@ -47,6 +48,7 @@ import javax.enterprise.inject.spi.DefinitionException;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.InjectionTarget;
 import javax.enterprise.inject.spi.SessionBeanType;
+import javax.transaction.UserTransaction;
 import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -77,7 +79,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
 
     public CdiEjbBean(final BeanContext beanContext, final WebBeansContext webBeansContext, final AnnotatedType<T> at,
                       final BeanAttributes<T> attributes) {
-        this(beanContext, webBeansContext, beanContext.getManagedClass(), at, new EjbInjectionTargetFactory<T>(at, webBeansContext), attributes);
+        this(beanContext, webBeansContext, beanContext.getManagedClass(), at, new EjbInjectionTargetFactory<T>(beanContext, at, webBeansContext), attributes);
         EjbInjectionTargetImpl.class.cast(getInjectionTarget()).setCdiEjbBean(this);
     }
 
@@ -356,14 +358,27 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
     }
 
     public static class EjbInjectionTargetFactory<T> extends InjectionTargetFactoryImpl<T> {
-        public EjbInjectionTargetFactory(final AnnotatedType<T> annotatedType, final WebBeansContext webBeansContext) {
+        private final BeanContext beanContext;
+
+        public EjbInjectionTargetFactory(final BeanContext bc, final AnnotatedType<T> annotatedType, final WebBeansContext webBeansContext) {
             super(annotatedType, webBeansContext);
+            this.beanContext = bc;
         }
 
         @Override
         public InjectionTarget<T> createInjectionTarget(final Bean<T> bean) {
             final EjbInjectionTargetImpl<T> injectionTarget = new EjbInjectionTargetImpl<T>(getAnnotatedType(), createInjectionPoints(bean), getWebBeansContext());
             final InjectionTarget<T> it = getWebBeansContext().getWebBeansUtil().fireProcessInjectionTargetEvent(injectionTarget, getAnnotatedType()).getInjectionTarget();
+
+            for (final InjectionPoint ip : it.getInjectionPoints()) {
+                if (ip.getType() != UserTransaction.class) {
+                    continue;
+                }
+                if (beanContext.getTransactionType() != TransactionType.BeanManaged) {
+                    throw new DefinitionException("@Inject UserTransaction is only valid for BeanManaged beans");
+                }
+            }
+
             if (!EjbInjectionTargetImpl.class.isInstance(it)) {
                 return new EjbInjectionTargetImpl<T>(injectionTarget, it);
             }
