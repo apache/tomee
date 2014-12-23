@@ -73,6 +73,8 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 
+import static java.util.Arrays.asList;
+
 public class LightweightWebAppBuilder implements WebAppBuilder {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, LightweightWebAppBuilder.class);
 
@@ -201,12 +203,14 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
                         }
 
                         final FilterConfig config = new SimpleFilterConfig(sce.getServletContext(), info.name, initParams);
-                        for (final String mapping : annotation.urlPatterns()) {
-                            try {
-                                addFilterMethod.invoke(null, clazz.getName(), webContext, mapping, config);
-                                deployedWebObjects.filterMappings.add(mapping);
-                            } catch (final Exception e) {
-                                LOGGER.warning(e.getMessage(), e);
+                        for (final String[] mappings : asList(annotation.urlPatterns(), annotation.value())) {
+                            for (final String mapping : mappings) {
+                                try {
+                                    addFilterMethod.invoke(null, clazz.getName(), webContext, mapping, config);
+                                    deployedWebObjects.filterMappings.add(mapping);
+                                } catch (final Exception e) {
+                                    LOGGER.warning(e.getMessage(), e);
+                                }
                             }
                         }
                     }
@@ -266,12 +270,14 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
                     final Class<?> clazz = loadFromUrls(webContext.getClassLoader(), url, servletPath);
                     final WebServlet annotation = clazz.getAnnotation(WebServlet.class);
                     if (annotation != null) {
-                        for (final String mapping : annotation.urlPatterns()) {
-                            try {
-                                addServletMethod.invoke(null, clazz.getName(), webContext, mapping);
-                                deployedWebObjects.mappings.add(mapping);
-                            } catch (final Exception e) {
-                                LOGGER.warning(e.getMessage(), e);
+                        for (final String[] mappings : asList(annotation.urlPatterns(), annotation.value())) {
+                            for (final String mapping : mappings) {
+                                try {
+                                    addServletMethod.invoke(null, clazz.getName(), webContext, mapping);
+                                    deployedWebObjects.mappings.add(mapping);
+                                } catch (final Exception e) {
+                                    LOGGER.warning(e.getMessage(), e);
+                                }
                             }
                         }
                     }

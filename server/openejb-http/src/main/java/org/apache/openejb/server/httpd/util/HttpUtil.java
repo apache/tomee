@@ -72,7 +72,7 @@ public final class HttpUtil {
             throw new OpenEJBRuntimeException(e);
         }
 
-        registry.addHttpListener(listener, pattern(wc.getContextRoot(), mapping));
+        registry.addHttpListener(listener, pattern(wc.getContextRoot(), "/".equals(mapping) ? "/*" : mapping));
         return true;
     }
 

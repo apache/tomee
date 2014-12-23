@@ -18,7 +18,14 @@ package org.apache.openejb.server.httpd;
 
 import org.apache.webbeans.web.lifecycle.test.MockServletContext;
 
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class EmbeddedServletContext extends MockServletContext {
+    private final Map<String, Object> attributes = new ConcurrentHashMap<>();
+
     @Override
     public int getMajorVersion() {
         return 3;
@@ -32,5 +39,20 @@ public class EmbeddedServletContext extends MockServletContext {
     @Override
     public String getVirtualServerName() {
         return "openejb";
+    }
+
+    @Override
+    public void setAttribute(final String name, final Object object) {
+        attributes.put(name, object);
+    }
+
+    @Override
+    public Object getAttribute(final String name) {
+        return attributes.get(name);
+    }
+
+    @Override
+    public Enumeration<String> getAttributeNames() {
+        return Collections.enumeration(attributes.keySet());
     }
 }

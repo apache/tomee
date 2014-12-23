@@ -17,6 +17,7 @@
 package org.apache.openejb.server.httpd;
 
 import org.apache.openejb.client.ArrayEnumeration;
+import org.apache.openejb.loader.SystemInstance;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSessionContext;
@@ -121,7 +122,7 @@ public class HttpSessionImpl implements HttpSession {
 
     @Override
     public ServletContext getServletContext() {
-        return null;
+        return SystemInstance.get().getComponent(ServletContext.class);
     }
 
     @Override
