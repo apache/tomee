@@ -185,7 +185,10 @@ import javax.ejb.TransactionAttributeType;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.enterprise.context.NormalScope;
+import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.Stereotype;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.spi.DefinitionException;
 import javax.enterprise.inject.spi.Extension;
 import javax.inject.Scope;
 import javax.interceptor.ExcludeClassInterceptors;
@@ -3795,7 +3798,16 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                 final Member member = new FieldMember(field.get());
 
-                buildResource(consumer, resource, member);
+                final JndiReference ref = buildResource(consumer, resource, member);
+
+                // mainly for TCK cause this validation doesn't make sense - using JNDI you can do a lot of things so validating types would be wrong
+                //
+                // real check would be to lookup the entry and validate it matches field type...but can only be done at runtime
+                // and TCK (org.jboss.cdi.tck.tests.implementation.simple.resource.broken.type.ResourceDefinitionWithDifferentTypeTest) don't instantiate it
+                if (ref != null && field.getAnnotation(Produces.class) != null
+                        && "java:comp/BeanManager".equals(ref.getLookupName()) && BeanManager.class != member.getType()) {
+                    throw new DefinitionException("Jndi entry for " + field + " doesn't match actual type (" + BeanManager.class.getName() + ")");
+                }
             }
 
             for (final Annotated<Method> method : annotationFinder.findMetaAnnotatedMethods(Resource.class)) {
@@ -4174,20 +4186,15 @@ public class AnnotationDeployer implements DynamicDeployer {
          * @param resource
          * @param member
          */
-        private void buildResource(final JndiConsumer consumer, final Resource resource, final Member member) {
+        private JndiReference buildResource(final JndiConsumer consumer, final Resource resource, final Member member) {
 
             /**
              * Was @Resource used at a class level without specifying the 'name' or 'beanInterface' attributes?
              */
             if (member == null) {
-                boolean shouldReturn = false;
                 if (resource.name().length() == 0) {
                     fail(consumer.getJndiConsumerName(), "resourceAnnotation.onClassWithNoName");
-                    shouldReturn = true;
-                }
-
-                if (shouldReturn) {
-                    return;
+                    return null;
                 }
             }
 
@@ -4207,16 +4214,12 @@ public class AnnotationDeployer implements DynamicDeployer {
                  */
                 if (member != null) { // Little quick validation for common mistake
                     final Class type = member.getType();
-                    boolean shouldReturn = false;
                     if (EntityManager.class.isAssignableFrom(type)) {
                         fail(consumer.getJndiConsumerName(), "resourceRef.onEntityManager", refName);
-                        shouldReturn = true;
+                        return null;
                     } else if (EntityManagerFactory.class.isAssignableFrom(type)) {
                         fail(consumer.getJndiConsumerName(), "resourceRef.onEntityManagerFactory", refName);
-                        shouldReturn = true;
-                    }
-                    if (shouldReturn) {
-                        return;
+                        return null;
                     }
                 }
 
@@ -4341,6 +4344,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     reference.setLookupName(lookupName);
                 }
             }
+            return reference;
         }
 
         private static Method getLookupMethod(final Class cls) {
