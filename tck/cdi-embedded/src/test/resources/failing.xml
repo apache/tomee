@@ -19,7 +19,7 @@
   <test name="CDI TCK">
     <!-- -Dopenejb.cdi.filter.classloader=false -Dorg.apache.openejb.assembler.classic.WebAppBuilder=org.apache.openejb.web.LightweightWebAppBuilder -Dopenejb.cdi.debug=true -Dopenejb.http.mock-request=true  -->
     <classes>
-      <class name="org.jboss.cdi.tck.tests.lookup.modules.specialization.SpecializationModularity02Test" />
+      <class name="org.jboss.cdi.tck.tests.context.request.event.RequestScopeEventTest" />
     </classes>
   </test>
 </suite>

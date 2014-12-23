@@ -16,9 +16,12 @@
  */
 package org.apache.openejb.server.httpd;
 
+import org.apache.openejb.AppContext;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.ServiceInfo;
+import org.apache.openejb.core.WebContext;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.WebBeansContext;
@@ -100,27 +103,43 @@ public class OpenEJBHttpRegistry {
         }
 
         public void onMessage(HttpRequest request, HttpResponse response) throws Exception {
-            ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
-            Thread.currentThread().setContextClassLoader(classLoader);
+            Thread thread = Thread.currentThread();
+            ClassLoader oldCl = thread.getContextClassLoader();
+            thread.setContextClassLoader(classLoader);
 
+            WebBeansContext wbc = null;
             try {
                 if (request instanceof HttpRequestImpl) {
-                    initCdi((HttpRequestImpl) request).init();
+                    wbc = findWebContext(request.getURI().getPath());
+                    initCdi(wbc, (HttpRequestImpl) request).init();
                 }
 
                 delegate.onMessage(request, response);
             } finally {
-                if (request instanceof HttpRequestImpl) {
+                if (wbc != null) {
                     ((HttpRequestImpl) request).destroy();
                 }
 
-                Thread.currentThread().setContextClassLoader(oldCl);
+                thread.setContextClassLoader(oldCl);
             }
         }
 
-        private static HttpRequestImpl initCdi(final HttpRequestImpl request) {
+        private static WebBeansContext findWebContext(final String path) { // poor impl, would need registration of app etc to be better
+            for (final AppContext app : SystemInstance.get().getComponent(ContainerSystem.class).getAppContexts()) {
+                for (final WebContext web : app.getWebContexts()) {
+                    if (path.startsWith(web.getContextRoot()) || path.startsWith('/' + web.getContextRoot())) {
+                        if (web.getWebBeansContext() != null) {
+                            return web.getWebBeansContext();
+                        }
+                        return app.getWebBeansContext();
+                    }
+                }
+            }
+            return WebBeansContext.currentInstance();
+        }
+
+        private static HttpRequestImpl initCdi(final WebBeansContext context, final HttpRequestImpl request) {
             try {
-                final WebBeansContext context = WebBeansContext.currentInstance();
                 if (context.getBeanManagerImpl().isInUse()) {
                     request.setBeginListener(new BeginWebBeansListener(context));
                     request.setEndListener(new EndWebBeansListener(context));
