@@ -35,6 +35,7 @@ import org.apache.webbeans.ejb.common.component.BaseEjbBean;
 import org.apache.webbeans.intercept.InterceptorResolutionService;
 import org.apache.webbeans.portable.InjectionTargetImpl;
 
+import javax.decorator.Decorator;
 import javax.ejb.NoSuchEJBException;
 import javax.ejb.Remove;
 import javax.enterprise.context.Dependent;
@@ -48,10 +49,12 @@ import javax.enterprise.inject.spi.DefinitionException;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.InjectionTarget;
 import javax.enterprise.inject.spi.SessionBeanType;
+import javax.interceptor.Interceptor;
 import javax.transaction.UserTransaction;
 import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.rmi.NoSuchObjectException;
@@ -92,7 +95,8 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
         passivatingId = beanContext.getDeploymentID() + getReturnType().getName();
 
         final boolean stateful = BeanType.STATEFUL.equals(beanContext.getComponentType());
-        isDependentAndStateful = getScope().equals(Dependent.class) && stateful;
+        final boolean isDependent = getScope().equals(Dependent.class);
+        isDependentAndStateful = isDependent && stateful;
         if (webBeansContext.getBeanManagerImpl().isPassivatingScope(getScope()) && stateful) {
             if (!getBeanContext().isPassivable()) {
                 throw new DefinitionException(
@@ -103,6 +107,16 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
             passivable = true;
         } else {
             passivable = false;
+        }
+        if (!isDependent) {
+            for (final Type type : attributes.getTypes()) {
+                if (ParameterizedType.class.isInstance(type)) {
+                    throw new DefinitionException("Parameterized session bean should be @Dependent: " + beanClass);
+                }
+            }
+        }
+        if (getAnnotatedType().isAnnotationPresent(Interceptor.class) || getAnnotatedType().isAnnotationPresent(Decorator.class)) {
+            throw new DefinitionException("An EJB can't be an interceptor or a decorator: " + beanClass);
         }
     }
 
