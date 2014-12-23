@@ -460,7 +460,12 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
 
 
     private RequestContext getRequestContext() {
-        return requestContext.get();
+        RequestContext context = requestContext.get();
+        if (context == null) {
+            context = new RequestContext();
+            context.setActive(true);
+        }
+        return context;
     }
 
     private Context getSessionContext() {
@@ -468,6 +473,11 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         if (context == null || !context.isActive()) {
             lazyStartSessionContext();
             context = sessionContext.get();
+            if (context == null) {
+                context = new SessionContext();
+                context.setActive(true);
+                sessionContext.set(context);
+            }
         }
         return context;
     }
