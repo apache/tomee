@@ -23,6 +23,9 @@ import java.util.Properties;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
 
+import javax.enterprise.inject.spi.AnnotatedType;
+import javax.enterprise.inject.spi.Bean;
+
 public class WebappWebBeansContext extends WebBeansContext {
     private final WebBeansContext parent;
     private BeanManagerImpl bm;
@@ -47,5 +50,16 @@ public class WebappWebBeansContext extends WebBeansContext {
 
     public WebBeansContext getParent() {
         return parent;
+    }
+
+    @Override
+    public boolean findMissingAnnotatedType(final Class<?> missing) {
+        // annotated element caches are empty at this point
+        for (final Bean<?> b : getParent().getBeanManagerImpl().getBeans()) {
+            if (b.getBeanClass() == missing) {
+                return true;
+            }
+        }
+        return false;
     }
 }
