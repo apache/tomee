@@ -32,9 +32,11 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.ManagedBean;
 import org.apache.openejb.jee.TransactionType;
 import org.apache.openejb.jee.WebApp;
+import org.apache.openejb.jee.WebApp$JAXB;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.IO;
+import org.apache.openejb.sxc.Sxc;
 import org.apache.openejb.util.classloader.URLClassLoaderFirst;
 import org.apache.xbean.finder.archive.ClassesArchive;
 import org.apache.xbean.finder.archive.CompositeArchive;
@@ -147,7 +149,23 @@ public class OpenEJBArchiveProcessor {
             appModule.setDelegateFirst(false);
             appModule.setStandloneWebModule();
 
-            final WebModule webModule = new WebModule(new WebApp(), contextRoot(archive.getName()), loader, "", appModule.getModuleId());
+            WebApp webApp;
+            final Node webXml = archive.get(WEB_INF + "web.xml");
+            if (webXml == null) {
+                webApp = new WebApp();
+            } else {
+                InputStream inputStream = null;
+                try {
+                    inputStream = webXml.getAsset().openStream();
+                    webApp = Sxc.unmarshalJavaee(new WebApp$JAXB(), inputStream);
+                } catch (final Exception e) {
+                    webApp = new WebApp();
+                } finally {
+                    IO.close(inputStream);
+                }
+            }
+
+            final WebModule webModule = new WebModule(webApp, contextRoot(archive.getName()), loader, "", appModule.getModuleId());
             webModule.setUrls(additionalPaths);
             appModule.getWebModules().add(webModule);
         } else if (isEar) { // mainly for CDI TCKs

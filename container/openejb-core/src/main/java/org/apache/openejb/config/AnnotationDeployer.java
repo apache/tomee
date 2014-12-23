@@ -3798,16 +3798,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                 final Member member = new FieldMember(field.get());
 
-                final JndiReference ref = buildResource(consumer, resource, member);
-
-                // mainly for TCK cause this validation doesn't make sense - using JNDI you can do a lot of things so validating types would be wrong
-                //
-                // real check would be to lookup the entry and validate it matches field type...but can only be done at runtime
-                // and TCK (org.jboss.cdi.tck.tests.implementation.simple.resource.broken.type.ResourceDefinitionWithDifferentTypeTest) don't instantiate it
-                if (ref != null && field.getAnnotation(Produces.class) != null
-                        && "java:comp/BeanManager".equals(ref.getLookupName()) && BeanManager.class != member.getType()) {
-                    throw new DefinitionException("Jndi entry for " + field + " doesn't match actual type (" + BeanManager.class.getName() + ")");
-                }
+                buildResource(consumer, resource, member);
             }
 
             for (final Annotated<Method> method : annotationFinder.findMetaAnnotatedMethods(Resource.class)) {
@@ -4186,7 +4177,7 @@ public class AnnotationDeployer implements DynamicDeployer {
          * @param resource
          * @param member
          */
-        private JndiReference buildResource(final JndiConsumer consumer, final Resource resource, final Member member) {
+        private void buildResource(final JndiConsumer consumer, final Resource resource, final Member member) {
 
             /**
              * Was @Resource used at a class level without specifying the 'name' or 'beanInterface' attributes?
@@ -4194,7 +4185,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             if (member == null) {
                 if (resource.name().length() == 0) {
                     fail(consumer.getJndiConsumerName(), "resourceAnnotation.onClassWithNoName");
-                    return null;
+                    return;
                 }
             }
 
@@ -4216,10 +4207,10 @@ public class AnnotationDeployer implements DynamicDeployer {
                     final Class type = member.getType();
                     if (EntityManager.class.isAssignableFrom(type)) {
                         fail(consumer.getJndiConsumerName(), "resourceRef.onEntityManager", refName);
-                        return null;
+                        return;
                     } else if (EntityManagerFactory.class.isAssignableFrom(type)) {
                         fail(consumer.getJndiConsumerName(), "resourceRef.onEntityManagerFactory", refName);
-                        return null;
+                        return;
                     }
                 }
 
@@ -4344,7 +4335,6 @@ public class AnnotationDeployer implements DynamicDeployer {
                     reference.setLookupName(lookupName);
                 }
             }
-            return reference;
         }
 
         private static Method getLookupMethod(final Class cls) {
@@ -4434,6 +4424,8 @@ public class AnnotationDeployer implements DynamicDeployer {
             if (member != null) {
                 final Class type = member.getType();
                 if (EntityManager.class.isAssignableFrom(type)) {
+                    failIfCdiProducer(member, "EntityManagerFactory");
+
                     /**
                      * Was @PersistenceUnit mistakenly used when @PersistenceContext should have been used?
                      */
@@ -4442,6 +4434,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                     final String name = persistenceUnitRef.getName();
                     validationContext.fail(jndiConsumerName, "persistenceUnitAnnotation.onEntityManager", name);
                 } else if (!EntityManagerFactory.class.isAssignableFrom(type)) {
+                    failIfCdiProducer(member, "EntityManagerFactory");
+
+
                     /**
                      * Was @PersistenceUnit mistakenly used for something that isn't an EntityManagerFactory?
                      */
@@ -4560,11 +4555,15 @@ public class AnnotationDeployer implements DynamicDeployer {
             if (member != null) {
                 final Class type = member.getType();
                 if (EntityManagerFactory.class.isAssignableFrom(type)) {
+                    failIfCdiProducer(member, "EntityManager");
+
                     /**
                      * Was @PersistenceContext mistakenly used when @PersistenceUnit should have been used?
                      */
                     fail(consumer.getJndiConsumerName(), "persistenceContextAnnotation.onEntityManagerFactory", persistenceContextRef.getName());
                 } else if (!EntityManager.class.isAssignableFrom(type)) {
+                    failIfCdiProducer(member, "EntityManager");
+
                     /**
                      * Was @PersistenceContext mistakenly used for something that isn't an EntityManager?
                      */
@@ -4761,7 +4760,14 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             // service qname
             if (serviceRef.getServiceQname() == null && refType != null) {
-                serviceRef.setServiceQname(JaxWsUtils.getServiceQName(refType));
+                try {
+                    serviceRef.setServiceQname(JaxWsUtils.getServiceQName(refType));
+                } catch (final IllegalArgumentException iae) {
+                    if (FieldMember.class.isInstance(member) && FieldMember.class.cast(member).field.getAnnotation(Produces.class) != null) {
+                        throw new DefinitionException(FieldMember.class.cast(member).field + " is not a webservice client");
+                    }
+                    throw iae;
+                }
             }
             if (serviceRef.getServiceQname() == null) {
                 serviceRef.setServiceQname(JaxWsUtils.getServiceQName(serviceInterface));
@@ -5286,6 +5292,12 @@ public class AnnotationDeployer implements DynamicDeployer {
                 return false;
             }
             return true;
+        }
+    }
+
+    private static void failIfCdiProducer(final Member member, final String type) {
+        if (FieldMember.class.isInstance(member) && FieldMember.class.cast(member).field.getAnnotation(Produces.class) != null) {
+            throw new DefinitionException(FieldMember.class.cast(member).field + " is not a " + type);
         }
     }
 

@@ -80,6 +80,8 @@ import org.apache.openejb.core.ivm.IntraVmProxy;
 import org.apache.openejb.core.ivm.naming.ContextualJndiReference;
 import org.apache.openejb.core.ivm.naming.IvmContext;
 import org.apache.openejb.core.ivm.naming.IvmJndiFactory;
+import org.apache.openejb.core.ivm.naming.JndiUrlReference;
+import org.apache.openejb.core.ivm.naming.Reference;
 import org.apache.openejb.core.security.SecurityContextHandler;
 import org.apache.openejb.core.timer.EjbTimerServiceImpl;
 import org.apache.openejb.core.timer.MemoryTimerStore;
@@ -132,6 +134,7 @@ import org.apache.openejb.util.classloader.ClassLoaderAwareHandler;
 import org.apache.openejb.util.classloader.URLClassLoaderFirst;
 import org.apache.openejb.util.proxy.ProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
+import org.apache.webbeans.component.ResourceBean;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.logger.JULLoggerFactory;
 import org.apache.webbeans.spi.BeanArchiveService;
@@ -143,6 +146,7 @@ import org.apache.webbeans.spi.ResourceInjectionService;
 import org.apache.webbeans.spi.ScannerService;
 import org.apache.webbeans.spi.TransactionService;
 import org.apache.webbeans.spi.adaptor.ELAdaptor;
+import org.apache.webbeans.spi.api.ResourceReference;
 import org.apache.xbean.finder.ClassLoaders;
 import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.finder.UrlSet;
@@ -154,6 +158,7 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.spi.DefinitionException;
 import javax.enterprise.inject.spi.DeploymentException;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanRegistrationException;
@@ -945,6 +950,48 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             // bind all global values on global context
             bindGlobals(appContext.getBindings());
+
+            // validate @Produces @Resource/@PersistenceX/@EJB once all is bound to JNDI and we have our comp bean
+            if (appContext.isStandaloneModule() && !appContext.getWebContexts().isEmpty()) {
+                final Map<String, Object> bindings = appContext.getWebContexts().iterator().next().getBindings();
+                for (final Bean<?> bean : appContext.getWebBeansContext().getBeanManagerImpl().getBeans()) {
+                    if (ResourceBean.class.isInstance(bean)) {
+                        final ResourceReference reference = ResourceBean.class.cast(bean).getReference();
+                        final String jndi = reference.getJndiName().replace("java:", "");
+                        Object lookup = bindings.get(jndi);
+                        if (Reference.class.isInstance(lookup)) {
+                            try {
+                                lookup = Reference.class.cast(lookup).getContent();
+                            } catch (final Exception e) { // surely too early, let's try some known locations
+                                if (JndiUrlReference.class.isInstance(lookup)) {
+                                    final String path = JndiUrlReference.class.cast(lookup).getJndiName();
+                                    if ("java:comp/BeanManager".equals(path) && reference.getResourceType() != BeanManager.class) {
+                                        throw new DefinitionException(
+                                                "Resource " + reference.getJndiName() + " in " + reference.getOwnerClass() + " can't be cast to a BeanManager");
+                                    } else if ("java:comp/TransactionSynchronizationRegistry".equals(path) && reference.getResourceType() != TransactionSynchronizationRegistry.class) {
+                                        throw new DefinitionException(
+                                                "Resource " + reference.getJndiName() + " in " + reference.getOwnerClass() + " can't be cast to a TransactionSynchronizationRegistry");
+                                    } else if ("java:comp/TransactionManager".equals(path) && reference.getResourceType() != TransactionManager.class) {
+                                        throw new DefinitionException(
+                                                "Resource " + reference.getJndiName() + " in " + reference.getOwnerClass() + " can't be cast to a TransactionManager");
+                                    } else if ("java:comp/ValidatorFactory".equals(path) && reference.getResourceType() != ValidatorFactory.class) {
+                                        throw new DefinitionException(
+                                                "Resource " + reference.getJndiName() + " in " + reference.getOwnerClass() + " can't be cast to a ValidatorFactory");
+                                    } else if ("java:comp/Validator".equals(path) && reference.getResourceType() != Validator.class) {
+                                        throw new DefinitionException(
+                                                "Resource " + reference.getJndiName() + " in " + reference.getOwnerClass() + " can't be cast to a Validator");
+                                    }
+                                }
+                                continue;
+                            }
+                        }
+                        if (lookup != null && !reference.getResourceType().isInstance(lookup)) {
+                            throw new DefinitionException(
+                                    "Resource " + reference.getJndiName() + " in " + reference.getOwnerClass() + " can't be cast, instance is " + lookup);
+                        }
+                    }
+                }
+            }
 
             // deploy MBeans
             for (final String mbean : appInfo.mbeans) {

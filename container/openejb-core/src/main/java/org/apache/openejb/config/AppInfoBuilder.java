@@ -124,7 +124,7 @@ class AppInfoBuilder {
         final AppInfo appInfo = new AppInfo();
         appInfo.appId = appModule.getModuleId();
         appInfo.path = appModule.getJarLocation();
-        appInfo.standaloneModule = appModule.isStandaloneModule();
+        appInfo.standaloneModule = appModule.isStandaloneModule() || appModule.isWebapp();
         appInfo.delegateFirst = appModule.isDelegateFirst();
         appInfo.watchedResources.addAll(appModule.getWatchedResources());
         appInfo.mbeans.addAll(appModule.getAdditionalLibMbeans());
