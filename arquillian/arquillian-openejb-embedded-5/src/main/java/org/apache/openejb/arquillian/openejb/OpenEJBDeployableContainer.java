@@ -24,14 +24,18 @@ import org.apache.openejb.arquillian.common.ArquillianUtil;
 import org.apache.openejb.arquillian.openejb.server.ServiceManagers;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.ClassListInfo;
 import org.apache.openejb.assembler.classic.OpenEjbConfigurationFactory;
+import org.apache.openejb.assembler.classic.ServletInfo;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
+import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentFilterable;
 import org.apache.openejb.config.WebModule;
 import org.apache.openejb.core.LocalInitialContext;
 import org.apache.openejb.core.LocalInitialContextFactory;
+import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.web.LightweightWebAppBuilder;
@@ -41,7 +45,9 @@ import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.container.DeploymentException;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
+import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
+import org.jboss.arquillian.container.spi.client.protocol.metadata.Servlet;
 import org.jboss.arquillian.container.spi.context.annotation.DeploymentScoped;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
@@ -208,10 +214,11 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
 
     @Override
     public ProtocolMetaData deploy(final Archive<?> archive) throws DeploymentException {
+        final DeploymentInfo info;
         try {
             final Closeables cl = new Closeables();
             closeablesProducer.set(cl);
-            final DeploymentInfo info = quickDeploy(archive, testClass.get(), cl);
+            info = quickDeploy(archive, testClass.get(), cl);
 
             servletContextProducer.set(info.appServletContext);
             sessionProducer.set(info.appSession);
@@ -226,6 +233,26 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
         // if service manager is started allow @ArquillianResource URL injection
         if (PROPERTIES.containsKey(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE)) {
             final ProtocolMetaData metaData = ServiceManagers.protocolMetaData(appInfoProducer.get());
+            HTTPContext http = null;
+            for (final WebAppInfo webapp : info.appInfo.webApps) {
+                for (final ServletInfo servletInfo : webapp.servlets) {
+                    if (http == null) {
+                        http = HTTPContext.class.cast(metaData.getContexts().iterator().next());
+                        http.add(new Servlet(servletInfo.servletName, webapp.contextRoot));
+                    }
+                }
+                for (final ClassListInfo classListInfo : webapp.webAnnotatedClasses) {
+                    for (final String path : classListInfo.list) {
+                        if (!path.contains("!")) {
+                            continue;
+                        }
+                        if (http == null) {
+                            http = HTTPContext.class.cast(metaData.getContexts().iterator().next());
+                            http.add(new Servlet(path.substring(path.lastIndexOf('!') + 2).replace(".class", "").replace("/", "."), webapp.contextRoot));
+                        }
+                    }
+                }
+            }
             if (metaData != null) {
                 return metaData;
             }
