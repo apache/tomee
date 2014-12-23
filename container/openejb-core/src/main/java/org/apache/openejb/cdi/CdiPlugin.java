@@ -54,6 +54,7 @@ import javax.enterprise.context.spi.Context;
 import javax.enterprise.context.spi.Contextual;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.Disposes;
+import javax.enterprise.inject.Specializes;
 import javax.enterprise.inject.Vetoed;
 import javax.enterprise.inject.spi.AnnotatedField;
 import javax.enterprise.inject.spi.AnnotatedMethod;
@@ -277,6 +278,10 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
     @Override
     public <T> Bean<T> defineSessionBean(final Class<T> clazz, final BeanAttributes<T> attributes, final AnnotatedType<T> annotatedType) {
         final BeanContext bc = findBeanContext(webBeansContext, clazz);
+        final Class<?> superClass = bc.getManagedClass().getSuperclass();
+        if (superClass != Object.class && !isSessionBean(superClass) && annotatedType.isAnnotationPresent(Specializes.class)) {
+            throw new DefinitionException("You can only specialize another EJB: " + clazz);
+        }
         final CdiEjbBean<T> bean = new OpenEJBBeanBuilder<T>(bc, webBeansContext, annotatedType, attributes).createBean(clazz, !annotatedType.isAnnotationPresent(Vetoed.class));
 
         bc.set(CdiEjbBean.class, bean);
