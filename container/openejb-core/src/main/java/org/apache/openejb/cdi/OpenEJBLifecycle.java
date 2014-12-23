@@ -54,6 +54,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Provider;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspApplicationContext;
@@ -243,13 +244,16 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         beanManager.getInjectionResolver().clearCaches();
 
         if (!hasBean(beanManager, HttpServletRequest.class)) {
-            beanManager.addInternalBean(new InternalBean<>(webBeansContext, HttpServletRequest.class));
+            beanManager.addInternalBean(new InternalBean<>(webBeansContext, HttpServletRequest.class, HttpServletRequest.class));
+        }
+        if (!hasBean(beanManager, ServletRequest.class)) {
+            beanManager.addInternalBean(new InternalBean<>(webBeansContext, ServletRequest.class, HttpServletRequest.class));
         }
         if (!hasBean(beanManager, HttpSession.class)) {
-            beanManager.addInternalBean(new InternalBean<>(webBeansContext, HttpSession.class));
+            beanManager.addInternalBean(new InternalBean<>(webBeansContext, HttpSession.class, HttpSession.class));
         }
         if (!hasBean(beanManager, ServletContext.class)) {
-            beanManager.addInternalBean(new InternalBean<>(webBeansContext, ServletContext.class));
+            beanManager.addInternalBean(new InternalBean<>(webBeansContext, ServletContext.class, ServletContext.class));
         }
 
         beanManager.getInjectionResolver().clearCaches(); // hasBean() usage can have cached several things
@@ -430,13 +434,23 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
     }
 
     public static class InternalBean<T> extends BuiltInOwbBean<T> {
-        private final Class<T> type;
+        private final String id;
 
-        protected InternalBean(final WebBeansContext webBeansContext, final Class<T> type) {
-            super(webBeansContext, WebBeansType.MANAGED, type,
+        protected InternalBean(final WebBeansContext webBeansContext, final Class<T> api, final Class<?> type) {
+            super(webBeansContext, WebBeansType.MANAGED, api,
                     new SimpleProducerFactory<T>(
-                            new ProviderBasedProducer<>(webBeansContext, type, new OpenEJBComponentProvider<T>(webBeansContext, type), false)));
-            this.type = type;
+                            new ProviderBasedProducer<>(webBeansContext, type, new OpenEJBComponentProvider(webBeansContext, type), false)));
+            this.id = "openejb#container#" + api.getName();
+        }
+
+        @Override
+        public boolean isPassivationCapable() {
+            return true;
+        }
+
+        @Override
+        protected String providedId() {
+            return id;
         }
 
         @Override
@@ -446,10 +460,10 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
     }
 
     private static class OpenEJBComponentProvider<T> implements Provider<T>, Serializable {
-        private Class<T> type;
+        private Class<?> type;
         private transient WebBeansContext webBeansContext;
 
-        public OpenEJBComponentProvider(final WebBeansContext webBeansContext, final Class<T> type) {
+        public OpenEJBComponentProvider(final WebBeansContext webBeansContext, final Class<?> type) {
             this.webBeansContext = webBeansContext;
             this.type = type;
         }
@@ -459,7 +473,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             if (webBeansContext == null) {
                 webBeansContext = WebBeansContext.currentInstance();
             }
-            return SystemInstance.get().getComponent(type);
+            return (T) SystemInstance.get().getComponent(type);
         }
 
         Object readResolve() throws ObjectStreamException {

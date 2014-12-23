@@ -326,10 +326,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     private void setComponentsUsedByCDI() {
         final SystemInstance systemInstance = SystemInstance.get();
         if (systemInstance.getComponent(HttpServletRequest.class) == null) {
-            systemInstance.setComponent(HttpServletRequest.class, Proxys.threadLocalProxy(HttpServletRequest.class, OpenEJBSecurityListener.requests));
+            systemInstance.setComponent(HttpServletRequest.class, Proxys.threadLocalProxy(HttpServletRequest.class, OpenEJBSecurityListener.requests, null));
         }
         if (systemInstance.getComponent(HttpSession.class) == null) {
-            systemInstance.setComponent(javax.servlet.http.HttpSession.class, Proxys.threadLocalRequestSessionProxy(OpenEJBSecurityListener.requests));
+            systemInstance.setComponent(javax.servlet.http.HttpSession.class, Proxys.threadLocalRequestSessionProxy(OpenEJBSecurityListener.requests, null));
         }
         if (systemInstance.getComponent(ServletContext.class) == null) {
             systemInstance.setComponent(ServletContext.class, Proxys.handlerProxy(ServletContext.class, new ServletContextHandler()));

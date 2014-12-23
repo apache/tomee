@@ -48,7 +48,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.container.ResourceContext;
 import javax.ws.rs.container.ResourceInfo;
-import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Request;
@@ -113,9 +112,6 @@ public class CxfRSService extends RESTService {
         if (!hasBean(beanManagerImpl, UriInfo.class)) {
             beanManagerImpl.addInternalBean(new ContextBean<>(UriInfo.class, ThreadLocalContextManager.URI_INFO));
         }
-        if (!hasBean(beanManagerImpl, HttpServletRequest.class)) {
-            beanManagerImpl.addInternalBean(new ContextBean<>(HttpServletRequest.class, ThreadLocalContextManager.HTTP_SERVLET_REQUEST));
-        }
         if (!hasBean(beanManagerImpl, HttpServletResponse.class)) {
             beanManagerImpl.addInternalBean(new ContextBean<>(HttpServletResponse.class, ThreadLocalContextManager.HTTP_SERVLET_RESPONSE));
         }
@@ -124,14 +120,6 @@ public class CxfRSService extends RESTService {
         }
         if (!hasBean(beanManagerImpl, Request.class)) {
             beanManagerImpl.addInternalBean(new ContextBean<>(Request.class, ThreadLocalContextManager.REQUEST));
-        }
-        /* HttpServletRequest impl it
-        if (!hasBean(beanManagerImpl, ServletRequest.class)) {
-            beanManagerImpl.addInternalBean(new ContextBean<>(ServletRequest.class, ThreadLocalContextManager.SERVLET_REQUEST));
-        }
-        */
-        if (!hasBean(beanManagerImpl, ServletContext.class)) {
-            beanManagerImpl.addInternalBean(new ContextBean<>(ServletContext.class, ThreadLocalContextManager.SERVLET_CONTEXT));
         }
         if (!hasBean(beanManagerImpl, ServletConfig.class)) {
             beanManagerImpl.addInternalBean(new ContextBean<>(ServletConfig.class, ThreadLocalContextManager.SERVLET_CONFIG));

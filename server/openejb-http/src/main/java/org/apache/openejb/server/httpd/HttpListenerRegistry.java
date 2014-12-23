@@ -16,16 +16,18 @@
  */
 package org.apache.openejb.server.httpd;
 
+import org.apache.openejb.cdi.Proxys;
 import org.apache.openejb.loader.SystemInstance;
 
-import org.apache.openejb.cdi.Proxys;
-
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 /**
  * @version $Revision$ $Date$
@@ -38,13 +40,22 @@ public class HttpListenerRegistry implements HttpListener {
 
     public HttpListenerRegistry() {
         final SystemInstance systemInstance = SystemInstance.get();
+        HttpRequestImpl mockRequest = null;
+        try {
+            mockRequest = new HttpRequestImpl(new URI("http://mock/"));
+            mockRequest.parseURI(new StringTokenizer("mock\n"));  // will do http://mock/mock, we don't really care
+        } catch (final Exception e) {
+            // no-op
+        }
         if (systemInstance.getComponent(HttpServletRequest.class) == null) {
-            systemInstance.setComponent(HttpServletRequest.class, Proxys.threadLocalProxy(HttpServletRequest.class, request));
+            systemInstance.setComponent(HttpServletRequest.class, Proxys.threadLocalProxy(HttpServletRequest.class, request, mockRequest));
         }
         if (systemInstance.getComponent(HttpSession.class) == null) {
-            systemInstance.setComponent(javax.servlet.http.HttpSession.class, Proxys.threadLocalRequestSessionProxy(request));
+            systemInstance.setComponent(javax.servlet.http.HttpSession.class, Proxys.threadLocalRequestSessionProxy(request, mockRequest.getSession()));
         }
-        // servlet context is unknown in this module
+        if (systemInstance.getComponent(ServletContext.class) == null) { // a poor impl but at least we set something
+            systemInstance.setComponent(ServletContext.class, new EmbeddedServletContext());
+        }
     }
 
     @Override
@@ -88,8 +99,9 @@ public class HttpListenerRegistry implements HttpListener {
             }
         } finally {
             if (currentFL == null) {
-                currentFilterListener.remove();
+                currentFilterListener.set(null);
             }
+            this.request.set(null);
         }
     }
 

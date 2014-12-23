@@ -26,14 +26,14 @@ import java.lang.reflect.Proxy;
 
 // some helper reused accross several modules
 public final class Proxys {
-    public static <T> T threadLocalProxy(final Class<T> type, final ThreadLocal<? extends T> threadLocal) {
+    public static <T> T threadLocalProxy(final Class<T> type, final ThreadLocal<? extends T> threadLocal, final T defaultValue) {
         return (T) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
-                new Class<?>[] { type, Serializable.class }, new ThreadLocalHandler<>(threadLocal));
+                new Class<?>[] { type, Serializable.class }, new ThreadLocalHandler<>(threadLocal, defaultValue));
     }
 
-    public static HttpSession threadLocalRequestSessionProxy(final ThreadLocal<? extends HttpServletRequest> threadLocal) {
+    public static HttpSession threadLocalRequestSessionProxy(final ThreadLocal<? extends HttpServletRequest> threadLocal, final HttpSession defaultValue) {
         return (HttpSession) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
-                new Class<?>[] { HttpSession.class, Serializable.class }, new ThreadLocalSessionFromRequestHandler(threadLocal));
+                new Class<?>[] { HttpSession.class, Serializable.class }, new ThreadLocalSessionFromRequestHandler(threadLocal, defaultValue));
     }
 
     public static <T> T handlerProxy(final Class<T> type, final InvocationHandler raw) {
@@ -47,15 +47,21 @@ public final class Proxys {
 
     private static final class ThreadLocalSessionFromRequestHandler implements InvocationHandler {
         private final ThreadLocal<? extends HttpServletRequest> holder;
+        private final HttpSession defaultValue;
 
-        public ThreadLocalSessionFromRequestHandler(final ThreadLocal<? extends HttpServletRequest> threadLocal) {
-            holder = threadLocal;
+        public ThreadLocalSessionFromRequestHandler(final ThreadLocal<? extends HttpServletRequest> threadLocal, final HttpSession defaultValue) {
+            this.holder = threadLocal;
+            this.defaultValue = defaultValue;
         }
 
         @Override
         public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
             try {
-                return method.invoke(holder.get().getSession(), args);
+                final HttpServletRequest request = holder.get();
+                if (request == null) {
+                    return method.invoke(defaultValue, args);
+                }
+                return method.invoke(request.getSession(), args);
             } catch (final InvocationTargetException ite) {
                 throw ite.getCause();
             }
@@ -63,16 +69,22 @@ public final class Proxys {
     }
 
     private static final class ThreadLocalHandler<T> implements InvocationHandler {
-        private final ThreadLocal<T> holder;
+        private final ThreadLocal<? extends T> holder;
+        private final T defaultValue;
 
-        public ThreadLocalHandler(final ThreadLocal<T> threadLocal) {
-            holder = threadLocal;
+        public ThreadLocalHandler(final ThreadLocal<? extends T> threadLocal, final T defaultValue) {
+            this.holder = threadLocal;
+            this.defaultValue = defaultValue;
         }
 
         @Override
         public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
             try {
-                return method.invoke(holder.get(), args);
+                T obj = holder.get();
+                if (obj == null) {
+                    obj = defaultValue;
+                }
+                return method.invoke(obj, args);
             } catch (final InvocationTargetException ite) {
                 throw ite.getCause();
             }

@@ -267,7 +267,7 @@ public class HttpRequestImpl implements HttpRequest {
 
     @Override
     public StringBuffer getRequestURL() {
-        return new StringBuffer(uri.getScheme() + "://" + uri.getHost() + ":" + uri.getPort() + uri.getRawPath());
+        return new StringBuffer(uri.getScheme() + "://" + uri.getAuthority() + uri.getRawPath());
     }
 
     @Override
@@ -471,7 +471,7 @@ public class HttpRequestImpl implements HttpRequest {
      * @param lineParts a StringTokenizer of the URI
      * @throws java.io.IOException if an exeption is thrown
      */
-    private void parseURI(StringTokenizer lineParts) throws IOException {
+    public void parseURI(StringTokenizer lineParts) throws IOException {
         String token;
         try {
             token = lineParts.nextToken();
