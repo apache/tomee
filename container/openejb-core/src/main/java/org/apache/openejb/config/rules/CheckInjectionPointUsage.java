@@ -19,6 +19,7 @@ package org.apache.openejb.config.rules;
 
 import org.apache.openejb.config.EjbModule;
 
+import javax.enterprise.inject.spi.DefinitionException;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServlet;
@@ -41,7 +42,9 @@ public class CheckInjectionPointUsage extends ValidationBase {
                     continue;
                 }
 
-                fail(field.getDeclaringClass().getSimpleName(), "cdi.injectionPointOnNonBean", field.getDeclaringClass().getName(), field.getName());
+                if (field.getAnnotations().length == 1) {
+                    throw new DefinitionException("Can't inject InjectionPoint in " + field.getDeclaringClass());
+                } // else we should check is there is no other qualifier than @Default but too early
             }
         } catch (final NoClassDefFoundError noClassDefFoundError) {
             // ignored: can't check but maybe it is because of an optional dep so ignore it

@@ -46,6 +46,7 @@ import org.apache.openejb.config.rules.ValidationBase;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.OpenEjbVersion;
 
+import javax.enterprise.inject.spi.DefinitionException;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -100,6 +101,8 @@ public class AppValidator {
             for (int i = 0; i < rules.length; i++) {
                 rules[i].validate(appModule);
             }
+        } catch (final DefinitionException de) {
+            throw de;
         } catch (final Throwable e) {
             e.printStackTrace(System.out);
             final ValidationError err = new ValidationError("cannot.validate");

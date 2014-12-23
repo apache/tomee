@@ -18,7 +18,7 @@
 <suite name="CDI TCK" verbose="0">
   <test name="CDI TCK">
     <classes>
-      <class name="org.jboss.cdi.tck.tests.inheritance.specialization.enterprise.broken.extend.managedbean.DirectlyExtendsSimpleBeanTest" />
+      <class name="org.jboss.cdi.tck.tests.lookup.injectionpoint.broken.not.bean.InjectionPointTest" />
     </classes>
   </test>
 </suite>
