@@ -42,10 +42,14 @@ import javax.enterprise.context.ContextException;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.context.Dependent;
+import javax.enterprise.context.Destroyed;
+import javax.enterprise.context.Initialized;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.context.spi.Context;
+import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Singleton;
+import javax.servlet.ServletRequest;
 import javax.servlet.ServletRequestEvent;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -252,6 +256,8 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             final HttpServletRequest request = (HttpServletRequest) event.getServletRequest();
             ((ServletRequestContext) rq).setServletRequest(request);
 
+            webBeansContext.getBeanManagerImpl().fireEvent(request, InitializedLiteral.REQUEST);
+
             if (request != null) {
                 //Re-initialize thread local for session
                 final HttpSession session = request.getSession(false);
@@ -276,6 +282,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
 
         //Destroy context
         if (context != null) {
+            webBeansContext.getBeanManagerImpl().fireEvent(ServletRequestContext.class.cast(context).getServletRequest(), DestroyedLiteral.REQUEST);
             context.destroy();
         }
 
@@ -341,6 +348,8 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
 
         //Set thread local
         sessionContext.set(currentSessionContext);
+
+        webBeansContext.getBeanManagerImpl().fireEvent(session, InitializedLiteral.SESSION);
     }
 
     private SessionContext newSessionContext(final HttpSession session) {
@@ -377,6 +386,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             if (context != null) {
                 context.destroy();
             }
+            webBeansContext.getBeanManagerImpl().fireEvent(session, DestroyedLiteral.SESSION);
 
             //Clear thread locals
             sessionContext.set(null);
@@ -556,6 +566,36 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             this.request = request;
             this.session = session;
             this.conversation = conversation;
+        }
+    }
+
+    public static class InitializedLiteral extends AnnotationLiteral<Initialized> implements Initialized {
+        private static final InitializedLiteral REQUEST = new InitializedLiteral(RequestScoped.class);
+        private static final InitializedLiteral SESSION = new InitializedLiteral(SessionScoped.class);
+
+        private final Class<? extends Annotation> value;
+
+        public InitializedLiteral(final Class<? extends Annotation> value) {
+            this.value = value;
+        }
+
+        public Class<? extends Annotation> value() {
+            return value;
+        }
+    }
+
+    public static class DestroyedLiteral extends AnnotationLiteral<Destroyed> implements Destroyed {
+        private static final DestroyedLiteral REQUEST = new DestroyedLiteral(RequestScoped.class);
+        private static final DestroyedLiteral SESSION = new DestroyedLiteral(SessionScoped.class);
+
+        private final Class<? extends Annotation> value;
+
+        public DestroyedLiteral(final Class<? extends Annotation> value) {
+            this.value = value;
+        }
+
+        public Class<? extends Annotation> value() {
+            return value;
         }
     }
 }
