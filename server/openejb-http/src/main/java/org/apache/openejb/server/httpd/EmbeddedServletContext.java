@@ -18,13 +18,60 @@ package org.apache.openejb.server.httpd;
 
 import org.apache.webbeans.web.lifecycle.test.MockServletContext;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class EmbeddedServletContext extends MockServletContext {
     private final Map<String, Object> attributes = new ConcurrentHashMap<>();
+
+    private Collection<ResourceProvider> resourceProviders = new ArrayList<>();
+
+    public EmbeddedServletContext() {
+        for (final ResourceProvider rp : ServiceLoader.load(ResourceProvider.class, EmbeddedServletContext.class.getClassLoader())) {
+            resourceProviders.add(rp);
+        }
+    }
+
+    @Override
+    public URL getResource(final String path) throws MalformedURLException {
+        if (resourceProviders.isEmpty()) {
+            return super.getResource(path);
+        }
+        for (final ResourceProvider provider : resourceProviders) {
+            final URL resource = provider.getResource(path);
+            if (resource != null) {
+                return resource;
+            }
+        }
+        return super.getResource(path);
+    }
+
+    @Override
+    public InputStream getResourceAsStream(final String path) {
+        if (resourceProviders.isEmpty()) {
+            return super.getResourceAsStream(path);
+        }
+        for (final ResourceProvider provider : resourceProviders) {
+            final URL resource = provider.getResource(path);
+            if (resource != null) {
+                try {
+                    return resource.openStream();
+                } catch (final IOException e) {
+                    // no-op
+                }
+            }
+        }
+        return super.getResourceAsStream(path);
+    }
 
     @Override
     public int getMajorVersion() {
@@ -54,5 +101,9 @@ public class EmbeddedServletContext extends MockServletContext {
     @Override
     public Enumeration<String> getAttributeNames() {
         return Collections.enumeration(attributes.keySet());
+    }
+
+    public static interface ResourceProvider {
+        URL getResource(String path);
     }
 }

@@ -25,6 +25,8 @@ import javax.naming.Context;
 import javax.naming.Name;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.UndeclaredThrowableException;
 
 public class ContextHandler extends ContextWrapper {
     public ContextHandler(final Context jndiContext) {
@@ -49,6 +51,29 @@ public class ContextHandler extends ContextWrapper {
     public Object lookup(final String name) throws NamingException {
         try {
             return context.lookup(name);
+        } catch (final UndeclaredThrowableException ute) {
+            Throwable e = ute.getUndeclaredThrowable();
+            while (e != null) {
+                if (InvocationTargetException.class.isInstance(e)) {
+                    final Throwable unwrap = InvocationTargetException.class.cast(e).getCause();
+                    if (e == unwrap) {
+                        throw new NameNotFoundException(name);
+                    }
+                    e = unwrap;
+                } else if (UndeclaredThrowableException.class.isInstance(e)) {
+                    final Throwable unwrap = UndeclaredThrowableException.class.cast(e).getUndeclaredThrowable();
+                    if (e == unwrap) {
+                        throw new NameNotFoundException(name);
+                    }
+                    e = unwrap;
+                } else {
+                    break;
+                }
+                if (NameNotFoundException.class.isInstance(e)) {
+                    throw NameNotFoundException.class.cast(e);
+                }
+            }
+            throw new NameNotFoundException(name);
         } catch (final NameNotFoundException nnfe) {
             try {
                 return SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext().lookup(name);

@@ -151,7 +151,7 @@
 
     <dependency> <!-- shouldn't be a compile/runtime dependency -->
       <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-server</artifactId>
+      <artifactId>openejb-http</artifactId>
       <version>${openejb.version}</version>
       <scope>provided</scope>
     </dependency>

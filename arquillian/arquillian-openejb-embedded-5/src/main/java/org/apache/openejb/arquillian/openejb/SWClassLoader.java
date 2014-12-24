@@ -81,15 +81,32 @@ public class SWClassLoader extends ClassLoader implements Closeable {
             if (!node.isEmpty()) {
                 final List<URL> urls = new ArrayList<>();
                 for (final Archive<?> i : node) {
-                    urls.add(new URL(null, "archive:" + i.getName() + "/" + name, new ArchiveStreamHandler()));
+                    urls.add(new URL(null, "archive:" + i.getName() + (!name.startsWith("/") ? "/" : "") + name, new ArchiveStreamHandler()));
+                }
+                if (cdiExtensions && !"true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.arquillian.cdi.extension.skip-externals", "false"))) {
+                    addContainerExtensions(name, urls);
                 }
                 return enumerator(urls);
             }
-            if (cdiExtensions && "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.arquillian.cdi.extension.skip-externals", "true"))) {
-                return enumerator(Collections.<URL>emptyList());
+            if (cdiExtensions) {
+                if ("true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.arquillian.cdi.extension.skip-externals", "false"))) {
+                    return enumerator(Collections.<URL>emptyList());
+                }
+                return enumerator(addContainerExtensions(name, new ArrayList<URL>(2)));
             }
         }
         return super.getResources(name);
+    }
+
+    private List<URL> addContainerExtensions(final String name, final List<URL> urls) throws IOException {
+        final Collection<URL> containerExtensions = Collections.list(getParent().getResources(name));
+        for (final URL u : containerExtensions) {
+            final String externalForm = u.toExternalForm();
+            if (externalForm.contains("myfaces-impl") || externalForm.contains("bval-jsr")) {
+                urls.add(u);
+            }
+        }
+        return urls;
     }
 
     @Override
@@ -98,14 +115,31 @@ public class SWClassLoader extends ClassLoader implements Closeable {
         if (!node.isEmpty()) {
             final List<URL> urls = new ArrayList<>();
             for (final Archive<?> i : node) {
-                urls.add(new URL(null, "archive:" + i.getName() + "/" + name, new ArchiveStreamHandler()));
+                urls.add(new URL(null, "archive:" + i.getName() + (!name.startsWith("/") ? "/" : "") + name, new ArchiveStreamHandler()));
             }
             return enumerator(urls);
         }
         return super.findResources(name);
     }
 
-    private LinkedList<Archive<?>> findNodes(final String name) {
+    public URL getWebResource(final String name) {
+        for (final Archive<?> a : archives) {
+            if (!WebArchive.class.isInstance(a)) {
+                continue;
+            }
+            final Node node = a.get(name);
+            if (node != null) {
+                try {
+                    return new URL(null, "archive:" + a.getName() + (!name.startsWith("/") ? "/" : "") + name, new ArchiveStreamHandler());
+                } catch (final MalformedURLException e) {
+                    // no-op
+                }
+            }
+        }
+        return null;
+    }
+
+    public LinkedList<Archive<?>> findNodes(final String name) {
         final LinkedList<Archive<?>> items = new LinkedList<>();
         for (final Archive<?> a : archives) {
             final Node node = a.get(ArchivePaths.create((WebArchive.class.isInstance(a) ? "/WEB-INF/classes/" : "") + name));
@@ -126,7 +160,7 @@ public class SWClassLoader extends ClassLoader implements Closeable {
         if (!node.isEmpty()) {
             final Archive<?> i = node.getLast();
             try {
-                return new URL(null, "archive:" + i.getName() + "/" + name, new ArchiveStreamHandler());
+                return new URL(null, "archive:" + i.getName() + (!name.startsWith("/") ? "/" : "") + name, new ArchiveStreamHandler());
             } catch (final MalformedURLException e) {
                 throw new IllegalArgumentException(e);
             }
@@ -155,9 +189,12 @@ public class SWClassLoader extends ClassLoader implements Closeable {
 
             final Archive<?> archive = archives.get(arName);
             final String path = path(archive.getName(), WebArchive.class.isInstance(archive) ? "/WEB-INF/classes/" : "", u);
-            final Node node = archive.get(path);
+            Node node = archive.get(path);
             if (node == null) {
-                throw new IOException(u.toExternalForm() + " not found");
+                node = archive.get(path(archive.getName(), "", u)); // web resources
+                if (node == null) {
+                    throw new IOException(u.toExternalForm() + " not found");
+                }
             }
 
             final Asset asset = node.getAsset();

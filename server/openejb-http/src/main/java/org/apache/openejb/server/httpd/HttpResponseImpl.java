@@ -501,7 +501,9 @@ public class HttpResponseImpl implements HttpResponse {
         out.writeBytes(SP);
         out.writeBytes(code + "");
         out.writeBytes(SP);
-        out.writeBytes(responseString);
+        if (responseString != null) {
+            out.writeBytes(responseString);
+        }
         out.writeBytes(CRLF);
     }
 

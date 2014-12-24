@@ -180,7 +180,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         // fix the address (to manage multiple connectors)
         if (HttpRequestImpl.class.isInstance(httpRequest)) {
             final HttpRequestImpl requestImpl = HttpRequestImpl.class.cast(httpRequest);
-            requestImpl.initPathFromContext(context);
+            requestImpl.initPathFromContext((!context.startsWith("/") ? "/" : "") + context);
             requestImpl.initServletPath(servlet);
         }
 

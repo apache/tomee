@@ -23,12 +23,19 @@ import org.apache.openejb.server.httpd.FilterListener;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.httpd.HttpListenerRegistry;
 import org.apache.openejb.server.httpd.ServletListener;
+import org.apache.webbeans.container.InjectableBeanManager;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterConfig;
 import javax.servlet.Servlet;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public final class HttpUtil {
     private static final String WILDCARD = SystemInstance.get().getProperty("openejb.http.wildcard", ".*");
@@ -66,14 +73,71 @@ public final class HttpUtil {
 
         final ServletListener listener;
         try {
-            listener = new ServletListener((Servlet) wc.newInstance(wc.getClassLoader().loadClass(classname)), wc.getContextRoot());
-            listener.getDelegate().init(null);
-        } catch (Exception e) {
+            final ServletContext servletContext = SystemInstance.get().getComponent(ServletContext.class);
+            if ("javax.faces.webapp.FacesServlet".equals(classname)) {
+                try {
+                    // faking it to let the FacesServlet starting
+                    // NOTE: needs myfaces-impl + tomcat-jasper (JspFactory)
+                    // TODO: handle the whole lifecycle (cleanup mainly) + use myfaces SPI to make scanning really faster (take care should work in tomee were we already have it impl)
+                    final Class<?> mfListenerClass = wc.getClassLoader().loadClass("org.apache.myfaces.webapp.StartupServletContextListener");
+                    final Class<?> jspFactory = wc.getClassLoader().loadClass("org.apache.jasper.runtime.JspFactoryImpl");
+                    final Class<?> jspFactoryApi = wc.getClassLoader().loadClass("javax.servlet.jsp.JspFactory");
+                    jspFactoryApi.getMethod("setDefaultFactory", jspFactoryApi).invoke(null, jspFactory.newInstance());
+
+                    final ServletContextListener servletContextListener = ServletContextListener.class.cast(mfListenerClass.newInstance());
+                    servletContext.setAttribute("javax.enterprise.inject.spi.BeanManager", new InjectableBeanManager(wc.getWebBeansContext().getBeanManagerImpl()));
+                    final Thread thread = Thread.currentThread();
+                    final ClassLoader old = setClassLoader(wc, thread);
+                    try {
+                        servletContextListener.contextInitialized(new ServletContextEvent(servletContext));
+                    } finally {
+                        thread.setContextClassLoader(old);
+                    }
+                    servletContext.removeAttribute("javax.enterprise.inject.spi.BeanManager");
+                } catch (final Exception e) {
+                    // no-op
+                }
+            }
+            final Thread thread = Thread.currentThread();
+            final ClassLoader old = setClassLoader(wc, thread);
+            try {
+                listener = new ServletListener((Servlet) wc.newInstance(wc.getClassLoader().loadClass(classname)), wc.getContextRoot());
+                listener.getDelegate().init(new ServletConfig() {
+                    @Override
+                    public String getServletName() {
+                        return classname;
+                    }
+
+                    @Override
+                    public ServletContext getServletContext() {
+                        return servletContext;
+                    }
+
+                    @Override
+                    public String getInitParameter(final String s) {
+                        return servletContext.getInitParameter(s);
+                    }
+
+                    @Override
+                    public Enumeration<String> getInitParameterNames() {
+                        return servletContext.getInitParameterNames();
+                    }
+                });
+            } finally {
+                thread.setContextClassLoader(old);
+            }
+        } catch (final Exception e) {
             throw new OpenEJBRuntimeException(e);
         }
 
         registry.addHttpListener(listener, pattern(wc.getContextRoot(), "/".equals(mapping) ? "/*" : mapping));
         return true;
+    }
+
+    private static ClassLoader setClassLoader(final WebContext wc, final Thread thread) {
+        final ClassLoader old = thread.getContextClassLoader();
+        thread.setContextClassLoader(wc.getClassLoader() == null ? wc.getAppContext().getClassLoader() : wc.getClassLoader());
+        return old;
     }
 
     public static void removeServlet(final String mapping, final WebContext wc) {
@@ -133,7 +197,7 @@ public final class HttpUtil {
         if (!mapping.startsWith("/") && !path.endsWith("/")) {
             path += '/';
         }
-        path += mapping;
+        path += mapping.startsWith("*.") ? WILDCARD + "\\" + mapping.substring(1) : mapping;
 
         if (path.endsWith("*")) {
             path = path.substring(0, path.length()) + WILDCARD;

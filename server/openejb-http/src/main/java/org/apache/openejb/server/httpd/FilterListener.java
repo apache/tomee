@@ -47,7 +47,7 @@ public class FilterListener implements HttpListener {
             }
         }
         if (req != null) {
-            req.initPathFromContext(context);
+            req.initPathFromContext((!context.startsWith("/") ? "/" : "") + context);
         }
         delegate.doFilter(request, response, new SimpleFilterChain(this));
     }

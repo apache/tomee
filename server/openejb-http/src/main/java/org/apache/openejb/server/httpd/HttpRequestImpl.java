@@ -221,6 +221,11 @@ public class HttpRequestImpl implements HttpRequest {
 
     @Override
     public String getPathInfo() {
+        // hack for jsf, would need to rething all our getpathInfo() to get rid of it
+        // Note: if you tackle it ensure to not break CXF integrations
+        if (path != null && path.endsWith(".jsf")) {
+            return null;
+        }
         if (servletPath != null) {
             return path.substring(servletPath.length());
         }
@@ -274,6 +279,12 @@ public class HttpRequestImpl implements HttpRequest {
     public String getServletPath() {
         if (servletPath != null) {
             return servletPath;
+        }
+        if (path != null && path.endsWith(".jsf")) { // see getPathInfo()
+            if (contextPath != null && path.startsWith('/' + contextPath)) { // weird case with encoded url in forms, still this missing router surely
+                return path.substring(contextPath.length() + 1);
+            }
+            return path;
         }
         return getPathInfo();
     }
@@ -1098,7 +1109,7 @@ public class HttpRequestImpl implements HttpRequest {
                 path = rawPath.substring(endIndex, rawPath.length());
                 contextPath = context.substring(0, endIndex);
             } else {
-                path = rawPath.substring(context.length(), rawPath.length()); // 1 because of the first /
+                path = rawPath.substring(context.length(), rawPath.length());
                 contextPath = context;
             }
         }
