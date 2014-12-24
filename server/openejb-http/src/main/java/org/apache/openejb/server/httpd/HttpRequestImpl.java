@@ -223,7 +223,7 @@ public class HttpRequestImpl implements HttpRequest {
     public String getPathInfo() {
         // hack for jsf, would need to rething all our getpathInfo() to get rid of it
         // Note: if you tackle it ensure to not break CXF integrations
-        if (path != null && path.endsWith(".jsf")) {
+        if (path != null && path.endsWith(".jsf") || servletPath != null && servletPath.endsWith(".jsf")) {
             return null;
         }
         if (servletPath != null) {
@@ -286,11 +286,19 @@ public class HttpRequestImpl implements HttpRequest {
             }
             return path;
         }
+        if ("/".equals(path)) { // not initialized, contextpath = "" so let use it for our router (HttpListenerRegistry)
+            return uri.getPath();
+        }
         return getPathInfo();
     }
 
     public void initServletPath(final String servlet) {
         servletPath = servlet;
+    }
+
+    public void addQueryParams(final String query) {
+        parseQueryParams(query);
+        parameters.putAll(queryParams); // a merge would be better
     }
 
     /**

@@ -98,19 +98,8 @@ public class HttpResponseImpl implements HttpResponse {
     private String encoding = "UTF-8";
     private Locale locale = Locale.getDefault();
 
-    private boolean eagerFlush = false;
-
     protected void setRequest(HttpRequestImpl request) {
         this.request = request;
-    }
-
-    public boolean isEagerlyFlushed() {
-        return eagerFlush;
-    }
-
-    public void eagerFlush(final OutputStream out) throws IOException {
-        eagerFlush = true;
-        writeMessage(out, false);
     }
 
     /**

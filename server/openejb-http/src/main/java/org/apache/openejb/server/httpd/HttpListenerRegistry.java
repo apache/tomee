@@ -63,8 +63,9 @@ public class HttpListenerRegistry implements HttpListener {
     }
 
     @Override
-    public void onMessage(HttpRequest request, HttpResponse response) throws Exception {
-        final String path = request.getURI().getPath();
+    public void onMessage(final HttpRequest request, final HttpResponse response) throws Exception {
+        final String servletPath = request.getServletPath();
+        final String path = request.getContextPath() + (!servletPath.startsWith("/") ? "/" : "") + servletPath;
         final FilterListener currentFL = currentFilterListener.get();
 
         // first look filters

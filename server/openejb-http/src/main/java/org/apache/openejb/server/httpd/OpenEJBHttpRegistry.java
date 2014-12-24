@@ -30,6 +30,7 @@ import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -104,50 +105,67 @@ public class OpenEJBHttpRegistry {
         }
 
         public void onMessage(HttpRequest request, HttpResponse response) throws Exception {
-            Thread thread = Thread.currentThread();
-            ClassLoader oldCl = thread.getContextClassLoader();
-            thread.setContextClassLoader(classLoader);
+            final Thread thread = Thread.currentThread();
+            final ClassLoader oldCl = thread.getContextClassLoader();
 
             WebBeansContext wbc = null;
             try {
                 if (request instanceof HttpRequestImpl) {
-                    wbc = findWebContext(request.getURI().getPath());
-                    initCdi(wbc, HttpRequestImpl.class.cast(request)).init();
+                    final HttpRequestImpl httpRequest = HttpRequestImpl.class.cast(request);
+                    final WebContext web = findWebContext(request.getURI().getPath());
+                    if (web != null) {
+                        if (web.getClassLoader() != null) {
+                            thread.setContextClassLoader(web.getClassLoader());
+                        } else if (web.getAppContext().getClassLoader() != null) {
+                            thread.setContextClassLoader(web.getAppContext().getClassLoader());
+                        }
+
+                        final String ctx = (web.getContextRoot().startsWith("/") ? "" : "/") + web.getContextRoot();
+                        httpRequest.initPathFromContext(ctx);
+                        if (httpRequest.getServletPath().startsWith('/' + ctx)) { // yes double /, there is an encoding issue with JSF forms with our embedded mode
+                            final String servlet = URLDecoder.decode(httpRequest.getServletPath().substring(ctx.length() + 1), "UTF-8");
+                            final int query = servlet.indexOf('?');
+                            if (query > 0) {
+                                httpRequest.initServletPath(servlet.substring(0, query));
+                                httpRequest.addQueryParams(servlet.substring(query + 1));
+                            } else {
+                                httpRequest.initServletPath(servlet);
+                            }
+                        }
+                        wbc = web.getWebbeansContext() != null ? web.getWebbeansContext() : web.getAppContext().getWebBeansContext();
+                    } else {
+                        thread.setContextClassLoader(classLoader);
+
+                        try { // surely an issue or something just tolerated for fake webapps
+                            wbc = WebBeansContext.currentInstance();
+                        } catch (final IllegalStateException ise) {
+                            // no-op
+                        }
+                    }
+                    if (wbc != null) {
+                        initCdi(wbc, httpRequest).init();
+                    }
                 }
 
                 delegate.onMessage(request, response);
             } finally {
-                final OutputStream out = OutputStream.class.cast(request.getAttribute("openejb_http_output"));
                 if (wbc != null) {
                     HttpRequestImpl.class.cast(request).destroy();
-                }
-                if (out != null && HttpResponseImpl.class.isInstance(response)) { // otherwise it got flushed after which means we can lock if @Observes @Destroyed(RequestScoped.class) rely on local http
-                    HttpResponseImpl.class.cast(response).eagerFlush(out);
                 }
 
                 thread.setContextClassLoader(oldCl);
             }
         }
 
-        private static WebBeansContext findWebContext(final String path) { // TODO: this is a poor impl, would need registration of app etc to be better and have a rooter
+        private static WebContext findWebContext(final String path) { // TODO: this is a poor impl, would need registration of app etc to be better and have a rooter
             for (final AppContext app : SystemInstance.get().getComponent(ContainerSystem.class).getAppContexts()) {
                 for (final WebContext web : app.getWebContexts()) {
                     if (path.startsWith(web.getContextRoot()) || path.startsWith('/' + web.getContextRoot())) {
-                        // classloader will be correctly resetted anyway to fine o set it here
-                        if (web.getClassLoader() != null) {
-                            Thread.currentThread().setContextClassLoader(web.getClassLoader());
-                        } else if (app.getClassLoader() != null) {
-                            Thread.currentThread().setContextClassLoader(app.getClassLoader()); // will be resetted anyway to fine o set it here
-                        }
-                        return web.getWebBeansContext(); // if null returns app one
+                        return web;
                     }
                 }
             }
-            try { // surely an issue or something just tolerated for fake webapps
-                return WebBeansContext.currentInstance();
-            } catch (final IllegalStateException ise) {
-                return null;
-            }
+            return null;
         }
 
         private static HttpRequestImpl initCdi(final WebBeansContext context, final HttpRequestImpl request) {
