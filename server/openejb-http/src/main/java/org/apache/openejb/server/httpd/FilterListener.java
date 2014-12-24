@@ -69,7 +69,17 @@ public class FilterListener implements HttpListener {
             registry.setOrigin(origin);
             try {
                 registry.onMessage((HttpRequest) request, (HttpResponse) response);
-            } catch (Exception e) {
+            } catch (final RuntimeException re) {
+                throw re;
+            } catch (final ServletException e) {
+                final Throwable cause = e.getCause();
+                if (RuntimeException.class.isInstance(cause)) { // frameworks generally wrap with ServletException
+                    throw RuntimeException.class.cast(cause);
+                }
+                throw e;
+            } catch (final IOException e) {
+                throw e;
+            } catch (final Exception e) {
                 throw new ServletException(e);
             } finally {
                 registry.setOrigin(origin);
