@@ -91,7 +91,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
     public CdiEjbBean(final BeanContext beanContext, final WebBeansContext webBeansContext, final Class beanClass, final AnnotatedType<T> at,
                       final InjectionTargetFactoryImpl<T> factory, final BeanAttributes<T> attributes) {
         super(webBeansContext, toSessionType(beanContext.getComponentType()), at, new EJBBeanAttributesImpl<T>(beanContext,
-                attributes), beanClass, factory);
+                attributes, true), beanClass, factory);
         this.beanContext = beanContext;
         beanContext.set(Bean.class, this);
         passivatingId = beanContext.getDeploymentID() + getReturnType().getName();
@@ -313,15 +313,20 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
         }
     }
 
-    private static class EJBBeanAttributesImpl<T> extends BeanAttributesImpl<T> {
+    public static class EJBBeanAttributesImpl<T> extends BeanAttributesImpl<T> { // TODO: move it in its own class
         private final BeanContext beanContext;
         private final Set<Type> ejbTypes;
 
-        public EJBBeanAttributesImpl(final BeanContext bc, final BeanAttributes<T> beanAttributes) {
+        public EJBBeanAttributesImpl(final BeanContext bc, final BeanAttributes<T> beanAttributes, final boolean withSerializable) {
             super(beanAttributes, false);
             this.beanContext = bc;
             this.ejbTypes = new HashSet<Type>();
             initTypes();
+            if (withSerializable) {
+                if (!ejbTypes.contains(Serializable.class)) {
+                    ejbTypes.add(Serializable.class);
+                }
+            }
         }
 
         @Override
@@ -341,23 +346,27 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
             final List<Class> cl = beanContext.getBusinessLocalInterfaces();
             if (cl != null && !cl.isEmpty()) {
                 for (final Class<?> c : cl) {
-                    ejbTypes.add(c);
-                    ejbTypes.addAll(asList(c.getInterfaces()));
+                    ejbTypes.addAll(parentInterfaces(c));
                 }
             }
 
             final List<Class> clRemote = beanContext.getBusinessRemoteInterfaces();
             if (clRemote != null && !clRemote.isEmpty()) {
                 for (final Class<?> c : clRemote) {
-                    ejbTypes.add(c);
+                    ejbTypes.add(c); // parentInterfaces(c), but is it useful in practise?
                 }
             }
 
-            if (!ejbTypes.contains(Serializable.class)) {
-                ejbTypes.add(Serializable.class);
-            }
-
             ejbTypes.add(Object.class);
+        }
+
+        private static Collection<Class<?>> parentInterfaces(final Class<?> c) {
+            final Collection<Class<?>> set = new HashSet<>();
+            set.add(c);
+            for (final Class<?> parent : c.getInterfaces()) {
+                set.addAll(parentInterfaces(parent));
+            }
+            return set;
         }
 
         private static void addApiTypes(final Collection<Type> clazzes, final Class<?> beanClass) {

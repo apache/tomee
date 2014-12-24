@@ -29,6 +29,7 @@ import org.apache.webbeans.component.OwbBean;
 import org.apache.webbeans.component.ProducerFieldBean;
 import org.apache.webbeans.component.ProducerMethodBean;
 import org.apache.webbeans.component.WebBeansType;
+import org.apache.webbeans.component.creation.BeanAttributesBuilder;
 import org.apache.webbeans.component.creation.ObserverMethodsBuilder;
 import org.apache.webbeans.component.creation.ProducerFieldBeansBuilder;
 import org.apache.webbeans.component.creation.ProducerMethodBeansBuilder;
@@ -116,6 +117,13 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
         if (beans != null) {
             this.beans.clear();
         }
+    }
+
+    public <T> BeanAttributes<T> createBeanAttributes(final AnnotatedType<T> type) {
+        return new CdiEjbBean.EJBBeanAttributesImpl(
+                findBeanContext(webBeansContext, type.getJavaClass()),
+                BeanAttributesBuilder.forContext(webBeansContext).newBeanAttibutes(type).build(),
+                false);
     }
 
     public void configureDeployments(final List<BeanContext> ejbDeployments) {

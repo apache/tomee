@@ -20,9 +20,9 @@
     <!-- runner helping properties
     -Dopenejb.cdi.filter.classloader=false -Dorg.apache.openejb.assembler.classic.WebAppBuilder=org.apache.openejb.web.LightweightWebAppBuilder -Dopenejb.cdi.debug=true -Dopenejb.http.mock-request=true
     -->
-    <classes><!--  org.jboss.cdi.tck.tests.context.application.ApplicationContextTest, org.jboss.cdi.tck.tests.extensions.beanManager.beanAttributes.CreateBeanAttributesTest, org.jboss.cdi.tck.tests.event.fires.FireEventTest, org.jboss.cdi.tck.tests.extensions.lifecycle.processInjectionPoint.ProcessInjectionPointFiredTest -->
+    <classes><!--  org.jboss.cdi.tck.tests.event.fires.FireEventTest, org.jboss.cdi.tck.tests.extensions.lifecycle.processInjectionPoint.ProcessInjectionPointFiredTest -->
       <!--<class name="org.jboss.cdi.tck.tests.context.application.async.ApplicationContextAsyncListenerTest" />-->
-      <class name="org.jboss.cdi.tck.tests.context.conversation.ClientConversationContextTest" />
+      <class name="org.jboss.cdi.tck.tests.extensions.beanManager.beanAttributes.CreateBeanAttributesTest" />
     </classes>
   </test>
 </suite>
