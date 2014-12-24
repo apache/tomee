@@ -19,10 +19,12 @@ package org.apache.openejb.config.rules;
 
 import org.apache.openejb.config.EjbModule;
 
+import javax.enterprise.inject.Default;
 import javax.enterprise.inject.spi.DefinitionException;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServlet;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
 /**
@@ -42,7 +44,8 @@ public class CheckInjectionPointUsage extends ValidationBase {
                     continue;
                 }
 
-                if (field.getAnnotations().length == 1) {
+                final Annotation[] annotations = field.getAnnotations();
+                if (annotations.length == 1 || (annotations.length == 2 && field.getAnnotation(Default.class) != null)) {
                     throw new DefinitionException("Can't inject InjectionPoint in " + field.getDeclaringClass());
                 } // else we should check is there is no other qualifier than @Default but too early
             }

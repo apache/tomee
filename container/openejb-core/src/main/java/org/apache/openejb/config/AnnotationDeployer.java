@@ -187,7 +187,6 @@ import javax.ejb.TransactionManagementType;
 import javax.enterprise.context.NormalScope;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.Stereotype;
-import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.DefinitionException;
 import javax.enterprise.inject.spi.Extension;
 import javax.inject.Scope;

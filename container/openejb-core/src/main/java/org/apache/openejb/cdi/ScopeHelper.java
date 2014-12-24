@@ -19,11 +19,9 @@ package org.apache.openejb.cdi;
 
 import org.apache.webbeans.spi.ContextsService;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
-import javax.inject.Singleton;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 

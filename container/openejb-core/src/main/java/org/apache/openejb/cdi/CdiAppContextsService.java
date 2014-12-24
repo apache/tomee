@@ -49,11 +49,9 @@ import javax.enterprise.context.SessionScoped;
 import javax.enterprise.context.spi.Context;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Singleton;
-import javax.servlet.ServletRequest;
 import javax.servlet.ServletRequestEvent;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionEvent;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -257,7 +255,9 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             final HttpServletRequest request = (HttpServletRequest) event.getServletRequest();
             ((ServletRequestContext) rq).setServletRequest(request);
 
-            webBeansContext.getBeanManagerImpl().fireEvent(request, InitializedLiteral.REQUEST);
+            if (request != null) {
+                webBeansContext.getBeanManagerImpl().fireEvent(request, InitializedLiteral.REQUEST);
+            }
 
             if (request != null) {
                 //Re-initialize thread local for session
@@ -283,7 +283,10 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
 
         //Destroy context
         if (context != null) {
-            webBeansContext.getBeanManagerImpl().fireEvent(ServletRequestContext.class.cast(context).getServletRequest(), DestroyedLiteral.REQUEST);
+            final HttpServletRequest servletRequest = ServletRequestContext.class.cast(context).getServletRequest();
+            if (servletRequest != null) {
+                webBeansContext.getBeanManagerImpl().fireEvent(servletRequest, DestroyedLiteral.REQUEST);
+            }
             context.destroy();
         }
 

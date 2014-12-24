@@ -19,7 +19,6 @@ package org.apache.openejb.cdi;
 
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.assembler.classic.ProxyInterfaceResolver;
-import org.apache.webbeans.component.creation.BeanAttributesBuilder;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.ejb.common.component.EjbBeanBuilder;
 
