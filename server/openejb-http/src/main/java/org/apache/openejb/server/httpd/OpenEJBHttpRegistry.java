@@ -26,6 +26,7 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.WebBeansContext;
 
+import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -111,31 +112,42 @@ public class OpenEJBHttpRegistry {
             try {
                 if (request instanceof HttpRequestImpl) {
                     wbc = findWebContext(request.getURI().getPath());
-                    initCdi(wbc, (HttpRequestImpl) request).init();
+                    initCdi(wbc, HttpRequestImpl.class.cast(request)).init();
                 }
 
                 delegate.onMessage(request, response);
             } finally {
+                final OutputStream out = OutputStream.class.cast(request.getAttribute("openejb_http_output"));
                 if (wbc != null) {
-                    ((HttpRequestImpl) request).destroy();
+                    HttpRequestImpl.class.cast(request).destroy();
+                }
+                if (out != null && HttpResponseImpl.class.isInstance(response)) { // otherwise it got flushed after which means we can lock if @Observes @Destroyed(RequestScoped.class) rely on local http
+                    HttpResponseImpl.class.cast(response).eagerFlush(out);
                 }
 
                 thread.setContextClassLoader(oldCl);
             }
         }
 
-        private static WebBeansContext findWebContext(final String path) { // poor impl, would need registration of app etc to be better
+        private static WebBeansContext findWebContext(final String path) { // TODO: this is a poor impl, would need registration of app etc to be better and have a rooter
             for (final AppContext app : SystemInstance.get().getComponent(ContainerSystem.class).getAppContexts()) {
                 for (final WebContext web : app.getWebContexts()) {
                     if (path.startsWith(web.getContextRoot()) || path.startsWith('/' + web.getContextRoot())) {
-                        if (web.getWebBeansContext() != null) {
-                            return web.getWebBeansContext();
+                        // classloader will be correctly resetted anyway to fine o set it here
+                        if (web.getClassLoader() != null) {
+                            Thread.currentThread().setContextClassLoader(web.getClassLoader());
+                        } else if (app.getClassLoader() != null) {
+                            Thread.currentThread().setContextClassLoader(app.getClassLoader()); // will be resetted anyway to fine o set it here
                         }
-                        return app.getWebBeansContext();
+                        return web.getWebBeansContext(); // if null returns app one
                     }
                 }
             }
-            return WebBeansContext.currentInstance();
+            try { // surely an issue or something just tolerated for fake webapps
+                return WebBeansContext.currentInstance();
+            } catch (final IllegalStateException ise) {
+                return null;
+            }
         }
 
         private static HttpRequestImpl initCdi(final WebBeansContext context, final HttpRequestImpl request) {

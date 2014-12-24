@@ -180,6 +180,7 @@ import javax.resource.spi.ResourceAdapter;
 import javax.resource.spi.ResourceAdapterInternalException;
 import javax.resource.spi.XATerminator;
 import javax.resource.spi.work.WorkManager;
+import javax.servlet.ServletContext;
 import javax.sql.DataSource;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
@@ -1739,7 +1740,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     final ClassLoader old = Thread.currentThread().getContextClassLoader();
                     Thread.currentThread().setContextClassLoader(classLoader);
                     try {
-                        webBeansContext.getService(ContainerLifecycle.class).stopApplication(null);
+                        final ServletContext context = appContext.isStandaloneModule() && appContext.getWebContexts().iterator().hasNext() ?
+                                appContext.getWebContexts().iterator().next().getServletContext() : null;
+                        webBeansContext.getService(ContainerLifecycle.class).stopApplication(context);
                     } finally {
                         Thread.currentThread().setContextClassLoader(old);
                     }

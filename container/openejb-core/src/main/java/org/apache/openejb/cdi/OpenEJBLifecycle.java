@@ -284,14 +284,18 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
                 service.shutdownNow();
             }
 
-            //Fire shut down
+            // Fire shut down
             if (WebappBeanManager.class.isInstance(beanManager)) {
                 WebappBeanManager.class.cast(beanManager).beforeStop();
             }
+
+            if (CdiAppContextsService.class.isInstance(contextsService)) {
+                CdiAppContextsService.class.cast(contextsService).beforeStop(endObject);
+            }
             this.beanManager.fireEvent(new BeforeShutdownImpl(), true);
 
-            //Destroys context
-            this.contextsService.destroy(null);
+            // Destroys context before BeforeShutdown event
+            this.contextsService.destroy(endObject);
 
             //Unbind BeanManager
             if (jndiService != null) {

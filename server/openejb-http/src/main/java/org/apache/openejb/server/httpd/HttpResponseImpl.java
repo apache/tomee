@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.server.httpd;
 
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.OpenEjbVersion;
 
 import javax.servlet.ServletOutputStream;
@@ -42,6 +44,7 @@ import java.util.StringTokenizer;
  * This class takes care of HTTP Responses.  It sends data back to the browser.
  */
 public class HttpResponseImpl implements HttpResponse {
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_SERVER, HttpResponseImpl.class.getName());
 
     /**
      * Response string
@@ -95,8 +98,19 @@ public class HttpResponseImpl implements HttpResponse {
     private String encoding = "UTF-8";
     private Locale locale = Locale.getDefault();
 
+    private boolean eagerFlush = false;
+
     protected void setRequest(HttpRequestImpl request) {
         this.request = request;
+    }
+
+    public boolean isEagerlyFlushed() {
+        return eagerFlush;
+    }
+
+    public void eagerFlush(final OutputStream out) throws IOException {
+        eagerFlush = true;
+        writeMessage(out, false);
     }
 
     /**
@@ -409,14 +423,9 @@ public class HttpResponseImpl implements HttpResponse {
      * @throws java.io.IOException if an exception is thrown
      */
     protected void writeMessage(OutputStream output, boolean indent) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        DataOutputStream out = new DataOutputStream(baos);
-        //DataOutput log = new DataOutputStream(System.out);
-        //System.out.println("\nRESPONSE");
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final DataOutputStream out = new DataOutputStream(baos);
         closeMessage();
-//        writeResponseLine(log);
-//        writeHeaders(log);
-//        writeBody(log);
         writeResponseLine(out);
         writeHeaders(out);
         writeBody(out, indent);
@@ -584,7 +593,11 @@ public class HttpResponseImpl implements HttpResponse {
         body.println("<body>");
         body.println("<h3>Internal Server Error</h3>");
         body.println("<br><br>");
-        System.out.println("ERROR");
+
+        if (LOGGER.isDebugEnabled()) { // this is not an error, don't log it by default
+            LOGGER.error(String.valueOf(t), t);
+        }
+
         if (message != null) {
             StringTokenizer msg = new StringTokenizer(message, "\n\r");
 

@@ -18,6 +18,7 @@ package org.apache.tomee.catalina.cdi;
 
 import org.apache.catalina.session.StandardSession;
 import org.apache.catalina.session.StandardSessionFacade;
+import org.apache.openejb.cdi.CdiAppContextsService;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.reflection.Reflections;
 import org.apache.webbeans.context.SessionContext;
@@ -34,18 +35,17 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-public class SessionContextBackedByHttpSession extends SessionContext {
+public class SessionContextBackedByHttpSession extends CdiAppContextsService.HttpSessionContextSessionAware {
     private static final String WRAPPER = SystemInstance.get().getProperty("tomee.session-context.wrapper", "direct");
 
-    private HttpSession session;
-
     public SessionContextBackedByHttpSession(final HttpSession session) {
-        this.session = session;
+        super(session);
         setComponentSessionInstanceMap(); // override default map (set in super())
     }
 
     @SuppressWarnings("unchecked")
     public void setComponentSessionInstanceMap() {
+        HttpSession session = getSession();
         if (session == null) {
             super.setComponentInstanceMap();
             return;
@@ -85,10 +85,6 @@ public class SessionContextBackedByHttpSession extends SessionContext {
             return id;
         }
         return key.toString(); // shouldn't occur
-    }
-
-    public HttpSession getSession() {
-        return session;
     }
 
     private static class DirectSessionMap implements ConcurrentMap<Contextual<?>, BeanInstanceBag<?>> {

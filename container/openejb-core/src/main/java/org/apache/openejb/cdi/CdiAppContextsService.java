@@ -56,12 +56,13 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
 public class CdiAppContextsService extends AbstractContextsService implements ContextsService {
 
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB.createChild("cdi"), CdiAppContextsService.class);
 
-    private final ThreadLocal<RequestContext> requestContext = new ThreadLocal<RequestContext>();
+    private final ThreadLocal<ServletRequestContext> requestContext = new ThreadLocal<ServletRequestContext>();
 
     private final ThreadLocal<SessionContext> sessionContext = new ThreadLocal<SessionContext>();
     private final UpdatableSessionContextManager sessionCtxManager = new UpdatableSessionContextManager();
@@ -79,6 +80,8 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
 
     private final WebBeansContext webBeansContext;
 
+    private final ConversationService conversationService;
+
     private static final ThreadLocal<Collection<Runnable>> endRequestRunnables = new ThreadLocal<Collection<Runnable>>() {
         @Override
         protected Collection<Runnable> initialValue() {
@@ -87,8 +90,8 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     };
 
 
-    public CdiAppContextsService() {
-        this(WebBeansContext.currentInstance(), WebBeansContext.currentInstance().getOpenWebBeansConfiguration().supportsConversation());
+    public CdiAppContextsService(final WebBeansContext wbc) {
+        this(wbc, wbc.getOpenWebBeansConfiguration().supportsConversation());
     }
 
     public CdiAppContextsService(final WebBeansContext wbc, final boolean supportsConversation) {
@@ -100,8 +103,14 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
 
         dependentContext.setActive(true);
         if (supportsConversation) {
-            conversationContext = new ThreadLocal<ConversationContext>();
+            conversationService = webBeansContext.getService(ConversationService.class);
+            if (conversationService == null) {
+                conversationContext = null;
+            } else {
+                conversationContext = new ThreadLocal<ConversationContext>();
+            }
         } else {
+            conversationService = null;
             conversationContext = null;
         }
         applicationContext.setActive(true);
@@ -132,6 +141,28 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         startContext(Singleton.class, initializeObject);
     }
 
+    public void beforeStop(final Object destroyObject) {
+        {   // trigger @PreDestroy mainly but keep it active until destroy(xxx)
+            applicationContext.destroy();
+            webBeansContext.getBeanManagerImpl().fireEvent(destroyObject != null ? destroyObject : applicationContext, DestroyedLiteral.APP);
+            applicationContext.setActive(true);
+
+            singletonContext.destroy();
+            singletonContext.setActive(true);
+        }
+
+        for (final Map.Entry<Conversation, ConversationContext> conversation : webBeansContext.getConversationManager().getAllConversationContexts().entrySet()) {
+            conversation.getValue().destroy();
+            webBeansContext.getBeanManagerImpl().fireEvent(conversation.getKey().getId(), DestroyedLiteral.CONVERSATION);
+        }
+        for (final SessionContext sc : sessionCtxManager.getContextById().values()) {
+            sc.destroy();
+            final Object event = HttpSessionContextSessionAware.class.isInstance(sc) ? HttpSessionContextSessionAware.class.cast(sc).getSession() : sc;
+            webBeansContext.getBeanManagerImpl().fireEvent(event, DestroyedLiteral.SESSION);
+        }
+        sessionCtxManager.getContextById().clear();
+    }
+
     public void destroy(final Object destroyObject) {
         //Destroy application context
         endContext(ApplicationScoped.class, destroyObject);
@@ -158,7 +189,6 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
 
     @Override
     public void endContext(final Class<? extends Annotation> scopeType, final Object endParameters) {
-
         if (supportsContext(scopeType)) {
             if (scopeType.equals(RequestScoped.class)) {
                 destroyRequestContext();
@@ -171,7 +201,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             } else if (scopeType.equals(Singleton.class)) {
                 destroySingletonContext();
             } else if (supportsConversation() && scopeType.equals(ConversationScoped.class)) {
-                destroyConversationContext();
+                destroyConversationContext(endParameters);
             } else {
                 if (logger.isWarningEnabled()) {
                     logger.warning("CDI-OpenWebBeans container in OpenEJB does not support context scope "
@@ -186,13 +216,13 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     @Override
     public Context getCurrentContext(final Class<? extends Annotation> scopeType) {
         if (scopeType.equals(RequestScoped.class)) {
-            return getRequestContext();
+            return getRequestContext(true);
         } else if (scopeType.equals(SessionScoped.class)) {
-            return getSessionContext();
+            return getSessionContext(true);
         } else if (scopeType.equals(ApplicationScoped.class)) {
             return getApplicationContext();
         } else if (supportsConversation() && scopeType.equals(ConversationScoped.class)) {
-            return getConversationContext();
+            return getConversationContext(true);
         } else if (scopeType.equals(Dependent.class)) {
             return dependentContext;
         } else if (scopeType.equals(Singleton.class)) {
@@ -210,7 +240,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             } else if (scopeType.equals(SessionScoped.class)) {
                 initSessionContext((HttpSession) startParameter);
             } else if (scopeType.equals(ApplicationScoped.class)) {
-                initApplicationContext();
+                initApplicationContext(startParameter);
             } else if (scopeType.equals(Dependent.class)) {
                 initSingletonContext();
             } else if (scopeType.equals(Singleton.class)) { //NOPMD
@@ -231,8 +261,12 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         singletonContext.setActive(true);
     }
 
-    private void initApplicationContext() { // in case contexts are stop/start
-        applicationContext.setActive(true);
+    private void initApplicationContext(final Object init) { // in case contexts are stop/start
+        final boolean alreadyStarted = applicationContext.isActive();
+        if (!alreadyStarted) {
+            applicationContext.setActive(true);
+            webBeansContext.getBeanManagerImpl().fireEvent(init != null ? init : applicationContext, InitializedLiteral.APP);
+        }
     }
 
     @Override
@@ -247,7 +281,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     }
 
     private void initRequestContext(final ServletRequestEvent event) {
-        final RequestContext rq = new ServletRequestContext();
+        final ServletRequestContext rq = new ServletRequestContext();
         rq.setActive(true);
 
         requestContext.set(rq);// set thread local
@@ -279,7 +313,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         }
 
         //Get context
-        final RequestContext context = getRequestContext();
+        final RequestContext context = getRequestContext(false);
 
         //Destroy context
         if (context != null) {
@@ -303,11 +337,11 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     }
 
     private void cleanupConversation() {
-        if (webBeansContext.getService(ConversationService.class) == null) {
+        if (conversationService == null) {
             return;
         }
 
-        final ConversationContext conversationContext = getConversationContext();
+        final ConversationContext conversationContext = getConversationContext(false);
         if (conversationContext == null) {
             return;
         }
@@ -371,7 +405,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
                 logger.error("Can't instantiate " + classname + ", using default session context", e);
             }
         }
-        return new SessionContext();
+        return new HttpSessionContextSessionAware(session);
     }
 
     /**
@@ -382,11 +416,9 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
      */
     private void destroySessionContext(final HttpSession session) {
         if (session != null) {
-            //Get current session context
             final SessionContext context = sessionContext.get();
 
-            //Destroy context
-            if (context != null) {
+            if (context != null && context.isActive()) {
                 context.destroy();
                 pushRequestReleasable(new Runnable() { // call it at the end of the request
                     @Override
@@ -421,7 +453,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
      * @param context context
      */
     private void initConversationContext(final ConversationContext context) {
-        if (webBeansContext.getService(ConversationService.class) == null) {
+        if (conversationService == null) {
             return;
         }
 
@@ -431,6 +463,10 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
                 newContext.setActive(true);
 
                 conversationContext.set(newContext);
+                final ServletRequestContext servletRequestContext = getRequestContext(true);
+                webBeansContext.getBeanManagerImpl().fireEvent(
+                        servletRequestContext != null && servletRequestContext.getServletRequest() != null ?
+                                servletRequestContext.getServletRequest() : context, InitializedLiteral.CONVERSATION);
             } else {
                 conversationContext.get().setActive(true);
             }
@@ -444,36 +480,39 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     /**
      * Destroy conversation context.
      */
-    private void destroyConversationContext() {
-        if (webBeansContext.getService(ConversationService.class) == null) {
+    private void destroyConversationContext(final Object destroy) {
+        if (conversationService == null) {
             return;
         }
 
-        final ConversationContext context = getConversationContext();
+        final ConversationContext context = getConversationContext(false);
 
         if (context != null) {
             context.destroy();
+            final ServletRequestContext servletRequestContext = getRequestContext(false);
+            final Object destroyObject = servletRequestContext != null && servletRequestContext.getServletRequest() != null ?
+                    servletRequestContext.getServletRequest() : destroy;
+            webBeansContext.getBeanManagerImpl().fireEvent(
+                    destroyObject == null ? context : destroyObject, DestroyedLiteral.CONVERSATION);
         }
 
         if (null != conversationContext) {
-            conversationContext.set(null);
             conversationContext.remove();
         }
     }
 
 
-    private RequestContext getRequestContext() {
-        RequestContext context = requestContext.get();
-        if (context == null) {
-            context = new RequestContext();
-            context.setActive(true);
+    private ServletRequestContext getRequestContext(final boolean create) {
+        ServletRequestContext context = requestContext.get();
+        if (context == null && create) {
+            initRequestContext(null);
         }
         return context;
     }
 
-    private Context getSessionContext() {
+    private Context getSessionContext(final boolean create) {
         SessionContext context = sessionContext.get();
-        if (context == null || !context.isActive()) {
+        if ((context == null || !context.isActive()) && create) {
             lazyStartSessionContext();
             context = sessionContext.get();
             if (context == null) {
@@ -508,8 +547,14 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
      *
      * @return conversation context
      */
-    private ConversationContext getConversationContext() {
-        return conversationContext.get();
+    private ConversationContext getConversationContext(final boolean createIfMissing) {
+        ConversationContext context = conversationContext.get();
+        if (context == null && createIfMissing) {
+            getRequestContext(true); // needs to exist for Conversation scope
+            initConversationContext(null);
+            return getConversationContext(false);
+        }
+        return context;
     }
 
     private Context lazyStartSessionContext() {
@@ -576,11 +621,11 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     }
 
     public static class State {
-        private final RequestContext request;
+        private final ServletRequestContext request;
         private final SessionContext session;
         private final ConversationContext conversation;
 
-        public State(final RequestContext request, final SessionContext session, final ConversationContext conversation) {
+        public State(final ServletRequestContext request, final SessionContext session, final ConversationContext conversation) {
             this.request = request;
             this.session = session;
             this.conversation = conversation;
@@ -588,6 +633,8 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     }
 
     public static class InitializedLiteral extends AnnotationLiteral<Initialized> implements Initialized {
+        private static final InitializedLiteral APP = new InitializedLiteral(ApplicationScoped.class);
+        private static final InitializedLiteral CONVERSATION = new InitializedLiteral(ConversationScoped.class);
         private static final InitializedLiteral REQUEST = new InitializedLiteral(RequestScoped.class);
         private static final InitializedLiteral SESSION = new InitializedLiteral(SessionScoped.class);
 
@@ -603,6 +650,8 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     }
 
     public static class DestroyedLiteral extends AnnotationLiteral<Destroyed> implements Destroyed {
+        private static final DestroyedLiteral APP = new DestroyedLiteral(ApplicationScoped.class);
+        private static final DestroyedLiteral CONVERSATION = new DestroyedLiteral(ConversationScoped.class);
         private static final DestroyedLiteral REQUEST = new DestroyedLiteral(RequestScoped.class);
         private static final DestroyedLiteral SESSION = new DestroyedLiteral(SessionScoped.class);
 
@@ -614,6 +663,18 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
 
         public Class<? extends Annotation> value() {
             return value;
+        }
+    }
+
+    public static class HttpSessionContextSessionAware extends SessionContext {
+        private final HttpSession session;
+
+        public HttpSessionContextSessionAware(final HttpSession session) {
+            this.session = session;
+        }
+
+        public HttpSession getSession() {
+            return session;
         }
     }
 }

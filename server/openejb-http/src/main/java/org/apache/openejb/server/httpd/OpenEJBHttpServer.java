@@ -192,15 +192,16 @@ public class OpenEJBHttpServer implements HttpServer {
     private void processRequest(final URI socketURI, final InputStream in, final OutputStream out) {
         HttpResponseImpl response = null;
         try {
-            response = process(socketURI, in);
+            response = process(socketURI, in, out);
 
         } catch (Throwable t) {
             response = HttpResponseImpl.createError(t.getMessage(), t);
         } finally {
             try {
                 if (response != null) {
-                    response.writeMessage(out, false);
-
+                    if (!response.isEagerlyFlushed()) {
+                        response.writeMessage(out, false);
+                    }
                     if (print.size() > 0 && print.contains(Output.RESPONSE)) {
                         response.writeMessage(new LoggerOutputStream(log, "debug"), indent);
                     }
@@ -220,7 +221,7 @@ public class OpenEJBHttpServer implements HttpServer {
         }
     }
 
-    private HttpResponseImpl process(final URI socketURI, final InputStream in) throws OpenEJBException {
+    private HttpResponseImpl process(final URI socketURI, final InputStream in, final OutputStream out) throws OpenEJBException {
         final HttpRequestImpl req = new HttpRequestImpl(socketURI);
         final HttpResponseImpl res = new HttpResponseImpl();
 
@@ -259,6 +260,7 @@ public class OpenEJBHttpServer implements HttpServer {
         }
 
         try {
+            req.setAttribute("openejb_http_output", out);
             listener.onMessage(req, res);
         } catch (Throwable t) {
             throw new OpenEJBException("Error occurred while executing the module " + location + "\n" + t.getClass().getName() + ":\n" + t.getMessage(), t);

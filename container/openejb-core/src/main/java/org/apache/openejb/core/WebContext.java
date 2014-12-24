@@ -33,6 +33,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.Filter;
 import javax.servlet.Servlet;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletContextAttributeListener;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletRequestAttributeListener;
@@ -56,6 +57,7 @@ public class WebContext {
     private String contextRoot;
     private String host;
     private Context initialContext;
+    private ServletContext servletContext;
     private final Map<Class<?>, ConstructorInjectionBean<Object>> constructorInjectionBeanCache = new ConcurrentHashMap<Class<?>, ConstructorInjectionBean<Object>>();
 
     public Context getInitialContext() {
@@ -68,6 +70,14 @@ public class WebContext {
             throw new IllegalStateException(e);
         }
         return initialContext;
+    }
+
+    public ServletContext getServletContext() {
+        return servletContext;
+    }
+
+    public void setServletContext(final ServletContext servletContext) {
+        this.servletContext = servletContext;
     }
 
     public void setHost(final String host) {

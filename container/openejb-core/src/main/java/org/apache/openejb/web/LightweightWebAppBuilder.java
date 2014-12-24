@@ -140,6 +140,7 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
             webContext.setHost(webAppInfo.host);
             webContext.getInjections().addAll(injections);
             webContext.setInitialContext(new EmbeddedInitialContext(webContext.getJndiEnc(), webContext.getBindings()));
+            webContext.setServletContext(SystemInstance.get().getComponent(ServletContext.class));
 
             appContext.getWebContexts().add(webContext);
             cs.addWebContext(webContext);

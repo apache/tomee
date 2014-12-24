@@ -1276,6 +1276,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
                 // add WebDeploymentInfo to ContainerSystem
                 final WebContext webContext = new WebContext(appContext);
+                webContext.setServletContext(standardContext.getServletContext());
                 webContext.setJndiEnc(new InitialContext());
                 webContext.setClassLoader(classLoader);
                 webContext.setId(webAppInfo.moduleId);
