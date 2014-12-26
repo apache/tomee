@@ -503,7 +503,9 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
         }
 
         public T createNewPojo(final CreationalContext<T> creationalContext) {
-            return (T) super.newInstance(CreationalContextImpl.class.cast(creationalContext));
+            final CreationalContextImpl<T> ccImpl = CreationalContextImpl.class.cast(creationalContext);
+            // super.produce(cc) will not work since we need the unproxied instance - decorator case
+            return (T) super.produce(super.createInterceptorInstances(ccImpl), ccImpl);
         }
 
         private static boolean isDynamicBean(final Bean<?> bean) {
