@@ -69,6 +69,9 @@ import javax.enterprise.inject.spi.PassivationCapable;
 import javax.enterprise.inject.spi.Producer;
 import javax.enterprise.inject.spi.SessionBeanType;
 import javax.inject.Provider;
+import javax.servlet.Filter;
+import javax.servlet.Servlet;
+import javax.servlet.ServletContextListener;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
@@ -104,6 +107,11 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
         } else { // share cache of proxies between the whole app otherwise hard to share an EJB between a webapp and the lib part of the app
             cacheProxies = CdiPlugin.class.cast(WebappWebBeansContext.class.cast(webBeansContext).getParent().getPluginLoader().getEjbPlugin()).cacheProxies;
         }
+    }
+
+    @Override
+    public boolean isEEComponent(final Class<?> impl) {
+        return Servlet.class.isAssignableFrom(impl) || Filter.class.isAssignableFrom(impl) || ServletContextListener.class.isAssignableFrom(impl);
     }
 
     public void setClassLoader(final ClassLoader classLoader) {

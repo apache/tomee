@@ -59,7 +59,7 @@ public class OptimizedLoaderService implements LoaderService {
     public <T> List<T> load(final Class<T> serviceType, final ClassLoader classLoader) {
         // ServiceLoader is expensive (can take up to a half second).  This is an optimization
         if (OpenWebBeansPlugin.class.equals(serviceType)) {
-            return loadWebBeansPlugins(classLoader);
+            return (List<T>) loadWebBeansPlugins(classLoader);
         }
 
         // As far as we know, this only is reached for CDI Extension discovery
@@ -114,42 +114,43 @@ public class OptimizedLoaderService implements LoaderService {
         return false;
     }
 
-    private <T> List<T> loadWebBeansPlugins(final ClassLoader loader) {
+    private List<? extends OpenWebBeansPlugin> loadWebBeansPlugins(final ClassLoader loader) {
         final String[] knownPlugins = {
-            "org.apache.openejb.cdi.CdiPlugin",
             "org.apache.geronimo.openejb.cdi.GeronimoWebBeansPlugin"
         };
         final String[] loaderAwareKnownPlugins = {
             "org.apache.webbeans.jsf.plugin.OpenWebBeansJsfPlugin"
         };
 
-        final List<T> list = new ArrayList<T>();
+        final List<OpenWebBeansPlugin> list = new ArrayList<>();
+        list.add(new CdiPlugin());
         for (final String name : knownPlugins) {
-            final Class<T> clazz;
+            final Class<?> clazz;
             try {
-                clazz = (Class<T>) loader.loadClass(name);
+                clazz = loader.loadClass(name);
             } catch (final ClassNotFoundException e) {
                 // ignore
                 continue;
             }
 
             try {
-                list.add(clazz.newInstance());
+                list.add(OpenWebBeansPlugin.class.cast(clazz.newInstance()));
             } catch (final Exception e) {
                 log.error("Unable to load OpenWebBeansPlugin: " + name);
             }
         }
         for (final String name : loaderAwareKnownPlugins) {
-            final Class<T> clazz;
+            final Class<?> clazz;
             try {
-                clazz = (Class<T>) loader.loadClass(name);
+                clazz = loader.loadClass(name);
             } catch (final ClassNotFoundException e) {
                 // ignore
                 continue;
             }
 
             try {
-                list.add((T) Proxy.newProxyInstance(loader, new Class<?>[]{OpenWebBeansPlugin.class}, new ClassLoaderAwareHandler(clazz.getSimpleName(), clazz.newInstance(), loader)));
+                list.add(OpenWebBeansPlugin.class.cast(
+                        Proxy.newProxyInstance(loader, new Class<?>[]{OpenWebBeansPlugin.class}, new ClassLoaderAwareHandler(clazz.getSimpleName(), clazz.newInstance(), loader))));
             } catch (final Exception e) {
                 log.error("Unable to load OpenWebBeansPlugin: " + name);
             }
