@@ -671,13 +671,21 @@ public class JndiBuilder {
         final AppContext application = module.getAppContext();
 
         final String appName = application.isStandaloneModule() ? "" : application.getId() + "/";
-        final String moduleName = cdi.getModuleName() + "/";
+        final String moduleName = moduleName(cdi);
         String beanName = cdi.getEjbName();
         if (intrface != null) {
             beanName = beanName + "!" + intrface.getName();
         }
 
         return "global/" + appName + moduleName + beanName;
+    }
+
+    private String moduleName(BeanContext cdi) {
+        String moduleName = cdi.getModuleName() + "/";
+        if (moduleName.startsWith("ear-scoped-cdi-beans_")) {
+            moduleName = moduleName.substring("ear-scoped-cdi-beans_".length());
+        }
+        return moduleName;
     }
 
     private void bindJava(final BeanContext cdi, final Class intrface, final Reference ref, final Bindings bindings, final EnterpriseBeanInfo beanInfo) throws NamingException {
@@ -689,7 +697,7 @@ public class JndiBuilder {
         final Context globalContext = application.getGlobalJndiContext();
 
         final String appName = application.isStandaloneModule() ? "" : application.getId() + "/";
-        String moduleName = cdi.getModuleName() + "/";
+        String moduleName = moduleName(cdi);
         if (moduleName.startsWith("/")) {
             moduleName = moduleName.substring(1);
         }

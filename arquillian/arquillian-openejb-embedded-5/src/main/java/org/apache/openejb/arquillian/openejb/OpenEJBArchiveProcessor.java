@@ -214,26 +214,14 @@ public class OpenEJBArchiveProcessor {
         }
 
         if (isEar) { // adding the test class as lib class can break test if tested against the web part of the ear
+            addTestClassAsManagedBean(javaClass, tempClassLoader, appModule);
             return appModule;
         }
 
         // add the test as a managed bean to be able to inject into it easily
         final Map<String, Object> testDD;
         if (javaClass != null) {
-            final EjbJar ejbJar = new EjbJar();
-            final OpenejbJar openejbJar = new OpenejbJar();
-            final String ejbName = appModule.getModuleId() + "_" + javaClass.getName();
-            final ManagedBean bean = ejbJar.addEnterpriseBean(new ManagedBean(ejbName, javaClass.getName(), true));
-            bean.localBean();
-            bean.setTransactionType(TransactionType.BEAN);
-            final EjbDeployment ejbDeployment = openejbJar.addEjbDeployment(bean);
-            ejbDeployment.setDeploymentId(ejbName);
-            final EjbModule e = new EjbModule(ejbJar, openejbJar);
-            e.getProperties().setProperty("openejb.cdi.activated", "false");
-            e.setBeans(new Beans());
-            e.setClassLoader(tempClassLoader);
-            appModule.getEjbModules().add(e);
-            testDD = e.getAltDDs();
+            testDD = addTestClassAsManagedBean(javaClass, tempClassLoader, appModule).getAltDDs();
         } else {
             testDD = new HashMap<>(); // ignore
         }
@@ -286,6 +274,23 @@ public class OpenEJBArchiveProcessor {
         }
 
         return appModule;
+    }
+
+    private static EjbModule addTestClassAsManagedBean(Class<?> javaClass, URLClassLoader tempClassLoader, AppModule appModule) {
+        final EjbJar ejbJar = new EjbJar();
+        final OpenejbJar openejbJar = new OpenejbJar();
+        final String ejbName = appModule.getModuleId() + "_" + javaClass.getName();
+        final ManagedBean bean = ejbJar.addEnterpriseBean(new ManagedBean(ejbName, javaClass.getName(), true));
+        bean.localBean();
+        bean.setTransactionType(TransactionType.BEAN);
+        final EjbDeployment ejbDeployment = openejbJar.addEjbDeployment(bean);
+        ejbDeployment.setDeploymentId(ejbName);
+        final EjbModule e = new EjbModule(ejbJar, openejbJar);
+        e.getProperties().setProperty("openejb.cdi.activated", "false");
+        e.setBeans(new Beans());
+        e.setClassLoader(tempClassLoader);
+        appModule.getEjbModules().add(e);
+        return e;
     }
 
     private static WebApp createWebApp(final Archive<?> archive) {
