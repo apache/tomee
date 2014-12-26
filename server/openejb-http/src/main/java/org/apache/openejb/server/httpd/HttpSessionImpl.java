@@ -25,6 +25,7 @@ import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -37,24 +38,28 @@ public class HttpSessionImpl implements HttpSession {
     private String sessionId = UUID.randomUUID().toString();
     private Map<String, Object> attributes = new HashMap<String, Object>();
     private final ConcurrentMap<String, HttpSession> mapToClean;
+    private final long created = System.currentTimeMillis();
+    private final long timeout;
+    private volatile long lastAccessed = created;
 
-    public HttpSessionImpl(final ConcurrentMap<String, HttpSession> sessions, final String contextPath) {
-        mapToClean = sessions;
+    public HttpSessionImpl(final ConcurrentMap<String, HttpSession> sessions, final String contextPath, final long timeout) {
+        this.mapToClean = sessions;
+        this.timeout = timeout;
         if (contextPath == null) {
             return;
         }
 
-        listeners = LightweightWebAppBuilderListenerExtractor.findByTypeForContext(contextPath, HttpSessionListener.class);
-        if (!listeners.isEmpty()) {
+        this.listeners = LightweightWebAppBuilderListenerExtractor.findByTypeForContext(contextPath, HttpSessionListener.class);
+        if (!this.listeners.isEmpty()) {
             final HttpSessionEvent event = new HttpSessionEvent(this);
-            for (final HttpSessionListener o : listeners) {
+            for (final HttpSessionListener o : this.listeners) {
                 HttpSessionListener.class.cast(o).sessionCreated(event);
             }
         }
     }
 
     public HttpSessionImpl() {
-        this(null, null);
+        this(null, null, 30000);
     }
 
     public void newSessionId() {
@@ -64,10 +69,15 @@ public class HttpSessionImpl implements HttpSession {
     @Override
     public void removeAttribute(String name) {
         attributes.remove(name);
+        touch();
+    }
+
+    private void touch() {
+        lastAccessed = System.currentTimeMillis();
     }
 
     @Override
-    public void removeValue(String s) {
+    public void removeValue(final String s) {
         Iterator<String> it = attributes.keySet().iterator();
         while (it.hasNext()) {
             String key = it.next();
@@ -75,6 +85,7 @@ public class HttpSessionImpl implements HttpSession {
                 attributes.remove(key);
             }
         }
+        touch();
     }
 
     @Override
@@ -82,7 +93,11 @@ public class HttpSessionImpl implements HttpSession {
         if (!listeners.isEmpty()) {
             final HttpSessionEvent event = new HttpSessionEvent(this);
             for (final HttpSessionListener o : listeners) {
-                HttpSessionListener.class.cast(o).sessionDestroyed(event);
+                try {
+                    HttpSessionListener.class.cast(o).sessionDestroyed(event);
+                } catch (final Throwable th) {
+                    // ignore, may be undeployed
+                }
             }
         }
 
@@ -99,27 +114,32 @@ public class HttpSessionImpl implements HttpSession {
 
     @Override
     public Object getAttribute(String name) {
+        touch();
         return attributes.get(name);
     }
 
     @Override
     public Object getValue(String s) {
+        touch();
         return attributes.get(s);
     }
 
     @Override
     public Enumeration<String> getAttributeNames() {
+        touch();
         return new ArrayEnumeration(new ArrayList(attributes.keySet()));
     }
 
     @Override
     public String[] getValueNames() {
+        touch();
         return attributes.keySet().toArray(new String[attributes.size()]);
     }
 
     @Override
     public void setAttribute(String name, Object value) {
         attributes.put(name, value);
+        touch();
     }
 
     @Override
@@ -129,7 +149,7 @@ public class HttpSessionImpl implements HttpSession {
 
     @Override
     public long getCreationTime() {
-        return -1;
+        return created;
     }
 
     @Override
@@ -139,11 +159,12 @@ public class HttpSessionImpl implements HttpSession {
 
     @Override
     public long getLastAccessedTime() {
-        return -1;
+        return lastAccessed;
     }
 
     @Override
     public ServletContext getServletContext() {
+        touch();
         return SystemInstance.get().getComponent(ServletContext.class);
     }
 
@@ -154,11 +175,23 @@ public class HttpSessionImpl implements HttpSession {
 
     @Override
     public int getMaxInactiveInterval() {
-        return -1;
+        touch();
+        return (int) timeout;
     }
 
     @Override
     public HttpSessionContext getSessionContext() {
-        return null;
+        touch();
+        return new HttpSessionContext() {
+            @Override
+            public javax.servlet.http.HttpSession getSession(final String sessionId) {
+                return mapToClean.get(sessionId);
+            }
+
+            @Override
+            public Enumeration<String> getIds() {
+                return Collections.enumeration(mapToClean.keySet());
+            }
+        };
     }
 }

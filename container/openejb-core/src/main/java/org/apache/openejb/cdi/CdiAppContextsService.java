@@ -156,8 +156,18 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             webBeansContext.getBeanManagerImpl().fireEvent(conversation.getKey().getId(), DestroyedLiteral.CONVERSATION);
         }
         for (final SessionContext sc : sessionCtxManager.getContextById().values()) {
-            sc.destroy();
             final Object event = HttpSessionContextSessionAware.class.isInstance(sc) ? HttpSessionContextSessionAware.class.cast(sc).getSession() : sc;
+            if (HttpSession.class.isInstance(event)) {
+                final HttpSession httpSession = HttpSession.class.cast(event);
+                initSessionContext(httpSession);
+                try {
+                    httpSession.invalidate();
+                } finally {
+                    destroySessionContext(httpSession);
+                }
+            } else {
+                sc.destroy();
+            }
             webBeansContext.getBeanManagerImpl().fireEvent(event, DestroyedLiteral.SESSION);
         }
         sessionCtxManager.getContextById().clear();

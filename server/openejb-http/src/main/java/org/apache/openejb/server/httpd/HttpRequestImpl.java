@@ -16,9 +16,13 @@
  */
 package org.apache.openejb.server.httpd;
 
+import org.apache.openejb.assembler.classic.AppInfo;
+import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.ArrayEnumeration;
+import org.apache.openejb.util.DaemonThreadFactory;
 import org.apache.openejb.util.Logger;
 
 import javax.security.auth.login.LoginException;
@@ -63,6 +67,9 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static java.util.Collections.singletonList;
 
@@ -86,6 +93,34 @@ public class HttpRequestImpl implements HttpRequest {
             return null;
         }
     };
+
+    private static volatile ScheduledExecutorService es;
+
+    public static void destroyEviction() {
+        if (es == null) {
+            return;
+        }
+        es.shutdownNow();
+        SESSIONS.clear();
+    }
+
+    public static void initEviction() {
+        if (!"true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.http.eviction", "true"))) {
+            return;
+        }
+        es = Executors.newScheduledThreadPool(1, new DaemonThreadFactory(OpenEJBAsyncContext.class));
+        es.scheduleWithFixedDelay(new Runnable() {
+            @Override
+            public void run() {
+                for (final HttpSession session : new ArrayList<>(SESSIONS.values())) {
+                    if (session.getMaxInactiveInterval() > 0 && session.getLastAccessedTime() + session.getMaxInactiveInterval() < System.currentTimeMillis()) {
+                        SESSIONS.remove(session.getId());
+                        session.invalidate();
+                    }
+                }
+            }
+        }, 1, 1, TimeUnit.MINUTES);
+    }
 
     private EndWebBeansListener end;
     private BeginWebBeansListener begin;
@@ -856,7 +891,21 @@ public class HttpRequestImpl implements HttpRequest {
 
     public HttpSession getSession(boolean create) {
         if (session == null && create) {
-            session = new HttpSessionImpl(SESSIONS, contextPath);
+            long timeout = -1; // default is infinite *here* only
+            if (contextPath != null) { // TODO: webapp should be contextual, would need to normalize jaxws, jaxrs, servlet, jsf...before but would be better
+                final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
+                if (assembler != null) {
+                    for (final AppInfo info : assembler.getDeployedApplications()) {
+                        for (final WebAppInfo webApp : info.webApps) {
+                            if (webApp.contextRoot.replace("/", "").equals(contextPath.replace("/", ""))) {
+                                timeout = webApp.sessionTimeout;
+                            }
+                        }
+                    }
+                }
+            }
+
+            session = new HttpSessionImpl(SESSIONS, contextPath, timeout);
             if (begin != null) {
                 begin.sessionCreated(new HttpSessionEvent(session));
                 session = new SessionInvalidateListener(session, end);
@@ -865,6 +914,14 @@ public class HttpRequestImpl implements HttpRequest {
             final HttpSession previous = SESSIONS.putIfAbsent(session.getId(), session);
             if (previous != null) {
                 session = previous;
+            } else {
+                if (es == null) {
+                    synchronized (HttpRequestImpl.class) {
+                        if (es == null) {
+                            initEviction();
+                        }
+                    }
+                }
             }
         }
         return session;

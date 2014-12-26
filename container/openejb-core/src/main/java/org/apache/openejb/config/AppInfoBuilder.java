@@ -63,6 +63,7 @@ import org.apache.openejb.jee.PortComponent;
 import org.apache.openejb.jee.ResourceAdapter;
 import org.apache.openejb.jee.ServiceImplBean;
 import org.apache.openejb.jee.Servlet;
+import org.apache.openejb.jee.SessionConfig;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.WebserviceDescription;
 import org.apache.openejb.jee.Webservices;
@@ -406,6 +407,16 @@ class AppInfoBuilder {
                 webAppInfo.contextRoot = appModule.getModuleId() + "/" + webModule.getContextRoot();
             } else {
                 webAppInfo.contextRoot = webModule.getContextRoot();
+            }
+
+            webAppInfo.sessionTimeout = 30;
+            if (webModule.getWebApp() != null && webModule.getWebApp().getSessionConfig() != null) {
+                for (final SessionConfig sessionConfig : webModule.getWebApp().getSessionConfig()) {
+                    if (sessionConfig.getSessionTimeout() != null) {
+                        webAppInfo.sessionTimeout = sessionConfig.getSessionTimeout();
+                        break;
+                    }
+                }
             }
 
             jndiEncInfoBuilder.build(webApp, webModule.getJarLocation(), webAppInfo.moduleId, webModule.getModuleUri(), webAppInfo.jndiEnc, webAppInfo.jndiEnc);

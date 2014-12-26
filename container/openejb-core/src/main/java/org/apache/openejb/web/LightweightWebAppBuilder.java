@@ -57,6 +57,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.annotation.WebInitParam;
+import javax.servlet.annotation.WebListener;
 import javax.servlet.annotation.WebServlet;
 import javax.ws.rs.core.Application;
 import java.io.File;
@@ -161,7 +162,7 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
                 assembler.startEjbs(true, beanContexts);
             }
 
-            final ServletContextEvent sce = new MockServletContextEvent();
+            final ServletContextEvent sce = new MockServletContextEvent(); // TODO: reuse EmbeddableServletContext
             servletContextEvents.put(webAppInfo, sce);
 
             // listeners
@@ -178,6 +179,26 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
                     listeners.put(webAppInfo, list);
                 }
                 list.add(instance);
+            }
+            for (final ClassListInfo info : webAppInfo.webAnnotatedClasses) {
+                final String url = info.name;
+                for (final String filterPath : info.list) {
+                    final Class<?> clazz = loadFromUrls(webContext.getClassLoader(), url, filterPath);
+                    final WebListener annotation = clazz.getAnnotation(WebListener.class);
+                    if (annotation != null) {
+                        final Object instance = webContext.newInstance(clazz);
+                        if (ServletContextListener.class.isInstance(instance)) {
+                            ((ServletContextListener) instance).contextInitialized(sce);
+                        }
+
+                        List<Object> list = listeners.get(webAppInfo);
+                        if (list == null) {
+                            list = new ArrayList<Object>();
+                            listeners.put(webAppInfo, list);
+                        }
+                        list.add(instance);
+                    }
+                }
             }
 
             final DeployedWebObjects deployedWebObjects = new DeployedWebObjects();

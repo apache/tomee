@@ -170,6 +170,7 @@ public class OpenEJBHttpServer implements HttpServer {
     @Override
     public void stop() throws ServiceException {
         OpenEJBAsyncContext.destroy();
+        HttpRequestImpl.destroyEviction();
     }
 
     @Override
