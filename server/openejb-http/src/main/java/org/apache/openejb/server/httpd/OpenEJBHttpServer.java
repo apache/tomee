@@ -99,6 +99,7 @@ public class OpenEJBHttpServer implements HttpServer {
          */
         OutputStream out = null;
 
+        boolean close = true;
         try {
             RequestInfos.initRequestInfo(socket);
 
@@ -107,36 +108,38 @@ public class OpenEJBHttpServer implements HttpServer {
 
             //TODO: if ssl change to https
             final URI socketURI = new URI("http://" + socket.getLocalAddress().getHostAddress() + ":" + socket.getLocalPort());
-            processRequest(socketURI, in, out);
+            close = processRequest(socket, socketURI, in, out);
 
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             log.error("Unexpected error", e);
         } finally {
-            if (out != null) {
-                try {
-                    out.flush();
-                } catch (Throwable e) {
-                    //Ignore
+            if (close) {
+                if (out != null) {
+                    try {
+                        out.flush();
+                    } catch (Throwable e) {
+                        //Ignore
+                    }
+                    try {
+                        out.close();
+                    } catch (Throwable e) {
+                        //Ignore
+                    }
                 }
-                try {
-                    out.close();
-                } catch (Throwable e) {
-                    //Ignore
-                }
-            }
 
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (Throwable e) {
-                    //Ignore
+                if (in != null) {
+                    try {
+                        in.close();
+                    } catch (Throwable e) {
+                        //Ignore
+                    }
                 }
-            }
 
-            try {
-                socket.close();
-            } catch (Throwable e) {
-                log.error("Encountered problem while closing connection with client: " + e.getMessage());
+                try {
+                    socket.close();
+                } catch (Throwable e) {
+                    log.error("Encountered problem while closing connection with client: " + e.getMessage());
+                }
             }
         }
     }
@@ -166,6 +169,7 @@ public class OpenEJBHttpServer implements HttpServer {
 
     @Override
     public void stop() throws ServiceException {
+        OpenEJBAsyncContext.destroy();
     }
 
     @Override
@@ -189,13 +193,14 @@ public class OpenEJBHttpServer implements HttpServer {
      * @param in  the input stream from the browser
      * @param out the output stream to the browser
      */
-    private void processRequest(final URI socketURI, final InputStream in, final OutputStream out) {
+    private boolean processRequest(final Socket socket, final URI socketURI, final InputStream in, final OutputStream out) {
         HttpResponseImpl response = null;
         try {
-            response = process(socketURI, in);
-
+            response = process(socket, socketURI, in);
+            return response != null;
         } catch (Throwable t) {
             response = HttpResponseImpl.createError(t.getMessage(), t);
+            return true;
         } finally {
             try {
                 if (response != null) {
@@ -219,7 +224,7 @@ public class OpenEJBHttpServer implements HttpServer {
         }
     }
 
-    private HttpResponseImpl process(final URI socketURI, final InputStream in) throws OpenEJBException {
+    private HttpResponseImpl process(final Socket socket, final URI socketURI, final InputStream in) throws OpenEJBException {
         final HttpRequestImpl req = new HttpRequestImpl(socketURI);
         final HttpResponseImpl res = new HttpResponseImpl();
 
@@ -258,12 +263,15 @@ public class OpenEJBHttpServer implements HttpServer {
         }
 
         try {
+            req.setAttribute("openejb_response", res);
+            req.setAttribute("openejb_socket", socket);
             listener.onMessage(req, res);
         } catch (Throwable t) {
             throw new OpenEJBException("Error occurred while executing the module " + location + "\n" + t.getClass().getName() + ":\n" + t.getMessage(), t);
         }
 
-        return res;
+        final boolean async = "true".equals(req.getAttribute("openejb_async"));
+        return !async ? res : null;
     }
 
     public static String reformat(final String raw) {

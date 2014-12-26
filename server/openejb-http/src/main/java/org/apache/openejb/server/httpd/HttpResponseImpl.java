@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.server.httpd;
 
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.OpenEjbVersion;
@@ -45,6 +46,7 @@ import java.util.StringTokenizer;
  */
 public class HttpResponseImpl implements HttpResponse {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_SERVER, HttpResponseImpl.class.getName());
+    private static final String DEFAULT_CONTENT_TYPE = SystemInstance.get().getProperty("openejb.http.default-content-type", "text/html");
 
     /**
      * Response string
@@ -375,7 +377,7 @@ public class HttpResponseImpl implements HttpResponse {
      * creates a new instance of HttpResponseImpl with default values
      */
     protected HttpResponseImpl() {
-        this(200, "OK", "text/html");
+        this(200, "OK", DEFAULT_CONTENT_TYPE);
     }
 
     /**

@@ -18,7 +18,11 @@
 <suite name="CDI TCK" verbose="0">
   <test name="CDI TCK">
     <!-- runner helping properties
-    -Dopenejb.cdi.filter.classloader=false -Dorg.apache.openejb.assembler.classic.WebAppBuilder=org.apache.openejb.web.LightweightWebAppBuilder -Dopenejb.cdi.debug=true -Dopenejb.http.mock-request=true
+    -Dorg.apache.openejb.assembler.classic.WebAppBuilder=org.apache.openejb.web.LightweightWebAppBuilder
+    -Dopenejb.cdi.debug=true
+    -Dopenejb.cdi.filter.classloader=false
+    -Dopenejb.http.mock-request=true
+    -Dopenejb.http.default-content-type=text/plain
     -->
     <classes>
       <class name="org.jboss.cdi.tck.tests.context.application.async.ApplicationContextAsyncListenerTest" />

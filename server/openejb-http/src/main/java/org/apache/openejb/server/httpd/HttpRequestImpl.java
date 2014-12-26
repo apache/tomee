@@ -943,7 +943,8 @@ public class HttpRequestImpl implements HttpRequest {
 
     @Override
     public AsyncContext getAsyncContext() {
-        return null;
+        setAttribute("openejb_async", "true");
+        return new OpenEJBAsyncContext(this /* TODO */, HttpResponse.class.cast(getAttribute("openejb_response")), contextPath);
     }
 
     public Object getAttribute(String name) {
@@ -971,12 +972,15 @@ public class HttpRequestImpl implements HttpRequest {
 
     @Override
     public AsyncContext startAsync() {
-        return null;
+        return startAsync(this, HttpResponse.class.cast(getAttribute("openejb_response")));
     }
 
     @Override
-    public AsyncContext startAsync(ServletRequest servletRequest, ServletResponse servletResponse) {
-        return null;
+    public AsyncContext startAsync(final ServletRequest servletRequest, final ServletResponse servletResponse) {
+        setAttribute("openejb_async", "true");
+        final OpenEJBAsyncContext asyncContext = new OpenEJBAsyncContext(this /* TODO */, servletResponse, contextPath);
+        asyncContext.internalStartAsync();
+        return asyncContext;
     }
 
     public String getParameter(String name) {

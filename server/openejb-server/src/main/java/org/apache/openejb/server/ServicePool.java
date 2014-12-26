@@ -43,6 +43,7 @@ public class ServicePool extends ServerServiceFilter {
 
     private final ThreadPoolExecutor threadPool;
     private final AtomicBoolean stop = new AtomicBoolean();
+    private boolean forceSocketClose = true;
 
     public ServicePool(final ServerService next, final Properties properties) {
         /**Defaults.
@@ -52,19 +53,27 @@ public class ServicePool extends ServerServiceFilter {
          * a slot for up to 10 seconds before rejecting the runnable.
          * If a thread remains idle for more than 1 minute then it will be removed.
          */
-        this(next, new Options(properties).get("threadsCore", 10), new Options(properties).get("threads", 150), new Options(properties).get("queue", 0), new Options(properties).get("block", true), new Options(properties).get("keepAliveTime", KEEP_ALIVE_TIME));
+        this(next, new Options(properties));
+    }
+    public ServicePool(final ServerService next, final Options properties) {
+        this(next, properties.get("threadsCore", 10), properties.get("threads", 150),
+                properties.get("queue", 0), properties.get("block", true),
+                properties.get("keepAliveTime", KEEP_ALIVE_TIME),
+                properties.get("forceSocketClose", true));
     }
 
     public ServicePool(final ServerService next, final int threads) {
-        this(next, threads, threads, 0, true, KEEP_ALIVE_TIME);
+        this(next, threads, threads, 0, true, KEEP_ALIVE_TIME, true);
     }
 
     public ServicePool(final ServerService next, final int threads, final int queue, final boolean block) {
-        this(next, threads, threads, queue, block, KEEP_ALIVE_TIME);
+        this(next, threads, threads, queue, block, KEEP_ALIVE_TIME, true);
     }
 
-    public ServicePool(final ServerService next, int threadCore, int threads, int queue, final boolean block, long keepAliveTime) {
+    public ServicePool(final ServerService next, int threadCore, int threads, int queue, final boolean block, long keepAliveTime, boolean forceClose) {
         super(next);
+
+        this.forceSocketClose = forceClose;
 
         if (keepAliveTime <= 0) {
             keepAliveTime = KEEP_ALIVE_TIME;
@@ -187,9 +196,10 @@ public class ServicePool extends ServerServiceFilter {
 
                 ClassLoader cl = null;
 
+                final Thread thread = Thread.currentThread();
                 try {
-                    cl = Thread.currentThread().getContextClassLoader();
-                    Thread.currentThread().setContextClassLoader(tccl);
+                    cl = thread.getContextClassLoader();
+                    thread.setContextClassLoader(tccl);
 
                     if (stop.get()) {
                         return;
@@ -224,7 +234,7 @@ public class ServicePool extends ServerServiceFilter {
                     //Ensure delegated socket is closed here
 
                     try {
-                        if (socket != null) {
+                        if (forceSocketClose && socket != null) {
                             socket.close();
                         }
                     } catch (Throwable t) {
@@ -234,7 +244,7 @@ public class ServicePool extends ServerServiceFilter {
                         }
                     }
 
-                    Thread.currentThread().setContextClassLoader(cl);
+                    thread.setContextClassLoader(cl);
                 }
             }
         };

@@ -64,7 +64,6 @@ public class HttpListenerRegistry implements HttpListener {
 
     @Override
     public void onMessage(final HttpRequest request, final HttpResponse response) throws Exception {
-        final HttpRequest registered = this.request.get();
         final String path;
         if (!HttpRequestImpl.class.isInstance(request)) {
             path = request.getRequestURI();
@@ -80,6 +79,7 @@ public class HttpListenerRegistry implements HttpListener {
             filters = new HashMap<>(filterRegistry);
         }
 
+        final HttpRequest registered = this.request.get();
         final boolean reset = registered == null;
         try {
             if (reset) {

@@ -189,6 +189,7 @@
             <openejb.cdi.filter.classloader>false</openejb.cdi.filter.classloader>
 
             <openejb.http.mock-request>true</openejb.http.mock-request>
+            <openejb.http.default-content-type>text/plain</openejb.http.default-content-type>
             <openejb.deploymentId.format>{appId}/{ejbJarId}/{ejbName}</openejb.deploymentId.format>
             <org.apache.openejb.assembler.classic.WebAppBuilder>org.apache.openejb.web.LightweightWebAppBuilder</org.apache.openejb.assembler.classic.WebAppBuilder>
           </systemPropertyVariables>
