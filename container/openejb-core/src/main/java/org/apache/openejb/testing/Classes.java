@@ -22,7 +22,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target(ElementType.METHOD)
+@Target({ ElementType.METHOD, ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Classes {
     Class<?>[] value() default {};
@@ -37,4 +37,5 @@ public @interface Classes {
 
     // only for WebApp ATM
     boolean innerClassesAsBean() default false;
+    String context() default "openejb";
 }

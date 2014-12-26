@@ -21,6 +21,7 @@ import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.InjectionProcessor;
 import org.apache.openejb.OpenEJB;
+import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.assembler.classic.AppInfo;
@@ -296,7 +297,7 @@ public final class ApplicationComposers {
             errors.add(new Exception(gripe));
         }
 
-        if (modules < 1) {
+        if (modules < 1 && testClass.getAnnotation(Classes.class) == null) {
             final String gripe = "Test class should have at least one @Module method";
             errors.add(new Exception(gripe));
         }
@@ -420,6 +421,14 @@ public final class ApplicationComposers {
             SystemInstance.reset();
         }
 
+        final ContainerProperties configAnnot = testClass.getAnnotation(ContainerProperties.class);
+        if (configAnnot != null) {
+            for (final ContainerProperties.Property p : configAnnot.value()) {
+                final String value = p.value();
+                configuration.put(p.name(), value.equals(ContainerProperties.Property.IGNORED) ? null : value);
+            }
+        }
+
         SystemInstance.init(configuration);
         for (final Map.Entry<Object, ClassFinder> finder : testClassFinders.entrySet()) {
             for (final Field field : finder.getValue().findAnnotatedFields(RandomPort.class)) {
@@ -428,7 +437,7 @@ public final class ApplicationComposers {
                 }
 
                 final String service = field.getAnnotation(RandomPort.class).value();
-                final String key = "http".equals(service) ? "httpejbd" : service + ".port";
+                final String key = ("http".equals(service) ? "httpejbd" : service) + ".port";
                 final String existing = SystemInstance.get().getProperty(key);
                 final int random;
                 if (existing == null) {
@@ -495,6 +504,8 @@ public final class ApplicationComposers {
 
         int webModulesNb = 0;
 
+        final Jars globalJarsAnnotation = testClass.getAnnotation(Jars.class);
+
         // Invoke the @Module producer methods to build out the AppModule
         final Map<Object, List<Method>> moduleMethods = new HashMap<>();
         findAnnotatedMethods(moduleMethods, Module.class);
@@ -525,74 +536,17 @@ public final class ApplicationComposers {
                 }
 
                 if (obj instanceof WebApp) { // will add the ejbmodule too
+                    final WebApp webApp = WebApp.class.cast(obj);
+                    if (webApp.getContextRoot() == null && classesAnnotation != null) {
+                        webApp.contextRoot(classesAnnotation.context());
+                    }
                     webModulesNb++;
-
-                    final WebApp webapp = (WebApp) obj;
-                    String root = webapp.getContextRoot();
-                    if (root == null) {
-                        root = "/openejb";
-                    }
-
-                    testBean.getEnvEntry().addAll(webapp.getEnvEntry());
-
-                    final WebModule webModule = new WebModule(webapp, root, Thread.currentThread().getContextClassLoader(), "", root);
-
-                    webModule.getAltDDs().putAll(additionalDescriptors);
-                    webModule.getAltDDs().putAll(descriptorsToMap(method.getAnnotation(Descriptors.class)));
-
-                    final EjbModule ejbModule = DeploymentLoader.addWebModule(webModule, appModule);
-                    ejbModule.getProperties().put(CdiScanner.OPENEJB_CDI_FILTER_CLASSLOADER, "false");
-                    if (cdi) {
-                        ejbModule.setBeans(beans(new Beans(), cdiDecorators, cdiInterceptors, cdiAlternatives));
-                    }
-
-                    final JaxrsProviders providers = method.getAnnotation(JaxrsProviders.class);
-                    final Class<?>[] providersClasses = providers == null ? null : providers.value();
-                    if (providers != null) {
-                        if (classes == null) {
-                            classes = providersClasses;
-                        } else {
-                            final Collection<Class<?>> newClasses = new ArrayList<>(asList(classes));
-                            newClasses.addAll(asList(providersClasses));
-                            classes = newClasses.toArray(new Class<?>[newClasses.size()]);
-                        }
-                    }
-                    if (innerClassesAsBean) {
-                        final Collection<Class<?>> inners = new LinkedList<Class<?>>();
-                        for (final Class<?> clazz : testClass.getClasses()) {
-                            final int modifiers = clazz.getModifiers();
-                            try {
-                                if (Modifier.isPublic(modifiers) && Modifier.isStatic(modifiers) && clazz.getConstructor() != null) {
-                                    inners.add(clazz);
-                                }
-                            } catch (final NoSuchMethodException nsme) {
-                                // no-op, skip it
-                            }
-                        }
-
-                        if (!inners.isEmpty()) {
-                            final Collection<Class<?>> newClasses = new ArrayList<Class<?>>(asList(classes));
-                            newClasses.addAll(inners);
-                            classes = newClasses.toArray(new Class<?>[newClasses.size()]);
-                        }
-                    }
-
-                    final IAnnotationFinder finder = finderFromClasses(webModule, classes, findFiles(jarsAnnotation));
-                    webModule.setFinder(finder);
-                    ejbModule.setFinder(webModule.getFinder());
-                    if (providersClasses != null) {
-                        OpenejbJar openejbJar = ejbModule.getOpenejbJar();
-                        if (openejbJar == null) {
-                            openejbJar = new OpenejbJar();
-                            ejbModule.setOpenejbJar(openejbJar);
-                        }
-                        final PojoDeployment pojoDeployment = new PojoDeployment();
-                        pojoDeployment.setClassName(providers.applicationName());
-                        pojoDeployment.getProperties().setProperty("cxf.jaxrs.providers", Join.join(",", providersClasses).replace("class ", ""));
-                        // it is specified so skip scanning otherwise we'll get them twice
-                        pojoDeployment.getProperties().setProperty("cxf.jaxrs.skip-provider-scanning", "true");
-                        openejbJar.getPojoDeployment().add(pojoDeployment);
-                    }
+                    addWebApp(
+                        appModule, testBean, additionalDescriptors,
+                        method.getAnnotation(Descriptors.class), method.getAnnotation(JaxrsProviders.class),
+                        webApp,
+                        globalJarsAnnotation, jarsAnnotation,
+                        classes, cdiInterceptors, cdiAlternatives, cdiDecorators, cdi, innerClassesAsBean);
                 } else if (obj instanceof WebModule) { // will add the ejbmodule too
                     webModulesNb++;
 
@@ -733,6 +687,19 @@ public final class ApplicationComposers {
                     appModule.getProperties().putAll(module.getProperties());
                 }
             }
+        }
+
+        final Classes classClasses = testClass.getAnnotation(Classes.class);
+        if (classClasses != null) {
+            final WebApp webapp = new WebApp();
+            webapp.setContextRoot(classClasses.context());
+            addWebApp(
+                    appModule, testBean, additionalDescriptors,
+                    null, null,
+                    webapp, globalJarsAnnotation, null, classClasses.value(),
+                    classClasses.cdiInterceptors(), classClasses.cdiAlternatives(), classClasses.cdiDecorators(),
+                    classClasses.cdi(), classClasses.innerClassesAsBean());
+            webModulesNb++;
         }
 
         // Application is final in AppModule, which is fine, so we'll create a new one and move everything
@@ -878,6 +845,101 @@ public final class ApplicationComposers {
 
         // switch back since next test will use another instance
         testClassFinders.put(this, testClassFinder);
+    }
+
+    private void addWebApp(final AppModule appModule, final ManagedBean testBean,
+                          final Map<String, URL> additionalDescriptors,
+                          final Descriptors descriptors,
+                          final JaxrsProviders providers,
+                          final WebApp webapp, final Jars globalJarsAnnotation,
+                          final Jars jarsAnnotation,
+                          final Class<?>[] cdiClasses,
+                          final Class<?>[] cdiInterceptors,
+                          final Class<?>[] cdiAlternatives,
+                          final Class<?>[] cdiDecorators,
+                          final boolean cdi,
+                          final boolean innerClassesAsBean) throws OpenEJBException {
+        String root = webapp.getContextRoot();
+        if (root == null) {
+            root = "/openejb";
+        }
+
+        testBean.getEnvEntry().addAll(webapp.getEnvEntry());
+
+        final WebModule webModule = new WebModule(webapp, root, Thread.currentThread().getContextClassLoader(), "", root);
+
+        webModule.getAltDDs().putAll(additionalDescriptors);
+        for (final Descriptors d : asList(testClass.getAnnotation(Descriptors.class), descriptors)) {
+            if (d != null) {
+                webModule.getAltDDs().putAll(descriptorsToMap(d));
+            }
+        }
+
+        final EjbModule ejbModule = DeploymentLoader.addWebModule(webModule, appModule);
+        ejbModule.getProperties().put(CdiScanner.OPENEJB_CDI_FILTER_CLASSLOADER, "false");
+        if (cdi) {
+            ejbModule.setBeans(beans(new Beans(), cdiDecorators, cdiInterceptors, cdiAlternatives));
+        }
+
+        Class<?>[] classes = cdiClasses;
+        final Class<?>[] providersClasses = providers == null ? null : providers.value();
+        for (final JaxrsProviders p : asList(testClass.getAnnotation(JaxrsProviders.class), providers)) {
+            if (p != null) {
+                if (classes == null) {
+                    classes = p.value();
+                } else {
+                    final Collection<Class<?>> newClasses = new ArrayList<>(asList(classes));
+                    newClasses.addAll(asList(p.value()));
+                    classes = newClasses.toArray(new Class<?>[newClasses.size()]);
+                }
+            }
+        }
+        if (innerClassesAsBean) {
+            final Collection<Class<?>> inners = new LinkedList<>();
+            for (final Class<?> clazz : testClass.getClasses()) {
+                final int modifiers = clazz.getModifiers();
+                try {
+                    if (Modifier.isPublic(modifiers) && Modifier.isStatic(modifiers) && clazz.getConstructor() != null) {
+                        inners.add(clazz);
+                    }
+                } catch (final NoSuchMethodException nsme) {
+                    // no-op, skip it
+                }
+            }
+
+            if (!inners.isEmpty()) {
+                final Collection<Class<?>> newClasses = new ArrayList<>(asList(classes));
+                newClasses.addAll(inners);
+                classes = newClasses.toArray(new Class<?>[newClasses.size()]);
+            }
+        }
+
+        Collection<File> libs = null;
+        for (final Jars jars : asList(jarsAnnotation, globalJarsAnnotation)) {
+            final Collection<File> files = findFiles(jars);
+            if (files != null) {
+                if (libs == null) {
+                    libs = new LinkedList<>();
+                }
+                libs.addAll(files);
+            }
+        }
+        final IAnnotationFinder finder = finderFromClasses(webModule, classes, libs);
+        webModule.setFinder(finder);
+        ejbModule.setFinder(webModule.getFinder());
+        if (providersClasses != null) {
+            OpenejbJar openejbJar = ejbModule.getOpenejbJar();
+            if (openejbJar == null) {
+                openejbJar = new OpenejbJar();
+                ejbModule.setOpenejbJar(openejbJar);
+            }
+            final PojoDeployment pojoDeployment = new PojoDeployment();
+            pojoDeployment.setClassName(providers.applicationName());
+            pojoDeployment.getProperties().setProperty("cxf.jaxrs.providers", Join.join(",", providersClasses).replace("class ", ""));
+            // it is specified so skip scanning otherwise we'll get them twice
+            pojoDeployment.getProperties().setProperty("cxf.jaxrs.skip-provider-scanning", "true");
+            openejbJar.getPojoDeployment().add(pojoDeployment);
+        }
     }
 
     private void enrich(final Object inputTestInstance, final BeanContext context) throws org.apache.openejb.OpenEJBException {
