@@ -23,9 +23,11 @@
     -Dopenejb.cdi.filter.classloader=false
     -Dopenejb.http.mock-request=true
     -Dopenejb.http.default-content-type=text/plain
+    -Dopenejb.deploymentId.format={appId}/{ejbJarId}/{ejbName}
     -->
     <classes>
-      <class name="org.jboss.cdi.tck.tests.context.application.ApplicationContextTest" />
+      <!--<class name="org.jboss.cdi.tck.tests.interceptors.definition.broken.interceptorForLifecycleTargetMethod.InterceptorForLifecycleTargetMethodTest" />-->
+      <class name="org.jboss.cdi.tck.interceptors.tests.contract.interceptorLifeCycle.environment.jndi.InterceptorEnvironmentJNDITest" />
     </classes>
   </test>
 </suite>

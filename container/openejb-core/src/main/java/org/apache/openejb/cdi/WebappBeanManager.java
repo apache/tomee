@@ -37,11 +37,14 @@ import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.InjectionTarget;
+import javax.enterprise.inject.spi.InterceptionType;
+import javax.enterprise.inject.spi.Interceptor;
 import javax.enterprise.inject.spi.ObserverMethod;
 import javax.enterprise.inject.spi.PassivationCapable;
 import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -67,6 +70,18 @@ public class WebappBeanManager extends BeanManagerImpl {
         if (isEvent(event)) {
             getParentBm().getNotificationManager().fireEvent(event, metadata, isLifecycleEvent);
         }
+    }
+
+    @Override
+    public List<Interceptor<?>> resolveInterceptors(final InterceptionType type, final Annotation... interceptorBindings) {
+        final List<Interceptor<?>> interceptors = super.resolveInterceptors(type, interceptorBindings);
+        final List<Interceptor<?>> parentInterceptors = getParentBm().resolveInterceptors(type, interceptorBindings);
+        for (final Interceptor<?> i : parentInterceptors) {
+            if (!interceptors.contains(i)) {
+                interceptors.add(i);
+            }
+        }
+        return interceptors;
     }
 
     @Override

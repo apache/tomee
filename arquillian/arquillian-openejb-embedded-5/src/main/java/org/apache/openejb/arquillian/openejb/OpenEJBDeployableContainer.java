@@ -248,8 +248,8 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
                         }
                         if (http == null) {
                             http = HTTPContext.class.cast(metaData.getContexts().iterator().next());
-                            http.add(new Servlet(path.substring(path.lastIndexOf('!') + 2).replace(".class", "").replace("/", "."), webapp.contextRoot));
                         }
+                        http.add(new Servlet(path.substring(path.lastIndexOf('!') + 2).replace(".class", "").replace("/", "."), webapp.contextRoot));
                     }
                 }
             }
