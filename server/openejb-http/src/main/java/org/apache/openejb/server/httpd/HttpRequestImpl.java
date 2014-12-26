@@ -30,6 +30,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletRequestEvent;
+import javax.servlet.ServletRequestListener;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
@@ -151,6 +152,7 @@ public class HttpRequestImpl implements HttpRequest {
     private ServletContext context = null;
     private String contextPath = "";
     private String servletPath = null;
+    private Collection<ServletRequestListener> listeners;
 
     public HttpRequestImpl(URI socketURI) {
         this.socketURI = socketURI;
@@ -854,7 +856,7 @@ public class HttpRequestImpl implements HttpRequest {
 
     public HttpSession getSession(boolean create) {
         if (session == null && create) {
-            session = new HttpSessionImpl(SESSIONS);
+            session = new HttpSessionImpl(SESSIONS, contextPath);
             if (begin != null) {
                 begin.sessionCreated(new HttpSessionEvent(session));
                 session = new SessionInvalidateListener(session, end);
@@ -1139,9 +1141,23 @@ public class HttpRequestImpl implements HttpRequest {
         if (begin != null) {
             begin.requestInitialized(new ServletRequestEvent(getServletContext(), this));
         }
+
+        listeners = LightweightWebAppBuilderListenerExtractor.findByTypeForContext(contextPath, ServletRequestListener.class);
+        if (!listeners.isEmpty()) {
+            final ServletRequestEvent event = new ServletRequestEvent(getServletContext(), this);
+            for (final ServletRequestListener listener : listeners) {
+                listener.requestInitialized(event);
+            }
+        }
     }
 
     public void destroy() {
+        if (listeners != null && !listeners.isEmpty()) {
+            final ServletRequestEvent event = new ServletRequestEvent(getServletContext(), this);
+            for (final ServletRequestListener listener : listeners) {
+                listener.requestDestroyed(event);
+            }
+        }
         if (end != null) {
             end.requestDestroyed(new ServletRequestEvent(getServletContext(), this));
         }

@@ -21,7 +21,10 @@ import org.apache.openejb.loader.SystemInstance;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSessionContext;
+import javax.servlet.http.HttpSessionEvent;
+import javax.servlet.http.HttpSessionListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -30,16 +33,28 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentMap;
 
 public class HttpSessionImpl implements HttpSession {
+    private Collection<HttpSessionListener> listeners;
     private String sessionId = UUID.randomUUID().toString();
     private Map<String, Object> attributes = new HashMap<String, Object>();
     private final ConcurrentMap<String, HttpSession> mapToClean;
 
-    public HttpSessionImpl(final ConcurrentMap<String, HttpSession> sessions) {
+    public HttpSessionImpl(final ConcurrentMap<String, HttpSession> sessions, final String contextPath) {
         mapToClean = sessions;
+        if (contextPath == null) {
+            return;
+        }
+
+        listeners = LightweightWebAppBuilderListenerExtractor.findByTypeForContext(contextPath, HttpSessionListener.class);
+        if (!listeners.isEmpty()) {
+            final HttpSessionEvent event = new HttpSessionEvent(this);
+            for (final HttpSessionListener o : listeners) {
+                HttpSessionListener.class.cast(o).sessionCreated(event);
+            }
+        }
     }
 
     public HttpSessionImpl() {
-        this(null);
+        this(null, null);
     }
 
     public void newSessionId() {
@@ -64,6 +79,13 @@ public class HttpSessionImpl implements HttpSession {
 
     @Override
     public void invalidate() {
+        if (!listeners.isEmpty()) {
+            final HttpSessionEvent event = new HttpSessionEvent(this);
+            for (final HttpSessionListener o : listeners) {
+                HttpSessionListener.class.cast(o).sessionDestroyed(event);
+            }
+        }
+
         attributes.clear();
         if (mapToClean != null) {
             mapToClean.remove(sessionId);

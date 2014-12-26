@@ -25,7 +25,7 @@
     -Dopenejb.http.default-content-type=text/plain
     -->
     <classes>
-      <class name="org.jboss.cdi.tck.tests.context.application.async.ApplicationContextAsyncListenerTest" />
+      <class name="org.jboss.cdi.tck.tests.context.application.ApplicationContextTest" />
     </classes>
   </test>
 </suite>

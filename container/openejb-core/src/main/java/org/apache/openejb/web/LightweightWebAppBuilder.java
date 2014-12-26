@@ -62,6 +62,7 @@ import javax.ws.rs.core.Application;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -285,6 +286,15 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
                 }
             }
         }
+    }
+
+    public Collection<Object> listenersFor(final String context) {
+        for (final Map.Entry<WebAppInfo, List<Object>> info : listeners.entrySet()) {
+            if (context != null && context.replace("/", "").equals(info.getKey().contextRoot.replace("/", ""))) {
+                return info.getValue();
+            }
+        }
+        return null;
     }
 
     private static Class<?> loadFromUrls(final ClassLoader loader, final String url, final String path) throws ClassNotFoundException {
