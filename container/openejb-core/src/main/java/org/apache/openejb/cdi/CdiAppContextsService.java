@@ -17,6 +17,8 @@
 
 package org.apache.openejb.cdi;
 
+import org.apache.openejb.core.Operation;
+import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -565,7 +567,8 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
      */
     private ConversationContext getConversationContext(final boolean createIfMissing) {
         ConversationContext context = conversationContext.get();
-        if (context == null && createIfMissing) {
+        final ThreadContext tc = ThreadContext.getThreadContext();
+        if (context == null && (createIfMissing && (tc == null || tc.getCurrentOperation() != Operation.TIMEOUT))) {
             getRequestContext(true); // needs to exist for Conversation scope
             initConversationContext(null);
             return getConversationContext(false);
