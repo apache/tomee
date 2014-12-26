@@ -246,7 +246,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             } else if (scopeType.equals(Singleton.class)) { //NOPMD
                 // Do nothing
             } else if (supportsConversation() && scopeType.equals(ConversationScoped.class)) {
-                initConversationContext((ConversationContext) startParameter);
+                initConversationContext(startParameter);
             } else {
                 if (logger.isWarningEnabled()) {
                     logger.warning("CDI-OpenWebBeans container in OpenEJB does not support context scope "
@@ -452,29 +452,35 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
      *
      * @param context context
      */
-    private void initConversationContext(final ConversationContext context) {
+    private void initConversationContext(final Object request) {
         if (conversationService == null) {
             return;
         }
 
+        final HttpServletRequest req = HttpServletRequest.class.isInstance(request) ? HttpServletRequest.class.cast(request) : null;
+        ConversationContext context = ConversationContext.class.isInstance(request) ? ConversationContext.class.cast(request) : null;
         if (context == null) {
-            if (conversationContext.get() == null) {
-                final ConversationContext newContext = new ConversationContext();
-                newContext.setActive(true);
+            final ConversationContext existingContext = conversationContext.get();
+            if (existingContext == null) {
+                context = new ConversationContext();
+                context.setActive(true);
 
-                conversationContext.set(newContext);
-                final ServletRequestContext servletRequestContext = getRequestContext(true);
-                webBeansContext.getBeanManagerImpl().fireEvent(
-                        servletRequestContext != null && servletRequestContext.getServletRequest() != null ?
-                                servletRequestContext.getServletRequest() : context, InitializedLiteral.CONVERSATION);
+                conversationContext.set(context);
+                final Object event;
+                if (req != null) {
+                    event = req;
+                } else {
+                    final ServletRequestContext servletRequestContext = getRequestContext(true);
+                    event = servletRequestContext != null && servletRequestContext.getServletRequest() != null ? servletRequestContext.getServletRequest() : context;
+                }
+                webBeansContext.getBeanManagerImpl().fireEvent(event, InitializedLiteral.CONVERSATION);
             } else {
-                conversationContext.get().setActive(true);
+                context = existingContext;
             }
-
         } else {
-            context.setActive(true);
             conversationContext.set(context);
         }
+        context.setActive(true);
     }
 
     /**
