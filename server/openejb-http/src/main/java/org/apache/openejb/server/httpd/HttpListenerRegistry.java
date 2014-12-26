@@ -64,8 +64,14 @@ public class HttpListenerRegistry implements HttpListener {
 
     @Override
     public void onMessage(final HttpRequest request, final HttpResponse response) throws Exception {
-        final String servletPath = request.getServletPath();
-        final String path = request.getContextPath() + (!servletPath.startsWith("/") ? "/" : "") + servletPath;
+        final HttpRequest registered = this.request.get();
+        final String path;
+        if (!HttpRequestImpl.class.isInstance(request)) {
+            path = request.getRequestURI();
+        } else {
+            path = getRequestHandledPath(request);
+        }
+
         final FilterListener currentFL = currentFilterListener.get();
 
         // first look filters
@@ -74,8 +80,11 @@ public class HttpListenerRegistry implements HttpListener {
             filters = new HashMap<>(filterRegistry);
         }
 
+        final boolean reset = registered == null;
         try {
-            this.request.set(request);
+            if (reset) {
+                this.request.set(request);
+            }
             boolean lastWasCurrent = false;
             for (Map.Entry<String, Collection<HttpListener>> entry : filters.entrySet()) {
                 String pattern = entry.getKey();
@@ -106,8 +115,15 @@ public class HttpListenerRegistry implements HttpListener {
             if (currentFL == null) {
                 currentFilterListener.set(null);
             }
-            this.request.set(null);
+            if (reset) {
+                this.request.set(null);
+            }
         }
+    }
+
+    private String getRequestHandledPath(final HttpRequest request) {
+        final String servletPath = request.getServletPath();
+        return request.getContextPath() + (!servletPath.startsWith("/") ? "/" : "") + servletPath;
     }
 
     public void addHttpListener(HttpListener listener, String regex) {

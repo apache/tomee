@@ -24,6 +24,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class FilterListener implements HttpListener {
@@ -68,7 +69,9 @@ public class FilterListener implements HttpListener {
             final HttpListenerRegistry registry = SystemInstance.get().getComponent(HttpListenerRegistry.class);
             registry.setOrigin(origin);
             try {
-                registry.onMessage((HttpRequest) request, (HttpResponse) response);
+                registry.onMessage(
+                        HttpRequest.class.isInstance(request) ? HttpRequest.class.cast(request) : new ServletRequestAdapter(HttpServletRequest.class.cast(request)),
+                        HttpResponse.class.isInstance(response) ? HttpResponse.class.cast(response) : new ServletResponseAdapter(HttpServletResponse.class.cast(response)));
             } catch (final RuntimeException re) {
                 throw re;
             } catch (final ServletException e) {

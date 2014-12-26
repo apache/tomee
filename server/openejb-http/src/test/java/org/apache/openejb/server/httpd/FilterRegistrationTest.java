@@ -36,6 +36,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
@@ -99,7 +100,7 @@ public class FilterRegistrationTest {
         public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
             ok = true;
             try {
-                chain.doFilter(new HttpRequestImpl(new URI("http://ok/filter/touch")) {
+                chain.doFilter(new HttpServletRequestWrapper(new HttpRequestImpl(new URI("http://ok/filter/touch")) {
                     @Override
                     public java.net.URI getURI() {
                         return super.getSocketURI();
@@ -110,7 +111,7 @@ public class FilterRegistrationTest {
                         return "GET";
                     }
 
-                }, response);
+                }), response);
             } catch (URISyntaxException e) {
                 throw new ServletException(e);
             }
