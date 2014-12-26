@@ -273,6 +273,9 @@ public class OpenEJBArchiveProcessor {
             appModule.getAdditionalLibraries().addAll(additionalPaths);
         }
 
+        if (archive.getName().endsWith(".jar")) { // otherwise global naming will be broken
+            appModule.setStandloneWebModule();
+        }
         return appModule;
     }
 

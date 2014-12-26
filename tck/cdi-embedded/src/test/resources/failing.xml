@@ -26,7 +26,7 @@
     -Dopenejb.deploymentId.format={appId}/{ejbJarId}/{ejbName}
     -->
     <classes>
-      <class name="org.jboss.cdi.tck.interceptors.tests.bindings.aroundConstruct.ejb.SessionBeanConstructorInterceptionTest" />
+      <class name="org.jboss.cdi.tck.tests.deployment.packaging.ejb.EJBJarDeploymentTest" />
     </classes>
   </test>
 </suite>
