@@ -144,8 +144,8 @@ public class InterceptorBindingBuilder {
             for (final Method method : clazz.getDeclaredMethods()) {
                 final List<InterceptorData> methodInterceptors = createInterceptorDatas(method, beanInfo.ejbName, this.bindings);
                 // The bean itself gets to intercept too and is always last.
-                methodInterceptors.add(beanAsInterceptor);
                 beanContext.setMethodInterceptors(method, methodInterceptors);
+                beanContext.getMethodContext(method).setSelfInterception(beanAsInterceptor);
             }
             clazz = clazz.getSuperclass();
         }

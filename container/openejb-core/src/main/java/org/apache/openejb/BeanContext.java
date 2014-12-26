@@ -44,6 +44,7 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.proxy.DynamicProxyImplFactory;
 import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 import org.apache.openejb.util.reflection.Reflections;
+import org.apache.webbeans.component.CdiInterceptorBean;
 import org.apache.webbeans.component.InjectionTargetBean;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.context.creational.CreationalContextImpl;
@@ -71,6 +72,7 @@ import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Decorator;
 import javax.enterprise.inject.spi.DeploymentException;
+import javax.enterprise.inject.spi.InterceptionType;
 import javax.enterprise.inject.spi.Interceptor;
 import javax.naming.Context;
 import javax.persistence.EntityManagerFactory;
@@ -82,6 +84,7 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -94,6 +97,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
+
+import static java.util.Arrays.asList;
 
 @SuppressWarnings("unchecked")
 public class BeanContext extends DeploymentContext {
@@ -130,7 +135,24 @@ public class BeanContext extends DeploymentContext {
             }
 
             for (final Interceptor<?> i : interceptors) {
-                addCdiMethodInterceptor(entry.getKey(), InterceptorData.scan(i.getBeanClass()));
+                final InterceptorData data;
+                if (CdiInterceptorBean.class.isInstance(i)) {
+                    final CdiInterceptorBean cdiInterceptorBean = CdiInterceptorBean.class.cast(i);
+
+                    data = new InterceptorData(i.getBeanClass());
+                    data.getAroundInvoke().addAll(getInterceptionMethodAsListOrEmpty(cdiInterceptorBean, InterceptionType.AROUND_INVOKE));
+                    data.getPostConstruct().addAll(getInterceptionMethodAsListOrEmpty(cdiInterceptorBean, InterceptionType.POST_CONSTRUCT));
+                    data.getPreDestroy().addAll(getInterceptionMethodAsListOrEmpty(cdiInterceptorBean, InterceptionType.PRE_DESTROY));
+                    data.getPostActivate().addAll(getInterceptionMethodAsListOrEmpty(cdiInterceptorBean, InterceptionType.POST_ACTIVATE));
+                    data.getPrePassivate().addAll(getInterceptionMethodAsListOrEmpty(cdiInterceptorBean, InterceptionType.PRE_PASSIVATE));
+                    data.getAroundTimeout().addAll(getInterceptionMethodAsListOrEmpty(cdiInterceptorBean, InterceptionType.AROUND_TIMEOUT));
+                    /*
+                    AfterBegin, BeforeCompletion and AfterCompletion are ignored since not handled by CDI
+                     */
+                } else { // TODO: here we are not as good as in previous if since we loose inheritance etc
+                    data = InterceptorData.scan(i.getBeanClass());
+                }
+                addCdiMethodInterceptor(entry.getKey(), data);
             }
             hasInterceptor = hasInterceptor || interceptors.length > 0;
             entry.getValue().setEjbInterceptors(new ArrayList<Interceptor<?>>());
@@ -188,6 +210,11 @@ public class BeanContext extends DeploymentContext {
 
         clear(Collection.class.cast(Reflections.get(info, "ejbInterceptors")));
         clear(Collection.class.cast(Reflections.get(info, "cdiInterceptors")));
+    }
+
+    private List<Method> getInterceptionMethodAsListOrEmpty(final CdiInterceptorBean cdiInterceptorBean, final InterceptionType aroundInvoke) {
+        final Method[] methods = cdiInterceptorBean.getInterceptorMethods(aroundInvoke);
+        return methods == null ? Collections.<Method>emptyList() : asList(methods);
     }
 
     private static void clear(final Collection<?> c) {

@@ -38,6 +38,7 @@ public class MethodContext {
     private final List<ScheduleData> schedules = new ArrayList<ScheduleData>();
     private final List<InterceptorData> interceptors = new ArrayList<InterceptorData>();
     private final Set<InterceptorData> cdiInterceptors = new LinkedHashSet<InterceptorData>();
+    private InterceptorData self = null;
     private LockType lockType;
     private TransactionType transactionType;
     private Duration accessTimeout;
@@ -46,6 +47,10 @@ public class MethodContext {
     public MethodContext(final BeanContext beanContext, final Method beanMethod) {
         this.beanContext = beanContext;
         this.beanMethod = beanMethod;
+    }
+
+    public void setSelfInterception(final InterceptorData data) {
+        self = data;
     }
 
     public void setAccessTimeout(final Duration accessTimeout) {
@@ -78,6 +83,9 @@ public class MethodContext {
         datas.addAll(interceptors);
         datas.addAll(beanContext.getCdiInterceptors());
         datas.addAll(cdiInterceptors);
+        if (self != null) {
+            datas.add(self); // always last, that's why putting it in interceptors doesn't work
+        }
         return datas;
     }
 
