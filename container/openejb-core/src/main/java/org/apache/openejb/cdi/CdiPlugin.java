@@ -41,12 +41,14 @@ import org.apache.webbeans.exception.WebBeansConfigurationException;
 import org.apache.webbeans.portable.events.discovery.BeforeShutdownImpl;
 import org.apache.webbeans.portable.events.generics.GProcessSessionBean;
 import org.apache.webbeans.proxy.NormalScopeProxyFactory;
+import org.apache.webbeans.spi.ContextsService;
 import org.apache.webbeans.spi.ResourceInjectionService;
 import org.apache.webbeans.spi.SecurityService;
 import org.apache.webbeans.spi.TransactionService;
 import org.apache.webbeans.spi.plugins.AbstractOwbPlugin;
 import org.apache.webbeans.spi.plugins.OpenWebBeansEjbPlugin;
 import org.apache.webbeans.spi.plugins.OpenWebBeansJavaEEPlugin;
+import org.apache.webbeans.spi.plugins.OpenWebBeansWebPlugin;
 import org.apache.webbeans.util.WebBeansUtil;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -90,7 +92,7 @@ import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 
-public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPlugin, OpenWebBeansEjbPlugin {
+public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPlugin, OpenWebBeansEjbPlugin, OpenWebBeansWebPlugin {
 
     private Map<Class<?>, BeanContext> beans;
 
@@ -107,6 +109,11 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
         } else { // share cache of proxies between the whole app otherwise hard to share an EJB between a webapp and the lib part of the app
             cacheProxies = CdiPlugin.class.cast(WebappWebBeansContext.class.cast(webBeansContext).getParent().getPluginLoader().getEjbPlugin()).cacheProxies;
         }
+    }
+
+    @Override
+    public String currentSessionId() {
+        return CdiAppContextsService.class.cast(webBeansContext.getService(ContextsService.class)).currentSessionId();
     }
 
     @Override

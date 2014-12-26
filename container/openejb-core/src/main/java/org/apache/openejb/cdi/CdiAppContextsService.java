@@ -134,6 +134,17 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         endRequestRunnables.get().add(runnable);
     }
 
+    public String currentSessionId() {
+        final ServletRequestContext rc = requestContext.get();
+        if (rc != null) {
+            final HttpServletRequest req = rc.getServletRequest();
+            if (req != null) {
+                return req.getSession().getId();
+            }
+        }
+        return null;
+    }
+
     @Override
     public void init(final Object initializeObject) {
         //Start application context
@@ -652,10 +663,10 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     }
 
     public static class InitializedLiteral extends AnnotationLiteral<Initialized> implements Initialized {
-        private static final InitializedLiteral APP = new InitializedLiteral(ApplicationScoped.class);
-        private static final InitializedLiteral CONVERSATION = new InitializedLiteral(ConversationScoped.class);
-        private static final InitializedLiteral REQUEST = new InitializedLiteral(RequestScoped.class);
-        private static final InitializedLiteral SESSION = new InitializedLiteral(SessionScoped.class);
+        public static final InitializedLiteral APP = new InitializedLiteral(ApplicationScoped.class);
+        public static final InitializedLiteral CONVERSATION = new InitializedLiteral(ConversationScoped.class);
+        public static final InitializedLiteral REQUEST = new InitializedLiteral(RequestScoped.class);
+        public static final InitializedLiteral SESSION = new InitializedLiteral(SessionScoped.class);
 
         private final Class<? extends Annotation> value;
 
@@ -669,10 +680,10 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     }
 
     public static class DestroyedLiteral extends AnnotationLiteral<Destroyed> implements Destroyed {
-        private static final DestroyedLiteral APP = new DestroyedLiteral(ApplicationScoped.class);
-        private static final DestroyedLiteral CONVERSATION = new DestroyedLiteral(ConversationScoped.class);
-        private static final DestroyedLiteral REQUEST = new DestroyedLiteral(RequestScoped.class);
-        private static final DestroyedLiteral SESSION = new DestroyedLiteral(SessionScoped.class);
+        public static final DestroyedLiteral APP = new DestroyedLiteral(ApplicationScoped.class);
+        public static final DestroyedLiteral CONVERSATION = new DestroyedLiteral(ConversationScoped.class);
+        public static final DestroyedLiteral REQUEST = new DestroyedLiteral(RequestScoped.class);
+        public static final DestroyedLiteral SESSION = new DestroyedLiteral(SessionScoped.class);
 
         private final Class<? extends Annotation> value;
 

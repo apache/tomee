@@ -171,9 +171,10 @@ public class EndWebBeansListener implements ServletContextListener, ServletReque
 
         final ConversationManager conversationManager = webBeansContext.getConversationManager();
         final Map<Conversation, ConversationContext> cc = conversationManager.getAndRemoveConversationMapWithSessionId(event.getSession().getId());
-        for (final ConversationContext c : cc.values()) {
+        for (final Map.Entry<Conversation, ConversationContext> c : cc.entrySet()) {
             if (c != null) {
-                c.destroy();
+                c.getValue().destroy();
+                webBeansContext.getBeanManagerImpl().fireEvent(c.getKey().getId(), CdiAppContextsService.DestroyedLiteral.CONVERSATION);
             }
         }
 

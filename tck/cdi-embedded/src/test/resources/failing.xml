@@ -26,8 +26,7 @@
     -Dopenejb.deploymentId.format={appId}/{ejbJarId}/{ejbName}
     -->
     <classes>
-      <class name="org.jboss.cdi.tck.tests.context.conversation.filter.ConversationFilterTest" />
-      <!--<class name="org.jboss.cdi.tck.tests.context.conversation.event.notattached.DestroyConversationNotAssociatedWithCurrentRequestEventTest" />-->
+      <class name="org.jboss.cdi.tck.tests.context.conversation.event.notattached.DestroyConversationNotAssociatedWithCurrentRequestEventTest" />
     </classes>
   </test>
 </suite>
