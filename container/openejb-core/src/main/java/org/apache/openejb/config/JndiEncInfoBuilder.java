@@ -360,7 +360,9 @@ public class JndiEncInfoBuilder {
         for (final EnvEntry env : item.getEnvEntry()) {
             // ignore env entries without a value and lookup name
             //If the the reference name of the environment entry is belong to those shareable JNDI name space, it somewhat is a valid one            
-            if (env.getEnvEntryValue() == null && env.getLookupName() == null && !isShareableJNDINamespace(env.getEnvEntryName())) {
+            if (env.getEnvEntryValue() == null && env.getLookupName() == null
+                    && !isShareableJNDINamespace(env.getEnvEntryName())
+                    && !CompManagedBean.class.isInstance(item) /* in this case we can desire to contextually lookup webapp value from an ear lib */) {
                 continue;
             }
 

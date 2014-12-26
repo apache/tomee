@@ -1268,7 +1268,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         final List<BeanContext> ejbs = sort(allDeployments);
-        appContext.getBeanContexts().addAll(ejbs);
+        for (final BeanContext b : ejbs) { // otherwise for ears we have duplicated beans
+            if (appContext.getBeanContexts().contains(b)) {
+                continue;
+            }
+            appContext.getBeanContexts().add(b);
+        }
         return ejbs;
     }
 

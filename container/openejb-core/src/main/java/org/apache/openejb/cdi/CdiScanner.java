@@ -96,12 +96,6 @@ public class CdiScanner implements ScannerService {
         final WebBeansContext webBeansContext = startupObject.getWebBeansContext();
         final InterceptorsManager interceptorsManager = webBeansContext.getInterceptorsManager();
 
-        // "manual" extension to avoid to add it through SPI mecanism
-        classes.addAll(asList(TRANSACTIONAL_INTERCEPTORS));
-        for (final Class<?> interceptor : TRANSACTIONAL_INTERCEPTORS) {
-            interceptorsManager.addEnabledInterceptorClass(interceptor);
-        }
-
         // app beans
         for (final EjbJarInfo ejbJar : appInfo.ejbJars) {
             final BeansInfo beans = ejbJar.beans;
@@ -116,6 +110,14 @@ public class CdiScanner implements ScannerService {
                 }
             } else if (ejbJar.webapp && !appInfo.webAppAlone) {
                 continue;
+            }
+
+            if (appInfo.webAppAlone || !ejbJar.webapp) {
+                // "manual" extension to avoid to add it through SPI mecanism
+                classes.addAll(asList(TRANSACTIONAL_INTERCEPTORS));
+                for (final Class<?> interceptor : TRANSACTIONAL_INTERCEPTORS) {
+                    interceptorsManager.addEnabledInterceptorClass(interceptor);
+                }
             }
 
             // here for ears we need to skip classes in the parent classloader

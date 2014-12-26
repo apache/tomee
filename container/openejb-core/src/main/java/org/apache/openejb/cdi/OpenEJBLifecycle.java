@@ -63,6 +63,7 @@ import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -163,7 +164,8 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
 
             //Resournce Injection Service
             final CdiResourceInjectionService injectionService = (CdiResourceInjectionService) webBeansContext.getService(ResourceInjectionService.class);
-            injectionService.setAppContext(stuff.getAppContext());
+            // todo use startupObject allDeployments to find Comp in priority (otherwise we can keep N times comps and loose time at injection time
+            injectionService.setAppContext(stuff.getAppContext(), stuff.getBeanContexts() != null ? stuff.getBeanContexts() : Collections.<BeanContext>emptyList());
 
             //Deploy the beans
             CdiScanner cdiScanner = null;

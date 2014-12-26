@@ -79,6 +79,20 @@ public final class AppFinder {
         }
     }
 
+    public static class AppOrWebContextTransformer implements Transformer<Object> {
+        public static final Transformer<AppContext> INSTANCE = new AppContextTransformer();
+
+        @Override
+        public Object from(final AppContext appCtx) {
+            return appCtx;
+        }
+
+        @Override
+        public Object from(final WebContext webCtx) {
+            return webCtx;
+        }
+    }
+
     private AppFinder() {
         // no-op
     }

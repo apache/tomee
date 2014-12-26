@@ -127,7 +127,16 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
             final Set<Injection> injections = new HashSet<Injection>(appContext.getInjections());
             injections.addAll(new InjectionBuilder(classLoader).buildInjections(webAppInfo.jndiEnc));
 
-            final Map<String, Object> bindings = new HashMap<String, Object>();
+            final List<BeanContext> beanContexts;
+            if (!appInfo.webAppAlone) { // add module bindings in app
+                final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
+                beanContexts = assembler.initEjbs(classLoader, appInfo, appContext, injections, new ArrayList<BeanContext>(), webAppInfo.moduleId);
+                appContext.getBeanContexts().addAll(beanContexts);
+            } else {
+                beanContexts = null;
+            }
+
+            final Map<String, Object> bindings = new HashMap<>();
             bindings.putAll(appContext.getBindings());
             bindings.putAll(new JndiEncBuilder(webAppInfo.jndiEnc, injections, webAppInfo.moduleId, "Bean", null, webAppInfo.uniqueId, classLoader, appInfo.properties).buildBindings(JndiEncBuilder.JndiScope.comp));
 
@@ -148,8 +157,6 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
 
             if (!appInfo.webAppAlone) {
                 final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
-                final List<BeanContext> beanContexts = assembler.initEjbs(classLoader, appInfo, appContext, injections, new ArrayList<BeanContext>(), webAppInfo.moduleId);
-                appContext.getBeanContexts().addAll(beanContexts);
                 new CdiBuilder().build(appInfo, appContext, beanContexts, webContext);
                 assembler.startEjbs(true, beanContexts);
             }

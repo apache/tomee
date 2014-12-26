@@ -149,23 +149,7 @@ public class OpenEJBArchiveProcessor {
             appModule.setDelegateFirst(false);
             appModule.setStandloneWebModule();
 
-            WebApp webApp;
-            final Node webXml = archive.get(WEB_INF + "web.xml");
-            if (webXml == null) {
-                webApp = new WebApp();
-            } else {
-                InputStream inputStream = null;
-                try {
-                    inputStream = webXml.getAsset().openStream();
-                    webApp = Sxc.unmarshalJavaee(new WebApp$JAXB(), inputStream);
-                } catch (final Exception e) {
-                    webApp = new WebApp();
-                } finally {
-                    IO.close(inputStream);
-                }
-            }
-
-            final WebModule webModule = new WebModule(webApp, contextRoot(archive.getName()), loader, "", appModule.getModuleId());
+            final WebModule webModule = new WebModule(createWebApp(archive), contextRoot(archive.getName()), loader, "", appModule.getModuleId());
             webModule.setUrls(additionalPaths);
             appModule.getWebModules().add(webModule);
         } else if (isEar) { // mainly for CDI TCKs
@@ -203,7 +187,7 @@ public class OpenEJBArchiveProcessor {
                                 finderArchive(beansXml, webArchive, webLoader, webAppArchive, webAppClassesByUrl, webAppBeansXml));
 
                         final String contextRoot = contextRoot(webArchive.getName());
-                        final WebModule webModule = new WebModule(new WebApp(), contextRoot, webLoader, "", appModule.getModuleId() + "_" + contextRoot);
+                        final WebModule webModule = new WebModule(createWebApp(webArchive), contextRoot, webLoader, "", appModule.getModuleId() + "_" + contextRoot);
                         webModule.setUrls(Collections.<URL>emptyList());
                         webModule.setScannableUrls(Collections.<URL>emptyList());
                         webModule.setFinder(finder);
@@ -302,6 +286,25 @@ public class OpenEJBArchiveProcessor {
         }
 
         return appModule;
+    }
+
+    private static WebApp createWebApp(final Archive<?> archive) {
+        WebApp webApp;
+        final Node webXml = archive.get(WEB_INF + "web.xml");
+        if (webXml == null) {
+            webApp = new WebApp();
+        } else {
+            InputStream inputStream = null;
+            try {
+                inputStream = webXml.getAsset().openStream();
+                webApp = Sxc.unmarshalJavaee(new WebApp$JAXB(), inputStream);
+            } catch (final Exception e) {
+                webApp = new WebApp();
+            } finally {
+                IO.close(inputStream);
+            }
+        }
+        return webApp;
     }
 
     private static CompositeArchive analyzeLibs(final ClassLoader parent,

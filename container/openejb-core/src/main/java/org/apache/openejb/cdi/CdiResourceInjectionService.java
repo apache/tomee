@@ -41,6 +41,7 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class CdiResourceInjectionService implements ResourceInjectionService {
@@ -49,14 +50,21 @@ public class CdiResourceInjectionService implements ResourceInjectionService {
     private final CdiPlugin ejbPlugin;
     private final List<BeanContext> compContexts = new ArrayList<BeanContext>();
     private volatile AppContext appCtx;
+    private volatile boolean ear;
 
     public CdiResourceInjectionService(final WebBeansContext context) {
         ejbPlugin = CdiPlugin.class.cast(context.getPluginLoader().getEjbPlugin());
     }
 
-    public void setAppContext(final AppContext appModule) {
+    public void setAppContext(final AppContext appModule, final Collection<BeanContext> ejbs) {
+        compContexts.clear();
+        ear = false;
         for (final BeanContext beanContext : appModule.getBeanContexts()) {
-            if (beanContext.getBeanClass().equals(BeanContext.Comp.class)) {
+            if (!ear) {
+                ear = beanContext.getEjbName().contains("ear-scoped-cdi-beans_");
+            }
+            if (beanContext.getBeanClass().equals(BeanContext.Comp.class)
+                    && (ejbs == null || ear || ejbs.contains(beanContext))) {
                 compContexts.add(beanContext);
             }
         }
@@ -130,8 +138,19 @@ public class CdiResourceInjectionService implements ResourceInjectionService {
         final boolean usePrefix = true;
         final Class<?> clazz = managedBeanInstance.getClass();
 
-        for (final BeanContext beanContext : compContexts) {
-
+        Collection<BeanContext> comps;
+        WebBeansContext webBeansContext = null;
+        if (ear) { // let it be contextual, ie use webapp context (env-entries...) to create ear libs interceptors...
+            try {
+                webBeansContext = WebBeansContext.currentInstance();
+                comps = CdiResourceInjectionService.class.cast(webBeansContext.getService(ResourceInjectionService.class)).compContexts;
+            } catch (final Exception e) {
+                comps = compContexts;
+            }
+        } else {
+            comps = compContexts;
+        }
+        for (final BeanContext beanContext : comps) {
             for (final Injection injection : beanContext.getInjections()) {
                 if (injection.getTarget() == null) {
                     continue;
@@ -139,19 +158,35 @@ public class CdiResourceInjectionService implements ResourceInjectionService {
                 if (!injection.getTarget().isAssignableFrom(clazz)) {
                     continue;
                 }
+
+                final String prefix;
+                if (usePrefix) {
+                    prefix = injection.getTarget().getName() + "/";
+                } else {
+                    prefix = "";
+                }
+
                 try {
                     final Object value = lookup(beanContext, injection);
 
-                    final String prefix;
-                    if (usePrefix) {
-                        prefix = injection.getTarget().getName() + "/";
-                    } else {
-                        prefix = "";
-                    }
-
                     objectRecipe.setProperty(prefix + injection.getName(), value);
                 } catch (final NamingException e) {
-                    logger.warning("Injection data not found in JNDI context: jndiName='" + injection.getJndiName() + "', target=" + injection.getTarget().getName() + "/" + injection.getName());
+                    boolean found = false;
+                    if (webBeansContext != null) {
+                        for (final WebContext w : appCtx.getWebContexts()) {
+                            if (w.getWebBeansContext() == webBeansContext) {
+                                final Object value = w.getBindings().get(injection.getJndiName());
+                                if (value != null) {
+                                    objectRecipe.setProperty(prefix + injection.getName(), value);
+                                    found = true;
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    if (!found) {
+                        logger.warning("Injection data not found in JNDI context: jndiName='" + injection.getJndiName() + "', target=" + injection.getTarget().getName() + "/" + injection.getName());
+                    }
                 }
 
             }

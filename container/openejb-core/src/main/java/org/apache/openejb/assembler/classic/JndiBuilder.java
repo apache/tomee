@@ -697,8 +697,8 @@ public class JndiBuilder {
         if (intrface != null) {
             beanName = beanName + "!" + intrface.getName();
         }
+        final String globalName = "global/" + appName + moduleName + beanName;
         try {
-            final String globalName = "global/" + appName + moduleName + beanName;
 
             if (embeddedEjbContainerApi
                 && !(beanInfo instanceof ManagedBeanInfo && ((ManagedBeanInfo) beanInfo).hidden)) {
@@ -716,8 +716,17 @@ public class JndiBuilder {
         appContext.bind("app/" + moduleName + beanName, ref);
         application.getBindings().put("app/" + moduleName + beanName, ref);
 
-        moduleContext.bind("module/" + beanName, ref);
-        application.getBindings().put("module/" + beanName, ref);
+        final String moduleJndi = "module/" + beanName;
+        moduleContext.bind(moduleJndi, ref);
+
+        // contextual if the same ejb (api) is deployed in 2 wars of an ear
+        ContextualEjbLookup contextual = ContextualEjbLookup.class.cast(application.getBindings().get(moduleJndi));
+        if (contextual == null) {
+            final Map<BeanContext, Object> potentials = new HashMap<>();
+            contextual = new ContextualEjbLookup(potentials, ref);
+            application.getBindings().put(moduleJndi, contextual); // TODO: we shouldn't do it but use web bindings
+        }
+        contextual.potentials.put(cdi, ref);
     }
 
 
@@ -765,6 +774,39 @@ public class JndiBuilder {
                 return 0;
             }
             return aIsRmote ? 1 : -1;
+        }
+    }
+
+    public static class ContextualEjbLookup extends org.apache.openejb.core.ivm.naming.Reference {
+        private final Map<BeanContext, Object> potentials;
+        private final Object defaultValue;
+
+        public ContextualEjbLookup(final Map<BeanContext, Object> potentials, final Object defaultValue) {
+            this.potentials = potentials;
+            this.defaultValue = defaultValue;
+        }
+
+        @Override
+        public Object getObject() throws NamingException {
+            if (potentials.size() == 1) {
+                return unwrap(defaultValue);
+            }
+            final ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            if (loader != null) {
+                for (final Map.Entry<BeanContext, Object> o : potentials.entrySet()) {
+                    if (loader.equals(o.getKey().getClassLoader())) {
+                        return unwrap(o.getValue());
+                    }
+                }
+            }
+            return unwrap(defaultValue);
+        }
+
+        private Object unwrap(final Object value) throws NamingException {
+            if (org.apache.openejb.core.ivm.naming.Reference.class.isInstance(value)) { // pretty sure
+                return org.apache.openejb.core.ivm.naming.Reference.class.cast(value).getObject();
+            }
+            return value;
         }
     }
 }

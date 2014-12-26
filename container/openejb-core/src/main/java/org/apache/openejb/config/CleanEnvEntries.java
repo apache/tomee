@@ -79,6 +79,9 @@ public class CleanEnvEntries implements DynamicDeployer {
             }
 
             for (final EnterpriseBean consumer : ejbJar.getEnterpriseBeans()) {
+                if (CompManagedBean.class.isInstance(consumer)) { // unused can be used by CDI (ear lib using webapp contextual binding)
+                    continue;
+                }
                 removeUnsetEnvEntries(appEnvEntryMap, consumer);
             }
         }
