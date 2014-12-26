@@ -29,6 +29,7 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
+import org.apache.xbean.recipe.ReflectionUtil;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -36,6 +37,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -139,10 +141,15 @@ public abstract class ServiceManager {
                 ObjectRecipe recipe = new ObjectRecipe(serviceClass);
                 try {
                     // Do not import.  This class is not available in xbean-reflect-3.3
-                    if (org.apache.xbean.recipe.ReflectionUtil.findStaticFactory(serviceClass, "createServerService", null, null) != null) {
-                        recipe = new ObjectRecipe(serviceClass, "createServerService");
+                    final ReflectionUtil.StaticFactory factory = ReflectionUtil.findStaticFactory(
+                            serviceClass, "createServerService", null, null, serviceProperties.stringPropertyNames(), Collections.singleton(Option.NAMED_PARAMETERS));
+                    if (factory != null) {
+                        recipe.setConstructorArgNames(factory.getParameterNames()); // can throw an exception so call it before next line
+                        recipe.setFactoryMethod("createServerService");
+                    } else if (ReflectionUtil.findStaticFactory(serviceClass, "createServerService", null, null) != null) { // old behavior, remove when sure previous check is ok
+                        recipe.setFactoryMethod("createServerService");
                     }
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     //Ignore
                 }
 

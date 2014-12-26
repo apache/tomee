@@ -3,3 +3,4 @@ bind        = 127.0.0.1
 port        = 4204
 disabled    = ${openejb.profile.custom}
 threads     = 200
+useJetty    = true

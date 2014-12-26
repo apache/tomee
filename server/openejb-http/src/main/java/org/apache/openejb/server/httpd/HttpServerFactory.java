@@ -17,12 +17,12 @@
 package org.apache.openejb.server.httpd;
 
 import org.apache.openejb.server.ServerService;
+import org.apache.xbean.recipe.ParameterNames;
 
 public class HttpServerFactory {
-    private boolean useJettyIfPossible = true;
-
-    public ServerService createServerService() {
-        if (useJettyIfPossible) {
+    @ParameterNames("useJetty")
+    public static ServerService createServerService(final boolean useJetty) {
+        if (useJetty) {
             try {
                 ClassLoader cl = Thread.currentThread().getContextClassLoader();
                 cl.loadClass("org.mortbay.jetty.Connector");
