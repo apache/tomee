@@ -82,6 +82,7 @@ public class HttpRequestImpl implements HttpRequest {
     private static final String TRANSFER_ENCODING = "Transfer-Encoding";
     private static final String CHUNKED = "chunked";
     protected static final String EJBSESSIONID = "EJBSESSIONID";
+    protected static final String JSESSIONID = "JSESSIONID";
 
     // note: no eviction so invalidate has to be called properly
     private static final ConcurrentMap<String, HttpSession> SESSIONS = new ConcurrentHashMap<>();
@@ -424,6 +425,8 @@ public class HttpRequestImpl implements HttpRequest {
                     final String current = c.trim();
                     if (current.startsWith("EJBSESSIONID=")) {
                         session = SESSIONS.get(current.substring("EJBSESSIONID=".length()));
+                    } else if (current.startsWith("JSESSIONID=")) {
+                        session = SESSIONS.get(current.substring("JSESSIONID=".length()));
                     }
                 }
             }
