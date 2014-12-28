@@ -21,7 +21,6 @@ import org.apache.catalina.session.StandardSessionFacade;
 import org.apache.openejb.cdi.CdiAppContextsService;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.reflection.Reflections;
-import org.apache.webbeans.context.SessionContext;
 import org.apache.webbeans.context.creational.BeanInstanceBag;
 import org.apache.webbeans.util.WebBeansUtil;
 
