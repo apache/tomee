@@ -90,7 +90,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         //initialize owb context, cf geronimo's OpenWebBeansGBean
         final Properties properties = new Properties();
 
-        final Map<Class<?>, Object> services = new HashMap<Class<?>, Object>();
+        final Map<Class<?>, Object> services = new HashMap<>();
         properties.setProperty(OpenWebBeansConfiguration.APPLICATION_IS_JSP, "true");
         properties.setProperty(OpenWebBeansConfiguration.USE_EJB_DISCOVERY, "true");
         //from CDI builder
@@ -131,10 +131,14 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
 
         properties.putAll(appContext.getProperties());
 
+        // services needing WBC as constructor param
+        properties.put(ContextsService.class.getName(), CdiAppContextsService.class.getName());
+        properties.put(ResourceInjectionService.class.getName(), CdiResourceInjectionService.class.getName());
+        properties.put(TransactionService.class.getName(), OpenEJBTransactionService.class.getName());
+
         services.put(BeanArchiveService.class, new OpenEJBBeanInfoService());
         services.put(AppContext.class, appContext);
         services.put(JNDIService.class, new OpenEJBJndiService());
-        services.put(TransactionService.class, new OpenEJBTransactionService());
         services.put(ELAdaptor.class, new CustomELAdapter(appContext));
         services.put(ScannerService.class, new CdiScanner());
         services.put(ApplicationBoundaryService.class, new DefaultApplicationBoundaryService());
@@ -145,8 +149,6 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
             services.put(LoaderService.class, loaderService);
         }
 
-        optional(services, ConversationService.class, "org.apache.webbeans.jsf.DefaultConversationService");
-
         final ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
         final ClassLoader cl;
         if (oldClassLoader != ThreadSingletonServiceImpl.class.getClassLoader() && ThreadSingletonServiceImpl.class.getClassLoader() != oldClassLoader.getParent()) {
@@ -155,6 +157,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
             cl = oldClassLoader;
         }
         Thread.currentThread().setContextClassLoader(cl);
+
         final WebBeansContext webBeansContext;
         Object old = null;
         try {
@@ -165,16 +168,18 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
                 webBeansContext = new WebappWebBeansContext(services, properties, appContext.getWebBeansContext());
                 startupObject.getWebContext().setWebbeansContext(webBeansContext);
             }
+
+            // we want the same reference as the ContextsService if that's our impl
+            if (webBeansContext.getOpenWebBeansConfiguration().supportsConversation()
+                && "org.apache.webbeans.jsf.DefaultConversationService".equals(webBeansContext.getOpenWebBeansConfiguration().getProperty(ConversationService.class.getName()))) {
+                webBeansContext.registerService(ConversationService.class, ConversationService.class.cast(webBeansContext.getService(ContextsService.class)));
+            }
+
             final BeanManagerImpl beanManagerImpl = webBeansContext.getBeanManagerImpl();
             beanManagerImpl.addContext(new TransactionContext());
             beanManagerImpl.addAdditionalInterceptorBindings(Transactional.class);
 
             SystemInstance.get().fireEvent(new WebBeansContextCreated(webBeansContext));
-            OpenEJBTransactionService.class.cast(services.get(TransactionService.class)).setWebBeansContext(webBeansContext);
-
-            // do it only here to get the webbeanscontext
-            services.put(ContextsService.class, new CdiAppContextsService(webBeansContext, true));
-            services.put(ResourceInjectionService.class, new CdiResourceInjectionService(webBeansContext));
 
             old = contextEntered(webBeansContext);
             setConfiguration(webBeansContext.getOpenWebBeansConfiguration());
@@ -196,18 +201,6 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
             }
         }
         return false;
-    }
-
-    private <T> void optional(final Map<Class<?>, Object> services, final Class<T> type, final String implementation) {
-        try { // use TCCL since we can use webapp enrichment for services
-            final Class clazz = Thread.currentThread().getContextClassLoader().loadClass(implementation);
-            services.put(type, type.cast(clazz.newInstance()));
-            logger.debug(String.format("CDI Service Installed: %s = %s", type.getName(), implementation));
-        } catch (final ClassNotFoundException e) {
-            logger.debug(String.format("CDI Service not installed: %s", type.getName()));
-        } catch (final Exception e) {
-            throw new IllegalStateException(e);
-        }
     }
 
     //not sure what openejb will need

@@ -1424,7 +1424,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             services.put(JNDIService.class, new OpenEJBJndiService());
             services.put(AppContext.class, appContext);
-            services.put(TransactionService.class, new OpenEJBTransactionService());
             services.put(ScannerService.class, new CdiScanner());
             services.put(BeanArchiveService.class, new OpenEJBBeanInfoService());
             services.put(ELAdaptor.class, new CustomELAdapter(appContext));
@@ -1432,18 +1431,16 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             final Properties properties = new Properties();
             properties.setProperty(org.apache.webbeans.spi.SecurityService.class.getName(), ManagedSecurityService.class.getName());
+            properties.setProperty(ContextsService.class.getName(), CdiAppContextsService.class.getName());
+            properties.setProperty(ResourceInjectionService.class.getName(), CdiResourceInjectionService.class.getName());
+            properties.setProperty(TransactionService.class.getName(), OpenEJBTransactionService.class.getName());
 
             webBeansContext = new WebBeansContext(services, properties);
 
-            webBeansContext.registerService(ContextsService.class, new CdiAppContextsService(webBeansContext, true));
-            webBeansContext.registerService(ResourceInjectionService.class, new CdiResourceInjectionService(webBeansContext));
-
             appContext.setCdiEnabled(false);
-            OpenEJBTransactionService.class.cast(services.get(TransactionService.class)).setWebBeansContext(webBeansContext);
-
-        appContext.set(WebBeansContext.class, webBeansContext);
-        appContext.setWebBeansContext(webBeansContext);
-    }
+            appContext.set(WebBeansContext.class, webBeansContext);
+            appContext.setWebBeansContext(webBeansContext);
+        }
     }
 
     private TransactionPolicyFactory createTransactionPolicyFactory(final EjbJarInfo ejbJar, final ClassLoader classLoader) {

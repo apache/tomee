@@ -46,10 +46,11 @@ public class OpenEJBTransactionService implements TransactionService {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_CDI, OpenEJBTransactionService.class);
 
     private final ContainerSystem containerSystem;
-    private WebBeansContext webBeansContext;
+    private final WebBeansContext webBeansContext;
 
-    public OpenEJBTransactionService() {
-        containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+    public OpenEJBTransactionService(final WebBeansContext webBeansContext) {
+        this.containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+        this.webBeansContext = webBeansContext;
     }
 
     @Override
@@ -93,13 +94,5 @@ public class OpenEJBTransactionService implements TransactionService {
         TransactionalEventNotifier.registerTransactionSynchronization(phase, observer, event,
             new EventMetadataImpl(observer.getObservedType(), null, null,
                 qualifiers.toArray(new Annotation[qualifiers.size()]), webBeansContext));
-    }
-
-    public void setWebBeansContext(final WebBeansContext webBeansContext) {
-        this.webBeansContext = webBeansContext;
-    }
-
-    public WebBeansContext getWebBeansContext() {
-        return webBeansContext;
     }
 }

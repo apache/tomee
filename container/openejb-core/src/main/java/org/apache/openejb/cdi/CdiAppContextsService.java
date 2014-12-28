@@ -60,7 +60,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
-public class CdiAppContextsService extends AbstractContextsService implements ContextsService {
+public class CdiAppContextsService extends AbstractContextsService implements ContextsService, ConversationService {
 
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB.createChild("cdi"), CdiAppContextsService.class);
 
@@ -87,7 +87,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     private static final ThreadLocal<Collection<Runnable>> endRequestRunnables = new ThreadLocal<Collection<Runnable>>() {
         @Override
         protected Collection<Runnable> initialValue() {
-            return new ArrayList<Runnable>();
+            return new ArrayList<>();
         }
     };
 
@@ -132,6 +132,16 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
 
     public static void pushRequestReleasable(final Runnable runnable) {
         endRequestRunnables.get().add(runnable);
+    }
+
+    @Override
+    public String getConversationId() {
+        return getHttpParameter("cid");
+    }
+
+    @Override
+    public String getConversationSessionId() {
+        return currentSessionId();
     }
 
     public String currentSessionId() {
@@ -648,6 +658,14 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         sessionContext.set(state.session);
         conversationContext.set(state.conversation);
         return old;
+    }
+
+    public String getHttpParameter(final String name) {
+        final ServletRequestContext req = getRequestContext(false);
+        if (req != null && req.getServletRequest() != null) {
+            return req.getServletRequest().getParameter(name);
+        }
+        return null;
     }
 
     public static class State {
