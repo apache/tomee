@@ -58,7 +58,6 @@ import org.jboss.shrinkwrap.impl.base.filter.IncludeRegExpPaths;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -75,6 +74,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static java.util.Arrays.asList;
+import static org.apache.openejb.arquillian.openejb.reflection.Assets.EMPTY_LOADER;
+import static org.apache.openejb.arquillian.openejb.reflection.Assets.get;
 
 // doesn't implement ApplicationArchiveProcessor anymore since in some cases
 // (with some observers set for instance)
@@ -94,13 +95,6 @@ public class OpenEJBArchiveProcessor {
     private static final String OPENEJB_JAR_XML = "openejb-jar.xml";
     private static final String ENV_ENTRIES_PROPERTIES = "env-entries.properties";
     private static final String WEB_INF_CLASSES = "/WEB-INF/classes/";
-
-    private static final ClassLoader EMPTY_LOADER = new ClassLoader() {
-        @Override
-        public URL getResource(final String name) {
-            return null;
-        }
-    };
 
     public static AppModule createModule(final Archive<?> archive, final TestClass testClass, final Closeables closeables) {
         final Class<?> javaClass;
@@ -480,16 +474,6 @@ public class OpenEJBArchiveProcessor {
             return name.substring(0, name.length() - ".war".length());
         }
         return name;
-    }
-
-    private static <T> T get(final Class<T> fileClass, final String attr, final Asset asset) {
-        try {
-            final Field field = asset.getClass().getDeclaredField(attr);
-            field.setAccessible(true);
-            return fileClass.cast(field.get(asset));
-        } catch (final Exception e) {
-            return null;
-        }
     }
 
     private static org.apache.xbean.finder.archive.Archive finderArchive(

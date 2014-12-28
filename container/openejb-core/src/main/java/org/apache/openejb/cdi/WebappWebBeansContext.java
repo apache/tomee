@@ -23,7 +23,6 @@ import java.util.Properties;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
 
-import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Bean;
 
 public class WebappWebBeansContext extends WebBeansContext {

@@ -16,18 +16,10 @@
  */
 package org.superbiz.cdi.decorators;
 
-import javax.annotation.Resource;
-import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
-import javax.enterprise.inject.Produces;
 
 @Stateless
 public class CalculatorBean implements Calculator {
-
-    @Produces
-    @Resource
-    private SessionContext sessionContext;
-
     public int add(int a, int b) {
         return a + b;
     }
@@ -47,5 +39,4 @@ public class CalculatorBean implements Calculator {
     public int remainder(int a, int b) {
         return a % b;
     }
-
 }

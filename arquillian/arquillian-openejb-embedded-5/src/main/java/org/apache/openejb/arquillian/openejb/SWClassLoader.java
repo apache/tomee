@@ -18,15 +18,19 @@ package org.apache.openejb.arquillian.openejb;
 
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Enumerator;
+import org.apache.openejb.util.URLs;
 import org.apache.openejb.util.reflection.Reflections;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.Node;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.Asset;
 import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
 import org.jboss.shrinkwrap.api.asset.FileAsset;
 import org.jboss.shrinkwrap.api.asset.UrlAsset;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.jboss.shrinkwrap.impl.base.filter.IncludeRegExpPaths;
 
 import javax.enterprise.inject.spi.Extension;
 import java.io.Closeable;
@@ -48,6 +52,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Arrays.asList;
+import static org.apache.openejb.arquillian.openejb.reflection.Assets.get;
+
 public class SWClassLoader extends ClassLoader implements Closeable {
     static {
         try {
@@ -59,21 +66,37 @@ public class SWClassLoader extends ClassLoader implements Closeable {
         }
     }
 
-    private final Archive<?>[] archives;
+    private final Collection<Archive<?>> archives;
     private final Collection<Closeable> closeables = new ArrayList<Closeable>();
 
     public SWClassLoader(final ClassLoader parent, final Archive<?>... ar) {
         super(parent);
-        this.archives = ar;
+        this.archives = new ArrayList<>(asList(ar));
         for (final Archive<?> a : ar) {
             ArchiveStreamHandler.set(a, closeables);
+
+            final boolean isWar = WebArchive.class.isInstance(a);
+            if (isWar) { // add dependencies - file and url - to be able to lookup them. ArchiveAssets are provided normally
+                for (final Node n : a.getContent(new IncludeRegExpPaths("/WEB-INF/lib/.*\\.jar")).values()) {
+                    final Asset asset = n.getAsset();
+                    if (FileAsset.class.isInstance(asset)) {
+                        final JavaArchive jar = ShrinkWrap.createFromZipFile(JavaArchive.class, get(File.class, "file", asset));
+                        this.archives.add(jar);
+                        ArchiveStreamHandler.set(jar, closeables);
+                    } else if (UrlAsset.class.isInstance(asset)) {
+                        final JavaArchive jar = ShrinkWrap.createFromZipFile(JavaArchive.class, URLs.toFile(get(URL.class, "url", asset)));
+                        this.archives.add(jar);
+                        ArchiveStreamHandler.set(jar, closeables);
+                    }
+                }
+            }
         }
     }
 
     @Override
     public Enumeration<URL> getResources(final String name) throws IOException {
         if (name == null) {
-            return super.getResources(name);
+            return super.getResources(null);
         }
         final boolean cdiExtensions = name.startsWith("META-INF/services/" + Extension.class.getName());
         if (cdiExtensions || !name.contains("META-INF/services/javax")) {
@@ -142,7 +165,8 @@ public class SWClassLoader extends ClassLoader implements Closeable {
     public LinkedList<Archive<?>> findNodes(final String name) {
         final LinkedList<Archive<?>> items = new LinkedList<>();
         for (final Archive<?> a : archives) {
-            final Node node = a.get(ArchivePaths.create((WebArchive.class.isInstance(a) ? "/WEB-INF/classes/" : "") + name));
+            final boolean isWar = WebArchive.class.isInstance(a);
+            final Node node = a.get(ArchivePaths.create((isWar ? "/WEB-INF/classes/" : "") + name));
             if (node != null) {
                 items.add(a);
             }
@@ -259,7 +283,7 @@ public class SWClassLoader extends ClassLoader implements Closeable {
     }
 
     // to let frameworks using TCCL use the archive directly
-    public Archive<?>[] getArchives() {
+    public Collection<Archive<?>> getArchives() {
         return archives;
     }
 }

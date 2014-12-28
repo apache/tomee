@@ -29,7 +29,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.deltaspike>1.0.0</version.deltaspike>
+    <version.deltaspike>1.2.1</version.deltaspike>
   </properties>
 
   <build>

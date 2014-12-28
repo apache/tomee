@@ -16,6 +16,7 @@
  */
 package org.superbiz.cdi.decorators;
 
+import javax.annotation.Resource;
 import javax.decorator.Decorator;
 import javax.decorator.Delegate;
 import javax.ejb.SessionContext;
@@ -28,7 +29,7 @@ public class CalculatorSecurity implements Calculator {
     @Delegate
     private Calculator calculator;
 
-    @Inject
+    @Resource
     private SessionContext sessionContext;
 
     @Override

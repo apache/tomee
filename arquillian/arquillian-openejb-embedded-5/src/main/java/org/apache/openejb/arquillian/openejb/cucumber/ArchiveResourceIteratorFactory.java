@@ -47,7 +47,7 @@ public class ArchiveResourceIteratorFactory implements ResourceIteratorFactory {
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
         final Collection<Resource> resources = new ArrayList<Resource>();
         if (SWClassLoader.class.isInstance(loader)) {
-            final Archive<?>[] archives = SWClassLoader.class.cast(loader).getArchives();
+            final Collection<Archive<?>> archives = SWClassLoader.class.cast(loader).getArchives();
             final ClassLoader parent = loader.getParent();
             for (final Archive<?> archive : archives) {
                 final Map<ArchivePath, Node> content = archive.getContent(new Filter<ArchivePath>() {
