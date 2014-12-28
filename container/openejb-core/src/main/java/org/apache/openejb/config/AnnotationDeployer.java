@@ -1640,7 +1640,10 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             if (!WebappAggregatedArchive.class.isInstance(archive)) {
                 try {
-                    classes.put(uri == null ? null : new URL(uri), annotationFinder.getAnnotatedClassNames());
+                    final List<String> annotatedClassNames = annotationFinder.getAnnotatedClassNames();
+                    if (!annotatedClassNames.isEmpty()) {
+                        classes.put(uri == null ? null : new URL(uri), annotatedClassNames);
+                    }
                 } catch (final MalformedURLException e) {
                     throw new IllegalStateException(e);
                 }
@@ -1734,7 +1737,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             if (urlPath.endsWith("/WEB-INF/beans.xml")) {
                 return url;
             }
-            if (urlPath.endsWith("WEB-INF/classes/")) {
+            if (urlPath.endsWith("WEB-INF/classes/") || urlPath.endsWith("WEB-INF/classes")) {
                 {
                     final File file = new File(URLs.toFile(url).getParent(), "beans.xml");
                     if (file.exists()) {

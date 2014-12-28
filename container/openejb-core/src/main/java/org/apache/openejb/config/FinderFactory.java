@@ -78,23 +78,15 @@ public class FinderFactory {
         if (module instanceof WebModule) {
             final WebModule webModule = (WebModule) module;
             finder = newFinder(new WebappAggregatedArchive(webModule, webModule.getScannableUrls()));
-            if (!finder.foundSomething()) { // test case (AppComposer with new WebApp())
-                finder = fallbackAnnotationFinder(module);
-            }
-            finder.link();
+            finder = useFallbackFinderIfNeededOrLink(module, finder);
         } else if (module instanceof ConnectorModule) {
             final ConnectorModule connectorModule = (ConnectorModule) module;
             finder = newFinder(new ConfigurableClasspathArchive(connectorModule, connectorModule.getLibraries()));
-            if (!finder.foundSomething()) { // test case
-                finder = fallbackAnnotationFinder(module);
-            }
-            finder.link();
+            finder = useFallbackFinderIfNeededOrLink(module, finder);
         } else if (module instanceof AppModule) {
             final Collection<URL> urls = NewLoaderLogic.applyBuiltinExcludes(new UrlSet(AppModule.class.cast(module).getAdditionalLibraries())).getUrls();
             finder = newFinder(new WebappAggregatedArchive(module.getClassLoader(), module.getAltDDs(), urls));
-            if (!finder.foundSomething()) { // test case
-                finder = fallbackAnnotationFinder(module);
-            }
+            finder = useFallbackFinderIfNeededOrLink(module, finder);
         } else if (module.getJarLocation() != null) {
             final String location = module.getJarLocation();
             final File file = new File(location);
@@ -117,16 +109,25 @@ public class FinderFactory {
             } else {
                 finder = newFinder(new DebugArchive(new ConfigurableClasspathArchive(module.getClassLoader(), url)));
             }
-            if (!finder.foundSomething()) { // test case too, should be removed in absolute. Next else should be hit but if jar location was set we are here.
-                finder = fallbackAnnotationFinder(module);
-            }
-            finder.link();
+            finder = useFallbackFinderIfNeededOrLink(module, finder);
         } else {
             // TODO: error. Here it means we'll not find anything so helping a bit (if you hit it outside a test fix it)
             finder = fallbackAnnotationFinder(module);
         }
 
         return MODULE_LIMITED ? new ModuleLimitedFinder(finder) : finder;
+    }
+
+    private OpenEJBAnnotationFinder useFallbackFinderIfNeededOrLink(final DeploymentModule module,
+                                                                    final OpenEJBAnnotationFinder finder) {
+        if (!finder.foundSomething()) { // test case (AppComposer with new WebApp())
+            final OpenEJBAnnotationFinder fbFinder = fallbackAnnotationFinder(module);
+            if (fbFinder.foundSomething()) {
+                return fbFinder;
+            }
+        }
+        finder.link();
+        return finder;
     }
 
     private OpenEJBAnnotationFinder fallbackAnnotationFinder(DeploymentModule module) {
