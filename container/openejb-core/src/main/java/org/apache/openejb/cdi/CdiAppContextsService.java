@@ -255,7 +255,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         } else if (scopeType.equals(ApplicationScoped.class)) {
             return getApplicationContext();
         } else if (supportsConversation() && scopeType.equals(ConversationScoped.class)) {
-            return getConversationContext(true);
+            return getConversationContext(false);
         } else if (scopeType.equals(Dependent.class)) {
             return dependentContext;
         } else if (scopeType.equals(Singleton.class)) {
