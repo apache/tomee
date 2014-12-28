@@ -140,7 +140,11 @@ public class OpenEJBAsyncContext implements AsyncContext {
             }
         }
 
-        commit();
+        try {
+            commit();
+        } finally {
+            INITIALIZED.remove(this);
+        }
     }
 
     private void onError(final Throwable ignored) {

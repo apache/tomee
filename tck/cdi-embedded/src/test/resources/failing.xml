@@ -26,7 +26,7 @@
     -Dopenejb.deploymentId.format={appId}/{ejbJarId}/{ejbName}
     -->
     <classes>
-      <class name="org.jboss.cdi.tck.tests.context.session.async.SessionContextAsyncListenerTest" />
+      <class name="org.jboss.cdi.tck.tests.context.application.async.ApplicationContextAsyncListenerTest" />
     </classes>
   </test>
 </suite>

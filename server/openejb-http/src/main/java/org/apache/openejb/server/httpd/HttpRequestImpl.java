@@ -108,7 +108,7 @@ public class HttpRequestImpl implements HttpRequest {
         if (!"true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.http.eviction", "true"))) {
             return;
         }
-        es = Executors.newScheduledThreadPool(1, new DaemonThreadFactory(OpenEJBAsyncContext.class));
+        es = Executors.newScheduledThreadPool(1, new DaemonThreadFactory(HttpRequestImpl.class));
         es.scheduleWithFixedDelay(new Runnable() {
             @Override
             public void run() {
@@ -1230,6 +1230,7 @@ public class HttpRequestImpl implements HttpRequest {
 
         @Override
         public void invalidate() {
+            SESSIONS.remove(session.getId());
             try {
                 listener.sessionDestroyed(new HttpSessionEvent(session));
             } finally {
