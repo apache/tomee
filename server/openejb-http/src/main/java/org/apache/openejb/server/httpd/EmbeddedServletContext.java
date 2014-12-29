@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.server.httpd;
 
+import org.apache.openejb.util.OpenEjbVersion;
 import org.apache.webbeans.web.lifecycle.test.MockServletContext;
 
 import java.io.IOException;
@@ -101,6 +102,11 @@ public class EmbeddedServletContext extends MockServletContext {
     @Override
     public Enumeration<String> getAttributeNames() {
         return Collections.enumeration(attributes.keySet());
+    }
+
+    @Override
+    public String getServerInfo() {
+        return "OpenEJB/" + OpenEjbVersion.get().getVersion();
     }
 
     public static interface ResourceProvider {
