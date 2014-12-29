@@ -61,10 +61,13 @@ import javax.servlet.jsp.JspApplicationContext;
 import javax.servlet.jsp.JspFactory;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
@@ -246,10 +249,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         beanManager.getInjectionResolver().clearCaches();
 
         if (!hasBean(beanManager, HttpServletRequest.class)) {
-            beanManager.addInternalBean(new InternalBean<>(webBeansContext, HttpServletRequest.class, HttpServletRequest.class));
-        }
-        if (!hasBean(beanManager, ServletRequest.class)) {
-            beanManager.addInternalBean(new InternalBean<>(webBeansContext, ServletRequest.class, HttpServletRequest.class));
+            beanManager.addInternalBean(new HttpServletRequestBean(webBeansContext));
         }
         if (!hasBean(beanManager, HttpSession.class)) {
             beanManager.addInternalBean(new InternalBean<>(webBeansContext, HttpSession.class, HttpSession.class));
@@ -462,6 +462,23 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         @Override
         public Class<?> proxyableType() {
             return null;
+        }
+    }
+
+    public static class HttpServletRequestBean extends InternalBean<HttpServletRequest> {
+        private final Set<Type> types;
+
+        protected HttpServletRequestBean(final WebBeansContext webBeansContext) {
+            super(webBeansContext, HttpServletRequest.class, HttpServletRequest.class);
+            this.types = new HashSet<>(); // here we need 2 types (+Object) otherwise decoratione etc fails
+            this.types.add(HttpServletRequest.class);
+            this.types.add(ServletRequest.class);
+            this.types.add(Object.class);
+        }
+
+        @Override
+        public Set<Type> getTypes() {
+            return types;
         }
     }
 
