@@ -16,14 +16,21 @@
  */
 package org.apache.openejb.server.httpd;
 
+import org.apache.openejb.AppContext;
+import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.cdi.CdiAppContextsService;
 import org.apache.openejb.cdi.Proxys;
+import org.apache.openejb.core.WebContext;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.AppFinder;
+import org.apache.openejb.web.LightweightWebAppBuilder;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.spi.ContextsService;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSessionEvent;
+import javax.servlet.http.HttpSessionListener;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -58,7 +65,34 @@ public class HttpListenerRegistry implements HttpListener {
             systemInstance.setComponent(HttpServletRequest.class, Proxys.threadLocalProxy(HttpServletRequest.class, request, mock));
         }
         if (systemInstance.getComponent(HttpSession.class) == null) {
-            systemInstance.setComponent(javax.servlet.http.HttpSession.class, Proxys.threadLocalRequestSessionProxy(request, mock != null ? mock.getSession() : null));
+            final javax.servlet.http.HttpSession delegate = mock != null ? mock.getSession() : null;
+            systemInstance.setComponent(javax.servlet.http.HttpSession.class, Proxys.threadLocalRequestSessionProxy(request, new ServletSessionAdapter(delegate) {
+                @Override
+                public void invalidate() {
+                    final Object web = AppFinder.findAppContextOrWeb(Thread.currentThread().getContextClassLoader(), AppFinder.AppOrWebContextTransformer.INSTANCE);
+                    if (WebContext.class.isInstance(web)) {
+                        doInvokeSpecificListeners(WebContext.class.cast(web).getContextRoot());
+                    } else if (AppContext.class.isInstance(web)) {
+                        doInvokeSpecificListeners(AppContext.class.cast(web).getId());
+                    }
+                    super.invalidate();
+                }
+
+                private void doInvokeSpecificListeners(final String web) {
+                    final WebAppBuilder wab = SystemInstance.get().getComponent(WebAppBuilder.class);
+                    if (LightweightWebAppBuilder.class.isInstance(wab)) {
+                        final Collection<HttpSessionListener> listeners = LightweightWebAppBuilderListenerExtractor.findByTypeForContext(web, HttpSessionListener.class);
+                        final HttpSessionEvent event = new HttpSessionEvent(this);
+                        for (final HttpSessionListener o : listeners) {
+                            try {
+                                o.sessionDestroyed(event);
+                            } catch (final Throwable th) {
+                                // ignore, may be undeployed
+                            }
+                        }
+                    }
+                }
+            }));
         }
         if (systemInstance.getComponent(ServletContext.class) == null) { // a poor impl but at least we set something
             systemInstance.setComponent(ServletContext.class, new EmbeddedServletContext());
