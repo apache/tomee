@@ -355,8 +355,9 @@ public class OpenEJBContextConfig extends ContextConfig {
             final FilterDef filter = new FilterDef();
             filter.setAsyncSupported("true");
             filter.setDescription("OpenEJB CDI Filter - to propagate @RequestScoped in async tasks");
-            filter.setDisplayName("OpenEJB_CDI");
+            filter.setDisplayName("OpenEJB CDI");
             filter.setFilterClass(WebBeansFilter.class.getName());
+            filter.setFilterName(WebBeansFilter.class.getName());
             webXml.addFilter(filter);
 
             final FilterMap mapping = new FilterMap();

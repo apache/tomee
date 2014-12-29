@@ -403,9 +403,15 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     }
 
     private void cleanupConversation() {
-        if (conversationService == null || getConversationContext(false) == null) {
+        if (conversationService == null) {
             return;
         }
+
+        final ConversationContext cc = getConversationContext(false);
+        if (cc == null) {
+            return;
+        }
+        cc.setActive(false);
 
         final ConversationManager conversationManager = webBeansContext.getConversationManager();
         final Conversation conversation = conversationManager.getConversationBeanReference();
@@ -413,13 +419,17 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             return;
         }
 
-        if (conversation.isTransient()) {
-            endContext(ConversationScoped.class, null);
-            conversationManager.removeConversation(conversation); // in case end() was called
-        } else {
-            final ConversationImpl conversationImpl = (ConversationImpl) conversation;
-            conversationImpl.updateTimeOut();
-            conversationImpl.iDontUseItAnymore();
+        final ConversationImpl conversationImpl = ConversationImpl.class.cast(conversation);
+        conversationImpl.iDontUseItAnymore(); // do it before next call to avoid busy exception if possible
+        try {
+            if (conversation.isTransient()) {
+                endContext(ConversationScoped.class, null);
+                conversationManager.removeConversation(conversation); // in case end() was called
+            } else {
+                conversationImpl.updateTimeOut();
+            }
+        } catch (final BusyConversationException bce) {
+            // no-op, TODO: do something, maybe add internalIsTransient() to avoid to fail here
         }
     }
 
