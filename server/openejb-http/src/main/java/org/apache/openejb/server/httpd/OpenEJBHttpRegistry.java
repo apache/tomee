@@ -136,13 +136,16 @@ public class OpenEJBHttpRegistry {
                     } else {
                         thread.setContextClassLoader(classLoader);
 
-                        try { // surely an issue or something just tolerated for fake webapps
-                            wbc = WebBeansContext.currentInstance();
-                        } catch (final IllegalStateException ise) {
-                            // no-op
+                        if (SystemInstance.isInitialized()) { // avoid to rely on default if we didnt init it and then create lazily a context
+                            try { // surely an issue or something just tolerated for fake webapps
+                                wbc = WebBeansContext.currentInstance();
+                            } catch (final IllegalStateException ise) {
+                                // no-op
+                            }
                         }
                     }
                     if (wbc != null) {
+                        httpRequest.setAttribute("openejb_owb_context", wbc);
                         initCdi(wbc, httpRequest).init();
                     }
                 }

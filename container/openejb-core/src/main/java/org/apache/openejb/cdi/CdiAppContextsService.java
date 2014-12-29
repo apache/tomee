@@ -40,6 +40,7 @@ import org.apache.webbeans.web.context.ServletRequestContext;
 import org.apache.webbeans.web.intercept.RequestScopedBeanInterceptorHandler;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.BusyConversationException;
 import javax.enterprise.context.ContextException;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
@@ -337,6 +338,22 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         }
     }
 
+    public void checkConversationState() {
+        final ServletRequestContext rc  = getRequestContext(false);
+        if (rc != null && rc.getServletRequest() != null && conversationService != null) {
+            final HttpSession session = rc.getServletRequest().getSession(false);
+            if (session != null) {
+                final String cid = rc.getServletRequest().getParameter("cid");
+                if (cid != null) {
+                    final ConversationImpl c = webBeansContext.getConversationManager().getPropogatedConversation(cid, session.getId());
+                    if (c != null && c.iUseIt() > 1) {
+                        throw new BusyConversationException("busy conversation " + c.getId() + '(' + c.getSessionId() + ')');
+                    }
+                }
+            }
+        }
+    }
+
     private void destroyRequestContext() {
         // execute request tasks
         endRequest();
@@ -390,7 +407,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         } else {
             final ConversationImpl conversationImpl = (ConversationImpl) conversation;
             conversationImpl.updateTimeOut();
-            conversationImpl.setInUsed(false);
+            conversationImpl.iDontUseItAnymore();
         }
     }
 

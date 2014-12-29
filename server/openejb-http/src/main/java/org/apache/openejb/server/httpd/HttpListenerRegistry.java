@@ -16,8 +16,11 @@
  */
 package org.apache.openejb.server.httpd;
 
+import org.apache.openejb.cdi.CdiAppContextsService;
 import org.apache.openejb.cdi.Proxys;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.webbeans.config.WebBeansContext;
+import org.apache.webbeans.spi.ContextsService;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -107,6 +110,10 @@ public class HttpListenerRegistry implements HttpListener {
             for (final Map.Entry<String, HttpListener> entry : listeners.entrySet()) {
                 final String pattern = entry.getKey();
                 if (path.matches(pattern) || path.equals(pattern)) {
+                    final WebBeansContext wbc = WebBeansContext.class.cast(request.getAttribute("openejb_owb_context"));
+                    if (wbc != null) {
+                        CdiAppContextsService.class.cast(wbc.getService(ContextsService.class)).checkConversationState();
+                    }
                     entry.getValue().onMessage(request, response);
                     break;
                 }
