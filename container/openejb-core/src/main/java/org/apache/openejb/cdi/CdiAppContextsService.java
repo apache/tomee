@@ -446,7 +446,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
 
         final String sessionId = session.getId();
         //Current context
-        SessionContext currentSessionContext = sessionCtxManager.getSessionContextWithSessionId(sessionId);
+        SessionContext currentSessionContext = sessionId == null ? null : sessionCtxManager.getSessionContextWithSessionId(sessionId);
 
         //No current context
         boolean fire = false;
