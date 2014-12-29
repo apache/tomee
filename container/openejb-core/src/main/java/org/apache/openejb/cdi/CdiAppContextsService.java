@@ -509,13 +509,13 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
 
         final HttpServletRequest req = HttpServletRequest.class.isInstance(request) ? HttpServletRequest.class.cast(request) : null;
         ConversationContext context = ConversationContext.class.isInstance(request) ? ConversationContext.class.cast(request) : null;
-        if (context == null) {
+        final ThreadContext tc = ThreadContext.getThreadContext();
+        if (context == null && (tc == null || tc.getCurrentOperation() != Operation.TIMEOUT)) {
             final ConversationContext existingContext = conversationContext.get();
             if (existingContext == null) {
                 context = new ConversationContext();
                 context.setActive(true);
 
-                conversationContext.set(context);
                 final Object event;
                 if (req != null) {
                     event = req;
@@ -527,10 +527,11 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             } else {
                 context = existingContext;
             }
-        } else {
-            conversationContext.set(context);
         }
-        context.setActive(true);
+        if (context != null) {
+            conversationContext.set(context);
+            context.setActive(true);
+        }
     }
 
     /**
