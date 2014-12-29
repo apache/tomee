@@ -338,7 +338,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
                     initSessionContext(session);
 
                     final ServletRequestContext rc  = getRequestContext(false);
-                    if (rc != null && rc.getServletRequest() != null && conversationService != null) {
+                    if (rc != null && rc.getServletRequest() != null && conversationService != null && !isConversationSkipped(rc)) {
                         final String cid = rc.getServletRequest().getParameter("cid");
                         if (cid != null) {
                             final ConversationManager conversationManager = webBeansContext.getConversationManager();
@@ -628,7 +628,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         ConversationContext context = conversationContext.get();
         if (context == null && createIfPropagated && !isTimeout()) {
             final ServletRequestContext rc  = getRequestContext(true); // needs to exist for Conversation scope
-            if (rc != null && rc.getServletRequest() != null) {
+            if (rc != null && rc.getServletRequest() != null && !isConversationSkipped(rc)) {
                 final HttpServletRequest servletRequest = rc.getServletRequest();
                 final HttpSession session = servletRequest.getSession(false);
                 if (session != null) {
@@ -651,6 +651,11 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             }
         }
         return context;
+    }
+
+    private boolean isConversationSkipped(final ServletRequestContext rc) {
+        final HttpServletRequest servletRequest = rc.getServletRequest();
+        return "none".equals(servletRequest.getParameter("conversationPropagation")) || "true".equals(servletRequest.getParameter("nocid"));
     }
 
     private boolean isTimeout() {
