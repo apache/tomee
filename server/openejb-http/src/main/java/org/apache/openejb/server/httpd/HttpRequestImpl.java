@@ -37,6 +37,7 @@ import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpUpgradeHandler;
@@ -189,6 +190,8 @@ public class HttpRequestImpl implements HttpRequest {
     private String contextPath = "";
     private String servletPath = null;
     private Collection<ServletRequestListener> listeners;
+
+    private volatile boolean asyncStarted;
 
     public HttpRequestImpl(URI socketURI) {
         this.socketURI = socketURI;
@@ -1037,12 +1040,13 @@ public class HttpRequestImpl implements HttpRequest {
         return startAsync(this, HttpResponse.class.cast(getAttribute("openejb_response")));
     }
 
-    @Override
+    @Override // avoids the need of org.apache.openejb.server.httpd.WebBeansFilter in embedded mode
     public AsyncContext startAsync(final ServletRequest servletRequest, final ServletResponse servletResponse) {
         setAttribute("openejb_async", "true");
-        final OpenEJBAsyncContext asyncContext = new OpenEJBAsyncContext(this /* TODO */, servletResponse, contextPath);
+        final OpenEJBAsyncContext asyncContext = new OpenEJBAsyncContext(HttpServletRequest.class.cast(servletRequest) /* TODO */, servletResponse, contextPath);
         asyncContext.internalStartAsync();
-        return asyncContext;
+        asyncStarted = true;
+        return new WebBeansFilter.AsynContextWrapper(asyncContext);
     }
 
     public String getParameter(String name) {
@@ -1141,7 +1145,7 @@ public class HttpRequestImpl implements HttpRequest {
 
     @Override
     public boolean isAsyncStarted() {
-        return false;
+        return asyncStarted;
     }
 
     @Override

@@ -40,6 +40,7 @@ import org.apache.openejb.config.NewLoaderLogic;
 import org.apache.openejb.config.ServiceUtils;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.server.httpd.WebBeansFilter;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URLs;
@@ -48,6 +49,8 @@ import org.apache.tomcat.util.bcel.classfile.ClassFormatException;
 import org.apache.tomcat.util.bcel.classfile.ElementValuePair;
 import org.apache.tomcat.util.bcel.classfile.JavaClass;
 import org.apache.tomcat.util.descriptor.web.ContextResource;
+import org.apache.tomcat.util.descriptor.web.FilterDef;
+import org.apache.tomcat.util.descriptor.web.FilterMap;
 import org.apache.tomcat.util.descriptor.web.JspPropertyGroup;
 import org.apache.tomcat.util.descriptor.web.WebXml;
 import org.apache.tomcat.util.digester.Digester;
@@ -346,6 +349,20 @@ public class OpenEJBContextConfig extends ContextConfig {
                     webXml.addJspPropertyGroup(propertyGroup);
                 }
             }
+        }
+
+        {
+            final FilterDef filter = new FilterDef();
+            filter.setAsyncSupported("true");
+            filter.setDescription("OpenEJB CDI Filter - to propagate @RequestScoped in async tasks");
+            filter.setDisplayName("OpenEJB_CDI");
+            filter.setFilterClass(WebBeansFilter.class.getName());
+            webXml.addFilter(filter);
+
+            final FilterMap mapping = new FilterMap();
+            mapping.setFilterName(filter.getFilterName());
+            mapping.addURLPattern("/*");
+            webXml.addFilterMapping(mapping);
         }
 
         return webXml;

@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.Socket;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -95,7 +96,7 @@ public class OpenEJBAsyncContext implements AsyncContext {
 
     private final List<AsyncListener> listeners = new ArrayList<>();
     private final ServletResponse response;
-    private final HttpRequestImpl request;
+    private final HttpServletRequest request;
     private final Socket socket;
     private final AsyncEvent event;
     private WebContext context = null;
@@ -104,7 +105,7 @@ public class OpenEJBAsyncContext implements AsyncContext {
     private long timeout = 30000;
     private long lastTouch = System.currentTimeMillis();
 
-    public OpenEJBAsyncContext(final HttpRequestImpl request, final ServletResponse response, final String contextPath) {
+    public OpenEJBAsyncContext(final HttpServletRequest request, final ServletResponse response, final String contextPath) {
         if (es == null) {
             synchronized (OpenEJBAsyncContext.class) { // we don't care since impl is not really thread safe, just here for testing
                 if (es == null) {
@@ -224,7 +225,7 @@ public class OpenEJBAsyncContext implements AsyncContext {
         final HttpListenerRegistry registry = SystemInstance.get().getComponent(HttpListenerRegistry.class);
         try {
             final String contextPath = this.context.getContextRoot().startsWith("/") ? this.context.getContextRoot() : ('/' + this.context.getContextRoot());
-            final HttpRequestImpl req = new HttpRequestImpl(request.getSocketURI()) {
+            final HttpRequestImpl req = new HttpRequestImpl(new URI(request.getRequestURI())) {
                 @Override
                 public String getContextPath() {
                     return contextPath;

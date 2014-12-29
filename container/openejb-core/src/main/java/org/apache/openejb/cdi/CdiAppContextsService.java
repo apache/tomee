@@ -177,7 +177,10 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
 
         for (final Map.Entry<Conversation, ConversationContext> conversation : webBeansContext.getConversationManager().getAllConversationContexts().entrySet()) {
             conversation.getValue().destroy();
-            webBeansContext.getBeanManagerImpl().fireEvent(conversation.getKey().getId(), DestroyedLiteral.CONVERSATION);
+            final String id = conversation.getKey().getId();
+            if (id != null) {
+                webBeansContext.getBeanManagerImpl().fireEvent(id, DestroyedLiteral.CONVERSATION);
+            }
         }
         for (final SessionContext sc : sessionCtxManager.getContextById().values()) {
             final Object event = HttpSessionContextSessionAware.class.isInstance(sc) ? HttpSessionContextSessionAware.class.cast(sc).getSession() : sc;
@@ -256,7 +259,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         } else if (scopeType.equals(ApplicationScoped.class)) {
             return getApplicationContext();
         } else if (supportsConversation() && scopeType.equals(ConversationScoped.class)) {
-            return getConversationContext(false);
+            return getConversationContext(true);
         } else if (scopeType.equals(Dependent.class)) {
             return dependentContext;
         } else if (scopeType.equals(Singleton.class)) {
@@ -333,6 +336,18 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
 
                 if (session != null) {
                     initSessionContext(session);
+
+                    final ServletRequestContext rc  = getRequestContext(false);
+                    if (rc != null && rc.getServletRequest() != null && conversationService != null) {
+                        final String cid = rc.getServletRequest().getParameter("cid");
+                        if (cid != null) {
+                            final ConversationManager conversationManager = webBeansContext.getConversationManager();
+                            final ConversationImpl c = conversationManager.getPropogatedConversation(cid, session.getId());
+                            if (c != null) {
+                                conversationContext.set(conversationManager.getConversationContext(c));
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -345,7 +360,8 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             if (session != null) {
                 final String cid = rc.getServletRequest().getParameter("cid");
                 if (cid != null) {
-                    final ConversationImpl c = webBeansContext.getConversationManager().getPropogatedConversation(cid, session.getId());
+                    final ConversationManager conversationManager = webBeansContext.getConversationManager();
+                    final ConversationImpl c = conversationManager.getPropogatedConversation(cid, session.getId());
                     if (c != null && c.iUseIt() > 1) {
                         throw new BusyConversationException("busy conversation " + c.getId() + '(' + c.getSessionId() + ')');
                     }
@@ -358,15 +374,15 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         // execute request tasks
         endRequest();
 
-        if (supportsConversation()) { // OWB-595
-            cleanupConversation();
-        }
-
         //Get context
         final RequestContext context = getRequestContext(false);
 
         //Destroy context
         if (context != null) {
+            if (supportsConversation()) { // OWB-595
+                cleanupConversation();
+            }
+
             final HttpServletRequest servletRequest = ServletRequestContext.class.cast(context).getServletRequest();
             if (servletRequest != null) {
                 webBeansContext.getBeanManagerImpl().fireEvent(servletRequest, DestroyedLiteral.REQUEST);
@@ -387,12 +403,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     }
 
     private void cleanupConversation() {
-        if (conversationService == null) {
-            return;
-        }
-
-        final ConversationContext conversationContext = getConversationContext(false);
-        if (conversationContext == null) {
+        if (conversationService == null || getConversationContext(false) == null) {
             return;
         }
 
@@ -403,7 +414,8 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         }
 
         if (conversation.isTransient()) {
-            webBeansContext.getContextsService().endContext(ConversationScoped.class, null);
+            endContext(ConversationScoped.class, null);
+            conversationManager.removeConversation(conversation); // in case end() was called
         } else {
             final ConversationImpl conversationImpl = (ConversationImpl) conversation;
             conversationImpl.updateTimeOut();
@@ -427,16 +439,21 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         SessionContext currentSessionContext = sessionCtxManager.getSessionContextWithSessionId(sessionId);
 
         //No current context
+        boolean fire = false;
         if (currentSessionContext == null) {
             currentSessionContext = newSessionContext(session);
             sessionCtxManager.addNewSessionContext(sessionId, currentSessionContext);
-            webBeansContext.getBeanManagerImpl().fireEvent(session, InitializedLiteral.SESSION);
+            fire = true;
         }
         //Activate
         currentSessionContext.setActive(true);
 
         //Set thread local
         sessionContext.set(currentSessionContext);
+
+        if (fire) {
+            webBeansContext.getBeanManagerImpl().fireEvent(session, InitializedLiteral.SESSION);
+        }
     }
 
     private SessionContext newSessionContext(final HttpSession session) {
@@ -502,28 +519,27 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
      *
      * @param context context
      */
-    private void initConversationContext(final Object request) {
+    private ConversationContext initConversationContext(final Object request) {
         if (conversationService == null) {
-            return;
+            return null;
         }
 
         final HttpServletRequest req = HttpServletRequest.class.isInstance(request) ? HttpServletRequest.class.cast(request) : null;
         ConversationContext context = ConversationContext.class.isInstance(request) ? ConversationContext.class.cast(request) : null;
         final ThreadContext tc = ThreadContext.getThreadContext();
+        Object event = null;
         if (context == null && (tc == null || tc.getCurrentOperation() != Operation.TIMEOUT)) {
             final ConversationContext existingContext = conversationContext.get();
             if (existingContext == null) {
                 context = new ConversationContext();
                 context.setActive(true);
 
-                final Object event;
                 if (req != null) {
                     event = req;
                 } else {
                     final ServletRequestContext servletRequestContext = getRequestContext(true);
                     event = servletRequestContext != null && servletRequestContext.getServletRequest() != null ? servletRequestContext.getServletRequest() : context;
                 }
-                webBeansContext.getBeanManagerImpl().fireEvent(event, InitializedLiteral.CONVERSATION);
             } else {
                 context = existingContext;
             }
@@ -531,7 +547,11 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         if (context != null) {
             conversationContext.set(context);
             context.setActive(true);
+            if (event != null) {
+                webBeansContext.getBeanManagerImpl().fireEvent(event, InitializedLiteral.CONVERSATION);
+            }
         }
+        return context;
     }
 
     /**
@@ -604,15 +624,38 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
      *
      * @return conversation context
      */
-    private ConversationContext getConversationContext(final boolean createIfMissing) {
+    private ConversationContext getConversationContext(final boolean createIfPropagated) {
         ConversationContext context = conversationContext.get();
-        final ThreadContext tc = ThreadContext.getThreadContext();
-        if (context == null && (createIfMissing && (tc == null || tc.getCurrentOperation() != Operation.TIMEOUT))) {
-            getRequestContext(true); // needs to exist for Conversation scope
-            initConversationContext(null);
-            return getConversationContext(false);
+        if (context == null && createIfPropagated && !isTimeout()) {
+            final ServletRequestContext rc  = getRequestContext(true); // needs to exist for Conversation scope
+            if (rc != null && rc.getServletRequest() != null) {
+                final HttpServletRequest servletRequest = rc.getServletRequest();
+                final HttpSession session = servletRequest.getSession(false);
+                if (session != null) {
+                    final String cid = rc.getServletRequest().getParameter("cid");
+                    if (cid != null) {
+                        final ConversationManager conversationManager = webBeansContext.getConversationManager();
+                        final ConversationImpl conversation = conversationManager.getPropogatedConversation(cid, session.getId());
+                        if (conversation != null) {
+                            final ConversationContext ctx = conversationManager.getConversationContext(conversation);
+                            if (ctx != null) {
+                                conversationContext.set(ctx);
+                                ctx.setActive(true);
+                                return ctx;
+                            }
+                        }
+                    }
+                    // else create a new one, we ensure we have a session before doing it cause in several cases - stateless - we don't want to create a new one if not
+                    return initConversationContext(servletRequest);
+                }
+            }
         }
         return context;
+    }
+
+    private boolean isTimeout() {
+        final ThreadContext tc = ThreadContext.getThreadContext();
+        return tc != null && tc.getCurrentOperation() == Operation.TIMEOUT;
     }
 
     private Context lazyStartSessionContext() {

@@ -26,7 +26,7 @@
     -Dopenejb.deploymentId.format={appId}/{ejbJarId}/{ejbName}
     -->
     <classes>
-      <class name="org.jboss.cdi.tck.tests.context.passivating.dependency.resource.persistence.DataSourcePassivationDependencyTest" />
+      <class name="org.jboss.cdi.tck.tests.context.conversation.determination.ConversationDeterminationTest" />
     </classes>
   </test>
 </suite>
