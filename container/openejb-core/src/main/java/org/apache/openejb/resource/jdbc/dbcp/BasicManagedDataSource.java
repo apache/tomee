@@ -29,6 +29,8 @@ import org.apache.openejb.resource.jdbc.pool.XADataSourceResource;
 
 import javax.sql.DataSource;
 import java.io.File;
+import java.io.ObjectStreamException;
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
@@ -36,9 +38,10 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 
 @SuppressWarnings({"UnusedDeclaration"})
-public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.BasicManagedDataSource {
+public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.BasicManagedDataSource implements Serializable {
 
     private static final ReentrantLock lock = new ReentrantLock();
+    private final String name;
 
     private Logger logger;
 
@@ -54,6 +57,12 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
 
     public BasicManagedDataSource(final String name) {
         registerAsMbean(name);
+        this.name = name;
+    }
+
+    @Override
+    public int getLoginTimeout() throws SQLException {
+        return 0;
     }
 
     @Override
@@ -309,5 +318,9 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
         } finally {
             l.unlock();
         }
+    }
+
+    Object writeReplace() throws ObjectStreamException {
+        return new DataSourceSerialization(name);
     }
 }

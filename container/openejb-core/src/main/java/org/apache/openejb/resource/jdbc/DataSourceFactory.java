@@ -42,6 +42,7 @@ import javax.sql.DataSource;
 import javax.sql.XADataSource;
 import java.io.Flushable;
 import java.io.IOException;
+import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 import java.sql.Driver;
@@ -248,7 +249,7 @@ public class DataSourceFactory {
     private static CommonDataSource makeFlushable(final CommonDataSource ds, final FlushableDataSourceHandler.FlushConfig flushConfig) {
         return (CommonDataSource) Proxy.newProxyInstance(
             Thread.currentThread().getContextClassLoader(),
-            new Class<?>[]{DataSource.class.isInstance(ds) ? DataSource.class : XADataSource.class, Flushable.class},
+            new Class<?>[]{DataSource.class.isInstance(ds) ? DataSource.class : XADataSource.class, Flushable.class, Serializable.class},
             new FlushableDataSourceHandler(ds, flushConfig));
     }
 
@@ -258,7 +259,7 @@ public class DataSourceFactory {
 
     public static DataSource makeItLogging(final CommonDataSource ds) {
         return (DataSource) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
-            new Class<?>[]{DataSource.class}, new LoggingSqlDataSource(ds));
+            new Class<?>[]{DataSource.class, Serializable.class}, new LoggingSqlDataSource(ds));
     }
 
     private static void normalizeJdbcUrl(final Properties properties) {

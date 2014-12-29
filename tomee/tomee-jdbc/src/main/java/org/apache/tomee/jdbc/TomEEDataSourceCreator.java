@@ -23,6 +23,7 @@ import org.apache.openejb.cipher.PasswordCipherFactory;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.resource.jdbc.BasicDataSourceUtil;
+import org.apache.openejb.resource.jdbc.dbcp.DataSourceSerialization;
 import org.apache.openejb.resource.jdbc.plugin.DataSourcePlugin;
 import org.apache.openejb.resource.jdbc.pool.PoolDataSourceCreator;
 import org.apache.openejb.resource.jdbc.pool.XADataSourceResource;
@@ -41,6 +42,8 @@ import javax.management.ObjectName;
 import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 import javax.sql.XADataSource;
+import java.io.ObjectStreamException;
+import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -202,16 +205,18 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
         ds.close(true);
     }
 
-    public static class TomEEDataSource extends org.apache.tomcat.jdbc.pool.DataSource {
+    public static class TomEEDataSource extends org.apache.tomcat.jdbc.pool.DataSource implements Serializable {
         private static final Log LOGGER = LogFactory.getLog(TomEEDataSource.class);
         private static final Class<?>[] CONNECTION_POOL_CLASS = new Class<?>[]{ PoolConfiguration.class };
 
+        private final String name;
         private ObjectName internalOn;
 
         public TomEEDataSource(final PoolConfiguration properties, final ConnectionPool pool, final String name) {
             super(readOnly(properties));
             this.pool = pool;
             initJmx(name);
+            this.name = name;
         }
 
         public TomEEDataSource(final PoolConfiguration poolConfiguration, final String name) {
@@ -222,6 +227,7 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
             } catch (final Throwable e) {
                 LOGGER.error("Can't create DataSource", e);
             }
+            this.name = name;
         }
 
         @Override
@@ -296,6 +302,10 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
                     LOGGER.error("Unable to unregister JDBC pool with JMX", e);
                 }
             }
+        }
+
+        Object writeReplace() throws ObjectStreamException {
+            return new DataSourceSerialization(name);
         }
     }
 

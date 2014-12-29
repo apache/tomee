@@ -33,6 +33,8 @@ import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 import javax.sql.XADataSource;
 import java.io.File;
+import java.io.ObjectStreamException;
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
@@ -40,7 +42,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 
 @SuppressWarnings({"UnusedDeclaration"})
-public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
+public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource implements Serializable {
 
     private static final ReentrantLock lock = new ReentrantLock();
 
@@ -56,6 +58,7 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
     private String passwordCipher;
     private JMXBasicDataSource jmxDs;
     private CommonDataSource delegate;
+    private String name;
 
     public BasicDataSource() {
         // no-op
@@ -63,6 +66,11 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
 
     public BasicDataSource(final String name) {
         setName(name);
+    }
+
+    @Override
+    public int getLoginTimeout() throws SQLException {
+        return 0;
     }
 
     public void setDelegate(final CommonDataSource delegate) {
@@ -314,5 +322,10 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
 
     public void setName(final String name) {
         registerAsMbean(name);
+        this.name = name;
+    }
+
+    Object writeReplace() throws ObjectStreamException {
+        return new DataSourceSerialization(name);
     }
 }
