@@ -428,7 +428,7 @@ public final class ApplicationComposers {
                 }
 
                 final String service = field.getAnnotation(RandomPort.class).value();
-                final String key = "http".equals(service) ? "httpejbd" : service + ".port";
+                final String key = ("http".equals(service) ? "httpejbd" : service) + ".port";
                 final String existing = SystemInstance.get().getProperty(key);
                 final int random;
                 if (existing == null) {
