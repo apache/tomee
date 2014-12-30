@@ -1149,7 +1149,7 @@ public final class ApplicationComposers {
                 for (final Descriptor descriptor : ((Descriptors) descriptors).value()) {
                     URL resource = loader.getResource(descriptor.path());
                     try {
-                        dds.put(descriptor.name(), resource == null ? new File(descriptor.path()).toURI().toURL() : null);
+                        dds.put(descriptor.name(), resource == null ? new File(descriptor.path()).toURI().toURL() : resource);
                     } catch (final MalformedURLException e) {
                         throw new IllegalArgumentException(e);
                     }
@@ -1159,7 +1159,7 @@ public final class ApplicationComposers {
                     for (final org.apache.openejb.junit.Descriptor descriptor : ((org.apache.openejb.junit.Descriptors) descriptors).value()) {
                         URL resource = loader.getResource(descriptor.path());
                         try {
-                            dds.put(descriptor.name(), resource == null ? new File(descriptor.path()).toURI().toURL() : null);
+                            dds.put(descriptor.name(), resource == null ? new File(descriptor.path()).toURI().toURL() : resource);
                         } catch (final MalformedURLException e) {
                             throw new IllegalArgumentException(e);
                         }
