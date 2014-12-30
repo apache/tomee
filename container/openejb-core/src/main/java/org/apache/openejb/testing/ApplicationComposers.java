@@ -1085,7 +1085,7 @@ public final class ApplicationComposers {
             }
             return dds;
         }
-        return Collections.emptyMap();
+        return new HashMap<String, URL>();
     }
 
     private static IAnnotationFinder finderFromClasses(final DeploymentModule module, final Class<?>[] value, final Collection<File> others) {
