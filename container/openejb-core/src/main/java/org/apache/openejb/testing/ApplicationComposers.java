@@ -110,7 +110,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -1075,9 +1074,9 @@ public final class ApplicationComposers {
             final ClassLoader loader = Thread.currentThread().getContextClassLoader();
             if (descriptors instanceof Descriptors) {
                 for (final Descriptor descriptor : ((Descriptors) descriptors).value()) {
-                    URL resource = loader.getResource(descriptor.path());
+                    final URL resource = loader.getResource(descriptor.path());
                     try {
-                        dds.put(descriptor.name(), resource == null ? new File(descriptor.path()).toURI().toURL() : null);
+                        dds.put(descriptor.name(), resource == null ? new File(descriptor.path()).toURI().toURL() : resource);
                     } catch (final MalformedURLException e) {
                         throw new IllegalArgumentException(e);
                     }
@@ -1085,9 +1084,9 @@ public final class ApplicationComposers {
             } else {
                 if (descriptors instanceof org.apache.openejb.junit.Descriptors) {
                     for (final org.apache.openejb.junit.Descriptor descriptor : ((org.apache.openejb.junit.Descriptors) descriptors).value()) {
-                        URL resource = loader.getResource(descriptor.path());
+                        final URL resource = loader.getResource(descriptor.path());
                         try {
-                            dds.put(descriptor.name(), resource == null ? new File(descriptor.path()).toURI().toURL() : null);
+                            dds.put(descriptor.name(), resource == null ? new File(descriptor.path()).toURI().toURL() : resource);
                         } catch (final MalformedURLException e) {
                             throw new IllegalArgumentException(e);
                         }
