@@ -1147,12 +1147,22 @@ public final class ApplicationComposers {
             final ClassLoader loader = Thread.currentThread().getContextClassLoader();
             if (descriptors instanceof Descriptors) {
                 for (final Descriptor descriptor : ((Descriptors) descriptors).value()) {
-                    dds.put(descriptor.name(), loader.getResource(descriptor.path()));
+                    URL resource = loader.getResource(descriptor.path());
+                    try {
+                        dds.put(descriptor.name(), resource == null ? new File(descriptor.path()).toURI().toURL()));
+                    } catch (final MalformedURLException e) {
+                        throw new IllegalArgumentException(e);
+                    }
                 }
             } else {
                 if (descriptors instanceof org.apache.openejb.junit.Descriptors) {
                     for (final org.apache.openejb.junit.Descriptor descriptor : ((org.apache.openejb.junit.Descriptors) descriptors).value()) {
-                        dds.put(descriptor.name(), loader.getResource(descriptor.path()));
+                        URL resource = loader.getResource(descriptor.path());
+                        try {
+                            dds.put(descriptor.name(), resource == null ? new File(descriptor.path()).toURI().toURL());
+                        } catch (final MalformedURLException e) {
+                            throw new IllegalArgumentException(e);
+                        }
                     }
                 }
             }
