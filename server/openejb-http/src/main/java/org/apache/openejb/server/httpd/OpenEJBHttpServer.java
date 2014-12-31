@@ -17,6 +17,7 @@
 package org.apache.openejb.server.httpd;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.ServiceException;
@@ -74,7 +75,7 @@ public class OpenEJBHttpServer implements HttpServer {
     }
 
     public OpenEJBHttpServer(final HttpListener listener) {
-        this.listener = listener;
+        this.listener = new OpenEJBHttpRegistry.ClassLoaderHttpListener(listener, ParentClassLoaderFinder.Helper.get());
     }
 
     public static boolean isTextXml(final Map<String, String> headers) {
