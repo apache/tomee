@@ -75,31 +75,4 @@ public class EarTest {
         final String slurp = IO.slurp(servlet);
         Assert.assertEquals(Test.class.getName(), slurp);
     }
-
-
-    @Singleton
-    @Startup
-    public static class Bean {
-
-        @PostConstruct
-        private void post() throws InterruptedException {
-//            Thread.sleep(TimeUnit.MINUTES.toMillis(1));
-        }
-
-        public String getMessage() {
-            return Test.class.getName();
-        }
-    }
-
-    @WebServlet("/blue")
-    public static class Hello extends HttpServlet {
-
-        @EJB
-        private Bean bean;
-
-        @Override
-        protected void service(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-            resp.getWriter().print(bean.getMessage());
-        }
-    }
 }
