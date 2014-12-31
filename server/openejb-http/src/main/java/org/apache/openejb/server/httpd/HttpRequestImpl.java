@@ -1194,15 +1194,20 @@ public class HttpRequestImpl implements HttpRequest {
     }
 
     public void setEndListener(final EndWebBeansListener end) {
-        this.end = end;
+        if (this.end == null) {
+            this.end = end;
+        }
     }
 
     public void setBeginListener(final BeginWebBeansListener begin) {
-        this.begin = begin;
+        if (this.begin == null) {
+            this.begin = begin;
+        }
     }
 
     public void init() {
-        if (begin != null) {
+        if (begin != null && getAttribute("openejb_requestInitialized") == null) {
+            setAttribute("openejb_requestInitialized", "ok"); // if called again we loose the request scope
             begin.requestInitialized(new ServletRequestEvent(getServletContext(), this));
         }
 
@@ -1222,7 +1227,8 @@ public class HttpRequestImpl implements HttpRequest {
                 listener.requestDestroyed(event);
             }
         }
-        if (end != null) {
+        if (end != null && getAttribute("openejb_requestDestroyed") == null) {
+            setAttribute("openejb_requestDestroyed", "ok");
             end.requestDestroyed(new ServletRequestEvent(getServletContext(), this));
         }
     }
