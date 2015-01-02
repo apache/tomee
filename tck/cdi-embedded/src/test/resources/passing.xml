@@ -151,6 +151,7 @@
         </methods>
       </class>
 
+      <!-- CDITCK-461 -->
       <class name="org.jboss.cdi.tck.tests.interceptors.definition.broken.finalClassInterceptor.FinalMethodClassLevelInterceptorTest">
         <methods>
           <exclude name="testFinalMethodWithClassLevelInterceptor" />
