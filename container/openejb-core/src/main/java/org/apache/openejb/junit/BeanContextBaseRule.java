@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.testing;
+package org.apache.openejb.junit;
 
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.Injector;

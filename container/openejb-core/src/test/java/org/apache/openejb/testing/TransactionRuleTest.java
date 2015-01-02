@@ -19,6 +19,7 @@ package org.apache.openejb.testing;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.junit.ApplicationComposerRule;
+import org.apache.openejb.junit.TransactionRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;

@@ -802,7 +802,9 @@ public final class ApplicationComposers {
 
         appContext = assembler.createApplication(appInfo);
 
-        ScopeHelper.startContexts(appContext.getWebBeansContext().getContextsService(), servletContext, session);
+        if (mockCdiContexts()) {
+            ScopeHelper.startContexts(appContext.getWebBeansContext().getContextsService(), servletContext, session);
+        }
 
         final BeanContext context = containerSystem.getBeanContext(testClass.getName());
 
@@ -844,6 +846,10 @@ public final class ApplicationComposers {
 
         // switch back since next test will use another instance
         testClassFinders.put(this, testClassFinder);
+    }
+
+    private boolean mockCdiContexts() {
+        return "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.testing.start-cdi-contexts", "true"));
     }
 
     private void addWebApp(final AppModule appModule, final ManagedBean testBean,
@@ -1084,10 +1090,12 @@ public final class ApplicationComposers {
 
             globalJndiEntries.clear();
 
-            try {
-                ScopeHelper.stopContexts(contextsService, servletContext, session);
-            } catch (final Exception e) {
-                // no-op
+            if (mockCdiContexts()) {
+                try {
+                    ScopeHelper.stopContexts(contextsService, servletContext, session);
+                } catch (final Exception e) {
+                    // no-op
+                }
             }
         }
 

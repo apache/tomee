@@ -19,6 +19,7 @@ package org.apache.openejb.testing;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.junit.ApplicationComposerRule;
+import org.apache.openejb.junit.RunAsRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
