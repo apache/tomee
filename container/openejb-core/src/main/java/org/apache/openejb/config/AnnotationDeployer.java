@@ -25,6 +25,7 @@ import org.apache.openejb.api.RemoteClient;
 import org.apache.openejb.cdi.CdiBeanInfo;
 import org.apache.openejb.config.rules.CheckClasses;
 import org.apache.openejb.core.EmptyResourcesClassLoader;
+import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.core.TempClassLoader;
 import org.apache.openejb.core.webservices.JaxWsUtils;
 import org.apache.openejb.dyni.DynamicSubclass;
@@ -146,6 +147,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.annotation.security.RunAs;
 import javax.annotation.sql.DataSourceDefinition;
 import javax.annotation.sql.DataSourceDefinitions;
+import javax.decorator.Delegate;
 import javax.ejb.AccessTimeout;
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.AfterBegin;
@@ -184,7 +186,13 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.context.Dependent;
 import javax.enterprise.context.NormalScope;
+import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.SessionScoped;
+import javax.enterprise.inject.Model;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.Stereotype;
 import javax.enterprise.inject.spi.DefinitionException;
@@ -1653,6 +1661,9 @@ public class AnnotationDeployer implements DynamicDeployer {
             final WebappAggregatedArchive aggregatedArchive = (WebappAggregatedArchive) archive;
             final Map<URL, List<String>> map = aggregatedArchive.getClassesMap();
 
+            Collection<Class<?>> discoveredBeans = null;
+            List<Class<? extends Extension>> extensions = null;
+
             for (final Map.Entry<URL, List<String>> entry : map.entrySet()) {
                 final URL key = entry.getKey();
                 final URL beansXml = hasBeansXml(key);
@@ -1660,74 +1671,89 @@ public class AnnotationDeployer implements DynamicDeployer {
                 if (beansXml != null) {
                     classes.put(beansXml, value);
                 } else if (!value.isEmpty()) {
-                    final Set<String> potentialClasses = new HashSet<>();
+                    final Set<String> fastValue = new HashSet<>(value);
+                    if (discoveredBeans == null) { // lazy init for apps not using it, it slows down the app boot and that should be useless
+                        discoveredBeans = new HashSet<>();
 
-                    final Set<Class<?>> newMarkers = new HashSet<>(finder.findAnnotatedClasses(Stereotype.class));
-                    newMarkers.addAll(finder.findAnnotatedClasses(NormalScope.class));
-                    newMarkers.addAll(finder.findAnnotatedClasses(Scope.class));
+                        final Set<Class<? extends Annotation>> containerAnnot = new HashSet<>();
+                        containerAnnot.add(Stereotype.class);
+                        containerAnnot.add(NormalScope.class);
+                        containerAnnot.add(Scope.class);
+                        containerAnnot.add(Dependent.class);
+                        containerAnnot.add(javax.inject.Singleton.class);
+                        containerAnnot.add(ApplicationScoped.class);
+                        containerAnnot.add(ConversationScoped.class);
+                        containerAnnot.add(RequestScoped.class);
+                        containerAnnot.add(SessionScoped.class);
+                        containerAnnot.add(Model.class);
+                        containerAnnot.add(javax.interceptor.InterceptorBinding.class);
+                        containerAnnot.add(Singleton.class);
+                        containerAnnot.add(Stateless.class);
+                        containerAnnot.add(Stateful.class);
+                        containerAnnot.add(MessageDriven.class);
+                        final ClassLoader classLoader = ParentClassLoaderFinder.Helper.get();
+                        try {
+                            for (final String name : asList("javax.faces.flow.FlowScoped", "javax.faces.view.ViewScoped")) {
+                                containerAnnot.add((Class<? extends Annotation>) classLoader.loadClass(name));
+                            }
+                        } catch (final Throwable e) {
+                            // no-op
+                        }
 
-                    do {
-                        final Set<Class<?>> loopMarkers = new HashSet<>(newMarkers);
-                        newMarkers.clear();
-                        for (final Class<?> marker : loopMarkers) {
-                            potentialClasses.add(marker.getName());
+                        final Set<Class<?>> newMarkers = new HashSet<>();
+                        for (final Class<? extends Annotation> a : containerAnnot) {
+                            newMarkers.addAll(finder.findAnnotatedClasses(a));
+                        }
 
-                            final List<Class<?>> found = finder.findAnnotatedClasses(Class.class.cast(marker));
-                            for (final Class<?> c : found) {
-                                if (c.isAnnotation()) {
-                                    newMarkers.add(c);
-                                }
-                                if (value.contains(c.getName())) {
-                                    potentialClasses.add(c.getName());
+                        do {
+                            final Set<Class<?>> loopMarkers = new HashSet<>(newMarkers);
+                            newMarkers.clear();
+                            for (final Class<?> marker : loopMarkers) {
+                                discoveredBeans.add(marker);
+
+                                final List<Class<?>> found = finder.findAnnotatedClasses(Class.class.cast(marker));
+                                for (final Class<?> c : found) {
+                                    if (c.isAnnotation()) {
+                                        newMarkers.add(c);
+                                    }
+                                    discoveredBeans.add(c);
                                 }
                             }
-                        }
-                    } while (!newMarkers.isEmpty());
+                        } while (!newMarkers.isEmpty());
 
-                    newMarkers.clear();
-                    newMarkers.add(Stateful.class);
-                    newMarkers.add(Singleton.class);
-                    newMarkers.add(Stateless.class);
-                    newMarkers.add(MessageDriven.class);
-
-                    boolean ejb = false;
-                    for (final Class<?> marker : newMarkers) {
-                        final List<Class<?>> found = finder.findAnnotatedClasses(Class.class.cast(marker));
-                        for (final Class<?> c : found) {
-                            if (value.contains(c.getName())) {
-                                potentialClasses.add(c.getName());
-                                ejb = true;
-                            }
+                        for (final Field field : finder.findAnnotatedFields(Delegate.class)) { // should be done for constructors but too slow?
+                            discoveredBeans.add(field.getDeclaringClass());
                         }
+
+                        extensions = finder.findImplementations(Extension.class);
                     }
-                    if (ejb) {
-                        final List<Class<? extends Extension>> extensions = finder.findImplementations(Extension.class);
-                        boolean skip = false;
-                        for (final Class<?> c : extensions) {
-                            if (value.contains(c.getName())) {
-                                // legacy mode, we should check META-INF/services/... but this mode + having an Extension should be enough
-                                skip = true;
-                                continue;
-                            }
-                        }
-                        if (skip) {
+
+                    boolean skip = false;
+                    for (final Class<?> c : extensions) {
+                        if (fastValue.contains(c.getName())) {
+                            // legacy mode, we should check META-INF/services/... but this mode + having an Extension should be enough
+                            skip = true;
                             continue;
                         }
                     }
-
-                    if (potentialClasses.isEmpty()) {
+                    if (skip) {
                         continue;
                     }
 
-                    // intersection
-                    final List<String> diff = new ArrayList<>(entry.getValue());
-                    diff.removeAll(potentialClasses);
+                    final Set<String> beans = new HashSet<>();
+                    for (final Class<?> c : discoveredBeans) {
+                        final String name = c.getName();
+                        if (fastValue.contains(name)) {
+                            beans.add(name);
+                        }
+                    }
 
-                    final List<String> copy = new ArrayList<>(entry.getValue());
-                    copy.removeAll(diff);
+                    if (beans.isEmpty()) {
+                        continue;
+                    }
 
                     // just keep the potential ones to not load all classes during boot
-                    notManaged.put(entry.getKey(), copy);
+                    notManaged.put(entry.getKey(), new ArrayList<String>(beans));
                 }
             }
         }

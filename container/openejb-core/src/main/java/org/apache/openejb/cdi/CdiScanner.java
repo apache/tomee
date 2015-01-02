@@ -35,11 +35,13 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.classloader.ClassLoaderComparator;
 import org.apache.openejb.util.classloader.DefaultClassLoaderComparator;
 import org.apache.webbeans.config.WebBeansContext;
+import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.intercept.InterceptorsManager;
 import org.apache.webbeans.spi.BDABeansXmlScanner;
 import org.apache.webbeans.spi.BeanArchiveService;
 import org.apache.webbeans.spi.ScannerService;
 
+import javax.decorator.Decorator;
 import java.lang.annotation.Annotation;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -281,8 +283,11 @@ public class CdiScanner implements ScannerService {
         try {
             for (final Annotation a : clazz.getAnnotations()) {
                 final Class<? extends Annotation> annotationType = a.annotationType();
-                if (webBeansContext.getBeanManagerImpl().isScope(annotationType)
-                        || webBeansContext.getBeanManagerImpl().isStereotype(annotationType)) {
+                final BeanManagerImpl beanManager = webBeansContext.getBeanManagerImpl();
+                if (beanManager.isScope(annotationType)
+                        || beanManager.isStereotype(annotationType)
+                        || beanManager.isInterceptorBinding(annotationType)
+                        || Decorator.class == a.annotationType()) {
                     return true;
                 }
             }
