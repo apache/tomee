@@ -31,9 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.URLConnection;
-import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -157,21 +155,17 @@ public class HttpResponseImpl implements HttpResponse {
 
     @Override
     public String encodeURL(String s) {
-        try {
-            return URLEncoder.encode(s, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            return s;
-        }
+        return toEncoded(s);
     }
 
     @Override
     public String encodeRedirectURL(String s) {
-        return encodeURL(s);
+        return toEncoded(s);
     }
 
     @Override
     public String encodeUrl(String s) {
-        return encodeURL(s);
+        return toEncoded(s);
     }
 
     @Override
@@ -216,8 +210,19 @@ public class HttpResponseImpl implements HttpResponse {
     }
 
     @Override
-    public void sendRedirect(String s) throws IOException {
-        // no-op
+    public void sendRedirect(final String path) throws IOException {
+        if (commited) {
+            throw new IllegalStateException("response already committed");
+        }
+        resetBuffer();
+
+        try {
+            setStatus(SC_FOUND);
+
+            setHeader("Location", base() + toEncoded(path));
+        } catch (final IllegalArgumentException e) {
+            setStatus(SC_NOT_FOUND);
+        }
     }
 
     @Override
@@ -715,5 +720,13 @@ public class HttpResponseImpl implements HttpResponse {
 
     public void setStatusMessage(String responseString) {
         this.setResponseString(responseString);
+    }
+
+    private String base() {
+        return request == null ? "" : request.getURI().getScheme() + "://" + request.getURI().getAuthority();
+    }
+
+    private String toEncoded(final String url) {
+        return url; // should add ;JSESSIONID=xxx but breaks other things and here we don't need it that much
     }
 }

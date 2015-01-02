@@ -26,11 +26,9 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.WebBeansContext;
 
-import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -122,16 +120,6 @@ public class OpenEJBHttpRegistry {
 
                         final String ctx = (web.getContextRoot().startsWith("/") ? "" : "/") + web.getContextRoot();
                         httpRequest.initPathFromContext(ctx);
-                        if (httpRequest.getServletPath().startsWith('/' + ctx)) { // yes double /, there is an encoding issue with JSF forms with our embedded mode
-                            final String servlet = URLDecoder.decode(httpRequest.getServletPath().substring(ctx.length() + 1), "UTF-8");
-                            final int query = servlet.indexOf('?');
-                            if (query > 0) {
-                                httpRequest.initServletPath(servlet.substring(0, query));
-                                httpRequest.addQueryParams(servlet.substring(query + 1));
-                            } else {
-                                httpRequest.initServletPath(servlet);
-                            }
-                        }
                         wbc = web.getWebbeansContext() != null ? web.getWebbeansContext() : web.getAppContext().getWebBeansContext();
                     } else {
                         thread.setContextClassLoader(classLoader);
