@@ -159,6 +159,7 @@ public class BeanContext extends DeploymentContext {
             entry.getValue().setCdiInterceptors(new ArrayList<Interceptor<?>>());
         }
 
+        /* Was a TCK bug :)
         if (hasInterceptor) { // 100% for TCKs, doesn't make any sense
             for (final Method m : getManagedClass().getDeclaredMethods()) {
                 boolean inApi = false;
@@ -190,6 +191,7 @@ public class BeanContext extends DeploymentContext {
                 }
             }
         }
+        */
 
         if (info.getSelfInterceptorBean() != null) { // handled by openejb
             try {
