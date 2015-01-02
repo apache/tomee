@@ -685,7 +685,7 @@ public class HttpRequestImpl implements HttpRequest {
         contentType = getHeader(HttpRequest.HEADER_CONTENT_TYPE);
 
         final boolean hasBody = hasBody();
-        if (hasBody && FORM_URL_ENCODED.equals(contentType)) {
+        if (hasBody && contentType != null && contentType.startsWith(FORM_URL_ENCODED)) {
             String rawParams;
 
             try {
