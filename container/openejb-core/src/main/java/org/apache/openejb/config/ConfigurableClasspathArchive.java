@@ -29,6 +29,7 @@ import org.apache.xbean.finder.filter.FilterList;
 import org.apache.xbean.finder.filter.PackageFilter;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -39,6 +40,16 @@ import java.util.Map;
 import java.util.Set;
 
 public class ConfigurableClasspathArchive extends CompositeArchive implements ScanConstants {
+    private static final Method CLOSE_LOADER;
+    static {
+        Method m = null;
+        try {
+            m = URLClassLoader.class.getMethod("close");
+        } catch (final Throwable e) {
+            // no-op
+        }
+        CLOSE_LOADER = m;
+    }
     public ConfigurableClasspathArchive(final Module module, final URL... urls) {
         this(module, Arrays.asList(urls));
     }
@@ -81,7 +92,13 @@ public class ConfigurableClasspathArchive extends CompositeArchive implements Sc
         try {
             final URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{location}, new EmptyResourcesClassLoader());
             final URL scanXml = urlClassLoader.getResource(name);
-            urlClassLoader.close();
+            if (CLOSE_LOADER != null) {
+                try {
+                    CLOSE_LOADER.invoke(urlClassLoader);
+                } catch (final Throwable ignored) {
+                    // no-op
+                }
+            }
 
             if (scanXml == null && !forceDescriptor) {
                 return ClasspathArchive.archive(loader, location);
