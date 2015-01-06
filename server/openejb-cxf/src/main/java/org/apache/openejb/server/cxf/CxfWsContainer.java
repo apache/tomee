@@ -70,7 +70,6 @@ public abstract class CxfWsContainer implements HttpListener {
 
         if (endpoint != null) {
             endpoint.stop();
-            endpoint = null;
         }
     }
 
@@ -91,4 +90,7 @@ public abstract class CxfWsContainer implements HttpListener {
         }
     }
 
+    public CxfEndpoint getEndpoint() {
+        return endpoint;
+    }
 }
