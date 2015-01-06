@@ -26,11 +26,14 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.cxf.client.SaajInterceptor;
 import org.apache.openejb.server.cxf.client.WebServiceInjectionConfigurator;
 import org.apache.openejb.server.cxf.ejb.EjbWsContainer;
+import org.apache.openejb.server.cxf.event.ServerCreated;
+import org.apache.openejb.server.cxf.event.ServerDestroyed;
 import org.apache.openejb.server.cxf.pojo.PojoWsContainer;
 import org.apache.openejb.server.cxf.transport.HttpTransportFactory;
 import org.apache.openejb.server.cxf.transport.util.CxfUtil;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.webservices.WsService;
+import org.apache.openejb.util.AppFinder;
 
 import javax.naming.Context;
 import java.net.URL;
@@ -89,6 +92,9 @@ public class CxfService extends WsService {
             final EjbWsContainer container = new EjbWsContainer(bus, httpTransportFactory, port, beanContext, config);
             container.start();
             wsContainers.put(beanContext.getDeploymentID().toString(), container);
+            SystemInstance.get().fireEvent(new ServerCreated(
+                    container.getEndpoint().getServer(),
+                    beanContext.getModuleContext().getAppContext()));
             return container;
         } finally {
             if (oldLoader != null) {
@@ -97,7 +103,10 @@ public class CxfService extends WsService {
         }
     }
 
-    protected HttpListener createPojoWsContainer(final ClassLoader loader, final URL moduleBaseUrl, final PortData port, final String serviceId, final Class target, final Context context, final String contextRoot, final Map<String, Object> bdgs, final ServiceConfiguration services) {
+    protected HttpListener createPojoWsContainer(final ClassLoader loader, final URL moduleBaseUrl, final PortData port,
+                                                 final String serviceId, final Class target, final Context context,
+                                                 final String contextRoot,
+                                                 final Map<String, Object> bdgs, final ServiceConfiguration services) {
         final Bus bus = CxfUtil.getBus();
 
         final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
@@ -108,6 +117,9 @@ public class CxfService extends WsService {
             final PojoWsContainer container = new PojoWsContainer(loader, httpTransportFactory, bus, port, context, target, bdgs, services);
             container.start();
             wsContainers.put(serviceId, container);
+            SystemInstance.get().fireEvent(new ServerCreated(
+                    container.getEndpoint().getServer(),
+                    AppFinder.findAppContextOrWeb(loader, AppFinder.AppContextTransformer.INSTANCE)));
             return container;
         } finally {
             if (oldLoader != null) {
@@ -131,6 +143,7 @@ public class CxfService extends WsService {
             Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());
             try {
                 container.destroy();
+                SystemInstance.get().fireEvent(new ServerDestroyed(container.getEndpoint().getServer()));
             } finally {
                 if (oldLoader != null) {
                     CxfUtil.clearBusLoader(oldLoader);

@@ -79,7 +79,10 @@ public class ConfigurableClasspathArchive extends CompositeArchive implements Sc
         final ClassLoader loader = module.getClassLoader();
         final String name = "META-INF/" + name();
         try {
-            final URL scanXml = new URLClassLoader(new URL[]{location}, new EmptyResourcesClassLoader()).getResource(name);
+            final URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{location}, new EmptyResourcesClassLoader());
+            final URL scanXml = urlClassLoader.getResource(name);
+            urlClassLoader.close();
+
             if (scanXml == null && !forceDescriptor) {
                 return ClasspathArchive.archive(loader, location);
             } else if (scanXml == null) {

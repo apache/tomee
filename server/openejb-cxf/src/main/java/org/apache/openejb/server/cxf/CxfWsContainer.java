@@ -55,6 +55,10 @@ public abstract class CxfWsContainer implements HttpListener {
         this.jmxName = registerMBean();
     }
 
+    public CxfEndpoint getEndpoint() {
+        return endpoint;
+    }
+
     protected String getFakeUrl() {
         return "" + endpoint.hashCode();
     }
@@ -70,7 +74,6 @@ public abstract class CxfWsContainer implements HttpListener {
 
         if (endpoint != null) {
             endpoint.stop();
-            endpoint = null;
         }
     }
 
