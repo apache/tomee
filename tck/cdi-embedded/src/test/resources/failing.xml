@@ -18,15 +18,20 @@
 <suite name="CDI TCK" verbose="0">
   <test name="CDI TCK">
     <!-- runner helping properties
+    -ea
+    -Dopenejb.deploymentId.format={appId}/{ejbJarId}/{ejbName}
+    -Dopenejb.http.default-content-type=text/plain
+    -Dhttpejbd.print=REQUEST,RESPONSE
+    -Dopenejb.jul.forceReload=true
+    -Dlogging.level.org.apache.openejb.server.httpd.HttpResponseImpl=FINEST
+    -Dopenejb.cdi.filter.classloader=false
     -Dorg.apache.openejb.assembler.classic.WebAppBuilder=org.apache.openejb.web.LightweightWebAppBuilder
     -Dopenejb.cdi.debug=true
-    -Dopenejb.cdi.filter.classloader=false
     -Dopenejb.http.mock-request=true
-    -Dopenejb.http.default-content-type=text/plain
-    -Dopenejb.deploymentId.format={appId}/{ejbJarId}/{ejbName}
+    -Dopenejb.embedded.try-jsp=true
     -->
     <classes>
-      <class name="org.jboss.cdi.tck.tests.context.request.event.async.RequestScopeEventAsyncTest" />
+      <class name="org.jboss.cdi.tck.tests.lookup.el.integration.IntegrationWithUnifiedELTest" />
     </classes>
   </test>
 </suite>

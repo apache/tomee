@@ -17,6 +17,7 @@
 package org.apache.openejb.server.httpd.util;
 
 import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.core.WebContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.httpd.FilterListener;
@@ -33,12 +34,15 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.regex.Pattern;
 
 public final class HttpUtil {
     private static final String WILDCARD = SystemInstance.get().getProperty("openejb.http.wildcard", ".*");
+    static {
+        setJspFactory();
+    }
 
     private HttpUtil() {
         // no-op
@@ -65,6 +69,17 @@ public final class HttpUtil {
         return addresses.iterator().next();
     }
 
+    public static void addDefaultsIfAvailable(final WebContext wc) {
+        try {
+            final Class<?> servlet = wc.getClassLoader().loadClass("org.apache.jasper.servlet.JspServlet");
+            SystemInstance.get().getComponent(ServletContext.class).setAttribute("org.apache.tomcat.InstanceManager",
+                    wc.getClassLoader().loadClass("org.apache.tomee.catalina.JavaeeInstanceManager").getConstructor(WebContext.class).newInstance(wc));
+            addServlet(servlet.getName(), wc, "*.jsp");
+        } catch (final Exception e) {
+            // no-op
+        }
+    }
+
     public static boolean addServlet(final String classname, final WebContext wc, final String mapping) {
         final HttpListenerRegistry registry = SystemInstance.get().getComponent(HttpListenerRegistry.class);
         if (registry == null || mapping == null) {
@@ -73,16 +88,16 @@ public final class HttpUtil {
 
         final ServletListener listener;
         try {
-            final ServletContext servletContext = SystemInstance.get().getComponent(ServletContext.class);
+            ServletContext servletContext = wc.getServletContext();
+            if (servletContext == null) {
+                servletContext = SystemInstance.get().getComponent(ServletContext.class);
+            }
             if ("javax.faces.webapp.FacesServlet".equals(classname)) {
                 try {
                     // faking it to let the FacesServlet starting
                     // NOTE: needs myfaces-impl + tomcat-jasper (JspFactory)
                     // TODO: handle the whole lifecycle (cleanup mainly) + use myfaces SPI to make scanning really faster (take care should work in tomee were we already have it impl)
                     final Class<?> mfListenerClass = wc.getClassLoader().loadClass("org.apache.myfaces.webapp.StartupServletContextListener");
-                    final Class<?> jspFactory = wc.getClassLoader().loadClass("org.apache.jasper.runtime.JspFactoryImpl");
-                    final Class<?> jspFactoryApi = wc.getClassLoader().loadClass("javax.servlet.jsp.JspFactory");
-                    jspFactoryApi.getMethod("setDefaultFactory", jspFactoryApi).invoke(null, jspFactory.newInstance());
 
                     final ServletContextListener servletContextListener = ServletContextListener.class.cast(mfListenerClass.newInstance());
                     servletContext.setAttribute("javax.enterprise.inject.spi.BeanManager", new InjectableBeanManager(wc.getWebBeansContext().getBeanManagerImpl()));
@@ -102,6 +117,7 @@ public final class HttpUtil {
             final ClassLoader old = setClassLoader(wc, thread);
             try {
                 listener = new ServletListener((Servlet) wc.newInstance(wc.getClassLoader().loadClass(classname)), wc.getContextRoot());
+                final ServletContext sc = servletContext;
                 listener.getDelegate().init(new ServletConfig() {
                     @Override
                     public String getServletName() {
@@ -110,18 +126,21 @@ public final class HttpUtil {
 
                     @Override
                     public ServletContext getServletContext() {
-                        return servletContext;
+                        return sc;
                     }
 
                     @Override
                     public String getInitParameter(final String s) {
-                        return servletContext.getInitParameter(s);
+                        return sc.getInitParameter(s);
                     }
 
                     @Override
                     public Enumeration<String> getInitParameterNames() {
-                        return servletContext.getInitParameterNames();
+                        final Enumeration<String> parameterNames = sc.getInitParameterNames();
+                        return parameterNames == null ? Collections.<String>emptyEnumeration() : parameterNames;
                     }
+
+
                 });
             } finally {
                 thread.setContextClassLoader(old);
@@ -132,6 +151,17 @@ public final class HttpUtil {
 
         registry.addHttpListener(listener, pattern(wc.getContextRoot(), "/".equals(mapping) ? "/*" : mapping));
         return true;
+    }
+
+    private static void setJspFactory() {
+        try {
+            final ClassLoader classLoader = ParentClassLoaderFinder.Helper.get();
+            final Class<?> jspFactory = classLoader.loadClass("org.apache.jasper.runtime.JspFactoryImpl");
+            final Class<?> jspFactoryApi = classLoader.loadClass("javax.servlet.jsp.JspFactory");
+            jspFactoryApi.getMethod("setDefaultFactory", jspFactoryApi).invoke(null, jspFactory.newInstance());
+        } catch (final Throwable t) {
+            // no-op
+        }
     }
 
     private static ClassLoader setClassLoader(final WebContext wc, final Thread thread) {
@@ -149,6 +179,9 @@ public final class HttpUtil {
         final Servlet servlet = ((ServletListener) registry.removeHttpListener(pattern(wc.getContextRoot(), mapping))).getDelegate();
         servlet.destroy();
         wc.destroy(servlet);
+        if (servlet.getClass().equals("org.apache.jasper.servlet.JspServlet")) {
+            SystemInstance.get().getComponent(ServletContext.class).removeAttribute("org.apache.tomcat.InstanceManager");
+        }
     }
 
     public static boolean addFilter(final String classname, final WebContext wc, final String mapping, final FilterConfig config) {

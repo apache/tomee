@@ -370,6 +370,9 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
     }
 
     public void startServletContext(final ServletContext servletContext) {
+        if (service != null) {
+            return;
+        }
         service = initializeServletContext(servletContext, webBeansContext);
     }
 

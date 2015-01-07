@@ -43,6 +43,11 @@ public class EmbeddedServletContext extends MockServletContext {
     }
 
     @Override
+    public ClassLoader getClassLoader() {
+        return Thread.currentThread().getContextClassLoader();
+    }
+
+    @Override
     public URL getResource(final String path) throws MalformedURLException {
         if (resourceProviders.isEmpty()) {
             return super.getResource(path);

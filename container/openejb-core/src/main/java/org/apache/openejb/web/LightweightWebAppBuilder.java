@@ -34,13 +34,18 @@ import org.apache.openejb.assembler.classic.ServletInfo;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.cdi.CdiBuilder;
+import org.apache.openejb.cdi.OpenEJBLifecycle;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.WebContext;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.observer.Event;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.ArrayEnumeration;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.OpenEjbVersion;
+import org.apache.webbeans.spi.ContainerLifecycle;
+import org.apache.webbeans.web.lifecycle.test.MockServletContext;
 import org.apache.webbeans.web.lifecycle.test.MockServletContextEvent;
 
 import javax.naming.Binding;
@@ -61,7 +66,10 @@ import javax.servlet.annotation.WebListener;
 import javax.servlet.annotation.WebServlet;
 import javax.ws.rs.core.Application;
 import java.io.File;
+import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -74,6 +82,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static java.util.Arrays.asList;
 
@@ -84,14 +93,16 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
     private static Method removeServletMethod;
     private static Method addFilterMethod;
     private static Method removeFilterMethod;
+    private static Method addDefaults;
 
     static {
         try {
-            final Class<?> utilClass = LightweightWebAppBuilder.class.getClassLoader().loadClass("org.apache.openejb.server.httpd.util.HttpUtil");
+            final Class<?> utilClass = Class.forName("org.apache.openejb.server.httpd.util.HttpUtil", true/*setFactory()*/, LightweightWebAppBuilder.class.getClassLoader());
             addServletMethod = utilClass.getMethod("addServlet", String.class, WebContext.class, String.class);
             removeServletMethod = utilClass.getMethod("removeServlet", String.class, WebContext.class);
             addFilterMethod = utilClass.getMethod("addFilter", String.class, WebContext.class, String.class, FilterConfig.class);
             removeFilterMethod = utilClass.getMethod("removeFilter", String.class, WebContext.class);
+            addDefaults = utilClass.getMethod("addDefaultsIfAvailable", WebContext.class);
         } catch (final Exception e) {
             LOGGER.info("Web features will not be available, add openejb-http if you need them");
         }
@@ -151,7 +162,13 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
             webContext.setHost(webAppInfo.host);
             webContext.getInjections().addAll(injections);
             webContext.setInitialContext(new EmbeddedInitialContext(webContext.getJndiEnc(), webContext.getBindings()));
-            webContext.setServletContext(SystemInstance.get().getComponent(ServletContext.class));
+
+            final ServletContext component = SystemInstance.get().getComponent(ServletContext.class);
+            final ServletContextEvent sce = component == null ? new MockServletContextEvent() :
+                    new ServletContextEvent(new LightServletContext(component, webContext.getClassLoader()));
+            servletContextEvents.put(webAppInfo, sce);
+            webContext.setServletContext(sce.getServletContext());
+            SystemInstance.get().fireEvent(new EmbeddedServletContextCreated(sce.getServletContext()));
 
             appContext.getWebContexts().add(webContext);
             cs.addWebContext(webContext);
@@ -161,9 +178,6 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
                 new CdiBuilder().build(appInfo, appContext, beanContexts, webContext);
                 assembler.startEjbs(true, beanContexts);
             }
-
-            final ServletContextEvent sce = new MockServletContextEvent(); // TODO: reuse EmbeddableServletContext
-            servletContextEvents.put(webAppInfo, sce);
 
             // listeners
             for (final ListenerInfo listener : webAppInfo.listeners) {
@@ -204,6 +218,10 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
             final DeployedWebObjects deployedWebObjects = new DeployedWebObjects();
             deployedWebObjects.webContext = webContext;
             servletDeploymentInfo.put(webAppInfo, deployedWebObjects);
+
+            if (webContext.getWebBeansContext() != null) {
+                OpenEJBLifecycle.class.cast(webContext.getWebBeansContext().getService(ContainerLifecycle.class)).startServletContext(sce.getServletContext());
+            }
 
             if (addServletMethod == null) { // can't manage filter/servlets
                 continue;
@@ -313,7 +331,16 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
                     }
                 }
             }
+
+            if (addDefaults != null && tryJsp()) {
+                addDefaults.invoke(null, webContext);
+                deployedWebObjects.mappings.add("*\\.jsp");
+            }
         }
+    }
+
+    private static boolean tryJsp() {
+        return "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.embedded.try-jsp", "true"));
     }
 
     public Collection<Object> listenersFor(final String context) {
@@ -580,6 +607,90 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
         @Override
         public Enumeration<String> getInitParameterNames() {
             return new ArrayEnumeration(params.keySet());
+        }
+    }
+
+    @Event
+    public static class EmbeddedServletContextCreated {
+        private final ServletContext context;
+
+        public EmbeddedServletContextCreated(ServletContext context) {
+            this.context = context;
+        }
+
+        public ServletContext getContext() {
+            return context;
+        }
+
+        @Override
+        public String toString() {
+            return "EmbeddedServletContextCreated{" +
+                    "context=" + context +
+                    '}';
+        }
+    }
+
+    public static class LightServletContext extends MockServletContext {
+        private final Map<String, Object> attributes = new ConcurrentHashMap<>();
+        private final ServletContext delegate; // EmbeddedServletContext has some resource handling we want to reuse here, TODO: move it here?
+        private final ClassLoader loader;
+
+        public LightServletContext(final ServletContext delegate, final ClassLoader loader) {
+            this.delegate = delegate;
+            this.loader = loader;
+        }
+
+        @Override
+        public ClassLoader getClassLoader() {
+            return loader;
+        }
+
+        @Override
+        public URL getResource(final String path) throws MalformedURLException {
+            return delegate.getResource(path);
+        }
+
+        @Override
+        public InputStream getResourceAsStream(final String path) {
+            return delegate.getResourceAsStream(path);
+        }
+
+        @Override
+        public int getMajorVersion() {
+            return 3;
+        }
+
+        @Override
+        public int getEffectiveMajorVersion() {
+            return 3;
+        }
+
+        @Override
+        public String getVirtualServerName() {
+            return "openejb-embedded";
+        }
+
+        @Override
+        public void setAttribute(final String name, final Object object) {
+            attributes.put(name, object);
+        }
+
+        @Override
+        public Object getAttribute(final String name) {
+            final Object o = attributes.get(name);
+            return o == null ? delegate.getAttribute(name) : o;
+        }
+
+        @Override
+        public Enumeration<String> getAttributeNames() {
+            final Set<String> c = new HashSet<>(attributes.keySet());
+            c.addAll(Collections.list(delegate.getAttributeNames()));
+            return Collections.enumeration(c);
+        }
+
+        @Override
+        public String getServerInfo() {
+            return "EmbeddedOpenEJB/" + OpenEjbVersion.get().getVersion();
         }
     }
 }

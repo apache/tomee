@@ -148,6 +148,9 @@ public class HttpListenerRegistry implements HttpListener {
                     if (wbc != null) {
                         CdiAppContextsService.class.cast(wbc.getService(ContextsService.class)).checkConversationState();
                     }
+                    if (pattern.contains("/.*\\.") && HttpRequestImpl.class.isInstance(request)) { // TODO: enhance it, basically servlet *.xxx
+                        HttpRequestImpl.class.cast(request).noPathInfo();
+                    }
                     entry.getValue().onMessage(request, response);
                     break;
                 }

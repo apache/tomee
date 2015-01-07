@@ -192,6 +192,7 @@ public class HttpRequestImpl implements HttpRequest {
     private Collection<ServletRequestListener> listeners;
 
     private volatile boolean asyncStarted;
+    private boolean noPathInfo;
 
     public HttpRequestImpl(URI socketURI) {
         this.socketURI = socketURI;
@@ -260,11 +261,13 @@ public class HttpRequestImpl implements HttpRequest {
         return parts.values();
     }
 
+    public void noPathInfo() { // todo: enhance it
+        noPathInfo = true;
+    }
+
     @Override
     public String getPathInfo() {
-        // hack for jsf, would need to rething all our getpathInfo() to get rid of it
-        // Note: if you tackle it ensure to not break CXF integrations
-        if (path != null && path.contains(".jsf") || servletPath != null && servletPath.endsWith(".jsf")) {
+        if (noPathInfo) {
             return null;
         }
         if (servletPath != null) {
@@ -321,13 +324,10 @@ public class HttpRequestImpl implements HttpRequest {
         if (servletPath != null) {
             return servletPath;
         }
-        if (path != null && path.endsWith(".jsf")) { // see getPathInfo()
-            return path;
-        }
         if ("/".equals(path) && uri != null) { // not initialized, contextpath = "" so let use it for our router (HttpListenerRegistry)
             return uri.getPath();
         }
-        return getPathInfo();
+        return path;
     }
 
     public void initServletPath(final String servlet) {
@@ -1113,7 +1113,7 @@ public class HttpRequestImpl implements HttpRequest {
 
     @Override
     public RequestDispatcher getRequestDispatcher(String s) {
-        return null;
+        return new SimpleDispatcher(s);
     }
 
     @Override
@@ -1246,6 +1246,45 @@ public class HttpRequestImpl implements HttpRequest {
             } finally {
                 super.invalidate();
             }
+        }
+    }
+
+    private static class SimpleDispatcher implements RequestDispatcher {
+        private final String path;
+
+        public SimpleDispatcher(final String path) {
+            this.path = path;
+        }
+
+        @Override
+        public void forward(final ServletRequest request, final ServletResponse response) throws ServletException, IOException {
+            if (!HttpRequestImpl.class.isInstance(request)) {
+                if (HttpServletResponse.class.isInstance(response)) {
+                    HttpServletResponse.class.cast(response).sendError(HttpServletResponse.SC_NOT_FOUND);
+                }
+                return;
+            }
+
+            final HttpRequestImpl cast = HttpRequestImpl.class.cast(request);
+            final HttpRequestImpl httpRequest = new HttpRequestImpl(cast.socketURI);
+            httpRequest.uri = cast.uri;
+            httpRequest.parameters.putAll(cast.parameters);
+            httpRequest.initPathFromContext(cast.contextPath);
+            httpRequest.initServletPath(path);
+            httpRequest.method = cast.method;
+
+            try {
+                SystemInstance.get().getComponent(HttpListenerRegistry.class).onMessage(
+                        httpRequest,
+                        HttpResponse.class.isInstance(response)? HttpResponse.class.cast(response) : new ServletResponseAdapter(HttpServletResponse.class.cast(response)));
+            } catch (final Exception e) {
+                throw new ServletException(e.getMessage(), e);
+            }
+        }
+
+        @Override
+        public void include(final ServletRequest request, final ServletResponse response) throws ServletException, IOException {
+            // not yet supported: TODO: fake response write in ByteArrayOutputStream and then call HttpListenerRegistry and write it back
         }
     }
 }
