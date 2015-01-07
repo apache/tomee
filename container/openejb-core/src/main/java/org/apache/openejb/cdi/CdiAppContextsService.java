@@ -62,6 +62,7 @@ import java.util.Collection;
 import java.util.Map;
 
 public class CdiAppContextsService extends AbstractContextsService implements ContextsService, ConversationService {
+    public static final Object EJB_REQUEST_EVENT = new Object();
 
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB.createChild("cdi"), CdiAppContextsService.class);
 
@@ -228,7 +229,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     public void endContext(final Class<? extends Annotation> scopeType, final Object endParameters) {
         if (supportsContext(scopeType)) {
             if (scopeType.equals(RequestScoped.class)) {
-                destroyRequestContext();
+                destroyRequestContext(endParameters);
             } else if (scopeType.equals(SessionScoped.class)) {
                 destroySessionContext((HttpSession) endParameters);
             } else if (scopeType.equals(ApplicationScoped.class)) {
@@ -273,7 +274,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     public void startContext(final Class<? extends Annotation> scopeType, final Object startParameter) throws ContextException {
         if (supportsContext(scopeType)) {
             if (scopeType.equals(RequestScoped.class)) {
-                initRequestContext((ServletRequestEvent) startParameter);
+                initRequestContext(startParameter);
             } else if (scopeType.equals(SessionScoped.class)) {
                 initSessionContext((HttpSession) startParameter);
             } else if (scopeType.equals(ApplicationScoped.class)) {
@@ -317,13 +318,13 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
 
     }
 
-    private void initRequestContext(final ServletRequestEvent event) {
+    private void initRequestContext(final Object event) {
         final ServletRequestContext rq = new ServletRequestContext();
         rq.setActive(true);
 
         requestContext.set(rq);// set thread local
-        if (event != null) {
-            final HttpServletRequest request = (HttpServletRequest) event.getServletRequest();
+        if (event != null && ServletRequestEvent.class.isInstance(event)) {
+            final HttpServletRequest request = (HttpServletRequest) ServletRequestEvent.class.cast(event).getServletRequest();
             ((ServletRequestContext) rq).setServletRequest(request);
 
             if (request != null) {
@@ -350,6 +351,8 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
                     }
                 }
             }
+        } else if (event == EJB_REQUEST_EVENT) {
+            webBeansContext.getBeanManagerImpl().fireEvent(event, InitializedLiteral.REQUEST);
         }
     }
 
@@ -370,12 +373,12 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         }
     }
 
-    private void destroyRequestContext() {
+    private void destroyRequestContext(final Object end) {
         // execute request tasks
         endRequest();
 
         //Get context
-        final RequestContext context = getRequestContext(false);
+        final ServletRequestContext context = getRequestContext(false);
 
         //Destroy context
         if (context != null) {
@@ -383,9 +386,11 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
                 cleanupConversation();
             }
 
-            final HttpServletRequest servletRequest = ServletRequestContext.class.cast(context).getServletRequest();
+            final HttpServletRequest servletRequest = context.getServletRequest();
             if (servletRequest != null) {
                 webBeansContext.getBeanManagerImpl().fireEvent(servletRequest, DestroyedLiteral.REQUEST);
+            } else if (end == EJB_REQUEST_EVENT) {
+                webBeansContext.getBeanManagerImpl().fireEvent(end, DestroyedLiteral.REQUEST);
             }
             context.destroy();
         }

@@ -25,13 +25,12 @@ import org.apache.webbeans.spi.ContextsService;
 
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.spi.Context;
+import javax.servlet.ServletRequestEvent;
 
 /**
  * @version $Rev$ $Date$
  */
 public class RequestScopedThreadContextListener implements ThreadContextListener {
-
-
     @Override
     public void contextEntered(final ThreadContext oldContext, final ThreadContext newContext) {
 
@@ -47,7 +46,7 @@ public class RequestScopedThreadContextListener implements ThreadContextListener
         final Context requestContext = contextsService.getCurrentContext(RequestScoped.class);
 
         if (requestContext == null) {
-            contextsService.startContext(RequestScoped.class, null);
+            contextsService.startContext(RequestScoped.class, CdiAppContextsService.EJB_REQUEST_EVENT);
             newContext.set(DestroyContext.class, new DestroyContext(contextsService, newContext));
         }
     }
@@ -64,7 +63,7 @@ public class RequestScopedThreadContextListener implements ThreadContextListener
             return;
         }
 
-        destroyContext.contextsService.endContext(RequestScoped.class, null);
+        destroyContext.contextsService.endContext(RequestScoped.class, CdiAppContextsService.EJB_REQUEST_EVENT);
         CdiAppContextsService.class.cast(destroyContext.contextsService).removeThreadLocals();
     }
 
