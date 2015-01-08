@@ -150,7 +150,7 @@ public class MavenResolver implements ArchiveResolver, ProvisioningResolverAware
 
         String base = snapshotBase == null || snapshotBase.isEmpty() ? "" : (snapshotBase + (!snapshotBase.endsWith("/") ? "/" : ""));
 
-        if ("LATEST".equals(version) || "LATEST-SNAPSHOT".equals(version)) {
+        if (("LATEST".equals(version) || "LATEST-SNAPSHOT".equals(version)) && base.startsWith("http")) {
             final String meta = base + group + "/" + artifact + "/maven-metadata.xml";
             final URL url = new URL(meta);
             final ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -170,7 +170,7 @@ public class MavenResolver implements ArchiveResolver, ProvisioningResolverAware
         }
 
         String artifactVersion;
-        if (version.endsWith("-SNAPSHOT")) {
+        if (version.endsWith("-SNAPSHOT") && base.startsWith("http")) {
             final String meta = base + group + "/" + artifact + "/" + version + "/maven-metadata.xml";
             final URL url = new URL(meta);
             final ByteArrayOutputStream out = new ByteArrayOutputStream();
