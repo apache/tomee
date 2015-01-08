@@ -18,12 +18,29 @@
 package org.apache.openejb.resource.activemq;
 
 import junit.framework.TestCase;
+import org.apache.activemq.broker.BrokerService;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.NetworkUtil;
+import org.apache.openejb.util.reflection.Reflections;
 
 import java.util.concurrent.TimeUnit;
 
 public class ActiveMQResourceAdapterTest extends TestCase {
+    @Override
+    protected void tearDown() throws Exception {
+        cleanup();
+    }
+    @Override
+    protected void setUp() throws Exception {
+        cleanup();
+    }
+
+    private void cleanup() throws Exception {
+        for (final BrokerService bs : ActiveMQFactory.getBrokers()) {
+            bs.stop();
+        }
+    }
+
     public void test() throws Exception {
         final ActiveMQResourceAdapter resourceAdapter = new ActiveMQResourceAdapter();
         resourceAdapter.setServerUrl("vm://localhost?waitForStart=30000&async=false");
@@ -35,5 +52,22 @@ public class ActiveMQResourceAdapterTest extends TestCase {
         //    DataSource Default Unmanaged JDBC Database
         //
         resourceAdapter.start(null);
+    }
+
+    public void testSchedulerSupport() throws Exception {
+        final ActiveMQResourceAdapter resourceAdapter = new ActiveMQResourceAdapter();
+        resourceAdapter.setServerUrl("vm://localhost?waitForStart=30000&async=false");
+        resourceAdapter.setStartupTimeout(new Duration(10, TimeUnit.SECONDS));
+
+        final String brokerAddress = NetworkUtil.getLocalAddress("broker:(tcp://", ")?useJmx=false&schedulerSupport=true");
+        resourceAdapter.setBrokerXmlConfig(brokerAddress);
+        resourceAdapter.start(null);
+        assertTrue(Boolean.class.cast(Reflections.get(ActiveMQFactory.getBrokers().iterator().next(), "schedulerSupport")));
+        resourceAdapter.stop();
+
+        resourceAdapter.setBrokerXmlConfig(NetworkUtil.getLocalAddress("broker:(tcp://", ")?useJmx=false&schedulerSupport=false"));
+        resourceAdapter.start(null);
+        assertFalse(Boolean.class.cast(Reflections.get(ActiveMQFactory.getBrokers().iterator().next(), "schedulerSupport")));
+        resourceAdapter.stop();
     }
 }
