@@ -70,18 +70,12 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
         if (null == broker || !broker.isStarted()) {
 
             final Properties properties = getLowerCaseProperties();
-            boolean scheduleSupport = false;
 
             final URISupport.CompositeData compositeData = URISupport.parseComposite(new URI(brokerURI.getRawSchemeSpecificPart()));
             final Map<String, String> params = new HashMap<String, String>(compositeData.getParameters());
             final PersistenceAdapter persistenceAdapter;
             if ("true".equals(params.remove("usekahadb"))) {
                 persistenceAdapter = createPersistenceAdapter("org.apache.activemq.store.kahadb.KahaDBPersistenceAdapter", "kahadb", params);
-
-                if ("true".equals(params.remove("scheduler"))) {
-                    scheduleSupport = true;
-                }
-
             } else if ("true".equals(params.remove("useleveldb"))) {
                 persistenceAdapter = createPersistenceAdapter("org.apache.activemq.store.leveldb.LevelDBPersistenceAdapter", "leveldb", params);
             } else if (params.get("persistenceadapter") != null) {
@@ -100,7 +94,7 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
                 // if user didn't set persistent to true then setPersistenceAdapter() alone is ignored so forcing it with the factory
                 broker.setPersistenceFactory(new ProvidedPersistenceAdapterPersistenceAdapterFactory(persistenceAdapter));
                 broker.setPersistent(true);
-                tomeeConfig(broker, scheduleSupport);
+                tomeeConfig(broker);
             } else {
                 final boolean notXbean = !uri.getScheme().toLowerCase().startsWith("xbean");
                 if (notXbean) {
@@ -155,7 +149,7 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
                         broker.setPersistenceAdapter(new MemoryPersistenceAdapter());
                     }
 
-                    tomeeConfig(broker, scheduleSupport);
+                    tomeeConfig(broker);
                 }
             }
 
@@ -290,25 +284,9 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
         return persistenceAdapter;
     }
 
-    private void tomeeConfig(final BrokerService broker, final boolean scheduleSupport) {
-        //New since 5.4.x
-        setSchedulerSupport(broker, scheduleSupport);
-
+    private void tomeeConfig(final BrokerService broker) {
         //Notify when an error occurs on shutdown.
         broker.setUseLoggingForShutdownErrors(Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class).isErrorEnabled());
-    }
-
-    private static void setSchedulerSupport(final BrokerService broker, final boolean scheduleSupport) {
-        try {
-            final Class<?> clazz = Class.forName("org.apache.activemq.broker.BrokerService");
-            final Method method = clazz.getMethod("setSchedulerSupport", new Class[]{Boolean.class});
-            method.invoke(broker, scheduleSupport);
-        } catch (final Throwable e) {
-            if (scheduleSupport) {
-                final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class);
-                logger.error("Failed to activate scheduler support", e);
-            }
-        }
     }
 
     private Properties getLowerCaseProperties() {
