@@ -16,8 +16,6 @@
  */
 package org.apache.tomee.catalina.realm.event;
 
-import org.apache.tomee.catalina.realm.event.BaseAuthenticationEvent;
-
 public class DigestAuthenticationEvent extends BaseAuthenticationEvent {
 
     private final String username;

@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.arquillian.tests.realm;
 
-import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.apache.catalina.authenticator.BasicAuthenticator;
 import org.apache.catalina.realm.GenericPrincipal;
 import org.apache.cxf.jaxrs.client.WebClient;
@@ -47,7 +46,6 @@ import java.util.Arrays;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Arquillian.class)
-@Ignore
 public class CdiEventRealmIntegTest
 {
     @Deployment(testable = false)
