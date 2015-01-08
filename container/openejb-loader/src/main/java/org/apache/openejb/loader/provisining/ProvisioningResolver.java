@@ -22,6 +22,8 @@ import org.apache.openejb.loader.SystemInstance;
 
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -193,14 +195,69 @@ public class ProvisioningResolver {
     // used when a resolver wants to use a local file by calling back this facade resolver
     public static final class LocalInputStream extends InputStream {
         private final String path;
+        private FileInputStream stream;
 
         private LocalInputStream(final String path) {
             this.path = path;
         }
 
+        private FileInputStream stream() {
+            if (stream == null) {
+                try {
+                    stream = new FileInputStream(path);
+                } catch (final FileNotFoundException e) {
+                    throw new IllegalStateException(e);
+                }
+            }
+            return stream;
+        }
+
         @Override
         public int read() throws IOException {
-            throw new UnsupportedOperationException();
+            return stream().read();
+        }
+
+        @Override
+        public int read(final byte[] b) throws IOException {
+            return stream().read(b);
+        }
+
+        @Override
+        public int read(final byte[] b, final int off, final int len) throws IOException {
+            return stream().read(b, off, len);
+        }
+
+        @Override
+        public synchronized void mark(final int readlimit) {
+            stream().mark(readlimit);
+        }
+
+        @Override
+        public int available() throws IOException {
+            return stream().available();
+        }
+
+        @Override
+        public long skip(final long n) throws IOException {
+            return stream().skip(n);
+        }
+
+        @Override
+        public synchronized void reset() throws IOException {
+            stream().reset();
+        }
+
+        @Override
+        public boolean markSupported() {
+            return stream().markSupported();
+        }
+
+        @Override
+        public void close() throws IOException {
+            if (stream != null) {
+                stream.close();
+            }
+            super.close();
         }
     }
 }
