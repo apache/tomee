@@ -42,47 +42,51 @@ public class CdiEventRealm extends RealmBase {
 
     @Override
     public Principal authenticate(final String username, final String credentials) {
-        if (beanManager() == null) {
+        final BeanManager beanManager = beanManager();
+        if (beanManager == null) {
             return null;
         }
 
         final UserPasswordAuthenticationEvent event = new UserPasswordAuthenticationEvent(username, credentials);
-        beanManager().fireEvent(event);
+        beanManager.fireEvent(event);
         return event.getPrincipal();
     }
 
     @Override
     public Principal authenticate(final String username, final String digest, final String nonce, final String nc,
                                   final String cnonce, final String qop, final String realm, final String md5a2) {
-        if (beanManager() == null) {
+        final BeanManager beanManager = beanManager();
+        if (beanManager == null) {
             return null;
         }
 
         final DigestAuthenticationEvent event = new DigestAuthenticationEvent(username, digest, nonce, nc,
                 cnonce, qop, realm, md5a2);
-        beanManager().fireEvent(event);
+        beanManager.fireEvent(event);
         return event.getPrincipal();
     }
 
     @Override
     public Principal authenticate(final GSSContext gssContext, final boolean storeCreds) {
-        if (beanManager() == null) {
+        final BeanManager beanManager = beanManager();
+        if (beanManager == null) {
             return null;
         }
 
         final GssAuthenticationEvent event = new GssAuthenticationEvent(gssContext, storeCreds);
-        beanManager().fireEvent(event);
+        beanManager.fireEvent(event);
         return event.getPrincipal();
     }
 
     @Override
     public Principal authenticate(final X509Certificate[] certs) {
-        if (beanManager() == null) {
+        final BeanManager beanManager = beanManager();
+        if (beanManager == null) {
             return null;
         }
 
         final SslAuthenticationEvent event = new SslAuthenticationEvent(certs);
-        beanManager().fireEvent(event);
+        beanManager.fireEvent(event);
         return event.getPrincipal();
     }
 
