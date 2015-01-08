@@ -70,12 +70,18 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
         if (null == broker || !broker.isStarted()) {
 
             final Properties properties = getLowerCaseProperties();
+            boolean scheduleSupport = false;
 
             final URISupport.CompositeData compositeData = URISupport.parseComposite(new URI(brokerURI.getRawSchemeSpecificPart()));
             final Map<String, String> params = new HashMap<String, String>(compositeData.getParameters());
             final PersistenceAdapter persistenceAdapter;
             if ("true".equals(params.remove("usekahadb"))) {
                 persistenceAdapter = createPersistenceAdapter("org.apache.activemq.store.kahadb.KahaDBPersistenceAdapter", "kahadb", params);
+
+                if ("true".equals(params.remove("scheduler"))) {
+                    scheduleSupport = true;
+                }
+
             } else if ("true".equals(params.remove("useleveldb"))) {
                 persistenceAdapter = createPersistenceAdapter("org.apache.activemq.store.leveldb.LevelDBPersistenceAdapter", "leveldb", params);
             } else if (params.get("persistenceadapter") != null) {
@@ -88,6 +94,8 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
             final URI uri = new URI(cleanUpUri(brokerURI.getSchemeSpecificPart(), compositeData.getParameters(), params));
             broker = BrokerFactory.createBroker(uri);
             brokers.put(brokerURI, broker);
+
+            broker.setSchedulerSupport(scheduleSupport);
 
             if (persistenceAdapter != null) {
                 broker.setPersistenceAdapter(persistenceAdapter);
@@ -285,21 +293,9 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
     }
 
     private void tomeeConfig(final BrokerService broker) {
-        //New since 5.4.x
-        disableScheduler(broker);
 
         //Notify when an error occurs on shutdown.
         broker.setUseLoggingForShutdownErrors(Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class).isErrorEnabled());
-    }
-
-    private static void disableScheduler(final BrokerService broker) {
-        try {
-            final Class<?> clazz = Class.forName("org.apache.activemq.broker.BrokerService");
-            final Method method = clazz.getMethod("setSchedulerSupport", new Class[]{Boolean.class});
-            method.invoke(broker, Boolean.FALSE);
-        } catch (final Throwable e) {
-            //Ignore
-        }
     }
 
     private Properties getLowerCaseProperties() {
