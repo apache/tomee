@@ -25,7 +25,6 @@ import org.apache.webbeans.spi.ContextsService;
 
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.spi.Context;
-import javax.servlet.ServletRequestEvent;
 
 /**
  * @version $Rev$ $Date$

@@ -28,7 +28,6 @@ import org.apache.webbeans.context.AbstractContextsService;
 import org.apache.webbeans.context.ApplicationContext;
 import org.apache.webbeans.context.ConversationContext;
 import org.apache.webbeans.context.DependentContext;
-import org.apache.webbeans.context.RequestContext;
 import org.apache.webbeans.context.SessionContext;
 import org.apache.webbeans.context.SingletonContext;
 import org.apache.webbeans.conversation.ConversationImpl;
