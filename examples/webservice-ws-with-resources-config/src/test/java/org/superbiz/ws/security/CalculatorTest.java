@@ -19,7 +19,9 @@ package org.superbiz.ws.security;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;
 import org.apache.openejb.OpenEjbContainer;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.wss4j.common.ext.WSPasswordCallback;
+import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
 import javax.ejb.embeddable.EJBContainer;
@@ -38,7 +40,6 @@ import java.util.Properties;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.junit.matchers.JUnitMatchers.containsString;
 
 public class CalculatorTest {
 
@@ -46,12 +47,14 @@ public class CalculatorTest {
     public void call() throws MalformedURLException {
         final EJBContainer container = EJBContainer.createEJBContainer(new Properties() {{
             setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
+            setProperty("httpejbd.port", "0"); // random port to avoid issue on CI, default is 4204
         }});
+        final int port = Integer.parseInt(SystemInstance.get().getProperty("httpejbd.port")); // get back the random port
 
         // normal call
 
         final Service service = Service.create(
-                                                  new URL("http://127.0.0.1:4204/webservice-ws-with-resources-config/CalculatorBean?wsdl"),
+                                                  new URL("http://127.0.0.1:" + port + "/webservice-ws-with-resources-config/CalculatorBean?wsdl"),
                                                   new QName("http://security.ws.superbiz.org/", "CalculatorBeanService"));
 
         final Calculator calculator = service.getPort(Calculator.class);
@@ -91,7 +94,7 @@ public class CalculatorTest {
         try {
             assertEquals(5, calculator2.add(2, 3));
         } catch (SOAPFaultException sfe) {
-            assertThat(sfe.getMessage(), containsString("The security token could not be authenticated or authorized"));
+            assertThat(sfe.getMessage(), CoreMatchers.containsString("The security token could not be authenticated or authorized"));
         }
 
         container.close();
