@@ -70,12 +70,18 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
         if (null == broker || !broker.isStarted()) {
 
             final Properties properties = getLowerCaseProperties();
+            boolean scheduleSupport = false;
 
             final URISupport.CompositeData compositeData = URISupport.parseComposite(new URI(brokerURI.getRawSchemeSpecificPart()));
             final Map<String, String> params = new HashMap<String, String>(compositeData.getParameters());
             final PersistenceAdapter persistenceAdapter;
             if ("true".equals(params.remove("usekahadb"))) {
                 persistenceAdapter = createPersistenceAdapter("org.apache.activemq.store.kahadb.KahaDBPersistenceAdapter", "kahadb", params);
+
+                if ("true".equals(params.remove("scheduler"))) {
+                    scheduleSupport = true;
+                }
+
             } else if ("true".equals(params.remove("useleveldb"))) {
                 persistenceAdapter = createPersistenceAdapter("org.apache.activemq.store.leveldb.LevelDBPersistenceAdapter", "leveldb", params);
             } else if (params.get("persistenceadapter") != null) {
@@ -94,7 +100,7 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
                 // if user didn't set persistent to true then setPersistenceAdapter() alone is ignored so forcing it with the factory
                 broker.setPersistenceFactory(new ProvidedPersistenceAdapterPersistenceAdapterFactory(persistenceAdapter));
                 broker.setPersistent(true);
-                tomeeConfig(broker);
+                tomeeConfig(broker, scheduleSupport);
             } else {
                 final boolean notXbean = !uri.getScheme().toLowerCase().startsWith("xbean");
                 if (notXbean) {
@@ -120,7 +126,7 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
                                 final Object obj = context.lookup("openejb/Resource/" + resouceId);
                                 if (!(obj instanceof DataSource)) {
                                     throw new IllegalArgumentException("Resource with id " + resouceId
-                                        + " is not a DataSource, but is " + obj.getClass().getName());
+                                            + " is not a DataSource, but is " + obj.getClass().getName());
                                 }
                                 dataSource = (DataSource) obj;
                             } catch (final NamingException e) {
@@ -149,7 +155,7 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
                         broker.setPersistenceAdapter(new MemoryPersistenceAdapter());
                     }
 
-                    tomeeConfig(broker);
+                    tomeeConfig(broker, scheduleSupport);
                 }
             }
 
@@ -172,9 +178,9 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
                         //Start before returning - this is known to be safe.
                         if (!bs.isStarted()) {
                             Logger
-                                .getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class)
-                                .getChildLogger("service")
-                                .info("Starting ActiveMQ BrokerService");
+                                    .getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class)
+                                    .getChildLogger("service")
+                                    .info("Starting ActiveMQ BrokerService");
                             bs.start();
                         }
 
@@ -182,9 +188,9 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
 
                         //Force a checkpoint to initialize pools
                         Logger
-                            .getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class)
-                            .getChildLogger("service")
-                            .info("Starting ActiveMQ checkpoint");
+                                .getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class)
+                                .getChildLogger("service")
+                                .info("Starting ActiveMQ checkpoint");
                         bs.getPersistenceAdapter().checkpoint(true);
                         started.set(true);
 
@@ -213,9 +219,9 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
             try {
                 timeout = Integer.parseInt(properties.getProperty("startuptimeout", "30000"));
                 Logger
-                    .getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class)
-                    .getChildLogger("service")
-                    .info("Using ActiveMQ startup timeout of " + timeout + "ms");
+                        .getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class)
+                        .getChildLogger("service")
+                        .info("Using ActiveMQ startup timeout of " + timeout + "ms");
             } catch (final Throwable e) {
                 //Ignore
             }
@@ -231,14 +237,14 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
 
             if (null != throwable) {
                 Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class).getChildLogger("service").error("ActiveMQ failed to start broker",
-                    throwable);
+                        throwable);
             } else if (started.get()) {
                 Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class).getChildLogger("service").info("ActiveMQ broker started");
             } else {
                 Logger
-                    .getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class)
-                    .getChildLogger("service")
-                    .warning("ActiveMQ failed to start broker within " + timeout + " seconds - It may be unusable");
+                        .getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class)
+                        .getChildLogger("service")
+                        .warning("ActiveMQ failed to start broker within " + timeout + " seconds - It may be unusable");
             }
 
         }
@@ -284,21 +290,24 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
         return persistenceAdapter;
     }
 
-    private void tomeeConfig(final BrokerService broker) {
+    private void tomeeConfig(final BrokerService broker, final boolean scheduleSupport) {
         //New since 5.4.x
-        disableScheduler(broker);
+        setSchedulerSupport(broker, scheduleSupport);
 
         //Notify when an error occurs on shutdown.
         broker.setUseLoggingForShutdownErrors(Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class).isErrorEnabled());
     }
 
-    private static void disableScheduler(final BrokerService broker) {
+    private static void setSchedulerSupport(final BrokerService broker, final boolean scheduleSupport) {
         try {
             final Class<?> clazz = Class.forName("org.apache.activemq.broker.BrokerService");
             final Method method = clazz.getMethod("setSchedulerSupport", new Class[]{Boolean.class});
-            method.invoke(broker, Boolean.FALSE);
+            method.invoke(broker, scheduleSupport);
         } catch (final Throwable e) {
-            //Ignore
+            if (scheduleSupport) {
+                final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class);
+                logger.error("Failed to activate scheduler support", e);
+            }
         }
     }
 
