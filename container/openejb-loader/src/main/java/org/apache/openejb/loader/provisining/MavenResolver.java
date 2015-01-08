@@ -92,7 +92,7 @@ public class MavenResolver implements ArchiveResolver, ProvisioningResolverAware
             base = REPO1;
         }
 
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         final String toParse;
         if (!raw.contains("!")) {
             // try first local file with default maven settings
@@ -102,8 +102,6 @@ public class MavenResolver implements ArchiveResolver, ProvisioningResolverAware
             }
 
             // else use repo1
-            builder = new StringBuilder();
-            builder.append(base);
             toParse = raw;
 
             // try first locally
