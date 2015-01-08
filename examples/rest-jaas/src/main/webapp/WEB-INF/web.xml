@@ -35,6 +35,9 @@
       <role-name>*</role-name>
       <!-- we'll use JAAS so don't filter too much here -->
     </auth-constraint>
+    <user-data-constraint>
+      <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+    </user-data-constraint>
   </security-constraint>
 
   <security-role>

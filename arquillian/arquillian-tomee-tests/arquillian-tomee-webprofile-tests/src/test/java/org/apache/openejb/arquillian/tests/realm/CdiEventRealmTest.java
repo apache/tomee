@@ -17,22 +17,18 @@
 package org.apache.openejb.arquillian.tests.realm;
 
 import org.apache.catalina.Context;
-import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.Request;
-import org.apache.catalina.connector.Response;
 import org.apache.catalina.realm.GenericPrincipal;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Classes;
 import org.apache.openejb.testing.Module;
+import org.apache.tomcat.util.descriptor.web.SecurityCollection;
 import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
 import org.apache.tomee.catalina.realm.CdiEventRealm;
 import org.apache.tomee.catalina.realm.event.DigestAuthenticationEvent;
 import org.apache.tomee.catalina.realm.event.FindSecurityConstraintsEvent;
 import org.apache.tomee.catalina.realm.event.GssAuthenticationEvent;
-import org.apache.tomee.catalina.realm.event.HasResourcePermissionEvent;
-import org.apache.tomee.catalina.realm.event.HasRoleEvent;
-import org.apache.tomee.catalina.realm.event.HasUserDataPermissionEvent;
 import org.apache.tomee.catalina.realm.event.SslAuthenticationEvent;
 import org.apache.tomee.catalina.realm.event.UserPasswordAuthenticationEvent;
 import org.ietf.jgss.GSSContext;
@@ -40,13 +36,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.enterprise.event.Observes;
-import java.io.IOException;
 import java.security.Principal;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -111,18 +105,12 @@ public class CdiEventRealmTest {
     public void find() {
         final SecurityConstraint[] securityConstraints = new CdiEventRealm().findSecurityConstraints(mock(Request.class), mock(Context.class));
         assertEquals(1, securityConstraints.length);
-        assertEquals("awesome", securityConstraints[0].getDisplayName());
-    }
-
-    @Test
-    public void has() throws IOException {
-        new CdiEventRealm().hasResourcePermission(mock(Request.class), mock(Response.class), new SecurityConstraint[0], mock(Context.class));
-        new CdiEventRealm().hasRole(mock(Wrapper.class), mock(Principal.class), "admin");
-        new CdiEventRealm().hasUserDataPermission(mock(Request.class), mock(Response.class), new SecurityConstraint[0]);
-
-        assertEquals(1, MultiAuthenticator.hasResourcePermission.get());
-        assertEquals(1, MultiAuthenticator.hasRole.get());
-        assertEquals(1, MultiAuthenticator.hasUserDataPermission.get());
+        final SecurityConstraint c = securityConstraints[0];
+        assertEquals("CONFIDENTIAL", c.getUserConstraint());
+        assertEquals(2, c.findAuthRoles().length);
+        assertEquals(1, c.findCollections().length);
+        SecurityCollection sc = c.findCollections()[0];
+        assertTrue(sc.findPattern("/*"));
     }
 
     private GenericPrincipal getGenericPrincipal(Principal principal) {
@@ -132,10 +120,6 @@ public class CdiEventRealmTest {
     }
 
     public static class MultiAuthenticator {
-
-        public static final AtomicInteger hasRole = new AtomicInteger(0);
-        public static final AtomicInteger hasResourcePermission = new AtomicInteger(0);
-        public static final AtomicInteger hasUserDataPermission = new AtomicInteger(0);
 
         public void authenticate(@Observes final UserPasswordAuthenticationEvent event) {
             assertEquals("john", event.getUsername());
@@ -166,24 +150,8 @@ public class CdiEventRealmTest {
         }
 
         public void findSecurityConstraints(@Observes FindSecurityConstraintsEvent event) {
-            SecurityConstraint mock = mock(SecurityConstraint.class);
-            when(mock.getDisplayName()).thenReturn("awesome");
-            event.addSecurityConstraint(mock);
-        }
-
-        public void hasResourcePermission(@Observes HasResourcePermissionEvent event) throws IOException {
-            hasResourcePermission.incrementAndGet();
-            event.setHasResourcePermission(true);
-        }
-
-        public void hasRole(@Observes final HasRoleEvent event) {
-            hasRole.incrementAndGet();
-            event.setHasRole(true);
-        }
-
-        public void hasUserDataPermission(@Observes final HasUserDataPermissionEvent event) throws IOException {
-            hasUserDataPermission.incrementAndGet();
-            event.setHasUserDataPermission(true);
+            event.addRoles("admin", "user");
+            event.setUserConstraint("CONFIDENTIAL");
         }
 
     }

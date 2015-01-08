@@ -55,7 +55,7 @@ public class CdiEventRealmIntegTest
         return ShrinkWrap.create(WebArchive.class, "realm-test.war")
                 .addClasses(MultiAuthenticator.class, MyService.class)
                 .addAsWebResource(EmptyAsset.INSTANCE, "beans.xml")
-                .addAsManifestResource(new StringAsset("<Context preemptive=\"true\" antiJARLocking=\"true\">\n" +
+                .addAsManifestResource(new StringAsset("<Context preemptiveAuthentication=\"true\" antiJARLocking=\"true\">\n" +
                         "<Valve className=\"" + BasicAuthenticator.class.getName() + "\" />\n" +
                         "<Realm className=\"" + CdiEventRealm.class.getName() + "\" />\n" +
                         "</Context>"), "context.xml");
@@ -98,7 +98,7 @@ public class CdiEventRealmIntegTest
         @GET
         @RolesAllowed("admin")
         public String hello() {
-            return authenticator.stacked ? "ok" : "ko";
+            return authenticator.isStacked() ? "ok" : "ko";
         }
     }
 
@@ -107,8 +107,7 @@ public class CdiEventRealmIntegTest
         private boolean stacked = false;
 
         public void authenticate(@Observes final UserPasswordAuthenticationEvent event) {
-            System.err.println(">> enter > " + event.getUsername());
-            assertEquals("secret", event.getCredential());
+            if (!"secret".equals(event.getCredential())) return; // not authenticated
             event.setPrincipal(new GenericPrincipal(event.getUsername(), "", Arrays.asList(event.getUsername())));
         }
 

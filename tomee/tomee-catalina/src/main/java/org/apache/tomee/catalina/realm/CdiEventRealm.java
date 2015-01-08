@@ -16,29 +16,20 @@
  */
 package org.apache.tomee.catalina.realm;
 
-import org.apache.catalina.Container;
 import org.apache.catalina.Context;
-import org.apache.catalina.CredentialHandler;
-import org.apache.catalina.Realm;
-import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.Request;
-import org.apache.catalina.connector.Response;
+import org.apache.catalina.realm.RealmBase;
+import org.apache.tomcat.util.descriptor.web.SecurityCollection;
 import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
 import org.apache.tomee.catalina.realm.event.DigestAuthenticationEvent;
 import org.apache.tomee.catalina.realm.event.FindSecurityConstraintsEvent;
 import org.apache.tomee.catalina.realm.event.GssAuthenticationEvent;
-import org.apache.tomee.catalina.realm.event.HasResourcePermissionEvent;
-import org.apache.tomee.catalina.realm.event.HasRoleEvent;
-import org.apache.tomee.catalina.realm.event.HasUserDataPermissionEvent;
 import org.apache.tomee.catalina.realm.event.SslAuthenticationEvent;
 import org.apache.tomee.catalina.realm.event.UserPasswordAuthenticationEvent;
 import org.apache.webbeans.config.WebBeansContext;
 import org.ietf.jgss.GSSContext;
 
 import javax.enterprise.inject.spi.BeanManager;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-import java.io.IOException;
 import java.security.Principal;
 import java.security.cert.X509Certificate;
 
@@ -47,12 +38,7 @@ import java.security.cert.X509Certificate;
  *
  * There is one different event per credential types to make it easier to implement.
  */
-public class CdiEventRealm implements Realm {
-
-    protected Container container = null;
-    protected final PropertyChangeSupport support = new PropertyChangeSupport(this);
-    private CredentialHandler credentialHandler;
-
+public class CdiEventRealm extends RealmBase {
 
     @Override
     public Principal authenticate(final String username, final String credentials) {
@@ -107,80 +93,52 @@ public class CdiEventRealm implements Realm {
 
     @Override
     public SecurityConstraint[] findSecurityConstraints(final Request request, final Context context) {
+        final SecurityConstraint[] sc = super.findSecurityConstraints(request, context);
+
         if (beanManager() == null) {
-            return null;
+            return sc;
         }
 
-        final FindSecurityConstraintsEvent event = new FindSecurityConstraintsEvent(request, context);
+        final FindSecurityConstraintsEvent event = new FindSecurityConstraintsEvent(request.getRequest(), context.getPath());
         beanManager().fireEvent(event);
-        return event.getSecurityConstraints();
-    }
 
-    @Override
-    public boolean hasResourcePermission(final Request request, final Response response,
-                                         final SecurityConstraint[] constraint,
-                                         final Context context) throws IOException {
-        if (beanManager() == null) {
-            return false;
+        if (!event.getRoles().isEmpty()) {
+            final SecurityConstraint s = new SecurityConstraint();
+            final SecurityCollection collection = new SecurityCollection();
+
+            collection.addPattern("/*"); // only for the current request
+            collection.addMethod(request.getMethod());
+            s.addCollection(collection);
+
+            if (event.getUserConstraint() != null) {
+                s.setUserConstraint(event.getUserConstraint());
+            }
+
+            for(final String r: event.getRoles()) {
+                s.addAuthRole(r);
+            }
+
+            return new SecurityConstraint[] { s };
         }
 
-        final HasResourcePermissionEvent event = new HasResourcePermissionEvent(request, response, constraint, context);
-        beanManager().fireEvent(event);
-        return event.isHasResourcePermission();
+        return sc;
     }
 
     @Override
-    public boolean hasRole(final Wrapper wrapper, final Principal principal, final String role) {
-        if (beanManager() == null) {
-            return false;
-        }
-
-        final HasRoleEvent event = new HasRoleEvent(wrapper, principal, role);
-        beanManager().fireEvent(event);
-        return event.isHasRole();
+    protected String getName() {
+        return "CdiEventRealm";
     }
 
     @Override
-    public boolean hasUserDataPermission(final Request request, final Response response, final SecurityConstraint[] constraint) throws IOException {
-        if (beanManager() == null) {
-            return false;
-        }
-
-        final HasUserDataPermissionEvent event = new HasUserDataPermissionEvent(request, response, constraint);
-        beanManager().fireEvent(event);
-        return event.isHasUserDataPermission();
+    protected String getPassword(final String username) {
+        // must never happen cause we overridden all authenticate() mthd
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public Container getContainer() {
-        return (container);
-    }
-
-    @Override
-    public void setContainer(final Container container) {
-        Container oldContainer = this.container;
-        this.container = container;
-        support.firePropertyChange("container", oldContainer, this.container);
-    }
-
-    @Override
-    public CredentialHandler getCredentialHandler() {
-        return credentialHandler;
-    }
-
-    @Override
-    public void setCredentialHandler(final CredentialHandler credentialHandler) {
-        this.credentialHandler = credentialHandler;
-    }
-
-    @Override
-    public void addPropertyChangeListener(final PropertyChangeListener listener) {
-        support.addPropertyChangeListener(listener);
-    }
-
-    @Override
-    public void removePropertyChangeListener(final PropertyChangeListener listener) {
-        support.removePropertyChangeListener(listener);
+    protected Principal getPrincipal(final String username) {
+        // must never happen cause we overridden all authenticate() mthd
+        throw new UnsupportedOperationException();
     }
 
     private BeanManager beanManager() {

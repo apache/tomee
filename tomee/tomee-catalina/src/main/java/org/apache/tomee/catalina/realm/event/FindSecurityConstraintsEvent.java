@@ -16,37 +16,49 @@
  */
 package org.apache.tomee.catalina.realm.event;
 
-import org.apache.catalina.Context;
-import org.apache.catalina.connector.Request;
-import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
-
+import javax.servlet.ServletRequest;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class FindSecurityConstraintsEvent {
 
-    private final Request request;
-    private final Context context;
-    private List<SecurityConstraint> securityConstraints;
+    private final ServletRequest request;
+    private final String context;
 
-    public FindSecurityConstraintsEvent(final Request request, final Context context) {
+    private final List<String> roles = new ArrayList<>();
+    private String userConstraint;
+
+    public FindSecurityConstraintsEvent(final ServletRequest request, final String context) {
         this.request = request;
         this.context = context;
     }
 
-    public Request getRequest() {
+    public ServletRequest getRequest() {
         return request;
     }
 
-    public Context getContext() {
+    public String getContext() {
         return context;
     }
 
-    public boolean addSecurityConstraint(final SecurityConstraint constraint) {
-        return securityConstraints.add(constraint);
+    public List<String> getRoles() {
+        return roles;
     }
 
-    public SecurityConstraint[] getSecurityConstraints() {
-        return securityConstraints.toArray(new SecurityConstraint[securityConstraints.size()]);
+    public FindSecurityConstraintsEvent addRoles(final String... roles) {
+        this.roles.addAll(Arrays.asList(roles));
+        return this;
     }
 
+    public void setUserConstraint(String userConstraint) {
+        if (this.userConstraint != null && !this.userConstraint.equals(userConstraint)) {
+            throw new IllegalStateException("User constraint already set to > " + this.userConstraint);
+        }
+        this.userConstraint = userConstraint;
+    }
+
+    public String getUserConstraint() {
+        return userConstraint;
+    }
 }
