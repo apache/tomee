@@ -87,9 +87,10 @@
   </ciManagement>
 
   <scm>
-    <connection>scm:svn:https://svn.apache.org/repos/asf/tomee/tomee/trunk/</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/tomee/tomee/trunk/</developerConnection>
-    <url>https://svn.apache.org/repos/asf/tomee/tomee/trunk</url>
+    <connection>scm:git:https://github.com/tomitribe/tomee.git</connection>
+    <developerConnection>scm:git:https://github.com/tomitribe/tomee.git</developerConnection>
+    <url>scm:git:https://github.com/tomitribe/tomee.git</url>
+    <tag>HEAD</tag>
   </scm>
 
   <properties>
@@ -647,6 +648,11 @@
           <id>Codehaus Snapshots</id>
           <url>http://snapshots.repository.codehaus.org/</url>
         </repository>
+	    <repository>
+	      <id>tomitribe-all</id>
+	      <name>Tomitribe Repository</name>
+	      <url>http://repository.tomitribe.com/content/groups/tomitribe/</url>
+	    </repository>		
       </repositories>
 
       <pluginRepositories>
@@ -2047,10 +2053,18 @@
   </dependencyManagement>
 
   <distributionManagement>
-    <site>
-      <id>openejb-website</id>
-      <url>scp://people.apache.org/www/tomee.apache.org/openejb/maven</url>
-    </site>
+    <!--You need to define 'server' entries in your settings.xml to gain access here-->
+    <repository>
+      <id>tomitribe.releases.https</id>
+      <name>Tomitribe Release Distribution Repository</name>
+      <!--url>http://repository.tomitribe.com/service/local/staging/deploy/maven2</url-->
+      <url>http://repository.tomitribe.com/content/repositories/releases-tomitribe</url>
+    </repository>
+    <snapshotRepository>
+      <id>tomitribe.snapshots.https</id>
+      <name>Tomitribe Development Snapshot Repository</name>
+      <url>http://repository.tomitribe.com/content/repositories/snapshots-tomitribe</url>
+    </snapshotRepository>
   </distributionManagement>
 
   <reporting>
