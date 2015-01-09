@@ -26,7 +26,7 @@ public abstract class BaseAuthenticationEvent {
         return principal;
     }
 
-    public void setPrincipal(Principal principal) {
+    public void setPrincipal(final Principal principal) {
         this.principal = principal;
     }
 }

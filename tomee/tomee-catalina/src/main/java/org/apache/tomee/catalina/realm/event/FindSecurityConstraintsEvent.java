@@ -51,7 +51,7 @@ public class FindSecurityConstraintsEvent {
         return this;
     }
 
-    public void setUserConstraint(String userConstraint) {
+    public void setUserConstraint(final String userConstraint) {
         if (this.userConstraint != null && !this.userConstraint.equals(userConstraint)) {
             throw new IllegalStateException("User constraint already set to > " + this.userConstraint);
         }

@@ -52,7 +52,7 @@ public class LazyValve implements Valve, Lifecycle, Contained {
         this.info = info;
     }
 
-    public void setDelegateClassName(String delegateClassName) {
+    public void setDelegateClassName(final String delegateClassName) {
         this.delegateClassName = delegateClassName;
     }
 
