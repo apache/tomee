@@ -19,10 +19,9 @@ package org.superbiz;
 import javax.enterprise.context.RequestScoped;
 import java.security.Principal;
 
-@RequestScoped
+@RequestScoped // just to show we can be bound to the request but @ApplicationScoped is what makes sense
 public class AuthBean {
-
-    public Principal authenticate(final String username, final String password) {
+    public Principal authenticate(final String username, String password) {
         if (("userA".equals(username) || "userB".equals(username)) && "test".equals(password)) {
             return new Principal() {
                 @Override
@@ -40,15 +39,10 @@ public class AuthBean {
     }
 
     public boolean hasRole(final Principal principal, final String role) {
-        if (principal == null) {
-            return false;
-        }
-        if (principal.getName().equals("userA") && (role.equals("admin") || role.equals("user"))) {
-            return true;
-        }
-        if (principal.getName().equals("userB") && (role.equals("user"))) {
-            return true;
-        }
-        return false;
+        return principal != null && (
+                principal.getName().equals("userA") && (role.equals("admin")
+                || role.equals("user"))
+                || principal.getName().equals("userB") && (role.equals("user"))
+            );
     }
 }
