@@ -26,8 +26,8 @@
   
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <openejb.version>4.7.2-SNAPSHOT</openejb.version>
-    <tomee.version>1.7.2-SNAPSHOT</tomee.version>
+    <version.openejb>4.7.2-SNAPSHOT</version.openejb>
+    <version.tomee>1.7.2-SNAPSHOT</version.tomee>
     <version.openjpa>2.3.0</version.openjpa>
   </properties>
   
@@ -75,22 +75,22 @@
       <plugin>
         <groupId>org.apache.openejb.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>${tomee.version}</version>
+        <version>${version.tomee}</version>
         <configuration>
           <simpleLog>true</simpleLog>
-          <tomeeVersion>${tomee.version}</tomeeVersion>
+          <tomeeVersion>${version.tomee}</tomeeVersion>
           <tomeeClassifier>plus</tomeeClassifier>
         </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.openejb.maven</groupId>
         <artifactId>tomee-embedded-maven-plugin</artifactId>
-        <version>${tomee.version}</version>
+        <version>${version.tomee}</version>
         <dependencies>
           <dependency>
             <groupId>org.apache.openejb</groupId>
             <artifactId>tomee-jaxrs</artifactId>
-            <version>${tomee.version}</version>
+            <version>${version.tomee}</version>
           </dependency>
         </dependencies>
       </plugin>
@@ -106,7 +106,7 @@
             <webappArtifact>
               <groupId>org.apache.openejb</groupId>
               <artifactId>tomee-plus-webapp</artifactId>
-              <version>${tomee.version}</version>
+              <version>${version.tomee}</version>
               <contextPath>openejb</contextPath>
             </webappArtifact>
           </webapps>
@@ -157,25 +157,25 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-embedded</artifactId>
-      <version>${tomee.version}</version>
+      <version>${version.tomee}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-cxf-rs</artifactId>
-      <version>${openejb.version}</version>
+      <version>${version.openejb}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-jaxrs</artifactId>
-      <version>${tomee.version}</version>
+      <version>${version.tomee}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>ziplock</artifactId>
-      <version>${tomee.version}</version>
+      <version>${version.tomee}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

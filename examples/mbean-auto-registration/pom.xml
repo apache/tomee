@@ -24,7 +24,7 @@
   <name>OpenEJB :: Examples :: MBean Auto Registration</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <openejb.version>4.7.2-SNAPSHOT</openejb.version>
+    <version.openejb>4.7.2-SNAPSHOT</version.openejb>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>

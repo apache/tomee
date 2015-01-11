@@ -97,8 +97,11 @@
     <test.complexity.coverage.minimun>0</test.complexity.coverage.minimun>
     <test.branch.coverage.minimun>0</test.branch.coverage.minimun>
     <test.coverage.skip>false</test.coverage.skip>
-    <openejb.version>4.7.2-SNAPSHOT</openejb.version>
-    <tomee.version>1.7.2-SNAPSHOT</tomee.version>
+    <version.openejb>4.7.2-SNAPSHOT</version.openejb>
+    <version.tomee>1.7.2-SNAPSHOT</version.tomee>
+
+    <openejb.version>${version.openejb}</openejb.version>
+    <tomee.version>${version.tomee}</tomee.version>
 
     <openjpa.version>2.4.0-nonfinal-1598334</openjpa.version>
     <org.apache.openwebbeans.version>1.2.7</org.apache.openwebbeans.version>
@@ -442,7 +445,7 @@
           <artifact>
             <groupId>${project.groupId}</groupId>
             <artifactId>tomee</artifactId>
-            <version>${tomee.version}</version>
+            <version>${version.tomee}</version>
           </artifact>
           <doapOptions>
             <programmingLanguage>Java</programmingLanguage>

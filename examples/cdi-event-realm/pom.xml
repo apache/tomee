@@ -10,8 +10,8 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <openejb.version>4.7.2-SNAPSHOT</openejb.version>
-    <tomee.version>1.7.2-SNAPSHOT</tomee.version>
+    <version.openejb>4.7.2-SNAPSHOT</version.openejb>
+    <version.tomee>1.7.2-SNAPSHOT</version.tomee>
     <tomcat.version>7.0.57</tomcat.version>
   </properties>
 
@@ -38,7 +38,7 @@
       <plugin>
         <groupId>org.apache.openejb.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>${tomee.version}</version>
+        <version>${version.tomee}</version>
       </plugin>
     </plugins>
   </build>
@@ -81,7 +81,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-catalina</artifactId>
-      <version>${tomee.version}</version>
+      <version>${version.tomee}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -95,13 +95,13 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>arquillian-tomee-embedded</artifactId>
-      <version>${tomee.version}</version>
+      <version>${version.tomee}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>ziplock</artifactId>
-      <version>${tomee.version}</version>
+      <version>${version.tomee}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

@@ -123,7 +123,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>apache-tomee</artifactId>
-      <version>${tomee.version}</version>
+      <version>${version.tomee}</version>
       <classifier>webprofile</classifier>
       <type>zip</type>
     </dependency>
@@ -447,28 +447,28 @@
         <dependency>
           <groupId>org.apache.openejb</groupId>
           <artifactId>apache-tomee</artifactId>
-          <version>${tomee.version}</version>
+          <version>${version.tomee}</version>
           <classifier>webprofile</classifier>
           <type>zip</type>
         </dependency>
         <dependency>
           <groupId>org.apache.openejb</groupId>
           <artifactId>apache-tomee</artifactId>
-          <version>${tomee.version}</version>
+          <version>${version.tomee}</version>
           <classifier>jaxrs</classifier>
           <type>zip</type>
         </dependency>
         <dependency>
           <groupId>org.apache.openejb</groupId>
           <artifactId>apache-tomee</artifactId>
-          <version>${tomee.version}</version>
+          <version>${version.tomee}</version>
           <classifier>plus</classifier>
           <type>zip</type>
         </dependency>
         <dependency>
           <groupId>org.apache.openejb</groupId>
           <artifactId>apache-tomee</artifactId>
-          <version>${tomee.version}</version>
+          <version>${version.tomee}</version>
           <classifier>plume</classifier>
           <type>zip</type>
         </dependency>
@@ -476,25 +476,25 @@
         <dependency>
           <groupId>org.apache.openejb</groupId>
           <artifactId>tomee-webapp</artifactId>
-          <version>${tomee.version}</version>
+          <version>${version.tomee}</version>
           <type>war</type>
         </dependency>
         <dependency>
           <groupId>org.apache.openejb</groupId>
           <artifactId>tomee-jaxrs-webapp</artifactId>
-          <version>${tomee.version}</version>
+          <version>${version.tomee}</version>
           <type>war</type>
         </dependency>
         <dependency>
           <groupId>org.apache.openejb</groupId>
           <artifactId>tomee-plus-webapp</artifactId>
-          <version>${tomee.version}</version>
+          <version>${version.tomee}</version>
           <type>war</type>
         </dependency>
         <dependency>
           <groupId>org.apache.openejb</groupId>
           <artifactId>tomee-plume-webapp</artifactId>
-          <version>${tomee.version}</version>
+          <version>${version.tomee}</version>
           <type>war</type>
         </dependency>
         <dependency>
