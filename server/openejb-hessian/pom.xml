@@ -47,7 +47,7 @@ limitations under the License.
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-catalina</artifactId>
-      <version>${version.tomee}</version>
+      <version>${tomee.version}</version>
       <scope>provided</scope>
     </dependency>
 

@@ -70,7 +70,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-util</artifactId>
-      <version>${version.tomee}</version>
+      <version>${tomee.version}</version>
     </dependency>
 
     <dependency>
@@ -87,14 +87,14 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-jee</artifactId>
-      <version>${version.openejb}</version>
+      <version>${openejb.version}</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>${version.openejb}</version>
+      <version>${openejb.version}</version>
       <type>jar</type>
       <scope>compile</scope>
       <exclusions>

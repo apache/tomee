@@ -114,7 +114,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-client</artifactId>
-      <version>${version.openejb}</version>
+      <version>${openejb.version}</version>
       <type>jar</type>
     </dependency>
 
@@ -129,7 +129,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-common</artifactId>
-      <version>${version.tomee}</version>
+      <version>${tomee.version}</version>
       <type>jar</type>
       <scope>compile</scope>
     </dependency>

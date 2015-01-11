@@ -25,7 +25,7 @@
   <name>OpenEJB :: Web Examples :: Pojo WS</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.tomee>1.7.2-SNAPSHOT</version.tomee>
+    <tomee.version>1.7.2-SNAPSHOT</tomee.version>
   </properties>
   <repositories>
     <repository>
@@ -64,7 +64,7 @@
         <artifactId>tomee-maven-plugin</artifactId>
         <version>1.7.2-SNAPSHOT</version>
         <configuration>
-          <tomeeVersion>${version.tomee}</tomeeVersion>
+          <tomeeVersion>${tomee.version}</tomeeVersion>
           <tomeeClassifier>plus</tomeeClassifier>
         </configuration>
       </plugin>

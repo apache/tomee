@@ -243,7 +243,7 @@
                     <property name="targetDir" value="${basedir}/target/" />
                     <property name="openejb.home" value="${targetDir}/openejb-${project.version}" />
                     <property name="openejb.dist" value="${targetDir}/openejb-${project.version}-bin.zip" />
-                    <property name="version.openejb" value="${project.version}" />
+                    <property name="openejb.version" value="${project.version}" />
 
                     <unjar src="${openejb.dist}" dest="${targetDir}" />
                     <copy file="${targetDir}/openejb-${project.version}-test.jar" todir="${openejb.home}/apps" />
@@ -260,13 +260,13 @@
                       <arg value="local" />
                     </java>
 
-                    <java jar="target/openejb-${version.openejb}-test.jar" fork="yes">
+                    <java jar="target/openejb-${openejb.version}-test.jar" fork="yes">
                       <sysproperty key="openejb.home" value="${openejb.home}" />
                       <jvmarg value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=${openejb.debug.suspend},address=${openejb.debug.port}" />
                       <arg value="remote" />
                     </java>
 
-                    <java jar="target/openejb-${version.openejb}-test.jar" fork="yes">
+                    <java jar="target/openejb-${openejb.version}-test.jar" fork="yes">
                       <sysproperty key="openejb.home" value="${openejb.home}" />
                       <jvmarg value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=${openejb.debug.suspend},address=${openejb.debug.port}" />
                       <arg value="http" />

@@ -25,8 +25,8 @@
   <name>OpenEJB :: Web Examples :: REST Example With Application</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.openejb>4.7.2-SNAPSHOT</version.openejb>
-    <version.tomee>1.7.2-SNAPSHOT</version.tomee>
+    <openejb.version>4.7.2-SNAPSHOT</openejb.version>
+    <tomee.version>1.7.2-SNAPSHOT</tomee.version>
   </properties>
   <repositories>
     <repository>
@@ -78,7 +78,7 @@
             <webappArtifact>
               <groupId>org.apache.openejb</groupId>
               <artifactId>tomee-plus-webapp</artifactId>
-              <version>${version.tomee}</version>
+              <version>${tomee.version}</version>
               <contextPath>openejb</contextPath>
             </webappArtifact>
           </webapps>

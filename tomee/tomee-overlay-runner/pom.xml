@@ -42,7 +42,7 @@
     <dependency> <!-- openejb-core is not needed but parent import it so setting it as provided to avoid wrong packaging -->
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>${version.openejb}</version>
+      <version>${openejb.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
