@@ -542,7 +542,7 @@ public class HttpRequestImpl implements HttpRequest {
         }
 
         try {
-            uri = new URI(socketURI.toString() + token);
+            uri = new URI(socketURI.toString() + token.replace("//", "/"));
         } catch (URISyntaxException e) {
             throw new IOException("Malformed URI :" + token + " Exception: " + e.getMessage());
         }

@@ -188,6 +188,8 @@
             </property>
           </properties>
           <systemPropertyVariables>
+            <cdiTckExcludeDummy>true</cdiTckExcludeDummy>
+
             <jms>new://Resource?type=javax.jms.ConnectionFactory</jms>
             <queue>new://Resource?type=Queue</queue>
             <topic>new://Resource?type=Topic</topic>

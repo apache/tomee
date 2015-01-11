@@ -364,8 +364,13 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
                 if (cid != null) {
                     final ConversationManager conversationManager = webBeansContext.getConversationManager();
                     final ConversationImpl c = conversationManager.getPropogatedConversation(cid, session.getId());
-                    if (c != null && c.iUseIt() > 1) {
-                        throw new BusyConversationException("busy conversation " + c.getId() + '(' + c.getSessionId() + ')');
+                    if (c != null) {
+                        if (c.isTransient()) {
+                            throw new IllegalStateException("Conversation " + cid + " missing");
+                        }
+                        if (c.iUseIt() > 1) {
+                            throw new BusyConversationException("busy conversation " + c.getId() + '(' + c.getSessionId() + ')');
+                        }
                     }
                 }
             }
@@ -663,6 +668,9 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
                     return initConversationContext(servletRequest);
                 }
             }
+        }
+        if (context != null && createIfPropagated) {
+            context.setActive(true);
         }
         return context;
     }

@@ -157,6 +157,34 @@
           <exclude name="testFinalMethodWithClassLevelInterceptor" />
         </methods>
       </class>
+
+      <!-- CDITCK-462 javax.enterprise.context.conversation.id is not el compliant -->
+      <class name="org.jboss.cdi.tck.tests.context.conversation.LongRunningConversationPropagatedByFacesContextTest">
+        <methods>
+          <exclude name="testConversationPropagatedAjax" />
+        </methods>
+      </class>
+
+      <!-- CDITCK-463 -->
+      <class name="org.jboss.cdi.tck.tests.lookup.manager.provider.custom.CustomCDIProviderTest">
+        <methods>
+          <exclude name=".*" />
+        </methods>
+      </class>
+
+      <!-- not in web profile and not supported by embedded adapter anyway -->
+      <class name="org.jboss.cdi.tck.tests.deployment.packaging.rar.ResourceAdapterArchiveTest">
+        <methods>
+          <exclude name=".*" />
+        </methods>
+      </class>
+
+      <!-- not supported by embedded adapter -->
+      <class name="org.jboss.cdi.tck.tests.lookup.injection.non.contextual.InjectionIntoNonContextualComponentTest">
+        <methods>
+          <exclude name="testInjectionIntoTagHandler" />
+        </methods>
+      </class>
     </classes>
   </test>
 </suite>

@@ -21,6 +21,7 @@ import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.cdi.CdiAppContextsService;
 import org.apache.openejb.cdi.Proxys;
 import org.apache.openejb.core.WebContext;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.AppFinder;
 import org.apache.openejb.web.LightweightWebAppBuilder;
@@ -31,7 +32,9 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
+import java.io.InputStream;
 import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -141,6 +144,7 @@ public class HttpListenerRegistry implements HttpListener {
                 listeners = new HashMap<>(registry);
             }
 
+            boolean found = false;
             for (final Map.Entry<String, HttpListener> entry : listeners.entrySet()) {
                 final String pattern = entry.getKey();
                 if (path.matches(pattern) || path.equals(pattern)) {
@@ -152,7 +156,25 @@ public class HttpListenerRegistry implements HttpListener {
                         HttpRequestImpl.class.cast(request).noPathInfo();
                     }
                     entry.getValue().onMessage(request, response);
+                    found = true;
                     break;
+                }
+            }
+            if (!found) {
+                final String servletPath = request.getServletPath();
+                if (servletPath != null) {
+                    final URL url = SystemInstance.get().getComponent(ServletContext.class).getResource(servletPath);
+                    if (url != null) {
+                        final InputStream from = url.openStream();
+                        try {
+                            IO.copy(from, response.getOutputStream());
+                        } finally {
+                            IO.close(from);
+                        }
+                    }
+                    if (servletPath.endsWith(".html")) {
+                        response.setContentType("text/html");
+                    }
                 }
             }
         } finally {

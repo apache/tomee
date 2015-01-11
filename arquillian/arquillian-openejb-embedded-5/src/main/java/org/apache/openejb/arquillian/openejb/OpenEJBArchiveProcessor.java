@@ -114,6 +114,7 @@ public class OpenEJBArchiveProcessor {
         final List<URL> additionalPaths = new ArrayList<>();
         CompositeArchive scannedArchive = null;
         final Map<URL, List<String>> earMap = new HashMap<>();
+        final Map<String, Object> altDD = new HashMap<>();
         final List<Archive> earLibsArchives = new ArrayList<>();
         final CompositeBeans earBeans = new CompositeBeans();
 
@@ -122,7 +123,7 @@ public class OpenEJBArchiveProcessor {
         final String prefix = isWebApp ? WEB_INF : META_INF;
         if (isEar || isWebApp) {
             final Map<ArchivePath, Node> jars = archive.getContent(new IncludeRegExpPaths(isEar ? "/.*\\.jar" : "/WEB-INF/lib/.*\\.jar"));
-            scannedArchive = analyzeLibs(parent, additionalPaths, earMap, earLibsArchives, earBeans, jars);
+            scannedArchive = analyzeLibs(parent, additionalPaths, earMap, earLibsArchives, earBeans, jars, altDD);
         }
 
         final URL[] urls = additionalPaths.toArray(new URL[additionalPaths.size()]);
@@ -153,7 +154,20 @@ public class OpenEJBArchiveProcessor {
             final EjbModule earCdiModule = new EjbModule(appModule.getClassLoader(), DeploymentLoader.EAR_SCOPED_CDI_BEANS + appModule.getModuleId(), new EjbJar(), new OpenejbJar());
             earCdiModule.setBeans(earBeans);
             earCdiModule.setFinder(earLibFinder);
-            earCdiModule.setEjbJar(new EjbJar()); // EmptyEjbJar would prevent to add scanned EJBs but this is *here* an aggregator so we need to be able to do so
+
+            final EjbJar ejbJar;
+            final AssetSource ejbJarXml = AssetSource.class.isInstance(altDD.get(EJB_JAR_XML)) ? AssetSource.class.cast(altDD.get(EJB_JAR_XML)) : null;
+            if (ejbJarXml != null) {
+                try {
+                    ejbJar = ReadDescriptors.readEjbJar(ejbJarXml.get());
+                } catch (final Exception e) {
+                    throw new OpenEJBRuntimeException(e);
+                }
+            } else {
+                ejbJar = new EjbJar();
+            }
+
+            earCdiModule.setEjbJar(ejbJar); // EmptyEjbJar would prevent to add scanned EJBs but this is *here* an aggregator so we need to be able to do so
             appModule.getEjbModules().add(earCdiModule);
 
             for (final Map.Entry<ArchivePath, Node> node : archive.getContent(new IncludeRegExpPaths("/.*\\.war")).entrySet()) {
@@ -161,7 +175,7 @@ public class OpenEJBArchiveProcessor {
                 if (ArchiveAsset.class.isInstance(asset)) {
                     final Archive<?> webArchive = ArchiveAsset.class.cast(asset).getArchive();
                     if (WebArchive.class.isInstance(webArchive)) {
-                        final Map<String, Object> altDD = new HashMap<>();
+                        final Map<String, Object> webAltDD = new HashMap<>();
                         final Node beansXml = findBeansXml(webArchive, WEB_INF);
 
                         final List<URL> webappAdditionalPaths = new LinkedList<>();
@@ -171,7 +185,8 @@ public class OpenEJBArchiveProcessor {
                         final CompositeArchive webAppArchive = analyzeLibs(parent,
                                 webappAdditionalPaths, webAppClassesByUrl,
                                 webAppArchives, webAppBeansXml,
-                                webArchive.getContent(new IncludeRegExpPaths("/WEB-INF/lib/.*\\.jar")));
+                                webArchive.getContent(new IncludeRegExpPaths("/WEB-INF/lib/.*\\.jar")),
+                                webAltDD);
 
                         webAppArchives.add(webArchive);
                         final SWClassLoader webLoader = new SWClassLoader(parent, webAppArchives.toArray(new Archive<?>[webAppArchives.size()]));
@@ -186,9 +201,11 @@ public class OpenEJBArchiveProcessor {
                         webModule.setScannableUrls(Collections.<URL>emptyList());
                         webModule.setFinder(finder);
 
-                        final EjbModule ejbModule = new EjbModule(webLoader, webModule.getModuleId(), null, new EjbJar(), new OpenejbJar());
+                        final EjbJar webEjbJar = createEjbJar(prefix, webArchive);
+
+                        final EjbModule ejbModule = new EjbModule(webLoader, webModule.getModuleId(), null, webEjbJar, new OpenejbJar());
                         ejbModule.setBeans(webAppBeansXml);
-                        ejbModule.getAltDDs().putAll(altDD);
+                        ejbModule.getAltDDs().putAll(webAltDD);
                         ejbModule.getAltDDs().put("beans.xml", webAppBeansXml);
                         ejbModule.setFinder(finder);
                         ejbModule.setClassLoader(webLoader);
@@ -220,17 +237,7 @@ public class OpenEJBArchiveProcessor {
             testDD = new HashMap<>(); // ignore
         }
 
-        final EjbJar ejbJar;
-        final Node ejbJarXml = archive.get(prefix.concat(EJB_JAR_XML));
-        if (ejbJarXml != null) {
-            try {
-                ejbJar = ReadDescriptors.readEjbJar(ejbJarXml.getAsset().openStream());
-            } catch (final OpenEJBException e) {
-                throw new OpenEJBRuntimeException(e);
-            }
-        } else {
-            ejbJar = new EjbJar();
-        }
+        final EjbJar ejbJar = createEjbJar(prefix, archive);
 
         if (ejbJar.getModuleName() == null) {
             final String name = archive.getName();
@@ -273,6 +280,21 @@ public class OpenEJBArchiveProcessor {
         return appModule;
     }
 
+    private static EjbJar createEjbJar(final String prefix, final Archive<?> webArchive) {
+        final EjbJar webEjbJar;
+        final Node webEjbJarXml = webArchive.get(prefix.concat(EJB_JAR_XML));
+        if (webEjbJarXml != null) {
+            try {
+                webEjbJar = ReadDescriptors.readEjbJar(webEjbJarXml.getAsset().openStream());
+            } catch (final OpenEJBException e) {
+                throw new OpenEJBRuntimeException(e);
+            }
+        } else {
+            webEjbJar = new EjbJar();
+        }
+        return webEjbJar;
+    }
+
     private static EjbModule addTestClassAsManagedBean(Class<?> javaClass, URLClassLoader tempClassLoader, AppModule appModule) {
         final EjbJar ejbJar = new EjbJar();
         final OpenejbJar openejbJar = new OpenejbJar();
@@ -313,7 +335,8 @@ public class OpenEJBArchiveProcessor {
                                                 final List<URL> additionalPaths, final Map<URL, List<String>> earMap,
                                                 final List<Archive> earLibsArchives,
                                                 final CompositeBeans earBeans,
-                                                final Map<ArchivePath, Node> jars) {
+                                                final Map<ArchivePath, Node> jars,
+                                                final Map<String, Object> altDD) {
         final List<org.apache.xbean.finder.archive.Archive> archives = new ArrayList<>(jars.size());
         for (final Map.Entry<ArchivePath, Node> node : jars.entrySet()) {
             final Asset asset = node.getValue().getAsset();
@@ -350,6 +373,11 @@ public class OpenEJBArchiveProcessor {
                         // no-op
                     }
                     archives.add(new ClassesArchive(earClasses));
+                }
+
+                final Node ejbJarXml = libArchive.get(META_INF + EJB_JAR_XML);
+                if (ejbJarXml != null) { // not super, we should merge them surely but ok for use cases we met until today
+                    altDD.put("ejb-jar.xml", new AssetSource(ejbJarXml.getAsset(), null));
                 }
             } if (UrlAsset.class.isInstance(asset) || FileAsset.class.isInstance(asset)) {
                 try {

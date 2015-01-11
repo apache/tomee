@@ -250,7 +250,9 @@ public class HttpResponseImpl implements HttpResponse {
     }
 
     public void flushBuffer() throws IOException {
-        // there is really no way to flush
+        if (writer != null) {
+            writer.flush();
+        }
     }
 
     @Override
@@ -419,6 +421,8 @@ public class HttpResponseImpl implements HttpResponse {
      * @throws java.io.IOException if an exception is thrown
      */
     protected void writeMessage(OutputStream output, boolean indent) throws IOException {
+        flushBuffer();
+
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         final DataOutputStream out = new DataOutputStream(baos);
         closeMessage();
