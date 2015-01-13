@@ -366,7 +366,11 @@ public class Setup {
 
         final File libFolder = new File(tomeeHome, "lib");
         for (final String lib : libs.split("\n")) {
-            final String location = ProvisioningUtil.realLocation(lib.trim());
+            final String trim = lib.trim();
+            if (trim.isEmpty() || trim.startsWith("#")) {
+                continue;
+            }
+            final String location = ProvisioningUtil.realLocation(trim);
             final File from = new File(location);
             try {
                 org.apache.openejb.loader.IO.copy(from, new File(libFolder, from.getName()));
