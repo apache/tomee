@@ -376,7 +376,11 @@ public class Setup {
 
         final File libFolder = new File(tomeeHome, "lib");
         for (final String lib : libs.split("\n")) {
-            final Set<String> locations = ProvisioningUtil.realLocation(lib.trim());
+            final String trim = lib.trim();
+            if (trim.isEmpty() || trim.startsWith("#")) {
+                continue;
+            }
+            final Set<String> locations = ProvisioningUtil.realLocation(trim);
             for (final String location : locations) {
                 final File from = new File(location);
                 try {
