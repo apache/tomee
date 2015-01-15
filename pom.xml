@@ -87,9 +87,10 @@
   </ciManagement>
 
   <scm>
-    <connection>scm:svn:https://svn.apache.org/repos/asf/tomee/tomee/trunk/</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/tomee/tomee/trunk/</developerConnection>
-    <url>https://svn.apache.org/repos/asf/tomee/tomee/trunk</url>
+    <connection>scm:git:https://git-wip-us.apache.org/repos/asf/tomee.git</connection>
+    <developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/tomee.git</developerConnection>
+    <url>scm:git:https://git-wip-us.apache.org/repos/asf/tomee.git</url>
+    <tag>HEAD</tag>
   </scm>
 
   <properties>
