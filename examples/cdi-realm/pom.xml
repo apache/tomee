@@ -26,7 +26,7 @@
   <name>OpenEJB :: Examples :: CDI Realm</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>1.7.2-SNAPSHOT</tomee.version>
+    <tomee.version>1.7.2</tomee.version>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
