@@ -16,22 +16,31 @@
  */
 package org.apache.openejb.arquillian.tests.jaxrs.staticresources;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Context;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
+import java.io.IOException;
 
-@Path("/")
-public class TheResource {
-    @GET
-    @Path("the")
-    public String get() {
-        return "resource";
+@WebFilter("/*")
+public class PreviousFilter implements Filter {
+    @Override
+    public void init(final FilterConfig filterConfig) throws ServletException {
+        // no-op
     }
 
-    @GET
-    @Path("gotFilter")
-    public String filter(@Context HttpServletRequest request) {
-        return String.class.cast(request.getAttribute("filter"));
+    @Override
+    public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse,
+                         final FilterChain filterChain) throws IOException, ServletException {
+        servletRequest.setAttribute("filter", "I'm the first");
+        filterChain.doFilter(servletRequest, servletResponse);
+    }
+
+    @Override
+    public void destroy() {
+        // no-op
     }
 }

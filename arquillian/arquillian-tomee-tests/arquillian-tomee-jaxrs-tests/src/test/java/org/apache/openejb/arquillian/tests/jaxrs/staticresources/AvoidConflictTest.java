@@ -37,7 +37,7 @@ public class AvoidConflictTest {
     @Deployment(testable = false)
     public static Archive<?> war() {
         return ShrinkWrap.create(WebArchive.class, "app.war")
-                    .addClass(TheResource.class)
+                    .addClasses(TheResource.class, SimpleServlet.class, PreviousFilter.class)
                     .addAsWebResource(new StringAsset("static"), "index.html");
     }
 
@@ -52,5 +52,15 @@ public class AvoidConflictTest {
     @Test
     public void staticResource() throws IOException {
         assertEquals("static", IO.slurp(url));
+    }
+
+    @Test
+    public void servlet() throws IOException {
+        assertEquals("Servlet!", IO.slurp(new URL(url + "servlet")));
+    }
+
+    @Test
+    public void filterOrder() throws IOException {
+        assertEquals("I'm the first", IO.slurp(new URL(url.toExternalForm() + "gotFilter")));
     }
 }

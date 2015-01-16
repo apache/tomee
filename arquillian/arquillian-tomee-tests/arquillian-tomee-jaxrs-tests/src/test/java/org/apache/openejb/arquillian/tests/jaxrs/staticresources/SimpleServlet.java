@@ -16,22 +16,17 @@
  */
 package org.apache.openejb.arquillian.tests.jaxrs.staticresources;
 
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Context;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
-@Path("/")
-public class TheResource {
-    @GET
-    @Path("the")
-    public String get() {
-        return "resource";
-    }
-
-    @GET
-    @Path("gotFilter")
-    public String filter(@Context HttpServletRequest request) {
-        return String.class.cast(request.getAttribute("filter"));
+@WebServlet("/servlet")
+public class SimpleServlet extends HttpServlet {
+    @Override
+    protected void service(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
+        resp.getWriter().write("Servlet!");
     }
 }
