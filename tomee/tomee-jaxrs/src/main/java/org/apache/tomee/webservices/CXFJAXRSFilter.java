@@ -16,6 +16,8 @@
  */
 package org.apache.tomee.webservices;
 
+import org.apache.catalina.servlets.DefaultServlet;
+import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.server.cxf.rs.CxfRsHttpListener;
 import org.apache.openejb.server.httpd.ServletRequestAdapter;
 import org.apache.openejb.server.httpd.ServletResponseAdapter;
@@ -30,8 +32,22 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 
 public class CXFJAXRSFilter implements Filter {
+    private static final Field SERVLET_FIELD;
+    static {
+        Field servletFieldTmp = null;
+        try {
+            final Class<?> clazz = ParentClassLoaderFinder.Helper.get().loadClass("org.apache.catalina.core.ApplicationFilterChain");
+            servletFieldTmp = clazz.getDeclaredField("servlet");
+            servletFieldTmp.setAccessible(true);
+        } catch (final Exception e) {
+            // no-op
+        }
+        SERVLET_FIELD = servletFieldTmp;
+    }
+
     private final CxfRsHttpListener delegate;
     private final String[] welcomeFiles;
 
@@ -59,11 +75,17 @@ public class CXFJAXRSFilter implements Filter {
         final HttpServletRequest httpServletRequest = HttpServletRequest.class.cast(request);
         final HttpServletResponse httpServletResponse = HttpServletResponse.class.cast(response);
 
-        if (CxfRsHttpListener.TRY_STATIC_RESOURCES || delegate.matchPath(httpServletRequest)) {
-            final InputStream staticContent = delegate.findStaticContent(httpServletRequest, welcomeFiles);
-            if (staticContent != null) {
+        if (CxfRsHttpListener.TRY_STATIC_RESOURCES) { // else we just want jaxrs
+            if (isServlet(chain)) {
                 chain.doFilter(request, response);
                 return;
+            }
+            if (delegate.matchPath(httpServletRequest)) {
+                final InputStream staticContent = delegate.findStaticContent(httpServletRequest, welcomeFiles);
+                if (staticContent != null) {
+                    chain.doFilter(request, response);
+                    return;
+                }
             }
         }
 
@@ -73,6 +95,21 @@ public class CXFJAXRSFilter implements Filter {
                     new ServletResponseAdapter(httpServletResponse));
         } catch (final Exception e) {
             throw new ServletException("Error processing webservice request", e);
+        }
+    }
+
+    // see org.apache.tomcat.util.http.mapper.Mapper.internalMapWrapper
+    private boolean isServlet(final FilterChain chain) {
+        // will not work if we are not the first filter - which is likely the case the keep security etc -
+        // and the chain is wrapped which is more unlikely so this should work as long as these untyped constraints are respeted:
+        // - org.apache.catalina.core.ApplicationFilterChain name is stable (case on tomcat 8 for now)
+        // - ApplicationFilterChain as a field servlet with the expected servlet
+        try {
+            return SERVLET_FIELD != null
+                    && "org.apache.catalina.core.ApplicationFilterChain".equals(chain.getClass().getName())
+                    && !DefaultServlet.class.isInstance(SERVLET_FIELD.get(chain));
+        } catch (final IllegalAccessException e) {
+            return false;
         }
     }
 
