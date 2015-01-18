@@ -91,6 +91,7 @@ import org.apache.xbean.finder.archive.CompositeArchive;
 import org.apache.xbean.finder.archive.JarArchive;
 import org.xml.sax.InputSource;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
@@ -102,6 +103,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -117,6 +119,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
 
 import static java.util.Arrays.asList;
 import static org.apache.openejb.config.DeploymentFilterable.DEPLOYMENTS_CLASSPATH_PROPERTY;
@@ -151,6 +154,7 @@ public final class ApplicationComposers {
     private MockHttpSession session;
     private MockServletContext servletContext;
     private final Collection<String> globalJndiEntries = new ArrayList<>();
+    private final Collection<Runnable> afterRunnables = new ArrayList<>();
 
     public ApplicationComposers(final Object... modules) {
         this(modules[0].getClass(), modules);
@@ -832,6 +836,9 @@ public final class ApplicationComposers {
                 field.set(inputTestInstance, new InitialContext(new Properties() {{
                     setProperty(Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
                 }}));
+            } else if (ApplicationComposers.class.isAssignableFrom(type)) {
+                field.setAccessible(true);
+                field.set(inputTestInstance, this);
             } else if (ContextProvider.class.isAssignableFrom(type)) {
                 RESTResourceFinder finder = SystemInstance.get().getComponent(RESTResourceFinder.class);
                 if (finder == null || !ContextProvider.class.isInstance(finder)) {
@@ -1070,49 +1077,55 @@ public final class ApplicationComposers {
     }
 
     public void after() throws Exception {
-        if (assembler != null) {
-            final ContextsService contextsService = appContext.getWebBeansContext().getContextsService();
-            contextsService.endContext(SessionScoped.class, session);
-            contextsService.endContext(RequestScoped.class, null);
-            contextsService.endContext(ConversationScoped.class, null);
+        try {
+            if (assembler != null) {
+                final ContextsService contextsService = appContext.getWebBeansContext().getContextsService();
+                contextsService.endContext(SessionScoped.class, session);
+                contextsService.endContext(RequestScoped.class, null);
+                contextsService.endContext(ConversationScoped.class, null);
 
-            try {
-                assembler.destroyApplication(appInfo.path);
-            } catch (final Exception e) {
-                // no-op
-            }
-
-            final ContainerSystem component = SystemInstance.get().getComponent(ContainerSystem.class);
-
-            if (null != component) {
-                final Context context = component.getJNDIContext();
-
-                for (final String entry : globalJndiEntries) {
-                    context.unbind(entry);
-                }
-            }
-
-            globalJndiEntries.clear();
-
-            if (mockCdiContexts()) {
                 try {
-                    ScopeHelper.stopContexts(contextsService, servletContext, session);
+                    assembler.destroyApplication(appInfo.path);
                 } catch (final Exception e) {
                     // no-op
                 }
+
+                final ContainerSystem component = SystemInstance.get().getComponent(ContainerSystem.class);
+
+                if (null != component) {
+                    final Context context = component.getJNDIContext();
+
+                    for (final String entry : globalJndiEntries) {
+                        context.unbind(entry);
+                    }
+                }
+
+                globalJndiEntries.clear();
+
+                if (mockCdiContexts()) {
+                    try {
+                        ScopeHelper.stopContexts(contextsService, servletContext, session);
+                    } catch (final Exception e) {
+                        // no-op
+                    }
+                }
+            }
+
+            if (serviceManager != null) {
+
+                try {
+                    serviceManager.stop();
+                } catch (final RuntimeException ignored) {
+                    // no-op
+                }
+            }
+
+            OpenEJB.destroy();
+        } finally {
+            for (final Runnable r : afterRunnables) {
+                r.run();
             }
         }
-
-        if (serviceManager != null) {
-
-            try {
-                serviceManager.stop();
-            } catch (final RuntimeException ignored) {
-                // no-op
-            }
-        }
-
-        OpenEJB.destroy();
     }
 
     private <M extends NamedModule> M setId(final M module, final Method method) {
@@ -1253,6 +1266,50 @@ public final class ApplicationComposers {
                 }
             }
             return list;
+        }
+    }
+
+    public static void run(final Class<?> type, String... args) {
+        final ApplicationComposers composer = new ApplicationComposers(type);
+        try {
+            Object instance;
+            try {
+                final Constructor<?> constructor = type.getConstructor(String[].class);
+                instance = constructor.newInstance(new Object[] { args });
+            } catch (final Exception e) {
+                instance = type.newInstance();
+            }
+            composer.before(instance);
+
+            final CountDownLatch latch = new CountDownLatch(1);
+            composer.afterRunnables.add(new Runnable() {
+                @Override
+                public void run() {
+                    latch.countDown();
+                }
+            });
+            Runtime.getRuntime().addShutdownHook(new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        composer.after();
+                    } catch (final Exception e) {
+                        // no-op
+                    }
+                }
+            });
+
+            for (final Method m : type.getMethods()) {
+                if (m.getAnnotation(PostConstruct.class) != null && m.getParameterTypes().length == 0) {
+                    m.invoke(instance);
+                }
+            }
+
+            latch.await();
+        } catch (final InterruptedException ie) {
+            Thread.interrupted();
+        } catch (final Exception e) {
+            throw new OpenEJBRuntimeException(e);
         }
     }
 }
