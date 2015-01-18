@@ -92,6 +92,7 @@ import org.apache.xbean.finder.archive.JarArchive;
 import org.xml.sax.InputSource;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
@@ -154,6 +155,7 @@ public final class ApplicationComposers {
     private MockHttpSession session;
     private MockServletContext servletContext;
     private final Collection<String> globalJndiEntries = new ArrayList<>();
+    private final Collection<Runnable> beforeDestroyAfterRunnables = new ArrayList<>();
     private final Collection<Runnable> afterRunnables = new ArrayList<>();
 
     public ApplicationComposers(final Object... modules) {
@@ -1078,6 +1080,7 @@ public final class ApplicationComposers {
 
     public void after() throws Exception {
         try {
+            runAll(beforeDestroyAfterRunnables);
             if (assembler != null) {
                 final ContextsService contextsService = appContext.getWebBeansContext().getContextsService();
                 contextsService.endContext(SessionScoped.class, session);
@@ -1122,10 +1125,19 @@ public final class ApplicationComposers {
 
             OpenEJB.destroy();
         } finally {
-            for (final Runnable r : afterRunnables) {
+            runAll(afterRunnables);
+        }
+    }
+
+    private void runAll(final Collection<Runnable> runnables) {
+        for (final Runnable r : runnables) {
+            try {
                 r.run();
+            } catch (final Exception e) {
+                // no-op
             }
         }
+        runnables.clear();
     }
 
     private <M extends NamedModule> M setId(final M module, final Method method) {
@@ -1282,6 +1294,23 @@ public final class ApplicationComposers {
             composer.before(instance);
 
             final CountDownLatch latch = new CountDownLatch(1);
+            final Object appInstance = instance;
+            composer.beforeDestroyAfterRunnables.add(new Runnable() {
+                @Override
+                public void run() {
+                    for (final Map.Entry<Object, ClassFinder> m : composer.testClassFinders.entrySet()) {
+                        for (final Method mtd : m.getValue().findAnnotatedMethods(PreDestroy.class)) {
+                            if (mtd.getParameterTypes().length == 0) {
+                                try {
+                                    mtd.invoke(mtd.getDeclaringClass() == type ? appInstance : m.getKey());
+                                } catch (final IllegalAccessException | InvocationTargetException e) {
+                                    // no-op
+                                }
+                            }
+                        }
+                    }
+                }
+            });
             composer.afterRunnables.add(new Runnable() {
                 @Override
                 public void run() {
@@ -1299,9 +1328,11 @@ public final class ApplicationComposers {
                 }
             });
 
-            for (final Method m : type.getMethods()) {
-                if (m.getAnnotation(PostConstruct.class) != null && m.getParameterTypes().length == 0) {
-                    m.invoke(instance);
+            for (final Map.Entry<Object, ClassFinder> m : composer.testClassFinders.entrySet()) {
+                for (final Method mtd : m.getValue().findAnnotatedMethods(PostConstruct.class)) {
+                    if (mtd.getParameterTypes().length == 0) {
+                        mtd.invoke(mtd.getDeclaringClass() == type ? instance : m.getKey());
+                    }
                 }
             }
 
