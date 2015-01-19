@@ -286,7 +286,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
                 if (apache.startsWith("naming.")) {
                     return true;
                 }
-                if (apache.startsWith("taglibs.")) {
+                if (apache.startsWith("taglibs.standard.")) {
                     return true;
                 }
 
