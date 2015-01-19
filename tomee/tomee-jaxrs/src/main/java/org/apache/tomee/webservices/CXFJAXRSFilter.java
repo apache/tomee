@@ -80,12 +80,10 @@ public class CXFJAXRSFilter implements Filter {
                 chain.doFilter(request, response);
                 return;
             }
-            if (delegate.matchPath(httpServletRequest)) {
-                final InputStream staticContent = delegate.findStaticContent(httpServletRequest, welcomeFiles);
-                if (staticContent != null) {
-                    chain.doFilter(request, response);
-                    return;
-                }
+            final InputStream staticContent = delegate.findStaticContent(httpServletRequest, welcomeFiles);
+            if (staticContent != null) {
+                chain.doFilter(request, response);
+                return;
             }
         }
 
