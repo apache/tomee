@@ -30,7 +30,6 @@ ln -sf /etc/tomee-${classifier}/conf.d /var/lib/tomee-${classifier}/conf/conf.d
 if [ ! -d /var/lib/tomee-${classifier}-user-data ] ; then
     mkdir -p /var/lib/tomee-${classifier}-user-data/temp
 	mkdir -p /var/lib/tomee-${classifier}-user-data/webapps
-	ln -sf /usr/share/tomee-${classifier}/extras/tomee /var/lib/tomee-${classifier}-user-data/webapps/tomee
 fi
 ln -sf /var/lib/tomee-${classifier}-user-data/temp /var/lib/tomee-${classifier}/temp
 ln -sf /var/lib/tomee-${classifier}-user-data/webapps /var/lib/tomee-${classifier}/webapps

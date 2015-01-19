@@ -106,8 +106,7 @@ class SetupCommand {
         ant.chmod(dir: "${workDir}/apache-tomcat-${tomcatVersion}/bin", perm: 'u+x', includes: '**/*.sh')
 
         ant.delete(dir: "${workDir}/apache-tomcat-${tomcatVersion}/webapps/examples")
-        ant.delete(file: "${workDir}/apache-tomcat-${tomcatVersion}/webapps/tomee/META-INF/LICENSE")
-        ant.delete(file: "${workDir}/apache-tomcat-${tomcatVersion}/webapps/tomee/META-INF/NOTICE")
+        ant.delete(dir: "${workDir}/apache-tomcat-${tomcatVersion}/webapps/tomee")
     }
 }
 

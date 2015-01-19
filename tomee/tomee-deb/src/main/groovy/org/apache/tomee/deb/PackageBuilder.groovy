@@ -113,7 +113,6 @@ class PackageBuilder {
                 .buildDataDir()
                 .move('lib', "usr/share/tomee-${classifier}/lib")
                 .eachFileRecurse("usr/share/tomee-${classifier}/lib", recurse)
-                .move('webapps/tomee', "usr/share/tomee-${classifier}/extras/tomee")
                 .move('endorsed', "usr/share/tomee-${classifier}/endorsed")
                 .move('bin', "usr/share/tomee-${classifier}/bin")
                 .move('conf', "etc/tomee-${classifier}")
