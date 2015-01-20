@@ -63,6 +63,7 @@ import org.apache.openejb.jee.PortComponent;
 import org.apache.openejb.jee.ResourceAdapter;
 import org.apache.openejb.jee.ServiceImplBean;
 import org.apache.openejb.jee.Servlet;
+import org.apache.openejb.jee.TransactionSupportType;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.WebserviceDescription;
 import org.apache.openejb.jee.Webservices;
@@ -504,16 +505,19 @@ class AppInfoBuilder {
             final OutboundResourceAdapter outbound = resourceAdapter.getOutboundResourceAdapter();
             if (outbound != null) {
                 String transactionSupport = "none";
-                switch (outbound.getTransactionSupport()) {
-                    case LOCAL_TRANSACTION:
-                        transactionSupport = "local";
-                        break;
-                    case NO_TRANSACTION:
-                        transactionSupport = "none";
-                        break;
-                    case XA_TRANSACTION:
-                        transactionSupport = "xa";
-                        break;
+                final TransactionSupportType transactionSupportType = outbound.getTransactionSupport();
+                if (transactionSupportType != null) {
+                    switch (transactionSupportType) {
+                        case LOCAL_TRANSACTION:
+                            transactionSupport = "local";
+                            break;
+                        case NO_TRANSACTION:
+                            transactionSupport = "none";
+                            break;
+                        case XA_TRANSACTION:
+                            transactionSupport = "xa";
+                            break;
+                    }
                 }
                 for (final ConnectionDefinition connection : outbound.getConnectionDefinition()) {
 
