@@ -20,6 +20,7 @@ import org.apache.openejb.AppContext;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.cdi.CdiAppContextsService;
 import org.apache.openejb.cdi.Proxys;
+import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.core.WebContext;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
@@ -32,6 +33,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
@@ -39,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.StringTokenizer;
 
@@ -50,6 +54,9 @@ public class HttpListenerRegistry implements HttpListener {
     private final Map<String, Collection<HttpListener>> filterRegistry = new LinkedHashMap<>();
     private final ThreadLocal<FilterListener> currentFilterListener = new ThreadLocal<>();
     private final ThreadLocal<HttpRequest> request = new ThreadLocal<>();
+    private final ClassLoader defaultClassLoader;
+    private final File[] resourceBases;
+    private final Map<String, String> defaultContextTypes = new HashMap<>();
 
     public HttpListenerRegistry() {
         HttpServletRequest mock = null;
@@ -100,6 +107,32 @@ public class HttpListenerRegistry implements HttpListener {
         if (systemInstance.getComponent(ServletContext.class) == null) { // a poor impl but at least we set something
             systemInstance.setComponent(ServletContext.class, new EmbeddedServletContext());
         }
+
+        defaultClassLoader = ParentClassLoaderFinder.Helper.get();
+
+        String resourceFolderPaths = SystemInstance.get().getProperty("openejb.embedded.http.resources");
+        Collection<File> resources = new LinkedList<>();
+        if (resourceFolderPaths != null) {
+            for (final String path : resourceFolderPaths.split(" , ")) {
+                if (!path.isEmpty()) {
+                    resources.add(new File(path));
+                }
+            }
+        }
+        resourceBases = resources.toArray(new File[resources.size()]);
+
+        defaultContextTypes.put("html", "text/html");
+        defaultContextTypes.put("html", "text/html");
+        defaultContextTypes.put("css", "text/css");
+        defaultContextTypes.put("txt", "text/plain");
+        defaultContextTypes.put("xml", "application/xml");
+        defaultContextTypes.put("xsl", "application/xml");
+        defaultContextTypes.put("js", "text/javascript");
+        defaultContextTypes.put("gif", "image/gif");
+        defaultContextTypes.put("jpeg", "image/jpeg");
+        defaultContextTypes.put("jpg", "image/jpeg");
+        defaultContextTypes.put("png", "image/png");
+        defaultContextTypes.put("tiff", "image/tiff");
     }
 
     @Override
@@ -163,19 +196,41 @@ public class HttpListenerRegistry implements HttpListener {
             if (!found) {
                 final String servletPath = request.getServletPath();
                 if (servletPath != null) {
-                    final URL url = SystemInstance.get().getComponent(ServletContext.class).getResource(servletPath);
+                    URL url = SystemInstance.get().getComponent(ServletContext.class).getResource(servletPath);
                     if (url != null) {
-                        final InputStream from = url.openStream();
-                        try {
-                            IO.copy(from, response.getOutputStream());
-                        } finally {
-                            IO.close(from);
+                        serveResource(response, url);
+                    } else {
+                        final String pathWithoutSlash = servletPath.startsWith("/") ? servletPath.substring(1) : servletPath;
+                        url = defaultClassLoader.getResource("META-INF/resources/" + pathWithoutSlash);
+                        if (url != null) {
+                            serveResource(response, url);
+                        } else if (resourceBases.length > 0) {
+                            for (final File f : resourceBases) {
+                                final File file = new File(f, pathWithoutSlash);
+                                if (file.isFile()) {
+                                    url = file.toURI().toURL();
+                                    serveResource(response, url);
+                                    break;
+                                }
+                            }
                         }
                     }
-                    if (servletPath.endsWith(".html")) {
-                        response.setContentType("text/html");
+                    if (url != null) {
+                        final int dot = servletPath.lastIndexOf('.');
+                        if (dot > 0 && dot < servletPath.length() - 1) {
+                            final String ext = servletPath.substring(dot + 1);
+                            final String ct = defaultContextTypes.get(ext);
+                            if (ct != null) {
+                                response.setContentType(ct);
+                            } else {
+                                final String uct = SystemInstance.get().getProperty("openejb.embedded.http.content-type." + ext);
+                                if (uct != null) {
+                                    response.setContentType(uct);
+                                }
+                            }
+                        }
                     }
-                }
+                } // TODO else 404
             }
         } finally {
             if (currentFL == null) {
@@ -184,6 +239,15 @@ public class HttpListenerRegistry implements HttpListener {
             if (reset) {
                 this.request.set(null);
             }
+        }
+    }
+
+    private void serveResource(HttpResponse response, URL url) throws IOException {
+        final InputStream from = url.openStream();
+        try {
+            IO.copy(from, response.getOutputStream());
+        } finally {
+            IO.close(from);
         }
     }
 

@@ -393,6 +393,10 @@ public final class ApplicationComposers {
             configuration.setProperty("httpejbd.indent.xml", "true");
             configuration.setProperty("logging.level.OpenEJB.server.http", "FINE");
         }
+        final WebResource webResource = testClass.getAnnotation(WebResource.class);
+        if (webResource != null && webResource.value().length > 0) {
+            configuration.setProperty("openejb.embedded.http.resources", Join.join(",", webResource.value()));
+        }
 
         Openejb openejb = null;
         final Map<Object, List<Method>> configs = new HashMap<>();
