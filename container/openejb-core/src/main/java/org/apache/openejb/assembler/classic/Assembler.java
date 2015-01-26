@@ -150,7 +150,6 @@ import org.apache.webbeans.spi.api.ResourceReference;
 import org.apache.xbean.finder.ClassLoaders;
 import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.finder.UrlSet;
-import org.apache.xbean.naming.reference.SimpleReference;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 import org.apache.xbean.recipe.UnsetPropertiesRecipe;
@@ -3039,7 +3038,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
     }
 
-    public static final class ResourceAdapterReference extends SimpleReference {
+    public static final class ResourceAdapterReference extends Reference {
         private transient ResourceAdapter ra;
         private transient Executor pool;
         private final String jndi;
@@ -3063,7 +3062,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         @Override
-        public Object getContent() throws NamingException {
+        public Object getObject() throws NamingException {
             return ra;
         }
 
