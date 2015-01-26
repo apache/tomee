@@ -16,8 +16,9 @@
  */
 package org.apache.tomee.webservices;
 
-import org.apache.catalina.servlets.DefaultServlet;
-import org.apache.openejb.core.ParentClassLoaderFinder;
+import org.apache.catalina.Wrapper;
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.RequestFacade;
 import org.apache.openejb.server.cxf.rs.CxfRsHttpListener;
 import org.apache.openejb.server.httpd.ServletRequestAdapter;
 import org.apache.openejb.server.httpd.ServletResponseAdapter;
@@ -29,27 +30,29 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class CXFJAXRSFilter implements Filter {
-    private static final Field SERVLET_FIELD;
+    private static final Field REQUEST;
     static {
-        Field servletFieldTmp = null;
         try {
-            final Class<?> clazz = ParentClassLoaderFinder.Helper.get().loadClass("org.apache.catalina.core.ApplicationFilterChain");
-            servletFieldTmp = clazz.getDeclaredField("servlet");
-            servletFieldTmp.setAccessible(true);
-        } catch (final Exception e) {
-            // no-op
+            REQUEST = RequestFacade.class.getDeclaredField("request");
+        } catch (final NoSuchFieldException e) {
+            throw new IllegalStateException(e);
         }
-        SERVLET_FIELD = servletFieldTmp;
+        REQUEST.setAccessible(true);
     }
 
     private final CxfRsHttpListener delegate;
+    private final ConcurrentMap<Wrapper, Boolean> mappingByServlet = new ConcurrentHashMap<>();
     private final String[] welcomeFiles;
+    private String mapping;
 
     public CXFJAXRSFilter(final CxfRsHttpListener delegate, final String[] welcomeFiles) {
         this.delegate = delegate;
@@ -62,7 +65,7 @@ public class CXFJAXRSFilter implements Filter {
 
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
-        // no-op
+        mapping = filterConfig.getInitParameter("mapping");
     }
 
     @Override
@@ -76,7 +79,7 @@ public class CXFJAXRSFilter implements Filter {
         final HttpServletResponse httpServletResponse = HttpServletResponse.class.cast(response);
 
         if (CxfRsHttpListener.TRY_STATIC_RESOURCES) { // else 100% JAXRS
-            if (isServlet(chain)) {
+            if (servletMappingIsUnderRestPath(httpServletRequest)) {
                 chain.doFilter(request, response);
                 return;
             }
@@ -96,19 +99,62 @@ public class CXFJAXRSFilter implements Filter {
         }
     }
 
-    // see org.apache.tomcat.util.http.mapper.Mapper.internalMapWrapper
-    private boolean isServlet(final FilterChain chain) {
-        // will not work if we are not the first filter - which is likely the case the keep security etc -
-        // and the chain is wrapped which is more unlikely so this should work as long as these untyped constraints are respeted:
-        // - org.apache.catalina.core.ApplicationFilterChain name is stable (case on tomcat 8 for now)
-        // - ApplicationFilterChain as a field servlet with the expected servlet
+    private boolean servletMappingIsUnderRestPath(final HttpServletRequest request) {
+        final HttpServletRequest unwrapped = unwrap(request);
+        if (!RequestFacade.class.isInstance(unwrapped)) {
+            return false;
+        }
+
+        final Request tr;
         try {
-            return SERVLET_FIELD != null
-                    && "org.apache.catalina.core.ApplicationFilterChain".equals(chain.getClass().getName())
-                    && !DefaultServlet.class.isInstance(SERVLET_FIELD.get(chain));
+            tr = Request.class.cast(REQUEST.get(unwrapped));
         } catch (final IllegalAccessException e) {
             return false;
         }
+        final Wrapper wrapper = tr.getWrapper();
+        if (wrapper == null || mapping == null) {
+            return false;
+        }
+
+        Boolean accept = mappingByServlet.get(wrapper);
+        if (accept == null) {
+            accept = false;
+            if (!"org.apache.catalina.servlets.DefaultServlet".equals(wrapper.getServletClass())) {
+                for (final String mapping : wrapper.findMappings()) {
+                    if (!mapping.isEmpty() && !"/*".equals(mapping) && !"/".equals(mapping) && mapping.startsWith(this.mapping)) {
+                        accept = true;
+                        break;
+                    }
+                }
+            } // else will be handed by getResourceAsStream()
+            mappingByServlet.putIfAbsent(wrapper, accept);
+            return accept;
+        }
+
+        return false;
+    }
+
+    private HttpServletRequest unwrap(final HttpServletRequest request) {
+        HttpServletRequest unwrapped = request;
+        boolean changed;
+        do {
+            changed = false;
+            while (HttpServletRequestWrapper.class.isInstance(unwrapped)) {
+                final HttpServletRequest tmp = HttpServletRequest.class.cast(HttpServletRequestWrapper.class.cast(unwrapped).getRequest());
+                if (tmp != unwrapped) {
+                    unwrapped = tmp;
+                } else {
+                    changed = false; // quit
+                    break;
+                }
+                changed = true;
+            }
+            while (ServletRequestAdapter.class.isInstance(unwrapped)) {
+                unwrapped = ServletRequestAdapter.class.cast(unwrapped).getRequest();
+                changed = true;
+            }
+        } while (changed);
+        return unwrapped;
     }
 
     @Override

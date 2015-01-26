@@ -16,16 +16,15 @@
  */
 package org.apache.tomee.jaxrs;
 
+import org.apache.catalina.connector.Request;
 import org.junit.Test;
-
-import javax.servlet.Servlet;
 
 import static org.junit.Assert.assertEquals;
 
 public class ReflectionTest {
     @Test // a quick test to break the build if upgrading tomcat our reflection will silently be broken
     public void breakTheBuildIfWhatWeUseChanged() throws ClassNotFoundException, NoSuchFieldException {
-        final Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass("org.apache.catalina.core.ApplicationFilterChain");
-        assertEquals(Servlet.class, clazz.getDeclaredField("servlet").getType());
+        final Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass("org.apache.catalina.connector.RequestFacade");
+        assertEquals(Request.class, clazz.getDeclaredField("request").getType());
     }
 }
