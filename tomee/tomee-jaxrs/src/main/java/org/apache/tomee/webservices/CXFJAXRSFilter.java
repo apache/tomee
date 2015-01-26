@@ -99,7 +99,7 @@ public class CXFJAXRSFilter implements Filter {
     // see org.apache.tomcat.util.http.mapper.Mapper.internalMapWrapper
     private boolean isServlet(final FilterChain chain) {
         // will not work if we are not the first filter - which is likely the case the keep security etc -
-        // and the chain is wrapped which is more unlikely so this should work as long as these untyped constraints are respeted:
+        // and the chain is wrapped which is more unlikely so this should work as long as these untyped constraints are respected:
         // - org.apache.catalina.core.ApplicationFilterChain name is stable (case on tomcat 8 for now)
         // - ApplicationFilterChain as a field servlet with the expected servlet
         try {
