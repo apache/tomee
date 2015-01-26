@@ -150,6 +150,7 @@ import org.apache.webbeans.spi.api.ResourceReference;
 import org.apache.xbean.finder.ClassLoaders;
 import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.finder.UrlSet;
+import org.apache.xbean.naming.reference.SimpleReference;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 import org.apache.xbean.recipe.UnsetPropertiesRecipe;
@@ -192,6 +193,8 @@ import java.io.Externalizable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InvalidObjectException;
+import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
@@ -217,6 +220,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
@@ -1624,7 +1628,23 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     private void destroyResource(final String name, final String className, final Object object) {
-        if (object instanceof ResourceAdapter) {
+        if (object instanceof ResourceAdapterReference) {
+            final ResourceAdapterReference resourceAdapter = (ResourceAdapterReference) object;
+            try {
+                logger.info("Stopping ResourceAdapter: " + name);
+
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Stopping ResourceAdapter: " + className);
+                }
+
+                if (resourceAdapter.pool != null && ExecutorService.class.isInstance(resourceAdapter.pool)) {
+                    ExecutorService.class.cast(resourceAdapter.pool).shutdownNow();
+                }
+                resourceAdapter.ra.stop();
+            } catch (final Throwable t) {
+                logger.fatal("ResourceAdapter Shutdown Failed: " + name, t);
+            }
+        } else if (object instanceof ResourceAdapter) {
             final ResourceAdapter resourceAdapter = (ResourceAdapter) object;
             try {
                 logger.info("Stopping ResourceAdapter: " + name);
@@ -2001,6 +2021,30 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     destroyLookedUpResource(globalContext, connector.resourceAdapter.id, name);
                 } catch (final NamingException e) {
                     logger.warning("can't unbind resource '{0}'", connector);
+                }
+
+                for (final ResourceInfo outbound : connector.outbound) {
+                    try {
+                        destroyLookedUpResource(globalContext, outbound.id, OPENEJB_RESOURCE_JNDI_PREFIX + outbound.id);
+                    } catch (final Exception e) {
+                        // no-op
+                    }
+                }
+                for (final ResourceInfo outbound : connector.adminObject) {
+                    try {
+                        destroyLookedUpResource(globalContext, outbound.id, OPENEJB_RESOURCE_JNDI_PREFIX + outbound.id);
+                    } catch (final Exception e) {
+                        // no-op
+                    }
+                }
+                for (final MdbContainerInfo container : connector.inbound) {
+                    try {
+                        containerSystem.removeContainer(container.id);
+                        config.containerSystem.containers.remove(container);
+                        this.containerSystem.getJNDIContext().unbind(JAVA_OPENEJB_NAMING_CONTEXT + container.service + "/" + container.id);
+                    } catch (final Exception e) {
+                        // no-op
+                    }
                 }
             }
 
@@ -2459,6 +2503,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             final Map<String, Object> unset = serviceRecipe.getUnsetProperties();
             unset.remove("threadPoolSize");
             logUnusedProperties(unset, serviceInfo);
+
+            service = new ResourceAdapterReference(resourceAdapter, threadPool, OPENEJB_RESOURCE_JNDI_PREFIX + serviceInfo.id);
         } else if (service instanceof ManagedConnectionFactory) {
             final ManagedConnectionFactory managedConnectionFactory = (ManagedConnectionFactory) service;
 
@@ -2990,6 +3036,43 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             this.name = name;
             this.clazz = clazz;
             this.instance = instance;
+        }
+    }
+
+    public static final class ResourceAdapterReference extends SimpleReference {
+        private transient ResourceAdapter ra;
+        private transient Executor pool;
+        private final String jndi;
+
+        public ResourceAdapterReference(final ResourceAdapter ra, final Executor pool, final String jndi) {
+            this.ra = ra;
+            this.pool = pool;
+            this.jndi = jndi;
+        }
+
+        public Executor getPool() {
+            return pool;
+        }
+
+        public ResourceAdapter getRa() {
+            return ra;
+        }
+
+        public String getJndi() {
+            return jndi;
+        }
+
+        @Override
+        public Object getContent() throws NamingException {
+            return ra;
+        }
+
+        protected Object readResolve() throws ObjectStreamException {
+            try {
+                return SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext().lookup(jndi);
+            } catch (final NamingException e) {
+                throw new InvalidObjectException("name not found: " + jndi);
+            }
         }
     }
 }
