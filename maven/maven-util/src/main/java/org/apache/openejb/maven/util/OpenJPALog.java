@@ -19,6 +19,12 @@ package org.apache.openejb.maven.util;
 import org.apache.openjpa.lib.log.Log;
 
 public class OpenJPALog implements Log {
+    private final String channel;
+
+    public OpenJPALog(final String channel) {
+        this.channel = channel; // ignored for now
+    }
+
     @Override
     public boolean isErrorEnabled() {
         return MavenLogStreamFactory.currentLogger().isErrorEnabled();
