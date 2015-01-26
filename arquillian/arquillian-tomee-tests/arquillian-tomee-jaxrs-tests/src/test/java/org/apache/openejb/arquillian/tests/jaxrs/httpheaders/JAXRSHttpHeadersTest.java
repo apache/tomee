@@ -143,7 +143,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
      */
     @Test
     public void testMediaTypesRequestTextPlain() throws IOException {
-        HttpPost post = new HttpPost(uri("/context/httpheaders/requestmediatype"));
+        HttpPost post = new HttpPost(uri("context/httpheaders/requestmediatype"));
         post.setHeader("Content-Type", "text/plain");
         post.setEntity(new StringEntity("Hello world!", "UTF-8"));
 
@@ -162,7 +162,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
      */
     @Test
     public void testMediaTypesRequestCustomContentType() throws IOException {
-        HttpPost post = new HttpPost(uri("/context/httpheaders/requestmediatype"));
+        HttpPost post = new HttpPost(uri("context/httpheaders/requestmediatype"));
         post.setHeader("Content-Type", "defg/abcd");
         post.setEntity(new StringEntity("Hello world!", "UTF-8"));
 
@@ -180,7 +180,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
      */
     @Test
     public void testMediaTypesRequestNoRequestEntity() throws IOException {
-        HttpPost post = new HttpPost(uri("/context/httpheaders/requestmediatype"));
+        HttpPost post = new HttpPost(uri("context/httpheaders/requestmediatype"));
 
         final HttpResponse response = client.execute(post);
         assertEquals(response.getStatusLine().getStatusCode(), 200);
@@ -197,7 +197,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
      */
     @Test
     public void testLanguageNoneGiven() throws IOException {
-        HttpPost post = new HttpPost(uri("/context/httpheaders/language"));
+        HttpPost post = new HttpPost(uri("context/httpheaders/language"));
         post.setHeader("Content-Type", "text/plain");
         post.setEntity(new StringEntity("Hello world!", "UTF-8"));
 
@@ -216,7 +216,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
      */
     @Test
     public void testLanguageEnglishGiven() throws IOException {
-        HttpPost post = new HttpPost(uri("/context/httpheaders/language"));
+        HttpPost post = new HttpPost(uri("context/httpheaders/language"));
         post.setHeader("Content-Type", "text/plain");
         post.setEntity(new StringEntity("Hello world!", "UTF-8"));
         post.addHeader("Content-Language", "en");
@@ -236,7 +236,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
      */
     @Test
     public void testLanguageChineseGiven() throws IOException {
-        HttpPost post = new HttpPost(uri("/context/httpheaders/language"));
+        HttpPost post = new HttpPost(uri("context/httpheaders/language"));
         post.setHeader("Content-Type", "text/plain");
         post.setEntity(new StringEntity("Hello world!", "UTF-8"));
         post.addHeader("Content-Language", "zh");
@@ -255,7 +255,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
      */
     @Test
     public void testCookiesNone() throws IOException {
-        HttpPost HttpPost = new HttpPost(uri("/context/httpheaders/cookies"));
+        HttpPost HttpPost = new HttpPost(uri("context/httpheaders/cookies"));
 
         final HttpResponse response = client.execute(HttpPost);
         assertEquals(response.getStatusLine().getStatusCode(), 200);
@@ -271,7 +271,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
      */
     @Test
     public void testCookiesOneGiven() throws IOException {
-        final HttpPost HttpPost = new HttpPost(uri("/context/httpheaders/cookies"));
+        final HttpPost HttpPost = new HttpPost(uri("context/httpheaders/cookies"));
         HttpPost.addHeader("Cookie", "foo=bar");
         final HttpResponse response = client.execute(HttpPost);
         assertEquals(response.getStatusLine().getStatusCode(), 200);
@@ -286,7 +286,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
      */
     @Test
     public void testCookiesManyGiven() throws IOException {
-        final HttpPost post = new HttpPost(uri("/context/httpheaders/cookies"));
+        final HttpPost post = new HttpPost(uri("context/httpheaders/cookies"));
         post.addHeader("Cookie", "foo=bar");
         post.addHeader("Cookie", "foo2=bar2");
 
@@ -303,7 +303,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
      * @throws java.io.IOException
      */
     public void testRequestHeaderNoneGivenIllegalArgument() throws IOException {
-        HttpGet get = new HttpGet(uri("/context/httpheaders/"));
+        HttpGet get = new HttpGet(uri("context/httpheaders/"));
         final HttpResponse response = client.execute(get);
         assertStatusCode(200, response);
         String responseBody = asString(response);
@@ -317,7 +317,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
      * @throws java.io.IOException
      */
     public void testRequestHeaderNonexistentHeader() throws IOException {
-        HttpGet get = new HttpGet(uri("/context/httpheaders/?name=foo"));
+        HttpGet get = new HttpGet(uri("context/httpheaders/?name=foo"));
         final HttpResponse response = client.execute(get);
         assertStatusCode(200, response);
         String responseBody = asString(response);
@@ -332,7 +332,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
      */
     @Test
     public void testRequestHeaderSingleValue() throws IOException {
-        HttpGet getMethod = new HttpGet(uri("/context/httpheaders/?name=foo"));
+        HttpGet getMethod = new HttpGet(uri("context/httpheaders/?name=foo"));
         getMethod.addHeader("foo", "bar");
         final HttpResponse response = client.execute(getMethod);
         assertStatusCode(200, response);
@@ -348,7 +348,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
      */
     @Test
     public void testRequestHeaderMultipleValue() throws IOException {
-        HttpGet getMethod = new HttpGet(uri("/context/httpheaders/?name=foo"));
+        HttpGet getMethod = new HttpGet(uri("context/httpheaders/?name=foo"));
         getMethod.addHeader("foo", "bar");
         getMethod.addHeader("foo", "bar2");
         final HttpResponse response = client.execute(getMethod);
@@ -366,7 +366,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
      */
     @Test
     public void testRequestHeaderCaseInsensitive() throws IOException {
-        HttpGet getMethod = new HttpGet(uri("/context/httpheaders/?name=foo"));
+        HttpGet getMethod = new HttpGet(uri("context/httpheaders/?name=foo"));
         getMethod.addHeader("FOO", "bar");
         getMethod.addHeader("FoO", "bar2");
         final HttpResponse response = client.execute(getMethod);
@@ -383,7 +383,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
      */
     @Test
     public void testRequestHeadersBasicHeader() throws IOException {
-        HttpGet getMethod = new HttpGet(uri("/context/httpheaders/requestheaders"));
+        HttpGet getMethod = new HttpGet(uri("context/httpheaders/requestheaders"));
         final HttpResponse response = client.execute(getMethod);
         assertStatusCode(200, response);
         String responseBody = asString(response);
@@ -402,7 +402,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
      */
     @Test
     public void testRequestHeadersSingleValue() throws IOException {
-        HttpGet getMethod = new HttpGet(uri("/context/httpheaders/requestheaders"));
+        HttpGet getMethod = new HttpGet(uri("context/httpheaders/requestheaders"));
         getMethod.addHeader("fOo", "bAr");
         final HttpResponse response = client.execute(getMethod);
         assertStatusCode(200, response);
@@ -419,7 +419,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
      */
     @Test
     public void testRequestHeadersMultipleValues() throws IOException {
-        HttpGet getMethod = new HttpGet(uri("/context/httpheaders/requestheaders"));
+        HttpGet getMethod = new HttpGet(uri("context/httpheaders/requestheaders"));
         getMethod.addHeader("fOo", "bAr");
         getMethod.addHeader("abc", "xyz");
         getMethod.addHeader("fOo", "2bAr");

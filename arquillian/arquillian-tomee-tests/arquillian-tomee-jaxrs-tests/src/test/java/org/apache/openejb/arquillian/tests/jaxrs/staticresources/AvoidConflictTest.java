@@ -36,7 +36,7 @@ import static org.junit.Assert.assertEquals;
 public class AvoidConflictTest {
     @Deployment(testable = false)
     public static Archive<?> war() {
-        return ShrinkWrap.create(WebArchive.class, "app.war")
+        return ShrinkWrap.create(WebArchive.class, "AvoidConflictTest.war")
                     .addClasses(TheResource.class, SimpleServlet.class, PreviousFilter.class)
                     .addAsWebResource(new StringAsset("static"), "index.html")
                     .addAsWebResource(new StringAsset("JSP <%= 5 %>"), "sample.jsp");

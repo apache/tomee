@@ -26,6 +26,7 @@ import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.webcommon30.WebAppVersionType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -39,11 +40,12 @@ import static org.junit.Assert.assertEquals;
 public class AvoidConflictWithWebXmlWithNoResourceMatchingTest {
     @Deployment(testable = false)
     public static Archive<?> war() {
-        return ShrinkWrap.create(WebArchive.class, "app.war")
+        return ShrinkWrap.create(WebArchive.class, "AvoidConflictWithWebXmlWithNoResourceMatchingTest.war")
                     .addClasses(TheResource.class, SimpleServlet.class, PreviousFilter.class)
                     .addAsWebResource(new StringAsset("JSP <%= 5 %>"), "sample.jsp")
                     .setWebXML(new StringAsset(
                             Descriptors.create(WebAppDescriptor.class)
+                                .version(WebAppVersionType._3_0)
                                 .createServlet()
                                     .servletName("home")
                                     .jspFile("/sample.jsp")
