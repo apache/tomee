@@ -38,7 +38,8 @@ public class AvoidConflictTest {
     public static Archive<?> war() {
         return ShrinkWrap.create(WebArchive.class, "app.war")
                     .addClasses(TheResource.class, SimpleServlet.class, PreviousFilter.class)
-                    .addAsWebResource(new StringAsset("static"), "index.html");
+                    .addAsWebResource(new StringAsset("static"), "index.html")
+                    .addAsWebResource(new StringAsset("JSP <%= 5 %>"), "sample.jsp");
     }
 
     @ArquillianResource
@@ -57,6 +58,11 @@ public class AvoidConflictTest {
     @Test
     public void servlet() throws IOException {
         assertEquals("Servlet!", IO.slurp(new URL(url + "servlet")));
+    }
+
+    @Test
+    public void jsp() throws IOException {
+        assertEquals("JSP 5", IO.slurp(new URL(url + "sample.jsp")).trim());
     }
 
     @Test
