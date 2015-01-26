@@ -121,7 +121,8 @@ public class CXFJAXRSFilter implements Filter {
             accept = false;
             if (!"org.apache.catalina.servlets.DefaultServlet".equals(wrapper.getServletClass())) {
                 for (final String mapping : wrapper.findMappings()) {
-                    if (!mapping.isEmpty() && !"/*".equals(mapping) && !"/".equals(mapping) && mapping.startsWith(this.mapping)) {
+                    if (!mapping.isEmpty() && !"/*".equals(mapping) && !"/".equals(mapping) && !mapping.startsWith("*")
+                            && mapping.startsWith(this.mapping)) {
                         accept = true;
                         break;
                     }
