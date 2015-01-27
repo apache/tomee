@@ -116,7 +116,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
 
         if (null == executor) {
 
-            int length = getNetworkInterfaces().length;
+            int length = getInterfaces().length;
             if (length < 1) {
                 length = 1;
             }
@@ -527,7 +527,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
 
         final ArrayList<MulticastSocket> list = new ArrayList<MulticastSocket>();
 
-        for (final NetworkInterface ni : getNetworkInterfaces()) {
+        for (final NetworkInterface ni : getInterfaces()) {
 
             MulticastSocket ms = null;
 
