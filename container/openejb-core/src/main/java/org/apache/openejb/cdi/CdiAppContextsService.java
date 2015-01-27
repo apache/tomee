@@ -186,6 +186,9 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             final Object event = HttpSessionContextSessionAware.class.isInstance(sc) ? HttpSessionContextSessionAware.class.cast(sc).getSession() : sc;
             if (HttpSession.class.isInstance(event)) {
                 final HttpSession httpSession = HttpSession.class.cast(event);
+                if (httpSession.getId() == null) {
+                    continue;
+                }
                 initSessionContext(httpSession);
                 try {
                     httpSession.invalidate();
