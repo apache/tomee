@@ -79,6 +79,7 @@ import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.log.NullLogChute;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
+import org.apache.xbean.finder.UrlSet;
 import org.apache.xbean.finder.filter.Filters;
 import org.codehaus.swizzle.stream.ReplaceStringsInputStream;
 
@@ -153,7 +154,11 @@ public class Container implements AutoCloseable {
             }
         }
 
-        return deployPathsAsWebapp(context, jarList, docBase);
+        try {
+            return deployPathsAsWebapp(context, NewLoaderLogic.applyBuiltinExcludes(new UrlSet(jarList), null).getUrls(), docBase);
+        } catch (final MalformedURLException e) {
+            return deployPathsAsWebapp(context, jarList, docBase);
+        }
     }
 
     public Container deployPathsAsWebapp(final String context, final List<URL> jarList, final File docBase) {
@@ -166,7 +171,7 @@ public class Container implements AutoCloseable {
         }
 
         final File jarLocation = docBase == null ? fakeRootDir() : docBase;
-        final WebModule webModule = new WebModule(new WebApp(), contextRoot, loader, jarLocation.getAbsolutePath(), contextRoot);
+        final WebModule webModule = new WebModule(new WebApp(), contextRoot, loader, jarLocation.getAbsolutePath(), contextRoot.replace("/", ""));
         if (docBase == null) {
             webModule.getProperties().put("fakeJarLocation", "true");
         }
@@ -189,6 +194,8 @@ public class Container implements AutoCloseable {
 
         final AppModule app = new AppModule(loader, null);
         app.setStandloneWebModule();
+        app.setStandaloneModule(true);
+        app.setModuleId(webModule.getModuleId());
         try {
             webModule.getAltDDs().putAll(DeploymentLoader.getWebDescriptors(jarLocation));
             DeploymentLoader.addWebModule(webModule, app);
