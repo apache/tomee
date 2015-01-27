@@ -75,9 +75,8 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
     private final ReentrantLock lock = new ReentrantLock();
     private final Set<String> ignore = Collections.synchronizedSet(new HashSet<String>());
     private final Set<URI> uriSet = new HashSet<URI>();
-    private AtomicBoolean running = new AtomicBoolean(false);
+    private final AtomicBoolean running = new AtomicBoolean(false);
     final ArrayList<Future> futures = new ArrayList<Future>();
-    final ArrayList<Future> senders = new ArrayList<Future>();
     private MulticastSocket[] sockets = null;
     private InetSocketAddress address = null;
 
@@ -89,7 +88,6 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
     private boolean loopbackOnly = true;
 
     /**
-     * @author Andy Gumbrecht
      * This agent listens for client pulses on a defined multicast channel.
      * On receipt of a valid pulse the agent responds with its own pulse for
      * a defined amount of time and rate. A client can deliver a pulse as often as
@@ -118,7 +116,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
 
         if (null == executor) {
 
-            int length = getNetworkInterfaces().length;
+            int length = getInterfaces().length;
             if (length < 1) {
                 length = 1;
             }
@@ -145,7 +143,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
                     this.ignore.add(s.trim().toLowerCase());
                 }
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             log.warning("Invalid ignore parameter. Should be a lowercase single host or comma seperated list of hosts to ignore like: ignore=host1,host2,ipv4,ipv6");
         }
 
@@ -198,7 +196,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
 
             if (bytes.length > 2048) {
                 log.warning("MultiPulse packet is larger than 2048 bytes, clients will not be able to read the packet" +
-                    "\n - You should define the 'ignore' property to filter out unreachable addresses: " + sb);
+                        "\n - You should define the 'ignore' property to filter out unreachable addresses: " + sb);
             }
         } finally {
             l.unlock();
@@ -263,13 +261,14 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
 
     private void fireEvent(final URI uri, final boolean add) {
         if (null != this.listener) {
+            final DiscoveryListener dl = this.listener;
             getExecutorService().execute(new Runnable() {
                 @Override
                 public void run() {
                     if (add) {
-                        MulticastPulseAgent.this.listener.serviceAdded(uri);
+                        dl.serviceAdded(uri);
                     } else {
-                        MulticastPulseAgent.this.listener.serviceRemoved(uri);
+                        dl.serviceRemoved(uri);
                     }
                 }
             });
@@ -282,7 +281,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
 
             try {
                 this.sockets = getSockets(this.multicast, this.port);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new ServiceException("Failed to get Multicast sockets", e);
             }
 
@@ -290,13 +289,14 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
             final String mpg = this.group;
             final boolean isLoopBackOnly = this.loopbackOnly;
             final ExecutorService executorService = getExecutorService();
+            final MulticastPulseAgent agent = MulticastPulseAgent.this;
 
             for (final MulticastSocket socket : this.sockets) {
 
                 final String socketKey;
                 try {
                     socketKey = socket.getNetworkInterface().toString();
-                } catch (SocketException e) {
+                } catch (final SocketException e) {
                     log.error("Failed to get network interface name on: " + socket, e);
                     continue;
                 }
@@ -311,7 +311,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
                         final DatagramPacket request = new DatagramPacket(new byte[2048], 2048);
                         latch.countDown();
 
-                        while (MulticastPulseAgent.this.running.get()) {
+                        while (agent.running.get()) {
 
                             try {
                                 socket.receive(request);
@@ -338,24 +338,25 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
                                         if (mpg.equals(req) || "*".equals(req)) {
 
                                             //Is there a bad url and is it this agent broadcasting the bad URI?
-                                            if (null != badUri && getHosts(MulticastPulseAgent.this.ignore).contains(badUri)) {
-                                                final ReentrantLock l = MulticastPulseAgent.this.lock;
-                                                l.lock();
+                                            if (null != badUri) {
+                                                if (getHosts(agent.ignore).contains(badUri)) {
+                                                    final ReentrantLock l = agent.lock;
+                                                    l.lock();
 
-                                                try {
-                                                    //Remove it and rebuild our broadcast packet
-                                                    if (MulticastPulseAgent.this.ignore.add(badUri)) {
-                                                        MulticastPulseAgent.this.buildPacket();
-
-                                                        MulticastPulseAgent.this.fireEvent(URI.create("OpenEJB" + BADURI + badUri), false);
-
-                                                        log.warning("This server has removed the unreachable host '" + badUri + "' from discovery, you should consider adding" +
-                                                            " this to the 'ignore' property in the multipulse.properties file");
+                                                    try {
+                                                        //Remove it and rebuild our broadcast packet
+                                                        if (agent.ignore.add(badUri)) {
+                                                            agent.buildPacket();
+                                                            log.warning("This server has removed the unreachable host '" + badUri + "' from discovery, you should consider adding" +
+                                                                    " this to the 'ignore' property in the multipulse.properties file");
+                                                        }
+                                                    } finally {
+                                                        l.unlock();
                                                     }
-
-                                                } finally {
-                                                    l.unlock();
                                                 }
+
+                                                agent.fireEvent(URI.create("OpenEJB" + BADURI + badUri), false);
+
                                             } else {
 
                                                 //Normal client multicast pulse request
@@ -365,8 +366,8 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
                                                     //We only have local services, so make sure the request is from a local source else ignore it
                                                     if (log.isDebugEnabled()) {
                                                         log.debug(String.format("Ignoring remote client %1$s pulse request for group: %2$s - No remote services available",
-                                                            client,
-                                                            req));
+                                                                client,
+                                                                req));
                                                     }
                                                 } else {
 
@@ -383,7 +384,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
                                     }
                                 }
 
-                            } catch (Exception e) {
+                            } catch (final Exception e) {
                                 if (log.isDebugEnabled()) {
                                     log.debug("MulticastPulseAgent request error: " + e.getMessage(), e);
                                 }
@@ -392,7 +393,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
 
                         try {
                             socket.close();
-                        } catch (Throwable e) {
+                        } catch (final Throwable e) {
                             //Ignore
                         }
                     }
@@ -402,7 +403,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
             try {
                 //Give threads a reasonable amount of time to start
                 latch.await(5, TimeUnit.SECONDS);
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 this.stop();
             }
         }
@@ -417,7 +418,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
                 for (final Future future : this.futures) {
                     try {
                         future.cancel(true);
-                    } catch (Throwable e) {
+                    } catch (final Throwable e) {
                         //Ignore
                     }
                 }
@@ -426,7 +427,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
                 for (final Future future : this.futures) {
                     try {
                         future.get();
-                    } catch (Throwable e) {
+                    } catch (final Throwable e) {
                         //Ignore
                     }
                 }
@@ -439,7 +440,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
                     for (final MulticastSocket s : this.sockets) {
                         try {
                             s.close();
-                        } catch (Throwable e) {
+                        } catch (final Throwable e) {
                             //Ignore
                         }
                     }
@@ -511,7 +512,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
 
         try {
             ia = InetAddress.getByName(multicastAddress);
-        } catch (UnknownHostException e) {
+        } catch (final UnknownHostException e) {
             throw new ServiceException(multicastAddress + " is not a valid address", e);
         }
 
@@ -526,7 +527,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
 
         final ArrayList<MulticastSocket> list = new ArrayList<MulticastSocket>();
 
-        for (final NetworkInterface ni : getNetworkInterfaces()) {
+        for (final NetworkInterface ni : getInterfaces()) {
 
             MulticastSocket ms = null;
 
@@ -545,12 +546,12 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
 
                 log.debug(String.format("Created MulticastSocket for '%1$s:%2$s' on network adapter: %3$s", ia.getHostName(), port, ni));
 
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
 
                 if (null != ms) {
                     try {
                         ms.close();
-                    } catch (Throwable t) {
+                    } catch (final Throwable t) {
                         //Ignore
                     }
                 }
@@ -573,7 +574,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
                     list.add(next);
                 }
             }
-        } catch (SocketException e) {
+        } catch (final SocketException e) {
             //Ignore
         }
 
@@ -591,7 +592,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
         final InetAddress addr;
         try {
             addr = InetAddress.getByName(host);
-        } catch (UnknownHostException e) {
+        } catch (final UnknownHostException e) {
             return false;
         }
 
@@ -610,7 +611,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
         final InetAddress addr;
         try {
             addr = InetAddress.getByName(host);
-        } catch (UnknownHostException e) {
+        } catch (final UnknownHostException e) {
             return false;
         }
 
@@ -622,7 +623,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
         // Check if the address is defined on any interface
         try {
             return NetworkInterface.getByInetAddress(addr) != null;
-        } catch (SocketException e) {
+        } catch (final SocketException e) {
             return false;
         }
     }
@@ -648,7 +649,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
                     } else if (0 != h1.compareTo(h2)) {
                         return -1;
                     }
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     //Ignore
                 }
 
@@ -660,7 +661,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
             final InetAddress localhost = InetAddress.getLocalHost();
             hosts.add(localhost.getHostAddress());
             //Multi-homed
-            final InetAddress[] all = InetAddress.getAllByName(localhost.getCanonicalHostName());
+            final InetAddress[] all = InetAddress.getAllByName(localhost.getHostName());
             for (final InetAddress ip : all) {
 
                 if (ip.isLinkLocalAddress() || ip.isMulticastAddress()) {
@@ -670,10 +671,10 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
                 final String ha = ip.getHostAddress();
                 if (!ha.replace("[", "").startsWith("2001:0:")) { //Filter Teredo
                     hosts.add(ha);
-                    hosts.add(ip.getCanonicalHostName());
+                    hosts.add(ip.getHostName());
                 }
             }
-        } catch (UnknownHostException e) {
+        } catch (final UnknownHostException e) {
             log.warning("Failed to list machine hosts", e);
         }
 
@@ -712,7 +713,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
                     try {
                         //Wait indefinitely until we are interrupted or notified
                         this.counter.wait();
-                    } catch (InterruptedException e) {
+                    } catch (final InterruptedException e) {
                         if (!this.agent.running.get()) {
                             break;
                         }
@@ -724,7 +725,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
 
                     try {
                         this.socket.send(this.agent.getResponsePacket());
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         if (log.isDebugEnabled()) {
                             log.debug("MulticastPulseAgent client error: " + e.getMessage(), e);
                         }
@@ -732,7 +733,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
 
                     try {
                         Thread.sleep(10);
-                    } catch (InterruptedException e) {
+                    } catch (final InterruptedException e) {
                         break;
                     }
                 }
