@@ -200,7 +200,7 @@ public class MulticastPulseAgentTest {
 
                             final SocketAddress sa = response.getSocketAddress();
 
-                            if (null != sa && (sa instanceof InetSocketAddress)) {
+                            if ((sa instanceof InetSocketAddress)) {
 
                                 int len = response.getLength();
                                 if (len > 2048) {
@@ -226,9 +226,9 @@ public class MulticastPulseAgentTest {
                                     final String[] hosts = s.split(",");
 
                                     System.out.println(String.format("\n" + name + " received Server pulse:\n\tGroup: %1$s\n\tServices: %2$s\n\tServer: %3$s\n",
-                                        group,
-                                        services,
-                                        s));
+                                            group,
+                                            services,
+                                            s));
 
                                     for (final String svc : serviceList) {
 
@@ -417,6 +417,9 @@ public class MulticastPulseAgentTest {
         final String[] hosts = agent.getHosts().split(",");
         final String host = hosts[hosts.length - 1];
 
+        boolean removed = agent.removeFromIgnore(host);
+        org.junit.Assert.assertTrue("Host is already ignored", !removed);
+
         final Future<?> future = executor.submit(new Runnable() {
             @Override
             public void run() {
@@ -428,13 +431,16 @@ public class MulticastPulseAgentTest {
 
                     final MulticastSocket[] multicastSockets = MulticastPulseAgent.getSockets(MulticastPulseAgentTest.host, port);
 
-                    for (final MulticastSocket socket : multicastSockets) {
+                    for (int i = 0; i < 5; i++) {
+                        for (final MulticastSocket socket : multicastSockets) {
 
-                        try {
-                            socket.send(request);
-                        } catch (final Exception e) {
-                            System.out.println("Failed to broadcast bad URI on: " + socket.getInterface().getHostAddress());
-                            e.printStackTrace();
+                            try {
+                                socket.send(request);
+                                Thread.sleep(100);
+                            } catch (final Exception e) {
+                                System.out.println("Failed to broadcast bad URI on: " + socket.getInterface().getHostAddress());
+                                e.printStackTrace();
+                            }
                         }
                     }
                 } catch (final Exception e) {
@@ -444,14 +450,13 @@ public class MulticastPulseAgentTest {
             }
         });
 
-        final Object o = future.get(10, TimeUnit.SECONDS);
-
         final boolean await = latch.await(20, TimeUnit.SECONDS);
-        final boolean removed = agent.removeFromIgnore(host);
+        removed = agent.removeFromIgnore(host);
 
         agent.setDiscoveryListener(original);
 
-        org.junit.Assert.assertTrue("Failed to remove host", removed && await);
+        org.junit.Assert.assertTrue("Failed to remove host", removed);
+        org.junit.Assert.assertTrue("Failed to unlatch", await);
     }
 
     private String ipFormat(final String h) throws UnknownHostException {
