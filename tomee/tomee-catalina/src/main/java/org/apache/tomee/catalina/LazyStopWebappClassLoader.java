@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -48,27 +49,47 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
 
     public static final String TOMEE_WEBAPP_FIRST = "tomee.webapp-first";
 
+    static {
+        boolean result = ClassLoader.registerAsParallelCapable();
+        if (!result) {
+            LOGGER.warning("Can't register // tomee webapp classloader");
+        }
+    }
+
     private boolean restarting;
     private final boolean forceStopPhase = Boolean.parseBoolean(SystemInstance.get().getProperty("tomee.webappclassloader.force-stop-phase", "false"));
     private ClassLoaderConfigurer configurer;
+    private final boolean isEar;
+    private final ClassLoader containerClassLoader;
+    private volatile boolean originalDelegate;
     private final int hashCode;
     private Collection<File> additionalRepos;
 
     public LazyStopWebappClassLoader() {
         j2seClassLoader = getSystemClassLoader();
         hashCode = construct();
+        containerClassLoader = ParentClassLoaderFinder.Helper.get();
+        isEar = getParent() != containerClassLoader;
+        originalDelegate = getDelegate();
     }
 
     public LazyStopWebappClassLoader(final ClassLoader parent) {
         super(parent);
         j2seClassLoader = getSystemClassLoader();
         hashCode = construct();
+        setJavaseClassLoader(getSystemClassLoader());
     }
 
     private int construct() {
         setDelegate(isDelegate());
         configurer = INIT_CONFIGURER.get();
         return super.hashCode();
+    }
+
+    @Override
+    public void setDelegate(final boolean delegate) {
+        this.delegate = delegate;
+        this.originalDelegate = delegate;
     }
 
     @Override
@@ -93,15 +114,14 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
             || "org.apache.tomee.mojarra.TomEEInjectionProvider".equals(name)) {
             // don't load them from system classloader (breaks all in embedded mode and no sense in other cases)
             synchronized (this) {
-                final ClassLoader old = j2seClassLoader;
+                final ClassLoader old = getJavaseClassLoader();
                 j2seClassLoader = NoClassClassLoader.INSTANCE;
-                final boolean delegate = getDelegate();
-                setDelegate(false);
+                delegate = false;
                 try {
                     return super.loadClass(name);
                 } finally {
-                    j2seClassLoader = old;
-                    setDelegate(delegate);
+                    setJavaseClassLoader(old);
+                    setDelegate(originalDelegate);
                 }
             }
         }
@@ -109,34 +129,77 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
         // avoid to redefine classes from server in this classloader is it not already loaded
         if (URLClassLoaderFirst.shouldDelegateToTheContainer(this, name)) { // dynamic validation handling overriding
             try {
-                return OpenEJB.class.getClassLoader().loadClass(name);
+                return OpenEJB.class.getClassLoader().loadClass(name); // we could use containerClassLoader but this is server loader so cut it even more
             } catch (final ClassNotFoundException e) {
                 return super.loadClass(name);
             } catch (final NoClassDefFoundError ncdfe) {
                 return super.loadClass(name);
             }
         } else if (name.startsWith("javax.faces.") || name.startsWith("org.apache.webbeans.jsf.")) {
-            final boolean delegate = getDelegate();
-            synchronized (this) {
-                setDelegate(false);
+	synchronized (this) {
+                delegate = false;
                 try {
                     return super.loadClass(name);
                 } finally {
-                    setDelegate(delegate);
+                    setDelegate(originalDelegate);
                 }
             }
         }
-        return super.loadClass(name);
+        synchronized (this) { // TODO: rework it to avoid it and get aligned on Java 7 classloaders (but not a big issue)
+            if (isEar) {
+                final boolean filter = filter(name);
+                filterTempCache.put(name, filter); // will be called again by super.loadClass() so cache it
+                if (!filter && wouldBeLoadedFromContainer(name)) {
+                    setDelegate(false);
+                    try {
+                        return super.loadClass(name);
+                    } finally {
+                        filterTempCache.remove(name); // no more needed since class is loaded, avoid to waste mem
+                        setDelegate(originalDelegate);
+                    }
+                }
+            }
+        }
+        synchronized (this) { // TODO: rework it to avoid it but not a big issue, see first if of this method
+            return super.loadClass(name);
+        }
     }
 
-    @Override
-    protected boolean validate(final String name) { // static validation, mainly container stuff
-        return !URLClassLoaderFirst.shouldSkip(name);
+    private boolean wouldBeLoadedFromContainer(final String name) {
+        final String resource = name.replace('.', '/') + CLASS_EXTENSION;
+
+        final URL containerUrl = containerClassLoader.getResource(resource);
+        if (containerUrl == null) {
+            return false;
+        }
+
+        final URL parentUrl = getParent().getResource(resource);
+        if (parentUrl == null) {
+            return false;
+        }
+        try {
+            return URLs.toFile(parentUrl).getCanonicalPath().equalsIgnoreCase(URLs.toFile(containerUrl).getCanonicalPath());
+        } catch (final IOException e) {
+            return false;
+        }
     }
+
+
 
     @Override
     protected boolean filter(final String name) {
-        return !"org.apache.tomee.mojarra.TomEEInjectionProvider".equals(name) && URLClassLoaderFirst.shouldSkip(name);
+        if ("org.apache.tomee.mojarra.TomEEInjectionProvider".equals(name)) {
+            return false;
+        }
+        if (isEar) { // check we are called from super and we already cached the result in loadClass
+            synchronized (this) {
+                final Boolean cache = filterTempCache.get(name);
+                if (cache != null) {
+                    return cache;
+                }
+            }
+        }
+        return URLClassLoaderFirst.shouldSkip(name);
     }
 
     public void internalStop() throws LifecycleException {
