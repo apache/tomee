@@ -142,9 +142,9 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
     }
 
     public void configureDeployments(final List<BeanContext> ejbDeployments) {
-        beans = new WeakHashMap<Class<?>, BeanContext>();
+        beans = new WeakHashMap<>();
         for (final BeanContext deployment : ejbDeployments) {
-            if (deployment.getComponentType().isSession()) {
+            if (deployment.getComponentType().isCdiCompatible()) {
                 if (deployment.isLocalbean() && !deployment.isDynamicallyImplemented()) {
                     beans.put(deployment.get(BeanContext.ProxyClass.class).getProxy(), deployment);
                 }

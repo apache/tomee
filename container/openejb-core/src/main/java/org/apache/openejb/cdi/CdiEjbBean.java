@@ -244,8 +244,10 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
                 instance = (T) homeLocalBean.create();
             } else if (home != null) {
                 instance = (T) home.create();
-            } else /*if (remote != null)*/ {
+            } else if (remote != null) {
                 instance = (T) remote.create();
+            } else { // shouldn't be called for an MDB
+                throw new IllegalStateException("no interface to proxy for ejb " + beanContext.getEjbName() + ", is this is a MDB maybe you shouldn't use a scope?");
             }
 
             if (isDependentAndStateful) {
@@ -291,7 +293,11 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
     public void initInternals() {
         final List<Class> classes = beanContext.getBusinessLocalInterfaces();
         final boolean noLocalInterface = classes.isEmpty();
-        if (noLocalInterface && beanContext.isLocalbean()) {
+        if (beanContext.getComponentType().isMessageDriven()) {
+            homeLocalBean = null;
+            home = null;
+            remote = null;
+        } else if (noLocalInterface && beanContext.isLocalbean()) {
             homeLocalBean = beanContext.getBusinessLocalBeanHome();
             home = null;
             remote = null;
