@@ -357,6 +357,15 @@ public class DeployerEjb implements Deployer {
                                 it.remove();
                                 break;
                             }
+                        } else {
+                            final String jarC = current.getFile();
+                            if (jarC != null && jarC.length() > 3) {
+                                final String substring = jarC.substring(0, jarC.length() - 4);
+                                if (substring.equals(deps.getDir()) || substring.equals(deps.getFile())) {
+                                    it.remove();
+                                    break;
+                                }
+                            }
                         }
                     }
                 }
