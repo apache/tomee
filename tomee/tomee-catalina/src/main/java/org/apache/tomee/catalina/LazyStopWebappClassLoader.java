@@ -27,7 +27,9 @@ import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.URLs;
 import org.apache.openejb.util.classloader.URLClassLoaderFirst;
+import org.apache.openejb.core.ParentClassLoaderFinder;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,6 +43,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
 
 public class LazyStopWebappClassLoader extends WebappClassLoader {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, LazyStopWebappClassLoader.class.getName());
@@ -48,14 +51,8 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
     private static final ThreadLocal<Context> CONTEXT = new ThreadLocal<Context>();
 
     public static final String TOMEE_WEBAPP_FIRST = "tomee.webapp-first";
-
-    static {
-        boolean result = ClassLoader.registerAsParallelCapable();
-        if (!result) {
-            LOGGER.warning("Can't register // tomee webapp classloader");
-        }
-    }
-
+    public static final String CLASS_EXTENSION = ".class";
+    
     private boolean restarting;
     private final boolean forceStopPhase = Boolean.parseBoolean(SystemInstance.get().getProperty("tomee.webappclassloader.force-stop-phase", "false"));
     private ClassLoaderConfigurer configurer;
@@ -64,6 +61,7 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
     private volatile boolean originalDelegate;
     private final int hashCode;
     private Collection<File> additionalRepos;
+    private final Map<String, Boolean> filterTempCache = new HashMap<String, Boolean>(); // used only in sync block + isEar
 
     public LazyStopWebappClassLoader() {
         j2seClassLoader = getSystemClassLoader();
@@ -78,6 +76,9 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
         j2seClassLoader = getSystemClassLoader();
         hashCode = construct();
         setJavaseClassLoader(getSystemClassLoader());
+        containerClassLoader = ParentClassLoaderFinder.Helper.get();
+        isEar = getParent() != containerClassLoader;
+        originalDelegate = getDelegate();
     }
 
     private int construct() {
@@ -136,7 +137,7 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
                 return super.loadClass(name);
             }
         } else if (name.startsWith("javax.faces.") || name.startsWith("org.apache.webbeans.jsf.")) {
-	synchronized (this) {
+        	synchronized (this) {
                 delegate = false;
                 try {
                     return super.loadClass(name);
