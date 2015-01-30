@@ -155,7 +155,13 @@ public class Container implements AutoCloseable {
         }
 
         try {
-            return deployPathsAsWebapp(context, NewLoaderLogic.applyBuiltinExcludes(new UrlSet(jarList), null).getUrls(), docBase);
+            return deployPathsAsWebapp(
+                    context,
+                    // ADDITIONAL_INCLUDE is not very well respected with NewLoaderLogic (but that's a different purpose) algo so force it a bit here
+                    NewLoaderLogic.applyBuiltinExcludes(
+                            new UrlSet(jarList), NewLoaderLogic.ADDITIONAL_INCLUDE == null ?
+                                    null : Filters.prefixes(NewLoaderLogic.ADDITIONAL_INCLUDE.split("[ \t\n\n]*,[ \t\n\n]*"))).getUrls(),
+                    docBase);
         } catch (final MalformedURLException e) {
             return deployPathsAsWebapp(context, jarList, docBase);
         }
