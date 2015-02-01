@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.config;
+package org.apache.openejb.util;
 
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.classloader.URLClassLoaderFirst;

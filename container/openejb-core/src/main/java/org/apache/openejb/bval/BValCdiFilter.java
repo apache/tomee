@@ -17,7 +17,7 @@
 package org.apache.openejb.bval;
 
 import org.apache.bval.cdi.BValExtension;
-import org.apache.openejb.config.ContainerClassesFilter;
+import org.apache.openejb.util.ContainerClassesFilter;
 
 import javax.enterprise.inject.spi.AnnotatedType;
 

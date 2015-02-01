@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.config;
 
+import org.apache.openejb.util.ContainerClassesFilter;
 import org.junit.Test;
 
 import java.util.Properties;
