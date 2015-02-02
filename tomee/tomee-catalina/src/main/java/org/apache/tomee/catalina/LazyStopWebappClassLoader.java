@@ -150,13 +150,11 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
             if (isEar) {
                 final boolean filter = filter(name);
                 filterTempCache.put(name, filter); // will be called again by super.loadClass() so cache it
-                if (!filter && wouldBeLoadedFromContainer(name)) {
-                    setDelegate(false);
-                    try {
-                        return super.loadClass(name);
-                    } finally {
-                        filterTempCache.remove(name); // no more needed since class is loaded, avoid to waste mem
-                        setDelegate(originalDelegate);
+                if (!filter) {
+                    if (isTheSame(name, getParent(), containerClassLoader, false, false)) {
+                        return loadWithDelegate(false, name);
+                    } else if (isTheSame(name, getParent(), this, true, originalDelegate)) {
+                        return loadWithDelegate(true, name);
                     }
                 }
             }
@@ -166,26 +164,37 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
         }
     }
 
-    private boolean wouldBeLoadedFromContainer(final String name) {
-        final String resource = name.replace('.', '/') + CLASS_EXTENSION;
-
-        final URL containerUrl = containerClassLoader.getResource(resource);
-        if (containerUrl == null) {
-            return false;
-        }
-
-        final URL parentUrl = getParent().getResource(resource);
-        if (parentUrl == null) {
-            return false;
-        }
+    private Class<?> loadWithDelegate(final boolean delegate, final String name) throws ClassNotFoundException {
+        setDelegate(delegate);
         try {
-            return URLs.toFile(parentUrl).getCanonicalPath().equalsIgnoreCase(URLs.toFile(containerUrl).getCanonicalPath());
-        } catch (final IOException e) {
-            return false;
+            return super.loadClass(name);
+        } finally {
+            filterTempCache.remove(name); // no more needed since class is loaded, avoid to waste mem
+            setDelegate(originalDelegate);
         }
     }
 
+    // NOTE: valueIfExistingInBoth should be removed but we need to work really more to make it a reality
+    private boolean isTheSame(final String name, final ClassLoader c1, final ClassLoader c2, final Boolean valueIfExistingInBoth, final boolean defaultValue) {
+        final String resource = name.replace('.', '/') + CLASS_EXTENSION;
 
+        final URL u1 = c1.getResource(resource);
+        if (u1 == null) {
+            return defaultValue;
+        }
+        final URL u2 = c2.getResource(resource);
+        if (u2 == null) {
+            return defaultValue;
+        }
+        if (valueIfExistingInBoth != null) {
+            return valueIfExistingInBoth;
+        }
+        try {
+            return URLs.toFile(u2).getCanonicalPath().equalsIgnoreCase(URLs.toFile(u1).getCanonicalPath());
+        } catch (final IOException e) {
+            return defaultValue;
+        }
+    }
 
     @Override
     protected boolean filter(final String name) {
