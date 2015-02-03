@@ -131,8 +131,7 @@ public class CXFJAXRSFilter implements Filter {
             mappingByServlet.putIfAbsent(wrapper, accept);
             return accept;
         }
-
-        return false;
+        return accept;
     }
 
     private HttpServletRequest unwrap(final HttpServletRequest request) {
