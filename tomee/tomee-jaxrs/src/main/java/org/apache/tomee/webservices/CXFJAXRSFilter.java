@@ -132,7 +132,7 @@ public class CXFJAXRSFilter implements Filter {
             return accept;
         }
 
-        return false;
+        return accept;
     }
 
     private HttpServletRequest unwrap(final HttpServletRequest request) {
