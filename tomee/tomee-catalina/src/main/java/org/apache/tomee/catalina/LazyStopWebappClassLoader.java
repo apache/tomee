@@ -137,7 +137,7 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
                 return super.loadClass(name);
             }
         } else if (name.startsWith("javax.faces.") || name.startsWith("org.apache.webbeans.jsf.")) {
-        	synchronized (this) {
+            synchronized (this) {
                 delegate = false;
                 try {
                     return super.loadClass(name);
