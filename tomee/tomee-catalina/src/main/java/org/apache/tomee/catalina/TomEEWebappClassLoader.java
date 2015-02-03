@@ -133,7 +133,7 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
     }
 
     @Override
-    public Class<?> loadClass(final String name) throws ClassNotFoundException {
+    public Class<?> loadClass(final String name, final boolean resolve) throws ClassNotFoundException {
         if ("org.apache.openejb.hibernate.OpenEJBJtaPlatform".equals(name)
                 || "org.apache.openejb.jpa.integration.hibernate.PrefixNamingStrategy".equals(name)
                 || "org.apache.openejb.jpa.integration.eclipselink.PrefixSessionCustomizer".equals(name)
@@ -145,7 +145,7 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
                 setJavaseClassLoader(NoClassClassLoader.INSTANCE);
                 delegate = false;
                 try {
-                    return super.loadClass(name);
+                    return super.loadClass(name, resolve);
                 } finally {
                     setJavaseClassLoader(old);
                     setDelegate(originalDelegate);
@@ -158,15 +158,19 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
             try {
                 return OpenEJB.class.getClassLoader().loadClass(name); // we could use containerClassLoader but this is server loader so cut it even more
             } catch (final ClassNotFoundException e) {
-                return super.loadClass(name);
+                synchronized (this) {
+                    return super.loadClass(name, resolve);
+                }
             } catch (final NoClassDefFoundError ncdfe) {
-                return super.loadClass(name);
+                synchronized (this) {
+                    return super.loadClass(name, resolve);
+                }
             }
         } else if (name.startsWith("javax.faces.") || name.startsWith("org.apache.webbeans.jsf.")) {
             synchronized (this) {
                 delegate = false;
                 try {
-                    return super.loadClass(name);
+                    return super.loadClass(name, resolve);
                 } finally {
                     setDelegate(originalDelegate);
                 }
@@ -177,45 +181,31 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
                 final boolean filter = filter(name);
                 filterTempCache.put(name, filter); // will be called again by super.loadClass() so cache it
                 if (!filter) {
-                    if (isTheSame(name, getParent(), containerClassLoader, false, false)) {
-                        return loadWithDelegate(false, name);
-                    } else if (isTheSame(name, getParent(), this, true, originalDelegate)) {
-                        return loadWithDelegate(true, name);
+                    if (URLClassLoaderFirst.class.isInstance(getParent())) { // true
+                        final URLClassLoaderFirst urlClassLoaderFirst = URLClassLoaderFirst.class.cast(getParent());
+                        Class<?> c = urlClassLoaderFirst.findAlreadyLoadedClass(name);
+                        if (c != null) {
+                            return c;
+                        }
+                        c = urlClassLoaderFirst.loadInternal(name, resolve);
+                        if (c != null) {
+                            return c;
+                        }
                     }
+                    return loadWithDelegate(getResource(name.replace('.', '/') + CLASS_EXTENSION) == null, resolve, name);
                 }
             }
-            return super.loadClass(name);
+            return super.loadClass(name, resolve);
         }
     }
-    private Class<?> loadWithDelegate(final boolean delegate, final String name) throws ClassNotFoundException {
+
+    private Class<?> loadWithDelegate(final boolean delegate, final boolean resolve, final String name) throws ClassNotFoundException {
         setDelegate(delegate);
         try {
-            return super.loadClass(name);
+            return super.loadClass(name, resolve);
         } finally {
             filterTempCache.remove(name); // no more needed since class is loaded, avoid to waste mem
             setDelegate(originalDelegate);
-        }
-    }
-
-    // NOTE: valueIfExistingInBoth should be removed but we need to work really more to make it a reality
-    private boolean isTheSame(final String name, final ClassLoader c1, final ClassLoader c2, final Boolean valueIfExistingInBoth, final boolean defaultValue) {
-        final String resource = name.replace('.', '/') + CLASS_EXTENSION;
-
-        final URL u1 = c1.getResource(resource);
-        if (u1 == null) {
-            return defaultValue;
-        }
-        final URL u2 = c2.getResource(resource);
-        if (u2 == null) {
-            return defaultValue;
-        }
-        if (valueIfExistingInBoth != null) {
-            return valueIfExistingInBoth;
-        }
-        try {
-            return URLs.toFile(u2).getCanonicalPath().equalsIgnoreCase(URLs.toFile(u1).getCanonicalPath());
-        } catch (final IOException e) {
-            return defaultValue;
         }
     }
 
