@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.server.cxf.transport.util;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.binding.BindingFactory;
@@ -69,11 +70,21 @@ public final class CxfUtil {
     public static final String DEBUG = "debug";
     public static final String BUS_PREFIX = "org.apache.openejb.cxf.bus.";
     public static final String BUS_CONFIGURED_FLAG = "openejb.cxf.bus.configured";
-    private static final AtomicReference<Bus> DEFAULT_BUS = new AtomicReference<Bus>();
+    private static final AtomicReference<Bus> DEFAULT_BUS = new AtomicReference<>();
+    private static final AtomicInteger USER_COUNT = new AtomicInteger();
     private static Map<String, BindingFactory> bindingFactoryMap;
 
     private CxfUtil() {
         // no-op
+    }
+
+    public static void release() { // symmetric of configureBus(), when last caller of configureBus() is calls this bus is destroyed
+        if (USER_COUNT.decrementAndGet() == 0) {
+            final Bus b = DEFAULT_BUS.get();
+            if (b != null) {
+                b.shutdown(true);
+            }
+        }
     }
 
     public static boolean hasService(final String name) {
@@ -133,7 +144,7 @@ public final class CxfUtil {
     public static void clearBusLoader(final ClassLoader old) {
         final ClassLoader loader = CxfUtil.getBus().getExtension(ClassLoader.class);
         if (loader != null && CxfContainerClassLoader.class.isInstance(loader)
-            && (old == null || !CxfContainerClassLoader.class.isInstance(old))) {
+                && (old == null || !CxfContainerClassLoader.class.isInstance(old))) {
             CxfContainerClassLoader.class.cast(loader).clear();
         }
         Thread.currentThread().setContextClassLoader(old);
@@ -181,7 +192,7 @@ public final class CxfUtil {
 
             if (!DataBinding.class.isInstance(instance)) {
                 throw new OpenEJBRuntimeException(instance + " is not a " + DataBinding.class.getName()
-                    + ", please check configuration of service [id=" + databinding + "]");
+                        + ", please check configuration of service [id=" + databinding + "]");
             }
             svrFactory.setDataBinding((DataBinding) instance);
         }
@@ -237,10 +248,11 @@ public final class CxfUtil {
     }
 
     public static void configureBus() {
-        final SystemInstance systemInstance = SystemInstance.get();
-        if (systemInstance.getProperties().containsKey(BUS_CONFIGURED_FLAG)) { // jaxws and jaxrs for instance
+        if (USER_COUNT.incrementAndGet() > 1) {
             return;
         }
+
+        final SystemInstance systemInstance = SystemInstance.get();
 
         final Bus bus = getBus();
 
@@ -273,7 +285,7 @@ public final class CxfUtil {
         }
 
         final ServiceConfiguration configuration = new ServiceConfiguration(systemInstance.getProperties(),
-            systemInstance.getComponent(OpenEjbConfiguration.class).facilities.services);
+                systemInstance.getComponent(OpenEjbConfiguration.class).facilities.services);
 
         final Collection<ServiceInfo> serviceInfos = configuration.getAvailableServices();
         Properties properties = configuration.getProperties();

@@ -184,6 +184,12 @@ public class CxfRSService extends RESTService {
     }
 
     @Override
+    public void stop() throws ServiceException {
+        super.stop();
+        CxfUtil.release();
+    }
+
+    @Override
     protected void beforeStart() {
         super.beforeStart();
         destinationFactory = new HTTPTransportFactory();
