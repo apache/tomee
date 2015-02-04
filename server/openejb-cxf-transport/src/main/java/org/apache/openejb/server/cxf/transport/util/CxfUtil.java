@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.server.cxf.transport.util;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.binding.BindingFactory;
@@ -71,6 +72,7 @@ public final class CxfUtil {
     public static final String BUS_CONFIGURED_FLAG = "openejb.cxf.bus.configured";
     private static final Map<String, BindingFactory> bindingFactoryMap = new ConcurrentHashMap<String, BindingFactory>(8, 0.75f, 4);
     private static final AtomicReference<Bus> DEFAULT_BUS = new AtomicReference<Bus>();
+    private static final AtomicInteger USER_COUNT = new AtomicInteger();
     private static volatile boolean usingBindingFactoryMap = false;
 
     private CxfUtil() {
@@ -79,6 +81,15 @@ public final class CxfUtil {
 
     public static boolean hasService(final String name) {
         return usingBindingFactoryMap && bindingFactoryMap.containsKey(name);
+    }
+
+    public static void release() { // symmetric of configureBus(), when last caller of configureBus() is calls this bus is destroyed
+        if (USER_COUNT.decrementAndGet() == 0) {
+            final Bus b = DEFAULT_BUS.get();
+            if (b != null) {
+                b.shutdown(true);
+            }
+        }
     }
 
     private static Bus initDefaultBus() {
@@ -248,6 +259,8 @@ public final class CxfUtil {
     }
 
     public static void configureBus() {
+        USER_COUNT.incrementAndGet();
+
         final SystemInstance systemInstance = SystemInstance.get();
         if (systemInstance.getProperties().containsKey(BUS_CONFIGURED_FLAG)) { // jaxws and jaxrs for instance
             return;

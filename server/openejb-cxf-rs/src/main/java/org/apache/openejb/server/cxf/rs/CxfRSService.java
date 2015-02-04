@@ -16,12 +16,14 @@
  */
 package org.apache.openejb.server.cxf.rs;
 
+import java.util.ArrayList;
 import org.apache.cxf.Bus;
 import org.apache.cxf.binding.BindingFactoryManager;
 import org.apache.cxf.jaxrs.JAXRSBindingFactory;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.assembler.classic.event.AssemblerAfterApplicationCreated;
+import org.apache.openejb.assembler.classic.event.AssemblerBeforeApplicationDestroyed;
 import org.apache.openejb.cdi.WebBeansContextCreated;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.observer.Observes;
@@ -141,6 +143,12 @@ public class CxfRSService extends RESTService {
                 CxfUtil.clearBusLoader(oldLoader);
             }
         }
+    }
+
+    @Override
+    public void stop() throws ServiceException {
+        super.stop();
+        CxfUtil.release();
     }
 
     @Override

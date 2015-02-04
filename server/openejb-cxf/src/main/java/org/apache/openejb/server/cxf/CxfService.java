@@ -23,6 +23,7 @@ import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
 import org.apache.openejb.core.ivm.naming.JaxWsServiceReference;
 import org.apache.openejb.core.webservices.PortData;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.cxf.client.SaajInterceptor;
 import org.apache.openejb.server.cxf.client.WebServiceInjectionConfigurator;
 import org.apache.openejb.server.cxf.ejb.EjbWsContainer;
@@ -54,6 +55,7 @@ public class CxfService extends WsService {
         return "cxf";
     }
 
+    @Override
     public void init(final Properties props) throws java.lang.Exception {
         super.init(props);
         CxfUtil.configureBus();
@@ -64,6 +66,12 @@ public class CxfService extends WsService {
         if (SystemInstance.get().getComponent(JaxWsServiceReference.WebServiceClientCustomizer.class) == null) {
             SystemInstance.get().setComponent(JaxWsServiceReference.WebServiceClientCustomizer.class, new WebServiceInjectionConfigurator());
         }
+    }
+
+    @Override
+    public void stop() throws ServiceException {
+        super.stop();
+        CxfUtil.release();
     }
 
     private void initBusTransport(final Bus bus) {
