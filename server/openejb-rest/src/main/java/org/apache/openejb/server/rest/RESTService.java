@@ -920,7 +920,8 @@ public abstract class RESTService implements ServerService, SelfManaging {
 
     public void undeploy(@Observes final AssemblerBeforeApplicationDestroyed event) {
         final AppInfo app = event.getApp();
-        if (deployedApplications.contains(app)) {
+        final boolean removed = deployedApplications.remove(app);
+        if (removed) {
             for (final WebAppInfo webApp : app.webApps) {
                 final List<DeployedService> toRemove = new ArrayList<>();
                 for (final DeployedService service : services) {
