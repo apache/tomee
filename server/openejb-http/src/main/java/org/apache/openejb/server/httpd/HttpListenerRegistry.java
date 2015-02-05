@@ -16,6 +16,23 @@
  */
 package org.apache.openejb.server.httpd;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.StringTokenizer;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSessionEvent;
+import javax.servlet.http.HttpSessionListener;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.cdi.CdiAppContextsService;
@@ -29,23 +46,6 @@ import org.apache.openejb.web.LightweightWebAppBuilder;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.spi.ContextsService;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSessionEvent;
-import javax.servlet.http.HttpSessionListener;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.StringTokenizer;
-
 /**
  * @version $Revision$ $Date$
  */
@@ -58,6 +58,8 @@ public class HttpListenerRegistry implements HttpListener {
     private final File[] resourceBases;
     private final Map<String, String> defaultContextTypes = new HashMap<>();
     private final String welcomeFile = SystemInstance.get().getProperty("openejb.http.welcome", "index.html");
+    private final Map<String, byte[]> cache = new HashMap<>();
+    private final boolean cacheResources = "true".equals(SystemInstance.get().getProperty("openejb.http.resource.cache", "false"));
 
     public HttpListenerRegistry() {
         HttpServletRequest mock = null;
@@ -199,19 +201,19 @@ public class HttpListenerRegistry implements HttpListener {
                 if (servletPath != null) {
                     URL url = SystemInstance.get().getComponent(ServletContext.class).getResource(servletPath);
                     if (url != null) {
-                        serveResource(response, url);
+                        serveResource(servletPath, response, url);
                     } else {
                         final String pathWithoutSlash = "/".equals(path) ? welcomeFile :
                                 (servletPath.startsWith("/") ? servletPath.substring(1) : servletPath);
                         url = defaultClassLoader.getResource("META-INF/resources/" + pathWithoutSlash);
                         if (url != null) {
-                            serveResource(response, url);
+                            serveResource(servletPath, response, url);
                         } else if (resourceBases.length > 0) {
                             for (final File f : resourceBases) {
                                 final File file = new File(f, pathWithoutSlash);
                                 if (file.isFile()) {
                                     url = file.toURI().toURL();
-                                    serveResource(response, url);
+                                    serveResource(servletPath, response, url);
                                     break;
                                 }
                             }
@@ -244,12 +246,28 @@ public class HttpListenerRegistry implements HttpListener {
         }
     }
 
-    private void serveResource(HttpResponse response, URL url) throws IOException {
-        final InputStream from = url.openStream();
-        try {
-            IO.copy(from, response.getOutputStream());
-        } finally {
-            IO.close(from);
+    private void serveResource(final String key, final HttpResponse response, final URL url) throws IOException {
+        if (cacheResources) {
+            byte[] value = cache.get(key);
+            if (value == null) {
+                final InputStream from = url.openStream();
+                try {
+                    ByteArrayOutputStream to = new ByteArrayOutputStream();
+                    IO.copy(from, to);
+                    value = to.toByteArray();
+                    cache.put(key, value);
+                } finally {
+                    IO.close(from);
+                }
+            }
+            response.getOutputStream().write(value);
+        } else {
+            final InputStream from = url.openStream();
+            try {
+                IO.copy(from, response.getOutputStream());
+            } finally {
+                IO.close(from);
+            }
         }
     }
 
