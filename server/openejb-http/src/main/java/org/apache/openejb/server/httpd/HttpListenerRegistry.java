@@ -57,6 +57,7 @@ public class HttpListenerRegistry implements HttpListener {
     private final ClassLoader defaultClassLoader;
     private final File[] resourceBases;
     private final Map<String, String> defaultContextTypes = new HashMap<>();
+    private final String welcomeFile = SystemInstance.get().getProperty("openejb.http.welcome", "index.html");
 
     public HttpListenerRegistry() {
         HttpServletRequest mock = null;
@@ -200,7 +201,8 @@ public class HttpListenerRegistry implements HttpListener {
                     if (url != null) {
                         serveResource(response, url);
                     } else {
-                        final String pathWithoutSlash = servletPath.startsWith("/") ? servletPath.substring(1) : servletPath;
+                        final String pathWithoutSlash = "/".equals(path) ? welcomeFile :
+                                (servletPath.startsWith("/") ? servletPath.substring(1) : servletPath);
                         url = defaultClassLoader.getResource("META-INF/resources/" + pathWithoutSlash);
                         if (url != null) {
                             serveResource(response, url);

@@ -16,31 +16,34 @@
  */
 package org.apache.openejb.server.stream;
 
+import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class CountingOutputStream extends OutputStream {
-    private final OutputStream delegate;
+// IMPORTANT: write(byte[]) methods are theorically useless but 1) good for perf, 2) avoid to break on windows (socket impl)
+public class CountingOutputStream extends FilterOutputStream {
     private int count = 0;
 
     public CountingOutputStream(final OutputStream rawIn) {
-        delegate = rawIn;
+        super(rawIn);
     }
 
     @Override
     public void write(final int b) throws IOException {
         count++;
-        delegate.write(b);
+        super.write(b);
     }
 
     @Override
-    public void flush() throws IOException {
-        delegate.flush();
+    public void write(final byte[] b) throws IOException {
+        count += b.length;
+        super.write(b);
     }
 
     @Override
-    public void close() throws IOException {
-        delegate.close();
+    public void write(final byte[] b, final int off, final int len) throws IOException {
+        count += len;
+        super.write(b, off, len);
     }
 
     public int getCount() {
