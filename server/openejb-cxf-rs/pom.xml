@@ -117,7 +117,7 @@
     <dependency> <!-- JohnzonProvider, WadlDocumentMessageBodyWriter and JsrProvider -->
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jaxrs</artifactId>
-      <version>0.2-incubating</version>
+      <version>0.5-incubating</version>
     </dependency>
   </dependencies>
 </project>

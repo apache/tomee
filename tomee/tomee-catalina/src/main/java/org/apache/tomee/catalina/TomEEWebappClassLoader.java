@@ -94,7 +94,7 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
         hashCode = construct();
         setJavaseClassLoader(getSystemClassLoader());
         containerClassLoader = ParentClassLoaderFinder.Helper.get();
-        isEar = getParent() != containerClassLoader;
+        isEar = getParent() != null && !getParent().equals(containerClassLoader);
         originalDelegate = getDelegate();
     }
 
@@ -103,7 +103,7 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
         hashCode = construct();
         setJavaseClassLoader(getSystemClassLoader());
         containerClassLoader = ParentClassLoaderFinder.Helper.get();
-        isEar = getParent() != containerClassLoader;
+        isEar = getParent() != null && !getParent().equals(containerClassLoader);
         originalDelegate = getDelegate();
     }
 

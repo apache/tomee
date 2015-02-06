@@ -167,6 +167,9 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
     @Parameter
     private List<String> applications;
 
+    @Parameter
+    private List<String> applicationScopes;
+
     @Parameter(property = "tomee-plugin.skip-current-project", defaultValue = "false")
     private boolean skipCurrentProject;
 
@@ -179,6 +182,7 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
             getLog().warn("this project is a pom, it is not deployable");
             return;
         }
+
 
         final Properties originalSystProp = new Properties();
         originalSystProp.putAll(System.getProperties());
@@ -331,24 +335,36 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
     private ClassLoader createClassLoader(final ClassLoader parent) {
         final List<URL> urls = new ArrayList<>();
         for (final Artifact artifact : (Set<Artifact>) project.getArtifacts()) {
+            final String scope = artifact.getScope();
+            if ((applicationScopes == null && !(Artifact.SCOPE_COMPILE.equals(scope) || Artifact.SCOPE_RUNTIME.equals(scope)))
+                    || (applicationScopes != null && !applicationScopes.contains(scope))) {
+                continue;
+            }
             try {
                 urls.add(artifact.getFile().toURI().toURL());
             } catch (final MalformedURLException e) {
                 getLog().warn("can't use artifact " + artifact.toString());
             }
         }
-        for (final File file : modules) {
-            if (file.exists()) {
-                try {
-                    urls.add(file.toURI().toURL());
-                } catch (final MalformedURLException e) {
-                    getLog().warn("can't use path " + file.getAbsolutePath());
+        if (modules != null) {
+            for (final File file : modules) {
+                if (file.exists()) {
+                    try {
+                        urls.add(file.toURI().toURL());
+                    } catch (final MalformedURLException e) {
+                        getLog().warn("can't use path " + file.getAbsolutePath());
+                    }
+                } else {
+                    getLog().warn("can't find " + file.getAbsolutePath());
                 }
-            } else {
-                getLog().warn("can't find " + file.getAbsolutePath());
             }
         }
-        return new URLClassLoader(urls.toArray(new URL[urls.size()]), parent);
+        return urls.isEmpty() ? parent : new URLClassLoader(urls.toArray(new URL[urls.size()]), parent) {
+            @Override
+            public boolean equals(final Object obj) {
+                return super.equals(obj) || parent.equals(obj); // fake container loader since we deploy the classpath normally (see tomee webapp loader)
+            }
+        };
     }
 
     private Configuration getConfig() { // lazy way but it works fine

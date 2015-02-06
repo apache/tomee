@@ -22,7 +22,6 @@ import org.apache.openejb.loader.SystemInstance;
 
 public interface ParentClassLoaderFinder {
     ClassLoader FALLBACK = OpenEJB.class.getClassLoader();
-    ;
 
     ClassLoader getParentClassLoader(final ClassLoader fallback);
 

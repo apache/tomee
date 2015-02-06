@@ -84,7 +84,7 @@ public class StandardContextCustomizer {
                 }
                 break;
             case Lifecycle.CONFIGURE_START_EVENT:
-                SystemInstance.get().getComponent(TomcatWebAppBuilder.class).setFinderOnContextConfig(StandardContext.class.cast(data), module.appModule());
+                SystemInstance.get().getComponent(TomcatWebAppBuilder.class).setFinderOnContextConfig(context, module.appModule());
                 break;
             default:
         }
