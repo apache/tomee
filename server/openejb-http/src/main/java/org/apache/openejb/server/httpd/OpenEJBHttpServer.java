@@ -230,7 +230,9 @@ public class OpenEJBHttpServer implements HttpServer {
         final HttpResponseImpl res = new HttpResponseImpl();
 
         try {
-            req.readMessage(in);
+            if (!req.readMessage(in)) {
+                return res;
+            }
 
             if (print.size() > 0 && print.contains(Output.REQUEST)) {
                 req.print(log, indent);

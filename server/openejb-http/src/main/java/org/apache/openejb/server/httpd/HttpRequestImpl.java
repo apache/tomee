@@ -405,10 +405,12 @@ public class HttpRequestImpl implements HttpRequest {
      * @param input the data input for this page
      * @throws java.io.IOException if an exception is thrown
      */
-    protected void readMessage(InputStream input) throws IOException {
+    protected boolean readMessage(InputStream input) throws IOException {
         final DataInput di = new DataInputStream(input);
 
-        readRequestLine(di);
+        if (!readRequestLine(di)) {
+            return false;
+        }
         readHeaders(di);
         readBody(di);
 
@@ -431,6 +433,7 @@ public class HttpRequestImpl implements HttpRequest {
                 }
             }
         }
+        return true;
     }
 
     public void print(final Logger log, boolean formatXml) {
@@ -460,7 +463,7 @@ public class HttpRequestImpl implements HttpRequest {
      * @param in the input to be read
      * @throws java.io.IOException if an exception is thrown
      */
-    private void readRequestLine(DataInput in) throws IOException {
+    private boolean readRequestLine(DataInput in) throws IOException {
         String line;
         try {
             line = in.readLine();
@@ -471,12 +474,16 @@ public class HttpRequestImpl implements HttpRequest {
                 + " : "
                 + e.getMessage());
         }
+        if (line == null) {
+            return false;
+        }
 
         StringTokenizer lineParts = new StringTokenizer(line, " ");
         /* [1] Parse the method */
         parseMethod(lineParts);
         /* [2] Parse the URI */
         parseURI(lineParts);
+        return true;
     }
 
     /**
