@@ -78,7 +78,7 @@ public final class PropertyPlaceHolderHelper {
                     throw new IllegalArgumentException(e);
                 }
             }
-            return cipher.decrypt(replace.substring(CIPHER_PREFIX.length() + algo.length()).toCharArray());
+            return cipher.decrypt(replace.substring(CIPHER_PREFIX.length() + algo.length() + 1).toCharArray());
         }
         return replace;
     }

@@ -39,6 +39,14 @@ public class PropertyPlaceHolderTest {
     }
 
     @Test
+    public void tomee1509() {
+        final String expected = "shuttt don't tell!";
+        final char[] encoded = new ReversePasswordCipher().encrypt(expected);
+        assertEquals(expected, PropertyPlaceHolderHelper.simpleValue("cipher:reverse:" + new String(encoded)));
+        assertEquals(expected, PropertyPlaceHolderHelper.simpleValue("cipher:" + ReversePasswordCipher.class.getName() + ":" + new String(encoded)));
+    }
+
+    @Test
     public void simpleReplace() {
         SystemInstance.get().setProperty("PropertyPlaceHolderTest", "ok");
 
