@@ -88,6 +88,7 @@ import org.apache.xbean.finder.UrlSet;
 import org.apache.xbean.finder.archive.Archive;
 import org.apache.xbean.finder.archive.ClassesArchive;
 import org.apache.xbean.finder.archive.CompositeArchive;
+import org.apache.xbean.finder.archive.FileArchive;
 import org.apache.xbean.finder.archive.JarArchive;
 import org.xml.sax.InputSource;
 
@@ -124,6 +125,7 @@ import java.util.concurrent.CountDownLatch;
 
 import static java.util.Arrays.asList;
 import static org.apache.openejb.config.DeploymentFilterable.DEPLOYMENTS_CLASSPATH_PROPERTY;
+import static org.apache.openejb.loader.JarLocation.jarLocation;
 import static org.apache.openejb.util.Classes.ancestors;
 
 @SuppressWarnings("deprecation")
@@ -306,7 +308,7 @@ public final class ApplicationComposers {
             errors.add(new Exception(gripe));
         }
 
-        if (modules < 1 && testClass.getAnnotation(Classes.class) == null) {
+        if (modules < 1 && testClass.getAnnotation(Classes.class) == null && testClass.getAnnotation(Default.class) == null) {
             final String gripe = "Test class should have at least one @Module method";
             errors.add(new Exception(gripe));
         }
@@ -529,6 +531,7 @@ public final class ApplicationComposers {
                 final Jars jarsAnnotation = method.getAnnotation(Jars.class);
                 final Classes classesAnnotation = method.getAnnotation(Classes.class);
                 final org.apache.openejb.junit.Classes classesAnnotationOld = method.getAnnotation(org.apache.openejb.junit.Classes.class);
+                final boolean defaultConfig = method.getAnnotation(Default.class) != null;
 
                 Class<?>[] classes = null;
                 Class<?>[] cdiInterceptors = null;
@@ -559,7 +562,8 @@ public final class ApplicationComposers {
                         method.getAnnotation(Descriptors.class), method.getAnnotation(JaxrsProviders.class),
                         webApp,
                         globalJarsAnnotation, jarsAnnotation,
-                        classes, cdiInterceptors, cdiAlternatives, cdiDecorators, cdi, innerClassesAsBean);
+                        classes, cdiInterceptors, cdiAlternatives, cdiDecorators, cdi, innerClassesAsBean,
+                        defaultConfig);
                 } else if (obj instanceof WebModule) { // will add the ejbmodule too
                     webModulesNb++;
 
@@ -574,7 +578,11 @@ public final class ApplicationComposers {
                         ejbModule.setBeans(beans(new Beans(), cdiDecorators, cdiInterceptors, cdiAlternatives));
                     }
 
-                    webModule.setFinder(finderFromClasses(webModule, classes, findFiles(jarsAnnotation)));
+                    Collection<File> files = findFiles(jarsAnnotation);
+                    if (defaultConfig) {
+                        (files == null ? files = new LinkedList<>() : files).add(jarLocation(testClass));
+                    }
+                    webModule.setFinder(finderFromClasses(webModule, classes, files));
                     ejbModule.setFinder(webModule.getFinder());
                 } else if (obj instanceof EjbModule) {
                     final EjbModule ejbModule = (EjbModule) obj;
@@ -588,7 +596,11 @@ public final class ApplicationComposers {
                         ejbModule.setBeans(beans(new Beans(), cdiDecorators, cdiInterceptors, cdiAlternatives));
                     }
 
-                    ejbModule.setFinder(finderFromClasses(ejbModule, classes, findFiles(jarsAnnotation)));
+                    Collection<File> files = findFiles(jarsAnnotation);
+                    if (defaultConfig) {
+                        (files == null ? files = new LinkedList<>() : files).add(jarLocation(testClass));
+                    }
+                    ejbModule.setFinder(finderFromClasses(ejbModule, classes, files));
                 } else if (obj instanceof EjbJar) {
 
                     final EjbJar ejbJar = (EjbJar) obj;
@@ -604,7 +616,11 @@ public final class ApplicationComposers {
                         ejbModule.setBeans(beans(new Beans(), cdiDecorators, cdiInterceptors, cdiAlternatives));
                     }
 
-                    ejbModule.setFinder(finderFromClasses(ejbModule, classes, findFiles(jarsAnnotation)));
+                    Collection<File> files = findFiles(jarsAnnotation);
+                    if (defaultConfig) {
+                        (files == null ? files = new LinkedList<>() : files).add(jarLocation(testClass));
+                    }
+                    ejbModule.setFinder(finderFromClasses(ejbModule, classes, files));
                 } else if (obj instanceof EnterpriseBean) {
 
                     final EnterpriseBean bean = (EnterpriseBean) obj;
@@ -618,7 +634,11 @@ public final class ApplicationComposers {
                     if (cdi) {
                         ejbModule.setBeans(beans(new Beans(), cdiDecorators, cdiInterceptors, cdiAlternatives));
                     }
-                    ejbModule.setFinder(finderFromClasses(ejbModule, classes, findFiles(jarsAnnotation)));
+                    Collection<File> files = findFiles(jarsAnnotation);
+                    if (defaultConfig) {
+                        (files == null ? files = new LinkedList<>() : files).add(jarLocation(testClass));
+                    }
+                    ejbModule.setFinder(finderFromClasses(ejbModule, classes, files));
                 } else if (obj instanceof Application) {
 
                     application = (Application) obj;
@@ -649,7 +669,11 @@ public final class ApplicationComposers {
                     if (cdi) {
                         ejbModule.setBeans(beans(beans, cdiDecorators, cdiInterceptors, cdiAlternatives));
                     }
-                    ejbModule.setFinder(finderFromClasses(ejbModule, classes, findFiles(jarsAnnotation)));
+                    Collection<File> files = findFiles(jarsAnnotation);
+                    if (defaultConfig) {
+                        (files == null ? files = new LinkedList<>() : files).add(jarLocation(testClass));
+                    }
+                    ejbModule.setFinder(finderFromClasses(ejbModule, classes, files));
                 } else if (obj instanceof Class[]) {
 
                     final Class[] beans = (Class[]) obj;
@@ -711,7 +735,7 @@ public final class ApplicationComposers {
                     null, null,
                     webapp, globalJarsAnnotation, null, classClasses.value(),
                     classClasses.cdiInterceptors(), classClasses.cdiAlternatives(), classClasses.cdiDecorators(),
-                    classClasses.cdi(), classClasses.innerClassesAsBean());
+                    classClasses.cdi(), classClasses.innerClassesAsBean(), testClass.getAnnotation(Default.class) != null);
             webModulesNb++;
         }
 
@@ -880,7 +904,8 @@ public final class ApplicationComposers {
                           final Class<?>[] cdiAlternatives,
                           final Class<?>[] cdiDecorators,
                           final boolean cdi,
-                          final boolean innerClassesAsBean) throws OpenEJBException {
+                          final boolean innerClassesAsBean,
+                          final boolean autoConfig) throws OpenEJBException {
         String root = webapp.getContextRoot();
         if (root == null) {
             root = "/openejb";
@@ -889,6 +914,18 @@ public final class ApplicationComposers {
         testBean.getEnvEntry().addAll(webapp.getEnvEntry());
 
         final WebModule webModule = new WebModule(webapp, root, Thread.currentThread().getContextClassLoader(), "", root);
+
+        final File thisJar;
+        if (autoConfig) {
+            thisJar = jarLocation(testClass);
+            try {
+                webModule.getAltDDs().putAll(DeploymentLoader.mapDescriptors(new ResourceFinder("", webModule.getClassLoader(), thisJar.toURI().toURL())));
+            } catch (final IOException e) {
+                throw new IllegalStateException(e);
+            }
+        } else {
+            thisJar = null;
+        }
 
         webModule.getAltDDs().putAll(additionalDescriptors);
         for (final Descriptors d : asList(testClass.getAnnotation(Descriptors.class), descriptors)) {
@@ -946,6 +983,13 @@ public final class ApplicationComposers {
                 libs.addAll(files);
             }
         }
+        if (autoConfig) {
+            if (libs == null) {
+                libs = new LinkedList<>();
+            }
+            libs.add(thisJar);
+        }
+
         final IAnnotationFinder finder = finderFromClasses(webModule, classes, libs);
         webModule.setFinder(finder);
         ejbModule.setFinder(webModule.getFinder());
@@ -1224,7 +1268,7 @@ public final class ApplicationComposers {
             final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             for (final File f : others) {
                 try {
-                    archives.add(new JarArchive(classLoader, f.toURI().toURL()));
+                    archives.add(f.isDirectory() ? new FileArchive(classLoader, f) : new JarArchive(classLoader, f.toURI().toURL()));
                 } catch (final MalformedURLException e) {
                     throw new IllegalArgumentException(e);
                 }
