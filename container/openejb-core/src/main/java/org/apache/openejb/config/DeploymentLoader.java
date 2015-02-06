@@ -193,28 +193,29 @@ public class DeploymentLoader implements DeploymentFilterable {
             if (ConnectorModule.class.equals(moduleClass)) {
                 final String jarLocation = URLs.toFilePath(baseUrl);
                 final ConnectorModule connectorModule = createConnectorModule(jarLocation, jarLocation, getOpenEJBClassLoader(), null);
+                if (connectorModule != null) {
+                    final List<ConnectorModule> connectorModules = new ArrayList<ConnectorModule>();
 
-                final List<ConnectorModule> connectorModules = new ArrayList<ConnectorModule>();
-
-                // let it be able to deploy the same connector several times
-                final String id = connectorModule.getModuleId();
-                if (!"true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.connector." + id + ".skip-default", "false"))) {
-                    connectorModules.add(connectorModule);
-                }
-
-                final String aliases = SystemInstance.get().getProperty("openejb.connector." + id + ".aliases");
-                if (aliases != null) {
-                    for (final String alias : aliases.split(",")) {
-                        final ConnectorModule aliasModule = createConnectorModule(jarLocation, jarLocation, getOpenEJBClassLoader(), alias);
-                        connectorModules.add(aliasModule);
+                    // let it be able to deploy the same connector several times
+                    final String id = connectorModule.getModuleId();
+                    if (!"true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.connector." + id + ".skip-default", "false"))) {
+                        connectorModules.add(connectorModule);
                     }
+
+                    final String aliases = SystemInstance.get().getProperty("openejb.connector." + id + ".aliases");
+                    if (aliases != null) {
+                        for (final String alias : aliases.split(",")) {
+                            final ConnectorModule aliasModule = createConnectorModule(jarLocation, jarLocation, getOpenEJBClassLoader(), alias);
+                            connectorModules.add(aliasModule);
+                        }
+                    }
+
+
+                    // Wrap the resource module with an Application Module
+                    final AppModule appModule = new AppModule(connectorModules.toArray(new ConnectorModule[connectorModules.size()]));
+
+                    return appModule;
                 }
-
-
-                // Wrap the resource module with an Application Module
-                final AppModule appModule = new AppModule(connectorModules.toArray(new ConnectorModule[connectorModules.size()]));
-
-                return appModule;
             }
 
             if (WebModule.class.equals(moduleClass)) {
@@ -290,7 +291,9 @@ public class DeploymentLoader implements DeploymentFilterable {
         if (webModule.getAltDDs().containsKey("ra.xml")) {
             final String jarLocation = new File(webModule.getJarLocation(), "/WEB-INF/classes").getAbsolutePath();
             final ConnectorModule connectorModule = createConnectorModule(jarLocation, jarLocation, webModule.getClassLoader(), webModule.getModuleId() + "RA", (URL) webModule.getAltDDs().get("ra.xml"));
-            appModule.getConnectorModules().add(connectorModule);
+            if (connectorModule != null) {
+                appModule.getConnectorModules().add(connectorModule);
+            }
         }
 
         // .rar
@@ -300,7 +303,9 @@ public class DeploymentLoader implements DeploymentFilterable {
                 if (file.getName().endsWith(".rar")) {
                     final String jarLocation = file.getAbsolutePath();
                     final ConnectorModule connectorModule = createConnectorModule(jarLocation, jarLocation, webModule.getClassLoader(), null);
-                    appModule.getConnectorModules().add(connectorModule);
+                    if (connectorModule != null) {
+                        appModule.getConnectorModules().add(connectorModule);
+                    }
                 }
             } catch (final Exception e) {
                 logger.error("error processing url " + url.toExternalForm(), e);
@@ -327,7 +332,9 @@ public class DeploymentLoader implements DeploymentFilterable {
 
                     final String jarLocation = file.getAbsolutePath();
                     final ConnectorModule connectorModule = createConnectorModule(jarLocation, jarLocation, webModule.getClassLoader(), null);
-                    appModule.getConnectorModules().add(connectorModule);
+                    if (connectorModule != null) {
+                        appModule.getConnectorModules().add(connectorModule);
+                    }
                 }
             } catch (final Exception e) {
                 logger.error("error processing url " + url.toExternalForm(), e);
@@ -590,8 +597,9 @@ public class DeploymentLoader implements DeploymentFilterable {
                         }
                     }
                     final ConnectorModule connectorModule = createConnectorModule(appId, URLs.toFilePath(rarUrl), appClassLoader, moduleName);
-
-                    appModule.getConnectorModules().add(connectorModule);
+                    if (connectorModule != null) {
+                        appModule.getConnectorModules().add(connectorModule);
+                    }
                 } catch (final OpenEJBException e) {
                     logger.error("Unable to load RAR: " + appId + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
                 }
@@ -1429,6 +1437,10 @@ public class DeploymentLoader implements DeploymentFilterable {
     protected static ConnectorModule createConnectorModule(final String appId, final String rarPath, final ClassLoader parentClassLoader, final String moduleId, final URL raXmlUrl) throws OpenEJBException {
         final URL baseUrl;// unpack the rar file
         File rarFile = new File(rarPath);
+        if (!rarFile.exists()) {
+            logger.warning(rarPath + " doesn't exist, skipping connector");
+            return null;
+        }
         rarFile = unpack(rarFile);
         baseUrl = getFileUrl(rarFile);
 
