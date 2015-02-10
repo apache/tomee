@@ -110,7 +110,7 @@ public class OpenEJBHttpRegistry {
             try {
                 if (request instanceof HttpRequestImpl) {
                     final HttpRequestImpl httpRequest = HttpRequestImpl.class.cast(request);
-                    final WebContext web = findWebContext(request.getURI().getPath());
+                    final WebContext web = findWebContext(request.getURI() == null ? request.getContextPath() : request.getURI().getPath());
                     if (web != null) {
                         if (web.getClassLoader() != null) {
                             thread.setContextClassLoader(web.getClassLoader());

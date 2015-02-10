@@ -28,6 +28,7 @@ import javax.servlet.AsyncEvent;
 import javax.servlet.AsyncListener;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -226,21 +227,48 @@ public class OpenEJBAsyncContext implements AsyncContext {
         try {
             final String contextPath = this.context.getContextRoot().startsWith("/") ? this.context.getContextRoot() : ('/' + this.context.getContextRoot());
             final HttpRequestImpl req = new HttpRequestImpl(new URI(request.getRequestURI())) {
+                private String thisPath = path;
+                private String thisContextPath = contextPath;
+
                 @Override
                 public String getContextPath() {
-                    return contextPath;
+                    return thisContextPath;
                 }
 
                 @Override
                 public String getServletPath() {
-                    return path;
+                    return thisPath;
+                }
+                
+                @Override
+                public void initServletPath(final String servlet) {
+                    thisPath = servlet;
                 }
 
                 @Override
-                public String getRequestURI() {
+                public void initPathFromContext(final String context) {
+                    super.initPathFromContext(context);
+                    thisContextPath = super.getContextPath();
+                }
+
+                @Override
+                public String getRequestURI() { // not thisContextPath + thisPath since it would break JAXRS
                     return contextPath + path;
                 }
+
+                @Override
+                public ServletInputStream getInputStream() throws IOException {
+                    return request.getInputStream();
+                }
+
+                @Override
+                public String getMethod() {
+                    return request.getMethod();
+                }
             };
+            if (HttpRequestImpl.class.isInstance(request)) { // needed for some advanced cases like async
+                req.setUri(HttpRequestImpl.class.cast(request).getURI());
+            }
             registry.onMessage(req, HttpResponse.class.isInstance(response) ? HttpResponse.class.cast(response) : new ServletResponseAdapter(HttpServletResponse.class.cast(response)));
             complete();
         } catch (final Exception e) {

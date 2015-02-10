@@ -42,6 +42,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import javax.servlet.DispatcherType;
 
 public class TomcatRsRegistry implements RsRegistry {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_STARTUP, TomcatRsRegistry.class);
@@ -127,6 +128,9 @@ public class TomcatRsRegistry implements RsRegistry {
 
         final FilterMap filterMap = new FilterMap();
         filterMap.addURLPattern(urlPattern);
+        for (final DispatcherType type : DispatcherType.values()) {
+            filterMap.setDispatcher(type.name());
+        }
         filterMap.setFilterName(filterDef.getFilterName());
         context.addFilterMap(filterMap);
 

@@ -198,6 +198,10 @@ public class HttpRequestImpl implements HttpRequest {
         this.socketURI = socketURI;
     }
 
+    public void setUri(final URI uri) {
+        this.uri = uri;
+    }
+
     /**
      * Gets a header based the header name passed in.
      *
@@ -1154,7 +1158,7 @@ public class HttpRequestImpl implements HttpRequest {
 
     @Override
     public boolean isAsyncSupported() {
-        return false;
+        return true;
     }
 
     @Override
