@@ -38,7 +38,9 @@ import java.net.HttpURLConnection;
 import java.net.Socket;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.Executors;
@@ -262,6 +264,41 @@ public class OpenEJBAsyncContext implements AsyncContext {
                 }
 
                 @Override
+                public Object getAttribute(final String name) {
+                    return request.getAttribute(name);
+                }
+
+                @Override
+                public Enumeration<String> getAttributeNames() {
+                    return request.getAttributeNames();
+                }
+
+                @Override
+                public void setAttribute(final String name, final Object value) {
+                    request.setAttribute(name, value);
+                }
+
+                @Override
+                public String getHeader(final String name) {
+                    return request.getHeader(name);
+                }
+
+                @Override
+                public Enumeration<String> getHeaderNames() {
+                    return request.getHeaderNames();
+                }
+
+                @Override
+                public Enumeration<String> getHeaders(final String s) {
+                    return request.getHeaders(s);
+                }
+
+                @Override
+                public int getIntHeader(final String s) {
+                    return request.getIntHeader(s);
+                }
+
+                @Override
                 public String getMethod() {
                     return request.getMethod();
                 }
@@ -269,6 +306,7 @@ public class OpenEJBAsyncContext implements AsyncContext {
             if (HttpRequestImpl.class.isInstance(request)) { // needed for some advanced cases like async
                 req.setUri(HttpRequestImpl.class.cast(request).getURI());
             }
+            req.setAttribute("openejb_async_dispatch", true);
             registry.onMessage(req, HttpResponse.class.isInstance(response) ? HttpResponse.class.cast(response) : new ServletResponseAdapter(HttpServletResponse.class.cast(response)));
             complete();
         } catch (final Exception e) {
