@@ -807,7 +807,14 @@ public final class ApplicationComposers {
             || annotation != null || annotationOld != null) {
             try {
                 if (annotation != null) {
-                    initFilteredServiceManager(annotation.value());
+                    final List<String> value = new ArrayList<String>(asList(annotation.value()));
+                    if (annotation.jaxrs()) {
+                        value.add("jaxrs");
+                    }
+                    if (annotation.jaxws()) {
+                        value.add("jaxws");
+                    }
+                    initFilteredServiceManager(value.toArray(new String[value.size()]));
                 }
                 if (annotationOld != null) {
                     initFilteredServiceManager(annotationOld.value());
