@@ -92,15 +92,6 @@ import org.apache.xbean.finder.archive.FileArchive;
 import org.apache.xbean.finder.archive.JarArchive;
 import org.xml.sax.InputSource;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.context.RequestScoped;
-import javax.enterprise.context.SessionScoped;
-import javax.enterprise.inject.spi.Extension;
-import javax.inject.Inject;
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -122,6 +113,15 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.SessionScoped;
+import javax.enterprise.inject.spi.Extension;
+import javax.inject.Inject;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 
 import static java.util.Arrays.asList;
 import static org.apache.openejb.config.DeploymentFilterable.DEPLOYMENTS_CLASSPATH_PROPERTY;
@@ -1390,5 +1390,17 @@ public final class ApplicationComposers {
         } catch (final Exception e) {
             throw new OpenEJBRuntimeException(e);
         }
+    }
+
+    public static void main(final String[] args) throws Exception {
+        if (args.length < 1) {
+            throw new IllegalArgumentException("provide at least application class as parameter");
+        }
+
+        final Class<?> c = Thread.currentThread().getContextClassLoader().loadClass(args[0]);
+
+        final List<String> a = new ArrayList<String>(asList(args));
+        a.remove(0);
+        run(c, a.toArray(new String[a.size()]));
     }
 }
