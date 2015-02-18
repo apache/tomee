@@ -126,6 +126,12 @@ public class ObserverManager {
         return invocation;
     }
 
+    public void destroy() {
+        for (final Observer o : new LinkedList<>(observers)) {
+            removeObserver(o.observer);
+        }
+    }
+
     private static enum Phase {
         BEFORE,
         INVOKE,

@@ -1526,7 +1526,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         l.lock();
 
         try {
-            SystemInstance.get().fireEvent(new ContainerSystemPreDestroy());
+            SystemInstance systemInstance = SystemInstance.get();
+            systemInstance.fireEvent(new ContainerSystemPreDestroy());
 
             try {
                 EjbTimerServiceImpl.shutdown();
@@ -1578,11 +1579,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 // no-op
             }
 
-            SystemInstance.get().removeComponent(OpenEjbConfiguration.class);
-            SystemInstance.get().removeComponent(JtaEntityManagerRegistry.class);
-            SystemInstance.get().removeComponent(TransactionSynchronizationRegistry.class);
-            SystemInstance.get().removeComponent(EjbResolver.class);
-            SystemInstance.get().fireEvent(new AssemblerDestroyed());
+            systemInstance.removeComponent(OpenEjbConfiguration.class);
+            systemInstance.removeComponent(JtaEntityManagerRegistry.class);
+            systemInstance.removeComponent(TransactionSynchronizationRegistry.class);
+            systemInstance.removeComponent(EjbResolver.class);
+            systemInstance.fireEvent(new AssemblerDestroyed());
+            systemInstance.removeObservers();
             SystemInstance.reset();
         } finally {
             l.unlock();

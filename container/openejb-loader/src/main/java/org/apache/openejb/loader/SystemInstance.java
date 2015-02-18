@@ -380,4 +380,8 @@ public final class SystemInstance {
     public boolean hasProperty(final String propName) {
         return this.internalProperties.get(propName) != null;
     }
+
+    public void removeObservers() {
+        observerManager.destroy();
+    }
 }
