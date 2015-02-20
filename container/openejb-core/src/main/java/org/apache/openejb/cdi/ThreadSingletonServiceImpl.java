@@ -139,7 +139,11 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         services.put(BeanArchiveService.class, new OpenEJBBeanInfoService());
         services.put(AppContext.class, appContext);
         services.put(JNDIService.class, new OpenEJBJndiService());
-        services.put(ELAdaptor.class, new CustomELAdapter(appContext));
+        try {
+            services.put(ELAdaptor.class, new CustomELAdapter(appContext));
+        } catch (final NoClassDefFoundError noClassDefFoundError) {
+            // no-op: no javax.el
+        }
         services.put(ScannerService.class, new CdiScanner());
         services.put(ApplicationBoundaryService.class, new DefaultApplicationBoundaryService());
         final LoaderService loaderService = SystemInstance.get().getComponent(LoaderService.class);

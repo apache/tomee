@@ -579,6 +579,8 @@ public class JndiBuilder {
             }
         } catch (final NamingException e) {
             throw new OpenEJBRuntimeException("Unable to bind mdb destination in jndi.", e);
+        } catch (final NoClassDefFoundError ncdfe) {
+            // no-op: no jms API
         }
     }
 
