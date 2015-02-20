@@ -1120,20 +1120,24 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     private void resumePersistentSchedulers(final AppContext appContext) {
-        final Scheduler globalScheduler = SystemInstance.get().getComponent(Scheduler.class);
-        final Collection<Scheduler> schedulers = new ArrayList<Scheduler>();
-        for (final BeanContext ejb : appContext.getBeanContexts()) {
-            final Scheduler scheduler = ejb.get(Scheduler.class);
-            if (scheduler == null || scheduler == globalScheduler || schedulers.contains(scheduler)) {
-                continue;
-            }
+        try { // if quartz is missing
+            final Scheduler globalScheduler = SystemInstance.get().getComponent(Scheduler.class);
+            final Collection<Scheduler> schedulers = new ArrayList<Scheduler>();
+            for (final BeanContext ejb : appContext.getBeanContexts()) {
+                final Scheduler scheduler = ejb.get(Scheduler.class);
+                if (scheduler == null || scheduler == globalScheduler || schedulers.contains(scheduler)) {
+                    continue;
+                }
 
-            schedulers.add(scheduler);
-            try {
-                scheduler.resumeAll();
-            } catch (final Exception e) {
-                logger.warning("Can't resume scheduler for " + ejb.getEjbName(), e);
+                schedulers.add(scheduler);
+                try {
+                    scheduler.resumeAll();
+                } catch (final Exception e) {
+                    logger.warning("Can't resume scheduler for " + ejb.getEjbName(), e);
+                }
             }
+        } catch (final NoClassDefFoundError ncdfe) {
+            // no-op
         }
     }
 
@@ -1533,6 +1537,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 EjbTimerServiceImpl.shutdown();
             } catch (final Exception e) {
                 logger.warning("Unable to shutdown scheduler", e);
+            } catch (final NoClassDefFoundError ncdfe) {
+                // no-op
             }
 
             logger.debug("Undeploying Applications");
