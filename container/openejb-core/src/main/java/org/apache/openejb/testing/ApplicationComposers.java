@@ -946,6 +946,7 @@ public final class ApplicationComposers {
             thisJar = jarLocation(testClass);
             try {
                 webModule.getAltDDs().putAll(DeploymentLoader.mapDescriptors(new ResourceFinder("", webModule.getClassLoader(), thisJar.toURI().toURL())));
+                webModule.getAltDDs().putAll(DeploymentLoader.getWebDescriptors(new File(thisJar.getParentFile().getParentFile(), "src/main/webapp")));
             } catch (final IOException e) {
                 throw new IllegalStateException(e);
             }
