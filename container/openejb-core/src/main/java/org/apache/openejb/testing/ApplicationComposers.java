@@ -72,6 +72,7 @@ import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.testing.rest.ContextProvider;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.NetworkUtil;
+import org.apache.openejb.util.PropertyPlaceHolderHelper;
 import org.apache.openejb.util.ServiceManagerProxy;
 import org.apache.openejb.util.URLs;
 import org.apache.openejb.web.LightweightWebAppBuilder;
@@ -436,11 +437,19 @@ public final class ApplicationComposers {
             SystemInstance.reset();
         }
 
+        Collection<String> propertiesToSetAgain = null;
         final ContainerProperties configAnnot = testClass.getAnnotation(ContainerProperties.class);
         if (configAnnot != null) {
             for (final ContainerProperties.Property p : configAnnot.value()) {
                 final String value = p.value();
-                configuration.put(p.name(), value.equals(ContainerProperties.Property.IGNORED) ? null : value);
+                final String name = p.name();
+                configuration.put(name, value.equals(ContainerProperties.Property.IGNORED) ? null : value);
+                if (value.contains("${")) {
+                    if (propertiesToSetAgain == null) {
+                        propertiesToSetAgain = new LinkedList<>();
+                    }
+                    propertiesToSetAgain.add(name);
+                }
             }
         }
 
@@ -468,6 +477,7 @@ public final class ApplicationComposers {
                 }
             }
         }
+
         for (final Map.Entry<Object, ClassFinder> finder : testClassFinders.entrySet()) {
             if (!finder.getValue().findAnnotatedClasses(SimpleLog.class).isEmpty()) {
                 SystemInstance.get().setProperty("openejb.jul.forceReload", "true");
@@ -824,6 +834,15 @@ public final class ApplicationComposers {
             } catch (final ServiceManagerProxy.AlreadyStartedException e) {
                 throw new OpenEJBRuntimeException(e);
             }
+        }
+
+        if (propertiesToSetAgain != null) {
+            for (final String name : propertiesToSetAgain) {
+                final String value = PropertyPlaceHolderHelper.simpleValue(SystemInstance.get().getProperty(name));
+                configuration.put(name, value);
+                System.setProperty(name, value); // done lazily to support placeholders so container will not do it here
+            }
+            propertiesToSetAgain.clear();
         }
 
         servletContext = new MockServletContext();
