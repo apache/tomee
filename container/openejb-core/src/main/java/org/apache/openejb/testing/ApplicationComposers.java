@@ -995,6 +995,12 @@ public final class ApplicationComposers {
                 libs = new LinkedList<>();
             }
             libs.add(thisJar);
+            if ("test-classes".equals(thisJar.getName()) && "target".equals(thisJar.getParentFile().getName())) {
+                final File mainClasses = new File(thisJar.getParentFile(), "classes");
+                if (mainClasses.exists()) {
+                    libs.add(mainClasses);
+                }
+            }
         }
 
         final IAnnotationFinder finder = finderFromClasses(webModule, classes, libs);
