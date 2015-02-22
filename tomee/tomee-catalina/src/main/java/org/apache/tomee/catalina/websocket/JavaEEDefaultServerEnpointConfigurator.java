@@ -32,7 +32,11 @@ public class JavaEEDefaultServerEnpointConfigurator extends DefaultServerEndpoin
 
     @Override
     public <T> T getEndpointInstance(final Class<T> clazz) throws InstantiationException {
-        final InstanceManager instanceManager = instanceManagers.get(clazz.getClassLoader());
+        final ClassLoader classLoader = clazz.getClassLoader();
+        InstanceManager instanceManager = instanceManagers.get(classLoader);
+        if (instanceManager == null && classLoader == ClassLoader.getSystemClassLoader() && instanceManagers.size() == 1) {
+            instanceManager = instanceManagers.values().iterator().next();
+        }
         if (instanceManager == null) {
             return super.getEndpointInstance(clazz);
         }
