@@ -20,6 +20,7 @@ import org.apache.openejb.SystemException;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.core.transaction.TxRequired;
 
+import javax.annotation.Priority;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
@@ -27,6 +28,7 @@ import javax.transaction.Transactional;
 
 @Interceptor
 @Transactional(Transactional.TxType.REQUIRED)
+@Priority(200)
 public class RequiredInterceptor extends InterceptorBase {
     @AroundInvoke
     public Object intercept(final InvocationContext ic) throws Exception {

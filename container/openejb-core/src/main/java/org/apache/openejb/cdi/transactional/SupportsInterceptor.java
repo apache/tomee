@@ -21,6 +21,7 @@ import org.apache.openejb.SystemException;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.core.transaction.TxSupports;
 
+import javax.annotation.Priority;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
@@ -28,6 +29,7 @@ import javax.transaction.Transactional;
 
 @Interceptor
 @Transactional(Transactional.TxType.SUPPORTS)
+@Priority(200)
 public class SupportsInterceptor extends InterceptorBase {
     @AroundInvoke
     public Object intercept(final InvocationContext ic) throws Exception {
