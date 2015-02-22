@@ -19,7 +19,6 @@ package org.apache.tomee.embedded;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.JarLocation;
 import org.apache.openejb.util.NetworkUtil;
-import org.apache.openejb.util.classloader.URLClassLoaderFirst;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -56,7 +55,6 @@ import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -81,7 +79,7 @@ public class ClasspathAsWebappTest {
                             .http(NetworkUtil.getNextAvailablePort())
                             .property("openejb.container.additional.exclude", "org.apache.tomee.embedded.")
                             .property("openejb.additional.include", "tomee-"))
-                .deployPathsAsWebapp("", asList(JarLocation.jarLocation(MyInitializer.class).toURI().toURL()), null)
+                .deployPathsAsWebapp(JarLocation.jarLocation(MyInitializer.class))
                 .inject(this)) {
 
             // Servlet (initializer, servlet)

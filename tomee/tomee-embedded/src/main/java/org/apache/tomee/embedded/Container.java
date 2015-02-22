@@ -93,6 +93,7 @@ import java.io.InputStream;
 import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -100,6 +101,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
+
+import static java.util.Arrays.asList;
 
 /**
  * @version $Rev$ $Date$
@@ -164,6 +167,22 @@ public class Container implements AutoCloseable {
                     docBase);
         } catch (final MalformedURLException e) {
             return deployPathsAsWebapp(context, jarList, docBase);
+        }
+    }
+
+    public Container deployPathsAsWebapp(final File... jarList) {
+        try {
+            if (jarList == null || jarList.length < 1) {
+                throw new IllegalArgumentException("The file does not have content");
+            }
+
+            List<URL> urls = new ArrayList<URL>();
+            for (File jar : jarList) {
+                urls.addAll(asList(jar.toURI().toURL()));
+            }
+            return this.deployPathsAsWebapp(null, urls, null);
+        } catch (final MalformedURLException e) {
+            throw new IllegalArgumentException(e);
         }
     }
 
