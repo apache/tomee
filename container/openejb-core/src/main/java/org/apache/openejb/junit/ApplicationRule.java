@@ -39,12 +39,15 @@ public class ApplicationRule implements TestRule {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
+                final Thread thread = Thread.currentThread();
+                final ClassLoader old = thread.getContextClassLoader();
                 final ApplicationComposers composers = new ApplicationOnlyApplicationComposers(instance);
                 composers.deployApp(instance);
                 try {
                     statement.evaluate();
                 } finally {
                     composers.stopApplication();
+                    thread.setContextClassLoader(old);
                 }
             }
         };

@@ -29,6 +29,7 @@ import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.startup.Catalina;
 import org.apache.catalina.startup.CatalinaProperties;
 import org.apache.catalina.startup.Tomcat;
+import org.apache.commons.lang3.text.StrSubstitutor;
 import org.apache.coyote.http11.Http11Protocol;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
@@ -344,7 +345,23 @@ public class Container implements AutoCloseable {
         }
 
         final Properties props = configuration.getProperties();
+
         if (props != null) {
+            StrSubstitutor substitutor = null;
+            for (final String s : props.stringPropertyNames()) {
+                final String v = props.getProperty(s);
+                if (v != null && v.contains("${")) {
+                    if (substitutor == null) {
+                        final Map<String, String> placeHolders = new HashMap<>();
+                        placeHolders.put("tomee.embedded.http", Integer.toString(configuration.getHttpPort()));
+                        placeHolders.put("tomee.embedded.https", Integer.toString(configuration.getHttpsPort()));
+                        placeHolders.put("tomee.embedded.stop", Integer.toString(configuration.getStopPort()));
+                        substitutor = new StrSubstitutor(placeHolders);
+                    }
+                    props.put(s, substitutor.replace(v));
+                }
+            }
+
             // inherit from system props
             final Properties properties = new Properties(System.getProperties());
             properties.putAll(configuration.getProperties());
@@ -819,6 +836,7 @@ public class Container implements AutoCloseable {
                     container.await();
                     end.countDown();
                 } catch (final Exception e) {
+                    end.countDown();
                     throw new IllegalStateException(e);
                 }
             }
