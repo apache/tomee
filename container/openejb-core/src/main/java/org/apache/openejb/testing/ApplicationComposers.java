@@ -410,10 +410,12 @@ public class ApplicationComposers {
         final Jars globalJarsAnnotation = testClass.getAnnotation(Jars.class);
 
         // Invoke the @Module producer methods to build out the AppModule
+        int moduleNumber = 0;
         final Map<Object, List<Method>> moduleMethods = new HashMap<>();
         findAnnotatedMethods(moduleMethods, Module.class);
         findAnnotatedMethods(moduleMethods, org.apache.openejb.junit.Module.class);
         for (final Map.Entry<Object, List<Method>> methods : moduleMethods.entrySet()) {
+            moduleNumber += methods.getValue().size();
             for (final Method method : methods.getValue()) {
                 final Object obj = method.invoke(methods.getKey());
                 final Jars jarsAnnotation = method.getAnnotation(Jars.class);
@@ -612,6 +614,8 @@ public class ApplicationComposers {
                     appModule.getAdditionalLibraries().addAll(module.getAdditionalLibraries());
                     appModule.getAltDDs().putAll(module.getAltDDs());
                     appModule.getProperties().putAll(module.getProperties());
+                } else {
+                    moduleNumber--;
                 }
             }
         }
@@ -627,6 +631,7 @@ public class ApplicationComposers {
                     classClasses.cdiInterceptors(), classClasses.cdiAlternatives(), classClasses.cdiDecorators(),
                     classClasses.cdi(), classClasses.innerClassesAsBean(), testClass.getAnnotation(Default.class) != null);
             webModulesNb++;
+            moduleNumber++;
         }
 
         // Application is final in AppModule, which is fine, so we'll create a new one and move everything
@@ -671,7 +676,7 @@ public class ApplicationComposers {
             }
         }
 
-        if (moduleMethods.size() == 1 && webModulesNb == 1) {
+        if (moduleNumber == 1 && webModulesNb == 1) {
             appModule.setStandloneWebModule();
         }
 
