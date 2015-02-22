@@ -156,6 +156,7 @@ public class ApplicationComposers {
     private ServiceManagerProxy serviceManager;
 
     // invocation context
+    private ClassLoader originalLoader;
     private AppInfo appInfo;
     private Assembler assembler;
     private AppContext appContext;
@@ -1009,6 +1010,9 @@ public class ApplicationComposers {
             OpenEJB.destroy();
         } finally {
             runAll(afterRunnables);
+            if (originalLoader != null) {
+                Thread.currentThread().setContextClassLoader(originalLoader);
+            }
         }
     }
 
@@ -1185,6 +1189,7 @@ public class ApplicationComposers {
     }
 
     public void startContainer(final Object instance) throws Exception {
+        originalLoader = Thread.currentThread().getContextClassLoader();
         testClassFinders.remove(this); // see constructor
 
         // For the moment we just take the first @Configuration method
