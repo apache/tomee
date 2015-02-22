@@ -81,6 +81,11 @@ public class Configuration {
         return dir;
     }
 
+    public Configuration dir(final String dir) {
+        setDir(dir);
+        return this;
+    }
+
     public void setDir(final String dir) {
         this.dir = dir;
     }

@@ -96,6 +96,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -103,6 +104,7 @@ import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 
 /**
  * @version $Rev$ $Date$
@@ -143,6 +145,10 @@ public class Container implements AutoCloseable {
     }
 
     public Container deployClasspathAsWebApp(final String context, final File docBase, final String... dependencies) {
+        return deployClasspathAsWebApp(context, docBase, Collections.<String>emptyList(), dependencies);
+    }
+
+    public Container deployClasspathAsWebApp(final String context, final File docBase, final List<String> callers, final String... dependencies) {
         final List<URL> jarList = new DeploymentsResolver.ClasspathSearcher().loadUrls(Thread.currentThread().getContextClassLoader()).getUrls();
         if (dependencies != null) {
             for (final String dep : dependencies) {
@@ -164,7 +170,8 @@ public class Container implements AutoCloseable {
                     NewLoaderLogic.applyBuiltinExcludes(
                             new UrlSet(jarList), NewLoaderLogic.ADDITIONAL_INCLUDE == null ?
                                     null : Filters.prefixes(NewLoaderLogic.ADDITIONAL_INCLUDE.split("[ \t\n\n]*,[ \t\n\n]*"))).getUrls(),
-                    docBase);
+                    docBase,
+                    callers == null || callers.isEmpty() ? null : callers.toArray(new String[callers.size()]));
         } catch (final MalformedURLException e) {
             return deployPathsAsWebapp(context, jarList, docBase);
         }
@@ -176,7 +183,7 @@ public class Container implements AutoCloseable {
                 throw new IllegalArgumentException("The file does not have content");
             }
 
-            final List<URL> urls = new ArrayList<URL>(jarList.length);
+            final List<URL> urls = new ArrayList<>(jarList.length);
             for (final File jar : jarList) {
                 urls.addAll(asList(jar.toURI().toURL()));
             }
@@ -186,7 +193,7 @@ public class Container implements AutoCloseable {
         }
     }
 
-    public Container deployPathsAsWebapp(final String context, final List<URL> jarList, final File docBase) {
+    public Container deployPathsAsWebapp(final String context, final List<URL> jarList, final File docBase, final String... additionalCallers) {
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
         final SystemInstance systemInstance = SystemInstance.get();
 
@@ -229,7 +236,7 @@ public class Container implements AutoCloseable {
             throw new IllegalStateException(e);
         }
 
-        addCallersAsEjbModule(loader, app);
+        addCallersAsEjbModule(loader, app, additionalCallers);
 
         systemInstance.addObserver(new StandardContextCustomizer(webModule));
 
@@ -243,8 +250,11 @@ public class Container implements AutoCloseable {
         return this;
     }
 
-    private static void addCallersAsEjbModule(final ClassLoader loader, final AppModule app) {
-        final Set<String> callers = NewLoaderLogic.callers(Filters.classes(Container.class.getName(), "org.apache.openejb.maven.plugins.TomEEEmbeddedMojo"));
+    private static void addCallersAsEjbModule(final ClassLoader loader, final AppModule app, final String... additionalCallers) {
+        final Set<String> callers = new HashSet<>(NewLoaderLogic.callers(Filters.classes(Container.class.getName(), "org.apache.openejb.maven.plugins.TomEEEmbeddedMojo")));
+        if (additionalCallers != null && additionalCallers.length > 0) {
+            callers.addAll(asList(additionalCallers));
+        }
         if (callers.isEmpty()) {
             return;
         }

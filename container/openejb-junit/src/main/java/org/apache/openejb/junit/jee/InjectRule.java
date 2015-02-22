@@ -26,6 +26,11 @@ public class InjectRule implements TestRule {
     private final StartingStatement startingStatement;
     private final Object test;
 
+    public InjectRule(final Object test) {
+        this.test = test;
+        this.startingStatement = null;
+    }
+
     public InjectRule(final Object target, final EJBContainerRule rule) {
         this(target, rule.getStartingStatement());
     }
