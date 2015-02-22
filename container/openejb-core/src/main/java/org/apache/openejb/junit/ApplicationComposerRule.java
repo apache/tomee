@@ -35,6 +35,14 @@ public class ApplicationComposerRule implements TestRule {
         }
     }
 
+    public <T> T getInstance(final Class<T> as) {
+        return as.cast(instance);
+    }
+
+    public Object[] getModules() {
+        return modules;
+    }
+
     @Override
     public Statement apply(final Statement base, final Description description) {
         return new DeployApplication(instance, base, new ApplicationComposers(instance.getClass(), modules));

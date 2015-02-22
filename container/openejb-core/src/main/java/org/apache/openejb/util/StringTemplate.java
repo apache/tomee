@@ -54,7 +54,7 @@ public class StringTemplate {
             if (value == null) {
                 throw new IllegalStateException("Value is null for key '" + key + "'. Template '" + template + "'. Keys: " + Join.join(", ", map.keySet()));
             }
-            matcher.appendReplacement(buf, value);
+            matcher.appendReplacement(buf, value.replace("$", "\\$")); // inner class have a $ we need to escape cause it means sthg for regex
         }
 
         matcher.appendTail(buf);

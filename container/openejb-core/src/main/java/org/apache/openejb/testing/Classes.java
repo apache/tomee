@@ -27,6 +27,8 @@ import java.lang.annotation.Target;
 public @interface Classes {
     Class<?>[] value() default {};
 
+    String[] excludes() default {};
+
     Class<?>[] cdiInterceptors() default {};
 
     Class<?>[] cdiDecorators() default {};
