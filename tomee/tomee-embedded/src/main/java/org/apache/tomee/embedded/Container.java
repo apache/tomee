@@ -176,11 +176,11 @@ public class Container implements AutoCloseable {
                 throw new IllegalArgumentException("The file does not have content");
             }
 
-            List<URL> urls = new ArrayList<URL>();
-            for (File jar : jarList) {
+            final List<URL> urls = new ArrayList<URL>(jarList.length);
+            for (final File jar : jarList) {
                 urls.addAll(asList(jar.toURI().toURL()));
             }
-            return this.deployPathsAsWebapp(null, urls, null);
+            return deployPathsAsWebapp(null, urls, null);
         } catch (final MalformedURLException e) {
             throw new IllegalArgumentException(e);
         }

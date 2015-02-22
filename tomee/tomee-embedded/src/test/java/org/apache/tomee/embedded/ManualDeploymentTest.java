@@ -54,7 +54,7 @@ public class ManualDeploymentTest {
                     .as(ExplodedExporter.class)
                     .exportExploded(parent);
 
-            final Context ctx = container.addContext("/", war.getAbsolutePath());
+            final Context ctx = container.addContext("", war.getAbsolutePath());
 
             final Wrapper wrapper = Tomcat.addServlet(ctx, "awesome", AServlet.class.getName());
             ctx.addServletMapping("/awesome", wrapper.getName());
