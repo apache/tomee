@@ -29,6 +29,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
+import static java.util.Arrays.asList;
+
 public class TomEEEmbeddedRule implements TestRule {
     private final Configuration configuration;
     private final File docBase;
@@ -36,7 +38,7 @@ public class TomEEEmbeddedRule implements TestRule {
     private final Collection<Object> injects = new LinkedList<>();
 
     public TomEEEmbeddedRule() {
-        this(new Configuration().http(NetworkUtil.getNextAvailablePort()), "");
+        this(new Configuration().http(NetworkUtil.getNextAvailablePort()).dir(autoDir()), "");
     }
 
     public TomEEEmbeddedRule(final Configuration configuration, final String context) {
@@ -77,6 +79,9 @@ public class TomEEEmbeddedRule implements TestRule {
 
     @Override
     public Statement apply(final Statement statement, Description description) {
+        if (configuration.getDir() == null) {
+            configuration.dir(autoDir());
+        }
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
@@ -100,5 +105,15 @@ public class TomEEEmbeddedRule implements TestRule {
             callers.add(o.getClass().getName());
         }
         return new LinkedList<>(callers);
+    }
+
+    private static String autoDir() {
+        for (final String test : asList("target", "../target", "workdir")) {
+            final File dir = new File(test);
+            if (dir.isDirectory()) {
+                return new File(dir, "tomee-embedded_" + System.identityHashCode(test)).getAbsolutePath();
+            }
+        }
+        return null;
     }
 }
