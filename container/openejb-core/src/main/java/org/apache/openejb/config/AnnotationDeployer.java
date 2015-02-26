@@ -439,6 +439,15 @@ public class AnnotationDeployer implements DynamicDeployer {
     }
 
     public static class DiscoverAnnotatedBeans implements DynamicDeployer {
+        private ClassesFolderDiscover classesFolderDiscover;
+
+        public DiscoverAnnotatedBeans() {
+            this.classesFolderDiscover = SystemInstance.get().getComponent(ClassesFolderDiscover.class);
+            if (this.classesFolderDiscover == null) {
+                this.classesFolderDiscover = new MavenClassesFolderDiscover();
+            }
+        }
+
         public AppModule deploy(AppModule appModule) throws OpenEJBException {
             if (!appModule.isWebapp() && !appModule.getWebModules().isEmpty()) { // need to scan for jsf stuff at least
                 try {
@@ -1297,7 +1306,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                 if (beans != null) {
                     managedClasses = beans.getManagedClasses();
-                    getBeanClasses(beans.getUri(), finder, managedClasses, beans.getNotManagedClasses());
+                    getBeanClasses(beans.getUri(), finder, managedClasses, beans.getNotManagedClasses(), ejbModule.getAltDDs());
 
                     // passing jar location to be able to manage maven classes/test-classes which have the same moduleId
                     String id = ejbModule.getModuleId();
@@ -1628,7 +1637,10 @@ public class AnnotationDeployer implements DynamicDeployer {
             return name != null && name.length() != 0;
         }
 
-        private void getBeanClasses(final String uri, final IAnnotationFinder finder, final Map<URL, List<String>> classes, final Map<URL, List<String>> notManaged) {
+        private void getBeanClasses(final String uri, final IAnnotationFinder finder,
+                                    final Map<URL, List<String>> classes,
+                                    final Map<URL, List<String>> notManaged,
+                                    final Map<String, Object> altDD) {
 
             //  What we're hoping in this method is to get lucky and find
             //  that our 'finder' instances is an AnnotationFinder that is
@@ -1664,9 +1676,11 @@ public class AnnotationDeployer implements DynamicDeployer {
             Collection<Class<?>> discoveredBeans = null;
             List<Class<? extends Extension>> extensions = null;
 
+            final Object altDDFound = altDD.get("beans.xml");
+            final URL classesBeansXml = URL.class.isInstance(altDDFound) ? URL.class.cast(altDDFound) : null;
             for (final Map.Entry<URL, List<String>> entry : map.entrySet()) {
                 final URL key = entry.getKey();
-                final URL beansXml = hasBeansXml(key);
+                final URL beansXml = hasBeansXml(key, classesBeansXml);
                 final List<String> value = entry.getValue();
                 if (beansXml != null) {
                     classes.put(beansXml, value);
@@ -1758,14 +1772,15 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
         }
 
-        public static URL hasBeansXml(final URL url) {
+        public URL hasBeansXml(final URL url, final URL classesBeansXml) {
             final String urlPath = url.getPath();
             if (urlPath.endsWith("/WEB-INF/beans.xml")) {
                 return url;
             }
             if (urlPath.endsWith("WEB-INF/classes/") || urlPath.endsWith("WEB-INF/classes")) {
+                final File toFile = URLs.toFile(url);
                 {
-                    final File file = new File(URLs.toFile(url).getParent(), "beans.xml");
+                    final File file = new File(toFile.getParent(), "beans.xml");
                     if (file.exists()) {
                         try {
                             return file.toURI().toURL();
@@ -1775,7 +1790,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
                 {
-                    final File file = new File(URLs.toFile(url), "classes/beans.xml");
+                    final File file = new File(toFile, "classes/beans.xml");
                     if (file.exists()) {
                         try {
                             return file.toURI().toURL();
@@ -1815,6 +1830,12 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 } catch (final IOException e) {
                     // no-op
+                }
+            }
+            if (classesFolderDiscover != null) {
+                final File asFile = URLs.toFile(url);
+                if (asFile.isDirectory() && classesFolderDiscover.isClassesFolder(asFile)) {
+                    return classesBeansXml;
                 }
             }
             return null;
@@ -5670,5 +5691,17 @@ public class AnnotationDeployer implements DynamicDeployer {
 
     public static class ProvidedJAXRSApplication extends Application {
         // no-method
+    }
+
+    public static interface ClassesFolderDiscover {
+        boolean isClassesFolder(final File dir);
+    }
+
+    public static class MavenClassesFolderDiscover implements ClassesFolderDiscover {
+        @Override
+        public boolean isClassesFolder(final File dir) {
+            return dir.getName().equals("classes")
+                    && dir.getParentFile().getName().equals("target");
+        }
     }
 }
