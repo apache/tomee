@@ -439,15 +439,6 @@ public class AnnotationDeployer implements DynamicDeployer {
     }
 
     public static class DiscoverAnnotatedBeans implements DynamicDeployer {
-        private ClassesFolderDiscover classesFolderDiscover;
-
-        public DiscoverAnnotatedBeans() {
-            this.classesFolderDiscover = SystemInstance.get().getComponent(ClassesFolderDiscover.class);
-            if (this.classesFolderDiscover == null) {
-                this.classesFolderDiscover = new MavenClassesFolderDiscover();
-            }
-        }
-
         public AppModule deploy(AppModule appModule) throws OpenEJBException {
             if (!appModule.isWebapp() && !appModule.getWebModules().isEmpty()) { // need to scan for jsf stuff at least
                 try {
@@ -1676,11 +1667,10 @@ public class AnnotationDeployer implements DynamicDeployer {
             Collection<Class<?>> discoveredBeans = null;
             List<Class<? extends Extension>> extensions = null;
 
-            final Object altDDFound = altDD.get("beans.xml");
-            final URL classesBeansXml = URL.class.isInstance(altDDFound) ? URL.class.cast(altDDFound) : null;
+            final FolderDDMapper ddMapper = SystemInstance.get().getComponent(FolderDDMapper.class);
             for (final Map.Entry<URL, List<String>> entry : map.entrySet()) {
                 final URL key = entry.getKey();
-                final URL beansXml = hasBeansXml(key, classesBeansXml);
+                final URL beansXml = hasBeansXml(key, ddMapper);
                 final List<String> value = entry.getValue();
                 if (beansXml != null) {
                     classes.put(beansXml, value);
@@ -1772,7 +1762,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
         }
 
-        public URL hasBeansXml(final URL url, final URL classesBeansXml) {
+        public URL hasBeansXml(final URL url, final FolderDDMapper ddMapper) {
             final String urlPath = url.getPath();
             if (urlPath.endsWith("/WEB-INF/beans.xml")) {
                 return url;
@@ -1832,10 +1822,18 @@ public class AnnotationDeployer implements DynamicDeployer {
                     // no-op
                 }
             }
-            if (classesFolderDiscover != null) {
+            if (ddMapper != null) {
                 final File asFile = URLs.toFile(url);
-                if (asFile.isDirectory() && classesFolderDiscover.isClassesFolder(asFile)) {
-                    return classesBeansXml;
+                if (asFile.isDirectory()) {
+                    final File ddFolder = ddMapper.getDDFolder(asFile);
+                    final File file = new File(ddFolder, "beans.xml");
+                    if (file.isFile()) {
+                        try {
+                            return file.toURI().toURL();
+                        } catch (final MalformedURLException e) {
+                            // no-op
+                        }
+                    }
                 }
             }
             return null;
@@ -5693,15 +5691,7 @@ public class AnnotationDeployer implements DynamicDeployer {
         // no-method
     }
 
-    public static interface ClassesFolderDiscover {
-        boolean isClassesFolder(final File dir);
-    }
-
-    public static class MavenClassesFolderDiscover implements ClassesFolderDiscover {
-        @Override
-        public boolean isClassesFolder(final File dir) {
-            return dir.getName().equals("classes")
-                    && dir.getParentFile().getName().equals("target");
-        }
+    public static interface FolderDDMapper {
+        File getDDFolder(final File dir);
     }
 }

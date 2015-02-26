@@ -222,6 +222,14 @@ public class Container implements AutoCloseable {
             throw new IllegalArgumentException(e);
         }
 
+        final File beansXml = new File(docBase, "WEB-INF/beans.xml");
+        if (beansXml.exists()) { // add it since it is not in the scanned path by default
+            try {
+                webModule.getAltDDs().put("beans.xml", beansXml.toURI().toURL());
+            } catch (final MalformedURLException e) {
+                // no-op
+            }
+        }
         DeploymentLoader.addBeansXmls(webModule);
 
         final AppModule app = new AppModule(loader, null);
@@ -229,7 +237,9 @@ public class Container implements AutoCloseable {
         app.setStandaloneModule(true);
         app.setModuleId(webModule.getModuleId());
         try {
-            webModule.getAltDDs().putAll(DeploymentLoader.getWebDescriptors(jarLocation));
+            final Map<String, URL> webDescriptors = DeploymentLoader.getWebDescriptors(jarLocation);
+            webDescriptors.remove("beans.xml");
+            webModule.getAltDDs().putAll(webDescriptors);
             DeploymentLoader.addWebModule(webModule, app);
             DeploymentLoader.addWebModuleDescriptors(new File(webModule.getJarLocation()).toURI().toURL(), webModule, app);
         } catch (final Exception e) {
@@ -239,6 +249,14 @@ public class Container implements AutoCloseable {
         addCallersAsEjbModule(loader, app, additionalCallers);
 
         systemInstance.addObserver(new StandardContextCustomizer(webModule));
+        systemInstance.setComponent(AnnotationDeployer.FolderDDMapper.class, new AnnotationDeployer.FolderDDMapper() {
+            @Override
+            public File getDDFolder(final File dir) {
+                // maven
+                return dir.getName().equals("classes") && dir.getParentFile().getName().equals("target") ?
+                        new File(docBase, "WEB-INF") : null;
+            }
+        });
 
         try {
             final AppInfo appInfo = configurationFactory.configureApplication(app);
