@@ -34,8 +34,8 @@ public class ContainerClassesFilter implements Filter {
     private final Filter delegateSkip;
 
     public ContainerClassesFilter(final Properties configuration) {
-        final String forcedStr = configuration.getProperty("openejb.container.additional.exclude", null);
-        final String skippedStr = configuration.getProperty("openejb.container.additional.include", null);
+        final String forcedStr = configuration == null ? null : configuration.getProperty("openejb.container.additional.exclude", null);
+        final String skippedStr = configuration == null ? null : configuration.getProperty("openejb.container.additional.include", null);
         forced = forcedStr == null ? EMPTY_ARRAY : forcedStr.split(" *, *");
         skipped = skippedStr == null ? EMPTY_ARRAY : skippedStr.split(" *, *");
 
