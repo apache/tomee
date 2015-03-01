@@ -28,12 +28,14 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 
 import static java.util.Arrays.asList;
 
 public class TomEEEmbeddedRule implements TestRule {
     private final Configuration configuration;
     private final File docBase;
+    private boolean resetSystemProperties = true;
     private final String context;
     private final Collection<Object> injects = new LinkedList<>();
 
@@ -64,6 +66,11 @@ public class TomEEEmbeddedRule implements TestRule {
         return this;
     }
 
+    public TomEEEmbeddedRule resetSystemPropertiesAfter(final boolean value) {
+        resetSystemProperties = value;
+        return this;
+    }
+
     public TomEEEmbeddedRule stopInjectionOn(final Object instance) {
         this.injects.remove(instance);
         return this;
@@ -85,12 +92,22 @@ public class TomEEEmbeddedRule implements TestRule {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
+                final Properties properties = new Properties();
+                if (resetSystemProperties) {
+                    properties.putAll(System.getProperties());
+                }
+
                 try (final Container container = new Container(configuration)
                                      .deployClasspathAsWebApp(context, docBase, toCallers())) {
                     for (final Object o : injects) {
                         container.inject(o);
                     }
                     statement.evaluate();
+                } finally {
+                    if (resetSystemProperties) { // issue is we set System Properties like default loader which breaks other tests
+                        System.getProperties().clear();
+                        System.getProperties().putAll(properties);
+                    }
                 }
             }
         };
