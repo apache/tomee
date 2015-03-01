@@ -72,10 +72,13 @@ public class ContainerClassesFilter implements Filter {
         excluded.add("com.ibm.wsdl");
         excluded.add("net.sf.ehcache");
         excluded.add("junit");
+        excluded.add("org.junit");
         excluded.add("serp");
 
         final Set<String> included = new HashSet<>();
         included.add("org.apache.myfaces.cdi");
+        // included.add("org.apache.myfaces.application.cdi");
+        included.add("org.apache.myfaces.flow.cdi");
 
         delegateSkip = new OptimizedExclusionFilter(excluded);
         delegateAccept = new OptimizedExclusionFilter(included);
