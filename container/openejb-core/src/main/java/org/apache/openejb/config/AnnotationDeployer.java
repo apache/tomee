@@ -5691,7 +5691,7 @@ public class AnnotationDeployer implements DynamicDeployer {
         // no-method
     }
 
-    public static interface FolderDDMapper {
+    public interface FolderDDMapper {
         File getDDFolder(final File dir);
     }
 }
