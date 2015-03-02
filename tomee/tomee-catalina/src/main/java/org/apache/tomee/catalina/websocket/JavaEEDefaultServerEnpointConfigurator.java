@@ -35,6 +35,12 @@ public class JavaEEDefaultServerEnpointConfigurator extends DefaultServerEndpoin
         final ClassLoader classLoader = clazz.getClassLoader();
         InstanceManager instanceManager = instanceManagers.get(classLoader);
 
+        if (instanceManager == null) {
+            final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+            if (tccl != null) {
+                instanceManager = instanceManagers.get(tccl);
+            }
+        }
         // if we have a single app fallback otherwise we don't have enough contextual information here
         if (instanceManager == null && instanceManagers.size() == 1) {
             instanceManager = instanceManagers.values().iterator().next();
