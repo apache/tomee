@@ -202,7 +202,7 @@ public class Container implements AutoCloseable {
             contextRoot = "/" + context;
         }
 
-        final File jarLocation = docBase == null ? fakeRootDir() : docBase;
+        File jarLocation = docBase == null || !docBase.isDirectory() ? fakeRootDir() : docBase;
         final WebModule webModule = new WebModule(new WebApp(), contextRoot, loader, jarLocation.getAbsolutePath(), contextRoot.replace("/", ""));
         if (docBase == null) {
             webModule.getProperties().put("fakeJarLocation", "true");

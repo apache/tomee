@@ -19,6 +19,7 @@ package org.apache.tomee.embedded;
 import org.apache.openejb.util.NetworkUtil;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -256,5 +257,21 @@ public class Configuration {
 
     public void setKeepServerXmlAsThis(final boolean keepServerXmlAsThis) {
         this.keepServerXmlAsThis = keepServerXmlAsThis;
+    }
+
+    public Configuration user(final String name, final String pwd) {
+        if (users == null) {
+            users = new HashMap<>();
+        }
+        this.users.put(name, pwd);
+        return this;
+    }
+
+    public Configuration role(final String user, final String roles) {
+        if (this.roles == null) {
+            this.roles = new HashMap<>();
+        }
+        this.roles.put(user, roles);
+        return this;
     }
 }
