@@ -84,7 +84,9 @@ public class FinderFactory {
             finder = newFinder(new ConfigurableClasspathArchive(connectorModule, connectorModule.getLibraries()));
             finder = useFallbackFinderIfNeededOrLink(module, finder);
         } else if (module instanceof AppModule) {
-            final Collection<URL> urls = NewLoaderLogic.applyBuiltinExcludes(new UrlSet(AppModule.class.cast(module).getAdditionalLibraries())).getUrls();
+            final AppModule appModule = AppModule.class.cast(module);
+            final Collection<URL> urls = NewLoaderLogic.applyBuiltinExcludes(new UrlSet(appModule.getAdditionalLibraries())).getUrls();
+            urls.addAll(appModule.getScannableContainerUrls());
             finder = newFinder(new WebappAggregatedArchive(module.getClassLoader(), module.getAltDDs(), urls));
             finder = useFallbackFinderIfNeededOrLink(module, finder);
         } else if (module.getJarLocation() != null) {

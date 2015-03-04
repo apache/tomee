@@ -954,34 +954,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         // determine war class path
 
         final List<URL> webUrls = new ArrayList<>();
-        if (containerUrls == null) {
-            if ("true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.scan.webapp.container", "false"))) {
-                synchronized (this) {
-                    if (containerUrls == null) {
-                        try {
-                            UrlSet urlSet = new UrlSet(ParentClassLoaderFinder.Helper.get());
-                            urlSet = URLs.cullSystemJars(urlSet);
-                            urlSet = NewLoaderLogic.applyBuiltinExcludes(urlSet);
-                            containerUrls = urlSet.getUrls();
-
-                            final boolean skipContainerFolders = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.scan.webapp.container.skip-folder", "true"));
-                            final Iterator<URL> it = containerUrls.iterator();
-                            while (it.hasNext()) { // remove lib/
-                                final File file = URLs.toFile(it.next());
-                                // TODO: see if websocket should be added in default.exclusions
-                                if ((skipContainerFolders && file.isDirectory()) || file.getName().endsWith("tomcat-websocket.jar")) {
-                                    it.remove();
-                                }
-                            }
-                        } catch (final Exception e) {
-                            logger.error(e.getMessage(), e);
-                        }
-                    }
-                }
-            } else {
-                containerUrls = Collections.emptyList();
-            }
-        }
+        ensureContainerUrls();
         webUrls.addAll(containerUrls);
 
         // add these urls first to ensure we load classes from here first
@@ -1091,6 +1064,37 @@ public class DeploymentLoader implements DeploymentFilterable {
         return webModule;
     }
 
+    private void ensureContainerUrls() {
+        if (containerUrls == null) {
+            if ("true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.scan.webapp.container", "false"))) {
+                synchronized (this) {
+                    if (containerUrls == null) {
+                        try {
+                            UrlSet urlSet = new UrlSet(ParentClassLoaderFinder.Helper.get());
+                            urlSet = URLs.cullSystemJars(urlSet);
+                            urlSet = NewLoaderLogic.applyBuiltinExcludes(urlSet);
+                            containerUrls = urlSet.getUrls();
+
+                            final boolean skipContainerFolders = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.scan.webapp.container.skip-folder", "true"));
+                            final Iterator<URL> it = containerUrls.iterator();
+                            while (it.hasNext()) { // remove lib/
+                                final File file = URLs.toFile(it.next());
+                                // TODO: see if websocket should be added in default.exclusions
+                                if ((skipContainerFolders && file.isDirectory()) || file.getName().endsWith("tomcat-websocket.jar")) {
+                                    it.remove();
+                                }
+                            }
+                        } catch (final Exception e) {
+                            logger.error(e.getMessage(), e);
+                        }
+                    }
+                }
+            } else {
+                containerUrls = Collections.emptyList();
+            }
+        }
+    }
+
     public static List<URL> filterWebappUrls(final URL[] webUrls, final URL exclusions) {
         Filter excludeFilter = null;
         if (exclusions != null) {
@@ -1191,6 +1195,9 @@ public class DeploymentLoader implements DeploymentFilterable {
             return;
         }
         complete.removeDuplicates();
+
+        ensureContainerUrls();
+        appModule.getScannableContainerUrls().addAll(containerUrls);
 
         IAnnotationFinder finder;
         try {

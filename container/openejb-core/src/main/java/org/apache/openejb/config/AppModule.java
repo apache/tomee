@@ -52,6 +52,7 @@ public class AppModule implements DeploymentModule {
     private final Application application;
     private final ValidationContext validation;
     private final List<URL> additionalLibraries = new ArrayList<URL>();
+    private final List<URL> scannableContainerUrls = new ArrayList<URL>();
     private final List<ConnectorModule> connectorModules = new ArrayList<ConnectorModule>();
     private final List<WebModule> webModules = new ArrayList<WebModule>();
     private final List<ClientModule> clientModules = new ArrayList<ClientModule>();
@@ -77,6 +78,10 @@ public class AppModule implements DeploymentModule {
 
     public AppModule(final ClassLoader classLoader, final String jarLocation) {
         this(classLoader, jarLocation, null, false);
+    }
+
+    public List<URL> getScannableContainerUrls() {
+        return scannableContainerUrls;
     }
 
     // shared between org.apache.openejb.config.AutoConfig.resolvePersistenceRefs() and org.apache.openejb.config.AppInfoBuilder.buildPersistenceModules()
