@@ -171,7 +171,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.17</version>
+        <version>2.18</version>
         <configuration>
           <reuseForks>true</reuseForks>
           <forkCount>1</forkCount>
@@ -182,7 +182,7 @@
             <suiteXmlFile>src/test/resources/passing.xml</suiteXmlFile>
           </suiteXmlFiles>
           <properties>
-            <property> <!-- broken cause @RequestScoped beans are parameter and testng logs parameters -->
+            <property> <!-- broken cause @RequestScoped beans are parameters and testng logs parameters -->
               <name>usedefaultlisteners</name>
               <value>false</value>
             </property>
@@ -203,6 +203,7 @@
             <openejb.cdi.producer.interception>false</openejb.cdi.producer.interception>
             <openejb.cdi.filter.classloader>false</openejb.cdi.filter.classloader>
 
+            <openejb.strict.interface.declaration>true</openejb.strict.interface.declaration>
             <openejb.http.mock-request>true</openejb.http.mock-request>
             <openejb.http.default-content-type>text/plain</openejb.http.default-content-type>
             <openejb.embedded.try-jsp>true</openejb.embedded.try-jsp>

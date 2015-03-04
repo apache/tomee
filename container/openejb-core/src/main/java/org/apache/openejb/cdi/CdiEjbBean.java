@@ -34,7 +34,25 @@ import org.apache.webbeans.context.creational.CreationalContextImpl;
 import org.apache.webbeans.ejb.common.component.BaseEjbBean;
 import org.apache.webbeans.intercept.InterceptorResolutionService;
 import org.apache.webbeans.portable.InjectionTargetImpl;
+import org.apache.webbeans.util.GenericsUtil;
 
+import java.io.Serializable;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.UndeclaredThrowableException;
+import java.rmi.NoSuchObjectException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 import javax.decorator.Decorator;
 import javax.ejb.NoSuchEJBException;
 import javax.ejb.Remove;
@@ -51,22 +69,6 @@ import javax.enterprise.inject.spi.InjectionTarget;
 import javax.enterprise.inject.spi.SessionBeanType;
 import javax.interceptor.Interceptor;
 import javax.transaction.UserTransaction;
-import java.io.Serializable;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.UndeclaredThrowableException;
-import java.rmi.NoSuchObjectException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
 
 public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, DeploymentValidationService.BeanInterceptorInfoProvider {
     private final Map<Integer, Object> dependentSFSBToBeRemoved = new ConcurrentHashMap<Integer, Object>();
@@ -86,15 +88,16 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
         EjbInjectionTargetImpl.class.cast(getInjectionTarget()).setCdiEjbBean(this);
     }
 
-    public CdiEjbBean(final BeanContext beanContext, final WebBeansContext webBeansContext, final Class beanClass, final AnnotatedType<T> at,
+    public CdiEjbBean(final BeanContext bc, final WebBeansContext webBeansContext, final Class beanClass, final AnnotatedType<T> at,
                       final InjectionTargetFactoryImpl<T> factory, final BeanAttributes<T> attributes) {
-        super(webBeansContext, toSessionType(beanContext.getComponentType()), at, new EJBBeanAttributesImpl<T>(beanContext,
-                attributes, true), beanClass, factory);
-        this.beanContext = beanContext;
-        beanContext.set(Bean.class, this);
-        passivatingId = beanContext.getDeploymentID() + getReturnType().getName();
+        super(webBeansContext, toSessionType(bc.getComponentType()), at,
+                new EJBBeanAttributesImpl<T>(bc, attributes),
+                beanClass, factory);
+        this.beanContext = bc;
+        bc.set(Bean.class, this);
+        passivatingId = bc.getDeploymentID() + getReturnType().getName();
 
-        final boolean stateful = BeanType.STATEFUL.equals(beanContext.getComponentType());
+        final boolean stateful = BeanType.STATEFUL.equals(bc.getComponentType());
         final boolean isDependent = getScope().equals(Dependent.class);
         isDependentAndStateful = isDependent && stateful;
         if (webBeansContext.getBeanManagerImpl().isPassivatingScope(getScope()) && stateful) {
@@ -321,16 +324,11 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
         private final BeanContext beanContext;
         private final Set<Type> ejbTypes;
 
-        public EJBBeanAttributesImpl(final BeanContext bc, final BeanAttributes<T> beanAttributes, final boolean withSerializable) {
+        public EJBBeanAttributesImpl(final BeanContext bc, final BeanAttributes<T> beanAttributes) {
             super(beanAttributes, false);
             this.beanContext = bc;
             this.ejbTypes = new HashSet<Type>();
             initTypes();
-            if (withSerializable) {
-                if (!ejbTypes.contains(Serializable.class)) {
-                    ejbTypes.add(Serializable.class);
-                }
-            }
         }
 
         @Override
@@ -349,8 +347,19 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
 
             final List<Class> cl = beanContext.getBusinessLocalInterfaces();
             if (cl != null && !cl.isEmpty()) {
+                final Map<Class<?>, Type> apis = new HashMap<>(cl.size());
+                for (final Type t : beanContext.getManagedClass().getGenericInterfaces()) {
+                    if (ParameterizedType.class.isInstance(t)) {
+                        try {
+                            apis.put(Class.class.cast(ParameterizedType.class.cast(t).getRawType()), t);
+                        } catch (final Throwable th) {
+                            // no-op
+                        }
+                    }
+                }
                 for (final Class<?> c : cl) {
-                    ejbTypes.addAll(parentInterfaces(c));
+                    final Type type = apis.get(c);
+                    ejbTypes.addAll(GenericsUtil.getTypeClosure(type != null ? type : c));
                 }
             }
 
@@ -364,22 +373,14 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
             ejbTypes.add(Object.class);
         }
 
-        private static Collection<Class<?>> parentInterfaces(final Class<?> c) {
-            final Collection<Class<?>> set = new HashSet<>();
-            set.add(c);
-            for (final Class<?> parent : c.getInterfaces()) {
-                set.addAll(parentInterfaces(parent));
-            }
-            return set;
-        }
-
         private static void addApiTypes(final Collection<Type> clazzes, final Class<?> beanClass) {
             final Typed typed = beanClass.getAnnotation(Typed.class);
             if (typed == null || typed.value().length == 0) {
-                Class<?> current = beanClass;
-                while (current != null && !Object.class.equals(current)) {
+                Type current = beanClass;
+                while (current != null && Object.class != current) {
                     clazzes.add(current);
-                    current = current.getSuperclass();
+                    // TODO: better loop
+                    current = Class.class.isInstance(current) ? Class.class.cast(current).getGenericSuperclass() : null;
                 }
             } else {
                 Collections.addAll(clazzes, typed.value());

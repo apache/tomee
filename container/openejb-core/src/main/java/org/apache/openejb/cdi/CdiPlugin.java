@@ -137,8 +137,7 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
     public <T> BeanAttributes<T> createBeanAttributes(final AnnotatedType<T> type) {
         return new CdiEjbBean.EJBBeanAttributesImpl(
                 findBeanContext(webBeansContext, type.getJavaClass()),
-                BeanAttributesBuilder.forContext(webBeansContext).newBeanAttibutes(type).build(),
-                false);
+                BeanAttributesBuilder.forContext(webBeansContext).newBeanAttibutes(type).build());
     }
 
     public void configureDeployments(final List<BeanContext> ejbDeployments) {

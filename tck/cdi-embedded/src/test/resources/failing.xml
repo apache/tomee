@@ -31,7 +31,7 @@
     -Dopenejb.embedded.try-jsp=true
     -->
     <classes>
-      <class name="org.jboss.cdi.tck.tests.context.conversation.filter.ConversationFilterTest" />
+      <class name="org.jboss.cdi.tck.tests.definition.bean.types.enterprise.SessionBeanTypesTest" />
     </classes>
   </test>
 </suite>
