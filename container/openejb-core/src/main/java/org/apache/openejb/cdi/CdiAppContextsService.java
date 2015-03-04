@@ -337,12 +337,13 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
                 //Re-initialize thread local for session
                 final HttpSession session = request.getSession(false);
 
+                String cid = null;
                 if (session != null) {
                     initSessionContext(session);
 
                     final ServletRequestContext rc  = getRequestContext(false);
                     if (rc != null && rc.getServletRequest() != null && conversationService != null && !isConversationSkipped(rc)) {
-                        final String cid = rc.getServletRequest().getParameter("cid");
+                        cid = rc.getServletRequest().getParameter("cid");
                         if (cid != null) {
                             final ConversationManager conversationManager = webBeansContext.getConversationManager();
                             final ConversationImpl c = conversationManager.getPropogatedConversation(cid, session.getId());
@@ -351,6 +352,14 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
                             }
                         }
                     }
+                } else {
+                    cid = getConversationId();
+                }
+                if (cid == null && conversationContext.get() == null) {
+                    // transient but active
+                    final ConversationContext context = new ConversationContext();
+                    context.setActive(true);
+                    conversationContext.set(context);
                 }
             }
         } else if (event == EJB_REQUEST_EVENT) {
@@ -595,7 +604,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
                     destroyObject == null ? context : destroyObject, DestroyedLiteral.CONVERSATION);
         }
 
-        if (null != conversationContext) {
+        if (null != context) {
             conversationContext.remove();
         }
     }
@@ -672,7 +681,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
                 }
             }
         }
-        if (context != null && createIfPropagated) {
+        if (context != null && !context.isActive() && createIfPropagated) {
             context.setActive(true);
         }
         return context;
