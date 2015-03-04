@@ -124,7 +124,22 @@ public class BeanContext extends DeploymentContext {
             return;
         }
 
-        boolean hasInterceptor = false;
+        final Collection<Interceptor<?>> postConstructInterceptors = Collection.class.cast(Reflections.get(injectionTarget, "postConstructInterceptors"));
+        final Collection<Interceptor<?>> preDestroyInterceptors = Collection.class.cast(Reflections.get(injectionTarget, "preDestroyInterceptors"));
+        for (final Interceptor<?> pc : postConstructInterceptors) {
+            final InterceptorData interceptorData = createInterceptorData(pc);
+            instanceScopedInterceptors.add(interceptorData);
+            cdiInterceptors.add(interceptorData);
+        }
+        for (final Interceptor<?> pd : preDestroyInterceptors) {
+            if (postConstructInterceptors.contains(pd)) {
+                continue;
+            }
+            final InterceptorData interceptorData = createInterceptorData(pd);
+            instanceScopedInterceptors.add(interceptorData);
+            cdiInterceptors.add(interceptorData);
+        }
+
         for (final Map.Entry<Method, InterceptorResolutionService.BusinessMethodInterceptorInfo> entry : info.getBusinessMethodsInfo().entrySet()) {
             final Interceptor<?>[] interceptors = entry.getValue().getCdiInterceptors();
             if (interceptors == null) {
@@ -132,65 +147,19 @@ public class BeanContext extends DeploymentContext {
             }
 
             for (final Interceptor<?> i : interceptors) {
-                final InterceptorData data;
-                if (CdiInterceptorBean.class.isInstance(i)) {
-                    final CdiInterceptorBean cdiInterceptorBean = CdiInterceptorBean.class.cast(i);
-
-                    data = new InterceptorData(i.getBeanClass());
-                    data.getAroundInvoke().addAll(getInterceptionMethodAsListOrEmpty(cdiInterceptorBean, InterceptionType.AROUND_INVOKE));
-                    data.getPostConstruct().addAll(getInterceptionMethodAsListOrEmpty(cdiInterceptorBean, InterceptionType.POST_CONSTRUCT));
-                    data.getPreDestroy().addAll(getInterceptionMethodAsListOrEmpty(cdiInterceptorBean, InterceptionType.PRE_DESTROY));
-                    data.getPostActivate().addAll(getInterceptionMethodAsListOrEmpty(cdiInterceptorBean, InterceptionType.POST_ACTIVATE));
-                    data.getPrePassivate().addAll(getInterceptionMethodAsListOrEmpty(cdiInterceptorBean, InterceptionType.PRE_PASSIVATE));
-                    data.getAroundTimeout().addAll(getInterceptionMethodAsListOrEmpty(cdiInterceptorBean, InterceptionType.AROUND_TIMEOUT));
-                    /*
-                    AfterBegin, BeforeCompletion and AfterCompletion are ignored since not handled by CDI
-                     */
-                } else { // TODO: here we are not as good as in previous if since we loose inheritance etc
-                    data = InterceptorData.scan(i.getBeanClass());
+                // already at class level, since we merge "hooks" in InterceptorData no need to add it again
+                if (postConstructInterceptors.contains(i) || preDestroyInterceptors.contains(i)) {
+                    continue;
                 }
+                final InterceptorData data = createInterceptorData(i);
                 addCdiMethodInterceptor(entry.getKey(), data);
             }
-            hasInterceptor = hasInterceptor || interceptors.length > 0;
             entry.getValue().setEjbInterceptors(new ArrayList<Interceptor<?>>());
             entry.getValue().setCdiInterceptors(new ArrayList<Interceptor<?>>());
         }
 
-        /* Was a TCK bug :)
-        if (hasInterceptor) { // 100% for TCKs, doesn't make any sense
-            for (final Method m : getManagedClass().getDeclaredMethods()) {
-                boolean inApi = false;
-                final Set<Type> types = cdiEjbBean.getTypes();
-                for (final Type t : types) {
-                    if (t == Object.class || t == Serializable.class) {
-                        continue;
-                    }
-                    if (m.getDeclaringClass() == t) {
-                        inApi = true;
-                        break;
-                    }
-                    if (Class.class.isInstance(t)) {
-                        try {
-                            Class.class.cast(t).getMethod(m.getName(), m.getParameterTypes());
-                            inApi = true;
-                            break;
-                        } catch (final NoSuchMethodException e) {
-                            // no-op
-                        }
-                    }
-                }
-                if (inApi) {
-                    continue;
-                }
-                final int modifiers = m.getModifiers();
-                if (Modifier.isFinal(modifiers) && !Modifier.isStatic(modifiers) && Modifier.isPublic(modifiers)) {
-                    throw new DeploymentException("We need to proxy " + getManagedClass() + " but " + m + " is final");
-                }
-            }
-        }
-        */
-
-        if (info.getSelfInterceptorBean() != null) { // handled by openejb
+        // handled by OpenEJB now so clean up all duplication from OWB
+        if (info.getSelfInterceptorBean() != null) {
             try {
                 final Field field = InterceptorResolutionService.BeanInterceptorInfo.class.getDeclaredField("selfInterceptorBean");
                 field.setAccessible(true);
@@ -199,16 +168,34 @@ public class BeanContext extends DeploymentContext {
                 // no-op
             }
         }
-
-        // handled by OpenEJB so clean up from OWB
         Map.class.cast(Reflections.get(injectionTarget, "methodInterceptors")).clear();
-        clear(Collection.class.cast(Reflections.get(injectionTarget, "postConstructInterceptors")));
+        clear(Collection.class.cast(postConstructInterceptors));
+        clear(Collection.class.cast(preDestroyInterceptors));
         clear(Collection.class.cast(Reflections.get(injectionTarget, "postConstructMethods")));
-        clear(Collection.class.cast(Reflections.get(injectionTarget, "preDestroyInterceptors")));
         clear(Collection.class.cast(Reflections.get(injectionTarget, "preDestroyMethods")));
-
         clear(Collection.class.cast(Reflections.get(info, "ejbInterceptors")));
         clear(Collection.class.cast(Reflections.get(info, "cdiInterceptors")));
+    }
+
+    private InterceptorData createInterceptorData(final Interceptor<?> i) {
+        final InterceptorData data;
+        if (CdiInterceptorBean.class.isInstance(i)) {
+            final CdiInterceptorBean cdiInterceptorBean = CdiInterceptorBean.class.cast(i);
+
+            data = new InterceptorData(i.getBeanClass());
+            data.getAroundInvoke().addAll(getInterceptionMethodAsListOrEmpty(cdiInterceptorBean, InterceptionType.AROUND_INVOKE));
+            data.getPostConstruct().addAll(getInterceptionMethodAsListOrEmpty(cdiInterceptorBean, InterceptionType.POST_CONSTRUCT));
+            data.getPreDestroy().addAll(getInterceptionMethodAsListOrEmpty(cdiInterceptorBean, InterceptionType.PRE_DESTROY));
+            data.getPostActivate().addAll(getInterceptionMethodAsListOrEmpty(cdiInterceptorBean, InterceptionType.POST_ACTIVATE));
+            data.getPrePassivate().addAll(getInterceptionMethodAsListOrEmpty(cdiInterceptorBean, InterceptionType.PRE_PASSIVATE));
+            data.getAroundTimeout().addAll(getInterceptionMethodAsListOrEmpty(cdiInterceptorBean, InterceptionType.AROUND_TIMEOUT));
+            /*
+            AfterBegin, BeforeCompletion and AfterCompletion are ignored since not handled by CDI
+             */
+        } else { // TODO: here we are not as good as in previous since we loose inheritance for instance
+            data = InterceptorData.scan(i.getBeanClass());
+        }
+        return data;
     }
 
     private List<Method> getInterceptionMethodAsListOrEmpty(final CdiInterceptorBean cdiInterceptorBean, final InterceptionType aroundInvoke) {
@@ -1116,8 +1103,8 @@ public class BeanContext extends DeploymentContext {
 
     public List<InterceptorData> getCallbackInterceptors() {
         final List<InterceptorData> datas = getInterceptorData();
-        datas.addAll(callbackInterceptors);
         datas.addAll(cdiInterceptors);
+        datas.addAll(callbackInterceptors);
         return datas;
     }
 
