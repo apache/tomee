@@ -62,6 +62,14 @@
     </packages>
 
     <classes>
+      <!-- in discussion -->
+      <!-- seems when InjectionPoint injection in for an EJB injection point then it should be null, any real reason? -->
+      <class name="org.jboss.cdi.tck.tests.lookup.injectionpoint.non.contextual.NonContextualInjectionPointTest">
+        <methods>
+          <exclude name="testNonContextualEjbInjectionPointGetBean" />
+        </methods>
+      </class>
+
       <!-- Issues in the spec -->
       <!-- CDI-437 -->
       <class name="org.jboss.cdi.tck.tests.lookup.byname.ambiguous.broken.AmbiguousELNamesTest">
