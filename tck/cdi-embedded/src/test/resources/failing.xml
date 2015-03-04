@@ -31,7 +31,7 @@
     -Dopenejb.embedded.try-jsp=true
     -->
     <classes>
-      <class name="org.jboss.cdi.tck.tests.deployment.initialization.ApplicationInitializationLifecycleTest" />
+      <class name="org.jboss.cdi.tck.tests.context.conversation.servlet.ServletConversationTest" />
     </classes>
   </test>
 </suite>

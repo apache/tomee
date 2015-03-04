@@ -154,7 +154,7 @@ public class EndWebBeansListener implements ServletContextListener, ServletReque
      * {@inheritDoc}
      */
     @Override
-    public void sessionDestroyed(HttpSessionEvent event) {
+    public void sessionDestroyed(final HttpSessionEvent event) {
         if (webBeansContext == null) {
             return;
         }
@@ -171,16 +171,30 @@ public class EndWebBeansListener implements ServletContextListener, ServletReque
             WebappWebBeansContext.class.cast(webBeansContext).getParent().getContextsService().endContext(SessionScoped.class, event.getSession());
         }
 
+        final CdiAppContextsService appContextsService = CdiAppContextsService.class.cast(webBeansContext.getContextsService());
+        if (appContextsService.getRequestContext(false) != null) {
+            appContextsService.pushRequestReleasable(new Runnable() {
+                @Override
+                public void run() {
+                    doDestroyConversations(event.getSession().getId());
+                }
+            });
+        } else {
+            doDestroyConversations(event.getSession().getId());
+        }
+
+        destroyFakedRequest();
+    }
+
+    private void doDestroyConversations(final String id) {
         final ConversationManager conversationManager = webBeansContext.getConversationManager();
-        final Map<Conversation, ConversationContext> cc = conversationManager.getAndRemoveConversationMapWithSessionId(event.getSession().getId());
+        final Map<Conversation, ConversationContext> cc = conversationManager.getAndRemoveConversationMapWithSessionId(id);
         for (final Map.Entry<Conversation, ConversationContext> c : cc.entrySet()) {
             if (c != null) {
                 c.getValue().destroy();
                 webBeansContext.getBeanManagerImpl().fireEvent(c.getKey().getId(), CdiAppContextsService.DestroyedLiteral.CONVERSATION);
             }
         }
-
-        destroyFakedRequest();
     }
 
     private void destroyFakedRequest() {
