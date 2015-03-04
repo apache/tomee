@@ -208,6 +208,9 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
             @Override
             public void run() {
                 if (container.getTomcat() != null && container.getTomcat().getServer().getState() != LifecycleState.DESTROYED) {
+                    final Thread thread = Thread.currentThread();
+                    final ClassLoader old = thread.getContextClassLoader();
+                    thread.setContextClassLoader(ParentClassLoaderFinder.Helper.get());
                     try {
                         if (!classpathAsWar) {
                             container.undeploy(warFile.getAbsolutePath());
@@ -215,10 +218,13 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
                         container.stop();
                     } catch (final Exception e) {
                         getLog().error("can't stop TomEE", e);
+                    } finally {
+                        thread.setContextClassLoader(old);
                     }
                 }
             }
         };
+        hook.setName("TomEE-Embedded-ShutdownHook");
 
         try {
             container.start();

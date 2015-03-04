@@ -19,6 +19,7 @@ package org.apache.tomee.catalina;
 import org.apache.catalina.Valve;
 import org.apache.catalina.ha.ClusterListener;
 import org.apache.catalina.ha.tcp.SimpleTcpCluster;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.tomee.catalina.cluster.TomEEClusterListener;
 
 import java.util.Arrays;
@@ -48,7 +49,8 @@ public class SimpleTomEETcpCluster extends SimpleTcpCluster {
     @Override
     protected void checkDefaults() {
         final List<ClusterListener> currentListeners = clusterListeners;
-        if (currentListeners.size() == 1 && currentListeners.iterator().next() == TomEEClusterListener.INSTANCE) {
+        final TomEEClusterListener tomEEClusterListener = SystemInstance.get().getComponent(TomEEClusterListener.class);
+        if (currentListeners.size() == 1 && currentListeners.iterator().next() == tomEEClusterListener) {
             currentListeners.clear();
         }
 
@@ -61,6 +63,6 @@ public class SimpleTomEETcpCluster extends SimpleTcpCluster {
         }
 
         super.checkDefaults();
-        addClusterListener(TomEEClusterListener.INSTANCE); // since that's a singleton and all listeners have to be unique (contains()) we can always add it
+        addClusterListener(tomEEClusterListener); // since that's a singleton and all listeners have to be unique (contains()) we can always add it
     }
 }

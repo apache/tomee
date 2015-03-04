@@ -62,6 +62,9 @@ public class Memoizer<K, V> implements Computable<K, V> {
             try {
                 return future.get();
             } catch (final ExecutionException e) {
+                if (e.getCause() != null && NoClassDefFoundError.class.isInstance(e.getCause())) {
+                    return null;
+                }
                 e.printStackTrace();
             }
         }

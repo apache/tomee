@@ -27,31 +27,20 @@ import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.DaemonThreadFactory;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import java.io.File;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 public class TomEEClusterListener extends ClusterListener {
-    public static final TomEEClusterListener INSTANCE = new TomEEClusterListener();
-
-    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, TomEEClusterListener.class);
-    private static final Properties IC_PROPS = new Properties();
-
-    // async processing to avoid to make the cluster hanging
-    private static final ExecutorService SERVICE = Executors.newSingleThreadExecutor();
-
-    static {
-        IC_PROPS.setProperty(Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
-    }
-
     @Override
     public void messageReceived(final ClusterMessage clusterMessage) {
         final Class<?> type = clusterMessage.getClass();
@@ -76,33 +65,33 @@ public class TomEEClusterListener extends ClusterListener {
                         file = dump.getAbsolutePath();
                         ioFile = new File(file);
 
-                        LOGGER.info("dumped archive: " + msg.getFile() + " to " + file);
+                        Static.STATIC.LOGGER.info("dumped archive: " + msg.getFile() + " to " + file);
                     } catch (final Exception e) {
-                        LOGGER.error("can't dump archive: "+ file, e);
+                        Static.STATIC.LOGGER.error("can't dump archive: "+ file, e);
                     }
                 }
 
                 if (ioFile.exists()) {
-                    SERVICE.submit(new DeployTask(file));
+                    Static.STATIC.SERVICE.submit(new DeployTask(file));
                 } else {
-                    LOGGER.warning("can't find '" + file);
+                    Static.STATIC.LOGGER.warning("can't find '" + file);
                 }
             } else {
-                LOGGER.info("application already deployed: " + file);
+                Static.STATIC.LOGGER.info("application already deployed: " + file);
             }
         } else if (UndeployMessage.class.equals(type)) {
             final String file = ((UndeployMessage) clusterMessage).getFile();
             if (isDeployed(file)) {
-                SERVICE.submit(new UndeployTask(file));
+                Static.STATIC.SERVICE.submit(new UndeployTask(file));
             } else {
                 final File alternativeFile = new File(deployedDir(), new File(file).getName());
                 if (isDeployed(alternativeFile.getAbsolutePath())) {
-                    SERVICE.submit(new UndeployTask(alternativeFile.getAbsolutePath()));
+                    Static.STATIC.SERVICE.submit(new UndeployTask(alternativeFile.getAbsolutePath()));
                 }
-                LOGGER.info("app '" + file + "' was not deployed");
+                Static.STATIC.LOGGER.info("app '" + file + "' was not deployed");
             }
         } else {
-            LOGGER.warning("message type not supported: " + type);
+            Static.STATIC.LOGGER.warning("message type not supported: " + type);
         }
     }
 
@@ -115,7 +104,7 @@ public class TomEEClusterListener extends ClusterListener {
     }
 
     private static Deployer deployer() throws NamingException {
-        return (Deployer) new InitialContext(IC_PROPS).lookup("openejb/DeployerBusinessRemote");
+        return (Deployer) new InitialContext(Static.STATIC.IC_PROPS).lookup("openejb/DeployerBusinessRemote");
     }
 
     @Override
@@ -126,11 +115,11 @@ public class TomEEClusterListener extends ClusterListener {
     }
 
     public static void stop() {
-        SERVICE.shutdown();
+        Static.STATIC.SERVICE.shutdown();
         try {
-            SERVICE.awaitTermination(1, TimeUnit.MINUTES);
+            Static.STATIC.SERVICE.awaitTermination(1, TimeUnit.MINUTES);
         } catch (final InterruptedException e) {
-            SERVICE.shutdownNow();
+            Static.STATIC.SERVICE.shutdownNow();
         }
     }
 
@@ -151,9 +140,9 @@ public class TomEEClusterListener extends ClusterListener {
                 try {
                     deployer().deploy(app, REMOTE_DEPLOY_PROPERTIES);
                 } catch (final OpenEJBException e) {
-                    LOGGER.warning("can't deploy: " + app, e);
+                    Static.STATIC.LOGGER.warning("can't deploy: " + app, e);
                 } catch (final NamingException e) {
-                    LOGGER.warning("can't find deployer", e);
+                    Static.STATIC.LOGGER.warning("can't find deployer", e);
                 }
             }
         }
@@ -172,13 +161,32 @@ public class TomEEClusterListener extends ClusterListener {
                 try {
                     deployer().undeploy(app);
                 } catch (final UndeployException e) {
-                    LOGGER.error("can't undeploy app", e);
+                    Static.STATIC.LOGGER.error("can't undeploy app", e);
                 } catch (final NoSuchApplicationException e) {
-                    LOGGER.warning("no app toi deploy", e);
+                    Static.STATIC.LOGGER.warning("no app toi deploy", e);
                 } catch (final NamingException e) {
-                    LOGGER.warning("can't find deployer", e);
+                    Static.STATIC.LOGGER.warning("can't find deployer", e);
                 }
             }
+        }
+    }
+
+    // lazy init of logger (can fail with shutdown hooks to kill the container) and executor
+    private static final class Static {
+        private static final Static STATIC = new Static();
+
+        private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, TomEEClusterListener.class);
+        private static final Properties IC_PROPS = new Properties();
+
+        // async processing to avoid to make the cluster hanging
+        private static final ExecutorService SERVICE = Executors.newSingleThreadExecutor(new DaemonThreadFactory("TomEE-Cluster-Listener-thread-"));
+
+        static {
+            IC_PROPS.setProperty(Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
+        }
+
+        private Static() {
+            // no-op
         }
     }
 }

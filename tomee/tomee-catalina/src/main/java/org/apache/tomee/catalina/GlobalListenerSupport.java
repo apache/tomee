@@ -155,7 +155,10 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
 
             if (Lifecycle.BEFORE_STOP_EVENT.equals(type)) {
                 TomcatHelper.setStopping(true);
-                TomEEClusterListener.stop();
+                final TomEEClusterListener tomEEClusterListener = SystemInstance.get().getComponent(TomEEClusterListener.class);
+                if (tomEEClusterListener != null) {
+                    tomEEClusterListener.stop();
+                }
             }
 
             if (Lifecycle.AFTER_STOP_EVENT.equals(type)) {

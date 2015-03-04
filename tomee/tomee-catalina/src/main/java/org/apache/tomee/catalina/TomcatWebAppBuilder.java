@@ -350,7 +350,12 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
         if (current instanceof CatalinaCluster) {
             final CatalinaCluster haCluster = (CatalinaCluster) current;
-            haCluster.addClusterListener(TomEEClusterListener.INSTANCE); // better to be a singleton
+            TomEEClusterListener listener = SystemInstance.get().getComponent(TomEEClusterListener.class);
+            if (listener == null) {
+                listener = new TomEEClusterListener();
+                SystemInstance.get().setComponent(TomEEClusterListener.class, listener);
+            }
+            haCluster.addClusterListener(listener); // better to be a singleton
             clusters.add(haCluster);
         }
     }
