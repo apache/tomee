@@ -240,6 +240,11 @@
           <exclude name="testInjectionIntoTagHandler" />
         </methods>
       </class>
+      <class name="org.jboss.cdi.tck.tests.context.conversation.filter.ConversationFilterTest">
+        <methods>
+          <exclude name="testConversationActivation" />
+        </methods>
+      </class>
     </classes>
   </test>
 </suite>
