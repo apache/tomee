@@ -328,8 +328,8 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
         final Map<ProducerMethodBean<?>, AnnotatedMethod<?>> annotatedMethods = new HashMap<>();
         for (final ProducerMethodBean<?> producerMethod : producerMethods) {
             final AnnotatedMethod<?> method = webBeansContext.getAnnotatedElementFactory().newAnnotatedMethod(producerMethod.getCreatorMethod(), annotatedType);
-            webBeansUtil.inspectErrorStack("There are errors that are added by ProcessProducer event observers for "
-                + "ProducerMethods. Look at logs for further details");
+            webBeansUtil.inspectDeploymentErrorStack("There are errors that are added by ProcessProducer event observers for "
+                    + "ProducerMethods. Look at logs for further details");
 
             annotatedMethods.put(producerMethod, method);
         }
@@ -339,8 +339,8 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
             if (!Modifier.isStatic(producerField.getCreatorField().getModifiers())) {
                 throw new DefinitionException("In an EJB all producer fields should be static");
             }
-            webBeansUtil.inspectErrorStack("There are errors that are added by ProcessProducer event observers for"
-                + " ProducerFields. Look at logs for further details");
+            webBeansUtil.inspectDeploymentErrorStack("There are errors that are added by ProcessProducer event observers for"
+                    + " ProducerFields. Look at logs for further details");
 
             annotatedFields.put(producerField,
                 webBeansContext.getAnnotatedElementFactory().newAnnotatedField(
@@ -365,19 +365,19 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
         final GProcessSessionBean event = new GProcessSessionBean(Bean.class.cast(bean), annotatedType, bc.getEjbName(), bean.getEjbType());
         beanManager.fireEvent(event, true);
         event.setStarted();
-        webBeansUtil.inspectErrorStack("There are errors that are added by ProcessSessionBean event observers for managed beans. Look at logs for further details");
+        webBeansUtil.inspectDeploymentErrorStack("There are errors that are added by ProcessSessionBean event observers for managed beans. Look at logs for further details");
 
         //Fires ProcessProducerMethod
         webBeansUtil.fireProcessProducerMethodBeanEvent(annotatedMethods, annotatedType);
-        webBeansUtil.inspectErrorStack("There are errors that are added by ProcessProducerMethod event observers for producer method beans. Look at logs for further details");
+        webBeansUtil.inspectDeploymentErrorStack("There are errors that are added by ProcessProducerMethod event observers for producer method beans. Look at logs for further details");
 
         //Fires ProcessProducerField
         webBeansUtil.fireProcessProducerFieldBeanEvent(annotatedFields);
-        webBeansUtil.inspectErrorStack("There are errors that are added by ProcessProducerField event observers for producer field beans. Look at logs for further details");
+        webBeansUtil.inspectDeploymentErrorStack("There are errors that are added by ProcessProducerField event observers for producer field beans. Look at logs for further details");
 
         //Fire ObservableMethods
         webBeansUtil.fireProcessObservableMethodBeanEvent(observerMethodsMap);
-        webBeansUtil.inspectErrorStack("There are errors that are added by ProcessObserverMethod event observers for observer methods. Look at logs for further details");
+        webBeansUtil.inspectDeploymentErrorStack("There are errors that are added by ProcessObserverMethod event observers for observer methods. Look at logs for further details");
 
         if (!webBeansUtil.isAnnotatedTypeDecoratorOrInterceptor(annotatedType)) {
             for (final ProducerMethodBean<?> producerMethod : producerMethods) {
