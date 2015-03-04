@@ -75,6 +75,7 @@ import javax.enterprise.inject.spi.InterceptionType;
 import javax.enterprise.inject.spi.Interceptor;
 import javax.naming.Context;
 import javax.persistence.EntityManagerFactory;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -127,11 +128,18 @@ public class BeanContext extends DeploymentContext {
         final Collection<Interceptor<?>> postConstructInterceptors = Collection.class.cast(Reflections.get(injectionTarget, "postConstructInterceptors"));
         final Collection<Interceptor<?>> preDestroyInterceptors = Collection.class.cast(Reflections.get(injectionTarget, "preDestroyInterceptors"));
         for (final Interceptor<?> pc : postConstructInterceptors) {
+            if (isEjbInterceptor(pc)) {
+                continue;
+            }
+
             final InterceptorData interceptorData = createInterceptorData(pc);
             instanceScopedInterceptors.add(interceptorData);
             cdiInterceptors.add(interceptorData);
         }
         for (final Interceptor<?> pd : preDestroyInterceptors) {
+            if (isEjbInterceptor(pd)) {
+                continue;
+            }
             if (postConstructInterceptors.contains(pd)) {
                 continue;
             }
@@ -175,6 +183,11 @@ public class BeanContext extends DeploymentContext {
         clear(Collection.class.cast(Reflections.get(injectionTarget, "preDestroyMethods")));
         clear(Collection.class.cast(Reflections.get(info, "ejbInterceptors")));
         clear(Collection.class.cast(Reflections.get(info, "cdiInterceptors")));
+    }
+
+    private boolean isEjbInterceptor(final Interceptor<?> pc) {
+        final Set<Annotation> interceptorBindings = pc.getInterceptorBindings();
+        return interceptorBindings == null || interceptorBindings.isEmpty();
     }
 
     private InterceptorData createInterceptorData(final Interceptor<?> i) {
@@ -282,6 +295,7 @@ public class BeanContext extends DeploymentContext {
     private TransactionPolicyFactory transactionPolicyFactory;
 
     private final List<InterceptorData> callbackInterceptors = new ArrayList<InterceptorData>();
+    private final List<InterceptorData> beanCallbackInterceptors = new ArrayList<InterceptorData>();
     private final Set<InterceptorData> instanceScopedInterceptors = new HashSet<InterceptorData>();
     private final List<InterceptorInstance> systemInterceptors = new ArrayList<InterceptorInstance>();
     private final List<InterceptorInstance> userInterceptors = new ArrayList<InterceptorInstance>();
@@ -1103,15 +1117,23 @@ public class BeanContext extends DeploymentContext {
 
     public List<InterceptorData> getCallbackInterceptors() {
         final List<InterceptorData> datas = getInterceptorData();
-        datas.addAll(cdiInterceptors);
         datas.addAll(callbackInterceptors);
+        datas.addAll(cdiInterceptors);
+        datas.addAll(beanCallbackInterceptors);
         return datas;
     }
 
     public void setCallbackInterceptors(final List<InterceptorData> callbackInterceptors) {
         //TODO shouldn't we remove the old callbackInterceptors from instanceScopedInterceptors before adding the new ones?
+        this.beanCallbackInterceptors.clear();
         this.callbackInterceptors.clear();
-        this.callbackInterceptors.addAll(callbackInterceptors);
+        for (final InterceptorData data : callbackInterceptors) {
+            if (data.getInterceptorClass().isAssignableFrom(getManagedClass())) {
+                this.beanCallbackInterceptors.add(data);
+            } else {
+                this.callbackInterceptors.add(data);
+            }
+        }
         this.instanceScopedInterceptors.addAll(callbackInterceptors);
     }
 
@@ -1130,7 +1152,7 @@ public class BeanContext extends DeploymentContext {
     }
 
     public List<InterceptorData> getInterceptorData() {
-        final List<InterceptorData> datas = new ArrayList<InterceptorData>();
+        final List<InterceptorData> datas = new ArrayList<InterceptorData>(getUserAndSystemInterceptors().size());
         for (final InterceptorInstance instance : getUserAndSystemInterceptors()) {
             datas.add(instance.getData());
         }
@@ -1634,7 +1656,7 @@ public class BeanContext extends DeploymentContext {
                 if (callbacks.isEmpty()) {
                     transactionType = TransactionType.RequiresNew;
                 } else {
-                    transactionType = getTransactionType(callbacks.iterator().next());
+                    transactionType = getTransactionType(callbacks.iterator().next()); // TODO: we should take the last one I think
                     if (transactionType == TransactionType.Required) {
                         transactionType = TransactionType.RequiresNew;
                     }

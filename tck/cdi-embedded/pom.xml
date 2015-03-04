@@ -203,9 +203,10 @@
             <openejb.cdi.producer.interception>false</openejb.cdi.producer.interception>
             <openejb.cdi.filter.classloader>false</openejb.cdi.filter.classloader>
 
+            <openejb.jul.forceReload>true</openejb.jul.forceReload>
             <openejb.strict.interface.declaration>true</openejb.strict.interface.declaration>
             <openejb.http.mock-request>true</openejb.http.mock-request>
-            <openejb.http.default-content-type>text/plain</openejb.http.default-content-type>
+            <openejb.http.default-content-type>text/plain</openejb.http.default-content-type> <!-- TODO: remove it -->
             <openejb.embedded.try-jsp>true</openejb.embedded.try-jsp>
             <openejb.deploymentId.format>{appId}/{ejbJarId}/{ejbName}</openejb.deploymentId.format>
             <org.apache.openejb.assembler.classic.WebAppBuilder>org.apache.openejb.web.LightweightWebAppBuilder</org.apache.openejb.assembler.classic.WebAppBuilder>

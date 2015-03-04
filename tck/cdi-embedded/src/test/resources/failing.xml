@@ -31,7 +31,7 @@
     -Dopenejb.embedded.try-jsp=true
     -->
     <classes>
-      <class name="org.jboss.cdi.tck.interceptors.tests.contract.lifecycleCallback.bindings.ejb.SessionBeanLifecycleInterceptorDefinitionTest" />
+      <class name="org.jboss.cdi.tck.tests.lookup.injectionpoint.non.contextual.NonContextualInjectionPointTest" />
     </classes>
   </test>
 </suite>
