@@ -17,6 +17,8 @@
 package org.apache.openejb.arquillian.openejb;
 
 import org.apache.openejb.AppContext;
+import org.apache.openejb.BeanContext;
+import org.apache.openejb.ModuleTestContext;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.OpenEjbContainer;
@@ -35,6 +37,7 @@ import org.apache.openejb.config.DeploymentFilterable;
 import org.apache.openejb.config.WebModule;
 import org.apache.openejb.core.LocalInitialContext;
 import org.apache.openejb.core.LocalInitialContextFactory;
+import org.apache.openejb.jee.sun.BeanCache;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.web.LightweightWebAppBuilder;
@@ -65,6 +68,8 @@ import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
@@ -218,6 +223,29 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
             final Closeables cl = new Closeables();
             closeablesProducer.set(cl);
             info = quickDeploy(archive, testClass.get(), cl);
+
+            // try to switch module context jndi to let test use java:module naming
+            // we could put the managed bean in the war but then test class should respect all the
+            // container rules (CDI) which is not the case with this solution
+            if (archive.getName().endsWith(".war")) {
+                final List<BeanContext> beanContexts = info.appCtx.getBeanContexts();
+                if (beanContexts.size() > 1) {
+                    final Iterator<BeanContext> it = beanContexts.iterator();
+                    while (it.hasNext()) {
+                        final BeanContext next = it.next();
+                        if (ModuleTestContext.class.isInstance(next.getModuleContext()) && BeanContext.Comp.class != next.getBeanClass()) {
+                            for (final BeanContext b : beanContexts) {
+                                if (b.getModuleContext() != next.getModuleContext()) {
+                                    ModuleTestContext.class.cast(next.getModuleContext())
+                                            .setModuleJndiContextOverride(b.getModuleContext().getModuleJndiContext());
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
 
             servletContextProducer.set(info.appServletContext);
             sessionProducer.set(info.appSession);

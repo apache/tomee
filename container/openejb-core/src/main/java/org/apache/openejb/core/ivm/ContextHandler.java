@@ -17,6 +17,7 @@
 
 package org.apache.openejb.core.ivm;
 
+import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.ivm.naming.ContextWrapper;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
@@ -78,6 +79,16 @@ public class ContextHandler extends ContextWrapper {
             try {
                 return SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext().lookup(name);
             } catch (final NameNotFoundException nnfe2) {
+                // ignore, let it be thrown
+            }
+            try {
+                final ThreadContext threadContext = ThreadContext.getThreadContext();
+                if (threadContext != null) {
+                    return threadContext.getBeanContext()
+                            .getModuleContext().getModuleJndiContext()
+                            .lookup(name);
+                }
+            } catch (final Exception nnfe3) {
                 // ignore, let it be thrown
             }
             throw nnfe;

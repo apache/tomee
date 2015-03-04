@@ -22,6 +22,7 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.Container;
 import org.apache.openejb.Injection;
 import org.apache.openejb.ModuleContext;
+import org.apache.openejb.ModuleTestContext;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.util.Messages;
 
@@ -54,7 +55,9 @@ public class EjbJarBuilder {
 
         final HashMap<String, BeanContext> deployments = new HashMap<String, BeanContext>();
 
-        final ModuleContext moduleContext = new ModuleContext(ejbJar.moduleName, ejbJar.moduleUri, ejbJar.uniqueId, context, moduleJndiContext, classLoader);
+        final ModuleContext moduleContext = !ejbJar.properties.containsKey("openejb.test.module") ?
+                new ModuleContext(ejbJar.moduleName, ejbJar.moduleUri, ejbJar.uniqueId, context, moduleJndiContext, classLoader) :
+                new ModuleTestContext(ejbJar.moduleName, ejbJar.moduleUri, ejbJar.uniqueId, context, moduleJndiContext, classLoader);
         moduleContext.getProperties().putAll(ejbJar.properties);
         final InterceptorBindingBuilder interceptorBindingBuilder = new InterceptorBindingBuilder(classLoader, ejbJar);
 

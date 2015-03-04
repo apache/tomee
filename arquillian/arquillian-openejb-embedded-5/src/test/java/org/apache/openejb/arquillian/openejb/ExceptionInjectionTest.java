@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.arquillian.openejb;
 
-import org.apache.webbeans.exception.WebBeansConfigurationException;
+import org.apache.webbeans.exception.WebBeansDeploymentException;
 import org.jboss.arquillian.container.spi.client.container.DeploymentException;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.ShouldThrowException;
@@ -39,10 +39,10 @@ public class ExceptionInjectionTest {
     private DeploymentException de;
 
     @ArquillianResource
-    private WebBeansConfigurationException owbException;
+    private WebBeansDeploymentException owbException;
 
     @ArquillianResource
-    private javax.enterprise.inject.spi.DeploymentException oejbException;
+    private DeploymentException oejbException;
 
     @Deployment(testable = false)
     @ShouldThrowException(javax.enterprise.inject.spi.DeploymentException.class)

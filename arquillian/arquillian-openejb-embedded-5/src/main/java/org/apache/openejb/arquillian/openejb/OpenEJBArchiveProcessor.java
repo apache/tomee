@@ -232,7 +232,8 @@ public class OpenEJBArchiveProcessor {
         // add the test as a managed bean to be able to inject into it easily
         final Map<String, Object> testDD;
         if (javaClass != null) {
-            testDD = addTestClassAsManagedBean(javaClass, tempClassLoader, appModule).getAltDDs();
+            final EjbModule testEjbModule = addTestClassAsManagedBean(javaClass, tempClassLoader, appModule);
+            testDD = testEjbModule.getAltDDs();
         } else {
             testDD = new HashMap<>(); // ignore
         }
@@ -306,6 +307,7 @@ public class OpenEJBArchiveProcessor {
         ejbDeployment.setDeploymentId(ejbName);
         final EjbModule e = new EjbModule(ejbJar, openejbJar);
         e.getProperties().setProperty("openejb.cdi.activated", "false");
+        e.getProperties().setProperty("openejb.test.module", "true");
         e.setBeans(new Beans());
         e.setClassLoader(tempClassLoader);
         appModule.getEjbModules().add(e);
