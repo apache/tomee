@@ -8,3 +8,5 @@ target
 *.log
 *~
 quick.bat
+/tomee/tomee-plume-webapp/overlays/
+/tomee/tomee-plus-webapp/overlays/
