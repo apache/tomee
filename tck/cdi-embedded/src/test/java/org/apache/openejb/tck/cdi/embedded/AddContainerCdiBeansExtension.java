@@ -18,6 +18,7 @@ package org.apache.openejb.tck.cdi.embedded;
 
 import org.apache.openejb.cdi.CompositeBeans;
 import org.apache.openejb.config.EjbModule;
+import org.apache.openejb.config.WebModule;
 import org.apache.openejb.config.event.BeforeAppInfoBuilderEvent;
 import org.apache.openejb.jee.Beans;
 import org.apache.openejb.observer.Observes;
@@ -43,6 +44,19 @@ public class AddContainerCdiBeansExtension {
                     cb.getManagedClasses().put(EXT_LIB, new ArrayList<>(BEANS));
                 }
                 return;
+            }
+        }
+        // else a war
+        for (final WebModule webModule : event.getAppModule().getWebModules()) {
+            for (final EjbModule ejbModule : event.getAppModule().getEjbModules()) {
+                if (ejbModule.getModuleId().equals(webModule.getModuleId())) {
+                    final Beans beans = ejbModule.getBeans();
+                    if (CompositeBeans.class.isInstance(beans)) {
+                        final CompositeBeans cb = CompositeBeans.class.cast(beans);
+                        cb.getManagedClasses().put(EXT_LIB, new ArrayList<>(BEANS));
+                    }
+                    return;
+                }
             }
         }
     }
