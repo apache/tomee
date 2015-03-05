@@ -1367,9 +1367,18 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
     private static File rootPath(final File file) {
         if (file.isDirectory() && file.getName().equals("classes") && file.getParentFile() != null && file.getParentFile().getName().equals("WEB-INF")) {
-            return file.getParentFile().getParentFile();
+            final File parentFile = file.getParentFile().getParentFile();
+            try {
+                return parentFile.getCanonicalFile();
+            } catch (final IOException e) {
+                return parentFile;
+            }
         }
-        return file;
+        try {
+            return file.getCanonicalFile();
+        } catch (final IOException e) {
+            return file;
+        }
     }
 
     private static void deployWebServicesIfEjbCreatedHere(final AppInfo info, final Collection<BeanContext> beanContexts) {

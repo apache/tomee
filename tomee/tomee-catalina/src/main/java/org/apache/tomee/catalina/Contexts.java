@@ -26,6 +26,7 @@ import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.util.ContextName;
 
 import java.io.File;
+import java.io.IOException;
 
 public class Contexts {
     public static String getHostname(final StandardContext ctx) {
@@ -50,10 +51,18 @@ public class Contexts {
         if (!file.isDirectory() && name.endsWith(".war")) {
             final File extracted = new File(file.getParentFile(), name.substring(0, name.length() - ".war".length()));
             if (extracted.exists()) {
-                return extracted;
+                try {
+                    return extracted.getCanonicalFile();
+                } catch (final IOException e) {
+                    return extracted;
+                }
             }
         }
-        return file;
+        try {
+            return file.getCanonicalFile();
+        } catch (final IOException e) {
+            return file;
+        }
     }
 
     public static File realWarPath(final Context standardContext) {
