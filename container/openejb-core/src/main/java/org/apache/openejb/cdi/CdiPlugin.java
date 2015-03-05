@@ -74,6 +74,7 @@ import javax.inject.Provider;
 import javax.servlet.Filter;
 import javax.servlet.Servlet;
 import javax.servlet.ServletContextListener;
+import javax.servlet.jsp.tagext.JspTag;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
@@ -118,7 +119,10 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
 
     @Override
     public boolean isEEComponent(final Class<?> impl) {
-        return Servlet.class.isAssignableFrom(impl) || Filter.class.isAssignableFrom(impl) || ServletContextListener.class.isAssignableFrom(impl);
+        return Servlet.class.isAssignableFrom(impl)
+                || Filter.class.isAssignableFrom(impl)
+                || ServletContextListener.class.isAssignableFrom(impl)
+                || JspTag.class.isAssignableFrom(impl);
     }
 
     public void setClassLoader(final ClassLoader classLoader) {

@@ -30,8 +30,8 @@
     -Dopenejb.http.mock-request=true
     -Dopenejb.embedded.try-jsp=true
     -->
-    <classes>
-      <class name="org.jboss.cdi.tck.tests.context.conversation.ClientConversationContextTest" />
+    <classes><!-- org.jboss.cdi.tck.tests.extensions.producer.remote.RemoteProducerTest -->
+      <class name="org.jboss.cdi.tck.tests.extensions.processBean.ProcessBeanTest" />
     </classes>
   </test>
 </suite>

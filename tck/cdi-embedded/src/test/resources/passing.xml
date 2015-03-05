@@ -48,6 +48,7 @@
     <listener class-name="org.testng.reporters.XMLReporter"/>
     <listener class-name="org.testng.reporters.EmailableReporter"/>
     <listener class-name="org.apache.openejb.tck.cdi.embedded.HTMLReporter"/>
+    <listener class-name="org.apache.openejb.tck.cdi.embedded.StandaloneTckCleaner"/>
   </listeners>
 
   <test name="JSR-346 TCK">

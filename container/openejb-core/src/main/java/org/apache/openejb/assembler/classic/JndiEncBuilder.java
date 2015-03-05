@@ -50,8 +50,21 @@ import org.apache.openejb.util.IntrospectionSupport;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.WebBeansContext;
+import org.apache.webbeans.container.InjectableBeanManager;
 import org.omg.CORBA.ORB;
 
+import java.io.Serializable;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.TreeMap;
+import java.util.concurrent.Callable;
 import javax.annotation.ManagedBean;
 import javax.ejb.EJBContext;
 import javax.ejb.TimerService;
@@ -81,18 +94,6 @@ import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Providers;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceContext;
-import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.TreeMap;
-import java.util.concurrent.Callable;
 
 /**
  * TODO: This class is essentially an over glorified sym-linker.  The names we were linking to are no longer guaranteed to be what we assume them to be.  We need to come up with a
@@ -380,12 +381,11 @@ public class JndiEncBuilder {
                 final String jndiName = "comp/TimerService";
                 reference = new LinkRef(jndiName);
 
-                // TODO Bind the BeanManager
             } else if (BeanManager.class.equals(type)) {
                 reference = new LazyObjectReference<BeanManager>(new Callable<BeanManager>() {
                     @Override
                     public BeanManager call() throws Exception {
-                        return WebBeansContext.currentInstance().getBeanManagerImpl();
+                        return new InjectableBeanManager(WebBeansContext.currentInstance().getBeanManagerImpl());
                     }
                 });
 
