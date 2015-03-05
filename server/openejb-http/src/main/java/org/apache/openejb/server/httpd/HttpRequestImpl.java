@@ -929,11 +929,13 @@ public class HttpRequestImpl implements HttpRequest {
                 }
             }
 
-            session = new HttpSessionImpl(SESSIONS, contextPath, timeout);
+            final HttpSessionImpl impl = new HttpSessionImpl(SESSIONS, contextPath, timeout);
+            session = impl;
             if (begin != null) {
                 begin.sessionCreated(new HttpSessionEvent(session));
                 session = new SessionInvalidateListener(session, end);
             }
+            impl.callListeners(); // can call req.getSession() so do it after affectation + do it after cdi init
 
             final RequestSession previous = SESSIONS.putIfAbsent(session.getId(), new RequestSession(this, session));
             if (previous != null) {

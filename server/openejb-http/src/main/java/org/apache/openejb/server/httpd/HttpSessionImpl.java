@@ -50,6 +50,9 @@ public class HttpSessionImpl implements HttpSession {
         }
 
         this.listeners = LightweightWebAppBuilderListenerExtractor.findByTypeForContext(contextPath, HttpSessionListener.class);
+    }
+
+    public void callListeners() {
         if (!this.listeners.isEmpty()) {
             final HttpSessionEvent event = new HttpSessionEvent(this);
             for (final HttpSessionListener o : this.listeners) {
