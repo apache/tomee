@@ -113,7 +113,7 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
 
     @Override
     public String currentSessionId() {
-        return CdiAppContextsService.class.cast(webBeansContext.getService(ContextsService.class)).currentSessionId();
+        return CdiAppContextsService.class.cast(webBeansContext.getService(ContextsService.class)).currentSessionId(true);
     }
 
     @Override

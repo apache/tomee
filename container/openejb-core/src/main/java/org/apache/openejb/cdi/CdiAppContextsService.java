@@ -142,15 +142,15 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
 
     @Override
     public String getConversationSessionId() {
-        return currentSessionId();
+        return currentSessionId(false);
     }
 
-    public String currentSessionId() {
+    public String currentSessionId(final boolean force) {
         final ServletRequestContext rc = requestContext.get();
         if (rc != null) {
             final HttpServletRequest req = rc.getServletRequest();
             if (req != null) {
-                final HttpSession session = req.getSession(false);
+                final HttpSession session = req.getSession(force);
                 if (session != null) {
                     return session.getId();
                 }
