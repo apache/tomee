@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.config.service;
+package org.apache.openejb.service;
 
 import org.apache.openejb.cdi.CompositeBeans;
 import org.apache.openejb.config.EjbModule;
@@ -41,7 +41,7 @@ import java.util.List;
  *
  * Definition can look like:
  *
- * 1. scanner = new://Service?class-name=org.apache.openejb.config.service.ScanJarService
+ * 1. scanner = new://Service?class-name=org.apache.openejb.service.ScanJarService
  * 2. scanner.url = cdi-lib/foo.jar
  * 
  */
