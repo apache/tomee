@@ -127,25 +127,29 @@ public class BeanContext extends DeploymentContext {
 
         final Collection<Interceptor<?>> postConstructInterceptors = Collection.class.cast(Reflections.get(injectionTarget, "postConstructInterceptors"));
         final Collection<Interceptor<?>> preDestroyInterceptors = Collection.class.cast(Reflections.get(injectionTarget, "preDestroyInterceptors"));
-        for (final Interceptor<?> pc : postConstructInterceptors) {
-            if (isEjbInterceptor(pc)) {
-                continue;
-            }
+        if (postConstructInterceptors != null) {
+            for (final Interceptor<?> pc : postConstructInterceptors) {
+                if (isEjbInterceptor(pc)) {
+                    continue;
+                }
 
-            final InterceptorData interceptorData = createInterceptorData(pc);
-            instanceScopedInterceptors.add(interceptorData);
-            cdiInterceptors.add(interceptorData);
+                final InterceptorData interceptorData = createInterceptorData(pc);
+                instanceScopedInterceptors.add(interceptorData);
+                cdiInterceptors.add(interceptorData);
+            }
         }
-        for (final Interceptor<?> pd : preDestroyInterceptors) {
-            if (isEjbInterceptor(pd)) {
-                continue;
+        if (preDestroyInterceptors != null) {
+            for (final Interceptor<?> pd : preDestroyInterceptors) {
+                if (isEjbInterceptor(pd)) {
+                    continue;
+                }
+                if (postConstructInterceptors.contains(pd)) {
+                    continue;
+                }
+                final InterceptorData interceptorData = createInterceptorData(pd);
+                instanceScopedInterceptors.add(interceptorData);
+                cdiInterceptors.add(interceptorData);
             }
-            if (postConstructInterceptors.contains(pd)) {
-                continue;
-            }
-            final InterceptorData interceptorData = createInterceptorData(pd);
-            instanceScopedInterceptors.add(interceptorData);
-            cdiInterceptors.add(interceptorData);
         }
 
         for (final Map.Entry<Method, InterceptorResolutionService.BusinessMethodInterceptorInfo> entry : info.getBusinessMethodsInfo().entrySet()) {
