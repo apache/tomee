@@ -48,6 +48,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Logger;
 
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class MulticastPulseAgentTest {
@@ -96,6 +97,10 @@ public class MulticastPulseAgentTest {
      */
     @Test
     public void test() throws Exception {
+        if ("true".equals(System.getProperty("skipMulticastTests"))) {
+            Logger.getLogger(this.getClass().getName()).warning("Skipping MulticastTest " + this.getClass().getName());
+            return;
+        }
 
         final InetAddress ia;
 
@@ -393,6 +398,10 @@ public class MulticastPulseAgentTest {
 
     @Test
     public void testBroadcastBadUri() throws Exception {
+        if ("true".equals(System.getProperty("skipMulticastTests"))) {
+            Logger.getLogger(this.getClass().getName()).warning("Skipping MulticastTest " + this.getClass().getName());
+            return;
+        }
 
         final DiscoveryListener original = agent.getDiscoveryListener();
 
