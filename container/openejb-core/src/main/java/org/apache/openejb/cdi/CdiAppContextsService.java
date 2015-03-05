@@ -150,7 +150,10 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         if (rc != null) {
             final HttpServletRequest req = rc.getServletRequest();
             if (req != null) {
-                return req.getSession().getId();
+                final HttpSession session = req.getSession(false);
+                if (session != null) {
+                    return session.getId();
+                }
             }
         }
         return null;
