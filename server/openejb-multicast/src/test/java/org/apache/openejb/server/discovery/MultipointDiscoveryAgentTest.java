@@ -48,23 +48,8 @@ import java.util.logging.Logger;
  */
 public class MultipointDiscoveryAgentTest extends TestCase {
 
-//    static {
-//        final FilteredHandler consoleHandler = new FilteredHandler(new ConsoleHandler(), new LogRecordFilter() {
-//            @Override
-//            public boolean accept(LogRecord record) {
-//                return Thread.currentThread().getName().contains("red");
-//            }
-//        });
-//        consoleHandler.setLevel(Level.FINEST);
-//
-//        final Logger logger = Logger.getLogger("OpenEJB.server.discovery");
-//        logger.addHandler(consoleHandler);
-//        logger.setLevel(Level.FINEST);
-//        logger.setUseParentHandlers(false);
-//    }
 
     public void test() throws Exception {
-//        System.setProperty("logging.level.OpenEJB.server.discovery", "debug");
 
         final URI testService = new URI("green://localhost:0");
 
