@@ -33,8 +33,10 @@ import org.apache.webbeans.context.SingletonContext;
 import org.apache.webbeans.conversation.ConversationImpl;
 import org.apache.webbeans.conversation.ConversationManager;
 import org.apache.webbeans.el.ELContextStore;
+import org.apache.webbeans.event.EventMetadataImpl;
 import org.apache.webbeans.spi.ContextsService;
 import org.apache.webbeans.spi.ConversationService;
+import org.apache.webbeans.util.AnnotationUtil;
 import org.apache.webbeans.web.context.ServletRequestContext;
 import org.apache.webbeans.web.intercept.RequestScopedBeanInterceptorHandler;
 
@@ -56,6 +58,8 @@ import javax.enterprise.context.SessionScoped;
 import javax.enterprise.context.spi.Context;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Singleton;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletRequestEvent;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -84,6 +88,8 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     private final WebBeansContext webBeansContext;
 
     private final ConversationService conversationService;
+
+    private volatile Object appEvent;
 
     private static final ThreadLocal<Collection<Runnable>> endRequestRunnables = new ThreadLocal<Collection<Runnable>>() {
         @Override
@@ -159,7 +165,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         return null;
     }
 
-    @Override
+    @Override // this method is called after the deployment (BeansDeployer) but need beans to be here to get events
     public void init(final Object initializeObject) {
         //Start application context
         startContext(ApplicationScoped.class, initializeObject);
@@ -171,7 +177,10 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     public void beforeStop(final Object destroyObject) {
         {   // trigger @PreDestroy mainly but keep it active until destroy(xxx)
             applicationContext.destroy();
-            webBeansContext.getBeanManagerImpl().fireEvent(destroyObject != null ? destroyObject : applicationContext, DestroyedLiteral.APP);
+            webBeansContext.getBeanManagerImpl().fireEvent(
+                    appEvent,
+                    new EventMetadataImpl(null, ServletContext.class.isInstance(appEvent) ? ServletContext.class : Object.class,null, new Annotation[] { DestroyedLiteral.APP }, webBeansContext),
+                    false);
             applicationContext.setActive(true);
 
             singletonContext.destroy();
@@ -305,10 +314,23 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     }
 
     private void initApplicationContext(final Object init) { // in case contexts are stop/start
-        final boolean alreadyStarted = applicationContext.isActive();
-        if (!alreadyStarted) {
-            applicationContext.setActive(true);
-            webBeansContext.getBeanManagerImpl().fireEvent(init != null ? init : applicationContext, InitializedLiteral.APP);
+        if (appEvent == null) { // no need of sync cause of the lifecycle
+            Object event = init;
+            if (StartupObject.class.isInstance(init)) {
+                final StartupObject so = StartupObject.class.cast(init);
+                if (so.isFromWebApp()) { // ear webapps
+                    event = so.getWebContext().getServletContext();
+                } else if (so.getAppInfo().webAppAlone) {
+                    event = SystemInstance.get().getComponent(ServletContext.class);
+                }
+            } else if (ServletContextEvent.class.isInstance(init)) {
+                event = ServletContextEvent.class.cast(init).getServletContext();
+            }
+            appEvent = event != null ? event : applicationContext;
+            webBeansContext.getBeanManagerImpl().fireEvent(
+                    appEvent,
+                    new EventMetadataImpl(null, ServletContext.class.isInstance(appEvent) ? ServletContext.class : Object.class, null, new Annotation[] { InitializedLiteral.APP }, webBeansContext),
+                    false);
         }
     }
 
@@ -517,13 +539,16 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             final SessionContext context = sessionContext.get();
 
             if (context != null && context.isActive()) {
-                context.destroy();
-                pushRequestReleasable(new Runnable() { // call it at the end of the request
-                    @Override
-                    public void run() {
-                        webBeansContext.getBeanManagerImpl().fireEvent(session, DestroyedLiteral.SESSION);
-                    }
-                });
+                if (getRequestContext(false) == null) {
+                    doDestroySession(context, session);
+                } else {
+                    pushRequestReleasable(new Runnable() { // call it at the end of the request
+                        @Override
+                        public void run() {
+                            doDestroySession(context, session);
+                        }
+                    });
+                }
             }
 
             //Clear thread locals
@@ -533,6 +558,11 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             //Remove session from manager
             sessionCtxManager.removeSessionContextWithSessionId(session.getId());
         }
+    }
+
+    private void doDestroySession(SessionContext context, HttpSession session) {
+        context.destroy();
+        webBeansContext.getBeanManagerImpl().fireEvent(session, DestroyedLiteral.SESSION);
     }
 
     //we don't have initApplicationContext

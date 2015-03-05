@@ -160,11 +160,6 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
         return contexsServices;
     }
 
-    public void startup() {
-        this.contexsServices = (CdiAppContextsService) webBeansContext.getContextsService();
-        this.contexsServices.init(null);
-    }
-
     public void stop() throws OpenEJBException {
         final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
         try {

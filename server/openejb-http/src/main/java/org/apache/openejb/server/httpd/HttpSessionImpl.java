@@ -37,12 +37,12 @@ public class HttpSessionImpl implements HttpSession {
     private Collection<HttpSessionListener> listeners;
     private String sessionId = UUID.randomUUID().toString();
     private Map<String, Object> attributes = new HashMap<String, Object>();
-    private final ConcurrentMap<String, HttpSession> mapToClean;
+    private final ConcurrentMap<String, ? extends HttpSessionEvent> mapToClean;
     private final long created = System.currentTimeMillis();
-    private final long timeout;
+    private volatile long timeout;
     private volatile long lastAccessed = created;
 
-    public HttpSessionImpl(final ConcurrentMap<String, HttpSession> sessions, final String contextPath, final long timeout) {
+    public HttpSessionImpl(final ConcurrentMap<String, ? extends HttpSessionEvent> sessions, final String contextPath, final long timeout) {
         this.mapToClean = sessions;
         this.timeout = timeout;
         if (contextPath == null) {
@@ -170,12 +170,13 @@ public class HttpSessionImpl implements HttpSession {
 
     @Override
     public void setMaxInactiveInterval(int i) {
-        // no-op
+        touch();
+        timeout = (long) i;
     }
 
     @Override
     public int getMaxInactiveInterval() {
-        touch();
+        // touch(); // TODO: dont use it internally
         return (int) timeout;
     }
 
@@ -185,7 +186,8 @@ public class HttpSessionImpl implements HttpSession {
         return new HttpSessionContext() {
             @Override
             public javax.servlet.http.HttpSession getSession(final String sessionId) {
-                return mapToClean.get(sessionId);
+                final HttpSessionEvent event = mapToClean.get(sessionId);
+                return event == null ? null : event.getSession();
             }
 
             @Override

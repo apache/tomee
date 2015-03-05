@@ -165,23 +165,25 @@ public class EndWebBeansListener implements ServletContextListener, ServletReque
 
         // ensure session ThreadLocal is set
         webBeansContext.getContextsService().startContext(SessionScoped.class, event.getSession());
-
-        webBeansContext.getContextsService().endContext(SessionScoped.class, event.getSession());
+        
         if (WebappWebBeansContext.class.isInstance(webBeansContext)) { // end after child
             WebappWebBeansContext.class.cast(webBeansContext).getParent().getContextsService().endContext(SessionScoped.class, event.getSession());
         }
 
         final CdiAppContextsService appContextsService = CdiAppContextsService.class.cast(webBeansContext.getContextsService());
         if (appContextsService.getRequestContext(false) != null) {
+            final String id = event.getSession().getId(); // capture it eagerly!
             appContextsService.pushRequestReleasable(new Runnable() {
                 @Override
                 public void run() {
-                    doDestroyConversations(event.getSession().getId());
+                    doDestroyConversations(id);
                 }
             });
         } else {
             doDestroyConversations(event.getSession().getId());
         }
+
+        webBeansContext.getContextsService().endContext(SessionScoped.class, event.getSession());
 
         destroyFakedRequest();
     }
