@@ -69,7 +69,10 @@ public class DependenceValidationTest extends TestCase {
                 "org.apache.openejb.service");
 
         // Nothing may depend on the Config code except it's subpackages
-        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.config", "org.apache.openejb.config.event", "org.apache.openejb.config.typed.util", "org.apache.openejb.config.rules", "org.apache.openejb.config.sys", "org.apache.openejb.assembler", "org.apache.openejb.cdi", "org.apache.openejb.junit", "org.apache.openejb.testng", "org.apache.openejb.testing", dynamicAssembler);
+        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.config",
+                "org.apache.openejb.config.event", "org.apache.openejb.config.typed.util", "org.apache.openejb.config.rules",
+                "org.apache.openejb.config.sys", "org.apache.openejb.assembler", "org.apache.openejb.cdi", "org.apache.openejb.junit",
+                "org.apache.openejb.testng", "org.apache.openejb.testing", dynamicAssembler, "org.apache.openejb.service");
 
         // The assembler may not be dependent on the config factory Implementation
         assertNotDependentOn("org.apache.openejb.assembler.classic", "org.apache.openejb.config");

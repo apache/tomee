@@ -35,7 +35,7 @@
       org.jboss.cdi.tck.interceptors.tests.contract.aroundTimeout.bindings.AroundTimeoutOrderInterceptorTest
       org.jboss.cdi.tck.tests.extensions.lifecycle.processInjectionTarget.ContainerEventTest
       -->
-      <class name="org.jboss.cdi.tck.tests.context.request.event.remote.RequestScopeEventRemoteTest" />
+      <class name="org.jboss.cdi.tck.tests.extensions.interceptors.InterceptorExtensionTest" />
     </classes>
   </test>
 </suite>
