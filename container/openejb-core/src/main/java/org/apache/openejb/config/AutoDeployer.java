@@ -96,6 +96,9 @@ public class AutoDeployer {
 
             assembler.createApplication(appInfo);
 
+            // war can be unpacked so it changes the last modified time
+            files.get(appPath).setModified(getLastModifiedInDir(new File(appPath)));
+
         } catch (final Exception e) {
             logger.error("Failed Auto-Deployment of: " + appPath, e);
         }
@@ -340,34 +343,41 @@ public class AutoDeployer {
             //
             super(dir.getAbsolutePath(), 0, getLastModifiedInDir(dir));
         }
+    }
 
-        private static long getLastModifiedInDir(final File dir) {
-            assert dir != null;
+    public static long getLastModifiedInDir(final File dir) {
+        assert dir != null;
 
-            long value = dir.lastModified();
-            final File[] children = dir.listFiles();
-            long test;
+        if (dir.isFile()) {
+            return dir.lastModified();
+        }
 
-            if (children != null) {
-                for (final File child : children) {
-                    if (!child.canRead()) {
+        long value = dir.lastModified();
+        final File[] children = dir.listFiles();
+        long test;
+
+        if (children != null) {
+            for (final File child : children) {
+                if (!child.canRead()) {
+                    continue;
+                }
+
+                if (child.isDirectory()) {
+                    if (new File(child.getParentFile(), child.getName() + ".war").exists()) { // unpacked
                         continue;
                     }
+                    test = getLastModifiedInDir(child);
+                } else {
+                    test = child.lastModified();
+                }
 
-                    if (child.isDirectory()) {
-                        test = getLastModifiedInDir(child);
-                    } else {
-                        test = child.lastModified();
-                    }
-
-                    if (test > value) {
-                        value = test;
-                    }
+                if (test > value) {
+                    value = test;
                 }
             }
-
-            return value;
         }
+
+        return value;
     }
 
     /**
