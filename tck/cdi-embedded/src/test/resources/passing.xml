@@ -227,6 +227,11 @@
               <exclude name=".*"/>
           </methods>
       </class>
+      <class name="org.jboss.cdi.tck.tests.extensions.interceptors.InterceptorExtensionTest">
+          <methods>
+              <exclude name=".*"/>
+          </methods>
+      </class>
 
 
 
