@@ -300,6 +300,11 @@
           <version>2.12.1</version>
         </plugin>
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>2.5.1</version>
+        </plugin>
+        <plugin>
           <groupId>org.codehaus.gmaven</groupId>
           <artifactId>groovy-maven-plugin</artifactId>
           <version>2.0</version>
@@ -328,7 +333,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
-        <version>2.5.1</version>
         <configuration>
           <!-- We cannot yet activate it as our submodules have different versions -->
           <autoVersionSubmodules>false</autoVersionSubmodules>

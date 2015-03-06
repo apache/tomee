@@ -1,4 +1,4 @@
-Title: Buildling Instructions
+Title: Building Instructions
 
 Apache TomEE is built with Apache Maven.
 
