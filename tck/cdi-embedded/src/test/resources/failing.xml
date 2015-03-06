@@ -31,7 +31,7 @@
     -Dopenejb.embedded.try-jsp=true
     -->
     <classes>
-      <class name="org.jboss.cdi.tck.tests.context.application.ejb.ApplicationContextSharedTest" />
+      <class name="org.jboss.cdi.tck.tests.lookup.modules.SpecializedBeanInjectionNotAvailable02Test" />
     </classes>
   </test>
 </suite>

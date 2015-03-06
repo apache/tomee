@@ -300,7 +300,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
             homeLocalBean = null;
             home = null;
             remote = null;
-        } else if (noLocalInterface && beanContext.isLocalbean()) {
+        } else if (beanContext.isLocalbean()) {
             homeLocalBean = beanContext.getBusinessLocalBeanHome();
             home = null;
             remote = null;
