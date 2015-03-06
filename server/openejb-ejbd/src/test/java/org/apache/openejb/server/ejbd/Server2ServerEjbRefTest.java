@@ -137,7 +137,7 @@ public class Server2ServerEjbRefTest extends TestCase {
             Assert.assertNotNull("orangeRemote is null", orangeRemote);
             assertEquals("olleh", orangeRemote.echo("hello"));
             try {
-                final OrangeRemote bean = OrangeRemote.class.cast(ctx.lookup("OrangeBeanRemoteWell "));
+                final OrangeRemote bean = OrangeRemote.class.cast(ctx.lookup("OrangeBeanRemote"));
                 assertNotNull(bean);
                 assertEquals("olleh", bean.echo("hello"));
             } catch (final NamingException e) {
