@@ -32,10 +32,12 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.ServiceDaemon;
 import org.apache.openejb.server.ServicePool;
 
+import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Remote;
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import java.util.Properties;
 
 /**
@@ -127,10 +129,20 @@ public class Server2ServerEjbRefTest extends TestCase {
         @EJB(mappedName = "jndi:ext://orange/OrangeBeanRemote")
         private OrangeRemote orangeRemote;
 
+        @Resource(lookup = "openejb:remote_jndi_contexts/orange")
+        private Context ctx;
+
         @Override
         public void hasOrangeRemote() {
             Assert.assertNotNull("orangeRemote is null", orangeRemote);
             assertEquals("olleh", orangeRemote.echo("hello"));
+            try {
+                final OrangeRemote bean = OrangeRemote.class.cast(ctx.lookup("OrangeBeanRemoteWell "));
+                assertNotNull(bean);
+                assertEquals("olleh", bean.echo("hello"));
+            } catch (final NamingException e) {
+                fail(e.getMessage());
+            }
         }
     }
 
