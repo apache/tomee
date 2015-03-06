@@ -16,19 +16,15 @@
  */
 package org.apache.openejb.tck.cdi.embedded;
 
+import org.apache.openejb.UndeployException;
+import org.apache.openejb.assembler.classic.AppInfo;
+import org.apache.openejb.assembler.classic.Assembler;
 import org.jboss.cdi.tck.util.ActionSequence;
-import org.testng.IInvokedMethod;
-import org.testng.IInvokedMethodListener;
-import org.testng.ITestResult;
 
-public class StandaloneTckCleaner implements IInvokedMethodListener {
+public class CleanUpAssembler extends Assembler {
     @Override
-    public void beforeInvocation(final IInvokedMethod iInvokedMethod, final ITestResult iTestResult) {
-        // no-op
-    }
-
-    @Override
-    public void afterInvocation(final IInvokedMethod iInvokedMethod, final ITestResult iTestResult) {
+    public void destroyApplication(final AppInfo appInfo) throws UndeployException {
+        super.destroyApplication(appInfo);
         ActionSequence.reset();
     }
 }

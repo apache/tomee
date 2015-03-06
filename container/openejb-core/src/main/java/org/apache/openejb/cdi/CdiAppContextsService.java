@@ -539,7 +539,8 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             final SessionContext context = sessionContext.get();
 
             if (context != null && context.isActive()) {
-                if (getRequestContext(false) == null) {
+                final ServletRequestContext servletRequestContext = getRequestContext(false);
+                if (servletRequestContext == null || servletRequestContext.getServletRequest() == null) {
                     doDestroySession(context, session);
                 } else {
                     pushRequestReleasable(new Runnable() { // call it at the end of the request

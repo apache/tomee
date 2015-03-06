@@ -20,20 +20,23 @@ import org.apache.openejb.cdi.CompositeBeans;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.config.FinderFactory;
 import org.apache.openejb.config.ReadDescriptors;
+import org.apache.openejb.config.WebModule;
 import org.apache.openejb.config.event.BeforeAppInfoBuilderEvent;
 import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.jee.Beans;
 import org.apache.openejb.observer.Observes;
-import org.apache.openejb.util.URLs;
 import org.apache.xbean.finder.archive.FileArchive;
 import org.apache.xbean.finder.archive.JarArchive;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -42,72 +45,136 @@ import java.util.List;
  * Definition can look like:
  *
  * 1. scanner = new://Service?class-name=org.apache.openejb.service.ScanJarService
- * 2. scanner.url = cdi-lib/foo.jar
+ * 2. scanner.path = cdi-lib/foo.jar
  * 
+ * if url is a directory containing multiple libs just use scanner.directory = true 
  */
 public class ScanJarService {
-    private URL url;
-    private final List<String> beans = new ArrayList<>();
-    private Beans beansModel;
+    private File path;
+    private boolean directory;
 
-    public void addScanningResult(@Observes final BeforeAppInfoBuilderEvent event) {
-        for (final EjbModule ejbModule : event.getAppModule().getEjbModules()) {
+    private volatile CompositeBeans beans;
+
+    public void addScanningResult(@Observes final BeforeAppInfoBuilderEvent event) throws Exception {
+        for (final EjbModule ejbModule : event.getAppModule().getEjbModules()) { // ear
             if (ejbModule.getModuleId().startsWith("ear-scoped-cdi-beans")) {
-                final Beans beans = ejbModule.getBeans();
-                if (CompositeBeans.class.isInstance(beans)) {
-                    final CompositeBeans cb = CompositeBeans.class.cast(beans);
-                    cb.getManagedClasses().put(url, new ArrayList<>(this.beans));
-
-                    if (beansModel != null) {
-                        if (beansModel.getAlternativeClasses() != null) {
-                            cb.getAlternativesByUrl().put(url, beansModel.getAlternativeClasses());
-                        }
-                        if (beansModel.getAlternativeStereotypes() != null) {
-                            cb.getAlternativeStereotypesByUrl().put(url, beansModel.getAlternativeStereotypes());
-                        }
-                        if (beansModel.getInterceptors() != null) {
-                            cb.getInterceptorsByUrl().put(url, beansModel.getInterceptors());
-                        }
-                        if (beansModel.getDecorators() != null) {
-                            cb.getDecoratorsByUrl().put(url, beansModel.getDecorators());
-                        }
-                    }
-                }
+                doMerge(ejbModule);
                 return;
+            }
+        }
+        // else a war
+        for (final WebModule webModule : event.getAppModule().getWebModules()) {
+            for (final EjbModule ejbModule : event.getAppModule().getEjbModules()) {
+                if (ejbModule.getModuleId().equals(webModule.getModuleId())) {
+                    doMerge(ejbModule);
+                    return;
+                }
             }
         }
     }
 
-    public void setUrl(final String url) throws Exception {
-        final File f = new File(url);
-        if (f.exists()) {
-            this.url = f.toURI().toURL();
-        } else {
-            this.url = new URL(url);
+    private void doMerge(final EjbModule ejbModule) throws Exception {
+        final Beans beans = ejbModule.getBeans();
+        if (CompositeBeans.class.isInstance(beans)) {
+            final CompositeBeans cb = CompositeBeans.class.cast(beans);
+            ensureInit();
+            merge(cb);
+        } else if (beans != null) {
+            ensureInit();
+            for (final URL key : this.beans.getManagedClasses().keySet()) {
+                beans.getManagedClasses().putAll(this.beans.getManagedClasses());
+                addIfNotNull(beans.getInterceptors(), this.beans.getInterceptorsByUrl().get(key));
+                addIfNotNull(beans.getAlternativeClasses(), this.beans.getAlternativesByUrl().get(key));
+                addIfNotNull(beans.getAlternativeStereotypes(), this.beans.getAlternativeStereotypesByUrl().get(key));
+                addIfNotNull(beans.getDecorators(), this.beans.getDecoratorsByUrl().get(key));
+            }
+        }
+    }
+
+    private void addIfNotNull(final List<String> out, final Collection<String> in) {
+        if (in != null) {
+            out.addAll(in);
+        }
+    }
+
+    private void merge(final CompositeBeans cb) {
+        cb.getManagedClasses().putAll(this.beans.getManagedClasses());
+        cb.getNotManagedClasses().putAll(this.beans.getNotManagedClasses());
+        cb.getAlternativesByUrl().putAll(this.beans.getAlternativesByUrl());
+        cb.getAlternativeStereotypesByUrl().putAll(this.beans.getAlternativeStereotypesByUrl());
+        cb.getInterceptorsByUrl().putAll(this.beans.getInterceptorsByUrl());
+        cb.getDecoratorsByUrl().putAll(this.beans.getDecoratorsByUrl());
+    }
+
+    private void ensureInit() throws Exception {
+        if (beans != null) {
+            return;
         }
 
-        final File file = URLs.toFile(this.url);
-        final ClassLoader loader = ParentClassLoaderFinder.Helper.get();
-        beans.addAll(
-                new FinderFactory.OpenEJBAnnotationFinder(
-                        file.isDirectory() ? new FileArchive(loader, file) : new JarArchive(loader, this.url))
-                        .getAnnotatedClassNames());
+        synchronized (this) {
+            if (beans != null) {
+                return;
+            }
 
-        if (file.isDirectory()) {
-            final File beansXml = new File(file, "META-INF/beans.xml");
-            if (beansXml.exists()) {
-                final FileInputStream inputStream = new FileInputStream(beansXml);
-                beansModel = ReadDescriptors.readBeans(inputStream);
-                inputStream.close();
+            final ClassLoader loader = ParentClassLoaderFinder.Helper.get();
+            final CompositeBeans mergedModel = new CompositeBeans();
+            for (final File file : findFiles()) {
+                final URL url = file.toURI().toURL();
+                if (file.isDirectory()) {
+                    final FinderFactory.OpenEJBAnnotationFinder finder = new FinderFactory.OpenEJBAnnotationFinder(new FileArchive(loader, file));
+                    mergedModel.getManagedClasses().put(url, finder.getAnnotatedClassNames());
+
+                    final File beansXml = new File(file, "META-INF/beans.xml");
+                    if (beansXml.exists()) {
+                        final FileInputStream inputStream = new FileInputStream(beansXml);
+                        final Beans beansModel = ReadDescriptors.readBeans(inputStream);
+                        mergedModel.mergeClasses(url, beansModel);
+                        inputStream.close();
+                    }
+                } else {
+                    final FinderFactory.OpenEJBAnnotationFinder finder = new FinderFactory.OpenEJBAnnotationFinder(new JarArchive(loader, url));
+                    mergedModel.getManagedClasses().put(url, finder.getAnnotatedClassNames());
+
+                    try (final URLClassLoader cl = new URLClassLoader(new URL[]{ url })) {
+                        final InputStream is = cl.getResourceAsStream("META-INF/beans.xml");
+                        if (is != null) {
+                            final Beans beansModel = ReadDescriptors.readBeans(is);
+                            mergedModel.mergeClasses(url, beansModel);
+                            is.close();
+                        }
+                    }
+                }
             }
-        } else {
-            final URLClassLoader cl = new URLClassLoader(new URL[] { this.url });
-            final InputStream is = cl.getResourceAsStream("META-INF/beans.xml");
-            if (is != null) {
-                beansModel = ReadDescriptors.readBeans(is);
-                is.close();
-            }
-            cl.close();
+
+            beans = mergedModel;
         }
+    }
+
+    private Iterable<? extends File> findFiles() {
+        final Collection<File> files = new LinkedList<>();
+        if (!directory) {
+            files.add(path);
+        } else {
+            final File[] children = path.listFiles(new FileFilter() {
+                @Override
+                public boolean accept(final File pathname) {
+                    final String name = pathname.getName();
+                    return name.endsWith(".jar") || name.endsWith(".zip") || pathname.isDirectory();
+                }
+            });
+            if (children != null) {
+                Collections.addAll(files, children);
+            }
+        }
+        return files;
+    }
+
+    public void setPath(final String path) throws Exception {
+        this.path = new File(path).getCanonicalFile();
+        
+    }
+
+    public void setDirectory(final boolean directory) {
+        this.directory = directory;
     }
 }

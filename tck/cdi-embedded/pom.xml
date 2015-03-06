@@ -203,6 +203,7 @@
             <openejb.cdi.producer.interception>false</openejb.cdi.producer.interception>
             <openejb.cdi.filter.classloader>false</openejb.cdi.filter.classloader>
 
+            <openejb.assembler>org.apache.openejb.tck.cdi.embedded.CleanUpAssembler</openejb.assembler>
             <openejb.jul.forceReload>true</openejb.jul.forceReload>
             <openejb.strict.interface.declaration>true</openejb.strict.interface.declaration>
             <openejb.http.mock-request>true</openejb.http.mock-request>
