@@ -147,6 +147,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.annotation.security.RunAs;
 import javax.annotation.sql.DataSourceDefinition;
 import javax.annotation.sql.DataSourceDefinitions;
+import javax.decorator.Decorator;
 import javax.decorator.Delegate;
 import javax.ejb.AccessTimeout;
 import javax.ejb.ActivationConfigProperty;
@@ -1691,6 +1692,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                         containerAnnot.add(Stateless.class);
                         containerAnnot.add(Stateful.class);
                         containerAnnot.add(MessageDriven.class);
+                        containerAnnot.add(javax.interceptor.Interceptor.class);
+                        containerAnnot.add(Decorator.class);
                         final ClassLoader classLoader = ParentClassLoaderFinder.Helper.get();
                         try {
                             for (final String name : asList("javax.faces.flow.FlowScoped", "javax.faces.view.ViewScoped")) {
