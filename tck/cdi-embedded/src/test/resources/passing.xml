@@ -220,6 +220,16 @@
           </methods>
       </class>
 
+
+      <!-- CDI-312 ambiguous BDA definition (EE-module vs JAR) -->
+      <class name="org.jboss.cdi.tck.tests.interceptors.ordering.global.GlobalInterceptorOrderingTest">
+          <methods>
+              <exclude name=".*"/>
+          </methods>
+      </class>
+
+
+
       <!-- not in web profile and not supported by embedded adapter anyway -->
       <class name="org.jboss.cdi.tck.tests.deployment.packaging.rar.ResourceAdapterArchiveTest">
         <methods>
