@@ -31,11 +31,7 @@
     -Dopenejb.embedded.try-jsp=true
     -->
     <classes>
-      <!--
-      org.jboss.cdi.tck.interceptors.tests.contract.aroundTimeout.bindings.AroundTimeoutOrderInterceptorTest
-      org.jboss.cdi.tck.tests.extensions.lifecycle.processInjectionTarget.ContainerEventTest
-      -->
-      <class name="org.jboss.cdi.tck.tests.deployment.discovery.BeanDiscoveryTest" />
+      <class name="org.jboss.cdi.tck.interceptors.tests.contract.aroundTimeout.bindings.AroundTimeoutOrderInterceptorTest" />
     </classes>
   </test>
 </suite>

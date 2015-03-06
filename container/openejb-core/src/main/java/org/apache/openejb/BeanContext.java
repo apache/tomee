@@ -44,6 +44,7 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.proxy.DynamicProxyImplFactory;
 import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 import org.apache.openejb.util.reflection.Reflections;
+import org.apache.webbeans.annotation.AnnotationManager;
 import org.apache.webbeans.component.CdiInterceptorBean;
 import org.apache.webbeans.component.InjectionTargetBean;
 import org.apache.webbeans.config.WebBeansContext;
@@ -53,6 +54,7 @@ import org.apache.webbeans.intercept.DecoratorHandler;
 import org.apache.webbeans.intercept.InterceptorResolutionService;
 import org.apache.webbeans.portable.InjectionTargetImpl;
 import org.apache.webbeans.proxy.InterceptorDecoratorProxyFactory;
+import org.apache.webbeans.util.AnnotationUtil;
 import org.apache.xbean.recipe.ConstructionException;
 
 import javax.ejb.ApplicationException;
@@ -70,6 +72,8 @@ import javax.ejb.TimedObject;
 import javax.ejb.Timer;
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.AnnotatedMethod;
+import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Decorator;
 import javax.enterprise.inject.spi.InterceptionType;
 import javax.enterprise.inject.spi.Interceptor;
@@ -187,6 +191,30 @@ public class BeanContext extends DeploymentContext {
         clear(Collection.class.cast(Reflections.get(injectionTarget, "preDestroyMethods")));
         clear(Collection.class.cast(Reflections.get(info, "ejbInterceptors")));
         clear(Collection.class.cast(Reflections.get(info, "cdiInterceptors")));
+
+        // OWB doesn't compute AROUND_INVOKE so let's do it
+        final Method timeout = getEjbTimeout();
+        if (timeout != null) {
+            final AnnotatedType annotatedType = cdiEjbBean.getAnnotatedType();
+            final AnnotationManager annotationManager = getWebBeansContext().getAnnotationManager();
+            final Collection<Annotation> annotations = new HashSet<>();
+            annotations.addAll(annotationManager.getInterceptorAnnotations(annotatedType.getAnnotations()));
+            final Set<AnnotatedMethod<?>> methods = annotatedType.getMethods();
+            for (final AnnotatedMethod<?> m : methods) {
+                if (timeout.equals(m.getJavaMember())) {
+                    annotations.addAll(annotationManager.getInterceptorAnnotations(m.getAnnotations()));
+                    break;
+                }
+            }
+            for (final Interceptor<?> timeoutInterceptor : getWebBeansContext().getBeanManagerImpl()
+                    .resolveInterceptors(InterceptionType.AROUND_TIMEOUT, AnnotationUtil.asArray(annotations))) {
+                if (isEjbInterceptor(timeoutInterceptor)) {
+                    continue;
+                }
+                final InterceptorData data = createInterceptorData(timeoutInterceptor);
+                addCdiMethodInterceptor(timeout, data);
+            }
+        }
     }
 
     private boolean isEjbInterceptor(final Interceptor<?> pc) {

@@ -19,12 +19,16 @@ package org.apache.openejb.tck.cdi.embedded;
 import org.apache.openejb.UndeployException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
 import org.jboss.cdi.tck.util.ActionSequence;
 
 public class CleanUpAssembler extends Assembler {
     @Override
     public void destroyApplication(final AppInfo appInfo) throws UndeployException {
         super.destroyApplication(appInfo);
-        ActionSequence.reset();
+        if (SystemInstance.get().getComponent(ContainerSystem.class).getAppContexts().isEmpty()) {
+            ActionSequence.reset();
+        }
     }
 }
