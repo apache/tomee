@@ -51,6 +51,9 @@ public class ContextHandler extends ContextWrapper {
     @Override
     public Object lookup(final String name) throws NamingException {
         try {
+            if ("java:".equals(name)) {
+                return context;
+            }
             return context.lookup(name);
         } catch (final UndeclaredThrowableException ute) {
             Throwable e = ute.getUndeclaredThrowable();
