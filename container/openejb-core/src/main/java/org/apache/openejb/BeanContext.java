@@ -206,13 +206,15 @@ public class BeanContext extends DeploymentContext {
                     break;
                 }
             }
-            for (final Interceptor<?> timeoutInterceptor : getWebBeansContext().getBeanManagerImpl()
-                    .resolveInterceptors(InterceptionType.AROUND_TIMEOUT, AnnotationUtil.asArray(annotations))) {
-                if (isEjbInterceptor(timeoutInterceptor)) {
-                    continue;
+            if (!annotations.isEmpty()) {
+                for (final Interceptor<?> timeoutInterceptor : getWebBeansContext().getBeanManagerImpl()
+                        .resolveInterceptors(InterceptionType.AROUND_TIMEOUT, AnnotationUtil.asArray(annotations))) {
+                    if (isEjbInterceptor(timeoutInterceptor)) {
+                        continue;
+                    }
+                    final InterceptorData data = createInterceptorData(timeoutInterceptor);
+                    addCdiMethodInterceptor(timeout, data);
                 }
-                final InterceptorData data = createInterceptorData(timeoutInterceptor);
-                addCdiMethodInterceptor(timeout, data);
             }
         }
     }
