@@ -247,6 +247,11 @@
               <exclude name=".*"/>
           </methods>
       </class>
+      <class name="org.jboss.cdi.tck.tests.lookup.manager.provider.runtime.CDIProviderRuntimeTest">
+          <methods>
+              <exclude name=".*"/>
+          </methods>
+      </class>
 
 
 
