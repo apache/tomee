@@ -266,6 +266,11 @@
               <exclude name="testDecoratorAndCrossModuleEventObserver"/>
           </methods>
       </class>
+      <class name="org.jboss.cdi.tck.tests.lookup.manager.provider.init.CDIProviderInitTest">
+        <methods>
+          <exclude name=".*"/>
+        </methods>
+      </class>
 
 
 
