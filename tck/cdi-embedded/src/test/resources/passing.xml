@@ -252,6 +252,13 @@
               <exclude name=".*"/>
           </methods>
       </class>
+      <class name="org.jboss.cdi.tck.tests.deployment.packaging.war.modules.WebArchiveModulesTest">
+          <methods>
+              <exclude name="testAlternatives"/>
+              <exclude name="testInjectionChainVisibilityAndInterceptorEnablement"/>
+              <exclude name="testDecoratorAndCrossModuleEventObserver"/>
+          </methods>
+      </class>
 
 
 
