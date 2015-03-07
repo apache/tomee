@@ -232,6 +232,21 @@
               <exclude name=".*"/>
           </methods>
       </class>
+      <class name="org.jboss.cdi.tck.tests.lookup.modules.specialization.alternative.Specialization02Test">
+          <methods>
+              <exclude name=".*"/>
+          </methods>
+      </class>
+      <class name="org.jboss.cdi.tck.tests.lookup.modules.specialization.alternative.Specialization03Test">
+          <methods>
+              <exclude name=".*"/>
+          </methods>
+      </class>
+      <class name="org.jboss.cdi.tck.tests.lookup.modules.specialization.alternative.Specialization05Test">
+          <methods>
+              <exclude name=".*"/>
+          </methods>
+      </class>
 
 
 
