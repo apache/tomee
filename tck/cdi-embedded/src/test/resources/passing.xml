@@ -307,6 +307,11 @@
           <exclude name="testConversationActivation" />
         </methods>
       </class>
+      <class name="org.jboss.cdi.tck.tests.lookup.el.integration.IntegrationWithUnifiedELTest">
+        <methods>
+          <exclude name="testELResolverRegisteredWithJsf" />
+        </methods>
+      </class>
     </classes>
   </test>
 </suite>
