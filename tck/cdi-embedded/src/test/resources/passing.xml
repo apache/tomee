@@ -194,6 +194,11 @@
               <exclude name=".*"/>
           </methods>
       </class>
+      <class name="org.jboss.cdi.tck.tests.extensions.lifecycle.processBeanAttributes.VerifyValuesTest">
+          <methods>
+              <exclude name="testManagedBeanAttributes"/>
+          </methods>
+      </class>
 
       <!-- CDI-514 (issue got moved from original CDITCK-467) -->
       <class name="org.jboss.cdi.tck.tests.event.fires.FireEventTest">
