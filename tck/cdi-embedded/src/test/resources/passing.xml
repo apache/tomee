@@ -189,6 +189,13 @@
       </class>
 
       <!-- CDITCK-467 -->
+      <class name="org.jboss.cdi.tck.tests.extensions.lifecycle.processBeanAttributes.specialization.SpecializationTest">
+          <methods>
+              <exclude name=".*"/>
+          </methods>
+      </class>
+
+      <!-- CDI-514 (issue got moved from original CDITCK-467) -->
       <class name="org.jboss.cdi.tck.tests.event.fires.FireEventTest">
           <methods>
               <exclude name="testDuplicateBindingsToFireEventFails"/>
