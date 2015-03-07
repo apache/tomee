@@ -314,7 +314,7 @@
       </class>
       <class name="org.jboss.cdi.tck.tests.lookup.el.integration.IntegrationWithUnifiedELTest">
         <methods>
-          <exclude name="testELResolverRegisteredWithJsf" />
+          <exclude name=".*" />
         </methods>
       </class>
     </classes>
