@@ -277,6 +277,12 @@
         </methods>
       </class>
 
+      <!-- CDI-517 -->
+      <class name="org.jboss.cdi.tck.tests.lookup.typesafe.resolution.parameterized.raw.RawBeanTypeParameterizedRequiredTypeTest">
+        <methods>
+          <exclude name="testNotAssignableTypeParams"/>
+        </methods>
+      </class>
 
 
       <!-- not in web profile and not supported by embedded adapter anyway -->
