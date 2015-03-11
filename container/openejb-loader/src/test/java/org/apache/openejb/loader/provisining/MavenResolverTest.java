@@ -45,7 +45,7 @@ public class MavenResolverTest {
 
     @Test
     public void resolve() throws Exception {
-        File file = new File("target/test/foo.jar");
+        File file = new File("target/test/foo1.jar");
         Files.remove(file);
         Files.mkdirs(file.getParentFile());
         FileOutputStream to = new FileOutputStream(file);
@@ -57,7 +57,7 @@ public class MavenResolverTest {
 
     @Test
     public void customRepo() throws Exception {
-        File file = new File("target/test/foo.jar");
+        File file = new File("target/test/foo2.jar");
         Files.remove(file);
         Files.mkdirs(file.getParentFile());
         FileOutputStream to = new FileOutputStream(file);
@@ -69,7 +69,7 @@ public class MavenResolverTest {
 
     @Test
     public void latest() throws Exception {
-        File file = new File("target/test/foo.jar");
+        File file = new File("target/test/foo3.jar");
         Files.remove(file);
         Files.mkdirs(file.getParentFile());
         FileOutputStream to = new FileOutputStream(file);
