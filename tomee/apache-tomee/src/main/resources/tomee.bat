@@ -20,7 +20,7 @@ set port=8080
 
 rem Guess CATALINA_HOME if not defined
 set "CURRENT_DIR=%cd%"
-if not "%CATALINA_HOME%" == "" goto gotHome
+if DEFINED CATALINA_HOME goto gotHome
 set "CATALINA_HOME=%CURRENT_DIR%"
 if exist "%CATALINA_HOME%\bin\catalina.bat" goto okHome
 cd ..
@@ -35,7 +35,7 @@ goto end
 :okHome
 
 rem Copy CATALINA_BASE from CATALINA_HOME if not defined
-if not "%CATALINA_BASE%" == "" goto gotBase
+if DEFINED CATALINA_BASE goto gotBase
 set "CATALINA_BASE=%CATALINA_HOME%"
 :gotBase
 
@@ -52,8 +52,7 @@ goto end
 call "%CATALINA_HOME%\bin\setclasspath.bat" %1
 if errorlevel 1 goto end
 
-
-if not "%CATALINA_TMPDIR%" == "" goto gotTmpdir
+if DEFINED CATALINA_TMPDIR goto gotTmpdir
 set "CATALINA_TMPDIR=%CATALINA_BASE%\temp"
 :gotTmpdir
 
@@ -61,11 +60,11 @@ set "CATALINA_TMPDIR=%CATALINA_BASE%\temp"
 rem create classpath
 setlocal enabledelayedexpansion
 
-set cp="%CATALINA_HOME%\bin\tomcat-juli.jar"
+set "CLASSPATH=%CLASSPATH%;%CATALINA_HOME%\bin\tomcat-juli.jar"
 set lib="%CATALINA_HOME%\lib\"
 echo %lib%
 for %%F in (%lib%/*.jar) do (
-  set cp=!cp!;%%F%
+  set CLASSPATH=!CLASSPATH!;%%F%
 )
 
 if ""%1"" == ""deploy"" goto doDeploy
@@ -74,11 +73,11 @@ goto doExec
 
 :doDeploy
 :doUndeploy
-%_RUNJAVA% -cp "%cp%" -Djava.io.tmpdir="%CATALINA_TMPDIR%" org.apache.openejb.cli.Bootstrap %1 -s http://localhost:%port%/tomee/ejb %2
+"%_RUNJAVA%" -Djava.io.tmpdir="%CATALINA_TMPDIR%" org.apache.openejb.cli.Bootstrap %1 -s http://localhost:%port%/tomee/ejb %2
 goto end
 
 :doExec
-%_RUNJAVA% -cp "%cp%" -Djava.io.tmpdir="%CATALINA_TMPDIR%" org.apache.openejb.cli.Bootstrap %*
+"%_RUNJAVA%" -Djava.io.tmpdir="%CATALINA_TMPDIR%" org.apache.openejb.cli.Bootstrap %*
 goto end
 
 :end

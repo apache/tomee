@@ -27,7 +27,7 @@ IF EXIST "%~dp0jdk" (
   SET "JAVA_HOME=%~dp0jdk"
 )
 
-@IF NOT "%ECHO%" == ""  ECHO %ECHO%
+@IF DEFINED ECHO  ECHO %ECHO%
 @IF "%OS%" == "Windows_NT" setlocal
 
 IF "%OS%" == "Windows_NT" (
@@ -66,7 +66,7 @@ IF /i "%proc%" EQU undefined (
 set "SELF=%~dp0%service.bat"
 rem Guess CATALINA_HOME if not defined
 set "CURRENT_DIR=%cd%"
-if not "%CATALINA_HOME%" == "" goto gotHome
+if DEFINED CATALINA_HOME goto gotHome
 set "CATALINA_HOME=%cd%"
 if exist "%CATALINA_HOME%\bin\service.bat" goto okHome
 rem CD to the upper dir
@@ -80,8 +80,8 @@ echo This environment variable is needed to run this program
 goto end
 :okHome
 rem Make sure prerequisite environment variables are set
-if not "%JAVA_HOME%" == "" goto gotJdkHome
-if not "%JRE_HOME%" == "" goto gotJreHome
+if DEFINED JAVA_HOME goto gotJdkHome
+if DEFINED JRE_HOME goto gotJreHome
 echo Neither the JAVA_HOME nor the JRE_HOME environment variable is defined
 echo Service will try to guess them from the registry.
 goto okJavaHome
@@ -102,7 +102,7 @@ echo This environment variable is needed to run this program
 echo NB: JAVA_HOME should point to a JDK not a JRE
 goto end
 :okJavaHome
-if not "%CATALINA_BASE%" == "" goto gotBase
+if DEFINED CATALINA_BASE goto gotBase
 set "CATALINA_BASE=%CATALINA_HOME%"
 :gotBase
 
