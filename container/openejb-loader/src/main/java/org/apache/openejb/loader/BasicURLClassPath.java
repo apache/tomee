@@ -76,7 +76,7 @@ public abstract class BasicURLClassPath implements ClassPath {
         });
 
         final URL[] jars = new URL[jarNames.length];
-        final boolean isWindows = System.getProperty("os.name", "unknown").toLowerCase().startsWith("windows");
+        final boolean isWindows = System.getProperty("os.name", "unknown").toLowerCase().startsWith("win");
 
         for (int j = 0; j < jarNames.length; j++) {
             final String name = isWindows ? jarNames[j].toLowerCase() : jarNames[j];

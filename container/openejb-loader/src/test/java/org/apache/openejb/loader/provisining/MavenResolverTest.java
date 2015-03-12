@@ -45,10 +45,10 @@ public class MavenResolverTest {
 
     @Test
     public void resolve() throws Exception {
-        File file = new File("target/test/foo1.jar");
+        final File file = new File("target/test/foo.jar");
         Files.remove(file);
         Files.mkdirs(file.getParentFile());
-        FileOutputStream to = new FileOutputStream(file);
+        final FileOutputStream to = new FileOutputStream(file);
         IO.copy(resolver.resolve("mvn:junit:junit:4.12:jar"), to);
         IO.close(to);
         assertTrue(file.exists());
@@ -57,10 +57,10 @@ public class MavenResolverTest {
 
     @Test
     public void customRepo() throws Exception {
-        File file = new File("target/test/foo2.jar");
+        final File file = new File("target/test/foo.jar");
         Files.remove(file);
         Files.mkdirs(file.getParentFile());
-        FileOutputStream to = new FileOutputStream(file);
+        final FileOutputStream to = new FileOutputStream(file);
         IO.copy(resolver.resolve("mvn:http://repo1.maven.org/maven2/!junit:junit:4.12:jar"), to);
         IO.close(to);
         assertTrue(file.exists());
@@ -69,10 +69,10 @@ public class MavenResolverTest {
 
     @Test
     public void latest() throws Exception {
-        File file = new File("target/test/foo3.jar");
+        final File file = new File("target/test/foo.jar");
         Files.remove(file);
         Files.mkdirs(file.getParentFile());
-        FileOutputStream to = new FileOutputStream(file);
+        final FileOutputStream to = new FileOutputStream(file);
         IO.copy(resolver.resolve("mvn:http://repo1.maven.org/maven2/!junit:junit:LATEST:jar"), to);
         IO.close(to);
         assertTrue(file.exists());

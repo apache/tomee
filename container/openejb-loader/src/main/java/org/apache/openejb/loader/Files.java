@@ -44,6 +44,7 @@ import static org.apache.openejb.loader.JarLocation.decode;
  */
 public class Files {
     private static final Map<String, MessageDigest> DIGESTS = new HashMap<String, MessageDigest>();
+    private static final boolean isWindows = System.getProperty("os.name", "unknown").toLowerCase().startsWith("win");
 
     public static File path(final String... parts) {
         File dir = null;
@@ -119,6 +120,8 @@ public class Files {
         if (!file.isDirectory()) {
             throw new FileRuntimeException("Not a directory: " + file.getAbsolutePath());
         }
+
+        System.gc();
         return file;
     }
 
@@ -167,6 +170,12 @@ public class Files {
         if (file.exists()) {
             return file;
         }
+
+        if (isWindows) {
+            //Known Windows bug JDK-4715154 and as of JDK8 still not fixable due to OS
+            System.gc();
+        }
+
         if (!file.mkdirs()) {
             throw new FileRuntimeException("Cannot mkdir: " + file.getAbsolutePath());
         }
@@ -179,17 +188,28 @@ public class Files {
 
     public static File tmpdir() {
         try {
-            File file = null;
+            File file;
             try {
                 file = File.createTempFile("temp", "dir");
             } catch (final Throwable e) {
                 //Use a local tmp directory
                 final File tmp = new File("tmp");
+
+                if (isWindows) {
+                    //Known Windows bug JDK-4715154 and as of JDK8 still not fixable due to OS
+                    System.gc();
+                }
+
                 if (!tmp.exists() && !tmp.mkdirs()) {
                     throw new IOException("Failed to create local tmp directory: " + tmp.getAbsolutePath());
                 }
 
                 file = File.createTempFile("temp", "dir", tmp);
+            }
+
+            if (isWindows) {
+                //Known Windows bug JDK-4715154 and as of JDK8 still not fixable due to OS
+                System.gc();
             }
 
             if (!file.delete()) {
@@ -214,6 +234,11 @@ public class Files {
     public static File mkdirs(final File file) {
 
         if (!file.exists()) {
+
+            if (isWindows) {
+                //Known Windows bug JDK-4715154 and as of JDK8 still not fixable due to OS
+                System.gc();
+            }
 
             if (!file.mkdirs()) {
                 throw new FileRuntimeException("Cannot mkdirs: " + file.getAbsolutePath());
@@ -275,6 +300,7 @@ public class Files {
     }
 
     public static void delete(final File file) {
+
         if (file.exists()) {
             if (file.isDirectory()) {
                 final File[] files = file.listFiles();
@@ -285,6 +311,12 @@ public class Files {
                 }
             }
             try {
+
+                if (isWindows) {
+                    //Known Windows bug JDK-4715154 and as of JDK8 still not fixable due to OS
+                    System.gc();
+                }
+
                 if (!file.delete()) {
                     file.deleteOnExit();
                 }
@@ -295,6 +327,7 @@ public class Files {
     }
 
     public static void remove(final File file) {
+
         if (file == null) {
             return;
         }
@@ -310,6 +343,12 @@ public class Files {
                 }
             }
         }
+
+        if (isWindows) {
+            //Known Windows bug JDK-4715154 and as of JDK8 still not fixable due to OS
+            System.gc();
+        }
+
         if (!file.delete()) {
             throw new IllegalStateException("Could not delete file: " + file.getAbsolutePath());
         }
