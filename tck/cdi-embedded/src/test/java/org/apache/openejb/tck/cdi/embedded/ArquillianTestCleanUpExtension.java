@@ -16,19 +16,20 @@
  */
 package org.apache.openejb.tck.cdi.embedded;
 
-import org.apache.openejb.UndeployException;
-import org.apache.openejb.assembler.classic.AppInfo;
-import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.spi.ContainerSystem;
+import org.jboss.arquillian.core.api.annotation.Observes;
+import org.jboss.arquillian.core.spi.LoadableExtension;
+import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 import org.jboss.cdi.tck.util.ActionSequence;
 
-public class CleanUpAssembler extends Assembler {
+public class ArquillianTestCleanUpExtension implements LoadableExtension {
     @Override
-    public void destroyApplication(final AppInfo appInfo) throws UndeployException {
-        super.destroyApplication(appInfo);
-        if (SystemInstance.get().getComponent(ContainerSystem.class).getAppContexts().isEmpty()) {
-            ActionSequence.reset();
+    public void register(final ExtensionBuilder extensionBuilder) {
+        extensionBuilder.observer(CleanUpObserver.class);
+    }
+
+    public static class CleanUpObserver {
+        public void cleanup(@Observes final AfterClass ignored) {
+            ActionSequence.reset(); // avoids to leak between tests, works in war cause of classloading but not in embedded mode
         }
     }
 }

@@ -36,7 +36,6 @@ import org.apache.webbeans.intercept.InterceptorResolutionService;
 import org.apache.webbeans.portable.InjectionTargetImpl;
 import org.apache.webbeans.util.GenericsUtil;
 
-import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -363,12 +362,14 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
                 }
             }
 
+            /* not in EJB types - 3.2.2 of cdi 1.2
             final List<Class> clRemote = beanContext.getBusinessRemoteInterfaces();
             if (clRemote != null && !clRemote.isEmpty()) {
                 for (final Class<?> c : clRemote) {
                     ejbTypes.add(c); // parentInterfaces(c), but is it useful in practise?
                 }
             }
+            */
 
             ejbTypes.add(Object.class);
         }

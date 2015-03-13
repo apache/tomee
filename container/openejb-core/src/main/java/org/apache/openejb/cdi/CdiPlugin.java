@@ -49,6 +49,7 @@ import org.apache.webbeans.spi.plugins.AbstractOwbPlugin;
 import org.apache.webbeans.spi.plugins.OpenWebBeansEjbPlugin;
 import org.apache.webbeans.spi.plugins.OpenWebBeansJavaEEPlugin;
 import org.apache.webbeans.spi.plugins.OpenWebBeansWebPlugin;
+import org.apache.webbeans.util.GenericsUtil;
 import org.apache.webbeans.util.WebBeansUtil;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -300,8 +301,18 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
     public <T> Bean<T> defineSessionBean(final Class<T> clazz, final BeanAttributes<T> attributes, final AnnotatedType<T> annotatedType) {
         final BeanContext bc = findBeanContext(webBeansContext, clazz);
         final Class<?> superClass = bc.getManagedClass().getSuperclass();
-        if (superClass != Object.class && !isSessionBean(superClass) && annotatedType.isAnnotationPresent(Specializes.class)) {
-            throw new DefinitionException("You can only specialize another EJB: " + clazz);
+        if (annotatedType.isAnnotationPresent(Specializes.class)) {
+            if (superClass != Object.class && !isSessionBean(superClass)) {
+                throw new DefinitionException("You can only specialize another EJB: " + clazz);
+            }
+            final BeanContext parentBc = findBeanContext(webBeansContext, superClass);
+            final List<Class> businessLocalInterfaces = new ArrayList<>(parentBc.getBusinessLocalInterfaces());
+            for (final Class<?> api : bc.getBusinessLocalInterfaces()) {
+                businessLocalInterfaces.removeAll(GenericsUtil.getTypeClosure(api));
+            }
+            if (!businessLocalInterfaces.isEmpty()) {
+                throw new DefinitionException("You can only specialize another EJB with at least the same API: " + clazz);
+            }
         }
         final CdiEjbBean<T> bean = new OpenEJBBeanBuilder<T>(bc, webBeansContext, annotatedType, attributes).createBean(clazz, !annotatedType.isAnnotationPresent(Vetoed.class));
 
