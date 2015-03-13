@@ -61,8 +61,6 @@
         <include>service.*</include>
         <include>TomEE.*</include>
         <include>tomee.bat</include>
-        <include>setclasspath.bat</include>
-        <include>catalina.bat</include>
       </includes>
     </fileSet>
     <fileSet>
@@ -79,10 +77,6 @@
       <includes>
         <include>**/bin/**/*</include>
       </includes>
-      <excludes>
-        <exclude>**/bin/setclasspath.bat</exclude>
-        <exclude>**/bin/catalina.bat</exclude>
-      </excludes>
       <fileMode>0755</fileMode>
     </fileSet>
   </fileSets>
