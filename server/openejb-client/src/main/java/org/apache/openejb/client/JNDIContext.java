@@ -461,8 +461,17 @@ public class JNDIContext implements InitialContextFactory, Context {
             case ResponseCodes.JNDI_RUNTIME_EXCEPTION:
                 throw (RuntimeException) res.getResult();
 
-            case ResponseCodes.JNDI_ERROR:
-                throw (Error) res.getResult();
+            case ResponseCodes.JNDI_ERROR: {
+                Object result = res.getResult();
+                if (Error.class.isInstance(result)) {
+                    throw Error.class.cast(result);
+                }
+                if (RuntimeException.class.isInstance(result)) {
+                    throw RuntimeException.class.cast(result);
+                }
+                final Throwable th = Throwable.class.cast(result);
+                throw new ClientRuntimeException(th.getMessage(), th);
+            }
 
             default:
                 throw new ClientRuntimeException("Invalid response from server: " + res.getResponseCode());
