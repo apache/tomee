@@ -3,10 +3,14 @@ package org.apache.openejb.assembler;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.AppInfo;
+import org.apache.openejb.config.sys.AdditionalDeployments;
+import org.apache.openejb.config.sys.Deployments;
+import org.apache.openejb.config.sys.JaxbOpenejb;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.Files;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.testing.AppResource;
 import org.apache.openejb.testing.Classes;
@@ -20,14 +24,22 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.naming.Context;
-import javax.naming.NamingException;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.FilterOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
+import javax.naming.Context;
+import javax.naming.NamingException;
+
+import static org.apache.openejb.config.ConfigurationFactory.ADDITIONAL_DEPLOYMENTS;
+import static org.junit.Assert.assertEquals;
 
 @RunWith(ApplicationComposer.class)
 public class DeployerEjbTest {
@@ -97,6 +109,7 @@ public class DeployerEjbTest {
     private void removeDeployments() throws IOException {
         final File deployments = new File(SystemInstance.get().getBase().getDirectory("conf", false), "deployments.xml");
         if (deployments.exists()) {
+            System.out.println(IO.slurp(deployments));
             Files.delete(deployments);
         }
     }
@@ -153,6 +166,54 @@ public class DeployerEjbTest {
         getAppInfo();
 
         Assert.assertTrue("Failed to find: " + deployments.getAbsolutePath(), deployments.exists());
+    }
+
+    @Test
+    public void removeDeploymentsLogic() throws Exception {
+        final File dir1 = Files.mkdirs(new File("target/DeployerEjbTest/removeDeploymentsLogic/app1/"));
+
+        final File file = SystemInstance.get().getBase().getFile(ADDITIONAL_DEPLOYMENTS, false);
+        final Method save = DeployerEjb.class.getDeclaredMethod("saveDeployment", File.class, boolean.class);
+        save.setAccessible(true);
+
+        {
+            final AdditionalDeployments deployments = new AdditionalDeployments();
+
+            final Deployments d1 = new Deployments();
+            d1.setDir(dir1.getCanonicalPath());
+            deployments.getDeployments().add(d1);
+
+            final Deployments d12 = new Deployments();
+            d12.setDir(dir1.getCanonicalPath());
+            deployments.getDeployments().add(d12);
+
+            final Deployments d2 = new Deployments();
+            d2.setFile("/foo/bar/app.war");
+            deployments.getDeployments().add(d2);
+
+            try (final FileOutputStream fos = new FileOutputStream(file)) {
+                JaxbOpenejb.marshal(AdditionalDeployments.class, deployments, fos);
+            }
+            assertDeployementsSize(file, 3);
+        }
+        {
+            save.invoke(new DeployerEjb(), dir1, false);
+            assertDeployementsSize(file, 2);
+        }
+        {
+            save.invoke(new DeployerEjb(), new File(dir1.getParentFile(), dir1.getName() + ".war"), false);
+            assertDeployementsSize(file, 1);
+        }
+        {
+            save.invoke(new DeployerEjb(), new File("/foo/bar/app.war"), false);
+            assertDeployementsSize(file, 0);
+        }
+    }
+
+    private void assertDeployementsSize(final File file, final int i) throws Exception {
+        try (final FileInputStream fis = new FileInputStream(file)) {
+            assertEquals(i, JaxbOpenejb.unmarshal(AdditionalDeployments.class, fis).getDeployments().size());
+        }
     }
 
     private AppInfo getAppInfo() throws IOException, NamingException, OpenEJBException {
