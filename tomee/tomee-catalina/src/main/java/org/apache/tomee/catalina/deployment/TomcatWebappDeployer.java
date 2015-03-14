@@ -19,11 +19,13 @@ package org.apache.tomee.catalina.deployment;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.WebAppDeployer;
 import org.apache.openejb.assembler.classic.AppInfo;
+import org.apache.openejb.assembler.classic.DeploymentExceptionManager;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.tomee.catalina.TomEERuntimeException;
 import org.apache.tomee.catalina.TomcatWebAppBuilder;
 
 import java.io.File;
@@ -39,9 +41,19 @@ public class TomcatWebappDeployer implements WebAppDeployer {
 
         final Collection<String> alreadyDeployed = tomcatWebAppBuilder.availableApps();
 
+        final AppInfo appInfo = fakeInfo(file, host, context);
         try {
-            tomcatWebAppBuilder.deployWebApps(fakeInfo(file, host, context), null); // classloader == null -> standalone war
-        } catch (final Exception e) {
+            tomcatWebAppBuilder.deployWebApps(appInfo, null); // classloader == null -> standalone war
+        } catch (final Exception e) { // tomcat lost the real exception (only in lifecycle exception string) so try to find it back
+            final DeploymentExceptionManager dem = SystemInstance.get().getComponent(DeploymentExceptionManager.class);
+            if (dem != null && dem.hasDeploymentFailed()) {
+                Throwable lastException = dem.getLastException();
+                dem.clearLastException(appInfo); // TODO: fix it, since we dont use this appInfo clean is ignored. Not a big deal while dem stores few exceptions only.
+                if (TomEERuntimeException.class.isInstance(lastException)) {
+                    lastException = TomEERuntimeException.class.cast(lastException).getCause();
+                }
+                throw new OpenEJBRuntimeException(Exception.class.cast(lastException));
+            }
             throw new OpenEJBRuntimeException(e);
         }
 

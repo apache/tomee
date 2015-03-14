@@ -466,7 +466,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             {
                 final ClassLoader containerLoader = Helper.get();
                 final Host host = hosts.getDefault();
-                if (StandardHost.class.isInstance(host)) {
+                if (StandardHost.class.isInstance(host) && !StandardContext.class.getName().equals(StandardHost.class.cast(host).getContextClass())) {
                     try {
                         standardContext = StandardContext.class.cast(containerLoader.loadClass(StandardHost.class.cast(host).getContextClass()).newInstance());
                     } catch (final Throwable th) {
