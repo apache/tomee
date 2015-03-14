@@ -30,7 +30,7 @@
       <property name="dir">target/tomee</property>
       <property name="appWorkingDir">target/workdir</property>
       <property name="cleanOnStartUp">true</property>
-      <property name="catalina_opts">-Xmx2048m -XX:PermSize=512m -XX:MaxPermSize=1024m -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:+CMSPermGenSweepingEnabled</property>
+      <property name="catalina_opts">-Xmx2048m -XX:PermSize=768m -XX:MaxPermSize=1536m -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:+CMSPermGenSweepingEnabled</property>
       <property name="properties">
         openejb.scan.webapp.container = true
         openejb.deploymentId.format = {appId}/{ejbJarId}/{ejbName}
