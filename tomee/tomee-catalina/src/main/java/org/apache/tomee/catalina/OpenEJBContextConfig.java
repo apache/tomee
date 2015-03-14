@@ -61,8 +61,14 @@ import org.apache.tomee.jasper.TomEEJasperInitializer;
 import org.apache.tomee.loader.TomcatHelper;
 import org.apache.xbean.finder.IAnnotationFinder;
 
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
 import javax.servlet.ServletContainerInitializer;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServlet;
 import javax.ws.rs.core.Application;
 import java.io.ByteArrayInputStream;
@@ -364,6 +370,16 @@ public class OpenEJBContextConfig extends ContextConfig {
             mapping.setFilterName(filter.getFilterName());
             mapping.addURLPattern("/*");
             webXml.addFilterMapping(mapping);
+        }
+
+        {   // CDI spec forces it, TODO: use it to replace org.apache.openejb.cdi.CdiAppContextsService conversation boot logic
+            final FilterDef filter = new FilterDef();
+            filter.setAsyncSupported("true");
+            filter.setDescription("CDI Conversation Filter");
+            filter.setDisplayName("CDI Conversation Filter");
+            filter.setFilterName("CDI Conversation Filter");
+            filter.setFilterClass(NoopFilter.class.getName());
+            webXml.addFilter(filter);
         }
 
         return webXml;
@@ -698,5 +714,22 @@ public class OpenEJBContextConfig extends ContextConfig {
             }
         }
         return false;
+    }
+
+    public static class NoopFilter implements Filter {
+        @Override
+        public void init(final FilterConfig filterConfig) throws ServletException {
+            // no-op
+        }
+
+        @Override
+        public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
+            chain.doFilter(request, response);
+        }
+
+        @Override
+        public void destroy() {
+            // no-op
+        }
     }
 }
