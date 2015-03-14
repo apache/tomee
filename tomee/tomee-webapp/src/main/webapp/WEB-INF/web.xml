@@ -23,6 +23,11 @@
 
   <display-name>Apache TomEE</display-name>
 
+  <context-param>
+    <param-name>org.apache.tomee.catalina.TomcatWebAppBuilder.IGNORE</param-name>
+    <param-value>true</param-value>
+  </context-param>
+
   <servlet>
     <servlet-name>LoaderServlet</servlet-name>
     <servlet-class>org.apache.tomee.loader.LoaderServlet</servlet-class>

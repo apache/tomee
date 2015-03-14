@@ -29,7 +29,7 @@
   <modules>
     <module>cdi-embedded</module>
     <module>cdi-tomee</module>
-    <module>cdi-tomee-embedded</module>
+    <module>cdi-tomee-embedded</module> <!-- TODO: either really use this module or delete it -->
     <module>bval-embedded</module>
     <module>tck-common</module>
     <module>bval-tomee</module>

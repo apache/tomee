@@ -207,7 +207,7 @@ public class Installer implements InstallerInterface {
                     .replace(" %_RUNJAVA%", " \"%_RUNJAVA%\"");
 
             // overwrite the catalina.bat file
-            if (Installers.writeAll(paths.getCatalinaBatFile(), catalinaBat, alerts)) {
+            if (!Installers.writeAll(paths.getCatalinaBatFile(), catalinaBat, alerts)) {
                 alerts.addInfo("Can't add workarounds for catalina.bat");
             }
         }
@@ -227,7 +227,7 @@ public class Installer implements InstallerInterface {
                     .replace("\"%JAVA_HOME%\" == \"\"", "NOT DEFINED JAVA_HOME");
 
             // overwrite the catalina.bat file
-            if (Installers.writeAll(setclasspath, bat, alerts)) {
+            if (!Installers.writeAll(setclasspath, bat, alerts)) {
                 alerts.addInfo("Can't add workarounds for setclasspath.bat");
             }
         }

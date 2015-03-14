@@ -66,6 +66,11 @@
       <artifactId>tomee-util</artifactId>
       <version>${tomee.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
   <build>
     <plugins>

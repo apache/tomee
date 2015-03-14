@@ -36,7 +36,6 @@ import org.apache.webbeans.el.ELContextStore;
 import org.apache.webbeans.event.EventMetadataImpl;
 import org.apache.webbeans.spi.ContextsService;
 import org.apache.webbeans.spi.ConversationService;
-import org.apache.webbeans.util.AnnotationUtil;
 import org.apache.webbeans.web.context.ServletRequestContext;
 import org.apache.webbeans.web.intercept.RequestScopedBeanInterceptorHandler;
 
@@ -174,7 +173,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         startContext(Singleton.class, initializeObject);
     }
 
-    public void beforeStop(final Object destroyObject) {
+    public void beforeStop(final Object ignored) {
         {   // trigger @PreDestroy mainly but keep it active until destroy(xxx)
             applicationContext.destroy();
             webBeansContext.getBeanManagerImpl().fireEvent(
@@ -204,6 +203,8 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
                 initSessionContext(httpSession);
                 try {
                     httpSession.invalidate();
+                } catch (final IllegalStateException ise) {
+                    // no-op
                 } finally {
                     destroySessionContext(httpSession);
                 }
