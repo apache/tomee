@@ -37,9 +37,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
@@ -47,28 +49,34 @@ import static java.util.Arrays.asList;
 public class TestClassDiscoverer implements AdditionalBeanDiscoverer {
     @Override
     public AppModule discover(final AppModule module) {
-        final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-
-        final Set<Class<? extends Annotation>> testMarkers = new HashSet<>();
-        for (final String s : asList("org.junit.Test", "org.testng.annotations.Test")) {
-            try {
-                testMarkers.add((Class<? extends Annotation>) contextClassLoader.loadClass(s));
-            } catch (final Throwable e) {
-                // no-op: deployment = false
+        final Set<Class<?>> testClasses = new HashSet<>();
+        final Map<Class<?>, WebModule> webTestClasses = new HashMap<>();
+        final Set<ClassLoader> saw = new HashSet<>();
+        if (module.getClassLoader() != null) {
+            addTests(findMarkers(module.getClassLoader()), module.getEarLibFinder(), testClasses);
+            saw.add(module.getClassLoader());
+        }
+        for (final WebModule web : module.getWebModules()) {
+            if (web.getClassLoader() != null && !saw.contains(web.getClassLoader())) {
+                final Set<Class<?>> classes = new HashSet<Class<?>>();
+                addTests(findMarkers(web.getClassLoader()), web.getFinder(), classes);
+                saw.add(web.getClassLoader());
+                for (final Class<?> c : classes) {
+                    webTestClasses.put(c, web);
+                }
+                testClasses.addAll(classes);
             }
         }
-
-        final Set<Class<?>> testClasses = new HashSet<>();
-        if (!testMarkers.isEmpty()) {
-            addTests(testMarkers, module.getEarLibFinder(), testClasses);
-            for (final WebModule web : module.getWebModules()) {
-                addTests(testMarkers, web.getFinder(), testClasses);
+        for (final EjbModule ejb : module.getEjbModules()) {
+            if (ejb.getClassLoader() != null && !saw.contains(ejb.getClassLoader())) {
+                addTests(findMarkers(ejb.getClassLoader()), ejb.getFinder(), testClasses);
+                saw.add(ejb.getClassLoader());
             }
-            for (final EjbModule ejb : module.getEjbModules()) {
-                addTests(testMarkers, ejb.getFinder(), testClasses);
-            }
-            for (final ConnectorModule connector : module.getConnectorModules()) {
-                addTests(testMarkers, connector.getFinder(), testClasses);
+        }
+        for (final ConnectorModule connector : module.getConnectorModules()) {
+            if (connector.getClassLoader() != null && !saw.contains(connector.getClassLoader())) {
+                addTests(findMarkers(connector.getClassLoader()), connector.getFinder(), testClasses);
+                saw.add(connector.getClassLoader());
             }
         }
 
@@ -130,10 +138,30 @@ public class TestClassDiscoverer implements AdditionalBeanDiscoverer {
             bean.setTransactionType(TransactionType.BEAN);
             final EjbDeployment ejbDeployment = openejbJar.addEjbDeployment(bean);
             ejbDeployment.setDeploymentId(ejbName);
-            module.getEjbModules().add(new EjbModule(ejbJar, openejbJar));
+
+            final EjbModule ejbModule = new EjbModule(ejbJar, openejbJar);
+            ejbModule.setClassLoader(test.getClassLoader());
+            final WebModule webModule = webTestClasses.get(test);
+            if (webModule != null) {
+                ejbModule.setWebapp(true);
+                ejbModule.getProperties().put("openejb.ejbmodule.webappId", webModule.getModuleId());
+            }
+            module.getEjbModules().add(ejbModule);
         }
 
         return module;
+    }
+
+    private Set<Class<? extends Annotation>> findMarkers(final ClassLoader contextClassLoader) {
+        final Set<Class<? extends Annotation>> testMarkers = new HashSet<>();
+        for (final String s : asList("org.junit.Test", "org.testng.annotations.Test")) {
+            try {
+                testMarkers.add((Class<? extends Annotation>) contextClassLoader.loadClass(s));
+            } catch (final Throwable e) {
+                // no-op: deployment = false
+            }
+        }
+        return testMarkers;
     }
 
     private static void addTests(final Set<Class<? extends Annotation>> testMarkers, final IAnnotationFinder finder, final Set<Class<?>> testClasses) {

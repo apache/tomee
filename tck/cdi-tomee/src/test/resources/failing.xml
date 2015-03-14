@@ -23,7 +23,7 @@
   -->
   <test name="CDI TCK">
     <classes>
-      <class name="org.jboss.cdi.tck.tests.alternative.broken.incorrect.name.stereotype.NoAnnotationWithSpecifiedNameTest" />
+      <class name="org.jboss.cdi.tck.tests.lookup.modules.specialization.alternative.Specialization06Test" />
     </classes>
   </test>
 </suite>

@@ -93,9 +93,10 @@ public class CheckClasses extends ValidationBase {
     }
 
     public void validate(final EjbModule ejbModule) {
+        final ClassLoader loader = ejbModule.getClassLoader();
         for (final EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
             try {
-                final Class<?> beanClass = check_hasEjbClass(bean);
+                final Class<?> beanClass = check_hasEjbClass(loader, bean);
 
                 // All the subsequent checks require the bean class
                 if (beanClass == null) {
@@ -117,30 +118,30 @@ public class CheckClasses extends ValidationBase {
                 check_hasInterface(b);
 
                 if (b.getRemote() != null) {
-                    checkInterface(b, beanClass, "remote", b.getRemote());
+                    checkInterface(loader, b, beanClass, "remote", b.getRemote());
                 }
 
                 if (b.getHome() != null) {
-                    checkInterface(b, beanClass, "home", b.getHome());
+                    checkInterface(loader, b, beanClass, "home", b.getHome());
                 }
 
                 if (b.getLocal() != null) {
-                    checkInterface(b, beanClass, "local", b.getLocal());
+                    checkInterface(loader, b, beanClass, "local", b.getLocal());
                 }
 
                 if (b.getLocalHome() != null) {
-                    checkInterface(b, beanClass, "local-home", b.getLocalHome());
+                    checkInterface(loader, b, beanClass, "local-home", b.getLocalHome());
                 }
 
                 if (b instanceof SessionBean) {
                     final SessionBean sessionBean = (SessionBean) b;
 
                     for (final String interfce : sessionBean.getBusinessLocal()) {
-                        checkInterface(b, beanClass, "business-local", interfce);
+                        checkInterface(loader, b, beanClass, "business-local", interfce);
                     }
 
                     for (final String interfce : sessionBean.getBusinessRemote()) {
-                        checkInterface(b, beanClass, "business-remote", interfce);
+                        checkInterface(loader, b, beanClass, "business-remote", interfce);
                     }
                 }
             } catch (final RuntimeException e) {
@@ -149,12 +150,12 @@ public class CheckClasses extends ValidationBase {
         }
 
         for (final Interceptor interceptor : ejbModule.getEjbJar().getInterceptors()) {
-            check_hasInterceptorClass(interceptor);
+            check_hasInterceptorClass(loader, interceptor);
         }
     }
 
-    private void checkInterface(final RemoteBean b, final Class<?> beanClass, String tag, final String className) {
-        final Class<?> interfce = lookForClass(className, tag, b.getEjbName());
+    private void checkInterface(final ClassLoader loader, final RemoteBean b, final Class<?> beanClass, String tag, final String className) {
+        final Class<?> interfce = lookForClass(loader, className, tag, b.getEjbName());
 
         if (interfce == null) {
             return;
@@ -253,11 +254,11 @@ public class CheckClasses extends ValidationBase {
         }
     }
 
-    public Class<?> check_hasEjbClass(final EnterpriseBean b) {
+    public Class<?> check_hasEjbClass(final ClassLoader loader, final EnterpriseBean b) {
 
         final String ejbName = b.getEjbName();
 
-        final Class<?> beanClass = lookForClass(b.getEjbClass(), "ejb-class", ejbName);
+        final Class<?> beanClass = lookForClass(loader, b.getEjbClass(), "ejb-class", ejbName);
         final boolean isDynamicProxyImpl = DynamicProxyImplFactory.isKnownDynamicallyImplemented(beanClass);
 
         if (beanClass == null) {
@@ -289,9 +290,9 @@ public class CheckClasses extends ValidationBase {
         return false;
     }
 
-    private void check_hasInterceptorClass(final Interceptor i) {
+    private void check_hasInterceptorClass(final ClassLoader loader, final Interceptor i) {
 
-        lookForClass(i.getInterceptorClass(), "interceptor-class", "Interceptor");
+        lookForClass(loader, i.getInterceptorClass(), "interceptor-class", "Interceptor");
 
     }
 
@@ -306,9 +307,9 @@ public class CheckClasses extends ValidationBase {
         }
     }
 
-    private Class<?> lookForClass(final String clazz, final String type, final String ejbName) {
+    private Class<?> lookForClass(final ClassLoader loader, final String clazz, final String type, final String ejbName) {
         try {
-            return loadClass(clazz);
+            return loadClass(loader, clazz);
         } catch (final OpenEJBException e) {
             /*
             # 0 - Class name
@@ -414,10 +415,9 @@ public class CheckClasses extends ValidationBase {
         }
     }
 
-    protected Class<?> loadClass(final String clazz) throws OpenEJBException {
-        final ClassLoader cl = module.getClassLoader();
+    protected Class<?> loadClass(final ClassLoader cl, final String clazz) throws OpenEJBException {
         try {
-            return Class.forName(clazz, false, cl);
+            return Class.forName(clazz, false, cl == null ? module.getClassLoader() : cl);
         } catch (final ClassNotFoundException cnfe) {
             throw new OpenEJBException(SafeToolkit.messages.format("cl0007", clazz, module.getJarLocation()), cnfe);
         }

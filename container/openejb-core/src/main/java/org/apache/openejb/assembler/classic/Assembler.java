@@ -1151,7 +1151,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             if (!appInfo.webAppAlone) {
                 if (webappId == null) {
                     skip = ejbJar.webapp; // we look for the lib part of the ear so deploy only if not a webapp
-                } else if (!ejbJar.webapp || !ejbJar.moduleId.equals(webappId)) {
+                } else if (!ejbJar.webapp
+                        || (!ejbJar.moduleId.equals(webappId) && !ejbJar.properties.getProperty("openejb.ejbmodule.webappId", "-").equals(webappId))) {
                     skip = true; // we look for a particular webapp deployment so deploy only if this webapp
                 }
             }
