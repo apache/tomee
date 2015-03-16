@@ -333,7 +333,7 @@ public class DataSourceFactory {
     }
 
     private static boolean usePool(final Properties properties) {
-        String property = properties.getProperty(POOL_PROPERTY);
+        String property = properties.getProperty(POOL_PROPERTY, SystemInstance.get().getProperty(POOL_PROPERTY));
         if (property != null) {
             properties.remove(POOL_PROPERTY);
         } else { // defined from @DataSourceDefinition and doesn't need pooling
