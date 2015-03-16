@@ -18,6 +18,8 @@
 package org.apache.openejb.async;
 
 import org.apache.openejb.AppContext;
+import org.apache.openejb.BeanContext;
+import org.apache.openejb.core.ExceptionType;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.util.DaemonThreadFactory;
@@ -229,6 +231,17 @@ public class AsynchronousPool {
             // throw checked excpetion and EJBException directly.
             if (!isExceptionUnchecked || e instanceof EJBException) {
                 throw new ExecutionException(e);
+            }
+
+            final ThreadContext tc = ThreadContext.getThreadContext();
+            if (tc != null) {
+                final BeanContext bc = tc.getBeanContext();
+                if (bc != null) {
+                    final ExceptionType exceptionType = bc.getExceptionType(e);
+                    if (exceptionType == ExceptionType.APPLICATION) {
+                        throw new ExecutionException(Exception.class.cast(e));
+                    }
+                }
             }
 
             // wrap unchecked exception with EJBException before throwing.
