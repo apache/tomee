@@ -121,7 +121,6 @@ public class Files {
             throw new FileRuntimeException("Not a directory: " + file.getAbsolutePath());
         }
 
-        System.gc();
         return file;
     }
 
@@ -299,9 +298,15 @@ public class Files {
         }
     }
 
+    /**
+     * Delete a file and all contents if specified file is a directory.
+     * If the delete fails then the file/s are flagged for delete on exit.
+     *
+     * @param file File
+     */
     public static void delete(final File file) {
 
-        if (file.exists()) {
+        if (null != file && file.exists()) {
             if (file.isDirectory()) {
                 final File[] files = file.listFiles();
                 if (null != files) {
@@ -326,31 +331,33 @@ public class Files {
         }
     }
 
+    /**
+     * Delete a file and all contents if specified file is a directory
+     *
+     * @param file File
+     * @Throws IllegalStateException on failure at any point
+     */
     public static void remove(final File file) {
 
-        if (file == null) {
-            return;
-        }
-        if (!file.exists()) {
-            return;
-        }
+        if (null != file && file.exists()) {
 
-        if (file.isDirectory()) {
-            final File[] files = file.listFiles();
-            if (files != null) {
-                for (final File child : files) {
-                    remove(child);
+            if (file.isDirectory()) {
+                final File[] files = file.listFiles();
+                if (files != null) {
+                    for (final File child : files) {
+                        remove(child);
+                    }
                 }
             }
-        }
 
-        if (isWindows) {
-            //Known Windows bug JDK-4715154 and as of JDK8 still not fixable due to OS
-            System.gc();
-        }
+            if (isWindows) {
+                //Known Windows bug JDK-4715154 and as of JDK8 still not fixable due to OS
+                System.gc();
+            }
 
-        if (!file.delete()) {
-            throw new IllegalStateException("Could not delete file: " + file.getAbsolutePath());
+            if (!file.delete()) {
+                throw new IllegalStateException("Could not delete file: " + file.getAbsolutePath());
+            }
         }
     }
 
