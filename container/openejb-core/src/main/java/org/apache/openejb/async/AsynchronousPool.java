@@ -18,14 +18,14 @@
 package org.apache.openejb.async;
 
 import org.apache.openejb.AppContext;
+import org.apache.openejb.BeanContext;
+import org.apache.openejb.core.ExceptionType;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.util.DaemonThreadFactory;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.ExecutorBuilder;
 
-import javax.ejb.EJBException;
-import javax.ejb.NoSuchEJBException;
 import java.rmi.NoSuchObjectException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
@@ -38,6 +38,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
+import javax.ejb.EJBException;
+import javax.ejb.NoSuchEJBException;
 
 /**
  * @version $Rev$ $Date$
@@ -226,9 +228,20 @@ public class AsynchronousPool {
 
             final boolean isExceptionUnchecked = e instanceof Error || e instanceof RuntimeException;
 
-            // throw checked excpetion and EJBException directly.
+            // throw checked exception and EJBException directly.
             if (!isExceptionUnchecked || e instanceof EJBException) {
                 throw new ExecutionException(e);
+            }
+
+            final ThreadContext tc = ThreadContext.getThreadContext();
+            if (tc != null) {
+                final BeanContext bc = tc.getBeanContext();
+                if (bc != null) {
+                    final ExceptionType exceptionType = bc.getExceptionType(e);
+                    if (exceptionType == ExceptionType.APPLICATION) {
+                        throw new ExecutionException(Exception.class.cast(e));
+                    }
+                }
             }
 
             // wrap unchecked exception with EJBException before throwing.
