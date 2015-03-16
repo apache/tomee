@@ -24,7 +24,6 @@ import org.apache.openejb.spi.ContainerSystem;
 import org.apache.tomee.catalina.OpenEJBSecurityListener;
 
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class ServletContextHandler implements InvocationHandler {
