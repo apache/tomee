@@ -64,6 +64,19 @@ public class TestClassDiscoverer implements AdditionalBeanDiscoverer {
                 for (final Class<?> c : classes) {
                     webTestClasses.put(c, web);
                 }
+
+                // in case of an ear if we find the same test class in a webapp we don't want it in lib part
+                // this case can happen in tomee-embedded mainly
+                final Iterator<Class<?>> c = testClasses.iterator();
+                while (c.hasNext()) {
+                    final String cl = c.next().getName();
+                    for (final Class<?> wc : classes) {
+                        if (cl.equals(wc.getName())) {
+                            c.remove();
+                            break;
+                        }
+                    }
+                }
                 testClasses.addAll(classes);
             }
         }
@@ -96,11 +109,22 @@ public class TestClassDiscoverer implements AdditionalBeanDiscoverer {
             }
 
             if (name != null) {
-                try {
-                    // call some reflection methods to make it fail if some dep are missing...
-                    testClasses.add(module.getClassLoader().loadClass(name));
-                } catch (final Throwable e) {
-                    // no-op
+                boolean found = false;
+                for (final WebModule web : module.getWebModules()) {
+                    try {
+                        testClasses.add(web.getClassLoader().loadClass(name));
+                        found = true;
+                        break;
+                    } catch (final Throwable e) {
+                        // no-op
+                    }
+                }
+                if (!found) {
+                    try {
+                        testClasses.add(module.getClassLoader().loadClass(name));
+                    } catch (final Throwable e) {
+                        // no-op
+                    }
                 }
             }
         }

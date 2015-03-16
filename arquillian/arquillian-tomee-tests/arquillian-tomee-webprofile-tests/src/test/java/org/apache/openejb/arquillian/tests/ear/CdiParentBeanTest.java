@@ -30,13 +30,6 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.net.URL;
 
 import static org.junit.Assert.assertFalse;
@@ -66,16 +59,5 @@ public class CdiParentBeanTest {
     public void test() throws Exception {
         final String slurp = IO.slurp(new URL(url, "/myear/web/classloader"));
         assertFalse(slurp + " should not contain WebappClassLoader", slurp.toLowerCase().contains("webappclassloader"));
-    }
-
-    @WebServlet("/classloader")
-    public static class ClassLoaderServlet extends HttpServlet {
-        @Inject
-        private SimpleBean bean;
-
-        @Override
-        protected void service(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-            resp.getWriter().print(bean.classloaderAsStr());
-        }
     }
 }
