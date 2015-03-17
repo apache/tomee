@@ -37,7 +37,6 @@ import org.apache.openejb.config.DeploymentFilterable;
 import org.apache.openejb.config.WebModule;
 import org.apache.openejb.core.LocalInitialContext;
 import org.apache.openejb.core.LocalInitialContextFactory;
-import org.apache.openejb.jee.sun.BeanCache;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.web.LightweightWebAppBuilder;
