@@ -85,37 +85,4 @@ public class CdiEventRealmIntegTest
 
         assertEquals(401, val.getStatus());
     }
-
-
-    @Path("/test")
-    @Singleton
-    public static class MyService {
-        @Inject
-        private MultiAuthenticator authenticator;
-
-        @GET
-        @RolesAllowed("admin")
-        public String hello() {
-            return authenticator.isStacked() ? "ok" : "ko";
-        }
-    }
-
-    @RequestScoped
-    public static class MultiAuthenticator {
-        private boolean stacked = false;
-
-        public void authenticate(@Observes final UserPasswordAuthenticationEvent event) {
-            if (!"secret".equals(event.getCredential())) return; // not authenticated
-            event.setPrincipal(new GenericPrincipal(event.getUsername(), "", Arrays.asList(event.getUsername())));
-        }
-
-        public void stacked(@Observes final UserPasswordAuthenticationEvent event) {
-            stacked = true;
-        }
-
-        public boolean isStacked() {
-            return stacked;
-        }
-    }
-
 }
