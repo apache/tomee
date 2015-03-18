@@ -32,9 +32,11 @@ public class LoggingSqlConnection implements InvocationHandler {
     private static final Class<?>[] INTERFACES_CALLABLE = new Class<?>[]{CallableStatement.class};
 
     private final Connection delegate;
+    private final String[] packages;
 
-    public LoggingSqlConnection(final Connection connection) {
-        delegate = connection;
+    public LoggingSqlConnection(final Connection connection, final String[] debugPackages) {
+        this.delegate = connection;
+        this.packages = debugPackages;
     }
 
     @Override
@@ -50,17 +52,17 @@ public class LoggingSqlConnection implements InvocationHandler {
 
         if ("createStatement".equals(mtd)) {
             return Proxy.newProxyInstance(delegate.getClass().getClassLoader(), INTERFACES_STATEMENT,
-                new LoggingSqlStatement((Statement) result));
+                new LoggingSqlStatement((Statement) result, packages));
         }
 
         if ("prepareStatement".equals(mtd)) {
             return Proxy.newProxyInstance(delegate.getClass().getClassLoader(), INTERFACES_PREPARED,
-                new LoggingPreparedSqlStatement((PreparedStatement) result, (String) args[0]));
+                new LoggingPreparedSqlStatement((PreparedStatement) result, (String) args[0], packages));
         }
 
         if ("prepareCall".equals(mtd)) {
             return Proxy.newProxyInstance(delegate.getClass().getClassLoader(), INTERFACES_CALLABLE,
-                new LoggingCallableSqlStatement((CallableStatement) result, (String) args[0]));
+                new LoggingCallableSqlStatement((CallableStatement) result, (String) args[0], packages));
         }
 
         return result;

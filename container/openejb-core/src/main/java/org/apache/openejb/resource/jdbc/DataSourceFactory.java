@@ -63,8 +63,10 @@ public class DataSourceFactory {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, DataSourceFactory.class);
 
     public static final String LOG_SQL_PROPERTY = "LogSql";
+    public static final String LOG_SQL_PACKAGE_PROPERTY = "LogSqlPackages";
     public static final String FLUSHABLE_PROPERTY = "Flushable";
     public static final String GLOBAL_LOG_SQL_PROPERTY = "openejb.jdbc.log";
+    public static final String GLOBAL_LOG_SQL_PACKAGE_PROPERTY = "openejb.jdbc.log.packages";
     public static final String GLOBAL_FLUSH_PROPERTY = "openejb.jdbc.flushable";
     public static final String POOL_PROPERTY = "openejb.datasource.pool";
     public static final String DATA_SOURCE_CREATOR_PROP = "DataSourceCreator";
@@ -135,6 +137,7 @@ public class DataSourceFactory {
 
         final boolean logSql = SystemInstance.get().getOptions().get(GLOBAL_LOG_SQL_PROPERTY,
             "true".equalsIgnoreCase((String) properties.remove(LOG_SQL_PROPERTY)));
+        final String logPackages = SystemInstance.get().getProperty(GLOBAL_LOG_SQL_PACKAGE_PROPERTY, (String) properties.remove(LOG_SQL_PACKAGE_PROPERTY));
         final DataSourceCreator creator = creator(properties.remove(DATA_SOURCE_CREATOR_PROP), logSql);
 
         boolean useContainerLoader = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.resources.use-container-loader", "true")) && (impl == null || impl.getClassLoader() == DataSourceFactory.class.getClassLoader());
@@ -204,7 +207,7 @@ public class DataSourceFactory {
             }
 
             if (logSql) {
-                ds = makeItLogging(ds);
+                ds = makeItLogging(ds, logPackages);
             }
             if (flushable) {
                 ds = makeFlushable(ds, flushConfig);
@@ -257,9 +260,10 @@ public class DataSourceFactory {
         creatorByDataSource.put(ds, creator);
     }
 
-    public static DataSource makeItLogging(final CommonDataSource ds) {
+    public static DataSource makeItLogging(final CommonDataSource ds, final String packagesStr) {
+        final String[] pck = packagesStr == null ? null : packagesStr.split(" *, *");
         return (DataSource) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
-            new Class<?>[]{DataSource.class, Serializable.class}, new LoggingSqlDataSource(ds));
+            new Class<?>[]{DataSource.class, Serializable.class}, new LoggingSqlDataSource(ds, pck));
     }
 
     private static void normalizeJdbcUrl(final Properties properties) {
