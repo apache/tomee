@@ -38,7 +38,7 @@ import static java.util.Arrays.asList;
 /**
  * Will dump properties once resolved.
  */
-public class EffectiveTomEEXml {
+public final class EffectiveTomEEXml {
     public static void main(final String[] args) throws Exception {
         final CommandLine line = parseCommand(args);
         if (line == null) {

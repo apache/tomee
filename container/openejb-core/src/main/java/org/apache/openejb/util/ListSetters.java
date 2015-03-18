@@ -32,7 +32,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 // this helps to know which setters/properties we can use for nor owned code (OracleXaDataSource is a perfect example)
-public class ListSetters {
+public final class ListSetters {
     public static void main(final String[] args) throws Exception {
         final Options options = new Options();
         options.addOption(OptionBuilder
