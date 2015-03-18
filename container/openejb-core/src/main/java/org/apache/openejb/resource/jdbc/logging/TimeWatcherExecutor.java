@@ -26,6 +26,27 @@ public final class TimeWatcherExecutor {
         // no-op
     }
 
+    public static String inlineStack(final String[] acceptedPackages) {
+        if (acceptedPackages == null) {
+            return "";
+        }
+
+        final Throwable t = new Exception().fillInStackTrace();
+        final StringBuilder inlinedStack = new StringBuilder();
+        for (final StackTraceElement elt : t.getStackTrace()) {
+            final String className = elt.getClassName();
+            for (final String p : acceptedPackages) {
+                if (className.startsWith(p)) {
+                    inlinedStack.append(" -> ")
+                            .append(className).append('.')
+                            .append(elt.getMethodName()).append(':').append(elt.getLineNumber());
+                    break;
+                }
+            }
+        }
+        return inlinedStack.toString();
+    }
+
     public static TimerWatcherResult execute(final Method mtd, final Object instance, final Object[] args, final boolean watch) {
         final long start = (watch) ? System.nanoTime() : 0;
 

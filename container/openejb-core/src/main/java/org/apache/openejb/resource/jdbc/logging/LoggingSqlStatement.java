@@ -28,9 +28,11 @@ public class LoggingSqlStatement implements InvocationHandler {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_SQL, LoggingSqlStatement.class);
 
     private final Statement delegate;
+    private final String[] packages;
 
-    public LoggingSqlStatement(final Statement result) {
-        delegate = result;
+    public LoggingSqlStatement(final Statement result, final String[] debugPackages) {
+        this.delegate = result;
+        this.packages = debugPackages;
     }
 
     @Override
@@ -40,7 +42,7 @@ public class LoggingSqlStatement implements InvocationHandler {
 
         final TimeWatcherExecutor.TimerWatcherResult result = TimeWatcherExecutor.execute(method, delegate, args, execute);
         if (execute) {
-            LOGGER.info(result.format((String) args[0]));
+            LOGGER.info(result.format((String) args[0]) + (packages != null ? " - stack:" + TimeWatcherExecutor.inlineStack(packages) : ""));
         }
 
         if (result.getThrowable() != null) {

@@ -34,6 +34,7 @@ import javax.transaction.TransactionManager;
 public class JTADataSourceWrapperFactory {
     private String delegate = "datasource";
     private boolean logSql;
+    private String logPackages;
 
     public CommonDataSource create() {
         final TransactionManager transactionManager = OpenEJB.getTransactionManager();
@@ -46,7 +47,7 @@ public class JTADataSourceWrapperFactory {
         }
 
         if (logSql) {
-            cds = DataSourceFactory.makeItLogging(cds);
+            cds = DataSourceFactory.makeItLogging(cds, logPackages);
         }
         return cds;
     }
@@ -66,5 +67,9 @@ public class JTADataSourceWrapperFactory {
 
     public void setLogSql(final boolean logSql) {
         this.logSql = logSql;
+    }
+
+    public void setLogPackages(final String logPackages) {
+        this.logPackages = logPackages;
     }
 }
