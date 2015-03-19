@@ -27,6 +27,10 @@
   <artifactId>cdi-tomee</artifactId>
   <name>OpenEJB :: TCK :: CDI TomEE</name>
 
+  <properties>
+    <suite.name>passing</suite.name>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
@@ -124,6 +128,24 @@
       <version>${jcs.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>tomee-catalina</artifactId>
+      <version>${tomee.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat-catalina</artifactId>
+      <version>${tomcat.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-http</artifactId>
+      <version>${openejb.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -165,7 +187,7 @@
           <useFile>false</useFile>
           <disableXmlReport>true</disableXmlReport>
           <suiteXmlFiles>
-            <suiteXmlFile>src/test/resources/passing.xml</suiteXmlFile>
+            <suiteXmlFile>src/test/resources/${suite.name}.xml</suiteXmlFile>
           </suiteXmlFiles>
           <properties>
             <property>

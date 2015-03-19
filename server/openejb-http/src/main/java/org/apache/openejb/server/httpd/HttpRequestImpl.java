@@ -123,8 +123,8 @@ public class HttpRequestImpl implements HttpRequest {
                         SESSIONS.remove(session.getId());
                         session.invalidate();
 
-                        if (data.request != null && data.request.end != null) {
-                            data.request.end.sessionDestroyed(new HttpSessionEvent(session));
+                        if (data.request != null && data.request.begin != null) {
+                            data.request.begin.sessionDestroyed(new HttpSessionEvent(session));
                         }
                     }
                 }
@@ -933,7 +933,7 @@ public class HttpRequestImpl implements HttpRequest {
             session = impl;
             if (begin != null) {
                 begin.sessionCreated(new HttpSessionEvent(session));
-                session = new SessionInvalidateListener(session, end);
+                session = new SessionInvalidateListener(session, begin);
             }
             impl.callListeners(); // can call req.getSession() so do it after affectation + do it after cdi init
 
@@ -1241,22 +1241,26 @@ public class HttpRequestImpl implements HttpRequest {
     }
 
     public void destroy() {
+        final boolean openejbRequestDestroyed = getAttribute("openejb_requestDestroyed") == null;
         if (listeners != null && !listeners.isEmpty()) {
+            if (begin != null && end != null && openejbRequestDestroyed) {
+                end.requestDestroyed(new ServletRequestEvent(getServletContext(), this));
+            }
             final ServletRequestEvent event = new ServletRequestEvent(getServletContext(), this);
             for (final ServletRequestListener listener : listeners) {
                 listener.requestDestroyed(event);
             }
         }
-        if (end != null && getAttribute("openejb_requestDestroyed") == null) {
+        if (begin != null && openejbRequestDestroyed) {
             setAttribute("openejb_requestDestroyed", "ok");
-            end.requestDestroyed(new ServletRequestEvent(getServletContext(), this));
+            begin.requestDestroyed(new ServletRequestEvent(getServletContext(), this));
         }
     }
 
     protected static class SessionInvalidateListener extends ServletSessionAdapter {
-        private final EndWebBeansListener listener;
+        private final BeginWebBeansListener listener;
 
-        public SessionInvalidateListener(final javax.servlet.http.HttpSession session, final EndWebBeansListener end) {
+        public SessionInvalidateListener(final javax.servlet.http.HttpSession session, final BeginWebBeansListener end) {
             super(session);
             listener = end;
         }

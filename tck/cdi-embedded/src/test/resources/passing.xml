@@ -306,6 +306,10 @@
           <exclude name=".*" />
         </methods>
       </class>
+      <!-- this one depends too much of embedded environment to be reliable on a regular basis in embedded mode -->
+      <class name="org.jboss.cdi.tck.tests.context.request.event.remote.RequestScopeEventRemoteTest">
+        <methods><exclude name=".*" /></methods>
+      </class>
     </classes>
   </test>
 </suite>

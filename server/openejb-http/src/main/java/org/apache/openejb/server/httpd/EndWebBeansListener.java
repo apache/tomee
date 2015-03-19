@@ -17,29 +17,17 @@
 package org.apache.openejb.server.httpd;
 
 import org.apache.openejb.cdi.CdiAppContextsService;
-import org.apache.openejb.cdi.ThreadSingletonServiceImpl;
-import org.apache.openejb.cdi.WebappWebBeansContext;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.WebBeansContext;
-import org.apache.webbeans.context.ConversationContext;
-import org.apache.webbeans.conversation.ConversationManager;
-import org.apache.webbeans.el.ELContextStore;
 import org.apache.webbeans.spi.ContextsService;
 import org.apache.webbeans.spi.FailOverService;
 
-import javax.enterprise.context.Conversation;
-import javax.enterprise.context.RequestScoped;
-import javax.enterprise.context.SessionScoped;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSessionActivationListener;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
-import java.util.Map;
 
 /**
  * @version $Rev$ $Date$
@@ -47,15 +35,6 @@ import java.util.Map;
  *          Used as a stack executed at the end of the request too. Avoid multiple (useless) listeners.
  */
 public class EndWebBeansListener implements ServletContextListener, ServletRequestListener, HttpSessionListener, HttpSessionActivationListener {
-
-    static final ThreadLocal<Boolean> FAKE_REQUEST = new ThreadLocal<Boolean>();
-
-    private final String contextKey;
-
-    /**
-     * Logger instance
-     */
-    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_CDI, EndWebBeansListener.class);
 
     protected FailOverService failoverService;
 
@@ -75,9 +54,7 @@ public class EndWebBeansListener implements ServletContextListener, ServletReque
         if (webBeansContext != null) {
             this.failoverService = this.webBeansContext.getService(FailOverService.class);
             this.contextsService = CdiAppContextsService.class.cast(webBeansContext.getService(ContextsService.class));
-            this.contextKey = "org.apache.tomee.catalina.WebBeansListener@" + webBeansContext.hashCode();
         } else {
-            this.contextKey = "notused";
             this.contextsService = null;
         }
     }
@@ -87,49 +64,7 @@ public class EndWebBeansListener implements ServletContextListener, ServletReque
      */
     @Override
     public void requestDestroyed(ServletRequestEvent event) {
-        if (webBeansContext == null) {
-            return;
-        }
-
-        if (logger.isDebugEnabled()) {
-            logger.debug("Destroying a request : [{0}]", event == null ? "null" : event.getServletRequest().getRemoteAddr());
-        }
-
-        final Object oldContext;
-        if (event != null) {
-            oldContext = event.getServletRequest().getAttribute(contextKey);
-        } else {
-            oldContext = null;
-        }
-
-        try {
-            if (event != null
-                && failoverService != null
-                && failoverService.isSupportFailOver()) {
-                Object request = event.getServletRequest();
-                if (request instanceof HttpServletRequest) {
-                    HttpServletRequest httpRequest = (HttpServletRequest) request;
-                    javax.servlet.http.HttpSession session = httpRequest.getSession(false);
-                    if (session != null) {
-                        failoverService.sessionIsIdle(session);
-                    }
-                }
-            }
-
-            // clean up the EL caches after each request
-            final ELContextStore elStore = ELContextStore.getInstance(false);
-            if (elStore != null) {
-                elStore.destroyELContextStore();
-            }
-
-            webBeansContext.getContextsService().endContext(RequestScoped.class, event);
-            if (webBeansContext instanceof WebappWebBeansContext) { // end after child
-                ((WebappWebBeansContext) webBeansContext).getParent().getContextsService().endContext(RequestScoped.class, event);
-            }
-        } finally {
-            contextsService.removeThreadLocals();
-            ThreadSingletonServiceImpl.enter((WebBeansContext) oldContext);
-        }
+        // no-op
     }
 
     /**
@@ -155,61 +90,8 @@ public class EndWebBeansListener implements ServletContextListener, ServletReque
      */
     @Override
     public void sessionDestroyed(final HttpSessionEvent event) {
-        if (webBeansContext == null) {
-            return;
-        }
-
-        if (logger.isDebugEnabled()) {
-            logger.debug("Destroying a session with session id : [{0}]", event.getSession().getId());
-        }
-
-        // ensure session ThreadLocal is set
-        webBeansContext.getContextsService().startContext(SessionScoped.class, event.getSession());
-        
-        if (WebappWebBeansContext.class.isInstance(webBeansContext)) { // end after child
-            WebappWebBeansContext.class.cast(webBeansContext).getParent().getContextsService().endContext(SessionScoped.class, event.getSession());
-        }
-
-        final CdiAppContextsService appContextsService = CdiAppContextsService.class.cast(webBeansContext.getContextsService());
-        if (appContextsService.getRequestContext(false) != null) {
-            final String id = event.getSession().getId(); // capture it eagerly!
-            appContextsService.pushRequestReleasable(new Runnable() {
-                @Override
-                public void run() {
-                    doDestroyConversations(id);
-                }
-            });
-        } else {
-            doDestroyConversations(event.getSession().getId());
-        }
-
-        webBeansContext.getContextsService().endContext(SessionScoped.class, event.getSession());
-
-        destroyFakedRequest();
+        WebBeansListenerHelper.ensureRequestScope(contextsService, this);
     }
-
-    private void doDestroyConversations(final String id) {
-        final ConversationManager conversationManager = webBeansContext.getConversationManager();
-        final Map<Conversation, ConversationContext> cc = conversationManager.getAndRemoveConversationMapWithSessionId(id);
-        for (final Map.Entry<Conversation, ConversationContext> c : cc.entrySet()) {
-            if (c != null) {
-                c.getValue().destroy();
-                webBeansContext.getBeanManagerImpl().fireEvent(c.getKey().getId(), CdiAppContextsService.DestroyedLiteral.CONVERSATION);
-            }
-        }
-    }
-
-    private void destroyFakedRequest() {
-        final Boolean faked = FAKE_REQUEST.get();
-        try {
-            if (faked != null && faked) {
-                requestDestroyed(null);
-            }
-        } finally {
-            FAKE_REQUEST.remove();
-        }
-    }
-
 
     @Override
     public void sessionWillPassivate(HttpSessionEvent event) {
@@ -220,7 +102,7 @@ public class EndWebBeansListener implements ServletContextListener, ServletReque
         if (failoverService != null && failoverService.isSupportPassivation()) {
             failoverService.sessionWillPassivate(event.getSession());
         }
-        destroyFakedRequest();
+        WebBeansListenerHelper.destroyFakedRequest(this);
     }
 
     @Override
@@ -230,11 +112,11 @@ public class EndWebBeansListener implements ServletContextListener, ServletReque
 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
-        destroyFakedRequest();
+        WebBeansListenerHelper.destroyFakedRequest(this);
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
-        destroyFakedRequest();
+        WebBeansListenerHelper.ensureRequestScope(contextsService, this);
     }
 }
