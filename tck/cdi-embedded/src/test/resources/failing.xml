@@ -31,12 +31,6 @@
     -Dopenejb.embedded.try-jsp=true
     -->
     <classes>
-      <!--
-        InvalidatingSessionDestroysConversationTest>Arquillian.run:164->testInvalidatingSessionDestroysConversation:63 expected [true] but found [false]
-  DestroyConversationNotAssociatedWithCurrentRequestEventTest>Arquillian.run:164->testLifecycleEventFired:70 expected [true] but found [false]
-  SessionContextTest>Arquillian.run:164->testSessionContextDestroyedWhenHttpSessionInvalidated:129 expected [ActionSequence [name=default, data=[org.jboss.cdi.tck.tests.context.session.IntrospectServlet, org.jboss.cdi.tck.tests.context.session.IntrospectHttpSessionListener, org.jboss.cdi.tck.tests.context.session.IntrospectFilter, org.jboss.cdi.tck.tests.context.session.IntrospectServletRequestListener, org.jboss.cdi.tck.tests.context.session.SimpleSessionBean]]] but found [ActionSequence [name=default, data=[org.jboss.cdi.tck.tests.context.session.IntrospectServlet, org.jboss.cdi.tck.tests.context.session.IntrospectHttpSessionListener, org.jboss.cdi.tck.tests.context.session.IntrospectFilter, org.jboss.cdi.tck.tests.context.session.IntrospectServletRequestListener]]]
-  SessionScopeEventTest>Arquillian.run:164->test:84 expected [true] but found [false]
--->
       <class name="org.jboss.cdi.tck.tests.context.conversation.InvalidatingSessionDestroysConversationTest" />
     </classes>
   </test>
