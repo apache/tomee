@@ -16,11 +16,13 @@
  */
 package org.apache.openejb.server.httpd;
 
+import org.apache.openejb.cdi.CdiAppContextsService;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.spi.ContextsService;
 
 import javax.enterprise.context.RequestScoped;
 import javax.servlet.AsyncContext;
+import javax.servlet.AsyncEvent;
 import javax.servlet.AsyncListener;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -72,17 +74,21 @@ public class WebBeansFilter implements Filter { // its pupose is to start/stop r
 
     public static class AsynContextWrapper implements AsyncContext {
         private final AsyncContext delegate;
-        private final ContextsService service;
+        private final CdiAppContextsService service;
         private volatile ServletRequestEvent event;
 
         public AsynContextWrapper(final AsyncContext asyncContext) {
             this.delegate = asyncContext;
-            this.service = WebBeansContext.currentInstance().getService(ContextsService.class);
+            this.service = CdiAppContextsService.class.cast(WebBeansContext.currentInstance().getService(ContextsService.class));
             this.event = null;
         }
 
-        private void startRequestScope() {
-            service.startContext(RequestScoped.class, getEvent());
+        private boolean startRequestScope() {
+            if (service.getRequestContext(false) == null) {
+                service.startContext(RequestScoped.class, getEvent());
+                return true;
+            }
+            return false;
         }
 
         private void stopRequestScope() {
@@ -133,11 +139,13 @@ public class WebBeansFilter implements Filter { // its pupose is to start/stop r
 
         @Override
         public void complete() {
-            startRequestScope();
+            final boolean created = startRequestScope();
             try {
                 delegate.complete();
             } finally {
-                stopRequestScope();
+                if (created) {
+                    stopRequestScope();
+                }
             }
         }
 
@@ -158,12 +166,16 @@ public class WebBeansFilter implements Filter { // its pupose is to start/stop r
 
         @Override
         public void addListener(final AsyncListener asyncListener) {
-            delegate.addListener(asyncListener);
+            delegate.addListener(wrapListener(asyncListener));
+        }
+
+        private AsyncListener wrapListener(final AsyncListener asyncListener) {
+            return new ScopeAwareListener(asyncListener);
         }
 
         @Override
         public void addListener(final AsyncListener asyncListener, final ServletRequest servletRequest, final ServletResponse servletResponse) {
-            delegate.addListener(asyncListener, servletRequest, servletResponse);
+            delegate.addListener(wrapListener(asyncListener), servletRequest, servletResponse);
         }
 
         @Override
@@ -179,6 +191,62 @@ public class WebBeansFilter implements Filter { // its pupose is to start/stop r
         @Override
         public long getTimeout() {
             return delegate.getTimeout();
+        }
+
+        private class ScopeAwareListener implements AsyncListener {
+            private final AsyncListener delegate;
+
+            public ScopeAwareListener(final AsyncListener asyncListener) {
+                this.delegate = asyncListener;
+            }
+
+            @Override
+            public void onComplete(final AsyncEvent event) throws IOException {
+                final boolean created = startRequestScope();
+                try {
+                    delegate.onComplete(event);
+                } finally {
+                    if (created) {
+                        stopRequestScope();
+                    }
+                }
+            }
+
+            @Override
+            public void onTimeout(final AsyncEvent event) throws IOException {
+                final boolean created = startRequestScope();
+                try {
+                    delegate.onTimeout(event);
+                } finally {
+                    if (created) {
+                        stopRequestScope();
+                    }
+                }
+            }
+
+            @Override
+            public void onError(final AsyncEvent event) throws IOException {
+                final boolean created = startRequestScope();
+                try {
+                    delegate.onError(event);
+                } finally {
+                    if (created) {
+                        stopRequestScope();
+                    }
+                }
+            }
+
+            @Override
+            public void onStartAsync(final AsyncEvent event) throws IOException {
+                final boolean created = startRequestScope();
+                try {
+                    delegate.onStartAsync(event);
+                } finally {
+                    if (created) {
+                        stopRequestScope();
+                    }
+                }
+            }
         }
     }
 }

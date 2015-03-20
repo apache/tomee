@@ -22,14 +22,16 @@ import org.apache.openejb.util.reflection.Reflections;
 import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 import javax.transaction.TransactionManager;
+import java.io.ObjectStreamException;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.logging.Logger;
 
-public class ManagedDataSource implements DataSource {
+public class ManagedDataSource implements DataSource, Serializable {
     private static final Class<?>[] CONNECTION_CLASS = new Class<?>[]{Connection.class};
 
     protected final DataSource delegate;
@@ -112,5 +114,12 @@ public class ManagedDataSource implements DataSource {
     @Override
     public int hashCode() {
         return hashCode;
+    }
+
+    Object writeReplace() throws ObjectStreamException {
+        if (Serializable.class.isInstance(delegate)) {
+            return delegate; // we don't care about the wrapping delegate will do another lookup when unserialized so it is magic :)
+        }
+        throw new ObjectStreamException(delegate + " not serializable") {};
     }
 }

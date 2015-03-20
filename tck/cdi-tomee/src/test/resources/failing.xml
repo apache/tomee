@@ -24,7 +24,6 @@
   <test name="CDI TCK">
     <classes>
       <!--
-  ConversationDeterminationTest>Arquillian.run:164->testConversationDetermination:78 expected [true] but found [false]
   ConversationFilterTest>Arquillian.run:164->testConversationBusy:133 expected [BusyConversationException] but found [500]
   DataSourcePassivationDependencyTest>Arquillian.run:164->testDataSource:68 » IllegalProduct
   RequestContextTest>Arquillian.run:164->testRequestScopeActiveDuringServiceMethod:62 » FailingHttpStatusCode
@@ -55,7 +54,7 @@
   DisabledProducerMethodInjectionNotAvailableTest>Arquillian.arquillianBeforeClass:109 » Runtime
   DisabledSessionBeanInjectionNotAvailableTest>Arquillian.arquillianBeforeClass:109 » Runtime
   -->
-      <class name="org.jboss.cdi.tck.tests.context.alterable.AlterableContextTest" />
+      <class name="org.jboss.cdi.tck.tests.context.passivating.dependency.resource.persistence.DataSourcePassivationDependencyTest" />
     </classes>
   </test>
 </suite>
