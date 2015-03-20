@@ -24,6 +24,7 @@ import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.UndeployException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.DeploymentExceptionManager;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentLoader;
@@ -263,13 +264,28 @@ public class DeployerEjb implements Deployer {
                 throw (ValidationException) e;
             }
 
-            if (e instanceof OpenEJBException) {
-                if (e.getCause() instanceof ValidationException) {
-                    throw (ValidationException) e.getCause();
+            final Throwable ex;
+            final DeploymentExceptionManager dem = SystemInstance.get().getComponent(DeploymentExceptionManager.class);
+            if (dem != null) {
+                if (dem.hasDeploymentFailed()) {
+                    ex = dem.getLastException();
+                } else {
+                    ex = e;
                 }
-                throw (OpenEJBException) e;
+                if (appInfo != null) {
+                    dem.clearLastException(appInfo);
+                }
+            } else {
+                ex = e;
             }
-            throw new OpenEJBException(e);
+
+            if (ex instanceof OpenEJBException) {
+                if (ex.getCause() instanceof ValidationException) {
+                    throw (ValidationException) ex.getCause();
+                }
+                throw (OpenEJBException) ex;
+            }
+            throw new OpenEJBException(ex);
         }
     }
 

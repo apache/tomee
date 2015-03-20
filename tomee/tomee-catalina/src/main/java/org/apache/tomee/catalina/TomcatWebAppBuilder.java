@@ -1297,6 +1297,12 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     OpenEJBLifecycle.CURRENT_APP_INFO.set(contextInfo.appInfo);
                     try {
                         new CdiBuilder().build(contextInfo.appInfo, appContext, beanContexts, webContext);
+                    } catch (final Exception e) {
+                        final DeploymentExceptionManager dem = SystemInstance.get().getComponent(DeploymentExceptionManager.class);
+                        if (dem != null) {
+                            dem.saveDeploymentException(contextInfo.appInfo, e);
+                        }
+                        throw e;
                     } finally {
                         OpenEJBLifecycle.CURRENT_APP_INFO.remove();
                     }
@@ -1318,6 +1324,15 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
             } catch (final Exception e) {
                 logger.error("Error merging Java EE JNDI entries in to war " + standardContext.getPath() + ": Exception: " + e.getMessage(), e);
+                if (System.getProperty(TOMEE_EAT_EXCEPTION_PROP) == null) {
+                    final DeploymentExceptionManager dem = SystemInstance.get().getComponent(DeploymentExceptionManager.class);
+                    if (dem != null && dem.getDeploymentException(contextInfo.appInfo) != null) {
+                        if (RuntimeException.class.isInstance(e)) {
+                            throw RuntimeException.class.cast(e);
+                        }
+                        throw new TomEERuntimeException(e);
+                    }
+                }
             }
 
             final JspFactory factory = JspFactory.getDefaultFactory();
