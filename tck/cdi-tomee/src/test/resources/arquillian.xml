@@ -37,6 +37,7 @@
         openejb.strict.interface.declaration = true
         openejb.cdi.producer.interception = false
         openejb.cdi.applicationScope.cached = false
+        openejb.cdi.requestScope.cached = false
         openejb.classloader.forced-load = org.apache.webbeans.test.tck.,org.apache.openejb.tck.cdi.tomee.
 
         jmsRa = new://Resource?type=ActiveMQResourceAdapter

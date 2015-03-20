@@ -24,7 +24,6 @@
   <test name="CDI TCK">
     <classes>
       <!--
-        AlterableContextTest>Arquillian.run:164->testRequestScopedComponent:66->testComponent:104 foo expected [null] but found [foo]
   ConversationDeterminationTest>Arquillian.run:164->testConversationDetermination:78 expected [true] but found [false]
   ConversationFilterTest>Arquillian.run:164->testConversationBusy:133 expected [BusyConversationException] but found [500]
   DataSourcePassivationDependencyTest>Arquillian.run:164->testDataSource:68 » IllegalProduct
@@ -56,7 +55,7 @@
   DisabledProducerMethodInjectionNotAvailableTest>Arquillian.arquillianBeforeClass:109 » Runtime
   DisabledSessionBeanInjectionNotAvailableTest>Arquillian.arquillianBeforeClass:109 » Runtime
   -->
-      <class name="org.jboss.cdi.tck.tests.context.request.RequestContextTest" />
+      <class name="org.jboss.cdi.tck.tests.context.alterable.AlterableContextTest" />
     </classes>
   </test>
 </suite>

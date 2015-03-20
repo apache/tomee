@@ -65,7 +65,8 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, ThreadSingletonServiceImpl.class);
 
     private String sessionContextClass;
-    private boolean cachedApplicationScoped;
+    private volatile boolean cachedApplicationScoped;
+    private volatile boolean cachedRequestScoped;
 
     //this needs to be static because OWB won't tell us what the existing SingletonService is and you can't set it twice.
     private static final ThreadLocal<WebBeansContext> contexts = new ThreadLocal<WebBeansContext>();
@@ -79,6 +80,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
                 if (sessionContextClass == null) {
                     sessionContextClass = SystemInstance.get().getProperty("openejb.session-context", "").trim();
                     cachedApplicationScoped = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.cdi.applicationScope.cached", "true").trim());
+                    cachedRequestScoped = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.cdi.requestScope.cached", "true").trim());
                 }
             }
         }
@@ -113,7 +115,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         properties.setProperty("org.apache.webbeans.proxy.mapping.javax.enterprise.context.ApplicationScoped",
                 cachedApplicationScoped ? ApplicationScopedBeanInterceptorHandler.class.getName() : defaultNormalScopeHandlerClass);
 
-        if (tomee) {
+        if (tomee && cachedRequestScoped) {
             properties.setProperty("org.apache.webbeans.proxy.mapping.javax.enterprise.context.RequestScoped", RequestScopedBeanInterceptorHandler.class.getName());
         } else {
             properties.setProperty("org.apache.webbeans.proxy.mapping.javax.enterprise.context.RequestScoped", defaultNormalScopeHandlerClass);
