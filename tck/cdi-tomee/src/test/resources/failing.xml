@@ -25,32 +25,22 @@
     <classes>
       <!--
   ConversationFilterTest>Arquillian.run:164->testConversationBusy:133 expected [BusyConversationException] but found [500]
-  RequestContextAsyncListenerTest>Arquillian.run:164->testRequestContextActiveOnComplete:65 expected [true] but found [false]
-  RequestContextAsyncListenerTest>Arquillian.run:164->testRequestContextActiveOnError:93 expected [true] but found [false]
-  RequestContextAsyncListenerTest>Arquillian.run:164->testRequestContextActiveOnStartAsync:102 expected [true] but found [false]
-  RequestContextAsyncListenerTest>Arquillian.run:164->testRequestContextActiveOnTimeout:83 expected [true] but found [false]
-  RequestContextTest>Arquillian.run:164->testRequestScopeActiveDuringWebServiceInvocation:72 » WebService
-  SessionContextTest>Arquillian.run:164->testSessionContextDestroyedWhenHttpSessionInvalidated:129 expected [ActionSequence [name=default, data=[org.jboss.cdi.tck.tests.context.session.IntrospectServlet, org.jboss.cdi.tck.tests.context.session.IntrospectHttpSessionListener, org.jboss.cdi.tck.tests.context.session.IntrospectFilter, org.jboss.cdi.tck.tests.context.session.IntrospectServletRequestListener, org.jboss.cdi.tck.tests.context.session.SimpleSessionBean]]] but found [ActionSequence [name=default, data=[org.jboss.cdi.tck.tests.context.session.IntrospectServlet, org.jboss.cdi.tck.tests.context.session.IntrospectHttpSessionListener, org.jboss.cdi.tck.tests.context.session.IntrospectFilter, org.jboss.cdi.tck.tests.context.session.SimpleSessionBean, org.jboss.cdi.tck.tests.context.session.IntrospectServletRequestListener]]]
-  SessionContextListenerShutdownTest>Arquillian.run:164->testApplicationContextDestroyed:108 expected [true] but found [false]
   EnterpriseBeanDiscoveryTest>Arquillian.run:164->testExplicitBeanArchiveEmptyDescriptor:133->assertDiscoveredAndAvailable:172 expected [true] but found [false]
   EnterpriseBeanDiscoveryTest>Arquillian.run:164->testExplicitBeanArchiveLegacyDescriptor:140->assertDiscoveredAndAvailable:172 expected [true] but found [false]
   EnterpriseBeanDiscoveryTest>Arquillian.run:164->testExplicitBeanArchiveModeAll:126->assertDiscoveredAndAvailable:172 expected [true] but found [false]
   EnterpriseBeanDiscoveryTest>Arquillian.run:164->testImplicitBeanArchiveModeAnnotated:154->assertDiscoveredAndAvailable:172 expected [true] but found [false]
   EnterpriseBeanDiscoveryTest>Arquillian.run:164->testImplicitBeanArchiveNoDescriptor:147->assertDiscoveredAndAvailable:170->AbstractTest.getContextualReference:157 » UnsatisfiedResolution
   EnterpriseBeanDiscoveryTest>Arquillian.run:164->testNoBeanArchiveModeNone:160->assertNotDiscoveredAndNotAvailable:178 expected [true] but found [false]
-  MultiWebModuleWithExtensionTest>Arquillian.run:164 » IllegalState Error launch...
   InstalledLibraryWarTest>Arquillian.arquillianBeforeClass:109 » Deployment Unab...
-  DeploymentTest>Arquillian.arquillianBeforeClass:109 » Deployment Unable to dep...
   ResourceDefinitionWithDifferentTypeTest>Arquillian.arquillianBeforeClass:109 » Runtime
   ResourceDefinitionWithDifferentTypeTest>Arquillian.arquillianBeforeClass:109 » Runtime
   ResourceDefinitionWithDifferentTypeTest>Arquillian.arquillianBeforeClass:109 » Runtime
-  DestroyingNormalScopedInstanceTest>Arquillian.run:164->testRequestScopedComponent:71->testComponent:146 foo expected [null] but found [foo]
   InterModuleELResolutionTest>Arquillian.run:164->testEnabledManagedBeanAvailableForELResolution:62 » PropertyNotFound
   DisabledProducerFieldInjectionNotAvailableTest>Arquillian.arquillianBeforeClass:109 » Runtime
   DisabledProducerMethodInjectionNotAvailableTest>Arquillian.arquillianBeforeClass:109 » Runtime
   DisabledSessionBeanInjectionNotAvailableTest>Arquillian.arquillianBeforeClass:109 » Runtime
   -->
-      <class name="org.jboss.cdi.tck.tests.context.request.async.RequestContextAsyncListenerTest" />
+      <class name="org.jboss.cdi.tck.tests.extensions.lifecycle.bbd.DeploymentTest" />
     </classes>
   </test>
 </suite>
