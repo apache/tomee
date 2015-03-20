@@ -42,7 +42,7 @@ public class RequestScopedThreadContextListener implements ThreadContextListener
 
         final ContextsService contextsService = webBeansContext.getContextsService();
 
-        final Context requestContext = contextsService.getCurrentContext(RequestScoped.class);
+        final Context requestContext = CdiAppContextsService.class.cast(contextsService).getRequestContext(false);
 
         if (requestContext == null) {
             contextsService.startContext(RequestScoped.class, CdiAppContextsService.EJB_REQUEST_EVENT);

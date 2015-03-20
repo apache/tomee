@@ -644,6 +644,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         ServletRequestContext context = requestContext.get();
         if (context == null && create) {
             initRequestContext(null);
+            return requestContext.get();
         }
         return context;
     }
