@@ -50,6 +50,7 @@ import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
 import java.rmi.AccessException;
 import java.rmi.NoSuchObjectException;
@@ -490,15 +491,18 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         if (obj == null) {
             return false;
         }
+        if (this == obj) {
+            return true;
+        }
         if (!BaseEjbProxyHandler.class.isInstance(obj)) {
+            if (!Proxy.isProxyClass(obj.getClass())) {
+                return false;
+            }
             try {
                 obj = ProxyManager.getInvocationHandler(obj);
             } catch (final IllegalArgumentException e) {
                 return false;
             }
-        }
-        if (this == obj) {
-            return true;
         }
         final BaseEjbProxyHandler other = (BaseEjbProxyHandler) obj;
         return equalHandler(other);
