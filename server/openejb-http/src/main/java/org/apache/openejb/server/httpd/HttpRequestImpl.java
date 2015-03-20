@@ -1066,7 +1066,7 @@ public class HttpRequestImpl implements HttpRequest {
         final OpenEJBAsyncContext asyncContext = new OpenEJBAsyncContext(HttpServletRequest.class.cast(servletRequest) /* TODO */, servletResponse, contextPath);
         asyncContext.internalStartAsync();
         asyncStarted = true;
-        return new WebBeansFilter.AsynContextWrapper(asyncContext);
+        return new WebBeansFilter.AsynContextWrapper(asyncContext, servletRequest);
     }
 
     public String getParameter(String name) {

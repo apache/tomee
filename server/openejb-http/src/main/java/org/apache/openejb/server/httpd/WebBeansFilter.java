@@ -63,24 +63,26 @@ public class WebBeansFilter implements Filter { // its pupose is to start/stop r
 
         @Override
         public AsyncContext startAsync() throws IllegalStateException {
-            return new AsynContextWrapper(super.startAsync());
+            return new AsynContextWrapper(super.startAsync(), getRequest());
         }
 
         @Override
         public AsyncContext startAsync(final ServletRequest servletRequest, final ServletResponse servletResponse) throws IllegalStateException {
-            return new AsynContextWrapper(super.startAsync(servletRequest, servletResponse));
+            return new AsynContextWrapper(super.startAsync(servletRequest, servletResponse), servletRequest);
         }
     }
 
     public static class AsynContextWrapper implements AsyncContext {
         private final AsyncContext delegate;
         private final CdiAppContextsService service;
+        private final ServletRequest request;
         private volatile ServletRequestEvent event;
 
-        public AsynContextWrapper(final AsyncContext asyncContext) {
+        public AsynContextWrapper(final AsyncContext asyncContext, final ServletRequest request) {
             this.delegate = asyncContext;
             this.service = CdiAppContextsService.class.cast(WebBeansContext.currentInstance().getService(ContextsService.class));
             this.event = null;
+            this.request = request;
         }
 
         private boolean startRequestScope() {
@@ -96,10 +98,10 @@ public class WebBeansFilter implements Filter { // its pupose is to start/stop r
         }
 
         private ServletRequestEvent getEvent() {
-            if (event == null || event.getServletRequest() != getRequest()) {
+            final ServletRequest request = getRequest();
+            if (event == null || event.getServletRequest() != request) {
                 synchronized (this) {
-                    if (event == null || event.getServletRequest() != getRequest()) {
-                        final ServletRequest request = delegate.getRequest();
+                    if (event == null || event.getServletRequest() != request) {
                         event = new ServletRequestEvent(request.getServletContext(), request);
                     }
                 }
@@ -109,7 +111,7 @@ public class WebBeansFilter implements Filter { // its pupose is to start/stop r
 
         @Override
         public ServletRequest getRequest() {
-            return delegate.getRequest();
+            return request;
         }
 
         @Override
