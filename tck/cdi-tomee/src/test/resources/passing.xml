@@ -291,25 +291,7 @@
       <class name="org.jboss.cdi.tck.tests.context.passivating.dependency.resource.remote.ResourcePassivationDependencyTest"><methods><exclude name=".*" /></methods></class>
       <class name="org.jboss.cdi.tck.tests.lookup.modules.InterModuleELResolutionTest"><methods><exclude name=".*" /></methods></class>
       <class name="org.jboss.cdi.tck.tests.deployment.packaging.ear.MultiWebModuleWithExtensionTest"><methods><exclude name=".*" /></methods></class>
-      <!-- this one is an ear + behavior is broken by design, TODO: find the associated jira issue -->
-      <class name="org.jboss.cdi.tck.tests.deployment.discovery.enterprise.EnterpriseBeanDiscoveryTest">
-        <methods>
-          <exclude name=".*" />
-        </methods>
-      </class>
-
-      <!-- not supported by embedded adapter -->
-      <class name="org.jboss.cdi.tck.tests.lookup.injection.non.contextual.InjectionIntoNonContextualComponentTest">
-        <methods>
-          <exclude name="testInjectionIntoTagHandler" />
-        </methods>
-      </class>
-      <class name="org.jboss.cdi.tck.tests.context.conversation.filter.ConversationFilterTest">
-        <methods>
-          <exclude name="testConversationActivation" />
-        </methods>
-      </class>
-      <class name="org.jboss.cdi.tck.tests.lookup.el.integration.IntegrationWithUnifiedELTest">
+      <class name="org.jboss.cdi.tck.tests.deployment.discovery.enterprise.EnterpriseBeanDiscoveryTest"> <!-- this one is an ear + behavior is broken by design, TODO: find the associated jira issue -->
         <methods>
           <exclude name=".*" />
         </methods>
