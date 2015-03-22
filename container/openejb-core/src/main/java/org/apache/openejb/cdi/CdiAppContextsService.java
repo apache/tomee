@@ -97,6 +97,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         }
     };
 
+    private volatile boolean autoConversationCheck = true;
 
     public CdiAppContextsService(final WebBeansContext wbc) {
         this(wbc, wbc.getOpenWebBeansConfiguration().supportsConversation());
@@ -388,6 +389,10 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         } else if (event == EJB_REQUEST_EVENT) {
             webBeansContext.getBeanManagerImpl().fireEvent(event, InitializedLiteral.REQUEST);
         }
+    }
+
+    public boolean isAutoConversationCheck() {
+        return autoConversationCheck;
     }
 
     public void checkConversationState() {
@@ -740,6 +745,10 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             logger.debug("<lazyStartSessionContext " + webContext);
         }
         return webContext;
+    }
+
+    public void setAutoConversationCheck(final boolean autoConversationCheck) {
+        this.autoConversationCheck = autoConversationCheck;
     }
 
     private boolean supportsConversation() {

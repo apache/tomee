@@ -78,6 +78,7 @@ import org.apache.openejb.assembler.classic.ServletInfo;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.assembler.classic.event.NewEjbAvailableAfterApplicationCreated;
+import org.apache.openejb.cdi.CdiAppContextsService;
 import org.apache.openejb.cdi.CdiBuilder;
 import org.apache.openejb.cdi.OpenEJBLifecycle;
 import org.apache.openejb.cdi.Proxys;
@@ -1050,14 +1051,21 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         standardContext.setXmlValidation(Boolean.parseBoolean(SystemInstance.get().getProperty("tomee.xml.validation", "false")));
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    // context class loader is now defined, but no classes should have been loaded
-    @SuppressWarnings("unchecked")
     @Override
     public void start(final StandardContext standardContext) {
-        // no-op
+        final WebContext webContext = WebContext.class.cast(standardContext.getServletContext().getAttribute("openejb.web.context"));
+        if (webContext == null) {
+            return;
+        }
+        for (final FilterMap map : standardContext.findFilterMaps()) {
+            if ("CDI Conversation Filter".equals(map.getFilterName()) && webContext.getWebBeansContext() != null) {
+                final CdiAppContextsService cdiAppContextsService = CdiAppContextsService.class.cast(webContext.getWebBeansContext().getContextsService());
+                if (cdiAppContextsService != null) {
+                    cdiAppContextsService.setAutoConversationCheck(false);
+                }
+                break;
+            }
+        }
     }
 
     /**
@@ -1291,6 +1299,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 webContext.getInjections().addAll(injections);
                 appContext.getWebContexts().add(webContext);
                 cs.addWebContext(webContext);
+                standardContext.getServletContext().setAttribute("openejb.web.context", webContext);
 
                 if (!contextInfo.appInfo.webAppAlone) {
                     final List<BeanContext> beanContexts = assembler.initEjbs(classLoader, contextInfo.appInfo, appContext, injections, new ArrayList<BeanContext>(), webAppInfo.moduleId);
@@ -1321,7 +1330,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 standardContext.setInstanceManager(instanceManager);
                 instanceManagers.put(classLoader, instanceManager);
                 standardContext.getServletContext().setAttribute(InstanceManager.class.getName(), standardContext.getInstanceManager());
-
             } catch (final Exception e) {
                 logger.error("Error merging Java EE JNDI entries in to war " + standardContext.getPath() + ": Exception: " + e.getMessage(), e);
                 if (System.getProperty(TOMEE_EAT_EXCEPTION_PROP) == null) {

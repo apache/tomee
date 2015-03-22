@@ -72,7 +72,7 @@ public class EndWebBeansListener implements ServletContextListener, ServletReque
      */
     @Override
     public void requestInitialized(ServletRequestEvent event) {
-        if (contextsService != null) {
+        if (contextsService != null && contextsService.isAutoConversationCheck()) {
             contextsService.checkConversationState();
         }
     }

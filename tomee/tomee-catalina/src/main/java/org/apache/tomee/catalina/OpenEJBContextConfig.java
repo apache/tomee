@@ -35,6 +35,7 @@ import org.apache.openejb.assembler.classic.ResourceInfo;
 import org.apache.openejb.assembler.classic.ServletInfo;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
+import org.apache.openejb.cdi.CdiAppContextsService;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.NewLoaderLogic;
 import org.apache.openejb.config.ServiceUtils;
@@ -59,6 +60,7 @@ import org.apache.tomee.common.NamingUtil;
 import org.apache.tomee.common.ResourceFactory;
 import org.apache.tomee.jasper.TomEEJasperInitializer;
 import org.apache.tomee.loader.TomcatHelper;
+import org.apache.webbeans.config.WebBeansContext;
 import org.apache.xbean.finder.IAnnotationFinder;
 
 import javax.servlet.Filter;
@@ -372,13 +374,13 @@ public class OpenEJBContextConfig extends ContextConfig {
             webXml.addFilterMapping(mapping);
         }
 
-        {   // CDI spec forces it, TODO: use it to replace org.apache.openejb.cdi.CdiAppContextsService conversation boot logic
+        {
             final FilterDef filter = new FilterDef();
             filter.setAsyncSupported("true");
             filter.setDescription("CDI Conversation Filter");
             filter.setDisplayName("CDI Conversation Filter");
             filter.setFilterName("CDI Conversation Filter");
-            filter.setFilterClass(NoopFilter.class.getName());
+            filter.setFilterClass(ConversationFilter.class.getName());
             webXml.addFilter(filter);
         }
 
@@ -716,14 +718,25 @@ public class OpenEJBContextConfig extends ContextConfig {
         return false;
     }
 
-    public static class NoopFilter implements Filter {
+    public static class ConversationFilter implements Filter {
+        private WebBeansContext wbc;
+        private CdiAppContextsService contextsService;
+
         @Override
         public void init(final FilterConfig filterConfig) throws ServletException {
-            // no-op
+            try {
+                wbc = WebBeansContext.currentInstance();
+                contextsService = CdiAppContextsService.class.cast(wbc.getContextsService());
+            } catch (final Exception e) {
+                // no-op
+            }
         }
 
         @Override
         public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
+            if (contextsService != null) {
+                contextsService.checkConversationState();
+            }
             chain.doFilter(request, response);
         }
 
