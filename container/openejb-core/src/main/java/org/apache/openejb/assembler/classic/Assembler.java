@@ -969,11 +969,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                             Object lookup = bindings.get(jndi);
                             if (lookup == null && reference.getAnnotation(EJB.class) != null) {
                                 final CdiPlugin plugin = CdiPlugin.class.cast(appContext.getWebBeansContext().getPluginLoader().getEjbPlugin());
-                                if (!plugin.isSessionBean(reference.getResourceType())) {
+                                if (!plugin.isSessionBean(reference.getResourceType())) { // local beans are here and access is O(1) instead of O(n)
                                     boolean ok = false;
                                     for (final BeanContext bc : appContext.getBeanContexts()) {
                                         if (bc.getBusinessLocalInterfaces().contains(reference.getResourceType())
-                                                || bc.getRemoteInterface() == reference.getResourceType()) {
+                                                || bc.getBusinessRemoteInterfaces().contains(reference.getResourceType())) {
                                             ok = true;
                                             break;
                                         }

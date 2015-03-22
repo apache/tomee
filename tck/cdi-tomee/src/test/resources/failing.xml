@@ -24,16 +24,7 @@
   <test name="CDI TCK">
     <classes>
       <!-- not in web profile and not supported by embedded adapter anyway -->
-      <class name="org.jboss.cdi.tck.tests.deployment.packaging.rar.ResourceAdapterArchiveTest">
-      </class>
-
-      <!-- not supported by embedded adapter -->
-      <class name="org.jboss.cdi.tck.tests.lookup.injection.non.contextual.InjectionIntoNonContextualComponentTest">
-      </class>
-      <class name="org.jboss.cdi.tck.tests.context.conversation.filter.ConversationFilterTest">
-      </class>
-      <class name="org.jboss.cdi.tck.tests.lookup.el.integration.IntegrationWithUnifiedELTest">
-      </class>
+      <class name="org.jboss.cdi.tck.tests.extensions.producer.remote.RemoteProducerTest" />
     </classes>
   </test>
 </suite>
