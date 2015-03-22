@@ -68,9 +68,9 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
 
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB.createChild("cdi"), CdiAppContextsService.class);
 
-    private final ThreadLocal<ServletRequestContext> requestContext = new ThreadLocal<ServletRequestContext>();
+    private final ThreadLocal<ServletRequestContext> requestContext = new ThreadLocal<>();
 
-    private final ThreadLocal<SessionContext> sessionContext = new ThreadLocal<SessionContext>();
+    private final ThreadLocal<SessionContext> sessionContext = new ThreadLocal<>();
     private final UpdatableSessionContextManager sessionCtxManager = new UpdatableSessionContextManager();
 
     /**
@@ -116,7 +116,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             if (conversationService == null) {
                 conversationContext = null;
             } else {
-                conversationContext = new ThreadLocal<ConversationContext>();
+                conversationContext = new ThreadLocal<>();
             }
         } else {
             conversationService = null;
@@ -367,7 +367,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
                 final String cid = request.getParameter("cid");
                 if (session != null) {
                     initSessionContext(session);
-                    if (conversationService != null && !isConversationSkipped(request)) {
+                    if (autoConversationCheck && conversationService != null && !isConversationSkipped(request)) {
                         if (cid != null) {
                             final ConversationManager conversationManager = webBeansContext.getConversationManager();
                             final ConversationImpl c = conversationManager.getPropogatedConversation(cid, session.getId());
@@ -381,7 +381,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
                     }
                 }
 
-                if (cid == null && !isTimeout()) {
+                if (cid == null && !isTimeout() && !autoConversationCheck) {
                     // transient but active
                     initConversationContext(request);
                 }
@@ -404,6 +404,9 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
                 if (cid != null) {
                     final ConversationManager conversationManager = webBeansContext.getConversationManager();
                     final ConversationImpl c = conversationManager.getPropogatedConversation(cid, session.getId());
+                    if (!autoConversationCheck) { // lazy association
+                        initConversationContext(rc.getServletRequest());
+                    }
                     if (c != null) {
                         if (c.isTransient()) {
                             throw new IllegalStateException("Conversation " + cid + " missing");
@@ -611,12 +614,10 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
                 context = existingContext;
             }
         }
-        if (context != null) {
-            conversationContext.set(context);
-            context.setActive(true);
-            if (event != null) {
-                webBeansContext.getBeanManagerImpl().fireEvent(event, InitializedLiteral.CONVERSATION);
-            }
+        conversationContext.set(context);
+        context.setActive(true);
+        if (event != null) {
+            webBeansContext.getBeanManagerImpl().fireEvent(event, InitializedLiteral.CONVERSATION);
         }
         return context;
     }
