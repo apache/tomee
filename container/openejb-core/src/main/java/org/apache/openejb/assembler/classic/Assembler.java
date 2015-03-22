@@ -155,6 +155,7 @@ import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 import org.apache.xbean.recipe.UnsetPropertiesRecipe;
 
+import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.context.spi.CreationalContext;
@@ -197,6 +198,7 @@ import java.io.InputStream;
 import java.io.InvalidObjectException;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Constructor;
@@ -957,67 +959,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             // bind all global values on global context
             bindGlobals(appContext.getBindings());
 
-            // validate @Produces @Resource/@PersistenceX/@EJB once all is bound to JNDI and we have our comp bean
-            if (appContext.isStandaloneModule()) {
-                final Map<String, Object> bindings =
-                        appContext.getWebContexts().isEmpty() ? appContext.getBindings() : appContext.getWebContexts().iterator().next().getBindings();
-                if (bindings != null && appContext.getWebBeansContext() != null && appContext.getWebBeansContext().getBeanManagerImpl().isInUse()) {
-                    for (final Bean<?> bean : appContext.getWebBeansContext().getBeanManagerImpl().getBeans()) {
-                        if (ResourceBean.class.isInstance(bean)) {
-                            final ResourceReference reference = ResourceBean.class.cast(bean).getReference();
-                            final String jndi = reference.getJndiName().replace("java:", "");
-                            Object lookup = bindings.get(jndi);
-                            if (lookup == null && reference.getAnnotation(EJB.class) != null) {
-                                final CdiPlugin plugin = CdiPlugin.class.cast(appContext.getWebBeansContext().getPluginLoader().getEjbPlugin());
-                                if (!plugin.isSessionBean(reference.getResourceType())) { // local beans are here and access is O(1) instead of O(n)
-                                    boolean ok = false;
-                                    for (final BeanContext bc : appContext.getBeanContexts()) {
-                                        if (bc.getBusinessLocalInterfaces().contains(reference.getResourceType())
-                                                || bc.getBusinessRemoteInterfaces().contains(reference.getResourceType())) {
-                                            ok = true;
-                                            break;
-                                        }
-                                    }
-                                    if (!ok) {
-                                        throw new DefinitionException(
-                                                "EJB " + reference.getJndiName() + " in " + reference.getOwnerClass() + " can't be cast, instance is " + lookup);
-                                    }
-                                }
-                            }
-                            if (Reference.class.isInstance(lookup)) {
-                                try {
-                                    lookup = Reference.class.cast(lookup).getContent();
-                                } catch (final Exception e) { // surely too early, let's try some known locations
-                                    if (JndiUrlReference.class.isInstance(lookup)) {
-                                        final String path = JndiUrlReference.class.cast(lookup).getJndiName();
-                                        if ("java:comp/BeanManager".equals(path) && reference.getResourceType() != BeanManager.class) {
-                                            throw new DefinitionException(
-                                                    "Resource " + reference.getJndiName() + " in " + reference.getOwnerClass() + " can't be cast to a BeanManager");
-                                        } else if ("java:comp/TransactionSynchronizationRegistry".equals(path) && reference.getResourceType() != TransactionSynchronizationRegistry.class) {
-                                            throw new DefinitionException(
-                                                    "Resource " + reference.getJndiName() + " in " + reference.getOwnerClass() + " can't be cast to a TransactionSynchronizationRegistry");
-                                        } else if ("java:comp/TransactionManager".equals(path) && reference.getResourceType() != TransactionManager.class) {
-                                            throw new DefinitionException(
-                                                    "Resource " + reference.getJndiName() + " in " + reference.getOwnerClass() + " can't be cast to a TransactionManager");
-                                        } else if ("java:comp/ValidatorFactory".equals(path) && reference.getResourceType() != ValidatorFactory.class) {
-                                            throw new DefinitionException(
-                                                    "Resource " + reference.getJndiName() + " in " + reference.getOwnerClass() + " can't be cast to a ValidatorFactory");
-                                        } else if ("java:comp/Validator".equals(path) && reference.getResourceType() != Validator.class) {
-                                            throw new DefinitionException(
-                                                    "Resource " + reference.getJndiName() + " in " + reference.getOwnerClass() + " can't be cast to a Validator");
-                                        }
-                                    }
-                                    continue;
-                                }
-                            }
-                            if (lookup != null && !reference.getResourceType().isInstance(lookup)) {
-                                throw new DefinitionException(
-                                        "Resource " + reference.getJndiName() + " in " + reference.getOwnerClass() + " can't be cast, instance is " + lookup);
-                            }
-                        }
-                    }
-                }
-            }
+            validateCdiResourceProducers(appContext, appInfo);
 
             // deploy MBeans
             for (final String mbean : appInfo.mbeans) {
@@ -1052,6 +994,99 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 logger.debug("createApplication.undeployFailed", e1, appInfo.path);
             }
             throw new OpenEJBException(messages.format("createApplication.failed", appInfo.path), t);
+        }
+    }
+
+    private void validateCdiResourceProducers(final AppContext appContext, final AppInfo info) {
+        // validate @Produces @Resource/@PersistenceX/@EJB once all is bound to JNDI - best case - or with our model
+        if (appContext.isStandaloneModule() && !appContext.getProperties().containsKey("openejb.cdi.skip-resource-validation")) {
+            final Map<String, Object> bindings =
+                    appContext.getWebContexts().isEmpty() ? appContext.getBindings() : appContext.getWebContexts().iterator().next().getBindings();
+            if (bindings != null && appContext.getWebBeansContext() != null && appContext.getWebBeansContext().getBeanManagerImpl().isInUse()) {
+                for (final Bean<?> bean : appContext.getWebBeansContext().getBeanManagerImpl().getBeans()) {
+                    if (ResourceBean.class.isInstance(bean)) {
+                        final ResourceReference reference = ResourceBean.class.cast(bean).getReference();
+                        final String jndi = reference.getJndiName().replace("java:", "");
+                        Object lookup = bindings.get(jndi);
+                        if (lookup == null && reference.getAnnotation(EJB.class) != null) {
+                            final CdiPlugin plugin = CdiPlugin.class.cast(appContext.getWebBeansContext().getPluginLoader().getEjbPlugin());
+                            if (!plugin.isSessionBean(reference.getResourceType())) { // local beans are here and access is O(1) instead of O(n)
+                                boolean ok = false;
+                                for (final BeanContext bc : appContext.getBeanContexts()) {
+                                    if (bc.getBusinessLocalInterfaces().contains(reference.getResourceType())
+                                            || bc.getBusinessRemoteInterfaces().contains(reference.getResourceType())) {
+                                        ok = true;
+                                        break;
+                                    }
+                                }
+                                if (!ok) {
+                                    throw new DefinitionException(
+                                            "EJB " + reference.getJndiName() + " in " + reference.getOwnerClass() + " can't be cast to " + reference.getResourceType());
+                                }
+                            }
+                        }
+                        if (Reference.class.isInstance(lookup)) {
+                            try {
+                                lookup = Reference.class.cast(lookup).getContent();
+                            } catch (final Exception e) { // surely too early, let's try some known locations
+                                if (JndiUrlReference.class.isInstance(lookup)) {
+                                    checkBuiltInResourceTypes(reference, JndiUrlReference.class.cast(lookup).getJndiName());
+                                }
+                                continue;
+                            }
+                        } else if (lookup == null) { // TODO: better validation with lookups in tomee, should be in TWAB surely but would split current code
+                            final Resource r = Resource.class.cast(reference.getAnnotation(Resource.class));
+                            if (r != null) {
+                                if (!r.lookup().isEmpty()) {
+                                    checkBuiltInResourceTypes(reference, r.lookup());
+                                } else if (!r.name().isEmpty()) {
+                                    final String name = "comp/env/" + r.name();
+                                    boolean done = false;
+                                    for (final WebAppInfo w : info.webApps) {
+                                        for (final EnvEntryInfo e : w.jndiEnc.envEntries) {
+                                            if (name.equals(e.referenceName)) {
+                                                if (e.type != null && !reference.getResourceType().getName().equals(e.type)) {
+                                                    throw new DefinitionException(
+                                                            "Env Entry " + reference.getJndiName() + " in " + reference.getOwnerClass() + " can't be cast to " + reference.getResourceType());
+                                                }
+                                                done = true;
+                                                break;
+                                            }
+                                        }
+                                        if (done) {
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if (lookup != null && !reference.getResourceType().isInstance(lookup)) {
+                            throw new DefinitionException(
+                                    "Resource " + reference.getJndiName() + " in " + reference.getOwnerClass() + " can't be cast, instance is " + lookup);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void checkBuiltInResourceTypes(final ResourceReference reference, final String jndi) {
+        final Class<?> resourceType = reference.getResourceType();
+        if ("java:comp/BeanManager".equals(jndi) && resourceType != BeanManager.class) {
+            throw new DefinitionException(
+                    "Resource " + reference.getJndiName() + " in " + reference.getOwnerClass() + " can't be cast to a BeanManager");
+        } else if ("java:comp/TransactionSynchronizationRegistry".equals(jndi) && resourceType != TransactionSynchronizationRegistry.class) {
+            throw new DefinitionException(
+                    "Resource " + reference.getJndiName() + " in " + reference.getOwnerClass() + " can't be cast to a TransactionSynchronizationRegistry");
+        } else if ("java:comp/TransactionManager".equals(jndi) && resourceType != TransactionManager.class) {
+            throw new DefinitionException(
+                    "Resource " + reference.getJndiName() + " in " + reference.getOwnerClass() + " can't be cast to a TransactionManager");
+        } else if ("java:comp/ValidatorFactory".equals(jndi) && resourceType != ValidatorFactory.class) {
+            throw new DefinitionException(
+                    "Resource " + reference.getJndiName() + " in " + reference.getOwnerClass() + " can't be cast to a ValidatorFactory");
+        } else if ("java:comp/Validator".equals(jndi) && resourceType != Validator.class) {
+            throw new DefinitionException(
+                    "Resource " + reference.getJndiName() + " in " + reference.getOwnerClass() + " can't be cast to a Validator");
         }
     }
 

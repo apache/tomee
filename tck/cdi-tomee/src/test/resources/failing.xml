@@ -21,10 +21,9 @@
 
   $ mvn test-compile
   -->
-  <test name="CDI TCK">
+  <test name="CDI TCK for developers (debugging)">
     <classes>
-      <!-- not in web profile and not supported by embedded adapter anyway -->
-      <class name="org.jboss.cdi.tck.tests.extensions.producer.remote.RemoteProducerTest" />
+      <class name="org.jboss.cdi.tck.tests.implementation.simple.resource.broken.type.env.ResourceDefinitionWithDifferentTypeTest" />
     </classes>
   </test>
 </suite>
