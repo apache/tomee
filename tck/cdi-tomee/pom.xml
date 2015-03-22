@@ -29,6 +29,7 @@
 
   <properties>
     <suite.name>passing</suite.name>
+    <cdi-tck.version>1.2.4.Final</cdi-tck.version>
   </properties>
 
   <dependencies>
@@ -96,7 +97,7 @@
     <dependency>
       <groupId>org.jboss.cdi.tck</groupId>
       <artifactId>cdi-tck-impl</artifactId>
-      <version>1.2.4.Final</version>
+      <version>${cdi-tck.version}</version>
       <exclusions>
         <exclusion>
           <groupId>javax.enterprise</groupId>

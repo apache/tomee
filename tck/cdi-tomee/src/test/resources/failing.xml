@@ -25,23 +25,8 @@
     <classes>
       <!--
       ConversationFilterTest>Arquillian.run:164->testConversationBusy:133 expected [BusyConversationException] but found [500]
-      EnterpriseBeanDiscoveryTest>Arquillian.run:164->testExplicitBeanArchiveEmptyDescriptor:133->assertDiscoveredAndAvailable:172 expected [true] but found [false]
-      EnterpriseBeanDiscoveryTest>Arquillian.run:164->testExplicitBeanArchiveLegacyDescriptor:140->assertDiscoveredAndAvailable:172 expected [true] but found [false]
-      EnterpriseBeanDiscoveryTest>Arquillian.run:164->testExplicitBeanArchiveModeAll:126->assertDiscoveredAndAvailable:172 expected [true] but found [false]
-      EnterpriseBeanDiscoveryTest>Arquillian.run:164->testImplicitBeanArchiveModeAnnotated:154->assertDiscoveredAndAvailable:172 expected [true] but found [false]
-      EnterpriseBeanDiscoveryTest>Arquillian.run:164->testImplicitBeanArchiveNoDescriptor:147->assertDiscoveredAndAvailable:170->AbstractTest.getContextualReference:157 » UnsatisfiedResolution
-      EnterpriseBeanDiscoveryTest>Arquillian.run:164->testNoBeanArchiveModeNone:160->assertNotDiscoveredAndNotAvailable:178 expected [true] but found [false]
-      MultiWebModuleWithExtensionTest>Arquillian.run:164 » IllegalState Error launch...
-      InstalledLibraryWarTest>Arquillian.arquillianBeforeClass:109 » Deployment Unab...
-      DeploymentTest>Arquillian.arquillianBeforeClass:109 » Deployment Unable to dep...
-      ResourceDefinitionWithDifferentTypeTest>Arquillian.arquillianBeforeClass:109 » Runtime
-      ResourceDefinitionWithDifferentTypeTest>Arquillian.arquillianBeforeClass:109 » Runtime
-      ResourceDefinitionWithDifferentTypeTest>Arquillian.arquillianBeforeClass:109 » Runtime
-      InterModuleELResolutionTest>Arquillian.run:164->testEnabledManagedBeanAvailableForELResolution:62 » PropertyNotFound
-      DisabledProducerMethodInjectionNotAvailableTest>Arquillian.arquillianBeforeClass:109 » Runtime
-      DisabledSessionBeanInjectionNotAvailableTest>Arquillian.arquillianBeforeClass:109 » Runtime
       -->
-      <class name="org.jboss.cdi.tck.tests.lookup.modules.broken.DisabledProducerFieldInjectionNotAvailableTest" />
+      <class name="org.jboss.cdi.tck.tests.context.conversation.filter.ConversationFilterTest" />
     </classes>
   </test>
 </suite>

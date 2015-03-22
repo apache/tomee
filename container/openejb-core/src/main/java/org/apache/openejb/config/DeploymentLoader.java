@@ -1080,7 +1080,13 @@ public class DeploymentLoader implements DeploymentFilterable {
                             while (it.hasNext()) { // remove lib/
                                 final File file = URLs.toFile(it.next());
                                 // TODO: see if websocket should be added in default.exclusions
-                                if ((skipContainerFolders && file.isDirectory()) || file.getName().endsWith("tomcat-websocket.jar")) {
+                                final String name = file.getName();
+                                if ((skipContainerFolders && file.isDirectory())
+                                        // few hardcoded exclusions, TODO: see if we should filter them in previous call of applyBuiltinExcludes()
+                                        || name.endsWith("tomcat-websocket.jar")
+                                        || name.startsWith("commons-jcs-")
+                                        || name.startsWith("xx-arquillian-tomee")
+                                        || ("lib".equals(name) && file.isDirectory() && new File(System.getProperty("openejb.base", "-")).equals(file.getParentFile()))) {
                                     it.remove();
                                 }
                             }

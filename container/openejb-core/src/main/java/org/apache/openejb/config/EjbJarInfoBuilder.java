@@ -272,12 +272,21 @@ public class EjbJarInfoBuilder {
 
             final Map<URL, String> discoveryModeByUrl = new HashMap<>();
             final CompositeBeans composite;
-            if (CompositeBeans.class.isInstance(beans)) {
+            final boolean isComposite = CompositeBeans.class.isInstance(beans);
+            if (isComposite) {
                 composite = CompositeBeans.class.cast(beans);
                 discoveryModeByUrl.putAll(composite.getDiscoveryByUrl());
             } else {
                 composite = null;
-                discoveryModeByUrl.put(DEFAULT_BEANS_XML_KEY, beans.getBeanDiscoveryMode());
+                URL key = DEFAULT_BEANS_XML_KEY;
+                if (beans.getUri() != null) {
+                    try {
+                        key = new URL(beans.getUri());
+                    } catch (final MalformedURLException e) {
+                        // no-op
+                    }
+                }
+                discoveryModeByUrl.put(key, beans.getBeanDiscoveryMode());
             }
             for (final Map.Entry<URL, List<String>> next : beans.getManagedClasses().entrySet()) {
                 final URL key = next.getKey();

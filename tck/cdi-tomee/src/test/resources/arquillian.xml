@@ -53,6 +53,7 @@
         target/test-classes/org
         target/test-classes/META-INF
         mvn:org.apache.openwebbeans:openwebbeans-porting:${org.apache.openwebbeans.version}
+        mvn:org.jboss.cdi.tck:cdi-tck-ext-lib:${cdi-tck.version}
       </property>
     </configuration>
   </container>
