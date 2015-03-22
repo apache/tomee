@@ -23,9 +23,6 @@
   -->
   <test name="CDI TCK">
     <classes>
-      <!--
-      ConversationFilterTest>Arquillian.run:164->testConversationBusy:133 expected [BusyConversationException] but found [500]
-      -->
       <class name="org.jboss.cdi.tck.tests.context.conversation.filter.ConversationFilterTest" />
     </classes>
   </test>

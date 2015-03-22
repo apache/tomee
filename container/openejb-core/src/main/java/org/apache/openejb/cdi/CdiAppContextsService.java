@@ -354,7 +354,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         requestContext.set(rq);// set thread local
         if (event != null && ServletRequestEvent.class.isInstance(event)) {
             final HttpServletRequest request = (HttpServletRequest) ServletRequestEvent.class.cast(event).getServletRequest();
-            ((ServletRequestContext) rq).setServletRequest(request);
+            rq.setServletRequest(request);
 
             if (request != null) {
                 webBeansContext.getBeanManagerImpl().fireEvent(request, InitializedLiteral.REQUEST);
