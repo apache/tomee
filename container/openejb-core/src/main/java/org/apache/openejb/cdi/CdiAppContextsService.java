@@ -381,7 +381,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
                     }
                 }
 
-                if (cid == null && !isTimeout() && !autoConversationCheck) {
+                if (cid == null && !isTimeout() && autoConversationCheck) {
                     // transient but active
                     initConversationContext(request);
                 }
