@@ -122,7 +122,7 @@
       </exclusions>
     </dependency>
 
-    <!-- debugging -->
+    <!-- debugging: said otherwise you can remove them, kept to ease future debugging if needed -->
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-jcs-jcache</artifactId>
@@ -136,6 +136,18 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>tomee-webservices</artifactId>
+      <version>${tomee.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>tomee-jaxrs</artifactId>
+      <version>${tomee.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-catalina</artifactId>
       <version>${tomcat.version}</version>
@@ -143,7 +155,13 @@
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-http</artifactId>
+      <artifactId>openejb-cxf</artifactId>
+      <version>${openejb.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-cxf-rs</artifactId>
       <version>${openejb.version}</version>
       <scope>test</scope>
     </dependency>

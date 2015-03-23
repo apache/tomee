@@ -17,13 +17,13 @@
   -->
 <suite name="CDI TCK" verbose="0">
   <!--
-  Before any run execute:
+  Before any (IDE) run execute:
 
   $ mvn test-compile
   -->
   <test name="CDI TCK for developers (debugging)">
     <classes>
-      <class name="org.jboss.cdi.tck.tests.implementation.simple.resource.broken.type.env.ResourceDefinitionWithDifferentTypeTest" />
+      <class name="org.jboss.cdi.tck.tests.context.request.ws.RequestContextTest" />
     </classes>
   </test>
 </suite>

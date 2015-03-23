@@ -30,12 +30,14 @@ import org.apache.catalina.authenticator.SSLAuthenticator;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardServer;
+import org.apache.catalina.core.StandardWrapper;
 import org.apache.openejb.assembler.classic.ServletInfo;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.webservices.WsRegistry;
 import org.apache.openejb.server.webservices.WsServlet;
+import org.apache.openejb.util.reflection.Reflections;
 import org.apache.tomcat.util.descriptor.web.LoginConfig;
 import org.apache.tomcat.util.descriptor.web.SecurityCollection;
 import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
@@ -123,8 +125,10 @@ public class TomcatWsRegistry implements WsRegistry {
         // by the WsServler class
         wrapper.setServletClass(WsServlet.class.getName());
         if (wrapper.getServlet() != null) {
-            wrapper.load();
-            wrapper.unload();
+            wrapper.unload(); // deallocate previous one
+            wrapper.load(); // reload this one withuot unloading it to keep the instance - unload is called during stop()
+            // boolean controlling this method call can't be set to false through API so let do it ourself
+            wrapper.getServlet().init(StandardWrapper.class.cast(wrapper)); // or Reflections.set(wrapper, "instanceInitialized", false);
         }
 
         setWsContainer(context, wrapper, httpListener);
@@ -133,7 +137,7 @@ public class TomcatWsRegistry implements WsRegistry {
         final List<String> addresses = new ArrayList<String>();
         for (final Connector connector : connectors) {
             for (final String mapping : wrapper.findMappings()) {
-                final URI address = new URI(connector.getScheme(), null, host.getName(), connector.getPort(), "/" + contextRoot + mapping, null, null);
+                final URI address = new URI(connector.getScheme(), null, host.getName(), connector.getPort(), (contextRoot.startsWith("/") ? "" : "/") + contextRoot + mapping, null, null);
                 addresses.add(address.toString());
             }
         }
