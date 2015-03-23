@@ -31,7 +31,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <scala.version>2.11</scala.version>
-    <scala.full-version>${scala.version}.0</scala.full-version>
+    <scala.full-version>${scala.version}.6</scala.full-version>
   </properties>
 
   <repositories>
@@ -82,6 +82,7 @@
         <artifactId>scalatest-maven-plugin</artifactId>
         <version>1.0</version>
         <configuration>
+          <forkMode>never</forkMode>
           <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
           <junitxml>.</junitxml>
           <filereports>TestSuite.txt</filereports>
