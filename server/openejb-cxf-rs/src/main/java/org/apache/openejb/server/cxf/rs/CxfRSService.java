@@ -47,7 +47,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.ws.rs.container.ResourceContext;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Context;
@@ -176,11 +175,16 @@ public class CxfRSService extends RESTService {
                     // no-op
                 }
             }
+            hacksOn();
         } finally {
             if (oldLoader != null) {
                 CxfUtil.clearBusLoader(oldLoader);
             }
         }
+    }
+
+    private void hacksOn() {
+        CxfHacks.initCxfClassHelper();
     }
 
     @Override

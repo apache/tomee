@@ -31,14 +31,19 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 public class OpenEJBEJBInvoker extends JAXRSInvoker {
     private final Map<Class<?>, Collection<Class<?>>> contextTypes = new HashMap<Class<?>, Collection<Class<?>>>();
 
     public OpenEJBEJBInvoker(final Collection<BeanContext> restEjbs) {
         for (final BeanContext context : restEjbs) {
-            final Collection<Class<?>> classes = new HashSet<Class<?>>();
+            final Collection<Class<?>> classes = new HashSet<>();
             Contexts.findContextFields(context.getBeanClass(), classes);
             for (final Collection<InterceptorData> list :
                 Arrays.asList(
