@@ -322,6 +322,12 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         deploymentLoader = new DeploymentLoader();
 
         setComponentsUsedByCDI();
+
+        try { // before tomcat was using ServiceLoader or manually instantiation, now it uses SL for itself so we can be in conflict
+            WebSockets.setConfigurator();
+        } catch (final Throwable th) {
+            // no-op: can be another API impl, normally we are ok, this is really just a safe belt
+        }
     }
 
     private void setComponentsUsedByCDI() {
