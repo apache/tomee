@@ -89,7 +89,7 @@ public final class LocalMBeanServer implements MBeanServer {
             return get().registerMBean(mbean, name);
 
         } catch (final Exception e) {
-            LOGGER.error("Cannot register MBean " + name, e);
+            LOGGER.error("Cannot register MBean " + name); // silently so no stack
         }
         return null;
     }
@@ -103,7 +103,7 @@ public final class LocalMBeanServer implements MBeanServer {
             get().unregisterMBean(name);
 
         } catch (final Exception e) {
-            LOGGER.error("Cannot unregister MBean " + name, e);
+            LOGGER.error("Cannot unregister MBean " + name); // silently so no stack
         }
     }
 

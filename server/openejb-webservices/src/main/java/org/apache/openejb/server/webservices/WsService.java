@@ -238,17 +238,17 @@ public abstract class WsService implements ServerService, SelfManaging {
     private void deployApp(final AppInfo appInfo, final Collection<BeanContext> ejbs) {
         final Collection<BeanContext> alreadyDeployed = deployedApplications.get(appInfo);
 
-        final Map<String, String> webContextByEjb = new HashMap<String, String>();
+        final Map<String, WebAppInfo> webContextByEjb = new HashMap<>();
         for (final WebAppInfo webApp : appInfo.webApps) {
             for (final String ejb : webApp.ejbWebServices) {
-                webContextByEjb.put(ejb, webApp.contextRoot);
+                webContextByEjb.put(ejb, webApp);
             }
         }
 
-        final Map<String, String> contextData = new HashMap<String, String>();
+        final Map<String, String> contextData = new HashMap<>();
         contextData.put("appId", appInfo.path);
         for (final EjbJarInfo ejbJar : appInfo.ejbJars) {
-            final Map<String, PortInfo> ports = new TreeMap<String, PortInfo>();
+            final Map<String, PortInfo> ports = new TreeMap<>();
             for (final PortInfo port : ejbJar.portInfos) {
                 ports.put(port.serviceLink, port);
             }
@@ -312,12 +312,15 @@ public abstract class WsService implements ServerService, SelfManaging {
                                 transport = portInfo.transportGuarantee;
                             }
 
-                            String context = webContextByEjb.get(bean.ejbClass);
+                            final WebAppInfo webAppInfo = webContextByEjb.get(bean.ejbClass);
+                            String context = webAppInfo != null ? webAppInfo.contextRoot : null;
+                            String moduleId = webAppInfo != null ? webAppInfo.moduleId : null;
                             if (context == null && !OLD_WEBSERVICE_DEPLOYMENT) {
                                 context = ejbJar.moduleName;
+                                context = null;
                             }
 
-                            final List<String> addresses = wsRegistry.addWsContainer(container, classLoader, context, host, location, realm, transport, auth);
+                            final List<String> addresses = wsRegistry.addWsContainer(container, classLoader, context, host, location, realm, transport, auth, moduleId);
                             alreadyDeployed.add(beanContext);
 
                             // one of the registered addresses to be the canonical address
@@ -431,7 +434,7 @@ public abstract class WsService implements ServerService, SelfManaging {
                     }
 
                     // give servlet a reference to the webservice container
-                    final List<String> addresses = wsRegistry.setWsContainer(container, classLoader, webApp.contextRoot, host(webApp), servlet, realm, transport, auth);
+                    final List<String> addresses = wsRegistry.setWsContainer(container, classLoader, webApp.contextRoot, host(webApp), servlet, realm, transport, auth, webApp.moduleId);
 
                     // one of the registered addresses to be the connonical address
                     final String address = HttpUtil.selectSingleAddress(addresses);
@@ -488,7 +491,7 @@ public abstract class WsService implements ServerService, SelfManaging {
                         // remove container from web server
                         final String location = ejbLocations.get(enterpriseBean.ejbDeploymentId);
                         if (this.wsRegistry != null && location != null) {
-                            this.wsRegistry.removeWsContainer(location);
+                            this.wsRegistry.removeWsContainer(location, ejbJar.moduleId);
                         }
 
                         // destroy webservice container
@@ -528,7 +531,7 @@ public abstract class WsService implements ServerService, SelfManaging {
                     // clear servlet's reference to the webservice container
                     if (this.wsRegistry != null) {
                         try {
-                            this.wsRegistry.clearWsContainer(webApp.contextRoot, host(webApp), servlet);
+                            this.wsRegistry.clearWsContainer(webApp.contextRoot, host(webApp), servlet, webApp.moduleId);
                         } catch (final IllegalArgumentException ignored) {
                             // no-op
                         }

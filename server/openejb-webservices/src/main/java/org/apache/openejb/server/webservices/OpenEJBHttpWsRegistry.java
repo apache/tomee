@@ -29,16 +29,17 @@ public class OpenEJBHttpWsRegistry extends OpenEJBHttpRegistry implements WsRegi
     public List<String> setWsContainer(final HttpListener httpListener,
                                        final ClassLoader classLoader,
                                        final String context, final String virtualHost, final ServletInfo servletInfo,
-                                       final String realmName, final String transportGuarantee, final String authMethod) throws Exception {
+                                       final String realmName, final String transportGuarantee, final String authMethod,
+                                       final String moduleId) throws Exception {
 
         final String path = servletInfo.mappings.iterator().next();
-        return addWsContainer(httpListener, classLoader, context, virtualHost, path, realmName, transportGuarantee, authMethod);
+        return addWsContainer(httpListener, classLoader, context, virtualHost, path, realmName, transportGuarantee, authMethod, moduleId);
     }
 
     @Override
-    public void clearWsContainer(final String context, final String virtualHost, final ServletInfo servletInfo) {
+    public void clearWsContainer(final String context, final String virtualHost, final ServletInfo servletInfo, final String moduleId) {
         final String path = servletInfo.mappings.iterator().next();
-        removeWsContainer(path);
+        removeWsContainer(path, moduleId);
     }
 
     @Override
@@ -49,7 +50,8 @@ public class OpenEJBHttpWsRegistry extends OpenEJBHttpRegistry implements WsRegi
                                        final String path,
                                        final String realmName,
                                        final String transportGuarantee, // ignored
-                                       final String authMethod) throws Exception {
+                                       final String authMethod,
+                                       final String moduleId) throws Exception {
 
         if (path == null) throw new NullPointerException("contextRoot is null");
 
@@ -84,7 +86,7 @@ public class OpenEJBHttpWsRegistry extends OpenEJBHttpRegistry implements WsRegi
     }
 
     @Override
-    public void removeWsContainer(final String path) {
+    public void removeWsContainer(final String path, final String moduleId) {
         registry.removeHttpListener(path);
     }
 }

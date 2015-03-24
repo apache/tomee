@@ -25,9 +25,10 @@ public interface WsRegistry {
     List<String> setWsContainer(HttpListener httpListener,
                                 ClassLoader classLoader,
                                 String context, String virtualHost, ServletInfo servletInfo,
-                                String realmName, String transportGuarantee, String authMethod) throws Exception;
+                                String realmName, String transportGuarantee, String authMethod,
+                                String moduleId) throws Exception;
 
-    void clearWsContainer(String context, String virtualHost, ServletInfo servletInfo);
+    void clearWsContainer(String context, String virtualHost, ServletInfo servletInfo, String moduleId);
 
     List<String> addWsContainer(HttpListener inputListener,
                                 ClassLoader classLoader,
@@ -36,7 +37,8 @@ public interface WsRegistry {
                                 String path,
                                 String realmName,
                                 String transportGuarantee, // ignored
-                                String authMethod) throws Exception;
+                                String authMethod,
+                                String moduleId) throws Exception;
 
-    void removeWsContainer(String path);
+    void removeWsContainer(String path, String moduleId);
 }
