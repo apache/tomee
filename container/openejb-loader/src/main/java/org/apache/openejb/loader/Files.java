@@ -179,9 +179,9 @@ public class Files {
     }
 
     private static void hackJDK4715154() {
-        if (IS_WINDOWS) { //NOPMD
+        if (IS_WINDOWS) {
             //Known Windows bug JDK-4715154 and as of JDK8 still not fixable due to OS
-            System.gc();
+            System.gc();//NOPMD
         }
     }
 
