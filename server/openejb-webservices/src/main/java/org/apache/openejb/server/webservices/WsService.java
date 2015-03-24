@@ -317,7 +317,6 @@ public abstract class WsService implements ServerService, SelfManaging {
                             String moduleId = webAppInfo != null ? webAppInfo.moduleId : null;
                             if (context == null && !OLD_WEBSERVICE_DEPLOYMENT) {
                                 context = ejbJar.moduleName;
-                                context = null;
                             }
 
                             final List<String> addresses = wsRegistry.addWsContainer(container, classLoader, context, host, location, realm, transport, auth, moduleId);
