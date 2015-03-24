@@ -48,7 +48,7 @@ public class WebBeansFilter implements Filter { // its pupose is to start/stop r
             filterChain.doFilter(servletRequest, servletResponse);
             return;
         }
-        filterChain.doFilter(new CdiRequest(HttpServletRequest.class.cast(servletRequest)), servletResponse);
+        filterChain.doFilter(servletRequest.isAsyncSupported() ? new CdiRequest(HttpServletRequest.class.cast(servletRequest)) : servletRequest, servletResponse);
     }
 
     @Override
