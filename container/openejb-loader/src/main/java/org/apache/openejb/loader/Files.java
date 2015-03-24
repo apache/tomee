@@ -44,7 +44,7 @@ import static org.apache.openejb.loader.JarLocation.decode;
  */
 public class Files {
     private static final Map<String, MessageDigest> DIGESTS = new HashMap<String, MessageDigest>();
-    private static final boolean isWindows = System.getProperty("os.name", "unknown").toLowerCase().startsWith("win");
+    private static final boolean IS_WINDOWS = System.getProperty("os.name", "unknown").toLowerCase().startsWith("win");
 
     public static File path(final String... parts) {
         File dir = null;
@@ -170,15 +170,19 @@ public class Files {
             return file;
         }
 
-        if (isWindows) {
-            //Known Windows bug JDK-4715154 and as of JDK8 still not fixable due to OS
-            System.gc();
-        }
+        hackJDK4715154();
 
         if (!file.mkdirs()) {
             throw new FileRuntimeException("Cannot mkdir: " + file.getAbsolutePath());
         }
         return file;
+    }
+
+    private static void hackJDK4715154() {
+        if (IS_WINDOWS) { //NOPMD
+            //Known Windows bug JDK-4715154 and as of JDK8 still not fixable due to OS
+            System.gc();
+        }
     }
 
     public static File mkdir(final File file, final String name) {
@@ -194,10 +198,7 @@ public class Files {
                 //Use a local tmp directory
                 final File tmp = new File("tmp");
 
-                if (isWindows) {
-                    //Known Windows bug JDK-4715154 and as of JDK8 still not fixable due to OS
-                    System.gc();
-                }
+                hackJDK4715154();
 
                 if (!tmp.exists() && !tmp.mkdirs()) {
                     throw new IOException("Failed to create local tmp directory: " + tmp.getAbsolutePath());
@@ -206,10 +207,7 @@ public class Files {
                 file = File.createTempFile("temp", "dir", tmp);
             }
 
-            if (isWindows) {
-                //Known Windows bug JDK-4715154 and as of JDK8 still not fixable due to OS
-                System.gc();
-            }
+            hackJDK4715154();
 
             if (!file.delete()) {
                 throw new IOException("Failed to create temp dir. Delete failed");
@@ -234,10 +232,7 @@ public class Files {
 
         if (!file.exists()) {
 
-            if (isWindows) {
-                //Known Windows bug JDK-4715154 and as of JDK8 still not fixable due to OS
-                System.gc();
-            }
+            hackJDK4715154();
 
             if (!file.mkdirs()) {
                 throw new FileRuntimeException("Cannot mkdirs: " + file.getAbsolutePath());
@@ -317,10 +312,7 @@ public class Files {
             }
             try {
 
-                if (isWindows) {
-                    //Known Windows bug JDK-4715154 and as of JDK8 still not fixable due to OS
-                    System.gc();
-                }
+                hackJDK4715154();
 
                 if (!file.delete()) {
                     file.deleteOnExit();
@@ -350,10 +342,7 @@ public class Files {
                 }
             }
 
-            if (isWindows) {
-                //Known Windows bug JDK-4715154 and as of JDK8 still not fixable due to OS
-                System.gc();
-            }
+            hackJDK4715154();
 
             if (!file.delete()) {
                 throw new IllegalStateException("Could not delete file: " + file.getAbsolutePath());
