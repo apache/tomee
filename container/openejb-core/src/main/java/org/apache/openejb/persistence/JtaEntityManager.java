@@ -18,6 +18,7 @@
 package org.apache.openejb.persistence;
 
 import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.assembler.classic.ReloadableEntityManagerFactory;
 import org.apache.openejb.core.ivm.IntraVmArtifact;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -72,6 +73,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
     private final boolean extended;
     private final String unitName;
     private final Logger logger;
+    private final boolean wrapNoTxQueries;
 
     public JtaEntityManager(final JtaEntityManagerRegistry registry, final EntityManagerFactory entityManagerFactory, final Map properties, final String unitName) {
         this(unitName, registry, entityManagerFactory, properties, false);
@@ -90,6 +92,9 @@ public class JtaEntityManager implements EntityManager, Serializable {
         this.properties = properties;
         this.extended = extended;
         logger = unitName == null ? baseLogger : baseLogger.getChildLogger(unitName);
+        final String wrapConfig = ReloadableEntityManagerFactory.class.isInstance(entityManagerFactory) ?
+                ReloadableEntityManagerFactory.class.cast(entityManagerFactory).getUnitProperties().getProperty("openejb.jpa.query.wrap-no-tx", "true") : "true";
+        this.wrapNoTxQueries = wrapConfig == null || "true".equalsIgnoreCase(wrapConfig);
     }
 
     EntityManager getEntityManager() {
@@ -320,14 +325,14 @@ public class JtaEntityManager implements EntityManager, Serializable {
     }
 
     private Query proxyIfNoTx(final Method method, final Object... args) {
-        if (!extended && !isTransactionActive()) {
+        if (wrapNoTxQueries && !extended && !isTransactionActive()) {
             return new JtaQuery(getEntityManager(), this, method, args);
         }
         return createQuery(Query.class, getEntityManager(), method, args);
     }
 
     private <T> TypedQuery<T> typedProxyIfNoTx(final Method method, final Object... args) {
-        if (!extended && !isTransactionActive()) {
+        if (wrapNoTxQueries && !extended && !isTransactionActive()) {
             return new JtaTypedQuery<T>(getEntityManager(), this, method, args);
         }
         return createQuery(TypedQuery.class, getEntityManager(), method, args);
