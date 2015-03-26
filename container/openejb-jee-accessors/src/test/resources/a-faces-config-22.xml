@@ -20,7 +20,10 @@
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
                                   http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
-
+  <factory>
+    <flash-factory>com.foo.Bar</flash-factory>
+    <flow-handler-factory>com.foo.Dummy</flow-handler-factory>
+  </factory>
   <application>
     <el-resolver>UnknownButSuperResolver</el-resolver>
     <resource-library-contracts>
@@ -52,4 +55,14 @@
       </outbound-parameter>
     </flow-call>
   </flow-definition>
+  <navigation-case>
+    <from-outcome>myLetters</from-outcome>
+    <to-view-id>/portal/letter/letterList.xhtml</to-view-id>
+    <redirect>
+      <redirect-param>
+        <name>type</name>
+        <value>LETTER</value>
+      </redirect-param>
+    </redirect>
+  </navigation-case>
 </faces-config>

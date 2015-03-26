@@ -336,7 +336,7 @@ public class FacesConfig$JAXB
                     }
                 }
                 facesConfigExtension.add(facesConfigExtensionItem);
-            } else if (("flow-definition" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI()) {
                 // just here ATM to not prevent users to get JSF 2.2 feature because we can't read it
                 // TODO:  read it if we need it (= classes to add to injectable classes, other file to parse to find them etc...)
             } else {
