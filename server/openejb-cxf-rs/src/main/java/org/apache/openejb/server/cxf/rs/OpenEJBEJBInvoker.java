@@ -37,6 +37,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import javax.ejb.EJBException;
 
 public class OpenEJBEJBInvoker extends JAXRSInvoker {
     private final Map<Class<?>, Collection<Class<?>>> contextTypes = new HashMap<Class<?>, Collection<Class<?>>>();
@@ -100,6 +101,10 @@ public class OpenEJBEJBInvoker extends JAXRSInvoker {
                 if (cause instanceof RemoteException) {
                     cause = cause.getCause();
                 }
+            }
+
+            if (EJBException.class.isInstance(cause)) {
+                cause = EJBException.class.cast(cause).getCause();
             }
 
             if (ApplicationException.class.isInstance(cause) && Exception.class.isInstance(cause.getCause())) {
