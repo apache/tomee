@@ -437,7 +437,7 @@ public class CxfRsHttpListener implements RsHttpListener {
     }
 
     private static void addMandatoryProviders(final Collection<Object> instances) {
-        instances.add(new JsrProvider()); // is this one really mandatory?
+        instances.add(new JsrProvider());
         instances.add(new WadlDocumentMessageBodyWriter());
         instances.add(EJBAccessExceptionMapper.INSTANCE);
 

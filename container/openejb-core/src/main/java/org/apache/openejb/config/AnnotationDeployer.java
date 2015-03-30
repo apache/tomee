@@ -5552,20 +5552,21 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
         }
 
-        // methods annotations: inheritance is managed like it to be more efficient
-        final List<Annotated<Method>> methods = finder.findMetaAnnotatedMethods(Path.class);
-        for (final Annotated<Method> aMethod : methods) {
-            final Method method = aMethod.get();
-            final Class<?> clazz = method.getDeclaringClass();
+        if ("true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.jaxrs.scanning.methods", "false"))) {
+            final List<Annotated<Method>> methods = finder.findMetaAnnotatedMethods(Path.class);
+            for (final Annotated<Method> aMethod : methods) {
+                final Method method = aMethod.get();
+                final Class<?> clazz = method.getDeclaringClass();
 
-            if (isInstantiable(clazz)) {
-                if (!isEJB(clazz)) {
+                if (isInstantiable(clazz)) {
+                    if (!isEJB(clazz)) {
+                        classes.add(clazz.getName());
+                    } else {
+                        webModule.getEjbRestServices().add(clazz.getName());
+                    }
+                } else if (isEJB(clazz) && DynamicSubclass.isDynamic(clazz)) {
                     classes.add(clazz.getName());
-                } else {
-                    webModule.getEjbRestServices().add(clazz.getName());
                 }
-            } else if (isEJB(clazz) && DynamicSubclass.isDynamic(clazz)) {
-                classes.add(clazz.getName());
             }
         }
 
