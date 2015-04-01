@@ -24,13 +24,13 @@ import static org.junit.Assert.assertNull;
 public class CdiAppContextsServiceTest {
     @Test
     public void cid() {
-        assertNull(CdiAppContextsService.getFromQuery(null));
-        assertNull(CdiAppContextsService.getFromQuery(""));
-        assertNull(CdiAppContextsService.getFromQuery("superparam=cejdzl&cfdlcjlzdbc=czlbcjb&cdlzcs&cdlcjkd"));
-        assertEquals("1", CdiAppContextsService.getFromQuery("cid=1"));
-        assertEquals("10", CdiAppContextsService.getFromQuery("cid=10"));
-        assertEquals("10", CdiAppContextsService.getFromQuery("cecfzd=cefczerf&cfdzcd=&é&cdzc&cid=10"));
-        assertEquals("10", CdiAppContextsService.getFromQuery("cecfzd=cefczerf&cfdzcd=&é&cdzc&cid=10&cdsjlcbdjc=djlbcsjlb=ldjbs=cdsln"));
-        assertEquals("10", CdiAppContextsService.getFromQuery("cid=10&cdsjlcbdjc=djlbcsjlb=ldjbs=cdsln"));
+        assertNull(CdiAppContextsService.getFromQuery("cid", null));
+        assertNull(CdiAppContextsService.getFromQuery("cid", ""));
+        assertNull(CdiAppContextsService.getFromQuery("cid", "superparam=cejdzl&cfdlcjlzdbc=czlbcjb&cdlzcs&cdlcjkd"));
+        assertEquals("1", CdiAppContextsService.getFromQuery("cid", "cid=1"));
+        assertEquals("10", CdiAppContextsService.getFromQuery("cid", "cid=10"));
+        assertEquals("10", CdiAppContextsService.getFromQuery("cid", "cecfzd=cefczerf&cfdzcd=&é&cdzc&cid=10"));
+        assertEquals("10", CdiAppContextsService.getFromQuery("cid", "cecfzd=cefczerf&cfdzcd=&é&cdzc&cid=10&cdsjlcbdjc=djlbcsjlb=ldjbs=cdsln"));
+        assertEquals("10", CdiAppContextsService.getFromQuery("cid", "cid=10&cdsjlcbdjc=djlbcsjlb=ldjbs=cdsln"));
     }
 }
