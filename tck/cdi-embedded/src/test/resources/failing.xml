@@ -32,7 +32,7 @@
     -Dopenejb.cdi.conversation.http.use-get-parameter=true
     -->
     <classes>
-      <class name="org.jboss.cdi.tck.tests.context.conversation.servlet.ServletConversationTest" />
+      <class name="org.jboss.cdi.tck.tests.context.request.ejb.EJBRequestContextTest" />
     </classes>
   </test>
 </suite>
