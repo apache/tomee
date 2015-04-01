@@ -68,6 +68,8 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
 
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB.createChild("cdi"), CdiAppContextsService.class);
 
+    private static final String CID = "cid";
+
     private final ThreadLocal<ServletRequestContext> requestContext = new ThreadLocal<>();
 
     private final ThreadLocal<SessionContext> sessionContext = new ThreadLocal<>();
@@ -364,7 +366,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
                 //Re-initialize thread local for session
                 final HttpSession session = request.getSession(false);
 
-                final String cid = conversationService != null ? request.getParameter("cid") : null;
+                final String cid = conversationService != null ? getCid(request) : null;
                 if (session != null) {
                     initSessionContext(session);
                     if (autoConversationCheck && conversationService != null && !isConversationSkipped(request)) {
@@ -391,6 +393,26 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         }
     }
 
+    public static String getCid(final HttpServletRequest req) {
+        return getFromQuery(CID, req.getQueryString());
+    }
+
+    public static String getFromQuery(final String name, final String q) {
+        final int cid = q == null ? -1 : q.indexOf(name + "=");
+        if (cid < 0) {
+            return null;
+        }
+        int end = q.indexOf("&", cid);
+        final int end2 = q.indexOf("#", cid);
+        if (end2 > 0 && end2 < end) {
+            end = end2;
+        }
+        if (end < 0) {
+            end = q.length();
+        }
+        return q.substring(cid + name.length() + 1, end);
+    }
+
     public boolean isAutoConversationCheck() {
         return autoConversationCheck;
     }
@@ -400,7 +422,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         if (rc != null && rc.getServletRequest() != null && conversationService != null) {
             final HttpSession session = rc.getServletRequest().getSession(false);
             if (session != null) {
-                final String cid = rc.getServletRequest().getParameter("cid");
+                final String cid = getFromQuery(CID, rc.getServletRequest().getQueryString());
                 if (cid != null) {
                     final ConversationManager conversationManager = webBeansContext.getConversationManager();
                     final ConversationImpl c = conversationManager.getPropogatedConversation(cid, session.getId());
@@ -585,11 +607,6 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         singletonContext.destroy();
     }
 
-    /**
-     * Initialize conversation context.
-     *
-     * @param context context
-     */
     private ConversationContext initConversationContext(final Object request) {
         if (conversationService == null) {
             return null;
@@ -697,7 +714,8 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     }
 
     private boolean isConversationSkipped(final HttpServletRequest servletRequest) {
-        return "none".equals(servletRequest.getParameter("conversationPropagation")) || "true".equals(servletRequest.getParameter("nocid"));
+        final String queryString = servletRequest.getQueryString();
+        return "none".equals(getFromQuery("conversationPropagation", queryString)) || "true".equals(getFromQuery("nocid", queryString));
     }
 
     private boolean isTimeout() {
@@ -775,7 +793,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     public String getHttpParameter(final String name) {
         final ServletRequestContext req = getRequestContext(false);
         if (req != null && req.getServletRequest() != null) {
-            return req.getServletRequest().getParameter(name);
+            return getFromQuery(name, req.getServletRequest().getQueryString());
         }
         return null;
     }
