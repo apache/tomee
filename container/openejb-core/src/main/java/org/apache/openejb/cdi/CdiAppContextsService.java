@@ -364,7 +364,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
                 //Re-initialize thread local for session
                 final HttpSession session = request.getSession(false);
 
-                final String cid = request.getParameter("cid");
+                final String cid = conversationService != null ? request.getParameter("cid") : null;
                 if (session != null) {
                     initSessionContext(session);
                     if (autoConversationCheck && conversationService != null && !isConversationSkipped(request)) {
