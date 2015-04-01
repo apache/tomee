@@ -202,6 +202,7 @@
             <openejb.cdi.applicationScope.cached>false</openejb.cdi.applicationScope.cached>
             <openejb.cdi.producer.interception>false</openejb.cdi.producer.interception>
             <openejb.cdi.filter.classloader>false</openejb.cdi.filter.classloader>
+            <openejb.cdi.conversation.http.use-get-parameter>true</openejb.cdi.conversation.http.use-get-parameter>
 
             <openejb.jul.forceReload>true</openejb.jul.forceReload>
             <openejb.strict.interface.declaration>true</openejb.strict.interface.declaration>

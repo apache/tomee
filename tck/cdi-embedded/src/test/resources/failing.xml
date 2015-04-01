@@ -29,9 +29,10 @@
     -Dopenejb.cdi.debug=true
     -Dopenejb.http.mock-request=true
     -Dopenejb.embedded.try-jsp=true
+    -Dopenejb.cdi.conversation.http.use-get-parameter=true
     -->
     <classes>
-      <class name="org.jboss.cdi.tck.tests.context.conversation.event.LongRunningConversationLifecycleEventTest" />
+      <class name="org.jboss.cdi.tck.tests.context.conversation.servlet.ServletConversationTest" />
     </classes>
   </test>
 </suite>

@@ -92,6 +92,8 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
 
     private volatile Object appEvent;
 
+    private final boolean useGetParameter;
+
     private static final ThreadLocal<Collection<Runnable>> endRequestRunnables = new ThreadLocal<Collection<Runnable>>() {
         @Override
         protected Collection<Runnable> initialValue() {
@@ -126,6 +128,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         }
         applicationContext.setActive(true);
         singletonContext.setActive(true);
+        useGetParameter = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.cdi.conversation.http.use-get-parameter", "false"));
     }
 
     private void endRequest() {
@@ -145,7 +148,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
 
     @Override
     public String getConversationId() {
-        return getHttpParameter("cid");
+        return getHttpParameter(CID);
     }
 
     @Override
@@ -366,7 +369,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
                 //Re-initialize thread local for session
                 final HttpSession session = request.getSession(false);
 
-                final String cid = conversationService != null ? getCid(request) : null;
+                final String cid = conversationService != null ? (!useGetParameter ? getCid(request) : request.getParameter(CID)) : null;
                 if (session != null) {
                     initSessionContext(session);
                     if (autoConversationCheck && conversationService != null && !isConversationSkipped(request)) {
@@ -422,7 +425,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         if (rc != null && rc.getServletRequest() != null && conversationService != null) {
             final HttpSession session = rc.getServletRequest().getSession(false);
             if (session != null) {
-                final String cid = getFromQuery(CID, rc.getServletRequest().getQueryString());
+                final String cid = useGetParameter ? rc.getServletRequest().getParameter(CID) : getFromQuery(CID, rc.getServletRequest().getQueryString());
                 if (cid != null) {
                     final ConversationManager conversationManager = webBeansContext.getConversationManager();
                     final ConversationImpl c = conversationManager.getPropogatedConversation(cid, session.getId());
@@ -793,7 +796,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     public String getHttpParameter(final String name) {
         final ServletRequestContext req = getRequestContext(false);
         if (req != null && req.getServletRequest() != null) {
-            return getFromQuery(name, req.getServletRequest().getQueryString());
+            return useGetParameter ? req.getServletRequest().getParameter(name) : getFromQuery(name, req.getServletRequest().getQueryString());
         }
         return null;
     }
