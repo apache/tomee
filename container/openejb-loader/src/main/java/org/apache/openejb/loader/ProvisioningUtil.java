@@ -149,7 +149,7 @@ public final class ProvisioningUtil {
         if (rawLocation.startsWith(MVN_PREFIX)) {
             try {
                 final String repo1Url = quickMvnUrl(rawLocation.substring(MVN_PREFIX.length()).replace(":", "/"));
-                return realLocation(repo1Url);
+                return realLocation(repo1Url).replace(":", "/").replace("///","/");
             } catch (final MalformedURLException e1) {
                 Logger.getLogger(ProvisioningUtil.class.getName()).severe("Can't find " + rawLocation);
             }
@@ -237,7 +237,7 @@ public final class ProvisioningUtil {
 
         final String version = segments[2];
         if (version.trim().isEmpty()) {
-            throw new MalformedURLException("Invalid artifactId. " + toParse);
+            throw new MalformedURLException("Invalid version. " + toParse);
         }
 
         builder.append(version).append("/");
