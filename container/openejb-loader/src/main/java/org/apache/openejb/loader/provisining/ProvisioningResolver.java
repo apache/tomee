@@ -154,7 +154,7 @@ public class ProvisioningResolver {
                 IO.close(is);
             }
         } else {
-            throw new IllegalArgumentException("Can't resolver (" + rawLocation + ')');
+            throw new IllegalArgumentException("Could not resolve (" + rawLocation + ')');
         }
     }
 
