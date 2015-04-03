@@ -37,9 +37,12 @@ import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Zips;
 import org.apache.openejb.maven.plugin.cli.Args;
+import org.apache.openejb.maven.util.XmlFormatter;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.OpenEjbVersion;
 import org.apache.tomee.util.QuickServerXmlParser;
+import org.codehaus.plexus.configuration.PlexusConfiguration;
+import org.codehaus.plexus.util.FileUtils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -326,6 +329,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     @Parameter
     protected List<File> externalRepositories;
 
+    @Parameter
+    protected PlexusConfiguration inlinedServerXml;
+
     protected File deployedFile = null;
     protected RemoteServer server = null;
     protected String container = TOM_EE;
@@ -374,6 +380,15 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                 activateSimpleLog();
             }
 
+            if (inlinedServerXml != null && inlinedServerXml.getChildCount() > 0) {
+                final File serverXml = new File(catalinaBase, "conf/server.xml");
+                try {
+                    FileUtils.forceMkdir(serverXml.getParentFile());
+                    FileUtils.fileWrite(serverXml, XmlFormatter.format(inlinedServerXml.getChild(0).toString()));
+                } catch (final Exception e) {
+                    throw new MojoExecutionException(e.getMessage(), e);
+                }
+            }
             if (!keepServerXmlAsthis) {
                 overrideAddresses();
             }

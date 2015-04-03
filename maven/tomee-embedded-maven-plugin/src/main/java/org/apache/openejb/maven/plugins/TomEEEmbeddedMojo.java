@@ -39,6 +39,8 @@ import org.apache.openejb.maven.util.MavenLogStreamFactory;
 import org.apache.openejb.util.JuliLogStreamFactory;
 import org.apache.tomee.embedded.Configuration;
 import org.apache.tomee.embedded.Container;
+import org.codehaus.plexus.configuration.PlexusConfiguration;
+import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -176,6 +178,12 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
     @Parameter(property = "tomee-plugin.application-copy", defaultValue = "${project.build.directory}/tomee-embedded/applications")
     private File applicationCopyFolder;
 
+    @Parameter(property = "tomee-plugin.work", defaultValue = "${project.build.directory}/tomee-embedded-work")
+    private File workDir;
+
+    @Parameter
+    protected PlexusConfiguration inlinedServerXml;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (!classpathAsWar && "pom".equals(packaging)) {
@@ -198,6 +206,19 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
         if (mavenLog) {
             System.setProperty("openejb.log.factory", MavenLogStreamFactory.class.getName()); // this line also preload the class (<cinit>)
             System.setProperty("openejb.jul.forceReload", "true");
+        }
+
+        if (inlinedServerXml != null && inlinedServerXml.getChildCount() > 0) {
+            if (serverXml != null && serverXml.exists()) {
+                throw new MojoFailureException("you can't define a server.xml and an inlinedServerXml");
+            }
+            try {
+                FileUtils.forceMkdir(workDir);
+                serverXml = new File(workDir, "server.xml_dump");
+                FileUtils.fileWrite(serverXml, inlinedServerXml.getChild(0).toString());
+            } catch (final Exception e) {
+                throw new MojoExecutionException(e.getMessage(), e);
+            }
         }
 
         final Container container = new Container();
@@ -391,7 +412,6 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
             } catch (final Exception e) {
                 getLog().warn("can't initialize attribute " + field.getName());
             }
-
         }
         if (containerProperties != null) {
             final Properties props = new Properties();
