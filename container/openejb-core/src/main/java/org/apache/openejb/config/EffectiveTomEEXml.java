@@ -104,7 +104,7 @@ public final class EffectiveTomEEXml {
     }
 
     private static void help(final Options options) {
-        new HelpFormatter().printHelp("effective-tomee [options] <value>", "\n", options, "\n");
+        new HelpFormatter().printHelp("effectivetomee [options] <value>", "\n", options, "\n");
     }
 
     private EffectiveTomEEXml() {
