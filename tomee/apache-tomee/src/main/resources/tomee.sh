@@ -16,7 +16,6 @@
 # limitations under the License.
 
 version="${version.openejb}"
-port=8080
 
 DEBUG=
 #DEBUG="-Xnoagent -Djava.compiler=NONE -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"
@@ -77,7 +76,7 @@ done
 if [ "$1" = "deploy" ] || [ "$1" = "undeploy" ]; then
     if [ $# -eq 2 ]; then
         echo "${1}ing $2"
-        $JAVA $DEBUG -Dopenejb.base="$TOMEE_HOME" -cp "\"$CP\"" org.apache.openejb.cli.Bootstrap $1 -s http://localhost:$port/tomee/ejb $2
+        $JAVA $DEBUG -Dopenejb.base="$TOMEE_HOME" -cp "\"$CP\"" org.apache.openejb.cli.Bootstrap $1 -s auto $2
     else
         echo "Usage: <tomee.sh> $1 <path>"
     fi

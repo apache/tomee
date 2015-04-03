@@ -87,7 +87,18 @@ public class Undeploy {
         final Properties p = new Properties();
         p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
 
-        final String serverUrl = line.getOptionValue("server-url", defaultServerUrl);
+        String serverUrl = line.getOptionValue("server-url", defaultServerUrl);
+        if ("auto".equalsIgnoreCase(serverUrl.trim())) {
+            try {
+                final File sXml = new File(System.getProperty("openejb.base", "conf/server.xml"));
+                if (sXml.exists()) {
+                    final QuickServerXmlParser result = QuickServerXmlParser.parse(sXml);
+                    serverUrl = "http://" + result.host() + ":" + result.http() + "/tomee/ejb";
+                }
+            } catch (final Throwable e) {
+                // no-op
+            }
+        }
         p.put(Context.PROVIDER_URL, serverUrl);
 
         Deployer deployer = null;
