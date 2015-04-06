@@ -51,12 +51,6 @@ import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.xbean.finder.MetaAnnotatedClass;
 
-import javax.naming.Context;
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -73,6 +67,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import javax.naming.Context;
+import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.Application;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.ext.Provider;
 
 @SuppressWarnings("UnusedDeclaration")
 public abstract class RESTService implements ServerService, SelfManaging {
@@ -515,7 +515,10 @@ public abstract class RESTService implements ServerService, SelfManaging {
         // annotation
         final ApplicationPath path = appClazz.getAnnotation(ApplicationPath.class);
         if (path != null) {
-            final String appPath = path.value();
+            String appPath = path.value();
+            if (appPath.endsWith("*")) {
+                appPath = appPath.substring(0, appPath.length() - 1);
+            }
 
             if (builder == null) {
                 builder = new StringBuilder();
