@@ -332,6 +332,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     @Parameter
     protected PlexusConfiguration inlinedServerXml;
 
+    @Parameter
+    protected PlexusConfiguration inlinedTomEEXml;
+
     protected File deployedFile = null;
     protected RemoteServer server = null;
     protected String container = TOM_EE;
@@ -385,6 +388,15 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                 try {
                     FileUtils.forceMkdir(serverXml.getParentFile());
                     FileUtils.fileWrite(serverXml, XmlFormatter.format(inlinedServerXml.getChild(0).toString()));
+                } catch (final Exception e) {
+                    throw new MojoExecutionException(e.getMessage(), e);
+                }
+            }
+            if (inlinedTomEEXml != null && inlinedTomEEXml.getChildCount() > 0) {
+                final File tomeeXml = new File(catalinaBase, "conf/tomee.xml");
+                try {
+                    FileUtils.forceMkdir(tomeeXml.getParentFile());
+                    FileUtils.fileWrite(tomeeXml, XmlFormatter.format(inlinedTomEEXml.getChild(0).toString()));
                 } catch (final Exception e) {
                     throw new MojoExecutionException(e.getMessage(), e);
                 }

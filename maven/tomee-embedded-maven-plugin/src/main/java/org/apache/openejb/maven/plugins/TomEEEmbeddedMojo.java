@@ -36,7 +36,9 @@ import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.maven.util.MavenLogStreamFactory;
+import org.apache.openejb.maven.util.XmlFormatter;
 import org.apache.openejb.util.JuliLogStreamFactory;
+import org.apache.tomee.catalina.TomEERuntimeException;
 import org.apache.tomee.embedded.Configuration;
 import org.apache.tomee.embedded.Container;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
@@ -184,6 +186,9 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
     @Parameter
     protected PlexusConfiguration inlinedServerXml;
 
+    @Parameter
+    protected PlexusConfiguration inlinedTomEEXml;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (!classpathAsWar && "pom".equals(packaging)) {
@@ -215,13 +220,27 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
             try {
                 FileUtils.forceMkdir(workDir);
                 serverXml = new File(workDir, "server.xml_dump");
-                FileUtils.fileWrite(serverXml, inlinedServerXml.getChild(0).toString());
+                FileUtils.fileWrite(serverXml, XmlFormatter.format(inlinedServerXml.getChild(0).toString()));
             } catch (final Exception e) {
                 throw new MojoExecutionException(e.getMessage(), e);
             }
         }
 
-        final Container container = new Container();
+        final Container container = new Container() {
+            @Override
+            public void setup(final Configuration configuration) {
+                super.setup(configuration);
+                if (inlinedTomEEXml != null && inlinedTomEEXml.getChildCount() > 0) {
+                    try {
+                        final File conf = new File(dir, "conf");
+                        FileUtils.forceMkdir(conf);
+                        FileUtils.fileWrite(new File(conf, "tomee.xml"), XmlFormatter.format(inlinedTomEEXml.getChild(0).toString()));
+                    } catch (final Exception e) {
+                        throw new TomEERuntimeException(e);
+                    }
+                }
+            }
+        };
         final Configuration config = getConfig();
         container.setup(config);
 
