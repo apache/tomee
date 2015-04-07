@@ -84,6 +84,7 @@ import org.apache.openejb.jee.NamedMethod;
 import org.apache.openejb.jee.OutboundResourceAdapter;
 import org.apache.openejb.jee.ParamValue;
 import org.apache.openejb.jee.PersistenceContextRef;
+import org.apache.openejb.jee.PersistenceContextSynchronization;
 import org.apache.openejb.jee.PersistenceContextType;
 import org.apache.openejb.jee.PersistenceUnitRef;
 import org.apache.openejb.jee.PortComponent;
@@ -4555,6 +4556,9 @@ public class AnnotationDeployer implements DynamicDeployer {
             PersistenceContextRef persistenceContextRef = consumer.getPersistenceContextRefMap().get(refName);
             if (persistenceContextRef == null) {
                 persistenceContextRef = new PersistenceContextRef();
+                if (persistenceContext.synchronization() != null) { // should be the case in "normal" deployments
+                    persistenceContextRef.setPersistenceContextSynchronization(PersistenceContextSynchronization.valueOf(persistenceContext.synchronization().toUpperCase(Locale.ENGLISH)));
+                }
                 persistenceContextRef.setPersistenceUnitName(persistenceContext.unitName());
                 persistenceContextRef.setPersistenceContextRefName(refName);
                 if ("EXTENDED".equalsIgnoreCase(persistenceContext.type())) {
@@ -4573,6 +4577,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                     } else {
                         persistenceContextRef.setPersistenceContextType(PersistenceContextType.TRANSACTION);
                     }
+                }
+                if (persistenceContextRef.getPersistenceContextSynchronization() == null && persistenceContext.synchronization() != null) {
+                    persistenceContextRef.setPersistenceContextSynchronization(PersistenceContextSynchronization.valueOf(persistenceContext.synchronization().toUpperCase(Locale.ENGLISH)));
                 }
             }
 

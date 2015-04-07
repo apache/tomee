@@ -28,6 +28,7 @@ import org.apache.xbean.asm5.shade.commons.EmptyVisitor;
 
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceProperty;
+import javax.persistence.SynchronizationType;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
@@ -112,6 +113,11 @@ public class PersistenceContextAnnFactory {
             return persistenceContext.name();
         }
 
+        @Override
+        public String synchronization() {
+            return persistenceContext.synchronization().name();
+        }
+
         public String unitName() {
             return persistenceContext.unitName();
         }
@@ -140,10 +146,16 @@ public class PersistenceContextAnnFactory {
         public String name;
         public String unitName;
         public String type;
+        public String synchronization = SynchronizationType.SYNCHRONIZED.name(); // default
         public final Map<String, String> properties = new LinkedHashMap<String, String>();
 
         public String name() {
             return name;
+        }
+
+        @Override
+        public String synchronization() {
+            return synchronization;
         }
 
         public String unitName() {
@@ -261,6 +273,8 @@ public class PersistenceContextAnnFactory {
                 persistenceContext.unitName = value;
             } else if ("type".equals(name)) {
                 persistenceContext.type = value;
+            } else if ("synchronization".equals(name)) {
+                persistenceContext.synchronization = value;
             }
         }
 

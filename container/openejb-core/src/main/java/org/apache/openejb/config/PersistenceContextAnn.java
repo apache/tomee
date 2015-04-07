@@ -22,6 +22,8 @@ import java.util.Map;
 public interface PersistenceContextAnn {
     String name();
 
+    String synchronization();
+
     String unitName();
 
     String type();
