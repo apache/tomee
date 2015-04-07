@@ -80,6 +80,8 @@ public class PersistenceContextRef implements JndiReference, PersistenceRef {
     protected String persistenceUnitName;
     @XmlElement(name = "persistence-context-type")
     protected PersistenceContextType persistenceContextType;
+    @XmlElement(name = "persistence-context-synchronization")
+    protected PersistenceContextSynchronization persistenceContextSynchronization;
     @XmlElement(name = "persistence-property", required = true)
     protected List<Property> persistenceProperty;
     @XmlElement(name = "mapped-name")
@@ -210,6 +212,14 @@ public class PersistenceContextRef implements JndiReference, PersistenceRef {
 
     public void setPersistenceContextType(final PersistenceContextType value) {
         this.persistenceContextType = value;
+    }
+
+    public PersistenceContextSynchronization getPersistenceContextSynchronization() {
+        return persistenceContextSynchronization;
+    }
+
+    public void setPersistenceContextSynchronization(PersistenceContextSynchronization persistenceContextSynchronization) {
+        this.persistenceContextSynchronization = persistenceContextSynchronization;
     }
 
     public List<Property> getPersistenceProperty() {

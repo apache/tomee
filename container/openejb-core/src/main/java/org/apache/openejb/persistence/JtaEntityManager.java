@@ -32,6 +32,7 @@ import javax.persistence.FlushModeType;
 import javax.persistence.LockModeType;
 import javax.persistence.Query;
 import javax.persistence.StoredProcedureQuery;
+import javax.persistence.SynchronizationType;
 import javax.persistence.TransactionRequiredException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -44,6 +45,7 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -76,15 +78,18 @@ public class JtaEntityManager implements EntityManager, Serializable {
     private final EntityManagerFactory entityManagerFactory;
     private final Map properties;
     private final boolean extended;
+    private final SynchronizationType synchronizationType;
     private final String unitName;
     private final Logger logger;
     private final boolean wrapNoTxQueries;
 
-    public JtaEntityManager(final JtaEntityManagerRegistry registry, final EntityManagerFactory entityManagerFactory, final Map properties, final String unitName) {
-        this(unitName, registry, entityManagerFactory, properties, false);
+    public JtaEntityManager(final JtaEntityManagerRegistry registry, final EntityManagerFactory entityManagerFactory,
+                            final Map properties, final String unitName, final String synchronizationType) {
+        this(unitName, registry, entityManagerFactory, properties, false, synchronizationType);
     }
 
-    public JtaEntityManager(final String unitName, final JtaEntityManagerRegistry registry, final EntityManagerFactory entityManagerFactory, final Map properties, final boolean extended) {
+    public JtaEntityManager(final String unitName, final JtaEntityManagerRegistry registry, final EntityManagerFactory entityManagerFactory,
+                            final Map properties, final boolean extended, final String synchronizationType) {
         if (registry == null) {
             throw new NullPointerException("registry is null");
         }
@@ -96,6 +101,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
         this.entityManagerFactory = entityManagerFactory;
         this.properties = properties;
         this.extended = extended;
+        this.synchronizationType = synchronizationType == null ? null : SynchronizationType.valueOf(synchronizationType.toUpperCase(Locale.ENGLISH));
         logger = unitName == null ? baseLogger : baseLogger.getChildLogger(unitName);
         final String wrapConfig = ReloadableEntityManagerFactory.class.isInstance(entityManagerFactory) ?
                 ReloadableEntityManagerFactory.class.cast(entityManagerFactory).getUnitProperties().getProperty("openejb.jpa.query.wrap-no-tx", "true") : "true";
@@ -103,7 +109,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
     }
 
     EntityManager getEntityManager() {
-        return registry.getEntityManager(entityManagerFactory, properties, extended, unitName);
+        return registry.getEntityManager(entityManagerFactory, properties, extended, unitName, synchronizationType);
     }
 
     boolean isTransactionActive() {

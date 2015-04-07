@@ -429,7 +429,8 @@ public class JndiEncBuilder {
                 throw new OpenEJBException("PersistenceUnit '" + contextInfo.unitId + "' not found for EXTENDED ref '" + contextInfo.referenceName + "'");
             }
 
-            final JtaEntityManager jtaEntityManager = new JtaEntityManager(contextInfo.persistenceUnitName, jtaEntityManagerRegistry, factory, contextInfo.properties, contextInfo.extended);
+            final JtaEntityManager jtaEntityManager = new JtaEntityManager(
+                    contextInfo.persistenceUnitName, jtaEntityManagerRegistry, factory, contextInfo.properties, contextInfo.extended, contextInfo.synchronizationType);
             final Reference reference = new PersistenceContextReference(jtaEntityManager);
             bindings.put(normalize(contextInfo.referenceName), reference);
         }

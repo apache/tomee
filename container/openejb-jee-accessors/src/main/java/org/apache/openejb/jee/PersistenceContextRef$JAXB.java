@@ -146,6 +146,12 @@ public class PersistenceContextRef$JAXB
                 if (persistenceContextType != null) {
                     persistenceContextRef.persistenceContextType = persistenceContextType;
                 }
+            } else if (("persistence-context-synchronization" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: persistenceContextType
+                final PersistenceContextSynchronization synchronization = parsePersistenceContextSynchronization(elementReader, context, elementReader.getElementAsString());
+                if (synchronization != null) {
+                    persistenceContextRef.persistenceContextSynchronization = synchronization;
+                }
             } else if (("persistence-property" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: persistenceProperty
                 final Property persistencePropertyItem = readProperty(elementReader, context);
@@ -372,4 +378,15 @@ public class PersistenceContextRef$JAXB
         context.afterMarshal(persistenceContextRef, LifecycleCallback.NONE);
     }
 
+    // should be in PersistenceContextSynchronization$JAXB but no need to generate the full sxc bean since we only need it here for now
+    public static PersistenceContextSynchronization parsePersistenceContextSynchronization(final XoXMLStreamReader reader, final RuntimeContext context, final String value)
+            throws Exception {
+        if ("Synchronized".equals(value)) {
+            return PersistenceContextSynchronization.SYNCHRONIZED;
+        } else if ("Unsynchronized".equals(value)) {
+            return PersistenceContextSynchronization.UNSYNCHRONIZED;
+        }
+        context.unexpectedEnumValue(reader, PersistenceContextType.class, value, "Synchronized", "Unsynchronized");
+        return null;
+    }
 }

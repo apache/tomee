@@ -557,7 +557,7 @@ public class TomcatJndiBuilder {
             }
 
             final JtaEntityManagerRegistry jtaEntityManagerRegistry = SystemInstance.get().getComponent(JtaEntityManagerRegistry.class);
-            setResource(resource, new JtaEntityManager(ref.persistenceUnitName, jtaEntityManagerRegistry, factory, ref.properties, ref.extended));
+            setResource(resource, new JtaEntityManager(ref.persistenceUnitName, jtaEntityManagerRegistry, factory, ref.properties, ref.extended, ref.synchronizationType));
         }
 
         if (addEntry) {

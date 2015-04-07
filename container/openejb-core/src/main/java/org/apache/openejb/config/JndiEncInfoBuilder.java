@@ -269,6 +269,7 @@ public class JndiEncInfoBuilder {
             final PersistenceContextReferenceInfo info = new PersistenceContextReferenceInfo();
             info.referenceName = contextRef.getPersistenceContextRefName();
             info.persistenceUnitName = contextRef.getPersistenceUnitName();
+            info.synchronizationType = contextRef.getPersistenceContextSynchronization() != null ? contextRef.getPersistenceContextSynchronization().name() : null;
             info.unitId = contextRef.getMappedName();
             info.location = buildLocationInfo(contextRef);
             info.extended = contextRef.getPersistenceContextType() == PersistenceContextType.EXTENDED;

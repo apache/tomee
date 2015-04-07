@@ -24,6 +24,7 @@ import org.apache.openejb.util.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.SynchronizationType;
 import javax.persistence.TransactionRequiredException;
 import javax.transaction.Status;
 import javax.transaction.Synchronization;
@@ -81,7 +82,9 @@ public class JtaEntityManagerRegistry {
      *                               instance already registered
      */
     @Geronimo
-    public EntityManager getEntityManager(final EntityManagerFactory entityManagerFactory, final Map properties, final boolean extended, final String unitName) throws IllegalStateException {
+    public EntityManager getEntityManager(final EntityManagerFactory entityManagerFactory,
+                                          final Map properties, final boolean extended, final String unitName,
+                                          final SynchronizationType synchronizationType) throws IllegalStateException {
         if (entityManagerFactory == null) {
             throw new NullPointerException("entityManagerFactory is null");
         }
@@ -106,7 +109,9 @@ public class JtaEntityManagerRegistry {
 
             // if transaction is active, we need to register the entity manager with the transaction manager
             if (transactionActive) {
-                entityManager.joinTransaction();
+                if (synchronizationType != SynchronizationType.UNSYNCHRONIZED) {
+                    entityManager.joinTransaction();
+                }
                 transactionRegistry.putResource(txKey, entityManager);
             }
 
@@ -115,7 +120,13 @@ public class JtaEntityManagerRegistry {
 
             // create a new entity manager
             final EntityManager entityManager;
-            if (properties != null) {
+            if (synchronizationType != null) {
+                if (properties != null) {
+                    entityManager = entityManagerFactory.createEntityManager(synchronizationType, properties);
+                } else {
+                    entityManager = entityManagerFactory.createEntityManager(synchronizationType);
+                }
+            } else if (properties != null) {
                 entityManager = entityManagerFactory.createEntityManager(properties);
             } else {
                 entityManager = entityManagerFactory.createEntityManager();
