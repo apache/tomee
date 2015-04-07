@@ -17,22 +17,21 @@
  */
 package org.apache.openejb.jee.jpa.unit;
 
+import org.apache.openejb.jee.JAXBContextFactory;
+import org.apache.openejb.jee.JaxbJavaee;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLFilterImpl;
-import org.apache.openejb.jee.JAXBContextFactory;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.UnmarshallerHandler;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
-import java.io.InputStream;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.net.URL;
 
 /**
  * @version $Revision$ $Date$
@@ -41,7 +40,8 @@ public class JaxbPersistenceFactory {
     public static final String PERSISTENCE_SCHEMA = "http://java.sun.com/xml/ns/persistence";
 
     public static <T> T getPersistence(final Class<T> clazz, final InputStream persistenceDescriptor) throws Exception {
-        final JAXBContext jc = JAXBContextFactory.newInstance(clazz);
+        final JAXBContext jc = clazz.getClassLoader() == JaxbPersistenceFactory.class.getClassLoader() ?
+                JaxbJavaee.getContext(clazz) : JAXBContextFactory.newInstance(clazz);
         final Unmarshaller u = jc.createUnmarshaller();
         final UnmarshallerHandler uh = u.getUnmarshallerHandler();
 
@@ -56,8 +56,7 @@ public class JaxbPersistenceFactory {
         // Create a filter to intercept events
         final PersistenceFilter xmlFilter = new PersistenceFilter(xmlReader);
 
-        // Be sure the filter has the JAXB content handler set (or it wont
-        // work)
+        // Be sure the filter has the JAXB content handler set (or it wont work)
         xmlFilter.setContentHandler(uh);
         final SAXSource source = new SAXSource(xmlFilter, new InputSource(persistenceDescriptor));
 
@@ -78,13 +77,17 @@ public class JaxbPersistenceFactory {
     }
 
     // Inject the proper namespace
-    public static class PersistenceFilter extends XMLFilterImpl {
-        private static final InputSource EMPTY_INPUT_SOURCE = new InputSource(new ByteArrayInputStream(new byte[0]));
-
+    public static class PersistenceFilter extends JaxbJavaee.NoSourceFilter {
         public PersistenceFilter(final XMLReader xmlReader) {
             super(xmlReader);
         }
 
+        @Override
+        protected String eeUri(final String uri) {
+            return "http://xmlns.jcp.org/xml/ns/persistence".equals(uri) ? "http://java.sun.com/xml/ns/persistence": uri;
+        }
+
+        @Override
         public InputSource resolveEntity(final String publicId, final String systemId) throws SAXException, IOException {
             return EMPTY_INPUT_SOURCE;
         }

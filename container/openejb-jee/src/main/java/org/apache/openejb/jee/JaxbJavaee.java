@@ -318,13 +318,13 @@ public class JaxbJavaee {
     }
 
     public static class NoSourceFilter extends XMLFilterImpl {
-        private static final InputSource EMPTY_INPUT_SOURCE = new InputSource(new ByteArrayInputStream(new byte[0]));
+        protected static final InputSource EMPTY_INPUT_SOURCE = new InputSource(new ByteArrayInputStream(new byte[0]));
 
         public NoSourceFilter(final XMLReader xmlReader) {
             super(xmlReader);
         }
 
-        private static String eeUri(final String uri) {
+        protected String eeUri(final String uri) {
             // if ee 7 then switch back on ee 6 to not break compatibility - to rework surely when we'll be fully ee 7
             return "http://xmlns.jcp.org/xml/ns/javaee".equals(uri) ? "http://java.sun.com/xml/ns/javaee": uri;
         }

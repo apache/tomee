@@ -44,10 +44,13 @@ import javax.management.ObjectName;
 import javax.management.openmbean.TabularData;
 import javax.naming.NamingException;
 import javax.persistence.Cache;
+import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnitUtil;
+import javax.persistence.Query;
 import javax.persistence.SharedCacheMode;
+import javax.persistence.SynchronizationType;
 import javax.persistence.ValidationMode;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.metamodel.Metamodel;
@@ -166,6 +169,54 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
             return new QueryLogEntityManager(em, logCriteriaJpqlLevel);
         }
         return em;
+    }
+
+    @Override
+    public EntityManager createEntityManager(final SynchronizationType synchronizationType) {
+        EntityManager em;
+        try {
+            em = delegate.createEntityManager(synchronizationType);
+        } catch (final LinkageError le) {
+            em = delegate.createEntityManager(synchronizationType);
+        }
+
+        if (logCriteriaJpql) {
+            return new QueryLogEntityManager(em, logCriteriaJpqlLevel);
+        }
+        return em;
+    }
+
+    @Override
+    public EntityManager createEntityManager(final SynchronizationType synchronizationType, final Map map) {
+        EntityManager em;
+        try {
+            em = delegate.createEntityManager(synchronizationType, map);
+        } catch (final LinkageError le) {
+            em = delegate.createEntityManager(synchronizationType, map);
+        }
+
+        if (logCriteriaJpql) {
+            return new QueryLogEntityManager(em, logCriteriaJpqlLevel);
+        }
+        return em;
+    }
+
+    @Override
+    public <T> T unwrap(final Class<T> cls) {
+        if (cls.isAssignableFrom(getClass())) {
+            return cls.cast(this);
+        }
+        return delegate.unwrap(cls);
+    }
+
+    @Override
+    public void addNamedQuery(final String name, final Query query) {
+        delegate.addNamedQuery(name, query);
+    }
+
+    @Override
+    public <T> void addNamedEntityGraph(final String graphName, final EntityGraph<T> entityGraph) {
+        delegate.addNamedEntityGraph(graphName, entityGraph);
     }
 
     @Override

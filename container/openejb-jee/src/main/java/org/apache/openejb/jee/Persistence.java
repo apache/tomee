@@ -135,7 +135,7 @@ public class Persistence {
      */
     public java.lang.String getVersion() {
         if (version == null) {
-            return "2.0";
+            return "2.1";
         } else {
             return version;
         }

@@ -17,16 +17,21 @@
 
 package org.apache.openejb.persistence;
 
+import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.FlushModeType;
 import javax.persistence.LockModeType;
 import javax.persistence.Query;
+import javax.persistence.StoredProcedureQuery;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.metamodel.Metamodel;
+import java.util.List;
 import java.util.Map;
 
 public class QueryLogEntityManager implements EntityManager {
@@ -164,6 +169,16 @@ public class QueryLogEntityManager implements EntityManager {
     }
 
     @Override
+    public Query createQuery(final CriteriaUpdate updateQuery) {
+        return delegate.createQuery(updateQuery);
+    }
+
+    @Override
+    public Query createQuery(final CriteriaDelete deleteQuery) {
+        return delegate.createQuery(deleteQuery);
+    }
+
+    @Override
     public <T> TypedQuery<T> createQuery(final String qlString, final Class<T> resultClass) {
         return delegate.createQuery(qlString, resultClass);
     }
@@ -194,8 +209,33 @@ public class QueryLogEntityManager implements EntityManager {
     }
 
     @Override
+    public StoredProcedureQuery createNamedStoredProcedureQuery(final String name) {
+        return delegate.createNamedStoredProcedureQuery(name);
+    }
+
+    @Override
+    public StoredProcedureQuery createStoredProcedureQuery(final String procedureName) {
+        return delegate.createStoredProcedureQuery(procedureName);
+    }
+
+    @Override
+    public StoredProcedureQuery createStoredProcedureQuery(final String procedureName, final Class... resultClasses) {
+        return delegate.createStoredProcedureQuery(procedureName, resultClasses);
+    }
+
+    @Override
+    public StoredProcedureQuery createStoredProcedureQuery(final String procedureName, final String... resultSetMappings) {
+        return delegate.createStoredProcedureQuery(procedureName, resultSetMappings);
+    }
+
+    @Override
     public void joinTransaction() {
         delegate.joinTransaction();
+    }
+
+    @Override
+    public boolean isJoinedToTransaction() {
+        return delegate.isJoinedToTransaction();
     }
 
     @Override
@@ -236,5 +276,25 @@ public class QueryLogEntityManager implements EntityManager {
     @Override
     public Metamodel getMetamodel() {
         return delegate.getMetamodel();
+    }
+
+    @Override
+    public <T> EntityGraph<T> createEntityGraph(final Class<T> rootType) {
+        return delegate.createEntityGraph(rootType);
+    }
+
+    @Override
+    public EntityGraph<?> createEntityGraph(final String graphName) {
+        return delegate.createEntityGraph(graphName);
+    }
+
+    @Override
+    public EntityGraph<?> getEntityGraph(final String graphName) {
+        return delegate.getEntityGraph(graphName);
+    }
+
+    @Override
+    public <T> List<EntityGraph<? super T>> getEntityGraphs(final Class<T> entityClass) {
+        return delegate.getEntityGraphs(entityClass);
     }
 }

@@ -24,21 +24,26 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.reflection.Reflections;
 
+import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.FlushModeType;
 import javax.persistence.LockModeType;
 import javax.persistence.Query;
+import javax.persistence.StoredProcedureQuery;
 import javax.persistence.TransactionRequiredException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.metamodel.Metamodel;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -647,7 +652,9 @@ public class JtaEntityManager implements EntityManager, Serializable {
     }
 
     private static enum Op {
-        clear, close, contains, createNamedQuery, createNativeQuery, createQuery, find, flush, getFlushMode, getReference, getTransaction, lock, merge, refresh, remove, setFlushMode, persist, detach, getLockMode, unwrap, setProperty, getCriteriaBuilder, getProperties, getMetamodel, joinTransaction, getDelegate;
+        clear, close, contains, createNamedQuery, createNativeQuery, createQuery, find, flush, getFlushMode, getReference, getTransaction, lock, merge, refresh, remove, setFlushMode, persist, detach, getLockMode, unwrap, setProperty, getCriteriaBuilder, getProperties, getMetamodel, joinTransaction, getDelegate,
+        // JPA 2.1
+        createNamedStoredProcedureQuery, createStoredProcedureQuery, createEntityGraph, getEntityGraph, getEntityGraphs, isJoinedToTransaction;
 
         public Timer start(final JtaEntityManager em) {
             return new Timer(this, em);
@@ -657,5 +664,117 @@ public class JtaEntityManager implements EntityManager, Serializable {
 
     protected Object writeReplace() throws ObjectStreamException {
         return new IntraVmArtifact(this, true);
+    }
+
+    // TODO: JPA 2.1 methods doesn't have yet proxying
+
+    @Override
+    public StoredProcedureQuery createNamedStoredProcedureQuery(final String name) {
+        final Timer timer = Op.createNamedStoredProcedureQuery.start(this);
+        try {
+            return getEntityManager().createNamedStoredProcedureQuery(name);
+        } finally {
+            timer.stop();
+        }
+    }
+
+    @Override
+    public StoredProcedureQuery createStoredProcedureQuery(final String procedureName) {
+        final Timer timer = Op.createNamedStoredProcedureQuery.start(this);
+        try {
+            return getEntityManager().createStoredProcedureQuery(procedureName);
+        } finally {
+            timer.stop();
+        }
+    }
+
+    @Override
+    public StoredProcedureQuery createStoredProcedureQuery(final String procedureName, final Class... resultClasses) {
+        final Timer timer = Op.createStoredProcedureQuery.start(this);
+        try {
+            return getEntityManager().createStoredProcedureQuery(procedureName, resultClasses);
+        } finally {
+            timer.stop();
+        }
+    }
+
+    @Override
+    public StoredProcedureQuery createStoredProcedureQuery(final String procedureName, final String... resultSetMappings) {
+        final Timer timer = Op.createStoredProcedureQuery.start(this);
+        try {
+            return getEntityManager().createStoredProcedureQuery(procedureName, resultSetMappings);
+        } finally {
+            timer.stop();
+        }
+    }
+
+    @Override
+    public Query createQuery(final CriteriaUpdate updateQuery) {
+        final Timer timer = Op.createQuery.start(this);
+        try {
+            return getEntityManager().createQuery(updateQuery);
+        } finally {
+            timer.stop();
+        }
+    }
+
+    @Override
+    public Query createQuery(final CriteriaDelete deleteQuery) {
+        final Timer timer = Op.createQuery.start(this);
+        try {
+            return getEntityManager().createQuery(deleteQuery);
+        } finally {
+            timer.stop();
+        }
+    }
+
+    @Override
+    public <T> EntityGraph<T> createEntityGraph(final Class<T> rootType) {
+        final Timer timer = Op.createEntityGraph.start(this);
+        try {
+            return getEntityManager().createEntityGraph(rootType);
+        } finally {
+            timer.stop();
+        }
+    }
+
+    @Override
+    public EntityGraph<?> createEntityGraph(final String graphName) {
+        final Timer timer = Op.createEntityGraph.start(this);
+        try {
+            return getEntityManager().createEntityGraph(graphName);
+        } finally {
+            timer.stop();
+        }
+    }
+
+    @Override
+    public EntityGraph<?> getEntityGraph(final String graphName) {
+        final Timer timer = Op.getEntityGraph.start(this);
+        try {
+            return getEntityManager().getEntityGraph(graphName);
+        } finally {
+            timer.stop();
+        }
+    }
+
+    @Override
+    public <T> List<EntityGraph<? super T>> getEntityGraphs(final Class<T> entityClass) {
+        final Timer timer = Op.getEntityGraphs.start(this);
+        try {
+            return getEntityManager().getEntityGraphs(entityClass);
+        } finally {
+            timer.stop();
+        }
+    }
+
+    @Override
+    public boolean isJoinedToTransaction() {
+        final Timer timer = Op.isJoinedToTransaction.start(this);
+        try {
+            return getEntityManager().isJoinedToTransaction();
+        } finally {
+            timer.stop();
+        }
     }
 }
