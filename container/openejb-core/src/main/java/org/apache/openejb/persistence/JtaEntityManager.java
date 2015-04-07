@@ -44,9 +44,12 @@ import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -73,6 +76,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
     private static final Method CREATE_QUERY_FROM_CRITERIA = Reflections.findMethod("createQuery", EntityManager.class, CriteriaQuery.class);
     private static final Method CREATE_NATIVE_FROM_NAME_CLASS = Reflections.findMethod("createNativeQuery", EntityManager.class, String.class, Class.class);
     private static final Method CREATE_NATIVE_FROM_NAME_MAPPING = Reflections.findMethod("createNativeQuery", EntityManager.class, String.class, String.class);
+    private static final ConcurrentMap<Class<?>, Boolean> IS_JPA21 = new ConcurrentHashMap<>();
 
     private final JtaEntityManagerRegistry registry;
     private final EntityManagerFactory entityManagerFactory;
@@ -101,11 +105,33 @@ public class JtaEntityManager implements EntityManager, Serializable {
         this.entityManagerFactory = entityManagerFactory;
         this.properties = properties;
         this.extended = extended;
-        this.synchronizationType = synchronizationType == null ? null : SynchronizationType.valueOf(synchronizationType.toUpperCase(Locale.ENGLISH));
+        this.synchronizationType = !isJPA21(entityManagerFactory) || synchronizationType == null ? null : SynchronizationType.valueOf(synchronizationType.toUpperCase(Locale.ENGLISH));
         logger = unitName == null ? baseLogger : baseLogger.getChildLogger(unitName);
         final String wrapConfig = ReloadableEntityManagerFactory.class.isInstance(entityManagerFactory) ?
                 ReloadableEntityManagerFactory.class.cast(entityManagerFactory).getUnitProperties().getProperty("openejb.jpa.query.wrap-no-tx", "true") : "true";
         this.wrapNoTxQueries = wrapConfig == null || "true".equalsIgnoreCase(wrapConfig);
+    }
+
+    private static boolean isJPA21(final EntityManagerFactory entityManagerFactory) {
+        return ReloadableEntityManagerFactory.class.isInstance(entityManagerFactory) ?
+                isJPA21(ReloadableEntityManagerFactory.class.cast(entityManagerFactory).getDelegate())
+                : hasMethod(entityManagerFactory, "createEntityManager", SynchronizationType.class);
+    }
+
+    private static boolean hasMethod(final Object object, final String name, final Class<?>... params) {
+        try {
+            final Class<?> objectClass = object.getClass();
+            Boolean result = IS_JPA21.get(objectClass);
+            if (result == null) {
+                result = !Modifier.isAbstract(objectClass.getMethod(name, params).getModifiers());
+                if (objectClass.getClassLoader() == JtaEntityManager.class.getClassLoader()) {
+                    IS_JPA21.putIfAbsent(objectClass, result);
+                } // else don't cache to not leak
+            }
+            return result;
+        } catch (final Throwable e) {
+            return false;
+        }
     }
 
     EntityManager getEntityManager() {
