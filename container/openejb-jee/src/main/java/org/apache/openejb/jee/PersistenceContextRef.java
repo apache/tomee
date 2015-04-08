@@ -64,6 +64,7 @@ import java.util.Set;
     "persistenceContextRefName",
     "persistenceUnitName",
     "persistenceContextType",
+    "persistenceContextSynchronization",
     "persistenceProperty",
     "mappedName",
     "injectionTarget",
