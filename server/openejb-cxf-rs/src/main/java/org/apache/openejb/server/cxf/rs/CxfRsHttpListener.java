@@ -40,6 +40,7 @@ import org.apache.cxf.jaxrs.provider.JAXBElementProvider;
 import org.apache.cxf.jaxrs.provider.MultipartProvider;
 import org.apache.cxf.jaxrs.provider.PrimitiveTextProvider;
 import org.apache.cxf.jaxrs.provider.SourceProvider;
+import org.apache.cxf.jaxrs.validation.ValidationExceptionMapper;
 import org.apache.cxf.service.invoker.Invoker;
 import org.apache.cxf.transport.DestinationFactory;
 import org.apache.cxf.transport.servlet.BaseUrlHelper;
@@ -440,6 +441,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         instances.add(new JsrProvider());
         instances.add(new WadlDocumentMessageBodyWriter());
         instances.add(EJBAccessExceptionMapper.INSTANCE);
+        instances.add(new ValidationExceptionMapper());
 
         if ("true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.jaxrs.cxf.add-cxf-providers", "false"))) {
             instances.add(new WebApplicationExceptionMapper());
