@@ -1,3 +1,4 @@
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -22,6 +23,8 @@ import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.webbeans.annotation.DestroyedLiteral;
+import org.apache.webbeans.annotation.InitializedLiteral;
 import org.apache.webbeans.config.OWBLogConst;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.context.AbstractContextsService;
@@ -50,12 +53,9 @@ import javax.enterprise.context.ContextException;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.context.Dependent;
-import javax.enterprise.context.Destroyed;
-import javax.enterprise.context.Initialized;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.context.spi.Context;
-import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Singleton;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -184,7 +184,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             applicationContext.destroy();
             webBeansContext.getBeanManagerImpl().fireEvent(
                     appEvent,
-                    new EventMetadataImpl(null, ServletContext.class.isInstance(appEvent) ? ServletContext.class : Object.class,null, new Annotation[] { DestroyedLiteral.APP }, webBeansContext),
+                    new EventMetadataImpl(null, ServletContext.class.isInstance(appEvent) ? ServletContext.class : Object.class,null, new Annotation[] { DestroyedLiteral.INSTANCE_APPLICATION_SCOPED }, webBeansContext),
                     false);
             applicationContext.setActive(true);
 
@@ -196,7 +196,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             conversation.getValue().destroy();
             final String id = conversation.getKey().getId();
             if (id != null) {
-                webBeansContext.getBeanManagerImpl().fireEvent(id, DestroyedLiteral.CONVERSATION);
+                webBeansContext.getBeanManagerImpl().fireEvent(id, DestroyedLiteral.INSTANCE_CONVERSATION_SCOPED);
             }
         }
         for (final SessionContext sc : sessionCtxManager.getContextById().values()) {
@@ -217,7 +217,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             } else {
                 sc.destroy();
             }
-            webBeansContext.getBeanManagerImpl().fireEvent(event, DestroyedLiteral.SESSION);
+            webBeansContext.getBeanManagerImpl().fireEvent(event, DestroyedLiteral.INSTANCE_SESSION_SCOPED);
         }
         sessionCtxManager.getContextById().clear();
     }
@@ -336,7 +336,9 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             appEvent = event != null ? event : applicationContext;
             webBeansContext.getBeanManagerImpl().fireEvent(
                     appEvent,
-                    new EventMetadataImpl(null, ServletContext.class.isInstance(appEvent) ? ServletContext.class : Object.class, null, new Annotation[] { InitializedLiteral.APP }, webBeansContext),
+                    new EventMetadataImpl(null,
+                            ServletContext.class.isInstance(appEvent) ? ServletContext.class : Object.class, null, new Annotation[] { InitializedLiteral.INSTANCE_APPLICATION_SCOPED },
+                            webBeansContext),
                     false);
         }
     }
@@ -362,7 +364,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             rq.setServletRequest(request);
 
             if (request != null) {
-                webBeansContext.getBeanManagerImpl().fireEvent(request, InitializedLiteral.REQUEST);
+                webBeansContext.getBeanManagerImpl().fireEvent(request, InitializedLiteral.INSTANCE_REQUEST_SCOPED);
             }
 
             if (request != null) {
@@ -392,7 +394,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
                 }
             }
         } else if (event == EJB_REQUEST_EVENT) {
-            webBeansContext.getBeanManagerImpl().fireEvent(event, InitializedLiteral.REQUEST);
+            webBeansContext.getBeanManagerImpl().fireEvent(event, InitializedLiteral.INSTANCE_REQUEST_SCOPED);
         }
     }
 
@@ -460,9 +462,9 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
 
             final HttpServletRequest servletRequest = context.getServletRequest();
             if (servletRequest != null) {
-                webBeansContext.getBeanManagerImpl().fireEvent(servletRequest, DestroyedLiteral.REQUEST);
+                webBeansContext.getBeanManagerImpl().fireEvent(servletRequest, DestroyedLiteral.INSTANCE_REQUEST_SCOPED);
             } else if (end == EJB_REQUEST_EVENT) {
-                webBeansContext.getBeanManagerImpl().fireEvent(end, DestroyedLiteral.REQUEST);
+                webBeansContext.getBeanManagerImpl().fireEvent(end, DestroyedLiteral.INSTANCE_REQUEST_SCOPED);
             }
             context.destroy();
         }
@@ -539,7 +541,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         sessionContext.set(currentSessionContext);
 
         if (fire) {
-            webBeansContext.getBeanManagerImpl().fireEvent(session, InitializedLiteral.SESSION);
+            webBeansContext.getBeanManagerImpl().fireEvent(session, InitializedLiteral.INSTANCE_SESSION_SCOPED);
         }
     }
 
@@ -597,7 +599,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
 
     private void doDestroySession(SessionContext context, HttpSession session) {
         context.destroy();
-        webBeansContext.getBeanManagerImpl().fireEvent(session, DestroyedLiteral.SESSION);
+        webBeansContext.getBeanManagerImpl().fireEvent(session, DestroyedLiteral.INSTANCE_SESSION_SCOPED);
     }
 
     //we don't have initApplicationContext
@@ -637,7 +639,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         conversationContext.set(context);
         context.setActive(true);
         if (event != null) {
-            webBeansContext.getBeanManagerImpl().fireEvent(event, InitializedLiteral.CONVERSATION);
+            webBeansContext.getBeanManagerImpl().fireEvent(event, InitializedLiteral.INSTANCE_CONVERSATION_SCOPED);
         }
         return context;
     }
@@ -657,7 +659,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             final Object destroyObject = servletRequestContext != null && servletRequestContext.getServletRequest() != null ?
                     servletRequestContext.getServletRequest() : destroy;
             webBeansContext.getBeanManagerImpl().fireEvent(
-                    destroyObject == null ? context : destroyObject, DestroyedLiteral.CONVERSATION);
+                    destroyObject == null ? context : destroyObject, DestroyedLiteral.INSTANCE_CONVERSATION_SCOPED);
         }
 
         if (null != context) {
@@ -810,40 +812,6 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             this.request = request;
             this.session = session;
             this.conversation = conversation;
-        }
-    }
-
-    public static class InitializedLiteral extends AnnotationLiteral<Initialized> implements Initialized {
-        public static final InitializedLiteral APP = new InitializedLiteral(ApplicationScoped.class);
-        public static final InitializedLiteral CONVERSATION = new InitializedLiteral(ConversationScoped.class);
-        public static final InitializedLiteral REQUEST = new InitializedLiteral(RequestScoped.class);
-        public static final InitializedLiteral SESSION = new InitializedLiteral(SessionScoped.class);
-
-        private final Class<? extends Annotation> value;
-
-        public InitializedLiteral(final Class<? extends Annotation> value) {
-            this.value = value;
-        }
-
-        public Class<? extends Annotation> value() {
-            return value;
-        }
-    }
-
-    public static class DestroyedLiteral extends AnnotationLiteral<Destroyed> implements Destroyed {
-        public static final DestroyedLiteral APP = new DestroyedLiteral(ApplicationScoped.class);
-        public static final DestroyedLiteral CONVERSATION = new DestroyedLiteral(ConversationScoped.class);
-        public static final DestroyedLiteral REQUEST = new DestroyedLiteral(RequestScoped.class);
-        public static final DestroyedLiteral SESSION = new DestroyedLiteral(SessionScoped.class);
-
-        private final Class<? extends Annotation> value;
-
-        public DestroyedLiteral(final Class<? extends Annotation> value) {
-            this.value = value;
-        }
-
-        public Class<? extends Annotation> value() {
-            return value;
         }
     }
 

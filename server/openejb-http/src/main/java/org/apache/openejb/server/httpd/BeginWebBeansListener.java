@@ -22,6 +22,7 @@ import org.apache.openejb.cdi.ThreadSingletonServiceImpl;
 import org.apache.openejb.cdi.WebappWebBeansContext;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.webbeans.annotation.DestroyedLiteral;
 import org.apache.webbeans.config.OWBLogConst;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.context.ConversationContext;
@@ -245,7 +246,7 @@ public class BeginWebBeansListener implements ServletContextListener, ServletReq
         for (final Map.Entry<Conversation, ConversationContext> c : cc.entrySet()) {
             if (c != null) {
                 c.getValue().destroy();
-                webBeansContext.getBeanManagerImpl().fireEvent(c.getKey().getId(), CdiAppContextsService.DestroyedLiteral.CONVERSATION);
+                webBeansContext.getBeanManagerImpl().fireEvent(c.getKey().getId(), DestroyedLiteral.INSTANCE_CONVERSATION_SCOPED);
             }
         }
     }

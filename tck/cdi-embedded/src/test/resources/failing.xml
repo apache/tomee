@@ -32,7 +32,10 @@
     -Dopenejb.cdi.conversation.http.use-get-parameter=true
     -->
     <classes>
-      <class name="org.jboss.cdi.tck.tests.context.request.ejb.EJBRequestContextTest" />
+      <class name="org.jboss.cdi.tck.tests.alternative.selection.resource.ResourceAlternative04Test" />
+      <class name="org.jboss.cdi.tck.tests.context.conversation.InvalidatingSessionDestroysConversationTest" />
+      <class name="org.jboss.cdi.tck.tests.context.conversation.event.notattached.DestroyConversationNotAssociatedWithCurrentRequestEventTest" />
+      <class name="org.jboss.cdi.tck.tests.context.conversation.servlet.ServletConversationTest" />
     </classes>
   </test>
 </suite>
