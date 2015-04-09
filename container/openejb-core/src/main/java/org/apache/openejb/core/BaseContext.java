@@ -22,6 +22,7 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.ivm.IntraVmArtifact;
 import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.timer.TimerServiceImpl;
+import org.apache.openejb.core.timer.Timers;
 import org.apache.openejb.core.transaction.EjbUserTransaction;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.core.transaction.TransactionType;
@@ -29,8 +30,10 @@ import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.threads.task.CUTask;
 
 import javax.ejb.EJBContext;
+import javax.ejb.EJBException;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
+import javax.ejb.Timer;
 import javax.ejb.TimerService;
 import javax.interceptor.InvocationContext;
 import javax.naming.Context;
@@ -45,6 +48,7 @@ import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.security.Identity;
 import java.security.Principal;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Properties;
 
@@ -208,16 +212,19 @@ public abstract class BaseContext implements EJBContext, Serializable {
         final EjbTimerService timerService = beanContext.getEjbTimerService();
         if (timerService == null) {
             throw new IllegalStateException("This ejb does not support timers " + beanContext.getDeploymentID());
-        }
-
-        if (!timerService.isStarted()) {
+        } else if (!timerService.isStarted()) {
             try {
                 timerService.start();
             } catch (final OpenEJBException e) {
                 throw new IllegalStateException(e);
             }
         }
-        return new TimerServiceImpl(timerService, threadContext.getPrimaryKey(), beanContext.getEjbTimeout());
+        return new TimerServiceImpl(timerService, threadContext.getPrimaryKey(), beanContext.getEjbTimeout()) {
+            @Override
+            public Collection<Timer> getAllTimers() throws IllegalStateException, EJBException {
+                return Timers.all(); // allowed here
+            }
+        };
     }
 
     public boolean isTimerMethodAllowed() {
