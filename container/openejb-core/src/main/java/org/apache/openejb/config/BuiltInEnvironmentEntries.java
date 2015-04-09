@@ -25,6 +25,9 @@ import org.apache.openejb.jee.JndiConsumer;
 import org.apache.openejb.jee.JndiReference;
 import org.apache.openejb.jee.ResourceEnvRef;
 
+import javax.enterprise.concurrent.ManagedExecutorService;
+import javax.enterprise.concurrent.ManagedScheduledExecutorService;
+import javax.enterprise.concurrent.ManagedThreadFactory;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
@@ -80,6 +83,9 @@ public class BuiltInEnvironmentEntries implements DynamicDeployer {
         add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/ValidatorFactory").type(ValidatorFactory.class));
         add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/TransactionManager").type(TransactionManager.class));
         add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/TransactionSynchronizationRegistry").type(TransactionSynchronizationRegistry.class));
+        add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/DefaultManagedExecutorService").type(ManagedExecutorService.class));
+        add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/DefaultManagedScheduledExecutorService").type(ManagedScheduledExecutorService.class));
+        add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/DefaultManagedThreadFactory").type(ManagedThreadFactory.class));
 
 
         // OpenEJB specific feature
