@@ -1125,6 +1125,7 @@
     KeepAlive = 5 s
     Queue = 15
     ThreadFactory = org.apache.openejb.threads.impl.ManagedThreadFactoryImpl
+    Lazy = true
   </ServiceProvider>
   <ServiceProvider id="Default Scheduled Executor Service"
                    service="Resource"
@@ -1133,6 +1134,8 @@
                    class-name="org.apache.openejb.resource.thread.ManagedScheduledExecutorServiceImplFactory">
     Core = 5
     ThreadFactory = org.apache.openejb.threads.impl.ManagedThreadFactoryImpl
+    Lazy = true
+    SkipImplicitAttributes = true
   </ServiceProvider>
   <ServiceProvider id="Default Managed Thread Factory"
                    service="Resource"
@@ -1140,10 +1143,14 @@
                    factory-name="create"
                    class-name="org.apache.openejb.resource.thread.ManagedThreadFactoryImplFactory">
     Prefix = openejb-managed-thread-
+    Lazy = true
+    SkipImplicitAttributes = true
   </ServiceProvider>
   <ServiceProvider id="Default Context Service"
                    service="Resource"
                    types="ContextService, javax.enterprise.concurrent.ContextService"
-                   class-name="org.apache.openejb.threads.impl.ContextServiceImpl" />
+                   class-name="org.apache.openejb.threads.impl.ContextServiceImpl">
+    SkipImplicitAttributes = true
+  </ServiceProvider>
 
 </ServiceJar>

@@ -82,6 +82,7 @@ import org.apache.openejb.core.ivm.naming.ContextualJndiReference;
 import org.apache.openejb.core.ivm.naming.IvmContext;
 import org.apache.openejb.core.ivm.naming.IvmJndiFactory;
 import org.apache.openejb.core.ivm.naming.JndiUrlReference;
+import org.apache.openejb.core.ivm.naming.LazyObjectReference;
 import org.apache.openejb.core.ivm.naming.Reference;
 import org.apache.openejb.core.security.SecurityContextHandler;
 import org.apache.openejb.core.timer.EjbTimerServiceImpl;
@@ -221,6 +222,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -2443,6 +2445,49 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     public void createResource(final ResourceInfo serviceInfo) throws OpenEJBException {
+        Object service = "true".equalsIgnoreCase(String.valueOf(serviceInfo.properties.remove("Lazy"))) ?
+                newLazyResource(serviceInfo) :
+                doCreateResource(serviceInfo);
+
+        bindResource(serviceInfo.id, service);
+        for (final String alias : serviceInfo.aliases) {
+            bindResource(alias, service);
+        }
+        if (serviceInfo.originAppName != null && !serviceInfo.originAppName.isEmpty() && !"/".equals(serviceInfo.originAppName)
+            && !serviceInfo.id.startsWith("global")) {
+            final String baseJndiName = serviceInfo.id.substring(serviceInfo.originAppName.length() + 1);
+            serviceInfo.aliases.add(baseJndiName);
+            final ContextualJndiReference ref = new ContextualJndiReference(baseJndiName);
+            ref.addPrefix(serviceInfo.originAppName);
+            bindResource(baseJndiName, ref);
+        }
+
+        // Update the config tree
+        config.facilities.resources.add(serviceInfo);
+
+        if (logger.isDebugEnabled()) { // weird to check parent logger but save time and it is almost never activated
+            logger.getChildLogger("service").debug("createService.success", serviceInfo.service, serviceInfo.id, serviceInfo.className);
+        }
+    }
+
+    private LazyResource newLazyResource(final ResourceInfo serviceInfo) {
+        final ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        return new LazyResource(new Callable<Object>() {
+            @Override
+            public Object call() throws Exception {
+                final Thread t = Thread.currentThread();
+                t.setContextClassLoader(loader);
+                final ClassLoader old = t.getContextClassLoader();
+                try {
+                    return doCreateResource(serviceInfo);
+                } finally {
+                    t.setContextClassLoader(old);
+                }
+            }
+        });
+    }
+
+    private Object doCreateResource(final ResourceInfo serviceInfo) throws OpenEJBException {
         final ObjectRecipe serviceRecipe = createRecipe(serviceInfo);
         final boolean properties = PropertiesFactory.class.getName().equals(serviceInfo.className);
         if ("false".equalsIgnoreCase(serviceInfo.properties.getProperty("SkipImplicitAttributes", "false")) && !properties) {
@@ -2459,7 +2504,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 final InputStream is = new ByteArrayInputStream(serviceInfo.properties.getProperty("Definition").getBytes());
                 final Properties p = new SuperProperties();
                 IO.readProperties(is, p);
-                for (final Map.Entry<Object, Object> entry : p.entrySet()) {
+                for (final Entry<Object, Object> entry : p.entrySet()) {
                     final String key = entry.getKey().toString();
                     if (!props.containsKey(key)
                         // never override from Definition, just use it to complete the properties set
@@ -2602,7 +2647,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             final Map<String, Object> unsetA = serviceRecipe.getUnsetProperties();
             final Map<String, Object> unsetB = connectionManagerRecipe.getUnsetProperties();
             final Map<String, Object> unset = new HashMap<String, Object>();
-            for (final Map.Entry<String, Object> entry : unsetA.entrySet()) {
+            for (final Entry<String, Object> entry : unsetA.entrySet()) {
                 if (unsetB.containsKey(entry.getKey())) {
                     unset.put(entry.getKey(), entry.getValue());
                 }
@@ -2666,26 +2711,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         } else if (!Properties.class.isInstance(service)) {
             logUnusedProperties(serviceRecipe, serviceInfo);
         }
-
-        bindResource(serviceInfo.id, service);
-        for (final String alias : serviceInfo.aliases) {
-            bindResource(alias, service);
-        }
-        if (serviceInfo.originAppName != null && !serviceInfo.originAppName.isEmpty() && !"/".equals(serviceInfo.originAppName)
-            && !serviceInfo.id.startsWith("global")) {
-            final String baseJndiName = serviceInfo.id.substring(serviceInfo.originAppName.length() + 1);
-            serviceInfo.aliases.add(baseJndiName);
-            final ContextualJndiReference ref = new ContextualJndiReference(baseJndiName);
-            ref.addPrefix(serviceInfo.originAppName);
-            bindResource(baseJndiName, ref);
-        }
-
-        // Update the config tree
-        config.facilities.resources.add(serviceInfo);
-
-        if (logger.isDebugEnabled()) { // weird to check parent logger but save time and it is almost never activated
-            logger.getChildLogger("service").debug("createService.success", serviceInfo.service, serviceInfo.id, serviceInfo.className);
-        }
+        return service;
     }
 
     private void bindResource(final String id, final Object service) throws OpenEJBException {
@@ -3136,6 +3162,20 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 return SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext().lookup(jndi);
             } catch (final NamingException e) {
                 throw new InvalidObjectException("name not found: " + jndi);
+            }
+        }
+    }
+
+    public static class LazyResource extends LazyObjectReference<Object> {
+        public LazyResource(final Callable<Object> creator) {
+            super(creator);
+        }
+
+        Object writeReplace() throws ObjectStreamException {
+            try {
+                return getObject();
+            } catch (final NamingException e) {
+                return null;
             }
         }
     }
