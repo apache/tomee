@@ -525,10 +525,11 @@ public class URLClassLoaderFirst extends URLClassLoader {
 
         // using annotation to test to avoid to load more classes with deps
         final String testClass;
-        if ("javax.faces.bean.RequestScoped".equals(name)) {
-            testClass = "javax.faces.bean.SessionScoped";
+        // these test classes have to be jsf 2.x AND 1.x otherwise we force JSF 2
+        if ("javax.faces.webapp.FacesServlet".equals(name)) {
+            testClass = "javax.faces.FactoryFinder";
         } else {
-            testClass = "javax.faces.bean.RequestScoped";
+            testClass = "javax.faces.webapp.FacesServlet";
         }
 
         final String classname = testClass.replace('.', '/') + ".class";
