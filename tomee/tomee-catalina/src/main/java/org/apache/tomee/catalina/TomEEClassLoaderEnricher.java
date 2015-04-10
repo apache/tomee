@@ -53,6 +53,7 @@ public final class TomEEClassLoaderEnricher implements WebAppEnricher {
 
     private static final String[] DEFAULT_PREFIXES_TO_ADD = new String[]{
             "openwebbeans-jsf", // to be able to provide jsf impl
+            "openwebbeans-jsf12", // if replaces previous one we need to handle it properly, note: not included by default
             "tomee-mojarra",
             "tomee-myfaces", // to be able to embedded myfaces in the webapp
             "openejb-jpa-integration" // to be able to embedded hibernate, eclipselinks....

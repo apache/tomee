@@ -303,7 +303,7 @@ public class Paths implements PathsInterface {
             if (tomeeWar != null) {
                 jar = findJar(new File(tomeeWar, "lib"), prefix);
             }
-            if (jar == null || !jar.exists()) {
+            if ((jar == null || !jar.exists()) && prefix.equals("openejb-jpa-integration")) {
                 jar = JarLocation.jarLocation(MakeTxLookup.class);
             }
         }

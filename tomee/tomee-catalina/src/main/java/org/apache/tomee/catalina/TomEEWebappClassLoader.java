@@ -166,7 +166,7 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
                     return super.loadClass(name, resolve);
                 }
             }
-        } else if (name.startsWith("javax.faces.") || name.startsWith("org.apache.webbeans.jsf.")) {
+        } else if (name.startsWith("javax.faces.") || name.startsWith("org.apache.webbeans.jsf")) {
             synchronized (this) {
                 delegate = false;
                 try {

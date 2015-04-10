@@ -17,6 +17,7 @@
 package org.apache.tomee.jasper;
 
 import org.apache.jasper.servlet.TldScanner;
+import org.apache.openejb.util.classloader.URLClassLoaderFirst;
 import org.apache.openejb.util.reflection.Reflections;
 import org.apache.tomcat.util.descriptor.tld.TagXml;
 import org.apache.tomcat.util.descriptor.tld.TaglibXml;
@@ -24,12 +25,12 @@ import org.apache.tomcat.util.descriptor.tld.TldResourcePath;
 import org.apache.tomcat.util.descriptor.tld.ValidatorXml;
 import org.apache.tomee.installer.Paths;
 
-import javax.servlet.ServletContext;
-import javax.servlet.jsp.tagext.FunctionInfo;
-import javax.servlet.jsp.tagext.TagAttributeInfo;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import javax.servlet.ServletContext;
+import javax.servlet.jsp.tagext.FunctionInfo;
+import javax.servlet.jsp.tagext.TagAttributeInfo;
 
 @SuppressWarnings("PMD") // this is generated so we don't really care
 public class TomEETldScanner extends TldScanner {
@@ -56,8 +57,21 @@ public class TomEETldScanner extends TldScanner {
     @Override
     protected void scanPlatform() {
         super.scanPlatform();
-        uriTldResourcePathMapParent.putAll(URI_TLD_RESOURCE);
-        tldResourcePathTaglibXmlMapParent.putAll(TLD_RESOURCE_TAG_LIB);
+        if (URLClassLoaderFirst.shouldSkipJsf(Thread.currentThread().getContextClassLoader(), "javax.faces.FactoryFinder")) {
+            uriTldResourcePathMapParent.putAll(URI_TLD_RESOURCE);
+            tldResourcePathTaglibXmlMapParent.putAll(TLD_RESOURCE_TAG_LIB);
+        } else { // exclude myfaces
+            for (final Map.Entry<String, TldResourcePath> entry : URI_TLD_RESOURCE.entrySet()) {
+                final TldResourcePath path = entry.getValue();
+                if (path.getUrl() != MYFACES_URL) { // ref works
+                    uriTldResourcePathMapParent.put(entry.getKey(), path);
+                    final TaglibXml tl = TLD_RESOURCE_TAG_LIB.get(path);
+                    if (tl != null) {
+                        tldResourcePathTaglibXmlMapParent.put(path, tl);
+                    }
+                }
+            }
+        }
     }
 
     //CHECKSTYLE:OFF
