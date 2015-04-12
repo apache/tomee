@@ -55,9 +55,9 @@ public class QuartzPersistenceForEJBTimersTest {
 
     @Test
     public void doTest() {
-        assertEquals(0, bean.timers().size());
-        bean.newTimer();
         assertEquals(1, bean.timers().size());
+        bean.newTimer();
+        assertEquals(2, bean.timers().size());
         while (!bean.awaitTimeout()) {
             try {
                 Thread.sleep(100);
@@ -65,7 +65,7 @@ public class QuartzPersistenceForEJBTimersTest {
                 // no-op
             }
         }
-        assertEquals(1, bean.timers().size());
+        assertEquals(2, bean.timers().size());
     }
 
     @Module

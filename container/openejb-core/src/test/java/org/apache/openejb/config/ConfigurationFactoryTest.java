@@ -56,6 +56,7 @@ public class ConfigurationFactoryTest {
 
     @Test
     public void testConfigureApplicationWebModule() throws OpenEJBException {
+        SystemInstance.get().setProperty("openejb.environment.default", "false");
         final String moduleId = "testConfigureApplicationWebModule";
         final String fileSeparator = System.getProperty("file.separator");
 
@@ -68,6 +69,7 @@ public class ConfigurationFactoryTest {
         final WebModule webModule = new WebModule(webApp, null, null, fileSeparator + "some" + fileSeparator + "where.war", moduleId);
         final WebAppInfo info = factory.configureApplication(webModule);
         assertEquals(moduleId, info.moduleId);
+        SystemInstance.get().getProperties().remove("openejb.environment.default");
     }
 
     @Test

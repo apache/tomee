@@ -54,11 +54,11 @@ public class GetTimerTest {
 
     @Test
     public void test() throws InterruptedException {
-        assertEquals(0, bean.timers().size());
+        assertEquals(1, bean.timers().size());
         bean.newTimer();
-        assertEquals(1, bean.timers().size());
+        assertEquals(2, bean.timers().size());
         bean.awaitTimeout();
-        assertEquals(1, bean.timers().size());
+        assertEquals(2, bean.timers().size());
     }
 
     @Singleton

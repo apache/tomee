@@ -61,6 +61,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
     protected void setUp() throws Exception {
         System.setProperty(LocalMBeanServer.OPENEJB_JMX_ACTIVE, "false");
+        System.setProperty("openejb.environment.default", "false");
         config = new ConfigurationFactory();
         assembler = new Assembler();
 
@@ -75,6 +76,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
     @Override
     public void tearDown() {
         System.getProperties().remove(LocalMBeanServer.OPENEJB_JMX_ACTIVE);
+        System.getProperties().remove("openejb.environment.default");
         OpenEJB.destroy();
     }
 

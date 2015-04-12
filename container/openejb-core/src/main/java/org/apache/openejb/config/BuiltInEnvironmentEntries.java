@@ -36,6 +36,11 @@ import javax.validation.ValidatorFactory;
 import java.util.Map;
 
 public class BuiltInEnvironmentEntries implements DynamicDeployer {
+    private final boolean addDefaults;
+
+    public BuiltInEnvironmentEntries(final boolean addDefaults) {
+        this.addDefaults = addDefaults;
+    }
 
     public AppModule deploy(final AppModule appModule) throws OpenEJBException {
 
@@ -83,9 +88,12 @@ public class BuiltInEnvironmentEntries implements DynamicDeployer {
         add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/ValidatorFactory").type(ValidatorFactory.class));
         add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/TransactionManager").type(TransactionManager.class));
         add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/TransactionSynchronizationRegistry").type(TransactionSynchronizationRegistry.class));
-        add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/DefaultManagedExecutorService").type(ManagedExecutorService.class));
-        add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/DefaultManagedScheduledExecutorService").type(ManagedScheduledExecutorService.class));
-        add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/DefaultManagedThreadFactory").type(ManagedThreadFactory.class));
+
+        if (addDefaults) {
+            add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/DefaultManagedExecutorService").type(ManagedExecutorService.class));
+            add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/DefaultManagedScheduledExecutorService").type(ManagedScheduledExecutorService.class));
+            add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/DefaultManagedThreadFactory").type(ManagedThreadFactory.class));
+        }
 
 
         // OpenEJB specific feature
