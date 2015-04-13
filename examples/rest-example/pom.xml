@@ -87,7 +87,7 @@
         <artifactId>tomee-embedded-maven-plugin</artifactId>
         <version>${tomee.version}</version>
       </plugin>
-      <plugin> <!-- needed otherwise it will not work at runtime -->
+      <plugin>
         <groupId>org.apache.openjpa</groupId>
         <artifactId>openjpa-maven-plugin</artifactId>
         <version>${version.openjpa}</version>
