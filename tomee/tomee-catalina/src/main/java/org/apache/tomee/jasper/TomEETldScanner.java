@@ -25,6 +25,7 @@ import org.apache.tomcat.util.descriptor.tld.TldResourcePath;
 import org.apache.tomcat.util.descriptor.tld.ValidatorXml;
 import org.apache.tomee.installer.Paths;
 
+import java.io.File;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,11 +33,13 @@ import javax.servlet.ServletContext;
 import javax.servlet.jsp.tagext.FunctionInfo;
 import javax.servlet.jsp.tagext.TagAttributeInfo;
 
+import static org.apache.openejb.loader.JarLocation.jarLocation;
+
 @SuppressWarnings("PMD") // this is generated so we don't really care
 public class TomEETldScanner extends TldScanner {
     private static final Paths PATHS = new Paths(null);
-    private static final URL MYFACES_URL = findJar("myfaces-impl");
-    private static final URL JSTL_URL = findJar("openejb-jstl");
+    private static final URL MYFACES_URL = findJar("myfaces-impl", "org.apache.myfaces.webapp.AbstractFacesInitializer");
+    private static final URL JSTL_URL = findJar("openejb-jstl", "javax.servlet.jsp.jstl.core.ConditionalTagSupport");
     private static final Map<String, TldResourcePath> URI_TLD_RESOURCE = new HashMap<>();
     private static final Map<TldResourcePath, TaglibXml> TLD_RESOURCE_TAG_LIB = new HashMap<>();
 
@@ -7192,10 +7195,11 @@ public class TomEETldScanner extends TldScanner {
     }
     //CHECKSTYLE:ON
 
-    private static URL findJar(final String s) {
+    private static URL findJar(final String s, final String api) {
         try {
-            return PATHS.findTomEELibJar(s).toURI().toURL();
-        } catch (final Exception e) {
+            final File tomEELibJar = PATHS.findTomEELibJar(s);
+            return (tomEELibJar == null ? jarLocation(TomEETldScanner.class.getClassLoader().loadClass(api)) : tomEELibJar).toURI().toURL();
+        } catch (final Throwable e) {
             // no-op
         }
         return null;
