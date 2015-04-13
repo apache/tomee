@@ -28,11 +28,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.spi.PersistenceProvider;
-import javax.sql.DataSource;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -59,6 +54,11 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.spi.PersistenceProvider;
+import javax.sql.DataSource;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
 
 import static org.apache.openejb.loader.JarLocation.decode;
 
@@ -77,11 +77,9 @@ import static org.apache.openejb.loader.JarLocation.decode;
  */
 public class PersistenceBootstrap {
 
-    public static final Logger logger = Logger.getLogger(PersistenceBootstrap.class.getName());
-
     public static final String DEFAULT_PROVIDER = getDefaultProvider();
 
-    private static String getDefaultProvider() {
+    private static String getDefaultProvider() { // TODO: we shouldn't use a logger here, too early!
         final Class<PersistenceBootstrap> clzz = PersistenceBootstrap.class;
         final String name = "/META-INF/" + clzz.getName() + ".provider";
 
@@ -89,11 +87,11 @@ public class PersistenceBootstrap {
             final URL provider = clzz.getResource(name);
             if (provider != null) {
                 final String trim = IO.slurp(provider).trim();
-                logger.info("Default JPA Provider changed to " + trim);
+                Logger.getLogger(PersistenceBootstrap.class.getName()).info("Default JPA Provider changed to " + trim);
                 return trim;
             }
         } catch (final Exception e) {
-            logger.log(Level.WARNING, "Could not read " + name, e);
+            Logger.getLogger(PersistenceBootstrap.class.getName()).log(Level.WARNING, "Could not read " + name, e);
         }
 
         return "org.apache.openjpa.persistence.PersistenceProviderImpl";
