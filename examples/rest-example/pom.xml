@@ -87,24 +87,6 @@
         <artifactId>tomee-embedded-maven-plugin</artifactId>
         <version>${tomee.version}</version>
       </plugin>
-      <plugin>
-        <groupId>com.googlecode.t7mp</groupId>
-        <artifactId>maven-t7-plugin</artifactId>
-        <version>0.9.7</version>
-        <configuration>
-          <tomcatHttpPort>1234</tomcatHttpPort>
-          <tomcatShutdownPort>13245</tomcatShutdownPort>
-          <tomcatVersion>7.0.53</tomcatVersion>
-          <webapps>
-            <webappArtifact>
-              <groupId>org.apache.openejb</groupId>
-              <artifactId>tomee-webapp</artifactId>
-              <version>${tomee.version}</version>
-              <contextPath>openejb</contextPath>
-            </webappArtifact>
-          </webapps>
-        </configuration>
-      </plugin>
       <plugin> <!-- needed otherwise it will not work at runtime -->
         <groupId>org.apache.openjpa</groupId>
         <artifactId>openjpa-maven-plugin</artifactId>
