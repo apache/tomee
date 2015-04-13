@@ -1243,8 +1243,9 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
     }
 
     private String getType(final JndiReference ref, final ClassLoader classLoader) throws OpenEJBException {
-        if (ref.getType() != null) {
-            return ref.getType();
+        final String refType = ref.getType();
+        if (refType != null) {
+            return refType;
         }
         if (classLoader != null) {
             final Set<InjectionTarget> injections = ref.getInjectionTarget();
