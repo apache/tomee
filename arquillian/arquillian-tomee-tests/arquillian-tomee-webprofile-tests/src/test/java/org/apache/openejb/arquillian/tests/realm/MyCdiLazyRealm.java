@@ -59,6 +59,11 @@ public class MyCdiLazyRealm implements Realm {
     }
 
     @Override
+    public Principal authenticate(final String username) {
+        return "user".equalsIgnoreCase(username) ? new GenericPrincipal(username, "pwd", asList("role")) : null;
+    }
+
+    @Override
     public Principal authenticate(final String username, final String credentials) {
         return "user".equalsIgnoreCase(username) && "pwd".equalsIgnoreCase(credentials) ? new GenericPrincipal(username, "pwd", asList("role")) : null;
     }
