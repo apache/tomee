@@ -2976,6 +2976,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             if (info.types.isEmpty() && "class".equalsIgnoreCase(property)) {
                 continue; // inline service (no sp)
             }
+            if ("destination".equalsIgnoreCase(property) && info.id.equals(unsetProperties.get("destination"))) {
+                continue;
+            }
 
             if (logger == null) {
                 logger = SystemInstance.get().getComponent(Assembler.class).logger;
