@@ -17,6 +17,7 @@
 
 package org.apache.openejb.config;
 
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.JndiConstants;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.ContainerInfo;
@@ -862,6 +863,10 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
             // Resource env reference
             for (final JndiReference ref : bean.getResourceEnvRef()) {
+                final String name = ref.getName();
+                if (name != null && name.startsWith("java:comp/Default") && !BeanContext.Comp.class.getName().equals(bean.getEjbClass())) {
+                    return; // all default resources will be available thanks to Comp bean, far enough for what it provides!
+                }
                 processResourceEnvRef(ref, ejbDeployment, appResources, ejbModule.getClassLoader());
             }
 
