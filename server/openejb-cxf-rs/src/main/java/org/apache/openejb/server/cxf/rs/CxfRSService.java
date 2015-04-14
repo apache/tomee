@@ -19,8 +19,19 @@ package org.apache.openejb.server.cxf.rs;
 import org.apache.cxf.Bus;
 import org.apache.cxf.binding.BindingFactoryManager;
 import org.apache.cxf.jaxrs.JAXRSBindingFactory;
+import org.apache.cxf.jaxrs.client.ClientProviderFactory;
+import org.apache.cxf.jaxrs.provider.BinaryDataProvider;
+import org.apache.cxf.jaxrs.provider.DataSourceProvider;
+import org.apache.cxf.jaxrs.provider.FormEncodingProvider;
+import org.apache.cxf.jaxrs.provider.JAXBElementProvider;
+import org.apache.cxf.jaxrs.provider.MultipartProvider;
+import org.apache.cxf.jaxrs.provider.PrimitiveTextProvider;
+import org.apache.cxf.jaxrs.provider.ProviderFactory;
+import org.apache.cxf.jaxrs.provider.SourceProvider;
 import org.apache.cxf.transport.DestinationFactory;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
+import org.apache.johnzon.jaxrs.JohnzonProvider;
+import org.apache.johnzon.jaxrs.JsrProvider;
 import org.apache.openejb.cdi.WebBeansContextBeforeDeploy;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.observer.Observes;
@@ -36,6 +47,24 @@ import org.apache.webbeans.annotation.EmptyAnnotationLiteral;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Serializable;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.lang.reflect.Type;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Set;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
@@ -56,21 +85,6 @@ import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Providers;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Serializable;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.lang.reflect.Type;
-import java.net.Socket;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Set;
 
 import static java.util.Arrays.asList;
 
@@ -176,9 +190,68 @@ public class CxfRSService extends RESTService {
                 }
             }
             hacksOn();
+            initCxfClientBuilderProviders(bus);
         } finally {
             if (oldLoader != null) {
                 CxfUtil.clearBusLoader(oldLoader);
+            }
+        }
+    }
+
+    private void initCxfClientBuilderProviders(final Bus bus) {
+        if (bus.getProperty("jaxrs.shared.client.factory") == null) {
+            try {
+                final Constructor<ClientProviderFactory> constructor = ClientProviderFactory.class.getDeclaredConstructor(ProviderFactory.class, Bus.class);
+                constructor.setAccessible(true);
+                final ClientProviderFactory factory = constructor.newInstance(null, bus);
+
+                final Method set = ClientProviderFactory.class.getDeclaredMethod("setProviders", Object[].class);
+                set.setAccessible(true);
+
+                final String userProviders = SystemInstance.get().getProperty("openejb.jaxrs.client.providers");
+                final Object[][] providers;  // vararg -> array, reflection -> array
+                if (userProviders == null) {
+                    providers = new Object[][] {{
+                            new BinaryDataProvider<>(),
+                            new SourceProvider<>(),
+                            new DataSourceProvider<>(),
+                            new FormEncodingProvider<>(),
+                            new PrimitiveTextProvider<>(),
+                            new JohnzonProvider<>(),
+                            new JAXBElementProvider<>(),
+                            new JsrProvider(),
+                            new MultipartProvider()
+                    }};
+                } else {
+                    final Collection<Object> all = new ArrayList<>(16);
+
+                    for (String p : userProviders.split(" *, *")) {
+                        p= p.trim();
+                        if (p.isEmpty()) {
+                            continue;
+                        }
+
+                        all.add(Thread.currentThread().getContextClassLoader().loadClass(p).newInstance());
+                    }
+
+                    all.addAll(asList( // added after to be after in the list once sorted
+                            new BinaryDataProvider<>(),
+                            new SourceProvider<>(),
+                            new DataSourceProvider<>(),
+                            new FormEncodingProvider<>(),
+                            new PrimitiveTextProvider<>(),
+                            new JohnzonProvider<>(),
+                            new JAXBElementProvider<>(),
+                            new JsrProvider(),
+                            new MultipartProvider()));
+
+                    providers = new Object[][] { all.toArray(new Object[all.size()]) };
+                }
+                set.invoke(factory, providers);
+
+                bus.setProperty("jaxrs.shared.client.factory", factory);
+            } catch (final Exception e) {
+                throw new IllegalStateException(e);
             }
         }
     }

@@ -94,6 +94,8 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.ConstrainedTo;
+import javax.ws.rs.RuntimeType;
 import javax.ws.rs.core.Application;
 import javax.xml.bind.Marshaller;
 import java.io.File;
@@ -134,6 +136,7 @@ public class CxfRsHttpListener implements RsHttpListener {
 
     private static final String GLOBAL_PROVIDERS = SystemInstance.get().getProperty(PROVIDERS_KEY);
     public static final boolean TRY_STATIC_RESOURCES = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.jaxrs.static-first", "true"));
+    private static final boolean FAIL_ON_CONSTRAINED_TO = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.jaxrs.fail-on-constrainedto", "true"));
 
     private static final Map<String, String> STATIC_CONTENT_TYPES;
     private static final String[] DEFAULT_WELCOME_FILES = new String[]{ "/index.html", "/index.htm" };
@@ -390,6 +393,10 @@ public class CxfRsHttpListener implements RsHttpListener {
         for (final Object o : additionalProviders) {
             if (o instanceof Class<?>) {
                 final Class<?> clazz = (Class<?>) o;
+                if (isNotServerProvider(clazz)) {
+                    continue;
+                }
+
                 final String name = clazz.getName();
                 if (shouldSkipProvider(name)) {
                     continue;
@@ -421,7 +428,11 @@ public class CxfRsHttpListener implements RsHttpListener {
                     }
                 }
             } else {
-                final String name = o.getClass().getName();
+                final Class<?> clazz = o.getClass();
+                if (isNotServerProvider(clazz)) {
+                    continue;
+                }
+                final String name = clazz.getName();
                 if (shouldSkipProvider(name)) {
                     continue;
                 }
@@ -430,6 +441,18 @@ public class CxfRsHttpListener implements RsHttpListener {
         }
 
         return instances;
+    }
+
+    private boolean isNotServerProvider(Class<?> clazz) {
+        final ConstrainedTo ct = clazz.getAnnotation(ConstrainedTo.class);
+        if (ct != null && ct.value() != RuntimeType.SERVER) {
+            if (!FAIL_ON_CONSTRAINED_TO) {
+                LOGGER.warning(clazz + " is not a SERVER provider, ignoring");
+                return true;
+            }
+            throw new IllegalArgumentException(clazz + " is not a SERVER provider");
+        }
+        return false;
     }
 
     private static boolean shouldSkipProvider(final String name) {
