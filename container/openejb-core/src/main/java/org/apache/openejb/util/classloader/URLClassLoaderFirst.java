@@ -559,6 +559,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
         // currently bean validation, Slf4j, myfaces (because of enrichment)
         return name != null
             && ("META-INF/services/javax.validation.spi.ValidationProvider".equals(name)
+            || "META-INF/services/javax.ws.rs.client.ClientBuilder".equals(name)
             || name.startsWith("META-INF/services/org.apache.myfaces.spi")
             || SLF4J_BINDER_CLASS.equals(name));
     }
