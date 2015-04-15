@@ -68,7 +68,6 @@ import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.NewLoaderLogic;
 import org.apache.openejb.config.QuickJarsTxtParser;
 import org.apache.openejb.config.TldScanner;
-import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.core.ConnectorReference;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.CoreUserTransaction;
@@ -82,7 +81,6 @@ import org.apache.openejb.core.ivm.IntraVmProxy;
 import org.apache.openejb.core.ivm.naming.ContextualJndiReference;
 import org.apache.openejb.core.ivm.naming.IvmContext;
 import org.apache.openejb.core.ivm.naming.IvmJndiFactory;
-import org.apache.openejb.core.ivm.naming.JndiUrlReference;
 import org.apache.openejb.core.ivm.naming.LazyObjectReference;
 import org.apache.openejb.core.ivm.naming.Reference;
 import org.apache.openejb.core.security.SecurityContextHandler;
@@ -137,7 +135,6 @@ import org.apache.openejb.util.classloader.ClassLoaderAwareHandler;
 import org.apache.openejb.util.classloader.URLClassLoaderFirst;
 import org.apache.openejb.util.proxy.ProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
-import org.apache.webbeans.component.ResourceBean;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.inject.OWBInjector;
 import org.apache.webbeans.logger.JULLoggerFactory;
@@ -206,7 +203,6 @@ import java.lang.annotation.Annotation;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.MalformedURLException;
@@ -1105,7 +1101,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             final Set<String> resourceIds = new HashSet<String>(appInfo.resourceIds);
             final List<ResourceInfo> resourceList = config.facilities.resources;
 
-            for (ResourceInfo resourceInfo : resourceList) {
+            for (final ResourceInfo resourceInfo : resourceList) {
                 if (!resourceIds.contains(resourceInfo.id)) {
                     continue;
                 }
@@ -1113,7 +1109,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 try {
                     final Class<?> cls = Class.forName(resourceInfo.className, true, classLoader);
                     final Method postConstruct = findMethodAnnotatedWith(PostConstruct.class, cls);
-                    boolean initialize = "true".equalsIgnoreCase(String.valueOf(resourceInfo.properties.remove("InitializeAfterDeployment")));
+                    final boolean initialize = "true".equalsIgnoreCase(String.valueOf(resourceInfo.properties.remove("InitializeAfterDeployment")));
                     if (postConstruct != null || initialize) {
 
                         Object resource = containerSystemContext.lookup(OPENEJB_RESOURCE_JNDI_PREFIX + resourceInfo.id);
@@ -1840,7 +1836,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
     }
 
-    private void preDestroy(Object object) {
+    private void preDestroy(final Object object) {
         final Method preDestroy = findMethodAnnotatedWith(PreDestroy.class, object.getClass());
         if (preDestroy != null) {
             try {
@@ -1858,7 +1854,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 resource = LazyResource.class.cast(resource).getObject();
             }
 
-            Class<? extends Object> cls = resource.getClass();
+            final Class<? extends Object> cls = resource.getClass();
             return findMethodAnnotatedWith(PreDestroy.class, cls) != null;
         } catch (Exception e) {
             return false;
@@ -2538,7 +2534,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     public void createResource(final ResourceInfo serviceInfo) throws OpenEJBException {
-        Object service = "true".equalsIgnoreCase(String.valueOf(serviceInfo.properties.remove("Lazy"))) ?
+        final Object service = "true".equalsIgnoreCase(String.valueOf(serviceInfo.properties.remove("Lazy"))) ?
                 newLazyResource(serviceInfo) :
                 doCreateResource(serviceInfo);
 
