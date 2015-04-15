@@ -19,7 +19,7 @@
 
 package org.apache.openejb.arquillian.tests.resource;
 
-import org.apache.openejb.api.DestroyableResource;
+import org.apache.openejb.api.resource.DestroyableResource;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
