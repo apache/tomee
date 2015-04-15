@@ -19,11 +19,9 @@
 
 package org.superbiz.resource.jmx.resources;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 public class Hello implements HelloMBean {
 
-    private AtomicInteger count = new AtomicInteger(0);
+    private int count = 0;
 
     @Override
     public String greet(String name) {
@@ -36,16 +34,16 @@ public class Hello implements HelloMBean {
 
     @Override
     public int getCount() {
-        return count.get();
+        return count;
     }
 
     @Override
     public void setCount(int value) {
-        count.set(value);
+        count = value;
     }
 
     @Override
     public void increment() {
-        count.incrementAndGet();
+        count++;
     }
 }
