@@ -1606,7 +1606,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     private void destroyResource(final String name, final String className, final Object object) {
 
-        final Method preDestroy = findPreDestroy(object);
+        Method preDestroy = null;
 
         if (object instanceof ResourceAdapterReference) {
             final ResourceAdapterReference resourceAdapter = (ResourceAdapterReference) object;
@@ -1666,7 +1666,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             } catch (final RuntimeException e) {
                 logger.error(e.getMessage(), e);
             }
-        } else if (preDestroy != null) {
+        } else if ((preDestroy = findPreDestroy(object)) != null) {
             logger.debug("Calling @PreDestroy on: " + className);
             try {
                 preDestroy.invoke(object);
