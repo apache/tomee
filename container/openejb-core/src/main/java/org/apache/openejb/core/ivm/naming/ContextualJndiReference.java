@@ -73,6 +73,10 @@ public class ContextualJndiReference extends IntraVmJndiReference {
         return prefixes.isEmpty();
     }
 
+    public int prefixesSize() {
+        return prefixes.size();
+    }
+
     @Override
     public Object getObject() throws NamingException {
         final Boolean rawValue = !followReference.get();

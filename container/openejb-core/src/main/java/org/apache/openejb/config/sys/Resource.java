@@ -52,6 +52,12 @@ public class Resource extends AbstractService {
     @XmlAttribute
     protected String jndi;
 
+    @XmlAttribute(name = "post-construct")
+    protected String postConstruct;
+
+    @XmlAttribute(name = "pre-destroy")
+    protected String preDestroy;
+
     @XmlElement(name = "aliases")
     protected List<String> aliases = new ArrayList<String>();
 
@@ -92,6 +98,22 @@ public class Resource extends AbstractService {
 
     public List<String> getAliases() {
         return aliases;
+    }
+
+    public String getPostConstruct() {
+        return postConstruct;
+    }
+
+    public void setPostConstruct(final String postConstruct) {
+        this.postConstruct = postConstruct;
+    }
+
+    public String getPreDestroy() {
+        return preDestroy;
+    }
+
+    public void setPreDestroy(final String preDestroy) {
+        this.preDestroy = preDestroy;
     }
 
     @Override
