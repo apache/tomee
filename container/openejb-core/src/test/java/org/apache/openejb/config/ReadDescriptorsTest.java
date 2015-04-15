@@ -42,29 +42,10 @@ public class ReadDescriptorsTest {
     }
 
     @Test
-    public void testTypeNotAvailable() {
-
-        final Resource resource = new Resource();
-        resource.setClassName("org.apache.openejb.config.ReadDescriptorsTest");
-        resource.setType("not.a.real.Class");
-
-        final Resources resources = new Resources();
-        resources.add(resource);
-
-        final Resources checkedResources = ReadDescriptors.check(resources);
-        final Resource res = checkedResources.getResource().get(0);
-
-        Assert.assertEquals("true", res.getProperties().getProperty("Lazy"));
-        Assert.assertEquals("true", res.getProperties().getProperty("UseAppClassLoader"));
-        Assert.assertEquals("true", res.getProperties().getProperty("InitializeAfterDeployment"));
-    }
-
-    @Test
     public void testClassAndTypeAvailable() {
 
         final Resource resource = new Resource();
         resource.setClassName("org.apache.openejb.config.ReadDescriptorsTest");
-        resource.setType("org.apache.openejb.config.ReadDescriptorsTest");
 
         final Resources resources = new Resources();
         resources.add(resource);
@@ -98,7 +79,6 @@ public class ReadDescriptorsTest {
     public void testLazyResource() {
         final Resource resource = new Resource();
         resource.setClassName("not.a.real.Class");
-        resource.setType("not.a.real.Class");
         resource.getProperties().setProperty("Lazy", "true");
 
         final Resources resources = new Resources();
