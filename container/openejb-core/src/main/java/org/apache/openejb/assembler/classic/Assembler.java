@@ -1115,6 +1115,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                         Object resource = containerSystemContext.lookup(OPENEJB_RESOURCE_JNDI_PREFIX + resourceInfo.id);
                         if (resource instanceof LazyResource) {
                             resource = LazyResource.class.cast(resource).getObject();
+                            this.bindResource(resourceInfo.id, resource);
                         }
 
                         try {
@@ -1755,6 +1756,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     private void destroyResource(final String name, final String className, final Object object) {
+
+        final Method preDestroy = findPreDestroy(object);
+
         if (object instanceof ResourceAdapterReference) {
             final ResourceAdapterReference resourceAdapter = (ResourceAdapterReference) object;
             try {
@@ -1813,9 +1817,13 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             } catch (final RuntimeException e) {
                 logger.error(e.getMessage(), e);
             }
-        } else if (hasPreDestroy(object)) {
+        } else if (preDestroy != null) {
             logger.debug("Calling @PreDestroy on: " + className);
-            preDestroy(object);
+            try {
+                preDestroy.invoke(object);
+            } catch (final Exception e) {
+                logger.error(e.getMessage(), e);
+            }
         } else if (logger.isDebugEnabled() && !DataSource.class.isInstance(object)) {
             logger.debug("Not processing resource on destroy: " + className);
         }
@@ -1836,28 +1844,17 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
     }
 
-    private void preDestroy(final Object object) {
-        final Method preDestroy = findMethodAnnotatedWith(PreDestroy.class, object.getClass());
-        if (preDestroy != null) {
-            try {
-                preDestroy.invoke(object);
-            } catch (Exception e) {
-                logger.error("Error when calling @PreDestroy", e);
-            }
-        }
-    }
-
-    private boolean hasPreDestroy(final Object object) {
+    private Method findPreDestroy(final Object object) {
         try {
             Object resource = object;
-            if (resource instanceof LazyResource) {
+            if (LazyResource.class.isInstance(resource) && LazyResource.class.cast(resource).isInitialized()) {
                 resource = LazyResource.class.cast(resource).getObject();
             }
 
             final Class<? extends Object> cls = resource.getClass();
-            return findMethodAnnotatedWith(PreDestroy.class, cls) != null;
+            return findMethodAnnotatedWith(PreDestroy.class, cls);
         } catch (Exception e) {
-            return false;
+            return null;
         }
     }
 

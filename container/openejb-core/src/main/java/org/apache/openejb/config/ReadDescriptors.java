@@ -278,12 +278,9 @@ public class ReadDescriptors implements DynamicDeployer {
             if (resource.getClassName() != null) {
                 try {
                     ParentClassLoaderFinder.Helper.get().loadClass(resource.getClassName());
-                    if (resource.getType() != null) {
-                        ParentClassLoaderFinder.Helper.get().loadClass(resource.getType());
-                    }
                     continue;
                 } catch (Exception e) {
-                    // ignore if these classes are found in the classloader
+                    // ignore if this class is not found in the classloader
                 }
 
                 // if the resource class cannot be loaded,
