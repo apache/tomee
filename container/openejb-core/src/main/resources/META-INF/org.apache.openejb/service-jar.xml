@@ -1142,5 +1142,4 @@
                    service="Resource"
                    types="ContextService, javax.enterprise.concurrent.ContextService"
                    class-name="org.apache.openejb.concurrencyutilities.ee.impl.ContextServiceImpl"/>
-
 </ServiceJar>
