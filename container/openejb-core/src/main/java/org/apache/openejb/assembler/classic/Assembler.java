@@ -68,6 +68,7 @@ import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.NewLoaderLogic;
 import org.apache.openejb.config.QuickJarsTxtParser;
 import org.apache.openejb.config.TldScanner;
+import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.core.ConnectorReference;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.CoreUserTransaction;
@@ -138,6 +139,7 @@ import org.apache.openejb.util.proxy.ProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
 import org.apache.webbeans.component.ResourceBean;
 import org.apache.webbeans.config.WebBeansContext;
+import org.apache.webbeans.inject.OWBInjector;
 import org.apache.webbeans.logger.JULLoggerFactory;
 import org.apache.webbeans.spi.BeanArchiveService;
 import org.apache.webbeans.spi.ContainerLifecycle;
@@ -156,8 +158,8 @@ import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 import org.apache.xbean.recipe.UnsetPropertiesRecipe;
 
-import javax.annotation.Resource;
-import javax.ejb.EJB;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
@@ -191,6 +193,7 @@ import javax.transaction.TransactionSynchronizationRegistry;
 import javax.validation.ValidationException;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+
 import java.io.ByteArrayInputStream;
 import java.io.Externalizable;
 import java.io.File;
@@ -199,9 +202,11 @@ import java.io.InputStream;
 import java.io.InvalidObjectException;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.MalformedURLException;
@@ -689,9 +694,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         Extensions.addExtensions(classLoader, appInfo.eventClassesNeedingAppClassloader);
-
         logger.info("createApplication.start", appInfo.path);
-
+        final Context containerSystemContext = containerSystem.getJNDIContext();
+        
         // To start out, ensure we don't already have any beans deployed with duplicate IDs.  This
         // is a conflict we can't handle.
         final List<String> used = new ArrayList<String>();
@@ -744,8 +749,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             containerSystem.addAppContext(appContext);
 
             appContext.set(AsynchronousPool.class, AsynchronousPool.create(appContext));
-
-            final Context containerSystemContext = containerSystem.getJNDIContext();
 
             final Map<String, LazyValidatorFactory> lazyValidatorFactories = new HashMap<String, LazyValidatorFactory>();
             final Map<String, LazyValidator> lazyValidators = new HashMap<String, LazyValidator>();
@@ -977,6 +980,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
             }
 
+            postConstructResources(appInfo, classLoader, containerSystemContext, appContext);
+            
             deployedApplications.put(appInfo.path, appInfo);
             resumePersistentSchedulers(appContext);
 
@@ -1089,6 +1094,66 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             throw new DefinitionException(
                     "Resource " + reference.getJndiName() + " in " + reference.getOwnerClass() + " can't be cast to a Validator");
         }
+    }
+
+    private void postConstructResources(final AppInfo appInfo, final ClassLoader classLoader, final Context containerSystemContext, final AppContext appContext) throws NamingException, OpenEJBException {
+        final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
+
+        try {
+            Thread.currentThread().setContextClassLoader(classLoader);
+
+            final Set<String> resourceIds = new HashSet<String>(appInfo.resourceIds);
+            final List<ResourceInfo> resourceList = config.facilities.resources;
+
+            for (ResourceInfo resourceInfo : resourceList) {
+                if (!resourceIds.contains(resourceInfo.id)) {
+                    continue;
+                }
+
+                try {
+                    final Class<?> cls = Class.forName(resourceInfo.className, true, classLoader);
+                    final Method postConstruct = findMethodAnnotatedWith(PostConstruct.class, cls);
+                    boolean initialize = "true".equalsIgnoreCase(String.valueOf(resourceInfo.properties.remove("InitializeAfterDeployment")));
+                    if (postConstruct != null || initialize) {
+
+                        Object resource = containerSystemContext.lookup(OPENEJB_RESOURCE_JNDI_PREFIX + resourceInfo.id);
+                        if (resource instanceof LazyResource) {
+                            resource = LazyResource.class.cast(resource).getObject();
+                        }
+
+                        try {
+                            // wire up CDI
+                            OWBInjector.inject(appContext.getBeanManager(),
+                                    resource,
+                                    appContext.getBeanManager().createCreationalContext(null));
+
+                            if (postConstruct != null) {
+                                postConstruct.invoke(resource);
+                            }
+                        } catch (Exception e) {
+                            logger.fatal("Error calling @PostConstruct method on " + resource.getClass().getName());
+                            throw new OpenEJBException(e);
+                        }
+                    }
+                } catch (Exception e) {
+                    logger.fatal("Error calling @PostConstruct method on " + resourceInfo.id);
+                    throw new OpenEJBException(e);
+                }
+            }
+        } finally {
+            Thread.currentThread().setContextClassLoader(oldCl);
+        }
+    }
+
+    private Method findMethodAnnotatedWith(final Class<? extends Annotation> annotation, final Class<?> cls) {
+        final Method[] methods = cls.getDeclaredMethods();
+        for (final Method method : methods) {
+            if (method.getAnnotation(annotation) != null) {
+                return method;
+            }
+        }
+
+        return null;
     }
 
     public static void mergeServices(final AppInfo appInfo) throws URISyntaxException {
@@ -1752,6 +1817,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             } catch (final RuntimeException e) {
                 logger.error(e.getMessage(), e);
             }
+        } else if (hasPreDestroy(object)) {
+            logger.debug("Calling @PreDestroy on: " + className);
+            preDestroy(object);
         } else if (logger.isDebugEnabled() && !DataSource.class.isInstance(object)) {
             logger.debug("Not processing resource on destroy: " + className);
         }
@@ -1769,6 +1837,31 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
         } catch (final Exception e) {
             logger.debug("Failed to purge resource on destroy: " + e.getMessage());
+        }
+    }
+
+    private void preDestroy(Object object) {
+        final Method preDestroy = findMethodAnnotatedWith(PreDestroy.class, object.getClass());
+        if (preDestroy != null) {
+            try {
+                preDestroy.invoke(object);
+            } catch (Exception e) {
+                logger.error("Error when calling @PreDestroy", e);
+            }
+        }
+    }
+
+    private boolean hasPreDestroy(final Object object) {
+        try {
+            Object resource = object;
+            if (resource instanceof LazyResource) {
+                resource = LazyResource.class.cast(resource).getObject();
+            }
+
+            Class<? extends Object> cls = resource.getClass();
+            return findMethodAnnotatedWith(PreDestroy.class, cls) != null;
+        } catch (Exception e) {
+            return false;
         }
     }
 
@@ -2475,13 +2568,21 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         return new LazyResource(new Callable<Object>() {
             @Override
             public Object call() throws Exception {
-                final Thread t = Thread.currentThread();
-                t.setContextClassLoader(loader);
-                final ClassLoader old = t.getContextClassLoader();
+                final boolean appClassLoader = "true".equals(serviceInfo.properties.remove("UseAppClassLoader"));
+
+                ClassLoader old = null;
+
+                if (!appClassLoader) {
+                    old = Thread.currentThread().getContextClassLoader();
+                    Thread.currentThread().setContextClassLoader(loader);
+                }
+
                 try {
                     return doCreateResource(serviceInfo);
                 } finally {
-                    t.setContextClassLoader(old);
+                    if (old != null) {
+                        Thread.currentThread().setContextClassLoader(old);
+                    }
                 }
             }
         });

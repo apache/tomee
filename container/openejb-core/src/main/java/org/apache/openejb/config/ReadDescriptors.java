@@ -21,7 +21,9 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.cdi.CompositeBeans;
 import org.apache.openejb.config.sys.JSonConfigReader;
 import org.apache.openejb.config.sys.JaxbOpenejb;
+import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.config.sys.Resources;
+import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.Beans;
 import org.apache.openejb.jee.Connector;
@@ -73,6 +75,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -242,7 +245,6 @@ public class ReadDescriptors implements DynamicDeployer {
         }
 
         return appModule;
-
     }
 
     public static void readResourcesXml(final Module module) {
@@ -251,7 +253,7 @@ public class ReadDescriptors implements DynamicDeployer {
             if (url != null) {
                 try {
                     final Resources openejb = JaxbOpenejb.unmarshal(Resources.class, url.get());
-                    module.initResources(openejb);
+                    module.initResources(check(openejb));
                 } catch (final Exception e) {
                     logger.warning("can't read " + url.toString() + " to load resources for module " + module.toString(), e);
                 }
@@ -262,12 +264,43 @@ public class ReadDescriptors implements DynamicDeployer {
             if (url != null) {
                 try {
                     final Resources openejb = JSonConfigReader.read(Resources.class, url.get());
-                    module.initResources(openejb);
+                    module.initResources(check(openejb));
                 } catch (final Exception e) {
                     logger.warning("can't read " + url.toString() + " to load resources for module " + module.toString(), e);
                 }
             }
         }
+    }
+
+    public static Resources check(final Resources resources) {
+        final List<Resource> resourceList = resources.getResource();
+        for (final Resource resource : resourceList) {
+            if (resource.getClassName() != null) {
+                try {
+                    ParentClassLoaderFinder.Helper.get().loadClass(resource.getClassName());
+                    if (resource.getType() != null) {
+                        ParentClassLoaderFinder.Helper.get().loadClass(resource.getType());
+                    }
+                    continue;
+                } catch (Exception e) {
+                }
+
+                // if the resource class cannot be loaded,
+                // set the lazy property to true
+                // and the app classloader property to true
+
+                final Boolean lazySpecified = Boolean.valueOf(resource.getProperties().getProperty("Lazy", "false"));
+
+                resource.getProperties().setProperty("Lazy", "true");
+                resource.getProperties().setProperty("UseAppClassLoader", "true");
+
+                if (!lazySpecified) {
+                    resource.getProperties().setProperty("InitializeAfterDeployment", "true");
+                }
+            }
+        }
+
+        return resources;
     }
 
     private void readValidationConfigType(final Module module) throws OpenEJBException {
