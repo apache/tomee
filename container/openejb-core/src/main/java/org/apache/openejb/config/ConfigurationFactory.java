@@ -773,10 +773,13 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 }
 
                 if (object instanceof Resource) {
+                    final Resource resource = Resource.class.cast(object);
                     final String aliases = map.remove("aliases");
                     if (aliases != null) {
-                        ((Resource) object).getAliases().addAll(Arrays.asList(aliases.split(",")));
+                        resource.getAliases().addAll(Arrays.asList(aliases.split(",")));
                     }
+                    resource.setPostConstruct(map.remove("post-construct"));
+                    resource.setPreDestroy(map.remove("pre-destroy"));
                 }
 
                 service.getProperties().putAll(map);
@@ -1230,8 +1233,12 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             info.properties = props;
             info.constructorArgs.addAll(parseConstructorArgs(provider));
             if (info instanceof ResourceInfo && service instanceof Resource) {
-                ((ResourceInfo) info).jndiName = ((Resource) service).getJndi();
-                ((ResourceInfo) info).aliases.addAll(((Resource) service).getAliases());
+                final ResourceInfo ri = ResourceInfo.class.cast(info);
+                final Resource resource = Resource.class.cast(service);
+                ri.jndiName = resource.getJndi();
+                ri.postConstruct = resource.getPostConstruct();
+                ri.preDestroy = resource.getPreDestroy();
+                ri.aliases.addAll(resource.getAliases());
             }
 
             if (service.getClasspath() != null && service.getClasspath().length() > 0) {
