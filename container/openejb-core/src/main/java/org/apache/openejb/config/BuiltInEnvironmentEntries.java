@@ -17,6 +17,7 @@
 
 package org.apache.openejb.config;
 
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EnterpriseBean;
@@ -50,7 +51,7 @@ public class BuiltInEnvironmentEntries implements DynamicDeployer {
                 continue;
             }
 
-            add(consumer, module, appModule);
+            add(consumer, module, appModule, false);
         }
 
         for (final WebModule module : appModule.getWebModules()) {
@@ -59,7 +60,7 @@ public class BuiltInEnvironmentEntries implements DynamicDeployer {
                 continue;
             }
 
-            add(consumer, module, appModule);
+            add(consumer, module, appModule, addDefaults);
         }
 
         for (final EjbModule module : appModule.getEjbModules()) {
@@ -69,14 +70,14 @@ public class BuiltInEnvironmentEntries implements DynamicDeployer {
             }
 
             for (final EnterpriseBean consumer : ejbJar.getEnterpriseBeans()) {
-                add(consumer, module, appModule);
+                add(consumer, module, appModule, addDefaults && BeanContext.Comp.class.getName().equals(consumer.getEjbClass()));
             }
         }
 
         return appModule;
     }
 
-    private void add(final JndiConsumer jndi, final DeploymentModule module, final DeploymentModule app) {
+    private void add(final JndiConsumer jndi, final DeploymentModule module, final DeploymentModule app, final boolean defaults) {
 
         // Standard names
         add(jndi.getEnvEntryMap(), new EnvEntry().name("java:module/ModuleName").value(module.getModuleId()).type(String.class));
@@ -89,7 +90,7 @@ public class BuiltInEnvironmentEntries implements DynamicDeployer {
         add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/TransactionManager").type(TransactionManager.class));
         add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/TransactionSynchronizationRegistry").type(TransactionSynchronizationRegistry.class));
 
-        if (addDefaults) {
+        if (defaults) {
             add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/DefaultManagedExecutorService").type(ManagedExecutorService.class));
             add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/DefaultManagedScheduledExecutorService").type(ManagedScheduledExecutorService.class));
             add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/DefaultManagedThreadFactory").type(ManagedThreadFactory.class));

@@ -17,7 +17,6 @@
 
 package org.apache.openejb.config;
 
-import org.apache.openejb.BeanContext;
 import org.apache.openejb.JndiConstants;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.ContainerInfo;
@@ -65,6 +64,19 @@ import org.apache.openejb.util.SuperProperties;
 import org.apache.openejb.util.URISupport;
 import org.apache.openejb.util.URLs;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import javax.annotation.ManagedBean;
 import javax.ejb.TimerService;
 import javax.enterprise.inject.spi.BeanManager;
@@ -88,19 +100,6 @@ import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Providers;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 import static java.util.Arrays.asList;
 
@@ -863,10 +862,6 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
             // Resource env reference
             for (final JndiReference ref : bean.getResourceEnvRef()) {
-                final String name = ref.getName();
-                if (name != null && name.startsWith("java:comp/Default") && !BeanContext.Comp.class.getName().equals(bean.getEjbClass())) {
-                    return; // all default resources will be available thanks to Comp bean, far enough for what it provides!
-                }
                 processResourceEnvRef(ref, ejbDeployment, appResources, ejbModule.getClassLoader());
             }
 
