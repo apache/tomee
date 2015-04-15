@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 
 public class LowTypedRealm implements Realm {
+    private static final Class<?>[] AUTHENTICATE_STRING_ARGS = new Class<?>[] { String.class };
     private static final Class<?>[] SIMPLE_AUTHENTICATE_ARGS = new Class<?>[] { String.class, String.class };
     private static final Class<?>[] AUTHENTICATE_ARGS = new Class<?>[] { String.class, String.class, String.class, String.class, String.class, String.class, String.class, String.class };
     private static final Class<?>[] GSCONTEXT_AUTHENTICATE = new Class<?>[] { GSSContext.class, Boolean.class };
@@ -55,6 +56,7 @@ public class LowTypedRealm implements Realm {
     private final String info;
 
     private final Method simpleAuthenticateMethod;
+    private final Method authenticateStringMethod;
     private final Method authenticateMethod;
     private final Method gsMethod;
     private final Method findSecurityConstraintsMethod;
@@ -71,6 +73,7 @@ public class LowTypedRealm implements Realm {
 
         final Class<?> clazz = delegate.getClass();
 
+        authenticateStringMethod = findMethod(clazz, AUTHENTICATE_STRING_ARGS);
         simpleAuthenticateMethod = findMethod(clazz, SIMPLE_AUTHENTICATE_ARGS);
         authenticateMethod = findMethod(clazz, AUTHENTICATE_ARGS);
         gsMethod = findMethod(clazz, GSCONTEXT_AUTHENTICATE);
@@ -132,6 +135,11 @@ public class LowTypedRealm implements Realm {
     @Override
     public void removePropertyChangeListener(final PropertyChangeListener listener) {
         // no-op
+    }
+
+    @Override
+    public Principal authenticate(final String s) {
+        return (Principal) invoke(authenticateStringMethod, s);
     }
 
     @Override

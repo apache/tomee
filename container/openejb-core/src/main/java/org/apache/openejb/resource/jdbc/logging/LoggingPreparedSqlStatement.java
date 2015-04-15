@@ -36,12 +36,14 @@ public class LoggingPreparedSqlStatement implements InvocationHandler {
     private final PreparedStatement delegate;
     private final String sql;
     private final List<Parameter> parameters = new ArrayList<Parameter>();
+    private final String[] packages;
     private int parameterIndex;
 
-    public LoggingPreparedSqlStatement(final PreparedStatement result, final String query) {
+    public LoggingPreparedSqlStatement(final PreparedStatement result, final String query, final String[] debugPackages) {
         delegate = result;
         sql = query;
         parameterIndex = 0;
+        packages = debugPackages;
     }
 
     @Override
@@ -112,7 +114,7 @@ public class LoggingPreparedSqlStatement implements InvocationHandler {
                     }
                 }
             }
-            LOGGER.info(result.format(str));
+            LOGGER.info(result.format(str) + (packages != null ? " - stack:" + TimeWatcherExecutor.inlineStack(packages) : ""));
         } else if ("clearParameters".equals(mtdName)) {
             parameters.clear();
             parameterIndex = 0;

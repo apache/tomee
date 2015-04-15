@@ -23,6 +23,10 @@ import org.apache.webbeans.component.ExtensionBean;
 import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.context.creational.CreationalContextImpl;
 import org.apache.webbeans.event.EventMetadata;
+import org.apache.webbeans.portable.events.discovery.AfterBeanDiscoveryImpl;
+import org.apache.webbeans.portable.events.discovery.AfterDeploymentValidationImpl;
+import org.apache.webbeans.portable.events.discovery.BeforeBeanDiscoveryImpl;
+import org.apache.webbeans.portable.events.discovery.BeforeShutdownImpl;
 import org.apache.webbeans.util.ClassUtil;
 import org.apache.webbeans.util.WebBeansUtil;
 
@@ -251,10 +255,10 @@ public class WebappBeanManager extends BeanManagerImpl {
             // so reuse parent beans
             // this can happen for validations
             return new IteratorSet<Bean<?>>(
-                new MultipleIterator<Bean<?>>(
-                    InheritedBeanFilter.INSTANCE,
-                    deploymentBeans.iterator(),
-                    getParentBm().getComponents().iterator()));
+                    new MultipleIterator<Bean<?>>(
+                            InheritedBeanFilter.INSTANCE,
+                            deploymentBeans.iterator(),
+                            getParentBm().getComponents().iterator()));
         }
         return deploymentBeans;
     }
@@ -295,7 +299,12 @@ public class WebappBeanManager extends BeanManagerImpl {
     }
 
     private static boolean isEvent(final Class<?> eventClass) {
-        return !WebBeansUtil.isDefaultExtensionBeanEventType(eventClass) && !WebBeansUtil.isExtensionEventType(eventClass);
+        return !WebBeansUtil.isDefaultExtensionBeanEventType(eventClass) && !WebBeansUtil.isExtensionEventType(eventClass)
+                && !(
+                eventClass.equals(BeforeBeanDiscoveryImpl.class) ||
+                eventClass.equals(AfterBeanDiscoveryImpl.class) ||
+                eventClass.equals(AfterDeploymentValidationImpl.class) ||
+                eventClass.equals(BeforeShutdownImpl.class));
     }
 
     private interface Filter<A> {

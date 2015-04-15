@@ -262,6 +262,11 @@ public class LazyRealm extends LifecycleBase implements Realm {
     }
 
     @Override
+    public Principal authenticate(final String s) {
+        return instance().authenticate(s);
+    }
+
+    @Override
     public Principal authenticate(final String username, final String credentials) {
         return instance().authenticate(username, credentials);
     }

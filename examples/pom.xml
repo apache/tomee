@@ -158,6 +158,7 @@
     <module>moviefun</module>
     <module>moviefun-rest</module>
     <module>cdi-event-realm</module>
+    <module>resources-jmx-example</module>
   </modules>
 
   <dependencies>

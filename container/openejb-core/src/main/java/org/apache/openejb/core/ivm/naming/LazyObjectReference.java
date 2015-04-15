@@ -43,4 +43,8 @@ public class LazyObjectReference<T> extends Reference {
         }
         return instance;
     }
+
+    public boolean isInitialized() {
+        return instance != null;
+    }
 }

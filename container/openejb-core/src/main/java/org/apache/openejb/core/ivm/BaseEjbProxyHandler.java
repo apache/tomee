@@ -27,18 +27,8 @@ import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
-import org.apache.openejb.util.proxy.ProxyManager;
+import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 
-import javax.ejb.AccessLocalException;
-import javax.ejb.EJBException;
-import javax.ejb.EJBTransactionRequiredException;
-import javax.ejb.EJBTransactionRolledbackException;
-import javax.ejb.NoSuchEJBException;
-import javax.ejb.NoSuchObjectLocalException;
-import javax.ejb.TransactionRequiredLocalException;
-import javax.ejb.TransactionRolledbackLocalException;
-import javax.transaction.TransactionRequiredException;
-import javax.transaction.TransactionRolledbackException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -50,6 +40,7 @@ import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
 import java.rmi.AccessException;
 import java.rmi.NoSuchObjectException;
@@ -62,6 +53,16 @@ import java.util.List;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.locks.ReentrantLock;
+import javax.ejb.AccessLocalException;
+import javax.ejb.EJBException;
+import javax.ejb.EJBTransactionRequiredException;
+import javax.ejb.EJBTransactionRolledbackException;
+import javax.ejb.NoSuchEJBException;
+import javax.ejb.NoSuchObjectLocalException;
+import javax.ejb.TransactionRequiredLocalException;
+import javax.ejb.TransactionRolledbackLocalException;
+import javax.transaction.TransactionRequiredException;
+import javax.transaction.TransactionRolledbackException;
 
 import static org.apache.openejb.core.ivm.IntraVmCopyMonitor.State.CLASSLOADER_COPY;
 import static org.apache.openejb.core.ivm.IntraVmCopyMonitor.State.COPY;
@@ -492,15 +493,18 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         if (obj == null) {
             return false;
         }
-        if (!BaseEjbProxyHandler.class.isInstance(obj)) {
-            try {
-                obj = ProxyManager.getInvocationHandler(obj);
-            } catch (final IllegalArgumentException e) {
-                return false;
-            }
-        }
         if (this == obj) {
             return true;
+        }
+        if (!BaseEjbProxyHandler.class.isInstance(obj)) {
+            final Class<?> aClass = obj.getClass();
+            if (Proxy.isProxyClass(aClass)) {
+                obj = Proxy.getInvocationHandler(obj);
+            } else if (LocalBeanProxyFactory.isProxy(aClass)) {
+                obj = LocalBeanProxyFactory.getInvocationHandler(obj);
+            } else {
+                return false;
+            }
         }
         final BaseEjbProxyHandler other = (BaseEjbProxyHandler) obj;
         return equalHandler(other);

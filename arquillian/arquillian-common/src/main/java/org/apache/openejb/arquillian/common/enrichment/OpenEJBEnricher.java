@@ -26,6 +26,7 @@ import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.util.AppFinder;
 import org.apache.webbeans.annotation.AnnotationManager;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
@@ -51,11 +52,15 @@ public final class OpenEJBEnricher {
         // no-op
     }
 
-    public static void enrich(final Object testInstance, final AppContext ctx) {
+    public static void enrich(final Object testInstance, final AppContext appCtx) {
         // don't rely on arquillian since this enrichment should absolutely be done before the following ones
         new MockitoEnricher().enrich(testInstance);
+        AppContext ctx = appCtx;
         if (ctx == null) {
-            return;
+            ctx = AppFinder.findAppContextOrWeb(Thread.currentThread().getContextClassLoader(), AppFinder.AppContextTransformer.INSTANCE);
+            if (ctx == null) {
+                return;
+            }
         }
 
         final BeanContext context = SystemInstance.get().getComponent(ContainerSystem.class).getBeanContext(ctx.getId() + "_" + testInstance.getClass().getName());

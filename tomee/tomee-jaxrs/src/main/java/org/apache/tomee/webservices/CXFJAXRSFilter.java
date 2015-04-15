@@ -16,6 +16,9 @@
  */
 package org.apache.tomee.webservices;
 
+import org.apache.catalina.Wrapper;
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.RequestFacade;
 import org.apache.openejb.server.cxf.rs.CxfRsHttpListener;
 import org.apache.openejb.server.httpd.ServletRequestAdapter;
 import org.apache.openejb.server.httpd.ServletResponseAdapter;
@@ -27,13 +30,29 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class CXFJAXRSFilter implements Filter {
+    private static final Field REQUEST;
+    static {
+        try {
+            REQUEST = RequestFacade.class.getDeclaredField("request");
+        } catch (final NoSuchFieldException e) {
+            throw new IllegalStateException(e);
+        }
+        REQUEST.setAccessible(true);
+    }
+
     private final CxfRsHttpListener delegate;
     private final String[] welcomeFiles;
+    private final ConcurrentMap<Wrapper, Boolean> mappingByServlet = new ConcurrentHashMap<Wrapper, Boolean>();
+    private String mapping;
 
     public CXFJAXRSFilter(final CxfRsHttpListener delegate, final String[] welcomeFiles) {
         this.delegate = delegate;
@@ -46,7 +65,7 @@ public class CXFJAXRSFilter implements Filter {
 
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
-        // no-op
+        mapping = filterConfig.getInitParameter("mapping");
     }
 
     @Override
@@ -59,7 +78,11 @@ public class CXFJAXRSFilter implements Filter {
         final HttpServletRequest httpServletRequest = HttpServletRequest.class.cast(request);
         final HttpServletResponse httpServletResponse = HttpServletResponse.class.cast(response);
 
-        if (CxfRsHttpListener.TRY_STATIC_RESOURCES || delegate.matchPath(httpServletRequest)) {
+        if (CxfRsHttpListener.TRY_STATIC_RESOURCES) { // else we just want jaxrs
+            if (servletMappingIsUnderRestPath(httpServletRequest)) {
+                chain.doFilter(request, response);
+                return;
+            }
             final InputStream staticContent = delegate.findStaticContent(httpServletRequest, welcomeFiles);
             if (staticContent != null) {
                 chain.doFilter(request, response);
@@ -74,6 +97,64 @@ public class CXFJAXRSFilter implements Filter {
         } catch (final Exception e) {
             throw new ServletException("Error processing webservice request", e);
         }
+    }
+
+    private boolean servletMappingIsUnderRestPath(final HttpServletRequest request) {
+        final HttpServletRequest unwrapped = unwrap(request);
+        if (!RequestFacade.class.isInstance(unwrapped)) {
+            return false;
+        }
+
+        final Request tr;
+        try {
+            tr = Request.class.cast(REQUEST.get(unwrapped));
+        } catch (final IllegalAccessException e) {
+            return false;
+        }
+        final Wrapper wrapper = tr.getWrapper();
+        if (wrapper == null || mapping == null) {
+            return false;
+        }
+
+        Boolean accept = mappingByServlet.get(wrapper);
+        if (accept == null) {
+            accept = false;
+            if (!"org.apache.catalina.servlets.DefaultServlet".equals(wrapper.getServletClass())) {
+                for (final String mapping : wrapper.findMappings()) {
+                    if (!mapping.isEmpty() && !"/*".equals(mapping) && !"/".equals(mapping) && !mapping.startsWith("*")
+                            && mapping.startsWith(this.mapping)) {
+                        accept = true;
+                        break;
+                    }
+                }
+            }
+            mappingByServlet.putIfAbsent(wrapper, accept);
+            return accept;
+        }
+        return accept;
+    }
+
+    private HttpServletRequest unwrap(final HttpServletRequest request) {
+        HttpServletRequest unwrapped = request;
+        boolean changed;
+        do {
+            changed = false;
+            while (HttpServletRequestWrapper.class.isInstance(unwrapped)) {
+                final HttpServletRequest tmp = HttpServletRequest.class.cast(HttpServletRequestWrapper.class.cast(unwrapped).getRequest());
+                if (tmp != unwrapped) {
+                    unwrapped = tmp;
+                } else {
+                    changed = false; // quit
+                    break;
+                }
+                changed = true;
+            }
+            while (ServletRequestAdapter.class.isInstance(unwrapped)) {
+                unwrapped = ServletRequestAdapter.class.cast(unwrapped).getRequest();
+                changed = true;
+            }
+        } while (changed);
+        return unwrapped;
     }
 
     @Override

@@ -19,6 +19,7 @@ package org.apache.openejb.arquillian.tests.jaxrs.apppath;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -33,6 +34,6 @@ import java.util.Set;
 @ApplicationPath("/rest")
 public class AnnotatedApplication extends Application {
     public Set<Class<?>> getClasses() {
-        return new HashSet<Class<?>>(Arrays.asList(Echo.class));
+        return new HashSet<Class<?>>(Collections.singletonList(Echo.class));
     }
 }

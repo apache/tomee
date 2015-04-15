@@ -34,6 +34,12 @@
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency> <!-- org.apache.openejb.arquillian.tests.jaxws.EarClassLoaderTest -->
+      <groupId>joda-time</groupId>
+      <artifactId>joda-time</artifactId>
+      <version>2.5</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <properties>

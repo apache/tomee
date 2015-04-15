@@ -43,6 +43,7 @@ public class JtaQuery implements Query {
     private final JtaEntityManager jtaEntityManager;
     private final Collection<QueryOperation> appliedOperations = new ArrayList<QueryOperation>();
 
+    private boolean unwrap;
     private boolean underTx;
     private Query query;
 
@@ -56,7 +57,9 @@ public class JtaQuery implements Query {
     }
 
     private void createQuery() {
-        query = jtaEntityManager.createQuery(queryType(), entityManager, method, args);
+        if (!unwrap) {
+            query = jtaEntityManager.createQuery(queryType(), entityManager, method, args);
+        }
         if (!underTx) {
             for (final QueryOperation op : appliedOperations) {
                 query = op.apply(query);
@@ -397,6 +400,10 @@ public class JtaQuery implements Query {
      * @see javax.persistence.Query#unwrap(java.lang.Class)
      */
     public <T> T unwrap(final Class<T> cls) {
+        unwrap = true;
+        if (getClass() == cls) {
+            return cls.cast(this);
+        }
         return query.unwrap(cls);
     }
 }

@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package commands
 
 import org.apache.tomee.installer.Installer
@@ -28,7 +27,7 @@ class SetupCommand {
     def pom
     def log
     def project
-    def ant
+    AntBuilder ant
     def properties
 
     def require(String name) {
@@ -44,6 +43,15 @@ class SetupCommand {
             throw new Exception("Missing required property: $name (resolved to null)" as String)
         }
         return value
+    }
+
+    def deleteWithRetry = {
+        try {
+            ant.delete(it)
+        } catch (e) {
+            log.warn("RETRY Deleting: ${it}")
+            ant.delete(it)
+        }
     }
 
     def execute() {
@@ -94,21 +102,20 @@ class SetupCommand {
 
         // clean up duplicate jars since in TomEE it is useless
         // = gain of space ;)
-        ant.delete(file: paths.getJAXBImpl())
-        ant.delete(file: paths.getOpenEJBTomcatLoaderJar())
-        ant.delete(file: paths.findTomEELibJar('jaxb-impl'))
-        ant.delete(file: paths.findTomEELibJar("openejb-javaagent-${openejbVersion}.jar" as String))
+        deleteWithRetry(file: paths.getJAXBImpl())
+        deleteWithRetry(file: paths.getOpenEJBTomcatLoaderJar())
+        deleteWithRetry(file: paths.findTomEELibJar('jaxb-impl'))
+        deleteWithRetry(file: paths.findTomEELibJar("openejb-javaagent-${openejbVersion}.jar" as String))
         // we need the one without version
 
-        ant.delete(file: paths.findOpenEJBWebJar('tomee-loader'))
-        ant.delete(file: paths.findOpenEJBWebJar('swizzle-stream'))
+        deleteWithRetry(file: paths.findOpenEJBWebJar('tomee-loader'))
+        deleteWithRetry(file: paths.findOpenEJBWebJar('swizzle-stream'))
 
         log.info('Assigning execute privileges to scripts in Tomcat bin directory')
         ant.chmod(dir: "${workDir}/apache-tomcat-${tomcatVersion}/bin", perm: 'u+x', includes: '**/*.sh')
 
-        ant.delete(dir: "${workDir}/apache-tomcat-${tomcatVersion}/webapps/examples")
-        ant.delete(file: "${workDir}/apache-tomcat-${tomcatVersion}/webapps/tomee/META-INF/LICENSE")
-        ant.delete(file: "${workDir}/apache-tomcat-${tomcatVersion}/webapps/tomee/META-INF/NOTICE")
+        deleteWithRetry(dir: "${workDir}/apache-tomcat-${tomcatVersion}/webapps/examples")
+        deleteWithRetry(dir: "${workDir}/apache-tomcat-${tomcatVersion}/webapps/tomee")
     }
 }
 

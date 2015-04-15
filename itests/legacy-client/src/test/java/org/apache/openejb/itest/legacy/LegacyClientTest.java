@@ -28,6 +28,7 @@ import org.apache.openejb.loader.Zips;
 import org.apache.openejb.server.control.StandaloneServer;
 import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.ejb.EJBException;
@@ -56,6 +57,10 @@ public class LegacyClientTest {
 
     private static final Map<String, StandaloneServer> servers = new HashMap<String, StandaloneServer>();
     private static StandaloneServer root = null;
+    private static final String rootname = "root";
+    private static final File dir = Files.tmpdir();
+    private static File zip = null;
+    private static File app = null;
     private static final Logger logger = Logger.getLogger("org.apache.openejb.client");
 
     static {
@@ -64,6 +69,27 @@ public class LegacyClientTest {
         logger.addHandler(consoleHandler);
         logger.setLevel(Level.FINER);
         logger.setUseParentHandlers(false);
+    }
+
+    @BeforeClass
+    public static void beforeClass() throws Exception {
+        logger.info("Retrieving standalone server: " + Repository.guessVersion("org.apache.openejb", "openejb-standalone") + " - This may take a while...");
+
+        zip = Repository.getArtifact("org.apache.openejb", "openejb-standalone", "zip");
+        app = Repository.getArtifact("org.apache.openejb.itests", "failover-ejb", "jar");
+
+        final File roothome = new File(dir, rootname);
+
+        Files.mkdir(roothome);
+        Zips.unzip(zip, roothome, true);
+
+        root = new StandaloneServer(roothome, roothome);
+
+        root.killOnExit();
+        root.getJvmOpts().add("-Dopenejb.classloader.forced-load=org.apache.openejb");
+        root.ignoreOut();
+        root.setProperty("name", rootname);
+        root.setProperty("openejb.extract.configuration", "false");
     }
 
     @AfterClass
@@ -93,26 +119,6 @@ public class LegacyClientTest {
         //        To run in an IDE, uncomment and update this line
         //        System.setProperty("version", OpenEjbVersion.get().getVersion());
         System.setProperty("openejb.client.connection.strategy", "roundrobin");
-
-        logger.info("Retrieving standalone server: " + Repository.guessVersion("org.apache.openejb", "openejb-standalone") + " - This may take a while...");
-        final File zip = Repository.getArtifact("org.apache.openejb", "openejb-standalone", "zip");
-        final File app = Repository.getArtifact("org.apache.openejb.itests", "failover-ejb", "jar");
-
-        final File dir = Files.tmpdir();
-
-        final String rootname = "root";
-        final File roothome = new File(dir, rootname);
-
-        Files.mkdir(roothome);
-        Zips.unzip(zip, roothome, true);
-
-        root = new StandaloneServer(roothome, roothome);
-
-        root.killOnExit();
-        root.getJvmOpts().add("-Dopenejb.classloader.forced-load=org.apache.openejb");
-        root.ignoreOut();
-        root.setProperty("name", rootname);
-        root.setProperty("openejb.extract.configuration", "false");
 
         StandaloneServer.ServerService multipoint = root.getServerService("multipoint");
         multipoint.setBind("localhost");
@@ -226,7 +232,7 @@ public class LegacyClientTest {
         }
     }
 
-    private void assertBalance(final Calculator bean, final int size) {
+    private static void assertBalance(final Calculator bean, final int size) {
         final int expectedInvocations = 1000;
         final double percent = 0.10;
         final int totalInvocations = size * expectedInvocations;
@@ -245,7 +251,7 @@ public class LegacyClientTest {
         }
     }
 
-    private Map<String, AtomicInteger> invoke(final Calculator bean, final int max) {
+    private static Map<String, AtomicInteger> invoke(final Calculator bean, final int max) {
         final Map<String, AtomicInteger> invocations = new HashMap<String, AtomicInteger>();
         for (int i = 0; i < max; i++) {
             final String name = bean.name();

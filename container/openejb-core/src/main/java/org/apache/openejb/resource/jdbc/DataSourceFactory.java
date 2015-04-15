@@ -42,6 +42,7 @@ import javax.sql.DataSource;
 import javax.sql.XADataSource;
 import java.io.Flushable;
 import java.io.IOException;
+import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 import java.sql.Driver;
@@ -62,8 +63,10 @@ public class DataSourceFactory {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, DataSourceFactory.class);
 
     public static final String LOG_SQL_PROPERTY = "LogSql";
+    public static final String LOG_SQL_PACKAGE_PROPERTY = "LogSqlPackages";
     public static final String FLUSHABLE_PROPERTY = "Flushable";
     public static final String GLOBAL_LOG_SQL_PROPERTY = "openejb.jdbc.log";
+    public static final String GLOBAL_LOG_SQL_PACKAGE_PROPERTY = "openejb.jdbc.log.packages";
     public static final String GLOBAL_FLUSH_PROPERTY = "openejb.jdbc.flushable";
     public static final String POOL_PROPERTY = "openejb.datasource.pool";
     public static final String DATA_SOURCE_CREATOR_PROP = "DataSourceCreator";
@@ -89,15 +92,15 @@ public class DataSourceFactory {
         final Properties properties = asProperties(definition);
 
         final boolean flushable = SystemInstance.get().getOptions().get(GLOBAL_FLUSH_PROPERTY,
-                "true".equalsIgnoreCase((String) properties.remove(FLUSHABLE_PROPERTY)));
+            "true".equalsIgnoreCase((String) properties.remove(FLUSHABLE_PROPERTY)));
         final FlushableDataSourceHandler.FlushConfig flushConfig;
         if (flushable) {
             properties.remove("flushable"); // don't let it wrap the delegate again
 
             flushConfig = new FlushableDataSourceHandler.FlushConfig(
-                    name, configuredManaged,
-                    impl, PropertiesHelper.propertiesToString(properties),
-                    maxWaitTime, timeBetweenEvictionRuns, minEvictableIdleTime);
+                name, configuredManaged,
+                impl, PropertiesHelper.propertiesToString(properties),
+                maxWaitTime, timeBetweenEvictionRuns, minEvictableIdleTime);
         } else {
             flushConfig = null;
         }
@@ -133,7 +136,8 @@ public class DataSourceFactory {
         }
 
         final boolean logSql = SystemInstance.get().getOptions().get(GLOBAL_LOG_SQL_PROPERTY,
-                "true".equalsIgnoreCase((String) properties.remove(LOG_SQL_PROPERTY)));
+            "true".equalsIgnoreCase((String) properties.remove(LOG_SQL_PROPERTY)));
+        final String logPackages = SystemInstance.get().getProperty(GLOBAL_LOG_SQL_PACKAGE_PROPERTY, (String) properties.remove(LOG_SQL_PACKAGE_PROPERTY));
         final DataSourceCreator creator = creator(properties.remove(DATA_SOURCE_CREATOR_PROP), logSql);
 
         boolean useContainerLoader = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.resources.use-container-loader", "true")) && (impl == null || impl.getClassLoader() == DataSourceFactory.class.getClassLoader());
@@ -203,7 +207,7 @@ public class DataSourceFactory {
             }
 
             if (logSql) {
-                ds = makeItLogging(ds);
+                ds = makeItLogging(ds, logPackages);
             }
             if (flushable) {
                 ds = makeFlushable(ds, flushConfig);
@@ -247,18 +251,19 @@ public class DataSourceFactory {
 
     private static CommonDataSource makeFlushable(final CommonDataSource ds, final FlushableDataSourceHandler.FlushConfig flushConfig) {
         return (CommonDataSource) Proxy.newProxyInstance(
-                Thread.currentThread().getContextClassLoader(),
-                new Class<?>[]{DataSource.class.isInstance(ds) ? DataSource.class : XADataSource.class, Flushable.class},
-                new FlushableDataSourceHandler(ds, flushConfig));
+            Thread.currentThread().getContextClassLoader(),
+            new Class<?>[]{DataSource.class.isInstance(ds) ? DataSource.class : XADataSource.class, Flushable.class, Serializable.class},
+            new FlushableDataSourceHandler(ds, flushConfig));
     }
 
     public static void setCreatedWith(final DataSourceCreator creator, final CommonDataSource ds) {
         creatorByDataSource.put(ds, creator);
     }
 
-    public static DataSource makeItLogging(final CommonDataSource ds) {
+    public static DataSource makeItLogging(final CommonDataSource ds, final String packagesStr) {
+        final String[] pck = packagesStr == null ? null : packagesStr.split(" *, *");
         return (DataSource) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
-                new Class<?>[]{DataSource.class}, new LoggingSqlDataSource(ds));
+            new Class<?>[]{DataSource.class, Serializable.class}, new LoggingSqlDataSource(ds, pck));
     }
 
     private static void normalizeJdbcUrl(final Properties properties) {
@@ -307,7 +312,7 @@ public class DataSourceFactory {
         final DataSourceCreator defaultCreator = SystemInstance.get().getComponent(DataSourceCreator.class);
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
         if (creatorName != null && creatorName instanceof String
-                && (defaultCreator == null || !creatorName.equals(defaultCreator.getClass().getName()))) {
+            && (defaultCreator == null || !creatorName.equals(defaultCreator.getClass().getName()))) {
             String clazz = KNOWN_CREATORS.get(creatorName);
             if (clazz == null) {
                 clazz = (String) creatorName;
@@ -333,14 +338,14 @@ public class DataSourceFactory {
     }
 
     private static boolean usePool(final Properties properties) {
-        String property = properties.getProperty(POOL_PROPERTY);
+        String property = properties.getProperty(POOL_PROPERTY, SystemInstance.get().getProperty(POOL_PROPERTY));
         if (property != null) {
             properties.remove(POOL_PROPERTY);
         } else { // defined from @DataSourceDefinition and doesn't need pooling
             final String initialPoolSize = properties.getProperty("initialPoolSize");
             final String maxPoolSize = properties.getProperty("maxPoolSize");
             if ((null == initialPoolSize || "-1".equals(initialPoolSize))
-                    && ("-1".equals(maxPoolSize) || maxPoolSize == null)) {
+                && ("-1".equals(maxPoolSize) || maxPoolSize == null)) {
                 property = "false";
             }
         }

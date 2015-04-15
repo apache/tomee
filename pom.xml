@@ -106,7 +106,7 @@
     <maven-bundle-plugin.version>2.3.7</maven-bundle-plugin.version>
 
     <!-- This is used by a manifest classpath entry -->
-    <xbeanVersion>4.1</xbeanVersion>
+    <xbeanVersion>4.2</xbeanVersion>
 
     <!-- OSGi bundles properties -->
     <openejb.bundle.activator />
@@ -127,7 +127,7 @@
 
     <jaxb.version>2.2.7</jaxb.version>
 
-    <tomcat.version>7.0.57</tomcat.version>
+    <tomcat.version>7.0.61</tomcat.version>
 
     <cxf.version>2.6.16</cxf.version>
     <!--2.6.4 requires wss4j 1.6.8-->
@@ -171,7 +171,7 @@
     <geronimo.connector.version>3.1.1</geronimo.connector.version>
     <geronimo-osgi.version>1.1</geronimo-osgi.version>
     <geronimo-javamail_1.4_spec.version>1.7.1</geronimo-javamail_1.4_spec.version>
-    <myfaces.version>2.1.16</myfaces.version>
+    <myfaces.version>2.1.17</myfaces.version>
     <mojarra.version>2.1.29</mojarra.version>
     <slf4j.version>1.7.7</slf4j.version>
     <log4j.version>1.2.17</log4j.version>
@@ -302,7 +302,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-release-plugin</artifactId>
-          <version>2.5</version>
+          <version>2.5.1</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.gmaven</groupId>
@@ -330,6 +330,20 @@
     </pluginManagement>
 
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <configuration>
+          <!-- We cannot yet activate it as our submodules have different versions -->
+          <autoVersionSubmodules>false</autoVersionSubmodules>
+
+          <!-- the following settings are important when working with git -->
+          <localCheckout>true</localCheckout>
+          <pushChanges>false</pushChanges>
+          <releaseProfiles></releaseProfiles>
+        </configuration>
+      </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>

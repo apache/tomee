@@ -20,8 +20,8 @@ package org.apache.openejb.resource.jdbc.logging;
 import java.sql.PreparedStatement;
 
 public class LoggingCallableSqlStatement extends LoggingPreparedSqlStatement {
-    public LoggingCallableSqlStatement(final PreparedStatement result, final String query) {
-        super(result, query);
+    public LoggingCallableSqlStatement(final PreparedStatement result, final String query, final String[] debugPackages) {
+        super(result, query, debugPackages);
     }
 
     // TODO: manage in/out parameters

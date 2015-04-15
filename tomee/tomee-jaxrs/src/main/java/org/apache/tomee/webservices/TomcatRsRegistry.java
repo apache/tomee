@@ -106,15 +106,6 @@ public class TomcatRsRegistry implements RsRegistry {
         final CxfRsHttpListener cxfRsHttpListener = findCxfRsHttpListener(listener);
         final String description = "tomee-jaxrs-" + listener;
 
-        final FilterDef filterDef = new FilterDef();
-        filterDef.setAsyncSupported("true");
-        filterDef.setDescription(description);
-        filterDef.setFilterName(description);
-        filterDef.setDisplayName(description);
-        filterDef.setFilter(new CXFJAXRSFilter(cxfRsHttpListener, context.findWelcomeFiles()));
-        filterDef.setFilterClass(CXFJAXRSFilter.class.getName());
-        context.addFilterDef(filterDef);
-
         String mapping = completePath;
         if (!completePath.endsWith("/*")) { // respect servlet spec (!= from our embedded listeners)
             if (completePath.endsWith("*")) {
@@ -125,6 +116,16 @@ public class TomcatRsRegistry implements RsRegistry {
 
         final String urlPattern = removeWebContext(webContext, mapping);
         cxfRsHttpListener.setUrlPattern(urlPattern.substring(0, urlPattern.length() - 1));
+
+        final FilterDef filterDef = new FilterDef();
+        filterDef.setAsyncSupported("true");
+        filterDef.setDescription(description);
+        filterDef.setFilterName(description);
+        filterDef.setDisplayName(description);
+        filterDef.setFilter(new CXFJAXRSFilter(cxfRsHttpListener, context.findWelcomeFiles()));
+        filterDef.setFilterClass(CXFJAXRSFilter.class.getName());
+        filterDef.addInitParameter("mapping", urlPattern.substring(0, urlPattern.length() - "/*".length())); // just keep base path
+        context.addFilterDef(filterDef);
 
         final FilterMap filterMap = new FilterMap();
         filterMap.addURLPattern(urlPattern);

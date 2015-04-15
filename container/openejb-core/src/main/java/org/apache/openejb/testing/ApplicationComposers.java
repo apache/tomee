@@ -151,6 +151,10 @@ public final class ApplicationComposers {
     private MockServletContext servletContext;
     private final Collection<String> globalJndiEntries = new ArrayList<String>();
 
+    public ApplicationComposers(final Object... modules) {
+        this(modules[0].getClass(), modules);
+    }
+
     public ApplicationComposers(final Class<?> klass, final Object... additionalModules) {
         testClass = klass;
 

@@ -172,7 +172,11 @@ public class URLClassLoaderFirst extends URLClassLoader {
         return null;
     }
 
-    private Class<?> loadInternal(final String name, final boolean resolve) {
+    public Class<?> findAlreadyLoadedClass(final String name) {
+        return super.findLoadedClass(name);
+    }
+
+    public Class<?> loadInternal(final String name, final boolean resolve) {
         try {
             final Class<?> clazz = findClass(name);
             if (clazz != null) {
@@ -286,7 +290,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
                 if (apache.startsWith("naming.")) {
                     return true;
                 }
-                if (apache.startsWith("taglibs.")) {
+                if (apache.startsWith("taglibs.standard.")) {
                     return true;
                 }
 
