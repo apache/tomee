@@ -282,6 +282,7 @@ public class ReadDescriptors implements DynamicDeployer {
                     }
                     continue;
                 } catch (Exception e) {
+                    // ignore if these classes are found in the classloader
                 }
 
                 // if the resource class cannot be loaded,
