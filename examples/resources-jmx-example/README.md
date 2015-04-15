@@ -241,11 +241,19 @@ Resources are typically discovered, created, and bound to JNDI very early on in 
 
 The following properties can be used to change this behavior.
 
-| Property                   | Values           | Description |
-| -------------------------- | ---------------- | ----------- |
-| Lazy                       | true/false       | Creates a proxy that defers the actual instantiation of the resource until the first time it is looked up from JNDI. |
-| UseAppClassLoader          | true/false       | Forces a lazily instantiated resource to use the application classloader, instead of the classloader available when the resources were first processed. |
-| InitializeAfterDeployment  | true/false       | Forces a resource created with the Lazy property to be instantiated once the application has started, as opposed to waiting for it to be looked up. |
+* Lazy
+
+This is a boolean value, which when true, creates a proxy that defers the actual instantiation of the resource until the first time it is looked up from JNDI. This can be useful if the resource's classpath until the application is started (see below), or to improve startup time by not fully initializing resources that might not be used.
+
+* UseAppClassLoader 
+
+This boolean value forces a lazily instantiated resource to use the application classloader, instead of the classloader available when the resources were first processed.
+
+* InitializeAfterDeployment
+
+This boolean setting forces a resource created with the Lazy property to be instantiated once the application has started, as opposed to waiting for it to be looked up. Use this flag if you require the resource to be loaded, irrespective of whether it is injected into a managed component or manually looked up.
+
+By default, all of these settings are `false`, unless TomEE encounters a custom application resource that cannot be instantiated until the application has started. In this case, it will set these three flags to `true`, unless the `Lazy` flag has been explicitly set.
 
 By default, if TomEE encounters a custom application resource that cannot be instantiated until the application has started, it will set these three flags to `true`, unless the `Lazy` flag has been explicitly set.
 
