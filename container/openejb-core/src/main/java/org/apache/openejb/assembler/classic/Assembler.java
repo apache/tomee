@@ -192,19 +192,15 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InvalidObjectException;
-import java.io.ObjectStreamException;
-import java.io.Serializable;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -973,7 +969,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             for (final ResourceInfo resourceInfo : resourceList) {
                 try {
-                    final Class<?> clazz = classLoader.loadClass(resourceInfo.className);
+                    Class<?> clazz;
+                    try {
+                        clazz = classLoader.loadClass(resourceInfo.className);
+                    } catch (final ClassNotFoundException cnfe) { // custom classpath
+                        clazz = containerSystemContext.lookup(OPENEJB_RESOURCE_JNDI_PREFIX + resourceInfo.id).getClass();
+                    }
                     final AnnotationFinder finder = new AnnotationFinder(new ClassesArchive(ancestors(clazz)));
                     final List<Method> postConstructs = finder.findAnnotatedMethods(PostConstruct.class);
                     final List<Method> preDestroys = finder.findAnnotatedMethods(PreDestroy.class);
@@ -3158,8 +3159,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     public static class ResourceInstance extends Reference implements Serializable, DestroyableResource {
         private final String name;
         private final Object delegate;
-        private transient final Collection<Method> preDestroys;
-        private transient final CreationalContext<?> context;
+        private transient Collection<Method> preDestroys;
+        private transient CreationalContext<?> context;
 
         public ResourceInstance(final String name, final Object delegate, final Collection<Method> preDestroys, final CreationalContext<?> context) {
             this.name = name;
