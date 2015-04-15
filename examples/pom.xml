@@ -156,6 +156,7 @@
     <module>webservice-holder</module>
     <module>moviefun</module>
     <module>moviefun-rest</module>
+    <module>resources-jmx-example</module>
   </modules>
 
   <dependencies>
