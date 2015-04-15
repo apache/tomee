@@ -170,6 +170,7 @@ public class TestClassDiscoverer implements AdditionalBeanDiscoverer {
                 ejbModule.setWebapp(true);
                 ejbModule.getProperties().put("openejb.ejbmodule.webappId", webModule.getModuleId());
             }
+            ejbModule.getProperties().put("openejb.ejbmodule.MergeWebappJndiContext", "true");
             module.getEjbModules().add(ejbModule);
         }
 

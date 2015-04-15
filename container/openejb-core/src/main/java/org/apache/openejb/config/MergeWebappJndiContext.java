@@ -58,6 +58,12 @@ public class MergeWebappJndiContext implements DynamicDeployer {
             for (final EjbModule ejbModule : appModule.getEjbModules()) {
                 // If they are the same module, they'll have the same finder
                 if (ejbModule.getFinder() != webModule.getFinder()) {
+                    final String forceMerge = ejbModule.getProperties().getProperty("openejb.ejbmodule.MergeWebappJndiContext"); // always true is not null
+                    if (forceMerge != null) { // default resource propagation
+                        for (final EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
+                            copy(webModule.getWebApp().getResourceEnvRefMap(), bean.getResourceEnvRefMap());
+                        }
+                    }
                     continue;
                 }
 
