@@ -24,7 +24,6 @@ import org.apache.activemq.ra.ActiveMQResourceAdapter;
 import org.apache.activemq.store.PersistenceAdapter;
 import org.apache.activemq.store.PersistenceAdapterFactory;
 import org.apache.activemq.store.jdbc.JDBCPersistenceAdapter;
-import org.apache.activemq.store.kahadb.KahaDBPersistenceAdapter;
 import org.apache.activemq.store.memory.MemoryPersistenceAdapter;
 import org.apache.activemq.util.URISupport;
 import org.apache.openejb.loader.SystemInstance;
