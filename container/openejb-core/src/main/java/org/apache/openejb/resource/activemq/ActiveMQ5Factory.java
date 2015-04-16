@@ -19,6 +19,7 @@ package org.apache.openejb.resource.activemq;
 
 import org.apache.activemq.broker.BrokerFactory;
 import org.apache.activemq.broker.BrokerFactoryHandler;
+import org.apache.activemq.broker.BrokerPlugin;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.ra.ActiveMQResourceAdapter;
 import org.apache.activemq.store.PersistenceAdapter;
@@ -32,10 +33,8 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.xbean.propertyeditor.PropertyEditorException;
 import org.apache.xbean.propertyeditor.PropertyEditors;
+import org.apache.xbean.recipe.ObjectRecipe;
 
-import javax.naming.Context;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -43,15 +42,20 @@ import java.lang.reflect.Modifier;
 import java.net.URI;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 
 public class ActiveMQ5Factory implements BrokerFactoryHandler {
 
     private static Properties properties;
-    private static final Map<URI, BrokerService> brokers = new HashMap<URI, BrokerService>();
+    protected static final Map<URI, BrokerService> brokers = new HashMap<URI, BrokerService>();
     private static Throwable throwable;
     private static final AtomicBoolean started = new AtomicBoolean(false);
 
@@ -84,8 +88,12 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
                 persistenceAdapter = null;
             }
 
+            final BrokerPlugin[] plugins = createPlugins(params);
             final URI uri = new URI(cleanUpUri(brokerURI.getSchemeSpecificPart(), compositeData.getParameters(), params));
             broker = BrokerFactory.createBroker(uri);
+            if (plugins != null) {
+                broker.setPlugins(plugins);
+            }
             brokers.put(brokerURI, broker);
 
             if (persistenceAdapter != null) {
@@ -243,6 +251,34 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
         }
 
         return broker;
+    }
+
+    private BrokerPlugin[] createPlugins(final Map<String, String> params) {
+        final String plugins = params.remove("amq.plugins");
+        if (plugins == null) {
+            return null;
+        }
+
+        final Collection<BrokerPlugin> instances = new LinkedList<>();
+        for (final String p : plugins.split(" *, *")) {
+            if (p.isEmpty()) {
+                continue;
+            }
+
+            final String prefix = p + ".";
+            final ObjectRecipe recipe = new ObjectRecipe(params.remove(prefix + "class"));
+            final Iterator<Map.Entry<String, String>> iterator = params.entrySet().iterator();
+            while (iterator.hasNext()) {
+                final Map.Entry<String, String> entry = iterator.next();
+                final String key = entry.getKey();
+                if (key.startsWith(prefix)) {
+                    recipe.setProperty(key.substring(prefix.length()), entry.getValue());
+                    iterator.remove();
+                }
+            }
+            instances.add(BrokerPlugin.class.cast(recipe.create()));
+        }
+        return instances.toArray(new BrokerPlugin[instances.size()]);
     }
 
     private static String cleanUpUri(final String schemeSpecificPart, final Map<String, String> parameters, final Map<String, String> params) {
