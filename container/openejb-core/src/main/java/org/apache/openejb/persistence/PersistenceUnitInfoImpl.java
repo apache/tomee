@@ -349,6 +349,9 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
             //        "org/apache/openejb/test/entity/cmp/BasicCmp2Bean_BasicCmp2Bean".equals(className)) {
             //    System.err.println("Loading " + className);
             // }
+            if (className == null) {
+                return classfileBuffer;
+            }
             final String replace = className.replace('/', '.');
             if (isServerClass(replace)) {
                 return classfileBuffer;

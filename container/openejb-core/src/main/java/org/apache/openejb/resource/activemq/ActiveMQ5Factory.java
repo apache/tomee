@@ -266,20 +266,24 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
     }
 
     private static PersistenceAdapter createPersistenceAdapter(final String clazz, final String prefix, final Map<String, String> params) throws IllegalAccessException, InvocationTargetException, ClassNotFoundException, InstantiationException {
-        final PersistenceAdapter persistenceAdapter = PersistenceAdapter.class.cast(Thread.currentThread().getContextClassLoader().loadClass(clazz).newInstance());
-        for (final Method m : KahaDBPersistenceAdapter.class.getDeclaredMethods()) {
-            if (m.getName().startsWith("set") && m.getParameterTypes().length == 1 && Modifier.isPublic(m.getModifiers())) {
-                final String key = prefix + "." + m.getName().substring(3).toLowerCase(Locale.ENGLISH);
-                final Object field = params.remove(key);
-                if (field != null) {
-                    try {
-                        final Object toSet = PropertyEditors.getValue(m.getParameterTypes()[0], field.toString());
-                        m.invoke(persistenceAdapter, toSet);
-                    } catch (final PropertyEditorException cantConvertException) {
-                        throw new IllegalArgumentException("can't convert " + field + " for " + m.getName(), cantConvertException);
+        Class<?> aClass = Thread.currentThread().getContextClassLoader().loadClass(clazz);
+        final PersistenceAdapter persistenceAdapter = PersistenceAdapter.class.cast(aClass.newInstance());
+        while (aClass != null) {
+            for (final Method m : aClass.getDeclaredMethods()) {
+                if (m.getName().startsWith("set") && m.getParameterTypes().length == 1 && Modifier.isPublic(m.getModifiers())) {
+                    final String key = prefix + "." + m.getName().substring(3).toLowerCase(Locale.ENGLISH);
+                    final Object field = params.remove(key);
+                    if (field != null) {
+                        try {
+                            final Object toSet = PropertyEditors.getValue(m.getParameterTypes()[0], field.toString());
+                            m.invoke(persistenceAdapter, toSet);
+                        } catch (final PropertyEditorException cantConvertException) {
+                            throw new IllegalArgumentException("can't convert " + field + " for " + m.getName(), cantConvertException);
+                        }
                     }
                 }
             }
+            aClass = aClass.getSuperclass();
         }
         return persistenceAdapter;
     }
