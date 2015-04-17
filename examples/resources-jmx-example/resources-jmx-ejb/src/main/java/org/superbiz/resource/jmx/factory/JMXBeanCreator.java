@@ -19,48 +19,69 @@
 
 package org.superbiz.resource.jmx.factory;
 
-import javax.management.InstanceAlreadyExistsException;
+import javax.management.Attribute;
+import javax.management.MBeanAttributeInfo;
+import javax.management.MBeanInfo;
 import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectName;
+import javax.management.StandardMBean;
 import java.lang.management.ManagementFactory;
-import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
 
 public class JMXBeanCreator {
 
+    private final Map<String, Class<?>> primitives = new HashMap<String, Class<?>>() {
+        {
+            put("boolean", Boolean.TYPE);
+            put("byte", Byte.TYPE);
+            put("char", Character.TYPE);
+            put("long", Long.TYPE);
+            put("float", Float.TYPE);
+            put("int", Integer.TYPE);
+            put("double", Double.TYPE);
+            put("short", Short.TYPE);
+        }
+    };
+
     private static Logger LOGGER = Logger.getLogger(JMXBeanCreator.class.getName());
     private Properties properties;
 
-    public Object create() throws MBeanRegistrationException {
-        // instantiate the bean
-
-        final String code = properties.getProperty("code");
-        final String name = properties.getProperty("name");
+    public <T> Object create() throws MBeanRegistrationException {
+        final String code = (String) properties.remove("code");
+        final String name = (String) properties.remove("name");
+        final String iface = (String) properties.remove("interface");
+        final String prefix = (String) properties.remove("prefix");
 
         requireNotNull(code);
         requireNotNull(name);
+        requireNotNull(iface);
 
         try {
-            final Class<?> cls = Class.forName(code, true, Thread.currentThread().getContextClassLoader());
-            final Object instance = cls.newInstance();
+            final Class<? extends T> cls = (Class<? extends T>) Class.forName(code, true, Thread.currentThread().getContextClassLoader());
+            final Class<T> ifaceCls = (Class<T>) Class.forName(iface, true, Thread.currentThread().getContextClassLoader());
+            final T instance = (T) cls.newInstance();
+            final StandardMBean mBean = new StandardMBean(instance, ifaceCls);
 
-            final Field[] fields = cls.getDeclaredFields();
-            for (final Field field : fields) {
+            for (Object property : properties.keySet()) {
+                String attributeName = (String) property;
+                final Object value = properties.getProperty(attributeName);
 
-                final String property = properties.getProperty(field.getName());
-                if (property == null) {
-                    continue;
+                if (prefix != null) {
+                    if (! attributeName.startsWith(prefix + ".")) {
+                        continue;
+                    } else {
+                        attributeName = attributeName.substring(prefix.length() + 1);
+                    }
                 }
 
-                try {
-                    field.setAccessible(true);
-                    field.set(instance, Converter.convert(property, field.getType(), field.getName()));
-                } catch (Exception e) {
-                    LOGGER.info(String.format("Unable to set value %s on field %s", property, field.getName()));
-                }
+                final Class<?> targetType = findAttributeType(mBean.getMBeanInfo(), attributeName);
+                final Object targetValue = Converter.convert(value, targetType, null);
+
+                final Attribute attribute = new Attribute(attributeName, targetValue);
+                mBean.setAttribute(attribute);
             }
 
             final MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
@@ -69,28 +90,33 @@ public class JMXBeanCreator {
 
             return instance;
 
-        } catch (final ClassNotFoundException e) {
-            LOGGER.severe("Unable to find class " + code);
-            throw new MBeanRegistrationException(e);
-        } catch (final InstantiationException e) {
-            LOGGER.severe("Unable to create instance of class " + code);
-            throw new MBeanRegistrationException(e);
-        } catch (final IllegalAccessException e) {
-            LOGGER.severe("Illegal access: " + code);
-            throw new MBeanRegistrationException(e);
-        } catch (final MalformedObjectNameException e) {
-            LOGGER.severe("Malformed MBean name: " + name);
-            throw new MBeanRegistrationException(e);
-        } catch (final InstanceAlreadyExistsException e) {
-            LOGGER.severe("Instance already exists: " + name);
-            throw new MBeanRegistrationException(e);
-        } catch (final NotCompliantMBeanException e) {
-            LOGGER.severe("Class is not a valid MBean: " + code);
-            throw new MBeanRegistrationException(e);
-        } catch (final javax.management.MBeanRegistrationException e) {
-            LOGGER.severe("Error registering " + name + ", " + code);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            LOGGER.severe("Unable to register mbean " + e.getMessage());
             throw new MBeanRegistrationException(e);
         }
+    }
+
+    private Class<?> findAttributeType(MBeanInfo mBeanInfo, String attributeName) {
+        try {
+            for (final MBeanAttributeInfo attribute : mBeanInfo.getAttributes()) {
+                if (attribute.getName().equals(attributeName)) {
+                    return convertPrimitive(attribute.getType());
+                }
+            }
+
+            return null;
+        } catch (final ClassNotFoundException e) {
+            return null;
+        }
+    }
+
+    private Class<?> convertPrimitive(final String type) throws ClassNotFoundException {
+        if (primitives.containsKey(type)) {
+            return primitives.get(type);
+        }
+
+        return Class.forName(type, true, Thread.currentThread().getContextClassLoader());
     }
 
     private void requireNotNull(final String object) throws MBeanRegistrationException {

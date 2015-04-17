@@ -19,53 +19,42 @@
 
 package org.superbiz.resource.jmx.resources;
 
+import org.superbiz.resource.jmx.factory.Converter;
 import org.superbiz.resource.jmx.factory.MBeanRegistrationException;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.management.InstanceAlreadyExistsException;
+import javax.management.Attribute;
 import javax.management.InstanceNotFoundException;
+import javax.management.MBeanAttributeInfo;
+import javax.management.MBeanInfo;
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
-import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectName;
+import javax.management.StandardMBean;
 import java.lang.management.ManagementFactory;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
 
 public class Alternative implements AlternativeMBean {
 
+    private final Map<String, Class<?>> primitives = new HashMap<String, Class<?>>() {
+        {
+            put("boolean", Boolean.TYPE);
+            put("byte", Byte.TYPE);
+            put("char", Character.TYPE);
+            put("long", Long.TYPE);
+            put("float", Float.TYPE);
+            put("int", Integer.TYPE);
+            put("double", Double.TYPE);
+            put("short", Short.TYPE);
+        }
+    };
+
     private static Logger LOGGER = Logger.getLogger(Alternative.class.getName());
     private Properties properties;
-
-    @PostConstruct
-    public void postConstruct() throws MBeanRegistrationException {
-        // initialize the bean
-
-        final String code = properties.getProperty("code");
-        final String name = properties.getProperty("name");
-
-        requireNotNull(code);
-        requireNotNull(name);
-
-        try {
-            final MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
-            final ObjectName objectName = new ObjectName(name);
-            mbs.registerMBean(this, objectName);
-        } catch (final MalformedObjectNameException e) {
-            LOGGER.severe("Malformed MBean name: " + name);
-            throw new MBeanRegistrationException(e);
-        } catch (final InstanceAlreadyExistsException e) {
-            LOGGER.severe("Instance already exists: " + name);
-            throw new MBeanRegistrationException(e);
-        } catch (final NotCompliantMBeanException e) {
-            LOGGER.severe("Class is not a valid MBean: " + code);
-            throw new MBeanRegistrationException(e);
-        } catch (final javax.management.MBeanRegistrationException e) {
-            LOGGER.severe("Error registering " + name + ", " + code);
-            throw new MBeanRegistrationException(e);
-        }
-    }
 
     @PreDestroy
     public void preDestroy() throws MBeanRegistrationException {
@@ -86,6 +75,71 @@ public class Alternative implements AlternativeMBean {
             LOGGER.severe("Error unregistering " + name);
             throw new MBeanRegistrationException(e);
         }
+    }
+
+    @PostConstruct
+    public <T> void postConstruct() throws MBeanRegistrationException {
+
+        final String name = properties.getProperty("name");
+        final String iface = properties.getProperty("interface");
+        final String prefix = properties.getProperty("prefix");
+
+        requireNotNull(name);
+        requireNotNull(iface);
+
+        try {
+            final Class<T> ifaceCls = (Class<T>) Class.forName(iface, true, Thread.currentThread().getContextClassLoader());
+            final StandardMBean mBean = new StandardMBean((T) this, ifaceCls);
+
+            for (Object property : properties.keySet()) {
+                String attributeName = (String) property;
+                final Object value = properties.getProperty(attributeName);
+
+                if (prefix != null) {
+                    if (! attributeName.startsWith(prefix + ".")) {
+                        continue;
+                    } else {
+                        attributeName = attributeName.substring(prefix.length() + 1);
+                    }
+                }
+
+                final Class<?> targetType = findAttributeType(mBean.getMBeanInfo(), attributeName);
+                final Object targetValue = Converter.convert(value, targetType, null);
+
+                final Attribute attribute = new Attribute(attributeName, targetValue);
+                mBean.setAttribute(attribute);
+            }
+
+            final MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+            final ObjectName objectName = new ObjectName(name);
+            mbs.registerMBean(this, objectName);
+
+        } catch (final Exception e) {
+            LOGGER.severe("Unable to register mbean " + e.getMessage());
+            throw new MBeanRegistrationException(e);
+        }
+    }
+
+    private Class<?> findAttributeType(MBeanInfo mBeanInfo, String attributeName) {
+        try {
+            for (final MBeanAttributeInfo attribute : mBeanInfo.getAttributes()) {
+                if (attribute.getName().equals(attributeName)) {
+                    return convertPrimitive(attribute.getType());
+                }
+            }
+
+            return null;
+        } catch (final ClassNotFoundException e) {
+            return null;
+        }
+    }
+
+    private Class<?> convertPrimitive(final String type) throws ClassNotFoundException {
+        if (primitives.containsKey(type)) {
+            return primitives.get(type);
+        }
+
+        return Class.forName(type, true, Thread.currentThread().getContextClassLoader());
     }
 
     private void requireNotNull(final String object) throws MBeanRegistrationException {

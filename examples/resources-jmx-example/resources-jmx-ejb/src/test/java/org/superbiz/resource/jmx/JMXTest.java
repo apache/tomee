@@ -66,7 +66,7 @@ public class JMXTest {
     }
 
     @Test
-    public void test() throws Exception {
+    public void testFactory() throws Exception {
         final MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
         final ObjectName objectName = new ObjectName("superbiz.test:name=Hello");
 
@@ -94,6 +94,23 @@ public class JMXTest {
 
         Assert.assertEquals("Hello, world", mbs.invoke(objectName, "greet", new Object[] { "world" }, new String[] { String.class.getName() }));
         Assert.assertEquals("Hello, world", ejb.greet("world"));
+    }
+
+    @Test
+    public void testFactorySkipImpliedAttributes() throws Exception {
+        final MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+        final ObjectName objectName = new ObjectName("superbiz.test:name=Hello2");
+
+        Assert.assertEquals(20, mbs.getAttribute(objectName, "Count"));
+
+        mbs.invoke(objectName, "increment", new Object[0], new String[0]);
+        Assert.assertEquals(21, mbs.getAttribute(objectName, "Count"));
+
+        Attribute attribute = new Attribute("Count", 12345);
+        mbs.setAttribute(objectName, attribute);
+        Assert.assertEquals(12345, mbs.getAttribute(objectName, "Count"));
+
+        Assert.assertEquals("Hello, world", mbs.invoke(objectName, "greet", new Object[] { "world" }, new String[] { String.class.getName() }));
     }
 
     @Test
