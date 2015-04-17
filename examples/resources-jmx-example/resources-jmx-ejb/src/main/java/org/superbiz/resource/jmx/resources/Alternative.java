@@ -80,9 +80,9 @@ public class Alternative implements AlternativeMBean {
     @PostConstruct
     public <T> void postConstruct() throws MBeanRegistrationException {
 
-        final String name = properties.getProperty("name");
-        final String iface = properties.getProperty("interface");
-        final String prefix = properties.getProperty("prefix");
+        final String name = properties.remove("name").toString();
+        final String iface = properties.remove("interface").toString();
+        final String prefix = properties.remove("prefix").toString();
 
         requireNotNull(name);
         requireNotNull(iface);
@@ -91,9 +91,8 @@ public class Alternative implements AlternativeMBean {
             final Class<T> ifaceCls = (Class<T>) Class.forName(iface, true, Thread.currentThread().getContextClassLoader());
             final StandardMBean mBean = new StandardMBean((T) this, ifaceCls);
 
-            for (Object property : properties.keySet()) {
-                String attributeName = (String) property;
-                final Object value = properties.getProperty(attributeName);
+            for (String attributeName : properties.stringPropertyNames()) {
+                final Object value = properties.remove(attributeName);
 
                 if (prefix != null) {
                     if (! attributeName.startsWith(prefix + ".")) {

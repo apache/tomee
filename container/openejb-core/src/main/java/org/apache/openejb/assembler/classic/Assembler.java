@@ -150,6 +150,7 @@ import org.apache.xbean.finder.ClassLoaders;
 import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.finder.UrlSet;
 import org.apache.xbean.finder.archive.ClassesArchive;
+import org.apache.xbean.recipe.ConstructionException;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 import org.apache.xbean.recipe.UnsetPropertiesRecipe;
@@ -192,15 +193,20 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InvalidObjectException;
+import java.io.ObjectStreamException;
+import java.io.Serializable;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -218,6 +224,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static org.apache.openejb.util.Classes.ancestors;
@@ -968,6 +975,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             final List<ResourceInfo> resourceList = config.facilities.resources;
 
             for (final ResourceInfo resourceInfo : resourceList) {
+                if (isTemplatizedResource(resourceInfo)) {
+                    continue;
+                }
+
                 try {
                     Class<?> clazz;
                     try {
@@ -975,6 +986,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     } catch (final ClassNotFoundException cnfe) { // custom classpath
                         clazz = containerSystemContext.lookup(OPENEJB_RESOURCE_JNDI_PREFIX + resourceInfo.id).getClass();
                     }
+
                     final AnnotationFinder finder = new AnnotationFinder(new ClassesArchive(ancestors(clazz)));
                     final List<Method> postConstructs = finder.findAnnotatedMethods(PostConstruct.class);
                     final List<Method> preDestroys = finder.findAnnotatedMethods(PreDestroy.class);
@@ -1000,19 +1012,21 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                                 }
                             }
 
-                            if (resourceInfo.postConstruct != null) {
-                                final Method p = clazz.getDeclaredMethod(resourceInfo.postConstruct);
-                                if (!p.isAccessible()) {
-                                    SetAccessible.on(p);
+                            if (!"none".equals(resourceInfo.postConstruct)) {
+                                if (resourceInfo.postConstruct != null) {
+                                    final Method p = clazz.getDeclaredMethod(resourceInfo.postConstruct);
+                                    if (!p.isAccessible()) {
+                                        SetAccessible.on(p);
+                                    }
+                                    p.invoke(resource);
                                 }
-                                p.invoke(resource);
-                            }
 
-                            for (final Method m : postConstructs) {
-                                if (!m.isAccessible()) {
-                                    SetAccessible.on(m);
+                                for (final Method m : postConstructs) {
+                                    if (!m.isAccessible()) {
+                                        SetAccessible.on(m);
+                                    }
+                                    m.invoke(resource);
                                 }
-                                m.invoke(resource);
                             }
                         } catch (final Exception e) {
                             logger.fatal("Error calling @PostConstruct method on " + resource.getClass().getName());
@@ -1020,20 +1034,30 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                         }
                     }
 
-                    if (resourceInfo.preDestroy != null) {
-                        final Method p = clazz.getDeclaredMethod(resourceInfo.preDestroy);
-                        if (!p.isAccessible()) {
-                            SetAccessible.on(p);
+                    if (!"none".equals(resourceInfo.preDestroy)) {
+                        if (resourceInfo.preDestroy != null) {
+                            final Method p = clazz.getDeclaredMethod(resourceInfo.preDestroy);
+                            if (!p.isAccessible()) {
+                                SetAccessible.on(p);
+                            }
+                            preDestroys.add(p);
                         }
-                        preDestroys.add(p);
+
+                        if (!preDestroys.isEmpty() || creationalContext != null) {
+                            final String name = OPENEJB_RESOURCE_JNDI_PREFIX + resourceInfo.id;
+                            if (originalResource == null) {
+                                originalResource = containerSystemContext.lookup(name);
+                            }
+                            this.bindResource(resourceInfo.id, new ResourceInstance(name, originalResource, preDestroys, creationalContext), true);
+                        }
                     }
 
-                    if (!preDestroys.isEmpty() || creationalContext != null) {
-                        final String name = OPENEJB_RESOURCE_JNDI_PREFIX + resourceInfo.id;
-                        if (originalResource == null) {
-                            originalResource = containerSystemContext.lookup(name);
+                    // log unused now for these resources now we built the resource completely and @PostConstruct can have used injected properties
+                    if (resourceInfo.unsetProperties != null) {
+                        final Set<String> unsetKeys = resourceInfo.unsetProperties.stringPropertyNames();
+                        for (final String key : unsetKeys) { // don't use keySet to auto filter txMgr for instance and not real properties!
+                            unusedProperty(resourceInfo.id, logger, key);
                         }
-                        this.bindResource(resourceInfo.id, new ResourceInstance(name, originalResource, preDestroys, creationalContext), true);
                     }
                 } catch (final Exception e) {
                     logger.fatal("Error calling @PostConstruct method on " + resourceInfo.id);
@@ -1045,7 +1069,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
     }
 
-
+    private static boolean isTemplatizedResource(final ResourceInfo resourceInfo) { // ~ container resource even if not 100% right
+        return resourceInfo.className == null || resourceInfo.className.isEmpty();
+    }
     public static void mergeServices(final AppInfo appInfo) throws URISyntaxException {
         for (final ServiceInfo si : appInfo.services) { // used lazily by JaxWsServiceObjectFactory, we could do the same for resources
             if (!appInfo.properties.containsKey(si.id)) {
@@ -2463,7 +2489,25 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
         serviceInfo.properties.remove("SkipImplicitAttributes");
 
-        serviceRecipe.setProperty("properties", new UnsetPropertiesRecipe());
+        final AtomicReference<Properties> injectedProperties = new AtomicReference<Properties>();
+        serviceRecipe.setProperty("properties", new UnsetPropertiesRecipe() {
+            @Override
+            protected Object internalCreate(final Type expectedType, final boolean lazyRefAllowed) throws ConstructionException {
+                final Map<String, Object> original = serviceRecipe.getUnsetProperties();
+                final Properties properties = new SuperProperties() {
+                    @Override
+                    public Object remove(final Object key) { // avoid to log them then
+                        original.remove(key);
+                        return super.remove(key);
+                    }
+                }.caseInsensitive(true); // keep our nice case insensitive feature
+                for (final Map.Entry<String, Object> entry : original.entrySet()) {
+                    properties.put(entry.getKey(), entry.getValue());
+                }
+                injectedProperties.set(properties);
+                return properties;
+            }
+        });
 
         final Properties props = PropertyPlaceHolderHelper.holds(serviceInfo.properties);
         if (serviceInfo.properties.containsKey("Definition")) {
@@ -2514,6 +2558,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 service = Proxy.newProxyInstance(loader, apis.toArray(new Class<?>[apis.size()]), new ClassLoaderAwareHandler(null, service, loader));
             } // else proxy would be useless
         }
+
+        serviceInfo.unsetProperties = injectedProperties.get();
 
         // Java Connector spec ResourceAdapters and ManagedConnectionFactories need special activation
         if (service instanceof ResourceAdapter) {
@@ -2676,7 +2722,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
             }
         } else if (!Properties.class.isInstance(service)) {
-            logUnusedProperties(serviceRecipe, serviceInfo);
+            if (serviceInfo.unsetProperties == null || isTemplatizedResource(serviceInfo)) {
+                logUnusedProperties(serviceRecipe, serviceInfo);
+            } // else wait post construct
         }
         return service;
     }
@@ -2912,7 +2960,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         logUnusedProperties(unsetProperties, info);
     }
 
-    private static void logUnusedProperties(final Map<String, Object> unsetProperties, final ServiceInfo info) {
+    private static void logUnusedProperties(final Map<String, ?> unsetProperties, final ServiceInfo info) {
         Logger logger = null;
         for (final String property : unsetProperties.keySet()) {
             //TODO: DMB: Make more robust later
@@ -2956,8 +3004,16 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             if (logger == null) {
                 logger = SystemInstance.get().getComponent(Assembler.class).logger;
             }
-            logger.getChildLogger("service").warning("unusedProperty", property, info.id);
+            unusedProperty(info.id, logger, property);
         }
+    }
+
+    private static void unusedProperty(final String id, final Logger parentLogger, final String property) {
+        parentLogger.getChildLogger("service").warning("unusedProperty", property, id);
+    }
+
+    private static void unusedProperty(final String id, final String property) {
+        unusedProperty(id, SystemInstance.get().getComponent(Assembler.class).logger, property);
     }
 
     public static ObjectRecipe prepareRecipe(final ServiceInfo info) {
