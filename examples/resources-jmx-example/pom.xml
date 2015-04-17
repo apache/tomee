@@ -30,9 +30,8 @@
   
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.openejb>4.7.2-SNAPSHOT</version.openejb>
-    <version.tomee>1.7.2-SNAPSHOT</version.tomee>
-    <version.openjpa>2.3.0</version.openjpa>
+    <version.openejb>5.0.0-SNAPSHOT</version.openejb>
+    <version.tomee>2.0.0-SNAPSHOT</version.tomee>
   </properties>
   
   <repositories>
@@ -64,8 +63,8 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.1</version>
           <configuration>
-            <source>1.6</source>
-            <target>1.6</target>
+            <source>1.7</source>
+            <target>1.7</target>
           </configuration>
         </plugin>
         <plugin>
@@ -93,15 +92,14 @@
       <dependency>
         <groupId>org.apache.openejb</groupId>
         <artifactId>javaee-api</artifactId>
-        <version>6.0-6</version>
+        <version>7.0-SNAPSHOT</version>
         <scope>provided</scope>
       </dependency>
       <!-- Test dependencies -->
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>4.11</version>
-        <type>jar</type>
+        <version>4.12</version>
         <scope>test</scope>
       </dependency>
     </dependencies>
