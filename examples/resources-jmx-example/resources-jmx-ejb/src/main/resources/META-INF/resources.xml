@@ -21,14 +21,27 @@
 <Resources>
   <Resource id="Hello" class-name="org.superbiz.resource.jmx.factory.JMXBeanCreator" factory-name="create">
     code org.superbiz.resource.jmx.resources.Hello
+    interface org.superbiz.resource.jmx.resources.HelloMBean
     name superbiz.test:name=Hello
-    count 20
+    prefix mbean
+    mbean.Count 20
   </Resource>
 
+  <!-- no prefix, but implied attributes are skipped, so additional properties should not appear in the map -->
+  <Resource id="Hello2" class-name="org.superbiz.resource.jmx.factory.JMXBeanCreator" factory-name="create">
+    code org.superbiz.resource.jmx.resources.Hello
+    interface org.superbiz.resource.jmx.resources.HelloMBean
+    name superbiz.test:name=Hello2
+    SkipImplicitAttributes true
+    Count 20
+  </Resource>
+
+
   <Resource id="Alternative" class-name="org.superbiz.resource.jmx.resources.Alternative">
-    code org.superbiz.resource.jmx.resources.Alternative
+    interface org.superbiz.resource.jmx.resources.AlternativeMBean
     name superbiz.test:name=Alternative
-    count 20
+    prefix mbean
+    mbean.Count 20
   </Resource>
 
 </Resources>
