@@ -18,8 +18,8 @@ package org.apache.openejb.tck.cdi.tomee.embedded;
 
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.context.AbstractContext;
-import org.apache.webbeans.context.ContextFactory;
 import org.apache.webbeans.context.RequestContext;
+import org.apache.webbeans.spi.ContextsService;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.context.RequestScoped;
@@ -30,14 +30,14 @@ import javax.enterprise.context.RequestScoped;
 public class ContextsImpl implements org.jboss.jsr299.tck.spi.Contexts<AbstractContext> {
 
     public AbstractContext getRequestContext() {
-        ContextFactory contextFactory = WebBeansContext.currentInstance().getContextFactory();
-        RequestContext ctx = (RequestContext) contextFactory.getStandardContext(RequestScoped.class);
+        ContextsService contextFactory = WebBeansContext.currentInstance().getContextsService();
+        RequestContext ctx = (RequestContext) contextFactory.getCurrentContext(RequestScoped.class);
 
         if (ctx == null) {
-            contextFactory.initRequestContext(null);
+            contextFactory.startContext(RequestScoped.class, null);
         }
 
-        return (AbstractContext) contextFactory.getStandardContext(RequestScoped.class);
+        return (AbstractContext) contextFactory.getCurrentContext(RequestScoped.class);
     }
 
     public void setActive(AbstractContext context) {
@@ -50,8 +50,8 @@ public class ContextsImpl implements org.jboss.jsr299.tck.spi.Contexts<AbstractC
     }
 
     public AbstractContext getDependentContext() {
-        ContextFactory contextFactory = WebBeansContext.currentInstance().getContextFactory();
-        return (AbstractContext) contextFactory.getStandardContext(Dependent.class);
+        ContextsService contextFactory = WebBeansContext.currentInstance().getContextsService();
+        return (AbstractContext) contextFactory.getCurrentContext(Dependent.class);
     }
 
     public void destroyContext(AbstractContext context) {
