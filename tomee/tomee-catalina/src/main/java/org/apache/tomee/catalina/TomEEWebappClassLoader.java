@@ -18,6 +18,7 @@ package org.apache.tomee.catalina;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
+import org.apache.catalina.LifecycleState;
 import org.apache.catalina.WebResource;
 import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.WebResourceSet;
@@ -255,6 +256,13 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
 
     public void internalDestroy() {
         try {
+            if (!stopped) {
+                try {
+                    internalStop();
+                } catch (final LifecycleException e) {
+                    // no-op
+                }
+            }
             super.destroy();
         } finally {
             cleanUpClassLoader();

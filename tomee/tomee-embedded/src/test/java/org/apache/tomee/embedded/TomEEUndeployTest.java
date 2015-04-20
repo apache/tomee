@@ -109,6 +109,7 @@ public class TomEEUndeployTest {
     private static void createWebapp(final File app) throws IOException {
         Files.mkdirs(app);
         IO.copy(new ByteArrayInputStream("test".getBytes()), new File(app, "index.html"));
+        Files.mkdirs(new File(app, "WEB-INF"));
         assertTrue(app.exists());
     }
 
