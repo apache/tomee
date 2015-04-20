@@ -28,7 +28,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.concurrent.locks.ReentrantLock;
 
 // TODO: look SM usage, find a better name
 public class URLClassLoaderFirst extends URLClassLoader {
