@@ -450,7 +450,11 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
                 // topics need a clientId and subscriptionName
                 if ("javax.jms.Topic".equals(destinationType)) {
-                    if (!properties.containsKey("clientId")) {
+                    if (Boolean.parseBoolean(
+                            SystemInstance.get().getProperty(
+                                    "openejb.activemq.deploymentId-as-clientId",
+                                    ejbModule.getProperties().getProperty("openejb.activemq.deploymentId-as-clientId", "true")))
+                            && !properties.containsKey("clientId")) {
                         mdb.getActivationConfig().addProperty("clientId", ejbDeployment.getDeploymentId());
                     }
                     if (!properties.containsKey("subscriptionName")) {
