@@ -28,6 +28,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.superbiz.resource.jmx.resources.AlternativeMBean;
 import org.superbiz.resource.jmx.resources.HelloMBean;
 
 import javax.annotation.Resource;
@@ -46,6 +47,9 @@ public class JMXTest {
     @EJB
     private TestEjb ejb;
 
+    @EJB
+    private AlternativeEjb alternativeEjb;
+
     @Deployment
     public static EnterpriseArchive createDeployment() {
 
@@ -62,22 +66,22 @@ public class JMXTest {
     }
 
     @Test
-    public void test() throws Exception {
+    public void testFactory() throws Exception {
         final MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
         final ObjectName objectName = new ObjectName("superbiz.test:name=Hello");
 
         Assert.assertNotNull(ejb);
         
-        Assert.assertEquals(0, mbs.getAttribute(objectName, "Count"));
-        Assert.assertEquals(0, ejb.getCount());
+        Assert.assertEquals(20, mbs.getAttribute(objectName, "Count"));
+        Assert.assertEquals(20, ejb.getCount());
         
         mbs.invoke(objectName, "increment", new Object[0], new String[0]);
-        Assert.assertEquals(1, mbs.getAttribute(objectName, "Count"));
-        Assert.assertEquals(1, ejb.getCount());
+        Assert.assertEquals(21, mbs.getAttribute(objectName, "Count"));
+        Assert.assertEquals(21, ejb.getCount());
         
         ejb.increment();
-        Assert.assertEquals(2, mbs.getAttribute(objectName, "Count"));
-        Assert.assertEquals(2, ejb.getCount());
+        Assert.assertEquals(22, mbs.getAttribute(objectName, "Count"));
+        Assert.assertEquals(22, ejb.getCount());
 
         Attribute attribute = new Attribute("Count", 12345);
         mbs.setAttribute(objectName, attribute);
@@ -90,6 +94,54 @@ public class JMXTest {
 
         Assert.assertEquals("Hello, world", mbs.invoke(objectName, "greet", new Object[] { "world" }, new String[] { String.class.getName() }));
         Assert.assertEquals("Hello, world", ejb.greet("world"));
+    }
+
+    @Test
+    public void testFactorySkipImpliedAttributes() throws Exception {
+        final MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+        final ObjectName objectName = new ObjectName("superbiz.test:name=Hello2");
+
+        Assert.assertEquals(20, mbs.getAttribute(objectName, "Count"));
+
+        mbs.invoke(objectName, "increment", new Object[0], new String[0]);
+        Assert.assertEquals(21, mbs.getAttribute(objectName, "Count"));
+
+        Attribute attribute = new Attribute("Count", 12345);
+        mbs.setAttribute(objectName, attribute);
+        Assert.assertEquals(12345, mbs.getAttribute(objectName, "Count"));
+
+        Assert.assertEquals("Hello, world", mbs.invoke(objectName, "greet", new Object[] { "world" }, new String[] { String.class.getName() }));
+    }
+
+    @Test
+    public void testPostConstruct() throws Exception {
+        final MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+        final ObjectName objectName = new ObjectName("superbiz.test:name=Alternative");
+
+        Assert.assertNotNull(alternativeEjb);
+
+        Assert.assertEquals(20, mbs.getAttribute(objectName, "Count"));
+        Assert.assertEquals(20, alternativeEjb.getCount());
+
+        mbs.invoke(objectName, "increment", new Object[0], new String[0]);
+        Assert.assertEquals(21, mbs.getAttribute(objectName, "Count"));
+        Assert.assertEquals(21, alternativeEjb.getCount());
+
+        alternativeEjb.increment();
+        Assert.assertEquals(22, mbs.getAttribute(objectName, "Count"));
+        Assert.assertEquals(22, alternativeEjb.getCount());
+
+        Attribute attribute = new Attribute("Count", 12345);
+        mbs.setAttribute(objectName, attribute);
+        Assert.assertEquals(12345, mbs.getAttribute(objectName, "Count"));
+        Assert.assertEquals(12345, alternativeEjb.getCount());
+
+        alternativeEjb.setCount(23456);
+        Assert.assertEquals(23456, mbs.getAttribute(objectName, "Count"));
+        Assert.assertEquals(23456, alternativeEjb.getCount());
+
+        Assert.assertEquals("Hello, world", mbs.invoke(objectName, "greet", new Object[] { "world" }, new String[] { String.class.getName() }));
+        Assert.assertEquals("Hello, world", alternativeEjb.greet("world"));
     }
 
     @Singleton
@@ -113,6 +165,30 @@ public class JMXTest {
 
         public int getCount() {
             return helloMBean.getCount();
+        }
+    }
+
+    @Singleton
+    @Lock(LockType.READ)
+    public static class AlternativeEjb {
+
+        @Resource(name="jmx/Alternative")
+        private AlternativeMBean alternativeMBean;
+
+        public String greet(String name) {
+            return alternativeMBean.greet(name);
+        }
+
+        public void setCount(int count) {
+            alternativeMBean.setCount(count);
+        }
+
+        public void increment() {
+            alternativeMBean.increment();
+        }
+
+        public int getCount() {
+            return alternativeMBean.getCount();
         }
     }
 }

@@ -17,12 +17,19 @@
  * under the License.
  */
 
-package org.superbiz.resource.jmx.factory;
+package org.superbiz.resource.jmx.resources;
 
+import org.superbiz.resource.jmx.factory.Converter;
+import org.superbiz.resource.jmx.factory.MBeanRegistrationException;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.management.Attribute;
+import javax.management.InstanceNotFoundException;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanInfo;
 import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.StandardMBean;
 import java.lang.management.ManagementFactory;
@@ -31,7 +38,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-public class JMXBeanCreator {
+public class Alternative implements AlternativeMBean {
 
     private final Map<String, Class<?>> primitives = new HashMap<String, Class<?>>() {
         {
@@ -46,24 +53,43 @@ public class JMXBeanCreator {
         }
     };
 
-    private static Logger LOGGER = Logger.getLogger(JMXBeanCreator.class.getName());
+    private static Logger LOGGER = Logger.getLogger(Alternative.class.getName());
     private Properties properties;
 
-    public <T> Object create() throws MBeanRegistrationException {
-        final String code = (String) properties.remove("code");
-        final String name = (String) properties.remove("name");
-        final String iface = (String) properties.remove("interface");
-        final String prefix = (String) properties.remove("prefix");
+    @PreDestroy
+    public void preDestroy() throws MBeanRegistrationException {
+        final String name = properties.getProperty("name");
+        requireNotNull(name);
 
-        requireNotNull(code);
+        try {
+            final MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+            final ObjectName objectName = new ObjectName(name);
+            mbs.unregisterMBean(objectName);
+        } catch (final MalformedObjectNameException e) {
+            LOGGER.severe("Malformed MBean name: " + name);
+            throw new MBeanRegistrationException(e);
+        } catch (final javax.management.MBeanRegistrationException e) {
+            LOGGER.severe("Error unregistering " + name);
+            throw new MBeanRegistrationException(e);
+        } catch (InstanceNotFoundException e) {
+            LOGGER.severe("Error unregistering " + name);
+            throw new MBeanRegistrationException(e);
+        }
+    }
+
+    @PostConstruct
+    public <T> void postConstruct() throws MBeanRegistrationException {
+
+        final String name = properties.getProperty("name");
+        final String iface = properties.getProperty("interface");
+        final String prefix = properties.getProperty("prefix");
+
         requireNotNull(name);
         requireNotNull(iface);
 
         try {
-            final Class<? extends T> cls = (Class<? extends T>) Class.forName(code, true, Thread.currentThread().getContextClassLoader());
             final Class<T> ifaceCls = (Class<T>) Class.forName(iface, true, Thread.currentThread().getContextClassLoader());
-            final T instance = (T) cls.newInstance();
-            final StandardMBean mBean = new StandardMBean(instance, ifaceCls);
+            final StandardMBean mBean = new StandardMBean((T) this, ifaceCls);
 
             for (Object property : properties.keySet()) {
                 String attributeName = (String) property;
@@ -86,12 +112,9 @@ public class JMXBeanCreator {
 
             final MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
             final ObjectName objectName = new ObjectName(name);
-            mbs.registerMBean(instance, objectName);
-
-            return instance;
+            mbs.registerMBean(this, objectName);
 
         } catch (final Exception e) {
-            e.printStackTrace();
             LOGGER.severe("Unable to register mbean " + e.getMessage());
             throw new MBeanRegistrationException(e);
         }
@@ -131,5 +154,31 @@ public class JMXBeanCreator {
 
     public void setProperties(final Properties properties) {
         this.properties = properties;
+    }
+
+    private int count = 0;
+
+    @Override
+    public String greet(String name) {
+        if (name == null) {
+            throw new NullPointerException("Name cannot be null");
+        }
+
+        return "Hello, " + name;
+    }
+
+    @Override
+    public int getCount() {
+        return count;
+    }
+
+    @Override
+    public void setCount(int value) {
+        count = value;
+    }
+
+    @Override
+    public void increment() {
+        count++;
     }
 }

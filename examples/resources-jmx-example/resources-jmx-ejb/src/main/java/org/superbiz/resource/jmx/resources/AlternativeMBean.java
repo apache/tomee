@@ -17,34 +17,16 @@
  * under the License.
  */
 
-package org.superbiz.resource.jmx.factory;
+package org.superbiz.resource.jmx.resources;
 
-import java.beans.PropertyEditor;
-import java.beans.PropertyEditorManager;
+public interface AlternativeMBean {
 
-public class Editors {
+    public String greet(final String name);
 
-    private Editors() {
-        // no-op
-    }
+    public int getCount();
 
-    public static PropertyEditor get(final Class<?> type) {
-        final PropertyEditor editor = PropertyEditorManager.findEditor(type);
+    public void setCount(int count);
 
-        if (editor != null) return editor;
-
-        final Class<Editors> c = Editors.class;
-
-        try {
-            final Class<?> editorClass = c.getClassLoader().loadClass(c.getName().replace("Editors", type.getSimpleName() + "Editor"));
-
-            PropertyEditorManager.registerEditor(type, editorClass);
-
-            return PropertyEditorManager.findEditor(type);
-        } catch (final ClassNotFoundException e) {
-            return null;
-        }
-    }
-
+    public void increment();
 
 }
