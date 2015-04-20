@@ -253,6 +253,14 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
         return URLClassLoaderFirst.shouldSkip(name);
     }
 
+    public void internalDestroy() {
+        try {
+            super.destroy();
+        } finally {
+            cleanUpClassLoader();
+        }
+    }
+
     public void internalStop() throws LifecycleException {
         if (stopped) {
             return;
@@ -264,9 +272,10 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
         thread.setContextClassLoader(this);
         try {
             super.stop();
-            super.destroy();
+            // super.destroy();
             if (webResourceRoot != null) {
                 webResourceRoot.internalStop();
+                webResourceRoot = null;
             }
             stopped = true;
         } finally {
@@ -445,11 +454,7 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
     @Override
     public void destroy() {
         if (forceStopPhase) {
-            try {
-                super.destroy();
-            } finally {
-                cleanUpClassLoader();
-            }
+            internalDestroy();
         }
     }
 

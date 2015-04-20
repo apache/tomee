@@ -320,8 +320,15 @@ public class LazyStopStandardRoot implements WebResourceRoot, JmxEnabled {
         // delegate.destroy();
     }
 
+    public void internalDestroy() throws LifecycleException {
+        delegate.destroy();
+    }
+
     public void internalStop() throws LifecycleException {
         delegate.stop();
-        delegate.destroy();
+    }
+
+    public WebResourceRoot getDelegate() {
+        return delegate;
     }
 }

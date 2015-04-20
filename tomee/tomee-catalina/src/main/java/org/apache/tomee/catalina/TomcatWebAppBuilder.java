@@ -977,6 +977,11 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      */
     @Override
     public void beforeStart(final StandardContext standardContext) {
+        if (standardContext.getResources() != null && LazyStopStandardRoot.class.isInstance(standardContext.getResources())) {
+            // reset after reload
+            Reflections.set(standardContext, "resources",  LazyStopStandardRoot.class.cast(standardContext.getResources()).getDelegate());
+        }
+
         final ServletContext sc = standardContext.getServletContext();
         if (sc != null && !SystemInstance.get().getOptions().get(OPENEJB_JSESSION_ID_SUPPORT, true)) {
             final Set<SessionTrackingMode> defaultTrackingModes = sc.getEffectiveSessionTrackingModes();
@@ -1932,7 +1937,27 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      */
     @Override
     public void destroy(final StandardContext standardContext) {
-        //No operation
+        final Loader standardContextLoader = standardContext.getLoader();
+        if (LazyStopLoader.class.isInstance(standardContextLoader)) {
+            final Loader delegate = LazyStopLoader.class.cast(standardContextLoader).getDelegateLoader();
+            if (TomEEWebappLoader.class.isInstance(delegate)) {
+                final TomEEWebappLoader webappLoader = TomEEWebappLoader.class.cast(delegate);
+                final ClassLoader loader = webappLoader.internalLoader();
+                webappLoader.clearLoader();
+                if (TomEEWebappClassLoader.class.isInstance(loader)) {
+                    TomEEWebappClassLoader.class.cast(loader).internalDestroy();
+                }
+            }
+        }
+
+        final WebResourceRoot root = standardContext.getResources();
+        if (LazyStopStandardRoot.class.isInstance(root)) {
+            try {
+                LazyStopStandardRoot.class.cast(root).internalDestroy();
+            } catch (final LifecycleException e) {
+                throw new IllegalStateException(e);
+            }
+        }
     }
 
     /**

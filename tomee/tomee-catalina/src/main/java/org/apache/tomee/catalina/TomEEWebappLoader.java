@@ -43,6 +43,8 @@ import java.io.File;
 public class TomEEWebappLoader extends WebappLoader {
     public static final boolean SKIP_BACKGROUND_PROCESS = "true".equals(SystemInstance.get().getProperty("tomee.classloader.skip-background-process", "false"));
 
+    private volatile ClassLoader loader;
+
     @Override
     public void backgroundProcess() {
         if (SKIP_BACKGROUND_PROCESS) {
@@ -66,6 +68,20 @@ public class TomEEWebappLoader extends WebappLoader {
     @Override
     public boolean modified() {
         return !SKIP_BACKGROUND_PROCESS && super.modified();
+    }
+
+    @Override
+    protected void stopInternal() throws LifecycleException {
+        loader = getClassLoader();
+        super.stopInternal();
+    }
+
+    public void clearLoader() {
+        loader = null;
+    }
+
+    public ClassLoader internalLoader() {
+        return loader;
     }
 
     @Override
