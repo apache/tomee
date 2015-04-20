@@ -106,6 +106,7 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URLs;
 import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
+import org.apache.openejb.util.reflection.Reflections;
 import org.apache.tomcat.InstanceManager;
 import org.apache.tomcat.JarScanFilter;
 import org.apache.tomcat.util.descriptor.web.ApplicationParameter;
@@ -130,22 +131,6 @@ import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.spi.adaptor.ELAdaptor;
 import org.omg.CORBA.ORB;
 
-import javax.ejb.spi.HandleDelegate;
-import javax.el.ELResolver;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NameNotFoundException;
-import javax.naming.NamingException;
-import javax.naming.Reference;
-import javax.naming.StringRefAddr;
-import javax.servlet.ServletContext;
-import javax.servlet.SessionTrackingMode;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspApplicationContext;
-import javax.servlet.jsp.JspFactory;
-import javax.sql.DataSource;
-import javax.transaction.TransactionManager;
-import javax.transaction.TransactionSynchronizationRegistry;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -169,6 +154,22 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import javax.ejb.spi.HandleDelegate;
+import javax.el.ELResolver;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NameNotFoundException;
+import javax.naming.NamingException;
+import javax.naming.Reference;
+import javax.naming.StringRefAddr;
+import javax.servlet.ServletContext;
+import javax.servlet.SessionTrackingMode;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspApplicationContext;
+import javax.servlet.jsp.JspFactory;
+import javax.sql.DataSource;
+import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
 
 import static java.util.Arrays.asList;
 import static org.apache.tomee.catalina.Contexts.warPath;
@@ -1510,7 +1511,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
         // skip undeployment if restarting
         final TomEEWebappClassLoader tomEEWebappClassLoader = lazyClassLoader(
-            org.apache.catalina.Context.class.isInstance(child)? org.apache.catalina.Context.class.cast(child) : null);
+                org.apache.catalina.Context.class.isInstance(child) ? org.apache.catalina.Context.class.cast(child) : null);
         if (tomEEWebappClassLoader != null && tomEEWebappClassLoader.isRestarting()) {
             return true;
         }
@@ -1846,9 +1847,20 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      */
     @Override
     public void beforeStop(final StandardContext standardContext) {
+        final ClassLoader classLoader = standardContext.getLoader().getClassLoader();
+
         // if it is not our custom loader clean up now otherwise wait afterStop
         if (!(standardContext.getLoader() instanceof LazyStopLoader)) {
-            jsfClasses.remove(standardContext.getLoader().getClassLoader());
+            jsfClasses.remove(classLoader);
+        }
+
+        // ensure we can stop it lazily - before all was in the classloader, now we align webresourceroot on the classloader config
+        // we wrap it only here to not modify at all runtime
+        if (!LazyStopStandardRoot.class.isInstance(standardContext.getResources())
+                && TomEEWebappClassLoader.class.isInstance(classLoader) && !TomEEWebappClassLoader.class.cast(classLoader).isForceStopPhase()) {
+            final LazyStopStandardRoot standardRoot = new LazyStopStandardRoot(standardContext.getResources());
+            Reflections.set(standardContext, "resources", standardRoot);
+            TomEEWebappClassLoader.class.cast(classLoader).setWebResourceRoot(standardRoot); // cause Assembler relies on the classloader only
         }
     }
 

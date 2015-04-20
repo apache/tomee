@@ -80,7 +80,7 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
     public static final String CLASS_EXTENSION = ".class";
 
     private boolean restarting;
-    private boolean forceStopPhase = Boolean.parseBoolean(SystemInstance.get().getProperty("tomee.webappclassloader.force-stop-phase", "true"));
+    private boolean forceStopPhase = Boolean.parseBoolean(SystemInstance.get().getProperty("tomee.webappclassloader.force-stop-phase", "false"));
     private ClassLoaderConfigurer configurer;
     private final boolean isEar;
     private final ClassLoader containerClassLoader;
@@ -89,6 +89,7 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
     private Collection<File> additionalRepos;
     private volatile boolean stopped = false;
     private final Map<String, Boolean> filterTempCache = new HashMap<>(); // used only in sync block + isEar
+    private volatile LazyStopStandardRoot webResourceRoot;
 
     public TomEEWebappClassLoader() {
         hashCode = construct();
@@ -263,9 +264,16 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
         thread.setContextClassLoader(this);
         try {
             super.stop();
+            super.destroy();
+            if (webResourceRoot != null) {
+                webResourceRoot.internalStop();
+            }
             stopped = true;
         } finally {
             thread.setContextClassLoader(loader);
+            if (!forceStopPhase) {
+                cleanUpClassLoader();
+            }
         }
     }
 
@@ -279,6 +287,10 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
 
     public boolean isRestarting() {
         return restarting;
+    }
+
+    public boolean isForceStopPhase() {
+        return forceStopPhase;
     }
 
     public boolean isStopped() {
@@ -432,13 +444,19 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
 
     @Override
     public void destroy() {
-        try {
-            super.destroy();
-        } finally {
-            final LogManager lm = LogManager.getLogManager();
-            if (ClassLoaderLogManager.class.isInstance(lm)) { // weak ref but ensure it is really removed otherwise in some cases we leak
-                Map.class.cast(Reflections.get(lm, "classLoaderLoggers")).remove(this);
+        if (forceStopPhase) {
+            try {
+                super.destroy();
+            } finally {
+                cleanUpClassLoader();
             }
+        }
+    }
+
+    private void cleanUpClassLoader() {
+        final LogManager lm = LogManager.getLogManager();
+        if (ClassLoaderLogManager.class.isInstance(lm)) { // weak ref but ensure it is really removed otherwise in some cases we leak
+            Map.class.cast(Reflections.get(lm, "classLoaderLoggers")).remove(this);
         }
     }
 
@@ -453,6 +471,10 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
     public static void cleanContext() {
         INIT_CONFIGURER.remove();
         CONTEXT.remove();
+    }
+
+    public void setWebResourceRoot(LazyStopStandardRoot webResourceRoot) {
+        this.webResourceRoot = webResourceRoot;
     }
 
     private static class NoClassClassLoader extends ClassLoader {
