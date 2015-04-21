@@ -56,24 +56,32 @@ public class TransactionalTest {
 
     @Test(expected = TransactionalException.class)
     public void mandatoryKO() {
-        bean.withoutATxIllThrowAnException();
+        for (int i = 0; i < 2; i++) {
+            bean.withoutATxIllThrowAnException();
+        }
     }
 
     @Test
     public void mandatoryOk() throws Exception {
-        OpenEJB.getTransactionManager().begin();
-        bean.withoutATxIllThrowAnException();
-        OpenEJB.getTransactionManager().rollback();
+        for (int i = 0; i < 2; i++) {
+            OpenEJB.getTransactionManager().begin();
+            bean.withoutATxIllThrowAnException();
+            OpenEJB.getTransactionManager().rollback();
+        }
     }
 
     @Test
     public void requiredStartsTx() throws Exception {
-        bean.required(); // asserts in the method
+        for (int i = 0; i < 2; i++) {
+            bean.required(); // asserts in the method
+        }
     }
 
     @Test
     public void utAllowedWhenThereIsNoTx() throws Exception {
-        bean.notSupportedUtOk();
+        for (int i = 0; i < 2; i++) {
+            bean.notSupportedUtOk();
+        }
     }
 
     @Test(expected = IllegalStateException.class)
@@ -83,42 +91,179 @@ public class TransactionalTest {
 
     @Test
     public void rollbackException() throws Exception {
-        final AtomicInteger status = new AtomicInteger();
-        final TransactionManager transactionManager = OpenEJB.getTransactionManager();
-        transactionManager.begin();
-        transactionManager.getTransaction().registerSynchronization(new Synchronization() {
-            @Override
-            public void beforeCompletion() {
+        for (int i = 0; i < 2; i++) {
+            final AtomicInteger status = new AtomicInteger();
+            final TransactionManager transactionManager = OpenEJB.getTransactionManager();
+            transactionManager.begin();
+            transactionManager.getTransaction().registerSynchronization(new Synchronization() {
+                @Override
+                public void beforeCompletion() {
+                    // no-op
+                }
+
+                @Override
+                public void afterCompletion(int state) {
+                    status.set(state);
+                }
+            });
+            try {
+                bean.anException();
+                fail();
+            } catch (final TransactionalException e) {
                 // no-op
             }
-
-            @Override
-            public void afterCompletion(int state) {
-                status.set(state);
-            }
-        });
-        try {
-            bean.anException();
-            fail();
-        } catch (final TransactionalException e) {
-            // no-op
+            OpenEJB.getTransactionManager().rollback();
+            assertEquals(Status.STATUS_ROLLEDBACK, status.get());
         }
-        OpenEJB.getTransactionManager().rollback();
-        assertEquals(Status.STATUS_ROLLEDBACK, status.get());
+    }
+
+    @Test
+    public void runtimeException() throws Exception {
+        for (int i = 0; i < 2; i++) {
+            final AtomicInteger status = new AtomicInteger();
+            try {
+                bean.runtimeEx(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            OpenEJB.getTransactionManager().getTransaction().registerSynchronization(new Synchronization() {
+                                @Override
+                                public void beforeCompletion() {
+                                    // no-op
+                                }
+
+                                @Override
+                                public void afterCompletion(int state) {
+                                    status.set(state);
+                                }
+                            });
+                        } catch (final RollbackException | SystemException e) {
+                            fail();
+                        }
+                    }
+                });
+                fail();
+            } catch (final TransactionalException e) {
+                // no-op
+            }
+            assertEquals(Status.STATUS_ROLLEDBACK, status.get());
+        }
+    }
+
+    @Test
+    public void checked() throws Exception {
+        for (int i = 0; i < 2; i++) {
+            final AtomicInteger status = new AtomicInteger();
+            try {
+                bean.checked(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            OpenEJB.getTransactionManager().getTransaction().registerSynchronization(new Synchronization() {
+                                @Override
+                                public void beforeCompletion() {
+                                    // no-op
+                                }
+
+                                @Override
+                                public void afterCompletion(int state) {
+                                    status.set(state);
+                                }
+                            });
+                        } catch (final RollbackException | SystemException e) {
+                            fail();
+                        }
+                    }
+                });
+                fail();
+            } catch (final TransactionalException e) {
+                // no-op
+            }
+            assertEquals(Status.STATUS_COMMITTED, status.get());
+        }
+    }
+
+    @Test
+    public void runtimeChecked() throws Exception {
+        for (int i = 0; i < 2; i++) {
+            final AtomicInteger status = new AtomicInteger();
+            try {
+                bean.runtimeChecked(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            OpenEJB.getTransactionManager().getTransaction().registerSynchronization(new Synchronization() {
+                                @Override
+                                public void beforeCompletion() {
+                                    // no-op
+                                }
+
+                                @Override
+                                public void afterCompletion(int state) {
+                                    status.set(state);
+                                }
+                            });
+                        } catch (final RollbackException | SystemException e) {
+                            fail();
+                        }
+                    }
+                });
+                fail();
+            } catch (final TransactionalException e) {
+                // no-op
+            }
+            assertEquals(Status.STATUS_COMMITTED, status.get());
+        }
+    }
+
+    @Test
+    public void classLevel() throws Exception {
+        for (int i = 0; i < 2; i++) {
+            final AtomicInteger status = new AtomicInteger();
+            try {
+                bean.classLevel(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            OpenEJB.getTransactionManager().getTransaction().registerSynchronization(new Synchronization() {
+                                @Override
+                                public void beforeCompletion() {
+                                    // no-op
+                                }
+
+                                @Override
+                                public void afterCompletion(int state) {
+                                    status.set(state);
+                                }
+                            });
+                        } catch (final RollbackException | SystemException e) {
+                            fail();
+                        }
+                    }
+                });
+                fail();
+            } catch (final TransactionalException e) {
+                // no-op
+            }
+            assertEquals(Status.STATUS_COMMITTED, status.get());
+        }
     }
 
     @Test
     public void dontRollbackException() throws Exception {
-        final AtomicInteger status = new AtomicInteger();
-        try {
-            bean.anotherException(status);
-            fail();
-        } catch (final TransactionalException e) {
-            // no-op
+        for (int i = 0; i < 2; i++) {
+            final AtomicInteger status = new AtomicInteger();
+            try {
+                bean.anotherException(status);
+                fail();
+            } catch (final TransactionalException e) {
+                // no-op
+            }
+            assertEquals(Status.STATUS_COMMITTED, status.get());
         }
-        assertEquals(Status.STATUS_COMMITTED, status.get());
     }
 
+    @Transactional(value = REQUIRED, rollbackOn = AnCheckedException.class)
     public static class TxBean {
         @Resource
         private UserTransaction ut;
@@ -167,6 +312,30 @@ public class TransactionalTest {
             throw new AnException();
         }
 
+        @Transactional(REQUIRED)
+        public void runtimeEx(Runnable runnable) {
+            runnable.run();
+            throw new AnException();
+        }
+
+        @Transactional(REQUIRED)
+        public void classLevel(Runnable runnable) throws AnCheckedException {
+            runnable.run();
+            throw new AnCheckedException();
+        }
+
+        @Transactional(REQUIRED)
+        public void checked(Runnable runnable) throws AnCheckedException {
+            runnable.run();
+            throw new AnCheckedException();
+        }
+
+        @Transactional(REQUIRED)
+        public void runtimeChecked(Runnable runnable) throws AnException {
+            runnable.run();
+            throw new AnException();
+        }
+
         @Transactional(value = REQUIRED, dontRollbackOn = AnotherException.class)
         public void anotherException(final AtomicInteger status) {
             try {
@@ -188,8 +357,9 @@ public class TransactionalTest {
         }
     }
 
+    public static class AnCheckedException extends Exception {
+    }
     public static class AnException extends RuntimeException {
-
     }
     public static class AnotherException extends RuntimeException {
 

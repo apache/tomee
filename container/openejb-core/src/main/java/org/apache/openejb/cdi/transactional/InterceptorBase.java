@@ -21,16 +21,26 @@ import org.apache.openejb.OpenEJB;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.core.CoreUserTransaction;
 import org.apache.openejb.core.transaction.TransactionPolicy;
+import org.apache.webbeans.config.WebBeansContext;
 
+import javax.enterprise.inject.spi.AnnotatedMethod;
+import javax.enterprise.inject.spi.AnnotatedType;
+import javax.enterprise.inject.spi.CDI;
 import javax.interceptor.InvocationContext;
 import javax.transaction.TransactionManager;
 import javax.transaction.Transactional;
 import javax.transaction.TransactionalException;
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static java.util.Arrays.asList;
 
 public abstract class InterceptorBase implements Serializable {
     private static final IllegalStateException ILLEGAL_STATE_EXCEPTION = new IllegalStateException("Can't use UserTransaction from @Transaction call");
+
+    private transient Map<Class<?>, Boolean> rollback = new ConcurrentHashMap<>();
 
     protected Object intercept(final InvocationContext ic) throws Exception {
         Exception error = null;
@@ -63,15 +73,32 @@ public abstract class InterceptorBase implements Serializable {
 
             if (policy != null) {
                 if (error != null) {
-                    // computed lazily but we could cache it later for sure if that's really a normal case
-                    final Method method = ic.getMethod();
-                    Transactional tx = method.getAnnotation(Transactional.class);
-                    if (tx == null) {
-                        tx = method.getDeclaringClass().getAnnotation(Transactional.class);
-                    }
-                    if (tx != null) { // TODO: find Bean instead of reflection
-                        if (new ExceptionPriotiryRules(tx.rollbackOn(), tx.dontRollbackOn()).accept(error)) {
+                    final Class<? extends Exception> errorClass = error.getClass();
+                    Boolean doRollback = rollback.get(errorClass);
+                    if (doRollback != null) {
+                        if (doRollback) {
                             policy.setRollbackOnly();
+                        }
+                    } else {
+                        // computed lazily but we could cache it later for sure if that's really a normal case
+                        final Method method = ic.getMethod();
+                        final AnnotatedType<?> annotatedType = CDI.current().getBeanManager().createAnnotatedType(method.getDeclaringClass());
+                        Transactional tx = null;
+                        for (final AnnotatedMethod<?> m : annotatedType.getMethods()) {
+                            if (method.equals(m.getJavaMember())) {
+                                tx = m.getAnnotation(Transactional.class);
+                                break;
+                            }
+                        }
+                        if (tx == null) {
+                            tx = annotatedType.getAnnotation(Transactional.class);
+                        }
+                        if (tx != null) {
+                            doRollback = new ExceptionPriotiryRules(tx.rollbackOn(), tx.dontRollbackOn()).accept(error, method.getExceptionTypes());
+                            rollback.putIfAbsent(errorClass, doRollback);
+                            if (doRollback) {
+                                policy.setRollbackOnly();
+                            }
                         }
                     }
                 }
@@ -99,7 +126,7 @@ public abstract class InterceptorBase implements Serializable {
             this.excludes = excludes;
         }
 
-        public boolean accept(final Exception e) {
+        public boolean accept(final Exception e, final Class<?>[] exceptionTypes) {
             if (e == null) {
                 return false;
             }
@@ -108,10 +135,9 @@ public abstract class InterceptorBase implements Serializable {
             final int excludeScore = contains(excludes, e);
 
             if (excludeScore < 0) {
-                return includeScore >= 0;
+                return includeScore >= 0 || isNotChecked(e, exceptionTypes);
             }
-
-            return includeScore >= 0 && includeScore - excludeScore <= 0;
+            return includeScore - excludeScore >= 0;
         }
 
         private static int contains(final Class<?>[] list, final Exception e) {
@@ -138,6 +164,9 @@ public abstract class InterceptorBase implements Serializable {
             }
             return score;
         }
-    }
 
+        private static boolean isNotChecked(final Exception e, final Class<?>[] exceptionTypes) {
+            return RuntimeException.class.isInstance(e) && (exceptionTypes.length == 0 || !asList(exceptionTypes).contains(e.getClass()));
+        }
+    }
 }
