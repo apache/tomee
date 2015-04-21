@@ -22,7 +22,6 @@ import org.apache.openejb.SystemException;
 import org.apache.openejb.core.CoreUserTransaction;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.webbeans.config.WebBeansContext;
 
 import javax.enterprise.inject.spi.AnnotatedMethod;
 import javax.enterprise.inject.spi.AnnotatedType;
@@ -33,7 +32,6 @@ import javax.transaction.Transactional;
 import javax.transaction.TransactionalException;
 import java.io.Serializable;
 import java.lang.reflect.Method;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
