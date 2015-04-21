@@ -21,6 +21,7 @@ import org.apache.openejb.OpenEJB;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.core.CoreUserTransaction;
 import org.apache.openejb.core.transaction.TransactionPolicy;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.webbeans.config.WebBeansContext;
 
 import javax.enterprise.inject.spi.AnnotatedMethod;
@@ -34,13 +35,15 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import static java.util.Arrays.asList;
 
 public abstract class InterceptorBase implements Serializable {
     private static final IllegalStateException ILLEGAL_STATE_EXCEPTION = new IllegalStateException("Can't use UserTransaction from @Transaction call");
+    private static final boolean HANDLE_EXCEPTION_ONLY_FOR_CLIENT = SystemInstance.get().getOptions().get("openejb.cdi.jta.exception.client-only", false);
 
-    private transient Map<Class<?>, Boolean> rollback = new ConcurrentHashMap<>();
+    private transient ConcurrentMap<Class<?>, Boolean> rollback = new ConcurrentHashMap<>();
 
     protected Object intercept(final InvocationContext ic) throws Exception {
         Exception error = null;
@@ -72,8 +75,8 @@ public abstract class InterceptorBase implements Serializable {
             }
 
             if (policy != null) {
-                if (error != null) {
-                    final Class<? extends Exception> errorClass = error.getClass();
+                if (error != null && (!HANDLE_EXCEPTION_ONLY_FOR_CLIENT || policy.isNewTransaction())) {
+                    final Class<?> errorClass = error.getClass();
                     Boolean doRollback = rollback.get(errorClass);
                     if (doRollback != null) {
                         if (doRollback) {
