@@ -2066,18 +2066,22 @@
   </dependencyManagement>
 
   <distributionManagement>
-    <!--You need to define 'server' entries in your settings.xml to gain access here-->
     <repository>
       <id>tomitribe.releases.https</id>
       <name>Tomitribe Release Distribution Repository</name>
-      <!--url>http://repository.tomitribe.com/service/local/staging/deploy/maven2</url-->
-      <url>http://repository.tomitribe.com/content/repositories/releases-tomitribe</url>
+      <!--<url>http://repository.tomitribe.com/content/repositories/releases-tomitribe</url>-->
+      <url>http://repository.tomitribe.com/service/local/staging/deploy/maven2</url>
     </repository>
+
     <snapshotRepository>
       <id>tomitribe.snapshots.https</id>
       <name>Tomitribe Development Snapshot Repository</name>
       <url>http://repository.tomitribe.com/content/repositories/snapshots-tomitribe</url>
     </snapshotRepository>
+    <site>
+      <id>openejb-website</id>
+      <url>scp://people.apache.org/www/tomee.apache.org/openejb/maven</url>
+    </site>
   </distributionManagement>
 
   <reporting>
