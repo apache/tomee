@@ -17,8 +17,8 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.api.configuration.AutoJPA;
-import org.apache.openejb.api.configuration.AutoJPAs;
+import org.apache.openejb.api.configuration.PersistenceUnitDefinition;
+import org.apache.openejb.api.configuration.PersistenceUnitDefinitions;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.jee.jpa.unit.TransactionType;
@@ -34,19 +34,19 @@ public class ConfigurationDeployer implements DynamicDeployer {
                 continue;
             }
 
-            for (final Class<?> configClass : module.getFinder().findAnnotatedClasses(AutoJPA.class)) {
-                configureJpa(appModule, configClass.getAnnotation(AutoJPA.class));
+            for (final Class<?> configClass : module.getFinder().findAnnotatedClasses(PersistenceUnitDefinition.class)) {
+                configureJpa(appModule, configClass.getAnnotation(PersistenceUnitDefinition.class));
             }
-            for (final Class<?> configClass : module.getFinder().findAnnotatedClasses(AutoJPAs.class)) {
-                for (final AutoJPA autoJPA : configClass.getAnnotation(AutoJPAs.class).value()) {
-                    configureJpa(appModule, autoJPA);
+            for (final Class<?> configClass : module.getFinder().findAnnotatedClasses(PersistenceUnitDefinitions.class)) {
+                for (final PersistenceUnitDefinition persistenceUnitDefinition : configClass.getAnnotation(PersistenceUnitDefinitions.class).value()) {
+                    configureJpa(appModule, persistenceUnitDefinition);
                 }
             }
         }
         return appModule;
     }
 
-    private void configureJpa(final AppModule appModule, final AutoJPA annotation) {
+    private void configureJpa(final AppModule appModule, final PersistenceUnitDefinition annotation) {
         if (annotation == null) {
             return;
         }

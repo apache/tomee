@@ -18,8 +18,8 @@
  */
 package org.apache.openejb.configuration;
 
-import org.apache.openejb.api.configuration.AutoJPA;
-import org.apache.openejb.api.configuration.AutoJPAs;
+import org.apache.openejb.api.configuration.PersistenceUnitDefinition;
+import org.apache.openejb.api.configuration.PersistenceUnitDefinitions;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.persistence.JtaEntityManager;
 import org.apache.openejb.testing.Classes;
@@ -39,7 +39,7 @@ import static org.junit.Assert.assertTrue;
 @SimpleLog
 @Classes(innerClassesAsBean = true)
 @RunWith(ApplicationComposer.class)
-public class AutoJPATest {
+public class PersistenceUnitDefinitionTest {
     @PersistenceContext(unitName = "jpa")
     private EntityManager em1;
 
@@ -53,9 +53,9 @@ public class AutoJPATest {
         assertTrue(JtaEntityManager.class.isInstance(em1));
     }
 
-    @AutoJPAs({
-        @AutoJPA,
-        @AutoJPA(unitName = "jpa2", jta = false)
+    @PersistenceUnitDefinitions({
+        @PersistenceUnitDefinition,
+        @PersistenceUnitDefinition(unitName = "jpa2", jta = false)
     })
     public static class MyConfig {
     }

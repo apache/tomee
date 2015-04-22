@@ -25,7 +25,7 @@ import javax.persistence.ValidationMode;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface AutoJPA {
+public @interface PersistenceUnitDefinition {
     String unitName() default "jpa";
     String provider() default "auto";
     String jtaDataSource() default "auto";

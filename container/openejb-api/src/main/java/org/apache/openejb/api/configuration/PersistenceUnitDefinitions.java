@@ -23,6 +23,6 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface AutoJPAs {
-    AutoJPA[] value() default {};
+public @interface PersistenceUnitDefinitions {
+    PersistenceUnitDefinition[] value() default {};
 }
