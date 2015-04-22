@@ -28,13 +28,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.concurrent.locks.ReentrantLock;
 
 // TODO: look SM usage, find a better name
 public class URLClassLoaderFirst extends URLClassLoader {
-
-    private static final ReentrantLock LOCK;
-
     // log4j is optional, moreover it will likely not work if not skipped and loaded by a temp classloader
     private static final boolean SKIP_LOG4J = "true".equals(SystemInstance.get().getProperty("openejb.skip.log4j", "true")) && skipLib("org.apache.log4j.Logger");
     private static final boolean SKIP_MYFACES = "true".equals(SystemInstance.get().getProperty("openejb.skip.myfaces", "true")) && skipLib("org.apache.myfaces.spi.FactoryFinderProvider");
@@ -51,7 +47,6 @@ public class URLClassLoaderFirst extends URLClassLoader {
     public static final Collection<String> FORCED_LOAD = new ArrayList<String>();
 
     static {
-        LOCK = new ReentrantLock();
         reloadConfig();
     }
 
@@ -91,62 +86,54 @@ public class URLClassLoaderFirst extends URLClassLoader {
     }
 
     @Override
-    public Class<?> loadClass(final String name, final boolean resolve) throws ClassNotFoundException {
-
-        final ReentrantLock lock = LOCK;
-        lock.lock();
-
-        try {
-            // already loaded?
-            Class<?> clazz = findLoadedClass(name);
-            if (clazz != null) {
-                if (resolve) {
-                    resolveClass(clazz);
-                }
-                return clazz;
+    public synchronized Class<?> loadClass(final String name, final boolean resolve) throws ClassNotFoundException {
+        // already loaded?
+        Class<?> clazz = findLoadedClass(name);
+        if (clazz != null) {
+            if (resolve) {
+                resolveClass(clazz);
             }
-
-            // JSE classes?
-            if (canBeLoadedFromSystem(name)) {
-                try {
-                    clazz = system.loadClass(name);
-                    if (clazz != null) {
-                        if (resolve) {
-                            resolveClass(clazz);
-                        }
-                        return clazz;
-                    }
-                } catch (final ClassNotFoundException ignored) {
-                    // no-op
-                }
-            }
-
-            // look for it in this classloader
-            final boolean ok = !(shouldSkip(name) || shouldDelegateToTheContainer(this, name));
-            if (ok) {
-                clazz = loadInternal(name, resolve);
-                if (clazz != null) {
-                    return clazz;
-                }
-            }
-
-            // finally delegate
-            clazz = loadFromParent(name, resolve);
-            if (clazz != null) {
-                return clazz;
-            }
-
-            if (!ok) {
-                clazz = loadInternal(name, resolve);
-                if (clazz != null) {
-                    return clazz;
-                }
-            }
-
-            throw new ClassNotFoundException(name);
-        } finally {
-            lock.unlock();
+            return clazz;
         }
+
+        // JSE classes?
+        if (canBeLoadedFromSystem(name)) {
+            try {
+                clazz = system.loadClass(name);
+                if (clazz != null) {
+                    if (resolve) {
+                        resolveClass(clazz);
+                    }
+                    return clazz;
+                }
+            } catch (final ClassNotFoundException ignored) {
+                // no-op
+            }
+        }
+
+        // look for it in this classloader
+        final boolean ok = !(shouldSkip(name) || shouldDelegateToTheContainer(this, name));
+        if (ok) {
+            clazz = loadInternal(name, resolve);
+            if (clazz != null) {
+                return clazz;
+            }
+        }
+
+        // finally delegate
+        clazz = loadFromParent(name, resolve);
+        if (clazz != null) {
+            return clazz;
+        }
+
+        if (!ok) {
+            clazz = loadInternal(name, resolve);
+            if (clazz != null) {
+                return clazz;
+            }
+        }
+
+        throw new ClassNotFoundException(name);
     }
 
     public static boolean shouldDelegateToTheContainer(final ClassLoader loader, final String name) {
