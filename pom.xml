@@ -94,7 +94,7 @@
     <openejb.version>5.0.0-SNAPSHOT</openejb.version>
     <tomee.version>2.0.0-SNAPSHOT</tomee.version>
 
-    <openjpa.version>2.4.0-nonfinal-1598334</openjpa.version>
+    <openjpa.version>2.4.0</openjpa.version>
     <org.apache.openwebbeans.version>1.5.0</org.apache.openwebbeans.version>
     <jcs.version>2.0-SNAPSHOT</jcs.version>
 
@@ -1442,13 +1442,17 @@
         <scope>provided</scope>
       </dependency>
       <dependency>
-        <groupId>org.apache.openejb.patch</groupId>
+        <groupId>org.apache.openjpa</groupId>
         <artifactId>openjpa</artifactId>
         <version>${openjpa.version}</version>
         <exclusions>
           <exclusion>
             <groupId>asm</groupId>
             <artifactId>asm</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.openjpa</groupId>
+            <artifactId>openjpa-jest</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
