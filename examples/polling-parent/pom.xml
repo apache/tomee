@@ -21,7 +21,7 @@
 
   <groupId>jug</groupId>
   <artifactId>polling-parent</artifactId>
-  <version>1.1.2-TT.2-SNAPSHOT</version>
+  <version>1.1.1-TT.2-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>OpenEJB :: Examples :: Polling</name>
 
@@ -165,8 +165,8 @@
   <properties>
     <xbean.version>3.17</xbean.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.tomee>1.7.3-TT.2-SNAPSHOT</version.tomee>
-    <version.openejb>4.7.3-TT.2-SNAPSHOT</version.openejb>
+    <version.tomee>1.7.2-TT.2</version.tomee>
+    <version.openejb>4.7.2-TT.2</version.openejb>
   </properties>
 
   <!--
