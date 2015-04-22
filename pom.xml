@@ -2078,10 +2078,6 @@
       <name>Tomitribe Development Snapshot Repository</name>
       <url>http://repository.tomitribe.com/content/repositories/snapshots-tomitribe</url>
     </snapshotRepository>
-    <site>
-      <id>openejb-website</id>
-      <url>scp://people.apache.org/www/tomee.apache.org/openejb/maven</url>
-    </site>
   </distributionManagement>
 
   <reporting>
