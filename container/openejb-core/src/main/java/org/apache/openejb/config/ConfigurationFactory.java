@@ -229,6 +229,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         chain.add(beanProperties);
 
+        chain.add(new ConfigurationDeployer()); // after annotation deployer and read descriptors are the only constraints
+
         chain.add(new ProxyBeanClassUpdate());
 
         chain.add(new GeneratedClientModules.Prune());
