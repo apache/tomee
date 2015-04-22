@@ -41,7 +41,7 @@ public abstract class InterceptorBase implements Serializable {
     private static final IllegalStateException ILLEGAL_STATE_EXCEPTION = new IllegalStateException("Can't use UserTransaction from @Transaction call");
     private static final boolean HANDLE_EXCEPTION_ONLY_FOR_CLIENT = SystemInstance.get().getOptions().get("openejb.cdi.jta.exception.client-only", false);
 
-    private transient ConcurrentMap<Class<?>, Boolean> rollback = new ConcurrentHashMap<>();
+    private transient volatile ConcurrentMap<Method, Boolean> rollback = new ConcurrentHashMap<>();
 
     protected Object intercept(final InvocationContext ic) throws Exception {
         Exception error = null;
@@ -74,15 +74,21 @@ public abstract class InterceptorBase implements Serializable {
 
             if (policy != null) {
                 if (error != null && (!HANDLE_EXCEPTION_ONLY_FOR_CLIENT || policy.isNewTransaction())) {
-                    final Class<?> errorClass = error.getClass();
-                    Boolean doRollback = rollback.get(errorClass);
+                    final Method method = ic.getMethod();
+                    if (rollback == null) {
+                        synchronized (this) {
+                            if (rollback == null) {
+                                rollback = new ConcurrentHashMap<>();
+                            }
+                        }
+                    }
+                    Boolean doRollback = rollback.get(method);
                     if (doRollback != null) {
                         if (doRollback) {
                             policy.setRollbackOnly();
                         }
                     } else {
                         // computed lazily but we could cache it later for sure if that's really a normal case
-                        final Method method = ic.getMethod();
                         final AnnotatedType<?> annotatedType = CDI.current().getBeanManager().createAnnotatedType(method.getDeclaringClass());
                         Transactional tx = null;
                         for (final AnnotatedMethod<?> m : annotatedType.getMethods()) {
@@ -96,7 +102,7 @@ public abstract class InterceptorBase implements Serializable {
                         }
                         if (tx != null) {
                             doRollback = new ExceptionPriotiryRules(tx.rollbackOn(), tx.dontRollbackOn()).accept(error, method.getExceptionTypes());
-                            rollback.putIfAbsent(errorClass, doRollback);
+                            rollback.putIfAbsent(method, doRollback);
                             if (doRollback) {
                                 policy.setRollbackOnly();
                             }
