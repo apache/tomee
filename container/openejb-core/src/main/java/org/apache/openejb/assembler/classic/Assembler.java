@@ -971,7 +971,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         try {
             thread.setContextClassLoader(classLoader);
 
-            final Set<String> resourceIds = new HashSet<String>(inResourceIds);
             final List<ResourceInfo> resourceList = config.facilities.resources;
 
             for (final ResourceInfo resourceInfo : resourceList) {
@@ -1661,8 +1660,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     private void destroyResource(final String name, final String className, final Object object) {
-
-        Collection<Method> preDestroy = null;
 
         if (object instanceof ResourceAdapterReference) {
             final ResourceAdapterReference resourceAdapter = (ResourceAdapterReference) object;
@@ -3010,10 +3007,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     private static void unusedProperty(final String id, final Logger parentLogger, final String property) {
         parentLogger.getChildLogger("service").warning("unusedProperty", property, id);
-    }
-
-    private static void unusedProperty(final String id, final String property) {
-        unusedProperty(id, SystemInstance.get().getComponent(Assembler.class).logger, property);
     }
 
     public static ObjectRecipe prepareRecipe(final ServiceInfo info) {
