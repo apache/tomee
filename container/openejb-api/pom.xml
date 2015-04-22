@@ -36,6 +36,10 @@
       <artifactId>mbean-annotation-api</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>javaee-api</artifactId>
+    </dependency>
   </dependencies>
 </project>
 

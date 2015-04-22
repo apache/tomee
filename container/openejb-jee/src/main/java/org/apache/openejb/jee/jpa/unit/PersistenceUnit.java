@@ -285,4 +285,11 @@ public class PersistenceUnit {
         return (validationMode == null) ? ValidationMode.AUTO : validationMode;
     }
 
+    public void setValidationMode(final ValidationMode validationMode) {
+        this.validationMode = validationMode;
+    }
+
+    public void setSharedCacheMode(final SharedCacheMode sharedCacheMode) {
+        this.sharedCacheMode = sharedCacheMode;
+    }
 }

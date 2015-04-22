@@ -20,6 +20,8 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import javax.persistence.SharedCacheMode;
+import javax.persistence.ValidationMode;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
@@ -32,4 +34,6 @@ public @interface AutoJPA {
     String[] properties() default {};
     boolean ddlAuto() default true;
     boolean jta() default true;
+    ValidationMode validationMode() default ValidationMode.AUTO;
+    SharedCacheMode cacheMode() default SharedCacheMode.UNSPECIFIED;
 }

@@ -90,6 +90,8 @@ public class ConfigurationDeployer implements DynamicDeployer {
         if (!"auto".equals(annotation.provider())) {
             unit.setProvider(annotation.provider());
         }
+        unit.setValidationMode(annotation.validationMode());
+        unit.setSharedCacheMode(annotation.cacheMode());
 
         final Persistence persistence = new Persistence();
         persistence.addPersistenceUnit(unit);
