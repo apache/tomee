@@ -34,6 +34,7 @@ public class ServiceInfo extends InfoObject {
     public URI[] classpath;
     public Properties properties;
     public final List<String> constructorArgs = new ArrayList<String>();
+    public Properties unsetProperties; // keep it in the model to be able to investigate it dumping Infos
 
     /**
      * Optional *

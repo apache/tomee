@@ -50,7 +50,7 @@ public class EJBContainerRunner extends BlockJUnit4ClassRunner {
 
     @Override
     protected List<FrameworkMethod> computeTestMethods() {
-        final List<FrameworkMethod> methods = super.computeTestMethods();
+        final List<FrameworkMethod> methods = new ArrayList<FrameworkMethod>(super.computeTestMethods()); // copy cause of junit 4.12 which is umodifiable
         Collections.shuffle(methods); // real tests should manage shuffle ordering
         return methods;
     }

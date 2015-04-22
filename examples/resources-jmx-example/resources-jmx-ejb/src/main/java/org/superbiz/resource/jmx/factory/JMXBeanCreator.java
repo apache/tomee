@@ -65,9 +65,8 @@ public class JMXBeanCreator {
             final T instance = (T) cls.newInstance();
             final StandardMBean mBean = new StandardMBean(instance, ifaceCls);
 
-            for (Object property : properties.keySet()) {
-                String attributeName = (String) property;
-                final Object value = properties.getProperty(attributeName);
+            for (String attributeName : properties.stringPropertyNames()) {
+                final Object value = properties.remove(attributeName);
 
                 if (prefix != null) {
                     if (! attributeName.startsWith(prefix + ".")) {

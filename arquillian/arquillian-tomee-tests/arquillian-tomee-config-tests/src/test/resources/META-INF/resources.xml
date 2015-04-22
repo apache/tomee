@@ -20,14 +20,12 @@
 
 <Resources>
   <Resource id="Hello" class-name="org.apache.openejb.arquillian.tests.resource.ResourceTest$Hello">
-    code org.apache.openejb.arquillian.tests.resource.ResourceTest.Hello
     Lazy true
     UseAppClassLoader true
     InitializeAfterDeployment true
   </Resource>
 
   <Resource id="Destroyable" class-name="org.apache.openejb.arquillian.tests.resource.ResourceTest$Destroyable">
-    code org.apache.openejb.arquillian.tests.resource.ResourceTest.Destroyable
     Lazy true
     UseAppClassLoader true
     InitializeAfterDeployment true
