@@ -5529,7 +5529,7 @@ public class AnnotationDeployer implements DynamicDeployer {
         return 0;
     }
 
-    private static Collection<String> findRestClasses(final WebModule webModule, final IAnnotationFinder finder) {
+    public static Collection<String> findRestClasses(final WebModule webModule, final IAnnotationFinder finder) {
         final Collection<String> classes = new HashSet<String>();
 
         // annotations on classes

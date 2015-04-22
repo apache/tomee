@@ -14,19 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.openejb.api.configuration;
 
-package org.apache.openejb.testing;
-
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.TYPE;
-
-@Target({ METHOD, TYPE })
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface JaxrsProviders {
-    Class<?>[] value() default {};
-    String applicationName() default "jaxrs-application";
+public @interface ApplicationComposer {
+    boolean metadataComplete() default false;
 }

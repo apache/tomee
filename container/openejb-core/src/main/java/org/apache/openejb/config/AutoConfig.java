@@ -1340,8 +1340,10 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             logger.debug("raw <jta-data-source>" + unit.getJtaDataSource() + "</jta-datasource>");
             logger.debug("raw <non-jta-data-source>" + unit.getNonJtaDataSource() + "</non-jta-datasource>");
 
-            unit.setJtaDataSource(normalizeResourceId(unit.getJtaDataSource()));
-            unit.setNonJtaDataSource(normalizeResourceId(unit.getNonJtaDataSource()));
+            final String originalJtaDataSource = unit.getJtaDataSource(); // keep it can start with java:global for instance
+            unit.setJtaDataSource(normalizeResourceId(originalJtaDataSource));
+            final String originalNonJtaDataSource = unit.getNonJtaDataSource();
+            unit.setNonJtaDataSource(normalizeResourceId(originalNonJtaDataSource));
 
             logger.debug("normalized <jta-data-source>" + unit.getJtaDataSource() + "</jta-datasource>");
             logger.debug("normalized <non-jta-data-source>" + unit.getNonJtaDataSource() + "</non-jta-datasource>");
@@ -1381,7 +1383,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
             // first try exact matching without JtaManaged which is not mandatory actually (custom DS + JTADataSourceWrapperFactory)
             final String jtaWithJavaAndSlash = replaceJavaAndSlash(unit.getJtaDataSource());
-            for (final String potentialName : asList(prefix + jtaWithJavaAndSlash, jtaWithJavaAndSlash)) {
+            for (final String potentialName : asList(prefix + jtaWithJavaAndSlash, originalJtaDataSource, jtaWithJavaAndSlash)) {
                 if(potentialName == null) {
                     // If unit.getJtaDataSource() is null, one of the potentialName is also null.
                     continue;
@@ -1399,7 +1401,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             }
 
             final String nonJtaWithJavaAndSlash = replaceJavaAndSlash(unit.getNonJtaDataSource());
-            for (final String potentialName : asList(prefix + nonJtaWithJavaAndSlash, nonJtaWithJavaAndSlash)) {
+            for (final String potentialName : asList(prefix + nonJtaWithJavaAndSlash, originalNonJtaDataSource, nonJtaWithJavaAndSlash)) {
                 if(potentialName == null) {
                     // If unit.getNonJtaDataSource() is null, one of the potentialName is also null.
                     continue;

@@ -279,23 +279,6 @@
                 </configuration>
               </execution>
               <execution>
-                <id>test-tomee-remote-plus</id>
-                <phase>test</phase>
-                <goals>
-                  <goal>test</goal>
-                </goals>
-                <configuration>
-                  <skip>${skip.remote.plus}</skip>
-                  <systemPropertyVariables>
-                    <openejb.arquillian.debug>true</openejb.arquillian.debug>
-                    <tomee.version>${tomee.version}</tomee.version>
-                    <tomee.classifier>plus</tomee.classifier>
-                    <arquillian.launch>tomee-remote</arquillian.launch>
-                    <openejb.arquillian.adapter>tomee-remote</openejb.arquillian.adapter>
-                  </systemPropertyVariables>
-                </configuration>
-              </execution>
-              <execution>
                 <id>test-tomee-remote-plume</id>
                 <phase>test</phase>
                 <goals>
@@ -307,6 +290,26 @@
                     <openejb.arquillian.debug>true</openejb.arquillian.debug>
                     <tomee.version>${tomee.version}</tomee.version>
                     <tomee.classifier>plume</tomee.classifier>
+                    <arquillian.launch>tomee-remote</arquillian.launch>
+                    <openejb.arquillian.adapter>tomee-remote</openejb.arquillian.adapter>
+                  </systemPropertyVariables>
+                  <excludes>
+                    <exclude>**/AppComposerTest.java</exclude>
+                  </excludes>
+                </configuration>
+              </execution>
+              <execution>
+                <id>test-tomee-remote-plus</id>
+                <phase>test</phase>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration>
+                  <skip>${skip.remote.plus}</skip>
+                  <systemPropertyVariables>
+                    <openejb.arquillian.debug>true</openejb.arquillian.debug>
+                    <tomee.version>${tomee.version}</tomee.version>
+                    <tomee.classifier>plus</tomee.classifier>
                     <arquillian.launch>tomee-remote</arquillian.launch>
                     <openejb.arquillian.adapter>tomee-remote</openejb.arquillian.adapter>
                   </systemPropertyVariables>
@@ -361,6 +364,9 @@
                     <arquillian.launch>tomee-webapp</arquillian.launch>
                     <openejb.arquillian.adapter>tomee-webapp</openejb.arquillian.adapter>
                   </systemPropertyVariables>
+                  <excludes>
+                    <exclude>**/AppComposerTest.java</exclude>
+                  </excludes>
                 </configuration>
               </execution>
             </executions>
@@ -518,6 +524,9 @@
                     <arquillian.launch>tomee-remote</arquillian.launch>
                     <openejb.arquillian.adapter>tomee-remote</openejb.arquillian.adapter>
                   </systemPropertyVariables>
+                  <excludes>
+                    <exclude>**/AppComposerTest.java</exclude>
+                  </excludes>
                 </configuration>
               </execution>
 
@@ -572,6 +581,9 @@
                     <arquillian.launch>tomee-webapp</arquillian.launch>
                     <openejb.arquillian.adapter>tomee-webapp</openejb.arquillian.adapter>
                   </systemPropertyVariables>
+                  <excludes>
+                    <exclude>**/AppComposerTest.java</exclude>
+                  </excludes>
                 </configuration>
               </execution>
             </executions>
