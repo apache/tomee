@@ -99,7 +99,7 @@
     <openejb.version>4.7.2-SNAPSHOT</openejb.version>
     <tomee.version>1.7.2-SNAPSHOT</tomee.version>
 
-    <openjpa.version>2.4.0-nonfinal-1598334</openjpa.version>
+    <openjpa.version>2.4.0</openjpa.version>
     <org.apache.openwebbeans.version>1.2.7</org.apache.openwebbeans.version>
 
     <!-- Maven module versions -->
@@ -1515,7 +1515,7 @@
         <scope>provided</scope>
       </dependency>
       <dependency>
-        <groupId>org.apache.openejb.patch</groupId>
+        <groupId>org.apache.openjpa</groupId>
         <artifactId>openjpa</artifactId>
         <version>${openjpa.version}</version>
         <exclusions>
