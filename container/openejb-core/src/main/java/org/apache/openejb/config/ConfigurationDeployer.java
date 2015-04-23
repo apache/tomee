@@ -34,13 +34,19 @@ public class ConfigurationDeployer implements DynamicDeployer {
                 continue;
             }
 
+            boolean scan = false;
             for (final Class<?> configClass : module.getFinder().findAnnotatedClasses(PersistenceUnitDefinition.class)) {
                 configureJpa(appModule, configClass.getAnnotation(PersistenceUnitDefinition.class));
+                scan = true;
             }
             for (final Class<?> configClass : module.getFinder().findAnnotatedClasses(PersistenceUnitDefinitions.class)) {
                 for (final PersistenceUnitDefinition persistenceUnitDefinition : configClass.getAnnotation(PersistenceUnitDefinitions.class).value()) {
                     configureJpa(appModule, persistenceUnitDefinition);
+                    scan = true;
                 }
+            }
+            if (scan) {
+                AnnotationDeployer.autoJpa(module); // we pass after annotation deployer so need to fill it ourself
             }
         }
         return appModule;
