@@ -56,7 +56,7 @@
       <releases>
         <enabled>false</enabled>
       </releases>
-      <snapshots />
+      <snapshots/>
       <id>apache-maven-snapshots</id>
       <url>http://repository.apache.org/snapshots/
       </url>

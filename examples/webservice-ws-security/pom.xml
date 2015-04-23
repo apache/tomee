@@ -56,7 +56,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-cxf</artifactId>
-      <version>4.7.3-SNAPSHOT</version>
+      <version>4.7.2-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <!-- This is required on IBM JDKs (and potentially others) because saaj-impl depends
@@ -125,7 +125,7 @@
             </goals>
             <configuration>
               <target name="generate keys">
-                <ant antfile="create-keystores.xml" target="run" />
+                <ant antfile="create-keystores.xml" target="run"/>
               </target>
             </configuration>
           </execution>
