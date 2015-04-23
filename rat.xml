@@ -43,6 +43,7 @@
           <exclude name="**/README.mdtext"/>
           <exclude name="**/LoadableExtension"/>
           <exclude name="**/javax.enterprise.inject.spi.Extension"/>
+          <exclude name="**/org.apache.openejb.cipher.PasswordCipher/**"/>
           <exclude name="**/*.handlebars"/>
 
           <exclude name="report.txt"/>
@@ -101,6 +102,7 @@
           <exclude name="tomee/tomee-myfaces/src/main/resources/META-INF/services/org.apache.myfaces.spi.AnnotationProviderFactory"/>
           <exclude name="tomee/tomee-myfaces/src/main/resources/META-INF/services/org.apache.myfaces.spi.FacesConfigurationProviderFactory" />
           <exclude name="tomee/tomee-myfaces/src/main/resources/META-INF/services/org.apache.myfaces.spi.FacesConfigResourceProviderFactory"/>
+          <exclude name="tomee/tomee-myfaces/src/main/resources/META-INF/services/org.apache.myfaces.spi.WebConfigProvider" />
           <exclude name="tomee/tomee-mojarra/src/main/resources/META-INF/services/com.sun.faces.spi.injectionprovider" />
           <exclude name="tomee/tomee-jdbc/src/test/resources/META-INF/org.apache.openejb.resource.jdbc.cipher.PasswordCipher/Mock" />
           <exclude name="tomee/tomee-webapp/src/main/webapp/app/lib/require/**" />
