@@ -3121,19 +3121,19 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         for (final String property : unsetProperties.keySet()) {
             //TODO: DMB: Make more robust later
             if (property.equalsIgnoreCase("Definition")) {
-                return;
+                continue;
             }
             if (property.equalsIgnoreCase("SkipImplicitAttributes")) {
-                return;
+                continue;
             }
             if (property.equalsIgnoreCase("JndiName")) {
-                return;
+                continue;
             }
             if (property.equalsIgnoreCase("Origin")) {
-                return;
+                continue;
             }
             if (property.equalsIgnoreCase("DatabaseName")) {
-                return;
+                continue;
             }
             if (property.equalsIgnoreCase("connectionAttributes")) {
                 return;
@@ -3143,10 +3143,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 return;
             }
             if (property.equalsIgnoreCase("ApplicationWide")) {
-                return;
+                continue;
             }
-            if (property.equalsIgnoreCase("transactionManager")) {
-                return;
+            if (isInternalProperty(property)) {
+                continue;
             }
             if (info.types.contains("javax.mail.Session")) {
                 return;
@@ -3168,7 +3168,20 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     private static void unusedProperty(final String id, final Logger parentLogger, final String property) {
+        if (isInternalProperty(property)) {
+            return;
+        }
         parentLogger.getChildLogger("service").warning("unusedProperty", property, id);
+    }
+
+    private static boolean isInternalProperty(String property) {
+        if (property.equalsIgnoreCase("ServiceId")) {
+            return true;
+        }
+        if (property.equalsIgnoreCase("transactionManager")) {
+            return true;
+        }
+        return false;
     }
 
     private static void unusedProperty(final String id, final String property) {

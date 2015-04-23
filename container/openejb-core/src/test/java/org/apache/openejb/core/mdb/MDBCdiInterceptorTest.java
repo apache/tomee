@@ -19,6 +19,7 @@ package org.apache.openejb.core.mdb;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Classes;
 import org.apache.openejb.testing.Configuration;
+import org.apache.openejb.testing.SimpleLog;
 import org.apache.openejb.testng.PropertiesBuilder;
 import org.apache.openejb.util.NetworkUtil;
 import org.junit.Test;
@@ -51,6 +52,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+@SimpleLog
 @Classes(cdi = true, innerClassesAsBean = true, cdiInterceptors = MDBCdiInterceptorTest.InInterceptor.class)
 @RunWith(ApplicationComposer.class)
 public class MDBCdiInterceptorTest {
@@ -88,6 +90,7 @@ public class MDBCdiInterceptorTest {
     public Properties p() {
         return new PropertiesBuilder()
                 .p("Default JMS Resource Adapter.BrokerXmlConfig", "broker:(tcp://localhost:" + NetworkUtil.getNextAvailablePort() + ")?useJmx=false")
+                .p("target", "new://Resource?type=Queue")
                 .build();
     }
 
