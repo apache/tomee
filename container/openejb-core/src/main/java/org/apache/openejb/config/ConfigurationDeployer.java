@@ -26,10 +26,13 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.PropertyPlaceHolderHelper;
 
+import java.util.ArrayList;
+import javax.persistence.Entity;
+
 public class ConfigurationDeployer implements DynamicDeployer {
     @Override
     public AppModule deploy(final AppModule appModule) throws OpenEJBException {
-        for (final EjbModule module : appModule.getEjbModules()) {
+        for (final EjbModule module : new ArrayList<>(appModule.getEjbModules())) {
             if (module.getFinder() == null) {
                 continue;
             }
@@ -46,7 +49,27 @@ public class ConfigurationDeployer implements DynamicDeployer {
                 }
             }
             if (scan) {
-                AnnotationDeployer.autoJpa(module); // we pass after annotation deployer so need to fill it ourself
+                EjbModule m = module;
+                if (m.getFinder().findAnnotatedClasses(Entity.class).isEmpty()) {
+                    // switch to another module
+                    for (final EjbModule other : appModule.getEjbModules()) {
+                        if (other == module || other.getFinder() == null) {
+                            continue;
+                        }
+                        m = other;
+                        boolean done = false;
+                        for (final WebModule web : appModule.getWebModules()) {
+                            if (web.getModuleId().equals(other.getModuleId())) { // the biggest module is found, use it
+                                done = true;
+                                break;
+                            }
+                        }
+                        if (done) {
+                            break;
+                        }
+                    }
+                }
+                AnnotationDeployer.autoJpa(m); // we pass after annotation deployer so need to fill it ourself
             }
         }
         return appModule;
