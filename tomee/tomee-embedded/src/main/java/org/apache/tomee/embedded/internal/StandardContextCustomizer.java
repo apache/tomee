@@ -18,6 +18,7 @@
  */
 package org.apache.tomee.embedded.internal;
 
+import org.apache.catalina.Globals;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.WebResourceRoot;
@@ -93,6 +94,9 @@ public class StandardContextCustomizer {
                     }
                     for (final SecurityConstaintBuilder sc : config.getSecurityConstraints()) {
                         context.addConstraint(sc.build());
+                    }
+                    if (config.getWebXml() != null) {
+                        context.getServletContext().setAttribute(Globals.ALT_DD_ATTR, config.getWebXml());
                     }
                 }
                 break;

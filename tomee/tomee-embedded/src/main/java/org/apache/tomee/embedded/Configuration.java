@@ -49,6 +49,7 @@ public class Configuration {
     private String keyAlias;
     private String sslProtocol;
 
+    private String webXml;
     private LoginConfigBuilder loginConfig;
     private Collection<SecurityConstaintBuilder> securityConstraints = new LinkedList<>();
 
@@ -278,6 +279,15 @@ public class Configuration {
         }
         this.roles.put(user, roles);
         return this;
+    }
+
+    public Configuration setWebXml(final String webXml) {
+        this.webXml = webXml;
+        return this;
+    }
+
+    public String getWebXml() {
+        return webXml;
     }
 
     public LoginConfigBuilder getLoginConfig() {
