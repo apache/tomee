@@ -24,6 +24,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.PropertyPlaceHolderHelper;
 import org.apache.webbeans.config.WebBeansContext;
 
 import java.net.InetAddress;
@@ -43,7 +44,7 @@ public class OpenEJBHttpRegistry {
             OpenEjbConfiguration configuration = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
             for (ServiceInfo service : configuration.facilities.services) {
                 if (service.className.equals(HttpServerFactory.class.getName())) {
-                    int port = Integer.parseInt(service.properties.getProperty("port"));
+                    int port = Integer.parseInt(PropertyPlaceHolderHelper.simpleValue(service.properties.getProperty("port")));
                     String ip = service.properties.getProperty("bind");
                     if ("0.0.0.0".equals(ip)) {
                         InetAddress[] addresses = InetAddress.getAllByName(ip);
