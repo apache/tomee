@@ -84,8 +84,6 @@ import org.apache.xbean.finder.UrlSet;
 import org.apache.xbean.finder.filter.Filters;
 import org.codehaus.swizzle.stream.ReplaceStringsInputStream;
 
-import javax.naming.Context;
-import javax.naming.NamingException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -103,6 +101,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
+import javax.naming.Context;
+import javax.naming.NamingException;
 
 import static java.util.Arrays.asList;
 
@@ -468,6 +468,10 @@ public class Container implements AutoCloseable {
             tomcat.getHost().setAppBase(webapps.getAbsolutePath());
             tomcat.getEngine().setDefaultHost(configuration.getHost());
             tomcat.setHostname(configuration.getHost());
+        }
+
+        if (configuration.getRealm() != null) {
+            tomcat.getEngine().setRealm(configuration.getRealm());
         }
 
         if (tomcat.getRawConnector() == null && !configuration.isSkipHttp()) {

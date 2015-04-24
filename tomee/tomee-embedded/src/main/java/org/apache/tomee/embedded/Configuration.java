@@ -16,6 +16,7 @@
  */
 package org.apache.tomee.embedded;
 
+import org.apache.catalina.Realm;
 import org.apache.openejb.util.NetworkUtil;
 
 import java.io.File;
@@ -52,6 +53,8 @@ public class Configuration {
     private String webXml;
     private LoginConfigBuilder loginConfig;
     private Collection<SecurityConstaintBuilder> securityConstraints = new LinkedList<>();
+
+    private Realm realm;
 
     private boolean deployOpenEjbApp;
 
@@ -305,6 +308,15 @@ public class Configuration {
 
     public Configuration securityConstaint(final SecurityConstaintBuilder constraint) {
         securityConstraints.add(constraint);
+        return this;
+    }
+
+    public Realm getRealm() {
+        return realm;
+    }
+
+    public Configuration setRealm(final Realm realm) {
+        this.realm = realm;
         return this;
     }
 }
