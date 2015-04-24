@@ -21,11 +21,9 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.monitoring.Managed;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.PropertyPlaceHolderHelper;
 import org.apache.openejb.util.StringTemplate;
 
-import javax.net.ServerSocketFactory;
-import javax.net.ssl.SSLServerSocket;
-import javax.net.ssl.SSLServerSocketFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -45,6 +43,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import javax.net.ServerSocketFactory;
+import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.SSLServerSocketFactory;
 
 @SuppressWarnings("UnusedDeclaration")
 @Managed
@@ -110,13 +111,13 @@ public class ServiceDaemon implements ServerService {
             this.discoveryUriFormat = new StringTemplate(formatString);
         }
 
-        this.ip = props.getProperty("bind");
+        this.ip = PropertyPlaceHolderHelper.simpleValue(props.getProperty("bind"));
 
         this.inetAddress = getAddress(this.ip);
 
         final Options options = new Options(props);
 
-        this.port = options.get("port", 0);
+        this.port = Integer.parseInt(PropertyPlaceHolderHelper.simpleValue(options.get("port", "0")));
 
         final int threads = options.get("threads", 100);
 
