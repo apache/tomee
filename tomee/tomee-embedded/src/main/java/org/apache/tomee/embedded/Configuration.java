@@ -19,7 +19,9 @@ package org.apache.tomee.embedded;
 import org.apache.openejb.util.NetworkUtil;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Properties;
 
@@ -46,6 +48,9 @@ public class Configuration {
     private String clientAuth;
     private String keyAlias;
     private String sslProtocol;
+
+    private LoginConfigBuilder loginConfig;
+    private Collection<SecurityConstaintBuilder> securityConstraints = new LinkedList<>();
 
     private boolean deployOpenEjbApp;
 
@@ -272,6 +277,24 @@ public class Configuration {
             this.roles = new HashMap<>();
         }
         this.roles.put(user, roles);
+        return this;
+    }
+
+    public LoginConfigBuilder getLoginConfig() {
+        return loginConfig;
+    }
+
+    public Configuration loginConfig(final LoginConfigBuilder loginConfig) {
+        this.loginConfig = loginConfig;
+        return this;
+    }
+
+    public Collection<SecurityConstaintBuilder> getSecurityConstraints() {
+        return securityConstraints;
+    }
+
+    public Configuration securityConstaint(final SecurityConstaintBuilder constraint) {
+        securityConstraints.add(constraint);
         return this;
     }
 }

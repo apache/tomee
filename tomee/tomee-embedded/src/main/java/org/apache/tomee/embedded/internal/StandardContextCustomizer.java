@@ -29,6 +29,8 @@ import org.apache.openejb.observer.Observes;
 import org.apache.openejb.util.URLs;
 import org.apache.openejb.util.reflection.Reflections;
 import org.apache.tomee.catalina.TomcatWebAppBuilder;
+import org.apache.tomee.embedded.Configuration;
+import org.apache.tomee.embedded.SecurityConstaintBuilder;
 
 import java.io.File;
 import java.net.URL;
@@ -36,9 +38,11 @@ import java.util.List;
 
 public class StandardContextCustomizer {
     private final WebModule module;
+    private final Configuration config;
 
-    public StandardContextCustomizer(final WebModule webModule) {
+    public StandardContextCustomizer(final Configuration configuration, final WebModule webModule) {
         module = webModule;
+        config = configuration;
     }
 
     public void customize(@Observes final LifecycleEvent event) {
@@ -80,6 +84,15 @@ public class StandardContextCustomizer {
                     } else {
                         resources.createWebResourceSet(WebResourceRoot.ResourceSetType.CLASSES_JAR, "/WEB-INF/lib", absolutePath, null, "/");
                         resources.createWebResourceSet(WebResourceRoot.ResourceSetType.RESOURCE_JAR, "/", url, "/META-INF/resources");
+                    }
+                }
+
+                if (config != null) {
+                    if (config.getLoginConfig() != null) {
+                        context.setLoginConfig(config.getLoginConfig().build());
+                    }
+                    for (final SecurityConstaintBuilder sc : config.getSecurityConstraints()) {
+                        context.addConstraint(sc.build());
                     }
                 }
                 break;

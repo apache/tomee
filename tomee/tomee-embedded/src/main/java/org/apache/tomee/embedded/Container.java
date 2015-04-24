@@ -248,7 +248,7 @@ public class Container implements AutoCloseable {
 
         addCallersAsEjbModule(loader, app, additionalCallers);
 
-        systemInstance.addObserver(new StandardContextCustomizer(webModule));
+        systemInstance.addObserver(new StandardContextCustomizer(configuration, webModule));
         systemInstance.setComponent(AnnotationDeployer.FolderDDMapper.class, new AnnotationDeployer.FolderDDMapper() {
             @Override
             public File getDDFolder(final File dir) {

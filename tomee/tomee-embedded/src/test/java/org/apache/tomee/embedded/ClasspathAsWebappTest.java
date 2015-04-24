@@ -22,6 +22,17 @@ import org.apache.openejb.util.NetworkUtil;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.lang.reflect.Modifier;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.security.Principal;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.inject.Inject;
@@ -45,16 +56,10 @@ import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Application;
-import java.io.IOException;
-import java.lang.reflect.Modifier;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.SecurityContext;
 
+import static javax.xml.bind.DatatypeConverter.printBase64Binary;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -78,7 +83,10 @@ public class ClasspathAsWebappTest {
                     new Configuration()
                             .http(NetworkUtil.getNextAvailablePort())
                             .property("openejb.container.additional.exclude", "org.apache.tomee.embedded.")
-                            .property("openejb.additional.include", "tomee-"))
+                            .property("openejb.additional.include", "tomee-")
+                            .user("tomee", "tomeepwd")
+                            .loginConfig(new LoginConfigBuilder().basic())
+                            .securityConstaint(new SecurityConstaintBuilder().addAuthRole("**").authConstraint(true).addCollection("api", "/api/resource2/")))
                 .deployPathsAsWebapp(JarLocation.jarLocation(MyInitializer.class))
                 .inject(this)) {
 
@@ -126,6 +134,23 @@ public class ClasspathAsWebappTest {
                 assertEquals("jaxrs", IO.slurp(new URL("http://localhost:" + container.getConfiguration().getHttpPort() + "/api/resource")));
             } catch (final IOException e) {
                 fail(e.getMessage());
+            }
+
+            // JAXRS + servlet security
+            try {
+                final URL url = new URL("http://localhost:" + container.getConfiguration().getHttpPort() + "/api/resource2/");
+                final HttpURLConnection c = HttpURLConnection.class.cast(url.openConnection());
+                c.setRequestProperty("Authorization", "Basic " + printBase64Binary("tomee:tomeepwd".getBytes()));
+                assertEquals("tomee", IO.slurp(c.getInputStream()));
+                c.disconnect();
+            } catch (final IOException e) {
+                fail(e.getMessage());
+            }
+            try {
+                assertEquals("tomee", IO.slurp(new URL("http://tomee:tomeepwd@localhost:" + container.getConfiguration().getHttpPort() + "/api/resource2/")));
+                fail("should have been not authorized");
+            } catch (final IOException e) {
+                // ok
             }
 
             // WebSocket
@@ -180,6 +205,18 @@ public class ClasspathAsWebappTest {
         @GET
         public String t() {
             return "jaxrs";
+        }
+    }
+
+    @Path("resource2")
+    public static class Secured {
+        @Context
+        private SecurityContext sc;
+
+        @GET
+        public String t() {
+            final Principal principal = sc.getUserPrincipal();
+            return principal.getName();
         }
     }
 
