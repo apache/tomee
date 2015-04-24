@@ -328,7 +328,9 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
             logger.debug("Clearing:'" + ctx + "'");
         }
         contextByClassLoader.remove(key);
-        ctx.clear();
+        if (ctx != null) {
+            ctx.clear();
+        }
     }
 
     @Override
