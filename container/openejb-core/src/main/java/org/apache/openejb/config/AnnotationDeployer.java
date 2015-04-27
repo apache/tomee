@@ -1874,39 +1874,43 @@ public class AnnotationDeployer implements DynamicDeployer {
                 for (final org.apache.openejb.jee.jpa.unit.PersistenceUnit pu : pm.getPersistence().getPersistenceUnit()) {
                     if ((pu.isExcludeUnlistedClasses() == null || !pu.isExcludeUnlistedClasses())
                         && "true".equalsIgnoreCase(pu.getProperties().getProperty(OPENEJB_JPA_AUTO_SCAN))) {
-                        final String packageName = pu.getProperties().getProperty(OPENEJB_JPA_AUTO_SCAN_PACKAGE);
-                        String[] packageNames = null;
-                        if (packageName != null) {
-                            packageNames = packageName.split(",");
-                        }
-
-                        // no need of meta currently since JPA providers doesn't support it
-                        final List<Class<?>> classes = new ArrayList<Class<?>>();
-                        classes.addAll(finder.findAnnotatedClasses(Entity.class));
-                        classes.addAll(finder.findAnnotatedClasses(Embeddable.class));
-                        classes.addAll(finder.findAnnotatedClasses(MappedSuperclass.class));
-                        final List<String> existingClasses = pu.getClazz();
-                        for (final Class<?> clazz : classes) {
-                            final String name = clazz.getName();
-                            if (existingClasses.contains(name)) {
-                                continue;
-                            }
-
-                            if (packageNames == null) {
-                                pu.getClazz().add(name);
-                            } else {
-                                for (final String pack : packageNames) {
-                                    if (name.startsWith(pack)) {
-                                        pu.getClazz().add(name);
-                                    }
-                                }
-                            }
-                        }
-                        pu.setScanned(true);
+                        doAutoJpa(finder, pu);
                     }
                 }
             }
         }
+    }
+
+    public static void doAutoJpa(final IAnnotationFinder finder, final org.apache.openejb.jee.jpa.unit.PersistenceUnit pu) {
+        final String packageName = pu.getProperties().getProperty(OPENEJB_JPA_AUTO_SCAN_PACKAGE);
+        String[] packageNames = null;
+        if (packageName != null) {
+            packageNames = packageName.split(",");
+        }
+
+        // no need of meta currently since JPA providers doesn't support it
+        final List<Class<?>> classes = new ArrayList<Class<?>>();
+        classes.addAll(finder.findAnnotatedClasses(Entity.class));
+        classes.addAll(finder.findAnnotatedClasses(Embeddable.class));
+        classes.addAll(finder.findAnnotatedClasses(MappedSuperclass.class));
+        final List<String> existingClasses = pu.getClazz();
+        for (final Class<?> clazz : classes) {
+            final String name = clazz.getName();
+            if (existingClasses.contains(name)) {
+                continue;
+            }
+
+            if (packageNames == null) {
+                pu.getClazz().add(name);
+            } else {
+                for (final String pack : packageNames) {
+                    if (name.startsWith(pack)) {
+                        pu.getClazz().add(name);
+                    }
+                }
+            }
+        }
+        pu.setScanned(true);
     }
 
     public static class ProcessAnnotatedBeans implements DynamicDeployer {

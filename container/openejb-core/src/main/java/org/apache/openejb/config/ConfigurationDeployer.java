@@ -25,6 +25,7 @@ import org.apache.openejb.jee.jpa.unit.TransactionType;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.PropertyPlaceHolderHelper;
+import org.apache.xbean.finder.IAnnotationFinder;
 
 import java.util.ArrayList;
 import javax.persistence.Entity;
@@ -37,45 +38,46 @@ public class ConfigurationDeployer implements DynamicDeployer {
                 continue;
             }
 
-            boolean scan = false;
+            EjbModule m = null;
             for (final Class<?> configClass : module.getFinder().findAnnotatedClasses(PersistenceUnitDefinition.class)) {
-                configureJpa(appModule, configClass.getAnnotation(PersistenceUnitDefinition.class));
-                scan = true;
+                m = m == null ? findModule(appModule, module) : m;
+                configureJpa(appModule, configClass.getAnnotation(PersistenceUnitDefinition.class), m.getFinder());
             }
             for (final Class<?> configClass : module.getFinder().findAnnotatedClasses(PersistenceUnitDefinitions.class)) {
                 for (final PersistenceUnitDefinition persistenceUnitDefinition : configClass.getAnnotation(PersistenceUnitDefinitions.class).value()) {
-                    configureJpa(appModule, persistenceUnitDefinition);
-                    scan = true;
+                    m = m == null ? findModule(appModule, module) : m;
+                    configureJpa(appModule, persistenceUnitDefinition, m.getFinder());
                 }
-            }
-            if (scan) {
-                EjbModule m = module;
-                if (m.getFinder().findAnnotatedClasses(Entity.class).isEmpty()) {
-                    // switch to another module
-                    for (final EjbModule other : appModule.getEjbModules()) {
-                        if (other == module || other.getFinder() == null) {
-                            continue;
-                        }
-                        m = other;
-                        boolean done = false;
-                        for (final WebModule web : appModule.getWebModules()) {
-                            if (web.getModuleId().equals(other.getModuleId())) { // the biggest module is found, use it
-                                done = true;
-                                break;
-                            }
-                        }
-                        if (done) {
-                            break;
-                        }
-                    }
-                }
-                AnnotationDeployer.autoJpa(m); // we pass after annotation deployer so need to fill it ourself
             }
         }
         return appModule;
     }
 
-    private void configureJpa(final AppModule appModule, final PersistenceUnitDefinition annotation) {
+    private EjbModule findModule(final AppModule appModule, final EjbModule module) {
+        EjbModule m = module;
+        if (m.getFinder().findAnnotatedClasses(Entity.class).isEmpty()) {
+            // switch to another module
+            for (final EjbModule other : appModule.getEjbModules()) {
+                if (other == module || other.getFinder() == null) {
+                    continue;
+                }
+                m = other;
+                boolean done = false;
+                for (final WebModule web : appModule.getWebModules()) {
+                    if (web.getModuleId().equals(other.getModuleId())) { // the biggest module is found, use it
+                        done = true;
+                        break;
+                    }
+                }
+                if (done) {
+                    break;
+                }
+            }
+        }
+        return m;
+    }
+
+    private void configureJpa(final AppModule appModule, final PersistenceUnitDefinition annotation, final IAnnotationFinder finder) {
         if (annotation == null) {
             return;
         }
@@ -121,6 +123,8 @@ public class ConfigurationDeployer implements DynamicDeployer {
         }
         unit.setValidationMode(annotation.validationMode());
         unit.setSharedCacheMode(annotation.cacheMode());
+
+        AnnotationDeployer.doAutoJpa(finder, unit); // we pass after annotation deployer so need to fill it ourself
 
         final Persistence persistence = new Persistence();
         persistence.addPersistenceUnit(unit);
