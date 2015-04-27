@@ -924,7 +924,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             final ResourceInfo resourceInfo = configFactory.configureService(resource, ResourceInfo.class);
             resourceInfo.originAppName = module.getModuleId();
             final ResourceRef resourceRef = new ResourceRef();
-            resourceRef.setResType(chooseType(module.getClassLoader(), resourceInfo.types, resource.getType()));
+            resourceRef.setResType(chooseType(module.getClassLoader(), resourceInfo, resource.getType()));
 
             if (shouldGenerateJdbcUrl) {
                 properties.remove(ORIGIN_FLAG);
@@ -977,15 +977,15 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         }
     }
 
-    private static String chooseType(final ClassLoader classLoader, final List<String> types, final String defaultType) {
-        if (types != null) {
-            for (final String type : types) {
+    private static String chooseType(final ClassLoader classLoader, final ResourceInfo info, final String defaultType) {
+        if (info.types != null) {
+            for (final String type : info.types) {
                 if (canLoad(classLoader, type)) {
                     return type;
                 }
             }
         }
-        return defaultType;
+        return info.className != null ? ((canLoad(classLoader, info.className) ? info.className : defaultType)) : defaultType;
     }
 
     private static boolean canLoad(final ClassLoader classLoader, final String type) {
