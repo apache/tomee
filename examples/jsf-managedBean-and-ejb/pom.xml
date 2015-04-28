@@ -43,7 +43,7 @@
       <plugin>
         <groupId>org.apache.openejb.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>1.7.3-SNAPSHOT</version>
+        <version>1.7.2-SNAPSHOT</version>
       </plugin>
     </plugins>
   </build>
@@ -52,7 +52,7 @@
       <releases>
         <enabled>false</enabled>
       </releases>
-      <snapshots />
+      <snapshots/>
       <id>apache-maven-snapshots</id>
       <url>http://repository.apache.org/snapshots/
       </url>
