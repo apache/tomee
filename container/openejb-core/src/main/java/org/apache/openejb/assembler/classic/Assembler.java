@@ -517,10 +517,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         createSecurityService(configInfo.facilities.securityService);
 
+        final Set<String> rIds = new HashSet<String>(configInfo.facilities.resources.size());
         for (final ResourceInfo resourceInfo : configInfo.facilities.resources) {
             createResource(resourceInfo);
+            rIds.add(resourceInfo.id);
         }
-        postConstructResources(ParentClassLoaderFinder.Helper.get(), systemInstance.getComponent(ContainerSystem.class).getJNDIContext(), null);
+        postConstructResources(rIds, ParentClassLoaderFinder.Helper.get(), systemInstance.getComponent(ContainerSystem.class).getJNDIContext(), null);
 
         // Containers
         for (final ContainerInfo serviceInfo : containerSystemInfo.containers) {
@@ -942,7 +944,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
             }
 
-            postConstructResources(classLoader, containerSystemContext, appContext);
+            postConstructResources(appInfo.resourceIds, classLoader, containerSystemContext, appContext);
             
             deployedApplications.put(appInfo.path, appInfo);
             resumePersistentSchedulers(appContext);
@@ -963,7 +965,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
     }
 
-    private void postConstructResources(final ClassLoader classLoader, final Context containerSystemContext, final AppContext appContext) throws NamingException, OpenEJBException {
+    private void postConstructResources(
+            final Set<String> resourceIds, final ClassLoader classLoader,
+            final Context containerSystemContext, final AppContext appContext) throws NamingException, OpenEJBException {
         final Thread thread = Thread.currentThread();
         final ClassLoader oldCl = thread.getContextClassLoader();
 
@@ -973,6 +977,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             final List<ResourceInfo> resourceList = config.facilities.resources;
 
             for (final ResourceInfo resourceInfo : resourceList) {
+                if (!resourceIds.contains(resourceInfo.id)) {
+                    continue;
+                }
                 if (isTemplatizedResource(resourceInfo)) {
                     continue;
                 }
