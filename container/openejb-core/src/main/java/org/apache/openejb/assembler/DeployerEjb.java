@@ -176,8 +176,11 @@ public class DeployerEjb implements Deployer {
             try {
                 final AppInfo appInfo = SystemInstance.get().getComponent(WebAppDeployer.class)
                         .deploy(host, contextRoot(properties, file.getAbsolutePath()), file);
-                saveIfNeeded(properties, file, appInfo);
-                return appInfo;
+                if (appInfo != null) {
+                    saveIfNeeded(properties, file, appInfo);
+                    return appInfo;
+                }
+                throw new OpenEJBException("can't deploy " + file.getAbsolutePath());
             } finally {
                 AUTO_DEPLOY.remove();
             }

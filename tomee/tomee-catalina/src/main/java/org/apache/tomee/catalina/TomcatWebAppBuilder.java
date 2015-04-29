@@ -466,7 +466,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 }
             }
 
-            if (getContextInfo(webApp.host, webApp.contextRoot) != null) {
+            if (isAlreadyDeployed(webApp)) {
                 continue;
             }
 
@@ -515,7 +515,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             appParam.setValue(webApp.moduleId);
             standardContext.addApplicationParameter(appParam);
 
-            if (getContextInfo(webApp.host, webApp.contextRoot) == null) {
+            if (!isAlreadyDeployed(webApp)) {
                 if (standardContext.getPath() == null) {
                     if (webApp.contextRoot != null && webApp.contextRoot.startsWith("/")) {
                         standardContext.setPath(webApp.contextRoot);
@@ -542,7 +542,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     webApp.contextRoot = "";
                 }
 
-                if (getContextInfo(webApp.host, webApp.contextRoot) != null) { // possible because of the previous renaming
+                if (isAlreadyDeployed(webApp)) { // possible because of the previous renaming
                     continue;
                 }
 
@@ -578,6 +578,17 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 }
             }
         }
+    }
+
+    private boolean isAlreadyDeployed(final WebAppInfo webApp) {
+        final ContextInfo contextInfo = getContextInfo(webApp.host, webApp.contextRoot);
+        if (contextInfo != null && contextInfo.standardContext != null && contextInfo.standardContext.getState() == LifecycleState.FAILED) {
+            synchronized (this) {
+                infos.remove(getId(webApp.host, webApp.contextRoot));
+            }
+            return false;
+        }
+        return contextInfo != null;
     }
 
     private static boolean isParent(final ClassLoader parent, final ClassLoader child) {
