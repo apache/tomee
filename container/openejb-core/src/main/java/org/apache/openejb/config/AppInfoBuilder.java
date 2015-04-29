@@ -84,7 +84,6 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.References;
 
-import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -97,6 +96,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import javax.xml.bind.JAXBException;
 
 import static org.apache.openejb.util.URLs.toFile;
 
@@ -680,7 +680,7 @@ class AppInfoBuilder {
                 // Handle Properties
                 info.properties.putAll(persistenceUnit.getProperties());
 
-                PersistenceProviderProperties.apply(appModule.getClassLoader(), info);
+                PersistenceProviderProperties.apply(appModule, info);
 
 
                 // Persistence Unit Root Url
@@ -747,10 +747,11 @@ class AppInfoBuilder {
         }
 
         /**
-         * @param classLoader the temp classloader, take care to only use getResource here
+         * @param appModule the app module with its config and its temp classloader, take care to only use getResource here
          * @param info        the persistence unit info
          */
-        private static void apply(final ClassLoader classLoader, final PersistenceUnitInfo info) {
+        private static void apply(final AppModule appModule, final PersistenceUnitInfo info) {
+            final ClassLoader classLoader = appModule.getClassLoader();
             overrideFromSystemProp(info);
 
             // The result is that OpenEJB-specific configuration can be avoided when
@@ -766,7 +767,7 @@ class AppInfoBuilder {
             if ("org.hibernate.ejb.HibernatePersistence".equals(info.provider) || "org.hibernate.jpa.HibernatePersistenceProvider".equals(info.provider)) {
 
                 // Apply the overrides that apply to all persistence units of this provider
-                override(info, "hibernate");
+                override(appModule.getProperties(), info, "hibernate");
 
                 String className = info.properties.getProperty(HIBERNATE_JTA_PLATFORM);
                 if (className == null) {
@@ -812,7 +813,7 @@ class AppInfoBuilder {
                 "oracle.toplink.essentials.ejb.cmp3.EntityManagerFactoryProvider".equals(info.provider)) {
 
                 // Apply the overrides that apply to all persistence units of this provider
-                override(info, "toplink");
+                override(appModule.getProperties(), info, "toplink");
 
                 final String lookupProperty = "toplink.target-server";
                 final String openejbLookupClass = MakeTxLookup.TOPLINK_FACTORY;
@@ -831,7 +832,7 @@ class AppInfoBuilder {
             } else if ("org.eclipse.persistence.jpa.PersistenceProvider".equals(info.provider) || "org.eclipse.persistence.jpa.osgi.PersistenceProvider".equals(info.provider)) {
 
                 // Apply the overrides that apply to all persistence units of this provider
-                override(info, "eclipselink");
+                override(appModule.getProperties(), info, "eclipselink");
 
                 final String className = info.properties.getProperty(ECLIPSELINK_TARGET_SERVER);
 
@@ -858,7 +859,7 @@ class AppInfoBuilder {
             } else if (info.provider == null || "org.apache.openjpa.persistence.PersistenceProviderImpl".equals(info.provider)) {
 
                 // Apply the overrides that apply to all persistence units of this provider
-                override(info, "openjpa");
+                override(appModule.getProperties(), info, "openjpa");
 
                 final String existing = info.properties.getProperty(OPENJPA_RUNTIME_UNENHANCED_CLASSES);
 
@@ -904,7 +905,7 @@ class AppInfoBuilder {
             }
 
             // Apply the overrides that apply to just this persistence unit
-            override(info);
+            override(appModule.getProperties(), info);
         }
 
         private static void overrideFromSystemProp(final PersistenceUnitInfo info) {
@@ -925,20 +926,30 @@ class AppInfoBuilder {
             }
         }
 
-        private static void override(final PersistenceUnitInfo info) {
-            override(info, info.name);
+        private static void override(final Properties appProperties, final PersistenceUnitInfo info) {
+            override(appProperties, info, info.name);
         }
 
-        private static void override(final PersistenceUnitInfo info, final String prefix) {
-
-            final Properties overrides = ConfigurationFactory.getSystemProperties(prefix, "PersistenceUnit");
+        private static void override(final Properties appProperties, final PersistenceUnitInfo info, final String prefix) {
+            final Properties propertiesToCheckForOverridings = new Properties();
+            propertiesToCheckForOverridings.putAll(appProperties);
+            propertiesToCheckForOverridings.putAll(System.getProperties());
+            propertiesToCheckForOverridings.putAll(SystemInstance.get().getProperties());
+            final Properties overrides = ConfigurationFactory.getOverrides(propertiesToCheckForOverridings, prefix, "PersistenceUnit");
 
             for (final Map.Entry<Object, Object> entry : overrides.entrySet()) {
                 final String property = (String) (prefix.equalsIgnoreCase(info.name) ? entry.getKey() : prefix + "." + entry.getKey());
-                final String value = (String) entry.getValue();
+                String value = (String) entry.getValue();
 
-                if ("openjpa.Log".equals(property) && info.properties.containsKey("openjpa.Log")) { // we set a default
-                    continue;
+                if ("openjpa.Log".equals(property) && "org.apache.openejb.openjpa.JULOpenJPALogFactory".equals(value)) { // we set a default
+                    if (info.properties.containsKey("openjpa.Log")) {
+                        continue;
+                    }
+                    if (appProperties.containsKey("openjpa.Log")) {
+                        value = appProperties.getProperty(property, value);
+                    } else {
+                        continue;
+                    }
                 }
 
                 if (info.properties.containsKey(property)) {
