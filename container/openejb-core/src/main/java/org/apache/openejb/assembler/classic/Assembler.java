@@ -517,11 +517,17 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         createSecurityService(configInfo.facilities.securityService);
 
+        final Set<String> reservedResourceIds = new HashSet<String>(configInfo.facilities.resources.size());
+        for (final AppInfo appInfo : containerSystemInfo.applications) {
+            reservedResourceIds.addAll(appInfo.resourceIds);
+        }
+
         final Set<String> rIds = new HashSet<String>(configInfo.facilities.resources.size());
         for (final ResourceInfo resourceInfo : configInfo.facilities.resources) {
             createResource(resourceInfo);
             rIds.add(resourceInfo.id);
         }
+        rIds.removeAll(reservedResourceIds);
         postConstructResources(rIds, ParentClassLoaderFinder.Helper.get(), systemInstance.getComponent(ContainerSystem.class).getJNDIContext(), null);
 
         // Containers
