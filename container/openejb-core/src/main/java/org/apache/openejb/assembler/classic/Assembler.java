@@ -549,6 +549,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         final Set<String> rIds = new HashSet<>(configInfo.facilities.resources.size());
         for (final ResourceInfo resourceInfo : configInfo.facilities.resources) {
             createResource(resourceInfo);
+            rIds.add(resourceInfo.id);
         }
         postConstructResources(rIds, ParentClassLoaderFinder.Helper.get(), systemInstance.getComponent(ContainerSystem.class).getJNDIContext(), null);
 
@@ -1105,17 +1106,21 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
     }
 
-    private void postConstructResources(final Set<String> inResourceIds, final ClassLoader classLoader, final Context containerSystemContext, final AppContext appContext) throws NamingException, OpenEJBException {
+    private void postConstructResources(
+            final Set<String> resourceIds, final ClassLoader classLoader,
+            final Context containerSystemContext, final AppContext appContext) throws NamingException, OpenEJBException {
         final Thread thread = Thread.currentThread();
         final ClassLoader oldCl = thread.getContextClassLoader();
 
         try {
             thread.setContextClassLoader(classLoader);
 
-            final Set<String> resourceIds = new HashSet<>(inResourceIds);
             final List<ResourceInfo> resourceList = config.facilities.resources;
 
             for (final ResourceInfo resourceInfo : resourceList) {
+                if (!resourceIds.contains(resourceInfo.id)) {
+                    continue;
+                }
                 if (isTemplatizedResource(resourceInfo)) {
                     continue;
                 }
