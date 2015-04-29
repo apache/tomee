@@ -133,21 +133,6 @@ import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.spi.adaptor.ELAdaptor;
 import org.omg.CORBA.ORB;
 
-import javax.ejb.spi.HandleDelegate;
-import javax.el.ELResolver;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NameNotFoundException;
-import javax.naming.NamingException;
-import javax.naming.Reference;
-import javax.naming.StringRefAddr;
-import javax.servlet.ServletContext;
-import javax.servlet.SessionTrackingMode;
-import javax.servlet.jsp.JspApplicationContext;
-import javax.servlet.jsp.JspFactory;
-import javax.sql.DataSource;
-import javax.transaction.TransactionManager;
-import javax.transaction.TransactionSynchronizationRegistry;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -171,6 +156,21 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import javax.ejb.spi.HandleDelegate;
+import javax.el.ELResolver;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NameNotFoundException;
+import javax.naming.NamingException;
+import javax.naming.Reference;
+import javax.naming.StringRefAddr;
+import javax.servlet.ServletContext;
+import javax.servlet.SessionTrackingMode;
+import javax.servlet.jsp.JspApplicationContext;
+import javax.servlet.jsp.JspFactory;
+import javax.sql.DataSource;
+import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
 
 import static org.apache.tomee.catalina.BackportUtil.getNamingContextListener;
 import static org.apache.tomee.catalina.Contexts.warPath;
@@ -500,7 +500,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 }
             }
 
-            if (getContextInfo(webApp.host, webApp.contextRoot) != null) {
+            if (isAlreadyDeployed(webApp)) {
                 continue;
             }
 
@@ -560,7 +560,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             appParam.setValue(webApp.moduleId);
             standardContext.addApplicationParameter(appParam);
 
-            if (getContextInfo(webApp.host, webApp.contextRoot) == null) {
+            if (!isAlreadyDeployed(webApp)) {
                 if (standardContext.getPath() == null) {
                     if (webApp.contextRoot != null && webApp.contextRoot.startsWith("/")) {
                         standardContext.setPath(webApp.contextRoot);
@@ -587,7 +587,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     webApp.contextRoot = "";
                 }
 
-                if (getContextInfo(webApp.host, webApp.contextRoot) != null) { // possible because of the previous renaming
+                if (isAlreadyDeployed(webApp)) { // possible because of the previous renaming
                     continue;
                 }
 
@@ -623,6 +623,17 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 }
             }
         }
+    }
+
+    private boolean isAlreadyDeployed(final WebAppInfo webApp) {
+        final ContextInfo contextInfo = getContextInfo(webApp.host, webApp.contextRoot);
+        if (contextInfo != null && contextInfo.standardContext != null && contextInfo.standardContext.getState() == LifecycleState.FAILED) {
+            synchronized (this) {
+                infos.remove(getId(webApp.host, webApp.contextRoot));
+            }
+            return false;
+        }
+        return contextInfo != null;
     }
 
     private static boolean isRoot(final String name) {
