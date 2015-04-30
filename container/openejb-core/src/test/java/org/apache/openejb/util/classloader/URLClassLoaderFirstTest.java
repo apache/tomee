@@ -21,17 +21,17 @@ import org.apache.openejb.loader.JarLocation;
 import org.apache.openejb.loader.SystemInstance;
 import org.junit.Test;
 
-import javax.wsdl.WSDLException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Properties;
+import javax.wsdl.WSDLException;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class URLClassLoaderFirstTest {
     @Test
-    public void loadFromAppIfNotInContainer() throws MalformedURLException {
+    public void loadFromAppIfNotInContainer() throws Exception {
         assertTrue(URLClassLoaderFirst.shouldSkip("javax.wsdl.WSDLException"));
 
         final URLClassLoader parent = new URLClassLoader(new URL[0]) {
@@ -45,6 +45,7 @@ public class URLClassLoaderFirstTest {
         };
         final URLClassLoader tmpLoader = new URLClassLoaderFirst(new URL[]{JarLocation.jarLocation(WSDLException.class).toURI().toURL()}, parent);
 
+        SystemInstance.init(new Properties());
         SystemInstance.get().setComponent(ParentClassLoaderFinder.class, new ParentClassLoaderFinder() {
             @Override
             public ClassLoader getParentClassLoader(final ClassLoader fallback) {
@@ -62,5 +63,6 @@ public class URLClassLoaderFirstTest {
         }
 
         assertTrue(URLClassLoaderFirst.shouldSkip("javax.wsdl.WSDLException"));
+        SystemInstance.reset();
     }
 }
