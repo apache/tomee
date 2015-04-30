@@ -102,6 +102,7 @@ public class JuliLogStream implements LogStream {
             if (t != null) {
                 logRecord.setThrown(t);
             }
+            logRecord.setLoggerName(log.getName());
             log.log(logRecord);
         }
     }
