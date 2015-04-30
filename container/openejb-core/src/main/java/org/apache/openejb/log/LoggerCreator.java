@@ -52,20 +52,27 @@ public class LoggerCreator implements Callable<Logger> {
         if (logger == null) {
             synchronized (this) { // no need of lock for this part
                 if (logger == null) {
+                    final Thread thread = Thread.currentThread();
+                    final ClassLoader originalLoader = thread.getContextClassLoader();
+                    thread.setContextClassLoader(ParentClassLoaderFinder.Helper.get());
                     try {
-                        logger = Logger.getLogger(name);
-                    } catch (final Exception e) {
-                        logger = Logger.getLogger(name); // try again
-                    }
-
-                    // if level set through properties force it
-                    final Properties p = SystemInstance.get().getProperties();
-                    final String levelName = p.getProperty("logging.level." + logger.getName());
-                    if (levelName != null) {
-                        final Level level = Level.parse(levelName);
-                        for (final Handler handler : logger.getHandlers()) {
-                            handler.setLevel(level);
+                        try {
+                            logger = Logger.getLogger(name);
+                        } catch (final Exception e) {
+                            logger = Logger.getLogger(name); // try again
                         }
+
+                        // if level set through properties force it
+                        final Properties p = SystemInstance.get().getProperties();
+                        final String levelName = p.getProperty("logging.level." + logger.getName());
+                        if (levelName != null) {
+                            final Level level = Level.parse(levelName);
+                            for (final Handler handler : logger.getHandlers()) {
+                                handler.setLevel(level);
+                            }
+                        }
+                    } finally {
+                        thread.setContextClassLoader(originalLoader);
                     }
                 }
             }
