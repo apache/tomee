@@ -27,7 +27,8 @@ public interface ParentClassLoaderFinder {
 
     class Helper {
         public static ClassLoader get() {
-            final ParentClassLoaderFinder parentFinder = SystemInstance.get().getComponent(ParentClassLoaderFinder.class);
+            final ParentClassLoaderFinder parentFinder = SystemInstance.isInitialized() ?
+                SystemInstance.get().getComponent(ParentClassLoaderFinder.class) : null;
             if (parentFinder != null) {
                 return parentFinder.getParentClassLoader(FALLBACK);
             }
