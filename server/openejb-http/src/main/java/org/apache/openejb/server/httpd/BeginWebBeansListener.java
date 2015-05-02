@@ -26,7 +26,6 @@ import org.apache.webbeans.config.OWBLogConst;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.el.ELContextStore;
 import org.apache.webbeans.spi.ContextsService;
-import org.apache.webbeans.spi.FailOverService;
 import org.apache.webbeans.util.WebBeansUtil;
 
 import javax.enterprise.context.RequestScoped;
@@ -35,7 +34,6 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSessionActivationListener;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
@@ -52,7 +50,6 @@ public class BeginWebBeansListener implements ServletContextListener, ServletReq
      */
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_CDI, BeginWebBeansListener.class);
 
-    protected FailOverService failoverService;
     private final CdiAppContextsService contextsService;
 
     /**
@@ -67,7 +64,6 @@ public class BeginWebBeansListener implements ServletContextListener, ServletReq
      */
     public BeginWebBeansListener(final WebBeansContext webBeansContext) {
         this.webBeansContext = webBeansContext;
-        this.failoverService = webBeansContext != null ? this.webBeansContext.getService(FailOverService.class) : null;
         this.contextsService = webBeansContext != null ? CdiAppContextsService.class.cast(webBeansContext.getService(ContextsService.class)) : null;
         this.contextKey = "org.apache.tomee.catalina.WebBeansListener@" + webBeansContext.hashCode();
     }
@@ -93,19 +89,6 @@ public class BeginWebBeansListener implements ServletContextListener, ServletReq
         }
 
         try {
-            if (event != null
-                    && failoverService != null
-                    && failoverService.isSupportFailOver()) {
-                Object request = event.getServletRequest();
-                if (request instanceof HttpServletRequest) {
-                    HttpServletRequest httpRequest = (HttpServletRequest) request;
-                    javax.servlet.http.HttpSession session = httpRequest.getSession(false);
-                    if (session != null) {
-                        failoverService.sessionIsIdle(session);
-                    }
-                }
-            }
-
             // clean up the EL caches after each request
             final ELContextStore elStore = ELContextStore.getInstance(false);
             if (elStore != null) {
@@ -195,9 +178,6 @@ public class BeginWebBeansListener implements ServletContextListener, ServletReq
 
     @Override
     public void sessionDidActivate(final HttpSessionEvent event) {
-        if (failoverService.isSupportFailOver() || failoverService.isSupportPassivation()) {
-            failoverService.sessionDidActivate(event.getSession());
-        }
     }
 
     @Override

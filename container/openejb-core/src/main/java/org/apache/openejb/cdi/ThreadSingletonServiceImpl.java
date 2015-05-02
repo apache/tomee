@@ -102,13 +102,6 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         properties.setProperty(OpenWebBeansConfiguration.APPLICATION_SUPPORTS_CONVERSATION, "true");
         properties.setProperty(OpenWebBeansConfiguration.IGNORED_INTERFACES, "org.apache.aries.proxy.weaving.WovenProxy");
 
-        final String failoverService = startupObject.getAppInfo().properties.getProperty("org.apache.webbeans.spi.FailOverService",
-            SystemInstance.get().getProperty("org.apache.webbeans.spi.FailOverService",
-                null));
-        if (failoverService != null) {
-            properties.setProperty(OpenWebBeansConfiguration.IGNORED_INTERFACES, failoverService);
-        }
-
         final boolean tomee = SystemInstance.get().getProperty("openejb.loader", "foo").startsWith("tomcat");
 
         final String defaultNormalScopeHandlerClass = NormalScopedBeanInterceptorHandler.class.getName();
