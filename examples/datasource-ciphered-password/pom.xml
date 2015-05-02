@@ -24,7 +24,7 @@
   <name>OpenEJB :: Examples :: Datasource Ciphered Password</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <openejb.version>4.7.2-TT.2</openejb.version>
+    <openejb.version>4.7.2-TT.3-SNAPSHOT</openejb.version>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
