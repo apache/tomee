@@ -104,6 +104,9 @@ public class HttpRequestImpl implements HttpRequest {
             return;
         }
         es.shutdownNow();
+        for (RequestSession requestSession : SESSIONS.values()) {
+            requestSession.session.invalidate();
+        }
         SESSIONS.clear();
     }
 

@@ -121,10 +121,6 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
             properties.setProperty("org.apache.webbeans.proxy.mapping.javax.enterprise.context.RequestScoped", defaultNormalScopeHandlerClass);
         }
 
-        if (sessionContextClass() != null && tomee) {
-            properties.setProperty("org.apache.webbeans.proxy.mapping.javax.enterprise.context.SessionScoped", "org.apache.tomee.catalina.cdi.SessionNormalScopeBeanHandler");
-        }
-
         if (SystemInstance.get().getOptions().get(WEBBEANS_FAILOVER_ISSUPPORTFAILOVER, false)) {
             properties.setProperty(WEBBEANS_FAILOVER_ISSUPPORTFAILOVER, "true");
         }

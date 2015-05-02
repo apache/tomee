@@ -35,7 +35,6 @@ import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
-import org.apache.openejb.cdi.CdiAppContextsService;
 import org.apache.openejb.cdi.Proxys;
 import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.core.WebContext;
@@ -43,8 +42,7 @@ import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.AppFinder;
 import org.apache.openejb.web.LightweightWebAppBuilder;
-import org.apache.webbeans.config.WebBeansContext;
-import org.apache.webbeans.spi.ContextsService;
+
 
 /**
  * @version $Revision$ $Date$
@@ -184,10 +182,6 @@ public class HttpListenerRegistry implements HttpListener {
             for (final Map.Entry<String, HttpListener> entry : listeners.entrySet()) {
                 final String pattern = entry.getKey();
                 if (path.matches(pattern) || path.equals(pattern)) {
-                    final WebBeansContext wbc = WebBeansContext.class.cast(request.getAttribute("openejb_owb_context"));
-                    if (wbc != null) {
-                        CdiAppContextsService.class.cast(wbc.getService(ContextsService.class)).checkConversationState();
-                    }
                     if (pattern.contains("/.*\\.") && HttpRequestImpl.class.isInstance(request)) { // TODO: enhance it, basically servlet *.xxx
                         HttpRequestImpl.class.cast(request).noPathInfo();
                     }

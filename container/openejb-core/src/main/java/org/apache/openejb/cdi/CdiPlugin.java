@@ -41,14 +41,12 @@ import org.apache.webbeans.exception.WebBeansConfigurationException;
 import org.apache.webbeans.portable.events.discovery.BeforeShutdownImpl;
 import org.apache.webbeans.portable.events.generics.GProcessSessionBean;
 import org.apache.webbeans.proxy.NormalScopeProxyFactory;
-import org.apache.webbeans.spi.ContextsService;
 import org.apache.webbeans.spi.ResourceInjectionService;
 import org.apache.webbeans.spi.SecurityService;
 import org.apache.webbeans.spi.TransactionService;
 import org.apache.webbeans.spi.plugins.AbstractOwbPlugin;
 import org.apache.webbeans.spi.plugins.OpenWebBeansEjbPlugin;
 import org.apache.webbeans.spi.plugins.OpenWebBeansJavaEEPlugin;
-import org.apache.webbeans.spi.plugins.OpenWebBeansWebPlugin;
 import org.apache.webbeans.util.GenericsUtil;
 import org.apache.webbeans.util.WebBeansUtil;
 
@@ -94,12 +92,11 @@ import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 
-public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPlugin, OpenWebBeansEjbPlugin, OpenWebBeansWebPlugin {
+public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPlugin, OpenWebBeansEjbPlugin {
 
     private Map<Class<?>, BeanContext> beans;
 
     private WebBeansContext webBeansContext;
-    private CdiAppContextsService contexsServices;
     private ClassLoader classLoader;
 
     private Map<Contextual<?>, Object> cacheProxies;
@@ -113,10 +110,6 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
         }
     }
 
-    @Override
-    public String currentSessionId() {
-        return CdiAppContextsService.class.cast(webBeansContext.getService(ContextsService.class)).currentSessionId(true);
-    }
 
     @Override
     public boolean isEEComponent(final Class<?> impl) {
@@ -157,9 +150,6 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
         }
     }
 
-    public CdiAppContextsService getContexsServices() {
-        return contexsServices;
-    }
 
     public void stop() throws OpenEJBException {
         final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
@@ -171,7 +161,7 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
             webBeansContext.getBeanManagerImpl().fireEvent(new BeforeShutdownImpl());
 
             // Destroys context
-            this.contexsServices.destroy(null);
+            webBeansContext.getContextsService().destroy(null);
 
             // Free all plugin resources
             webBeansContext.getPluginLoader().shutDown();

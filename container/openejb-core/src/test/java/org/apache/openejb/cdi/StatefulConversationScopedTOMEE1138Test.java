@@ -75,8 +75,8 @@ public class StatefulConversationScopedTOMEE1138Test {
             }
 
             @Override
-            public String getConversationSessionId() {
-                return "session-test";
+            public String generateConversationId() {
+                return "cid_1";
             }
         });
         webBeansContext.getService(ContextsService.class).startContext(ConversationScoped.class, null);

@@ -78,7 +78,6 @@ import org.apache.openejb.assembler.classic.ServletInfo;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.assembler.classic.event.NewEjbAvailableAfterApplicationCreated;
-import org.apache.openejb.cdi.CdiAppContextsService;
 import org.apache.openejb.cdi.CdiBuilder;
 import org.apache.openejb.cdi.OpenEJBLifecycle;
 import org.apache.openejb.cdi.Proxys;
@@ -128,6 +127,7 @@ import org.apache.tomee.common.NamingUtil;
 import org.apache.tomee.common.UserTransactionFactory;
 import org.apache.tomee.loader.TomcatHelper;
 import org.apache.webbeans.config.WebBeansContext;
+import org.apache.webbeans.spi.ContextsService;
 import org.apache.webbeans.spi.adaptor.ELAdaptor;
 import org.omg.CORBA.ORB;
 
@@ -1071,9 +1071,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         }
         for (final FilterMap map : standardContext.findFilterMaps()) {
             if ("CDI Conversation Filter".equals(map.getFilterName()) && webContext.getWebBeansContext() != null) {
-                final CdiAppContextsService cdiAppContextsService = CdiAppContextsService.class.cast(webContext.getWebBeansContext().getContextsService());
-                if (cdiAppContextsService != null) {
-                    cdiAppContextsService.setAutoConversationCheck(false);
+                ContextsService contextsService = webContext.getWebBeansContext().getContextsService();
+                if (contextsService != null) {
+                    contextsService.setSupportConversations(false);
                 }
                 break;
             }

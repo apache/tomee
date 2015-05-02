@@ -19,7 +19,6 @@ package org.apache.openejb.server.httpd;
 import org.apache.openejb.cdi.CdiAppContextsService;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.spi.ContextsService;
-import org.apache.webbeans.spi.FailOverService;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -36,8 +35,6 @@ import javax.servlet.http.HttpSessionListener;
  */
 public class EndWebBeansListener implements ServletContextListener, ServletRequestListener, HttpSessionListener, HttpSessionActivationListener {
 
-    protected FailOverService failoverService;
-
     /**
      * Manages the container lifecycle
      */
@@ -52,7 +49,6 @@ public class EndWebBeansListener implements ServletContextListener, ServletReque
     public EndWebBeansListener(WebBeansContext webBeansContext) {
         this.webBeansContext = webBeansContext;
         if (webBeansContext != null) {
-            this.failoverService = this.webBeansContext.getService(FailOverService.class);
             this.contextsService = CdiAppContextsService.class.cast(webBeansContext.getService(ContextsService.class));
         } else {
             this.contextsService = null;
@@ -72,9 +68,6 @@ public class EndWebBeansListener implements ServletContextListener, ServletReque
      */
     @Override
     public void requestInitialized(ServletRequestEvent event) {
-        if (contextsService != null && contextsService.isAutoConversationCheck()) {
-            contextsService.checkConversationState();
-        }
     }
 
     /**
@@ -99,9 +92,6 @@ public class EndWebBeansListener implements ServletContextListener, ServletReque
             return;
         }
 
-        if (failoverService != null && failoverService.isSupportPassivation()) {
-            failoverService.sessionWillPassivate(event.getSession());
-        }
         WebBeansListenerHelper.destroyFakedRequest(this);
     }
 

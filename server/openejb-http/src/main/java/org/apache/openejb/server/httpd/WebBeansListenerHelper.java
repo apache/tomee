@@ -22,6 +22,9 @@ import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.spi.Context;
 import javax.servlet.ServletRequestListener;
 
+/**
+ * @deprecated this features is imo highly questionable. We should rather fix the root of the issue
+ */
 public final class WebBeansListenerHelper {
     private static final ThreadLocal<Boolean> FAKE_REQUEST = new ThreadLocal<Boolean>();
 

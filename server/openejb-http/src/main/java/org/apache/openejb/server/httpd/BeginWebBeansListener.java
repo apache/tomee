@@ -22,18 +22,13 @@ import org.apache.openejb.cdi.ThreadSingletonServiceImpl;
 import org.apache.openejb.cdi.WebappWebBeansContext;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.webbeans.annotation.DestroyedLiteral;
 import org.apache.webbeans.config.OWBLogConst;
 import org.apache.webbeans.config.WebBeansContext;
-import org.apache.webbeans.context.ConversationContext;
-import org.apache.webbeans.conversation.ConversationManager;
 import org.apache.webbeans.el.ELContextStore;
 import org.apache.webbeans.spi.ContextsService;
 import org.apache.webbeans.spi.FailOverService;
 import org.apache.webbeans.util.WebBeansUtil;
 
-import java.util.Map;
-import javax.enterprise.context.Conversation;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.servlet.ServletContextEvent;
@@ -188,26 +183,6 @@ public class BeginWebBeansListener implements ServletContextListener, ServletReq
             logger.debug("Destroying a session with session id : [{0}]", event.getSession().getId());
         }
 
-        // ensure session ThreadLocal is set
-        webBeansContext.getContextsService().startContext(SessionScoped.class, event.getSession());
-
-        if (WebappWebBeansContext.class.isInstance(webBeansContext)) { // end after child
-            WebappWebBeansContext.class.cast(webBeansContext).getParent().getContextsService().endContext(SessionScoped.class, event.getSession());
-        }
-
-        final CdiAppContextsService appContextsService = CdiAppContextsService.class.cast(webBeansContext.getContextsService());
-        if (appContextsService.getRequestContext(false) != null) {
-            final String id = event.getSession().getId(); // capture it eagerly!
-            appContextsService.pushRequestReleasable(new Runnable() {
-                @Override
-                public void run() {
-                    doDestroyConversations(id);
-                }
-            });
-        } else {
-            doDestroyConversations(event.getSession().getId());
-        }
-
         webBeansContext.getContextsService().endContext(SessionScoped.class, event.getSession());
 
         WebBeansListenerHelper.destroyFakedRequest(this);
@@ -240,14 +215,4 @@ public class BeginWebBeansListener implements ServletContextListener, ServletReq
         WebBeansListenerHelper.destroyFakedRequest(this);
     }
 
-    private void doDestroyConversations(final String id) {
-        final ConversationManager conversationManager = webBeansContext.getConversationManager();
-        final Map<Conversation, ConversationContext> cc = conversationManager.getAndRemoveConversationMapWithSessionId(id);
-        for (final Map.Entry<Conversation, ConversationContext> c : cc.entrySet()) {
-            if (c != null) {
-                c.getValue().destroy();
-                webBeansContext.getBeanManagerImpl().fireEvent(c.getKey().getId(), DestroyedLiteral.INSTANCE_CONVERSATION_SCOPED);
-            }
-        }
-    }
 }

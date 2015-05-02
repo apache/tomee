@@ -29,10 +29,10 @@ import org.apache.webbeans.component.BuiltInOwbBean;
 import org.apache.webbeans.component.SimpleProducerFactory;
 import org.apache.webbeans.component.WebBeansType;
 import org.apache.webbeans.config.BeansDeployer;
-import org.apache.webbeans.config.OpenWebBeansConfiguration;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.config.WebBeansFinder;
 import org.apache.webbeans.container.BeanManagerImpl;
+import org.apache.webbeans.el.ELContextStore;
 import org.apache.webbeans.intercept.InterceptorResolutionService;
 import org.apache.webbeans.portable.AbstractProducer;
 import org.apache.webbeans.portable.InjectionTargetImpl;
@@ -48,10 +48,15 @@ import org.apache.webbeans.util.WebBeansConstants;
 import org.apache.webbeans.util.WebBeansUtil;
 
 import javax.el.ELResolver;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Provider;
+import javax.inject.Singleton;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletRequest;
@@ -71,7 +76,6 @@ import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @version $Rev:$ $Date:$
@@ -288,12 +292,22 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
                 WebappBeanManager.class.cast(beanManager).beforeStop();
             }
 
-            if (CdiAppContextsService.class.isInstance(contextsService)) {
-                CdiAppContextsService.class.cast(contextsService).beforeStop(endObject);
+            webBeansContext.getContextsService().endContext(RequestScoped.class, endObject);
+            webBeansContext.getContextsService().endContext(ConversationScoped.class, endObject);
+            webBeansContext.getContextsService().endContext(SessionScoped.class, endObject);
+            webBeansContext.getContextsService().endContext(ApplicationScoped.class, endObject);
+            webBeansContext.getContextsService().endContext(Singleton.class, endObject);
+
+            // clean up the EL caches after each request
+            ELContextStore elStore = ELContextStore.getInstance(false);
+            if (elStore != null)
+            {
+                elStore.destroyELContextStore();
             }
+
             this.beanManager.fireEvent(new BeforeShutdownImpl(), true);
 
-            // Destroys context before BeforeShutdown event
+            // this will now even destroy the ExtensionBeans and other internal stuff
             this.contextsService.destroy(endObject);
 
             //Unbind BeanManager
@@ -374,8 +388,6 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
     }
 
     public static ScheduledExecutorService initializeServletContext(final ServletContext servletContext, final WebBeansContext context) {
-        final String strDelay = context.getOpenWebBeansConfiguration().getProperty(OpenWebBeansConfiguration.CONVERSATION_PERIODIC_DELAY, "150000");
-        final long delay = Long.parseLong(strDelay);
 
         final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1, new ThreadFactory() {
             @Override
@@ -385,7 +397,6 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
                 return t;
             }
         });
-        executorService.scheduleWithFixedDelay(new ConversationCleaner(context), delay, delay, TimeUnit.MILLISECONDS);
 
         final ELAdaptor elAdaptor = context.getService(ELAdaptor.class);
         final ELResolver resolver = elAdaptor.getOwbELResolver();
@@ -393,13 +404,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         if (context.getOpenWebBeansConfiguration().isJspApplication()) {
             logger.debug("Application is configured as JSP. Adding EL Resolver.");
 
-            final JspFactory factory = JspFactory.getDefaultFactory();
-            if (factory != null) {
-                final JspApplicationContext applicationCtx = factory.getJspApplicationContext(servletContext);
-                applicationCtx.addELResolver(resolver);
-            } else {
-                logger.debug("Default JspFactory instance was not found");
-            }
+            setJspELFactory(servletContext, resolver);
         }
 
         // Add BeanManager to the 'javax.enterprise.inject.spi.BeanManager' servlet context attribute
@@ -409,21 +414,36 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
     }
 
     /**
-     * Conversation cleaner thread, that
-     * clears unused conversations.
+     * On Tomcat we need to sometimes force a class load to get our hands on the JspFactory
      */
-    private static final class ConversationCleaner implements Runnable {
-        private final WebBeansContext webBeansContext;
+    private static void setJspELFactory(ServletContext startupObject, ELResolver resolver)
+    {
+        JspFactory factory = JspFactory.getDefaultFactory();
+        if (factory == null)
+        {
+            try
+            {
+                Class.forName("org.apache.jasper.compiler.JspRuntimeContext");
+                factory = JspFactory.getDefaultFactory();
+            }
+            catch (Exception e)
+            {
+                // ignore
+            }
 
-        private ConversationCleaner(final WebBeansContext webBeansContext) {
-            this.webBeansContext = webBeansContext;
         }
 
-        public void run() {
-            webBeansContext.getConversationManager().destroyWithRespectToTimout();
-
+        if (factory != null)
+        {
+            JspApplicationContext applicationCtx = factory.getJspApplicationContext(startupObject);
+            applicationCtx.addELResolver(resolver);
+        }
+        else
+        {
+            logger.warning("Default JSPFactroy instance has not found. Skipping OWB JSP handling");
         }
     }
+
 
     /**
      * Returns servlet context otherwise throws exception.

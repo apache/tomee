@@ -1027,9 +1027,9 @@ public class ApplicationComposers {
     public void stopApplication() throws NamingException {
         if (appContext != null) {
             final ContextsService contextsService = appContext.getWebBeansContext().getContextsService();
+            // No need to stop the ConversationContext manually as it gets stored inside the SessionContext as Bean
             contextsService.endContext(SessionScoped.class, session);
             contextsService.endContext(RequestScoped.class, null);
-            contextsService.endContext(ConversationScoped.class, null);
         }
 
         if (appInfo != null) {
