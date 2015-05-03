@@ -19,30 +19,13 @@ package org.apache.openejb.server.httpd;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.WebAppInfo;
+import org.apache.openejb.core.WebContext;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.server.httpd.session.SessionManager;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.ArrayEnumeration;
-import org.apache.openejb.util.DaemonThreadFactory;
-import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.Logger;
 
-import javax.security.auth.login.LoginException;
-import javax.servlet.AsyncContext;
-import javax.servlet.DispatcherType;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletRequestEvent;
-import javax.servlet.ServletRequestListener;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSessionEvent;
-import javax.servlet.http.HttpUpgradeHandler;
-import javax.servlet.http.Part;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInput;
@@ -67,11 +50,23 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import javax.security.auth.login.LoginException;
+import javax.servlet.AsyncContext;
+import javax.servlet.DispatcherType;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletRequestEvent;
+import javax.servlet.ServletRequestListener;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSessionEvent;
+import javax.servlet.http.HttpUpgradeHandler;
+import javax.servlet.http.Part;
 
 import static java.util.Collections.singletonList;
 
@@ -83,11 +78,6 @@ public class HttpRequestImpl implements HttpRequest {
     private static final String FORM_URL_ENCODED = "application/x-www-form-urlencoded";
     private static final String TRANSFER_ENCODING = "Transfer-Encoding";
     private static final String CHUNKED = "chunked";
-    protected static final String EJBSESSIONID = "EJBSESSIONID";
-    protected static final String JSESSIONID = "JSESSIONID";
-
-    // note: no eviction so invalidate has to be called properly
-    private static final ConcurrentMap<String, RequestSession> SESSIONS = new ConcurrentHashMap<>();
 
     public static final Class<?>[] SERVLET_CONTEXT_INTERFACES = new Class<?>[]{ServletContext.class};
     public static final InvocationHandler SERVLET_CONTEXT_HANDLER = new InvocationHandler() {
@@ -97,43 +87,9 @@ public class HttpRequestImpl implements HttpRequest {
         }
     };
 
-    private static volatile ScheduledExecutorService es;
-
-    public static void destroyEviction() {
-        if (es == null) {
-            return;
-        }
-        es.shutdownNow();
-        SESSIONS.clear();
-    }
-
-    public static void initEviction() {
-        if (!"true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.http.eviction", "true"))) {
-            return;
-        }
-        final Duration duration = new Duration(SystemInstance.get().getProperty("openejb.http.eviction.duration", "1 minute"));
-        es = Executors.newScheduledThreadPool(1, new DaemonThreadFactory(HttpRequestImpl.class));
-        es.scheduleWithFixedDelay(new Runnable() {
-            @Override
-            public void run() {
-                for (final RequestSession data : new ArrayList<>(SESSIONS.values())) {
-                    final HttpSession session = data.session;
-                    if (session.getMaxInactiveInterval() > 0
-                            && session.getLastAccessedTime() + TimeUnit.SECONDS.toMillis(session.getMaxInactiveInterval()) < System.currentTimeMillis()) {
-                        SESSIONS.remove(session.getId());
-                        session.invalidate();
-
-                        if (data.request != null && data.request.begin != null) {
-                            data.request.begin.sessionDestroyed(new HttpSessionEvent(session));
-                        }
-                    }
-                }
-            }
-        }, duration.getTime(), duration.getTime(), duration.getUnit());
-    }
-
     private EndWebBeansListener end;
     private BeginWebBeansListener begin;
+    private WebContext application;
 
     /**
      * 5.1.1    Method
@@ -438,11 +394,13 @@ public class HttpRequestImpl implements HttpRequest {
                 for (String c : cookies) {
                     final String current = c.trim();
                     if (current.startsWith("EJBSESSIONID=")) {
-                        final RequestSession requestSession = SESSIONS.get(current.substring("EJBSESSIONID=".length()));
-                        session = requestSession == null ? null : requestSession.session;
+                        final SessionManager.SessionWrapper sessionWrapper =
+                                SystemInstance.get().getComponent(SessionManager.class).findSession(current.substring("EJBSESSIONID=".length()));
+                        session = sessionWrapper == null ? null : sessionWrapper.session;
                     } else if (current.startsWith("JSESSIONID=")) {
-                        final RequestSession requestSession = SESSIONS.get(current.substring("JSESSIONID=".length()));
-                        session = requestSession == null ? null : requestSession.session;
+                        final SessionManager.SessionWrapper sessionWrapper =
+                                SystemInstance.get().getComponent(SessionManager.class).findSession(current.substring("JSESSIONID=".length()));
+                        session = sessionWrapper == null ? null : sessionWrapper.session;
                     }
                 }
             }
@@ -929,7 +887,7 @@ public class HttpRequestImpl implements HttpRequest {
                 }
             }
 
-            final HttpSessionImpl impl = new HttpSessionImpl(SESSIONS, contextPath, timeout);
+            final HttpSessionImpl impl = new HttpSessionImpl(contextPath, timeout);
             session = impl;
             if (begin != null) {
                 begin.sessionCreated(new HttpSessionEvent(session));
@@ -937,17 +895,10 @@ public class HttpRequestImpl implements HttpRequest {
             }
             impl.callListeners(); // can call req.getSession() so do it after affectation + do it after cdi init
 
-            final RequestSession previous = SESSIONS.putIfAbsent(session.getId(), new RequestSession(this, session));
+            final SessionManager sessionManager = SystemInstance.get().getComponent(SessionManager.class);
+            final SessionManager.SessionWrapper previous = sessionManager.newSession(begin, session, application);
             if (previous != null) {
                 session = previous.session;
-            } else {
-                if (es == null) {
-                    synchronized (HttpRequestImpl.class) {
-                        if (es == null) {
-                            initEviction();
-                        }
-                    }
-                }
             }
         }
         return session;
@@ -1219,6 +1170,10 @@ public class HttpRequestImpl implements HttpRequest {
         }
     }
 
+    public void setApplication(final WebContext app) {
+        this.application = app;
+    }
+
     public void setBeginListener(final BeginWebBeansListener begin) {
         if (this.begin == null) {
             this.begin = begin;
@@ -1267,7 +1222,7 @@ public class HttpRequestImpl implements HttpRequest {
 
         @Override
         public void invalidate() {
-            SESSIONS.remove(session.getId());
+            SystemInstance.get().getComponent(SessionManager.class).removeSession(session.getId());
             try {
                 super.invalidate();
             } finally {
@@ -1312,17 +1267,6 @@ public class HttpRequestImpl implements HttpRequest {
         @Override
         public void include(final ServletRequest request, final ServletResponse response) throws ServletException, IOException {
             // not yet supported: TODO: fake response write in ByteArrayOutputStream and then call HttpListenerRegistry and write it back
-        }
-    }
-
-    private static class RequestSession extends HttpSessionEvent {
-        private final HttpRequestImpl request;
-        private final HttpSession session;
-
-        public RequestSession(final HttpRequestImpl request, final HttpSession session) {
-            super(session);
-            this.request = request;
-            this.session = session;
         }
     }
 }

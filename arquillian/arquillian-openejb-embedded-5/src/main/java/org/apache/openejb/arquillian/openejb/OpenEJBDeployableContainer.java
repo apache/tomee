@@ -37,8 +37,10 @@ import org.apache.openejb.config.DeploymentFilterable;
 import org.apache.openejb.config.WebModule;
 import org.apache.openejb.core.LocalInitialContext;
 import org.apache.openejb.core.LocalInitialContextFactory;
+import org.apache.openejb.core.WebContext;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.server.httpd.session.SessionManager;
 import org.apache.openejb.web.LightweightWebAppBuilder;
 import org.apache.webbeans.web.lifecycle.test.MockHttpSession;
 import org.apache.webbeans.web.lifecycle.test.MockServletContext;
@@ -58,11 +60,6 @@ import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.IOException;
@@ -75,6 +72,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
 
 import static org.apache.openejb.cdi.ScopeHelper.startContexts;
 import static org.apache.openejb.cdi.ScopeHelper.stopContexts;
@@ -295,7 +297,8 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
                 final AppInfo appInfo = configurationFactory.configureApplication(module);
 
                 final WebAppBuilder webAppBuilder = SystemInstance.get().getComponent(WebAppBuilder.class);
-                if (webAppBuilder != null && LightweightWebAppBuilder.class.isInstance(webAppBuilder)) {
+                final boolean isEmbeddedWebAppBuilder = webAppBuilder != null && LightweightWebAppBuilder.class.isInstance(webAppBuilder);
+                if (isEmbeddedWebAppBuilder) {
                     // for now we keep the same classloader, open to discussion if we should recreate it, not sure it does worth it
                     final LightweightWebAppBuilder lightweightWebAppBuilder = LightweightWebAppBuilder.class.cast(webAppBuilder);
                     for (final WebModule w : module.getWebModules()) {
@@ -310,6 +313,21 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
                     }
                 }
                 final AppContext appCtx = assembler.createApplication(appInfo, module.getClassLoader());
+                if (isEmbeddedWebAppBuilder && PROPERTIES.containsKey(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE) && !appCtx.getWebContexts().isEmpty()) {
+                    cls.add(new Closeable() {
+                        @Override
+                        public void close() throws IOException {
+                            try {
+                                final SessionManager sessionManager = SystemInstance.get().getComponent(SessionManager.class);
+                                for (final WebContext web : appCtx.getWebContexts()) {
+                                    sessionManager.destroy(web);
+                                }
+                            } catch (final Throwable e) {
+                                // no-op
+                            }
+                        }
+                    });
+                }
 
                 final ServletContext appServletContext = new MockServletContext();
                 final HttpSession appSession = new MockHttpSession();

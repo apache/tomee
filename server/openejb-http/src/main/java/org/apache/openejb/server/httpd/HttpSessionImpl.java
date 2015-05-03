@@ -18,11 +18,8 @@ package org.apache.openejb.server.httpd;
 
 import org.apache.openejb.client.ArrayEnumeration;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.server.httpd.session.SessionManager;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSessionContext;
-import javax.servlet.http.HttpSessionEvent;
-import javax.servlet.http.HttpSessionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -31,19 +28,20 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentMap;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSessionContext;
+import javax.servlet.http.HttpSessionEvent;
+import javax.servlet.http.HttpSessionListener;
 
 public class HttpSessionImpl implements HttpSession {
     private Collection<HttpSessionListener> listeners;
     private String sessionId = UUID.randomUUID().toString();
     private Map<String, Object> attributes = new HashMap<String, Object>();
-    private final ConcurrentMap<String, ? extends HttpSessionEvent> mapToClean;
     private final long created = System.currentTimeMillis();
     private volatile long timeout;
     private volatile long lastAccessed = created;
 
-    public HttpSessionImpl(final ConcurrentMap<String, ? extends HttpSessionEvent> sessions, final String contextPath, final long timeout) {
-        this.mapToClean = sessions;
+    public HttpSessionImpl(final String contextPath, final long timeout) {
         this.timeout = timeout;
         if (contextPath == null) {
             return;
@@ -62,7 +60,7 @@ public class HttpSessionImpl implements HttpSession {
     }
 
     public HttpSessionImpl() {
-        this(null, null, 30000);
+        this(null, 30000);
     }
 
     public void newSessionId() {
@@ -105,8 +103,9 @@ public class HttpSessionImpl implements HttpSession {
         }
 
         attributes.clear();
-        if (mapToClean != null) {
-            mapToClean.remove(sessionId);
+        final SessionManager sessionManager = SystemInstance.get().getComponent(SessionManager.class);
+        if (sessionManager != null) {
+            sessionManager.removeSession(sessionId);
         }
     }
 
@@ -186,16 +185,17 @@ public class HttpSessionImpl implements HttpSession {
     @Override
     public HttpSessionContext getSessionContext() {
         touch();
+        final SessionManager component = SystemInstance.get().getComponent(SessionManager.class);
         return new HttpSessionContext() {
             @Override
             public javax.servlet.http.HttpSession getSession(final String sessionId) {
-                final HttpSessionEvent event = mapToClean.get(sessionId);
+                final HttpSessionEvent event = component.findSession(sessionId);
                 return event == null ? null : event.getSession();
             }
 
             @Override
             public Enumeration<String> getIds() {
-                return Collections.enumeration(mapToClean.keySet());
+                return Collections.enumeration(component.findSessionIds());
             }
         };
     }
