@@ -744,13 +744,6 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
                     final HttpSession currentSession = servletRequest.getSession();
                     initSessionContext(currentSession);
 
-                    /*
-                    final FailOverService failoverService = webBeansContext.getService(FailOverService.class);
-                    if (failoverService != null && failoverService.isSupportFailOver()) {
-                        failoverService.sessionIsInUse(currentSession);
-                    }
-                    */
-
                     if (logger.isDebugEnabled()) {
                         logger.debug("Lazy SESSION context initialization SUCCESS");
                     }
