@@ -199,26 +199,6 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
                 webBeansContext.getBeanManagerImpl().fireEvent(id, DestroyedLiteral.INSTANCE_CONVERSATION_SCOPED);
             }
         }
-        for (final SessionContext sc : sessionCtxManager.getContextById().values()) {
-            final Object event = HttpSessionContextSessionAware.class.isInstance(sc) ? HttpSessionContextSessionAware.class.cast(sc).getSession() : sc;
-            if (HttpSession.class.isInstance(event)) {
-                final HttpSession httpSession = HttpSession.class.cast(event);
-                if (httpSession.getId() == null) {
-                    continue;
-                }
-                initSessionContext(httpSession);
-                try {
-                    httpSession.invalidate();
-                } catch (final IllegalStateException ise) {
-                    // no-op
-                } finally {
-                    destroySessionContext(httpSession);
-                }
-            } else {
-                sc.destroy();
-            }
-            webBeansContext.getBeanManagerImpl().fireEvent(event, DestroyedLiteral.INSTANCE_SESSION_SCOPED);
-        }
         sessionCtxManager.getContextById().clear();
     }
 
@@ -729,11 +709,6 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     }
 
     private Context lazyStartSessionContext() {
-
-        if (logger.isDebugEnabled()) {
-            logger.debug(">lazyStartSessionContext");
-        }
-
         final Context webContext = null;
         final Context context = getCurrentContext(RequestScoped.class);
         if (context instanceof ServletRequestContext) {
@@ -743,10 +718,6 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
                 try {
                     final HttpSession currentSession = servletRequest.getSession();
                     initSessionContext(currentSession);
-
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Lazy SESSION context initialization SUCCESS");
-                    }
                 } catch (final Exception e) {
                     logger.error(OWBLogConst.ERROR_0013, e);
                 }
@@ -758,9 +729,6 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             logger.warning("Could NOT lazily initialize session context because of " + context + " RequestContext");
         }
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("<lazyStartSessionContext " + webContext);
-        }
         return webContext;
     }
 

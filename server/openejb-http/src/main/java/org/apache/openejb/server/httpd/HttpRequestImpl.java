@@ -896,7 +896,7 @@ public class HttpRequestImpl implements HttpRequest {
             impl.callListeners(); // can call req.getSession() so do it after affectation + do it after cdi init
 
             final SessionManager sessionManager = SystemInstance.get().getComponent(SessionManager.class);
-            final SessionManager.SessionWrapper previous = sessionManager.newSession(begin, session, application);
+            final SessionManager.SessionWrapper previous = sessionManager.newSession(begin, end, session, application);
             if (previous != null) {
                 session = previous.session;
             }
@@ -1222,7 +1222,6 @@ public class HttpRequestImpl implements HttpRequest {
 
         @Override
         public void invalidate() {
-            SystemInstance.get().getComponent(SessionManager.class).removeSession(session.getId());
             try {
                 super.invalidate();
             } finally {

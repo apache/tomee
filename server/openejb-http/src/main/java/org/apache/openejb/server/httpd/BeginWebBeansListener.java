@@ -117,7 +117,7 @@ public class BeginWebBeansListener implements ServletContextListener, ServletReq
                 elStore.destroyELContextStore();
             }
 
-            webBeansContext.getContextsService().endContext(RequestScoped.class, event);
+            contextsService.endContext(RequestScoped.class, event);
             if (webBeansContext instanceof WebappWebBeansContext) { // end after child
                 ((WebappWebBeansContext) webBeansContext).getParent().getContextsService().endContext(RequestScoped.class, event);
             }
@@ -145,7 +145,7 @@ public class BeginWebBeansListener implements ServletContextListener, ServletReq
             if (webBeansContext instanceof WebappWebBeansContext) { // start before child
                 ((WebappWebBeansContext) webBeansContext).getParent().getContextsService().startContext(RequestScoped.class, event);
             }
-            this.webBeansContext.getContextsService().startContext(RequestScoped.class, event);
+            contextsService.startContext(RequestScoped.class, event);
 
             // we don't initialise the Session here but do it lazily if it gets requested
             // the first time. See OWB-457
@@ -168,7 +168,7 @@ public class BeginWebBeansListener implements ServletContextListener, ServletReq
             if (webBeansContext instanceof WebappWebBeansContext) { // start before child
                 ((WebappWebBeansContext) webBeansContext).getParent().getContextsService().startContext(SessionScoped.class, event.getSession());
             }
-            this.webBeansContext.getContextsService().startContext(SessionScoped.class, event.getSession());
+            contextsService.startContext(SessionScoped.class, event.getSession());
         } catch (final Exception e) {
             logger.error(OWBLogConst.ERROR_0020, event.getSession());
             WebBeansUtil.throwRuntimeExceptions(e);
@@ -189,16 +189,15 @@ public class BeginWebBeansListener implements ServletContextListener, ServletReq
         }
 
         // ensure session ThreadLocal is set
-        webBeansContext.getContextsService().startContext(SessionScoped.class, event.getSession());
+        contextsService.startContext(SessionScoped.class, event.getSession());
 
         if (WebappWebBeansContext.class.isInstance(webBeansContext)) { // end after child
             WebappWebBeansContext.class.cast(webBeansContext).getParent().getContextsService().endContext(SessionScoped.class, event.getSession());
         }
 
-        final CdiAppContextsService appContextsService = CdiAppContextsService.class.cast(webBeansContext.getContextsService());
-        if (appContextsService.getRequestContext(false) != null) {
+        if (contextsService.getRequestContext(false) != null) {
             final String id = event.getSession().getId(); // capture it eagerly!
-            appContextsService.pushRequestReleasable(new Runnable() {
+            contextsService.pushRequestReleasable(new Runnable() {
                 @Override
                 public void run() {
                     doDestroyConversations(id);
@@ -208,7 +207,7 @@ public class BeginWebBeansListener implements ServletContextListener, ServletReq
             doDestroyConversations(event.getSession().getId());
         }
 
-        webBeansContext.getContextsService().endContext(SessionScoped.class, event.getSession());
+        contextsService.endContext(SessionScoped.class, event.getSession());
 
         WebBeansListenerHelper.destroyFakedRequest(this);
     }

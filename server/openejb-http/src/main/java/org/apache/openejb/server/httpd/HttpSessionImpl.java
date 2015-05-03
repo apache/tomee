@@ -102,7 +102,6 @@ public class HttpSessionImpl implements HttpSession {
             }
         }
 
-        attributes.clear();
         final SessionManager sessionManager = SystemInstance.get().getComponent(SessionManager.class);
         if (sessionManager != null) {
             sessionManager.removeSession(sessionId);

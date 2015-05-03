@@ -29,12 +29,6 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.OptionsLog;
 
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -46,6 +40,12 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
 /**
  * This is the main class for the web administration.  It takes care of the
@@ -62,7 +62,7 @@ public class OpenEJBHttpServer implements HttpServer {
     private boolean indent;
 
     public OpenEJBHttpServer() {
-        this(getHttpListenerRegistry());
+        this(null);
     }
 
     public static HttpListenerRegistry getHttpListenerRegistry() {
@@ -76,10 +76,11 @@ public class OpenEJBHttpServer implements HttpServer {
     }
 
     public OpenEJBHttpServer(final HttpListener listener) {
-        this.listener = new OpenEJBHttpRegistry.ClassLoaderHttpListener(listener, ParentClassLoaderFinder.Helper.get());
         if (SystemInstance.get().getComponent(SessionManager.class) == null) {
             SystemInstance.get().setComponent(SessionManager.class, new SessionManager());
         }
+        this.listener = new OpenEJBHttpRegistry.ClassLoaderHttpListener(
+                listener == null ? getHttpListenerRegistry() : listener, ParentClassLoaderFinder.Helper.get());
     }
 
     public static boolean isTextXml(final Map<String, String> headers) {

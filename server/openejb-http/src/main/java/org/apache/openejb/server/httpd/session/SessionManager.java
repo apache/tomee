@@ -19,10 +19,11 @@ package org.apache.openejb.server.httpd.session;
 import org.apache.openejb.core.WebContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.httpd.BeginWebBeansListener;
-import org.apache.openejb.server.httpd.HttpRequestImpl;
+import org.apache.openejb.server.httpd.EndWebBeansListener;
 import org.apache.openejb.server.httpd.HttpSession;
 import org.apache.openejb.util.DaemonThreadFactory;
 import org.apache.openejb.util.Duration;
+import org.apache.webbeans.config.WebBeansContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,12 +44,33 @@ public class SessionManager {
     private static volatile ScheduledExecutorService es;
 
     public void destroy(final WebContext app) {
+        if (app == null) {
+            return;
+        }
+
+        final WebBeansContext wbc = app.getWebBeansContext();
         final Iterator<SessionWrapper> iterator = sessions.values().iterator();
         while (iterator.hasNext()) {
             final SessionWrapper next = iterator.next();
             if (next.app == app) {
-                next.session.invalidate();
+                doDestroy(next);
                 iterator.remove();
+            }
+        }
+    }
+
+    private void doDestroy(final SessionWrapper next) {
+        HttpSessionEvent event = null;
+        if (next.end != null) {
+            event = new HttpSessionEvent(next.session);
+            next.end.sessionDestroyed(event);
+            next.begin.sessionCreated(event); // just set session thread local
+        }
+        try {
+            next.session.invalidate();
+        } finally {
+            if (next.begin != null) {
+                next.begin.sessionDestroyed(event);
             }
         }
     }
@@ -69,7 +91,7 @@ public class SessionManager {
             return;
         }
         final Duration duration = new Duration(SystemInstance.get().getProperty("openejb.http.eviction.duration", "1 minute"));
-        es = Executors.newScheduledThreadPool(1, new DaemonThreadFactory(HttpRequestImpl.class));
+        es = Executors.newScheduledThreadPool(1, new DaemonThreadFactory(SessionManager.class));
         es.scheduleWithFixedDelay(new Runnable() {
             @Override
             public void run() {
@@ -77,12 +99,8 @@ public class SessionManager {
                     final HttpSession session = data.session;
                     if (session.getMaxInactiveInterval() > 0
                             && session.getLastAccessedTime() + TimeUnit.SECONDS.toMillis(session.getMaxInactiveInterval()) < System.currentTimeMillis()) {
-                        sessions.remove(session.getId());
-                        session.invalidate();
-
-                        if (data.listener != null) {
-                            data.listener.sessionDestroyed(new HttpSessionEvent(session));
-                        }
+                        doDestroy(data);
+                        sessions.remove(data.session.getId());
                     }
                 }
             }
@@ -105,8 +123,10 @@ public class SessionManager {
         return sessions.size();
     }
 
-    public SessionWrapper newSession(final BeginWebBeansListener listener, final HttpSession session, final WebContext app) {
-        final SessionWrapper existing = sessions.putIfAbsent(session.getId(), new SessionWrapper(listener, session, app));
+    public SessionWrapper newSession(final BeginWebBeansListener begin, final EndWebBeansListener end,
+                                     final HttpSession session, final WebContext app) {
+        final SessionWrapper wrapper = new SessionWrapper(begin, end, session, app);
+        final SessionWrapper existing = sessions.putIfAbsent(session.getId(), wrapper);
         if (existing == null && es == null) {
             synchronized (this) {
                 if (es == null) {
@@ -114,17 +134,19 @@ public class SessionManager {
                 }
             }
         }
-        return existing;
+        return existing == null ? wrapper : existing;
     }
 
     public static class SessionWrapper extends HttpSessionEvent {
-        public final BeginWebBeansListener listener;
+        public final BeginWebBeansListener begin;
+        public final EndWebBeansListener end;
         public final HttpSession session;
         public final WebContext app;
 
-        public SessionWrapper(final BeginWebBeansListener listener, final HttpSession session, final WebContext app) {
+        public SessionWrapper(final BeginWebBeansListener begin, final EndWebBeansListener end, final HttpSession session, final WebContext app) {
             super(session);
-            this.listener = listener;
+            this.begin = begin;
+            this.end = end;
             this.session = session;
             this.app = app;
         }
