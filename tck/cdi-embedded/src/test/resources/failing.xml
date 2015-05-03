@@ -32,7 +32,7 @@
     -Dopenejb.cdi.conversation.http.use-get-parameter=true
     -->
     <classes>
-      <class name="org.jboss.cdi.tck.tests.lookup.injection.non.contextual.InjectionIntoNonContextualComponentTest" />
+      <class name="org.jboss.cdi.tck.tests.context.session.listener.shutdown.SessionContextListenerShutdownTest" />
     </classes>
   </test>
 </suite>
