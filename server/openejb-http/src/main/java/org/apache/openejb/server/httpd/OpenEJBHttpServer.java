@@ -22,6 +22,7 @@ import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.context.RequestInfos;
+import org.apache.openejb.server.httpd.session.SessionManager;
 import org.apache.openejb.server.stream.CountingInputStream;
 import org.apache.openejb.server.stream.CountingOutputStream;
 import org.apache.openejb.util.LogCategory;
@@ -76,6 +77,9 @@ public class OpenEJBHttpServer implements HttpServer {
 
     public OpenEJBHttpServer(final HttpListener listener) {
         this.listener = new OpenEJBHttpRegistry.ClassLoaderHttpListener(listener, ParentClassLoaderFinder.Helper.get());
+        if (SystemInstance.get().getComponent(SessionManager.class) == null) {
+            SystemInstance.get().setComponent(SessionManager.class, new SessionManager());
+        }
     }
 
     public static boolean isTextXml(final Map<String, String> headers) {
@@ -170,7 +174,10 @@ public class OpenEJBHttpServer implements HttpServer {
     @Override
     public void stop() throws ServiceException {
         OpenEJBAsyncContext.destroy();
-        HttpRequestImpl.destroyEviction();
+        final SessionManager component = SystemInstance.get().getComponent(SessionManager.class);
+        if (component != null) {
+            component.destroy();
+        }
     }
 
     @Override

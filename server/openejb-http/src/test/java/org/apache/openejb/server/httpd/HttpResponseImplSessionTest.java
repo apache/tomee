@@ -21,41 +21,31 @@ import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.ivm.naming.IvmJndiFactory;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.ServiceException;
+import org.apache.openejb.server.httpd.session.SessionManager;
 import org.apache.openejb.spi.ContainerSystem;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import javax.servlet.http.HttpSession;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Field;
 import java.net.Socket;
-import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
+import javax.servlet.http.HttpSession;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class HttpResponseImplSessionTest {
-    private static Field sessions;
-
     private OpenEJBHttpEjbServer server;
 
-    @BeforeClass
-    public static void findSessionsField() throws NoSuchFieldException {
-        sessions = HttpRequestImpl.class.getDeclaredField("SESSIONS");
-        sessions.setAccessible(true);
-    }
-
     private static int numberOfSessions() throws IllegalAccessException {
-        return Map.class.cast(sessions.get(null)).size();
+        return SystemInstance.get().getComponent(SessionManager.class).size();
     }
 
     @Before

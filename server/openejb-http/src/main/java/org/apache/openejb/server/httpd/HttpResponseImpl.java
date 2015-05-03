@@ -17,6 +17,7 @@
 package org.apache.openejb.server.httpd;
 
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.server.httpd.session.SessionManager;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.OpenEjbVersion;
@@ -483,7 +484,7 @@ public class HttpResponseImpl implements HttpResponse {
             return;
         }
 
-        headers.put(HttpRequest.HEADER_SET_COOKIE, HttpRequestImpl.EJBSESSIONID + '=' + session.getId() + "; Path=/");
+        headers.put(HttpRequest.HEADER_SET_COOKIE, SessionManager.EJBSESSIONID + '=' + session.getId() + "; Path=/");
     }
 
     /**
