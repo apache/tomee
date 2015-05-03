@@ -47,8 +47,6 @@ import org.apache.webbeans.spi.TransactionService;
 import org.apache.webbeans.spi.adaptor.ELAdaptor;
 import org.apache.webbeans.web.intercept.RequestScopedBeanInterceptorHandler;
 
-import javax.enterprise.inject.spi.DeploymentException;
-import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -56,6 +54,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
+import javax.enterprise.inject.spi.DeploymentException;
+import javax.transaction.Transactional;
 
 /**
  * @version $Rev:$ $Date:$
@@ -71,7 +71,6 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
     //this needs to be static because OWB won't tell us what the existing SingletonService is and you can't set it twice.
     private static final ThreadLocal<WebBeansContext> contexts = new ThreadLocal<WebBeansContext>();
     private static final Map<ClassLoader, WebBeansContext> contextByClassLoader = new ConcurrentHashMap<ClassLoader, WebBeansContext>();
-    private static final String WEBBEANS_FAILOVER_ISSUPPORTFAILOVER = "org.apache.webbeans.web.failover.issupportfailover";
 
     @Override
     public void initialize(final StartupObject startupObject) {
@@ -114,9 +113,6 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
             properties.setProperty("org.apache.webbeans.proxy.mapping.javax.enterprise.context.RequestScoped", defaultNormalScopeHandlerClass);
         }
 
-        if (SystemInstance.get().getOptions().get(WEBBEANS_FAILOVER_ISSUPPORTFAILOVER, false)) {
-            properties.setProperty(WEBBEANS_FAILOVER_ISSUPPORTFAILOVER, "true");
-        }
 
         properties.put(OpenWebBeansConfiguration.PRODUCER_INTERCEPTION_SUPPORT, SystemInstance.get().getProperty("openejb.cdi.producer.interception", "true"));
 
