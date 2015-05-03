@@ -46,6 +46,7 @@ import org.apache.openejb.config.sys.JaxbOpenejb;
 import org.apache.openejb.config.sys.Openejb;
 import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.core.Operation;
+import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.WebContext;
 import org.apache.openejb.core.ivm.naming.InitContextFactory;
@@ -75,6 +76,7 @@ import org.apache.openejb.util.NetworkUtil;
 import org.apache.openejb.util.PropertyPlaceHolderHelper;
 import org.apache.openejb.util.ServiceManagerProxy;
 import org.apache.openejb.util.URLs;
+import org.apache.openejb.util.reflection.Reflections;
 import org.apache.openejb.web.LightweightWebAppBuilder;
 import org.apache.webbeans.inject.OWBInjector;
 import org.apache.webbeans.spi.ContextsService;
@@ -1447,6 +1449,26 @@ public class ApplicationComposers {
                     }
                 }
             });
+            if (!composer.appContext.getWebContexts().isEmpty()) {
+                composer.beforeDestroyAfterRunnables.add(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            final Object sessionManager = SystemInstance.get().getComponent(
+                                    ParentClassLoaderFinder.Helper.get().loadClass("org.apache.openejb.server.httpd.session.SessionManager")
+                            );
+                            if (sessionManager != null) {
+                                final Class<?>[] paramTypes = {WebContext.class};
+                                for (final WebContext web : composer.appContext.getWebContexts()) {
+                                    Reflections.invokeByReflection(sessionManager, "destroy", paramTypes, new Object[] { web });
+                                }
+                            }
+                        } catch (final Throwable e) {
+                            // no-op
+                        }
+                    }
+                });
+            }
             composer.afterRunnables.add(new Runnable() {
                 @Override
                 public void run() {

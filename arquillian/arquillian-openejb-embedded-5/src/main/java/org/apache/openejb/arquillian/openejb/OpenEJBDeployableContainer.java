@@ -319,8 +319,10 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
                         public void close() throws IOException {
                             try {
                                 final SessionManager sessionManager = SystemInstance.get().getComponent(SessionManager.class);
-                                for (final WebContext web : appCtx.getWebContexts()) {
-                                    sessionManager.destroy(web);
+                                if (sessionManager != null) {
+                                    for (final WebContext web : appCtx.getWebContexts()) {
+                                        sessionManager.destroy(web);
+                                    }
                                 }
                             } catch (final Throwable e) {
                                 // no-op
