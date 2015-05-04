@@ -30,8 +30,8 @@
   
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.openejb>4.7.3-SNAPSHOT</version.openejb>
-    <version.tomee>1.7.3-SNAPSHOT</version.tomee>
+    <version.openejb>4.7.2-SNAPSHOT</version.openejb>
+    <version.tomee>1.7.2-SNAPSHOT</version.tomee>
     <version.openjpa>2.4.0</version.openjpa>
   </properties>
   
