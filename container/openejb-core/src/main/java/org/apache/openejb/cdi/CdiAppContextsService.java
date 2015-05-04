@@ -21,8 +21,6 @@ package org.apache.openejb.cdi;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.WebBeansContext;
-import org.apache.webbeans.context.RequestContext;
-import org.apache.webbeans.context.SessionContext;
 import org.apache.webbeans.spi.ContextsService;
 import org.apache.webbeans.web.context.WebContextsService;
 
@@ -30,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Singleton;
-import javax.servlet.http.HttpSession;
 
 
 public class CdiAppContextsService extends WebContextsService implements ContextsService {
