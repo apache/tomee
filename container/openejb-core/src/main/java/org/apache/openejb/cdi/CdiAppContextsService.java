@@ -203,12 +203,19 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             final Object event = HttpSessionContextSessionAware.class.isInstance(sc) ? HttpSessionContextSessionAware.class.cast(sc).getSession() : sc;
             if (HttpSession.class.isInstance(event)) {
                 final HttpSession httpSession = HttpSession.class.cast(event);
-                if (httpSession.getId() == null) {
-                    continue;
+                if (httpSession.getId() != null) { // TODO: think if we add a flag to deactivate this behavior (clustering case??)
+                    initSessionContext(httpSession);
+                    try {
+                        // far to be sexy but we need 1) triggering listeners + 2) destroying it *now*
+                        // -> org.jboss.cdi.tck.tests.context.session.listener.shutdown.SessionContextListenerShutdownTest
+                        httpSession.invalidate();
+                    } finally {
+                        destroySessionContext(event);
+                    }
                 }
-                initSessionContext(httpSession);
+            } else {
+                destroySessionContext(event);
             }
-            destroySessionContext(event);
         }
         sessionCtxManager.getContextById().clear();
     }
