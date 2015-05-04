@@ -23,7 +23,7 @@
   -->
   <test name="CDI TCK for developers (debugging)">
     <classes>
-      <class name="org.jboss.cdi.tck.tests.context.request.ws.RequestContextTest" />
+      <class name="org.jboss.cdi.tck.tests.deployment.shutdown.ApplicationShutdownLifecycleTest" />
     </classes>
   </test>
 </suite>
