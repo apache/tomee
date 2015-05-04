@@ -190,14 +190,15 @@
           <systemPropertyVariables>
             <cdiTckExcludeDummy>true</cdiTckExcludeDummy>
 
-            <jms>new://Resource?type=javax.jms.ConnectionFactory</jms>
             <queue>new://Resource?type=Queue</queue>
             <topic>new://Resource?type=Topic</topic>
             <jdbc>new://Resource?type=DataSource</jdbc>
+            <jms>new://Resource?type=javax.jms.ConnectionFactory</jms>
 
             <admin.disabled>true</admin.disabled>
             <ejbd.disabled>true</ejbd.disabled>
             <ejbds.disabled>true</ejbds.disabled>
+            <httpejbd.port>0</httpejbd.port> <!-- random port for http one -> CI friendly -->
 
             <openejb.cdi.applicationScope.cached>false</openejb.cdi.applicationScope.cached>
             <openejb.cdi.producer.interception>false</openejb.cdi.producer.interception>

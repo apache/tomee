@@ -26,6 +26,7 @@
       <property name="startDefaultScopes">false</property>
       <property name="properties">
         Default\ JMS\ Resource\ Adapter = new://Resource?type=ActiveMQResourceAdapter
+        Default\ JMS\ Resource\ Adapter.BrokerXmlConfig = broker:(tcp://localhost:0)?useJmx=false
 
         # used in TCKs
         jdbc = new://Resource?type=DataSource

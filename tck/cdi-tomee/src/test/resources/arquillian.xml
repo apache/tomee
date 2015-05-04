@@ -42,6 +42,7 @@
         openejb.classloader.forced-load = org.apache.webbeans.test.tck.,org.apache.openejb.tck.cdi.tomee.
 
         jmsRa = new://Resource?type=ActiveMQResourceAdapter
+        jmsRa.BrokerXmlConfig = broker:(tcp://localhost:0)?useJmx=false
         jms = new://Resource?type=javax.jms.ConnectionFactory
         jms.ResourceAdapter = jmsRa
         queue = new://Resource?type=Queue
