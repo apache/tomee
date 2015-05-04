@@ -34,6 +34,7 @@ public final class PropertyPlaceHolderHelper {
 
     private static final PropertiesLookup RESOLVER = new PropertiesLookup();
     public static final StrSubstitutor SUBSTITUTOR = new StrSubstitutor(RESOLVER);
+
     static {
         SUBSTITUTOR.setEnableSubstitutionInVariables(true);
         SUBSTITUTOR.setValueDelimiter(System.getProperty("openejb.placehodler.delimiter", ":-")); // default one of [lang3]
@@ -68,7 +69,7 @@ public final class PropertyPlaceHolderHelper {
     private static String decryptIfNeeded(final String replace) {
         if (replace.startsWith(CIPHER_PREFIX)) {
             final String algo = replace.substring(CIPHER_PREFIX.length(), replace.indexOf(':', CIPHER_PREFIX.length() + 1));
-            PasswordCipher cipher = null;
+            PasswordCipher cipher;
             try {
                 cipher = PasswordCipherFactory.getPasswordCipher(algo);
             } catch (final PasswordCipherException ex) {
