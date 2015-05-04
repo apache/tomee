@@ -25,7 +25,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>cdi-tomee-embedded</artifactId>
   <packaging>jar</packaging>
-  <name>OpenEJB :: TCK :: CDI TomEE Embedded</name>
+  <name>OpenEJB :: TCK :: CDI-1.2 TomEE Embedded</name>
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>

@@ -27,6 +27,10 @@
   <artifactId>cdi-tomee</artifactId>
   <name>OpenEJB :: TCK :: CDI TomEE</name>
 
+  <!--
+   * debug the server side by adding -Dopenejb.server.debug=true
+   -->
+
   <properties>
     <suite.name>passing</suite.name>
     <cdi-tck.version>1.2.4.Final</cdi-tck.version>
