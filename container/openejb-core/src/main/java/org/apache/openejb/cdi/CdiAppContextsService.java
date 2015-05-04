@@ -184,7 +184,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             applicationContext.destroy();
             webBeansContext.getBeanManagerImpl().fireEvent(
                     appEvent,
-                    new EventMetadataImpl(null, ServletContext.class.isInstance(appEvent) ? ServletContext.class : Object.class,null, new Annotation[] { DestroyedLiteral.INSTANCE_APPLICATION_SCOPED }, webBeansContext),
+                    new EventMetadataImpl(null, ServletContext.class.isInstance(appEvent) ? ServletContext.class : Object.class, null, new Annotation[]{DestroyedLiteral.INSTANCE_APPLICATION_SCOPED}, webBeansContext),
                     false);
             applicationContext.setActive(true);
 
@@ -198,6 +198,17 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             if (id != null) {
                 webBeansContext.getBeanManagerImpl().fireEvent(id, DestroyedLiteral.INSTANCE_CONVERSATION_SCOPED);
             }
+        }
+        for (final SessionContext sc : sessionCtxManager.getContextById().values()) { // ensure to destroy session context in time at shutdown and not with session which can happen later
+            final Object event = HttpSessionContextSessionAware.class.isInstance(sc) ? HttpSessionContextSessionAware.class.cast(sc).getSession() : sc;
+            if (HttpSession.class.isInstance(event)) {
+                final HttpSession httpSession = HttpSession.class.cast(event);
+                if (httpSession.getId() == null) {
+                    continue;
+                }
+                initSessionContext(httpSession);
+            }
+            destroySessionContext(event);
         }
         sessionCtxManager.getContextById().clear();
     }
@@ -244,12 +255,11 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             } else {
                 if (logger.isWarningEnabled()) {
                     logger.warning("CDI-OpenWebBeans container in OpenEJB does not support context scope "
-                        + scopeType.getSimpleName()
-                        + ". Scopes @Dependent, @RequestScoped, @ApplicationScoped and @Singleton are supported scope types");
+                            + scopeType.getSimpleName()
+                            + ". Scopes @Dependent, @RequestScoped, @ApplicationScoped and @Singleton are supported scope types");
                 }
             }
         }
-
     }
 
     @Override
@@ -289,8 +299,8 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             } else {
                 if (logger.isWarningEnabled()) {
                     logger.warning("CDI-OpenWebBeans container in OpenEJB does not support context scope "
-                        + scopeType.getSimpleName()
-                        + ". Scopes @Dependent, @RequestScoped, @ApplicationScoped and @Singleton are supported scope types");
+                            + scopeType.getSimpleName()
+                            + ". Scopes @Dependent, @RequestScoped, @ApplicationScoped and @Singleton are supported scope types");
                 }
             }
         }
@@ -317,7 +327,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             webBeansContext.getBeanManagerImpl().fireEvent(
                     appEvent,
                     new EventMetadataImpl(null,
-                            ServletContext.class.isInstance(appEvent) ? ServletContext.class : Object.class, null, new Annotation[] { InitializedLiteral.INSTANCE_APPLICATION_SCOPED },
+                            ServletContext.class.isInstance(appEvent) ? ServletContext.class : Object.class, null, new Annotation[]{InitializedLiteral.INSTANCE_APPLICATION_SCOPED},
                             webBeansContext),
                     false);
         }
@@ -326,12 +336,11 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     @Override
     public boolean supportsContext(final Class<? extends Annotation> scopeType) {
         return scopeType.equals(RequestScoped.class)
-            || scopeType.equals(SessionScoped.class)
-            || scopeType.equals(ApplicationScoped.class)
-            || scopeType.equals(Dependent.class)
-            || scopeType.equals(Singleton.class)
-            || scopeType.equals(ConversationScoped.class) && supportsConversation();
-
+                || scopeType.equals(SessionScoped.class)
+                || scopeType.equals(ApplicationScoped.class)
+                || scopeType.equals(Dependent.class)
+                || scopeType.equals(Singleton.class)
+                || scopeType.equals(ConversationScoped.class) && supportsConversation();
     }
 
     private void initRequestContext(final Object event) {
@@ -403,7 +412,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     }
 
     public void checkConversationState() {
-        final ServletRequestContext rc  = getRequestContext(false);
+        final ServletRequestContext rc = getRequestContext(false);
         if (rc != null && rc.getServletRequest() != null && conversationService != null) {
             final HttpSession session = rc.getServletRequest().getSession(false);
             if (session != null) {
@@ -536,7 +545,6 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
                 } catch (final Exception e) {
                     return (SessionContext) clazz.newInstance();
                 }
-
             } catch (final Exception e) {
                 logger.error("Can't instantiate " + classname + ", using default session context", e);
             }
@@ -550,7 +558,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
      *
      * @param session http session object
      */
-    private void destroySessionContext(final HttpSession session) {
+    private void destroySessionContext(final Object session) {
         if (session != null) {
             final SessionContext context = sessionContext.get();
 
@@ -573,13 +581,15 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             sessionContext.remove();
 
             //Remove session from manager
-            sessionCtxManager.removeSessionContextWithSessionId(session.getId());
+            if (HttpSession.class.isInstance(session)) {
+                sessionCtxManager.removeSessionContextWithSessionId(HttpSession.class.cast(session).getId());
+            }
         }
     }
 
-    private void doDestroySession(SessionContext context, HttpSession session) {
+    private void doDestroySession(final SessionContext context, final Object event) {
         context.destroy();
-        webBeansContext.getBeanManagerImpl().fireEvent(session, DestroyedLiteral.INSTANCE_SESSION_SCOPED);
+        webBeansContext.getBeanManagerImpl().fireEvent(event, DestroyedLiteral.INSTANCE_SESSION_SCOPED);
     }
 
     //we don't have initApplicationContext
@@ -721,7 +731,6 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
                 } catch (final Exception e) {
                     logger.error(OWBLogConst.ERROR_0013, e);
                 }
-
             } else {
                 logger.warning("Could NOT lazily initialize session context because NO active request context");
             }

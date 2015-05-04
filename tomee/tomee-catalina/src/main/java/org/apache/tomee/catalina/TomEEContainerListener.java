@@ -33,7 +33,7 @@ public class TomEEContainerListener implements ContainerListener {
             context.set((StandardContext) event.getContainer());
         } else if ("afterContextInitialized".equals(event.getType())) {
             context.remove();
-        } else if (Context.CHANGE_SESSION_ID_EVENT.endsWith(event.getType())) {
+        } else if (Context.CHANGE_SESSION_ID_EVENT.endsWith(event.getType())) { // note: we could use a javax.servlet.http.HttpSessionIdListener
             final String[] ids = (String[]) event.getData();
 
             final WebBeansContext wbc = WebBeansContext.currentInstance();
