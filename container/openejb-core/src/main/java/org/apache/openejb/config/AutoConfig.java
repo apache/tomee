@@ -21,6 +21,7 @@ import org.apache.openejb.JndiConstants;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.ContainerInfo;
 import org.apache.openejb.assembler.classic.ResourceInfo;
+import org.apache.openejb.config.sys.Container;
 import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.ActivationConfigProperty;
@@ -70,6 +71,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -108,6 +110,8 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
     public static final String ORIGIN_ANNOTATION = "Annotation";
     public static final String ORIGIN_FLAG = "Origin";
     public static final String ORIGINAL_ID = "OriginalId";
+
+    private static final AppResources EMPTY_APP_RESOURCES = new AppResources();
 
     public static Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, AutoConfig.class);
 
@@ -184,6 +188,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         appResources.dump();
 
         processApplicationResources(appModule);
+        processApplicationContainers(appModule, appResources);
 
         for (final EjbModule ejbModule : appModule.getEjbModules()) {
             processActivationConfig(ejbModule);
@@ -890,6 +895,25 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 }
             }
 
+        }
+    }
+
+    private void processApplicationContainers(final AppModule module, final AppResources appResources) throws OpenEJBException {
+        if (module.getContainers().isEmpty()) {
+            return;
+        }
+
+        final String prefix = module.getModuleId() + "/";
+        for (final Container container : module.getContainers()) {
+            if (container.getId() == null) {
+                throw new IllegalStateException("a container can't get a null id: " + container.getType() + " from " + module.getModuleId());
+            }
+            if (!container.getId().startsWith(prefix)) {
+                container.setId(prefix + container.getId());
+            }
+            final ContainerInfo containerInfo = configFactory.createContainerInfo(container);
+            configFactory.install(containerInfo);
+            appResources.addContainer(containerInfo);
         }
     }
 
@@ -1944,7 +1968,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         }
 
         if (appResources == null) {
-            appResources = new AppResources();
+            appResources = EMPTY_APP_RESOURCES;
         }
 
         // skip references such as URL which are automatically handled by the server
@@ -2146,7 +2170,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             return null;
         }
         if (appResources == null) {
-            appResources = new AppResources();
+            appResources = EMPTY_APP_RESOURCES;
         }
 
         // skip references such as URLs which are automatically handled by the server
@@ -2198,7 +2222,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
     }
 
     private String getUsableContainer(final Class<? extends ContainerInfo> containerInfoType, final Object bean, final AppResources appResources) {
-        if (bean instanceof MessageDrivenBean) {
+        if (MessageDrivenBean.class.isInstance(bean)) {
             final MessageDrivenBean messageDrivenBean = (MessageDrivenBean) bean;
             final String messagingType = messageDrivenBean.getMessagingType();
             final List<String> containerIds = appResources.containerIdsByType.get(messagingType);
@@ -2207,10 +2231,22 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             }
         }
 
-        for (final ContainerInfo containerInfo : configFactory.getContainerInfos()) {
+        String containerInfo = matchContainer(containerInfoType, bean, appResources.getContainerInfos());
+        if (containerInfo == null) { // avoid to build configFactory.getContainerInfos() if not needed
+            containerInfo = matchContainer(containerInfoType, bean, configFactory.getContainerInfos());
+        }
+        if (containerInfo != null) {
+            return containerInfo;
+        }
+
+        return null;
+    }
+
+    private String matchContainer(final Class<? extends ContainerInfo> containerInfoType, final Object bean, final Collection<ContainerInfo> list) {
+        for (final ContainerInfo containerInfo : list) {
             if (containerInfo.getClass().equals(containerInfoType)) {
                 // MDBs must match message listener interface type
-                if (bean instanceof MessageDrivenBean) {
+                if (MessageDrivenBean.class.isInstance(bean)) {
                     final MessageDrivenBean messageDrivenBean = (MessageDrivenBean) bean;
                     final String messagingType = messageDrivenBean.getMessagingType();
                     if (containerInfo.properties.get("MessageListenerInterface").equals(messagingType)) {
@@ -2221,7 +2257,6 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 }
             }
         }
-
         return null;
     }
 
@@ -2234,6 +2269,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         private final Map<String, List<String>> resourceIdsByType = new TreeMap<String, List<String>>();
         private final Map<String, List<String>> resourceEnvIdsByType = new TreeMap<String, List<String>>();
         private final Map<String, List<String>> containerIdsByType = new TreeMap<String, List<String>>();
+        private final Collection<ContainerInfo> containerInfos = new HashSet<>();
 
         public void dump() {
             if (!logger.isDebugEnabled()) {
@@ -2395,6 +2431,16 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             //                    }
             //                }
             //            }
+        }
+
+        public Collection<ContainerInfo> getContainerInfos() {
+            return containerInfos;
+        }
+
+        // needs to be called after merge otherwise we get wrong/missing data
+        private void addContainer(final ContainerInfo container) {
+            containerInfos.add(container);
+            // no need to enrich containerIdsByType here, TODO: see if we can remove containerIdsByType
         }
 
         public List<String> getResourceIds(final String type) {
