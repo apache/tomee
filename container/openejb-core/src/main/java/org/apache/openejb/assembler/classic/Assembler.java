@@ -2298,6 +2298,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     Thread.currentThread().setContextClassLoader(old);
                 }
             }
+			
+            for (final String id : appInfo.containerIds) {
+                removeContainer(id);
+            }
 
             containerSystem.removeAppContext(appInfo.appId);
 
@@ -2547,6 +2551,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         final Object service = serviceRecipe.create();
 
+        serviceRecipe.getUnsetProperties().remove("id"); // we forced it
+        serviceRecipe.getUnsetProperties().remove("securityService"); // we forced it
         logUnusedProperties(serviceRecipe, serviceInfo);
 
         final Class interfce = serviceInterfaces.get(serviceInfo.service);
