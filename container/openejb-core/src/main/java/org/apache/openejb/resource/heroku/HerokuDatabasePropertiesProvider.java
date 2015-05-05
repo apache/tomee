@@ -33,6 +33,8 @@ public class HerokuDatabasePropertiesProvider implements PropertiesResourceProvi
         put("hsql", "hsqldb:hsql");
     }};
 
+    private Properties properties;
+
     @Override
     public Properties provides() {
         try {
@@ -52,6 +54,11 @@ public class HerokuDatabasePropertiesProvider implements PropertiesResourceProvi
                 } else {
                     builder.p("UserName", userInfo);
                 }
+            }
+            if (properties == null || "org.hsqldb.jdbcDriver".equals(properties.getProperty("JdbcDriver"))) {
+                if ("postgres".equalsIgnoreCase(url.getScheme())) {
+                    builder.p("JdbcDriver", "org.postgresql.Driver");
+                } // else TODO
             }
             return builder.build();
         } catch (final URISyntaxException e) {

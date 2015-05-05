@@ -36,7 +36,12 @@ public class HerokuDatabasePropertiesProviderTest {
     public void herokuToJava() {
         SystemInstance.get().setProperty("DATABASE_URL", "postgres://user:pwd@host.com:5432/db");
         assertEquals(
-                new PropertiesBuilder().p("Password", "pwd").p("JdbcUrl", "jdbc:postgresql://host.com:5432/db").p("UserName", "user").build(),
+                new PropertiesBuilder()
+                        .p("Password", "pwd")
+                        .p("JdbcUrl", "jdbc:postgresql://host.com:5432/db")
+                        .p("UserName", "user")
+                        .p("JdbcDriver", "org.postgresql.Driver")
+                        .build(),
                 new HerokuDatabasePropertiesProvider().provides());
     }
 }
