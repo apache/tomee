@@ -40,6 +40,7 @@ public class HttpSessionImpl implements HttpSession {
     private final long created = System.currentTimeMillis();
     private volatile long timeout;
     private volatile long lastAccessed = created;
+    private volatile boolean valid = true;
 
     public HttpSessionImpl(final String contextPath, final long timeout) {
         this.timeout = timeout;
@@ -91,20 +92,31 @@ public class HttpSessionImpl implements HttpSession {
 
     @Override
     public void invalidate() {
-        if (!listeners.isEmpty()) {
-            final HttpSessionEvent event = new HttpSessionEvent(this);
-            for (final HttpSessionListener o : listeners) {
-                try {
-                    HttpSessionListener.class.cast(o).sessionDestroyed(event);
-                } catch (final Throwable th) {
-                    // ignore, may be undeployed
-                }
-            }
+        if (!valid) {
+            return;
         }
 
-        final SessionManager sessionManager = SystemInstance.get().getComponent(SessionManager.class);
-        if (sessionManager != null) {
-            sessionManager.removeSession(sessionId);
+        synchronized (this) {
+            if (!valid) {
+                return;
+            }
+
+            if (!listeners.isEmpty()) {
+                final HttpSessionEvent event = new HttpSessionEvent(this);
+                for (final HttpSessionListener o : listeners) {
+                    try {
+                        HttpSessionListener.class.cast(o).sessionDestroyed(event);
+                    } catch (final Throwable th) {
+                        // ignore, may be undeployed
+                    }
+                }
+            }
+
+            final SessionManager sessionManager = SystemInstance.get().getComponent(SessionManager.class);
+            if (sessionManager != null) {
+                sessionManager.removeSession(sessionId);
+            }
+            valid = false;
         }
     }
 
