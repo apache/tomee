@@ -33,6 +33,7 @@ import org.apache.xbean.finder.filter.IncludeExcludeFilter;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -400,9 +401,28 @@ public class DeploymentsResolver implements DeploymentFilterable {
             return urls;
         }
 
+        private UrlSet cleanUpUrlSet(final UrlSet set) {
+            if (set.size() >= 5) { // if set size == 1 then we use both getURLs() and getresource(META-INF) to find jar, ensure we don't duplicate it, ie size ~ 2
+                return set;
+            }
+
+            final List<URL> copy = set.getUrls();
+            for (final URL url : set.getUrls()) {
+                try {
+                    if ("file".equals(url.getProtocol()) && copy.contains(new URL("jar:" + url.toExternalForm() + "!"))) {
+                        copy.remove(url);
+                    }
+                } catch (final MalformedURLException e) {
+                    // no-op
+                }
+            }
+            return new UrlSet(copy);
+        }
+
         public ClasspathSearcher loadUrls(final ClassLoader classLoader) {
             try {
-                urlSet = URLs.cullSystemJars(new UrlSet(classLoader));
+                final UrlSet original = cleanUpUrlSet(new UrlSet(classLoader));
+                urlSet = URLs.cullSystemJars(original);
 
                 // save the prefiltered list of jars before excluding system apps
                 // so that we can choose not to filter modules with descriptors on the full list

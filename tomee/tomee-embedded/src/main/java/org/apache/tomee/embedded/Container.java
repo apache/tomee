@@ -212,12 +212,15 @@ public class Container implements AutoCloseable {
         webModule.setRarUrls(Collections.<URL>emptyList());
         webModule.setScannableUrls(jarList);
         try {
+            final String filterContainerClasses = SystemInstance.get().getProperty("tomee.embedded.filter-container-classes");
             webModule.setFinder(
-                new FinderFactory.OpenEJBAnnotationFinder(
-                    // skip container classes in scanning for shades
-                    new WebappAggregatedArchive(webModule, jarList,
-                            jarList.size() == 1 ? new ContainerClassesFilter(configuration.getProperties()) /* shade */ : null))
-                        .link());
+                    new FinderFactory.OpenEJBAnnotationFinder(
+                            // skip container classes in scanning for shades
+                            new WebappAggregatedArchive(webModule, jarList,
+                                    // see org.apache.openejb.config.DeploymentsResolver.ClasspathSearcher.cleanUpUrlSet()
+                                    jarList.size() <= 4 || "true".equalsIgnoreCase(filterContainerClasses) ?
+                                            new ContainerClassesFilter(configuration.getProperties()) /* shade */ : null))
+                            .link());
         } catch (final Exception e) {
             throw new IllegalArgumentException(e);
         }
