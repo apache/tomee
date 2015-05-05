@@ -887,7 +887,13 @@ public class HttpRequestImpl implements HttpRequest {
                 }
             }
 
-            final HttpSessionImpl impl = new HttpSessionImpl(contextPath, timeout);
+            final HttpSessionImpl impl = new HttpSessionImpl(contextPath, timeout) {
+                @Override
+                public void invalidate() {
+                    super.invalidate();
+                    HttpRequestImpl.this.session = null;
+                }
+            };
             session = impl;
             if (begin != null) {
                 begin.sessionCreated(new HttpSessionEvent(session));

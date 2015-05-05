@@ -100,6 +100,7 @@ public class Module {
         this.appModule = appModule;
         if (resources != null) {
             this.appModule.getResources().addAll(resources.getResource());
+            this.appModule.getContainers().addAll(resources.getContainer());
             this.appModule.getServices().addAll(resources.getService());
         }
     }

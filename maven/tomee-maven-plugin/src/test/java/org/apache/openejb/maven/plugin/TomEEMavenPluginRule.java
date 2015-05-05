@@ -73,7 +73,7 @@ assertThat(IO.slurp(new URL(url + "/docs")), containsString("Apache Tomcat"));
  */
 public class TomEEMavenPluginRule implements MethodRule {
     @Override
-    public Statement apply(final Statement base, final FrameworkMethod method, final Object target) {
+    public Statement apply(final Statement base, final FrameworkMethod ignored, final Object target) {
         return new RunTest(target, base);
     }
 
@@ -210,6 +210,8 @@ public class TomEEMavenPluginRule implements MethodRule {
 
         tomEEMojo.useConsole = true;
         tomEEMojo.checkStarted = true;
+
+        tomEEMojo.overrideOnUnzip = true;
 
         // we mock all the artifact resolution in test
         tomEEMojo.remoteRepos = new LinkedList<ArtifactRepository>();

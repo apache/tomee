@@ -31,8 +31,12 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
+import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.config.RemoteServer;
+import org.apache.openejb.config.sys.Deployments;
+import org.apache.openejb.config.sys.JaxbOpenejb;
+import org.apache.openejb.config.sys.Openejb;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Zips;
@@ -329,11 +333,23 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     @Parameter
     protected List<File> externalRepositories;
 
+    /**
+     * server.xml configured inlined (is Server tag is the first child of inlinedServerXml)
+     */
     @Parameter
     protected PlexusConfiguration inlinedServerXml;
 
+    /**
+     * tomee.xml configured inlined (is tomee tag is the first child of inlinedTomEEXml)
+     */
     @Parameter
     protected PlexusConfiguration inlinedTomEEXml;
+
+    /**
+     * if a file is already there when unpacking tomee zip should it be overriden?
+     */
+    @Parameter(property = "tomee-plugin.override-on-unzip", defaultValue = "true")
+    protected boolean overrideOnUnzip;
 
     protected File deployedFile = null;
     protected RemoteServer server = null;
@@ -1272,6 +1288,8 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                             || (!parent.canRead() && !parent.setReadable(true))) {
                         throw new RuntimeException("Failed to create or set permissions on: " + parent);
                     }
+                } else if (!overrideOnUnzip) {
+                    continue;
                 }
                 if (entry.isDirectory()) {
                     if (!dest.exists() && !dest.mkdir()) {
@@ -1330,13 +1348,35 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                 && (
                 (apps != null && !apps.isEmpty())
                         || (!"pom".equals(packaging) && !"war".equals(packaging))))) { // webapps doesn't need apps folder in tomee
-            final FileWriter writer = new FileWriter(file);
             final String rootTag = container.toLowerCase(Locale.ENGLISH);
-            writer.write("<?xml version=\"1.0\"?>\n" +
-                    "<" + rootTag + ">\n" +
-                    "  <Deployments dir=\"apps\" />\n" +
-                    "</" + rootTag + ">\n");
-            writer.close();
+            if (file.isFile())  { // can be not existing since we dont always deploy tomee but shouldn't since then apps/ is not guaranteed to work
+                try {
+                    final Openejb jaxb = JaxbOpenejb.readConfig(file.getAbsolutePath());
+                    boolean needAdd = true;
+                    for (final Deployments d : jaxb.getDeployments()) {
+                        if ("apps".equals(d.getDir())) {
+                            needAdd = false;
+                            break;
+                        }
+                    }
+                    if (needAdd) {
+                        final String content = IO.slurp(file);
+                        final FileWriter writer = new FileWriter(file);
+                        final String end = "</" + rootTag + ">";
+                        writer.write(content.replace(end, "  <Deployments dir=\"apps\" />\n" + end));
+                        writer.close();
+                    }
+                } catch (final OpenEJBException e) {
+                    throw new IllegalStateException("illegal tomee.xml:\n" + IO.slurp(file), e);
+                }
+            } else {
+                final FileWriter writer = new FileWriter(file);
+                writer.write("<?xml version=\"1.0\"?>\n" +
+                        "<" + rootTag + ">\n" +
+                        "  <Deployments dir=\"apps\" />\n" +
+                        "</" + rootTag + ">\n");
+                writer.close();
+            }
 
             final File appsFolder = new File(catalinaBase, "apps");
             if (!appsFolder.exists() && !appsFolder.mkdirs()) {

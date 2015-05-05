@@ -112,8 +112,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         } else {
             properties.setProperty("org.apache.webbeans.proxy.mapping.javax.enterprise.context.RequestScoped", defaultNormalScopeHandlerClass);
         }
-
-
+        
         properties.put(OpenWebBeansConfiguration.PRODUCER_INTERCEPTION_SUPPORT, SystemInstance.get().getProperty("openejb.cdi.producer.interception", "true"));
 
         properties.putAll(appContext.getProperties());

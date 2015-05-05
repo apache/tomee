@@ -44,6 +44,7 @@ import org.apache.openejb.config.WebModule;
 import org.apache.openejb.config.sys.JSonConfigReader;
 import org.apache.openejb.config.sys.JaxbOpenejb;
 import org.apache.openejb.config.sys.Openejb;
+import org.apache.openejb.config.sys.Resources;
 import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ParentClassLoaderFinder;
@@ -146,7 +147,8 @@ public class ApplicationComposers {
         WebApp.class, EjbJar.class, EnterpriseBean.class,
         Persistence.class, PersistenceUnit.class,
         Connector.class, Beans.class,
-        Class[].class, Class.class
+        Class[].class, Class.class,
+        Resources.class
     };
 
     static {
@@ -594,6 +596,10 @@ public class ApplicationComposers {
                     ejbModule.setFinder(new AnnotationFinder((Archive) obj).link());
                     ejbModule.setBeans(new Beans());
                     appModule.getEjbModules().add(ejbModule);
+                } else if (obj instanceof Resources) {
+                    final Resources asResources = Resources.class.cast(obj);
+                    appModule.getResources().addAll(asResources.getResource());
+                    appModule.getContainers().addAll(asResources.getContainer());
                 } else if (obj instanceof AppModule) {
                     // we can probably go further here
                     final AppModule module = (AppModule) obj;

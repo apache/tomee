@@ -546,6 +546,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
                     @Override
                     public void initResources(final Resources resources) {
+                        appModule.getContainers().addAll(resources.getContainer());
                         appModule.getResources().addAll(resources.getResource());
                         appModule.getServices().addAll(resources.getService());
                     }
