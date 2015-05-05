@@ -1726,18 +1726,6 @@
         <version>${org.apache.openwebbeans.version}</version>
         <exclusions>
           <exclusion>
-            <groupId>javassist</groupId>
-            <artifactId>javassist</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>net.sf.scannotation</groupId>
-            <artifactId>scannotation</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>asm</groupId>
-            <artifactId>asm</artifactId>
-          </exclusion>
-          <exclusion>
             <groupId>org.apache.xbean</groupId>
             <artifactId>xbean-finder-shaded</artifactId>
           </exclusion>
