@@ -18,16 +18,20 @@
 
 package org.apache.openejb.cdi;
 
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.webbeans.annotation.InitializedLiteral;
 import org.apache.webbeans.config.WebBeansContext;
+import org.apache.webbeans.event.EventMetadataImpl;
 import org.apache.webbeans.spi.ContextsService;
 import org.apache.webbeans.web.context.WebContextsService;
 
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collection;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Singleton;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
 
 
 public class CdiAppContextsService extends WebContextsService implements ContextsService {
@@ -65,11 +69,35 @@ public class CdiAppContextsService extends WebContextsService implements Context
 
     @Override // this method is called after the deployment (BeansDeployer) but need beans to be here to get events
     public void init(final Object initializeObject) {
-        //Start application context
-        startContext(ApplicationScoped.class, initializeObject);
+        super.init(initializeObject);
 
-        //Start signelton context
-        startContext(Singleton.class, initializeObject);
+        Object payload = null;
+        if (initializeObject instanceof ServletContext) {
+            payload = initializeObject;
+        }
+
+        if (initializeObject != null) {
+            Object event = initializeObject;
+            if (StartupObject.class.isInstance(initializeObject)) {
+                final StartupObject so = StartupObject.class.cast(initializeObject);
+                if (so.isFromWebApp()) { // ear webapps
+                    event = so.getWebContext().getServletContext();
+                } else if (so.getAppInfo().webAppAlone) {
+                    event = SystemInstance.get().getComponent(ServletContext.class);
+                }
+            } else if (ServletContextEvent.class.isInstance(initializeObject)) {
+                event = ServletContextEvent.class.cast(initializeObject).getServletContext();
+            }
+            Object appEvent = event != null ? event : applicationContext;
+            webBeansContext.getBeanManagerImpl().fireEvent(
+                    appEvent,
+                    new EventMetadataImpl(null,
+                            ServletContext.class.isInstance(appEvent) ? ServletContext.class : Object.class, null,
+                            new Annotation[]{InitializedLiteral.INSTANCE_APPLICATION_SCOPED},
+                            webBeansContext),
+                    false);
+        }
+
     }
 
     public void destroy(final Object destroyObject) {
