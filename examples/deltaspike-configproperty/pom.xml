@@ -17,13 +17,14 @@
     limitations under the License.
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.superbiz</groupId>
   <artifactId>deltaspike-configproperty</artifactId>
   <packaging>jar</packaging>
-  <version>1.1.1</version>
+  <version>1.1.1-SNAPSHOT</version>
   <name>OpenEJB :: Examples :: DeltaSpike @ConfigProperty</name>
 
   <properties>
@@ -80,13 +81,13 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>arquillian-openejb-embedded-4</artifactId>
-      <version>4.7.2</version>
+      <version>4.7.2-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>ziplock</artifactId>
-      <version>1.7.2</version>
+      <version>1.7.2-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
