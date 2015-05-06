@@ -18,7 +18,6 @@ package org.apache.openejb.server.cxf.rs;
 
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.loader.IO;
 import org.apache.openejb.testing.Classes;
 import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.EnableServices;
@@ -30,17 +29,18 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.IOException;
+import java.security.Principal;
+import java.util.Properties;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.ext.Provider;
-import java.io.IOException;
-import java.net.URL;
-import java.security.Principal;
-import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 
@@ -70,8 +70,20 @@ public class CustomSecurityContextTest {
 
     @Test
     public void check() throws IOException {
-        assertEquals("true", IO.slurp(new URL("http://localhost:" + port + "/foo/sc?role=therole")));
-        assertEquals("false", IO.slurp(new URL("http://localhost:" + port + "/foo/sc?role=another")));
+        assertEquals("true", ClientBuilder.newClient()
+                .target("http://127.0.0.1:" + port)
+                .path("foo/sc")
+                .queryParam("role", "therole")
+                .request()
+                .accept(MediaType.TEXT_PLAIN_TYPE)
+                .get(String.class));
+        assertEquals("false", ClientBuilder.newClient()
+                .target("http://127.0.0.1:" + port)
+                .path("foo/sc")
+                .queryParam("role", "another")
+                .request()
+                .accept(MediaType.TEXT_PLAIN_TYPE)
+                .get(String.class));
     }
 
     @Path("sc")

@@ -33,6 +33,7 @@ import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import java.util.Properties;
 
@@ -71,22 +72,22 @@ public class EjbDeploymentTest {
 
     @Test
     public void rest() {
-        final String response = WebClient.create("http://localhost:" + port + "/openejb-cxf-rs").path("/ejb/rest").get(String.class);
+        final String response = WebClient.create("http://localhost:" + port + "/openejb-cxf-rs").path("/ejb/rest").accept(MediaType.TEXT_PLAIN_TYPE).get(String.class);
         assertEquals("ok", response);
     }
 
     @Test
     public void restParameterInjected() {
-        String response = WebClient.create("http://localhost:" + port + "/openejb-cxf-rs").path("/ejb/param").get(String.class);
+        String response = WebClient.create("http://localhost:" + port + "/openejb-cxf-rs").path("/ejb/param").accept(MediaType.TEXT_PLAIN_TYPE).get(String.class);
         assertEquals("true", response);
 
-        response = WebClient.create("http://localhost:" + port + "/openejb-cxf-rs").path("/ejb/param").query("arg", "foo").get(String.class);
+        response = WebClient.create("http://localhost:" + port + "/openejb-cxf-rs").path("/ejb/param").query("arg", "foo").accept(MediaType.TEXT_PLAIN_TYPE).get(String.class);
         assertEquals("foo", response);
     }
 
     @Test
     public void restFieldInjected() {
-        final Boolean response = WebClient.create("http://localhost:" + port + "/openejb-cxf-rs").path("/ejb/field").get(Boolean.class);
+        final Boolean response = WebClient.create("http://localhost:" + port + "/openejb-cxf-rs").path("/ejb/field").accept(MediaType.TEXT_PLAIN_TYPE).get(Boolean.class);
         assertEquals(true, response);
     }
 

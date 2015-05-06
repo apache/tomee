@@ -31,8 +31,10 @@ import org.junit.runner.RunWith;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.container.ResourceContext;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;
@@ -65,7 +67,12 @@ public class SubResourceTest {
 
     @Test
     public void rest() throws IOException {
-        final String response = IO.slurp(new URL("http://127.0.0.1:" + port + "/SubResourceTest/sub1/sub2/value"));
+        final String response = ClientBuilder.newClient()
+                .target("http://127.0.0.1:" + port + "/SubResourceTest/")
+                .path("sub1/sub2/value")
+                .request()
+                .accept(MediaType.TEXT_PLAIN_TYPE)
+                .get(String.class);
         assertEquals("2", response);
     }
 

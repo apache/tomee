@@ -48,6 +48,7 @@ import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.util.Properties;
 
+import static javax.ws.rs.core.MediaType.TEXT_PLAIN_TYPE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -83,7 +84,7 @@ public class SimpleApplicationTest {
 
     @Test
     public void wadlXML() throws IOException {
-        final Response response = WebClient.create(BASE_URL).path("/first/hi").query("_wadl").query("_type", "xml").get();
+        final Response response = WebClient.create(BASE_URL).path("/first/hi").query("_wadl").query("_type", "xml").accept(TEXT_PLAIN_TYPE).get();
 
         final StringBuilder sb = new StringBuilder();
         BufferedReader br = null;
@@ -114,7 +115,7 @@ public class SimpleApplicationTest {
 
     @Test
     public void wadlJSON() throws IOException {
-        final Response response = WebClient.create(BASE_URL).path("/first/hi").query("_wadl").query("_type", "json").get();
+        final Response response = WebClient.create(BASE_URL).path("/first/hi").query("_wadl").query("_type", "json").accept(TEXT_PLAIN_TYPE).get();
 
         final StringBuilder sb = new StringBuilder();
         BufferedReader br = null;
@@ -140,19 +141,19 @@ public class SimpleApplicationTest {
 
     @Test
     public void first() {
-        final String hi = WebClient.create(BASE_URL).path("/first/hi").get(String.class);
+        final String hi = WebClient.create(BASE_URL).path("/first/hi").accept(TEXT_PLAIN_TYPE).get(String.class);
         assertEquals("Hi from REST World!", hi);
     }
 
     @Test
     public void second() {
-        final String hi = WebClient.create(BASE_URL).path("/second/hi2/2nd").get(String.class);
+        final String hi = WebClient.create(BASE_URL).path("/second/hi2/2nd").accept(TEXT_PLAIN_TYPE).get(String.class);
         assertEquals("hi 2nd", hi);
     }
 
     @Test
     public void expert() throws Exception {
-        final Response response = WebClient.create(BASE_URL).path("/expert/still-hi").post("Pink Floyd");
+        final Response response = WebClient.create(BASE_URL).path("/expert/still-hi").accept(TEXT_PLAIN_TYPE).post("Pink Floyd");
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
 
         final InputStream is = (InputStream) response.getEntity();
@@ -166,16 +167,16 @@ public class SimpleApplicationTest {
 
     @Test(expected = WebApplicationException.class)
     public void nonListed() {
-        WebClient.create(BASE_URL).path("/non-listed/yata/foo").get(String.class);
+        WebClient.create(BASE_URL).path("/non-listed/yata/foo").accept(TEXT_PLAIN_TYPE).get(String.class);
     }
 
     @Test
     public void hooked() {
-        assertEquals(true, WebClient.create(BASE_URL).path("/hooked/post").get(Boolean.class));
+        assertEquals(true, WebClient.create(BASE_URL).path("/hooked/post").accept(TEXT_PLAIN_TYPE).get(Boolean.class));
     }
 
     @Test
     public void injectEjb() {
-        assertEquals(true, WebClient.create(BASE_URL).path("/inject/ejb").get(Boolean.class));
+        assertEquals(true, WebClient.create(BASE_URL).path("/inject/ejb").accept(TEXT_PLAIN_TYPE).get(Boolean.class));
     }
 }

@@ -26,7 +26,6 @@ import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.jee.oejb3.PojoDeployment;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.loader.IO;
 import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.Module;
 import org.apache.openejb.testng.PropertiesBuilder;
@@ -35,14 +34,15 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.IOException;
+import java.util.Properties;
 import javax.ejb.Singleton;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.Provider;
-import java.io.IOException;
-import java.net.URL;
-import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 
@@ -83,7 +83,12 @@ public class CustomContextTest {
 
     @Test
     public void rest() throws IOException {
-        final String response = IO.slurp(new URL("http://127.0.0.1:" + port + "/CustomContextTest/custom-context/check"));
+        final String response = ClientBuilder.newClient()
+                .target("http://127.0.0.1:" + port + "/CustomContextTest")
+                .path("custom-context/check")
+                .request()
+                .accept(MediaType.TEXT_PLAIN_TYPE)
+                .get(String.class);
         assertEquals("true", response);
     }
 
