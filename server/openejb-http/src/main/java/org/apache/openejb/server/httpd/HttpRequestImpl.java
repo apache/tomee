@@ -907,20 +907,7 @@ public class HttpRequestImpl implements HttpRequest {
                 session = previous.session;
             }
         }
-
-        if (session != null) {
-            return new ServletSessionAdapter(session) {
-                @Override
-                public void invalidate() {
-                    super.invalidate();
-
-                    // after invalidating the session we need to remove the reference to the cached Session
-                    HttpRequestImpl.this.session = null;
-                }
-            };
-        }
-
-        return null;
+        return session;
     }
 
     protected URI getSocketURI() {
