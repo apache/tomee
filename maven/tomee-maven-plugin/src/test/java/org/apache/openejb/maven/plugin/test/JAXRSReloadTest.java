@@ -30,6 +30,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.URL;
 
 import static java.lang.Thread.sleep;
@@ -83,7 +84,7 @@ public class JAXRSReloadTest {
     @Test
     public void simpleStart() throws Exception {
         // eager check setup is ok and it works (avoid to mix redeployment checks with simple deployment)
-        assertThat(IO.slurp(new URL(url + "/app-jaxrs/ping")).trim(), is("pong"));
+        assertThat(slurp(new URL(url + "/app-jaxrs/ping")).trim(), is("pong"));
 
         long lastTime = 0;
         for (int i = 0; i < 10; i++) {
@@ -91,14 +92,24 @@ public class JAXRSReloadTest {
             mojo.reload();
 
             // it still works
-            assertThat(IO.slurp(new URL(url + "/app-jaxrs/ping")).trim(), is("pong"));
+            assertThat(slurp(new URL(url + "/app-jaxrs/ping")).trim(), is("pong"));
 
             // we redeployed since we have a new deployment date
-            final long time = Long.parseLong(IO.slurp(new URL(url + "/app-jaxrs/ping/time")).trim());
+            final long time = Long.parseLong(slurp(new URL(url + "/app-jaxrs/ping/time")).trim());
             if (i > 0) {
                 assertTrue(time >= lastTime);
             }
             lastTime = time;
+        }
+    }
+
+    private static String slurp(final URL url) throws IOException {
+        final HttpURLConnection urlConnection = HttpURLConnection.class.cast(url.openConnection());
+        try {
+            urlConnection.setRequestProperty("Accept", "text/plain");
+            return IO.slurp(urlConnection.getInputStream());
+        } finally {
+            urlConnection.disconnect();
         }
     }
 }
