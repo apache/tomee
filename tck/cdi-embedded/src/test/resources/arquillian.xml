@@ -34,6 +34,7 @@
         queue = new://Resource?type=Queue
         topic = new://Resource?type=Topic
       </property>
+      <property name="startDefaultScopes">true</property>
     </configuration>
   </container>
 </arquillian>
