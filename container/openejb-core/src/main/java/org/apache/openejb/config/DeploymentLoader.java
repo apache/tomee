@@ -958,8 +958,10 @@ public class DeploymentLoader implements DeploymentFilterable {
         ensureContainerUrls();
         webUrls.addAll(containerUrls);
 
+        final SystemInstance systemInstance = SystemInstance.get();
+
         // add these urls first to ensure we load classes from here first
-        final String externalRepos = SystemInstance.get().getProperty("tomee." + warFile.getName().replace(".war", "") + ".externalRepositories");
+        final String externalRepos = systemInstance.getProperty("tomee." + warFile.getName().replace(".war", "") + ".externalRepositories");
         List<URL> externalUrls = null;
         if (externalRepos != null) {
             externalUrls = new ArrayList<URL>();
@@ -1023,12 +1025,34 @@ public class DeploymentLoader implements DeploymentFilterable {
         // if we want to manage it in a generic way
         // simply add a boolean shared between tomcat and openejb world
         // to know if we should fire it or not
-        SystemInstance.get().fireEvent(new BeforeDeploymentEvent(webUrlsArray, parentClassLoader));
+        systemInstance.fireEvent(new BeforeDeploymentEvent(webUrlsArray, parentClassLoader));
 
         final ClassLoader warClassLoader = ClassLoaderUtil.createTempClassLoader(appId, webUrlsArray, parentClassLoader);
 
         // create web module
         final List<URL> scannableUrls = filterWebappUrls(webUrlsArray, descriptors.get(NewLoaderLogic.EXCLUSION_FILE));
+        // executable war will add war in scannable urls, we don't want it since it will surely contain tomee, cxf, ...
+        if (Boolean.parseBoolean(systemInstance.getProperty("openejb.core.skip-war-in-loader", "true"))) {
+            File archive = warFile;
+            if (!archive.getName().endsWith(".war")) {
+                archive = new File(warFile.getParentFile(), warFile.getName() + ".war");
+                final String unpackDir = systemInstance.getProperty("tomee.unpack.dir");
+                if (unpackDir != null && !archive.isFile()) {
+                    try {
+                        archive = new File(systemInstance.getBase().getDirectory(unpackDir, false), warFile.getName());
+                    } catch (final IOException e) {
+                        // no-op
+                    }
+                }
+            }
+            if (archive.isFile()) {
+                try {
+                    scannableUrls.remove(archive.toURI().toURL());
+                } catch (final MalformedURLException e) {
+                    // no-op
+                }
+            }
+        }
         if (externalUrls != null) {
             for (final URL url : externalUrls) {
                 if (scannableUrls.contains(url)) {
