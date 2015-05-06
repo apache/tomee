@@ -409,7 +409,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
             final List<URL> copy = set.getUrls();
             for (final URL url : set.getUrls()) {
                 try {
-                    if ("file".equals(url.getProtocol()) && copy.contains(new URL("jar:" + url.toExternalForm() + "!"))) {
+                    if ("file".equals(url.getProtocol()) && copy.contains(new URL("jar:" + url.toExternalForm() + "!/"))) {
                         copy.remove(url);
                     }
                 } catch (final MalformedURLException e) {
