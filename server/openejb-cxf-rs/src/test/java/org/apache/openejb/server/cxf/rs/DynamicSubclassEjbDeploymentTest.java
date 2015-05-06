@@ -38,6 +38,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Properties;
 
+import static javax.ws.rs.core.MediaType.TEXT_PLAIN_TYPE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -75,22 +76,22 @@ public class DynamicSubclassEjbDeploymentTest {
     @Test
     public void rest() {
         final String response = WebClient.create("http://localhost:" + port + "/openejb-cxf-rs")
-            .path("/ejb/rest").get(String.class);
+            .path("/ejb/rest").accept(TEXT_PLAIN_TYPE).get(String.class);
         assertEquals("ok", response);
     }
 
     @Test
     public void restParameterInjected() {
-        String response = WebClient.create("http://localhost:" + port + "/openejb-cxf-rs").path("/ejb/param").get(String.class);
+        String response = WebClient.create("http://localhost:" + port + "/openejb-cxf-rs").path("/ejb/param").accept(TEXT_PLAIN_TYPE).get(String.class);
         assertEquals("true", response);
 
-        response = WebClient.create("http://localhost:" + port + "/openejb-cxf-rs").path("/ejb/param").query("arg", "foo").get(String.class);
+        response = WebClient.create("http://localhost:" + port + "/openejb-cxf-rs").path("/ejb/param").query("arg", "foo").accept(TEXT_PLAIN_TYPE).get(String.class);
         assertEquals("foo", response);
     }
 
     @Test
     public void restFieldInjected() {
-        final Boolean response = WebClient.create("http://localhost:" + port + "/openejb-cxf-rs").path("/ejb/field").get(Boolean.class);
+        final Boolean response = WebClient.create("http://localhost:" + port + "/openejb-cxf-rs").path("/ejb/field").accept(TEXT_PLAIN_TYPE).get(Boolean.class);
         assertEquals(true, response);
     }
 

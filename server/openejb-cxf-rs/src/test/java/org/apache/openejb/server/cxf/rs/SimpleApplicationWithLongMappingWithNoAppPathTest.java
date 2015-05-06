@@ -41,6 +41,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Application;
 import java.util.Properties;
 
+import static javax.ws.rs.core.MediaType.TEXT_PLAIN_TYPE;
 import static org.junit.Assert.assertEquals;
 
 @EnableServices("jax-rs")
@@ -79,28 +80,28 @@ public class SimpleApplicationWithLongMappingWithNoAppPathTest {
 
     @Test
     public void first() {
-        final String hi = WebClient.create(BASE_URL).path("/first/hi").get(String.class);
+        final String hi = WebClient.create(BASE_URL).path("/first/hi").accept(TEXT_PLAIN_TYPE).get(String.class);
         assertEquals("Hi from REST World!", hi);
     }
 
     @Test
     public void second() {
-        final String hi = WebClient.create(BASE_URL).path("/second/hi2/2nd").get(String.class);
+        final String hi = WebClient.create(BASE_URL).path("/second/hi2/2nd").accept(TEXT_PLAIN_TYPE).get(String.class);
         assertEquals("hi 2nd", hi);
     }
 
     @Test(expected = WebApplicationException.class)
     public void nonListed() {
-        WebClient.create(BASE_URL).path("/non-listed/yata/foo").get(String.class);
+        WebClient.create(BASE_URL).path("/non-listed/yata/foo").accept(TEXT_PLAIN_TYPE).get(String.class);
     }
 
     @Test
     public void hooked() {
-        assertEquals(true, WebClient.create(BASE_URL).path("/hooked/post").get(Boolean.class));
+        assertEquals(true, WebClient.create(BASE_URL).path("/hooked/post").accept(TEXT_PLAIN_TYPE).get(Boolean.class));
     }
 
     @Test
     public void injectEjb() {
-        assertEquals(true, WebClient.create(BASE_URL).path("/inject/ejb").get(Boolean.class));
+        assertEquals(true, WebClient.create(BASE_URL).path("/inject/ejb").accept(TEXT_PLAIN_TYPE).get(Boolean.class));
     }
 }

@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.server.cxf.rs;
 
+import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.loader.IO;
@@ -31,8 +32,10 @@ import javax.ejb.Singleton;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
 import java.io.IOException;
 import java.net.URL;
@@ -67,7 +70,12 @@ public class RsWithInterfaceTest {
 
     @Test
     public void rest() throws IOException {
-        final String response = IO.slurp(new URL("http://127.0.0.1:" + port + "/RsWithInterfaceTest/itf/check"));
+        final String response = ClientBuilder.newClient()
+                .target("http://127.0.0.1:" + port + "/RsWithInterfaceTest/")
+                .path("itf/check")
+                .request()
+                .accept(MediaType.TEXT_PLAIN_TYPE)
+                .get(String.class);
         assertEquals("true", response);
     }
 
@@ -90,7 +98,7 @@ public class RsWithInterfaceTest {
         }
     }
 
-    public static interface Rs {
+    public interface Rs {
         @GET
         @Path("/check")
         boolean check(@Context final SecurityContext sc);

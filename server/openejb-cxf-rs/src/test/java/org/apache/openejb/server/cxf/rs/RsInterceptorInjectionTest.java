@@ -39,8 +39,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
@@ -79,7 +81,12 @@ public class RsInterceptorInjectionTest {
 
     @Test
     public void rest() throws IOException {
-        final String response = IO.slurp(new URL("http://127.0.0.1:" + port + "/RsInterceptorInjectionTest/injections/check"));
+        final String response = ClientBuilder.newClient()
+                .target("http://127.0.0.1:" + port + "/RsInterceptorInjectionTest/")
+                .path("injections/check")
+                .request()
+                .accept(MediaType.TEXT_PLAIN_TYPE)
+                .get(String.class);
         assertEquals("true", response);
     }
 

@@ -36,6 +36,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
+import static javax.ws.rs.core.MediaType.TEXT_PLAIN_TYPE;
 import static org.junit.Assert.assertEquals;
 
 @EnableServices("jax-rs")
@@ -56,14 +57,14 @@ public class SingletonTest {
     @Test
     public void checkStateStays() {
         for (int i = 0; i < 3; i++) {
-            assertEquals(i, WebClient.create(base.toExternalForm() + "foo/foo").get(Integer.class).intValue());
+            assertEquals(i, WebClient.create(base.toExternalForm() + "foo/foo").accept(TEXT_PLAIN_TYPE).get(Integer.class).intValue());
         }
     }
 
     @Test
     public void checkCdiInjections() {
         for (int i = 0; i < 3; i++) {
-            assertEquals(i, WebClient.create(base.toExternalForm() + "foo/cdi").get(Integer.class).intValue());
+            assertEquals(i, WebClient.create(base.toExternalForm() + "foo/cdi").accept(TEXT_PLAIN_TYPE).get(Integer.class).intValue());
         }
     }
 

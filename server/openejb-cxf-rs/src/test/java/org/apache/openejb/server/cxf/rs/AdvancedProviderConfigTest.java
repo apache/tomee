@@ -27,7 +27,6 @@ import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.jee.oejb3.PojoDeployment;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.loader.IO;
 import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.Module;
@@ -38,18 +37,18 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.lang.annotation.Annotation;
+import java.util.Properties;
 import javax.ejb.Singleton;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.Providers;
 import javax.xml.bind.ValidationEvent;
 import javax.xml.bind.ValidationEventHandler;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.lang.annotation.Annotation;
-import java.net.URL;
-import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 
@@ -101,7 +100,12 @@ public class AdvancedProviderConfigTest {
 
     @Test
     public void check() throws Exception {
-        assertEquals("true", IO.slurp(new URL("http://127.0.0.1:" + port + "/AdvancedProviderConfigTest/advanced-provider-config/")));
+        assertEquals("true", ClientBuilder.newClient()
+                .target("http://127.0.0.1:" + port + "/AdvancedProviderConfigTest")
+                .path("advanced-provider-config")
+                .request()
+                .accept(MediaType.TEXT_PLAIN_TYPE)
+                .get(String.class));
     }
 
     @Singleton
