@@ -985,7 +985,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 }
             }
         }
-        return defaultType;
+        return info.className != null ? ((canLoad(classLoader, info.className) ? info.className : defaultType)) : defaultType;
     }
 
     private static boolean canLoad(final ClassLoader classLoader, final String type) {
