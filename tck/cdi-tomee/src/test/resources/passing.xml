@@ -62,6 +62,13 @@
       </class>
 
       <!-- Issues in the TCK -->
+      <!-- CDITCK-476 -->
+      <class name="org.jboss.cdi.tck.tests.context.conversation.filter.ConversationFilterTest">
+        <methods>
+          <exclude name=".*"/>
+        </methods>
+      </class>
+
       <!-- CDITCK-444 -->
       <class name="org.jboss.cdi.tck.tests.extensions.lifecycle.processBeanAttributes.broken.invalid.InvalidStereotypeTest">
         <methods>

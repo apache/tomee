@@ -45,6 +45,14 @@
     </packages>
 
     <classes>
+      <!-- fails due to integration issue within openejb-http, but passes on cdi-tomee -->
+      <class name="org.jboss.cdi.tck.tests.context.session.event.SessionScopeEventTest">
+        <methods>
+          <exclude name=".*"/>
+        </methods>
+      </class>
+
+
       <!-- in discussion -->
       <!-- seems when InjectionPoint injection in for an EJB injection point then it should be null, any real reason? -->
       <class name="org.jboss.cdi.tck.tests.lookup.injectionpoint.non.contextual.NonContextualInjectionPointTest">
@@ -62,6 +70,13 @@
       </class>
 
       <!-- Issues in the TCK -->
+      <!-- CDITCK-476 -->
+      <class name="org.jboss.cdi.tck.tests.context.conversation.filter.ConversationFilterTest">
+        <methods>
+          <exclude name=".*"/>
+        </methods>
+      </class>
+
       <!-- CDITCK-444 -->
       <class name="org.jboss.cdi.tck.tests.extensions.lifecycle.processBeanAttributes.broken.invalid.InvalidStereotypeTest">
         <methods>
