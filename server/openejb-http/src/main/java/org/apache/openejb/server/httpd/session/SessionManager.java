@@ -48,14 +48,20 @@ public class SessionManager {
             return;
         }
 
-        final WebBeansContext wbc = app.getWebBeansContext();
-        final Iterator<SessionWrapper> iterator = sessions.values().iterator();
-        while (iterator.hasNext()) {
-            final SessionWrapper next = iterator.next();
-            if (next.app == app) {
-                doDestroy(next);
-                iterator.remove();
+        final Thread tc = Thread.currentThread();
+        final ClassLoader tccl = tc.getContextClassLoader();
+        tc.setContextClassLoader(app.getClassLoader());
+        try {
+            final Iterator<SessionWrapper> iterator = sessions.values().iterator();
+            while (iterator.hasNext()) {
+                final SessionWrapper next = iterator.next();
+                if (next.app == app) {
+                    doDestroy(next);
+                    iterator.remove();
+                }
             }
+        } finally {
+            tc.setContextClassLoader(tccl);
         }
     }
 
