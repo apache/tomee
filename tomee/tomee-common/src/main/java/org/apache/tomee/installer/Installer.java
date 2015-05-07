@@ -449,13 +449,13 @@ public class Installer implements InstallerInterface {
 
         //Add TomEE header
         try {
-            newServerXml = Installers.replace(serverXmlOriginal,
+            newServerXml = Installers.replace(newServerXml,
                     "<Connector port=\"8080\"",
                     "<Connector port=\"8080\"",
                     "/>",
                     "xpoweredBy=\"false\" server=\"Apache TomEE\" />");
 
-            newServerXml = Installers.replace(serverXmlOriginal,
+            newServerXml = Installers.replace(newServerXml,
                     "<Connector port=\"8443\"",
                     "<Connector port=\"8443\"",
                     "/>",
