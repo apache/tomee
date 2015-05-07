@@ -126,7 +126,7 @@
     <version.shrinkwrap.descriptor>2.0.0-alpha-7</version.shrinkwrap.descriptor>
     <version.shrinkwrap.shrinkwrap>1.2.2</version.shrinkwrap.shrinkwrap>
 
-    <tomcat.version>8.0.21</tomcat.version>
+    <tomcat.version>8.0.22</tomcat.version>
 
     <cxf.version>3.1.0</cxf.version>
     <ehcache.version>2.8.5</ehcache.version>
