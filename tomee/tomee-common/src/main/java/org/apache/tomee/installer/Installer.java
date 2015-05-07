@@ -447,6 +447,23 @@ public class Installer implements InstallerInterface {
             alerts.addError("Error while adding listener to server.xml file", e);
         }
 
+        //Add TomEE header
+        try {
+            newServerXml = Installers.replace(serverXmlOriginal,
+                    "<Connector port=\"8080\"",
+                    "<Connector port=\"8080\"",
+                    "/>",
+                    "xpoweredBy=\"false\" server=\"Apache TomEE\" />");
+
+            newServerXml = Installers.replace(serverXmlOriginal,
+                    "<Connector port=\"8443\"",
+                    "<Connector port=\"8443\"",
+                    "/>",
+                    "xpoweredBy=\"false\" server=\"Apache TomEE\" />");
+        } catch (final IOException e) {
+            alerts.addError("Error adding server attribute to server.xml file", e);
+        }
+
         // overwrite server.xml
         if (Installers.writeAll(paths.getServerXmlFile(), newServerXml, alerts)) {
             alerts.addInfo("Add OpenEJB listener to server.xml");
