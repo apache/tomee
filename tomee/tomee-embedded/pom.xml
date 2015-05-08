@@ -66,6 +66,34 @@
               <createDependencyReducedPom>false</createDependencyReducedPom>
               <shadedArtifactAttached>true</shadedArtifactAttached>
               <shadedClassifierName>uber</shadedClassifierName>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>org.apache.tomee.embedded.Main</mainClass>
+                </transformer>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                  <resource>META-INF/cxf/bus-extensions.txt</resource>
+                </transformer>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                  <resource>META-INF/openwebbeans/openwebbeans.properties</resource>
+                </transformer>
+              </transformers>
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>META-INF/ejb-jar.xml</exclude>
+                    <exclude>META-INF/openejb-jar.xml</exclude>
+                    <exclude>META-INF/web-fragment.xml</exclude>
+                    <!--
+                    NOTE:
+                    we shouldn't exclude faces-config.xml while we didn't impl the feature in another manner
+                    but it breaks all apps not using JSF.
+                    Solution would be to handle it more deeply in our myfaces integration
+                    -->
+                    <exclude>META-INF/faces-config.xml</exclude>
+                  </excludes>
+                </filter>
+              </filters>
             </configuration>
           </execution>
         </executions>

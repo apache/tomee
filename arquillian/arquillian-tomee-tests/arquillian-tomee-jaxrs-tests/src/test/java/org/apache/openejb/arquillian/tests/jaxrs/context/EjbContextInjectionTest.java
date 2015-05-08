@@ -27,6 +27,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import javax.ejb.Singleton;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,8 +42,6 @@ import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Providers;
-import java.io.IOException;
-import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 
@@ -63,10 +64,19 @@ public class EjbContextInjectionTest {
 
     @Test
     public void rest() throws IOException {
-        final String response = IO.slurp(new URL(url.toExternalForm() + "injections/check"));
+        final String response = slurp(new URL(url.toExternalForm() + "injections/check"));
         assertEquals("true", response);
     }
 
+    private static String slurp(final URL url) throws IOException {
+        final HttpURLConnection urlConnection = HttpURLConnection.class.cast(url.openConnection());
+        try {
+            urlConnection.setRequestProperty("Accept", "text/plain");
+            return IO.slurp(urlConnection.getInputStream());
+        } finally {
+            urlConnection.disconnect();
+        }
+    }
 
     @Singleton
     @Path("/injections")

@@ -27,6 +27,8 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.apache.openejb.loader.ProvisioningUtil;
 
+import static org.apache.openejb.loader.JarLocation.jarLocation;
+
 public class Main {
     public static final String PORT = "port";
     public static final String SHUTDOWN = "shutdown";
@@ -59,6 +61,7 @@ public class Main {
                 contexts = null;
             }
 
+            boolean autoWar = true;
             int i = 0;
             if (line.hasOption(PATH)) {
                 for (final String path : line.getOptionValues(PATH)) {
@@ -77,10 +80,18 @@ public class Main {
                         container.deploy(name, file, true);
                     }
                 }
+                autoWar = false;
             }
             if (line.hasOption(AS_WAR)) {
                 container.deployClasspathAsWebApp(contexts == null || i == contexts.length ? "" : contexts[i],
                         line.hasOption(DOC_BASE) ? new File(line.getOptionValue(DOC_BASE)) : null);
+                autoWar = false;
+            }
+            if (autoWar) { // nothing deployed check if we are a war and deploy ourself then
+                final File me = jarLocation(Main.class);
+                if (me.getName().endsWith(".war")) {
+                    container.deploy(contexts == null || i == contexts.length ? "" : contexts[i], me);
+                }
             }
 
             Runtime.getRuntime().addShutdownHook(new Thread() {

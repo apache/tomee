@@ -32,6 +32,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.ws.rs.core.Response;
 
 import static java.lang.Thread.sleep;
+import static javax.ws.rs.core.MediaType.TEXT_PLAIN_TYPE;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Arquillian.class)
@@ -51,12 +52,12 @@ public class SuspendedTest {
         new Thread() {
             @Override
             public void run() {
-                response.set(WebClient.create(url.toExternalForm() + "touch").get());
+                response.set(WebClient.create(url.toExternalForm() + "touch").accept(TEXT_PLAIN_TYPE).get());
                 end.countDown();
             }
         }.start();
         final WebClient client = WebClient.create(url.toExternalForm() + "touch");
-        while (!client.reset().path("check").get(Boolean.class)) {
+        while (!client.reset().path("check").accept(TEXT_PLAIN_TYPE).get(Boolean.class)) {
             sleep(1000);
         }
         client.reset().path("answer").post("hello");
