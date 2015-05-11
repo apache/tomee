@@ -124,6 +124,11 @@ public final class ProvisioningUtil {
         return location.substring(idx + 1, location.length());
     }
 
+    /**
+     *
+     * @param rawLocation
+     * @return
+     */
     public static String realLocation(final String rawLocation) {
         if (hasHttpOrHttpsPrefix(rawLocation)) {
             final File file = cacheFile(lastPart(rawLocation));
