@@ -32,6 +32,6 @@ public class ProvisioningUtilTest {
     @Test
     public void mvnUrlRawLocation() throws MalformedURLException {
         final String url = ProvisioningUtil.realLocation("mvn:org.apache.openejb:apache-tomee:x.y.z-SNAPSHOT:zip");
-        assertEquals("https/repository.apache.org/snapshots/org/apache/openejb/apache-tomee/x.y.z-SNAPSHOT/apache-tomee-x.y.z-SNAPSHOT.zip", url);
+        assertEquals("https://repository.apache.org/snapshots/org/apache/openejb/apache-tomee/x.y.z-SNAPSHOT/apache-tomee-x.y.z-SNAPSHOT.zip", url);
     }
 }
