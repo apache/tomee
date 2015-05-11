@@ -36,7 +36,7 @@ public class MavenCache {
 
         // initializing the SystemInstance because we'll need it for configuration
         try {
-            SystemInstance.get().init(new Properties());
+            SystemInstance.init(new Properties());
         } catch (final Exception e) {
             // no-op
         }
@@ -84,7 +84,7 @@ public class MavenCache {
                 os.write(buffer, 0, bytesRead);
             }
         } catch (final Exception e) {
-            throw new DownloadException("Unable to download " + source + " to " + file.getAbsolutePath(), e);
+            throw new DownloadException("Unable to download " + source + " to " + file, e);
         } finally {
             if (is != null) {
                 try {

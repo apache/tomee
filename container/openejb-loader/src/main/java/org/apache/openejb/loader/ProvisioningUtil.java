@@ -16,12 +16,17 @@
  */
 package org.apache.openejb.loader;
 
+import org.w3c.dom.Document;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathFactory;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -51,6 +56,7 @@ public final class ProvisioningUtil {
 
     public static final String OPENEJB_DEPLOYER_CACHE_FOLDER = "openejb.deployer.cache.folder";
     public static final String HTTP_PREFIX = "http";
+    public static final String HTTPS_PREFIX = "https";
     public static final String MVN_PREFIX = "mvn:";
     public static final String SNAPSHOT_SUFFIX = "-SNAPSHOT";
 
@@ -119,7 +125,7 @@ public final class ProvisioningUtil {
     }
 
     public static String realLocation(final String rawLocation) {
-        if (rawLocation.startsWith(HTTP_PREFIX)) {
+        if (hasHttpOrHttpsPrefix(rawLocation)) {
             final File file = cacheFile(lastPart(rawLocation));
             if (file.exists()) {
                 return file.getAbsolutePath();
@@ -149,7 +155,8 @@ public final class ProvisioningUtil {
         if (rawLocation.startsWith(MVN_PREFIX)) {
             try {
                 final String repo1Url = quickMvnUrl(rawLocation.substring(MVN_PREFIX.length()).replace(":", "/"));
-                return realLocation(repo1Url).replace(":", "/").replace("///","/");
+                final String real = realLocation(repo1Url);
+                return real;
             } catch (final MalformedURLException e1) {
                 Logger.getLogger(ProvisioningUtil.class.getName()).severe("Can't find " + rawLocation);
             }
@@ -213,7 +220,27 @@ public final class ProvisioningUtil {
     }
 
     private static String m2Home() {
-        return SystemInstance.get().getProperty("openejb.m2.home", System.getProperty("user.home") + "/.m2/repository/");
+        String home = "";
+        File f = new File(SystemInstance.get().getProperty("openejb.m2.home", System.getProperty("user.home") + "/.m2/repository/"));
+
+        if (f.exists()) {
+            home = f.getAbsolutePath();
+        } else {
+            f = new File(SystemInstance.get().getProperty("openejb.m2.home", System.getProperty("user.home") + "/.m2/settings.xml"));
+            if (f.exists()) {
+                try {
+                    final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                    final DocumentBuilder builder = factory.newDocumentBuilder();
+                    final Document document = builder.parse(f);
+                    final XPathFactory xpf = XPathFactory.newInstance();
+                    final XPath xp = xpf.newXPath();
+                    home = xp.evaluate("//settings/localRepository/text()", document.getDocumentElement());
+                } catch (final Exception ignore) {
+                }
+            }
+        }
+
+        return (home.endsWith("/") ? home : home + "/");
     }
 
     private static String mvnArtifactPath(final String toParse, final String snapshotBase) throws MalformedURLException {
@@ -243,7 +270,7 @@ public final class ProvisioningUtil {
         builder.append(version).append("/");
 
         String artifactVersion;
-        if (snapshotBase != null && snapshotBase.startsWith(HTTP_PREFIX) && version.endsWith(SNAPSHOT_SUFFIX)) {
+        if (snapshotBase != null && hasHttpOrHttpsPrefix(snapshotBase) && version.endsWith(SNAPSHOT_SUFFIX)) {
             final String meta = snapshotBase + builder.toString() + "maven-metadata.xml";
             final URL url = new URL(meta);
             final ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -278,6 +305,10 @@ public final class ProvisioningUtil {
         }
 
         return builder.append(".").append(type).toString();
+    }
+
+    private static boolean hasHttpOrHttpsPrefix(final String str) {
+        return str.startsWith(HTTP_PREFIX) || str.startsWith(HTTPS_PREFIX);
     }
 
     private static String extractLastSnapshotVersion(final String defaultVersion, final InputStream metadata) {
