@@ -236,6 +236,7 @@ public final class ProvisioningUtil {
                     final XPath xp = xpf.newXPath();
                     home = xp.evaluate("//settings/localRepository/text()", document.getDocumentElement());
                 } catch (final Exception ignore) {
+                    //no-op
                 }
             }
         }
