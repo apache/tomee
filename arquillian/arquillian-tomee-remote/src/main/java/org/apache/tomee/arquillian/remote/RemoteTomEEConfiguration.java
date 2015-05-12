@@ -39,6 +39,8 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
     private String conf;
     private String bin;
     private String lib;
+    private String endorsed;
+    private String javaagent;
     private String additionalLibs;
     private boolean cleanOnStartUp;
     private boolean debug;
@@ -92,6 +94,24 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
 
     public String getAdditionalLibs() {
         return additionalLibs;
+    }
+
+    public String getEndorsed() {
+        return endorsed;
+    }
+
+    public String getJavaagent() {
+        return javaagent;
+    }
+
+    @Multiline
+    public void setEndorsed(final String endorsed) {
+        this.endorsed = endorsed;
+    }
+
+    @Multiline
+    public void setJavaagent(final String javaagent) {
+        this.javaagent = javaagent;
     }
 
     @Multiline

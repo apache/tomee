@@ -30,7 +30,6 @@ import org.jboss.arquillian.container.spi.client.container.LifecycleException;
 import org.jboss.arquillian.protocol.servlet.ServletMethodExecutor;
 import org.jboss.shrinkwrap.api.Archive;
 
-import javax.naming.NamingException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,6 +43,7 @@ import java.util.Properties;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.naming.NamingException;
 
 public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguration> {
     private static final Logger logger = Logger.getLogger(RemoteTomEEContainer.class.getName());
@@ -214,13 +214,32 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
         Setup.synchronizeFolder(tomeeHome, configuration.getConf(), "conf");
         Setup.synchronizeFolder(tomeeHome, configuration.getBin(), "bin");
         Setup.synchronizeFolder(tomeeHome, configuration.getLib(), "lib");
-        Setup.addTomEELibraries(tomeeHome, configuration.getAdditionalLibs());
+        Setup.addTomEELibraries(new File(tomeeHome, "lib"), configuration.getAdditionalLibs(), false);
+        if (configuration.getEndorsed() != null && !configuration.getEndorsed().isEmpty()) {
+            final File endorsed = new File(tomeeHome, "endorsed");
+            Files.mkdir(endorsed);
+            Setup.addTomEELibraries(endorsed, configuration.getEndorsed(), false);
+        }
+
+        String opts = configuration.getCatalina_opts();
+        if (configuration.getJavaagent() != null && !configuration.getJavaagent().isEmpty()) {
+            final File javaagent = new File(tomeeHome, "javaagent");
+            Files.mkdir(javaagent);
+            final Map<File, String> agents = Setup.addTomEELibraries(javaagent, configuration.getJavaagent(), true);
+            if (!agents.isEmpty()) {
+                if (opts == null) {
+                    opts = "";
+                }
+                for (final Map.Entry<File, String> entry : agents.entrySet()) {
+                    opts += " \"-javaagent:" + entry.getKey().getAbsolutePath() + entry.getValue() + "\"";
+                }
+            }
+            configuration.setCatalina_opts(opts);
+        }
 
         Setup.configureServerXml(tomeeHome, configuration);
 
         Setup.configureSystemProperties(tomeeHome, configuration);
-
-        final String opts = configuration.getCatalina_opts();
 
         Setup.exportProperties(tomeeHome, configuration, opts == null || (!opts.contains("-Xm") && !opts.matches(".*-XX:[^=]*Size=.*")));
         Setup.installArquillianBeanDiscoverer(tomeeHome);

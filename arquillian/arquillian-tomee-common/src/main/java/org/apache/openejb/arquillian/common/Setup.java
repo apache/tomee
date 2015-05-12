@@ -42,6 +42,8 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static java.util.Collections.emptyMap;
+
 /**
  * @version $Rev$ $Date$
  */
@@ -357,13 +359,13 @@ public class Setup {
         Files.delete(destination);
     }
 
-    public static void addTomEELibraries(final File tomeeHome, final String additionalLibs) {
+    public static Map<File, String> addTomEELibraries(final File libFolder, final String additionalLibs, final boolean parseArgs) {
         if (additionalLibs == null) {
-            return;
+            return emptyMap();
         }
         final String libs = additionalLibs.trim();
         if (libs.isEmpty()) {
-            return;
+            return emptyMap();
         }
 
         try { // initializing the SystemInstance because we'll need it for configuration
@@ -374,22 +376,43 @@ public class Setup {
             // no-op
         }
 
-        final File libFolder = new File(tomeeHome, "lib");
+        final Map<File, String> configs = new HashMap<>();
         for (final String lib : libs.split("\n")) {
             final String trim = lib.trim();
             if (trim.isEmpty() || trim.startsWith("#")) {
                 continue;
             }
+
+            final String args;
+            if (parseArgs) { // javaagent friendly
+                int argsIdx = trim.indexOf('=');
+                if (argsIdx < 0) {
+                    argsIdx = trim.indexOf('?');
+                }
+                if (argsIdx > 0) {
+                    args = trim.substring(argsIdx);
+                } else {
+                    args = "";
+                }
+            } else {
+                args = null;
+            }
+
             final Set<String> locations = ProvisioningUtil.realLocation(trim);
             for (final String location : locations) {
                 final File from = new File(location);
                 try {
-                    org.apache.openejb.loader.IO.copy(from, new File(libFolder, from.getName()));
+                    final File to = new File(libFolder, from.getName());
+                    org.apache.openejb.loader.IO.copy(from, to);
+                    if (args != null) {
+                        configs.put(to, args);
+                    }
                 } catch (final IOException e) {
                     throw new IllegalArgumentException(e);
                 }
             }
         }
+        return configs;
     }
 
     private static class TrueFilter implements FileFilter {

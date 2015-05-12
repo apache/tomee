@@ -14,44 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.arquillian;
+package org.apache.openejb.arquillian.javaagent;
 
-import org.apache.sirona.web.servlet.SironaFilter;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.File;
-import java.io.FilenameFilter;
+import java.lang.management.ManagementFactory;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 @RunWith(Arquillian.class)
-public class AdditionalLibsTest {
+public class JavaagentTest {
     @Deployment
-    public static Archive<?> war() {
-        return ShrinkWrap.create(WebArchive.class, "foo.war")
-            .addClass(Tester.class);
+    public static Archive<?> empty() {
+        return ShrinkWrap.create(WebArchive.class, "javaagent.war").addAsResource(EmptyAsset.INSTANCE, "foo");
     }
 
     @Test
-    public void run() {
-        final File[] sirona = new File(System.getProperty("catalina.base") + "/lib").listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(final File dir, final String name) {
-                return name.startsWith("sirona-");
+    public void checkAgent() {
+        for (final String arg : ManagementFactory.getRuntimeMXBean().getInputArguments()) {
+            if (arg.startsWith("-javaagent") && arg.endsWith("sirona-javaagent-0.2-incubating-shaded.jar")) {
+                return;
             }
-        });
-        assertEquals(1, sirona.length); // web
-
-        assertNotNull(new SironaFilter()); // would fail if libs are missing
-    }
-
-    private static class Tester {
+        }
+        fail("didnt find sirona as javaagent");
     }
 }
