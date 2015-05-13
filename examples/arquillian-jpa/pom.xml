@@ -19,7 +19,7 @@
   <properties>
     <arquillian.version>1.1.5.Final</arquillian.version>
     <arquillian-persistence.version>1.0.0.Alpha7</arquillian-persistence.version>
-    <tomee.version>2.0.0-SNAPSHOT</tomee.version>
+    <tomee.version>7.0.0-SNAPSHOT</tomee.version>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
@@ -63,7 +63,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>5.0.0-SNAPSHOT</version>
+      <version>7.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>

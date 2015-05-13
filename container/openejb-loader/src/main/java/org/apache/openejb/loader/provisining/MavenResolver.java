@@ -18,12 +18,17 @@ package org.apache.openejb.loader.provisining;
 
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
+import org.w3c.dom.Document;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathFactory;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -63,7 +68,7 @@ public class MavenResolver implements ArchiveResolver, ProvisioningResolverAware
 
     private String sanitize(final String url) {
         final int sep = url.indexOf('!') + 1;
-        String value = url.substring(prefix().length() + 1);
+        final String value = url.substring(prefix().length() + 1);
         return value.substring(0, sep) + value.substring(sep).replace(":", "/");
     }
 
@@ -116,13 +121,36 @@ public class MavenResolver implements ArchiveResolver, ProvisioningResolverAware
     }
 
     private static String m2Home() {
+
         final Properties properties;
         if (SystemInstance.isInitialized()) {
             properties = SystemInstance.get().getProperties();
         } else {
             properties = System.getProperties();
         }
-        return properties.getProperty("openejb.m2.home", System.getProperty("user.home") + "/.m2/repository/");
+
+        String home = "";
+        File f = new File(properties.getProperty("openejb.m2.home", System.getProperty("user.home") + "/.m2/repository/"));
+
+        if (f.exists()) {
+            home = f.getAbsolutePath();
+        } else {
+            f = new File(properties.getProperty("openejb.m2.home", System.getProperty("user.home") + "/.m2/settings.xml"));
+            if (f.exists()) {
+                try {
+                    final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                    final DocumentBuilder builder = factory.newDocumentBuilder();
+                    final Document document = builder.parse(f);
+                    final XPathFactory xpf = XPathFactory.newInstance();
+                    final XPath xp = xpf.newXPath();
+                    home = xp.evaluate("//settings/localRepository/text()", document.getDocumentElement());
+                } catch (final Exception ignore) {
+                    //no-op
+                }
+            }
+        }
+
+        return (home.endsWith("/") ? home : home + "/");
     }
 
     private String mvnArtifactPath(final String toParse, final String snapshotBase) throws MalformedURLException {
@@ -146,10 +174,10 @@ public class MavenResolver implements ArchiveResolver, ProvisioningResolverAware
             throw new MalformedURLException("Invalid artifactId. " + toParse);
         }
 
-        String base = snapshotBase == null || snapshotBase.isEmpty() ? "" : (snapshotBase + (!snapshotBase.endsWith("/") ? "/" : ""));
+        final String base = snapshotBase == null || snapshotBase.isEmpty() ? "" : (snapshotBase + (!snapshotBase.endsWith("/") ? "/" : ""));
 
         if (("LATEST".equals(version) || "LATEST-SNAPSHOT".equals(version)) && base.startsWith("http")) {
-            final String meta = base + group + "/" + artifact + "/maven-metadata.xml";
+            final String meta = base + group.replace('.', '/') + "/" + artifact + "/maven-metadata.xml";
             final URL url = new URL(meta);
             final ByteArrayOutputStream out = new ByteArrayOutputStream();
             InputStream is = null;
@@ -169,7 +197,7 @@ public class MavenResolver implements ArchiveResolver, ProvisioningResolverAware
 
         String artifactVersion;
         if (version.endsWith("-SNAPSHOT") && base.startsWith("http")) {
-            final String meta = base + group + "/" + artifact + "/" + version + "/maven-metadata.xml";
+            final String meta = base + group.replace('.', '/') + "/" + artifact + "/" + version + "/maven-metadata.xml";
             final URL url = new URL(meta);
             final ByteArrayOutputStream out = new ByteArrayOutputStream();
             InputStream is = null;
@@ -199,7 +227,7 @@ public class MavenResolver implements ArchiveResolver, ProvisioningResolverAware
             fullClassifier = "-" + segments[4];
         }
 
-        StringBuilder builder = new StringBuilder(base);
+        final StringBuilder builder = new StringBuilder(base);
         builder.append(group.replace('.', '/')).append("/");
         builder.append(artifact).append("/");
         builder.append(version).append("/");
@@ -211,7 +239,7 @@ public class MavenResolver implements ArchiveResolver, ProvisioningResolverAware
         return builder.append(".").append(type).toString();
     }
 
-    private static String extractRealVersion(String version, ByteArrayOutputStream out) {
+    private static String extractRealVersion(String version, final ByteArrayOutputStream out) {
         final QuickMvnMetadataParser handler = new QuickMvnMetadataParser();
         try {
             final SAXParser parser = FACTORY.newSAXParser();

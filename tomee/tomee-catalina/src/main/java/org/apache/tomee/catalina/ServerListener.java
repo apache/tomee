@@ -188,8 +188,7 @@ public class ServerListener implements LifecycleListener {
             acc = field.isAccessible();
             final int slash = value.indexOf('/');
             field.setAccessible(true);
-            final String version = OpenEjbVersion.get().getVersion();
-            final String tomeeVersion = (Integer.parseInt(Character.toString(version.charAt(0))) - 3) + version.substring(1, version.length());
+            final String tomeeVersion = OpenEjbVersion.get().getVersion();
             final int modifiers = field.getModifiers();
             if (Modifier.isFinal(modifiers)) {
                 final Field modifiersField = Field.class.getDeclaredField("modifiers");
