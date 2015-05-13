@@ -62,6 +62,13 @@
       </class>
 
       <!-- Issues in the TCK -->
+      <!-- CDITCK-480 -->
+      <class name="org.jboss.cdi.tck.tests.context.conversation.ClientConversationContextTest">
+        <methods>
+          <exclude name="testSuppressedConversationPropagation"/>
+        </methods>
+      </class>
+
       <!-- CDITCK-476 -->
       <class name="org.jboss.cdi.tck.tests.context.conversation.filter.ConversationFilterTest">
         <methods>
