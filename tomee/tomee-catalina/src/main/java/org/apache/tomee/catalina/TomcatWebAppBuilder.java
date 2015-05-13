@@ -1076,19 +1076,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
     @Override
     public void start(final StandardContext standardContext) {
-        final WebContext webContext = WebContext.class.cast(standardContext.getServletContext().getAttribute("openejb.web.context"));
-        if (webContext == null) {
-            return;
-        }
-        for (final FilterMap map : standardContext.findFilterMaps()) {
-            if ("CDI Conversation Filter".equals(map.getFilterName()) && webContext.getWebBeansContext() != null) {
-                ContextsService contextsService = webContext.getWebBeansContext().getContextsService();
-                if (contextsService != null) {
-                    contextsService.setSupportConversations(false);
-                }
-                break;
-            }
-        }
+        // nothing to do for now
     }
 
     /**

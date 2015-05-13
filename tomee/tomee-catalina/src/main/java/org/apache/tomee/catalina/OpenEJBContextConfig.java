@@ -59,6 +59,7 @@ import org.apache.tomee.common.NamingUtil;
 import org.apache.tomee.common.ResourceFactory;
 import org.apache.tomee.jasper.TomEEJasperInitializer;
 import org.apache.tomee.loader.TomcatHelper;
+import org.apache.webbeans.web.context.WebConversationFilter;
 import org.apache.xbean.finder.IAnnotationFinder;
 
 import javax.servlet.ServletContainerInitializer;
@@ -363,6 +364,16 @@ public class OpenEJBContextConfig extends ContextConfig {
             mapping.setFilterName(filter.getFilterName());
             mapping.addURLPattern("/*");
             webXml.addFilterMapping(mapping);
+        }
+
+        {
+            final FilterDef filter = new FilterDef();
+            filter.setAsyncSupported("true");
+            filter.setDescription("CDI Conversation Filter");
+            filter.setDisplayName("CDI Conversation Filter");
+            filter.setFilterName("CDI Conversation Filter");
+            filter.setFilterClass(WebConversationFilter.class.getName());
+            webXml.addFilter(filter);
         }
 
         return webXml;
