@@ -360,8 +360,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         fixConfig();
 
         if ("-1".equals(tomeeVersion)) {
-            final String version = OpenEjbVersion.get().getVersion();
-            tomeeVersion = (Integer.parseInt(Character.toString(version.charAt(0))) - 3) + version.substring(1, version.length());
+            tomeeVersion = OpenEjbVersion.get().getVersion();
         }
 
         if (!tomeeAlreadyInstalled) {

@@ -164,8 +164,8 @@
   <properties>
     <xbean.version>4.0</xbean.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.tomee>2.0.0-SNAPSHOT</version.tomee>
-    <version.openejb>5.0.0-SNAPSHOT</version.openejb>
+    <version.tomee>7.0.0-SNAPSHOT</version.tomee>
+    <version.openejb>7.0.0-SNAPSHOT</version.openejb>
   </properties>
 
   <!--

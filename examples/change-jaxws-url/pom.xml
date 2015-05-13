@@ -25,8 +25,8 @@
   <name>OpenEJB :: Web Examples :: Change JAXWS URL</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <openejb.version>5.0.0-SNAPSHOT</openejb.version>
-    <tomee.version>2.0.0-SNAPSHOT</tomee.version>
+    <openejb.version>7.0.0-SNAPSHOT</openejb.version>
+    <tomee.version>7.0.0-SNAPSHOT</tomee.version>
   </properties>
   <repositories>
     <repository>
