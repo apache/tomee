@@ -79,6 +79,7 @@ import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.assembler.classic.event.NewEjbAvailableAfterApplicationCreated;
 import org.apache.openejb.cdi.CdiBuilder;
+import org.apache.openejb.cdi.OWBContextThreadListener;
 import org.apache.openejb.cdi.OpenEJBLifecycle;
 import org.apache.openejb.cdi.Proxys;
 import org.apache.openejb.config.AppModule;
@@ -118,6 +119,7 @@ import org.apache.tomcat.util.descriptor.web.FilterMap;
 import org.apache.tomcat.util.descriptor.web.ResourceBase;
 import org.apache.tomcat.util.scan.StandardJarScanFilter;
 import org.apache.tomee.catalina.cdi.ServletContextHandler;
+import org.apache.tomee.catalina.cdi.WebBeansThreadBindingListener;
 import org.apache.tomee.catalina.cluster.ClusterObserver;
 import org.apache.tomee.catalina.cluster.TomEEClusterListener;
 import org.apache.tomee.catalina.environment.Hosts;
@@ -1677,6 +1679,12 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 System.arraycopy(lifecycleListeners, 0, newLifecycleListeners, 1, lifecycleListeners.length);
                 newLifecycleListeners[newLifecycleListeners.length - 1] = endWebBeansListener;
                 standardContext.setApplicationLifecycleListeners(newLifecycleListeners);
+            }
+
+            // also add the ThreadBindingListener to clean up async thread executions
+            {
+                WebBeansThreadBindingListener webBeansThreadBindingListener = new WebBeansThreadBindingListener(webBeansContext, standardContext.getThreadBindingListener());
+                standardContext.setThreadBindingListener(webBeansThreadBindingListener);
             }
         } else {
             // just add the end listener to be able to stack tasks to execute at the request end
