@@ -52,6 +52,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.ReentrantLock;
 import javax.ejb.AccessLocalException;
 import javax.ejb.EJBException;
@@ -608,20 +610,20 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     protected abstract Object _writeReplace(Object proxy) throws ObjectStreamException;
 
     protected void registerHandler(final Object key, final BaseEjbProxyHandler handler) {
-        HashSet set = (HashSet) getLiveHandleRegistry().get(key);
-        if (set != null) {
-            final ReentrantLock l = lock;
-            l.lock();
-
-            try {
-                set.add(handler);
-            } finally {
-                l.unlock();
-            }
-        } else {
+        Set set = (Set) getLiveHandleRegistry().get(key);
+        if (set == null) {
             set = new HashSet();
+            final Object existing = getLiveHandleRegistry().putIfAbsent(key, set);
+            if (existing != null) {
+                set = Set.class.cast(existing);
+            }
+        }
+        final ReentrantLock l = lock;
+        l.lock();
+        try {
             set.add(handler);
-            getLiveHandleRegistry().put(key, set);
+        } finally {
+            l.unlock();
         }
     }
 
@@ -640,7 +642,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         this.beanContextRef = new WeakReference<BeanContext>(beanContext);
     }
 
-    public HashMap getLiveHandleRegistry() {
+    public ConcurrentMap getLiveHandleRegistry() {
         final BeanContext beanContext = getBeanContext();
         ProxyRegistry proxyRegistry = beanContext.get(ProxyRegistry.class);
         if (proxyRegistry == null) {
@@ -675,6 +677,6 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
     private static class ProxyRegistry {
 
-        protected final HashMap liveHandleRegistry = new HashMap();
+        protected final ConcurrentMap liveHandleRegistry = new ConcurrentHashMap();
     }
 }
