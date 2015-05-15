@@ -97,6 +97,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.apache.openejb.util.URLs.toFile;
 
 /**
@@ -845,6 +847,13 @@ class AppInfoBuilder {
                         info.properties.setProperty(ECLIPSELINK_SESSION_CUSTOMIZER, PREFIX_SESSION_CUSTOMIZER);
                     }
                 }
+
+                for (final String key : singletonList("eclipselink.jdbc.sequence-connection-pool.non-jta-data-source")) {
+                    final String ds = info.properties.getProperty(key);
+                    if (ds != null && !ds.contains(":") /* java:, openejb:, other: namespace */) {
+                        info.properties.setProperty(key, "java:openejb/Resource/" + ds);
+                    }
+                }
             } else if (info.provider == null || "org.apache.openjpa.persistence.PersistenceProviderImpl".equals(info.provider)) {
 
                 // Apply the overrides that apply to all persistence units of this provider
@@ -895,6 +904,13 @@ class AppInfoBuilder {
 
             // Apply the overrides that apply to just this persistence unit
             override(appModule.getProperties(), info);
+
+            for (final String key : asList("javax.persistence.jtaDataSource", "javax.persistence.nonJtaDataSource")) {
+                final String ds = info.properties.getProperty(key);
+                if (ds != null && !ds.contains(":") /* java:, openejb:, other: namespace */) {
+                    info.properties.setProperty(key, "java:openejb/Resource/" + ds);
+                }
+            }
         }
 
         private static void overrideFromSystemProp(final PersistenceUnitInfo info) {
