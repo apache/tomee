@@ -251,10 +251,17 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
         this.persistenceUnitRootUrl = toUrl(root);
         try {
 
-            for (final String path : jarFiles) {
-                File file = new File(root, path);
-                file = file.getCanonicalFile();
-                jarFileUrls.add(toUrl(file));
+            if (!jarFiles.isEmpty()) {
+                final File tmpRoot;
+                if (root.getName().endsWith(".jar")) {
+                    tmpRoot = root.getParentFile(); // lib for a war, / of the ear otherwise, no sense in other cases
+                } else {
+                    tmpRoot = root;
+                }
+
+                for (final String path : jarFiles) {
+                    jarFileUrls.add(toUrl(new File(tmpRoot, path).getCanonicalFile()));
+                }
             }
         } catch (final IOException e) {
             throw new IllegalStateException(e);
