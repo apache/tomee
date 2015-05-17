@@ -84,9 +84,17 @@ public class TomEEJarScanner extends StandardJarScanner {
 
             tldConfigScanStream = TldConfig.class.getDeclaredMethod("tldScanStream", InputStream.class);
             tldConfigScanStream.setAccessible(true);
-            tldConfig = loader.loadClass("org.apache.catalina.startup.TldConfig$TldJarScannerCallback")
-                .getDeclaredFields()[0]; // there is a unique field and this way it is portable
-            //.getDeclaredField("this$0");
+
+            // .getDeclaredField("this$0");
+            final Field[] declaredFields = loader.loadClass("org.apache.catalina.startup.TldConfig$TldJarScannerCallback").getDeclaredFields();
+            Field tldConfigTmp = null;
+            for (final Field f : declaredFields) {
+                if ("org.apache.catalina.startup.TldConfig".equals(f.getType().getName())) {
+                    tldConfigTmp = f;
+                    break;
+                }
+            }
+            tldConfig = tldConfigTmp; // there is a unique field and this way it is portable
             tldConfig.setAccessible(true);
 
             final Class<?> tldLocationsCache = loader.loadClass("org.apache.jasper.compiler.TldLocationsCache");
