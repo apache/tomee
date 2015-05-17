@@ -64,7 +64,16 @@
       <!-- Issues in the TCK -->
       <!-- CDITCK-482 -->
       <class name="org.jboss.cdi.tck.tests.context.session.listener.shutdown.SessionContextListenerShutdownTest">
+        <methods>
+          <exclude name=".*"/>
+        </methods>
       </class>
+      <class name="org.jboss.cdi.tck.tests.deployment.shutdown.ApplicationShutdownLifecycleTest">
+        <methods>
+          <exclude name=".*"/>
+        </methods>
+      </class>
+
 
       <!-- CDITCK-480 -->
       <class name="org.jboss.cdi.tck.tests.context.conversation.ClientConversationContextTest">
