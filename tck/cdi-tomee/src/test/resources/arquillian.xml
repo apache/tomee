@@ -27,6 +27,7 @@
       <property name="ajpPort">-1</property>
       <property name="stopPort">-1</property>
       <property name="classifier">plus</property>
+      <property name="conf">src/test/conf</property>
       <property name="dir">target/tomee</property>
       <property name="appWorkingDir">target/workdir</property>
       <property name="cleanOnStartUp">true</property>
