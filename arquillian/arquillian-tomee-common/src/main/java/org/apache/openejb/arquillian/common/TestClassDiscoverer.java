@@ -75,6 +75,8 @@ public class TestClassDiscoverer implements AdditionalBeanDiscoverer {
         // keep it since CukeSpace doesn't rely on JUnit or TestNG @Test so it stays mandatory
         final File file = module.getFile();
         final String line = findTestName(file, module.getClassLoader());
+        String moduleId = null;
+        ClassLoader loader = null;
         if (line != null) {
             String name;
             final int endIndex = line.indexOf('#');
@@ -89,10 +91,18 @@ public class TestClassDiscoverer implements AdditionalBeanDiscoverer {
 
             if (name != null) {
                 try {
-                    // call some reflection methods to make it fail if some dep are missing...
                     testClasses.add(module.getClassLoader().loadClass(name));
                 } catch (final Throwable e) {
-                    // no-op
+                    for (final WebModule web : module.getWebModules()) {
+                        try {
+                            testClasses.add(web.getClassLoader().loadClass(name));
+                            moduleId = web.getModuleId();
+                            loader = web.getClassLoader();
+                            break;
+                        } catch (final Throwable e2) {
+                            // no-op
+                        }
+                    }
                 }
             }
         }
@@ -130,7 +140,13 @@ public class TestClassDiscoverer implements AdditionalBeanDiscoverer {
             bean.setTransactionType(TransactionType.BEAN);
             final EjbDeployment ejbDeployment = openejbJar.addEjbDeployment(bean);
             ejbDeployment.setDeploymentId(ejbName);
-            module.getEjbModules().add(new EjbModule(ejbJar, openejbJar));
+            final EjbModule ejbModule = new EjbModule(ejbJar, openejbJar);
+            if (moduleId != null) {
+                ejbModule.setWebapp(true);
+                ejbModule.getProperties().put("openejb.ejbmodule.webappId", moduleId);
+                ejbModule.setClassLoader(loader); // can be a web module so set it
+            }
+            module.getEjbModules().add(ejbModule);
         }
 
         return module;

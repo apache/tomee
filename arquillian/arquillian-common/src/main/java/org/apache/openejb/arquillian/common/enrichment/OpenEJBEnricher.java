@@ -24,6 +24,7 @@ import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.arquillian.common.mockito.MockitoEnricher;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.WebContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.AppFinder;
@@ -65,25 +66,32 @@ public final class OpenEJBEnricher {
 
         final BeanContext context = SystemInstance.get().getComponent(ContainerSystem.class).getBeanContext(ctx.getId() + "_" + testInstance.getClass().getName());
 
-        final BeanManagerImpl bm = findBeanManager(ctx);
-        if (bm != null && bm.isInUse()) {
+        final WebBeansContext appWBC = ctx.getWebBeansContext();
+        final BeanManagerImpl bm = appWBC.getBeanManagerImpl();
+
+        boolean ok = false;
+        for (final WebContext web : ctx.getWebContexts()) {
+            final WebBeansContext webBeansContext = web.getWebBeansContext();
+            final BeanManagerImpl webAppBm = webBeansContext.getBeanManagerImpl();
+            if (webBeansContext != appWBC && webAppBm.isInUse()) {
+                try {
+                    doInject(testInstance, context, webAppBm);
+                    ok = true;
+                    break;
+                } catch (final Exception e) {
+                    // no-op, try next
+                }
+            }
+        }
+        if (bm != null && bm.isInUse() && !ok) {
             try {
-                final Set<Bean<?>> beans = bm.getBeans(testInstance.getClass());
-                final Bean<?> bean = bm.resolve(beans);
-                final CreationalContext<?> cc = bm.createCreationalContext(bean);
-                if (context != null) {
-                    context.set(CreationalContext.class, cc);
+                doInject(testInstance, context, bm);
+            } catch (final Exception e) {
+                LOGGER.log(Level.SEVERE, "Failed injection on: " + testInstance.getClass(), e);
+                if (RuntimeException.class.isInstance(e)) {
+                    throw RuntimeException.class.cast(e);
                 }
-                OWBInjector.inject(bm, testInstance, cc);
-            } catch (final Throwable t) {
-                LOGGER.log(Level.SEVERE, "Failed injection on: " + testInstance.getClass(), t);
-                if (RuntimeException.class.isInstance(t)) {
-                    throw RuntimeException.class.cast(t);
-                }
-                if (Exception.class.isInstance(t)) {
-                    throw new OpenEJBRuntimeException(Exception.class.cast(t));
-                }
-                // ignoring other cases for the moment, let manage some OWB API change without making all tests failing
+                throw new OpenEJBRuntimeException(e);
             }
         }
 
@@ -91,7 +99,7 @@ public final class OpenEJBEnricher {
             final ThreadContext callContext = new ThreadContext(context, null, Operation.INJECTION);
             final ThreadContext oldContext = ThreadContext.enter(callContext);
             try {
-                final InjectionProcessor processor = new InjectionProcessor<Object>(testInstance, context.getInjections(), context.getJndiContext());
+                final InjectionProcessor processor = new InjectionProcessor(testInstance, context.getInjections(), context.getJndiContext());
                 processor.createInstance();
             } catch (final OpenEJBException e) {
                 // ignored
@@ -99,6 +107,16 @@ public final class OpenEJBEnricher {
                 ThreadContext.exit(oldContext);
             }
         }
+    }
+
+    private static void doInject(final Object testInstance, final BeanContext context, final BeanManagerImpl bm) throws Exception {
+        final Set<Bean<?>> beans = bm.getBeans(testInstance.getClass());
+        final Bean<?> bean = bm.resolve(beans);
+        final CreationalContext<?> cc = bm.createCreationalContext(bean);
+        if (context != null) {
+            context.set(CreationalContext.class, cc);
+        }
+        OWBInjector.inject(bm, testInstance, cc);
     }
 
     private static BeanManagerImpl findBeanManager(final AppContext ctx) {
