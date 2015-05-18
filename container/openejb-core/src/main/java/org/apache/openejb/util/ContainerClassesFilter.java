@@ -46,7 +46,7 @@ public class ContainerClassesFilter implements Filter {
         excluded.add("org.apache.oro");
         excluded.add("org.apache.ws");
         excluded.add("org.apache.jcp");
-        excluded.add("org.apache.tomee");
+        excluded.add("org.apache.openejb");
         excluded.add("org.apache.tomee");
         excluded.add("org.apache.tomcat");
         excluded.add("org.apache.juli");
