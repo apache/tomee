@@ -42,7 +42,7 @@
       <artifactId>maven-project</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-embedded</artifactId>
       <version>${tomee.version}</version>
       <exclusions>

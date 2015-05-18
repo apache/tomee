@@ -24,7 +24,7 @@
 
   <parent>
     <artifactId>tomee</artifactId>
-    <groupId>org.apache.openejb</groupId>
+    <groupId>org.apache.tomee</groupId>
     <version>7.0.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
@@ -172,54 +172,54 @@
       <version>1.2</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>javaee-api</artifactId>
       <classifier>tomcat</classifier>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-client</artifactId>
       <version>${version.openejb}</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
-          <groupId>org.apache.openejb</groupId>
+          <groupId>org.apache.tomee</groupId>
           <artifactId>javaee-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-ejbd</artifactId>
       <version>${version.openejb}</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
-          <groupId>org.apache.openejb</groupId>
+          <groupId>org.apache.tomee</groupId>
           <artifactId>javaee-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-hsql</artifactId>
       <version>${version.openejb}</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
-          <groupId>org.apache.openejb</groupId>
+          <groupId>org.apache.tomee</groupId>
           <artifactId>javaee-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-http</artifactId>
       <version>${version.openejb}</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
-          <groupId>org.apache.openejb</groupId>
+          <groupId>org.apache.tomee</groupId>
           <artifactId>javaee-api</artifactId>
         </exclusion>
       </exclusions>
@@ -245,12 +245,12 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-server</artifactId>
       <version>${version.openejb}</version>
       <exclusions>
         <exclusion>
-          <groupId>org.apache.openejb</groupId>
+          <groupId>org.apache.tomee</groupId>
           <artifactId>javaee-api</artifactId>
         </exclusion>
       </exclusions>
@@ -262,13 +262,13 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-catalina</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
-          <groupId>org.apache.openejb</groupId>
+          <groupId>org.apache.tomee</groupId>
           <artifactId>javaee-api</artifactId>
         </exclusion>
         <exclusion>
@@ -278,31 +278,31 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-myfaces</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
-          <groupId>org.apache.openejb</groupId>
+          <groupId>org.apache.tomee</groupId>
           <artifactId>javaee-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-mojarra</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-common</artifactId>
       <version>${project.version}</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <groupId>org.apache.openejb</groupId>
+          <groupId>org.apache.tomee</groupId>
           <artifactId>javaee-api</artifactId>
         </exclusion>
         <exclusion>
@@ -312,13 +312,13 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-loader</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
-          <groupId>org.apache.openejb</groupId>
+          <groupId>org.apache.tomee</groupId>
           <artifactId>javaee-api</artifactId>
         </exclusion>
         <exclusion> <!-- 'provided' -->
@@ -332,46 +332,46 @@
       <artifactId>swizzle-stream</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-cxf-rs</artifactId>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
-          <groupId>org.apache.openejb</groupId>
+          <groupId>org.apache.tomee</groupId>
           <artifactId>javaee-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-cxf-transport</artifactId>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
-          <groupId>org.apache.openejb</groupId>
+          <groupId>org.apache.tomee</groupId>
           <artifactId>javaee-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-rest</artifactId>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
-          <groupId>org.apache.openejb</groupId>
+          <groupId>org.apache.tomee</groupId>
           <artifactId>javaee-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-jaxrs</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
-          <groupId>org.apache.openejb</groupId>
+          <groupId>org.apache.tomee</groupId>
           <artifactId>javaee-api</artifactId>
         </exclusion>
       </exclusions>

@@ -73,9 +73,9 @@ public class LegacyClientTest {
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        logger.info("Retrieving standalone server: " + Repository.guessVersion("org.apache.openejb", "openejb-standalone") + " - This may take a while...");
+        logger.info("Retrieving standalone server: " + Repository.guessVersion("org.apache.tomee", "openejb-standalone") + " - This may take a while...");
 
-        zip = Repository.getArtifact("org.apache.openejb", "openejb-standalone", "zip");
+        zip = Repository.getArtifact("org.apache.tomee", "openejb-standalone", "zip");
         app = Repository.getArtifact("org.apache.openejb.itests", "failover-ejb", "jar");
 
         final File roothome = new File(dir, rootname);

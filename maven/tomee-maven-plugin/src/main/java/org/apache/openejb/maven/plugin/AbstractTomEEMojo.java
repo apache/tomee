@@ -120,7 +120,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     @Parameter(property = "tomee-plugin.version", defaultValue = "-1")
     protected String tomeeVersion;
 
-    @Parameter(property = "tomee-plugin.groupId", defaultValue = "org.apache.openejb")
+    @Parameter(property = "tomee-plugin.groupId", defaultValue = "org.apache.tomee")
     protected String tomeeGroupId;
 
     @Parameter(property = "tomee-plugin.artifactId", defaultValue = "apache-tomee")
@@ -490,7 +490,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
     protected void fixConfig() {
         if (useOpenEJB) {
-            tomeeGroupId = "org.apache.openejb";
+            tomeeGroupId = "org.apache.tomee";
             tomeeArtifactId = "openejb-standalone";
             tomeeClassifier = null;
             tomeeShutdownCommand = "Q";
@@ -1248,7 +1248,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         }
 
         if ((tomeeClassifier != null && (tomeeClassifier.isEmpty() || tomeeClassifier.equals("ignore")))
-                || ("org.apache.openejb".equals(tomeeGroupId) && "openejb-standalone".equals(tomeeArtifactId))) {
+                || ("org.apache.tomee".equals(tomeeGroupId) && "openejb-standalone".equals(tomeeArtifactId))) {
             tomeeClassifier = null;
         }
 

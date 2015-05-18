@@ -49,7 +49,7 @@ public class ProviderGenerator extends Resource {
 
         final Set<String> seen = new HashSet<String>();
 
-        final List<ServiceProvider> providers = manager.load("org.apache.openejb");
+        final List<ServiceProvider> providers = manager.load("org.apache.tomee");
         for (final ServiceProvider provider : providers) {
             final List<String> types = provider.getTypes();
             final String name = guessBuilder(types);

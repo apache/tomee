@@ -40,13 +40,13 @@ public class ServiceUtils {
      * Default service provider package.  This value is choosen as follows:
      * </p>
      * 1. System property "openejb.provider.default" </br>
-     * 2. If in a full server containing a "conf" directory "org.apache.openejb" </br>
+     * 2. If in a full server containing a "conf" directory "org.apache.tomee" </br>
      * 3. Embedded mode "org.apache.openejb.embedded" </br>
      */
     public static final String DEFAULT_PROVIDER_URL;
 
     static {
-        String defaultValue = "org.apache.openejb";
+        String defaultValue = "org.apache.tomee";
         try {
             final SystemInstance system = SystemInstance.get();
             if (system.getProperty("openejb.embedded") != null) {

@@ -21,7 +21,7 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <artifactId>arquillian</artifactId>
-    <groupId>org.apache.openejb</groupId>
+    <groupId>org.apache.tomee</groupId>
     <version>7.0.0-SNAPSHOT</version>
   </parent>
   <artifactId>arquillian-tomee-remote</artifactId>
@@ -31,7 +31,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>arquillian-openejb-transaction-provider</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -89,7 +89,7 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>apache-tomee</artifactId>
       <type>zip</type>
       <version>7.0.0-SNAPSHOT</version>
@@ -112,14 +112,14 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-client</artifactId>
       <version>${openejb.version}</version>
       <type>jar</type>
     </dependency>
 
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>arquillian-tomee-common</artifactId>
       <version>7.0.0-SNAPSHOT</version>
       <type>jar</type>
@@ -127,7 +127,7 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-common</artifactId>
       <version>${tomee.version}</version>
       <type>jar</type>
@@ -146,7 +146,7 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>arquillian-common</artifactId>
       <version>7.0.0-SNAPSHOT</version>
     </dependency>

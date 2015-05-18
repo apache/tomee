@@ -42,15 +42,15 @@
       <artifactId>maven-project</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-client</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-util</artifactId>
       <version>${tomee.version}</version>
     </dependency>
@@ -77,7 +77,7 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>apache-tomee</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>

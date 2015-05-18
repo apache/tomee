@@ -157,7 +157,7 @@ public class StatefulContainerFactory {
         if (classLoader == null) getClass().getClassLoader();
         */
         ClassLoader classLoader = StatefulContainerFactory.class.getClassLoader();
-        if (!((String) cache).startsWith("org.apache.openejb")) { // user impl?
+        if (!((String) cache).startsWith("org.apache.tomee")) { // user impl?
             classLoader = Thread.currentThread().getContextClassLoader();
         }
         cache = serviceRecipe.create(classLoader);

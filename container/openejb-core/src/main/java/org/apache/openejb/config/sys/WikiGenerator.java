@@ -37,8 +37,8 @@ public class WikiGenerator {
         System.out.println();
         System.out.println();
 
-        new WikiGenerator("org.apache.openejb", new PrintWriter(System.out)).generate();
-//        new WikiGenerator("org.apache.openejb", new PrintWriter(new File("/Users/dblevins/work/all/website/content/containers-and-resources.mdtext"))).generate();
+        new WikiGenerator("org.apache.tomee", new PrintWriter(System.out)).generate();
+//        new WikiGenerator("org.apache.tomee", new PrintWriter(new File("/Users/dblevins/work/all/website/content/containers-and-resources.mdtext"))).generate();
 
         System.out.println();
         System.out.println();

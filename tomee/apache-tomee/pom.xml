@@ -23,7 +23,7 @@
 
   <parent>
     <artifactId>tomee</artifactId>
-    <groupId>org.apache.openejb</groupId>
+    <groupId>org.apache.tomee</groupId>
     <version>7.0.0-SNAPSHOT</version>
   </parent>
 
@@ -71,21 +71,21 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-common</artifactId>
       <version>${project.version}</version>
       <type>jar</type>
       <scope>provided</scope>
     </dependency>
     <dependency> <!-- to be sure to have it -->
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-plus-webapp</artifactId>
       <version>${project.version}</version>
       <type>war</type>
       <scope>provided</scope>
     </dependency>
     <dependency> <!-- to be sure to have it -->
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-plume-webapp</artifactId>
       <version>${project.version}</version>
       <type>war</type>
@@ -94,17 +94,17 @@
 
     <!-- needed for EJBContainer impl so scope compile -->
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-util</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-client</artifactId>
       <version>${openejb.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
       <type>jar</type>
     </dependency>
@@ -232,7 +232,7 @@
         <artifactId>groovy-maven-plugin</artifactId>
         <dependencies>
           <dependency>
-            <groupId>org.apache.openejb</groupId>
+            <groupId>org.apache.tomee</groupId>
             <artifactId>openejb-jpa-integration</artifactId>
             <version>${version.openejb}</version>
           </dependency>

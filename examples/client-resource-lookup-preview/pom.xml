@@ -49,7 +49,7 @@
   </repositories>
   <dependencies>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>javaee-api</artifactId>
       <version>7.0-SNAPSHOT</version>
       <scope>provided</scope>
@@ -57,13 +57,13 @@
 
     <!-- here what is needed to use client lookup with jms resources -->
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-client</artifactId>
       <version>7.0.0-SNAPSHOT</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-ejbd</artifactId>
       <version>7.0.0-SNAPSHOT</version>
     </dependency>
@@ -82,7 +82,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>ziplock</artifactId>
       <version>7.0.0-SNAPSHOT</version>
       <scope>test</scope>

@@ -49,7 +49,7 @@
   </repositories>
   <dependencies>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>javaee-api</artifactId>
       <version>7.0-SNAPSHOT</version>
       <scope>provided</scope>
@@ -64,7 +64,7 @@
     The router is dependent of openejb so it needs openejb core with compile scope.
     -->
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
       <version>7.0.0-SNAPSHOT</version>
     </dependency>

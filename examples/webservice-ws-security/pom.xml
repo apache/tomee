@@ -38,7 +38,7 @@
   </repositories>
   <dependencies>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>javaee-api</artifactId>
       <version>7.0-SNAPSHOT</version>
     </dependency>
@@ -54,7 +54,7 @@
     code is dependent on any OpenEJB classes.
     -->
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-cxf</artifactId>
       <version>7.0.0-SNAPSHOT</version>
       <scope>test</scope>

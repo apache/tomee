@@ -75,7 +75,7 @@ public class StickyConnectionStrategyTest {
         // To run in an IDE, uncomment and update this line
         System.setProperty("version", OpenEjbVersion.get().getVersion());
 
-        final File zip = Repository.getArtifact("org.apache.openejb", "openejb-standalone", "zip");
+        final File zip = Repository.getArtifact("org.apache.tomee", "openejb-standalone", "zip");
         final File app = Repository.getArtifact("org.apache.openejb.itests", "failover-ejb", "jar");
 
         final File dir = Files.tmpdir();

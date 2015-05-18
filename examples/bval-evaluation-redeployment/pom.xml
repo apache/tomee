@@ -63,19 +63,19 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.apache.openejb</groupId>
+        <groupId>org.apache.tomee</groupId>
         <artifactId>javaee-api</artifactId>
         <version>7.0-SNAPSHOT</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
-        <groupId>org.apache.openejb</groupId>
+        <groupId>org.apache.tomee</groupId>
         <artifactId>openejb-core</artifactId>
         <version>${openejb.test.version}</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
-        <groupId>org.apache.openejb</groupId>
+        <groupId>org.apache.tomee</groupId>
         <artifactId>openejb-cxf-rs</artifactId>
         <version>${openejb.test.version}</version>
         <scope>provided</scope>
@@ -107,7 +107,7 @@
         <version>0.7</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.openejb</groupId>
+        <groupId>org.apache.tomee</groupId>
         <artifactId>arquillian-tomee-remote</artifactId>
         <version>7.0.0-SNAPSHOT</version>
         <scope>test</scope>

@@ -75,7 +75,7 @@ public class ReconnectDelayCaseInsensitiveTest {
 
         final Duration reconnectDelay = new Duration("1 second");
 
-        final File zip = Repository.getArtifact("org.apache.openejb", "openejb-standalone", "zip");
+        final File zip = Repository.getArtifact("org.apache.tomee", "openejb-standalone", "zip");
         final File app = Repository.getArtifact("org.apache.openejb.itests", "failover-ejb", "jar");
 
         final File dir = Files.tmpdir();

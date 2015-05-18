@@ -74,13 +74,13 @@
     <dependencies>
       <!-- API -->
       <dependency>
-        <groupId>org.apache.openejb</groupId>
+        <groupId>org.apache.tomee</groupId>
         <artifactId>javaee-api</artifactId>
         <version>7.0-SNAPSHOT</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
-        <groupId>org.apache.openejb</groupId>
+        <groupId>org.apache.tomee</groupId>
         <artifactId>openejb-api</artifactId>
         <version>${version.openejb}</version>
         <scope>provided</scope>
@@ -88,13 +88,13 @@
 
       <!-- impl - for standard code scope test is fine -->
       <dependency>
-        <groupId>org.apache.openejb</groupId>
+        <groupId>org.apache.tomee</groupId>
         <artifactId>openejb-core</artifactId>
         <version>${version.openejb}</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
-        <groupId>org.apache.openejb</groupId>
+        <groupId>org.apache.tomee</groupId>
         <artifactId>openejb-cxf-rs</artifactId>
         <version>${version.openejb}</version>
         <scope>provided</scope>
@@ -102,19 +102,19 @@
 
       <!-- test -->
       <dependency>
-        <groupId>org.apache.openejb</groupId>
+        <groupId>org.apache.tomee</groupId>
         <artifactId>arquillian-tomee-embedded</artifactId>
         <version>${version.tomee}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
-        <groupId>org.apache.openejb</groupId>
+        <groupId>org.apache.tomee</groupId>
         <artifactId>tomee-webservices</artifactId>
         <version>${version.tomee}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
-        <groupId>org.apache.openejb</groupId>
+        <groupId>org.apache.tomee</groupId>
         <artifactId>ziplock</artifactId>
         <version>${version.tomee}</version>
         <scope>test</scope>

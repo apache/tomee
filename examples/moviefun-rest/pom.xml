@@ -152,7 +152,7 @@
   </dependencyManagement>
   <dependencies>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>javaee-api</artifactId>
       <version>7.0-SNAPSHOT</version>
       <scope>provided</scope>
@@ -170,7 +170,7 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
       <version>${version.openejb}</version>
       <scope>test</scope>
@@ -182,7 +182,7 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-embedded</artifactId>
       <version>${tomee.version}</version>
       <scope>test</scope>
@@ -204,7 +204,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>ziplock</artifactId>
       <version>${tomee.version}</version>
       <scope>test</scope>
@@ -258,7 +258,7 @@
       </activation>
       <dependencies>
         <dependency>
-          <groupId>org.apache.openejb</groupId>
+          <groupId>org.apache.tomee</groupId>
           <artifactId>arquillian-tomee-embedded</artifactId>
           <version>${tomee.version}</version>
           <scope>test</scope>
@@ -269,7 +269,7 @@
       <id>arquillian-tomee-remote</id>
       <dependencies>
         <dependency>
-          <groupId>org.apache.openejb</groupId>
+          <groupId>org.apache.tomee</groupId>
           <artifactId>arquillian-tomee-remote</artifactId>
           <version>${tomee.version}</version>
           <scope>test</scope>

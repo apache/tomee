@@ -179,7 +179,7 @@ public class TomEEMavenPluginRule implements MethodRule {
         tomEEMojo.skipCurrentProject = true;
 
         // our well known web profile ;)
-        tomEEMojo.tomeeGroupId = "org.apache.openejb";
+        tomEEMojo.tomeeGroupId = "org.apache.tomee";
         tomEEMojo.tomeeArtifactId = "apache-tomee";
         tomEEMojo.tomeeVersion = OpenEjbVersion.get().getVersion();
         tomEEMojo.tomeeClassifier = "webprofile";

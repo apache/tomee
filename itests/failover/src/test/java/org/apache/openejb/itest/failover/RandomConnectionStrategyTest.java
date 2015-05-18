@@ -72,7 +72,7 @@ public class RandomConnectionStrategyTest {
 //        System.setProperty("version", OpenEjbVersion.get().getVersion());
         System.setProperty("openejb.client.connection.strategy", "roundrobin");
 
-        final File zip = Repository.getArtifact("org.apache.openejb", "openejb-standalone", "zip");
+        final File zip = Repository.getArtifact("org.apache.tomee", "openejb-standalone", "zip");
         final File app = Repository.getArtifact("org.apache.openejb.itests", "failover-ejb", "jar");
 
         final File dir = Files.tmpdir();

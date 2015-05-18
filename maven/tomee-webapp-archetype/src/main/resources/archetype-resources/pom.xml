@@ -32,15 +32,15 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>6.0-6</version>
+      <version>7.0-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
 
     <!-- to test with TomEE and Arquillian
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>arquillian-tomee-remote</artifactId>
       <version>[TOMEE]</version>
       <scope>test</scope>
@@ -61,7 +61,7 @@
 
     <!-- to test with OpenEJB embedded and Arquillian
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>arquillian-openejb-embedded-5</artifactId>
       <version>[OPENEJB]</version>
       <scope>test</scope>

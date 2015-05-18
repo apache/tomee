@@ -24,7 +24,7 @@
 
   <parent>
     <artifactId>tomee</artifactId>
-    <groupId>org.apache.openejb</groupId>
+    <groupId>org.apache.tomee</groupId>
     <version>7.0.0-SNAPSHOT</version>
   </parent>
 
@@ -35,7 +35,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-loader</artifactId>
     </dependency>
     <dependency>
@@ -51,7 +51,7 @@
     </dependency>
     <!--The order of the next two deps is important-->
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-juli</artifactId>
       <version>${project.version}</version>
       <scope>compile</scope>
@@ -63,7 +63,7 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-common</artifactId>
       <version>${project.version}</version>
     </dependency>
