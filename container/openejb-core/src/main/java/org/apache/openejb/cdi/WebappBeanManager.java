@@ -98,7 +98,7 @@ public class WebappBeanManager extends BeanManagerImpl {
 
     @Override
     public Object getInjectableReference(final InjectionPoint injectionPoint, final CreationalContext<?> ctx) {
-        Asserts.assertNotNull(injectionPoint, "injectionPoint parameter can not be null");
+        Asserts.assertNotNull(injectionPoint, "injectionPoint parameter");
         if(injectionPoint == null)  {
             return null;
         }
