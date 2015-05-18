@@ -94,6 +94,12 @@
       <artifactId>openwebbeans-porting</artifactId>
       <version>${org.apache.openwebbeans.version}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.openejb</groupId>
+          <artifactId>openejb-core</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jboss.cdi.tck</groupId>
