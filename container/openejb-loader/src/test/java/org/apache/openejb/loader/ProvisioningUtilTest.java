@@ -50,7 +50,7 @@ public class ProvisioningUtilTest {
     @Test
     public void mvnUrl() throws MalformedURLException {
         final String url = new MavenResolver().quickMvnUrl("org.apache.tomee/apache-tomee/x.y.z-SNAPSHOT");
-        assertEquals("https://repository.apache.org/snapshots/org/apache/openejb/apache-tomee/x.y.z-SNAPSHOT/apache-tomee-x.y.z-SNAPSHOT.jar", url);
+        assertEquals("https://repository.apache.org/snapshots/org/apache/tomee/apache-tomee/x.y.z-SNAPSHOT/apache-tomee-x.y.z-SNAPSHOT.jar", url);
     }
 
     @Test(expected = IllegalArgumentException.class)
