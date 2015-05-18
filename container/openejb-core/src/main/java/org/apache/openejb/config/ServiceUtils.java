@@ -46,7 +46,7 @@ public class ServiceUtils {
     public static final String DEFAULT_PROVIDER_URL;
 
     static {
-        String defaultValue = "org.apache.tomee";
+        String defaultValue = "org.apache.openejb";
         try {
             final SystemInstance system = SystemInstance.get();
             if (system.getProperty("openejb.embedded") != null) {
