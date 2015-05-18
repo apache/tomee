@@ -122,7 +122,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.spi.Extension;
