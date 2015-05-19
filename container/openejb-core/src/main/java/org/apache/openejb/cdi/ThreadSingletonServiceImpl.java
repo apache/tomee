@@ -167,7 +167,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
 
             final BeanManagerImpl beanManagerImpl = webBeansContext.getBeanManagerImpl();
             beanManagerImpl.addContext(new TransactionContext());
-            beanManagerImpl.addAdditionalInterceptorBindings(Transactional.class);
+            webBeansContext.getInterceptorsManager().addInterceptorBindingType(Transactional.class);
 
             SystemInstance.get().fireEvent(new WebBeansContextCreated(webBeansContext));
 
