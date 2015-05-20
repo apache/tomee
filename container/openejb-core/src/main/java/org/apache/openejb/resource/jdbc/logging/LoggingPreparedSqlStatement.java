@@ -21,6 +21,8 @@ import org.apache.openejb.util.Join;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
+import java.io.ByteArrayInputStream;
+import java.io.ObjectInputStream;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.sql.ParameterMetaData;
@@ -81,7 +83,19 @@ public class LoggingPreparedSqlStatement implements InvocationHandler {
                     final Parameter param = parameters.get(i);
                     if (str.contains("?")) {
                         try {
-                            str = str.replaceFirst("\\?", param.value.toString());
+                            String val;
+                            if (ByteArrayInputStream.class.isInstance(param.value)) {
+                                final ByteArrayInputStream bais = ByteArrayInputStream.class.cast(param.value);
+                                try {
+                                    bais.reset(); // already read when arriving here - mainly openjpa case
+                                    val = new ObjectInputStream(bais).readObject().toString();
+                                } catch (final Exception e) {
+                                    val = param.value.toString();
+                                }
+                            } else {
+                                val = param.value.toString();
+                            }
+                            str = str.replaceFirst("\\?", val);
                         } catch (final Exception e) {
                             if (param.value == null) {
                                 str = str.replaceFirst("\\?", "null");
