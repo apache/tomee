@@ -17,6 +17,7 @@
  */
 package org.apache.tomee.common;
 
+import javafx.print.Collation;
 import org.apache.naming.ResourceRef;
 import org.apache.openejb.Injection;
 import org.apache.openejb.core.ivm.naming.JaxWsServiceReference;
@@ -99,7 +100,7 @@ public class WsFactory extends AbstractObjectFactory {
             if (handlerChains == null) {
                 handlerChains = Collections.emptyList();
             }
-            List<Injection> injections = NamingUtil.getStaticValue(ref, "injections");
+            Collation<Injection> injections = NamingUtil.getStaticValue(ref, "injections");
             if (injections == null) {
                 injections = Collections.emptyList();
             }
