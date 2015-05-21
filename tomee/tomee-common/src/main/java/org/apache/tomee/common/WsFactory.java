@@ -31,6 +31,7 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 import java.net.URL;
 import java.util.Collections;
+import java.util.Collection;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
@@ -99,7 +100,7 @@ public class WsFactory extends AbstractObjectFactory {
             if (handlerChains == null) {
                 handlerChains = Collections.emptyList();
             }
-            List<Injection> injections = NamingUtil.getStaticValue(ref, "injections");
+            Collection<Injection> injections = NamingUtil.getStaticValue(ref, "injections");
             if (injections == null) {
                 injections = Collections.emptyList();
             }
