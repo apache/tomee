@@ -74,6 +74,12 @@
       <artifactId>cucumber-openejb</artifactId>
       <version>1.0.10</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.openejb</groupId>
+          <artifactId>openejb-core</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>info.cukes</groupId>
