@@ -279,7 +279,7 @@
         </dependencies>
       </plugin>
       <plugin>
-        <groupId>org.apache.openejb.maven</groupId>
+        <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
         <version>${project.version}</version>
         <configuration>
