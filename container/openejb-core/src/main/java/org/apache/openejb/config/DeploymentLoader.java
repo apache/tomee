@@ -90,6 +90,8 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 
+import static java.util.Arrays.asList;
+
 /**
  * @version $Revision$ $Date$
  */
@@ -827,9 +829,11 @@ public class DeploymentLoader implements DeploymentFilterable {
         }
 
         {
-            List<URL> persistenceXmls = (List<URL>) appModule.getAltDDs().get("persistence.xml");
+            final Object pXml = appModule.getAltDDs().get("persistence.xml");
+
+            List<URL> persistenceXmls = List.class.isInstance(pXml) ? (List<URL>) pXml : new ArrayList<>(asList(URL.class.cast(pXml)));
             if (persistenceXmls == null) {
-                persistenceXmls = new ArrayList<URL>();
+                persistenceXmls = new ArrayList<>();
                 appModule.getAltDDs().put("persistence.xml", persistenceXmls);
             }
 
