@@ -64,7 +64,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
 
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, ThreadSingletonServiceImpl.class);
 
-    private String sessionContextClass;
+    private Object lazyInit;
     private volatile boolean cachedApplicationScoped;
     private volatile boolean cachedRequestScoped;
 
@@ -74,10 +74,10 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
 
     @Override
     public void initialize(final StartupObject startupObject) {
-        if (sessionContextClass == null) { // done here cause Cdibuilder trigger this class loading and that's from Warmup so we can't init too early config
+        if (lazyInit == null) { // done here cause Cdibuilder trigger this class loading and that's from Warmup so we can't init too early config
             synchronized (this) {
-                if (sessionContextClass == null) {
-                    sessionContextClass = SystemInstance.get().getProperty("openejb.session-context", "").trim();
+                if (lazyInit == null) {
+                    lazyInit = new Object();
                     cachedApplicationScoped = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.cdi.applicationScope.cached", "true").trim());
                     cachedRequestScoped = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.cdi.requestScope.cached", "true").trim());
                 }
@@ -315,16 +315,5 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         if (ctx != null) {
             ctx.clear();
         }
-    }
-
-    @Override
-    public String sessionContextClass() {
-        if (!sessionContextClass.isEmpty()) {
-            if ("http".equals(sessionContextClass)) { // easy way to manage this config
-                return "org.apache.tomee.catalina.cdi.SessionContextBackedByHttpSession";
-            }
-            return sessionContextClass;
-        }
-        return null;
     }
 }
