@@ -54,21 +54,12 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>com.googlecode.t7mp</groupId>
-        <artifactId>maven-t7-plugin</artifactId>
-        <version>0.9.6</version>
+        <groupId>org.apache.tomee.maven</groupId>
+        <artifactId>tomee-maven-plugin</artifactId>
+        <version>7.0.0-SNAPSHOT</version>
         <configuration>
-          <tomcatHttpPort>9999</tomcatHttpPort>
-          <tomcatShutdownPort>9998</tomcatShutdownPort>
-          <tomcatVersion>7.0.27</tomcatVersion>
-          <webapps>
-            <webappArtifact>
-              <groupId>org.apache.tomee</groupId>
-              <artifactId>openejb-tomcat-webapp</artifactId>
-              <version>7.0.0-SNAPSHOT</version>
-              <contextPath>openejb</contextPath>
-            </webappArtifact>
-          </webapps>
+          <context>/ejb-examples</context>
+          <tomeeClassifier>plus</tomeeClassifier>
         </configuration>
       </plugin>
     </plugins>

@@ -161,6 +161,6 @@
   <persistence-context-ref>
     <persistence-context-ref-name>web.xml/PersistenceContext</persistence-context-ref-name>
     <persistence-unit-name>jpa-example</persistence-unit-name>
-    <persistence-context-type>Transactional</persistence-context-type>
+    <persistence-context-type>Transaction</persistence-context-type>
   </persistence-context-ref>
 </web-app>
