@@ -33,6 +33,7 @@ import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.corespi.se.DefaultApplicationBoundaryService;
 import org.apache.webbeans.intercept.ApplicationScopedBeanInterceptorHandler;
 import org.apache.webbeans.intercept.NormalScopedBeanInterceptorHandler;
+import org.apache.webbeans.intercept.SessionScopedBeanInterceptorHandler;
 import org.apache.webbeans.spi.ApplicationBoundaryService;
 import org.apache.webbeans.spi.BeanArchiveService;
 import org.apache.webbeans.spi.ContainerLifecycle;
@@ -45,7 +46,7 @@ import org.apache.webbeans.spi.ScannerService;
 import org.apache.webbeans.spi.SecurityService;
 import org.apache.webbeans.spi.TransactionService;
 import org.apache.webbeans.spi.adaptor.ELAdaptor;
-import org.apache.webbeans.web.intercept.RequestScopedBeanInterceptorHandler;
+import org.apache.webbeans.intercept.RequestScopedBeanInterceptorHandler;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -67,6 +68,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
     private Object lazyInit;
     private volatile boolean cachedApplicationScoped;
     private volatile boolean cachedRequestScoped;
+    private volatile boolean cachedSessionScoped;
 
     //this needs to be static because OWB won't tell us what the existing SingletonService is and you can't set it twice.
     private static final ThreadLocal<WebBeansContext> contexts = new ThreadLocal<WebBeansContext>();
@@ -80,6 +82,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
                     lazyInit = new Object();
                     cachedApplicationScoped = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.cdi.applicationScope.cached", "true").trim());
                     cachedRequestScoped = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.cdi.requestScope.cached", "true").trim());
+                    cachedSessionScoped = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.cdi.sessionScope.cached", "true").trim());
                 }
             }
         }
@@ -107,12 +110,12 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         properties.setProperty("org.apache.webbeans.proxy.mapping.javax.enterprise.context.ApplicationScoped",
                 cachedApplicationScoped ? ApplicationScopedBeanInterceptorHandler.class.getName() : defaultNormalScopeHandlerClass);
 
-        if (tomee && cachedRequestScoped) {
-            properties.setProperty("org.apache.webbeans.proxy.mapping.javax.enterprise.context.RequestScoped", RequestScopedBeanInterceptorHandler.class.getName());
-        } else {
-            properties.setProperty("org.apache.webbeans.proxy.mapping.javax.enterprise.context.RequestScoped", defaultNormalScopeHandlerClass);
-        }
-        
+        properties.setProperty("org.apache.webbeans.proxy.mapping.javax.enterprise.context.RequestScoped",
+            tomee && cachedRequestScoped ? RequestScopedBeanInterceptorHandler.class.getName() : defaultNormalScopeHandlerClass);
+
+        properties.setProperty("org.apache.webbeans.proxy.mapping.javax.enterprise.context.SessionScoped",
+            tomee && cachedSessionScoped ? SessionScopedBeanInterceptorHandler.class.getName() : defaultNormalScopeHandlerClass);
+
         properties.put(OpenWebBeansConfiguration.PRODUCER_INTERCEPTION_SUPPORT, SystemInstance.get().getProperty("openejb.cdi.producer.interception", "true"));
 
         properties.putAll(appContext.getProperties());
