@@ -119,6 +119,15 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
                 || JspTag.class.isAssignableFrom(impl);
     }
 
+    @Override
+    public void registerEEBeans()
+    {
+        BeanManagerImpl beanManagerImpl = webBeansContext.getBeanManagerImpl();
+        beanManagerImpl.addInternalBean(new org.apache.webbeans.ee.beans.ValidatorBean(webBeansContext));
+        beanManagerImpl.addInternalBean(new org.apache.webbeans.ee.beans.ValidatorFactoryBean(webBeansContext));
+        beanManagerImpl.addInternalBean(new org.apache.webbeans.ee.beans.UserTransactionBean(webBeansContext));
+    }
+
     public void setClassLoader(final ClassLoader classLoader) {
         this.classLoader = classLoader;
     }
