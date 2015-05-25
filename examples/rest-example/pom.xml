@@ -73,7 +73,7 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.apache.openejb.maven</groupId>
+        <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
         <version>${tomee.version}</version>
         <configuration>
@@ -83,10 +83,11 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.apache.openejb.maven</groupId>
+        <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-embedded-maven-plugin</artifactId>
         <version>${tomee.version}</version>
       </plugin>
+<!--
       <plugin>
         <groupId>org.apache.openjpa</groupId>
         <artifactId>openjpa-maven-plugin</artifactId>
@@ -113,6 +114,7 @@
           </dependency>
         </dependencies>
       </plugin>
+-->
     </plugins>
   </build>
   

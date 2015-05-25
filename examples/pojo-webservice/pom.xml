@@ -60,7 +60,7 @@
         </configuration>
       </plugin>
       <plugin> <!-- http://localhost:8080/pojo-webservice?wsdl -->
-        <groupId>org.apache.openejb.maven</groupId>
+        <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
         <version>7.0.0-SNAPSHOT</version>
         <configuration>
