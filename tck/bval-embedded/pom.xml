@@ -55,7 +55,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>arquillian-openejb-embedded-5</artifactId>
+      <artifactId>arquillian-openejb-embedded</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>

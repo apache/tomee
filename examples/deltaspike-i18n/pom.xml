@@ -80,7 +80,7 @@
       is dependent on any OpenEJB classes. -->
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>arquillian-openejb-embedded-5</artifactId>
+      <artifactId>arquillian-openejb-embedded</artifactId>
       <version>7.0.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>

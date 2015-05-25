@@ -29,7 +29,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.deltaspike>1.2.1</version.deltaspike>
+    <version.deltaspike>1.3.0</version.deltaspike>
   </properties>
 
   <build>
@@ -80,7 +80,7 @@
       is dependent on any OpenEJB classes. -->
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>arquillian-openejb-embedded-5</artifactId>
+      <artifactId>arquillian-openejb-embedded</artifactId>
       <version>7.0.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
