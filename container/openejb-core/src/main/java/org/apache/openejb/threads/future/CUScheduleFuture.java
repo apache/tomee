@@ -22,7 +22,7 @@ import java.util.concurrent.Delayed;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-public class CUScheduleFuture<V> extends CUFuture<V> implements ScheduledFuture<V> {
+public class CUScheduleFuture<V> extends CUFuture<V, Delayed> implements ScheduledFuture<V> {
     public CUScheduleFuture(final ScheduledFuture<V> delegate, final ManagedTaskListenerTask listener) {
         super(delegate, listener);
     }

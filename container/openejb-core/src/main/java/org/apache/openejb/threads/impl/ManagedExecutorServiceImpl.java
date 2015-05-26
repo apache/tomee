@@ -70,7 +70,7 @@ public class ManagedExecutorServiceImpl extends AbstractExecutorService implemen
         final CUCallable<T> wrapper = new CUCallable<T>(task);
         final Future<T> future = delegate.submit(wrapper);
         wrapper.taskSubmitted(future, this, task);
-        return new CUFuture<T>(future, wrapper);
+        return new CUFuture<>(future, wrapper);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class ManagedExecutorServiceImpl extends AbstractExecutorService implemen
         final CURunnable wrapper = new CURunnable(task);
         final Future<T> future = delegate.submit(wrapper, result);
         wrapper.taskSubmitted(future, this, task);
-        return new CUFuture<T>(future, wrapper);
+        return new CUFuture<>(future, wrapper);
     }
 
     @Override
@@ -86,7 +86,7 @@ public class ManagedExecutorServiceImpl extends AbstractExecutorService implemen
         final CURunnable wrapper = new CURunnable(task);
         final Future<?> future = delegate.submit(wrapper);
         wrapper.taskSubmitted(future, this, task);
-        return new CUFuture<Void>(Future.class.cast(future), wrapper);
+        return new CUFuture<>(Future.class.cast(future), wrapper);
     }
 
     @Override

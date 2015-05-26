@@ -440,7 +440,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         }
         else
         {
-            logger.warning("Default JSPFactroy instance has not found. Skipping OWB JSP handling");
+            logger.debug("Default JSPFactroy instance has not found. Skipping OWB JSP handling");
         }
     }
 

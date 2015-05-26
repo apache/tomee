@@ -4178,7 +4178,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         private String normalize(final String refName) {
             if (refName.startsWith("java:")) {
-                return refName;
+                return refName.startsWith("/") ? refName.substring(1) : refName;
             }
             return "java:comp/env/" + refName;
         }

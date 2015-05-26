@@ -465,7 +465,7 @@ public class SunConversion implements DynamicDeployer {
         if (!refName.startsWith("java:")) {
             refName = "java:comp/env/" + refName;
         }
-        return refName;
+        return refName.startsWith("java:/") ? "java:" + refName.substring("java:/".length()) : refName;
     }
 
     public void convertModule(final WebModule webModule) {

@@ -1227,6 +1227,11 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 throw new OpenEJBException(messages.format("configureService.cannotInstantiateClass", infoType.getName()), e);
             }
 
+            // some jndi adjustment
+            if (service.getId().startsWith("java:/")) {
+                service.setId(service.getId().substring("java:/".length()));
+            }
+
             info.service = provider.getService();
             info.types.addAll(provider.getTypes());
             info.description = provider.getDescription();

@@ -588,6 +588,9 @@ public class JndiEncInfoBuilder {
         } else if (name.startsWith("java:comp/")) {
             i.referenceName = name.substring(5);
             comp.add(i);
+        } else if (name.startsWith("java:/")) {
+            i.referenceName = name.substring(6);
+            comp.add(i);
         } else {
             logger.warning("config.invalid.referenceName.suffix", name);
         }

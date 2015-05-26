@@ -1028,7 +1028,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 for (final Bean<?> bean : appContext.getWebBeansContext().getBeanManagerImpl().getBeans()) {
                     if (ResourceBean.class.isInstance(bean)) {
                         final ResourceReference reference = ResourceBean.class.cast(bean).getReference();
-                        final String jndi = reference.getJndiName().replace("java:", "");
+                        String jndi = reference.getJndiName().replace("java:", "");
+                        if (reference.getJndiName().startsWith("java:/")) {
+                            jndi = jndi.substring(1);
+                        }
                         Object lookup = bindings.get(jndi);
                         if (lookup == null && reference.getAnnotation(EJB.class) != null) {
                             final CdiPlugin plugin = CdiPlugin.class.cast(appContext.getWebBeansContext().getPluginLoader().getEjbPlugin());

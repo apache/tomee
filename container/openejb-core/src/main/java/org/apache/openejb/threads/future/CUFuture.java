@@ -24,7 +24,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-public class CUFuture<V> implements Future<V> {
+public class CUFuture<V, C> implements Future<V>, Comparable<C> {
     protected final Future<V> delegate;
     protected final ManagedTaskListenerTask listener;
 
@@ -58,5 +58,10 @@ public class CUFuture<V> implements Future<V> {
     @Override
     public V get(final long timeout, final TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
         return delegate.get(timeout, unit);
+    }
+
+    @Override
+    public int compareTo(final C o) {
+        return Comparable.class.isInstance(delegate) ? Comparable.class.cast(delegate).compareTo(o) : -1;
     }
 }

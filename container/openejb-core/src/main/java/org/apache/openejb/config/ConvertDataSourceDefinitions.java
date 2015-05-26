@@ -63,6 +63,7 @@ public class ConvertDataSourceDefinitions implements DynamicDeployer {
     private Resource toResource(final DataSource datasource) {
         String name = datasource.getName();
         name = name.replaceFirst("java:comp/env/", "");
+        name = name.replaceFirst("java:/", "");
         name = name.replaceFirst("java:", "");
 
         final Resource def = new Resource(name, javax.sql.DataSource.class.getName());

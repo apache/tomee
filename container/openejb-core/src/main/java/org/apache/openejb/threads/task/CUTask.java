@@ -26,7 +26,7 @@ import org.apache.openejb.spi.SecurityService;
 import javax.security.auth.login.LoginException;
 import java.util.concurrent.Callable;
 
-public abstract class CUTask<T> extends ManagedTaskListenerTask {
+public abstract class CUTask<T> extends ManagedTaskListenerTask implements Comparable<Object> {
     private static final SecurityService SECURITY_SERVICE = SystemInstance.get().getComponent(SecurityService.class);
 
     private final Context initialContext;
@@ -178,5 +178,10 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask {
             Thread.currentThread().setContextClassLoader(currentContext.loader);
             currentContext = null;
         }
+    }
+
+    @Override
+    public int compareTo(final Object o) {
+        return Comparable.class.isInstance(delegate) ? Comparable.class.cast(delegate).compareTo(o) : -1;
     }
 }

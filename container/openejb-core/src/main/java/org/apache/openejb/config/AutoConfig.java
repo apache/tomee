@@ -1056,7 +1056,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
     private String dataSourceLookupName(final Resource datasource) {
         final String jndi = datasource.getJndi();
         if (jndi.startsWith("java:")) {
-            return jndi;
+            return jndi.startsWith("/") ? jndi.substring(1) : jndi;
         }
         if (jndi.startsWith("comp/env/")) {
             return "java:" + jndi;
@@ -1189,6 +1189,9 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 String id = mappedName.length() == 0 ? ref.getName() : mappedName;
                 if (id.startsWith("java:")) {
                     id = id.substring("java:".length());
+                }
+                if (id.startsWith("/")) {
+                    id = id.substring(1);
                 }
                 try {
                     final AppModule appModule = ejbModule.getAppModule();
@@ -1942,7 +1945,10 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         }
 
         if (resourceId.startsWith("java:")) { // can be an absolute path
-            final String jndi = resourceId.substring("java:".length());
+            String jndi = resourceId.substring("java:".length());
+            if (jndi.startsWith("/")) {
+                jndi = jndi.substring(1);
+            }
             if (ServiceUtils.hasServiceProvider(jndi)) {
                 return jndi;
             }
@@ -2125,6 +2131,9 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
         if (resourceId.startsWith("java:")) {
             resourceId = resourceId.substring("java:".length());
+            if (resourceId.startsWith("/")) {
+                resourceId = resourceId.substring(1);
+            }
         }
 
         // strip off "java:comp/env"
