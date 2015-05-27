@@ -16,8 +16,6 @@
  */
 package org.apache.openejb.resource;
 
-import org.apache.openejb.assembler.classic.ResourceInfo;
-import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.sys.JaxbOpenejb;
 import org.apache.openejb.config.sys.Resources;
 import org.apache.openejb.junit.ApplicationComposer;
@@ -29,10 +27,8 @@ import org.xml.sax.SAXException;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -41,7 +37,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-@SimpleLog
+@SimpleLog // close to org.apache.openejb.assembler.classic.ResourceInfoComparatorTest but with a real case!
 @RunWith(ApplicationComposer.class)
 public class ResourceSortingTest {
 
@@ -72,42 +68,7 @@ public class ResourceSortingTest {
         assertFalse(letters.hasNext());
     }
 
-    @Test
-    public void testRealWorld4() throws Exception {
-        final List<ResourceInfo> resources = new ArrayList<>();
 
-        resources.add(new ResourceInfo());
-        resources.get(0).id = "My JMS Connection Factory";
-        resources.get(0).properties = new Properties();
-        resources.get(0).properties.put("ResourceAdapter", "My JMS Resource Adapter");
-
-        resources.add(new ResourceInfo());
-        resources.get(1).id = "My Unmanaged DataSource";
-        resources.get(1).properties = new Properties();
-
-        resources.add(new ResourceInfo());
-        resources.get(2).id = "Test Resource";
-        resources.get(2).properties = new Properties();
-        resources.get(2).properties.put("ResourceAdapter", "My JMS Connection Factory");
-
-        resources.add(new ResourceInfo());
-        resources.get(3).id = "My DataSource";
-        resources.get(3).properties = new Properties();
-
-        resources.add(new ResourceInfo());
-        resources.get(4).id = "My JMS Resource Adapter";
-        resources.get(4).properties = new Properties();
-        resources.get(4).properties.put("DataSource", "My Unmanaged DataSource");
-
-        Collections.sort(resources, new ConfigurationFactory.ResourceInfoComparator(resources));
-
-        for (ResourceInfo i : resources) System.out.println(i.id);
-        assertEquals("My Unmanaged DataSource", resources.get(0).id);
-        assertEquals("My DataSource", resources.get(1).id);
-        assertEquals("My JMS Resource Adapter", resources.get(2).id);
-        assertEquals("My JMS Connection Factory", resources.get(3).id);
-        assertEquals("Test Resource", resources.get(4).id);
-    }
 
     public static class Foo {
         private static final List<String> IDS = new ArrayList<>();

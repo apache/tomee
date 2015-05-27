@@ -88,6 +88,7 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.PropertyPlaceHolderHelper;
+import org.apache.openejb.util.References;
 import org.apache.openejb.util.SuperProperties;
 import org.apache.openejb.util.URISupport;
 import org.apache.openejb.util.URLs;
@@ -109,7 +110,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -486,7 +486,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             final ResourceInfo resourceInfo = configureService(resource, ResourceInfo.class);
             resources.add(resourceInfo);
         }
-        Collections.sort(resources, new ResourceInfoComparator(resources));
+        sort(resources, null);
 
         sys.facilities.resources.addAll(resources);
 
@@ -1603,95 +1603,44 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
     }
 
-    public static class ResourceInfoComparator implements Comparator<ResourceInfo> {
-
-        private final List<String> ids;
-        private static final int EQUAL = 0;
-        private static final int GREATER = 1;
-        private static final int LESS = -1;
-
-        public ResourceInfoComparator(final List<ResourceInfo> resources) {
-            ids = new ArrayList<String>();
-            for (final ResourceInfo info : resources) {
-                ids.add(info.id);
-            }
-        }
-
-        @Override
-        public int compare(final ResourceInfo a, final ResourceInfo b) {
-            final String refA = getReference(a);
-            final String refB = getReference(b);
-
-            // both null or the same id
-            if (refA == null && refB == null ||
-                    refA != null && refA.equals(refB)) {
-                return EQUAL;
+    public static List<ResourceInfo> sort(final List<ResourceInfo> infos, final String prefix) {
+        final Collection<String> ids = new HashSet<>();
+        return References.sort(infos, new References.Visitor<ResourceInfo>() {
+            @Override // called first so we can rely on it to ensure we have ids full before any getReferences call
+            public String getName(final ResourceInfo resourceInfo) {
+                final String name = prefix != null && resourceInfo.id.startsWith(prefix) ? resourceInfo.id.substring(prefix.length()) : resourceInfo.id;
+                ids.add(name);
+                return name;
             }
 
-            // b is referencing a
-            if (a.id.equals(refB)) {
-                return LESS;
-            }
-
-            // a is referencing b
-            if (b.id.equals(refA)) {
-                return GREATER;
-            }
-
-            // a has a ref and b doesn't
-            if (refA != null && refB == null) {
-                return GREATER;
-            }
-
-            // b has a ref and a doesn't
-            if (refA == null) {
-                return LESS;
-            }
-
-            return EQUAL;
-        }
-
-        public int hasReference(final ResourceInfo info) {
-            for (final Object value : info.properties.values()) {
-                if (String.class.isInstance(value)) {
-                    //noinspection SuspiciousMethodCalls
-                    if (ids.contains(value)) {
-                        return GREATER;
+            @Override
+            public Set<String> getReferences(final ResourceInfo resourceInfo) {
+                final Set<String> refs = new HashSet<>();
+                for (final Object value : resourceInfo.properties.values()) {
+                    if (!String.class.isInstance(value)) {
+                        continue;
                     }
-                }
-            }
-            return EQUAL;
-        }
-
-        public String getReference(final ResourceInfo info) {
-            for (final Object value : info.properties.values()) {
-                if (String.class.isInstance(value)) {
                     final String string = String.class.cast(value).trim();
                     if (string.isEmpty()) {
                         continue;
                     }
-
-                    if (ids.contains(string)) {
-                        return (String) value;
-                    }
-
                     if (string.contains(",")) { // multiple references
                         for (final String s : string.split(",")) {
-                            final String trimmed = s.trim();
-                            if (ids.contains(trimmed)) {
-                                return s;
+                            final String trim = s.trim();
+                            if (ids.contains(trim)) {
+                                refs.add(trim);
                             }
                         }
-                    }
-
-                    for (final String s : ids) {
-                        if (s.endsWith("/" + string)) { // submodule resources
-                            return s;
+                    } else {
+                        final String trim = String.valueOf(value).trim();
+                        if (ids.contains(trim)) {
+                            refs.add(trim);
                         }
                     }
                 }
+                return refs;
             }
-            return null;
-        }
+        });
     }
+
 }
