@@ -137,7 +137,7 @@ public class ResourceInfoComparatorTest extends TestCase {
 
     @Test
     public void testRealWorld4() throws Exception {
-        final List<ResourceInfo> resources = new ArrayList<>();
+        final List<ResourceInfo> resources = new ArrayList<ResourceInfo>();
 
         resources.add(new ResourceInfo());
         resources.get(0).id = "My JMS Connection Factory";

@@ -481,7 +481,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         sys.facilities.transactionService = configureService(openejb.getTransactionManager(), TransactionServiceInfo.class);
 
-        List<ResourceInfo> resources = new ArrayList<>();
+        List<ResourceInfo> resources = new ArrayList<ResourceInfo>();
         for (final Resource resource : openejb.getResource()) {
             final ResourceInfo resourceInfo = configureService(resource, ResourceInfo.class);
             resources.add(resourceInfo);
@@ -1604,7 +1604,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     }
 
     public static List<ResourceInfo> sort(final List<ResourceInfo> infos, final String prefix) {
-        final Collection<String> ids = new HashSet<>();
+        final Collection<String> ids = new HashSet<String>();
         return References.sort(infos, new References.Visitor<ResourceInfo>() {
             @Override // called first so we can rely on it to ensure we have ids full before any getReferences call
             public String getName(final ResourceInfo resourceInfo) {
@@ -1615,7 +1615,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
             @Override
             public Set<String> getReferences(final ResourceInfo resourceInfo) {
-                final Set<String> refs = new HashSet<>();
+                final Set<String> refs = new HashSet<String>();
                 for (final Object value : resourceInfo.properties.values()) {
                     if (!String.class.isInstance(value)) {
                         continue;
