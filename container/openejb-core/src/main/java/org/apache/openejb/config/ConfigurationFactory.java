@@ -1638,6 +1638,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                         }
                     }
                 }
+                refs.remove(getName(resourceInfo)); // can happen with serviceId for instance, avoid cicular dep issue
                 return refs;
             }
         });
