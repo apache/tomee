@@ -496,12 +496,12 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         sys.facilities.transactionService = configureService(openejb.getTransactionManager(), TransactionServiceInfo.class);
 
-        final List<ResourceInfo> resources = new ArrayList<ResourceInfo>();
+        List<ResourceInfo> resources = new ArrayList<>();
         for (final Resource resource : openejb.getResource()) {
             final ResourceInfo resourceInfo = configureService(resource, ResourceInfo.class);
             resources.add(resourceInfo);
         }
-        sort(resources, null);
+        resources = sort(resources, null);
 
         sys.facilities.resources.addAll(resources);
 
