@@ -1008,7 +1008,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             resourcesMap.put(resourceInfo, resource);
         }
 
-        Collections.sort(resourceInfos, new ConfigurationFactory.ResourceInfoComparator(resourceInfos));
+        ConfigurationFactory.sort(resourceInfos, module.getModuleId() + "/");
         for (final ResourceInfo resourceInfo : resourceInfos) {
             final int originalSize = resourceInfo.aliases.size();
             final String id = installResource(module.getModuleId(), resourceInfo);

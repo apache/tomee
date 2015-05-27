@@ -18,9 +18,10 @@ package org.apache.openejb.assembler.classic;
 
 import junit.framework.TestCase;
 import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.util.Join;
+import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
@@ -51,12 +52,19 @@ public class ResourceInfoComparatorTest extends TestCase {
         resources.get(3).properties = new Properties();
         resources.get(3).properties.put("foo", "Green");
 
-        Collections.sort(resources, new ConfigurationFactory.ResourceInfoComparator(resources));
+        final List<ResourceInfo> sorted = ConfigurationFactory.sort(resources, null);
 
-        assertEquals("Green", resources.get(0).id);
-        assertEquals("Blue", resources.get(1).id);
-        assertEquals("Red", resources.get(2).id);
-        assertEquals("Yellow", resources.get(3).id);
+        final String error = Join.join(",", new Join.NameCallback<ResourceInfo>() {
+            @Override
+            public String getName(ResourceInfo object) {
+                return object.id;
+            }
+        }, resources);
+
+        assertEquals(error, "Green", sorted.get(0).id);
+        assertEquals(error, "Blue", sorted.get(1).id);
+        assertEquals(error, "Red", sorted.get(2).id);
+        assertEquals(error, "Yellow", sorted.get(3).id);
 
     }
 
@@ -81,12 +89,12 @@ public class ResourceInfoComparatorTest extends TestCase {
         resources.get(3).properties = new Properties();
         resources.get(3).properties.put("ResourceAdapter", "My JMS Resource Adapter");
 
-        Collections.sort(resources, new ConfigurationFactory.ResourceInfoComparator(resources));
+        final List<ResourceInfo> sorted = ConfigurationFactory.sort(resources, null);
 
-        assertEquals("My DataSource", resources.get(0).id);
-        assertEquals("My Unmanaged DataSource", resources.get(1).id);
-        assertEquals("My JMS Resource Adapter", resources.get(2).id);
-        assertEquals("My JMS Connection Factory", resources.get(3).id);
+        assertEquals("My DataSource", sorted.get(0).id);
+        assertEquals("My Unmanaged DataSource", sorted.get(1).id);
+        assertEquals("My JMS Resource Adapter", sorted.get(2).id);
+        assertEquals("My JMS Connection Factory", sorted.get(3).id);
 
     }
 
@@ -111,14 +119,55 @@ public class ResourceInfoComparatorTest extends TestCase {
         resources.get(3).id = "My DataSource";
         resources.get(3).properties = new Properties();
 
+        final List<ResourceInfo> sorted = ConfigurationFactory.sort(resources, null);
 
-        Collections.sort(resources, new ConfigurationFactory.ResourceInfoComparator(resources));
+        final String error = Join.join(",", new Join.NameCallback<ResourceInfo>() {
+            @Override
+            public String getName(ResourceInfo object) {
+                return object.id;
+            }
+        }, sorted);
 
         // since unmanaged is first in the "file" it should be first here
-        assertEquals("My Unmanaged DataSource", resources.get(0).id);
-        assertEquals("My DataSource", resources.get(1).id);
-        assertEquals("My JMS Resource Adapter", resources.get(2).id);
-        assertEquals("My JMS Connection Factory", resources.get(3).id);
+        assertEquals(error, "My Unmanaged DataSource", sorted.get(0).id);
+        assertEquals(error, "My JMS Resource Adapter", sorted.get(1).id);
+        assertEquals(error, "My JMS Connection Factory", sorted.get(2).id);
+        assertEquals(error, "My DataSource", sorted.get(3).id);
+    }
 
+    @Test
+    public void testRealWorld4() throws Exception {
+        final List<ResourceInfo> resources = new ArrayList<>();
+
+        resources.add(new ResourceInfo());
+        resources.get(0).id = "My JMS Connection Factory";
+        resources.get(0).properties = new Properties();
+        resources.get(0).properties.put("ResourceAdapter", "My JMS Resource Adapter");
+
+        resources.add(new ResourceInfo());
+        resources.get(1).id = "My Unmanaged DataSource";
+        resources.get(1).properties = new Properties();
+
+        resources.add(new ResourceInfo());
+        resources.get(2).id = "Test Resource";
+        resources.get(2).properties = new Properties();
+        resources.get(2).properties.put("ResourceAdapter", "My JMS Connection Factory");
+
+        resources.add(new ResourceInfo());
+        resources.get(3).id = "My DataSource";
+        resources.get(3).properties = new Properties();
+
+        resources.add(new ResourceInfo());
+        resources.get(4).id = "My JMS Resource Adapter";
+        resources.get(4).properties = new Properties();
+        resources.get(4).properties.put("DataSource", "My Unmanaged DataSource");
+
+        final List<ResourceInfo> sorted = ConfigurationFactory.sort(resources, null);
+
+        assertEquals("My Unmanaged DataSource", sorted.get(0).id);
+        assertEquals("My DataSource", sorted.get(1).id);
+        assertEquals("My JMS Resource Adapter", sorted.get(2).id);
+        assertEquals("My JMS Connection Factory", sorted.get(3).id);
+        assertEquals("Test Resource", sorted.get(4).id);
     }
 }
