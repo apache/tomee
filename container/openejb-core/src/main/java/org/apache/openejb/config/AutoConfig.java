@@ -878,7 +878,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             Collections.addAll(jndiConsumers, ejbModule.getEjbJar().getEnterpriseBeans());
         }
 
-        final List<ResourceInfo> resourceInfos = new ArrayList<ResourceInfo>();
+        List<ResourceInfo> resourceInfos = new ArrayList<ResourceInfo>();
         final Map<ResourceInfo, Resource> resourcesMap = new HashMap<ResourceInfo, Resource>(resources.size());
         for (final Resource resource : resources) {
             final String originalId = PropertyPlaceHolderHelper.value(resource.getId());
@@ -952,7 +952,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             resourcesMap.put(resourceInfo, resource);
         }
 
-        ConfigurationFactory.sort(resourceInfos, module.getModuleId() + "/");
+        resourceInfos = ConfigurationFactory.sort(resourceInfos, module.getModuleId() + "/");
         for (final ResourceInfo resourceInfo : resourceInfos) {
             final int originalSize = resourceInfo.aliases.size();
             final String id = installResource(module.getModuleId(), resourceInfo);
