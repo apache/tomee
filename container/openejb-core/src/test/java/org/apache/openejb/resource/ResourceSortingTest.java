@@ -71,7 +71,7 @@ public class ResourceSortingTest {
 
 
     public static class Foo {
-        private static final List<String> IDS = new ArrayList<>();
+        private static final List<String> IDS = new ArrayList<String>();
         private String name;
 
         public void setName(String name) {

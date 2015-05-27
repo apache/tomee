@@ -67,7 +67,7 @@ public class References {
         }
         boolean circuitFounded = false;
         for (final Node node : nodes.values()) {
-            final Set<Node> visitedNodes = new HashSet<>();
+            final Set<Node> visitedNodes = new HashSet<Node>();
             if (!normalizeNodeReferences(node, node, visitedNodes)) {
                 circuitFounded = true;
                 break;
