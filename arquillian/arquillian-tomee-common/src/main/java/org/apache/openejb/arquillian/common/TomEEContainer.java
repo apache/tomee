@@ -16,7 +16,9 @@
  */
 package org.apache.openejb.arquillian.common;
 
+import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.UndeployException;
 import org.apache.openejb.assembler.Deployer;
 import org.apache.openejb.assembler.DeployerEjb;
 import org.apache.openejb.assembler.classic.AppInfo;
@@ -82,12 +84,8 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
                 && deploymentDescription.testable();
     }
 
-    @Override
-    public void setup(final Configuration configuration) {
-        this.configuration = configuration;
-
+    protected void handlePrefix() {
         final Prefixes prefixes = configuration.getClass().getAnnotation(Prefixes.class);
-
         if (prefixes == null) {
             return;
         }
@@ -118,6 +116,13 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
                 }
             }
         }
+    }
+
+    @Override
+    public void setup(final Configuration configuration) {
+        this.configuration = configuration;
+
+        handlePrefix();
 
         ArquillianUtil.preLoadClassesAsynchronously(configuration.getPreloadClasses());
     }
@@ -283,21 +288,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
             final String archiveName = archive.getName();
             try {
                 if (dump.isCreated() || !configuration.isSingleDeploymentByArchiveName(archiveName)) {
-                    final Properties deployerProperties = getDeployerProperties();
-                    if (deployerProperties == null) {
-                        appInfo = deployer().deploy(file.getAbsolutePath());
-                    } else {
-                        final Properties props = new Properties();
-                        props.putAll(deployerProperties);
-
-                        if ("true".equalsIgnoreCase(deployerProperties.getProperty(DeployerEjb.OPENEJB_USE_BINARIES, "false"))) {
-                            final byte[] slurpBinaries = IO.slurpBytes(file);
-                            props.put(DeployerEjb.OPENEJB_VALUE_BINARIES, slurpBinaries);
-                            props.put(DeployerEjb.OPENEJB_PATH_BINARIES, archive.getName());
-                        }
-
-                        appInfo = deployer().deploy(file.getAbsolutePath(), props);
-                    }
+                    appInfo = doDeploy(archive, file);
 
                     if (appInfo != null) {
                         moduleIds.put(archiveName, new DeployedApp(appInfo.path, file));
@@ -306,7 +297,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
                 } else {
                     final String path = moduleIds.get(archiveName).path;
                     AppInfo selected = null;
-                    for (final AppInfo info : deployer().getDeployedApps()) {
+                    for (final AppInfo info : getDeployedApps()) {
                         if (path.equals(info.path)) {
                             selected = info;
                             break;
@@ -337,6 +328,30 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         } catch (final Exception e) {
             throw new DeploymentException("Unable to deploy", e);
         }
+    }
+
+    protected Collection<AppInfo> getDeployedApps() throws NamingException {
+        return deployer().getDeployedApps();
+    }
+
+    protected AppInfo doDeploy(final Archive<?> archive, final File file) throws OpenEJBException, NamingException, IOException {
+        AppInfo appInfo;
+        final Properties deployerProperties = getDeployerProperties();
+        if (deployerProperties == null) {
+            appInfo = deployer().deploy(file.getAbsolutePath());
+        } else {
+            final Properties props = new Properties();
+            props.putAll(deployerProperties);
+
+            if ("true".equalsIgnoreCase(deployerProperties.getProperty(DeployerEjb.OPENEJB_USE_BINARIES, "false"))) {
+                final byte[] slurpBinaries = IO.slurpBytes(file);
+                props.put(DeployerEjb.OPENEJB_VALUE_BINARIES, slurpBinaries);
+                props.put(DeployerEjb.OPENEJB_PATH_BINARIES, archive.getName());
+            }
+
+            appInfo = deployer().deploy(file.getAbsolutePath(), props);
+        }
+        return appInfo;
     }
 
     protected Properties getDeployerProperties() {
@@ -394,7 +409,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
     private Collection<String> apps() {
         final Collection<String> paths = new ArrayList<String>();
         try {
-            final Collection<AppInfo> appInfos = deployer().getDeployedApps();
+            final Collection<AppInfo> appInfos = getDeployedApps();
             for (final AppInfo info : appInfos) {
                 paths.add(info.path);
             }
@@ -471,7 +486,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
                 LOGGER.warning(archiveName + " was not deployed");
                 return;
             }
-            deployer().undeploy(deployed.path);
+            doUndeploy(deployed);
         } catch (final Exception e) {
             throw new DeploymentException("Unable to undeploy " + archiveName, e);
         } finally {
@@ -491,6 +506,10 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
                 }
             }
         }
+    }
+
+    protected void doUndeploy(DeployedApp deployed) throws UndeployException, NoSuchApplicationException, NamingException {
+        deployer().undeploy(deployed.path);
     }
 
     @Override
