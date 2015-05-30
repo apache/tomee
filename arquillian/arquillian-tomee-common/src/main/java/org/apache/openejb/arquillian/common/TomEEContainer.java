@@ -43,9 +43,6 @@ import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -57,6 +54,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 public abstract class TomEEContainer<Configuration extends TomEEConfiguration> implements DeployableContainer<Configuration> {
     protected static final Logger LOGGER = Logger.getLogger(TomEEContainer.class.getName());
@@ -120,6 +120,25 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         }
 
         ArquillianUtil.preLoadClassesAsynchronously(configuration.getPreloadClasses());
+    }
+
+    protected void addArquillianServlet(final Archive<?> archive, final AppInfo appInfo,
+                                      final String archiveName, final HTTPContext httpContext) {
+        // Avoids "inconvertible types" error in windows build
+        if (archiveName.endsWith(".war")) {
+            httpContext.add(new Servlet("ArquillianServletRunner", "/" + getArchiveNameWithoutExtension(archive)));
+        } else if (archiveName.endsWith(".ear") && appInfo.webApps.size() > 0) {
+            final String contextRoot = System.getProperty("tomee.arquillian.ear.context", configuration.getWebContextToUseWithEars());
+            if (contextRoot != null) {
+                httpContext.add(new Servlet("ArquillianServletRunner", ("/" + contextRoot).replace("//", "/")));
+            } else {
+                for (final WebAppInfo web : appInfo.webApps) { // normally a single webapp is supported cause of arquillian resolution
+                    httpContext.add(new Servlet("ArquillianServletRunner", ("/" + web.contextRoot).replace("//", "/")));
+                }
+            }
+        } else {
+            httpContext.add(new Servlet("ArquillianServletRunner", "/arquillian-protocol")); // needs another jar to add the fake webapp
+        }
     }
 
     protected void setPorts() {
@@ -311,21 +330,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
 
             final HTTPContext httpContext = new HTTPContext(configuration.getHost(), configuration.getHttpPort());
 
-            // Avoids "inconvertible types" error in windows build
-            if (archiveName.endsWith(".war")) {
-                httpContext.add(new Servlet("ArquillianServletRunner", "/" + getArchiveNameWithoutExtension(archive)));
-            } else if (archiveName.endsWith(".ear") && appInfo.webApps.size() > 0) {
-                final String contextRoot = System.getProperty("tomee.arquillian.ear.context", configuration.getWebContextToUseWithEars());
-                if (contextRoot != null) {
-                    httpContext.add(new Servlet("ArquillianServletRunner", ("/" + contextRoot).replace("//", "/")));
-                } else {
-                    for (final WebAppInfo web : appInfo.webApps) { // normally a single webapp is supported cause of arquillian resolution
-                        httpContext.add(new Servlet("ArquillianServletRunner", ("/" + web.contextRoot).replace("//", "/")));
-                    }
-                }
-            } else {
-                httpContext.add(new Servlet("ArquillianServletRunner", "/arquillian-protocol")); // needs another jar to add the fake webapp
-            }
+            addArquillianServlet(archive, appInfo, archiveName, httpContext);
             addServlets(httpContext, appInfo);
 
             return new ProtocolMetaData().addContext(httpContext);
