@@ -548,12 +548,14 @@ public class ApplicationComposers {
                 } else if (obj instanceof Persistence) {
 
                     final Persistence persistence = (Persistence) obj;
-                    appModule.addPersistenceModule(new PersistenceModule(appModule, implicitRootUrl(), persistence));
+                    appModule.addPersistenceModule(
+                            new PersistenceModule(appModule, implicitRootUrl(method.getAnnotation(PersistenceRootUrl.class)), persistence));
 
                 } else if (obj instanceof PersistenceUnit) {
 
                     final PersistenceUnit unit = (PersistenceUnit) obj;
-                    appModule.addPersistenceModule(new PersistenceModule(appModule, implicitRootUrl(), new Persistence(unit)));
+                    appModule.addPersistenceModule(
+                            new PersistenceModule(appModule, implicitRootUrl(method.getAnnotation(PersistenceRootUrl.class)), new Persistence(unit)));
 
                 } else if (obj instanceof Beans) {
 
@@ -1094,7 +1096,10 @@ public class ApplicationComposers {
         return module;
     }
 
-    private static String implicitRootUrl() {
+    private static String implicitRootUrl(final PersistenceRootUrl annotation) {
+        if (annotation != null) {
+            return annotation.value();
+        }
         final ResourceFinder finder = new ResourceFinder("", Thread.currentThread().getContextClassLoader());
         try {
             final URL url = DeploymentLoader.altDDSources(DeploymentLoader.mapDescriptors(finder), false).get("persistence.xml");
