@@ -105,6 +105,7 @@ public class AutoDeployerTest {
         properties.setProperty("openejb.deployment.unpack.location", "false");
         properties.setProperty("openejb.home", tmpdir.getAbsolutePath());
         properties.setProperty("openejb.base", tmpdir.getAbsolutePath());
+        properties.setProperty("openejb.autodeploy.interval", "2 seconds");
 
         SystemInstance.init(properties);
 
@@ -143,6 +144,65 @@ public class AutoDeployerTest {
 
         assertFalse(Yellow.deployed);
         assertTrue(Orange.deployed);
+
+        Files.delete(deployed);
+
+        Orange.state.waitForChange(1, TimeUnit.MINUTES);
+
+        assertFalse(Yellow.deployed);
+        assertFalse(Orange.deployed);
+    }
+
+    @Test
+    public void testOriginalAppScanning() throws Exception {
+        final File tmpdir = Files.tmpdir();
+        final File apps = Files.mkdir(tmpdir, "myapps");
+        final File conf = Files.mkdir(tmpdir, "conf");
+
+        files.add(apps);
+
+        final Properties properties = new Properties();
+        properties.setProperty("openejb.deployments.classpath", "false");
+        properties.setProperty("openejb.deployment.unpack.location", "false");
+        properties.setProperty("openejb.home", tmpdir.getAbsolutePath());
+        properties.setProperty("openejb.base", tmpdir.getAbsolutePath());
+        properties.setProperty("openejb.autodeploy.interval", "2 seconds");
+
+        SystemInstance.init(properties);
+
+        { // Setup the configuration location
+            final File config = new File(conf, "openejb.xml");
+            IO.writeString(config, "<openejb><Deployments autoDeploy=\"true\" dir=\"myapps\"/> </openejb>");
+            SystemInstance.get().setProperty("openejb.configuration", config.getAbsolutePath());
+        }
+
+        final File deployed = Files.path(apps, "colors.ear");
+        final File ear = createEar(tmpdir, Orange.class, State.class);
+        IO.copy(ear, deployed);
+
+        final ConfigurationFactory configurationFactory = new ConfigurationFactory();
+        configurationFactory.init(properties);
+        final OpenEjbConfiguration configuration = configurationFactory.getOpenEjbConfiguration();
+
+        { // Check the ContainerSystemInfo
+
+            final List<String> autoDeploy = configuration.containerSystem.autoDeploy;
+            assertEquals(1, autoDeploy.size());
+            assertEquals("myapps", autoDeploy.get(0));
+        }
+
+        final Assembler assembler = new Assembler();
+        assembler.buildContainerSystem(configuration);
+
+        assertTrue(Orange.deployed);
+        final long start = Orange.start;
+
+        assertFalse(Yellow.deployed);
+        assertTrue(Orange.deployed);
+
+        // wait another to ensure it doesnt redeploy again
+        Thread.sleep(4000);
+        assertEquals(start, Orange.start);
 
         Files.delete(deployed);
 
@@ -323,8 +383,11 @@ public class AutoDeployerTest {
         public static volatile boolean deployed;
         public static final State state = new State();
 
+        public static long start;
+
         @PostConstruct
         private void startup() {
+            start = System.currentTimeMillis();
             deployed = true;
             state.toggle();
         }
