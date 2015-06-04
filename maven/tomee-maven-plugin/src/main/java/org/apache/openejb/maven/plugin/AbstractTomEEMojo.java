@@ -437,16 +437,23 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                         try {
                             final Class<?> clazz = tccl.loadClass(customizer);
                             try {
-                                final Constructor<?> cons = clazz.getConstructor(File.class);
-                                Runnable.class.cast(cons.newInstance(catalinaBase)).run();
-                            } catch (final NoSuchMethodException e) {
+                                clazz.getMethod("main", String[].class)
+                                    .invoke(null, new String[] { catalinaBase.getAbsolutePath() });
+                            } catch (final NoSuchMethodException noMainEx) {
                                 try {
-                                    Runnable.class.cast(clazz.newInstance()).run();
-                                } catch (final Exception e1) {
+                                    final Constructor<?> cons = clazz.getConstructor(File.class);
+                                    Runnable.class.cast(cons.newInstance(catalinaBase)).run();
+                                } catch (final NoSuchMethodException e) {
+                                    try {
+                                        Runnable.class.cast(clazz.newInstance()).run();
+                                    } catch (final Exception e1) {
+                                        throw new MojoExecutionException("can't create customizer: " + currentLoader, e);
+                                    }
+                                } catch (final InvocationTargetException | InstantiationException | IllegalAccessException e) {
                                     throw new MojoExecutionException("can't create customizer: " + currentLoader, e);
                                 }
-                            } catch (final InvocationTargetException | InstantiationException | IllegalAccessException e) {
-                                throw new MojoExecutionException("can't create customizer: " + currentLoader, e);
+                            } catch (final InvocationTargetException | IllegalAccessException e) {
+                                throw new MojoExecutionException("can't find customizer: " + currentLoader, e);
                             }
                         } catch (final ClassNotFoundException e) {
                             throw new MojoExecutionException("can't find customizer: " + currentLoader, e);
