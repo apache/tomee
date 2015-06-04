@@ -17,6 +17,10 @@
 
 package org.apache.openejb.maven.plugin;
 
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
@@ -25,25 +29,34 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+import org.apache.openejb.loader.Files;
+import org.apache.openejb.loader.IO;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-
-import static org.apache.openejb.maven.plugin.util.Zips.zip;
+import java.util.Collections;
+import java.util.Map;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * Create but not run a TomEE.
  */
 @Mojo(name = "build", requiresDependencyResolution = ResolutionScope.RUNTIME_PLUS_SYSTEM)
 public class BuildTomEEMojo extends AbstractTomEEMojo {
+    @Deprecated
     @Parameter(property = "tomee-plugin.zip", defaultValue = "true")
     protected boolean zip;
 
     @Parameter(property = "tomee-plugin.attach", defaultValue = "true")
     protected boolean attach;
 
+    @Deprecated
     @Parameter(property = "tomee-plugin.zip-file", defaultValue = "${project.build.directory}/${project.build.finalName}.zip")
     protected File zipFile;
+
+    @Parameter(property = "tomee-plugin.output-base", defaultValue = "${project.build.directory}/${project.build.finalName}")
+    protected File base;
 
     @Component
     protected MavenProjectHelper projectHelper;
@@ -54,26 +67,132 @@ public class BuildTomEEMojo extends AbstractTomEEMojo {
     @Parameter(property = "tomee-plugin.classifier")
     protected String classifier = null;
 
+    /**
+     * config looks like:
+     * &gt;formats&lt;
+     *     &gt;zip>${project.build.directory}/${project.build.finalName}.zip&gt;/zip&lt;
+     *     &gt;tar.gz /&lt;
+     * &gt;/formats&lt;
+     *
+     * No value means auto format
+     */
+    @Parameter
+    private Map<String, String> formats;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         super.execute();
-        if (zip) {
+
+        if (formats == null) {
+            formats = Collections.emptyMap();
+        }
+
+        String prefix = catalinaBase.getParentFile().getAbsolutePath();
+        if (!prefix.endsWith(File.separator)) {
+            prefix += File.separator;
+        }
+
+        if (zip || formats.containsKey("zip")) {
             getLog().info("Zipping Custom TomEE Distribution");
-            try {
-                zip(catalinaBase, zipFile);
+
+            final String zip = formats.get("zip");
+            final File output = zip != null ? new File(zip) : zipFile;
+            try (final ZipArchiveOutputStream zos =
+                         new ZipArchiveOutputStream(new FileOutputStream(output))) {
+                for (final String entry : catalinaBase.list()) {
+                    zip(zos, new File(catalinaBase, entry), prefix);
+                }
             } catch (final IOException e) {
                 throw new MojoExecutionException(e.getMessage(), e);
             }
 
-            if (attach) {
-                getLog().info("Attaching Custom TomEE Distribution");
-                if (classifier != null) {
-                    projectHelper.attachArtifact(project, "zip", classifier, zipFile);
+            attach("zip", output);
+        }
+        if (formats != null) {
+            formats.remove("zip"); //handled previously for compatibility
+
+            for (final Map.Entry<String, String> format : formats.entrySet()) {
+                final String key = format.getKey();
+                getLog().info(key + "-ing Custom TomEE Distribution");
+
+                if ("tar.gz".equals(key)) {
+                    final String out = format.getValue();
+                    final File output = out != null ? new File(out) : new File(base.getParentFile(), base.getName() + "." + key);
+                    Files.mkdirs(output.getParentFile());
+
+                    try (final TarArchiveOutputStream tarGz =
+                                 new TarArchiveOutputStream(new GZIPOutputStream(new FileOutputStream(output)))) {
+                        tarGz.setLongFileMode(TarArchiveOutputStream.LONGFILE_GNU);
+                        for (final String entry : catalinaBase.list()) {
+                            tarGz(tarGz, new File(catalinaBase, entry), prefix);
+                        }
+                    } catch (final IOException e) {
+                        throw new MojoExecutionException(e.getMessage(), e);
+                    }
+
+                    attach(key, output);
                 } else {
-                    projectHelper.attachArtifact(project, "zip", zipFile);
+                    throw new MojoExecutionException(key + " format not supported");
                 }
             }
         }
+    }
+
+    private void attach(final String ext, final File output) {
+        if (attach) {
+            getLog().info("Attaching Custom TomEE Distribution (" + ext + ")");
+            if (classifier != null) {
+                projectHelper.attachArtifact(project, ext, classifier, output);
+            } else {
+                projectHelper.attachArtifact(project, ext, output);
+            }
+        }
+    }
+
+    private void tarGz(final TarArchiveOutputStream tarGz, final File f, final String prefix) throws IOException {
+        final String path = f.getPath().replace(prefix, "").replace(File.separator, "/");
+        final TarArchiveEntry archiveEntry = new TarArchiveEntry(f, path);
+        if (isSh(path)) {
+            archiveEntry.setMode(0755);
+        }
+        tarGz.putArchiveEntry(archiveEntry);
+        if (f.isDirectory()) {
+            tarGz.closeArchiveEntry();
+            final File[] files = f.listFiles();
+            if (files != null) {
+                for (final File child : files) {
+                    tarGz(tarGz, child, prefix);
+                }
+            }
+        } else {
+            IO.copy(f, tarGz);
+            tarGz.closeArchiveEntry();
+        }
+    }
+
+    private void zip(final ZipArchiveOutputStream zip, final File f, final String prefix) throws IOException {
+        final String path = f.getPath().replace(prefix, "").replace(File.separator, "/");
+        final ZipArchiveEntry archiveEntry = new ZipArchiveEntry(f, path);
+        if (isSh(path)) {
+            archiveEntry.setUnixMode(0755);
+        }
+        zip.putArchiveEntry(archiveEntry);
+        if (f.isDirectory()) {
+            zip.closeArchiveEntry();
+            final File[] files = f.listFiles();
+            if (files != null) {
+                for (final File child : files) {
+                    zip(zip, child, prefix);
+                }
+            }
+        } else {
+            IO.copy(f, zip);
+            zip.closeArchiveEntry();
+        }
+    }
+
+    private boolean isSh(final String path) {
+        return path.startsWith(catalinaBase.getName() + "/bin/") && path.endsWith(".sh");
     }
 
     @Override
