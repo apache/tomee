@@ -384,7 +384,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             final Collection<File> copied = overrideConf(bin, "bin");
 
             for (final File copy : copied) {
-                if (copy.getName().endsWith(".bat") || copy.getName().endsWith(".sh")) {
+                if (copy.getName().endsWith(".sh")) {
                     if (!copy.setExecutable(true)) {
                         getLog().warn("can't make " + copy.getPath() + " executable");
                     }
