@@ -551,6 +551,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
         return name != null
             && ("META-INF/services/javax.validation.spi.ValidationProvider".equals(name)
             || "META-INF/services/javax.ws.rs.client.ClientBuilder".equals(name)
+            || "META-INF/services/javax.cache.spi.CachingProvider".equals(name)
             || name.startsWith("META-INF/services/org.apache.myfaces.spi")
             || SLF4J_BINDER_CLASS.equals(name));
     }
