@@ -165,6 +165,15 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     @Parameter(property = "tomee-plugin.simple-log", defaultValue = "false")
     protected boolean simpleLog;
 
+    @Parameter(property = "tomee-plugin.extractWars", defaultValue = "false")
+    protected boolean extractWars;
+
+    @Parameter(property = "tomee-plugin.stripWarVersion", defaultValue = "true")
+    protected boolean stripWarVersion;
+
+    @Parameter(property = "tomee-plugin.stripVersion", defaultValue = "false")
+    protected boolean stripVersion;
+
     @Parameter(property = "tomee-plugin.debugPort", defaultValue = "5005")
     protected int debugPort;
 
@@ -281,6 +290,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
     @Parameter(defaultValue = "${project.build.directory}/${project.build.finalName}.${project.packaging}")
     protected File warFile;
+
+    @Parameter(defaultValue = "${project.build.directory}/${project.build.finalName}", readonly = true)
+    protected File workWarFile;
 
     @Parameter(property = "tomee-plugin.remove-default-webapps", defaultValue = "true")
     protected boolean removeDefaultWebapps;
@@ -603,7 +615,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         }
     }
 
-    private void updateLib(final String rawLib, final File destParent, final String defaultType) {
+    private void updateLib(final String rawLib, final File rawDestParent, final String defaultType) {
         InputStream is = null;
         OutputStream os = null;
 
@@ -619,12 +631,16 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             }
         }
 
-        boolean unzip = false;
+        final boolean isWar = "war".equals(defaultType);
+        final boolean isExplodedWar = extractWars && isWar;
+
+        boolean unzip = isExplodedWar;
         if (lib.startsWith(UNZIP_PREFIX)) {
             lib = lib.substring(UNZIP_PREFIX.length());
             unzip = true;
         }
 
+        File destParent = rawDestParent;
         if (lib.startsWith(REMOVE_PREFIX)) {
             final String prefix = lib.substring(REMOVE_PREFIX.length());
             final File[] files = destParent.listFiles(new FilenameFilter() {
@@ -644,7 +660,29 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         } else {
             try {
                 final File file = mvnToFile(lib, defaultType);
-                if (!unzip) {
+                if (extractedName == null && (stripVersion || isWar && stripWarVersion)) {
+                    String currentName = file.getName();
+                    currentName = currentName.endsWith("." + defaultType) ?
+                            currentName.substring(0, currentName.length() - defaultType.length() - 1) : currentName;
+                    currentName = currentName.endsWith("-SNAPSHOT") ?
+                            currentName.substring(0, currentName.length() - "-SNAPSHOT".length()) : currentName;
+
+                    int idx = currentName.length() - 1;
+                    while (idx >= 0) {
+                        if (currentName.charAt(idx) == '-') {
+                            break;
+                        }
+                        idx--;
+                    }
+                    if (idx > 0) {
+                        extractedName = currentName.substring(0, idx);
+                        if (!isExplodedWar) { // works for libs
+                            extractedName += "." + defaultType;
+                        }
+                    }
+                }
+
+                if (!unzip && !isExplodedWar) {
                     final File dest;
                     if (extractedName == null) {
                         dest = new File(destParent, file.getName());
@@ -658,7 +696,11 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
                     getLog().info("Copied '" + lib + "' in '" + dest.getAbsolutePath());
                 } else {
-                    Zips.unzip(file, destParent, true);
+                    if (isExplodedWar) {
+                        destParent = Files.mkdirs(new File(rawDestParent, extractedName != null ?
+                                extractedName : file.getName().replace(".war", "")));
+                    }
+                    Zips.unzip(file, destParent, !isExplodedWar);
 
                     getLog().info("Unzipped '" + lib + "' in '" + destParent.getAbsolutePath());
                 }
@@ -702,7 +744,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
         final boolean war = "war".equals(packaging);
         final String name = destinationName();
-        final File out;
+        File out;
         if (war) {
             out = new File(catalinaBase, webappDir + "/" + name);
         } else {
@@ -722,6 +764,13 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                 unpacked = new File(catalinaBase, appDir + "/" + dir);
             }
             delete(unpacked);
+        }
+
+        if (extractWars) {
+            warFile = workWarFile;
+            if (context == null && out.getName().endsWith(".war") && !warFile.getName().endsWith(".war")) {
+                out = new File(out.getParentFile(), warFile.getName());
+            }
         }
 
         if (warFile.exists() && warFile.isDirectory()) {
