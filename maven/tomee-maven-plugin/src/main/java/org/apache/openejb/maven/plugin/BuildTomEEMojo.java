@@ -27,7 +27,6 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
@@ -60,9 +59,6 @@ public class BuildTomEEMojo extends AbstractTomEEMojo {
 
     @Component
     protected MavenProjectHelper projectHelper;
-
-    @Parameter(defaultValue = "${project}", readonly = true)
-    protected MavenProject project;
 
     @Parameter(property = "tomee-plugin.classifier")
     protected String classifier = null;

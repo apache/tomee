@@ -21,10 +21,10 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 public abstract class AbstractAddressMojo extends AbstractMojo {
-    @Parameter(property = "tomee-plugin.http", defaultValue = "8080")
-    protected int tomeeHttpPort = 8080;
+    @Parameter(property = "tomee-plugin.http")
+    protected Integer tomeeHttpPort;
 
-    @Parameter(property = "tomee-plugin.host", defaultValue = "localhost")
+    @Parameter(property = "tomee-plugin.host")
     protected String tomeeHost;
 
     @Parameter(property = "tomee-plugin.user")

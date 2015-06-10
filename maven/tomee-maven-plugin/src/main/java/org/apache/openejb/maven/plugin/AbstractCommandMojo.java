@@ -23,6 +23,13 @@ import java.util.Properties;
 
 public abstract class AbstractCommandMojo extends AbstractAddressMojo {
     protected Object lookup(final String name) {
+        if (tomeeHttpPort == null) {
+            tomeeHttpPort = 8080;
+        }
+        if (tomeeHost == null) {
+            tomeeHost = "localhost";
+        }
+
         final Properties props = new Properties();
         props.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
         props.put(Context.PROVIDER_URL, "http://" + tomeeHost + ":" + tomeeHttpPort + "/tomee/ejb");

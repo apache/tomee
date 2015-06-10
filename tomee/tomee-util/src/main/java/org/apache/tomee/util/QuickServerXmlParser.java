@@ -56,12 +56,17 @@ public class QuickServerXmlParser extends DefaultHandler {
     private final Map<String, String> values = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
 
     public QuickServerXmlParser() { // ensure defaults are present
-        values.put(STOP_KEY, DEFAULT_STOP_PORT);
-        values.put(HTTP_KEY, DEFAULT_HTTP_PORT);
-        values.put(AJP_KEY, DEFAULT_AJP_PORT);
-        values.put(HOST_KEY, DEFAULT_HOST);
-        values.put(APP_BASE_KEY, DEFAULT_APP_BASE);
-        values.put(KEYSTORE_KEY, DEFAULT_KEYSTORE);
+        this(true);
+    }
+    public QuickServerXmlParser(final boolean useDefaults) {
+        if (useDefaults) {
+            values.put(STOP_KEY, DEFAULT_STOP_PORT);
+            values.put(HTTP_KEY, DEFAULT_HTTP_PORT);
+            values.put(AJP_KEY, DEFAULT_AJP_PORT);
+            values.put(HOST_KEY, DEFAULT_HOST);
+            values.put(APP_BASE_KEY, DEFAULT_APP_BASE);
+            values.put(KEYSTORE_KEY, DEFAULT_KEYSTORE);
+        }
     }
 
     @Override
@@ -108,7 +113,11 @@ public class QuickServerXmlParser extends DefaultHandler {
     }
 
     public static QuickServerXmlParser parse(final File serverXml) {
-        final QuickServerXmlParser handler = new QuickServerXmlParser();
+        return parse(serverXml, true);
+    }
+
+    public static QuickServerXmlParser parse(final File serverXml, final boolean defaults) {
+        final QuickServerXmlParser handler = new QuickServerXmlParser(defaults);
         try {
             final SAXParser parser = FACTORY.newSAXParser();
             parser.parse(serverXml, handler);
