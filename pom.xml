@@ -1934,11 +1934,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-concurrent_1.0_spec</artifactId>
-        <version>1.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-jaxb_2.2_spec</artifactId>
         <version>1.0.1</version>
       </dependency>
