@@ -1208,7 +1208,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     }
 
                     // log unused now for these resources now we built the resource completely and @PostConstruct can have used injected properties
-                    if (resourceInfo.unsetProperties != null) {
+                    if (resourceInfo.unsetProperties != null && !isPassthroughType(resourceInfo)) {
                         final Set<String> unsetKeys = resourceInfo.unsetProperties.stringPropertyNames();
                         for (final String key : unsetKeys) { // don't use keySet to auto filter txMgr for instance and not real properties!
                             unusedProperty(resourceInfo.id, logger, key);
@@ -3136,6 +3136,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     private static void logUnusedProperties(final Map<String, ?> unsetProperties, final ServiceInfo info) {
+        if (isPassthroughType(info)) {
+            return;
+        }
+
         Logger logger = null;
         for (final String property : unsetProperties.keySet()) {
             //TODO: DMB: Make more robust later
@@ -3167,11 +3171,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             if (isInternalProperty(property)) {
                 continue;
             }
-            if (info.types.contains("javax.mail.Session")) {
-                return;
-            }
-            //---
-
             if (info.types.isEmpty() && "class".equalsIgnoreCase(property)) {
                 continue; // inline service (no sp)
             }
@@ -3184,6 +3183,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
             unusedProperty(info.id, logger, property);
         }
+    }
+
+    private static boolean isPassthroughType(final ServiceInfo info) {
+        return info.types.contains("javax.mail.Session");
     }
 
     private static void unusedProperty(final String id, final Logger parentLogger, final String property) {
