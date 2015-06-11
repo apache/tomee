@@ -85,8 +85,11 @@ public final class PropertyPlaceHolderHelper {
     }
 
     public static String value(final String aw) {
-        if (aw == null || !aw.contains(PREFIX) || !aw.contains(SUFFIX)) {
-            return aw;
+        if (aw == null) {
+            return null;
+        }
+        if (!aw.contains(PREFIX) || !aw.contains(SUFFIX)) {
+            return decryptIfNeeded(aw);
         }
 
         String value = CACHE.getProperty(aw);
@@ -99,7 +102,15 @@ public final class PropertyPlaceHolderHelper {
         return value;
     }
 
+    public static Properties simpleHolds(final Properties properties) {
+        return holds(properties, false);
+    }
+
     public static Properties holds(final Properties properties) {
+        return holds(properties, true);
+    }
+
+    private static Properties holds(final Properties properties, final boolean cache) {
         // we can put null values in SuperProperties, since properties is often of this type we need to tolerate it
         final Properties updated = new SuperProperties();
         if (properties == null) {
@@ -109,7 +120,8 @@ public final class PropertyPlaceHolderHelper {
         for (final Map.Entry<Object, Object> entry : properties.entrySet()) {
             final Object rawValue = entry.getValue();
             if (rawValue instanceof String) {
-                updated.put(entry.getKey(), value((String) rawValue));
+                final String value = (String) rawValue;
+                updated.put(entry.getKey(), cache ? value(value) : simpleValue(value));
             } else {
                 updated.put(entry.getKey(), rawValue);
             }

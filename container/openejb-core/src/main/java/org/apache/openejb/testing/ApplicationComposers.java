@@ -414,6 +414,7 @@ public class ApplicationComposers {
 
         // Invoke the @Module producer methods to build out the AppModule
         int moduleNumber = 0;
+        int notBusinessModuleNumber = 0; // we dont consider resources.xml to set an app as standalone or not
         final Map<Object, List<Method>> moduleMethods = new HashMap<>();
         findAnnotatedMethods(moduleMethods, Module.class);
         findAnnotatedMethods(moduleMethods, org.apache.openejb.junit.Module.class);
@@ -601,6 +602,7 @@ public class ApplicationComposers {
                     final Resources asResources = Resources.class.cast(obj);
                     appModule.getResources().addAll(asResources.getResource());
                     appModule.getContainers().addAll(asResources.getContainer());
+                    notBusinessModuleNumber++;
                 } else if (obj instanceof AppModule) {
                     // we can probably go further here
                     final AppModule module = (AppModule) obj;
@@ -685,7 +687,7 @@ public class ApplicationComposers {
             }
         }
 
-        if (moduleNumber == 1 && webModulesNb == 1) {
+        if (moduleNumber - notBusinessModuleNumber == 1 && webModulesNb == 1) {
             appModule.setStandloneWebModule();
         }
 

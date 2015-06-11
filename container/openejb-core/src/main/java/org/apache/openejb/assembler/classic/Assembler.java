@@ -2605,9 +2605,13 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     public void createResource(final ResourceInfo serviceInfo) throws OpenEJBException {
-        final Object service = "true".equalsIgnoreCase(String.valueOf(serviceInfo.properties.remove("Lazy"))) ?
+        final boolean usesCdiPwdCipher = usesCdiPwdCipher(serviceInfo);
+        final Object service = "true".equalsIgnoreCase(String.valueOf(serviceInfo.properties.remove("Lazy"))) || usesCdiPwdCipher ?
                 newLazyResource(serviceInfo) :
                 doCreateResource(serviceInfo);
+        if (usesCdiPwdCipher && !serviceInfo.properties.contains("InitializeAfterDeployment")) {
+            serviceInfo.properties.put("InitializeAfterDeployment", "true");
+        }
 
         bindResource(serviceInfo.id, service, false);
         for (final String alias : serviceInfo.aliases) {
@@ -2628,6 +2632,15 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         if (logger.isDebugEnabled()) { // weird to check parent logger but save time and it is almost never activated
             logger.getChildLogger("service").debug("createService.success", serviceInfo.service, serviceInfo.id, serviceInfo.className);
         }
+    }
+
+    private boolean usesCdiPwdCipher(final ResourceInfo serviceInfo) {
+        for (final Object val : serviceInfo.properties.values()) {
+            if (String.valueOf(val).startsWith("cipher:cdi:")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private LazyResource newLazyResource(final ResourceInfo serviceInfo) {
@@ -2684,7 +2697,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
         });
 
-        final Properties props = PropertyPlaceHolderHelper.holds(serviceInfo.properties);
         if (serviceInfo.properties.containsKey("Definition")) {
             try { // we catch classcast etc..., if it fails it is not important
                 final InputStream is = new ByteArrayInputStream(serviceInfo.properties.getProperty("Definition").getBytes());
@@ -3236,7 +3248,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         final ObjectRecipe serviceRecipe = prepareRecipe(info);
         final Object value = info.properties.remove("SkipImplicitAttributes"); // we don't want this one to go in recipe
-        serviceRecipe.setAllProperties(info.properties);
+        serviceRecipe.setAllProperties(PropertyPlaceHolderHelper.simpleHolds(info.properties));
         if (value != null) {
             info.properties.put("SkipImplicitAttributes", value);
         }
