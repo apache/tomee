@@ -17,6 +17,7 @@
 
 package org.apache.openejb.cdi;
 
+import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.classloader.ClassLoaderAwareHandler;
@@ -24,12 +25,15 @@ import org.apache.webbeans.service.DefaultLoaderService;
 import org.apache.webbeans.spi.LoaderService;
 import org.apache.webbeans.spi.plugins.OpenWebBeansPlugin;
 
-import javax.enterprise.inject.spi.Extension;
 import java.lang.reflect.Proxy;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
+import javax.enterprise.inject.spi.Extension;
 
 /**
  * @version $Rev$ $Date$
@@ -97,7 +101,13 @@ public class OptimizedLoaderService implements LoaderService {
 
     // mainly intended to avoid conflicts between internal and overrided spec extensions
     private boolean isFiltered(final Collection<Extension> extensions, final Extension next) {
-        final String name = next.getClass().getName();
+        final ClassLoader containerLoader = ParentClassLoaderFinder.Helper.get();
+        final Class<? extends Extension> extClass = next.getClass();
+        if (extClass.getClassLoader() != containerLoader) {
+            return false;
+        }
+
+        final String name = extClass.getName();
         switch (name) {
             case "org.apache.bval.cdi.BValExtension":
                 for (final Extension e : extensions) {
@@ -105,8 +115,26 @@ public class OptimizedLoaderService implements LoaderService {
 
                     // org.hibernate.validator.internal.cdi.ValidationExtension but allowing few evolutions of packages
                     if (en.startsWith("org.hibernate.validator.") && en.endsWith("ValidationExtension")) {
+                        log.info("Skipping BVal CDI integration cause hibernate was found in the application");
                         return true;
                     }
+                }
+                break;
+            case "org.apache.commons.jcs.jcache.cdi.MakeJCacheCDIInterceptorFriendly":
+                final String spi = "META-INF/services/javax.cache.spi.CachingProvider";
+                try {
+                    final Enumeration<URL> appResources = Thread.currentThread().getContextClassLoader().getResources(spi);
+                    if (appResources != null && appResources.hasMoreElements()) {
+                        final Collection<URL> containerResources = Collections.list(containerLoader.getResources(spi));
+                        do {
+                            if (!containerResources.contains(appResources.nextElement())) {
+                                log.info("Skipping JCS CDI integration cause another provide was found in the application");
+                                return true;
+                            }
+                        } while (appResources.hasMoreElements());
+                    }
+                } catch (final Exception e) {
+                    // no-op
                 }
                 break;
             default:
@@ -115,44 +143,33 @@ public class OptimizedLoaderService implements LoaderService {
     }
 
     private List<? extends OpenWebBeansPlugin> loadWebBeansPlugins(final ClassLoader loader) {
-        final String[] knownPlugins = {
-            "org.apache.geronimo.openejb.cdi.GeronimoWebBeansPlugin"
-        };
-        final String[] loaderAwareKnownPlugins = {
-            "org.apache.webbeans.jsf.plugin.OpenWebBeansJsfPlugin"
-        };
-
-        final List<OpenWebBeansPlugin> list = new ArrayList<>();
+        final List<OpenWebBeansPlugin> list = new ArrayList<>(2);
         list.add(new CdiPlugin());
-        for (final String name : knownPlugins) {
+        {
             final Class<?> clazz;
             try {
-                clazz = loader.loadClass(name);
+                clazz = loader.loadClass("org.apache.geronimo.openejb.cdi.GeronimoWebBeansPlugin");
+                try {
+                    list.add(OpenWebBeansPlugin.class.cast(clazz.newInstance()));
+                } catch (final Exception e) {
+                    log.error("Unable to load OpenWebBeansPlugin: GeronimoWebBeansPlugin");
+                }
             } catch (final ClassNotFoundException e) {
                 // ignore
-                continue;
-            }
-
-            try {
-                list.add(OpenWebBeansPlugin.class.cast(clazz.newInstance()));
-            } catch (final Exception e) {
-                log.error("Unable to load OpenWebBeansPlugin: " + name);
             }
         }
-        for (final String name : loaderAwareKnownPlugins) {
+        {
             final Class<?> clazz;
             try {
-                clazz = loader.loadClass(name);
+                clazz = loader.loadClass("org.apache.webbeans.jsf.plugin.OpenWebBeansJsfPlugin");
+                try {
+                    list.add(OpenWebBeansPlugin.class.cast(
+                            Proxy.newProxyInstance(loader, new Class<?>[]{OpenWebBeansPlugin.class}, new ClassLoaderAwareHandler(clazz.getSimpleName(), clazz.newInstance(), loader))));
+                } catch (final Exception e) {
+                    log.error("Unable to load OpenWebBeansPlugin: OpenWebBeansJsfPlugin");
+                }
             } catch (final ClassNotFoundException e) {
                 // ignore
-                continue;
-            }
-
-            try {
-                list.add(OpenWebBeansPlugin.class.cast(
-                        Proxy.newProxyInstance(loader, new Class<?>[]{OpenWebBeansPlugin.class}, new ClassLoaderAwareHandler(clazz.getSimpleName(), clazz.newInstance(), loader))));
-            } catch (final Exception e) {
-                log.error("Unable to load OpenWebBeansPlugin: " + name);
             }
         }
         return list;
