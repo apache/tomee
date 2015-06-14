@@ -70,12 +70,6 @@ public class CdiAppContextsService extends WebContextsService implements Context
     @Override // this method is called after the deployment (BeansDeployer) but need beans to be here to get events
     public void init(final Object initializeObject) {
         super.init(initializeObject);
-
-        Object payload = null;
-        if (initializeObject instanceof ServletContext) {
-            payload = initializeObject;
-        }
-
         if (initializeObject != null) {
             Object event = initializeObject;
             if (StartupObject.class.isInstance(initializeObject)) {
@@ -97,7 +91,6 @@ public class CdiAppContextsService extends WebContextsService implements Context
                             webBeansContext),
                     false);
         }
-
     }
 
     public void destroy(final Object destroyObject) {
