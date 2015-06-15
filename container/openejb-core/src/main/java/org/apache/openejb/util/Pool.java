@@ -149,7 +149,9 @@ public class Pool<T> {
 
     public void stop() {
         final ScheduledFuture<?> future = this.future.get();
-        if (future != null && !future.isDone() && !future.isCancelled() && !future.cancel(false)) {
+        if (future != null && this.future.compareAndSet(future, null)
+                && !future.isDone() && !future.isCancelled()
+                && !future.cancel(false)) {
             Logger.getLogger(Pool.class.getName()).log(Level.WARNING, "Pool scheduler task termination timeout expired");
         }
 
