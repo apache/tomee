@@ -64,6 +64,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -88,12 +89,17 @@ public class StatelessInstanceManager {
     private final SecurityService securityService;
     private final Pool.Builder poolBuilder;
     private final ThreadPoolExecutor executor;
+    private final ScheduledExecutorService scheduledExecutor;
 
-    public StatelessInstanceManager(final SecurityService securityService, final Duration accessTimeout, final Duration closeTimeout, final Pool.Builder poolBuilder, final int callbackThreads) {
+    public StatelessInstanceManager(final SecurityService securityService,
+                                    final Duration accessTimeout, final Duration closeTimeout,
+                                    final Pool.Builder poolBuilder, final int callbackThreads,
+                                    final ScheduledExecutorService ses) {
         this.securityService = securityService;
         this.accessTimeout = accessTimeout;
         this.closeTimeout = closeTimeout;
         this.poolBuilder = poolBuilder;
+        this.scheduledExecutor = ses;
 
         if (accessTimeout.getUnit() == null) {
             accessTimeout.setUnit(TimeUnit.MILLISECONDS);
@@ -340,6 +346,7 @@ public class StatelessInstanceManager {
         final StatelessSupplier supplier = new StatelessSupplier(beanContext);
         builder.setSupplier(supplier);
         builder.setExecutor(executor);
+        builder.setScheduledExecutor(scheduledExecutor);
 
         final Data data = new Data(builder.build(), accessTimeout, closeTimeout);
         beanContext.setContainerData(data);

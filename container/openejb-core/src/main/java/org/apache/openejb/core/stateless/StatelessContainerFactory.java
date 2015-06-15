@@ -34,6 +34,16 @@ public class StatelessContainerFactory {
     private Duration accessTimeout;
     private int callbackThreads = 5;
     private Duration closeTimeout;
+    private boolean useOneSchedulerThreadByBean = false;
+    private int evictionThreads = 1;
+
+    public void setEvictionThreads(final int evictionThreads) {
+        this.evictionThreads = evictionThreads;
+    }
+
+    public void setUseOneSchedulerThreadByBean(final boolean useOneSchedulerThreadByBean) {
+        this.useOneSchedulerThreadByBean = useOneSchedulerThreadByBean;
+    }
 
     public void setCallbackThreads(final int callbackThreads) {
         this.callbackThreads = callbackThreads;
@@ -125,6 +135,8 @@ public class StatelessContainerFactory {
     }
 
     public StatelessContainer create() {
-        return new StatelessContainer(id, securityService, accessTimeout, closeTimeout, pool, callbackThreads);
+        return new StatelessContainer(
+                id, securityService, accessTimeout, closeTimeout, pool, callbackThreads,
+                useOneSchedulerThreadByBean, evictionThreads);
     }
 }

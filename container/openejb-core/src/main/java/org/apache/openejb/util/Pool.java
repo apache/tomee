@@ -31,6 +31,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -43,6 +44,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
  * Any successful pop() call requires a corresponding push() or discard() call.
@@ -60,7 +62,7 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 @SuppressWarnings("StatementWithEmptyBody")
 public class Pool<T> {
 
-    private final LinkedList<Entry> pool = new LinkedList<Entry>();
+    private final LinkedList<Entry> pool = new LinkedList<>();
     private final Semaphore instances;
     private final Semaphore available;
     private final Semaphore minimum;
@@ -73,7 +75,8 @@ public class Pool<T> {
     private final AtomicInteger poolVersion = new AtomicInteger();
 
     private final Supplier<T> supplier;
-    private final AtomicReference<ScheduledExecutorService> scheduler = new AtomicReference<ScheduledExecutorService>();
+    private final AtomicReference<ScheduledExecutorService> scheduler = new AtomicReference<>();
+    private final AtomicReference<ScheduledFuture<?>> future = new AtomicReference<>();
     private final Sweeper sweeper;
 
     private final CountingLatch out = new CountingLatch();
@@ -127,21 +130,36 @@ public class Pool<T> {
     }
 
     public Pool start() {
-        final ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1, new SchedulerThreadFactory());
-
-        if (this.scheduler.compareAndSet(null, scheduledExecutorService)) {
-            this.scheduler.get().scheduleAtFixedRate(sweeper, 0, this.sweepInterval, MILLISECONDS);
+        ScheduledExecutorService scheduledExecutorService = this.scheduler.get();
+        boolean createdSES = scheduledExecutorService == null;
+        if (scheduledExecutorService == null) {
+            scheduledExecutorService = Executors.newScheduledThreadPool(1, new SchedulerThreadFactory());
+            if (!this.scheduler.compareAndSet(null, scheduledExecutorService)) {
+                scheduledExecutorService.shutdownNow();
+                scheduledExecutorService = this.scheduler.get();
+                createdSES = false;
+            }
         }
+        if (this.future.compareAndSet(null, scheduledExecutorService.scheduleAtFixedRate(sweeper, 0, this.sweepInterval, MILLISECONDS)) && !createdSES) {
+            // we don't want to shutdown it, we'll just stop the task
+            this.scheduler.set(null);
+        }
+        System.out.println(sweepInterval + " " + createdSES);
         return this;
     }
 
     public void stop() {
+        final ScheduledFuture<?> future = this.future.get();
+        if (future != null && !future.isDone() && !future.isCancelled() && !future.cancel(false)) {
+            Logger.getLogger(Pool.class.getName()).log(Level.WARNING, "Pool scheduler task termination timeout expired");
+        }
+
         final ScheduledExecutorService scheduler = this.scheduler.get();
         if (scheduler != null && this.scheduler.compareAndSet(scheduler, null)) {
             scheduler.shutdown();
             try {
-                if (!scheduler.awaitTermination(10000, MILLISECONDS)) {
-                    Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Pool scheduler termination timeout expired");
+                if (!scheduler.awaitTermination(10, SECONDS)) { // should last something like 0s max since we killed the task
+                    Logger.getLogger(Pool.class.getName()).log(Level.WARNING, "Pool scheduler termination timeout expired");
                 }
             } catch (final InterruptedException e) {
                 //Ignore
@@ -150,7 +168,7 @@ public class Pool<T> {
     }
 
     public boolean running() {
-        return this.scheduler.get() != null;
+        return this.future.get() != null;
     }
 
     private Executor createExecutor() {
@@ -1093,6 +1111,7 @@ public class Pool<T> {
         private Duration interval = new Duration(5 * 60, TimeUnit.SECONDS);
         private Supplier<T> supplier;
         private Executor executor;
+        private ScheduledExecutorService scheduledExecutorService;
         private boolean replaceAged;
         private boolean replaceFlushed;
         private boolean garbageCollection = true;
@@ -1204,9 +1223,17 @@ public class Pool<T> {
             this.executor = executor;
         }
 
+        public void setScheduledExecutor(final ScheduledExecutorService scheduledExecutorService) {
+            this.scheduledExecutorService = scheduledExecutorService;
+        }
+
         public Pool<T> build() {
             //noinspection unchecked
-            return new Pool(max, min, strict, maxAge.getTime(MILLISECONDS), idleTimeout.getTime(MILLISECONDS), interval.getTime(MILLISECONDS), executor, supplier, replaceAged, maxAgeOffset, this.garbageCollection, replaceFlushed);
+            final Pool pool = new Pool(max, min, strict, maxAge.getTime(MILLISECONDS), idleTimeout.getTime(MILLISECONDS), interval.getTime(MILLISECONDS), executor, supplier, replaceAged, maxAgeOffset, this.garbageCollection, replaceFlushed);
+            if (scheduledExecutorService != null) {
+                pool.scheduler.set(scheduledExecutorService);
+            }
+            return pool;
         }
     }
 
