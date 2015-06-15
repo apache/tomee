@@ -144,7 +144,6 @@ public class Pool<T> {
             // we don't want to shutdown it, we'll just stop the task
             this.scheduler.set(null);
         }
-        System.out.println(sweepInterval + " " + createdSES);
         return this;
     }
 
