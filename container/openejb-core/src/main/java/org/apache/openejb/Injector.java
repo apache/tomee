@@ -64,19 +64,19 @@ public class Injector {
     }
 
     private static <T> void cdiInjections(final BeanContext context, final T object) {
-        ThreadContext oldContext = null;
-        if (context != null) {
-            final ThreadContext callContext = new ThreadContext(context, null, Operation.INJECTION);
-            oldContext = ThreadContext.enter(callContext);
+        if (context.getWebBeansContext() == null) {
+            return;
         }
+
+        ThreadContext oldContext = null;
+        final ThreadContext callContext = new ThreadContext(context, null, Operation.INJECTION);
+        oldContext = ThreadContext.enter(callContext);
         try {
             OWBInjector.inject(context.getWebBeansContext().getBeanManagerImpl(), object, null);
         } catch (final Throwable t) {
             logger().warning("an error occured while injecting the class '" + object.getClass().getName() + "': " + t.getMessage());
         } finally {
-            if (context != null) {
-                ThreadContext.exit(oldContext);
-            }
+            ThreadContext.exit(oldContext);
         }
     }
 

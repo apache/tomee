@@ -55,6 +55,9 @@ public class OpenEJBInjectionEnricher implements TestEnricher {
             final List<AppContext> appContexts = SystemInstance.get().getComponent(ContainerSystem.class).getAppContexts();
             final Class<?> clazz = testInstance.getClass();
             for (final AppContext appContext : appContexts) {
+                if (appContext.getWebBeansContext() == null) {
+                    continue;
+                }
                 try {
                     final BeanManager bm = appContext.getWebBeansContext().getBeanManagerImpl();
                     final AnnotatedType<?> at = bm.createAnnotatedType(clazz);

@@ -710,7 +710,7 @@ public class ApplicationComposers {
         appInfo = SystemInstance.get().getComponent(ConfigurationFactory.class).configureApplication(appModule);
         appContext = assembler.createApplication(appInfo);
 
-        if (mockCdiContexts()) {
+        if (mockCdiContexts() && appContext.getWebBeansContext() != null) {
             ScopeHelper.startContexts(appContext.getWebBeansContext().getContextsService(), servletContext, session);
         }
 
@@ -899,11 +899,16 @@ public class ApplicationComposers {
 
             Throwable error = null;
             try {
-                OWBInjector.inject(appContext.getBeanManager(), inputTestInstance, null);
+                if (appContext.getBeanManager() != null) {
+                    OWBInjector.inject(appContext.getBeanManager(), inputTestInstance, null);
+                }
             } catch (final Throwable t) {
                 error = t;
             }
             for (final WebContext web : appContext.getWebContexts()) {
+                if (web.getWebBeansContext() == null) {
+                    continue;
+                }
                 try {
                     OWBInjector.inject(web.getWebBeansContext().getBeanManagerImpl(), inputTestInstance, null);
                     // hourra, we enriched correctly the test then cleanup error state and quit
@@ -1036,7 +1041,7 @@ public class ApplicationComposers {
     }
 
     public void stopApplication() throws NamingException {
-        if (appContext != null) {
+        if (appContext != null && appContext.getWebBeansContext() != null) {
             final ContextsService contextsService = appContext.getWebBeansContext().getContextsService();
             // No need to stop the ConversationContext manually as it gets stored inside the SessionContext as Bean
             contextsService.endContext(SessionScoped.class, session);
@@ -1063,7 +1068,7 @@ public class ApplicationComposers {
 
         globalJndiEntries.clear();
 
-        if (mockCdiContexts() && appContext != null) {
+        if (mockCdiContexts() && appContext != null && appContext.getWebBeansContext() != null) {
             try {
                 ScopeHelper.stopContexts(appContext.getWebBeansContext().getContextsService(), servletContext, session);
             } catch (final Exception e) {

@@ -351,29 +351,32 @@ public class OpenEJBContextConfig extends ContextConfig {
             }
         }
 
-        {
-            final FilterDef filter = new FilterDef();
-            filter.setAsyncSupported("true");
-            filter.setDescription("OpenEJB CDI Filter - to propagate @RequestScoped in async tasks");
-            filter.setDisplayName("OpenEJB CDI");
-            filter.setFilterClass(WebBeansFilter.class.getName());
-            filter.setFilterName(WebBeansFilter.class.getName());
-            webXml.addFilter(filter);
+        final AppInfo app = info.app();
+        if (app == null || !"false".equals(app.properties.getProperty("openejb.cdi.activated"))) {
+            {
+                final FilterDef filter = new FilterDef();
+                filter.setAsyncSupported("true");
+                filter.setDescription("OpenEJB CDI Filter - to propagate @RequestScoped in async tasks");
+                filter.setDisplayName("OpenEJB CDI");
+                filter.setFilterClass(WebBeansFilter.class.getName());
+                filter.setFilterName(WebBeansFilter.class.getName());
+                webXml.addFilter(filter);
 
-            final FilterMap mapping = new FilterMap();
-            mapping.setFilterName(filter.getFilterName());
-            mapping.addURLPattern("/*");
-            webXml.addFilterMapping(mapping);
-        }
+                final FilterMap mapping = new FilterMap();
+                mapping.setFilterName(filter.getFilterName());
+                mapping.addURLPattern("/*");
+                webXml.addFilterMapping(mapping);
+            }
 
-        {
-            final FilterDef filter = new FilterDef();
-            filter.setAsyncSupported("true");
-            filter.setDescription("CDI Conversation Filter");
-            filter.setDisplayName("CDI Conversation Filter");
-            filter.setFilterName("CDI Conversation Filter");
-            filter.setFilterClass(WebConversationFilter.class.getName());
-            webXml.addFilter(filter);
+            {
+                final FilterDef filter = new FilterDef();
+                filter.setAsyncSupported("true");
+                filter.setDescription("CDI Conversation Filter");
+                filter.setDisplayName("CDI Conversation Filter");
+                filter.setFilterName("CDI Conversation Filter");
+                filter.setFilterClass(WebConversationFilter.class.getName());
+                webXml.addFilter(filter);
+            }
         }
 
         return webXml;

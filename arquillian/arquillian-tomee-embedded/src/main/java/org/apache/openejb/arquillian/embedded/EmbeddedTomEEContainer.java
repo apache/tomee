@@ -196,7 +196,7 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
 
     private void startCdiContexts(final String name) {
         final WebBeansContext wbc = this.container.getAppContexts(name).getWebBeansContext();
-        if (wbc.getBeanManagerImpl().isInUse()) {
+        if (wbc != null && wbc.getBeanManagerImpl().isInUse()) {
             final MockHttpSession session = new MockHttpSession();
             wbc.getContextsService().startContext(RequestScoped.class, null);
             wbc.getContextsService().startContext(SessionScoped.class, session);
@@ -211,7 +211,7 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
             final HttpSession session = SESSIONS.remove(name);
             if (session != null) {
                 final WebBeansContext wbc = container.getAppContexts(container.getInfo(name).appId).getWebBeansContext();
-                if (wbc.getBeanManagerImpl().isInUse()) {
+                if (wbc != null && wbc.getBeanManagerImpl().isInUse()) {
                     wbc.getContextsService().startContext(RequestScoped.class, null);
                     wbc.getContextsService().startContext(SessionScoped.class, session);
                     wbc.getContextsService().startContext(ConversationScoped.class, null);

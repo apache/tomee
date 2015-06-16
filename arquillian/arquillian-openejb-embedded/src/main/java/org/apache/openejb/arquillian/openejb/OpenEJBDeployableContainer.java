@@ -334,7 +334,7 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
                 final ServletContext appServletContext = new MockServletContext();
                 final HttpSession appSession = new MockHttpSession();
 
-                if (configuration.isStartDefaultScopes()) {
+                if (configuration.isStartDefaultScopes() && appCtx.getWebBeansContext() != null) {
                     startContexts(appCtx.getWebBeansContext().getContextsService(), appServletContext, appSession);
                 }
 
@@ -375,7 +375,7 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
             if (!configuration.isSingleDeploymentByArchiveName(archive.getName())) {
                 assembler.destroyApplication(info.get().path);
             }
-            if (configuration.isStartDefaultScopes()) {
+            if (configuration.isStartDefaultScopes() && ctx.getWebBeansContext() != null) {
                 stopContexts(ctx.getWebBeansContext().getContextsService(), servletContext.get(), session.get());
             }
         } catch (final Exception e) {

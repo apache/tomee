@@ -76,11 +76,14 @@ public final class OpenEJBEnricher {
         final BeanContext context = SystemInstance.get().getComponent(ContainerSystem.class).getBeanContext(ctx.getId() + "_" + testInstance.getClass().getName());
 
         final WebBeansContext appWBC = ctx.getWebBeansContext();
-        final BeanManagerImpl bm = appWBC.getBeanManagerImpl();
+        final BeanManagerImpl bm = appWBC == null ? null : appWBC.getBeanManagerImpl();
 
         boolean ok = false;
         for (final WebContext web : ctx.getWebContexts()) {
             final WebBeansContext webBeansContext = web.getWebBeansContext();
+            if (webBeansContext == null) {
+                continue;
+            }
             final BeanManagerImpl webAppBm = webBeansContext.getBeanManagerImpl();
             if (webBeansContext != appWBC && webAppBm.isInUse()) {
                 try {
@@ -130,6 +133,9 @@ public final class OpenEJBEnricher {
 
     private static BeanManagerImpl findBeanManager(final AppContext ctx) {
         if (ctx != null) {
+            if (ctx.getWebBeansContext() == null) {
+                return null;
+            }
             return ctx.getWebBeansContext().getBeanManagerImpl();
         }
 
@@ -152,13 +158,15 @@ public final class OpenEJBEnricher {
         final List<BeanManager> beanManagers = new ArrayList<>();
         final BeanManager bm = findBeanManager(appContext);
         if (bm != null) {
-            if (appContext != null) { // then add web bean manager first, TODO: selection of the webapp containing the test?
-                for (final WebContext web : appContext.getWebContexts()) {
-                    final WebBeansContext webBeansContext = web.getWebBeansContext();
-                    final BeanManagerImpl webAppBm = webBeansContext.getBeanManagerImpl();
-                    if (bm != webAppBm) {
-                        beanManagers.add(webAppBm);
-                    }
+            // then add web bean manager first, TODO: selection of the webapp containing the test?
+            for (final WebContext web : appContext.getWebContexts()) {
+                final WebBeansContext webBeansContext = web.getWebBeansContext();
+                if (webBeansContext == null) {
+                    continue;
+                }
+                final BeanManagerImpl webAppBm = webBeansContext.getBeanManagerImpl();
+                if (bm != webAppBm) {
+                    beanManagers.add(webAppBm);
                 }
             }
             beanManagers.add(bm);

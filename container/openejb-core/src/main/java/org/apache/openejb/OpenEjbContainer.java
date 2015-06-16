@@ -118,8 +118,8 @@ public final class OpenEjbContainer extends EJBContainer {
     private final Options options;
     private final OpenEjbContainer.GlobalContext globalJndiContext;
     private final WebBeansContext webBeanContext;
-    private final ServletContext servletContext;
-    private final HttpSession session;
+    private volatile ServletContext servletContext;
+    private volatile HttpSession session;
 
     private OpenEjbContainer(final Map<?, ?> map, final AppContext appContext) {
         webBeanContext = appContext.getWebBeansContext();
@@ -132,12 +132,14 @@ public final class OpenEjbContainer extends EJBContainer {
 
         startNetworkServices();
 
-        servletContext = new MockServletContext();
-        session = new MockHttpSession();
-        try {
-            startContexts(webBeanContext.getContextsService(), servletContext, session);
-        } catch (final Exception e) {
-            logger().warning("can't start all CDI contexts", e);
+        if (webBeanContext != null) {
+            servletContext = new MockServletContext();
+            session = new MockHttpSession();
+            try {
+                startContexts(webBeanContext.getContextsService(), servletContext, session);
+            } catch (final Exception e) {
+                logger().warning("can't start all CDI contexts", e);
+            }
         }
     }
 
@@ -178,10 +180,12 @@ public final class OpenEjbContainer extends EJBContainer {
             }
         }
 
-        try {
-            stopContexts(webBeanContext.getContextsService(), servletContext, session);
-        } catch (final Exception e) {
-            logger().warning("can't stop all CDI contexts", e);
+        if (webBeanContext != null) {
+            try {
+                stopContexts(webBeanContext.getContextsService(), servletContext, session);
+            } catch (final Exception e) {
+                logger().warning("can't stop all CDI contexts", e);
+            }
         }
 
         logger().info("Destroying OpenEJB container");

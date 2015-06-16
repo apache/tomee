@@ -65,6 +65,7 @@ import org.apache.tomee.common.ResourceFactory;
 import org.apache.tomee.common.SystemComponentFactory;
 import org.apache.tomee.common.UserTransactionFactory;
 import org.apache.tomee.common.WsFactory;
+import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.InjectableBeanManager;
 import org.omg.CORBA.ORB;
 
@@ -273,7 +274,10 @@ public class TomcatJndiBuilder {
             if (webContext != null && webContext.getWebbeansContext() != null) {
                 comp.rebind("BeanManager", new InjectableBeanManager(webContext.getWebbeansContext().getBeanManagerImpl()));
             } else if (contextInfo != null) {
-                comp.rebind("BeanManager", new InjectableBeanManager(cs.getAppContext(contextInfo.appInfo.appId).getWebBeansContext().getBeanManagerImpl()));
+                final WebBeansContext webBeansContext = cs.getAppContext(contextInfo.appInfo.appId).getWebBeansContext();
+                if (webBeansContext != null) { // can be null if cdi is inhibited
+                    comp.rebind("BeanManager", new InjectableBeanManager(webBeansContext.getBeanManagerImpl()));
+                }
             }
         } catch (final Exception ignored) {
             ignored.printStackTrace();

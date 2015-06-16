@@ -886,11 +886,13 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 propagateApplicationExceptions(appInfo, classLoader, allDeployments);
             }
 
-            if ("true".equalsIgnoreCase(appInfo.properties.getProperty("openejb.cdi.activated", "true"))) {
+            if (shouldStartCdi(appInfo)) {
                 new CdiBuilder().build(appInfo, appContext, allDeployments);
                 ensureWebBeansContext(appContext);
                 appJndiContext.bind("app/BeanManager", appContext.getBeanManager());
                 appContext.getBindings().put("app/BeanManager", appContext.getBeanManager());
+            } else { // ensure we can reuse it in tomcat to remove OWB filters
+                appInfo.properties.setProperty("openejb.cdi.activated", "false");
             }
 
             // now cdi is started we can try to bind real validator factory and validator
@@ -1005,9 +1007,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             logger.info("createApplication.success", appInfo.path);
 
             return appContext;
-        } catch (final ValidationException ve) {
-            throw ve;
-        } catch (final DeploymentException ve) {
+        } catch (final ValidationException | DeploymentException ve) {
             throw ve;
         } catch (final Throwable t) {
             try {
@@ -1019,7 +1019,22 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
     }
 
+    private boolean shouldStartCdi(final AppInfo appInfo) {
+        if (!"true".equalsIgnoreCase(appInfo.properties.getProperty("openejb.cdi.activated", "true"))) {
+            return false;
+        }
+        for (final EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
+            if (ejbJarInfo.beans != null && !ejbJarInfo.beans.bdas.isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void validateCdiResourceProducers(final AppContext appContext, final AppInfo info) {
+        if (appContext.getWebBeansContext() == null) {
+            return;
+        }
         // validate @Produces @Resource/@PersistenceX/@EJB once all is bound to JNDI - best case - or with our model
         if (appContext.isStandaloneModule() && !appContext.getProperties().containsKey("openejb.cdi.skip-resource-validation")) {
             final Map<String, Object> bindings =
@@ -1159,7 +1174,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
                         try {
                             // wire up CDI
-                            if (appContext != null) {
+                            if (appContext != null && appContext.getWebBeansContext() != null) {
                                 final BeanManagerImpl beanManager = appContext.getWebBeansContext().getBeanManagerImpl();
                                 if (beanManager.isInUse()) {
                                     creationalContext = beanManager.createCreationalContext(null);
@@ -1614,10 +1629,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         if (webBeansContext == null) {
             webBeansContext = appContext.getWebBeansContext();
         }else{
-            if(null == appContext.getWebBeansContext()){
+            if (null == appContext.getWebBeansContext()){
                 appContext.setWebBeansContext(webBeansContext);
-        }
-
+            }
             return;
         }
 
