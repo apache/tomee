@@ -31,5 +31,9 @@
 
   <properties>
     <profile-under-test>plus</profile-under-test>
+
+    <!-- cause mojarra only works with CDI for now -->
+    <skip.remote.plume>true</skip.remote.plume>
+    <skip.webapp.plume>true</skip.webapp.plume>
   </properties>
 </project>

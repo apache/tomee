@@ -223,8 +223,8 @@
                         props['skip.embedded'] = 'false'
                         props['skip.remote.plus'] = 'false'
                         props['skip.webapp.plus'] = 'false'
-                        props['skip.remote.plume'] = 'false'
-                        props['skip.webapp.plume'] = 'false'
+                        props['skip.remote.plume'] = props['skip.remote.plume'] ? props['skip.remote.plume'] : 'false'
+                        props['skip.webapp.plume'] = props['skip.webapp.plume'] ? props['skip.webapp.plume'] : 'false'
                       }
                     }
 
