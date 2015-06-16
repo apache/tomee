@@ -140,7 +140,11 @@ public class Pool<T> {
                 createdSES = false;
             }
         }
-        if (this.future.compareAndSet(null, scheduledExecutorService.scheduleAtFixedRate(sweeper, 0, this.sweepInterval, MILLISECONDS)) && !createdSES) {
+        final ScheduledFuture<?> scheduledFuture = scheduledExecutorService.scheduleAtFixedRate(sweeper, 0, this.sweepInterval, MILLISECONDS);
+        if (!this.future.compareAndSet(null, scheduledFuture)) {
+            scheduledFuture.cancel(true);
+        }
+        if (!createdSES) {
             // we don't want to shutdown it, we'll just stop the task
             this.scheduler.set(null);
         }

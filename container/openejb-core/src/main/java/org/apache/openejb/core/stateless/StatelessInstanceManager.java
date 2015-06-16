@@ -65,6 +65,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -100,6 +101,9 @@ public class StatelessInstanceManager {
         this.closeTimeout = closeTimeout;
         this.poolBuilder = poolBuilder;
         this.scheduledExecutor = ses;
+        if (ScheduledThreadPoolExecutor.class.isInstance(ses)) {
+            ScheduledThreadPoolExecutor.class.cast(ses).setRemoveOnCancelPolicy(true);
+        }
 
         if (accessTimeout.getUnit() == null) {
             accessTimeout.setUnit(TimeUnit.MILLISECONDS);
