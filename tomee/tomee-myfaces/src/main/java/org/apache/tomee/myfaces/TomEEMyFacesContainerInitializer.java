@@ -27,6 +27,7 @@ import org.apache.myfaces.webapp.AbstractFacesInitializer;
 import org.apache.myfaces.webapp.StartupServletContextListener;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.log.RemoveLogMessage;
+import org.apache.openejb.util.URLs;
 
 import javax.faces.webapp.FacesServlet;
 import javax.servlet.ServletContainerInitializer;
@@ -166,8 +167,8 @@ public class TomEEMyFacesContainerInitializer implements ServletContainerInitial
             // remove our internal faces-config.xml
             final Iterator<URL> it = metaInfFacesConfigUrls.iterator();
             while (it.hasNext()) {
-                final String next = it.next().toExternalForm().replace(File.separator, "/");
-                if (next.contains("/openwebbeans-jsf-") || next.contains("/openwebbeans-el22-")) {
+                final URL next = it.next();
+                if (isOwb(next)) {
                     it.remove();
                 }
             }
@@ -176,6 +177,11 @@ public class TomEEMyFacesContainerInitializer implements ServletContainerInitial
         } catch (final Exception e) {
             return false;
         }
+    }
+
+    public static boolean isOwb(final URL url) {
+        final String jar = URLs.toFile(url).getName();
+        return jar.startsWith("openwebbeans-jsf-") || jar.startsWith("openwebbeans-el22-");
     }
 
     private static Object get(final Class<?> clazz, final Object facade) throws Exception {

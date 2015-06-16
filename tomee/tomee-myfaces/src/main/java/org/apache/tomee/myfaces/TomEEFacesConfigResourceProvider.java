@@ -21,6 +21,7 @@ import org.apache.myfaces.shared.util.ClassUtils;
 import org.apache.openejb.config.NewLoaderLogic;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.util.URLs;
+import org.apache.webbeans.config.WebBeansContext;
 import org.apache.xbean.finder.UrlSet;
 
 import javax.faces.context.ExternalContext;
@@ -33,6 +34,7 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,7 +49,7 @@ public class TomEEFacesConfigResourceProvider extends DefaultFacesConfigResource
     private static final String META_INF_PREFIX = "META-INF/";
     private static final String FACES_CONFIG_SUFFIX = ".faces-config.xml";
     private static final String FACES_CONFIG_IMPLICIT = "META-INF/faces-config.xml";
-    private static final Map<ClassLoader, Collection<URL>> CACHED_RESOURCES = new HashMap<ClassLoader, Collection<URL>>();
+    private static final Map<ClassLoader, Collection<URL>> CACHED_RESOURCES = new HashMap<>();
 
     @Override
     public Collection<URL> getMetaInfConfigurationResources(final ExternalContext notUsedNullIsPassedFromInitializer) throws IOException {
@@ -55,10 +57,10 @@ public class TomEEFacesConfigResourceProvider extends DefaultFacesConfigResource
 
         Collection<URL> urlSet = CACHED_RESOURCES.get(loader);
         if (urlSet != null) {
-            return new HashSet<URL>(urlSet); // copy it since it can be modified then
+            return new HashSet<>(urlSet); // copy it since it can be modified then
         }
 
-        urlSet  = new HashSet<URL>();
+        urlSet  = new HashSet<>();
 
         final Enumeration<URL> resources = loader.getResources(FACES_CONFIG_IMPLICIT);
         while (resources.hasMoreElements()) {
@@ -68,7 +70,7 @@ public class TomEEFacesConfigResourceProvider extends DefaultFacesConfigResource
         final List<URL> urls = NewLoaderLogic.applyBuiltinExcludes(new UrlSet(loader)).getUrls();
 
         final ExecutorService es = Executors.newFixedThreadPool(2 * Runtime.getRuntime().availableProcessors() + 1);
-        final Collection<Future<Set<URL>>> futures = new ArrayList<Future<Set<URL>>>(urls.size());
+        final Collection<Future<Set<URL>>> futures = new ArrayList<>(urls.size());
 
         // Scan files inside META-INF ending with .faces-config.xml
         for (final URL url : urls) {
@@ -80,7 +82,7 @@ public class TomEEFacesConfigResourceProvider extends DefaultFacesConfigResource
             futures.add(es.submit(new Callable<Set<URL>>() {
                 @Override
                 public Set<URL> call() throws Exception {
-                    final Set<URL> currentSet = new HashSet<URL>();
+                    final Set<URL> currentSet = new HashSet<>();
 
                     if (!file.isDirectory()) { // browse all entries to see if we have a matching file
                         final Enumeration<JarEntry> e = new JarFile(file).entries();
@@ -123,8 +125,22 @@ public class TomEEFacesConfigResourceProvider extends DefaultFacesConfigResource
             }
         }
 
+        try {
+            if (WebBeansContext.currentInstance() == null) {
+                final Iterator<URL> toFilter = urlSet.iterator();
+                while (toFilter.hasNext()) {
+                    final URL url = toFilter.next();
+                    if (TomEEMyFacesContainerInitializer.isOwb(url)) {
+                        toFilter.remove();
+                    }
+                }
+            }
+        } catch (final Throwable th) {
+            // no-op
+        }
+
         CACHED_RESOURCES.put(loader, urlSet);
-        return new HashSet<URL>(urlSet);
+        return new HashSet<>(urlSet);
     }
 
     private ClassLoader getClassLoader() {
