@@ -21,6 +21,7 @@ import org.apache.openejb.util.reflection.Reflections;
 import org.apache.webbeans.component.BuiltInOwbBean;
 import org.apache.webbeans.component.ExtensionBean;
 import org.apache.webbeans.component.OwbBean;
+import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.context.creational.CreationalContextImpl;
 import org.apache.webbeans.event.EventMetadataImpl;
@@ -68,7 +69,10 @@ public class WebappBeanManager extends BeanManagerImpl {
     public void fireEvent(final Object event, final EventMetadataImpl metadata, final boolean isLifecycleEvent) {
         getNotificationManager().fireEvent(event, metadata, isLifecycleEvent);
         if (isEvent(event)) {
-            getParentBm().getNotificationManager().fireEvent(event, metadata, isLifecycleEvent);
+            final BeanManagerImpl parentBm = getParentBm();
+            if (parentBm != null) {
+                parentBm.getNotificationManager().fireEvent(event, metadata, isLifecycleEvent);
+            }
         }
     }
 
@@ -90,7 +94,10 @@ public class WebappBeanManager extends BeanManagerImpl {
         set.addAll(getNotificationManager().resolveObservers(event, metadata, false));
 
         if (isEvent(event)) {
-            set.addAll(getParentBm().getNotificationManager().resolveObservers(event, metadata, false));
+            final BeanManagerImpl parentBm = getParentBm();
+            if (parentBm != null) {
+                set.addAll(parentBm.getNotificationManager().resolveObservers(event, metadata, false));
+            }
         } // else nothing since extensions are loaded by classloader so we already have it
 
         return set;
@@ -103,18 +110,22 @@ public class WebappBeanManager extends BeanManagerImpl {
             return null;
         }
 
+        final BeanManagerImpl parentBm = getParentBm();
         final Boolean existing = USE_PARENT_BM.get();
         if (existing != null && existing) { // shortcut the whole logic to keep the threadlocal set up correctly
-            return getParentBm().getInjectableReference(injectionPoint, ctx);
+            if (parentBm == null) {
+                return null;
+            }
+            return parentBm.getInjectableReference(injectionPoint, ctx);
         }
 
         // we can do it cause there is caching but we shouldn't - easy way to overide OWB actually
         final Bean<Object> injectedBean = (Bean<Object>)getInjectionResolver().getInjectionPointBean(injectionPoint);
         try {
-            if (injectedBean != null && injectedBean == getParentBm().getInjectionResolver().getInjectionPointBean(injectionPoint)) {
+            if (parentBm != null && injectedBean != null && injectedBean == parentBm.getInjectionResolver().getInjectionPointBean(injectionPoint)) {
                 USE_PARENT_BM.set(true);
                 try {
-                    return getParentBm().getInjectableReference(injectionPoint, ctx);
+                    return parentBm.getInjectableReference(injectionPoint, ctx);
                 } finally {
                     USE_PARENT_BM.remove();
                 }
@@ -268,7 +279,8 @@ public class WebappBeanManager extends BeanManagerImpl {
     }
 
     public BeanManagerImpl getParentBm() {
-        return webappCtx.getParent().getBeanManagerImpl();
+        final WebBeansContext parent = webappCtx.getParent();
+        return parent != null ? parent.getBeanManagerImpl() : null;
     }
 
     @Override
@@ -304,7 +316,7 @@ public class WebappBeanManager extends BeanManagerImpl {
     @Override
     public Bean<?> getPassivationCapableBean(final String id) {
         final Bean<?> bean = super.getPassivationCapableBean(id);
-        if (bean == null) {
+        if (bean == null && getParentBm() != null) {
             return getParentBm().getPassivationCapableBean(id);
         }
         return bean;
@@ -318,9 +330,12 @@ public class WebappBeanManager extends BeanManagerImpl {
 
     private Set<Bean<?>> mergeBeans() {
         final Set<Bean<?>> allBeans = new CopyOnWriteArraySet<>(); // override parent one with a "webapp" bean list
-        for (final Bean<?> bean : getParentBm().getBeans()) {
-            if (filter.accept(bean)) {
-                allBeans.add(bean);
+        final BeanManagerImpl parentBm = getParentBm();
+        if (parentBm != null) {
+            for (final Bean<?> bean : parentBm.getBeans()) {
+                if (filter.accept(bean)) {
+                    allBeans.add(bean);
+                }
             }
         }
         allBeans.addAll(super.getBeans());

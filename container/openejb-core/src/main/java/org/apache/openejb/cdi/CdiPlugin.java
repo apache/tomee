@@ -103,10 +103,18 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
 
     public void setWebBeansContext(final WebBeansContext webBeansContext) {
         this.webBeansContext = webBeansContext;
+        if (webBeansContext == null) {
+            return;
+        }
         if (!WebappWebBeansContext.class.isInstance(webBeansContext)) {
             cacheProxies = new ConcurrentHashMap<Contextual<?>, Object>();
         } else { // share cache of proxies between the whole app otherwise hard to share an EJB between a webapp and the lib part of the app
-            cacheProxies = CdiPlugin.class.cast(WebappWebBeansContext.class.cast(webBeansContext).getParent().getPluginLoader().getEjbPlugin()).cacheProxies;
+            final WebBeansContext parent = WebappWebBeansContext.class.cast(webBeansContext).getParent();
+            if (parent != null) {
+                cacheProxies = CdiPlugin.class.cast(parent.getPluginLoader().getEjbPlugin()).cacheProxies;
+            } else {
+                cacheProxies = new ConcurrentHashMap<Contextual<?>, Object>();
+            }
         }
     }
 
