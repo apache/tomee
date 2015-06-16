@@ -83,6 +83,9 @@ public class EndWebBeansListener implements ServletContextListener, ServletReque
      */
     @Override
     public void sessionDestroyed(final HttpSessionEvent event) {
+        if (contextsService == null) {
+            return;
+        }
         WebBeansListenerHelper.ensureRequestScope(contextsService, this);
     }
 
@@ -107,6 +110,9 @@ public class EndWebBeansListener implements ServletContextListener, ServletReque
 
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
+        if (contextsService == null) {
+            return;
+        }
         WebBeansListenerHelper.ensureRequestScope(contextsService, this);
     }
 }

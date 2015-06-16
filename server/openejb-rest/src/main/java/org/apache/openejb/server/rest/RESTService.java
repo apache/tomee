@@ -144,7 +144,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
                     try {
                         appClazz = classLoader.loadClass(app);
                         application = Application.class.cast(appClazz.newInstance());
-                        if (owbCtx.getBeanManagerImpl().isInUse()) {
+                        if (owbCtx != null && owbCtx.getBeanManagerImpl().isInUse()) {
                             try {
                                 webContext.inject(application);
                             } catch (final Exception e) {

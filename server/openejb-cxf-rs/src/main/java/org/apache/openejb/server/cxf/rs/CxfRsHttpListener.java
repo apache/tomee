@@ -887,7 +887,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         if (comparatorClass == null) {
             comparator = DefaultProviderComparator.INSTANCE;
         } else {
-            final BeanManagerImpl bm = ctx.getBeanManagerImpl();
+            final BeanManagerImpl bm = ctx == null ? null : ctx.getBeanManagerImpl();
             if (bm != null && bm.isInUse()) {
                 try {
                     final Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(comparatorClass);

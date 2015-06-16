@@ -75,9 +75,9 @@ public abstract class CdiResourceProvider implements ResourceProvider {
         postConstructMethod = ResourceUtils.findPostConstructMethod(clazz);
         preDestroyMethod = ResourceUtils.findPreDestroyMethod(clazz);
 
-        bm = webbeansContext.getBeanManagerImpl();
+        bm = webbeansContext == null ? null : webbeansContext.getBeanManagerImpl();
         this.clazz = clazz;
-        if (bm.isInUse()) {
+        if (bm != null && bm.isInUse()) {
             try {
                 final Set<Bean<?>> beans = bm.getBeans(clazz);
                 bean = bm.resolve(beans);
@@ -331,13 +331,15 @@ public abstract class CdiResourceProvider implements ResourceProvider {
             injector = new InjectionProcessor<>(instance, new ArrayList<>(injections), InjectionProcessor.unwrap(context));
             instance = injector.createInstance();
 
-            final BeanManager bm = webbeansContext.getBeanManagerImpl();
-            creationalContext = bm.createCreationalContext(null);
+            final BeanManager bm = webbeansContext == null ? null : webbeansContext.getBeanManagerImpl();
+            if (bm != null) {
+                creationalContext = bm.createCreationalContext(null);
 
-            try {
-                OWBInjector.inject(bm, instance, creationalContext);
-            } catch (final Exception e) {
-                // ignored
+                try {
+                    OWBInjector.inject(bm, instance, creationalContext);
+                } catch (final Exception e) {
+                    // ignored
+                }
             }
 
             // injector.postConstruct(); // it doesn't know it
