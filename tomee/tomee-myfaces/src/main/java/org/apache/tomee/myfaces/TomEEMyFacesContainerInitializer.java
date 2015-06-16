@@ -33,7 +33,6 @@ import javax.faces.webapp.FacesServlet;
 import javax.servlet.ServletContainerInitializer;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import java.io.File;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.Arrays;
