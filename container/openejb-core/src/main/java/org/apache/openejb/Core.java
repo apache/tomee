@@ -27,55 +27,6 @@ import java.util.concurrent.Semaphore;
  */
 public class Core {
     static {
-        final String[] classes = {
-            "org.slf4j.LoggerFactory",
-            "org.slf4j.impl.StaticLoggerBinder",
-
-            "org.apache.openejb.config.sys.JaxbJavaee",
-            "org.apache.bval.jsr.ApacheValidationProvider",
-            "org.apache.bval.jsr.ApacheValidatorFactory",
-            "org.apache.bval.jsr.ConstraintAnnotationAttributes",
-            "org.apache.bval.jsr.ConstraintDefaults",
-            "org.apache.bval.jsr.groups.GroupsComputer",
-            "org.apache.bval.jsr.xml.ValidationMappingParser",
-            "org.apache.bval.util.PrivilegedActions",
-            "org.apache.geronimo.transaction.manager.TransactionManagerImpl",
-            "org.apache.openejb.InterfaceType",
-            "org.apache.openejb.assembler.classic.Assembler",
-            "org.apache.openejb.assembler.classic.AssemblerTool",
-            "org.apache.openejb.cdi.CdiBuilder",
-            "org.apache.openejb.cdi.ThreadSingletonServiceImpl",
-            "org.apache.openejb.config.AppValidator",
-            "org.apache.openejb.config.AnnotationDeployer",
-            "org.apache.openejb.config.AutoConfig",
-            "org.apache.openejb.config.ConfigurationFactory",
-            "org.apache.openejb.config.MBeanDeployer",
-            "org.apache.openejb.config.PersistenceContextAnnFactory",
-            "org.apache.openejb.core.ServerFederation",
-            "org.apache.openejb.core.ivm.EjbHomeProxyHandler$1",
-            "org.apache.openejb.core.ivm.EjbHomeProxyHandler$MethodType",
-            "org.apache.openejb.core.managed.ManagedContainer$MethodType",
-            "org.apache.openejb.loader.FileUtils",
-            "org.apache.openejb.loader.IO",
-            "org.apache.openejb.loader.SystemInstance",
-            "org.apache.openejb.monitoring.StatsInterceptor",
-            "org.apache.openejb.persistence.JtaEntityManagerRegistry",
-            "org.apache.openejb.util.Join",
-            "org.apache.openejb.util.JuliLogStreamFactory",
-            "org.apache.openejb.util.LogCategory",
-            "org.apache.openejb.util.Messages",
-            "org.apache.openejb.util.SafeToolkit",
-            "org.apache.openejb.util.StringTemplate",
-            "org.apache.openejb.util.proxy.ProxyManager",
-            "org.apache.openjpa.enhance.PCRegistry",
-            "org.apache.openjpa.lib.util.Localizer",
-            "org.apache.webbeans.logger.WebBeansLoggerFacade",
-            "org.apache.xbean.naming.reference.SimpleReference",
-            "org.apache.xbean.propertyeditor.PropertyEditors",
-            "org.apache.xbean.propertyeditor.ReferenceIdentityMap",
-            "org.apache.xbean.recipe.ReflectionUtil"
-        };
-
         final Thread preloadMessages = new Thread() {
             @Override
             public void run() {
@@ -102,41 +53,104 @@ public class Core {
         final Semaphore semaphore = new Semaphore(0);
         final ClassLoader loader = OpenEjbContainer.class.getClassLoader();
 
-        try { // logging classes should be loaded before any other classes so do it here synchronously
-            Class.forName("org.apache.openejb.util.Logger", true, loader);
+        try {
+            Class.forName("org.apache.tomee.catalina.Warmup", true, loader);
+            // ok preloading already done
         } catch (final Throwable e) {
-            // no-op
-        }
+            try { // logging classes should be loaded before any other classes so do it here synchronously
+                Class.forName("org.apache.openejb.util.Logger", true, loader);
+            } catch (final Throwable ignored) {
+                // no-op
+            }
 
-        final int part = Math.max(1, (int) Math.round(classes.length * 1. / permits));
-        for (int i = 0; i < permits; i++) {
-            final int current = i;
-            final int offset = i * part;
-            final Thread thread = new Thread() {
-                @Override
-                public void run() {
-                    int max = offset + part;
-                    if (current == permits - 1) { // last one
-                        max = classes.length;
-                    }
+            final String[] classes = {
+                    "org.slf4j.LoggerFactory",
+                    "org.slf4j.impl.StaticLoggerBinder",
 
-                    for (int c = offset; c < max; c++) {
-                        try {
-                            Class.forName(classes[c], true, loader);
-                        } catch (final Throwable e) {
-                            // no-op
-                        }
-                    }
-                    semaphore.release();
-                }
+                    "org.apache.openejb.config.sys.JaxbJavaee",
+                    "org.apache.bval.jsr.ApacheValidationProvider",
+                    "org.apache.bval.jsr.ApacheValidatorFactory",
+                    "org.apache.bval.jsr.ConstraintAnnotationAttributes",
+                    "org.apache.bval.jsr.ConstraintDefaults",
+                    "org.apache.bval.jsr.groups.GroupsComputer",
+                    "org.apache.bval.jsr.xml.ValidationMappingParser",
+                    "org.apache.bval.util.PrivilegedActions",
+                    "org.apache.geronimo.transaction.manager.TransactionManagerImpl",
+                    "org.apache.openejb.InterfaceType",
+                    "org.apache.openejb.assembler.classic.Assembler",
+                    "org.apache.openejb.assembler.classic.AssemblerTool",
+                    "org.apache.openejb.cdi.CdiBuilder",
+                    "org.apache.openejb.cdi.ThreadSingletonServiceImpl",
+                    "org.apache.openejb.config.AppValidator",
+                    "org.apache.openejb.config.AnnotationDeployer",
+                    "org.apache.openejb.config.AutoConfig",
+                    "org.apache.openejb.config.ConfigurationFactory",
+                    "org.apache.openejb.config.MBeanDeployer",
+                    "org.apache.openejb.config.PersistenceContextAnnFactory",
+                    "org.apache.openejb.core.ServerFederation",
+                    "org.apache.openejb.core.ivm.EjbHomeProxyHandler$1",
+                    "org.apache.openejb.core.ivm.EjbHomeProxyHandler$MethodType",
+                    "org.apache.openejb.core.managed.ManagedContainer$MethodType",
+                    "org.apache.openejb.loader.FileUtils",
+                    "org.apache.openejb.loader.IO",
+                    "org.apache.openejb.loader.SystemInstance",
+                    "org.apache.openejb.monitoring.StatsInterceptor",
+                    "org.apache.openejb.persistence.JtaEntityManagerRegistry",
+                    "org.apache.openejb.util.Join",
+                    "org.apache.openejb.util.JuliLogStreamFactory",
+                    "org.apache.openejb.util.LogCategory",
+                    "org.apache.openejb.util.Messages",
+                    "org.apache.openejb.util.SafeToolkit",
+                    "org.apache.openejb.util.StringTemplate",
+                    "org.apache.openejb.util.proxy.ProxyManager",
+                    "org.apache.openjpa.enhance.PCRegistry",
+                    "org.apache.openjpa.lib.util.Localizer",
+                    "org.apache.webbeans.logger.WebBeansLoggerFacade",
+                    "org.apache.xbean.naming.reference.SimpleReference",
+                    "org.apache.xbean.propertyeditor.PropertyEditors",
+                    "org.apache.xbean.propertyeditor.ReferenceIdentityMap",
+                    "org.apache.xbean.recipe.ReflectionUtil"
             };
-            thread.setDaemon(true);
-            thread.start();
+
+            final int part = Math.max(1, (int) Math.round(classes.length * 1. / permits));
+            for (int i = 0; i < permits; i++) {
+                final int current = i;
+                final int offset = i * part;
+                final Thread thread = new Thread() {
+                    {
+                        setName("core-" + current);
+                    }
+
+                    @Override
+                    public void run() {
+                        int max = offset + part;
+                        if (current == permits - 1) { // last one
+                            max = classes.length;
+                        }
+
+                        for (int c = offset; c < max; c++) {
+                            try {
+                                Class.forName(classes[c], true, loader);
+                            } catch (final Throwable e) {
+                                // no-op
+                            }
+                        }
+                        semaphore.release();
+                    }
+                };
+                thread.setDaemon(true);
+                thread.start();
+            }
+            try {
+                semaphore.acquire(permits);
+            } catch (final InterruptedException ie) {
+                Thread.interrupted();
+            }
         }
+
         try {
             preloadServiceProviders.join();
             preloadMessages.join();
-            semaphore.acquire(permits);
         } catch (final InterruptedException e) {
             Thread.interrupted();
         }
