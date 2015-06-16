@@ -39,7 +39,8 @@ import static org.junit.Assert.assertEquals;
 public class SuspendedTest {
     @Deployment(testable = false)
     public static Archive<?> war() {
-        return ShrinkWrap.create(WebArchive.class, "suspended.war").addClasses(Endpoint.class, Endpoint.RunThread.class);
+        return ShrinkWrap.create(WebArchive.class, "suspended.war")
+                .addClasses(Endpoint.class, Endpoint.RunThread.class);
     }
 
     @ArquillianResource
