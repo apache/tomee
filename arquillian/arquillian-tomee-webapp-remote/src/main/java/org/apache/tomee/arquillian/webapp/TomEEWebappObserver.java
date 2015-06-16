@@ -18,6 +18,7 @@
 package org.apache.tomee.arquillian.webapp;
 
 import org.apache.openejb.cdi.ThreadSingletonServiceImpl;
+import org.apache.webbeans.config.WebBeansContext;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
@@ -38,7 +39,10 @@ public class TomEEWebappObserver {
     private InstanceProducer<Context> context;
 
     public void beforeSuite(@Observes final BeforeSuite event) {
-        beanManager.set(ThreadSingletonServiceImpl.get(Thread.currentThread().getContextClassLoader()).getBeanManagerImpl());
+        final WebBeansContext webBeansContext = ThreadSingletonServiceImpl.get(Thread.currentThread().getContextClassLoader());
+        if (webBeansContext != null) {
+            beanManager.set(webBeansContext.getBeanManagerImpl());
+        }
         try {
             context.set(new InitialContext());
         } catch (final NamingException e) {
