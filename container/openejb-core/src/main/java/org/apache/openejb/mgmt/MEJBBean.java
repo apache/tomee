@@ -17,8 +17,11 @@
 
 package org.apache.openejb.mgmt;
 
+import java.util.List;
+import java.util.Set;
+import javax.ejb.Lock;
 import javax.ejb.RemoteHome;
-import javax.ejb.Stateless;
+import javax.ejb.Singleton;
 import javax.management.Attribute;
 import javax.management.AttributeList;
 import javax.management.AttributeNotFoundException;
@@ -34,10 +37,11 @@ import javax.management.QueryExp;
 import javax.management.ReflectionException;
 import javax.management.j2ee.ListenerRegistration;
 import javax.management.j2ee.ManagementHome;
-import java.util.List;
-import java.util.Set;
 
-@Stateless(name = "MEJB")
+import static javax.ejb.LockType.READ;
+
+@Singleton(name = "MEJB")
+@Lock(READ)
 @RemoteHome(ManagementHome.class)
 public class MEJBBean {
 

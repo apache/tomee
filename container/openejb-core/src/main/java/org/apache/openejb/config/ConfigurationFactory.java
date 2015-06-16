@@ -325,6 +325,10 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         this.serviceTypeIsAdjustable = true;
     }
 
+    public boolean isOffline() {
+        return offline;
+    }
+
     public static List<HandlerChainInfo> toHandlerChainInfo(final HandlerChains chains) {
         final List<HandlerChainInfo> handlerChains = new ArrayList<HandlerChainInfo>();
         if (chains == null) {
@@ -538,7 +542,13 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         if (options.get("openejb.system.apps", false)) {
             try {
-                final AppInfo appInfo = configureApplication(new AppModule(SystemApps.getSystemModule()));
+                final boolean extended = SystemApps.isExtended();
+                final AppInfo appInfo;
+                if (!extended) { // do it manually, we know what we need and can skip a bunch of processing
+                    appInfo = SystemAppInfo.preComputedInfo(this);
+                } else {
+                    appInfo = configureApplication(new AppModule(SystemApps.getSystemModule()));
+                }
                 // they doesn't use CDI so no need to activate it
                 // 1) will be faster
                 // 2) will let embedded containers (tomee-embedded mainly) not be noised by it in our singleton service

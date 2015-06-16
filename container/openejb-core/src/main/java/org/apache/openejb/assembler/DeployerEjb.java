@@ -40,11 +40,6 @@ import org.apache.openejb.loader.provisining.ProvisioningResolver;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionManagement;
-import javax.enterprise.inject.Alternative;
-import javax.validation.ValidationException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,13 +51,21 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
+import javax.ejb.Lock;
+import javax.ejb.Remote;
+import javax.ejb.Singleton;
+import javax.ejb.TransactionManagement;
+import javax.enterprise.inject.Alternative;
+import javax.validation.ValidationException;
 
+import static javax.ejb.LockType.READ;
 import static javax.ejb.TransactionManagementType.BEAN;
 import static org.apache.openejb.config.ConfigurationFactory.ADDITIONAL_DEPLOYMENTS;
 import static org.apache.openejb.loader.ProvisioningUtil.realLocation;
 
 @SuppressWarnings("EjbProhibitedPackageUsageInspection")
-@Stateless(name = "openejb/Deployer")
+@Singleton(name = "openejb/Deployer")
+@Lock(READ)
 @Remote(Deployer.class)
 @TransactionManagement(BEAN)
 @Alternative

@@ -24,7 +24,6 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.Interceptor;
 import org.apache.openejb.jee.InterceptorBinding;
 import org.apache.openejb.jee.SingletonBean;
-import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.mgmt.MEJBBean;
@@ -34,6 +33,7 @@ import org.apache.openejb.security.internal.InternalSecurityInterceptor;
  * Avoids the needs to scan the classpath to load system applications that are used
  * for deploy tools and other command line tooling.
  */
+// see org.apache.openejb.config.SystemAppInfo
 public class SystemApps {
 
     public static EjbModule getSystemModule() {
@@ -42,29 +42,38 @@ public class SystemApps {
         final OpenejbJar openejbJar = module.getOpenejbJar();
         final EjbJar ejbJar = module.getEjbJar();
 
-        ejbJar.addEnterpriseBean(new StatelessBean(null, DeployerEjb.class));
-        ejbJar.addEnterpriseBean(new StatelessBean(null, ConfigurationInfoEjb.class));
-        ejbJar.addEnterpriseBean(new StatelessBean(null, MEJBBean.class));
+        //
+        //
+        // DONT MODIFY IT WITHOUT VALIDATING org.apache.openejb.config.SystemAppInfo.preComputedInfo()
+        //
+        //
+        ejbJar.addEnterpriseBean(singleton(DeployerEjb.class));
+        ejbJar.addEnterpriseBean(singleton(ConfigurationInfoEjb.class));
+        ejbJar.addEnterpriseBean(singleton(MEJBBean.class));
         ejbJar.addInterceptor(new Interceptor(InternalSecurityInterceptor.class));
         ejbJar.getAssemblyDescriptor().addInterceptorBinding(new InterceptorBinding("*", InternalSecurityInterceptor.class.getName()));
         module.getMbeans().add(JMXDeployer.class.getName());
 
-        final String className = "org.apache.tomee.catalina.deployer.WebappDeployer";
-        if (exists(className)) {
-            final SingletonBean bean = ejbJar.addEnterpriseBean(new SingletonBean("openejb/WebappDeployer", className));
-            final EjbDeployment deployment = openejbJar.addEjbDeployment(bean);
-            deployment.getProperties().put("openejb.jndiname.format", "{deploymentId}{interfaceType.annotationName}");
+        final SingletonBean bean = ejbJar.addEnterpriseBean(new SingletonBean("openejb/WebappDeployer", "org.apache.tomee.catalina.deployer.WebappDeployer"));
+        final EjbDeployment deployment = openejbJar.addEjbDeployment(bean);
+        deployment.getProperties().put("openejb.jndiname.format", "{deploymentId}{interfaceType.annotationName}");
 
-            final SingletonBean exceptionManager = ejbJar.addEnterpriseBean(new SingletonBean("openejb/ExceptionManagerFacade", "org.apache.tomee.catalina.facade.ExceptionManagerFacadeBean"));
-            final EjbDeployment exceptionMgr = openejbJar.addEjbDeployment(exceptionManager);
-            exceptionMgr.getProperties().put("openejb.jndiname.format", "{deploymentId}{interfaceType.annotationName}");
-        }
-
+        final SingletonBean exceptionManager = ejbJar.addEnterpriseBean(new SingletonBean("openejb/ExceptionManagerFacade", "org.apache.tomee.catalina.facade.ExceptionManagerFacadeBean"));
+        final EjbDeployment exceptionMgr = openejbJar.addEjbDeployment(exceptionManager);
+        exceptionMgr.getProperties().put("openejb.jndiname.format", "{deploymentId}{interfaceType.annotationName}");
 
         openejbJar.getProperties().put("openejb.deploymentId.format", "{ejbName}");
         openejbJar.getProperties().put("openejb.jndiname.format", "{deploymentId}{interfaceType.openejbLegacyName}");
 
         return module;
+    }
+
+    public static boolean isExtended() {
+        return exists("org.apache.tomee.catalina.deployer.WebappDeployer");
+    }
+
+    private static SingletonBean singleton(final Class<?> ejbClass) {
+        return new SingletonBean(null, ejbClass);
     }
 
     private static boolean exists(final String className) {

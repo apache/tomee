@@ -20,14 +20,18 @@ package org.apache.openejb.assembler.classic.cmd;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.loader.SystemInstance;
 
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
 import java.io.File;
+import javax.ejb.Lock;
+import javax.ejb.Remote;
+import javax.ejb.Singleton;
+
+import static javax.ejb.LockType.READ;
 
 /**
  * @version $Rev$ $Date$
  */
-@Stateless(name = "openejb/ConfigurationInfo")
+@Singleton(name = "openejb/ConfigurationInfo")
+@Lock(READ)
 @Remote(ConfigurationInfo.class)
 public class ConfigurationInfoEjb implements ConfigurationInfo {
 

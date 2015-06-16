@@ -28,6 +28,7 @@ import java.util.Properties;
 import java.util.Set;
 
 public class Module {
+    // note: 0 is reserved for internal app, don't set it to 0!
     private static int currentId = 1; // unique id to be able to bind something for each module in the jndi tree
 
     private boolean isStandaloneModule = true;

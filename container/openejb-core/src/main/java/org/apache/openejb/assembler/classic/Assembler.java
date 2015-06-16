@@ -780,6 +780,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 final Map<String, ValidatorFactory> validatorFactories = new HashMap<String, ValidatorFactory>();
 
                 for (final CommonInfoObject info : vfs) {
+                    if (info.validationInfo == null) {
+                        continue;
+                    }
+
                     final ComparableValidationConfig conf = new ComparableValidationConfig(
                             info.validationInfo.providerClassName, info.validationInfo.messageInterpolatorClass,
                             info.validationInfo.traversableResolverClass, info.validationInfo.constraintFactoryClass,
@@ -2333,7 +2337,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     public ClassLoader createAppClassLoader(final AppInfo appInfo) throws OpenEJBException, IOException {
-        final Set<URL> jars = new HashSet<URL>();
+        if ("openejb".equals(appInfo.appId)) {
+            return ParentClassLoaderFinder.Helper.get();
+        }
+
+        final Set<URL> jars = new HashSet<>();
         for (final EjbJarInfo info : appInfo.ejbJars) {
             if (info.path != null) {
                 jars.add(toUrl(info.path));
