@@ -59,12 +59,10 @@ import org.apache.tomee.common.NamingUtil;
 import org.apache.tomee.common.ResourceFactory;
 import org.apache.tomee.jasper.TomEEJasperInitializer;
 import org.apache.tomee.loader.TomcatHelper;
+import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.web.context.WebConversationFilter;
 import org.apache.xbean.finder.IAnnotationFinder;
 
-import javax.servlet.ServletContainerInitializer;
-import javax.servlet.http.HttpServlet;
-import javax.ws.rs.core.Application;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -85,6 +83,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import javax.servlet.ServletContainerInitializer;
+import javax.servlet.http.HttpServlet;
+import javax.ws.rs.core.Application;
 
 public class OpenEJBContextConfig extends ContextConfig {
     private static Logger logger = Logger.getInstance(LogCategory.OPENEJB, OpenEJBContextConfig.class);
@@ -351,34 +352,6 @@ public class OpenEJBContextConfig extends ContextConfig {
             }
         }
 
-        final AppInfo app = info.app();
-        if (app == null || !"false".equals(app.properties.getProperty("openejb.cdi.activated"))) {
-            {
-                final FilterDef filter = new FilterDef();
-                filter.setAsyncSupported("true");
-                filter.setDescription("OpenEJB CDI Filter - to propagate @RequestScoped in async tasks");
-                filter.setDisplayName("OpenEJB CDI");
-                filter.setFilterClass(WebBeansFilter.class.getName());
-                filter.setFilterName(WebBeansFilter.class.getName());
-                webXml.addFilter(filter);
-
-                final FilterMap mapping = new FilterMap();
-                mapping.setFilterName(filter.getFilterName());
-                mapping.addURLPattern("/*");
-                webXml.addFilterMapping(mapping);
-            }
-
-            {
-                final FilterDef filter = new FilterDef();
-                filter.setAsyncSupported("true");
-                filter.setDescription("CDI Conversation Filter");
-                filter.setDisplayName("CDI Conversation Filter");
-                filter.setFilterName("CDI Conversation Filter");
-                filter.setFilterClass(WebConversationFilter.class.getName());
-                webXml.addFilter(filter);
-            }
-        }
-
         return webXml;
     }
 
@@ -386,6 +359,7 @@ public class OpenEJBContextConfig extends ContextConfig {
         public static final String OPENEJB_WEB_XML_MAJOR_VERSION_PROPERTY = "openejb.web.xml.major";
 
         private String prefix;
+        private boolean cdiConversation = false;
 
         public OpenEJBWebXml(final String prefix) {
             this.prefix = prefix;
@@ -395,6 +369,22 @@ public class OpenEJBContextConfig extends ContextConfig {
         public int getMajorVersion() {
             return SystemInstance.get().getOptions().get(prefix + "." + OPENEJB_WEB_XML_MAJOR_VERSION_PROPERTY,
                     SystemInstance.get().getOptions().get(OPENEJB_WEB_XML_MAJOR_VERSION_PROPERTY, super.getMajorVersion()));
+        }
+
+        @Override
+        public void addFilterMapping(final FilterMap filterMap) {
+            // we need to add this one before the mapping cause of tomcat validation (ie dont make deployment fail)
+            if ("CDI Conversation Filter".equals(filterMap.getFilterName()) && !cdiConversation) {
+                final FilterDef conversationFilter = new FilterDef();
+                conversationFilter.setAsyncSupported("true");
+                conversationFilter.setDescription("CDI Conversation Filter");
+                conversationFilter.setDisplayName("CDI Conversation Filter");
+                conversationFilter.setFilterName("CDI Conversation Filter");
+                conversationFilter.setFilterClass(WebConversationFilter.class.getName());
+                addFilter(conversationFilter);
+                cdiConversation = true;
+            }
+            super.addFilterMapping(filterMap);
         }
     }
 
@@ -407,6 +397,21 @@ public class OpenEJBContextConfig extends ContextConfig {
 
         if (IgnoredStandardContext.class.isInstance(context)) { // no need of jsf
             return;
+        }
+
+        if (WebBeansContext.currentInstance() != null) {
+            final FilterDef asyncOwbFilter = new FilterDef();
+            asyncOwbFilter.setAsyncSupported("true");
+            asyncOwbFilter.setDescription("OpenEJB CDI Filter - to propagate @RequestScoped in async tasks");
+            asyncOwbFilter.setDisplayName("OpenEJB CDI");
+            asyncOwbFilter.setFilterClass(WebBeansFilter.class.getName());
+            asyncOwbFilter.setFilterName(WebBeansFilter.class.getName());
+            context.addFilterDef(asyncOwbFilter);
+
+            final FilterMap asyncOwbMapping = new FilterMap();
+            asyncOwbMapping.setFilterName(asyncOwbFilter.getFilterName());
+            asyncOwbMapping.addURLPattern("/*");
+            context.addFilterMap(asyncOwbMapping);
         }
 
         if ("true".equalsIgnoreCase(SystemInstance.get().getProperty("tomee.jsp-development", "false"))) {

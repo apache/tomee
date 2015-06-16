@@ -48,7 +48,9 @@ public class WebBeansFilter implements Filter { // its pupose is to start/stop r
             filterChain.doFilter(servletRequest, servletResponse);
             return;
         }
-        filterChain.doFilter(servletRequest.isAsyncSupported() ? new CdiRequest(HttpServletRequest.class.cast(servletRequest)) : servletRequest, servletResponse);
+        WebBeansContext ctx = null;
+        filterChain.doFilter(servletRequest.isAsyncSupported() &&  (ctx = WebBeansContext.currentInstance()) != null ?
+                new CdiRequest(HttpServletRequest.class.cast(servletRequest), ctx) : servletRequest, servletResponse);
     }
 
     @Override
@@ -57,18 +59,21 @@ public class WebBeansFilter implements Filter { // its pupose is to start/stop r
     }
 
     public static class CdiRequest extends HttpServletRequestWrapper {
-        public CdiRequest(final HttpServletRequest cast) {
+        private final WebBeansContext webBeansContext;
+
+        public CdiRequest(final HttpServletRequest cast, final WebBeansContext webBeansContext) {
             super(cast);
+            this.webBeansContext = webBeansContext;
         }
 
         @Override
         public AsyncContext startAsync() throws IllegalStateException {
-            return new AsynContextWrapper(super.startAsync(), getRequest());
+            return new AsynContextWrapper(super.startAsync(), getRequest(), webBeansContext);
         }
 
         @Override
         public AsyncContext startAsync(final ServletRequest servletRequest, final ServletResponse servletResponse) throws IllegalStateException {
-            return new AsynContextWrapper(super.startAsync(servletRequest, servletResponse), servletRequest);
+            return new AsynContextWrapper(super.startAsync(servletRequest, servletResponse), servletRequest, webBeansContext);
         }
     }
 
@@ -78,9 +83,9 @@ public class WebBeansFilter implements Filter { // its pupose is to start/stop r
         private final ServletRequest request;
         private volatile ServletRequestEvent event;
 
-        public AsynContextWrapper(final AsyncContext asyncContext, final ServletRequest request) {
+        public AsynContextWrapper(final AsyncContext asyncContext, final ServletRequest request, final WebBeansContext webBeansContext) {
             this.delegate = asyncContext;
-            this.service = CdiAppContextsService.class.cast(WebBeansContext.currentInstance().getService(ContextsService.class));
+            this.service = CdiAppContextsService.class.cast(webBeansContext.getService(ContextsService.class));
             this.event = null;
             this.request = request;
         }
