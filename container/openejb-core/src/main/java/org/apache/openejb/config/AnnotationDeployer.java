@@ -1743,7 +1743,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
                 {
-                    final File file = new File(toFile, "classes/beans.xml");
+                    final File file = new File(toFile, "META-INF/beans.xml");
                     if (file.exists()) {
                         try {
                             return file.toURI().toURL();

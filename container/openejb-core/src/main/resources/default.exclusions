@@ -26,6 +26,7 @@ arquillian-test-api
 arquillian-test-impl-base
 arquillian-test-spi
 arquillian-tomee-
+asm-
 avalon-framework-
 axis-
 axis2-
@@ -49,12 +50,14 @@ commons-digester-
 commons-discovery-
 commons-httpclient-
 commons-io-
+commons-jcs-core-
 commons-lang-
 commons-lang3-
 commons-logging-
 commons-logging-api-
 commons-net-
 commons-pool-
+cryptacular-
 cssparser-
 cxf-
 deploy.jar
@@ -104,6 +107,7 @@ jasper.jar
 jasper-el.jar
 jasypt-
 java-atk-wrapper
+java-support-
 javaee-
 javaee-api
 javassist-

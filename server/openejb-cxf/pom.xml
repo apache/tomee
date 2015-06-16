@@ -118,7 +118,7 @@
       <version>${cxf.version}</version>
       <exclusions>
         <exclusion>
-          <groupId>asm</groupId>
+          <groupId>org.ow2.asm</groupId>
           <artifactId>asm</artifactId>
         </exclusion>
         <exclusion>
