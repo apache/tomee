@@ -39,6 +39,7 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.ServletRequestAttributeListener;
 import javax.servlet.ServletRequestListener;
 import javax.servlet.http.HttpSessionAttributeListener;
+import javax.servlet.http.HttpSessionIdListener;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -173,9 +174,9 @@ public class WebContext {
                 if (beanDefinition == null) {
                     final AnnotatedType annotatedType = webBeansContext.getAnnotatedElementFactory().newAnnotatedType(beanClass);
                     if (isWeb(beanClass)) {
-                        beanDefinition = new ConstructorInjectionBean<Object>(webBeansContext, beanClass, annotatedType, false);
+                        beanDefinition = new ConstructorInjectionBean<>(webBeansContext, beanClass, annotatedType, false);
                     } else {
-                        beanDefinition = new ConstructorInjectionBean<Object>(webBeansContext, beanClass, annotatedType);
+                        beanDefinition = new ConstructorInjectionBean<>(webBeansContext, beanClass, annotatedType);
                     }
 
                     constructorInjectionBeanCache.put(beanClass, beanDefinition);
@@ -193,6 +194,7 @@ public class WebContext {
             || HttpSessionAttributeListener.class.isAssignableFrom(beanClass)
             || ServletRequestListener.class.isAssignableFrom(beanClass)
             || ServletContextAttributeListener.class.isAssignableFrom(beanClass)
+            || HttpSessionIdListener.class.isAssignableFrom(beanClass)
             || ServletRequestAttributeListener.class.isAssignableFrom(beanClass);
     }
 
