@@ -44,7 +44,7 @@ public class ServletContextListenerRegistrationTest {
         assertTrue(Initializer.init);
     }
 
-    private static class Initializer implements ServletContextListener {
+    public static class Initializer implements ServletContextListener {
         private static boolean init = false;
 
         @Override

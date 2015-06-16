@@ -86,7 +86,7 @@ public class ServletRegistrationTest {
         assertEquals("true", IO.slurp(new URL("http://localhost:" + port + "/servlet/injection")));
     }
 
-    private static class TestServlet extends HttpServlet {
+    public static class TestServlet extends HttpServlet {
         @Override
         protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
             resp.getWriter().write("touched");
@@ -94,7 +94,7 @@ public class ServletRegistrationTest {
     }
 
     @WebServlet(urlPatterns = "/discover")
-    private static class TestServlet2 extends HttpServlet {
+    public static class TestServlet2 extends HttpServlet {
         @Override
         protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
             resp.getWriter().write("discovered");
@@ -102,7 +102,7 @@ public class ServletRegistrationTest {
     }
 
     @WebServlet(urlPatterns = "/bar/*")
-    private static class TestServlet3 extends HttpServlet {
+    public static class TestServlet3 extends HttpServlet {
         @Override
         protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
             resp.getWriter().write("wildcard");
@@ -110,7 +110,7 @@ public class ServletRegistrationTest {
     }
 
     @WebServlet(urlPatterns = "/injection")
-    private static class TestServlet4 extends HttpServlet {
+    public static class TestServlet4 extends HttpServlet {
         @EJB
         private SomeEjb ejb;
 

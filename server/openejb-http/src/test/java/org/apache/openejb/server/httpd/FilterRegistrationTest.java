@@ -80,14 +80,14 @@ public class FilterRegistrationTest {
         assertTrue(TestFilter2.ok);
     }
 
-    private static class TestServlet extends HttpServlet {
+    public static class TestServlet extends HttpServlet {
         @Override
         protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
             resp.getWriter().write(req.getRequestURI());
         }
     }
 
-    private static class TestFilter implements Filter {
+    public static class TestFilter implements Filter {
         public static boolean ok = false;
         private static boolean init = false;
 
@@ -123,7 +123,7 @@ public class FilterRegistrationTest {
         }
     }
 
-    private static class TestFilter2 implements Filter {
+    public static class TestFilter2 implements Filter {
         public static boolean ok = false;
 
         @Override
