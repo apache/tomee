@@ -74,7 +74,7 @@ public final class OpenEJB {
             if (appServer == null) {
                 throw new IllegalArgumentException("appServer must not be null");
             }
-            initialized = new InitializationException("Initialized at " + new Date()).fillInStackTrace();
+            initialized = new InitializationException("Initialized at " + new Date())/*.fillInStackTrace()*/;
 
             try {
                 SystemInstance.init(initProps);
@@ -257,7 +257,7 @@ public final class OpenEJB {
         }
 
         public Throwable getInitialized() {
-            return initialized;
+            return initialized.fillInStackTrace();
         }
     }
 
