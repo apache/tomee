@@ -62,7 +62,6 @@ public class ServiceUtils {
         return SystemInstance.get().getProperty("openejb.provider.default", defaultValue);
     }
 
-    public static Messages messages = new Messages("org.apache.openejb.util.resources");
     public static Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
 
     public static ProviderManager getManager() {
@@ -120,7 +119,7 @@ public class ServiceUtils {
             }
         }
 
-        throw new NoSuchProviderException(messages.format("conf.4901", id.getName(), id.getNamespace()));
+        throw new NoSuchProviderException(new Messages("org.apache.openejb.util.resources").format("conf.4901", id.getName(), id.getNamespace()));
     }
 
     public static String getServiceProviderId(final String type) throws OpenEJBException {

@@ -24,13 +24,13 @@ import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.SafeToolkit;
 import org.apache.openejb.util.proxy.ProxyFactory;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 import javax.resource.spi.ConnectionManager;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.ResourceAdapter;
 import javax.transaction.TransactionManager;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
 
 public class AssemblerTool {
 
@@ -46,7 +46,6 @@ public class AssemblerTool {
         serviceInterfaces.put("Container", Container.class);
     }
 
-    protected static final Messages messages = new Messages("org.apache.openejb.util.resources");
     protected static final SafeToolkit toolkit = SafeToolkit.getToolkit("AssemblerTool");
 
     protected Properties props = new Properties();
@@ -57,7 +56,7 @@ public class AssemblerTool {
 
     protected static void checkImplementation(final Class intrfce, final Class factory, final String serviceType, final String serviceName) throws OpenEJBException {
         if (!intrfce.isAssignableFrom(factory)) {
-            throw new OpenEJBException(messages.format("init.0100", serviceType, serviceName, factory.getName(), intrfce.getName()));
+            throw new OpenEJBException(new Messages("org.apache.openejb.util.resources").format("init.0100", serviceType, serviceName, factory.getName(), intrfce.getName()));
         }
     }
 

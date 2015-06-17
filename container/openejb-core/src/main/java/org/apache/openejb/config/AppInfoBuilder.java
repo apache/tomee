@@ -108,7 +108,6 @@ import static org.apache.openejb.util.URLs.toFile;
 class AppInfoBuilder {
 
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, "org.apache.openejb.util.resources");
-    private static final Messages messages = new Messages("org.apache.openejb.util.resources");
 
     private static final boolean USE_EAR_AS_CONTEXT_ROOT_BASE = SystemInstance.get().getOptions().get("openejb.ear.use-as-webcontext-base", false);
 
@@ -206,7 +205,7 @@ class AppInfoBuilder {
                     }
 
                     if (!containerIds.contains(d.getContainerId()) && !skipMdb(bean)) {
-                        final String msg = messages.format("config.noContainerFound", d.getContainerId(), d.getEjbName());
+                        final String msg = new Messages("org.apache.openejb.util.resources").format("config.noContainerFound", d.getContainerId(), d.getEjbName());
                         logger.fatal(msg);
                         throw new OpenEJBException(msg);
                     }

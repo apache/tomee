@@ -24,20 +24,17 @@ import org.apache.openejb.Injection;
 import org.apache.openejb.ModuleContext;
 import org.apache.openejb.ModuleTestContext;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.util.Messages;
 
-import javax.naming.Context;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
+import javax.naming.Context;
 
 /**
  * @version $Revision$ $Date$
  */
 public class EjbJarBuilder {
-    protected static final Messages messages = new Messages("org.apache.openejb.util.resources");
-
     private final Properties props;
     private final AppContext context;
 

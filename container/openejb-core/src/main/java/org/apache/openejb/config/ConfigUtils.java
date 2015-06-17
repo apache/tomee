@@ -26,7 +26,6 @@ import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.Messages;
 import org.apache.xbean.finder.ResourceFinder;
 
 import java.io.File;
@@ -36,7 +35,6 @@ import java.net.URL;
 
 public class ConfigUtils {
 
-    public static Messages messages = new Messages("org.apache.openejb.util.resources");
     public static Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
 
     /**

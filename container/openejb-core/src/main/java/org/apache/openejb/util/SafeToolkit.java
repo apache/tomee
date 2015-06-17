@@ -24,7 +24,6 @@ import java.net.URLClassLoader;
 import java.util.HashMap;
 
 public final class SafeToolkit {
-    public static final Messages messages = new Messages("org.apache.openejb.util.resources");
     public static final HashMap codebases = new HashMap();
 
     public static SafeToolkit getToolkit(final String systemLocation) {

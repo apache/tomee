@@ -31,11 +31,6 @@ import org.apache.openejb.util.Index;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.SafeToolkit;
 
-import javax.ejb.TimedObject;
-import javax.ejb.Timer;
-import javax.naming.Context;
-import javax.naming.NamingException;
-import javax.persistence.EntityManagerFactory;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,9 +40,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import javax.ejb.TimedObject;
+import javax.ejb.Timer;
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.persistence.EntityManagerFactory;
 
 class EnterpriseBeanBuilder {
-    protected static final Messages messages = new Messages("org.apache.openejb.util.resources");
     private final EnterpriseBeanInfo bean;
     private final BeanType ejbType;
     private final List<Exception> warnings = new ArrayList<Exception>();
@@ -405,21 +404,25 @@ class EnterpriseBeanBuilder {
             return clazz;
         } catch (final NoClassDefFoundError e) {
             if (clazz.getClassLoader() != moduleContext.getClassLoader()) {
-                final String message = SafeToolkit.messages.format("cl0008", className, clazz.getClassLoader(), moduleContext.getClassLoader(), e.getMessage());
-                throw new OpenEJBException(AssemblerTool.messages.format(messageCode, className, bean.ejbDeploymentId, message), e);
+                final String message = messages().format("cl0008", className, clazz.getClassLoader(), moduleContext.getClassLoader(), e.getMessage());
+                throw new OpenEJBException(messages().format(messageCode, className, bean.ejbDeploymentId, message), e);
             } else {
-                final String message = SafeToolkit.messages.format("cl0009", className, clazz.getClassLoader(), e.getMessage());
-                throw new OpenEJBException(AssemblerTool.messages.format(messageCode, className, bean.ejbDeploymentId, message), e);
+                final String message = messages().format("cl0009", className, clazz.getClassLoader(), e.getMessage());
+                throw new OpenEJBException(messages().format(messageCode, className, bean.ejbDeploymentId, message), e);
             }
         }
+    }
+
+    private Messages messages() { // new is fine cause for errors only
+        return new Messages("org.apache.openejb.util.resources");
     }
 
     private Class load(final String className, final String messageCode) throws OpenEJBException {
         try {
             return Class.forName(className, true, moduleContext.getClassLoader());
         } catch (final ClassNotFoundException e) {
-            final String message = SafeToolkit.messages.format("cl0007", className, bean.codebase);
-            throw new OpenEJBException(AssemblerTool.messages.format(messageCode, className, bean.ejbDeploymentId, message));
+            final String message = messages().format("cl0007", className, bean.codebase);
+            throw new OpenEJBException(messages().format(messageCode, className, bean.ejbDeploymentId, message));
         }
     }
 }

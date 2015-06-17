@@ -26,6 +26,7 @@ import org.apache.openejb.jee.EntityBean;
 import org.apache.openejb.jee.Interceptor;
 import org.apache.openejb.jee.RemoteBean;
 import org.apache.openejb.jee.SessionBean;
+import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.SafeToolkit;
 import org.apache.openejb.util.Strings;
 import org.apache.openejb.util.proxy.DynamicProxyImplFactory;
@@ -419,7 +420,8 @@ public class CheckClasses extends ValidationBase {
         try {
             return Class.forName(clazz, false, cl == null ? module.getClassLoader() : cl);
         } catch (final ClassNotFoundException cnfe) {
-            throw new OpenEJBException(SafeToolkit.messages.format("cl0007", clazz, module.getJarLocation()), cnfe);
+            throw new OpenEJBException(
+                    new Messages("org.apache.openejb.util.resources").format("cl0007", clazz, module.getJarLocation()), cnfe);
         }
     }
 }

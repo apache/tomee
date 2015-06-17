@@ -30,7 +30,7 @@ import org.apache.openejb.jee.MethodParams;
 import org.apache.openejb.jee.PersistenceType;
 import org.apache.openejb.util.Classes;
 import org.apache.openejb.util.Join;
-import org.apache.openejb.util.SafeToolkit;
+import org.apache.openejb.util.Messages;
 
 import java.lang.reflect.Method;
 
@@ -150,8 +150,12 @@ public abstract class ValidationBase implements ValidationRule {
         try {
             return Classes.forName(clazz, cl);
         } catch (final ClassNotFoundException cnfe) {
-            throw new OpenEJBException(SafeToolkit.messages.format("cl0007", clazz, module.getJarLocation()), cnfe);
+            throw new OpenEJBException(messages().format("cl0007", clazz, module.getJarLocation()), cnfe);
         }
+    }
+
+    private Messages messages() { // new is fine cause for errors only
+        return new Messages("org.apache.openejb.util.resources");
     }
 
     public boolean isCmp(final EnterpriseBean b) {

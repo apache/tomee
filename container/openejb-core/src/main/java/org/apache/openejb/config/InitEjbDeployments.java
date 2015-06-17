@@ -27,7 +27,6 @@ import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.StringTemplate;
 
 import java.util.Collection;
@@ -37,7 +36,6 @@ import java.util.Map;
 import java.util.Set;
 
 public class InitEjbDeployments implements DynamicDeployer {
-    public static Messages messages = new Messages("org.apache.openejb.util.resources");
     public static Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
 
     private final StringTemplate deploymentIdTemplate;

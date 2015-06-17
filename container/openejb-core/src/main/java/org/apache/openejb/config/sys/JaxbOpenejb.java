@@ -18,11 +18,11 @@
 package org.apache.openejb.config.sys;
 
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.config.ConfigUtils;
 import org.apache.openejb.config.SystemProperty;
 import org.apache.openejb.jee.JAXBContextFactory;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.util.Join;
+import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.Saxs;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -236,12 +236,12 @@ public abstract class JaxbOpenejb {
             out = IO.write(file);
             marshal(Openejb.class, openejb, out);
         } catch (final IOException e) {
-            throw new OpenEJBException(ConfigUtils.messages.format("conf.1040", configFile, e.getLocalizedMessage()), e);
+            throw new OpenEJBException(messages().format("conf.1040", configFile, e.getLocalizedMessage()), e);
         } catch (final MarshalException e) {
             if (e.getCause() instanceof IOException) {
-                throw new OpenEJBException(ConfigUtils.messages.format("conf.1040", configFile, e.getLocalizedMessage()), e);
+                throw new OpenEJBException(messages().format("conf.1040", configFile, e.getLocalizedMessage()), e);
             } else {
-                throw new OpenEJBException(ConfigUtils.messages.format("conf.1050", configFile, e.getLocalizedMessage()), e);
+                throw new OpenEJBException(messages().format("conf.1050", configFile, e.getLocalizedMessage()), e);
             }
         } catch (final ValidationException e) {
             /* TODO: Implement informative error handling here.
@@ -255,7 +255,7 @@ public abstract class JaxbOpenejb {
              * is invalid, the MarshalException is thrown, not this one as you
              * would think.
              */
-            throw new OpenEJBException(ConfigUtils.messages.format("conf.1060", configFile, e.getLocalizedMessage()), e);
+            throw new OpenEJBException(messages().format("conf.1060", configFile, e.getLocalizedMessage()), e);
         } catch (final JAXBException e) {
             throw new OpenEJBException(e);
         } finally {
@@ -267,6 +267,10 @@ public abstract class JaxbOpenejb {
                 }
             }
         }
+    }
+
+    private static Messages messages() { // new is fine cause for errors only
+        return new Messages("org.apache.openejb.util.resources");
     }
 
     public static final ThreadLocal<Set<String>> currentPublicId = new ThreadLocal<Set<String>>();
