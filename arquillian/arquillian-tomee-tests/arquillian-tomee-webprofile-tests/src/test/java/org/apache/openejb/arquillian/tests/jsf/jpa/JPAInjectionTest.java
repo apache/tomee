@@ -24,6 +24,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.asset.Asset;
 import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
@@ -56,6 +57,7 @@ public class JPAInjectionTest extends JSFs {
         Asset persistenceAsset = new StringAsset(persistenceDescriptor.exportAsString());
         return base("jsf-jpa-test.war").addAsWebInfResource(persistenceAsset, "persistence.xml")
                 .addClasses(DummyManagedBean.class)
+                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
                 .addAsWebResource(new ClassLoaderAsset(
                         JPAInjectionTest.class.getPackage().getName().replace('.', '/').concat("/").concat("dummy.xhtml")), "dummy.xhtml");
 

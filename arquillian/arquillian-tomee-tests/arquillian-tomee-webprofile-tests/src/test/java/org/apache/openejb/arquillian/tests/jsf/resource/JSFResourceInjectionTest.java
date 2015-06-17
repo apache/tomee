@@ -22,6 +22,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,6 +42,7 @@ public class JSFResourceInjectionTest extends JSFs {
     public static WebArchive getArchive() {
         return base("jsf-resource-injection-test.war")
                 .addClass(ResourceManagedBean.class)
+                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
                 .addAsWebResource(new ClassLoaderAsset(
                         JSFResourceInjectionTest.class.getPackage()
                                 .getName().replace('.', '/').concat("/resource.xhtml")), "resource.xhtml");
