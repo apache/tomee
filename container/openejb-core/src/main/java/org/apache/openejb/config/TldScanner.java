@@ -109,7 +109,9 @@ public class TldScanner {
         tldUrls.addAll(scan(classLoader.getParent()));
 
         if (urls.size() > 0) {
-            final ExecutorService es = Executors.newFixedThreadPool(2 * Runtime.getRuntime().availableProcessors() + 1, new DaemonThreadFactory("OpenEJB-tld-server-scanning"));
+            final ExecutorService es = Executors.newFixedThreadPool(
+                    Math.min(urls.size(), 2 * Runtime.getRuntime().availableProcessors() + 1),
+                    new DaemonThreadFactory("OpenEJB-tld-server-scanning"));
 
             final Collection<Future<Set<URL>>> futures = new ArrayList<Future<Set<URL>>>(urls.size());
             for (URL url : urls) {
