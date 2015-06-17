@@ -35,6 +35,7 @@ import org.apache.openejb.util.SafeToolkit;
 import javax.transaction.TransactionManager;
 import java.util.Date;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @version $Rev$ $Date$
@@ -56,7 +57,6 @@ public final class OpenEJB {
 
     public static class Instance {
 
-        private static final Messages messages = new Messages("org.apache.openejb.util.resources");
         private final Throwable initialized;
 
         /**
@@ -119,18 +119,19 @@ public final class OpenEJB {
             //OWB support.  The classloader has to be able to load all OWB components including the ones supplied by OpenEjb.
             CdiBuilder.initializeOWB(getClass().getClassLoader());
 
-            final String className = system.getOptions().get("openejb.assembler", "org.apache.openejb.assembler.classic.Assembler");
+            final String className = system.getOptions().get("openejb.assembler", (String) null);
 
             logger.debug("startup.instantiatingAssemblerClass", className);
 
             final Assembler assembler;
             try {
-                assembler = (Assembler) SafeToolkit.getToolkit("OpenEJB").newInstance(className);
+                assembler = className == null ?
+                        new org.apache.openejb.assembler.classic.Assembler() : (Assembler) SafeToolkit.getToolkit("OpenEJB").newInstance(className);
             } catch (final OpenEJBException oe) {
                 logger.fatal("startup.assemblerCannotBeInstantiated", oe);
                 throw oe;
             } catch (final Throwable t) {
-                final String msg = messages.message("startup.openejbEncounteredUnexpectedError");
+                final String msg = messages().message("startup.openejbEncounteredUnexpectedError");
                 logger.fatal(msg, t);
                 throw new OpenEJBException(msg, t);
             }
@@ -141,7 +142,7 @@ public final class OpenEJB {
                 logger.fatal("startup.assemblerFailedToInitialize", oe);
                 throw oe;
             } catch (final Throwable t) {
-                final String msg = messages.message("startup.assemblerEncounteredUnexpectedError");
+                final String msg = messages().message("startup.assemblerEncounteredUnexpectedError");
                 logger.fatal(msg, t);
                 throw new OpenEJBException(msg, t);
             }
@@ -152,14 +153,14 @@ public final class OpenEJB {
                 logger.fatal("startup.assemblerFailedToBuild", oe);
                 throw oe;
             } catch (final Throwable t) {
-                final String msg = messages.message("startup.assemblerEncounterUnexpectedBuildError");
+                final String msg = messages().message("startup.assemblerEncounterUnexpectedBuildError");
                 logger.fatal(msg, t);
                 throw new OpenEJBException(msg, t);
             }
 
             final ContainerSystem containerSystem = assembler.getContainerSystem();
             if (containerSystem == null) {
-                final String msg = messages.message("startup.assemblerReturnedNullContainer");
+                final String msg = messages().message("startup.assemblerReturnedNullContainer");
                 logger.fatal(msg);
                 throw new OpenEJBException(msg);
             }
@@ -233,7 +234,7 @@ public final class OpenEJB {
 
             final SecurityService securityService = assembler.getSecurityService();
             if (securityService == null) {
-                final String msg = messages.message("startup.assemblerReturnedNullSecurityService");
+                final String msg = messages().message("startup.assemblerReturnedNullSecurityService");
                 logger.fatal(msg);
                 throw new OpenEJBException(msg);
             } else {
@@ -243,7 +244,7 @@ public final class OpenEJB {
 
             final TransactionManager transactionManager = assembler.getTransactionManager();
             if (transactionManager == null) {
-                final String msg = messages.message("startup.assemblerReturnedNullTransactionManager");
+                final String msg = messages().message("startup.assemblerReturnedNullTransactionManager");
                 logger.fatal(msg);
                 throw new OpenEJBException(msg);
             } else {
@@ -278,7 +279,16 @@ public final class OpenEJB {
         init(props, null);
     }
 
-    private static final Messages messages = new Messages("org.apache.openejb.util.resources");
+    private static final AtomicReference<Messages> messagesRef = new AtomicReference<>();
+
+    private static Messages messages() { // only used for errors so lazy init is great
+        Messages m = messagesRef.get();
+        if (m == null) {
+            m = new Messages("org.apache.openejb.util.resources");
+            messagesRef.compareAndSet(null, m);
+        }
+        return m;
+    }
 
     /**
      * 2 usages
@@ -286,11 +296,11 @@ public final class OpenEJB {
     public static void init(final Properties initProps, final ApplicationServer appServer) throws OpenEJBException {
         if (isInitialized()) {
             if (instance != null) {
-                final String msg = messages.message("startup.alreadyInitialized");
+                final String msg = messages().message("startup.alreadyInitialized");
                 logger().error(msg, instance.initialized);
                 throw new OpenEJBException(msg, instance.initialized);
             } else {
-                final String msg = messages.message("startup.alreadyInitialized");
+                final String msg = messages().message("startup.alreadyInitialized");
                 logger().error(msg);
                 throw new OpenEJBException(msg);
             }

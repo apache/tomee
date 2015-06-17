@@ -30,6 +30,7 @@ import org.apache.openejb.util.OpenEjbVersion;
 import org.apache.tomee.loader.TomcatHelper;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -37,10 +38,14 @@ import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static java.util.Arrays.asList;
 
 // this listener is the real tomee one (the OpenEJBListener is more tomcat oriented)
 // so it even changes the server info
@@ -129,31 +134,35 @@ public class ServerListener implements LifecycleListener {
                 loader.initSystemInstance(properties);
 
                 // manage additional libraries
-                if (URLClassLoader.class.isInstance(classLoader)) {
-                    final URLClassLoader ucl = URLClassLoader.class.cast(classLoader);
-                    try {
-                        final Method addUrl = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-                        final boolean acc = addUrl.isAccessible();
-                        try {
-                            for (final File f : ProvisioningUtil.addAdditionalLibraries()) {
-                                addUrl(ucl, addUrl, f.toURI().toURL());
-                            }
-
-                            final File globalJarsTxt = SystemInstance.get().getConf(QuickJarsTxtParser.FILE_NAME);
-                            final ClassLoaderConfigurer configurer = QuickJarsTxtParser.parse(globalJarsTxt);
-                            if (configurer != null) {
-                                for (final URL f : configurer.additionalURLs()) {
-                                    addUrl(ucl, addUrl, f);
-                                }
-                            }
-                        } finally {
-                            addUrl.setAccessible(acc);
-                        }
-                    } catch (final Exception e) {
-                        LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                try {
+                    final Collection<URL> files = new ArrayList<>();
+                    for (final File f : ProvisioningUtil.addAdditionalLibraries()) {
+                        files.add(f.toURI().toURL());
                     }
-                } else {
-                    LOGGER.finer("container classloader is not an URL one so can't check provisining: " + classLoader);
+
+                    final ClassLoaderConfigurer configurer = QuickJarsTxtParser.parse(SystemInstance.get().getConf(QuickJarsTxtParser.FILE_NAME));
+                    if (configurer != null) {
+                        files.addAll(asList(configurer.additionalURLs()));
+                    }
+
+                    if (!files.isEmpty() && URLClassLoader.class.isInstance(classLoader)) {
+                        final URLClassLoader ucl = URLClassLoader.class.cast(classLoader);
+                        try {
+                            final Method addUrl = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+                            final boolean acc = addUrl.isAccessible();
+                            try {
+                                for (final URL url : files) {
+                                    addUrl(ucl, addUrl, url);
+                                }
+                            } finally {
+                                addUrl.setAccessible(acc);
+                            }
+                        } catch (final Exception e) {
+                            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                        }
+                    }
+                } catch (final IOException ex) {
+                    LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
                 }
 
                 loader.initialize(properties);
