@@ -285,9 +285,9 @@ public class TomcatLoader implements Loader {
 
         final ClassLoader cl = TomcatLoader.class.getClassLoader();
         if (SystemInstance.get().getOptions().get("openejb.servicemanager.enabled", true)) {
-            final String clazz = SystemInstance.get().getOptions().get("openejb.service.manager.class", "org.apache.tomee.catalina.TomEEServiceManager");
+            final String clazz = SystemInstance.get().getOptions().get("openejb.service.manager.class", (String) null);
             try {
-                manager = (ServiceManager) cl.loadClass(clazz).newInstance();
+                manager = clazz == null ? new TomEEServiceManager() : (ServiceManager) cl.loadClass(clazz).newInstance();
             } catch (final ClassNotFoundException cnfe) {
                 logger.severe("can't find the service manager " + clazz + ", the TomEE one will be used");
                 manager = new TomEEServiceManager();
