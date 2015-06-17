@@ -30,7 +30,7 @@
   </parent>
 
   <groupId>org.apache.tomee</groupId>
-  <artifactId>openejb</artifactId>
+  <artifactId>tomee-project</artifactId>
   <packaging>pom</packaging>
 
   <version>7.0.0-SNAPSHOT</version>
@@ -55,21 +55,21 @@
       <subscribe>commits-subscribe@tomee.apache.org</subscribe>
       <unsubscribe>commits-unsubscribe@tomee.apache.org</unsubscribe>
       <post>commits@tomee.apache.org</post>
-      <archive>http://mail-archives.apache.org/mod_mbox/openejb-commits/</archive>
+      <archive>http://mail-archives.apache.org/mod_mbox/tomee-commits/</archive>
     </mailingList>
     <mailingList>
       <name>OpenEJB Developer List</name>
       <subscribe>dev-subscribe@tomee.apache.org</subscribe>
       <unsubscribe>dev-unsubscribe@tomee.apache.org</unsubscribe>
       <post>dev@tomee.apache.org</post>
-      <archive>http://mail-archives.apache.org/mod_mbox/openejb-dev/</archive>
+      <archive>http://mail-archives.apache.org/mod_mbox/tomee-dev/</archive>
     </mailingList>
     <mailingList>
       <name>OpenEJB Users List</name>
       <subscribe>users-subscribe@tomee.apache.org</subscribe>
       <unsubscribe>users-unsubscribe@tomee.apache.org</unsubscribe>
       <post>users@tomee.apache.org</post>
-      <archive>http://mail-archives.apache.org/mod_mbox/openejb-users/</archive>
+      <archive>http://mail-archives.apache.org/mod_mbox/tomee-users/</archive>
     </mailingList>
   </mailingLists>
   <ciManagement>
