@@ -27,7 +27,6 @@ import org.apache.openejb.jee.Interceptor;
 import org.apache.openejb.jee.RemoteBean;
 import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.util.Messages;
-import org.apache.openejb.util.SafeToolkit;
 import org.apache.openejb.util.Strings;
 import org.apache.openejb.util.proxy.DynamicProxyImplFactory;
 import org.apache.xbean.finder.ClassFinder;

@@ -29,7 +29,6 @@ import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.Index;
 import org.apache.openejb.util.Messages;
-import org.apache.openejb.util.SafeToolkit;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
