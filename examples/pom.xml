@@ -81,6 +81,7 @@
     <module>injection-of-entitymanager</module>
     <module>injection-of-env-entry</module>
     <module>interceptors</module>
+    <module>javamail</module>
     <module>jpa-eclipselink</module>
     <module>jpa-hibernate</module>
     <module>jpa-enumerated</module>
