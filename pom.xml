@@ -95,7 +95,7 @@
     <tomee.version>7.0.0-SNAPSHOT</tomee.version>
 
     <openjpa.version>2.4.0</openjpa.version>
-    <org.apache.openwebbeans.version>1.6.0</org.apache.openwebbeans.version>
+    <org.apache.openwebbeans.version>1.6.1</org.apache.openwebbeans.version>
     <jcs.version>2.0-SNAPSHOT</jcs.version>
 
     <!-- Maven module versions -->
