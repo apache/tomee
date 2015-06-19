@@ -201,7 +201,6 @@ public class TomEEMavenPluginRule implements MethodRule {
         tomEEMojo.config = new File(tomEEMojo.catalinaBase.getPath() + "-conf");
         tomEEMojo.lib = new File(tomEEMojo.catalinaBase.getPath() + "-lib");
 
-        tomEEMojo.tomeeHttpsPort = NetworkUtil.getNextAvailablePort();
         tomEEMojo.tomeeHttpPort = NetworkUtil.getNextAvailablePort();
         tomEEMojo.tomeeAjpPort = NetworkUtil.getNextAvailablePort();
         tomEEMojo.tomeeShutdownPort = NetworkUtil.getNextAvailablePort();
