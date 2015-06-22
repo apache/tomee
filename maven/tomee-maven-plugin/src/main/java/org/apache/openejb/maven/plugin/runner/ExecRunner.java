@@ -113,7 +113,7 @@ public class ExecRunner {
 
         final String additionalArgs = System.getProperty("additionalSystemProperties");
 
-        final Collection<String> params = new ArrayList<String>();
+        final Collection<String> params = new ArrayList<>();
         if ("java".equals(cmd)) {
             final QuickServerXmlParser parser = QuickServerXmlParser.parse(new File(distribOutput,"conf/server.xml"));
 
@@ -144,6 +144,11 @@ public class ExecRunner {
             server.start(jvmArgs, args[0], true);
             server.getServer().waitFor();
         } else {
+            // TODO: split cmd correctly to support multiple inlined segments in cmd
+            if (cmd.endsWith(".bat") && !cmd.startsWith("cmd.exe")) {
+                params.add("cmd.exe");
+                params.add("/c");
+            } // else suppose the user knows what he does
             params.add(cmd);
             params.addAll(asList(args));
 
