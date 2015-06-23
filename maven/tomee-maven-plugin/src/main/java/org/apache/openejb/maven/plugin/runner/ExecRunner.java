@@ -98,7 +98,7 @@ public class ExecRunner {
                 final String dir = cmd.substring(0, lastSlash);
                 final String script = cmd.substring(lastSlash + 1, cmd.length() - SH_BAT_AUTO.length())
                         + (System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("win") ? ".bat" : ".sh");
-                cmd = dir + '/' + script;
+                cmd = dir + File.separator + script;
                 final File scriptFile = new File(distribOutput, cmd);
                 if (!scriptFile.exists()) {
                     throw new IllegalArgumentException("Can't find  " + cmd);
