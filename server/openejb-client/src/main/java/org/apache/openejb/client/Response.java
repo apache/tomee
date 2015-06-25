@@ -28,13 +28,13 @@ public interface Response extends Externalizable {
      *
      * @param metaData ProtocolMetaData
      */
-    public void setMetaData(final ProtocolMetaData metaData);
+    void setMetaData(final ProtocolMetaData metaData);
 
     @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException;
+    void readExternal(ObjectInput in) throws IOException, ClassNotFoundException;
 
     @Override
-    public void writeExternal(ObjectOutput out) throws IOException;
+    void writeExternal(ObjectOutput out) throws IOException;
 
 }
 

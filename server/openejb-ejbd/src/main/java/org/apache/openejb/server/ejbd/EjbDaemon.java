@@ -60,6 +60,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
     private RequestHandler ejbHandler;
     private RequestHandler jndiHandler;
     private RequestHandler authHandler;
+    private RequestHandler logoutHandler;
     private ClusterRequestHandler clusterHandler;
 
     private ContainerSystem containerSystem;
@@ -78,6 +79,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
         ejbHandler = new EjbRequestHandler(this);
         jndiHandler = new JndiRequestHandler(this);
         authHandler = new AuthRequestHandler(this);
+        logoutHandler = new LogoutRequestHandler(this);
         clusterHandler = new ClusterRequestHandler(this);
         gzip = "true".equalsIgnoreCase(props.getProperty("gzip", "false"));
 
@@ -243,6 +245,9 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
                 case AUTH_REQUEST:
                     response = processAuthRequest(ois, clientProtocol);
                     break;
+                case LOGOUT_REQUEST:
+                    response = processLogoutRequest(ois, clientProtocol);
+                    break;
                 default:
                     logger.error("\"" + requestType + " " + clientProtocol.getSpec() + "\" FAIL \"Unknown request type " + requestType);
                     return;
@@ -271,6 +276,9 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
                         break;
                     case AUTH_REQUEST:
                         processAuthResponse(response, oos, clientProtocol);
+                        break;
+                    case LOGOUT_REQUEST:
+                        processLogoutResponse(response, oos, clientProtocol);
                         break;
                     default:
                         //Should never get here...
@@ -350,6 +358,10 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
         return authHandler.processRequest(in, metaData);
     }
 
+    public Response processLogoutRequest(final ObjectInputStream in, final ProtocolMetaData metaData) throws Exception {
+        return logoutHandler.processRequest(in, metaData);
+    }
+
     public void processEjbResponse(final Response response, final ObjectOutputStream out, final ProtocolMetaData metaData) throws Exception {
         ejbHandler.processResponse(response, out, metaData);
     }
@@ -360,6 +372,10 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
 
     public void processAuthResponse(final Response response, final ObjectOutputStream out, final ProtocolMetaData metaData) throws Exception {
         authHandler.processResponse(response, out, metaData);
+    }
+
+    public void processLogoutResponse(final Response response, final ObjectOutputStream out, final ProtocolMetaData metaData) throws Exception {
+        logoutHandler.processResponse(response, out, metaData);
     }
 
     @Override

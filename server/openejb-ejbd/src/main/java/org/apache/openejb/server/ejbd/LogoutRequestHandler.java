@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.server.ejbd;
 
-import org.apache.openejb.client.AuthenticationRequest;
 import org.apache.openejb.client.AuthenticationResponse;
-import org.apache.openejb.client.ClientMetaData;
+import org.apache.openejb.client.LogoutRequest;
+import org.apache.openejb.client.LogoutResponse;
 import org.apache.openejb.client.ProtocolMetaData;
 import org.apache.openejb.client.Response;
 import org.apache.openejb.client.ResponseCodes;
@@ -30,17 +30,17 @@ import org.apache.openejb.util.Logger;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-class AuthRequestHandler extends RequestHandler {
+class LogoutRequestHandler extends RequestHandler {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE.createChild("auth"), "org.apache.openejb.server.util.resources");
     private static final boolean debug = logger.isDebugEnabled();
 
-    protected AuthRequestHandler(final EjbDaemon daemon) {
+    protected LogoutRequestHandler(final EjbDaemon daemon) {
         super(daemon);
     }
 
     @Override
     public String getName() {
-        return "Authentication";
+        return "Logout";
     }
 
     @Override
@@ -50,36 +50,25 @@ class AuthRequestHandler extends RequestHandler {
 
     @Override
     public Response processRequest(final ObjectInputStream in, final ProtocolMetaData metaData) throws Exception {
-
-        final AuthenticationRequest req = new AuthenticationRequest();
+        final LogoutRequest req = new LogoutRequest();
         req.setMetaData(metaData);
 
-        final AuthenticationResponse res = new AuthenticationResponse();
+        final LogoutResponse res = new LogoutResponse();
         res.setMetaData(metaData);
 
         try {
             req.readExternal(in);
 
-            final String securityRealm = req.getRealm();
-            final String username = req.getUsername();
-            final String password = req.getCredentials();
+            SystemInstance.get().getComponent(SecurityService.class).logout(req.getSecurityIdentity());
 
-            final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
-            final Object token = securityService.login(securityRealm, username, password);
-
-            final ClientMetaData client = new ClientMetaData();
-            client.setMetaData(metaData);
-            client.setClientIdentity(token);
-
-            res.setIdentity(client);
-            res.setResponseCode(ResponseCodes.AUTH_GRANTED);
-        } catch (Throwable t) {
-            res.setResponseCode(ResponseCodes.AUTH_DENIED);
+            res.setResponseCode(ResponseCodes.LOGOUT_SUCCESS);
+        } catch (final Throwable t) {
+            res.setResponseCode(ResponseCodes.LOGOUT_FAILED);
             res.setDeniedCause(t);
         } finally {
             if (debug) {
                 try {
-                    logger.debug("AUTH REQUEST: " + req + " -- RESPONSE: " + res);
+                    logger.debug("LOGOUT REQUEST: " + req + " -- RESPONSE: " + res);
                 } catch (Exception e) {
                     //Ignore
                 }
@@ -91,15 +80,12 @@ class AuthRequestHandler extends RequestHandler {
 
     @Override
     public void processResponse(final Response response, final ObjectOutputStream out, final ProtocolMetaData metaData) throws Exception {
-
-        if (AuthenticationResponse.class.isInstance(response)) {
-
-            final AuthenticationResponse res = (AuthenticationResponse) response;
+        if (LogoutResponse.class.isInstance(response)) {
+            final LogoutResponse res = LogoutResponse.class.cast(response);
             res.setMetaData(metaData);
-
             try {
                 res.writeExternal(out);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.fatal("Could not write AuthenticationResponse to output stream", e);
             }
         } else {

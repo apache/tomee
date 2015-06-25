@@ -20,24 +20,6 @@ import org.apache.openejb.client.event.RemoteInitialContextCreated;
 import org.apache.openejb.client.serializer.EJBDSerializer;
 import org.omg.CORBA.ORB;
 
-import javax.naming.AuthenticationException;
-import javax.naming.Binding;
-import javax.naming.CompoundName;
-import javax.naming.ConfigurationException;
-import javax.naming.Context;
-import javax.naming.InvalidNameException;
-import javax.naming.Name;
-import javax.naming.NameClassPair;
-import javax.naming.NameNotFoundException;
-import javax.naming.NameParser;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-import javax.naming.OperationNotSupportedException;
-import javax.naming.Reference;
-import javax.naming.ServiceUnavailableException;
-import javax.naming.spi.InitialContextFactory;
-import javax.naming.spi.NamingManager;
-import javax.sql.DataSource;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.net.ConnectException;
@@ -59,6 +41,24 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.naming.AuthenticationException;
+import javax.naming.Binding;
+import javax.naming.CompoundName;
+import javax.naming.ConfigurationException;
+import javax.naming.Context;
+import javax.naming.InvalidNameException;
+import javax.naming.Name;
+import javax.naming.NameClassPair;
+import javax.naming.NameNotFoundException;
+import javax.naming.NameParser;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.naming.OperationNotSupportedException;
+import javax.naming.Reference;
+import javax.naming.ServiceUnavailableException;
+import javax.naming.spi.InitialContextFactory;
+import javax.naming.spi.NamingManager;
+import javax.sql.DataSource;
 
 /**
  * @version $Rev$ $Date$
@@ -717,6 +717,28 @@ public class JNDIContext implements InitialContextFactory, Context {
     @Override
     public void close() throws NamingException {
         waitEndOfTasks(executorService);
+        if (authenticationInfo == null && client != null && client.getClientIdentity() != null) {
+            logout();
+            client.setClientIdentity(null);
+        }
+    }
+
+    private void logout() throws AuthenticationException {
+        final LogoutRequest request = new LogoutRequest(client.getClientIdentity());
+
+        final LogoutResponse response;
+        try {
+            response = LogoutResponse.class.cast(Client.request(request, new LogoutResponse(), server));
+        } catch (final RemoteException e) {
+            throw new AuthenticationException(e.getLocalizedMessage());
+        }
+
+        switch (response.getResponseCode()) {
+            case ResponseCodes.AUTH_DENIED:
+                throw AuthenticationException.class.cast(new AuthenticationException("Can't logout").initCause(response.getDeniedCause()));
+            case ResponseCodes.LOGOUT_SUCCESS:
+            default:
+        }
     }
 
     private static void waitEndOfTasks(final ExecutorService executor) {
