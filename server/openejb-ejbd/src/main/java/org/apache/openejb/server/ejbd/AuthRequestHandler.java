@@ -66,9 +66,16 @@ class AuthRequestHandler extends RequestHandler {
             final String securityRealm = req.getRealm();
             final String username = req.getUsername();
             final String password = req.getCredentials();
+            final long timeout = req.getTimeout();
+            final boolean logout = req.isLogout();
 
             final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
+
             final Object token = securityService.login(securityRealm, username, password);
+
+            if(logout){
+                securityService.logout(token);
+            }
 
             final ClientMetaData client = new ClientMetaData();
             client.setMetaData(metaData);
