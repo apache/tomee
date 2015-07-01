@@ -228,7 +228,7 @@ public class StatefulSecurityPermissionsTest extends TestCase {
     }
 
 
-    private static ThreadLocal<String> actual = new ThreadLocal<String>();
+    private static final ThreadLocal<String> actual = new ThreadLocal<String>();
 
     public static class TestSecurityService extends AbstractSecurityService {
 

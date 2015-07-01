@@ -22,23 +22,30 @@ import java.io.ObjectOutput;
 
 public class AuthenticationRequest implements Request {
 
-    private static final long serialVersionUID = 7009531340198948330L;
+    private static final long serialVersionUID = 7009531340098948330L;
     private transient String realm;
     private transient String username;
     private transient String credentials;
+    private transient long timeout;
     private transient ProtocolMetaData metaData;
+    private transient boolean logout = false;
 
     public AuthenticationRequest() {
     }
 
     public AuthenticationRequest(final String principal, final String credentials) {
-        this(null, principal, credentials);
+        this(null, principal, credentials, 0);
     }
 
-    public AuthenticationRequest(final String realm, final String principal, final String credentials) {
+    public AuthenticationRequest(final String principal, final String credentials, final long timeout) {
+        this(null, principal, credentials, timeout);
+    }
+
+    public AuthenticationRequest(final String realm, final String principal, final String credentials, final long timeout) {
         this.realm = realm;
         this.username = principal;
         this.credentials = credentials;
+        this.timeout = timeout;
     }
 
     @Override
@@ -63,6 +70,18 @@ public class AuthenticationRequest implements Request {
         return credentials;
     }
 
+    public long getTimeout() {
+        return timeout;
+    }
+
+    public boolean isLogout() {
+        return logout;
+    }
+
+    public void setLogout(final boolean logout) {
+        this.logout = logout;
+    }
+
     /**
      * Changes to this method must observe the optional {@link #metaData} version
      */
@@ -73,6 +92,11 @@ public class AuthenticationRequest implements Request {
         realm = (String) in.readObject();
         username = (String) in.readObject();
         credentials = (String) in.readObject();
+
+        if (version > 1) {
+            timeout = in.readLong();
+            logout = in.readBoolean();
+        }
     }
 
     /**
@@ -81,18 +105,21 @@ public class AuthenticationRequest implements Request {
     @Override
     public void writeExternal(final ObjectOutput out) throws IOException {
         // write out the version of the serialized data for future use
-        out.writeByte(1);
+        out.writeByte(2);
 
         out.writeObject(realm);
         out.writeObject(username);
         out.writeObject(credentials);
+        out.writeLong(timeout);
+        out.writeBoolean(logout);
     }
 
     public String toString() {
         final StringBuilder sb = new StringBuilder(50);
         sb.append(null != realm ? realm : "Unknown realm").append(':');
         sb.append(null != username ? username : "Unknown user").append(':');
-        sb.append(null != credentials ? credentials : "Unknown credentials");
+        sb.append(null != credentials ? credentials : "Unknown credentials").append(':');
+        sb.append(timeout);
         return sb.toString();
     }
 }
