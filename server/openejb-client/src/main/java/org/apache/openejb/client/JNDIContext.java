@@ -66,7 +66,6 @@ import java.util.logging.Logger;
  */
 public class JNDIContext implements InitialContextFactory, Context {
     private static final Logger LOGGER = Logger.getLogger("OpenEJB.client");
-    private static final AtomicBoolean isShutdown = new AtomicBoolean(false);
 
     @SuppressWarnings("UnusedDeclaration")
     public static final String DEFAULT_PROVIDER_URL = "ejbd://localhost:4201";
@@ -78,6 +77,7 @@ public class JNDIContext implements InitialContextFactory, Context {
     public static final String AUTHENTICATION_REALM_NAME = "openejb.authentication.realmName";
     public static final String IDENTITY_TIMEOUT = "tomee.authentication.identity.timeout";
 
+    private final AtomicBoolean isShutdown = new AtomicBoolean(false);
     private String tail = "/";
     private ServerMetaData server;
     private ClientMetaData client;
