@@ -142,6 +142,7 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
     /**
      * @param defaultUser the defaultUser to set
      */
+    @SuppressWarnings("UnusedDeclaration")
     public void setDefaultUser(final String defaultUser) {
         this.defaultUser = defaultUser;
 
@@ -240,8 +241,9 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
         identities.remove(securityIdentity);
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     protected void unregisterSubject(final Object securityIdentity) {
-        identities.remove(securityIdentity);
+        identities.remove(UUID.class.cast(securityIdentity));
     }
 
     @Override
