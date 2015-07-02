@@ -37,7 +37,7 @@ import java.util.Arrays;
 @SuppressWarnings("UnusedDeclaration")
 public class ProtocolMetaData {
 
-    public static final String VERSION = "4.6";
+    public static final String VERSION = "4.7";
 
     private static final String OEJB = "OEJP";
     private transient String id;

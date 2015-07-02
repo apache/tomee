@@ -45,11 +45,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -60,12 +63,49 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public abstract class AbstractSecurityService implements SecurityService<UUID>, ThreadContextListener, BasicPolicyConfiguration.RoleResolver {
 
+    private static final Timer timer = new Timer("AbstractSecurityService.Timer", true);
     private static final Map<UUID, Identity> identities = new ConcurrentHashMap<UUID, Identity>();
     protected static final ThreadLocal<Identity> clientIdentity = new ThreadLocal<Identity>();
     protected String defaultUser = "guest";
     private String realmName = "PropertiesLogin";
     protected Subject defaultSubject;
     protected SecurityContext defaultContext;
+
+    static {
+        final long period = Long.parseLong(SystemInstance.get().getProperty("tomee.security.identity.schedule", "60000"));
+
+        //TODO - Get the default session timeout rather than this
+        final long defaultTimeout = Long.parseLong(SystemInstance.get().getProperty("tomee.security.identity.timeout", "1800000"));
+
+        timer.scheduleAtFixedRate(new TimerTask() {
+
+            /**
+             * Check for identities that have not been accessed within timeout
+             */
+            @Override
+            public void run() {
+
+                Map.Entry<UUID, Identity> next;
+                final Iterator<Map.Entry<UUID, Identity>> iterator = identities.entrySet().iterator();
+                while (iterator.hasNext()) {
+                    next = iterator.next();
+                    final Identity value = next.getValue();
+                    long timeout = value.getTimeout();
+
+                    if (0 == timeout) {
+                        timeout = defaultTimeout;
+                    }
+
+                    if (timeout > 0) {
+                        if (System.currentTimeMillis() - value.getLastAccess() > timeout) {
+                            iterator.remove();
+                        }
+                    }
+                }
+
+            }
+        }, period, period);
+    }
 
     public AbstractSecurityService() {
         this(BasicJaccProvider.class.getName());
@@ -395,6 +435,7 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
     protected static class Identity implements Serializable {
 
         private long lastAccess;
+        private long timeout = 0;
         private final Subject subject;
         private final UUID token;
 
@@ -425,6 +466,14 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
 
         public long getLastAccess() {
             return lastAccess;
+        }
+
+        public void setTimeout(final long timeout) {
+            this.timeout = timeout;
+        }
+
+        public long getTimeout() {
+            return timeout;
         }
     }
 
