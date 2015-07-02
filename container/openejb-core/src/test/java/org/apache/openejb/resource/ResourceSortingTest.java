@@ -54,7 +54,8 @@ public class ResourceSortingTest {
                     .append("name foo:bar=Hello").append(c).append("</Resource>");
         }
         resourcesXml.append("</Resources>");
-        return JaxbOpenejb.unmarshal(Resources.class, new ByteArrayInputStream(resourcesXml.toString().getBytes()));
+        final Resources unmarshal = JaxbOpenejb.unmarshal(Resources.class, new ByteArrayInputStream(resourcesXml.toString().getBytes()));
+        return unmarshal;
     }
 
     @Test
@@ -74,7 +75,7 @@ public class ResourceSortingTest {
         private static final List<String> IDS = new ArrayList<String>();
         private String name;
 
-        public void setName(String name) {
+        public void setName(final String name) {
             this.name = name;
             IDS.add(name);
         }
