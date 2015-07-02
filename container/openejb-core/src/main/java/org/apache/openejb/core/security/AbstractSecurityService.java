@@ -435,7 +435,7 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
     protected static class Identity implements Serializable {
 
         private long lastAccess;
-        private long timeout = 0;
+        private long timeout;
         private final Subject subject;
         private final UUID token;
 
