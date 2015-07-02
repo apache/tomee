@@ -21,6 +21,7 @@ import org.apache.openejb.config.sys.Resources;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Module;
 import org.apache.openejb.testing.SimpleLog;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.xml.sax.SAXException;
@@ -37,6 +38,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+@Ignore
 @SimpleLog // close to org.apache.openejb.assembler.classic.ResourceInfoComparatorTest but with a real case!
 @RunWith(ApplicationComposer.class)
 public class ResourceSortingTest {
