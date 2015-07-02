@@ -56,6 +56,7 @@ import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -65,6 +66,7 @@ import java.util.logging.Logger;
  */
 public class JNDIContext implements InitialContextFactory, Context {
     private static final Logger LOGGER = Logger.getLogger("OpenEJB.client");
+    private static final AtomicBoolean isShutdown = new AtomicBoolean(false);
 
     @SuppressWarnings("UnusedDeclaration")
     public static final String DEFAULT_PROVIDER_URL = "ejbd://localhost:4201";
@@ -82,7 +84,6 @@ public class JNDIContext implements InitialContextFactory, Context {
     private Hashtable env;
     private String moduleId;
     private ClientInstance clientIdentity;
-    private boolean authWithRequest = false;
 
     private static final ThreadPoolExecutor GLOBAL_CLIENT_POOL = newExecutor(10, null);
 
@@ -99,7 +100,7 @@ public class JNDIContext implements InitialContextFactory, Context {
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 @Override
                 public void run() {
-                    waitEndOfTasks(GLOBAL_CLIENT_POOL);
+                    waitForShutdown(GLOBAL_CLIENT_POOL);
                 }
             });
         }
@@ -234,7 +235,8 @@ public class JNDIContext implements InitialContextFactory, Context {
         final String userID = (String) env.get(Context.SECURITY_PRINCIPAL);
         final String psswrd = (String) env.get(Context.SECURITY_CREDENTIALS);
         String providerUrl = (String) env.get(Context.PROVIDER_URL);
-        authWithRequest = "true".equalsIgnoreCase(String.class.cast(env.get(AUTHENTICATE_WITH_THE_REQUEST)));
+
+        final boolean authWithRequest = "true".equalsIgnoreCase(String.class.cast(env.get(AUTHENTICATE_WITH_THE_REQUEST)));
         moduleId = (String) env.get("openejb.client.moduleId");
 
         final URI location;
@@ -294,10 +296,14 @@ public class JNDIContext implements InitialContextFactory, Context {
     private long getTimeout(final Hashtable env) {
         final Object o = env.get(IDENTITY_TIMEOUT);
         if (null != o) {
-
+            final Long l = Long.class.cast(o);
+            //noinspection ConstantConditions
+            if(null != l){
+                return l;
+            }
         }
 
-        return 0;
+        return 0L;
     }
 
     private static String getProperty(final Hashtable env, final String key, final String defaultValue) {
@@ -387,6 +393,8 @@ public class JNDIContext implements InitialContextFactory, Context {
 
     @Override
     public Object lookup(String name) throws NamingException {
+
+        checkState();
 
         if (name == null) {
             throw new InvalidNameException("The name cannot be null");
@@ -565,6 +573,9 @@ public class JNDIContext implements InitialContextFactory, Context {
     @SuppressWarnings("unchecked")
     @Override
     public NamingEnumeration<NameClassPair> list(String name) throws NamingException {
+
+        checkState();
+
         if (name == null) {
             throw new InvalidNameException("The name cannot be null");
         } else if (name.startsWith("java:")) {
@@ -724,17 +735,36 @@ public class JNDIContext implements InitialContextFactory, Context {
         return "";
     }
 
-    @Override
-    public void close() throws NamingException {
-        waitEndOfTasks(executorService);
-
-        final String userID = (String) env.get(Context.SECURITY_PRINCIPAL);
-        final String psswrd = (String) env.get(Context.SECURITY_CREDENTIALS);
-        this.authenticate(userID, psswrd, true);
+    private void checkState() throws NamingException {
+        if (isShutdown.get()) {
+            throw new NamingException("Context has been closed. Please create a new instance.");
+        }
     }
 
-    private static void waitEndOfTasks(final ExecutorService executor) {
-        if (executor == null) {
+    @Override
+    public void close() throws NamingException {
+
+        if (isShutdown.getAndSet(true)) {
+            return;
+        }
+
+        waitForShutdown(executorService);
+
+        final String userID = (String) env.get(Context.SECURITY_PRINCIPAL);
+
+        if (userID != null) {
+            final String psswrd = (String) env.get(Context.SECURITY_CREDENTIALS);
+            final boolean logout = true;
+            try {
+                this.authenticate(userID, psswrd, logout);
+            } catch (final Exception ignore) {
+                //no-op
+            }
+        }
+    }
+
+    private static void waitForShutdown(final ExecutorService executor) {
+        if (executor == null || executor.isShutdown()) {
             return;
         }
 
@@ -808,6 +838,15 @@ public class JNDIContext implements InitialContextFactory, Context {
         return createSubcontext(name.toString());
     }
 
+    @Override
+    protected void finalize() throws Throwable {
+        try {
+            close();
+        } finally {
+            super.finalize();
+        }
+    }
+
     private static final class SimpleNameParser implements NameParser {
 
         private static final Properties PARSER_PROPERTIES = new Properties();
@@ -833,6 +872,10 @@ public class JNDIContext implements InitialContextFactory, Context {
         private final String user;
         private final char[] password;
         private final long timeout;
+
+        public AuthenticationInfo(final String realm, final String user, final char[] chars) {
+            this(realm, user, chars, 0);
+        }
 
         public AuthenticationInfo(final String realm, final String user, final char[] password, final long timeout) {
             this.realm = realm;

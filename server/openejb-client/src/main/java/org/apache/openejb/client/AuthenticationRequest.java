@@ -22,7 +22,11 @@ import java.io.ObjectOutput;
 
 public class AuthenticationRequest implements Request {
 
-    private static final long serialVersionUID = 7009531340098948330L;
+    /**
+     * Never change this, use #metaData for version
+     */
+    private static final long serialVersionUID = 7009531340198948330L;
+
     private transient String realm;
     private transient String username;
     private transient String credentials;
@@ -39,6 +43,10 @@ public class AuthenticationRequest implements Request {
 
     public AuthenticationRequest(final String principal, final String credentials, final long timeout) {
         this(null, principal, credentials, timeout);
+    }
+
+    public AuthenticationRequest(final String securityRealm, final String username, final String password) {
+        this(securityRealm, username, password, 0);
     }
 
     public AuthenticationRequest(final String realm, final String principal, final String credentials, final long timeout) {
@@ -87,13 +95,13 @@ public class AuthenticationRequest implements Request {
      */
     @Override
     public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
-        final byte version = in.readByte(); // future use
+        in.readByte(); // Not used @see #metaData
 
         realm = (String) in.readObject();
         username = (String) in.readObject();
         credentials = (String) in.readObject();
 
-        if (version > 1) {
+        if (null == metaData || metaData.isAtLeast(4, 7)) {
             timeout = in.readLong();
             logout = in.readBoolean();
         }
@@ -104,8 +112,8 @@ public class AuthenticationRequest implements Request {
      */
     @Override
     public void writeExternal(final ObjectOutput out) throws IOException {
-        // write out the version of the serialized data for future use
-        out.writeByte(2);
+        // Not used, but must be written @see #metaData
+        out.writeByte(1);
 
         out.writeObject(realm);
         out.writeObject(username);
