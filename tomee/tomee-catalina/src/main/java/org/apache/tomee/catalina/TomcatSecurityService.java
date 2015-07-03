@@ -81,6 +81,10 @@ public class TomcatSecurityService extends AbstractSecurityService {
     }
 
     public UUID login(final String realmName, final String username, final String password) throws LoginException {
+        return this.login(realmName, username, password, 0);
+    }
+
+    public UUID login(final String realmName, final String username, final String password, final long accessTimeout) throws LoginException {
         final Realm realm = findRealm(realmName);
         if (realm == null) {
             throw new LoginException("No Tomcat realm available");
@@ -92,7 +96,7 @@ public class TomcatSecurityService extends AbstractSecurityService {
         }
 
         final Subject subject = createSubject(realm, principal);
-        return registerSubject(subject);
+        return registerSubject(subject, accessTimeout);
     }
 
     private Realm findRealm(final String realmName) {

@@ -225,7 +225,7 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
         }
     }
 
-    protected UUID registerSubject(final Subject subject) {
+    protected UUID registerSubject(final Subject subject, final long accessTimeout) {
         final Identity identity = new Identity(subject);
         final UUID token = identity.getToken();
         identities.put(token, identity);

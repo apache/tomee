@@ -77,7 +77,12 @@ public class SecurityServiceImpl extends AbstractSecurityService {
     }
 
     @Override
-    public UUID login(String realmName, final String username, final String password) throws LoginException {
+    public UUID login(final String securityRealm, final String user, final String pass) throws LoginException {
+        return this.login(securityRealm, user, pass, 0);
+    }
+
+    @Override
+    public UUID login(String realmName, final String username, final String password, final long accessTimeout) throws LoginException {
         if (realmName == null) {
             realmName = getRealmName();
         }
@@ -86,7 +91,7 @@ public class SecurityServiceImpl extends AbstractSecurityService {
 
         final Subject subject = context.getSubject();
 
-        final UUID token = registerSubject(subject);
+        final UUID token = registerSubject(subject, accessTimeout);
         contexts.put(token, context);
 
         return token;
