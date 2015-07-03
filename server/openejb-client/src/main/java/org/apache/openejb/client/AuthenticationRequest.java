@@ -32,7 +32,7 @@ public class AuthenticationRequest implements Request {
     private transient String credentials;
     private transient long timeout;
     private transient ProtocolMetaData metaData;
-    private transient boolean logout = false;
+    private transient Object logoutIdentity = null;
 
     public AuthenticationRequest() {
     }
@@ -82,12 +82,12 @@ public class AuthenticationRequest implements Request {
         return timeout;
     }
 
-    public boolean isLogout() {
-        return logout;
+    public Object getLogoutIdentity() {
+        return logoutIdentity;
     }
 
-    public void setLogout(final boolean logout) {
-        this.logout = logout;
+    public void setLogoutIdentity(final Object logoutIdentity) {
+        this.logoutIdentity = logoutIdentity;
     }
 
     /**
@@ -103,7 +103,7 @@ public class AuthenticationRequest implements Request {
 
         if (null == metaData || metaData.isAtLeast(4, 7)) {
             timeout = in.readLong();
-            logout = in.readBoolean();
+            logoutIdentity = in.readObject();
         }
     }
 
@@ -119,14 +119,15 @@ public class AuthenticationRequest implements Request {
         out.writeObject(username);
         out.writeObject(credentials);
         out.writeLong(timeout);
-        out.writeBoolean(logout);
+        out.writeObject(logoutIdentity);
     }
 
     public String toString() {
         final StringBuilder sb = new StringBuilder(50);
-        sb.append(null != realm ? realm : "Unknown realm").append(':');
-        sb.append(null != username ? username : "Unknown user").append(':');
-        sb.append(null != credentials ? credentials : "Unknown credentials").append(':');
+        sb.append(null != realm ? realm : "Undefined realm").append(':');
+        sb.append(null != username ? username : "Undefined user").append(':');
+        sb.append(null != credentials ? credentials : "Undefined credentials").append(':');
+        sb.append(null != logoutIdentity ? logoutIdentity : "Undefined logoutIdentity").append(':');
         sb.append(timeout);
         return sb.toString();
     }

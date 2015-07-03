@@ -67,7 +67,7 @@ public class RemoteTomEEEJBContainerIT {
             "  <!-- TomEE plugin for Tomcat -->\n" +
             "  <Listener className=\"org.apache.tomee.catalina.ServerListener\" />\n" +
             "  <Service name=\"Catalina\">\n" +
-            "    <Connector port=\"" + http + "\" protocol=\"HTTP/1.1\" />\n" +
+            "    <Connector port=\"" + http + "\" protocol=\"HTTP/1.1\" xpoweredBy=\"false\" server=\"Apache TomEE\" />\n" +
             "    <Engine name=\"Catalina\" defaultHost=\"localhost\">\n" +
             "      <Host name=\"localhost\"  appBase=\"webapps\"\n" +
             "            unpackWARs=\"true\" autoDeploy=\"true\">\n" +

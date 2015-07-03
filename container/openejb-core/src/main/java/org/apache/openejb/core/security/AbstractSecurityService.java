@@ -227,11 +227,8 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
 
     protected UUID registerSubject(final Subject subject, final long accessTimeout) {
         final Identity identity = new Identity(subject);
-        identity.setTimeout(accessTimeout);
-
         final UUID token = identity.getToken();
         identities.put(token, identity);
-
         return token;
     }
 
@@ -264,7 +261,6 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
             throw new LoginException("Identity is not currently logged in: " + securityIdentity);
         }
 
-        identity.access();
         clientIdentity.set(identity);
     }
 

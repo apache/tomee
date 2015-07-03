@@ -26,14 +26,13 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.Messages;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 class AuthRequestHandler extends RequestHandler {
 
-    Messages _messages = new Messages("org.apache.openejb.server.util.resources");
+    //Messages _messages = new Messages("org.apache.openejb.server.util.resources");
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE.createChild("auth"), "org.apache.openejb.server.util.resources");
     private static final boolean debug = logger.isDebugEnabled();
 
@@ -67,14 +66,17 @@ class AuthRequestHandler extends RequestHandler {
             final String username = req.getUsername();
             final String password = req.getCredentials();
             final long timeout = req.getTimeout();
-            final boolean logout = req.isLogout();
+            final Object logoutIdentity = req.getLogoutIdentity();
 
             final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
+            final Object token;
 
-            final Object token = securityService.login(securityRealm, username, password);
-
-            if(logout){
-                securityService.logout(token);
+            if (null != logoutIdentity) {
+                //noinspection unchecked
+                securityService.logout(logoutIdentity);
+                token = logoutIdentity;
+            } else {
+                token = securityService.login(securityRealm, username, password, timeout);
             }
 
             final ClientMetaData client = new ClientMetaData();

@@ -298,7 +298,7 @@ public class JNDIContext implements InitialContextFactory, Context {
         if (null != o) {
             final Long l = Long.class.cast(o);
             //noinspection ConstantConditions
-            if(null != l){
+            if (null != l) {
                 return l;
             }
         }
@@ -350,7 +350,10 @@ public class JNDIContext implements InitialContextFactory, Context {
     public void authenticate(final String userID, final String psswrd, final boolean logout) throws AuthenticationException {
 
         final AuthenticationRequest req = new AuthenticationRequest(String.class.cast(env.get(AUTHENTICATION_REALM_NAME)), userID, psswrd, getTimeout(env));
-        req.setLogout(logout);
+
+        if (logout) {
+            req.setLogoutIdentity(null != client ? client.getClientIdentity() : null);
+        }
 
         final AuthenticationResponse res;
         try {
