@@ -29,6 +29,7 @@ public enum RequestType {
     JNDI_REQUEST((byte) 1),
     AUTH_REQUEST((byte) 2),
     CLUSTER_REQUEST((byte) 3),
+    LOGOUT_REQUEST((byte) 4),
     STOP_REQUEST_Quit((byte) 'Q'),
     STOP_REQUEST_quit((byte) 'q'),
     STOP_REQUEST_Stop((byte) 'S'),

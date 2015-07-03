@@ -24,6 +24,8 @@ public class ResponseCodes {
     public static final int AUTH_GRANTED = 1;
     public static final int AUTH_REDIRECT = 2;
     public static final int AUTH_DENIED = 3;
+    public static final int LOGOUT_SUCCESS = 27;
+    public static final int LOGOUT_FAILED = 28;
     public static final int EJB_OK = 4;
     public static final int EJB_OK_CREATE = 5;
     public static final int EJB_OK_FOUND = 6;
@@ -47,5 +49,6 @@ public class ResponseCodes {
     public static final int JNDI_RESOURCE = 24;
     public static final int JNDI_WEBSERVICE = 25;
     public static final int JNDI_REFERENCE = 26;
+    // LOGOUT codes: 27-28
 }
 

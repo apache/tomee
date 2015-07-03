@@ -1162,10 +1162,13 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                         clazz = containerSystemContext.lookup(OPENEJB_RESOURCE_JNDI_PREFIX + resourceInfo.id).getClass();
                     }
 
-                    final AnnotationFinder finder = new AnnotationFinder(new ClassesArchive(ancestors(clazz)));
-                    final List<Method> postConstructs = finder.findAnnotatedMethods(PostConstruct.class);
-                    final List<Method> preDestroys = finder.findAnnotatedMethods(PreDestroy.class);
                     final boolean initialize = "true".equalsIgnoreCase(String.valueOf(resourceInfo.properties.remove("InitializeAfterDeployment")));
+                    final AnnotationFinder finder = Proxy.isProxyClass(clazz) ?
+                            null : new AnnotationFinder(new ClassesArchive(ancestors(clazz)));
+                    final List<Method> postConstructs = finder == null ?
+                            Collections.<Method>emptyList() : finder.findAnnotatedMethods(PostConstruct.class);
+                    final List<Method> preDestroys = finder == null ?
+                            Collections.<Method>emptyList() : finder.findAnnotatedMethods(PreDestroy.class);
 
                     CreationalContext<?> creationalContext = null;
                     Object originalResource = null;

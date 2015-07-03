@@ -64,6 +64,12 @@ public class BuildTomEEMojo extends AbstractTomEEMojo {
     protected String classifier = null;
 
     /**
+     * Behaves as TomEE 1 Maven plugin ie zip structure will get bin/ conf/ lib/ ... directly in zip root.
+     */
+    @Parameter(property = "tomee-plugin.no-root", defaultValue = "false")
+    protected boolean skipArchiveRootFolder;
+
+    /**
      * config looks like:
      * &gt;formats&lt;
      *     &gt;zip>${project.build.directory}/${project.build.finalName}.zip&gt;/zip&lt;
@@ -86,6 +92,9 @@ public class BuildTomEEMojo extends AbstractTomEEMojo {
         String prefix = catalinaBase.getParentFile().getAbsolutePath();
         if (!prefix.endsWith(File.separator)) {
             prefix += File.separator;
+        }
+        if (skipArchiveRootFolder) {
+            prefix += catalinaBase.getName() + File.separator;
         }
 
         if (zip || formats.containsKey("zip")) {

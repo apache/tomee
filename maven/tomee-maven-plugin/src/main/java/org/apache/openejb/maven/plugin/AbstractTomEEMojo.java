@@ -360,6 +360,16 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     @Parameter(property = "tomee-plugin.override-on-unzip", defaultValue = "true")
     protected boolean overrideOnUnzip;
 
+    /**
+     * the actual path used in server.xml for the https keystore if relevant.
+     * Common usage will be to put in src/main/tomee/conf a keystore foo.jks
+     * and set this value to ${catalina.base}/foo.jks.
+     *
+     * Note: if not set we'll check for any *.jks in conf/. You can set it to "ignore" to skip this.
+     */
+    @Parameter(property = "tomee-plugin.keystore")
+    protected String keystore;
+
     protected File deployedFile = null;
     protected RemoteServer server = null;
     protected String container = TOM_EE;
@@ -862,25 +872,34 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         final String original = read(serverXml);
         String value = original;
 
-        File keystoreFile = new File(parser.keystore());
-
-        if (!keystoreFile.exists()) {
-            keystoreFile = new File(System.getProperty("user.home"), ".keystore");
-        }
-
-        if (!keystoreFile.exists()) {
-            keystoreFile = new File("target", ".keystore");
-        }
-
-        final String keystoreFilePath = (keystoreFile.exists() ? keystoreFile.getAbsolutePath() : "");
-
-
         if (tomeeHttpsPort != null && tomeeHttpsPort > 0 && parser.value("HTTPS", null) == null) {
+            String keystorePath = keystore != null ? keystore : parser.keystore();
+            if (keystorePath == null) {
+                final File conf = new File(catalinaBase, "conf");
+                if (conf.isDirectory()) {
+                    final File[] jks = conf.listFiles(new FilenameFilter() {
+                        @Override
+                        public boolean accept(final File dir, final String name) {
+                            return name.endsWith(".jks");
+                        }
+                    });
+                    if (jks != null && jks.length == 1) {
+                        keystorePath = "${catalina.base}/conf/" + jks[0].getName();
+                    } else {
+                        throw new IllegalArgumentException("Ambiguous jks in conf/,please use <keystore /> to force it.");
+                    }
+                }
+            }
+
+            if (keystorePath == null) {
+                throw new IllegalArgumentException("No keystore specified, please use <keystore></keystore>");
+            }
+
             // ensure connector is not commented
             value = value.replace("<Service name=\"Catalina\">", "<Service name=\"Catalina\">\n"
                     + "    <Connector port=\"" + tomeeHttpsPort + "\" protocol=\"HTTP/1.1\" SSLEnabled=\"true\"\n" +
                     "                scheme=\"https\" secure=\"true\"\n" +
-                    "                clientAuth=\"false\" sslProtocol=\"TLS\" keystoreFile=\"" + keystoreFilePath + "\" />\n");
+                    "                clientAuth=\"false\" sslProtocol=\"TLS\" keystoreFile=\"" + keystorePath + "\" />\n");
         }
 
         if (tomeeHttpPort != null) {
