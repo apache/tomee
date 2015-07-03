@@ -251,7 +251,7 @@ public class StatefulSecurityPermissionsTest extends TestCase {
                 set.add(new GroupPrincipal(role));
             }
             final Subject subject = new Subject(true, set, Collections.EMPTY_SET, Collections.EMPTY_SET);
-            final UUID uuid = registerSubject(subject);
+            final UUID uuid = registerSubject(subject, 0);
             associate(uuid);
         }
 
