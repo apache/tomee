@@ -32,7 +32,6 @@ import javax.xml.ws.Service;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Collection;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
