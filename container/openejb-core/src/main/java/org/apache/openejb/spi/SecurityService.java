@@ -39,6 +39,8 @@ public interface SecurityService<T> extends Service {
 
     T login(String securityRealm, String user, String pass) throws LoginException;
 
+    T login(String securityRealm, String user, String pass, long accessTimeout) throws LoginException;
+
     /**
      * Active
      */

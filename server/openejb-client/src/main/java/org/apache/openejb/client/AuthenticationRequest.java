@@ -22,23 +22,38 @@ import java.io.ObjectOutput;
 
 public class AuthenticationRequest implements Request {
 
+    /**
+     * Never change this, use #metaData for version
+     */
     private static final long serialVersionUID = 7009531340198948330L;
+
     private transient String realm;
     private transient String username;
     private transient String credentials;
+    private transient long timeout;
     private transient ProtocolMetaData metaData;
+    private transient Object logoutIdentity = null;
 
     public AuthenticationRequest() {
     }
 
     public AuthenticationRequest(final String principal, final String credentials) {
-        this(null, principal, credentials);
+        this(null, principal, credentials, 0);
     }
 
-    public AuthenticationRequest(final String realm, final String principal, final String credentials) {
+    public AuthenticationRequest(final String principal, final String credentials, final long timeout) {
+        this(null, principal, credentials, timeout);
+    }
+
+    public AuthenticationRequest(final String securityRealm, final String username, final String password) {
+        this(securityRealm, username, password, 0);
+    }
+
+    public AuthenticationRequest(final String realm, final String principal, final String credentials, final long timeout) {
         this.realm = realm;
         this.username = principal;
         this.credentials = credentials;
+        this.timeout = timeout;
     }
 
     @Override
@@ -63,16 +78,33 @@ public class AuthenticationRequest implements Request {
         return credentials;
     }
 
+    public long getTimeout() {
+        return timeout;
+    }
+
+    public Object getLogoutIdentity() {
+        return logoutIdentity;
+    }
+
+    public void setLogoutIdentity(final Object logoutIdentity) {
+        this.logoutIdentity = logoutIdentity;
+    }
+
     /**
      * Changes to this method must observe the optional {@link #metaData} version
      */
     @Override
     public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
-        final byte version = in.readByte(); // future use
+        in.readByte(); // Not used @see #metaData
 
         realm = (String) in.readObject();
         username = (String) in.readObject();
         credentials = (String) in.readObject();
+
+        if (null == metaData || metaData.isAtLeast(4, 7)) {
+            timeout = in.readLong();
+            logoutIdentity = in.readObject();
+        }
     }
 
     /**
@@ -80,19 +112,23 @@ public class AuthenticationRequest implements Request {
      */
     @Override
     public void writeExternal(final ObjectOutput out) throws IOException {
-        // write out the version of the serialized data for future use
+        // Not used, but must be written @see #metaData
         out.writeByte(1);
 
         out.writeObject(realm);
         out.writeObject(username);
         out.writeObject(credentials);
+        out.writeLong(timeout);
+        out.writeObject(logoutIdentity);
     }
 
     public String toString() {
         final StringBuilder sb = new StringBuilder(50);
-        sb.append(null != realm ? realm : "Unknown realm").append(':');
-        sb.append(null != username ? username : "Unknown user").append(':');
-        sb.append(null != credentials ? credentials : "Unknown credentials");
+        sb.append(null != realm ? realm : "Undefined realm").append(':');
+        sb.append(null != username ? username : "Undefined user").append(':');
+        sb.append(null != credentials ? credentials : "Undefined credentials").append(':');
+        sb.append(null != logoutIdentity ? logoutIdentity : "Undefined logoutIdentity").append(':');
+        sb.append(timeout);
         return sb.toString();
     }
 }

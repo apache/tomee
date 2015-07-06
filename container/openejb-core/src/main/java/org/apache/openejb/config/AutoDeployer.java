@@ -133,12 +133,16 @@ public class AutoDeployer {
                         assembler.destroyApplication(app);
 
                         for (final String location : app.paths) {
+                            if (new File(location).equals(file)) {
+                                continue;
+                            }
 
                             final File delete = new File(location.replace("%20", " ").replace("%23", "#"));
 
                             for (int i = 0; i < 3; i++) {
                                 try {
                                     Files.remove(delete);
+                                    break;
                                 } catch (final Exception e) {
                                     if (i < 2) {
                                         //Try again as file IO is not a science
@@ -237,6 +241,7 @@ public class AutoDeployer {
 
             final FileInfo now = newInfo(file);
             now.setChanging(false);
+            now.setNewFile(false);
 
             logger.debug("Auto-Deployer initialization found: " + file.getAbsolutePath());
         }
@@ -291,6 +296,7 @@ public class AutoDeployer {
                     // Used to be changing, now in (hopefully) its final state
                     logger.info("New File: " + newStatus);
                     newStatus.setNewFile(!fileAdded(file));
+                    newStatus.setChanging(false);
                 } else if (oldStatus.isChanging()) {
                     logger.info("Updated Auto-Deployer File: " + newStatus);
                     fileUpdated(file);

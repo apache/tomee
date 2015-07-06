@@ -24,7 +24,6 @@ import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.core.security.AbstractSecurityService;
 import org.apache.openejb.core.security.jaas.GroupPrincipal;
 import org.apache.openejb.core.security.jaas.UserPrincipal;
@@ -77,7 +76,7 @@ public class StatefulSecurityPermissionsTest extends TestCase {
     }
 
     public void test() throws Exception {
-        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
+        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, org.apache.openejb.core.LocalInitialContextFactory.class.getName());
 
         final Assembler assembler = new Assembler();
         final ConfigurationFactory config = new ConfigurationFactory();
@@ -228,7 +227,7 @@ public class StatefulSecurityPermissionsTest extends TestCase {
     }
 
 
-    private static ThreadLocal<String> actual = new ThreadLocal<String>();
+    private static final ThreadLocal<String> actual = new ThreadLocal<String>();
 
     public static class TestSecurityService extends AbstractSecurityService {
 
@@ -240,6 +239,11 @@ public class StatefulSecurityPermissionsTest extends TestCase {
             return null;
         }
 
+        @Override
+        public UUID login(final String securityRealm, final String user, final String pass, final long accessTimeout) throws LoginException {
+            return null;
+        }
+
         public void login(final String user, final String... roles) throws LoginException {
             final Set<Principal> set = new HashSet<Principal>();
             set.add(new UserPrincipal(user));
@@ -247,7 +251,7 @@ public class StatefulSecurityPermissionsTest extends TestCase {
                 set.add(new GroupPrincipal(role));
             }
             final Subject subject = new Subject(true, set, Collections.EMPTY_SET, Collections.EMPTY_SET);
-            final UUID uuid = registerSubject(subject);
+            final UUID uuid = registerSubject(subject, 0);
             associate(uuid);
         }
 
@@ -279,7 +283,9 @@ public class StatefulSecurityPermissionsTest extends TestCase {
                     }
 
                     final Principal[] principals = domain.getPrincipals();
-                    if (principals.length == 0) return false;
+                    if (principals.length == 0) {
+                        return false;
+                    }
 
                     final RoleResolver roleResolver = SystemInstance.get().getComponent(RoleResolver.class);
                     final Set<String> roles = roleResolver.getLogicalRoles(principals, rolePermissionsMap.keySet());

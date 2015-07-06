@@ -56,6 +56,7 @@ import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -63,16 +64,20 @@ import java.util.logging.Logger;
 /**
  * @version $Rev$ $Date$
  */
-@SuppressWarnings("UseOfObsoleteCollectionType")
 public class JNDIContext implements InitialContextFactory, Context {
     private static final Logger LOGGER = Logger.getLogger("OpenEJB.client");
 
+    @SuppressWarnings("UnusedDeclaration")
     public static final String DEFAULT_PROVIDER_URL = "ejbd://localhost:4201";
     public static final String SERIALIZER = "openejb.ejbd.serializer";
     public static final String AUTHENTICATE_WITH_THE_REQUEST = "openejb.ejbd.authenticate-with-request";
     public static final String POOL_QUEUE_SIZE = "openejb.client.invoker.queue";
+    @SuppressWarnings("UnusedDeclaration")
     public static final String POOL_THREAD_NUMBER = "openejb.client.invoker.threads";
+    public static final String AUTHENTICATION_REALM_NAME = "openejb.authentication.realmName";
+    public static final String IDENTITY_TIMEOUT = "tomee.authentication.identity.timeout";
 
+    private final AtomicBoolean isShutdown = new AtomicBoolean(false);
     private String tail = "/";
     private ServerMetaData server;
     private ClientMetaData client;
@@ -91,11 +96,11 @@ public class JNDIContext implements InitialContextFactory, Context {
             container = null;
         }
         if (classLoader == ClassLoader.getSystemClassLoader() || Boolean.getBoolean("openejb.client.flus-tasks")
-            || (container != null && container.getClassLoader() == classLoader)) {
+                || (container != null && container.getClassLoader() == classLoader)) {
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 @Override
                 public void run() {
-                    waitEndOfTasks(GLOBAL_CLIENT_POOL);
+                    waitForShutdown(GLOBAL_CLIENT_POOL);
                 }
             });
         }
@@ -133,7 +138,7 @@ public class JNDIContext implements InitialContextFactory, Context {
         /**
          This thread pool starts with 3 core threads and can grow to the limit defined by 'threads'.
          If a pool thread is idle for more than 1 minute it will be discarded, unless the core size is reached.
-         It can accept upto the number of processes defined by 'queue'.
+         It can accept up to the number of processes defined by 'queue'.
          If the queue is full then an attempt is made to add the process to the queue for 10 seconds.
          Failure to add to the queue in this time will either result in a logged rejection, or if 'block'
          is true then a final attempt is made to run the process in the current thread (the service thread).
@@ -171,7 +176,7 @@ public class JNDIContext implements InitialContextFactory, Context {
                 final Logger log = Logger.getLogger(EJBObjectHandler.class.getName());
 
                 if (log.isLoggable(Level.WARNING)) {
-                    log.log(Level.WARNING, "EJBObjectHandler ExecutorService at capicity for process: " + r);
+                    log.log(Level.WARNING, "EJBObjectHandler ExecutorService at capacity for process: " + r);
                 }
 
                 boolean offer = false;
@@ -230,7 +235,7 @@ public class JNDIContext implements InitialContextFactory, Context {
         final String userID = (String) env.get(Context.SECURITY_PRINCIPAL);
         final String psswrd = (String) env.get(Context.SECURITY_CREDENTIALS);
         String providerUrl = (String) env.get(Context.PROVIDER_URL);
-        final String serializer = (String) env.get(SERIALIZER);
+
         final boolean authWithRequest = "true".equalsIgnoreCase(String.class.cast(env.get(AUTHENTICATE_WITH_THE_REQUEST)));
         moduleId = (String) env.get("openejb.client.moduleId");
 
@@ -240,11 +245,11 @@ public class JNDIContext implements InitialContextFactory, Context {
             location = new URI(providerUrl);
         } catch (final URISyntaxException e) {
             throw (ConfigurationException) new ConfigurationException("Property value for " +
-                Context.PROVIDER_URL +
-                " invalid: " +
-                providerUrl +
-                " - " +
-                e.getMessage()).initCause(e);
+                    Context.PROVIDER_URL +
+                    " invalid: " +
+                    providerUrl +
+                    " - " +
+                    e.getMessage()).initCause(e);
         }
         this.server = new ServerMetaData(location);
 
@@ -256,19 +261,29 @@ public class JNDIContext implements InitialContextFactory, Context {
 
         Client.fireEvent(new RemoteInitialContextCreated(location));
 
-        //TODO:1: Either aggressively initiate authentication or wait for the
-        //        server to send us an authentication challange.
+        //TODO: Either aggressively initiate authentication or wait for the server to send us an authentication challenge.
         if (userID != null) {
             if (!authWithRequest) {
-                authenticate(userID, psswrd);
+                authenticate(userID, psswrd, false);
             } else {
-                authenticationInfo = new AuthenticationInfo(String.class.cast(env.get("openejb.authentication.realmName")), userID, psswrd.toCharArray());
+                authenticationInfo = new AuthenticationInfo(String.class.cast(env.get(AUTHENTICATION_REALM_NAME)), userID, psswrd.toCharArray(), getTimeout(env));
             }
         }
         if (client == null) {
             client = new ClientMetaData();
         }
 
+        seedClientSerializer();
+
+        final int queue = Integer.parseInt(getProperty(env, JNDIContext.POOL_QUEUE_SIZE, "2"));
+        blockingQueue = new LinkedBlockingQueue<Runnable>((queue < 2 ? 2 : queue));
+        threads = Integer.parseInt(getProperty(env, "openejb.client.invoker.threads", "-1"));
+
+        return this;
+    }
+
+    private void seedClientSerializer() {
+        final String serializer = (String) env.get(SERIALIZER);
         if (serializer != null) {
             try {
                 client.setSerializer(EJBDSerializer.class.cast(Thread.currentThread().getContextClassLoader().loadClass(serializer).newInstance()));
@@ -276,12 +291,19 @@ public class JNDIContext implements InitialContextFactory, Context {
                 // no-op
             }
         }
+    }
 
-        final int queue = Integer.parseInt(getProperty(env, JNDIContext.POOL_QUEUE_SIZE, "2"));
-        blockingQueue = new LinkedBlockingQueue<Runnable>((queue < 2 ? 2 : queue));
-        threads = Integer.parseInt(getProperty(env, "openejb.client.invoker.threads", "-1"));
+    private long getTimeout(final Hashtable env) {
+        final Object o = env.get(IDENTITY_TIMEOUT);
+        if (null != o) {
+            final Long l = Long.class.cast(o);
+            //noinspection ConstantConditions
+            if (null != l) {
+                return l;
+            }
+        }
 
-        return this;
+        return 0L;
     }
 
     private static String getProperty(final Hashtable env, final String key, final String defaultValue) {
@@ -325,9 +347,13 @@ public class JNDIContext implements InitialContextFactory, Context {
         return providerUrl;
     }
 
-    public void authenticate(final String userID, final String psswrd) throws AuthenticationException {
+    public void authenticate(final String userID, final String psswrd, final boolean logout) throws AuthenticationException {
 
-        final AuthenticationRequest req = new AuthenticationRequest(String.class.cast(env.get("openejb.authentication.realmName")), userID, psswrd);
+        final AuthenticationRequest req = new AuthenticationRequest(String.class.cast(env.get(AUTHENTICATION_REALM_NAME)), userID, psswrd, getTimeout(env));
+
+        if (logout) {
+            req.setLogoutIdentity(null != client ? client.getClientIdentity() : null);
+        }
 
         final AuthenticationResponse res;
         try {
@@ -338,15 +364,17 @@ public class JNDIContext implements InitialContextFactory, Context {
 
         switch (res.getResponseCode()) {
             case ResponseCodes.AUTH_GRANTED:
-                client = res.getIdentity();
+                client = logout ? new ClientMetaData() : res.getIdentity();
                 break;
             case ResponseCodes.AUTH_REDIRECT:
-                client = res.getIdentity();
+                client = logout ? new ClientMetaData() : res.getIdentity();
                 server = res.getServer();
                 break;
             case ResponseCodes.AUTH_DENIED:
                 throw (AuthenticationException) new AuthenticationException("This principle is not authorized.").initCause(res.getDeniedCause());
         }
+
+        seedClientSerializer();
     }
 
     public EJBHomeProxy createEJBHomeProxy(final EJBMetaDataImpl ejbData) {
@@ -368,6 +396,8 @@ public class JNDIContext implements InitialContextFactory, Context {
 
     @Override
     public Object lookup(String name) throws NamingException {
+
+        checkState();
 
         if (name == null) {
             throw new InvalidNameException("The name cannot be null");
@@ -546,6 +576,9 @@ public class JNDIContext implements InitialContextFactory, Context {
     @SuppressWarnings("unchecked")
     @Override
     public NamingEnumeration<NameClassPair> list(String name) throws NamingException {
+
+        checkState();
+
         if (name == null) {
             throw new InvalidNameException("The name cannot be null");
         } else if (name.startsWith("java:")) {
@@ -626,7 +659,7 @@ public class JNDIContext implements InitialContextFactory, Context {
 
         private static final long serialVersionUID = 1L;
         private RuntimeException failed;
-        private Context context;
+        private final Context context;
 
         public LazyBinding(final String name, final String className, final Context context) {
             super(name, className, null);
@@ -705,13 +738,36 @@ public class JNDIContext implements InitialContextFactory, Context {
         return "";
     }
 
-    @Override
-    public void close() throws NamingException {
-        waitEndOfTasks(executorService);
+    private void checkState() throws NamingException {
+        if (isShutdown.get()) {
+            throw new NamingException("Context has been closed. Please create a new instance.");
+        }
     }
 
-    private static void waitEndOfTasks(final ExecutorService executor) {
-        if (executor == null) {
+    @Override
+    public void close() throws NamingException {
+
+        if (isShutdown.getAndSet(true)) {
+            return;
+        }
+
+        waitForShutdown(executorService);
+
+        final String userID = (String) env.get(Context.SECURITY_PRINCIPAL);
+
+        if (userID != null) {
+            final String psswrd = (String) env.get(Context.SECURITY_CREDENTIALS);
+            final boolean logout = true;
+            try {
+                this.authenticate(userID, psswrd, logout);
+            } catch (final Exception ignore) {
+                //no-op
+            }
+        }
+    }
+
+    private static void waitForShutdown(final ExecutorService executor) {
+        if (executor == null || executor.isShutdown()) {
             return;
         }
 
@@ -785,6 +841,15 @@ public class JNDIContext implements InitialContextFactory, Context {
         return createSubcontext(name.toString());
     }
 
+    @Override
+    protected void finalize() throws Throwable {
+        try {
+            close();
+        } finally {
+            super.finalize();
+        }
+    }
+
     private static final class SimpleNameParser implements NameParser {
 
         private static final Properties PARSER_PROPERTIES = new Properties();
@@ -805,15 +870,21 @@ public class JNDIContext implements InitialContextFactory, Context {
 
     public static class AuthenticationInfo implements Serializable {
 
-        private static final long serialVersionUID = -8898613532355280735L;
-        private String realm;
-        private String user;
-        private char[] password;
+        private static final long serialVersionUID = -8898613592355280735L;
+        private final String realm;
+        private final String user;
+        private final char[] password;
+        private final long timeout;
 
-        public AuthenticationInfo(final String realm, final String user, final char[] password) {
+        public AuthenticationInfo(final String realm, final String user, final char[] chars) {
+            this(realm, user, chars, 0);
+        }
+
+        public AuthenticationInfo(final String realm, final String user, final char[] password, final long timeout) {
             this.realm = realm;
             this.user = user;
             this.password = password;
+            this.timeout = timeout;
         }
 
         public String getRealm() {
@@ -826,6 +897,10 @@ public class JNDIContext implements InitialContextFactory, Context {
 
         public char[] getPassword() {
             return password;
+        }
+
+        public long getTimeout() {
+            return timeout;
         }
     }
 }

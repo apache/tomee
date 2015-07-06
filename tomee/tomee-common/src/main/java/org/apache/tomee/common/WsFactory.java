@@ -30,6 +30,7 @@ import javax.naming.Reference;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Collection;
 import java.util.Hashtable;

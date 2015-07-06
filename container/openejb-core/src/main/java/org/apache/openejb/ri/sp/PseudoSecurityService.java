@@ -46,6 +46,11 @@ public class PseudoSecurityService implements SecurityService {
         return null;
     }
 
+    @Override
+    public Object login(final String securityRealm, final String user, final String pass, final long accessTimeout) throws LoginException {
+        return null;
+    }
+
     public Set<String> getLogicalRoles(final Principal[] principals, final Set<String> logicalRoles) {
         return Collections.emptySet();
     }
