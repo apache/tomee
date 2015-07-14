@@ -20,6 +20,7 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.resource.jdbc.managed.local.ManagedConnection;
+import org.apache.openejb.resource.jdbc.managed.local.ManagedConnectionsByTransactionByDatasource;
 import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.Module;
 import org.junit.After;
@@ -36,6 +37,7 @@ import javax.ejb.TransactionManagementType;
 import javax.sql.DataSource;
 import javax.transaction.Transaction;
 import javax.transaction.UserTransaction;
+
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -211,7 +213,7 @@ public class UTManagedDataSourceTest {
 
     @After
     public void checkTxMapIsEmpty() throws Exception { // avoid memory leak
-        final Field map = ManagedConnection.class.getDeclaredField("CONNECTION_BY_TX_BY_DS");
+        final Field map = ManagedConnectionsByTransactionByDatasource.class.getDeclaredField("CONNECTION_BY_TX_BY_DS");
         map.setAccessible(true);
         final Map<DataSource, Map<Transaction, Connection>> instance = (Map<DataSource, Map<Transaction, Connection>>) map.get(null);
         assertEquals(1, instance.size());
