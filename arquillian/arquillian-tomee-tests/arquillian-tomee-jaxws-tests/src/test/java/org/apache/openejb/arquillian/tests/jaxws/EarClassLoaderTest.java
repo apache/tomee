@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(Arquillian.class)
 public class EarClassLoaderTest {
@@ -59,6 +60,6 @@ public class EarClassLoaderTest {
 
     @Test
     public void checkIfWasCorretlyLoaded() throws IOException { // when writing this test we ship joda-time 2.2
-        assertEquals("2.5", IO.slurp(new URL(url.toExternalForm() + (url.getPath().isEmpty() ? "/broken-web/" : "") + "joda")));
+        assertTrue(IO.slurp(new URL(url.toExternalForm() + (url.getPath().isEmpty() ? "/broken-web/" : "") + "joda")).endsWith("joda-time-2.5.jar"));
     }
 }

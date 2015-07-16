@@ -28,7 +28,7 @@ public class LoadJodaFromTheWebAppResource {
     @GET
     public String worked() {
         LocalDateTime.now().toString(); // just trigger loading if not already done during scanning
-        return LocalDateTime.class.getPackage().getImplementationVersion();
+        return LocalDateTime.class.getProtectionDomain().getCodeSource().getLocation().toExternalForm();
     }
 
     public LocalDateTime triggerLoadingDuringScanning() {
