@@ -30,6 +30,7 @@ import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 import javax.sql.XADataSource;
 import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
 
 public class JTADataSourceWrapperFactory {
     private String delegate = "datasource";
@@ -41,9 +42,9 @@ public class JTADataSourceWrapperFactory {
 
         CommonDataSource cds = findDelegate();
         if (cds instanceof XADataSource) {
-            cds = new ManagedXADataSource(cds, transactionManager);
+            cds = new ManagedXADataSource(cds, transactionManager, SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class));
         } else {
-            cds = new ManagedDataSource(DataSource.class.cast(cds), transactionManager);
+            cds = new ManagedDataSource(DataSource.class.cast(cds), transactionManager, SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class));
         }
 
         if (logSql) {
