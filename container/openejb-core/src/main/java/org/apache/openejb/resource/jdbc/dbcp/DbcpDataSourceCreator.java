@@ -18,6 +18,7 @@
 package org.apache.openejb.resource.jdbc.dbcp;
 
 import org.apache.openejb.OpenEJB;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.resource.jdbc.managed.local.ManagedDataSource;
 import org.apache.openejb.resource.jdbc.managed.xa.ManagedXADataSource;
 import org.apache.openejb.resource.jdbc.pool.PoolDataSourceCreator;
@@ -27,6 +28,7 @@ import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 import javax.sql.XADataSource;
 import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
 import java.util.Properties;
 
 // just a sample showing how to implement a datasourcecreator
@@ -41,9 +43,9 @@ public class DbcpDataSourceCreator extends PoolDataSourceCreator {
     public DataSource managed(final String name, final CommonDataSource ds) {
         final TransactionManager transactionManager = OpenEJB.getTransactionManager();
         if (ds instanceof XADataSource) {
-            return new ManagedXADataSource(ds, transactionManager);
+            return new ManagedXADataSource(ds, transactionManager, SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class));
         }
-        return new ManagedDataSource(DataSource.class.cast(ds), transactionManager);
+        return new ManagedDataSource(DataSource.class.cast(ds), transactionManager, SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class));
     }
 
     @Override

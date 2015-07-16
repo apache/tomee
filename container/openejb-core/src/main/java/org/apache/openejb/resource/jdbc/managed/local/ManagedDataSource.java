@@ -17,44 +17,45 @@
 
 package org.apache.openejb.resource.jdbc.managed.local;
 
-import org.apache.openejb.util.reflection.Reflections;
-
-import javax.sql.CommonDataSource;
-import javax.sql.DataSource;
-import javax.transaction.TransactionManager;
+import java.io.ObjectStreamException;
 import java.io.PrintWriter;
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.logging.Logger;
+import javax.sql.CommonDataSource;
+import javax.sql.DataSource;
+import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
 
 public class ManagedDataSource implements DataSource {
     private static final Class<?>[] CONNECTION_CLASS = new Class<?>[]{Connection.class};
 
-    protected final DataSource delegate;
+    protected final CommonDataSource delegate;
     protected final TransactionManager transactionManager;
+    protected final TransactionSynchronizationRegistry registry;
     protected final int hashCode;
 
-    protected ManagedDataSource(final DataSource ds, final TransactionManager txMgr, final int hc) {
+    protected ManagedDataSource(final CommonDataSource ds, final TransactionManager txMgr, final TransactionSynchronizationRegistry txRegistry, final int hc) {
         delegate = ds;
         hashCode = hc;
         transactionManager = txMgr;
-        ManagedConnection.pushDataSource(this);
+        registry = txRegistry;
     }
 
-    public ManagedDataSource(final DataSource ds, final TransactionManager txMgr) {
-        this(ds, txMgr, ds.hashCode());
+    public ManagedDataSource(final DataSource ds, final TransactionManager txMgr,  final TransactionSynchronizationRegistry txRegistry) {
+        this(ds, txMgr, txRegistry, ds.hashCode());
     }
 
     @Override
     public Connection getConnection() throws SQLException {
-        return managed(delegate.getConnection());
+        return managed(null, null);
     }
 
     @Override
     public Connection getConnection(final String username, final String password) throws SQLException {
-        return managed(delegate.getConnection(username, password));
+        return managed(username, password);
     }
 
     @Override
@@ -79,29 +80,26 @@ public class ManagedDataSource implements DataSource {
 
     @Override
     public <T> T unwrap(final Class<T> iface) throws SQLException {
-        return delegate.unwrap(iface);
+        return DataSource.class.isInstance(delegate) ? DataSource.class.cast(delegate).unwrap(iface) : null;
     }
 
     @Override
     public boolean isWrapperFor(final Class<?> iface) throws SQLException {
-        return delegate.isWrapperFor(iface);
+        return DataSource.class.isInstance(delegate) && DataSource.class.cast(delegate).isWrapperFor(iface);
     }
 
-    // @Override JDK7
+    @Override
     public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-        return (Logger) Reflections.invokeByReflection(delegate, "getParentLogger", new Class<?>[0], null);
+        return delegate.getParentLogger();
     }
 
-    private Connection managed(final Connection connection) {
-        return (Connection) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), CONNECTION_CLASS, new ManagedConnection(this, connection, transactionManager));
+    private Connection managed(final String u, final String p) {
+        return (Connection) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), CONNECTION_CLASS,
+                new ManagedConnection(delegate, transactionManager, registry, u, p));
     }
 
-    public DataSource getDelegate() {
+    public CommonDataSource getDelegate() {
         return delegate;
-    }
-
-    public void clean() {
-        ManagedConnection.cleanDataSource(this);
     }
 
     @Override
