@@ -109,7 +109,6 @@ import org.apache.openejb.quartz.Scheduler;
 import org.apache.openejb.resource.GeronimoConnectionManagerFactory;
 import org.apache.openejb.resource.PropertiesFactory;
 import org.apache.openejb.resource.jdbc.DataSourceFactory;
-import org.apache.openejb.resource.jdbc.managed.local.ManagedDataSource;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;

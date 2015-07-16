@@ -226,24 +226,11 @@ public class ManagedConnection implements InvocationHandler {
         }
     }
 
-    public static void pushDataSource(final CommonDataSource ds) {
-        CONNECTION_BY_TX_BY_DS.put(ds.hashCode(), new ConcurrentHashMap<Transaction, Connection>());
-    }
-
-    public static void cleanDataSource(final CommonDataSource ds) {
-        final Map<Transaction, Connection> map = CONNECTION_BY_TX_BY_DS.remove(ds.hashCode());
-        if (map != null) {
-            map.clear();
-        }
-    }
-
-    private static class ClosingSynchronization implements Synchronization {
+        private static class ClosingSynchronization implements Synchronization {
         private final Connection connection;
-        private final Map<Transaction, Connection> mapToCleanup;
 
-        public ClosingSynchronization(final Connection delegate, final Map<Transaction, Connection> connByTx) {
-            connection = delegate;
-            mapToCleanup = connByTx;
+        public ClosingSynchronization(final Connection delegate) {
+            this.connection = delegate;
         }
 
         @Override
@@ -254,12 +241,44 @@ public class ManagedConnection implements InvocationHandler {
         @Override
         public void afterCompletion(final int status) {
             close(connection);
-            try {
-                final Transaction tx = OpenEJB.getTransactionManager().getTransaction();
-                mapToCleanup.remove(tx);
-            } catch (final SystemException ignored) {
-                // no-op
+        }
+    }
+
+    private static final class Key {
+        private final CommonDataSource ds;
+        private final String user;
+        private final String pwd;
+        private final int hash;
+
+        private Key(final CommonDataSource ds, final String user, final String pwd) {
+            this.ds = ds;
+            this.user = user;
+            this.pwd = pwd;
+
+            int result = ds.hashCode();
+            result = 31 * result + (user != null ? user.hashCode() : 0);
+            result = 31 * result + (pwd != null ? pwd.hashCode() : 0);
+            hash = result;
+        }
+
+        @Override
+        public boolean equals(final Object o) {
+            if (this == o) {
+                return true;
             }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            Key key = Key.class.cast(o);
+            return (ds == key.ds || ds.equals(key.ds)) &&
+                    !(user != null ? !user.equals(key.user) : key.user != null) &&
+                    !(pwd != null ? !pwd.equals(key.pwd) : key.pwd != null);
+        }
+
+        @Override
+        public int hashCode() {
+            return hash;
         }
     }
 }
