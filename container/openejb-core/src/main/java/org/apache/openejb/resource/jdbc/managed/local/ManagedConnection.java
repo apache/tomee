@@ -70,77 +70,108 @@ public class ManagedConnection implements InvocationHandler {
             return "ManagedConnection{" + delegate + "}";
         }
         if ("hashCode".equals(mtdName)) {
-            return delegate.hashCode();
+            return hashCode();
         }
         if ("equals".equals(mtdName)) {
-            return delegate.equals(args[0]);
+            return args[0] == this || (delegate != null && delegate.equals(args[0]));
+        }
+
+        // allow to get delegate if needed by the underlying program
+        if (Wrapper.class == method.getDeclaringClass() && args.length == 1 && Connection.class == args[0]) {
+            if ("isWrapperFor".equals(mtdName)) {
+                return true;
+            }
+            if ("unwrap".equals(mtdName)) {
+                return delegate;
+            }
         }
 
         // here the real logic starts
         try {
             final Transaction transaction = transactionManager.getTransaction();
 
-            if (transaction == null) { // shouldn't be possible
+            // shouldn't be used without a transaction but if so just delegate to the actual connection
+            if (transaction == null) {
+                if (delegate == null) {
+                    newConnection();
+                }
                 return invoke(method, delegate, args);
             }
 
             // if we have a tx check it is the same this connection is linked to
-            if (currentTransaction != null) {
-                if (isUnderTransaction(currentTransaction.getStatus())) {
-                    if (!currentTransaction.equals(transaction)) {
-                        throw new SQLException("Connection can not be used while enlisted in another transaction");
-                    }
-                    return invokeUnderTransaction(delegate, method, args);
-                } else {
-                    close(delegate);
+            if (currentTransaction != null && isUnderTransaction(currentTransaction.getStatus())) {
+                if (!currentTransaction.equals(transaction)) {
+                    throw new SQLException("Connection can not be used while enlisted in another transaction");
                 }
-            }
-
-            // get the already bound connection to the current transaction
-            // or enlist this one in the tx
-            final int status = transaction.getStatus();
-            if (isUnderTransaction(status)) {
-                final Connection connection = connectionByTx.get(transaction);
-                if (connection != delegate) {
-                    if (connection != null) { // use already existing one
-                        delegate.close(); // return to pool
-                        delegate = connection;
-                    } else {
-                        connectionByTx.put(transaction, delegate);
-                        currentTransaction = transaction;
-                        try {
-                            transaction.enlistResource(getXAResource());
-                        } catch (final RollbackException ignored) {
-                            // no-op
-                        } catch (final SystemException e) {
-                            throw new SQLException("Unable to enlist connection the transaction", e);
-                        }
-
-                        transaction.registerSynchronization(new ClosingSynchronization(delegate, connectionByTx));
-
-                        try {
-                            setAutoCommit(false);
-                        } catch (final SQLException xae) { // we are already in a transaction so this can't be called from a user perspective - some XA DataSource prevents it in their code
-                            final String message = "Can't set auto commit to false cause the XA datasource doesn't support it, this is likely an issue";
-                            if (LOGGER.isDebugEnabled()) { // we don't want to print the exception by default
-                                LOGGER.warning(message, xae);
-                            } else {
-                                LOGGER.warning(message);
-                            }
-                        }
-                    }
-                }
-
                 return invokeUnderTransaction(delegate, method, args);
             }
 
+            // get the already bound connection to the current transaction or enlist this one in the tx
+            if (isUnderTransaction(transaction.getStatus())) {
+                Connection connection = Connection.class.cast(registry.getResource(key));
+                if (connection == null && delegate == null) {
+                    newConnection();
+                    connection = delegate;
+
+                    registry.putResource(transaction, delegate);
+                    currentTransaction = transaction;
+                    try {
+                        transaction.enlistResource(getXAResource());
+                    } catch (final RollbackException ignored) {
+                        // no-op
+                    } catch (final SystemException e) {
+                        throw new SQLException("Unable to enlist connection the transaction", e);
+                    }
+
+                    transaction.registerSynchronization(new ClosingSynchronization(delegate));
+
+                    try {
+                        setAutoCommit(false);
+                    } catch (final SQLException xae) { // we are alreay in a transaction so this can't be called from a user perspective - some XA DataSource prevents it in their code
+                        final String message = "Can't set auto commit to false cause the XA datasource doesn't support it, this is likely an issue";
+                        final Logger logger = Logger.getInstance(LogCategory.OPENEJB_RESOURCE_JDBC, ManagedConnection.class);
+                        if (logger.isDebugEnabled()) { // we don't want to print the exception by default
+                            logger.warning(message, xae);
+                        } else {
+                            logger.warning(message);
+                        }
+                    }
+                } else if (delegate == null) { // shouldn't happen
+                    delegate = connection;
+                }
+
+                return invokeUnderTransaction(connection, method, args);
+            }
+
+            // we shouldn't come here, tempted to just throw an exception
+            if (delegate == null) {
+                newConnection();
+            }
             return invoke(method, delegate, args);
         } catch (final InvocationTargetException ite) {
             throw ite.getTargetException();
         }
     }
 
+    protected Object newConnection() throws SQLException {
+        final Object connection = DataSource.class.isInstance(key.ds) ?
+                (key.user == null ? DataSource.class.cast(key.ds).getConnection() : DataSource.class.cast(key.ds).getConnection(key.user, key.pwd)) :
+                (key.user == null ? XADataSource.class.cast(key.ds).getXAConnection() : XADataSource.class.cast(key.ds).getXAConnection(key.user, key.pwd));
+        if (XAConnection.class.isInstance(connection)) {
+            xaConnection = XAConnection.class.cast(connection);
+            delegate = xaConnection.getConnection();
+            xaResource = xaConnection.getXAResource();
+        } else {
+            delegate = Connection.class.cast(connection);
+            xaResource = new LocalXAResource(delegate);
+        }
+        return connection;
+    }
+
     protected void setAutoCommit(final boolean value) throws SQLException {
+        if (delegate == null) {
+            newConnection();
+        }
         delegate.setAutoCommit(value);
     }
 
