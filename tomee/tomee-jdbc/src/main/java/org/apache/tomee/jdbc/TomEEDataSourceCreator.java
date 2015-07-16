@@ -41,6 +41,8 @@ import javax.management.ObjectName;
 import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 import javax.sql.XADataSource;
+import java.io.ObjectStreamException;
+import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -48,6 +50,10 @@ import java.sql.SQLException;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+import javax.management.ObjectName;
+import javax.sql.CommonDataSource;
+import javax.sql.DataSource;
+import javax.sql.XADataSource;
 
 public class TomEEDataSourceCreator extends PoolDataSourceCreator {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, TomEEDataSourceCreator.class);
@@ -239,7 +245,7 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
             if (pool != null) {
                 return pool;
             } else {
-                pool = new TomEEConnectionPool(poolProperties); // to force to init the driver with TCCL
+                pool = new TomEEConnectionPool(poolProperties, Thread.currentThread().getContextClassLoader()); // to force to init the driver with TCCL
                 return pool;
             }
         }
@@ -303,7 +309,7 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
         private final PoolConfiguration delegate;
 
         public ReadOnlyConnectionpool(final PoolConfiguration pool) {
-            delegate = pool;
+            this.delegate = pool;
         }
 
         @Override
@@ -320,8 +326,11 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
     }
 
     private static class TomEEConnectionPool extends ConnectionPool {
-        public TomEEConnectionPool(final PoolConfiguration poolProperties) throws SQLException {
+        private final ClassLoader creationLoader;
+
+        public TomEEConnectionPool(final PoolConfiguration poolProperties, final ClassLoader creationLoader) throws SQLException {
             super(poolProperties);
+            this.creationLoader = creationLoader;
         }
 
         @Override
@@ -335,7 +344,13 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
                 }
                 try {
                     Reflections.set(con, "driver", Class.forName(getPoolProperties().getDriverClassName(), true, cl).newInstance());
-                } catch (final java.lang.Exception cn) {
+                } catch (final ClassNotFoundException cnfe) {
+                    try { // custom resource classloader
+                        Reflections.set(con, "driver", Class.forName(getPoolProperties().getDriverClassName(), true, creationLoader).newInstance());
+                    } catch (final Exception e) {
+                        // will fail later, no worry
+                    }
+                } catch (final Exception cn) {
                     // will fail later, no worry
                 }
             }
