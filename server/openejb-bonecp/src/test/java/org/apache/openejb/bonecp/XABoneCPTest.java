@@ -26,11 +26,11 @@ import org.hsqldb.jdbc.pool.JDBCXADataSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Resource;
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
+import javax.annotation.Resource;
+import javax.sql.DataSource;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertNotNull;
