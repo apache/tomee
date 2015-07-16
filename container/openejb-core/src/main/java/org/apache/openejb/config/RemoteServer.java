@@ -284,7 +284,7 @@ public class RemoteServer {
                     if (!addedArgs.containsKey("-Djava.io.tmpdir")) {
                         argsList.add("-Djava.io.tmpdir=" + temp.getAbsolutePath());
                     }
-                    if (!addedArgs.containsKey("-Djava.endorsed.dirs")) {
+                    if (!javaVersion.startsWith("1.9") && !addedArgs.containsKey("-Djava.endorsed.dirs")) {
                         argsList.add("-Djava.endorsed.dirs=" + endorsed.getAbsolutePath());
                     }
                     if (!addedArgs.containsKey("-Dcatalina.base")) {
