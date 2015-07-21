@@ -127,7 +127,7 @@ public class ManagedConnectionBehaviorTest {
     }
 
     public static class MyDs implements DataSource {
-        private final Collection<MyConn> connections = new LinkedList<>();
+        private final Collection<MyConn> connections = new LinkedList<MyConn>();
 
         @Override
         public Connection getConnection() throws SQLException {
@@ -159,11 +159,6 @@ public class ManagedConnectionBehaviorTest {
         @Override
         public int getLoginTimeout() throws SQLException {
             return 0;
-        }
-
-        @Override
-        public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-            return null;
         }
 
         @Override
@@ -421,31 +416,6 @@ public class ManagedConnectionBehaviorTest {
         @Override
         public Struct createStruct(String typeName, Object[] attributes) throws SQLException {
             return null;
-        }
-
-        @Override
-        public void setSchema(String schema) throws SQLException {
-
-        }
-
-        @Override
-        public String getSchema() throws SQLException {
-            return null;
-        }
-
-        @Override
-        public void abort(Executor executor) throws SQLException {
-
-        }
-
-        @Override
-        public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException {
-
-        }
-
-        @Override
-        public int getNetworkTimeout() throws SQLException {
-            return 0;
         }
 
         @Override
