@@ -17,13 +17,10 @@
 
 package org.apache.openejb.resource.jdbc.managed.local;
 
-import java.io.ObjectStreamException;
 import java.io.PrintWriter;
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
-import java.util.logging.Logger;
 import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 import javax.transaction.TransactionManager;
