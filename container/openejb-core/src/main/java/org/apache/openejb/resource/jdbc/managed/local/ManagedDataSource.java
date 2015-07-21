@@ -21,10 +21,7 @@ import org.apache.openejb.util.reflection.Reflections;
 
 import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
-import javax.transaction.SystemException;
-import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
-
 import java.io.PrintWriter;
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
@@ -43,7 +40,7 @@ public class ManagedDataSource implements DataSource {
         delegate = ds;
         hashCode = hc;
         transactionManager = txMgr;
-        ManagedConnectionsByTransactionByDatasource.pushDataSource(this);
+        ManagedConnection.pushDataSource(this);
     }
 
     public ManagedDataSource(final DataSource ds, final TransactionManager txMgr) {
@@ -52,26 +49,7 @@ public class ManagedDataSource implements DataSource {
 
     @Override
     public Connection getConnection() throws SQLException {
-        
-        Transaction transaction = null;
-        
-        try {
-            transaction = transactionManager.getTransaction();
-        } catch (final SystemException e) {
-            // ignore
-        }
-        
-        Connection connection = null;
-        
-        if (transaction != null) {
-            connection = ManagedConnectionsByTransactionByDatasource.get(this, transaction);
-        }
-        
-        if (connection == null) {
-            connection = delegate.getConnection();
-        }
-        
-        return managed(connection);
+        return managed(delegate.getConnection());
     }
 
     @Override
@@ -123,7 +101,7 @@ public class ManagedDataSource implements DataSource {
     }
 
     public void clean() {
-        ManagedConnectionsByTransactionByDatasource.cleanDataSource(this);
+        ManagedConnection.cleanDataSource(this);
     }
 
     @Override

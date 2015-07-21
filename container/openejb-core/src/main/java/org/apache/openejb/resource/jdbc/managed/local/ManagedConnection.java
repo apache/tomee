@@ -35,9 +35,12 @@ import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ManagedConnection implements InvocationHandler {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_RESOURCE_JDBC, ManagedConnection.class);
+
+    private static final Map<Integer, Map<Transaction, Connection>> CONNECTION_BY_TX_BY_DS = new ConcurrentHashMap<Integer, Map<Transaction, Connection>>();
 
     private final TransactionManager transactionManager;
     private final LocalXAResource xaResource;
@@ -52,7 +55,7 @@ public class ManagedConnection implements InvocationHandler {
         transactionManager = txMgr;
         closed = false;
         xaResource = new LocalXAResource(delegate);
-        connectionByTx = ManagedConnectionsByTransactionByDatasource.get(ds);
+        connectionByTx = CONNECTION_BY_TX_BY_DS.get(ds.hashCode());
     }
 
     public XAResource getXAResource() throws SQLException {
@@ -189,6 +192,17 @@ public class ManagedConnection implements InvocationHandler {
             }
         } catch (final SQLException e) {
             // no-op
+        }
+    }
+
+    public static void pushDataSource(final CommonDataSource ds) {
+        CONNECTION_BY_TX_BY_DS.put(ds.hashCode(), new ConcurrentHashMap<Transaction, Connection>());
+    }
+
+    public static void cleanDataSource(final CommonDataSource ds) {
+        final Map<Transaction, Connection> map = CONNECTION_BY_TX_BY_DS.remove(ds.hashCode());
+        if (map != null) {
+            map.clear();
         }
     }
 
