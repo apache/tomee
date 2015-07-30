@@ -16,12 +16,10 @@
  */
 package org.apache.openejb.resource.jdbc;
 
-import org.apache.openejb.resource.jdbc.managed.local.ManagedDataSource;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
-import javax.sql.CommonDataSource;
 import java.io.Flushable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
@@ -29,6 +27,7 @@ import java.lang.reflect.Method;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import javax.sql.CommonDataSource;
 
 public class FlushableDataSourceHandler implements InvocationHandler {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, FlushableDataSourceHandler.class);
@@ -57,10 +56,6 @@ public class FlushableDataSourceHandler implements InvocationHandler {
                 DataSourceFactory.destroy(old);
             } catch (final Throwable t) {
                 //Ignore
-            }
-
-            if (ManagedDataSource.class.isInstance(old)) {
-                ManagedDataSource.class.cast(old).clean();
             }
         }
     }

@@ -1710,11 +1710,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             } catch (final Throwable t) {
                 //Ignore
             }
-
-            if (object instanceof ManagedDataSource) {
-                ((ManagedDataSource) object).clean();
-            }
-
         } else if (object instanceof ConnectorReference) {
             final ConnectorReference cr = (ConnectorReference) object;
             try {
