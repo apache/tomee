@@ -53,7 +53,7 @@ public class CipherFromAppTest {
 
     @Test
     public void checkPassword() {
-        final DataSource delegate = DataSource.class.cast(ManagedDataSource.class.cast(ds).getDelegate());
+        final DataSource delegate = ManagedDataSource.class.cast(ds).getDelegate();
         assertEquals(new MyConstantCipher().decrypt(null), TomEEDataSourceCreator.TomEEDataSource.class.cast(delegate).getPoolProperties().getPassword());
     }
 }
