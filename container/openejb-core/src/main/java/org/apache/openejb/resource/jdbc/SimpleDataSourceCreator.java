@@ -18,7 +18,6 @@
 package org.apache.openejb.resource.jdbc;
 
 import org.apache.openejb.OpenEJB;
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.resource.XAResourceWrapper;
 import org.apache.openejb.resource.jdbc.managed.local.ManagedDataSource;
 import org.apache.openejb.resource.jdbc.managed.xa.ManagedXADataSource;
@@ -29,7 +28,6 @@ import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 import javax.sql.XADataSource;
 import javax.transaction.TransactionManager;
-import javax.transaction.TransactionSynchronizationRegistry;
 import java.util.Properties;
 
 public class SimpleDataSourceCreator implements DataSourceCreator {
@@ -37,9 +35,9 @@ public class SimpleDataSourceCreator implements DataSourceCreator {
     public DataSource managed(final String name, final CommonDataSource ds) {
         final TransactionManager transactionManager = OpenEJB.getTransactionManager();
         if (XADataSource.class.isInstance(ds)) {
-            return new ManagedXADataSource(XADataSource.class.cast(ds), transactionManager, SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class));
+            return new ManagedXADataSource(XADataSource.class.cast(ds), transactionManager);
         }
-        return new ManagedDataSource(DataSource.class.cast(ds), transactionManager, SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class));
+        return new ManagedDataSource(DataSource.class.cast(ds), transactionManager);
     }
 
     @Override

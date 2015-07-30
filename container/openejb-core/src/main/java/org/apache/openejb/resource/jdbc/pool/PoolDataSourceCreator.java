@@ -18,7 +18,6 @@
 package org.apache.openejb.resource.jdbc.pool;
 
 import org.apache.openejb.OpenEJB;
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.resource.TransactionManagerWrapper;
 import org.apache.openejb.resource.XAResourceWrapper;
 import org.apache.openejb.resource.jdbc.managed.local.ManagedDataSource;
@@ -27,15 +26,14 @@ import org.apache.openejb.util.PassthroughFactory;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
 import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 import javax.sql.XADataSource;
 import javax.transaction.TransactionManager;
-import javax.transaction.TransactionSynchronizationRegistry;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
 
 public abstract class PoolDataSourceCreator implements DataSourceCreator {
     protected final Map<Object, ObjectRecipe> recipes = new HashMap<Object, ObjectRecipe>();
@@ -55,9 +53,9 @@ public abstract class PoolDataSourceCreator implements DataSourceCreator {
     public DataSource managed(final String name, final CommonDataSource ds) {
         final TransactionManager transactionManager = OpenEJB.getTransactionManager();
         if (ds instanceof XADataSource) {
-            return new ManagedXADataSource(ds, transactionManager, SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class));
+            return new ManagedXADataSource(ds, transactionManager);
         }
-        return new ManagedDataSource(DataSource.class.cast(ds), transactionManager, SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class));
+        return new ManagedDataSource(DataSource.class.cast(ds), transactionManager);
     }
 
     @Override
@@ -65,9 +63,9 @@ public abstract class PoolDataSourceCreator implements DataSourceCreator {
         final TransactionManager transactionManager = new TransactionManagerWrapper(OpenEJB.getTransactionManager(), name, xaResourceWrapper);
         final CommonDataSource ds = pool(name, driver, properties);
         if (ds instanceof XADataSource) {
-            return new ManagedXADataSource(ds, transactionManager, SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class));
+            return new ManagedXADataSource(ds, transactionManager);
         }
-        return new ManagedDataSource(DataSource.class.cast(ds), transactionManager, SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class));
+        return new ManagedDataSource(DataSource.class.cast(ds), transactionManager);
     }
 
     @Override

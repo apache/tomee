@@ -21,7 +21,6 @@ import com.jolbox.bonecp.BoneCPConfig;
 import com.jolbox.bonecp.BoneCPDataSource;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBRuntimeException;
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.resource.jdbc.BasicDataSourceUtil;
 import org.apache.openejb.resource.jdbc.managed.xa.ManagedXADataSource;
 import org.apache.openejb.resource.jdbc.plugin.DataSourcePlugin;
@@ -33,7 +32,6 @@ import org.apache.openejb.util.Strings;
 import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 import javax.sql.XADataSource;
-import javax.transaction.TransactionSynchronizationRegistry;
 import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
@@ -130,7 +128,7 @@ public class BoneCPDataSourceCreator extends PoolDataSourceCreator {
             cleanProperty(ds, "xadatasource");
 
             final XADataSource xaDs = XADataSourceResource.proxy(Thread.currentThread().getContextClassLoader(), xa);
-            ds.setDatasourceBean(new ManagedXADataSource(xaDs, OpenEJB.getTransactionManager(), SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class)));
+            ds.setDatasourceBean(new ManagedXADataSource(xaDs, OpenEJB.getTransactionManager()));
         }
 
         return ds;

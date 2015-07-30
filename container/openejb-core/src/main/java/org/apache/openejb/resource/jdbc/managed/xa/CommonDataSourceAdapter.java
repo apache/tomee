@@ -36,15 +36,6 @@ public class CommonDataSourceAdapter implements InvocationHandler {
 
     @Override
     public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-        if (Object.class == method.getDeclaringClass() && "equals".equals(method.getName())) {
-            if (delegate == args[0]) {
-                return true;
-            }
-        }
         return method.invoke(delegate, args); // we suppose missing methods are not called - it is the case thanks to ManagedXADataSource
-    }
-
-    public CommonDataSource getDelegate() {
-        return delegate;
     }
 }

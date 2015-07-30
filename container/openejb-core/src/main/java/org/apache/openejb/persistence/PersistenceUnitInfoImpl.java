@@ -19,7 +19,6 @@ package org.apache.openejb.persistence;
 
 
 import org.apache.openejb.OpenEJB;
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.resource.jdbc.managed.xa.DataSourceXADataSource;
 import org.apache.openejb.util.URLs;
 import org.apache.openejb.util.classloader.URLClassLoaderFirst;
@@ -32,7 +31,6 @@ import javax.persistence.spi.PersistenceUnitTransactionType;
 import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 import javax.sql.XADataSource;
-import javax.transaction.TransactionSynchronizationRegistry;
 import java.io.File;
 import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
@@ -196,8 +194,7 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
 
     public void setJtaDataSource(final CommonDataSource jtaDataSource) {
         if (XADataSource.class.isInstance(jtaDataSource)) {
-            this.jtaDataSource = new DataSourceXADataSource(
-                    jtaDataSource, OpenEJB.getTransactionManager(), SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class));
+            this.jtaDataSource = new DataSourceXADataSource(jtaDataSource, OpenEJB.getTransactionManager());
         } else {
             this.jtaDataSource = DataSource.class.cast(jtaDataSource);
         }
@@ -209,8 +206,7 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
 
     public void setNonJtaDataSource(final CommonDataSource nonJtaDataSource) {
         if (XADataSource.class.isInstance(nonJtaDataSource)) {
-            this.nonJtaDataSource = new DataSourceXADataSource(
-                    nonJtaDataSource, OpenEJB.getTransactionManager(), SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class));
+            this.nonJtaDataSource = new DataSourceXADataSource(nonJtaDataSource, OpenEJB.getTransactionManager());
         } else {
             this.nonJtaDataSource = DataSource.class.cast(nonJtaDataSource);
         }

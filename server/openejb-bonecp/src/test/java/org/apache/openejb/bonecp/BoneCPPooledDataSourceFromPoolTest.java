@@ -21,16 +21,13 @@ import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.junit.Configuration;
 import org.apache.openejb.junit.Module;
+import org.apache.openejb.resource.jdbc.managed.local.ManagedConnection;
+import org.hsqldb.jdbc.JDBCDataSource;
+import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Properties;
 import javax.annotation.Resource;
 import javax.annotation.sql.DataSourceDefinition;
 import javax.ejb.EJB;
@@ -40,7 +37,17 @@ import javax.ejb.Singleton;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.sql.DataSource;
+import javax.transaction.Transaction;
+import java.lang.reflect.Field;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Map;
+import java.util.Properties;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -188,7 +195,16 @@ public class BoneCPPooledDataSourceFromPoolTest {
         assertFalse(exists(12));
     }
 
-    private static boolean exists(int id) throws SQLException {
+    @After
+    public void checkTxMapIsEmpty() throws Exception { // avoid memory leak
+        final Field map = ManagedConnection.class.getDeclaredField("CONNECTION_BY_TX_BY_DS");
+        map.setAccessible(true);
+        final Map<DataSource, Map<Transaction, Connection>> instance = (Map<DataSource, Map<Transaction, Connection>>) map.get(null);
+        assertEquals(1, instance.size());
+        assertEquals(0, instance.values().iterator().next().size());
+    }
+
+    private static boolean exists(final int id) throws SQLException {
         final Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
         final Statement statement = connection.createStatement();
         final ResultSet result = statement.executeQuery("SELECT count(*) AS NB FROM " + TABLE + " WHERE ID = " + id);

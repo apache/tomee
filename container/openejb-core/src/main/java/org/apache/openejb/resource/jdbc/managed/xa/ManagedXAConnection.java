@@ -19,25 +19,24 @@ package org.apache.openejb.resource.jdbc.managed.xa;
 
 import org.apache.openejb.resource.jdbc.managed.local.ManagedConnection;
 
-import java.sql.SQLException;
-import javax.sql.CommonDataSource;
+import javax.sql.DataSource;
+import javax.sql.XAConnection;
 import javax.transaction.TransactionManager;
-import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.xa.XAResource;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 public class ManagedXAConnection extends ManagedConnection {
-    public ManagedXAConnection(final CommonDataSource ds, final TransactionManager txMgr,
-                               final TransactionSynchronizationRegistry txRegistry,
-                               final String user, final String password) throws SQLException {
-        super(ds, txMgr, txRegistry, user, password);
+    private final XAConnection xaConnection;
+
+    public ManagedXAConnection(final DataSource ds, final XAConnection xa, final Connection connection, final TransactionManager txMgr) throws SQLException {
+        super(ds, connection, txMgr);
+        this.xaConnection = xa;
     }
 
     @Override
     public XAResource getXAResource() throws SQLException {
-        if (xaResource == null) {
-            newConnection();
-        }
-        return xaResource;
+        return xaConnection.getXAResource();
     }
 
     @Override
