@@ -88,6 +88,11 @@ public class ManagedDataSource implements DataSource {
         return DataSource.class.isInstance(delegate) && DataSource.class.cast(delegate).isWrapperFor(iface);
     }
 
+    @Override
+    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        return delegate.getParentLogger();
+    }
+
     private Connection managed(final String u, final String p) {
         return (Connection) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), CONNECTION_CLASS,
                 new ManagedConnection(delegate, transactionManager, registry, u, p));
