@@ -17,48 +17,53 @@
 
 package org.apache.openejb.resource.jdbc.managed.local;
 
-import org.apache.openejb.OpenEJB;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Wrapper;
+
 import javax.sql.CommonDataSource;
+import javax.sql.DataSource;
+import javax.sql.XAConnection;
+import javax.sql.XADataSource;
 import javax.transaction.RollbackException;
 import javax.transaction.Status;
 import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.xa.XAResource;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class ManagedConnection implements InvocationHandler {
-    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_RESOURCE_JDBC, ManagedConnection.class);
-
-    private static final Map<Integer, Map<Transaction, Connection>> CONNECTION_BY_TX_BY_DS = new ConcurrentHashMap<Integer, Map<Transaction, Connection>>();
-
     private final TransactionManager transactionManager;
-    private final LocalXAResource xaResource;
+    private final Key key;
+    private final TransactionSynchronizationRegistry registry;
+    protected XAResource xaResource;
     protected Connection delegate;
+    protected XAConnection xaConnection;
     private Transaction currentTransaction;
     private boolean closed;
 
-    private final Map<Transaction, Connection> connectionByTx;
-
-    public ManagedConnection(final CommonDataSource ds, final Connection connection, final TransactionManager txMgr) {
-        delegate = connection;
+    public ManagedConnection(final CommonDataSource ds,
+                             final TransactionManager txMgr,
+                             final TransactionSynchronizationRegistry txRegistry,
+                             final String user, final String password) {
         transactionManager = txMgr;
+        registry = txRegistry;
         closed = false;
-        xaResource = new LocalXAResource(delegate);
-        connectionByTx = CONNECTION_BY_TX_BY_DS.get(ds.hashCode());
+        key = new Key(ds, user, password);
     }
 
     public XAResource getXAResource() throws SQLException {
+        if (xaResource == null) {
+            newConnection();
+        }
         return xaResource;
     }
 
@@ -174,7 +179,6 @@ public class ManagedConnection implements InvocationHandler {
         }
         delegate.setAutoCommit(value);
     }
-
     private static Object invoke(final Method method, final Connection delegate, final Object[] args) throws Throwable {
         try {
             return method.invoke(delegate, args);
@@ -226,7 +230,7 @@ public class ManagedConnection implements InvocationHandler {
         }
     }
 
-        private static class ClosingSynchronization implements Synchronization {
+    private static class ClosingSynchronization implements Synchronization {
         private final Connection connection;
 
         public ClosingSynchronization(final Connection delegate) {
