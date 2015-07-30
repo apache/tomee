@@ -274,7 +274,7 @@ public class ManagedConnection implements InvocationHandler {
                 return false;
             }
 
-            Key key = Key.class.cast(o);
+            final Key key = Key.class.cast(o);
             return (ds == key.ds || ds.equals(key.ds)) &&
                     !(user != null ? !user.equals(key.user) : key.user != null) &&
                     !(pwd != null ? !pwd.equals(key.pwd) : key.pwd != null);
