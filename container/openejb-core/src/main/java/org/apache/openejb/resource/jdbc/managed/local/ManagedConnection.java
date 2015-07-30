@@ -247,7 +247,7 @@ public class ManagedConnection implements InvocationHandler {
         }
     }
 
-    private static final class Key {
+    private static class Key {
         private final CommonDataSource ds;
         private final String user;
         private final String pwd;
