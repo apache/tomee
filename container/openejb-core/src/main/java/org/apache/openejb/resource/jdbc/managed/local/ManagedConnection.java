@@ -117,7 +117,7 @@ public class ManagedConnection implements InvocationHandler {
                     newConnection();
                     connection = delegate;
 
-                    registry.putResource(transaction, delegate);
+                    registry.putResource(key, delegate);
                     currentTransaction = transaction;
                     try {
                         transaction.enlistResource(getXAResource());
