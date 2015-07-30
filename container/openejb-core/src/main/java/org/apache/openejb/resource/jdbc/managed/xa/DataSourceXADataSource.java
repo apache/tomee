@@ -23,15 +23,14 @@ import javax.sql.CommonDataSource;
 import javax.sql.XAConnection;
 import javax.sql.XADataSource;
 import javax.transaction.TransactionManager;
-import javax.transaction.TransactionSynchronizationRegistry;
 import java.sql.Connection;
 import java.sql.SQLException;
 
 public class DataSourceXADataSource extends ManagedDataSource {
     private final XADataSource xaDataSource;
 
-    public DataSourceXADataSource(final CommonDataSource ds, final TransactionManager txMgr, final TransactionSynchronizationRegistry registry) {
-        super(CommonDataSourceAdapter.wrap(ds), txMgr, registry, ds.hashCode());
+    public DataSourceXADataSource(final CommonDataSource ds, final TransactionManager txMgr) {
+        super(CommonDataSourceAdapter.wrap(ds), txMgr, ds.hashCode());
         xaDataSource = XADataSource.class.cast(ds);
     }
 
