@@ -26,7 +26,6 @@ import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Wrapper;
-
 import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 import javax.sql.XAConnection;
@@ -113,14 +112,12 @@ public class ManagedConnection implements InvocationHandler {
 
             // get the already bound connection to the current transaction or enlist this one in the tx
             if (isUnderTransaction(transaction.getStatus())) {
-                final TxRegistryKey txRegistryKey = new TxRegistryKey(key, transaction);
-                
-                Connection connection = Connection.class.cast(registry.getResource(txRegistryKey));
+                Connection connection = Connection.class.cast(registry.getResource(transaction));
                 if (connection == null && delegate == null) {
                     newConnection();
                     connection = delegate;
 
-                    registry.putResource(txRegistryKey, delegate);
+                    registry.putResource(transaction, delegate);
                     currentTransaction = transaction;
                     try {
                         transaction.enlistResource(getXAResource());
@@ -285,48 +282,6 @@ public class ManagedConnection implements InvocationHandler {
         @Override
         public int hashCode() {
             return hash;
-        }
-    }
-    
-    private static final class TxRegistryKey {
-        private final Key key;
-        private final Transaction tx;
-        
-        private TxRegistryKey(Key key, Transaction tx) {
-            super();
-            this.key = key;
-            this.tx = tx;
-        }
-
-        public Key getKey() {
-            return key;
-        }
-
-        public Transaction getTx() {
-            return tx;
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((key == null) ? 0 : key.hashCode());
-            result = prime * result + ((tx == null) ? 0 : tx.hashCode());
-            return result;
-        }
-
-        @Override
-        public boolean equals(final Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-
-            final TxRegistryKey txRegKey = TxRegistryKey.class.cast(o);
-            return (this.key == txRegKey.key || this.key.equals(txRegKey.key)) &&
-                    !(this.tx != null ? !this.tx.equals(txRegKey.tx) : txRegKey.tx != null);
         }
     }
 }
