@@ -55,12 +55,13 @@ public class TomcatXADataSourceTest {
             .p("txMgr.txRecovery", "true")
             .p("txMgr.logFileDir", "target/test/xa/howl")
 
-                // real XA datasources
+            // real XA datasources
             .p("xa", "new://Resource?class-name=" + JDBCXADataSource.class.getName())
             .p("xa.url", "jdbc:hsqldb:mem:tomcat-xa")
             .p("xa.user", "sa")
             .p("xa.password", "")
             .p("xa.SkipImplicitAttributes", "true")
+            .p("xa.SkipPropertiesFallback", "true") // otherwise goes to connection properties
 
             .p("xadb", "new://Resource?type=DataSource")
             .p("xadb.xaDataSource", "xa")

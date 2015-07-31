@@ -16,31 +16,25 @@
  */
 package org.apache.openejb.bonecp;
 
-import com.jolbox.bonecp.BoneCP;
 import com.jolbox.bonecp.BoneCPConfig;
 import com.jolbox.bonecp.BoneCPDataSource;
 import org.apache.openejb.OpenEJB;
-import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.resource.jdbc.BasicDataSourceUtil;
 import org.apache.openejb.resource.jdbc.managed.xa.ManagedXADataSource;
 import org.apache.openejb.resource.jdbc.plugin.DataSourcePlugin;
 import org.apache.openejb.resource.jdbc.pool.PoolDataSourceCreator;
 import org.apache.openejb.resource.jdbc.pool.XADataSourceResource;
-import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.Strings;
+import org.apache.xbean.recipe.ObjectRecipe;
 
 import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 import javax.sql.XADataSource;
 import javax.transaction.TransactionSynchronizationRegistry;
-import java.lang.reflect.Field;
 import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 public class BoneCPDataSourceCreator extends PoolDataSourceCreator {
     @Override
@@ -50,20 +44,46 @@ public class BoneCPDataSourceCreator extends PoolDataSourceCreator {
 
     @Override
     public DataSource pool(final String name, final DataSource ds, final Properties properties) {
+        final BoneCPDataSource dataSourceProvidedPool = createPool(properties);
+        dataSourceProvidedPool.setDatasourceBean(ds);
+        if (dataSourceProvidedPool.getPoolName() == null) {
+            dataSourceProvidedPool.setPoolName(name);
+        }
+        return dataSourceProvidedPool;
+    }
+
+    @Override
+    public CommonDataSource pool(final String name, final String driver, final Properties properties) {
+        final BoneCPDataSource pool = createPool(properties);
+        if (pool.getDriverClass() == null) {
+            pool.setDriverClass(driver);
+        }
+        if (pool.getPoolName() == null) {
+            pool.setPoolName(name);
+        }
+        final String xa = String.class.cast(properties.remove("XaDataSource"));
+        if (xa != null) {
+            final XADataSource xaDs = XADataSourceResource.proxy(Thread.currentThread().getContextClassLoader(), xa);
+            pool.setDatasourceBean(new ManagedXADataSource(xaDs, OpenEJB.getTransactionManager(), SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class)));
+        }
+        return pool;
+    }
+
+    private BoneCPDataSource createPool(final Properties properties) {
         final BoneCPConfig config;
-        final BoneCP pool;
         try {
             config = new BoneCPConfig(prefixedProps(properties));
-            pool = new BoneCP(config);
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
         }
-        return build(BoneCPDataSourceProvidedPool.class, new BoneCPDataSourceProvidedPool(pool), new Properties());
+        final BoneCPDataSource dataSourceProvidedPool = new BoneCPDataSource(config);
+        recipes.put(dataSourceProvidedPool, new ObjectRecipe(BoneCPDataSource.class.getName())); // no error
+        return dataSourceProvidedPool;
     }
 
     private Properties prefixedProps(final Properties properties) {
         if (properties.containsKey("url")) {
-            properties.setProperty("", properties.getProperty("url"));
+            properties.setProperty("url", properties.getProperty("url"));
         }
 
         // updating relative url if mandatory (hsqldb for instance)
@@ -82,83 +102,22 @@ public class BoneCPDataSourceCreator extends PoolDataSourceCreator {
             }
         }
 
-        // TODO: convert some more properties:
-        // InitialSize, TestOnReturn, ConnectionProperties, MaxOpenPreparedStatements
-        // AccessToUnderlyingConnectionAllowed, PoolPreparedStatements, MinIdle, TestWhileIdle
-        // NumTestsPerEvictionRun, MaxIdle, MaxWait, MinEvictableIdleTimeMillis, TestOnBorrow, ValidationQuery
-
         final String cipher = properties.getProperty("PasswordCipher");
         if (cipher == null || "PlainText".equals(cipher)) { // no need to warn
             properties.remove("PasswordCipher");
-        }
-        if (properties.containsKey("TimeBetweenEvictionRuns")) {
-            properties.setProperty("idleConnectionTestPeriodInSeconds", Long.toString(new Duration((String) properties.remove("TimeBetweenEvictionRuns")).getTime(TimeUnit.SECONDS)));
-        }
-        if (properties.containsKey("UserName")) {
-            properties.put("username", properties.remove("UserName"));
-        }
-        if (properties.containsKey("MaxActive")) {
-            properties.put("maxConnectionsPerPartition", properties.remove("MaxActive"));
         }
 
         // bonecp expects bonecp prefix in properties
         final Properties prefixedProps = new Properties();
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
             final String suffix = Strings.lcfirst((String) entry.getKey());
-            prefixedProps.put("bonecp." + suffix, entry.getValue());
+            if (!suffix.startsWith("bonecp.")) {
+                prefixedProps.put("bonecp." + suffix, entry.getValue());
+            } else {
+                prefixedProps.put(suffix, entry.getValue());
+            }
         }
 
         return prefixedProps;
-    }
-
-    @Override
-    public CommonDataSource pool(final String name, final String driver, final Properties properties) {
-        // bonecp already have a kind of ObjectRecipe so simply giving it the values
-        final Properties props = new Properties();
-        props.put("properties", prefixedProps(properties));
-
-        final BoneCPDataSource ds = build(BoneCPDataSource.class, props);
-        if (ds.getDriverClass() == null || ds.getDriverClass().isEmpty()) {
-            ds.setDriverClass(driver);
-        }
-        if (ds.getPoolName() == null || ds.getPoolName().isEmpty()) {
-            ds.setPoolName(name);
-        }
-
-        final String xa = String.class.cast(properties.remove("XaDataSource"));
-        if (xa != null) {
-            cleanProperty(ds, "xadatasource");
-
-            final XADataSource xaDs = XADataSourceResource.proxy(Thread.currentThread().getContextClassLoader(), xa);
-            ds.setDatasourceBean(new ManagedXADataSource(xaDs, OpenEJB.getTransactionManager(), SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class)));
-        }
-
-        return ds;
-    }
-
-    private static final class BoneCPDataSourceProvidedPool extends BoneCPDataSource {
-        private static final Field POOL_FIELD;
-
-        static {
-            try {
-                POOL_FIELD = BoneCPDataSource.class.getDeclaredField("pool");
-                POOL_FIELD.setAccessible(true);
-            } catch (NoSuchFieldException e) {
-                throw new OpenEJBRuntimeException(e);
-            }
-        }
-
-        public BoneCPDataSourceProvidedPool(final BoneCP pool) {
-            try {
-                POOL_FIELD.set(this, pool);
-            } catch (IllegalAccessException e) {
-                throw new OpenEJBRuntimeException(e);
-            }
-        }
-
-        // @Override // java 7
-        public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-            throw new SQLFeatureNotSupportedException();
-        }
     }
 }

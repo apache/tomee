@@ -96,10 +96,14 @@ public abstract class PoolDataSourceCreator implements DataSourceCreator {
         recipeOptions(serviceRecipe);
         serviceRecipe.setAllProperties(properties);
         final T value = (T) serviceRecipe.create();
-        if (value instanceof DataSource) { // avoid to keep config objects
+        if (trackRecipeFor(value)) { // avoid to keep config objects
             recipes.put(value, serviceRecipe);
         }
         return value;
+    }
+
+    protected boolean trackRecipeFor(final Object value) {
+        return value instanceof DataSource;
     }
 
     protected <T> T build(final Class<T> clazz, final Object instance, final Properties properties) {

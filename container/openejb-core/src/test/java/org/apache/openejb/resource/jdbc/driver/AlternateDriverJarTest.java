@@ -35,6 +35,8 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.util.Properties;
 
+import static org.apache.openejb.loader.JarLocation.jarLocation;
+
 @RunWith(ApplicationComposer.class)
 public class AlternateDriverJarTest {
 
@@ -44,7 +46,7 @@ public class AlternateDriverJarTest {
     @Configuration
     public Properties config() {
 
-        final File drivers = new File(".", "drivers").getAbsoluteFile();
+        final File drivers = new File(jarLocation(AlternateDriverJarTest.class).getParentFile(), "drivers").getAbsoluteFile();
 
         final Properties p = new Properties();
         p.put("openejb.jdbc.datasource-creator", "dbcp-alternative");

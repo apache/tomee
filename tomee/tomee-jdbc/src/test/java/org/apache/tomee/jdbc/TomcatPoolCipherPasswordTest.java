@@ -18,8 +18,8 @@ package org.apache.tomee.jdbc;
 
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.junit.Configuration;
-import org.apache.openejb.junit.Module;
+import org.apache.openejb.testing.Configuration;
+import org.apache.openejb.testing.Module;
 import org.apache.openejb.resource.jdbc.cipher.PasswordCipher;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -63,7 +63,7 @@ public class TomcatPoolCipherPasswordTest {
     public static void createTable() throws SQLException, ClassNotFoundException {
         Class.forName("org.hsqldb.jdbcDriver");
 
-        final Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+        final Connection connection = DriverManager.getConnection(URL, USER, "");
         final Statement statement = connection.createStatement();
         statement.execute("CREATE TABLE " + TABLE + "(ID INTEGER)");
         statement.close();
@@ -77,8 +77,8 @@ public class TomcatPoolCipherPasswordTest {
         p.put("openejb.jdbc.datasource-creator", TomEEDataSourceCreator.class.getName());
 
         p.put("ciphered", "new://Resource?type=DataSource");
-        p.put("ciphered.JdbcDriver", "org.hsqldb.jdbcDriver");
-        p.put("ciphered.JdbcUrl", URL);
+        p.put("ciphered.DriverClassName", "org.hsqldb.jdbcDriver");
+        p.put("ciphered.Url", URL);
         p.put("ciphered.UserName", USER);
         p.put("ciphered.Password", PASSWORD);
         p.put("ciphered.PasswordCipher", "Mock");

@@ -18,19 +18,14 @@ package org.apache.tomee.jdbc;
 
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
-import org.apache.openejb.cipher.PasswordCipher;
 import org.apache.openejb.cipher.PasswordCipherFactory;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
-import org.apache.openejb.resource.jdbc.BasicDataSourceUtil;
 import org.apache.openejb.resource.jdbc.dbcp.DataSourceSerialization;
-import org.apache.openejb.resource.jdbc.plugin.DataSourcePlugin;
 import org.apache.openejb.resource.jdbc.pool.PoolDataSourceCreator;
-import org.apache.openejb.resource.jdbc.pool.XADataSourceResource;
+import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.Duration;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.Strings;
 import org.apache.openejb.util.SuperProperties;
 import org.apache.openejb.util.reflection.Reflections;
 import org.apache.tomcat.jdbc.pool.ConnectionPool;
@@ -38,31 +33,22 @@ import org.apache.tomcat.jdbc.pool.PoolConfiguration;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
 import org.apache.tomcat.jdbc.pool.PooledConnection;
 
+import javax.management.ObjectName;
+import javax.naming.NamingException;
+import javax.sql.CommonDataSource;
+import javax.sql.DataSource;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.sql.SQLException;
-import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-import javax.management.ObjectName;
-import javax.sql.CommonDataSource;
-import javax.sql.DataSource;
-import javax.sql.XADataSource;
 
 public class TomEEDataSourceCreator extends PoolDataSourceCreator {
-    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, TomEEDataSourceCreator.class);
-
     @Override
     public DataSource pool(final String name, final DataSource ds, final Properties properties) {
-        final Properties converted = new Properties();
-        final SuperProperties prop = new SuperProperties().caseInsensitive(true);
-        prop.putAll(properties);
-        updateProperties(prop, converted, null);
-
-        final PoolConfiguration config = build(PoolProperties.class, converted);
+        final PoolConfiguration config = build(TomEEPoolProperties.class, createProperties(name, properties));
         config.setDataSource(ds);
         final ConnectionPool pool;
         try {
@@ -70,130 +56,18 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
-        return build(TomEEDataSource.class, new TomEEDataSource(config, pool, name), converted);
+
+        final TomEEDataSource dataSource = new TomEEDataSource(config, pool, name);
+        recipes.put(dataSource, recipes.remove(config)); // transfer unset props for correct logging
+        return dataSource;
     }
 
     @Override
     public CommonDataSource pool(final String name, final String driver, final Properties properties) {
-        final Properties converted = new Properties();
-        converted.setProperty("name", name);
-
-        final SuperProperties prop = new SuperProperties().caseInsensitive(true);
-        prop.putAll(properties);
-
-        updateProperties(prop, converted, driver);
-        final PoolConfiguration config = build(PoolProperties.class, converted);
-        final TomEEDataSource ds = build(TomEEDataSource.class, new TomEEDataSource(config, name), converted);
-
-        final String xa = String.class.cast(properties.remove("XaDataSource"));
-        if (xa != null) {
-            cleanProperty(ds, "xadatasource");
-
-            final XADataSource xaDs = XADataSourceResource.proxy(Thread.currentThread().getContextClassLoader(), xa);
-            ds.setDataSource(xaDs);
-        }
-
+        final PoolConfiguration config = build(TomEEPoolProperties.class, createProperties(name, properties));
+        final TomEEDataSource ds = new TomEEDataSource(config, name);
+        recipes.put(ds, recipes.remove(config));
         return ds;
-    }
-
-    private void updateProperties(final SuperProperties properties, final Properties converted, final String driver) {
-        // some compatibility with old dbcp style
-        if (driver != null && !properties.containsKey("driverClassName")) {
-            converted.setProperty("driverClassName", driver);
-        }
-        final String jdbcDriver = (String) properties.remove("JdbcDriver");
-        if (jdbcDriver != null && !properties.containsKey("driverClassName")) {
-            converted.setProperty("driverClassName", jdbcDriver);
-        }
-        final String url = (String) properties.remove("JdbcUrl");
-        if (url != null && !properties.containsKey("url")) {
-            converted.setProperty("url", url);
-        }
-        final String user = (String) properties.remove("user");
-        if (user != null && !properties.containsKey("username")) {
-            converted.setProperty("username", user);
-        }
-        final String maxWait = toMillis((String) properties.remove("maxWaitTime"));
-        if (maxWait != null && !properties.containsKey("maxWait")) {
-            converted.setProperty("maxWait", maxWait);
-        }
-        final String tb = toMillis((String) properties.remove("timeBetweenEvictionRuns"));
-        if (tb != null && !properties.containsKey("timeBetweenEvictionRunsMillis")) {
-            converted.setProperty("timeBetweenEvictionRunsMillis", tb);
-        }
-        final String minEvict = toMillis((String) properties.remove("minEvictableIdleTime"));
-        if (minEvict != null && !properties.containsKey("minEvictableIdleTimeMillis")) {
-            converted.setProperty("minEvictableIdleTimeMillis", minEvict);
-        }
-
-        final String passwordCipher = properties.getProperty("PasswordCipher");
-        if (passwordCipher != null && "PlainText".equals(passwordCipher)) { // no need to warn about it
-            properties.remove("PasswordCipher");
-        } else {
-            final String password = properties.getProperty("Password");
-            if (passwordCipher != null) {
-                final PasswordCipher cipher = PasswordCipherFactory.getPasswordCipher(passwordCipher);
-                final String plainPwd = cipher.decrypt(password.toCharArray());
-                converted.setProperty("password", plainPwd);
-
-                // all went fine so remove it to avoid errors later
-                properties.remove("PasswordCipher");
-                properties.remove("Password");
-            }
-        }
-
-        for (final Map.Entry<Object, Object> entry : properties.entrySet()) {
-            final String key = entry.getKey().toString();
-            final String value = entry.getValue().toString().trim();
-            if (!converted.containsKey(key)) {
-                if (!value.isEmpty()) {
-                    if ("MaxOpenPreparedStatements".equalsIgnoreCase(key) || "PoolPreparedStatements".equalsIgnoreCase(key)) {
-                        if ("0".equalsIgnoreCase(properties.getProperty("MaxOpenPreparedStatements", "0"))
-                                || "false".equalsIgnoreCase(properties.getProperty("PoolPreparedStatements", "false"))) {
-                            continue;
-                        }
-
-                        final String interceptors = properties.getProperty("jdbcInterceptors");
-                        if (interceptors == null) {
-                            converted.setProperty("jdbcInterceptors",
-                                    "StatementCache(max=" + properties.getProperty("MaxOpenPreparedStatements", "128") + ")");
-                            LOGGER.debug("Tomcat-jdbc StatementCache added to handle prepared statement cache/pool");
-                        } else if (!interceptors.contains("StatementCache")) {
-                            converted.setProperty("jdbcInterceptors", interceptors
-                                    + ";StatementCache(max=" + properties.getProperty("MaxOpenPreparedStatements", "128") + ")");
-                            LOGGER.debug("Tomcat-jdbc StatementCache added to handle prepared statement cache/pool");
-                        }
-                        continue;
-                    }
-
-                    converted.put(Strings.lcfirst(key), value);
-                } else if (key.toLowerCase().equals("username") || key.toLowerCase().equals("password")) { // avoid NPE
-                    converted.put(Strings.lcfirst(key), "");
-                }
-            }
-        }
-
-        final String currentUrl = converted.getProperty("url");
-        if (currentUrl != null) {
-            try {
-                final DataSourcePlugin helper = BasicDataSourceUtil.getDataSourcePlugin(currentUrl);
-                if (helper != null) {
-                    final String newUrl = helper.updatedUrl(currentUrl);
-                    if (!currentUrl.equals(newUrl)) {
-                        properties.setProperty("url", newUrl);
-                    }
-                }
-            } catch (final SQLException ignored) {
-                // no-op
-            }
-        }
-    }
-
-    private String toMillis(final String d) {
-        if (d == null) {
-            return null;
-        }
-        return Long.toString(new Duration(d).getTime(TimeUnit.MILLISECONDS));
     }
 
     @Override
@@ -203,6 +77,38 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
             ((TomEEDataSource) ds).internalJMXUnregister();
         }
         ds.close(true);
+    }
+
+    @Override
+    protected boolean trackRecipeFor(final Object value) {
+        return super.trackRecipeFor(value) || TomEEPoolProperties.class.isInstance(value);
+    }
+
+    private SuperProperties createProperties(final String name, final Properties properties) {
+        final SuperProperties converted = new SuperProperties() {
+            @Override
+            public Object setProperty(final String name, final String value) {
+                if (value == null) {
+                    return super.getProperty(name);
+                }
+                return super.setProperty(name, value);
+            }
+        }.caseInsensitive(true);
+
+        converted.setProperty("name", name);
+        // very few properties have default = connection ones, so ensure to translate them with priority to specific ones
+        converted.setProperty("url", properties.getProperty("url", (String) properties.remove("JdbcUrl")));
+        converted.setProperty("driverClassName", properties.getProperty("driverClassName", (String) properties.remove("JdbcDriver")));
+        converted.setProperty("username", (String) properties.remove("username"));
+        converted.setProperty("password", (String) properties.remove("password"));
+        converted.putAll(properties);
+
+        final String passwordCipher = (String) converted.remove("PasswordCipher");
+        if (passwordCipher != null && !"PlainText".equals(passwordCipher)) {
+            converted.setProperty("password", PasswordCipherFactory.getPasswordCipher(passwordCipher).decrypt(converted.getProperty("Password").toCharArray()));
+        }
+
+        return converted;
     }
 
     public static class TomEEDataSource extends org.apache.tomcat.jdbc.pool.DataSource implements Serializable {
@@ -251,27 +157,6 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
         }
 
         private static PoolConfiguration readOnly(final PoolConfiguration pool) {
-            // if validationQuery is not filled disable testXXX
-            if (pool.getValidationQuery() == null || pool.getValidationQuery().isEmpty()) {
-                if (pool.isTestOnBorrow()) {
-                    LOGGER.info("Disabling testOnBorrow since no validation query is provided");
-                    pool.setTestOnBorrow(false);
-                }
-                if (pool.isTestOnConnect()) {
-                    LOGGER.info("Disabling testOnConnect since no validation query is provided");
-                    pool.setTestOnConnect(false);
-                }
-                if (pool.isTestOnReturn()) {
-                    LOGGER.info("Disabling testOnReturn since no validation query is provided");
-                    pool.setTestOnReturn(false);
-                }
-                if (pool.isTestWhileIdle()) {
-                    LOGGER.info("Disabling testWhileIdle since no validation query is provided");
-                    pool.setTestWhileIdle(false);
-                }
-            }
-
-            // prevent overriding of the configuration
             try {
                 return (PoolConfiguration) Proxy.newProxyInstance(TomEEDataSourceCreator.class.getClassLoader(), CONNECTION_POOL_CLASS, new ReadOnlyConnectionpool(pool));
             } catch (final Throwable e) {
@@ -359,6 +244,33 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
                 }
             }
             return con;
+        }
+    }
+
+    // enhanced API/setters
+    public static class TomEEPoolProperties extends PoolProperties {
+        public void setMinEvictableIdleTime(final String minEvictableIdleTime) {
+            final Duration duration = new Duration(minEvictableIdleTime);
+            super.setMinEvictableIdleTimeMillis((int) duration.getUnit().toMillis(duration.getTime()));
+        }
+
+        public void setTimeBetweenEvictionRuns(final String timeBetweenEvictionRuns) {
+            final Duration duration = new Duration(timeBetweenEvictionRuns);
+            super.setMinEvictableIdleTimeMillis((int) duration.getUnit().toMillis(duration.getTime()));
+        }
+
+        public void setXaDataSource(final String jndi) {
+            // we should do setDataSourceJNDI(jndi); but ATM tomcat doesnt do the lookup so using this as correct impl
+            try {
+                setDataSource(SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext().lookup("openejb:Resource/" + jndi));
+            } catch (final NamingException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+
+        @Override
+        public void setDataSourceJNDI(final String jndi) {
+            super.setDataSourceJNDI("openejb:Resource/" + jndi);
         }
     }
 }

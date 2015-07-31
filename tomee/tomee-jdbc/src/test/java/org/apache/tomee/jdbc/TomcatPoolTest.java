@@ -19,8 +19,8 @@ package org.apache.tomee.jdbc;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.junit.Configuration;
-import org.apache.openejb.junit.Module;
+import org.apache.openejb.testing.Configuration;
+import org.apache.openejb.testing.Module;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -71,8 +71,8 @@ public class TomcatPoolTest {
         p.put("openejb.jdbc.datasource-creator", TomEEDataSourceCreator.class.getName());
 
         p.put("managed", "new://Resource?type=DataSource");
-        p.put("managed.JdbcDriver", "org.hsqldb.jdbcDriver");
-        p.put("managed.JdbcUrl", URL);
+        p.put("managed.DriverClassName", "org.hsqldb.jdbcDriver");
+        p.put("managed.Url", URL);
         p.put("managed.UserName", USER);
         p.put("managed.Password", PASSWORD);
         p.put("managed.JtaManaged", "true");

@@ -136,6 +136,7 @@ import org.apache.openejb.util.classloader.ClassLoaderAwareHandler;
 import org.apache.openejb.util.classloader.URLClassLoaderFirst;
 import org.apache.openejb.util.proxy.ProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
+import org.apache.openejb.util.reflection.Reflections;
 import org.apache.webbeans.component.ResourceBean;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
@@ -161,6 +162,43 @@ import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 import org.apache.xbean.recipe.UnsetPropertiesRecipe;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
+import javax.ejb.EJB;
+import javax.enterprise.context.Dependent;
+import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.spi.DefinitionException;
+import javax.enterprise.inject.spi.DeploymentException;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanRegistrationException;
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+import javax.naming.Binding;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NameAlreadyBoundException;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.resource.cci.Connection;
+import javax.resource.cci.ConnectionFactory;
+import javax.resource.spi.BootstrapContext;
+import javax.resource.spi.ConnectionManager;
+import javax.resource.spi.ManagedConnectionFactory;
+import javax.resource.spi.ResourceAdapter;
+import javax.resource.spi.ResourceAdapterInternalException;
+import javax.resource.spi.XATerminator;
+import javax.resource.spi.work.WorkManager;
+import javax.servlet.ServletContext;
+import javax.sql.DataSource;
+import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
+import javax.validation.ValidationException;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import java.io.ByteArrayInputStream;
 import java.io.Externalizable;
 import java.io.File;
@@ -200,43 +238,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.enterprise.context.Dependent;
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.inject.spi.DefinitionException;
-import javax.enterprise.inject.spi.DeploymentException;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanRegistrationException;
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
-import javax.naming.Binding;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NameAlreadyBoundException;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-import javax.resource.cci.Connection;
-import javax.resource.cci.ConnectionFactory;
-import javax.resource.spi.BootstrapContext;
-import javax.resource.spi.ConnectionManager;
-import javax.resource.spi.ManagedConnectionFactory;
-import javax.resource.spi.ResourceAdapter;
-import javax.resource.spi.ResourceAdapterInternalException;
-import javax.resource.spi.XATerminator;
-import javax.resource.spi.work.WorkManager;
-import javax.servlet.ServletContext;
-import javax.sql.DataSource;
-import javax.transaction.TransactionManager;
-import javax.transaction.TransactionSynchronizationRegistry;
-import javax.validation.ValidationException;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 
 import static org.apache.openejb.util.Classes.ancestors;
 
@@ -2697,50 +2698,79 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
         serviceInfo.properties.remove("SkipImplicitAttributes");
 
+        // if custom instance allow to skip properties fallback to avoid to set unexpectedly it - connectionProps of DBs
+        final String skipPropertiesFallback = (String) serviceInfo.properties.remove("SkipPropertiesFallback");
         final AtomicReference<Properties> injectedProperties = new AtomicReference<>();
-        serviceRecipe.setProperty("properties", new UnsetPropertiesRecipe() {
-            @Override
-            protected Object internalCreate(final Type expectedType, final boolean lazyRefAllowed) throws ConstructionException {
-                final Map<String, Object> original = serviceRecipe.getUnsetProperties();
-                final Properties properties = new SuperProperties() {
-                    @Override
-                    public Object remove(final Object key) { // avoid to log them then
-                        original.remove(key);
-                        return super.remove(key);
+        if (!"true".equalsIgnoreCase(skipPropertiesFallback)) {
+            serviceRecipe.setProperty("properties", new UnsetPropertiesRecipe() {
+                @Override
+                protected Object internalCreate(final Type expectedType, final boolean lazyRefAllowed) throws ConstructionException {
+                    final Map<String, Object> original = serviceRecipe.getUnsetProperties();
+                    final Properties properties = new SuperProperties() {
+                        @Override
+                        public Object remove(final Object key) { // avoid to log them then
+                            original.remove(key);
+                            return super.remove(key);
+                        }
+                    }.caseInsensitive(true); // keep our nice case insensitive feature
+                    for (final Map.Entry<String, Object> entry : original.entrySet()) {
+                        properties.put(entry.getKey(), entry.getValue());
                     }
-                }.caseInsensitive(true); // keep our nice case insensitive feature
-                for (final Map.Entry<String, Object> entry : original.entrySet()) {
-                    properties.put(entry.getKey(), entry.getValue());
+                    injectedProperties.set(properties);
+                    return properties;
                 }
-                injectedProperties.set(properties);
-                return properties;
-            }
-        });
+            });
+        } else { // this is not the best fallback we have but since it is super limited it is acceptable
+            final Map<String, Object> unsetProperties = serviceRecipe.getUnsetProperties();
+            injectedProperties.set(new Properties() {
+                @Override
+                public String getProperty(final String key) {
+                    final Object obj = unsetProperties.get(key);
+                    return String.class.isInstance(obj) ? String.valueOf(obj) : null;
+                }
 
-        final Properties props = PropertyPlaceHolderHelper.simpleHolds(serviceInfo.properties);
-        if (serviceInfo.properties.containsKey("Definition")) {
-            final Object encoding = serviceInfo.properties.remove("DefitionEncoding");
-            try { // we catch classcast etc..., if it fails it is not important
-                final InputStream is = new ByteArrayInputStream(serviceInfo.properties.getProperty("Definition")
-                        .getBytes(encoding != null ? encoding.toString() : "ISO-8859-1"));
-                final Properties p = new SuperProperties();
-                IO.readProperties(is, p);
-                for (final Entry<Object, Object> entry : p.entrySet()) {
-                    final String key = entry.getKey().toString();
-                    if (!props.containsKey(key)
-                        // never override from Definition, just use it to complete the properties set
-                        &&
-                        !(key.equalsIgnoreCase("url") &&
-                            props.containsKey("JdbcUrl"))) { // with @DataSource we can get both, see org.apache.openejb.config.ConvertDataSourceDefinitions.rawDefinition()
-                        props.put(key, entry.getValue());
-                    }
+                @Override
+                public Set<String> stringPropertyNames() {
+                    return unsetProperties.keySet();
                 }
-            } catch (final Exception e) {
-                // ignored
-            }
+
+                @Override
+                public Set<Object> keySet() {
+                    return Set.class.cast(unsetProperties.keySet());
+                }
+
+                @Override
+                public synchronized boolean containsKey(final Object key) {
+                    return getProperty(String.valueOf(key)) != null;
+                }
+            });
         }
 
-        serviceRecipe.setProperty("Definition", PropertiesHelper.propertiesToString(props));
+        if (serviceInfo.types.contains("DataSource") || serviceInfo.types.contains(DataSource.class.getName())) {
+            final Properties props = PropertyPlaceHolderHelper.simpleHolds(serviceInfo.properties);
+            if (serviceInfo.properties.containsKey("Definition")) {
+                final Object encoding = serviceInfo.properties.remove("DefitionEncoding");
+                try { // we catch classcast etc..., if it fails it is not important
+                    final InputStream is = new ByteArrayInputStream(serviceInfo.properties.getProperty("Definition")
+                        .getBytes(encoding != null ? encoding.toString() : "ISO-8859-1"));
+                    final Properties p = new SuperProperties();
+                    IO.readProperties(is, p);
+                    for (final Entry<Object, Object> entry : p.entrySet()) {
+                        final String key = entry.getKey().toString();
+                        if (!props.containsKey(key)
+                            // never override from Definition, just use it to complete the properties set
+                            &&
+                            !(key.equalsIgnoreCase("url") &&
+                                props.containsKey("JdbcUrl"))) { // with @DataSource we can get both, see org.apache.openejb.config.ConvertDataSourceDefinitions.rawDefinition()
+                            props.put(key, entry.getValue());
+                        }
+                    }
+                } catch (final Exception e) {
+                    // ignored
+                }
+            }
+            serviceRecipe.setProperty("Definition", PropertiesHelper.propertiesToString(props));
+        } // else: any other kind of resource relying on it? shouldnt be
 
         replaceResourceAdapterProperty(serviceRecipe);
 
@@ -3175,9 +3205,13 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             return;
         }
 
+        final boolean ignoreJdbcDefault = "Annotation".equalsIgnoreCase(info.properties.getProperty("Origin"));
         Logger logger = null;
         for (final String property : unsetProperties.keySet()) {
             //TODO: DMB: Make more robust later
+            if (ignoreJdbcDefault && ("JdbcUrl".equals(property) || "UserName".equals(property) || "Password".equals(property) || "PasswordCipher".equals(property))) {
+                continue;
+            }
             if (property.equalsIgnoreCase("Definition")) {
                 continue;
             }
@@ -3271,7 +3305,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         final ObjectRecipe serviceRecipe = prepareRecipe(info);
         final Object value = info.properties.remove("SkipImplicitAttributes"); // we don't want this one to go in recipe
-        serviceRecipe.setAllProperties(PropertyPlaceHolderHelper.simpleHolds(info.properties));
+        final Properties allProperties = PropertyPlaceHolderHelper.simpleHolds(info.properties);
+        allProperties.remove("SkipPropertiesFallback");
+        serviceRecipe.setAllProperties(allProperties);
         if (value != null) {
             info.properties.put("SkipImplicitAttributes", value);
         }
