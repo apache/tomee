@@ -21,6 +21,6 @@
             type="javax.sql.DataSource" username="sa" password=""
             driverClassName="org.hsqldb.jdbcDriver"
             url="jdbc:hsqldb:mem:foo:myDB"
-            maxActive="8"
+            maxActive="8" initialSize="3" minIdle="1" maxIdle="8"
       />
 </Context>
