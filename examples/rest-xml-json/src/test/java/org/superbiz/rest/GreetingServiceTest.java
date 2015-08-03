@@ -45,7 +45,7 @@ public class GreetingServiceTest {
         final String message = WebClient.create("http://localhost:4204").path("/test/greeting/")
                 .accept(MediaType.APPLICATION_XML_TYPE)
                 .get(String.class);
-        assertEquals("<response><value>Hi REST!</value></response>", message);
+        assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><value>Hi REST!</value></response>", message);
     }
 
     @Test
@@ -54,7 +54,7 @@ public class GreetingServiceTest {
                 .path("/test/greeting/")
                 .accept(MediaType.APPLICATION_XML_TYPE)
                 .post("<request><value>Hi REST!</value></request>", String.class);
-        assertEquals("<response><value>hi rest!</value></response>", message);
+        assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><value>hi rest!</value></response>", message);
     }
 
     @Test
