@@ -25,9 +25,18 @@ import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.Module;
 import org.apache.openejb.testng.PropertiesBuilder;
 import org.apache.openejb.util.NetworkUtil;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
+import java.net.URL;
+import java.util.Comparator;
+import java.util.Properties;
+import java.util.concurrent.atomic.AtomicReference;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -37,17 +46,11 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
 import javax.ws.rs.ext.Providers;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-import java.net.URL;
-import java.util.Comparator;
-import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+@Ignore("no more supported by CXF - chaining providers")
 public class SortProviderTest {
     @Rule
     public final ApplicationComposerRule container = new ApplicationComposerRule(this);
@@ -81,7 +84,24 @@ public class SortProviderTest {
         @Override
         public int compare(final Object o1, final Object o2) {
             saw = true;
-            return o1.getClass().getName().compareTo(o2.getClass().getName());
+
+            final Class<?> c1 = o1.getClass();
+            if (c1 == ATestProvider11.class) {
+                return -1;
+            }
+
+            final Class<?> c2 = o2.getClass();
+            if (c2 == ATestProvider11.class) {
+                return 1;
+            }
+            if (c1 == ATestProviderA.class) {
+                return -1;
+            }
+            if (c2 == ATestProviderA.class) {
+                return 1;
+            }
+
+            return c1.getName().compareTo(c2.getName());
         }
     }
 
@@ -92,14 +112,14 @@ public class SortProviderTest {
 
         @GET
         @Produces("test/test")
-        public String asserts() {
-            return "fail";
+        public AtomicReference<String> asserts() {
+            return new AtomicReference<>("fail");
         }
     }
 
     @Provider
     @Produces("test/test")
-    public static class TestProviderA<T> implements MessageBodyWriter<T> {
+    public static class ATestProviderA implements MessageBodyWriter<AtomicReference<String>> {
         private String reverse(String str) {
             if (str == null) {
                 return "";
@@ -113,7 +133,7 @@ public class SortProviderTest {
         }
 
         @Override
-        public long getSize(T t, Class<?> rawType, Type genericType, Annotation[] annotations, MediaType mediaType) {
+        public long getSize(AtomicReference<String> t, Class<?> rawType, Type genericType, Annotation[] annotations, MediaType mediaType) {
             return -1;
         }
 
@@ -123,16 +143,16 @@ public class SortProviderTest {
         }
 
         @Override
-        public void writeTo(T t, Class<?> rawType, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException {
-            entityStream.write(reverse((String) t).getBytes());
+        public void writeTo(AtomicReference<String> t, Class<?> rawType, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException {
+            entityStream.write(reverse(t.get()).getBytes());
         }
     }
 
     @Provider
     @Produces("test/test")
-    public static class TestProvider11<T> implements MessageBodyWriter<T> {
+    public static class ATestProvider11 implements MessageBodyWriter<AtomicReference<?>> {
         @Override
-        public long getSize(T t, Class<?> rawType, Type genericType, Annotation[] annotations, MediaType mediaType) {
+        public long getSize(AtomicReference<?> t, Class<?> rawType, Type genericType, Annotation[] annotations, MediaType mediaType) {
             return -1;
         }
 
@@ -142,7 +162,7 @@ public class SortProviderTest {
         }
 
         @Override
-        public void writeTo(T t, Class<?> rawType, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException {
+        public void writeTo(AtomicReference<?> t, Class<?> rawType, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException {
             entityStream.write("it works!".getBytes());
         }
     }

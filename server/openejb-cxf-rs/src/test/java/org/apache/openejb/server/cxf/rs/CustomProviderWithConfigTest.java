@@ -25,6 +25,11 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
+import java.util.Properties;
 import javax.ejb.Singleton;
 import javax.ejb.embeddable.EJBContainer;
 import javax.ws.rs.GET;
@@ -34,11 +39,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 
@@ -77,8 +77,8 @@ public class CustomProviderWithConfigTest {
     public static class CustomizedService {
         @GET
         @Produces("openejb/conf")
-        public String go() {
-            return "";
+        public CustomizedService go() {
+            return new CustomizedService();
         }
     }
 

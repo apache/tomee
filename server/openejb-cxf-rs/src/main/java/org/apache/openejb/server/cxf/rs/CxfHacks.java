@@ -18,6 +18,7 @@ package org.apache.openejb.server.cxf.rs;
 
 import org.apache.cxf.common.util.ClassHelper;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.server.cxf.transport.util.CxfUtil;
 import org.apache.openejb.util.reflection.Reflections;
 
 public final class CxfHacks {

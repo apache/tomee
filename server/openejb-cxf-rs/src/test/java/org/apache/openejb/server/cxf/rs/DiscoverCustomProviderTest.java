@@ -26,6 +26,12 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
+import java.util.Properties;
+import java.util.concurrent.atomic.AtomicReference;
 import javax.ejb.Singleton;
 import javax.ejb.embeddable.EJBContainer;
 import javax.ws.rs.GET;
@@ -35,11 +41,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 
@@ -80,8 +81,8 @@ public class DiscoverCustomProviderTest {
         @GET
         @Path("service")
         @Produces("discover/reverse")
-        public String go() {
-            return "skcor ti";
+        public AtomicReference<String> go() {
+            return new AtomicReference<>("skcor ti");
         }
     }
 
@@ -107,7 +108,7 @@ public class DiscoverCustomProviderTest {
 
         @Override
         public void writeTo(T t, Class<?> rawType, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException {
-            entityStream.write(reverse((String) t).getBytes());
+            entityStream.write(reverse(AtomicReference.class.cast(t).get().toString()).getBytes());
         }
     }
 }

@@ -87,8 +87,8 @@ public class ProviderWithConstructorTest {
     public static class AnEndpointToCheckAProvider {
         @GET
         @Produces("openejb/constructor")
-        public String bar() {
-            return "bar"; // whatever the value is the provider will return the context path
+        public AnEndpointToCheckAProvider bar() {
+            return new AnEndpointToCheckAProvider();
         }
     }
 

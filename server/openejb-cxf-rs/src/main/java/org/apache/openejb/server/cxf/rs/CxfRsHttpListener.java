@@ -27,25 +27,20 @@ import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.JAXRSServiceImpl;
 import org.apache.cxf.jaxrs.ext.ResourceComparator;
-import org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper;
 import org.apache.cxf.jaxrs.lifecycle.ResourceProvider;
 import org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider;
 import org.apache.cxf.jaxrs.model.ClassResourceInfo;
 import org.apache.cxf.jaxrs.model.MethodDispatcher;
 import org.apache.cxf.jaxrs.model.OperationResourceInfo;
-import org.apache.cxf.jaxrs.provider.BinaryDataProvider;
-import org.apache.cxf.jaxrs.provider.DataSourceProvider;
-import org.apache.cxf.jaxrs.provider.FormEncodingProvider;
-import org.apache.cxf.jaxrs.provider.JAXBElementProvider;
-import org.apache.cxf.jaxrs.provider.MultipartProvider;
-import org.apache.cxf.jaxrs.provider.PrimitiveTextProvider;
-import org.apache.cxf.jaxrs.provider.SourceProvider;
+import org.apache.cxf.jaxrs.model.ProviderInfo;
+import org.apache.cxf.jaxrs.provider.ProviderFactory;
+import org.apache.cxf.jaxrs.provider.ServerProviderFactory;
+import org.apache.cxf.jaxrs.utils.JAXRSUtils;
 import org.apache.cxf.jaxrs.validation.ValidationExceptionMapper;
+import org.apache.cxf.message.Message;
 import org.apache.cxf.service.invoker.Invoker;
 import org.apache.cxf.transport.DestinationFactory;
 import org.apache.cxf.transport.servlet.BaseUrlHelper;
-import org.apache.johnzon.jaxrs.JohnzonProvider;
-import org.apache.johnzon.jaxrs.JsrProvider;
 import org.apache.johnzon.jaxrs.WadlDocumentMessageBodyWriter;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
@@ -81,28 +76,18 @@ import org.apache.openejb.util.AppFinder;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.proxy.ProxyEJB;
+import org.apache.openejb.util.reflection.Reflections;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.context.creational.CreationalContextImpl;
 
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.spi.Bean;
-import javax.management.ObjectName;
-import javax.management.openmbean.TabularData;
-import javax.naming.Context;
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.ConstrainedTo;
-import javax.ws.rs.RuntimeType;
-import javax.ws.rs.core.Application;
-import javax.xml.bind.Marshaller;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -119,6 +104,22 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
+import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.Bean;
+import javax.management.ObjectName;
+import javax.management.openmbean.TabularData;
+import javax.naming.Context;
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.ConstrainedTo;
+import javax.ws.rs.RuntimeType;
+import javax.ws.rs.core.Application;
+import javax.ws.rs.core.Configuration;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.ext.MessageBodyReader;
+import javax.ws.rs.ext.MessageBodyWriter;
 
 import static org.apache.openejb.loader.JarLocation.jarLocation;
 
@@ -230,7 +231,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         }
 
         String path = request.getRequestURI().substring(request.getContextPath().length());
-        if (path == null || path.isEmpty()) {
+        if (path.isEmpty()) {
             path = "/";
         }
         for (final Pattern pattern : staticResourcesList) {
@@ -461,20 +462,9 @@ public class CxfRsHttpListener implements RsHttpListener {
     }
 
     private static void addMandatoryProviders(final Collection<Object> instances) {
-        instances.add(new JsrProvider());
         instances.add(new WadlDocumentMessageBodyWriter());
         instances.add(EJBAccessExceptionMapper.INSTANCE);
         instances.add(new ValidationExceptionMapper());
-
-        if ("true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.jaxrs.cxf.add-cxf-providers", "false"))) {
-            instances.add(new WebApplicationExceptionMapper());
-            instances.add(new BinaryDataProvider<>());
-            instances.add(new SourceProvider<>());
-            instances.add(new DataSourceProvider<>());
-            instances.add(new FormEncodingProvider<>());
-            instances.add(new PrimitiveTextProvider<>());
-            instances.add(new MultipartProvider());
-        }
     }
 
     private Object newProvider(final Class<?> clazz) throws IllegalAccessException, InstantiationException {
@@ -590,6 +580,20 @@ public class CxfRsHttpListener implements RsHttpListener {
             try {
                 server = factory.create();
                 fireServerCreated(oldLoader);
+
+                final ServerProviderFactory spf = ServerProviderFactory.class.cast(server.getEndpoint().get(ServerProviderFactory.class.getName()));
+                LOGGER.info("Using readers:");
+                for (final Object provider : List.class.cast(Reflections.get(spf, "messageReaders"))) {
+                    LOGGER.info("     " + ProviderInfo.class.cast(provider).getProvider());
+                }
+                LOGGER.info("Using writers:");
+                for (final Object provider : List.class.cast(Reflections.get(spf, "messageWriters"))) {
+                    LOGGER.info("     " + ProviderInfo.class.cast(provider).getProvider());
+                }
+                LOGGER.info("Using exception mappers:");
+                for (final Object provider : List.class.cast(Reflections.get(spf, "exceptionMappers"))) {
+                    LOGGER.info("     " + ProviderInfo.class.cast(provider).getProvider());
+                }
             } finally {
                 try {
                     SERVER_IMPL_LOGGER.setLevel(level);
@@ -778,6 +782,12 @@ public class CxfRsHttpListener implements RsHttpListener {
                                   final ServiceConfiguration serviceConfiguration,
                                   final JAXRSServerFactoryBean factory,
                                   final WebBeansContext ctx) {
+        if (!"true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.cxf.rs.skip-provider-sorting", "false"))) {
+            final Comparator<?> providerComparator = findProviderComparator(serviceConfiguration, ctx);
+            if (providerComparator != null) {
+                factory.setProviderComparator(providerComparator);
+            }
+        }
         CxfUtil.configureEndpoint(factory, serviceConfiguration, CXF_JAXRS_PREFIX);
 
         final Collection<ServiceInfo> services = serviceConfiguration.getAvailableServices();
@@ -845,15 +855,13 @@ public class CxfRsHttpListener implements RsHttpListener {
         if (providersConfig != null) {
             providers = ServiceInfos.resolve(services, providersConfig.toArray(new String[providersConfig.size()]), OpenEJBProviderFactory.INSTANCE);
             if (providers != null && additionalProviders != null && !additionalProviders.isEmpty()) {
-                providers.addAll(sortProviders(serviceConfiguration, ctx, additionalProviders));
+                providers.addAll(providers(serviceConfiguration.getAvailableServices(), additionalProviders, ctx));
             }
         }
         if (providers == null) {
             providers = new ArrayList<>(4);
             if (additionalProviders != null && !additionalProviders.isEmpty()) {
-                providers.addAll(sortProviders(serviceConfiguration, ctx, additionalProviders));
-            } else {
-                providers.addAll(defaultProviders());
+                providers.addAll(providers(serviceConfiguration.getAvailableServices(), additionalProviders, ctx));
             }
         }
 
@@ -864,28 +872,19 @@ public class CxfRsHttpListener implements RsHttpListener {
         SystemInstance.get().fireEvent(new ExtensionProviderRegistration(
                 AppFinder.findAppContextOrWeb(Thread.currentThread().getContextClassLoader(), AppFinder.AppContextTransformer.INSTANCE), providers));
 
-        LOGGER.info("Using providers:");
-        for (final Object provider : providers) {
-            LOGGER.info("     " + provider);
+        if (!providers.isEmpty()) {
+            factory.setProviders(providers);
         }
-        factory.setProviders(providers);
     }
 
-    private List<Object> sortProviders(final ServiceConfiguration serviceConfiguration, final WebBeansContext ctx,
-                                       final Collection<Object> additionalProviders) {
-        final Collection<ServiceInfo> services = serviceConfiguration.getAvailableServices();
-        final List<Object> loadedProviders = providers(services, additionalProviders, ctx);
-        if ("true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.cxf.rs.skip-provider-sorting", "false"))) {
-            return loadedProviders;
-        }
-
+    private Comparator<?> findProviderComparator(final ServiceConfiguration serviceConfiguration, final WebBeansContext ctx) {
         final String comparatorKey = CXF_JAXRS_PREFIX + "provider-comparator";
         final String comparatorClass = serviceConfiguration.getProperties()
                                            .getProperty(comparatorKey, SystemInstance.get().getProperty(comparatorKey));
 
         Comparator<Object> comparator = null;
         if (comparatorClass == null) {
-            comparator = DefaultProviderComparator.INSTANCE;
+            return null; // try to rely on CXF behavior otherwise just reactivate DefaultProviderComparator.INSTANCE if it is an issue
         } else {
             final BeanManagerImpl bm = ctx == null ? null : ctx.getBeanManagerImpl();
             if (bm != null && bm.isInUse()) {
@@ -904,7 +903,7 @@ public class CxfRsHttpListener implements RsHttpListener {
             }
 
             if (comparator == null) {
-                comparator = Comparator.class.cast(ServiceInfos.resolve(services, comparatorClass));
+                comparator = Comparator.class.cast(ServiceInfos.resolve(serviceConfiguration.getAvailableServices(), comparatorClass));
             }
             if (comparator == null) {
                 try {
@@ -913,30 +912,38 @@ public class CxfRsHttpListener implements RsHttpListener {
                     throw new IllegalArgumentException(e);
                 }
             }
+
+            for (final Type itf : comparator.getClass().getGenericInterfaces()) {
+                if (!ParameterizedType.class.isInstance(itf)) {
+                    continue;
+                }
+
+                final ParameterizedType pt = ParameterizedType.class.cast(itf);
+                if (Comparator.class == pt.getRawType() && pt.getActualTypeArguments().length > 0) {
+                    final Type t = pt.getActualTypeArguments()[0];
+                    if (Class.class.isInstance(t) && ProviderInfo.class == t) {
+                        return comparator;
+                    }
+                    if (ParameterizedType.class.isInstance(t) && ProviderInfo.class == ParameterizedType.class.cast(t).getRawType()) {
+                        return comparator;
+                    }
+                }
+            }
+
+            return new ProviderComparatorWrapper(comparator);
         }
-        Collections.sort(loadedProviders, comparator);
-        return loadedProviders;
     }
 
-    private static List<Object> defaultProviders() {
-        final JAXBElementProvider jaxb = new JAXBElementProvider();
-        final Map<String, Object> jaxbProperties = new HashMap<>();
-        jaxbProperties.put(Marshaller.JAXB_FRAGMENT, true);
-        jaxb.setMarshallerProperties(jaxbProperties);
-
-        final List<Object> providers = new ArrayList<>(2);
-        providers.add(new JohnzonProvider<>());
-        providers.add(jaxb);
-        return providers;
-    }
-
-    // we use Object cause an app with a custom comparator can desire to compare instances
-    private static final class DefaultProviderComparator implements Comparator<Object> {
-        private static final DefaultProviderComparator INSTANCE = new DefaultProviderComparator();
+    // public to ensure it can be configured since not setup by default anymore
+    public static final class DefaultProviderComparator extends ProviderFactory implements Comparator<ProviderInfo<?>> {
         private static final ClassLoader SYSTEM_LOADER = ClassLoader.getSystemClassLoader();
 
+        public DefaultProviderComparator() {
+            super(null);
+        }
+
         @Override
-        public int compare(final Object o1, final Object o2) {
+        public int compare(final ProviderInfo<?> o1, final ProviderInfo<?> o2) {
             if (o1 == o2 || (o1 != null && o1.equals(o2))) {
                 return 0;
             }
@@ -947,8 +954,17 @@ public class CxfRsHttpListener implements RsHttpListener {
                 return 1;
             }
 
-            final Class<?> c1 = o1.getClass();
-            final Class<?> c2 = o2.getClass();
+            final Class<?> c1 = o1.getProvider().getClass();
+            final Class<?> c2 = o2.getProvider().getClass();
+            if (c1.getName().startsWith("org.apache.cxf.")) {
+                if (!c2.getName().startsWith("org.apache.cxf.")) {
+                    return 1;
+                }
+                return -1;
+            }
+            if (c2.getName().startsWith("org.apache.cxf.")) {
+                return -1;
+            }
 
             final ClassLoader classLoader1 = c1.getClassLoader();
             final ClassLoader classLoader2 = c2.getClassLoader();
@@ -965,22 +981,64 @@ public class CxfRsHttpListener implements RsHttpListener {
                     return -1;
                 }
             } else {
-                final File l1 = jarLocation(c1);
-                final File l2 = jarLocation(c2);
-                if (l1 == null) {
-                    return 1;
-                }
-                if (l2 == null) {
-                    return -1;
+                int result = compareClasses(o1.getProvider(), o2.getProvider());
+                if (result != 0) {
+                    return result;
                 }
 
-                try { // WEB-INF/classes will be before WEB-INF/lib automatically
-                    return l1.getCanonicalPath().compareTo(l2.getCanonicalPath());
-                } catch (final IOException e) {
+                if (MessageBodyWriter.class.isInstance(o1.getProvider())) {
+                    final List<MediaType> types1 =
+                            JAXRSUtils.sortMediaTypes(JAXRSUtils.getProviderProduceTypes(MessageBodyWriter.class.cast(o1.getProvider())), JAXRSUtils.MEDIA_TYPE_QS_PARAM);
+                    final List<MediaType> types2 =
+                            JAXRSUtils.sortMediaTypes(JAXRSUtils.getProviderProduceTypes(MessageBodyWriter.class.cast(o2.getProvider())), JAXRSUtils.MEDIA_TYPE_QS_PARAM);
+
+                    if (types1.contains(MediaType.WILDCARD_TYPE) && !types2.contains(MediaType.WILDCARD_TYPE)) {
+                        return 1;
+                    }
+                    if (types2.contains(MediaType.WILDCARD_TYPE) && !types1.contains(MediaType.WILDCARD_TYPE)) {
+                        return -1;
+                    }
+
+                    result = JAXRSUtils.compareSortedMediaTypes(types1, types2, JAXRSUtils.MEDIA_TYPE_QS_PARAM);
+                    if (result != 0) {
+                        return result;
+                    }
+                }
+                if (MessageBodyReader.class.isInstance(o1.getProvider())) {
+                    final List<MediaType> types1 =
+                            JAXRSUtils.sortMediaTypes(JAXRSUtils.getProviderConsumeTypes(MessageBodyReader.class.cast(o1.getProvider())), null);
+                    final List<MediaType> types2 =
+                            JAXRSUtils.sortMediaTypes(JAXRSUtils.getProviderConsumeTypes(MessageBodyReader.class.cast(o2.getProvider())), null);
+
+                    result = JAXRSUtils.compareSortedMediaTypes(types1, types2, JAXRSUtils.MEDIA_TYPE_QS_PARAM);
+                    if (result != 0) {
+                        return result;
+                    }
+                }
+
+                final Boolean custom1 = o1.isCustom();
+                final Boolean custom2 = o2.isCustom();
+                final int customComp = custom1.compareTo(custom2) * -1;
+                if (customComp != 0) {
+                    return customComp;
+                }
+
+                try { // WEB-INF/classes will be before WEB-INF/lib
+                    final File file1 = jarLocation(c1);
+                    final File file2 = jarLocation(c2);
+                    if ("classes".equals(file1.getName())) {
+                        if ("classes".equals(file2.getName())) {
+                            return c1.getName().compareTo(c2.getName());
+                        }
+                        return -1;
+                    }
+                    if ("classes".equals(file2.getName())) {
+                        return 1;
+                    }
+                } catch (final Exception e) {
                     // no-op: sort by class name
                 }
             }
-
             return c1.getName().compareTo(c2.getName());
         }
 
@@ -993,6 +1051,30 @@ public class CxfRsHttpListener implements RsHttpListener {
                 current = current.getParent();
             }
             return false;
+        }
+
+        @Override
+        public Configuration getConfiguration(final Message message) {
+            throw new UnsupportedOperationException("not a real inheritance");
+        }
+
+        @Override
+        protected void setProviders(final boolean custom, final Object... providers) {
+            throw new UnsupportedOperationException("not a real inheritance");
+        }
+    }
+
+    // we use Object cause an app with a custom comparator can desire to compare instances
+    private static final class ProviderComparatorWrapper implements Comparator<ProviderInfo<?>> {
+        private final Comparator<Object> delegate;
+
+        private ProviderComparatorWrapper(final Comparator<Object> delegate) {
+            this.delegate = delegate;
+        }
+
+        @Override
+        public int compare(final ProviderInfo<?> o1, final ProviderInfo<?> o2) {
+            return delegate.compare(o1.getProvider(), o2.getProvider());
         }
     }
 
