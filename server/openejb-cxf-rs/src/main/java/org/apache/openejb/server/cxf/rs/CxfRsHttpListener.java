@@ -463,7 +463,7 @@ public class CxfRsHttpListener implements RsHttpListener {
 
     private static void addMandatoryProviders(final Collection<Object> instances) {
         instances.add(new WadlDocumentMessageBodyWriter());
-        instances.add(EJBAccessExceptionMapper.INSTANCE);
+        instances.add(new EJBExceptionMapper());
         instances.add(new ValidationExceptionMapper());
     }
 

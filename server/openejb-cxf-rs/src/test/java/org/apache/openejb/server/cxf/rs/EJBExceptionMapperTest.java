@@ -42,7 +42,7 @@ import java.util.Properties;
 import static org.junit.Assert.assertEquals;
 
 @SuppressWarnings("FieldCanBeLocal")
-public class EJBAccessExceptionMapperTest {
+public class EJBExceptionMapperTest {
     private static EJBContainer container;
     private static RESTIsCoolOne service;
     private static int port = -1;
@@ -69,7 +69,7 @@ public class EJBAccessExceptionMapperTest {
     @Test
     public void rest() {
         final Response response = WebClient.create("http://localhost:" + port + "/openejb-cxf-rs").path("/ejbsecu/rest").get();
-        assertEquals(403, response.getStatus());
+        assertEquals(500, response.getStatus());
     }
 
 

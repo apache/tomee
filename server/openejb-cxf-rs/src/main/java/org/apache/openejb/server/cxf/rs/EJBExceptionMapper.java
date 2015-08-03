@@ -16,15 +16,23 @@
  */
 package org.apache.openejb.server.cxf.rs;
 
-import javax.ejb.EJBAccessException;
+import javax.ejb.EJBException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
+import javax.ws.rs.ext.Providers;
 
-public class EJBAccessExceptionMapper implements ExceptionMapper<EJBAccessException> {
-    public static final EJBAccessExceptionMapper INSTANCE = new EJBAccessExceptionMapper();
+public class EJBExceptionMapper implements ExceptionMapper<EJBException> {
+    @Context
+    private Providers providers;
 
     @Override
-    public Response toResponse(EJBAccessException throwable) {
-        return Response.status(Response.Status.FORBIDDEN).build();
+    public Response toResponse(final EJBException ejbException) {
+        final Exception cause = ejbException.getCausedByException();
+        if (cause != null) {
+            final Class causeClass = cause.getClass();
+            return providers.getExceptionMapper(causeClass).toResponse(cause);
+        }
+        throw ejbException;
     }
 }
