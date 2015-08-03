@@ -75,7 +75,7 @@ public class CdiEventRealmIntegTest
         final Response val = WebClient.create(webapp.toExternalForm(), "user", "secret", null)
                 .path("/test").get();
 
-        assertEquals(403, val.getStatus());
+        assertEquals(500, val.getStatus());
     }
 
     @Test
