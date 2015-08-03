@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.arquillian.openejb;
 
-import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.openejb.assembler.classic.ReloadableEntityManagerFactory;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;

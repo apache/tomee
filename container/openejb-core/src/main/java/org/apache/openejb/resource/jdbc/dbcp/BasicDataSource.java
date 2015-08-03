@@ -17,9 +17,9 @@
 
 package org.apache.openejb.resource.jdbc.dbcp;
 
-import org.apache.commons.dbcp.ConnectionFactory;
-import org.apache.commons.dbcp.DataSourceConnectionFactory;
-import org.apache.commons.dbcp.managed.DataSourceXAConnectionFactory;
+import org.apache.commons.dbcp2.ConnectionFactory;
+import org.apache.commons.dbcp2.DataSourceConnectionFactory;
+import org.apache.commons.dbcp2.managed.DataSourceXAConnectionFactory;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.cipher.PasswordCipher;
 import org.apache.openejb.cipher.PasswordCipherFactory;
@@ -29,9 +29,6 @@ import org.apache.openejb.resource.jdbc.IsolationLevels;
 import org.apache.openejb.resource.jdbc.plugin.DataSourcePlugin;
 import org.apache.openejb.util.reflection.Reflections;
 
-import javax.sql.CommonDataSource;
-import javax.sql.DataSource;
-import javax.sql.XADataSource;
 import java.io.File;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
@@ -40,11 +37,13 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
+import javax.sql.CommonDataSource;
+import javax.sql.DataSource;
+import javax.sql.XADataSource;
 
 @SuppressWarnings({"UnusedDeclaration"})
-public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource implements Serializable {
-
-    private static final ReentrantLock lock = new ReentrantLock();
+public class BasicDataSource extends org.apache.commons.dbcp2.BasicDataSource implements Serializable {
+    private final ReentrantLock lock = new ReentrantLock();
 
     private Logger logger;
 
@@ -81,9 +80,9 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource imp
     protected ConnectionFactory createConnectionFactory() throws SQLException {
         if (delegate != null) {
             if (XADataSource.class.isInstance(delegate)) {
-                return new DataSourceXAConnectionFactory(OpenEJB.getTransactionManager(), XADataSource.class.cast(delegate), username, password);
+                return new DataSourceXAConnectionFactory(OpenEJB.getTransactionManager(), XADataSource.class.cast(delegate), getUsername(), getPassword());
             }
-            return new DataSourceConnectionFactory(DataSource.class.cast(delegate), username, password);
+            return new DataSourceConnectionFactory(DataSource.class.cast(delegate), getUsername(), getPassword());
         }
         return super.createConnectionFactory();
     }
@@ -208,24 +207,26 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource imp
         final ReentrantLock l = lock;
         l.lock();
         try {
-            super.setMaxWait((long) maxWait);
+            super.setMaxWaitMillis((long) maxWait);
         } finally {
             l.unlock();
         }
     }
 
+    @Override
     protected DataSource createDataSource() throws SQLException {
         final ReentrantLock l = lock;
         l.lock();
         try {
-            if (super.dataSource != null) {
-                return super.dataSource;
+            final Object dataSource = Reflections.get(this, "dataSource");
+            if (dataSource != null) {
+                return DataSource.class.cast(dataSource);
             }
 
             // check password codec if available
-            if (null != passwordCipher) {
+            if (null != passwordCipher && !"PlainText".equals(passwordCipher)) {
                 final PasswordCipher cipher = PasswordCipherFactory.getPasswordCipher(passwordCipher);
-                final String plainPwd = cipher.decrypt(password.toCharArray());
+                final String plainPwd = cipher.decrypt(getPassword().toCharArray());
 
                 // override previous password value
                 super.setPassword(plainPwd);
@@ -309,7 +310,7 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource imp
         try {
 
             if (null == this.logger) {
-                this.logger = (Logger) Reflections.invokeByReflection(super.dataSource, "getParentLogger", new Class<?>[0], null);
+                this.logger = (Logger) Reflections.invokeByReflection(createDataSource(), "getParentLogger", new Class<?>[0], null);
             }
 
             return this.logger;

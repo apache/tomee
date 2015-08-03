@@ -15,7 +15,7 @@
             ],
             "properties": {
                 "JdbcUrl": "jdbc:hsqldb:mem:json",
-                "MaxActive": 123,
+                "MaxTotal": 123,
                 "JtaManaged": false
             }
         }

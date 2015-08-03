@@ -17,7 +17,7 @@
 
 package org.apache.openejb.resource.jdbc.dbcp;
 
-import org.apache.commons.dbcp.ConnectionFactory;
+import org.apache.commons.dbcp2.ConnectionFactory;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.cipher.PasswordCipher;
 import org.apache.openejb.cipher.PasswordCipherFactory;
@@ -26,8 +26,8 @@ import org.apache.openejb.resource.jdbc.BasicDataSourceUtil;
 import org.apache.openejb.resource.jdbc.IsolationLevels;
 import org.apache.openejb.resource.jdbc.plugin.DataSourcePlugin;
 import org.apache.openejb.resource.jdbc.pool.XADataSourceResource;
+import org.apache.openejb.util.reflection.Reflections;
 
-import javax.sql.DataSource;
 import java.io.File;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
@@ -36,9 +36,10 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
+import javax.sql.DataSource;
 
 @SuppressWarnings({"UnusedDeclaration"})
-public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.BasicManagedDataSource implements Serializable {
+public class BasicManagedDataSource extends org.apache.commons.dbcp2.managed.BasicManagedDataSource implements Serializable {
 
     private static final ReentrantLock lock = new ReentrantLock();
     private final String name;
@@ -210,7 +211,7 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
         final ReentrantLock l = lock;
         l.lock();
         try {
-            super.setMaxWait((long) maxWait);
+            super.setMaxWaitMillis((long) maxWait);
         } finally {
             l.unlock();
         }
@@ -220,14 +221,15 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
         final ReentrantLock l = lock;
         l.lock();
         try {
-            if (super.dataSource != null) {
-                return super.dataSource;
+            final Object dataSource = Reflections.get(this, "dataSource");
+            if (dataSource != null) {
+                return DataSource.class.cast(dataSource);
             }
 
             // check password codec if available
             if (null != passwordCipher) {
                 final PasswordCipher cipher = PasswordCipherFactory.getPasswordCipher(passwordCipher);
-                final String plainPwd = cipher.decrypt(password.toCharArray());
+                final String plainPwd = cipher.decrypt(getPassword().toCharArray());
 
                 // override previous password value
                 super.setPassword(plainPwd);
@@ -309,7 +311,7 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
         try {
 
             if (null == this.logger) {
-                this.logger = (Logger) DataSource.class.getDeclaredMethod("getParentLogger").invoke(super.dataSource);
+                this.logger = (Logger) DataSource.class.getDeclaredMethod("getParentLogger").invoke(createDataSource());
             }
 
             return this.logger;

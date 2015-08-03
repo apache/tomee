@@ -17,7 +17,7 @@
 
 package org.apache.openejb.resource.jdbc.dbcp;
 
-import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.openejb.api.internal.Internal;
 import org.apache.openejb.api.jmx.Description;
 import org.apache.openejb.api.jmx.ManagedAttribute;
@@ -26,11 +26,11 @@ import org.apache.openejb.monitoring.DynamicMBeanWrapper;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
 
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 
 // @MBean: don't put it since it is not a pojo
 @Internal
@@ -110,7 +110,7 @@ public class JMXBasicDataSource {
     @Description("The maximum number of active connections that can be allocated from this pool at the same time,"
         + " or negative for no limit.")
     public int getMaxActive() {
-        return ds.getMaxActive();
+        return ds.getMaxTotal();
     }
 
     @ManagedAttribute
@@ -158,37 +158,37 @@ public class JMXBasicDataSource {
     @Description("The maximum number of milliseconds that the pool will wait (when there are no available connections) "
         + "for a connection to be returned before throwing an exception, or <= 0 to wait indefinitely.")
     public long getMaxWait() {
-        return ds.getMaxWait();
+        return ds.getMaxWaitMillis();
     }
 
     @ManagedAttribute
     @Description("The default auto-commit state of connections created by this pool.")
     public boolean getDefaultAutoCommit() {
-        return ds.getDefaultAutoCommit();
+        return Boolean.TRUE.equals(ds.getDefaultAutoCommit());
     }
 
     @ManagedAttribute
     @Description("Prepared statement pooling for this pool.")
     public boolean getPoolPreparedStatements() {
-        return ds.isPoolPreparedStatements();
+        return Boolean.TRUE.equals(ds.isPoolPreparedStatements());
     }
 
     @ManagedAttribute
     @Description("The indication of whether objects will be validated before being borrowed from the pool.")
     public boolean getTestOnBorrow() {
-        return ds.getTestOnBorrow();
+        return Boolean.TRUE.equals(ds.getTestOnBorrow());
     }
 
     @ManagedAttribute
     @Description("The indication of whether objects will be validated before being returned to the pool.")
     public boolean getTestOnReturn() {
-        return ds.getTestOnReturn();
+        return Boolean.TRUE.equals(ds.getTestOnReturn());
     }
 
     @ManagedAttribute
     @Description("The indication of whether objects will be validated by the idle object evictor (if any).")
     public boolean getTestWhileIdle() {
-        return ds.getTestWhileIdle();
+        return Boolean.TRUE.equals(ds.getTestWhileIdle());
     }
 
     @ManagedAttribute
@@ -200,7 +200,7 @@ public class JMXBasicDataSource {
     @ManagedAttribute
     @Description("The default read-only state of connections created by this pool.")
     public boolean getDefaultReadOnly() {
-        return ds.getDefaultReadOnly();
+        return Boolean.TRUE.equals(ds.getDefaultReadOnly());
     }
 
     @ManagedAttribute
@@ -303,7 +303,7 @@ public class JMXBasicDataSource {
     @Description("Set the maximum number of active connections that can be allocated from this pool at the same time,"
         + " or negative for no limit.")
     public void setMaxActive(final int max) {
-        ds.setMaxActive(max);
+        ds.setMaxTotal(max);
     }
 
     @ManagedAttribute
@@ -351,7 +351,7 @@ public class JMXBasicDataSource {
     @Description("Set the maximum number of milliseconds that the pool will wait (when there are no available connections) "
         + "for a connection to be returned before throwing an exception, or <= 0 to wait indefinitely.")
     public void setMaxWait(final long max) {
-        ds.setMaxWait(max);
+        ds.setMaxWaitMillis(max);
     }
 
     @ManagedAttribute

@@ -27,6 +27,7 @@ import org.apache.openejb.resource.jdbc.pool.DataSourceCreator;
 import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.Module;
 import org.hsqldb.jdbc.pool.JDBCXADataSource;
+import org.hsqldb.jdbcDriver;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -59,6 +60,7 @@ public class XADataSourceTest {
         } catch (final EJBException ejbEx) {
             assertThat(ejbEx.getCause(), instanceOf(IllegalArgumentException.class));
         }
+        ejb.assertPersisted();
     }
 
     @Configuration
@@ -90,23 +92,22 @@ public class XADataSourceTest {
 
         // pooled "XA" datasources
         p.put("xadb", "new://Resource?type=DataSource");
-        p.put("xadb.xaDataSource", "xa");// to be xa
+        p.put("xadb.XaDataSource", "xa"); // to be xa
         p.put("xadb.JtaManaged", "true");
 
         p.put("xadb2", "new://Resource?type=DataSource");
-        p.put("xadb2.xaDataSource", "xa2");// to be xa
+        p.put("xadb2.XaDataSource", "xa2"); // to be xa
         p.put("xadb2.JtaManaged", "true");
 
         // non jta datasources
-        p.put("xadbn", "new://Resource?type=DataSource");
-        p.put("xadbn.JdbcDriver", JDBCXADataSource.class.getName());
-        p.put("xadbn.JdbcUrl", "jdbc:hsqldb:mem:xa");
-        p.put("xadbn.UserName", "sa");
-        p.put("xadbn.Password", "");
-        p.put("xadbn.JtaManaged", "false");
+        p.put("xadbn", "new://Resource?class-name=" + JDBCXADataSource.class.getName());
+        p.put("xadbn.JdbcDriver", jdbcDriver.class.getName());
+        p.put("xadbn.url", "jdbc:hsqldb:mem:xa");
+        p.put("xadbn.user", "sa");
+        p.put("xadbn.password", "");
 
         p.put("xadbn2", "new://Resource?type=DataSource");
-        p.put("xadbn2.JdbcDriver", JDBCXADataSource.class.getName());
+        p.put("xadbn2.JdbcDriver", jdbcDriver.class.getName());
         p.put("xadbn2.JdbcUrl", "jdbc:hsqldb:mem:xa2");
         p.put("xadbn2.UserName", "sa");
         p.put("xadbn2.Password", "");

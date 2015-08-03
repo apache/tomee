@@ -210,12 +210,12 @@
           <groupId>org.apache.openwebbeans</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>commons-dbcp</artifactId>
-          <groupId>commons-dbcp</groupId>
+          <artifactId>org.apache.commons</artifactId>
+          <groupId>commons-dbcp2</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>commons-pool</artifactId>
-          <groupId>commons-pool</groupId>
+          <artifactId>org.apache.commons</artifactId>
+          <groupId>commons-pool2</groupId>
         </exclusion>
         <exclusion>
           <artifactId>swizzle-stream</artifactId>

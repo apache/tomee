@@ -25,15 +25,16 @@ import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
+import java.util.Map;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.persistence.SharedCacheMode;
 import javax.persistence.ValidationMode;
 import javax.persistence.spi.PersistenceUnitTransactionType;
+import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 import javax.validation.ValidatorFactory;
-import java.util.Map;
 
 public class PersistenceBuilder {
 
@@ -84,7 +85,7 @@ public class PersistenceBuilder {
                         jtaDataSourceId = "openejb/Resource/" + jtaDataSourceId;
                     }
 
-                    final DataSource jtaDataSource = (DataSource) context.lookup(jtaDataSourceId);
+                    final CommonDataSource jtaDataSource = (CommonDataSource) context.lookup(jtaDataSourceId);
                     unitInfo.setJtaDataSource(jtaDataSource);
                 } catch (final NamingException e) {
                     try {
@@ -131,7 +132,7 @@ public class PersistenceBuilder {
                         nonJtaDataSourceId = "java:openejb/Resource/" + nonJtaDataSourceId;
                     }
 
-                    final DataSource nonJtaDataSource = (DataSource) context.lookup(nonJtaDataSourceId);
+                    final CommonDataSource nonJtaDataSource = (CommonDataSource) context.lookup(nonJtaDataSourceId);
                     unitInfo.setNonJtaDataSource(nonJtaDataSource);
                 } catch (final NamingException e) {
                     try {

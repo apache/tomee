@@ -58,7 +58,7 @@ public class JSonConfigTest {
     public void checkDsIsHere() throws NamingException {
         final BasicDataSource ds = BasicDataSource.class.cast(ctx.lookup("openejb:Resource/json-datasource"));
         assertNotNull(ds);
-        assertEquals(123, ds.getMaxActive());
+        assertEquals(123, ds.getMaxTotal());
         assertEquals("jdbc:hsqldb:mem:json", ds.getJdbcUrl());
     }
 
@@ -85,7 +85,7 @@ public class JSonConfigTest {
         assertEquals(1, openejb.getResource().size());
         final Resource resource = openejb.getResource().iterator().next();
         assertEquals("json-datasource", resource.getId());
-        assertTrue("123".equals(resource.getProperties().getProperty("MaxActive")));
+        assertTrue("123".equals(resource.getProperties().getProperty("MaxTotal")));
         assertTrue("jdbc:hsqldb:mem:json".equals(resource.getProperties().getProperty("JdbcUrl")));
 
         assertEquals(1, openejb.getDeployments().size());

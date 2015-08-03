@@ -24,17 +24,17 @@ import org.apache.openejb.testng.PropertiesBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Properties;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Properties;
 
 import static org.apache.openejb.resource.jdbc.FailOverRouters.datasource;
-import static org.apache.openejb.resource.jdbc.FailOverRouters.url;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 
 @RunWith(ApplicationComposer.class)
@@ -55,7 +55,9 @@ public class JtaFailOverRouterTest {
     public Properties configuration() {
         return datasource(datasource(new PropertiesBuilder(), "fo1"), "fo2")
             .property("fo1.JtaManaged", "true")
+            .property("fo1.accessToUnderlyingConnectionAllowed", "true")
             .property("fo2.JtaManaged", "true")
+            .property("fo2.accessToUnderlyingConnectionAllowed", "true")
             .property("router", "new://Resource?class-name=" + FailOverRouter.class.getName())
             .property("router.datasourceNames", "fo1,fo2")
             .property("router.strategy", "reverse")
@@ -75,25 +77,17 @@ public class JtaFailOverRouterTest {
         private DataSource ds;
 
         public void inTx(final String url) {
-            Connection firstConnection = null;
+            Connection firstConnection;
             try {
-                firstConnection = ds.getConnection();
-                assertEquals(url, url(firstConnection));
-                for (int i = 0; i < 1; i++) { // 4 is kind of random, > 2 is enough
-                    final Connection anotherConnection = ds.getConnection();
-                    assertEquals(firstConnection, anotherConnection); // in tx so should be the same ds and if the ds is JtaManaged same anotherConnection
-                    assertEquals(url, url(anotherConnection));
+                firstConnection = org.apache.commons.dbcp2.managed.ManagedConnection.class.cast(ds.getConnection()).getInnermostDelegate();
+                assertEquals(url, firstConnection.getMetaData().getURL());
+                for (int i = 0; i < 4; i++) { // 4 is kind of random, > 2 is enough
+                    final Connection anotherConnection = org.apache.commons.dbcp2.managed.ManagedConnection.class.cast(ds.getConnection()).getInnermostDelegate();
+                    assertSame(firstConnection, anotherConnection); // in tx so should be the same ds and if the ds is JtaManaged same anotherConnection
+                    assertEquals(url, anotherConnection.getMetaData().getURL());
                 }
             } catch (final SQLException e) {
                 fail(e.getMessage());
-            } finally {
-                try {
-                    if (firstConnection != null) {
-                        firstConnection.close();
-                    }
-                } catch (final Exception e) {
-                    // no-op
-                }
             }
         }
     }

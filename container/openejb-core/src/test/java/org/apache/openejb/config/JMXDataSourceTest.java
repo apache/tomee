@@ -107,7 +107,6 @@ public class JMXDataSourceTest {
         final MBeanInfo mBeanInfo = ManagementFactory.getPlatformMBeanServer().getMBeanInfo(on);
         assertNotNull(mBeanInfo);
         final Map<String, Object> map = new HashMap<String, Object>();
-        final int found = 0;
         for (final MBeanAttributeInfo mBeanAttributeInfo : mBeanInfo.getAttributes()) {
             final String name = mBeanAttributeInfo.getName();
             final Object value = ManagementFactory.getPlatformMBeanServer().getAttribute(on, name);

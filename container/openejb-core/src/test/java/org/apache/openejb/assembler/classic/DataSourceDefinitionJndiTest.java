@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import org.apache.commons.dbcp.DelegatingConnection;
-import org.apache.commons.dbcp.managed.ManagedConnection;
+import org.apache.commons.dbcp2.DelegatingConnection;
+import org.apache.commons.dbcp2.managed.ManagedConnection;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.resource.jdbc.dbcp.DbcpManagedDataSource;

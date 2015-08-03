@@ -24,12 +24,12 @@ import org.apache.openejb.resource.jdbc.managed.xa.ManagedXADataSource;
 import org.apache.openejb.resource.jdbc.pool.PoolDataSourceCreator;
 import org.apache.openejb.resource.jdbc.pool.XADataSourceResource;
 
+import java.util.Properties;
 import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 import javax.sql.XADataSource;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
-import java.util.Properties;
 
 // just a sample showing how to implement a datasourcecreator
 // this one will probably not be used since dbcp has already the integration we need
@@ -50,26 +50,24 @@ public class DbcpDataSourceCreator extends PoolDataSourceCreator {
 
     @Override
     public CommonDataSource pool(final String name, final String driver, final Properties properties) {
-        final String xa = String.class.cast(properties.remove("XaDataSource"));
-        if (xa != null) {
-            return XADataSourceResource.proxy(Thread.currentThread().getContextClassLoader(), xa);
-        }
+        properties.setProperty("name", name);
 
-        if (!properties.containsKey("JdbcDriver")) {
+        final String xa = String.class.cast(properties.remove("XaDataSource"));
+        if (xa == null && !properties.containsKey("JdbcDriver")) {
             properties.setProperty("driverClassName", driver);
         }
-        properties.setProperty("name", name);
 
         final BasicDataSource ds = build(BasicDataSource.class, properties);
         ds.setDriverClassName(driver);
-        // if (xa != null) ds.setDelegate(XADataSourceResource.proxy(Thread.currentThread().getContextClassLoader(), xa));
-
+        if (xa != null) {
+            ds.setDelegate(XADataSourceResource.proxy(Thread.currentThread().getContextClassLoader(), xa));
+        }
         return ds;
     }
 
     @Override
     protected void doDestroy(final CommonDataSource dataSource) throws Throwable {
-        ((org.apache.commons.dbcp.BasicDataSource) dataSource).close();
+        ((org.apache.commons.dbcp2.BasicDataSource) dataSource).close();
     }
 
     @Override
@@ -87,8 +85,8 @@ public class DbcpDataSourceCreator extends PoolDataSourceCreator {
     }
 
     private <T> void setDriverLoader(final T object) {
-        if (org.apache.commons.dbcp.BasicDataSource.class.isInstance(object)) {
-            final org.apache.commons.dbcp.BasicDataSource basicDataSource = (org.apache.commons.dbcp.BasicDataSource) object;
+        if (org.apache.commons.dbcp2.BasicDataSource.class.isInstance(object)) {
+            final org.apache.commons.dbcp2.BasicDataSource basicDataSource = (org.apache.commons.dbcp2.BasicDataSource) object;
             final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
             basicDataSource.setDriverClassLoader(contextClassLoader);
         }

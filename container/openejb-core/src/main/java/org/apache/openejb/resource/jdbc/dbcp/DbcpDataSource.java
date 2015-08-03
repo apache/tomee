@@ -17,12 +17,12 @@
 
 package org.apache.openejb.resource.jdbc.dbcp;
 
-import org.apache.commons.dbcp.ConnectionFactory;
-import org.apache.commons.dbcp.DataSourceConnectionFactory;
+import org.apache.commons.dbcp2.ConnectionFactory;
+import org.apache.commons.dbcp2.DataSourceConnectionFactory;
 import org.apache.openejb.resource.jdbc.DataSourceHelper;
 
-import javax.sql.DataSource;
 import java.sql.SQLException;
+import javax.sql.DataSource;
 
 public class DbcpDataSource extends BasicDataSource {
 
@@ -35,7 +35,7 @@ public class DbcpDataSource extends BasicDataSource {
 
     @Override
     protected ConnectionFactory createConnectionFactory() throws SQLException {
-        return new DataSourceConnectionFactory(this.ds, username, password);
+        return new DataSourceConnectionFactory(this.ds, getUsername(), getPassword());
     }
 
     @Override

@@ -72,11 +72,11 @@ public class DefaultDataSourceCreator extends DbcpDataSourceCreator {
 
     @Override
     public void destroy(final Object object) throws Throwable {
-        ((org.apache.commons.dbcp.BasicDataSource) object).close();
+        ((org.apache.commons.dbcp2.BasicDataSource) object).close();
     }
 
     @Override
     protected void doDestroy(final CommonDataSource dataSource) throws Throwable {
-        ((org.apache.commons.dbcp.BasicDataSource) dataSource).close();
+        ((org.apache.commons.dbcp2.BasicDataSource) dataSource).close();
     }
 }

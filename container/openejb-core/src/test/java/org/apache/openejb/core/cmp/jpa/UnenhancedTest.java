@@ -260,7 +260,7 @@ public class UnenhancedTest extends TestCase {
         ds.setUrl("jdbc:hsqldb:mem:JpaTest");
         ds.setUsername("sa");
         ds.setPassword("");
-        ds.setMaxActive(100);
+        ds.setMaxTotal(100);
         ds.setMaxWait(10000);
         ds.setTestOnBorrow(true);
         return ds;
@@ -272,7 +272,7 @@ public class UnenhancedTest extends TestCase {
         ds.setUrl("jdbc:hsqldb:mem:JpaTest");
         ds.setUsername("sa");
         ds.setPassword("");
-        ds.setMaxActive(100);
+        ds.setMaxTotal(100);
         ds.setMaxWait(10000);
         ds.setTestOnBorrow(true);
         return ds;

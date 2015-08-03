@@ -19,9 +19,9 @@ package org.apache.openejb.resource.jdbc.dbcp;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 
-import javax.naming.NamingException;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
+import javax.naming.NamingException;
 
 public class DataSourceSerialization implements Serializable {
     private final String name;

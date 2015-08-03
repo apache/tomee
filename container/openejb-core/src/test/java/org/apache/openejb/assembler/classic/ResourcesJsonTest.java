@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.config.AppModule;
