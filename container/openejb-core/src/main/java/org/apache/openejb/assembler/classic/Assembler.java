@@ -109,7 +109,6 @@ import org.apache.openejb.quartz.Scheduler;
 import org.apache.openejb.resource.GeronimoConnectionManagerFactory;
 import org.apache.openejb.resource.PropertiesFactory;
 import org.apache.openejb.resource.jdbc.DataSourceFactory;
-import org.apache.openejb.resource.jdbc.managed.local.ManagedDataSource;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
@@ -1711,11 +1710,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             } catch (final Throwable t) {
                 //Ignore
             }
-
-            if (object instanceof ManagedDataSource) {
-                ((ManagedDataSource) object).clean();
-            }
-
         } else if (object instanceof ConnectorReference) {
             final ConnectorReference cr = (ConnectorReference) object;
             try {

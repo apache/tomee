@@ -19,37 +19,30 @@ package org.apache.openejb.resource.jdbc;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.resource.jdbc.managed.local.ManagedConnection;
-import org.apache.openejb.resource.jdbc.managed.local.ManagedConnectionsByTransactionByDatasource;
 import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.Module;
-import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.EJBContext;
-import javax.ejb.LocalBean;
-import javax.ejb.Singleton;
-import javax.sql.DataSource;
-import javax.transaction.Transaction;
-
-import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import javax.annotation.Resource;
+import javax.ejb.EJB;
+import javax.ejb.EJBContext;
+import javax.ejb.LocalBean;
+import javax.ejb.Singleton;
+import javax.sql.DataSource;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -192,15 +185,6 @@ public class MultiThreadedManagedDataSourceTest {
         assertEquals(0, errors.get());
         assertEquals(0, fail.get());
         assertEquals(ok.get(), count("") - count);
-    }
-
-    @After
-    public void checkTxMapIsEmpty() throws Exception { // avoid memory leak
-        final Field map = ManagedConnectionsByTransactionByDatasource.class.getDeclaredField("CONNECTION_BY_TX_BY_DS");
-        map.setAccessible(true);
-        final Map<DataSource, Map<Transaction, Connection>> instance = (Map<DataSource, Map<Transaction, Connection>>) map.get(null);
-        assertEquals(1, instance.size());
-        assertEquals(0, instance.values().iterator().next().size());
     }
 
     private static boolean exists(final int id) throws SQLException {

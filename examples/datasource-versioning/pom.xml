@@ -159,6 +159,18 @@
       <version>4.7.3-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat-jdbc</artifactId>
+      <version>7.0.63</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>tomee-jdbc</artifactId>
+      <version>1.7.3-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
   <!--
   This section allows you to configure where to publish libraries for sharing.
