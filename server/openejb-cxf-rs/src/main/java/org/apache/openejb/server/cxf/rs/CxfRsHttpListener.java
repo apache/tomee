@@ -225,6 +225,8 @@ public class CxfRsHttpListener implements RsHttpListener {
         Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());
         try {
             destination.invoke(null, httpRequest.getServletContext(), httpRequest, httpResponse);
+        } catch (final Throwable t) {
+            throw new IOException("Failed to invoke AbstractHTTPDestination", t);
         } finally {
             CxfUtil.clearBusLoader(oldLoader);
         }
@@ -314,7 +316,7 @@ public class CxfRsHttpListener implements RsHttpListener {
                            final Collection<Object> additionalProviders,
                            final ServiceConfiguration configuration) {
         deploy(contextRoot, loadedClazz, fullContext, new OpenEJBPerRequestPojoResourceProvider(loader, loadedClazz, injections, context, owbCtx),
-            null, app, null, additionalProviders, configuration, null);
+                null, app, null, additionalProviders, configuration, null);
     }
 
     @Deprecated
@@ -595,7 +597,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         }
     }
 
-    private EJBRestServiceInfo getEjbRestServiceInfo(Map<String, EJBRestServiceInfo> restEjbs, Class<?> clazz) {
+    private EJBRestServiceInfo getEjbRestServiceInfo(final Map<String, EJBRestServiceInfo> restEjbs, final Class<?> clazz) {
         String name = clazz.getName();
         EJBRestServiceInfo restServiceInfo = restEjbs.get(name);
 
@@ -954,7 +956,7 @@ public class CxfRsHttpListener implements RsHttpListener {
             return c1.getName().compareTo(c2.getName());
         }
 
-        private static boolean isParent(final ClassLoader l1, ClassLoader l2) {
+        private static boolean isParent(final ClassLoader l1, final ClassLoader l2) {
             ClassLoader current = l2;
             while (current != null && current != SYSTEM_LOADER) {
                 if (current.equals(l1) || l1.equals(current)) {
