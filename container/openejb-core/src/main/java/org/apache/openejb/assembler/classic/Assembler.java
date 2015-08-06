@@ -768,7 +768,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     try {
                         containerSystemContext.bind(VALIDATOR_FACTORY_NAMING_CONTEXT + id, factory);
 
-                        Validator validator;
+                        final Validator validator;
                         try {
                             final LazyValidator lazyValidator = new LazyValidator(factory);
                             validator = (Validator) Proxy.newProxyInstance(appContext.getClassLoader(), VALIDATOR_INTERFACES, lazyValidator);
@@ -3168,8 +3168,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     public static final class ResourceAdapterReference extends Reference {
-        private transient ResourceAdapter ra;
-        private transient Executor pool;
+        private final transient ResourceAdapter ra;
+        private final transient Executor pool;
         private final String jndi;
 
         public ResourceAdapterReference(final ResourceAdapter ra, final Executor pool, final String jndi) {
@@ -3221,8 +3221,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     public static class ResourceInstance extends Reference implements Serializable, DestroyableResource {
         private final String name;
         private final Object delegate;
-        private transient Collection<Method> preDestroys;
-        private transient CreationalContext<?> context;
+        private final transient Collection<Method> preDestroys;
+        private final transient CreationalContext<?> context;
 
         public ResourceInstance(final String name, final Object delegate, final Collection<Method> preDestroys, final CreationalContext<?> context) {
             this.name = name;
