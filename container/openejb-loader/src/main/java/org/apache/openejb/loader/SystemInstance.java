@@ -62,8 +62,7 @@ public final class SystemInstance {
         this.components = new HashMap<Class, Object>();
 
         // import JVM system property config (if a resource/container/... is set through this way)
-        for (final Map.Entry<Object, Object> e : System.getProperties().entrySet()) {
-            final String key = e.getKey().toString();
+        for (final String key : System.getProperties().stringPropertyNames()) {
             if (key.startsWith("sun.")) {
                 continue;
             }
@@ -106,7 +105,10 @@ public final class SystemInstance {
                     continue;
                 }
             }
-            this.internalProperties.put(e.getKey(), e.getValue());
+            final String value = System.getProperty(key);
+            if (value != null) {
+                this.internalProperties.put(key, value);
+            }
         }
         this.internalProperties.putAll(properties);
         this.options = new Options(internalProperties, new Options(System.getProperties()));
