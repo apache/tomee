@@ -28,26 +28,32 @@ import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * @version $Revision$ $Date$
  */
 public class HttpConnectionFactory implements ConnectionFactory {
+    // this map only ensures JVM keep alive socket caching works properly
+    private final ConcurrentMap<URI, SSLSocketFactory> socketFactoryMap = new ConcurrentHashMap<>();
 
     @Override
     public Connection getConnection(final URI uri) throws IOException {
-        return new HttpConnection(uri);
+        return new HttpConnection(uri, socketFactoryMap);
     }
 
     public static class HttpConnection implements Connection {
+        private final ConcurrentMap<URI, SSLSocketFactory> socketFactoryMap;
 
         private HttpURLConnection httpURLConnection;
         private InputStream inputStream;
         private OutputStream outputStream;
         private final URI uri;
 
-        public HttpConnection(final URI uri) throws IOException {
+        public HttpConnection(final URI uri, final ConcurrentMap<URI, SSLSocketFactory> socketFactoryMap) throws IOException {
             this.uri = uri;
+            this.socketFactoryMap = socketFactoryMap;
             final URL url = uri.toURL();
 
             final Map<String, String> params;
@@ -75,7 +81,16 @@ public class HttpConnectionFactory implements ConnectionFactory {
 
             if (params.containsKey("sslKeyStore") || params.containsKey("sslTrustStore")) {
                 try {
-                    ((HttpsURLConnection) httpURLConnection).setSSLSocketFactory(new SSLContextBuilder(params).build().getSocketFactory());
+                    SSLSocketFactory sslSocketFactory = socketFactoryMap.get(uri);
+                    if (sslSocketFactory == null) {
+                        sslSocketFactory = new SSLContextBuilder(params).build().getSocketFactory();
+                        final SSLSocketFactory existing = socketFactoryMap.putIfAbsent(uri, sslSocketFactory);
+                        if (existing != null) {
+                            sslSocketFactory = existing;
+                        }
+                    }
+
+                    ((HttpsURLConnection) httpURLConnection).setSSLSocketFactory(sslSocketFactory);
                 } catch (final NoSuchAlgorithmException e) {
                     throw new ClientRuntimeException(e.getMessage(), e);
                 } catch (final KeyManagementException e) {
