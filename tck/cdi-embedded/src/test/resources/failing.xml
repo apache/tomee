@@ -16,6 +16,9 @@
   limitations under the License.
   -->
 <suite name="CDI TCK" verbose="0">
+  <listeners>
+    <listener class-name="org.jboss.cdi.tck.impl.testng.SingleTestClassMethodInterceptor"/>
+  </listeners>
   <test name="CDI TCK">
     <!-- runner helping properties
     -ea
@@ -32,7 +35,8 @@
     -Dopenejb.cdi.conversation.http.use-get-parameter=true
     -->
     <classes>
-      <class name="org.jboss.cdi.tck.tests.implementation.simple.lifecycle.SimpleBeanLifecycleTest" />
+      <class name="org.jboss.cdi.tck.tests.context.NormalContextTest" />
+      <class name="org.jboss.cdi.tck.tests.context.ContextDestroysBeansTest" />
     </classes>
   </test>
 </suite>

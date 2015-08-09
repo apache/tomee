@@ -115,7 +115,10 @@ public class AlternativeDriver implements Driver {
 
     @Override
     public Connection connect(final String url, final Properties info) throws SQLException {
-        return getDelegate().connect(url, info);
+        if (acceptsURL(url)) {
+            return getDelegate().connect(url, info);
+        }
+        return null;
     }
 
     @Override

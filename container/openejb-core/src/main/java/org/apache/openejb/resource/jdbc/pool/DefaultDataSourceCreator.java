@@ -29,7 +29,6 @@ import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 import java.util.Properties;
 
-// TODO: remove it and replace it with org.apache.openejb.resource.jdbc.dbcp.DbcpDataSourceCreator
 public class DefaultDataSourceCreator extends DbcpDataSourceCreator {
     @Override
     public DataSource managed(final String name, final CommonDataSource ds) {
@@ -68,15 +67,5 @@ public class DefaultDataSourceCreator extends DbcpDataSourceCreator {
         ds.setDriverClassName(driver);
         build(BasicManagedDataSource.class, ds, properties);
         return ds;
-    }
-
-    @Override
-    public void destroy(final Object object) throws Throwable {
-        ((org.apache.commons.dbcp2.BasicDataSource) object).close();
-    }
-
-    @Override
-    protected void doDestroy(final CommonDataSource dataSource) throws Throwable {
-        ((org.apache.commons.dbcp2.BasicDataSource) dataSource).close();
     }
 }

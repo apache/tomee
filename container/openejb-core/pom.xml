@@ -315,6 +315,7 @@
         <version>2.17</version>
         <configuration>
           <reuseForks>false</reuseForks>
+          <forkCount>2</forkCount>
           <testNGArtifactName>none:none</testNGArtifactName>
           <argLine>
             -javaagent:${project.basedir}/target/openejb-javaagent-${project.version}.jar

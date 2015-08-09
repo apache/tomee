@@ -44,8 +44,18 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.sql.SQLException;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 public class TomEEDataSourceCreator extends PoolDataSourceCreator {
+    @Override
+    public void resetConnections(final CommonDataSource ds) {
+        if (TomEEDataSource.class.isInstance(ds)) {
+            TomEEDataSource.class.cast(ds).purge();
+        } else {
+            super.resetConnections(ds);
+        }
+    }
+
     @Override
     public DataSource pool(final String name, final DataSource ds, final Properties properties) {
         final PoolConfiguration config = build(TomEEPoolProperties.class, createProperties(name, properties));

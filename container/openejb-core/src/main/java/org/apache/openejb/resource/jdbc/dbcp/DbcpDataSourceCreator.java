@@ -24,12 +24,12 @@ import org.apache.openejb.resource.jdbc.managed.xa.ManagedXADataSource;
 import org.apache.openejb.resource.jdbc.pool.PoolDataSourceCreator;
 import org.apache.openejb.resource.jdbc.pool.XADataSourceResource;
 
-import java.util.Properties;
 import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 import javax.sql.XADataSource;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
+import java.util.Properties;
 
 // just a sample showing how to implement a datasourcecreator
 // this one will probably not be used since dbcp has already the integration we need

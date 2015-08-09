@@ -33,6 +33,8 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.jee.StatelessBean;
 import org.junit.AfterClass;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -78,6 +80,7 @@ public class DependsOnTest extends TestCase {
 
         final StatelessSessionContainerInfo statelessContainer = config.configureService(StatelessSessionContainerInfo.class);
         statelessContainer.properties.setProperty("MinSize", "1");
+        statelessContainer.properties.setProperty("MaxSize", "1");
         assembler.createContainer(statelessContainer);
 
         actual.clear();

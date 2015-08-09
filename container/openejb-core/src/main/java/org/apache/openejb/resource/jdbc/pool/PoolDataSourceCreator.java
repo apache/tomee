@@ -27,15 +27,15 @@ import org.apache.openejb.util.PassthroughFactory;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
 import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 import javax.sql.XADataSource;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
 
 public abstract class PoolDataSourceCreator implements DataSourceCreator {
     protected final Map<Object, ObjectRecipe> recipes = new HashMap<Object, ObjectRecipe>();

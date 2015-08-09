@@ -32,10 +32,11 @@ import org.apache.openejb.resource.jdbc.pool.DefaultDataSourceCreator;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.PropertiesHelper;
 import org.apache.openejb.util.SuperProperties;
+import org.apache.xbean.recipe.ExecutionContext;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
+import org.apache.xbean.recipe.Recipe;
 
 import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
@@ -48,8 +49,10 @@ import java.lang.reflect.Proxy;
 import java.sql.Driver;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
@@ -65,15 +68,17 @@ public class DataSourceFactory {
     public static final String LOG_SQL_PROPERTY = "LogSql";
     public static final String LOG_SQL_PACKAGE_PROPERTY = "LogSqlPackages";
     public static final String FLUSHABLE_PROPERTY = "Flushable";
+    public static final String RESET_PROPERTY = "ResetOnError";
+    public static final String RESET_METHODS_PROPERTY = "ResetOnErrorMethods";
     public static final String GLOBAL_LOG_SQL_PROPERTY = "openejb.jdbc.log";
     public static final String GLOBAL_LOG_SQL_PACKAGE_PROPERTY = "openejb.jdbc.log.packages";
     public static final String GLOBAL_FLUSH_PROPERTY = "openejb.jdbc.flushable";
     public static final String POOL_PROPERTY = "openejb.datasource.pool";
     public static final String DATA_SOURCE_CREATOR_PROP = "DataSourceCreator";
 
-    private static final Map<CommonDataSource, AlternativeDriver> driverByDataSource = new HashMap<CommonDataSource, AlternativeDriver>();
+    private static final Map<CommonDataSource, AlternativeDriver> driverByDataSource = new HashMap<>();
 
-    private static final Map<CommonDataSource, DataSourceCreator> creatorByDataSource = new HashMap<CommonDataSource, DataSourceCreator>();
+    private static final Map<CommonDataSource, DataSourceCreator> creatorByDataSource = new HashMap<>();
     private static final Map<String, String> KNOWN_CREATORS = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER) {{
         put("simple", "org.apache.openejb.resource.jdbc.SimpleDataSourceCreator"); // use user provided DS, pooling not supported
         put("dbcp", "org.apache.openejb.resource.jdbc.pool.DefaultDataSourceCreator"); // the original one
@@ -90,20 +95,10 @@ public class DataSourceFactory {
                                           final Duration timeBetweenEvictionRuns,
                                           final Duration minEvictableIdleTime) throws IllegalAccessException, InstantiationException, IOException {
         final Properties properties = asProperties(definition);
+        final Set<String> originalKeys = properties.stringPropertyNames();
 
-        final boolean flushable = SystemInstance.get().getOptions().get(GLOBAL_FLUSH_PROPERTY,
+        boolean flushable = SystemInstance.get().getOptions().get(GLOBAL_FLUSH_PROPERTY,
             "true".equalsIgnoreCase((String) properties.remove(FLUSHABLE_PROPERTY)));
-        final FlushableDataSourceHandler.FlushConfig flushConfig;
-        if (flushable) {
-            properties.remove("flushable"); // don't let it wrap the delegate again
-
-            flushConfig = new FlushableDataSourceHandler.FlushConfig(
-                name, configuredManaged,
-                impl, PropertiesHelper.propertiesToString(properties),
-                maxWaitTime, timeBetweenEvictionRuns, minEvictableIdleTime);
-        } else {
-            flushConfig = null;
-        }
 
         convert(properties, maxWaitTime, "maxWaitTime", "maxWait");
         convert(properties, timeBetweenEvictionRuns, "timeBetweenEvictionRuns", "timeBetweenEvictionRunsMillis");
@@ -139,8 +134,10 @@ public class DataSourceFactory {
             "true".equalsIgnoreCase((String) properties.remove(LOG_SQL_PROPERTY)));
         final String logPackages = SystemInstance.get().getProperty(GLOBAL_LOG_SQL_PACKAGE_PROPERTY, (String) properties.remove(LOG_SQL_PACKAGE_PROPERTY));
         final DataSourceCreator creator = creator(properties.remove(DATA_SOURCE_CREATOR_PROP), logSql);
+        final String resetOnError = (String) properties.remove(RESET_PROPERTY);
+        final String resetMethods = (String) properties.remove(RESET_METHODS_PROPERTY); // before setProperties()
 
-        boolean useContainerLoader = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.resources.use-container-loader", "true")) && (impl == null || impl.getClassLoader() == DataSourceFactory.class.getClassLoader());
+        boolean useContainerLoader = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.resources.use-container-loader", "true")) && impl.getClassLoader() == DataSourceFactory.class.getClassLoader();
         final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         if (useContainerLoader) {
             final ClassLoader containerLoader = DataSourceFactory.class.getClassLoader();
@@ -206,11 +203,76 @@ public class DataSourceFactory {
                 driverByDataSource.put(ds, driver);
             }
 
-            if (logSql) {
-                ds = makeItLogging(ds, logPackages);
-            }
-            if (flushable) {
-                ds = makeFlushable(ds, flushConfig);
+            final boolean doResetOnError = resetOnError != null && !"false".equals(resetOnError);
+            if (doResetOnError || logSql || flushable) { // will get proxied
+                ObjectRecipe objectRecipe = null;
+                ResettableDataSourceHandler existingResettableHandler = null;
+                FlushableDataSourceHandler flushableDataSourceHandler = null;
+                if (ExecutionContext.isContextSet()) {
+                    final ExecutionContext context = ExecutionContext.getContext();
+                    final List<Recipe> stack = context.getStack();
+                    if (stack.size() > 0) {
+                        objectRecipe = ObjectRecipe.class.cast(stack.get(0));
+                        existingResettableHandler = ResettableDataSourceHandler.class.cast(objectRecipe.getProperty("resettableHandler"));
+                        flushableDataSourceHandler = FlushableDataSourceHandler.class.cast(objectRecipe.getProperty("flushableHandler"));
+
+                        final Map<String, Object> props = objectRecipe.getProperties();
+                        for (final String key : originalKeys) {
+                            props.remove(key);
+                        }
+
+                        // meta properties, not needed here so gain few cycles removing them
+                        props.remove("properties");
+                        props.remove("Definition");
+                        props.remove("ServiceId");
+                        props.remove("resettableHandler");
+                        props.remove("flushableHandler");
+
+                        //we create a proxy so we cant get txmgr etc in another manner or we cant extend (= break) this method
+                        new ObjectRecipe(ds.getClass()) {{
+                            allow(Option.CASE_INSENSITIVE_PROPERTIES);
+                            allow(Option.IGNORE_MISSING_PROPERTIES);
+                            allow(Option.NAMED_PARAMETERS);
+                            allow(Option.PRIVATE_PROPERTIES);
+                            setAllProperties(props);
+                        }}.setProperties(ds);
+                    }
+                }
+
+                if (logSql) {
+                    ds = makeItLogging(ds, logPackages);
+                }
+
+                final ResettableDataSourceHandler resettableDataSourceHandler;
+                if (doResetOnError) { // needs to be done after flushable
+                    // ensure we reuse the same handle instance otherwise we loose state
+                    resettableDataSourceHandler = existingResettableHandler != null ?
+                        existingResettableHandler :
+                        new ResettableDataSourceHandler(ds, resetOnError, resetMethods);
+                } else {
+                    resettableDataSourceHandler = null;
+                }
+
+                if (flushable || doResetOnError) {
+                    if (flushableDataSourceHandler == null) {
+                        final FlushableDataSourceHandler.FlushConfig flushConfig;
+                        properties.remove("flushable"); // don't let it wrap the delegate again
+
+                        final Map<String, Object> recipeProps = new HashMap<>(objectRecipe == null ? new HashMap<String, Object>() : objectRecipe.getProperties());
+                        recipeProps.remove("properties");
+
+                        flushConfig = new FlushableDataSourceHandler.FlushConfig(recipeProps);
+                        flushableDataSourceHandler = new FlushableDataSourceHandler(ds, flushConfig, resettableDataSourceHandler);
+                    } else {
+                        flushableDataSourceHandler.updateDataSource(ds);
+                    }
+                    ds = makeSerializableFlushableDataSourceProxy(ds, flushableDataSourceHandler);
+                }
+                if (doResetOnError) { // needs to be done after flushable
+                    // ensure we reuse the same handle instance otherwise we loose state
+                    resettableDataSourceHandler.updateDelegate(ds);
+                    ds = makeSerializableFlushableDataSourceProxy(ds, resettableDataSourceHandler);
+                }
             }
 
             return ds;
@@ -219,6 +281,13 @@ public class DataSourceFactory {
                 Thread.currentThread().setContextClassLoader(oldLoader);
             }
         }
+    }
+
+    public static CommonDataSource makeSerializableFlushableDataSourceProxy(final CommonDataSource ds, final InvocationHandler handler) {
+        return (CommonDataSource) Proxy.newProxyInstance(
+            Thread.currentThread().getContextClassLoader(),
+            new Class<?>[]{DataSource.class.isInstance(ds) ? DataSource.class : XADataSource.class, Serializable.class, Flushable.class},
+            handler);
     }
 
     private static boolean basicChecksThatDataSourceCanBeCreatedFromContainerLoader(final Properties properties, final ClassLoader containerLoader) {
@@ -247,13 +316,6 @@ public class DataSourceFactory {
         }
 
         return true;
-    }
-
-    private static CommonDataSource makeFlushable(final CommonDataSource ds, final FlushableDataSourceHandler.FlushConfig flushConfig) {
-        return (CommonDataSource) Proxy.newProxyInstance(
-            Thread.currentThread().getContextClassLoader(),
-            new Class<?>[]{DataSource.class.isInstance(ds) ? DataSource.class : XADataSource.class, Flushable.class, Serializable.class},
-            new FlushableDataSourceHandler(ds, flushConfig));
     }
 
     public static void setCreatedWith(final DataSourceCreator creator, final CommonDataSource ds) {
@@ -364,7 +426,7 @@ public class DataSourceFactory {
     }
 
     public static boolean knows(final Object object) {
-        return object instanceof CommonDataSource && creatorByDataSource.containsKey(realInstance(object));
+        return object instanceof CommonDataSource && creatorByDataSource.containsKey(CommonDataSource.class.cast(realInstance(object)));
     }
 
     // TODO: should we get a get and a clear method instead of a single one?
@@ -405,11 +467,9 @@ public class DataSourceFactory {
 
         Object ds = o;
         while (Proxy.isProxyClass(ds.getClass())) {
-            final InvocationHandler handler = Proxy.getInvocationHandler(o);
-            if (LoggingSqlDataSource.class.isInstance(handler)) {
-                ds = LoggingSqlDataSource.class.cast(handler).getDelegate();
-            } else if (FlushableDataSourceHandler.class.isInstance(handler)) {
-                ds = FlushableDataSourceHandler.class.cast(handler).getDelegate();
+            final InvocationHandler handler = Proxy.getInvocationHandler(ds);
+            if (DelegatableHandler.class.isInstance(handler)) {
+                ds = DelegatableHandler.class.cast(handler).getDelegate();
             } else {
                 break;
             }

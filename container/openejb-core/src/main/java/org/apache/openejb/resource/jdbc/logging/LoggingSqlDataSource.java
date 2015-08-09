@@ -17,14 +17,15 @@
 
 package org.apache.openejb.resource.jdbc.logging;
 
+import org.apache.openejb.resource.jdbc.DelegatableHandler;
+
 import javax.sql.CommonDataSource;
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
 
-public class LoggingSqlDataSource implements InvocationHandler {
+public class LoggingSqlDataSource implements DelegatableHandler {
     private static final Class<?>[] INTERFACES = new Class<?>[]{Connection.class};
 
     private final CommonDataSource delegate;
@@ -37,6 +38,10 @@ public class LoggingSqlDataSource implements InvocationHandler {
 
     @Override
     public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+        if (Object.class == method.getDeclaringClass() && "toString".equals(method.getName())) {
+            return "Logging[" + delegate.toString() + "]";
+        }
+
         final Object result;
         try {
             result = method.invoke(delegate, args);
@@ -51,6 +56,7 @@ public class LoggingSqlDataSource implements InvocationHandler {
         return result;
     }
 
+    @Override
     public CommonDataSource getDelegate() {
         return delegate;
     }
