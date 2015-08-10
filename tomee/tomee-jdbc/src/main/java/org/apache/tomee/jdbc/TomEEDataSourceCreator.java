@@ -44,7 +44,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.sql.SQLException;
 import java.util.Properties;
-import java.util.logging.Logger;
 
 public class TomEEDataSourceCreator extends PoolDataSourceCreator {
     @Override
