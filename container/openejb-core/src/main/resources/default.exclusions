@@ -127,6 +127,7 @@ jetty-
 jline
 jmdns-
 joda-time-
+johnzon-
 jsoup-
 jsp-api
 jsr299-
