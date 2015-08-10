@@ -41,6 +41,8 @@ import org.apache.cxf.message.Message;
 import org.apache.cxf.service.invoker.Invoker;
 import org.apache.cxf.transport.DestinationFactory;
 import org.apache.cxf.transport.servlet.BaseUrlHelper;
+import org.apache.johnzon.jaxrs.ConfigurableJohnzonProvider;
+import org.apache.johnzon.jaxrs.JohnzonProvider;
 import org.apache.johnzon.jaxrs.WadlDocumentMessageBodyWriter;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
@@ -97,6 +99,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -121,6 +124,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
 
+import static java.util.Arrays.asList;
 import static org.apache.openejb.loader.JarLocation.jarLocation;
 
 public class CxfRsHttpListener implements RsHttpListener {
@@ -321,8 +325,8 @@ public class CxfRsHttpListener implements RsHttpListener {
         final Object proxy = ProxyEJB.subclassProxy(beanContext);
 
         deploy(contextRoot, beanContext.getBeanClass(), fullContext, new NoopResourceProvider(beanContext.getBeanClass(), proxy),
-                proxy, null, new OpenEJBEJBInvoker(Collections.singleton(beanContext)), additionalProviders, configuration,
-                beanContext.getWebBeansContext());
+            proxy, null, new OpenEJBEJBInvoker(Collections.singleton(beanContext)), additionalProviders, configuration,
+            beanContext.getWebBeansContext());
     }
 
     private void deploy(final String contextRoot, final Class<?> clazz, final String address, final ResourceProvider rp, final Object serviceBean,
@@ -579,6 +583,7 @@ public class CxfRsHttpListener implements RsHttpListener {
 
             try {
                 server = factory.create();
+                fixProviderIfKnown();
                 fireServerCreated(oldLoader);
 
                 final ServerProviderFactory spf = ServerProviderFactory.class.cast(server.getEndpoint().get(ServerProviderFactory.class.getName()));
@@ -625,6 +630,34 @@ public class CxfRsHttpListener implements RsHttpListener {
                 CxfUtil.clearBusLoader(oldLoader);
             }
         }
+    }
+
+    private void fixProviderIfKnown() {
+        final ServerProviderFactory spf = ServerProviderFactory.class.cast(server.getEndpoint().get(ServerProviderFactory.class.getName()));
+        for (final String field : asList("messageWriters", "messageReaders")) {
+            final List<ProviderInfo<?>> values = List.class.cast(Reflections.get(spf, field));
+
+            boolean customJsonProvider = false;
+            for (final ProviderInfo<?> o : values) { // using getName to not suppose any classloader setup
+                if (ConfigurableJohnzonProvider.class.getName().equals(o.getResourceClass().getName())
+                    // contains in case of proxying
+                    || o.getResourceClass().getName().contains("com.fasterxml.jackson.jaxrs.json")) {
+                    customJsonProvider = true;
+                    break; //  cause we only handle json for now
+                }
+            }
+
+            if (customJsonProvider) {
+                final Iterator<ProviderInfo<?>> it = values.iterator();
+                while (it.hasNext()) {
+                    if (JohnzonProvider.class.getName().equals(it.next().getResourceClass().getName())) {
+                        it.remove();
+                        break;
+                    }
+                }
+            }
+        }
+
     }
 
     private static Class<?> realClass(final Class<?> aClass) {
