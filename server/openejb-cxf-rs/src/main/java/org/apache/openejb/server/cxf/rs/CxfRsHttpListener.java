@@ -1036,12 +1036,18 @@ public class CxfRsHttpListener implements RsHttpListener {
                     if (result != 0) {
                         return result;
                     }
-                }
-                if (MessageBodyReader.class.isInstance(o1.getProvider())) {
+                } else if (MessageBodyReader.class.isInstance(o1.getProvider())) { // else is not super good but using both is not sa well so let it be for now
                     final List<MediaType> types1 =
                             JAXRSUtils.sortMediaTypes(JAXRSUtils.getProviderConsumeTypes(MessageBodyReader.class.cast(o1.getProvider())), null);
                     final List<MediaType> types2 =
                             JAXRSUtils.sortMediaTypes(JAXRSUtils.getProviderConsumeTypes(MessageBodyReader.class.cast(o2.getProvider())), null);
+
+                    if (types1.contains(MediaType.WILDCARD_TYPE) && !types2.contains(MediaType.WILDCARD_TYPE)) {
+                        return 1;
+                    }
+                    if (types2.contains(MediaType.WILDCARD_TYPE) && !types1.contains(MediaType.WILDCARD_TYPE)) {
+                        return -1;
+                    }
 
                     result = JAXRSUtils.compareSortedMediaTypes(types1, types2, JAXRSUtils.MEDIA_TYPE_QS_PARAM);
                     if (result != 0) {
