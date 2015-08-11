@@ -14,25 +14,30 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
+package org.apache.openejb.maven.plugin.test;
 
-package org.apache.openejb.maven.plugin;
+import org.apache.openejb.loader.IO;
+import org.apache.openejb.maven.plugin.Config;
+import org.apache.openejb.maven.plugin.TomEEMavenPluginRule;
+import org.junit.Rule;
+import org.junit.Test;
 
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugins.annotations.Parameter;
+import java.io.File;
 
-public abstract class AbstractAddressMojo extends AbstractMojo {
-    @Parameter(property = "tomee-plugin.http")
-    protected String tomeeHttpPort;
+import static org.junit.Assert.assertTrue;
 
-    @Parameter(property = "tomee-plugin.host")
-    protected String tomeeHost;
+public class PortPlaceholderTest {
+    @Rule
+    public final TomEEMavenPluginRule TMPRule = new TomEEMavenPluginRule().noRun();
 
-    @Parameter(property = "tomee-plugin.user")
-    protected String user;
+    @Config
+    private final String tomeeHttpPort = "${http.port}";
 
-    @Parameter(property = "tomee-plugin.pwd")
-    protected String password;
+    @Config
+    private final File catalinaBase = new File("target/tomee-placeholder");
 
-    @Parameter(property = "tomee-plugin.realm")
-    protected String realm;
+    @Test
+    public void run() throws Exception {
+        assertTrue(IO.slurp(new File(catalinaBase, "conf/server.xml")).contains("<Connector port=\"" + tomeeHttpPort + "\""));
+    }
 }

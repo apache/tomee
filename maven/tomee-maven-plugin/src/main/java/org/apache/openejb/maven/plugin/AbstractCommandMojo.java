@@ -24,7 +24,7 @@ import java.util.Properties;
 public abstract class AbstractCommandMojo extends AbstractAddressMojo {
     protected Object lookup(final String name) {
         if (tomeeHttpPort == null) {
-            tomeeHttpPort = 8080;
+            tomeeHttpPort = "8080";
         }
         if (tomeeHost == null) {
             tomeeHost = "localhost";

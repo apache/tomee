@@ -159,7 +159,9 @@ public class OpenEJBHttpServer implements HttpServer {
         final Options options = new Options(props);
         options.setLogger(new OptionsLog(log));
         print = options.getAll("print", OpenEJBHttpServer.Output.class);
-        indent = print.size() > 0 && options.get("indent.xml", false);
+        indent = print.size() > 0 && options.get("" +
+            "" +
+            ".xml", false);
 
     }
 

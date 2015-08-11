@@ -72,6 +72,13 @@ assertThat(IO.slurp(new URL(url + "/docs")), containsString("Apache Tomcat"));
  * @Config specifies you want to configure the backend mojo with the value specifies on the test instance
  */
 public class TomEEMavenPluginRule implements MethodRule {
+    private boolean run = true;
+
+    public TomEEMavenPluginRule noRun() {
+        run = false;
+        return this;
+    }
+
     @Override
     public Statement apply(final Statement base, final FrameworkMethod ignored, final Object target) {
         return new RunTest(target, base);
@@ -101,7 +108,12 @@ public class TomEEMavenPluginRule implements MethodRule {
                 } else if (f.getAnnotation(Config.class) != null) {
                     f.setAccessible(true);
 
-                    final Field mojoField = AbstractTomEEMojo.class.getDeclaredField(f.getName());
+                    Field mojoField;
+                    try {
+                        mojoField = AbstractTomEEMojo.class.getDeclaredField(f.getName());
+                    } catch (final Exception e) {
+                        mojoField = AbstractAddressMojo.class.getDeclaredField(f.getName());
+                    }
                     mojoField.setAccessible(true);
                     mojoField.set(testMojo, f.get(testInstance));
                 }
@@ -115,6 +127,19 @@ public class TomEEMavenPluginRule implements MethodRule {
                 @Override
                 protected void asserts() throws Throwable {
                     next.evaluate();
+                }
+
+                @Override
+                protected void run() {
+                    if (run) {
+                        super.run();
+                    } else {
+                        try {
+                            next.evaluate();
+                        } catch (Throwable throwable) {
+                            throw new RuntimeException(throwable);
+                        }
+                    }
                 }
             });
         }
@@ -201,9 +226,9 @@ public class TomEEMavenPluginRule implements MethodRule {
         tomEEMojo.config = new File(tomEEMojo.catalinaBase.getPath() + "-conf");
         tomEEMojo.lib = new File(tomEEMojo.catalinaBase.getPath() + "-lib");
 
-        tomEEMojo.tomeeHttpPort = NetworkUtil.getNextAvailablePort();
-        tomEEMojo.tomeeAjpPort = NetworkUtil.getNextAvailablePort();
-        tomEEMojo.tomeeShutdownPort = NetworkUtil.getNextAvailablePort();
+        tomEEMojo.tomeeHttpPort = Integer.toString(NetworkUtil.getNextAvailablePort());
+        tomEEMojo.tomeeAjpPort = Integer.toString(NetworkUtil.getNextAvailablePort());
+        tomEEMojo.tomeeShutdownPort = Integer.toString(NetworkUtil.getNextAvailablePort());
         tomEEMojo.tomeeShutdownCommand = "SHUTDOWN";
         tomEEMojo.tomeeHost = "localhost";
 

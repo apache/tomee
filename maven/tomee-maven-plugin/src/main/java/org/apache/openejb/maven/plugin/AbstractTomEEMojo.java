@@ -142,7 +142,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     protected String tomeeClassifier;
 
     @Parameter(property = "tomee-plugin.shutdown")
-    protected Integer tomeeShutdownPort;
+    protected String tomeeShutdownPort;
 
     @Parameter(property = "tomee-plugin.shutdown.attempts", defaultValue = "60")
     protected int tomeeShutdownAttempts;
@@ -151,10 +151,10 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     protected String tomeeShutdownCommand;
 
     @Parameter(property = "tomee-plugin.ajp")
-    protected Integer tomeeAjpPort;
+    protected String tomeeAjpPort;
 
     @Parameter(property = "tomee-plugin.https")
-    protected Integer tomeeHttpsPort;
+    protected String tomeeHttpsPort;
 
     @Parameter(property = "tomee-plugin.args")
     protected String args;
@@ -503,22 +503,10 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         final File sXml = new File(catalinaBase, "conf/server.xml");
         if (sXml.isFile()) {
             final QuickServerXmlParser quickServerXmlParser = QuickServerXmlParser.parse(sXml, false);
-            final String http = quickServerXmlParser.value("HTTP", null);
-            if (http != null) {
-                tomeeHttpPort = Integer.parseInt(http);
-            }
-            final String https = quickServerXmlParser.value("HTTPS", null);
-            if (https != null) {
-                tomeeHttpsPort = Integer.parseInt(https);
-            }
-            final String ajp = quickServerXmlParser.value("AJP", null);
-            if (ajp != null) {
-                tomeeAjpPort = Integer.parseInt(ajp);
-            }
-            final String stop = quickServerXmlParser.value("STOP", null);
-            if (stop != null) {
-                tomeeShutdownPort = Integer.parseInt(stop);
-            }
+            tomeeHttpPort = quickServerXmlParser.value("HTTP", null);
+            tomeeHttpsPort = quickServerXmlParser.value("HTTPS", null);
+            tomeeAjpPort = quickServerXmlParser.value("AJP", null);
+            tomeeShutdownPort = quickServerXmlParser.value("STOP", null);
             final String host = quickServerXmlParser.value("host", null);
             if (host != null) {
                 tomeeHost = host;
@@ -559,8 +547,8 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             tomeeArtifactId = "openejb-standalone";
             tomeeClassifier = null;
             tomeeShutdownCommand = "Q";
-            if (8005 == tomeeShutdownPort) { // default admin port
-                tomeeShutdownPort = 4200;
+            if ("8005".equals(tomeeShutdownPort)) { // default admin port
+                tomeeShutdownPort = "4200";
             }
             if (tomeeVersion.startsWith("2.")) {
                 tomeeVersion = OpenEjbVersion.get().getVersion();
@@ -872,7 +860,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         final String original = read(serverXml);
         String value = original;
 
-        if (tomeeHttpsPort != null && tomeeHttpsPort > 0 && parser.value("HTTPS", null) == null) {
+        if (tomeeHttpsPort != null && tomeeHttpsPort.length() > 0 && parser.value("HTTPS", null) == null) {
             String keystorePath = keystore != null ? keystore : parser.keystore();
             if (keystorePath == null) {
                 final File conf = new File(catalinaBase, "conf");
@@ -903,16 +891,16 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         }
 
         if (tomeeHttpPort != null) {
-            value = value.replace("\"" + parser.http() + '"', '"' + Integer.toString(tomeeHttpPort) + '"');
+            value = value.replace("\"" + parser.http() + '"', '"' + tomeeHttpPort + '"');
         }
         if (tomeeHttpsPort != null) {
-            value = value.replace("\"" + parser.https() + '"', '"' + Integer.toString(tomeeHttpsPort) + '"');
+            value = value.replace("\"" + parser.https() + '"', '"' + tomeeHttpsPort + '"');
         }
         if (tomeeAjpPort != null) {
-            value = value.replace("\"" + parser.ajp() + '"', '"' + Integer.toString(tomeeAjpPort) + '"');
+            value = value.replace("\"" + parser.ajp() + '"', '"' + tomeeAjpPort + '"');
         }
         if (tomeeShutdownPort != null) {
-            value = value.replace("\"" + parser.stop() + '"', '"' + Integer.toString(tomeeShutdownPort) + '"');
+            value = value.replace("\"" + parser.stop() + '"', '"' + tomeeShutdownPort + '"');
         }
         if (webappDir != null) {
             value = value.replace("\"" + parser.value("app-base", "webapps") + '"', '"' + webappDir + '"');
@@ -1012,7 +1000,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             System.setProperty("openejb.server.debug", "true");
             System.setProperty("server.debug.port", Integer.toString(debugPort));
         }
-        System.setProperty("server.shutdown.port", Integer.toString(tomeeShutdownPort));
+        System.setProperty("server.shutdown.port", tomeeShutdownPort);
         System.setProperty("server.shutdown.command", tomeeShutdownCommand);
 
         server = new RemoteServer(getConnectAttempts(), debug);
@@ -1022,7 +1010,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
         if (TOM_EE.equals(container)) {
 
-            server.setPortStartup(tomeeHttpPort == null ? tomeeHttpsPort : tomeeHttpPort);
+            server.setPortStartup(Integer.parseInt(tomeeHttpPort == null ? tomeeHttpsPort : tomeeHttpPort));
 
             getLog().info("Running '" + getClass().getName().replace("TomEEMojo", "").toLowerCase(Locale.ENGLISH)
                     + "'. Configured TomEE in plugin is " + tomeeHost + ":" + server.getPortStartup()
