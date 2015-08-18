@@ -62,7 +62,7 @@ public class TomcatRsRegistry implements RsRegistry {
     }
 
     @Override
-    public AddressInfo createRsHttpListener(final String webContext, final HttpListener listener, final ClassLoader classLoader, final String completePath, final String virtualHost, final String auth, final String realm) {
+    public AddressInfo createRsHttpListener(final String appId, final String webContext, final HttpListener listener, final ClassLoader classLoader, final String completePath, final String virtualHost, final String auth, final String realm) {
         String path = webContext;
         if (path == null) {
             throw new NullPointerException("contextRoot is null");
@@ -82,7 +82,7 @@ public class TomcatRsRegistry implements RsRegistry {
 
         if (host == null) {
             for (final Host h : hosts) {
-                context = findContext(h, webContext);
+                context = findContext(h, appId, webContext);
                 if (context != null) {
                     host = h;
                     if (classLoader != null && classLoader.equals(context.getLoader().getClassLoader())) {
@@ -95,7 +95,7 @@ public class TomcatRsRegistry implements RsRegistry {
                 throw new IllegalArgumentException("Invalid virtual host '" + virtualHost + "'.  Do you have a matching Host entry in the server.xml?");
             }
         } else {
-            context = findContext(host, webContext);
+            context = findContext(host, appId, webContext);
         }
 
         if (context == null) {
@@ -155,7 +155,14 @@ public class TomcatRsRegistry implements RsRegistry {
         return completePath.substring((webContext.length() > 0 && !webContext.startsWith("/") ? 1 : 0) + webContext.length());
     }
 
-    private static Context findContext(final Container host, final String webContext) {
+    private static Context findContext(final Container host, final String appId, final String webContext) {
+        if (appId != null) { // when using versioning appId is like context#1235 but not the context itself so ensure to test appId first
+            final Context ctx = Context.class.cast(host.findChild('/' + appId));
+            if (ctx != null) {
+                return ctx;
+            }
+        }
+
         Context webapp = Context.class.cast(host.findChild(webContext));
         if (webapp == null && "/".equals(webContext)) { // ROOT
             webapp = Context.class.cast(host.findChild(""));

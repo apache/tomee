@@ -466,7 +466,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 }
             }
 
-            if (isAlreadyDeployed(webApp)) {
+            if (isAlreadyDeployed(appInfo, webApp)) {
                 continue;
             }
 
@@ -515,7 +515,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             appParam.setValue(webApp.moduleId);
             standardContext.addApplicationParameter(appParam);
 
-            if (!isAlreadyDeployed(webApp)) {
+            if (!isAlreadyDeployed(appInfo, webApp)) {
                 if (standardContext.getPath() == null) {
                     if (webApp.contextRoot != null && webApp.contextRoot.startsWith("/")) {
                         standardContext.setPath(webApp.contextRoot);
@@ -542,7 +542,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     webApp.contextRoot = "";
                 }
 
-                if (isAlreadyDeployed(webApp)) { // possible because of the previous renaming
+                if (isAlreadyDeployed(appInfo, webApp)) { // possible because of the previous renaming
                     continue;
                 }
 
@@ -580,11 +580,12 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         }
     }
 
-    private boolean isAlreadyDeployed(final WebAppInfo webApp) {
-        final ContextInfo contextInfo = getContextInfo(webApp.host, webApp.contextRoot);
+    private boolean isAlreadyDeployed(final AppInfo appInfo, final WebAppInfo webApp) {
+        final String version = appVersion(appInfo);
+        final ContextInfo contextInfo = getContextInfo(webApp.host, webApp.contextRoot, version);
         if (contextInfo != null && contextInfo.standardContext != null && contextInfo.standardContext.getState() == LifecycleState.FAILED) {
-            synchronized (this) {
-                infos.remove(getId(webApp.host, webApp.contextRoot));
+            synchronized (infos) {
+                infos.remove(getId(webApp.host, webApp.contextRoot, version));
             }
             return false;
         }
@@ -718,8 +719,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      */
     @Override
     public void undeployWebApps(final AppInfo appInfo) throws Exception {
+        final String version = appVersion(appInfo);
         for (final WebAppInfo webApp : appInfo.webApps) {
-            final ContextInfo contextInfo = getContextInfo(webApp.host, webApp.contextRoot);
+            final ContextInfo contextInfo = getContextInfo(webApp.host, webApp.contextRoot, version);
 
             if (contextInfo != null) {
                 final StandardContext standardContext = contextInfo.standardContext;
@@ -956,7 +958,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     continue;
                 }
 
-                final String wId = getId(webApp.host, webApp.contextRoot);
+                final String wId = getId(webApp.host, webApp.contextRoot, contextInfo.version);
                 if (id.equals(wId)) {
                     return webApp;
                 }
@@ -1228,7 +1230,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         // appInfo is null when deployment fails
         if (contextInfo.appInfo != null) {
             for (final WebAppInfo w : contextInfo.appInfo.webApps) {
-                if (id.equals(getId(w.host, w.contextRoot)) || id.equals(getId(w.host, w.moduleId))) {
+                if (id.equals(getId(w.host, w.contextRoot, contextInfo.version)) || id.equals(getId(w.host, w.moduleId, contextInfo.version))) {
                     if (webAppInfo == null) {
                         webAppInfo = w;
                     } else if (w.host != null && w.host.equals(Contexts.getHostname(standardContext))) {
@@ -1516,7 +1518,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
         // skip undeployment if restarting
         final TomEEWebappClassLoader tomEEWebappClassLoader = lazyClassLoader(
-                org.apache.catalina.Context.class.isInstance(child) ? org.apache.catalina.Context.class.cast(child) : null);
+            org.apache.catalina.Context.class.isInstance(child) ? org.apache.catalina.Context.class.cast(child) : null);
         if (tomEEWebappClassLoader != null && tomEEWebappClassLoader.isRestarting()) {
             return true;
         }
@@ -1583,7 +1585,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         final String id = getId(standardContext);
         WebAppInfo currentWebAppInfo = null;
         for (final WebAppInfo webAppInfo : contextInfo.appInfo.webApps) {
-            final String wId = getId(webAppInfo.host, webAppInfo.contextRoot);
+            final String wId = getId(webAppInfo.host, webAppInfo.contextRoot, contextInfo.version);
             if (id.equals(wId)) {
                 currentWebAppInfo = webAppInfo;
                 break;
@@ -1748,6 +1750,14 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         }
 
         addConfiguredDocBases(standardContext, contextInfo);
+    }
+
+    private static String appVersion(final AppInfo appInfo) {
+        if (appInfo != null && appInfo.webAppAlone && appInfo.appId != null) {
+            final int versionIndex = appInfo.appId.indexOf("##");
+            return versionIndex >= 0 ? appInfo.appId.substring(versionIndex) : "";
+        }
+        return "";
     }
 
     private void addConfiguredDocBases(final StandardContext standardContext, final ContextInfo contextInfo) {
@@ -2342,10 +2352,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      * @return id of the context
      */
     private String getId(final StandardContext standardContext) {
-        return getId(Contexts.getHostname(standardContext), standardContext.getName());
+        return getId(Contexts.getHostname(standardContext), standardContext.getPath(), standardContext.getWebappVersion());
     }
 
-    private String getId(final String host, final String context) {
+    private String getId(final String host, final String context, final String version) {
         String contextRoot = context;
         if (isRoot(contextRoot)) {
             contextRoot = "";
@@ -2353,10 +2363,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         if (!contextRoot.startsWith("/")) {
             contextRoot = "/" + contextRoot;
         }
-        if (host != null) {
-            return host + contextRoot;
-        }
-        return hosts.getDefaultHost() + contextRoot;
+        return (host == null ? hosts.getDefaultHost() : host) + contextRoot + (version == null || version.isEmpty() ? "" : (version.startsWith("##") ? version : "##" + version));
     }
 
     /**
@@ -2379,13 +2386,13 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      *
      * @return context info
      */
-    private synchronized ContextInfo getContextInfo(final String webAppHost, final String webAppContextRoot) {
+    private synchronized ContextInfo getContextInfo(final String webAppHost, final String webAppContextRoot, final String version) {
         String host = webAppHost;
         if (host == null) {
             host = hosts.getDefaultHost();
         }
 
-        final String id = getId(host, webAppContextRoot);
+        final String id = getId(host, webAppContextRoot, version);
 
         final ContextInfo value;
         synchronized (infos) {
@@ -2414,6 +2421,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             contextInfo = infos.get(id);
             if (contextInfo == null) {
                 contextInfo = new ContextInfo();
+                final String webappVersion = standardContext.getWebappVersion();
+                contextInfo.version = webappVersion != null && !webappVersion.isEmpty() ? "##" + webappVersion : webappVersion;
                 contextInfo.standardContext = standardContext;
                 infos.put(id, contextInfo);
             }
@@ -2427,9 +2436,22 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      * @param standardContext context
      */
     private void removeContextInfo(final StandardContext standardContext) {
-        final String id = getId(standardContext);
+        boolean found = false;
         synchronized (infos) {
-            infos.remove(id);
+            final Iterator<Map.Entry<String, ContextInfo>> info = infos.entrySet().iterator();
+            while (info.hasNext()) {
+                if (info.next().getValue().standardContext == standardContext) {
+                    info.remove();
+                    found = true;
+                    break;
+                }
+            }
+        }
+        if (!found) { // unlikely
+            final String id = getId(standardContext);
+            synchronized (infos) {
+                infos.remove(id);
+            }
         }
     }
 
@@ -2439,6 +2461,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         public StandardContext standardContext;
         public HostConfig deployer;
         public Host host;
+        public String version;
         public Collection<String> resourceNames = Collections.emptyList();
 
         @Override

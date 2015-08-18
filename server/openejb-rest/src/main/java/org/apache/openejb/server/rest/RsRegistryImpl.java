@@ -29,7 +29,7 @@ public class RsRegistryImpl extends OpenEJBHttpRegistry implements RsRegistry {
     private Map<String, String> addresses = new HashMap<String, String>();
 
     @Override
-    public AddressInfo createRsHttpListener(String webContext, HttpListener listener, ClassLoader classLoader, String path, String virtualHost, String auth, String realm) {
+    public AddressInfo createRsHttpListener(String appId, String webContext, HttpListener listener, ClassLoader classLoader, String path, String virtualHost, String auth, String realm) {
         final String address = HttpUtil.selectSingleAddress(getResolvedAddresses(path));
 
         if ("BASIC".equals(auth)) { // important to wrap with basic wrapper before classloader wrapping
