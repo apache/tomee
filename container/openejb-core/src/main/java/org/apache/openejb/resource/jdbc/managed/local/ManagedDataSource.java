@@ -17,14 +17,18 @@
 
 package org.apache.openejb.resource.jdbc.managed.local;
 
-import java.io.PrintWriter;
-import java.lang.reflect.Proxy;
-import java.sql.Connection;
-import java.sql.SQLException;
+import org.apache.openejb.util.reflection.Reflections;
+
 import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
+import java.io.PrintWriter;
+import java.lang.reflect.Proxy;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
+import java.util.logging.Logger;
 
 public class ManagedDataSource implements DataSource {
     private static final Class<?>[] CONNECTION_CLASS = new Class<?>[]{Connection.class};
@@ -83,6 +87,11 @@ public class ManagedDataSource implements DataSource {
     @Override
     public boolean isWrapperFor(final Class<?> iface) throws SQLException {
         return DataSource.class.isInstance(delegate) && DataSource.class.cast(delegate).isWrapperFor(iface);
+    }
+
+    // @Override JDK7
+    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        return (Logger) Reflections.invokeByReflection(delegate, "getParentLogger", new Class<?>[0], null);
     }
 
     private Connection managed(final String u, final String p) {
