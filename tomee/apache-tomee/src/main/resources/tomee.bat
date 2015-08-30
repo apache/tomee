@@ -69,11 +69,17 @@ for %%F in (%lib%/*.jar) do (
 
 if ""%1"" == ""deploy"" goto doDeploy
 if ""%1"" == ""undeploy"" goto doUndeploy
+if ""%1"" == ""start"" goto unsupportedCmd
+if ""%1"" == ""stop"" goto unsupportedCmd
 goto doExec
 
 :doDeploy
 :doUndeploy
 "%_RUNJAVA%" -Djava.io.tmpdir="%CATALINA_TMPDIR%" org.apache.openejb.cli.Bootstrap %1 -s http://localhost:%port%/tomee/ejb %2
+goto end
+
+:unsupportedCmd
+echo start/stop commands are not compatible with tomee.bat, please use catalina.bar/startup.bat/shutdown.bat
 goto end
 
 :doExec
