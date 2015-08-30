@@ -80,6 +80,9 @@ if [ "$1" = "deploy" ] || [ "$1" = "undeploy" ]; then
     else
         echo "Usage: <tomee.sh> $1 <path>"
     fi
+elif [ "$1" = "start" ] || [ "$1" = "stop" ]; then
+    echo "To start or stop TomEE please use catalina.sh/startup.sh/shutdown.sh instead of tomee.sh"
 else
     $JAVA $DEBUG -Dopenejb.base="$TOMEE_HOME" -cp "\"$CP\"" org.apache.openejb.cli.Bootstrap $*
 fi
+
