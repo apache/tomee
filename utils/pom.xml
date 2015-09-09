@@ -33,5 +33,6 @@
     <module>openejb-core-eclipselink</module>
     <module>openejb-provisionning</module>
     <module>openejb-mockito</module>
+    <module>log4j2-tomee</module>
   </modules>
 </project>
