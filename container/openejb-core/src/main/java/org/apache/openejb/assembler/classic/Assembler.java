@@ -197,6 +197,7 @@ import java.io.Serializable;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
@@ -2120,9 +2121,30 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 throw undeployException;
             }
 
+            this.resetSlf4j();
+
             logger.debug("destroyApplication.success", appInfo.path);
         } finally {
             l.unlock();
+        }
+    }
+
+    private void resetSlf4j() {
+        if (SystemInstance.get().getOptions().get("org.apache.tomee.slf4j.deployment.reset", false)) {
+            try {
+                final Class<?> c = Class.forName("org.slf4j.LoggerFactory");
+                final Method m = c.getDeclaredMethod("reset", null);
+                m.setAccessible(true);
+                m.invoke(null);
+            } catch (final ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (final NoSuchMethodException e) {
+                e.printStackTrace();
+            } catch (final InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (final IllegalAccessException e) {
+                e.printStackTrace();
+            }
         }
     }
 
