@@ -2137,13 +2137,13 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 m.setAccessible(true);
                 m.invoke(null);
             } catch (final ClassNotFoundException e) {
-                e.printStackTrace();
+                logger.warning("resetSlf4j: " + e.getMessage());
             } catch (final NoSuchMethodException e) {
-                e.printStackTrace();
+                logger.warning("resetSlf4j: " + e.getMessage());
             } catch (final InvocationTargetException e) {
-                e.printStackTrace();
+                logger.warning("resetSlf4j: " + e.getMessage());
             } catch (final IllegalAccessException e) {
-                e.printStackTrace();
+                logger.warning("resetSlf4j: " + e.getMessage());
             }
         }
     }
