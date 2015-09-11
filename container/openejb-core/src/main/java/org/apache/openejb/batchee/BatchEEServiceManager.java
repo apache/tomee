@@ -18,13 +18,17 @@ package org.apache.openejb.batchee;
 
 import org.apache.batchee.container.services.ServicesManager;
 import org.apache.batchee.container.services.ServicesManagerLocator;
+import org.apache.batchee.container.services.factory.CDIBatchArtifactFactory;
+import org.apache.batchee.spi.BatchArtifactFactory;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.assembler.classic.event.AssemblerAfterApplicationCreated;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.observer.Observes;
 import org.apache.openejb.observer.event.ObserverAdded;
 import org.apache.openejb.util.AppFinder;
+import org.apache.webbeans.config.WebBeansContext;
 
+import javax.enterprise.inject.spi.BeanManager;
 import java.util.Properties;
 
 public class BatchEEServiceManager implements ServicesManagerLocator {
@@ -43,6 +47,9 @@ public class BatchEEServiceManager implements ServicesManagerLocator {
         thread.setContextClassLoader(init.getContext().getClassLoader());
         final ServicesManager servicesManager = new ServicesManager();
         try {
+            if (properties.getProperty(BatchArtifactFactory.class.getName()) == null) {
+                properties.setProperty(BatchArtifactFactory.class.getName(), TomEEArtifactFactory.class.getName());
+            }
             servicesManager.init(properties); // will look for batchee.properties so need the right classloader
         } finally {
             thread.setContextClassLoader(current);
@@ -59,5 +66,12 @@ public class BatchEEServiceManager implements ServicesManagerLocator {
             return context.get(ServicesManager.class);
         }
         throw new IllegalStateException("Can't find ServiceManager for " + contextClassLoader);
+    }
+
+    public static class TomEEArtifactFactory extends CDIBatchArtifactFactory {
+        @Override
+        protected BeanManager getBeanManager() {
+            return WebBeansContext.currentInstance().getBeanManagerImpl();
+        }
     }
 }

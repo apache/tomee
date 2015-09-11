@@ -18,6 +18,7 @@
 package org.apache.openejb.cdi;
 
 import org.apache.openejb.core.ParentClassLoaderFinder;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.classloader.ClassLoaderAwareHandler;
@@ -25,6 +26,7 @@ import org.apache.webbeans.service.DefaultLoaderService;
 import org.apache.webbeans.spi.LoaderService;
 import org.apache.webbeans.spi.plugins.OpenWebBeansPlugin;
 
+import javax.enterprise.inject.spi.Extension;
 import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.util.ArrayList;
@@ -33,7 +35,6 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
-import javax.enterprise.inject.spi.Extension;
 
 /**
  * @version $Rev$ $Date$
@@ -120,6 +121,8 @@ public class OptimizedLoaderService implements LoaderService {
                     }
                 }
                 break;
+            case "org.apache.batchee.container.cdi.BatchCDIInjectionExtension": // see org.apache.openejb.batchee.BatchEEServiceManager
+                return "true".equals(SystemInstance.get().getProperty("tomee.batchee.cdi.use-extension", "false"));
             case "org.apache.commons.jcs.jcache.cdi.MakeJCacheCDIInterceptorFriendly":
                 final String spi = "META-INF/services/javax.cache.spi.CachingProvider";
                 try {
