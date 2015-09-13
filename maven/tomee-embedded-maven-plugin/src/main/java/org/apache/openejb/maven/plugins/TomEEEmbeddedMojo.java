@@ -111,6 +111,9 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
     @Parameter(property = "tomee-embedded-plugin.ssl", defaultValue = "false")
     protected boolean ssl;
 
+    @Parameter(property = "tomee-embedded-plugin.withEjbRemote", defaultValue = "false")
+    protected boolean withEjbRemote;
+
     @Parameter(property = "tomee-embedded-plugin.quickSession", defaultValue = "true")
     protected boolean quickSession;
 

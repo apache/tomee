@@ -43,6 +43,7 @@ public class Configuration {
 
     private int httpsPort = 8443;
     private boolean ssl;
+    private boolean withEjbRemote;
     private String keystoreFile;
     private String keystorePass;
     private String keystoreType = "JKS";
@@ -94,6 +95,19 @@ public class Configuration {
     public Configuration dir(final String dir) {
         setDir(dir);
         return this;
+    }
+
+    public boolean isWithEjbRemote() {
+        return withEjbRemote;
+    }
+
+    public Configuration withEjbRemote(final boolean withEjbRemote) {
+        setWithEjbRemote(withEjbRemote);
+        return this;
+    }
+
+    public void setWithEjbRemote(final boolean withEjbRemote) {
+        this.withEjbRemote = withEjbRemote;
     }
 
     public void setDir(final String dir) {

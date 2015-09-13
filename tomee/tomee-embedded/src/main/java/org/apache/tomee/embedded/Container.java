@@ -71,6 +71,7 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.tomee.catalina.TomEERuntimeException;
 import org.apache.tomee.catalina.TomcatLoader;
+import org.apache.tomee.catalina.remote.TomEERemoteWebapp;
 import org.apache.tomee.catalina.session.QuickSessionManager;
 import org.apache.tomee.embedded.internal.StandardContextCustomizer;
 import org.apache.tomee.util.QuickServerXmlParser;
@@ -592,6 +593,10 @@ public class Container implements AutoCloseable {
 
         assembler = SystemInstance.get().getComponent(Assembler.class);
         configurationFactory = new ConfigurationFactory();
+
+        if (configuration.isWithEjbRemote()) {
+            tomcat.getHost().addChild(new TomEERemoteWebapp());
+        }
     }
 
     private static Server createServer(final String serverXml) {

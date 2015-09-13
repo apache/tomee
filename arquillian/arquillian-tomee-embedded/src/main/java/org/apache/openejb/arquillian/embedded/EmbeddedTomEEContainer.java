@@ -96,6 +96,7 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
         configuration.setClientAuth(tomeeConfiguration.getClientAuth());
         configuration.setKeyAlias(tomeeConfiguration.getKeyAlias());
         configuration.setSslProtocol(tomeeConfiguration.getSslProtocol());
+        configuration.setWithEjbRemote(tomeeConfiguration.isWithEjbRemote());
 
         if (tomeeConfiguration.getRoles() != null) {
             configuration.setRoles(new HashMap<String, String>(Map.class.cast(tomeeConfiguration.getRolesAsProperties())));

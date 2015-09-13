@@ -35,6 +35,7 @@ import java.util.Properties;
 public class EmbeddedTomEEConfiguration extends TomEEConfiguration {
     private int httpsPort = 8443;
     private boolean ssl;
+    private boolean withEjbRemote;
     private String keystoreFile;
     private String keystorePass;
     private String keystoreType = "JKS";
@@ -43,6 +44,14 @@ public class EmbeddedTomEEConfiguration extends TomEEConfiguration {
     private String sslProtocol;
     private String users;
     private String roles;
+
+    public boolean isWithEjbRemote() {
+        return withEjbRemote;
+    }
+
+    public void setWithEjbRemote(final boolean withEjbRemote) {
+        this.withEjbRemote = withEjbRemote;
+    }
 
     public int getHttpsPort() {
         return httpsPort;
