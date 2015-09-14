@@ -2743,7 +2743,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             // init cm if needed
             final Object eagerInit = unset.remove("eagerInit");
-            if (eagerInit != null && String.class.isInstance(eagerInit) && "true".equalsIgnoreCase((String) eagerInit)
+            if (eagerInit != null && String.class.isInstance(eagerInit) && "true".equalsIgnoreCase(String.class.cast(eagerInit))
                     && AbstractConnectionManager.class.isInstance(connectionManager)) {
                 try {
                     AbstractConnectionManager.class.cast(connectionManager).doStart();
