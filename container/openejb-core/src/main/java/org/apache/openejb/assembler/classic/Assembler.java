@@ -287,6 +287,44 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     //Used outside of this class
     private final Logger logger;
 
+    protected SafeToolkit toolkit = SafeToolkit.getToolkit("Assembler");
+    protected OpenEjbConfiguration config;
+
+    public Assembler() {
+        this(new IvmJndiFactory());
+    }
+
+    public Assembler(final JndiFactory jndiFactory) {
+        logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, Assembler.class);
+        skipLoaderIfPossible = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.classloader.skip-app-loader-if-possible", "true"));
+        persistenceClassLoaderHandler = new PersistenceClassLoaderHandlerImpl();
+
+        installNaming();
+
+        final SystemInstance system = SystemInstance.get();
+
+        system.setComponent(org.apache.openejb.spi.Assembler.class, this);
+        system.setComponent(Assembler.class, this);
+
+        containerSystem = new CoreContainerSystem(jndiFactory);
+        system.setComponent(ContainerSystem.class, containerSystem);
+
+        jndiBuilder = new JndiBuilder(containerSystem.getJNDIContext());
+
+        setConfiguration(new OpenEjbConfiguration());
+
+        final ApplicationServer appServer = system.getComponent(ApplicationServer.class);
+        if (appServer == null) {
+            system.setComponent(ApplicationServer.class, new ServerFederation());
+        }
+
+        system.setComponent(EjbResolver.class, new EjbResolver(null, EjbResolver.Scope.GLOBAL));
+
+        installExtensions();
+
+        system.fireEvent(new AssemblerCreated());
+    }
+
     @Override
     public ContainerSystem getContainerSystem() {
         return containerSystem;
@@ -326,44 +364,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         } finally {
             l.unlock();
         }
-    }
-
-    protected SafeToolkit toolkit = SafeToolkit.getToolkit("Assembler");
-    protected OpenEjbConfiguration config;
-
-    public Assembler() {
-        this(new IvmJndiFactory());
-    }
-
-    public Assembler(final JndiFactory jndiFactory) {
-        logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, Assembler.class);
-        skipLoaderIfPossible = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.classloader.skip-app-loader-if-possible", "true"));
-        persistenceClassLoaderHandler = new PersistenceClassLoaderHandlerImpl();
-
-        installNaming();
-
-        final SystemInstance system = SystemInstance.get();
-
-        system.setComponent(org.apache.openejb.spi.Assembler.class, this);
-        system.setComponent(Assembler.class, this);
-
-        containerSystem = new CoreContainerSystem(jndiFactory);
-        system.setComponent(ContainerSystem.class, containerSystem);
-
-        jndiBuilder = new JndiBuilder(containerSystem.getJNDIContext());
-
-        setConfiguration(new OpenEjbConfiguration());
-
-        final ApplicationServer appServer = system.getComponent(ApplicationServer.class);
-        if (appServer == null) {
-            system.setComponent(ApplicationServer.class, new ServerFederation());
-        }
-
-        system.setComponent(EjbResolver.class, new EjbResolver(null, EjbResolver.Scope.GLOBAL));
-
-        installExtensions();
-
-        system.fireEvent(new AssemblerCreated());
     }
 
     private void installExtensions() {
