@@ -285,7 +285,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     private SecurityService securityService;
 
     //Used outside of this class
-    public volatile Logger logger;
+    private final Logger logger;
 
     @Override
     public ContainerSystem getContainerSystem() {
@@ -3136,6 +3136,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
     }
 
+    public Logger getLogger() {
+        return logger;
+    }
+
     private static class PersistenceClassLoaderHandlerImpl implements PersistenceClassLoaderHandler {
         private static final AtomicBoolean logged = new AtomicBoolean(false);
 
@@ -3156,7 +3160,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     transformers.add(classFileTransformer);
                 }
             } else if (!logged.getAndSet(true)) {
-                SystemInstance.get().getComponent(Assembler.class).logger.warning("assembler.noAgent");
+                SystemInstance.get().getComponent(Assembler.class).getLogger().warning("assembler.noAgent");
             }
         }
 
@@ -3170,7 +3174,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                         instrumentation.removeTransformer(transformer);
                     }
                 } else {
-                    SystemInstance.get().getComponent(Assembler.class).logger.error("assembler.noAgent");
+                    SystemInstance.get().getComponent(Assembler.class).getLogger().error("assembler.noAgent");
                 }
             }
         }
@@ -3308,7 +3312,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     }
                     m.invoke(o);
                 } catch (final Exception e) {
-                    SystemInstance.get().getComponent(Assembler.class).logger.error(e.getMessage(), e);
+                    SystemInstance.get().getComponent(Assembler.class).getLogger().error(e.getMessage(), e);
                 }
             }
             try {
