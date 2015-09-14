@@ -2186,10 +2186,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         if (null != m) {
             try {
                 m.invoke(null);
+                logger.info("Reset slf4j on application undeployment");
             } catch (final InvocationTargetException e) {
-                System.out.println("Assembler.resetSlf4j: " + e.getMessage());
+                logger.warning("Assembler.resetSlf4j: " + e.getMessage());
             } catch (final IllegalAccessException e) {
-                System.out.println("Assembler.resetSlf4j: " + e.getMessage());
+                logger.warning("Assembler.resetSlf4j: " + e.getMessage());
             }
         }
     }

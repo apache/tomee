@@ -68,7 +68,7 @@ public final class SystemInstance {
         this.components = new HashMap<Class, Object>();
 
         // import JVM system property config (if a resource/container/... is set through this way)
-        Properties clonedSystemProperties = (Properties) System.getProperties().clone();
+        final Properties clonedSystemProperties = (Properties) System.getProperties().clone();
         for (final Map.Entry<Object, Object> e : clonedSystemProperties.entrySet()) {
             final String key = e.getKey().toString();
             if (key.startsWith("sun.")) {
