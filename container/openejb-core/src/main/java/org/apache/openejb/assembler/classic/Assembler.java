@@ -1547,7 +1547,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             factory = TransactionPolicyFactory.class.cast(value);
         } else if (String.class.isInstance(value)) {
             try {
-                final String[] parts = (String.class.cast(value)).split(":", 2);
+                final String[] parts = String.class.cast(value).split(":", 2);
 
                 final ResourceFinder finder = new ResourceFinder("META-INF", classLoader);
                 final Map<String, Class<? extends TransactionPolicyFactory>> plugins = finder.mapAvailableImplementations(TransactionPolicyFactory.class);
