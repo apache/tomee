@@ -572,8 +572,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 logger.error("appNotDeployed", e, appInfo.path);
 
                 final DeploymentExceptionManager exceptionManager = systemInstance.getComponent(DeploymentExceptionManager.class);
-                if (exceptionManager != null && e instanceof Exception) {
-                    exceptionManager.saveDeploymentException(appInfo, (Exception) e);
+                if (Exception.class.isInstance(exceptionManager)) {
+                    exceptionManager.saveDeploymentException(appInfo, Exception.class.cast(exceptionManager));
                 }
             }
         }
@@ -1051,7 +1051,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     if (!postConstructs.isEmpty() || initialize) {
                         originalResource = containerSystemContext.lookup(OPENEJB_RESOURCE_JNDI_PREFIX + resourceInfo.id);
                         Object resource = originalResource;
-                        if (resource instanceof Reference) {
+                        if (Reference.class.isInstance(resource)) {
                             resource = unwrapReference(resource);
                             this.bindResource(resourceInfo.id, resource, true);
                         }
@@ -1543,11 +1543,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         TransactionPolicyFactory factory = null;
 
         final Object value = ejbJar.properties.get(TransactionPolicyFactory.class.getName());
-        if (value instanceof TransactionPolicyFactory) {
-            factory = (TransactionPolicyFactory) value;
-        } else if (value instanceof String) {
+        if (TransactionPolicyFactory.class.isInstance(value)) {
+            factory = TransactionPolicyFactory.class.cast(value);
+        } else if (String.class.isInstance(value)) {
             try {
-                final String[] parts = ((String) value).split(":", 2);
+                final String[] parts = (String.class.cast(value)).split(":", 2);
 
                 final ResourceFinder finder = new ResourceFinder("META-INF", classLoader);
                 final Map<String, Class<? extends TransactionPolicyFactory>> plugins = finder.mapAvailableImplementations(TransactionPolicyFactory.class);
@@ -1765,8 +1765,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             final ConnectorReference cr = ConnectorReference.class.cast(object);
             try {
                 final ConnectionManager cm = cr.getConnectionManager();
-                if (cm != null && cm instanceof AbstractConnectionManager) {
-                    ((AbstractConnectionManager) cm).doStop();
+                if (AbstractConnectionManager.class.isInstance(cm)) {
+                    AbstractConnectionManager.class.cast(cm).doStop();
                 }
             } catch (final Exception e) {
                 logger.debug("Not processing resource on destroy: " + className, e);
@@ -2025,8 +2025,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
             }
             try {
-                if (globalContext instanceof IvmContext) {
-                    final IvmContext ivmContext = (IvmContext) globalContext;
+                if (IvmContext.class.isInstance(globalContext)) {
+                    final IvmContext ivmContext = IvmContext.class.cast(globalContext);
                     ivmContext.prune("openejb/Deployment");
                     ivmContext.prune("openejb/local");
                     ivmContext.prune("openejb/remote");
@@ -2094,7 +2094,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     } finally {
                         ContextualJndiReference.followReference.remove();
                     }
-                    if (object instanceof ContextualJndiReference) {
+                    if (ContextualJndiReference.class.isInstance(object)) {
                         final ContextualJndiReference contextualJndiReference = ContextualJndiReference.class.cast(object);
                         contextualJndiReference.removePrefix(appContext.getId());
                         if (contextualJndiReference.hasNoMorePrefix()) {
@@ -2480,8 +2480,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     private void replaceResourceAdapterProperty(final ObjectRecipe serviceRecipe) throws OpenEJBException {
         final Object resourceAdapterId = serviceRecipe.getProperty("ResourceAdapter");
-        if (resourceAdapterId instanceof String) {
-            String id = (String) resourceAdapterId;
+        if (String.class.isInstance(resourceAdapterId)) {
+            String id = String.class.cast(resourceAdapterId);
             id = id.trim();
 
             Object resourceAdapter = null;
@@ -2494,7 +2494,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             if (resourceAdapter == null) {
                 throw new OpenEJBException("No existing resource adapter defined with id '" + id + "'.");
             }
-            if (!(resourceAdapter instanceof ResourceAdapter)) {
+            if (!ResourceAdapter.class.isInstance(resourceAdapter)) {
                 throw new OpenEJBException(messages.format("assembler.resourceAdapterNotResourceAdapter", id, resourceAdapter.getClass()));
             }
             serviceRecipe.setProperty("ResourceAdapter", resourceAdapter);
@@ -2634,8 +2634,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         serviceInfo.unsetProperties = injectedProperties.get();
 
         // Java Connector spec ResourceAdapters and ManagedConnectionFactories need special activation
-        if (service instanceof ResourceAdapter) {
-            final ResourceAdapter resourceAdapter = (ResourceAdapter) service;
+        if (ResourceAdapter.class.isInstance(service)) {
+            final ResourceAdapter resourceAdapter = ResourceAdapter.class.cast(service);
 
             // Create a thead pool for work manager
             final int threadPoolSize = getIntProperty(serviceInfo.properties, "threadPoolSize", 30);
@@ -2676,12 +2676,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             // BootstrapContext: wraps the WorkMananger and XATerminator
             final BootstrapContext bootstrapContext;
-            if (transactionManager instanceof GeronimoTransactionManager) {
+            if (GeronimoTransactionManager.class.isInstance(transactionManager)) {
                 bootstrapContext = new GeronimoBootstrapContext(GeronimoWorkManager.class.cast(workManager),
                         (GeronimoTransactionManager) transactionManager,
                         (GeronimoTransactionManager) transactionManager);
-            } else if (transactionManager instanceof XATerminator) {
-                bootstrapContext = new SimpleBootstrapContext(workManager, (XATerminator) transactionManager);
+            } else if (XATerminator.class.isInstance(transactionManager)) {
+                bootstrapContext = new SimpleBootstrapContext(workManager, XATerminator.class.cast(transactionManager));
             } else {
                 bootstrapContext = new SimpleBootstrapContext(workManager);
             }
@@ -2699,8 +2699,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             logUnusedProperties(unset, serviceInfo);
 
             service = new ResourceAdapterReference(resourceAdapter, threadPool, OPENEJB_RESOURCE_JNDI_PREFIX + serviceInfo.id);
-        } else if (service instanceof ManagedConnectionFactory) {
-            final ManagedConnectionFactory managedConnectionFactory = (ManagedConnectionFactory) service;
+        } else if (ManagedConnectionFactory.class.isInstance(service)) {
+            final ManagedConnectionFactory managedConnectionFactory = ManagedConnectionFactory.class.cast(service);
 
             // connection manager is constructed via a recipe so we automatically expose all cmf properties
             final ObjectRecipe connectionManagerRecipe = new ObjectRecipe(GeronimoConnectionManagerFactory.class, "create");
@@ -2743,14 +2743,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             // init cm if needed
             final Object eagerInit = unset.remove("eagerInit");
-            if (eagerInit != null && eagerInit instanceof String && "true".equalsIgnoreCase((String) eagerInit)
-                    && connectionManager instanceof AbstractConnectionManager) {
+            if (eagerInit != null && String.class.isInstance(eagerInit) && "true".equalsIgnoreCase((String) eagerInit)
+                    && AbstractConnectionManager.class.isInstance(connectionManager)) {
                 try {
-                    ((AbstractConnectionManager) connectionManager).doStart();
+                    AbstractConnectionManager.class.cast(connectionManager).doStart();
                     try {
                         final Object cf = managedConnectionFactory.createConnectionFactory(connectionManager);
-                        if (cf instanceof ConnectionFactory) {
-                            final Connection connection = ((ConnectionFactory) cf).getConnection();
+                        if (ConnectionFactory.class.isInstance(cf)) {
+                            final Connection connection = ConnectionFactory.class.cast(cf).getConnection();
                             connection.getMetaData();
                             connection.close();
                         }
@@ -2763,13 +2763,13 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
 
             logUnusedProperties(unset, serviceInfo);
-        } else if (service instanceof DataSource) {
+        } else if (DataSource.class.isInstance(service)) {
             ClassLoader classLoader = loader;
             if (classLoader == null) {
                 classLoader = getClass().getClassLoader();
             }
 
-            final ImportSql importer = new ImportSql(classLoader, serviceInfo.id, (DataSource) service);
+            final ImportSql importer = new ImportSql(classLoader, serviceInfo.id, DataSource.class.cast(service));
             if (importer.hasSomethingToImport()) {
                 importer.doImport();
             }
@@ -3002,8 +3002,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         // TransactionSynchronizationRegistry
         final TransactionSynchronizationRegistry synchronizationRegistry;
-        if (transactionManager instanceof TransactionSynchronizationRegistry) {
-            synchronizationRegistry = (TransactionSynchronizationRegistry) transactionManager;
+        if (TransactionSynchronizationRegistry.class.isInstance(transactionManager)) {
+            synchronizationRegistry = TransactionSynchronizationRegistry.class.cast(transactionManager);
         } else {
             // todo this should be built
             synchronizationRegistry = new SimpleTransactionSynchronizationRegistry(transactionManager);
@@ -3096,8 +3096,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     private ObjectRecipe createRecipe(final ServiceInfo info) {
         final Logger serviceLogger = logger.getChildLogger("service");
 
-        if (info instanceof ResourceInfo) {
-            final List<String> aliasesList = ((ResourceInfo) info).aliases;
+        if (ResourceInfo.class.isInstance(info)) {
+            final List<String> aliasesList = ResourceInfo.class.cast(info).aliases;
             if (!aliasesList.isEmpty()) {
                 final String aliases = Join.join(", ", aliasesList);
                 serviceLogger.info("createServiceWithAliases", info.service, info.id, aliases);
@@ -3202,11 +3202,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             if (this == o) {
                 return true;
             }
-            if (!(o instanceof DeploymentListenerObserver)) {
+            if (!DeploymentListenerObserver.class.isInstance(o)) {
                 return false;
             }
 
-            final DeploymentListenerObserver that = (DeploymentListenerObserver) o;
+            final DeploymentListenerObserver that = DeploymentListenerObserver.class.cast(o);
 
             return !(delegate != null ? !delegate.equals(that.delegate) : that.delegate != null);
         }
