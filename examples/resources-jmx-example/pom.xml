@@ -17,6 +17,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
@@ -28,8 +29,8 @@
   
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.openejb>4.7.3-TT.2</version.openejb>
-    <version.tomee>1.7.3-TT.2</version.tomee>
+    <version.openejb>4.7.3-SNAPSHOT</version.openejb>
+    <version.tomee>1.7.3-SNAPSHOT</version.tomee>
     <version.openjpa>2.4.0</version.openjpa>
   </properties>
   
@@ -104,9 +105,11 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-  <!-- This section allows you to configure where to publish libraries for
-    sharing. It is not required and may be deleted. For more information see:
-    http://maven.apache.org/plugins/maven-deploy-plugin/ -->
+  <!--
+  This section allows you to configure where to publish libraries for sharing.
+  It is not required and may be deleted.  For more information see:
+  http://maven.apache.org/plugins/maven-deploy-plugin/
+  -->
   <distributionManagement>
     <repository>
       <id>localhost</id>

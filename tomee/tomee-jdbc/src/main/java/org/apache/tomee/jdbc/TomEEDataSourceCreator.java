@@ -41,8 +41,6 @@ import javax.management.ObjectName;
 import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 import javax.sql.XADataSource;
-import java.io.ObjectStreamException;
-import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -50,10 +48,6 @@ import java.sql.SQLException;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
-import javax.management.ObjectName;
-import javax.sql.CommonDataSource;
-import javax.sql.DataSource;
-import javax.sql.XADataSource;
 
 public class TomEEDataSourceCreator extends PoolDataSourceCreator {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, TomEEDataSourceCreator.class);

@@ -24,7 +24,7 @@
   <parent>
     <artifactId>container</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.7.3-TT.3-SNAPSHOT</version>
+    <version>4.7.3-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-core</artifactId>
@@ -192,8 +192,8 @@
       org.apache.webbeans.util;version="[1.1,2)",
       org.apache.webbeans.web.context;version="[1.1,2)",
       org.apache.webbeans.xml;version="[1.1,2)",
-      org.apache.xbean.asm5;version="[3.1,4)",
-      org.apache.xbean.asm5.commons;version="[3.1,4)",
+      org.apache.xbean.asm5;version="[3.1,5)",
+      org.apache.xbean.asm5.commons;version="[3.1,5)",
       org.apache.xbean.finder;version="[3.8,4)",
       org.apache.xbean.finder.archive;version="[3.8,4)",
       org.apache.xbean.finder.filter;version="[3.8,4)",
