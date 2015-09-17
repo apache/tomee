@@ -2,6 +2,8 @@ Title: Movies Complete
 
 *Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
 
+[![Try it out in Codenvy](https://tomitribe.github.io/codenvy/tryitout.svg)](https://nightly.codenvy-stg.com/f?id=gopoew6029zsh562)
+
 ## AddInterceptor
 
     package org.superbiz.injection.tx;
