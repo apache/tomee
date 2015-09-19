@@ -13,7 +13,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>cdi-request-scope</artifactId>
   <name>OpenEJB :: Examples :: CDI Request Scope</name>
-  <version>1.1.1-SNAPSHOT</version>
+  <version>1.1.1-TT.3</version>
 
   <build>
     <defaultGoal>install</defaultGoal>
