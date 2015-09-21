@@ -1098,7 +1098,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         }
 
         @Override
-        protected void setProviders(final boolean custom, final Object... providers) {
+        protected void setProviders(final boolean custom, final boolean bus, final Object... providers) {
             throw new UnsupportedOperationException("not a real inheritance");
         }
     }
