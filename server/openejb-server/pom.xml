@@ -60,26 +60,26 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>javaee-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-jee</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-loader</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-core</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-client</artifactId>
       <version>${project.version}</version>
     </dependency>

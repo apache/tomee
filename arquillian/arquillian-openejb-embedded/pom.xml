@@ -32,9 +32,9 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>${openejb.version}</version>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>
@@ -118,15 +118,15 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>arquillian-common</artifactId>
-      <version>${tomee.version}</version>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>arquillian-openejb-transaction-provider</artifactId>
-      <version>${tomee.version}</version>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>
@@ -150,16 +150,16 @@
     </dependency>
 
     <dependency> <!-- shouldn't be a compile/runtime dependency -->
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-http</artifactId>
-      <version>${openejb.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-cxf-rs</artifactId>
-      <version>${openejb.version}</version>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

@@ -37,7 +37,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>arquillian-common</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -61,16 +61,16 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>javaee-api</artifactId>
       <version>${javaee-api.version}</version>
       <type>jar</type>
     </dependency>
 
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>tomee-util</artifactId>
-      <version>${tomee.version}</version>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>
@@ -85,22 +85,22 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-jee</artifactId>
-      <version>${openejb.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>${openejb.version}</version>
+      <version>${project.version}</version>
       <type>jar</type>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
           <artifactId>mbean-annotation-api</artifactId>
-          <groupId>org.apache.tomee</groupId>
+          <groupId>${project.groupId}</groupId>
         </exclusion>
         <exclusion>
           <artifactId>commons-lang3</artifactId>
@@ -108,19 +108,19 @@
         </exclusion>
         <exclusion>
           <artifactId>javaee-api-embedded</artifactId>
-          <groupId>org.apache.tomee</groupId>
+          <groupId>${project.groupId}</groupId>
         </exclusion>
         <exclusion>
           <artifactId>openejb-api</artifactId>
-          <groupId>org.apache.tomee</groupId>
+          <groupId>${project.groupId}</groupId>
         </exclusion>
         <exclusion>
           <artifactId>openejb-javaagent</artifactId>
-          <groupId>org.apache.tomee</groupId>
+          <groupId>${project.groupId}</groupId>
         </exclusion>
         <exclusion>
           <artifactId>openejb-jee</artifactId>
-          <groupId>org.apache.tomee</groupId>
+          <groupId>${project.groupId}</groupId>
         </exclusion>
         <exclusion>
           <artifactId>commons-cli</artifactId>

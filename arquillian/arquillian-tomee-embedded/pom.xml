@@ -32,13 +32,13 @@
   <dependencies>
 
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>tomee-embedded</artifactId>
-      <version>${tomee.version}</version>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>arquillian-openejb-transaction-provider</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -113,27 +113,27 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>javaee-api</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>arquillian-tomee-common</artifactId>
       <version>${project.version}</version>
     </dependency>
 
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>tomee-webservices</artifactId>
-      <version>${tomee.version}</version>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>arquillian-common</artifactId>
-      <version>${tomee.version}</version>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
 

@@ -28,9 +28,9 @@
   <name>OpenEJB :: TCK :: CDI-1.2 TomEE Embedded</name>
   <dependencies>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>tomee-embedded</artifactId>
-      <version>${tomee.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -38,7 +38,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>tck-common</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -116,13 +116,13 @@
             <configuration>
               <artifactItems>
                 <artifactItem>
-                  <groupId>org.apache.tomee</groupId>
+                  <groupId>${project.groupId}</groupId>
                   <artifactId>tck-common</artifactId>
                   <version>${project.version}</version>
                   <outputDirectory>${project.build.directory}/dependency/lib</outputDirectory>
                 </artifactItem>
                 <artifactItem>
-                  <groupId>org.apache.tomee</groupId>
+                  <groupId>${project.groupId}</groupId>
                   <artifactId>cdi-tomee-embedded</artifactId>
                   <version>${project.version}</version>
                   <outputDirectory>${project.build.directory}/dependency/lib</outputDirectory>

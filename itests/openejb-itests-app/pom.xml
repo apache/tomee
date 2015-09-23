@@ -21,15 +21,18 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
   <parent>
     <artifactId>itests</artifactId>
     <groupId>org.apache.tomee</groupId>
     <version>7.0.0-SNAPSHOT</version>
-  </parent>
-  <modelVersion>4.0.0</modelVersion>
+  </parent>  
+  
   <artifactId>openejb-itests-app</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: iTests :: App</name>
+  
   <build>
     <plugins>
       <plugin>
@@ -52,15 +55,15 @@
               <bundleDir>META-INF/lib</bundleDir>
             </jarModule>
             <ejbModule>
-              <groupId>org.apache.tomee</groupId>
+              <groupId>${project.groupId}</groupId>
               <artifactId>openejb-itests-beans</artifactId>
             </ejbModule>
             <ejbModule>
-              <groupId>org.apache.tomee</groupId>
+              <groupId>${project.groupId}</groupId>
               <artifactId>openejb-itests-interceptor-beans</artifactId>
             </ejbModule>
             <jarModule>
-              <groupId>org.apache.tomee</groupId>
+              <groupId>${project.groupId}</groupId>
               <artifactId>openejb-itests-client</artifactId>
               <includeInApplicationXml>true</includeInApplicationXml>
             </jarModule>
@@ -71,24 +74,24 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>javaee-api</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-itests-beans</artifactId>
       <version>${project.version}</version>
       <type>ejb</type>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-itests-interceptor-beans</artifactId>
       <version>${project.version}</version>
       <type>ejb</type>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-itests-client</artifactId>
       <version>${project.version}</version>
     </dependency>

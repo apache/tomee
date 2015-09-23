@@ -37,7 +37,7 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>javaee-api</artifactId>
     </dependency>
   </dependencies>

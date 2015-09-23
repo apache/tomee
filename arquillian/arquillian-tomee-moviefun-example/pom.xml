@@ -104,7 +104,7 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>javaee-api</artifactId>
       <scope>provided</scope>
     </dependency>
@@ -249,9 +249,9 @@
       <artifactId>log4j</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>tomee-embedded</artifactId>
-      <version>${tomee.version}</version>
+      <version>${project.version}</version>
       <!--<classifier>uber</classifier>-->
       <scope>test</scope>
     </dependency>
@@ -284,9 +284,9 @@
       </activation>
       <dependencies>
         <dependency>
-          <groupId>org.apache.tomee</groupId>
+          <groupId>${project.groupId}</groupId>
           <artifactId>arquillian-tomee-embedded</artifactId>
-          <version>${tomee.version}</version>
+          <version>${project.version}</version>
           <scope>test</scope>
         </dependency>
       </dependencies>
@@ -295,9 +295,9 @@
       <id>arquillian-tomee-remote</id>
       <dependencies>
         <dependency>
-          <groupId>org.apache.tomee</groupId>
+          <groupId>${project.groupId}</groupId>
           <artifactId>arquillian-tomee-remote</artifactId>
-          <version>${tomee.version}</version>
+          <version>${project.version}</version>
           <scope>test</scope>
         </dependency>
       </dependencies>

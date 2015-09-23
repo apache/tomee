@@ -33,7 +33,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>tomee-catalina</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>

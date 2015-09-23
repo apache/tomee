@@ -17,17 +17,20 @@
     limitations under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  
   <modelVersion>4.0.0</modelVersion>
+  
   <groupId>org.superbiz</groupId>
   <artifactId>rest-example-with-application</artifactId>
   <packaging>war</packaging>
   <version>1.1.0-SNAPSHOT</version>
   <name>OpenEJB :: Web Examples :: REST Example With Application</name>
+  
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <openejb.version>7.0.0-SNAPSHOT</openejb.version>
     <tomee.version>7.0.0-SNAPSHOT</tomee.version>
   </properties>
+  
   <repositories>
     <repository>
       <id>apache-m2-snapshot</id>
@@ -40,6 +43,7 @@
       <url>http://tomcat.apache.org/dev/dist/m2-repository/</url>
     </repository>
   </repositories>
+  
   <pluginRepositories>
     <pluginRepository>
       <id>apache-m2-snapshot</id>
@@ -47,13 +51,14 @@
       <url>https://repository.apache.org/content/groups/snapshots</url>
     </pluginRepository>
   </pluginRepositories>
+  
   <build>
     <defaultGoal>package</defaultGoal>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
+        <version>3.2</version>
         <configuration>
           <source>1.7</source>
           <target>1.7</target>

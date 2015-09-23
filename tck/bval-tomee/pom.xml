@@ -28,14 +28,14 @@
   <name>OpenEJB :: TCK :: Bean Validation TomEE</name>
 
   <properties>
-    <openejb.home>${project.build.directory}${file.separator}apache-tomee-webprofile-${tomee.version}</openejb.home>
+    <openejb.home>${project.build.directory}${file.separator}apache-tomee-webprofile-${project.version}</openejb.home>
     <tck.version>1.1.3.Final</tck.version>
     <validation.provider>org.apache.bval.jsr.ApacheValidationProvider</validation.provider>
   </properties>
 
   <dependencies>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>tck-common</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
@@ -53,10 +53,10 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>apache-tomee</artifactId>
       <type>zip</type>
-      <version>${tomee.version}</version>
+      <version>${project.version}</version>
       <classifier>webprofile</classifier>
       <scope>test</scope>
     </dependency>
@@ -66,9 +66,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>arquillian-tomee-remote</artifactId>
-      <version>${tomee.version}</version>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

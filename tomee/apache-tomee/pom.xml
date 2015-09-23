@@ -71,21 +71,21 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>tomee-common</artifactId>
       <version>${project.version}</version>
       <type>jar</type>
       <scope>provided</scope>
     </dependency>
     <dependency> <!-- to be sure to have it -->
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>tomee-plus-webapp</artifactId>
       <version>${project.version}</version>
       <type>war</type>
       <scope>provided</scope>
     </dependency>
     <dependency> <!-- to be sure to have it -->
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>tomee-plume-webapp</artifactId>
       <version>${project.version}</version>
       <type>war</type>
@@ -94,18 +94,19 @@
 
     <!-- needed for EJBContainer impl so scope compile -->
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>tomee-util</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-client</artifactId>
-      <version>${openejb.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-core</artifactId>
+      <version>${project.version}</version>
       <type>jar</type>
     </dependency>
   </dependencies>
@@ -232,7 +233,7 @@
         <artifactId>groovy-maven-plugin</artifactId>
         <dependencies>
           <dependency>
-            <groupId>org.apache.tomee</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>openejb-jpa-integration</artifactId>
             <version>${version.openejb}</version>
           </dependency>

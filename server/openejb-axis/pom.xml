@@ -61,7 +61,7 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-webservices</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -70,7 +70,7 @@
       <artifactId>axis</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-itests-client</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>

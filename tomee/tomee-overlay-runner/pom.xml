@@ -33,19 +33,19 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>javaee-api</artifactId>
       <scope>provided</scope>
     </dependency>
 
     <dependency> <!-- openejb-core is not needed but parent import it so setting it as provided to avoid wrong packaging -->
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>${openejb.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>tomee-catalina</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>

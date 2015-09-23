@@ -20,15 +20,19 @@
 <!-- $Rev$ $Date$ -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  
+  <modelVersion>4.0.0</modelVersion>
+  
   <parent>
     <artifactId>assembly</artifactId>
     <groupId>org.apache.tomee</groupId>
     <version>7.0.0-SNAPSHOT</version>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
+  
   <artifactId>openejb-standalone</artifactId>
   <packaging>pom</packaging>
   <name>OpenEJB :: Assembly :: Standalone</name>
+  
   <build>
     <resources>
       <resource>
@@ -118,17 +122,17 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-loader</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-core</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>javaee-api</artifactId>
     </dependency>
     <dependency>
@@ -136,50 +140,50 @@
       <artifactId>geronimo-javamail_1.4_mail</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-client</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-server</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-ejbd</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-multicast</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-hsql</artifactId>
       <version>${project.version}</version>
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-http</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-cxf</artifactId>
       <version>${project.version}</version>
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-cxf-rs</artifactId>
       <version>${project.version}</version>
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-daemon</artifactId>
       <version>${project.version}</version>
       <optional>true</optional>
@@ -190,13 +194,13 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-itests-client</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-itests-beans</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
@@ -211,12 +215,12 @@
       </properties>
       <dependencies>
         <dependency>
-          <groupId>org.apache.tomee</groupId>
+          <groupId>${project.groupId}</groupId>
           <artifactId>openejb-itests-client</artifactId>
           <version>${project.version}</version>
         </dependency>
         <dependency>
-          <groupId>org.apache.tomee</groupId>
+          <groupId>${project.groupId}</groupId>
           <artifactId>openejb-itests-beans</artifactId>
           <version>${project.version}</version>
         </dependency>
@@ -243,7 +247,7 @@
                     <property name="targetDir" value="${basedir}/target/" />
                     <property name="openejb.home" value="${targetDir}/openejb-${project.version}" />
                     <property name="openejb.dist" value="${targetDir}/openejb-${project.version}-bin.zip" />
-                    <property name="openejb.version" value="${project.version}" />
+                    <property name="tomee.version" value="${project.version}" />
 
                     <unjar src="${openejb.dist}" dest="${targetDir}" />
                     <copy file="${targetDir}/openejb-${project.version}-test.jar" todir="${openejb.home}/apps" />
@@ -260,13 +264,13 @@
                       <arg value="local" />
                     </java>
 
-                    <java jar="target/openejb-${openejb.version}-test.jar" fork="yes">
+                    <java jar="target/openejb-{project.version}-test.jar" fork="yes">
                       <sysproperty key="openejb.home" value="${openejb.home}" />
                       <jvmarg value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=${openejb.debug.suspend},address=${openejb.debug.port}" />
                       <arg value="remote" />
                     </java>
 
-                    <java jar="target/openejb-${openejb.version}-test.jar" fork="yes">
+                    <java jar="target/openejb-{project.version}-test.jar" fork="yes">
                       <sysproperty key="openejb.home" value="${openejb.home}" />
                       <jvmarg value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=${openejb.debug.suspend},address=${openejb.debug.port}" />
                       <arg value="http" />

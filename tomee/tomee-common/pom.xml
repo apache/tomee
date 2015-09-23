@@ -32,7 +32,7 @@
   <description>This module contains the classes that will be added to the common class loader</description>
   <dependencies>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-loader</artifactId>
       <version>${version.openejb}</version>
     </dependency>
@@ -45,7 +45,7 @@
       <artifactId>xbean-naming</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-client</artifactId>
       <version>${version.openejb}</version>
     </dependency>

@@ -16,23 +16,27 @@
     limitations under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  
   <modelVersion>4.0.0</modelVersion>
+  
   <groupId>org.superbiz</groupId>
   <artifactId>mbean-auto-registration</artifactId>
   <packaging>jar</packaging>
   <version>1.1.0-SNAPSHOT</version>
   <name>OpenEJB :: Examples :: MBean Auto Registration</name>
+  
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <openejb.version>7.0.0-SNAPSHOT</openejb.version>
+    <tomee.version>7.0.0-SNAPSHOT</tomee.version>
   </properties>
+  
   <build>
     <defaultGoal>install</defaultGoal>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
+        <version>3.2</version>
         <configuration>
           <source>1.7</source>
           <target>1.7</target>
@@ -40,6 +44,7 @@
       </plugin>
     </plugins>
   </build>
+  
   <repositories>
     <repository>
       <id>apache-m2-snapshot</id>
@@ -47,6 +52,7 @@
       <url>https://repository.apache.org/content/groups/snapshots</url>
     </repository>
   </repositories>
+  
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>
@@ -57,13 +63,13 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>mbean-annotation-api</artifactId>
-      <version>7.0.0-SNAPSHOT</version>
+      <version>${tomee.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.11</version>
+      <version>4.12</version>
       <scope>test</scope>
     </dependency>
     <!--
@@ -72,10 +78,11 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>7.0.0-SNAPSHOT</version>
+      <version>${tomee.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
+  
   <!--
   This section allows you to configure where to publish libraries for sharing.
   It is not required and may be deleted.  For more information see:

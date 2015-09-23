@@ -31,7 +31,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>arquillian-openejb-transaction-provider</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -108,18 +108,18 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-client</artifactId>
-      <version>${openejb.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>${openejb.version}</version>
+      <version>${project.version}</version>
       <exclusions>
         <exclusion>
           <artifactId>mbean-annotation-api</artifactId>
-          <groupId>org.apache.tomee</groupId>
+          <groupId>${project.groupId}</groupId>
         </exclusion>
         <exclusion>
           <artifactId>commons-lang3</artifactId>
@@ -127,19 +127,19 @@
         </exclusion>
         <exclusion>
           <artifactId>javaee-api-embedded</artifactId>
-          <groupId>org.apache.tomee</groupId>
+          <groupId>${project.groupId}</groupId>
         </exclusion>
         <exclusion>
           <artifactId>openejb-api</artifactId>
-          <groupId>org.apache.tomee</groupId>
+          <groupId>${project.groupId}</groupId>
         </exclusion>
         <exclusion>
           <artifactId>openejb-javaagent</artifactId>
-          <groupId>org.apache.tomee</groupId>
+          <groupId>${project.groupId}</groupId>
         </exclusion>
         <exclusion>
           <artifactId>openejb-jee</artifactId>
-          <groupId>org.apache.tomee</groupId>
+          <groupId>${project.groupId}</groupId>
         </exclusion>
         <exclusion>
           <artifactId>commons-cli</artifactId>
@@ -251,7 +251,7 @@
         </exclusion>
         <exclusion>
           <artifactId>javaee-api</artifactId>
-          <groupId>org.apache.tomee</groupId>
+          <groupId>${project.groupId}</groupId>
         </exclusion>
         <exclusion>
           <artifactId>openejb-bval</artifactId>
@@ -259,19 +259,19 @@
         </exclusion>
         <exclusion>
           <artifactId>mbean-annotation-api</artifactId>
-          <groupId>org.apache.tomee</groupId>
+          <groupId>${project.groupId}</groupId>
         </exclusion>
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>arquillian-tomee-common</artifactId>
-      <version>${tomee.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>tomee-common</artifactId>
-      <version>${tomee.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.swizzle</groupId>
@@ -291,9 +291,9 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>arquillian-common</artifactId>
-      <version>${tomee.version}</version>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
 

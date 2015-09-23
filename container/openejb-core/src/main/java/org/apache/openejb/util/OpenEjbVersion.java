@@ -52,6 +52,7 @@ public final class OpenEjbVersion {
         time = info.getProperty("time");
 
         System.setProperty("openejb.version", version);
+        System.setProperty("tomee.version", version);
     }
 
     public static OpenEjbVersion get() {

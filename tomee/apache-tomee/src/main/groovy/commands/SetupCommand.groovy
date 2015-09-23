@@ -61,9 +61,6 @@ class SetupCommand {
         String tomeeVersion = require('tomee.version')
         System.setProperty('tomee.version', tomeeVersion)
 
-        String openejbVersion = require('openejb.version')
-        System.setProperty('openejb.version', openejbVersion)
-
         String proxyHost = pom.settings.activeProxy?.host ?: ''
         String proxyPort = pom.settings.activeProxy?.port ?: ''
         if (proxyHost && proxyPort) {
@@ -105,7 +102,7 @@ class SetupCommand {
         deleteWithRetry(file: paths.getJAXBImpl())
         deleteWithRetry(file: paths.getOpenEJBTomcatLoaderJar())
         deleteWithRetry(file: paths.findTomEELibJar('jaxb-impl'))
-        deleteWithRetry(file: paths.findTomEELibJar("openejb-javaagent-${openejbVersion}.jar" as String))
+        deleteWithRetry(file: paths.findTomEELibJar("openejb-javaagent-${tomeeVersion}.jar" as String))
         // we need the one without version
 
         deleteWithRetry(file: paths.findOpenEJBWebJar('tomee-loader'))

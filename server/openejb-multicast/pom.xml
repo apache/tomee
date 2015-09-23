@@ -32,7 +32,7 @@
   <name>OpenEJB :: Server :: Multicast Discovery</name>
   <dependencies>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-server</artifactId>
       <version>${project.version}</version>
     </dependency>

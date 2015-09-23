@@ -103,13 +103,13 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>tomee-catalina</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
           <artifactId>javaee-api</artifactId>
-          <groupId>org.apache.tomee</groupId>
+          <groupId>${project.groupId}</groupId>
         </exclusion>
         <exclusion>
           <artifactId>tomcat-annotations-api</artifactId>
@@ -118,12 +118,12 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>tomee-util</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>javaee-api</artifactId>
       <scope>compile</scope>
       <classifier>tomcat</classifier>
@@ -134,7 +134,7 @@
       <version>${tomcat.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>tomee-myfaces</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -148,7 +148,7 @@
       <artifactId>myfaces-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-core</artifactId>
       <scope>compile</scope>
       <exclusions>
@@ -158,7 +158,7 @@
         </exclusion>
         <exclusion>
           <artifactId>javaee-api</artifactId>
-          <groupId>org.apache.tomee</groupId>
+          <groupId>${project.groupId}</groupId>
         </exclusion>
         <exclusion>
           <artifactId>geronimo-j2ee-connector_1.6_spec</artifactId>
@@ -281,17 +281,17 @@
       <artifactId>velocity</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-client</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>javaee-api</artifactId>
-          <groupId>org.apache.tomee</groupId>
+          <groupId>${project.groupId}</groupId>
         </exclusion>
       </exclusions>
     </dependency>
     <dependency> <!-- now in webprofile -->
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>tomee-jaxrs</artifactId>
       <version>${project.version}</version>
     </dependency>

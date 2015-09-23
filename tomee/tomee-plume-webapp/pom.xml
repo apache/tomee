@@ -37,7 +37,7 @@
   <dependencies>
 
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-core-eclipselink</artifactId>
     </dependency>
     <dependency>
@@ -46,7 +46,7 @@
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>tomee-webapp</artifactId>
       <version>${project.version}</version>
       <type>war</type>
@@ -64,34 +64,34 @@
       <artifactId>activemq-ra</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-cxf-rs</artifactId>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
-          <groupId>org.apache.tomee</groupId>
+          <groupId>${project.groupId}</groupId>
           <artifactId>javaee-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-cxf-transport</artifactId>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
-          <groupId>org.apache.tomee</groupId>
+          <groupId>${project.groupId}</groupId>
           <artifactId>javaee-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-cxf</artifactId>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
-          <groupId>org.apache.tomee</groupId>
+          <groupId>${project.groupId}</groupId>
           <artifactId>javaee-api</artifactId>
         </exclusion>
       </exclusions>
@@ -103,35 +103,35 @@
       <!-- transitive from xerces but in test scope in parent so needed here -->
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-rest</artifactId>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
-          <groupId>org.apache.tomee</groupId>
+          <groupId>${project.groupId}</groupId>
           <artifactId>javaee-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-webservices</artifactId>
       <exclusions>
         <exclusion>
-          <groupId>org.apache.tomee</groupId>
+          <groupId>${project.groupId}</groupId>
           <artifactId>javaee-api</artifactId>
         </exclusion>
       </exclusions>
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>tomee-webservices</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
-          <groupId>org.apache.tomee</groupId>
+          <groupId>${project.groupId}</groupId>
           <artifactId>javaee-api</artifactId>
         </exclusion>
       </exclusions>
@@ -149,13 +149,13 @@
 
     <!-- if i'm not mistaken we decided to remove it from our default deliveries
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-provisionning</artifactId>
       <version>${version.openejb}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-ssh</artifactId>
       <version>${version.openejb}</version>
       <scope>runtime</scope>
