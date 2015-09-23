@@ -44,7 +44,7 @@ Licensed to the Apache Software Foundation (ASF) under one or more
               <target>
                 <replace file="${project.build.directory}/classes/archetype-resources/pom.xml" token="[TOMEE]" value="${project.version}"/>
                 <replace file="${project.build.directory}/classes/archetype-resources/pom.xml" token="[OPENEJB]" value="{project.version}"/>
-                </target>
+              </target>
             </configuration>
           </execution>
         </executions>

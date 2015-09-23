@@ -23,17 +23,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  
+
   <parent>
     <artifactId>container</artifactId>
     <groupId>org.apache.tomee</groupId>
     <version>7.0.0-SNAPSHOT</version>
-  </parent>  
-  
+  </parent>
+
   <artifactId>openejb-core</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: Container :: Core</name>
-  
+
   <properties>
     <openejb.osgi.import.pkg>
       javax.annotation;version="[1.1.0,2.0.0)",
@@ -227,7 +227,7 @@
       org.apache.openejb;version=${openejb.osgi.export.version}
     </openejb.osgi.export>
   </properties>
-  
+
   <build>
     <resources>
       <resource>
@@ -335,14 +335,14 @@
             <exclude>**/TestHandler.java</exclude>
             <exclude>org/apache/openejb/cdi/**</exclude>
           </excludes>
-<!--
-          <properties>
-            <property>
-              <name>listener</name>
-              <value>org.apache.openejb.tool.junit.OpenEJBJUnitDebugListener</value>
-            </property>
-          </properties>
--->
+          <!--
+                    <properties>
+                      <property>
+                        <name>listener</name>
+                        <value>org.apache.openejb.tool.junit.OpenEJBJUnitDebugListener</value>
+                      </property>
+                    </properties>
+          -->
         </configuration>
         <executions>
           <execution>
@@ -721,7 +721,8 @@
                 -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005
                 -Xms512m -Xmx1024m -XX:PermSize=256m -XX:MaxPermSize=512m
               </argLine>
-              <runOrder>alphabetical</runOrder> <!-- make local/buildbot runs deterministic and the same -->
+              <runOrder>alphabetical</runOrder>
+              <!-- make local/buildbot runs deterministic and the same -->
               <workingDirectory>${project.basedir}/target</workingDirectory>
               <systemPropertyVariables>
                 <openejb.home>${project.basedir}/target/test-classes</openejb.home>
