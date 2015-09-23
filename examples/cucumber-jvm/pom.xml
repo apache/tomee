@@ -17,7 +17,8 @@
     limitations under the License.
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>cucumber-jvm</artifactId>
@@ -72,7 +73,7 @@
     <dependency>
       <groupId>info.cukes</groupId>
       <artifactId>cucumber-openejb</artifactId>
-      <version>1.0.10</version>
+      <version>1.2.2</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -84,13 +85,13 @@
     <dependency>
       <groupId>info.cukes</groupId>
       <artifactId>cucumber-junit</artifactId>
-      <version>1.0.10</version>
+      <version>1.2.2</version>
       <scope>test</scope>
     </dependency>
     <dependency> <!-- needed by last released versino of cucumber-openejb -->
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
-      <version>1.2.16</version>
+      <version>1.2.17</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

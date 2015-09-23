@@ -16,8 +16,8 @@
  */
 package org.superbiz.cucumber;
 
-import cucumber.annotation.en.Given;
-import cucumber.annotation.en.Then;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
 
 import javax.inject.Inject;
 
