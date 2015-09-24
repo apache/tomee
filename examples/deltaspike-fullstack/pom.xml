@@ -22,8 +22,8 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <version.myfaces2>2.2.5</version.myfaces2>
-    <version.deltaspike>1.0.1</version.deltaspike>
+    <version.myfaces2>2.2.7</version.myfaces2>
+    <version.deltaspike>1.3.0</version.deltaspike>
     <version.extval>2.0.8</version.extval>
     <version.openejb>7.0.0-SNAPSHOT</version.openejb>
     <version.tomee>7.0.0-SNAPSHOT</version.tomee>
@@ -162,7 +162,7 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.7.7</version>
+      <version>1.7.10</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
