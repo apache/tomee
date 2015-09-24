@@ -52,7 +52,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.18.1</version>
         <configuration>
-          <argLine>"-javaagent:${settings.localRepository}/org/apache/tomee/openejb-javaagent/{project.version}/openejb-javaagent-{project.version}.jar"</argLine>
+          <argLine>"-javaagent:${settings.localRepository}/org/apache/tomee/openejb-javaagent/${tomee.version}/openejb-javaagent-${tomee.version}.jar"</argLine>
         </configuration>
       </plugin>
     </plugins>
