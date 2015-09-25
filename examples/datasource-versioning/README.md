@@ -188,7 +188,7 @@ Both examples demonstrate the same, in that two driver versions can be loaded an
     INFO - OpenEJB http://tomee.apache.org/
     INFO - Startup: Thu Apr 17 14:19:55 CEST 2014
     INFO - Copyright 1999-2013 (C) Apache OpenEJB Project, All Rights Reserved.
-    INFO - Version: 4.6.1-SNAPSHOT
+    INFO - Version: 7.0.0-SNAPSHOT
     INFO - Build date: 20140417
     INFO - Build time: 01:37
     INFO - ********************************************************************************

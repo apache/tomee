@@ -54,7 +54,7 @@ public interface Pages extends ViewConfig {
     }
 
     @Secured(LoginAccessDecisionVoter.class)
-        //@Secured(value = LoginAccessDecisionVoter.class, errorView = Login.class)
+            //@Secured(value = LoginAccessDecisionVoter.class, errorView = Login.class)
     interface Secure extends Pages {
 
         @PageBean(FeedbackPage.class)

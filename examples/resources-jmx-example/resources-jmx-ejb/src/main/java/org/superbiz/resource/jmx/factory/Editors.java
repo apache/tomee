@@ -31,7 +31,9 @@ public class Editors {
     public static PropertyEditor get(final Class<?> type) {
         final PropertyEditor editor = PropertyEditorManager.findEditor(type);
 
-        if (editor != null) return editor;
+        if (editor != null) {
+            return editor;
+        }
 
         final Class<Editors> c = Editors.class;
 

@@ -30,22 +30,26 @@ import org.superbiz.deltaspike.view.security.LoginAccessDecisionVoter;
 import static org.apache.deltaspike.jsf.api.config.view.View.NavigationMode.REDIRECT;
 
 @View(navigation = REDIRECT)
-public interface Pages extends ViewConfig
-{
-    class Index implements Pages {}
+public interface Pages extends ViewConfig {
+    class Index implements Pages {
+    }
 
-    @InfoPage class About implements Pages {}
+    @InfoPage
+    class About implements Pages {
+    }
 
-    class Registration implements Pages {}
+    class Registration implements Pages {
+    }
 
-    class Login extends DefaultErrorView implements Pages /*just to benefit from the config*/ {}
+    class Login extends DefaultErrorView implements Pages /*just to benefit from the config*/ {
+    }
 
     @Secured(LoginAccessDecisionVoter.class)
-    //@Secured(value = LoginAccessDecisionVoter.class, errorView = Login.class)
-    interface Secure extends Pages
-    {
+            //@Secured(value = LoginAccessDecisionVoter.class, errorView = Login.class)
+    interface Secure extends Pages {
         @ViewControllerRef(FeedbackPage.class)
-        //optional: @View
-        class FeedbackList implements Secure {}
+                //optional: @View
+        class FeedbackList implements Secure {
+        }
     }
 }

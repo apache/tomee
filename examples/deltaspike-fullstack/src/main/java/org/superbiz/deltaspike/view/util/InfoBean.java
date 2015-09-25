@@ -41,8 +41,7 @@ import java.io.Serializable;
 @SuppressWarnings("CdiUnproxyableBeanTypesInspection")
 @Named
 @SessionScoped
-public class InfoBean implements Serializable
-{
+public class InfoBean implements Serializable {
     private static final long serialVersionUID = -1748909261695527800L;
 
     @Inject
@@ -64,12 +63,10 @@ public class InfoBean implements Serializable
     private String jpaVersion;
 
     @PostConstruct
-    protected void showWelcomeMessage()
-    {
+    protected void showWelcomeMessage() {
         String versionString = ClassUtils.getJarVersion(InfoBean.class);
 
-        if (versionString != null)
-        {
+        if (versionString != null) {
             this.applicationMessageVersionInfo = " (v" + versionString + ")";
         }
 
@@ -79,37 +76,31 @@ public class InfoBean implements Serializable
         this.jpaVersion =
                 ClassUtils.getJarVersion(Persistence.createEntityManagerFactory("demoApplicationPU").getClass());
 
-        if (!ProjectStage.IntegrationTest.equals(this.projectStage))
-        {
+        if (!ProjectStage.IntegrationTest.equals(this.projectStage)) {
             this.webappMessages.addInfo().msgWelcome();
         }
     }
 
-    public boolean isInfoPage()
-    {
+    public boolean isInfoPage() {
         ViewConfigDescriptor viewConfigDescriptor =
                 this.viewConfigResolver.getViewConfigDescriptor(FacesContext.getCurrentInstance().getViewRoot().getViewId());
 
-        if (viewConfigDescriptor == null)
-        {
+        if (viewConfigDescriptor == null) {
             return false;
         }
 
         return !viewConfigDescriptor.getMetaData(InfoPage.class).isEmpty();
     }
 
-    public String getProjectStage()
-    {
+    public String getProjectStage() {
         return this.projectStage.toString();
     }
 
-    public String getApplicationVersion()
-    {
+    public String getApplicationVersion() {
         return this.applicationMessageVersionInfo;
     }
 
-    public String getDeltaSpikeVersion()
-    {
+    public String getDeltaSpikeVersion() {
         return ClassUtils.getJarVersion(BeanManagerProvider.class);
     }
 
@@ -122,28 +113,23 @@ public class InfoBean implements Serializable
         }
     }
 
-    public String getExtValVersion()
-    {
+    public String getExtValVersion() {
         return ExtValInformation.VERSION;
     }
 
-    public String getJsfVersion()
-    {
+    public String getJsfVersion() {
         return ClassUtils.getJarVersion(FacesContext.class);
     }
 
-    public String getBeanValidationVersion()
-    {
+    public String getBeanValidationVersion() {
         return this.beanValidationVersion;
     }
 
-    public String getJpaVersion()
-    {
+    public String getJpaVersion() {
         return this.jpaVersion;
     }
 
-    public String getWindowId()
-    {
+    public String getWindowId() {
         return this.windowContext.getCurrentWindowId();
     }
 }

@@ -18,12 +18,14 @@
  */
 package org.superbiz.deltaspike.domain;
 
-import javax.persistence.*;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Version;
 import java.io.Serializable;
 
 @MappedSuperclass
-public abstract class AbstractDomainObject implements Serializable
-{
+public abstract class AbstractDomainObject implements Serializable {
     @Id
     @GeneratedValue
     private Long id;
@@ -31,13 +33,11 @@ public abstract class AbstractDomainObject implements Serializable
     @Version
     private Long version;
 
-    public boolean isTransient()
-    {
+    public boolean isTransient() {
         return this.version == null;
     }
 
-    public Long getId()
-    {
+    public Long getId() {
         return id;
     }
 }

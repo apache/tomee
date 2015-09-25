@@ -5,14 +5,14 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.superbiz.telephone;
 
@@ -28,8 +28,8 @@ import java.util.Properties;
 public class TelephoneTest extends TestCase {
 
     //START SNIPPET: setup
-	
-	//Random port to avoid test conflicts
+
+    //Random port to avoid test conflicts
     private static final int port = Integer.parseInt(System.getProperty("ejbd.port", "" + org.apache.openejb.util.NetworkUtil.getNextAvailablePort()));
 
     @Override
@@ -37,10 +37,10 @@ public class TelephoneTest extends TestCase {
         final Properties properties = new Properties();
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
         properties.setProperty("openejb.embedded.remotable", "true");
-		
-		//Just for this test we change the default port from 4204 to avoid conflicts
-		properties.setProperty("ejbd.port", "" + port);
-		
+
+        //Just for this test we change the default port from 4204 to avoid conflicts
+        properties.setProperty("ejbd.port", "" + port);
+
         // Uncomment these properties to change the defaults
         //properties.setProperty("ejbd.bind", "localhost");
         //properties.setProperty("ejbd.threads", "200");
@@ -70,7 +70,7 @@ public class TelephoneTest extends TestCase {
         assertEquals("Interesting.", telephone.listen());
 
         telephone.speak("Yep, I'm using the bean's remote interface but since the ejb container is embedded " +
-                        "in the same vm I'm just using the LocalInitialContextFactory.");
+                "in the same vm I'm just using the LocalInitialContextFactory.");
 
         assertEquals("Really?", telephone.listen());
 

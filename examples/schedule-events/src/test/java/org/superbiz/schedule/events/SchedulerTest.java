@@ -42,9 +42,9 @@ public class SchedulerTest {
     public void test() throws Exception {
 
         final ScheduleExpression schedule = new ScheduleExpression()
-                                                .hour("*")
-                                                .minute("*")
-                                                .second("*/5");
+                .hour("*")
+                .minute("*")
+                .second("*/5");
 
         scheduler.scheduleEvent(schedule, new TestEvent("five"));
 

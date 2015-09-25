@@ -71,14 +71,14 @@ public class JMXTest {
         final ObjectName objectName = new ObjectName("superbiz.test:name=Hello");
 
         Assert.assertNotNull(ejb);
-        
+
         Assert.assertEquals(20, mbs.getAttribute(objectName, "Count"));
         Assert.assertEquals(20, ejb.getCount());
-        
+
         mbs.invoke(objectName, "increment", new Object[0], new String[0]);
         Assert.assertEquals(21, mbs.getAttribute(objectName, "Count"));
         Assert.assertEquals(21, ejb.getCount());
-        
+
         ejb.increment();
         Assert.assertEquals(22, mbs.getAttribute(objectName, "Count"));
         Assert.assertEquals(22, ejb.getCount());
@@ -87,12 +87,12 @@ public class JMXTest {
         mbs.setAttribute(objectName, attribute);
         Assert.assertEquals(12345, mbs.getAttribute(objectName, "Count"));
         Assert.assertEquals(12345, ejb.getCount());
-        
+
         ejb.setCount(23456);
         Assert.assertEquals(23456, mbs.getAttribute(objectName, "Count"));
         Assert.assertEquals(23456, ejb.getCount());
 
-        Assert.assertEquals("Hello, world", mbs.invoke(objectName, "greet", new Object[] { "world" }, new String[] { String.class.getName() }));
+        Assert.assertEquals("Hello, world", mbs.invoke(objectName, "greet", new Object[]{"world"}, new String[]{String.class.getName()}));
         Assert.assertEquals("Hello, world", ejb.greet("world"));
     }
 
@@ -110,7 +110,7 @@ public class JMXTest {
         mbs.setAttribute(objectName, attribute);
         Assert.assertEquals(12345, mbs.getAttribute(objectName, "Count"));
 
-        Assert.assertEquals("Hello, world", mbs.invoke(objectName, "greet", new Object[] { "world" }, new String[] { String.class.getName() }));
+        Assert.assertEquals("Hello, world", mbs.invoke(objectName, "greet", new Object[]{"world"}, new String[]{String.class.getName()}));
     }
 
     @Test
@@ -140,7 +140,7 @@ public class JMXTest {
         Assert.assertEquals(23456, mbs.getAttribute(objectName, "Count"));
         Assert.assertEquals(23456, alternativeEjb.getCount());
 
-        Assert.assertEquals("Hello, world", mbs.invoke(objectName, "greet", new Object[] { "world" }, new String[] { String.class.getName() }));
+        Assert.assertEquals("Hello, world", mbs.invoke(objectName, "greet", new Object[]{"world"}, new String[]{String.class.getName()}));
         Assert.assertEquals("Hello, world", alternativeEjb.greet("world"));
     }
 
@@ -148,7 +148,7 @@ public class JMXTest {
     @Lock(LockType.READ)
     public static class TestEjb {
 
-        @Resource(name="jmx/Hello")
+        @Resource(name = "jmx/Hello")
         private HelloMBean helloMBean;
 
         public String greet(String name) {
@@ -172,7 +172,7 @@ public class JMXTest {
     @Lock(LockType.READ)
     public static class AlternativeEjb {
 
-        @Resource(name="jmx/Alternative")
+        @Resource(name = "jmx/Alternative")
         private AlternativeMBean alternativeMBean;
 
         public String greet(String name) {

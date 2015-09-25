@@ -21,8 +21,8 @@ import org.apache.ziplock.JarLocation;
 import java.io.File;
 
 /**
-* @version $Revision$ $Date$
-*/
+ * @version $Revision$ $Date$
+ */
 public class Basedir {
 
     public static File basedir(final String s) {

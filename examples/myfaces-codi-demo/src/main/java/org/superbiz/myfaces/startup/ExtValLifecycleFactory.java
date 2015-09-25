@@ -32,54 +32,44 @@ import javax.faces.lifecycle.LifecycleFactory;
 import java.util.Iterator;
 
 //TODO remove it after upgrading to ExtVal r8+
-public class ExtValLifecycleFactory extends LifecycleFactory
-{
+public class ExtValLifecycleFactory extends LifecycleFactory {
     private final LifecycleFactory wrapped;
 
-    public ExtValLifecycleFactory(LifecycleFactory wrapped)
-    {
+    public ExtValLifecycleFactory(LifecycleFactory wrapped) {
         this.wrapped = wrapped;
     }
 
     @Override
-    public void addLifecycle(String lifecycleId, Lifecycle lifecycle)
-    {
+    public void addLifecycle(String lifecycleId, Lifecycle lifecycle) {
         wrapped.addLifecycle(lifecycleId, lifecycle);
     }
 
     @Override
-    public Lifecycle getLifecycle(String lifecycleId)
-    {
+    public Lifecycle getLifecycle(String lifecycleId) {
         return new LifecycleWrapper(wrapped.getLifecycle(lifecycleId));
     }
 
     @Override
-    public Iterator<String> getLifecycleIds()
-    {
+    public Iterator<String> getLifecycleIds() {
         return wrapped.getLifecycleIds();
     }
 
     @Override
-    public LifecycleFactory getWrapped()
-    {
+    public LifecycleFactory getWrapped() {
         return wrapped;
     }
 
-    private static class LifecycleWrapper extends Lifecycle
-    {
+    private static class LifecycleWrapper extends Lifecycle {
         private final Lifecycle wrapped;
         private static boolean firstPhaseListener = true;
 
-        private LifecycleWrapper(Lifecycle wrapped)
-        {
+        private LifecycleWrapper(Lifecycle wrapped) {
             this.wrapped = wrapped;
         }
 
         @Override
-        public void addPhaseListener(PhaseListener listener)
-        {
-            if (firstPhaseListener)
-            {
+        public void addPhaseListener(PhaseListener listener) {
+            if (firstPhaseListener) {
                 //forced order independent of any other config
                 firstPhaseListener = false;
                 wrapped.addPhaseListener(new ExtValStartupListener());
@@ -88,35 +78,29 @@ public class ExtValLifecycleFactory extends LifecycleFactory
         }
 
         @Override
-        public void execute(FacesContext context) throws FacesException
-        {
+        public void execute(FacesContext context) throws FacesException {
             wrapped.execute(context);
         }
 
         @Override
-        public PhaseListener[] getPhaseListeners()
-        {
+        public PhaseListener[] getPhaseListeners() {
             return wrapped.getPhaseListeners();
         }
 
         @Override
-        public void removePhaseListener(PhaseListener listener)
-        {
+        public void removePhaseListener(PhaseListener listener) {
             wrapped.removePhaseListener(listener);
         }
 
         @Override
-        public void render(FacesContext context) throws FacesException
-        {
+        public void render(FacesContext context) throws FacesException {
             wrapped.render(context);
         }
     }
 
-    public static class ExtValStartupListener extends AbstractStartupListener
-    {
+    public static class ExtValStartupListener extends AbstractStartupListener {
         @Override
-        protected void init()
-        {
+        protected void init() {
             ExtValCoreConfiguration.use(new DefaultExtValCoreConfiguration() {
                 @Override
                 public ProxyHelper proxyHelper() {

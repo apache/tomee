@@ -30,24 +30,20 @@ import java.util.logging.Logger;
 @Exclude(exceptIfProjectStage = {ProjectStage.Development.class, CustomProjectStage.Debugging.class})
 
 @JsfPhaseListener
-public class DebugPhaseListener implements PhaseListener
-{
+public class DebugPhaseListener implements PhaseListener {
     private static final long serialVersionUID = 5899542118538949019L;
 
     private Logger logger = Logger.getLogger(Logger.class.getName());
 
-    public void beforePhase(PhaseEvent phaseEvent)
-    {
+    public void beforePhase(PhaseEvent phaseEvent) {
         this.logger.info("before " + phaseEvent.getPhaseId());
     }
 
-    public void afterPhase(PhaseEvent phaseEvent)
-    {
+    public void afterPhase(PhaseEvent phaseEvent) {
         this.logger.info("after " + phaseEvent.getPhaseId());
     }
 
-    public PhaseId getPhaseId()
-    {
+    public PhaseId getPhaseId() {
         return PhaseId.ANY_PHASE;
     }
 }

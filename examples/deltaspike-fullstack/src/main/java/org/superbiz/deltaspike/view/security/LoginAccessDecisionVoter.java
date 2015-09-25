@@ -29,8 +29,7 @@ import javax.inject.Inject;
 import java.util.Set;
 
 @ApplicationScoped
-public class LoginAccessDecisionVoter extends AbstractAccessDecisionVoter
-{
+public class LoginAccessDecisionVoter extends AbstractAccessDecisionVoter {
     private static final long serialVersionUID = -6332617547592896599L;
 
     @Inject
@@ -41,10 +40,8 @@ public class LoginAccessDecisionVoter extends AbstractAccessDecisionVoter
 
     @Override
     protected void checkPermission(AccessDecisionVoterContext accessDecisionVoterContext,
-                                   Set<SecurityViolation> violations)
-    {
-        if (!this.userHolder.isLoggedIn())
-        {
+                                   Set<SecurityViolation> violations) {
+        if (!this.userHolder.isLoggedIn()) {
             violations.add(newSecurityViolation(this.webappMessageBundle.msgAccessDenied()));
         }
     }

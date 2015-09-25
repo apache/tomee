@@ -16,7 +16,6 @@
  */
 package org.superbiz.quartz;
 
-import org.apache.openejb.resource.quartz.QuartzResourceAdapter;
 import org.apache.openejb.quartz.Job;
 import org.apache.openejb.quartz.JobBuilder;
 import org.apache.openejb.quartz.JobDetail;
@@ -26,6 +25,7 @@ import org.apache.openejb.quartz.Scheduler;
 import org.apache.openejb.quartz.SimpleScheduleBuilder;
 import org.apache.openejb.quartz.SimpleTrigger;
 import org.apache.openejb.quartz.TriggerBuilder;
+import org.apache.openejb.resource.quartz.QuartzResourceAdapter;
 
 import javax.ejb.Stateless;
 import javax.naming.InitialContext;
@@ -46,12 +46,12 @@ public class JobBean implements JobScheduler {
 
         //Schedule my 'test' job to run now
         final SimpleTrigger trigger = TriggerBuilder.newTrigger()
-                                                    .withIdentity("trigger1", "group1")
-                                                    .forJob(jd)
-                                                    .withSchedule(SimpleScheduleBuilder.simpleSchedule()
-                                                                                       .withRepeatCount(0)
-                                                                                       .withIntervalInSeconds(0))
-                                                    .build();
+                .withIdentity("trigger1", "group1")
+                .forJob(jd)
+                .withSchedule(SimpleScheduleBuilder.simpleSchedule()
+                        .withRepeatCount(0)
+                        .withIntervalInSeconds(0))
+                .build();
         return s.scheduleJob(jd, trigger);
     }
 

@@ -25,41 +25,35 @@ import javax.enterprise.inject.Model;
 import javax.inject.Inject;
 
 @Model
-public class MenuBean
-{
+public class MenuBean {
     @Inject
     private GroupedConversationManager groupedConversationManager;
 
-    public Class<? extends Pages> home()
-    {
+    public Class<? extends Pages> home() {
         //close all conversations of the current window
         this.groupedConversationManager.closeConversations();
         return Pages.Index.class;
     }
 
-    public Class<? extends Pages.Secure> feedback()
-    {
+    public Class<? extends Pages.Secure> feedback() {
         //close all conversations of the current window
         this.groupedConversationManager.closeConversations();
         return Pages.Secure.FeedbackList.class;
     }
 
-    public Class<? extends Pages> about()
-    {
+    public Class<? extends Pages> about() {
         //close all conversations of the current window
         this.groupedConversationManager.closeConversations();
         return Pages.About.class;
     }
 
-    public Class<? extends Pages> login()
-    {
+    public Class<? extends Pages> login() {
         //close all conversations of the current window
         this.groupedConversationManager.closeConversations();
         return Pages.Login.class;
     }
 
-    public Class<? extends Pages> register()
-    {
+    public Class<? extends Pages> register() {
         //close all conversations of the current window
         this.groupedConversationManager.closeConversations();
         return Pages.Registration.class;

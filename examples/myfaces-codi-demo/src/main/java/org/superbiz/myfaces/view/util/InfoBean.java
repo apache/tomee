@@ -73,10 +73,10 @@ public class InfoBean implements Serializable {
         }
 
         this.beanValidationVersion =
-            ClassUtils.getJarVersion(Validation.buildDefaultValidatorFactory().getValidator().getClass());
+                ClassUtils.getJarVersion(Validation.buildDefaultValidatorFactory().getValidator().getClass());
 
         this.jpaVersion =
-            ClassUtils.getJarVersion(Persistence.createEntityManagerFactory("demoApplicationPU").getClass());
+                ClassUtils.getJarVersion(Persistence.createEntityManagerFactory("demoApplicationPU").getClass());
 
         if (!ProjectStage.IntegrationTest.equals(this.projectStage)) {
             this.messageContext.message().text("{msgWelcome}").add();
@@ -85,7 +85,7 @@ public class InfoBean implements Serializable {
 
     public boolean isInfoPage() {
         ViewConfigDescriptor viewConfigDescriptor =
-            this.viewConfigResolver.getViewConfigDescriptor(this.facesContext.getViewRoot().getViewId());
+                this.viewConfigResolver.getViewConfigDescriptor(this.facesContext.getViewRoot().getViewId());
 
         if (viewConfigDescriptor == null) {
             return false;

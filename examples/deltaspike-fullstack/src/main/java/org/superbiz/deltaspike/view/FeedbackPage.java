@@ -32,8 +32,7 @@ import java.util.List;
 
 @Named
 @GroupedConversationScoped
-public class FeedbackPage implements Serializable
-{
+public class FeedbackPage implements Serializable {
     private static final long serialVersionUID = 744025508253889974L;
 
     private List<Feedback> feedbackList;
@@ -47,19 +46,16 @@ public class FeedbackPage implements Serializable
     private Feedback feedback;
 
     @PostConstruct
-    protected void init()
-    {
+    protected void init() {
         this.feedback = new Feedback();
     }
 
     @PreRenderView
-    public void reloadFeedbackList()
-    {
+    public void reloadFeedbackList() {
         this.feedbackList = this.feedbackRepository.findAll();
     }
 
-    public void save()
-    {
+    public void save() {
         this.feedbackRepository.save(this.feedback);
         this.conversation.close();
     }
@@ -68,13 +64,11 @@ public class FeedbackPage implements Serializable
      * generated
      */
 
-    public List<Feedback> getFeedbackList()
-    {
+    public List<Feedback> getFeedbackList() {
         return feedbackList;
     }
 
-    public Feedback getFeedback()
-    {
+    public Feedback getFeedback() {
         return feedback;
     }
 }

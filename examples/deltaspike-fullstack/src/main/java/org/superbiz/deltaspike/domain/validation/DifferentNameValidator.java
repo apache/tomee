@@ -23,14 +23,11 @@ import org.superbiz.deltaspike.domain.User;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-public class DifferentNameValidator implements ConstraintValidator<DifferentName, User>
-{
-    public void initialize(DifferentName differentName)
-    {
+public class DifferentNameValidator implements ConstraintValidator<DifferentName, User> {
+    public void initialize(DifferentName differentName) {
     }
 
-    public boolean isValid(User person, ConstraintValidatorContext constraintValidatorContext)
-    {
+    public boolean isValid(User person, ConstraintValidatorContext constraintValidatorContext) {
         return person == null || !(person.getFirstName() != null && person.getFirstName().equals(person.getLastName()));
     }
 }

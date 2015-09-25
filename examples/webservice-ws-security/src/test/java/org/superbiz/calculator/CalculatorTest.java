@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,18 +45,18 @@ import java.util.Properties;
 public class CalculatorTest extends TestCase {
 
     //START SNIPPET: setup
-	
-	//Random port to avoid test conflicts
+
+    //Random port to avoid test conflicts
     private static final int port = Integer.parseInt(System.getProperty("httpejbd.port", "" + org.apache.openejb.util.NetworkUtil.getNextAvailablePort()));
-	
+
     @Override
     protected void setUp() throws Exception {
         final Properties properties = new Properties();
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
         properties.setProperty("openejb.embedded.remotable", "true");
-		
-		//Just for this test we change the default port from 4204 to avoid conflicts
-		properties.setProperty("httpejbd.port", "" + port);
+
+        //Just for this test we change the default port from 4204 to avoid conflicts
+        properties.setProperty("httpejbd.port", "" + port);
 
         new InitialContext(properties);
     }
@@ -65,7 +65,7 @@ public class CalculatorTest extends TestCase {
     //START SNIPPET: webservice
     public void testCalculatorViaWsInterface() throws Exception {
         final Service calcService = Service.create(new URL("http://localhost:" + port + "/webservice-ws-security/CalculatorImpl?wsdl"),
-                                                   new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
+                new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
         assertNotNull(calcService);
 
         final CalculatorWs calc = calcService.getPort(CalculatorWs.class);
@@ -95,13 +95,13 @@ public class CalculatorTest extends TestCase {
 
     public void testCalculatorViaWsInterfaceWithTimestamp1way() throws Exception {
         final Service calcService = Service.create(new URL("http://localhost:" + port + "/webservice-ws-security/CalculatorImplTimestamp1way?wsdl"),
-                                                   new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
+                new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
         assertNotNull(calcService);
 
         // for debugging (ie. TCPMon)
         calcService.addPort(new QName("http://superbiz.org/wsdl",
-                                      "CalculatorWsService2"), SOAPBinding.SOAP12HTTP_BINDING,
-                            "http://127.0.0.1:8204/CalculatorImplTimestamp1way");
+                        "CalculatorWsService2"), SOAPBinding.SOAP12HTTP_BINDING,
+                "http://127.0.0.1:8204/CalculatorImplTimestamp1way");
 
         //        CalculatorWs calc = calcService.getPort(
         //        	new QName("http://superbiz.org/wsdl", "CalculatorWsService2"),
@@ -123,13 +123,13 @@ public class CalculatorTest extends TestCase {
 
     public void testCalculatorViaWsInterfaceWithTimestamp2ways() throws Exception {
         final Service calcService = Service.create(new URL("http://localhost:" + port + "/webservice-ws-security/CalculatorImplTimestamp2ways?wsdl"),
-                                                   new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
+                new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
         assertNotNull(calcService);
 
         // for debugging (ie. TCPMon)
         calcService.addPort(new QName("http://superbiz.org/wsdl",
-                                      "CalculatorWsService2"), SOAPBinding.SOAP12HTTP_BINDING,
-                            "http://127.0.0.1:8204/CalculatorImplTimestamp2ways");
+                        "CalculatorWsService2"), SOAPBinding.SOAP12HTTP_BINDING,
+                "http://127.0.0.1:8204/CalculatorImplTimestamp2ways");
 
         //        CalculatorWs calc = calcService.getPort(
         //        	new QName("http://superbiz.org/wsdl", "CalculatorWsService2"),
@@ -157,13 +157,13 @@ public class CalculatorTest extends TestCase {
 
     public void testCalculatorViaWsInterfaceWithUsernameTokenPlainPassword() throws Exception {
         final Service calcService = Service.create(new URL("http://localhost:" + port + "/webservice-ws-security/CalculatorImplUsernameTokenPlainPassword?wsdl"),
-                                                   new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
+                new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
         assertNotNull(calcService);
 
         // for debugging (ie. TCPMon)
         calcService.addPort(new QName("http://superbiz.org/wsdl",
-                                      "CalculatorWsService2"), SOAPBinding.SOAP12HTTP_BINDING,
-                            "http://127.0.0.1:8204/CalculatorImplUsernameTokenPlainPassword");
+                        "CalculatorWsService2"), SOAPBinding.SOAP12HTTP_BINDING,
+                "http://127.0.0.1:8204/CalculatorImplUsernameTokenPlainPassword");
 
         //        CalculatorWs calc = calcService.getPort(
         //        	new QName("http://superbiz.org/wsdl", "CalculatorWsService2"),
@@ -196,13 +196,13 @@ public class CalculatorTest extends TestCase {
 
     public void testCalculatorViaWsInterfaceWithUsernameTokenHashedPassword() throws Exception {
         final Service calcService = Service.create(new URL("http://localhost:" + port + "/webservice-ws-security/CalculatorImplUsernameTokenHashedPassword?wsdl"),
-                                                   new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
+                new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
         assertNotNull(calcService);
 
         // for debugging (ie. TCPMon)
         calcService.addPort(new QName("http://superbiz.org/wsdl",
-                                      "CalculatorWsService2"), SOAPBinding.SOAP12HTTP_BINDING,
-                            "http://127.0.0.1:8204/CalculatorImplUsernameTokenHashedPassword");
+                        "CalculatorWsService2"), SOAPBinding.SOAP12HTTP_BINDING,
+                "http://127.0.0.1:8204/CalculatorImplUsernameTokenHashedPassword");
 
         //        CalculatorWs calc = calcService.getPort(
         //        	new QName("http://superbiz.org/wsdl", "CalculatorWsService2"),
@@ -235,13 +235,13 @@ public class CalculatorTest extends TestCase {
 
     public void testCalculatorViaWsInterfaceWithUsernameTokenPlainPasswordEncrypt() throws Exception {
         final Service calcService = Service.create(new URL("http://localhost:" + port + "/webservice-ws-security/CalculatorImplUsernameTokenPlainPasswordEncrypt?wsdl"),
-                                                   new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
+                new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
         assertNotNull(calcService);
 
         // for debugging (ie. TCPMon)
         calcService.addPort(new QName("http://superbiz.org/wsdl",
-                                      "CalculatorWsService2"), SOAPBinding.SOAP12HTTP_BINDING,
-                            "http://127.0.0.1:8204/CalculatorImplUsernameTokenPlainPasswordEncrypt");
+                        "CalculatorWsService2"), SOAPBinding.SOAP12HTTP_BINDING,
+                "http://127.0.0.1:8204/CalculatorImplUsernameTokenPlainPasswordEncrypt");
 
         //        CalculatorWs calc = calcService.getPort(
         //        	new QName("http://superbiz.org/wsdl", "CalculatorWsService2"),
@@ -255,7 +255,7 @@ public class CalculatorTest extends TestCase {
 
         final Map<String, Object> outProps = new HashMap<String, Object>();
         outProps.put(WSHandlerConstants.ACTION, WSHandlerConstants.USERNAME_TOKEN
-                                                + " " + WSHandlerConstants.ENCRYPT);
+                + " " + WSHandlerConstants.ENCRYPT);
         outProps.put(WSHandlerConstants.USER, "jane");
         outProps.put(WSHandlerConstants.PASSWORD_TYPE, WSConstants.PW_TEXT);
         outProps.put(WSHandlerConstants.PW_CALLBACK_REF, new CallbackHandler() {
@@ -277,13 +277,13 @@ public class CalculatorTest extends TestCase {
 
     public void testCalculatorViaWsInterfaceWithSign() throws Exception {
         final Service calcService = Service.create(new URL("http://localhost:" + port + "/webservice-ws-security/CalculatorImplSign?wsdl"),
-                                                   new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
+                new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
         assertNotNull(calcService);
 
         // for debugging (ie. TCPMon)
         calcService.addPort(new QName("http://superbiz.org/wsdl",
-                                      "CalculatorWsService2"), SOAPBinding.SOAP12HTTP_BINDING,
-                            "http://127.0.0.1:8204/CalculatorImplSign");
+                        "CalculatorWsService2"), SOAPBinding.SOAP12HTTP_BINDING,
+                "http://127.0.0.1:8204/CalculatorImplSign");
 
         //      CalculatorWs calc = calcService.getPort(
         //	new QName("http://superbiz.org/wsdl", "CalculatorWsService2"),

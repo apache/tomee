@@ -35,8 +35,7 @@ import javax.inject.Inject;
 import javax.persistence.PersistenceException;
 
 @RunWith(CdiTestRunner.class)
-public class PageBeanTest
-{
+public class PageBeanTest {
     @Inject
     private RegistrationPage registrationPage;
 
@@ -53,8 +52,7 @@ public class PageBeanTest
     private ContextControl contextControl;
 
     @Test(expected = PersistenceException.class)
-    public void duplicatedUser()
-    {
+    public void duplicatedUser() {
         final String userName = "tomee";
         final String firstName = "Apache";
         final String lastName = "TomEE";
@@ -64,8 +62,7 @@ public class PageBeanTest
     }
 
     @Test
-    public void saveUser()
-    {
+    public void saveUser() {
         final String userName = "GP";
         final String firstName = "Gerhard";
         final String lastName = "Petracek";
@@ -89,8 +86,7 @@ public class PageBeanTest
     }
 
     @Test
-    public void saveUserAndLogin()
-    {
+    public void saveUserAndLogin() {
         final String userName = "tt";
         final String firstName = "Tom";
         final String lastName = "Tester";

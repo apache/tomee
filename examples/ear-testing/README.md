@@ -125,7 +125,7 @@ And finally, the `business-logic/pom.xml` which is setup to support embedded tes
         <dependency>
           <groupId>org.apache.openejb</groupId>
           <artifactId>openejb-core</artifactId>
-          <version>4.0.0-beta-1</version>
+          <version>7.0.0-SNAPSHOT</version>
           <scope>test</scope>
         </dependency>
       </dependencies>
@@ -179,7 +179,7 @@ The test code is the same as always:
      T E S T S
     -------------------------------------------------------
     Running org.superbiz.logic.MoviesTest
-    Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
+    Apache OpenEJB 7.0.0-SNAPSHOT    build: 20111002-04:06
     http://tomee.apache.org/
     INFO - openejb.home = /Users/dblevins/examples/ear-testing/business-logic
     INFO - openejb.base = /Users/dblevins/examples/ear-testing/business-logic

@@ -95,7 +95,7 @@ public class Alternative implements AlternativeMBean {
                 final Object value = properties.remove(attributeName);
 
                 if (prefix != null) {
-                    if (! attributeName.startsWith(prefix + ".")) {
+                    if (!attributeName.startsWith(prefix + ".")) {
                         continue;
                     } else {
                         attributeName = attributeName.substring(prefix.length() + 1);

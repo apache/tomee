@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,10 +22,6 @@ import org.apache.openejb.testing.Classes;
 import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.Module;
-
-import static java.lang.Integer.toString;
-import static org.junit.Assert.assertTrue;
-
 import org.apache.openejb.testng.PropertiesBuilder;
 import org.apache.openejb.util.NetworkUtil;
 import org.junit.Test;
@@ -38,6 +34,8 @@ import java.net.URL;
 import java.util.Date;
 import java.util.Properties;
 
+import static org.junit.Assert.assertTrue;
+
 @EnableServices("jax-ws")
 @RunWith(ApplicationComposer.class)
 public class MeetingPlannerTest {
@@ -47,8 +45,9 @@ public class MeetingPlannerTest {
     public Properties configuration() {
         return new PropertiesBuilder().p("httpejbd.port", Integer.toString(JAX_WS_PORT)).build();
     }
+
     @Module
-    @Classes(cdi = true, value = { MeetingPlannerImpl.class, LazyAgenda.class })
+    @Classes(cdi = true, value = {MeetingPlannerImpl.class, LazyAgenda.class})
     public WebApp war() {
         return new WebApp()
                 .contextRoot("/demo")

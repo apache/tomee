@@ -18,6 +18,5 @@
  */
 package org.superbiz.deltaspike.domain.validation;
 
-public interface UniqueUserName
-{
+public interface UniqueUserName {
 }

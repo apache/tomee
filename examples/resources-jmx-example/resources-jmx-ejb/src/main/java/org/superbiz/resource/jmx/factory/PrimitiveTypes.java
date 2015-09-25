@@ -121,5 +121,6 @@ public enum PrimitiveTypes {
     };
 
     public abstract String getDefaultValue();
+
     public abstract Class<?> getWraper();
 }

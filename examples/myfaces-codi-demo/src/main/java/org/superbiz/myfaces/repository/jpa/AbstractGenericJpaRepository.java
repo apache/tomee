@@ -47,7 +47,7 @@ public abstract class AbstractGenericJpaRepository<T extends AbstractDomainObjec
         for (Type interfaceClass : currentClass.getGenericInterfaces()) {
             for (Type genericInterfaceClass : ((Class) interfaceClass).getGenericInterfaces()) {
                 if (genericInterfaceClass instanceof ParameterizedType &&
-                    GenericRepository.class.isAssignableFrom((Class) ((ParameterizedType) genericInterfaceClass).getRawType())) {
+                        GenericRepository.class.isAssignableFrom((Class) ((ParameterizedType) genericInterfaceClass).getRawType())) {
                     for (Type parameterizedType : ((ParameterizedType) genericInterfaceClass).getActualTypeArguments()) {
                         if (AbstractDomainObject.class.isAssignableFrom((Class) parameterizedType)) {
                             this.entityClass = (Class<? extends AbstractDomainObject>) parameterizedType;
@@ -88,7 +88,7 @@ public abstract class AbstractGenericJpaRepository<T extends AbstractDomainObjec
 
     public List<T> loadAll() {
         return (List<T>) this.entityManager.createQuery("select entity from " + this.entityClass.getSimpleName() + " entity")
-                                           .getResultList();
+                .getResultList();
     }
 
     public T loadById(Long id) {

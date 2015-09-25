@@ -5,14 +5,14 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package jug.rest.arquillian;
 
@@ -38,7 +38,6 @@ import org.junit.runner.RunWith;
 import java.io.BufferedInputStream;
 import java.net.URL;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 @RunAsClient
@@ -51,27 +50,27 @@ public class SubjectServiceTomEETest {
     @Deployment
     public static WebArchive archive() {
         return new WebModule(SubjectServiceTomEETest.class).getArchive()
-                   .addClass(VoteCounter.class)
-                   .addPackage(Subject.class.getPackage()) // domain
-                   .addAsWebInfResource(new ClassLoaderAsset("META-INF/persistence.xml"), "persistence.xml")
-                   .addAsWebInfResource(new ClassLoaderAsset("META-INF/env-entries.properties"), "env-entries.properties")
-                   .addAsWebInfResource(new ClassLoaderAsset("META-INF/resources.xml"), "resources.xml")
-                   .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
-                   .addPackage(PollingRouter.class.getPackage()) // core
-                   .addPackage(SubjectDao.class.getPackage()) // core
-                   .addPackage(SubjectService.class.getPackage()) // front
-                   .addAsLibrary(JarLocation.jarLocation(IOUtils.class)) // helper for client test
-                   .addAsLibrary(JarLocation.jarLocation(Test.class)); // junit
+                .addClass(VoteCounter.class)
+                .addPackage(Subject.class.getPackage()) // domain
+                .addAsWebInfResource(new ClassLoaderAsset("META-INF/persistence.xml"), "persistence.xml")
+                .addAsWebInfResource(new ClassLoaderAsset("META-INF/env-entries.properties"), "env-entries.properties")
+                .addAsWebInfResource(new ClassLoaderAsset("META-INF/resources.xml"), "resources.xml")
+                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
+                .addPackage(PollingRouter.class.getPackage()) // core
+                .addPackage(SubjectDao.class.getPackage()) // core
+                .addPackage(SubjectService.class.getPackage()) // front
+                .addAsLibrary(JarLocation.jarLocation(IOUtils.class)) // helper for client test
+                .addAsLibrary(JarLocation.jarLocation(Test.class)); // junit
     }
 
     @Test
     public void checkThereIsSomeOutput() throws Exception {
         final String base = url.toExternalForm();
         WebClient.create(base)
-            .path("api/subject/create")
-            .accept("application/json")
-            .query("name", "SubjectServiceTomEETest")
-            .post("SubjectServiceTomEETest");
+                .path("api/subject/create")
+                .accept("application/json")
+                .query("name", "SubjectServiceTomEETest")
+                .post("SubjectServiceTomEETest");
         for (int i = 0; i < 2; i++) { // we have a dynamic datasource so let it round
             final URL url = new URL(base + "api/subject/list");
             final String output = IOUtils.toString(new BufferedInputStream(url.openStream()));

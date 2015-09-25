@@ -40,8 +40,8 @@ public class AlternateDataSourceTest {
     public static WebArchive createDeployment() {
 
         return ShrinkWrap.create(WebArchive.class, "test.war")
-            .addClasses(DataSourceTester.class)
-            .addAsResource(new ClassLoaderAsset("META-INF/ejb-jar.xml"), "META-INF/ejb-jar.xml");
+                .addClasses(DataSourceTester.class)
+                .addAsResource(new ClassLoaderAsset("META-INF/ejb-jar.xml"), "META-INF/ejb-jar.xml");
         //We are using src/test/conf/tomee.xml, but this also works - .addAsResource(new ClassLoaderAsset("META-INF/resources.xml"), "META-INF/resources.xml");
         //Or even using a persistence context - .addAsResource(new ClassLoaderAsset("META-INF/persistence.xml"), "META-INF/persistence.xml");
     }

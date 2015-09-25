@@ -15,11 +15,11 @@ if you don't use workarounds like https://github.com/rmannibucau/persistence-wit
     oct. 01, 2014 6:30:23 PM org.apache.openejb.arquillian.common.Setup findHome
     INFOS: Unable to find home in: /home/rmannibucau/dev/Apache/tomee-trunk/examples/arquillian-jpa/target/apache-tomee-remote
     oct. 01, 2014 6:30:23 PM org.apache.openejb.arquillian.common.MavenCache getArtifact
-    INFOS: Downloading org.apache.openejb:apache-tomee:2.0.0-SNAPSHOT:zip:webprofile please wait...
+    INFOS: Downloading org.apache.openejb:apache-tomee:7.0.0-SNAPSHOT:zip:webprofile please wait...
     oct. 01, 2014 6:30:23 PM org.apache.openejb.arquillian.common.Zips unzip
-    INFOS: Extracting '/home/rmannibucau/.m2/repository/org/apache/openejb/apache-tomee/2.0.0-SNAPSHOT/apache-tomee-2.0.0-SNAPSHOT-webprofile.zip' to '/home/rmannibucau/dev/Apache/tomee-trunk/examples/arquillian-jpa/target/apache-tomee-remote'
+    INFOS: Extracting '/home/rmannibucau/.m2/repository/org/apache/openejb/apache-tomee/7.0.0-SNAPSHOT/apache-tomee-7.0.0-SNAPSHOT-webprofile.zip' to '/home/rmannibucau/dev/Apache/tomee-trunk/examples/arquillian-jpa/target/apache-tomee-remote'
     oct. 01, 2014 6:30:24 PM org.apache.tomee.arquillian.remote.RemoteTomEEContainer configure
-    INFOS: Downloaded container to: /home/rmannibucau/dev/Apache/tomee-trunk/examples/arquillian-jpa/target/apache-tomee-remote/apache-tomee-webprofile-2.0.0-SNAPSHOT
+    INFOS: Downloaded container to: /home/rmannibucau/dev/Apache/tomee-trunk/examples/arquillian-jpa/target/apache-tomee-remote/apache-tomee-webprofile-7.0.0-SNAPSHOT
     INFOS - Server version: Apache Tomcat/8.0.14
     INFOS - Server built:   Sep 24 2014 09:01:51
     INFOS - Server number:  8.0.14.0
@@ -38,15 +38,15 @@ if you don't use workarounds like https://github.com/rmannibucau/persistence-wit
     INFOS - OpenEJB http://tomee.apache.org/
     INFOS - Startup: Wed Oct 01 18:30:26 CEST 2014
     INFOS - Copyright 1999-2013 (C) Apache OpenEJB Project, All Rights Reserved.
-    INFOS - Version: 5.0.0-SNAPSHOT
+    INFOS - Version: 7.0.0-SNAPSHOT
     INFOS - Build date: 20141001
     INFOS - Build time: 04:53
     INFOS - ********************************************************************************
-    INFOS - openejb.home = /home/rmannibucau/dev/Apache/tomee-trunk/examples/arquillian-jpa/target/apache-tomee-remote/apache-tomee-webprofile-2.0.0-SNAPSHOT
-    INFOS - openejb.base = /home/rmannibucau/dev/Apache/tomee-trunk/examples/arquillian-jpa/target/apache-tomee-remote/apache-tomee-webprofile-2.0.0-SNAPSHOT
+    INFOS - openejb.home = /home/rmannibucau/dev/Apache/tomee-trunk/examples/arquillian-jpa/target/apache-tomee-remote/apache-tomee-webprofile-7.0.0-SNAPSHOT
+    INFOS - openejb.base = /home/rmannibucau/dev/Apache/tomee-trunk/examples/arquillian-jpa/target/apache-tomee-remote/apache-tomee-webprofile-7.0.0-SNAPSHOT
     INFOS - Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@13158bbd
     INFOS - Succeeded in installing singleton service
-    INFOS - openejb configuration file is '/home/rmannibucau/dev/Apache/tomee-trunk/examples/arquillian-jpa/target/apache-tomee-remote/apache-tomee-webprofile-2.0.0-SNAPSHOT/conf/tomee.xml'
+    INFOS - openejb configuration file is '/home/rmannibucau/dev/Apache/tomee-trunk/examples/arquillian-jpa/target/apache-tomee-remote/apache-tomee-webprofile-7.0.0-SNAPSHOT/conf/tomee.xml'
     INFOS - Configuring Service(id=Tomcat Security Service, type=SecurityService, provider-id=Tomcat Security Service)
     INFOS - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
     INFOS - Configuring Service(id=demoDataSource, type=Resource, provider-id=Default JDBC Database)
@@ -93,7 +93,7 @@ if you don't use workarounds like https://github.com/rmannibucau/persistence-wit
     INFOS - Importing a Tomcat Resource with id 'UserDatabase' of type 'org.apache.catalina.UserDatabase'.
     INFOS - Creating Resource(id=UserDatabase)
     INFOS - Démarrage du service Catalina
-    INFOS - Starting Servlet Engine: Apache Tomcat (TomEE)/8.0.14 (2.0.0-SNAPSHOT)
+    INFOS - Starting Servlet Engine: Apache Tomcat (TomEE)/8.0.14 (7.0.0-SNAPSHOT)
     INFOS - Starting ProtocolHandler ["http-nio-52256"]
     INFOS - Starting ProtocolHandler ["ajp-nio-40071"]
     INFOS - Server startup in 140 ms
@@ -108,7 +108,7 @@ if you don't use workarounds like https://github.com/rmannibucau/persistence-wit
     INFOS - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
     INFOS - Auto-creating a container for bean UserPersistenceTest_org.superbiz.arquillian.test.persistence.PersistenceTest: Container(type=MANAGED, id=Default Managed Container)
     INFOS - Creating Container(id=Default Managed Container)
-    INFOS - Using directory /home/rmannibucau/dev/Apache/tomee-trunk/examples/arquillian-jpa/target/apache-tomee-remote/apache-tomee-webprofile-2.0.0-SNAPSHOT/temp for stateful session passivation
+    INFOS - Using directory /home/rmannibucau/dev/Apache/tomee-trunk/examples/arquillian-jpa/target/apache-tomee-remote/apache-tomee-webprofile-7.0.0-SNAPSHOT/temp for stateful session passivation
     INFOS - Configuring PersistenceUnit(name=demoApplicationPU)
     INFOS - Auto-creating a Resource with id 'demoDataSourceNonJta' of type 'DataSource for 'demoApplicationPU'.
     INFOS - Configuring Service(id=demoDataSourceNonJta, type=Resource, provider-id=demoDataSource)

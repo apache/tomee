@@ -64,9 +64,9 @@ public class RegistrationPage implements Serializable {
     public Class<? extends Pages> register() {
         this.userRepository.save(this.user);
         this.messageContext.message()
-                           .text("{msgUserRegistered}")
-                           .namedArgument("userName", this.user.getUserName())
-                           .add();
+                .text("{msgUserRegistered}")
+                .namedArgument("userName", this.user.getUserName())
+                .add();
 
         //in order to re-use the page-bean for the login-page
         this.conversation.close();

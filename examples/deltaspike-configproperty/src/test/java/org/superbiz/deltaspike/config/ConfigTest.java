@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,12 +43,12 @@ public class ConfigTest {
     @Deployment
     public static WebArchive jar() {
         return ShrinkWrap.create(WebArchive.class)
-                         .addClasses(Counter.class, MyConfigSource.class, MapConfigurationProvider.class)
-                         .addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
-                         .addAsResource(new ClassLoaderAsset("my-app-config.properties"), "my-app-config.properties")
-                         .addAsLibraries(JarLocation.jarLocation(ConfigSourceProvider.class))
-                         .addAsLibraries(JarLocation.jarLocation(DefaultConfigSourceProvider.class))
-                         .addAsServiceProvider(ConfigSourceProvider.class, MyConfigSourceProvider.class);
+                .addClasses(Counter.class, MyConfigSource.class, MapConfigurationProvider.class)
+                .addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
+                .addAsResource(new ClassLoaderAsset("my-app-config.properties"), "my-app-config.properties")
+                .addAsLibraries(JarLocation.jarLocation(ConfigSourceProvider.class))
+                .addAsLibraries(JarLocation.jarLocation(DefaultConfigSourceProvider.class))
+                .addAsServiceProvider(ConfigSourceProvider.class, MyConfigSourceProvider.class);
     }
 
     @Test

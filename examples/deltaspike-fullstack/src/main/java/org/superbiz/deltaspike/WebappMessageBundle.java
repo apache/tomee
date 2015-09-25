@@ -23,8 +23,7 @@ import org.apache.deltaspike.core.api.message.MessageContextConfig;
 
 @MessageBundle
 @MessageContextConfig(messageSource = "org.superbiz.deltaspike.i18n.messages")
-public interface WebappMessageBundle
-{
+public interface WebappMessageBundle {
     String msgAccessDenied();
 
     String msgUserRegistered(String userName);

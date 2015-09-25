@@ -18,6 +18,5 @@
  */
 package org.superbiz.deltaspike.domain.validation;
 
-public interface Partial
-{
+public interface Partial {
 }

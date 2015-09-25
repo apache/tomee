@@ -35,8 +35,7 @@ import java.io.Serializable;
 
 @Named
 @GroupedConversationScoped
-public class RegistrationPage implements Serializable
-{
+public class RegistrationPage implements Serializable {
     private static final long serialVersionUID = 3844502441069448490L;
 
     @Inject
@@ -57,8 +56,7 @@ public class RegistrationPage implements Serializable
     private String repeatedPassword;
 
     @BeanValidation(useGroups = Full.class) //triggers UniqueUserNameValidator
-    public Class<? extends Pages> register()
-    {
+    public Class<? extends Pages> register() {
         this.userService.save(this.user);
         this.webappMessages.addInfo().msgUserRegistered(this.user.getUserName());
 
@@ -68,11 +66,9 @@ public class RegistrationPage implements Serializable
         return Pages.Login.class;
     }
 
-    public Class<? extends Pages> login()
-    {
+    public Class<? extends Pages> login() {
         User user = this.userService.findByUserName(this.user.getUserName());
-        if (user != null && user.getPassword().equals(this.user.getPassword()))
-        {
+        if (user != null && user.getPassword().equals(this.user.getPassword())) {
             this.webappMessages.addInfo().msgLoginSuccessful();
             this.userHolder.setCurrentUser(user);
             return Pages.About.class;
@@ -83,18 +79,15 @@ public class RegistrationPage implements Serializable
         return null;
     }
 
-    public User getUser()
-    {
+    public User getUser() {
         return user;
     }
 
-    public String getRepeatedPassword()
-    {
+    public String getRepeatedPassword() {
         return repeatedPassword;
     }
 
-    public void setRepeatedPassword(String repeatedPassword)
-    {
+    public void setRepeatedPassword(String repeatedPassword) {
         this.repeatedPassword = repeatedPassword;
     }
 }

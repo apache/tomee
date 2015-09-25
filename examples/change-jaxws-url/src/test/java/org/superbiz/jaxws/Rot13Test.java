@@ -39,8 +39,8 @@ public class Rot13Test {
     @Deployment(testable = false)
     public static WebArchive war() {
         return ShrinkWrap.create(WebArchive.class)
-            .addClass(Rot13.class)
-            .addAsWebInfResource(new ClassLoaderAsset("META-INF/openejb-jar.xml"), ArchivePaths.create("openejb-jar.xml"));
+                .addClass(Rot13.class)
+                .addAsWebInfResource(new ClassLoaderAsset("META-INF/openejb-jar.xml"), ArchivePaths.create("openejb-jar.xml"));
     }
 
     @Test
