@@ -29,6 +29,8 @@
     <rat:report xmlns:rat="antlib:org.apache.rat.anttasks"> 
       <fileset dir="."> 
         <patternset id="exclusions"> 
+          <exclude name=".git"/>
+          <exclude name="**/.git"/>
           <exclude name="**/.settings/**"/>
           <exclude name="**/.idea/**"/>
           <exclude name="**/overlays/*.info"/>
@@ -60,6 +62,7 @@
           <exclude name="tomee/tomee-deb/src/main/resources/control/control.template"/>
           <exclude name="tomee/tomee-deb/src/main/resources/copyright.template"/>
           <exclude name="tomee/tomee-webaccess/src/test/resources/test/log/**"/>
+          <exclude name="utils/log4j2-tomee/src/main/resources/META-INF/org.apache.openejb.extension"/>
           <exclude name="utils/openejb-core-eclipselink/src/main/resources/META-INF/org.apache.openejb.persistence.PersistenceBootstrap.provider"/>
           <exclude name="utils/openejb-core-hibernate/src/main/resources/META-INF/org.apache.openejb.persistence.PersistenceBootstrap.provider"/>
           <exclude name="assembly/openejb-standalone/src/main/resources/service.readme.txt"/>
