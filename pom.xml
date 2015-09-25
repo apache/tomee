@@ -119,7 +119,7 @@
 
     <batchee.version>0.2-incubating</batchee.version>
     <!-- to change easily the javaee api version -->
-    <javaee-api.version>7.0-SNAPSHOT</javaee-api.version>
+    <javaee-api.version>7.0</javaee-api.version>
 
     <version.arquillian>1.1.8.Final</version.arquillian>
     <version.shrinkwrap.descriptor>2.0.0-alpha-7</version.shrinkwrap.descriptor>
@@ -678,18 +678,19 @@
     </profile>
   </profiles>
   <repositories>
-    <!--<repository>-->
-    <!--<id>codehaus-snapshot</id>-->
-    <!--<name>CodeHaus SNAPSHOT repository</name>-->
-    <!--<url>http://snapshots.repository.codehaus.org</url>-->
-    <!--<releases>-->
-    <!--<enabled>false</enabled>-->
-    <!--</releases>-->
-    <!--<snapshots>-->
-    <!--<enabled>true</enabled>-->
-    <!--</snapshots>-->
-    <!--</repository>-->
-    <!-- Apache snapshots -->
+    <repository>
+      <id>nexus-staging</id>
+      <name>Nexus Staging Repository</name>
+      <url>https://repository.apache.org/content/repositories/orgapachetomee-1063</url>
+      <layout>default</layout>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+        <checksumPolicy>ignore</checksumPolicy>
+      </releases>
+    </repository>
     <repository>
       <id>apache-snapshots</id>
       <name>Apache Snapshots Repository</name>
@@ -752,6 +753,19 @@
     </repository>
   </repositories>
   <pluginRepositories>
+    <pluginRepository>
+      <id>nexus-staging-plugin</id>
+      <name>Nexus Staging Repository</name>
+      <url>https://repository.apache.org/content/repositories/orgapachetomee-1063</url>
+      <layout>default</layout>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+        <checksumPolicy>ignore</checksumPolicy>
+      </releases>
+    </pluginRepository>
     <pluginRepository>
       <id>apache-m2-snapshot</id>
       <name>Apache Software Foundation M2 Snapshot Repository</name>
