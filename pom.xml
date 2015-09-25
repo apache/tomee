@@ -92,10 +92,13 @@
 
   <properties>
     <tomee.version>${project.version}</tomee.version>
+    
+    <!-- to change easily the javaee api version -->
+    <javaee-api.version>7.0-SNAPSHOT</javaee-api.version>
 
     <openjpa.version>2.4.0</openjpa.version>
     <org.apache.openwebbeans.version>1.6.2</org.apache.openwebbeans.version>
-    <jcs.version>2.0-SNAPSHOT</jcs.version>
+    <jcs.version>2.0-beta-1</jcs.version>
 
     <!-- Maven module versions -->
     <maven-bundle-plugin.version>2.3.7</maven-bundle-plugin.version>
@@ -117,9 +120,7 @@
     <openejb.osgi.dynamic.import>${openejb.osgi.dynamic.import.pkg}</openejb.osgi.dynamic.import>
     <openejb.osgi.symbolic.name>${project.groupId}.${project.artifactId}</openejb.osgi.symbolic.name>
 
-    <batchee.version>0.2-incubating</batchee.version>
-    <!-- to change easily the javaee api version -->
-    <javaee-api.version>7.0-SNAPSHOT</javaee-api.version>
+    <batchee.version>0.2-incubating</batchee.version>    
 
     <version.arquillian>1.1.8.Final</version.arquillian>
     <version.shrinkwrap.descriptor>2.0.0-alpha-7</version.shrinkwrap.descriptor>
