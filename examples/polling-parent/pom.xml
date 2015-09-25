@@ -23,14 +23,14 @@
 
   <groupId>jug</groupId>
   <artifactId>polling-parent</artifactId>
-  <version>1.1.0-SNAPSHOT</version>
+  <version>1.1.3</version>
   <packaging>pom</packaging>
   <name>OpenEJB :: Examples :: Polling</name>
   
   <properties>
     <xbean.version>4.4</xbean.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>7.0.0-SNAPSHOT</tomee.version>
+    <tomee.version>7.0.0-M1</tomee.version>
   </properties>
 
   <build>
@@ -82,7 +82,7 @@
       <dependency>
         <groupId>org.apache.tomee</groupId>
         <artifactId>javaee-api</artifactId>
-        <version>7.0-SNAPSHOT</version>
+        <version>7.0</version>
         <scope>provided</scope>
       </dependency>
       <dependency>

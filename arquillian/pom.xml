@@ -23,11 +23,11 @@
   <parent>
     <artifactId>tomee-project</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>7.0.0-SNAPSHOT</version>
+    <version>7.0.0-M1</version>
   </parent>
 
   <artifactId>arquillian</artifactId>
-  <version>7.0.0-SNAPSHOT</version>
+  <version>7.0.0-M1</version>
   <packaging>pom</packaging>
   <name>OpenEJB :: Arquillian Adaptors Parent</name>
 

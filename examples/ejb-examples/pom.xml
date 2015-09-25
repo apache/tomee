@@ -25,7 +25,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>ejb-examples</artifactId>
   <packaging>war</packaging>
-  <version>1.1.0-SNAPSHOT</version>
+  <version>1.1.3</version>
   <name>OpenEJB :: Web Examples :: EJB Examples War</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -57,7 +57,7 @@
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>7.0.0-SNAPSHOT</version>
+        <version>7.0.0-M1</version>
         <configuration>
           <context>/ejb-examples</context>
           <tomeeClassifier>plus</tomeeClassifier>
@@ -69,7 +69,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>7.0-SNAPSHOT</version>
+      <version>7.0</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

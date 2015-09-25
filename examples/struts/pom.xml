@@ -21,7 +21,7 @@
   <groupId>org.superbiz.struts</groupId>
   <artifactId>struts</artifactId>
   <packaging>war</packaging>
-  <version>1.1.0-SNAPSHOT</version>
+  <version>1.1.3</version>
   <name>OpenEJB :: Web Examples :: Struts</name>
   <url>http://tomee.apache.org</url>
 
@@ -85,7 +85,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>7.0-SNAPSHOT</version>
+      <version>7.0</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
