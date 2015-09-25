@@ -30,7 +30,6 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.openejb>7.0.0-SNAPSHOT</version.openejb>
     <version.tomee>7.0.0-SNAPSHOT</version.tomee>
   </properties>
 
@@ -84,7 +83,7 @@
       <dependency>
         <groupId>org.superbiz</groupId>
         <artifactId>resources-jmx-ejb</artifactId>
-        <version>1.1.0-SNAPSHOT</version>
+        <version>${project.version}</version>
         <type>ejb</type>
         <scope>compile</scope>
       </dependency>
