@@ -192,7 +192,7 @@ public class LegacyClientTest {
             final URI serverURI = server.getContext().get(URI.class);
 
             logger.info("Waiting for updated list");
-            services.assertServices(1, TimeUnit.MINUTES, new CalculatorCallable(bean), 500);
+            services.assertServices(2, TimeUnit.MINUTES, new CalculatorCallable(bean), 1500);
 
             logger.info("Asserting balance");
             assertBalance(bean, services.get().size());
@@ -212,23 +212,6 @@ public class LegacyClientTest {
         } catch (final EJBException e) {
             logger.info(String.format("Pass.  Request resulted in %s: %s", e.getCause().getClass().getSimpleName(), e.getMessage()));
             // good
-        }
-
-        for (final Map.Entry<String, StandaloneServer> entry : servers.entrySet()) {
-            final String name = entry.getKey();
-            final StandaloneServer server = entry.getValue();
-            final URI serverURI = server.getContext().get(URI.class);
-
-            logger.info(String.format("Starting %s server", name));
-
-            server.start(1, TimeUnit.MINUTES);
-            services.add(serverURI);
-
-            logger.info("Waiting for updated list");
-            services.assertServices(1, TimeUnit.MINUTES, new CalculatorCallable(bean), 500);
-
-            logger.info("Asserting balance");
-            assertBalance(bean, services.get().size());
         }
     }
 
@@ -292,6 +275,7 @@ public class LegacyClientTest {
             return expected.remove(o);
         }
 
+        @SuppressWarnings("unused")
         public void observe(@Observes final ClusterMetaDataUpdated updated) {
             final URI[] locations = updated.getClusterMetaData().getLocations();
             final Set<URI> found = new HashSet<URI>(Arrays.asList(locations));
@@ -316,10 +300,6 @@ public class LegacyClientTest {
 
             return diffs;
         }
-
-//        public void assertServices(final long timeout, final TimeUnit unit, final Callable callable) {
-//            assertServices(timeout, unit, callable, 10);
-//        }
 
         public void assertServices(final long timeout, final TimeUnit unit, final Callable callable, final int delay) {
             final ClientThread client = new ClientThread(callable);

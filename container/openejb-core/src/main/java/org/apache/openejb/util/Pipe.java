@@ -56,7 +56,7 @@ public final class Pipe implements Runnable {
 
     public void run() {
         try {
-            int i = -1;
+            int i;
 
             final byte[] buf = new byte[1];
 
@@ -64,6 +64,11 @@ public final class Pipe implements Runnable {
                 out.write(buf, 0, i);
             }
         } catch (final Exception e) {
+            final String m = e.getMessage();
+            if(null != m && m.toLowerCase().contains("stream closed")){
+                //This does not need to be noisy
+                return;
+            }
             e.printStackTrace();
         }
     }
