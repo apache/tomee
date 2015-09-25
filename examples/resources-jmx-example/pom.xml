@@ -30,8 +30,13 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.tomee>7.0.0-SNAPSHOT</version.tomee>
+    <tomee.version>7.0.0-SNAPSHOT</tomee.version>
   </properties>
+  
+  <modules>
+    <module>resources-jmx-ejb</module>
+    <module>resources-jmx-ear</module>
+  </modules>
 
   <repositories>
     <repository>
@@ -69,15 +74,12 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
-          <version>2.6</version>
+          <version>2.7</version>
         </plugin>
       </plugins>
     </pluginManagement>
   </build>
-  <modules>
-    <module>resources-jmx-ejb</module>
-    <module>resources-jmx-ear</module>
-  </modules>
+  
   <dependencyManagement>
     <dependencies>
       <dependency>

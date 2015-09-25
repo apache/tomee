@@ -18,6 +18,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+  
   <groupId>org.superbiz</groupId>
   <artifactId>datasource-versioning</artifactId>
   <packaging>jar</packaging>
@@ -26,7 +27,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.tomee>7.0.0-SNAPSHOT</version.tomee>
+    <tomee.version>7.0.0-SNAPSHOT</tomee.version>
   </properties>
 
   <build>
@@ -44,7 +45,7 @@
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>${version.tomee}</version>
+        <version>${tomee.version}</version>
         <configuration>
           <tomeeClassifier>plus</tomeeClassifier>
           <args>-Xmx512m -XX:PermSize=256m</args>
@@ -136,7 +137,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>arquillian-tomee-remote</artifactId>
-      <version>${version.tomee}</version>
+      <version>${tomee.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

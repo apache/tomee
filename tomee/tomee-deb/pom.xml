@@ -69,22 +69,22 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>${version.openejb}</version>
+      <version>${tomee.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-cxf</artifactId>
-      <version>${version.openejb}</version>
+      <version>${tomee.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-cxf-rs</artifactId>
-      <version>${version.openejb}</version>
+      <version>${tomee.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-hsql</artifactId>
-      <version>${version.openejb}</version>
+      <version>${tomee.version}</version>
     </dependency>
   </dependencies>
   <build>

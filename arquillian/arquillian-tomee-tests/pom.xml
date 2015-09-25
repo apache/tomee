@@ -11,12 +11,15 @@
   language governing permissions and limitations under the License. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         
   <modelVersion>4.0.0</modelVersion>
+  
   <parent>
     <artifactId>arquillian</artifactId>
     <groupId>org.apache.tomee</groupId>
     <version>7.0.0-SNAPSHOT</version>
   </parent>
+  
   <artifactId>arquillian-tomee-tests</artifactId>
   <packaging>pom</packaging>
 
@@ -116,7 +119,7 @@
     <dependency> <!-- tomee-embedded needs it + dependencies but tomee-*-remote doesn't need dependencies so to avoid conflicts bringing it back here -->
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>7.0.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
 
     <!-- just to get it in the correct order -->

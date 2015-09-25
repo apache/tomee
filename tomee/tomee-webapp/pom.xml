@@ -179,7 +179,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-client</artifactId>
-      <version>${version.openejb}</version>
+      <version>${tomee.version}</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
@@ -191,7 +191,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-ejbd</artifactId>
-      <version>${version.openejb}</version>
+      <version>${tomee.version}</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
@@ -203,7 +203,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-hsql</artifactId>
-      <version>${version.openejb}</version>
+      <version>${tomee.version}</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
@@ -215,7 +215,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-http</artifactId>
-      <version>${version.openejb}</version>
+      <version>${tomee.version}</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
@@ -247,7 +247,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-server</artifactId>
-      <version>${version.openejb}</version>
+      <version>${tomee.version}</version>
       <exclusions>
         <exclusion>
           <groupId>${project.groupId}</groupId>

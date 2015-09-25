@@ -35,7 +35,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-loader</artifactId>
-      <version>${version.openejb}</version>
+      <version>${tomee.version}</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.swizzle</groupId>
@@ -48,7 +48,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-client</artifactId>
-      <version>${version.openejb}</version>
+      <version>${tomee.version}</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

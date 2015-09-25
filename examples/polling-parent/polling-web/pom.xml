@@ -19,12 +19,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <artifactId>polling-parent</artifactId>
     <groupId>jug</groupId>
     <version>1.1.0-SNAPSHOT</version>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
 
   <artifactId>polling-web</artifactId>
   <name>OpenEJB :: Examples :: Polling :: Web</name>
@@ -79,7 +80,7 @@
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>${version.tomee}</version>
+        <version>${tomee.version}</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -94,7 +95,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.18.1</version>
-        <configuration> <!-- arquillian tomee embedded and can openejb conflicts since first one is suite scoped -->
+        <configuration> <!-- arquillian tomee embedded and openejb can conflict, since first one is suite scoped -->
           <reuseForks>false</reuseForks>
         </configuration>
       </plugin>
