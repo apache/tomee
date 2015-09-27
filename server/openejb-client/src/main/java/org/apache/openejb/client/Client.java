@@ -50,17 +50,15 @@ import static org.apache.openejb.client.Exceptions.newIOException;
 
 public class Client {
 
-    public static final String OPENEJB_CLIENT_RETRY_CONDITION_MAX = "openejb.client.retry.condition.max";
     private static final String OPENEJB_CLIENT_COMPATIBILITY_VERSION = "openejb.client.protocol.version";
 
     private static final Logger logger = Logger.getLogger("OpenEJB.client");
     private boolean FINEST = logger.isLoggable(Level.FINEST);
     private boolean FINER = logger.isLoggable(Level.FINER);
 
-    public static final ThreadLocal<Set<URI>> failed = new ThreadLocal<Set<URI>>();
+    public static final ThreadLocal<Set<URI>> failed = new ThreadLocal<>();
     private static final ProtocolMetaData PROTOCOL_META_DATA = new ProtocolMetaData();
 
-    private static final int maxConditionRetry = Integer.parseInt(System.getProperty(OPENEJB_CLIENT_RETRY_CONDITION_MAX, "20"));
     private static Client client = new Client();
     private static final ProtocolMetaData COMPATIBLE_META_DATA;
 
@@ -69,7 +67,7 @@ public class Client {
         COMPATIBLE_META_DATA = (null != version ? new ProtocolMetaData(version) : null);
     }
 
-    private List<Class<? extends Throwable>> retryConditions = new CopyOnWriteArrayList<Class<? extends Throwable>>();
+    private List<Class<? extends Throwable>> retryConditions = new CopyOnWriteArrayList<>();
     private boolean retry = false;
 
     private final Observers observers = new Observers();
@@ -389,6 +387,8 @@ public class Client {
                     }
                     throw new RemoteFailoverException("Cannot complete request.  Retry attempted on " + failed.size() + " servers", e);
                 }
+            } else {
+                throw new RemoteException("Cannot read the response from the server (" + protocolRequest.getSpec() + ") : " + e.getMessage(), e);
             }
 
         } catch (final Throwable error) {
