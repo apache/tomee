@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.server.ejbd;
 
-import org.apache.openejb.client.ClientRuntimeException;
 import org.apache.openejb.client.RemoteInitialContextFactory;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.SingletonBean;
@@ -77,7 +76,7 @@ public class ZEjbdTest {
         remoteCall("zejbd");
     }
 
-    @Test(expected = ClientRuntimeException.class)
+    @Test(expected = NamingException.class)
     public void checkEjbdFailWithAGzipServer() throws Exception {
         remoteCall("ejbd");
     }
