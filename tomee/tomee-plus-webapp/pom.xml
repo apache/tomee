@@ -140,7 +140,7 @@
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.commons</groupId>
+      <groupId>org.apache.tomee.patch</groupId>
       <artifactId>commons-jcs-jcache</artifactId>
       <version>${jcs.version}</version>
       <scope>runtime</scope>

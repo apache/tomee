@@ -98,7 +98,7 @@
 
     <openjpa.version>2.4.0</openjpa.version>
     <org.apache.openwebbeans.version>1.6.2</org.apache.openwebbeans.version>
-    <jcs.version>2.0-beta-1</jcs.version>
+    <jcs.version>2.0-M1</jcs.version>
 
     <!-- Maven module versions -->
     <maven-bundle-plugin.version>2.3.7</maven-bundle-plugin.version>
