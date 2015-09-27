@@ -26,7 +26,7 @@
   <artifactId>jsf-managedBean-and-ejb</artifactId>
   <packaging>war</packaging>
   <name>OpenEJB :: Web Examples :: JSF - ManangedBean and EJB</name>
-  <version>1.1.3</version>
+  <version>1.1.4</version>
   <url>http://tomee.apache.org</url>
 
   <properties>

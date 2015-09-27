@@ -23,7 +23,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>mbean-auto-registration</artifactId>
   <packaging>jar</packaging>
-  <version>1.1.3</version>
+  <version>1.1.4</version>
   <name>OpenEJB :: Examples :: MBean Auto Registration</name>
 
   <properties>
