@@ -27,7 +27,6 @@ import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.ProvisioningUtil;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.OpenEjbVersion;
-import org.apache.tomee.TomEELogConfigurer;
 import org.apache.tomee.loader.TomcatHelper;
 
 import java.io.File;
@@ -166,8 +165,6 @@ public class ServerListener implements LifecycleListener {
                 }
 
                 loader.initialize(properties);
-
-                TomEELogConfigurer.configureLogs();
 
                 listenerInstalled.set(true);
             } catch (final Exception e) {
