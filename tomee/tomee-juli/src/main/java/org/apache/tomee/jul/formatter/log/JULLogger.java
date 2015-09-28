@@ -26,35 +26,36 @@ import java.util.logging.Logger;
 
 // DirectJDKLog copy since it is now package scoped
 public class JULLogger implements Log {
-    /** Alternate config reader and console format
+    /**
+     * Alternate config reader and console format
      */
-    private static final String SIMPLE_FMT="java.util.logging.SimpleFormatter";
-    private static final String SIMPLE_CFG="org.apache.juli.JdkLoggerConfig"; //doesn't exist
-    private static final String FORMATTER="org.apache.juli.formatter";
+    private static final String SIMPLE_FMT = "java.util.logging.SimpleFormatter";
+    private static final String SIMPLE_CFG = "org.apache.juli.JdkLoggerConfig"; //doesn't exist
+    private static final String FORMATTER = "org.apache.juli.formatter";
 
     static {
-        if (System.getProperty("java.util.logging.config.class") == null  &&
-            System.getProperty("java.util.logging.config.file") == null) {
+        if (System.getProperty("java.util.logging.config.class") == null &&
+                System.getProperty("java.util.logging.config.file") == null) {
             // default configuration - it sucks. Let's override at least the
             // formatter for the console
             try {
                 Class.forName(SIMPLE_CFG).newInstance();
-            } catch(final Throwable t) {
+            } catch (final Throwable t) {
                 // no-op
             }
             try {
-                final Formatter fmt=(Formatter)Class.forName(System.getProperty(FORMATTER, SIMPLE_FMT)).newInstance();
+                final Formatter fmt = (Formatter) Class.forName(System.getProperty(FORMATTER, SIMPLE_FMT)).newInstance();
                 // it is also possible that the user modified jre/lib/logging.properties -
                 // but that's really stupid in most cases
-                final Logger root=Logger.getLogger("");
+                final Logger root = Logger.getLogger("");
                 final Handler[] handlers = root.getHandlers();
-                for( int i=0; i< handlers.length; i++ ) {
+                for (final Handler handler : handlers) {
                     // I only care about console - that's what's used in default config anyway
-                    if( handlers[i] instanceof ConsoleHandler) {
-                        handlers[i].setFormatter(fmt);
+                    if (handler instanceof ConsoleHandler) {
+                        handler.setFormatter(fmt);
                     }
                 }
-            } catch( Throwable t ) {
+            } catch (final Throwable t) {
                 // no-op maybe it wasn't included - the ugly default will be used.
             }
         }
@@ -62,8 +63,8 @@ public class JULLogger implements Log {
 
     private final Logger logger;
 
-    public JULLogger(final String name ) {
-        logger= Logger.getLogger(name);
+    public JULLogger(final String name) {
+        logger = Logger.getLogger(name);
     }
 
     @Override
@@ -159,8 +160,8 @@ public class JULLogger implements Log {
     private void log(final Level level, final String msg, final Throwable ex) {
         if (logger.isLoggable(level)) {
             // Hack (?) to get the stack trace.
-            final Throwable dummyException=new Throwable();
-            final StackTraceElement[] locations=dummyException.getStackTrace();
+            final Throwable dummyException = new Throwable();
+            final StackTraceElement[] locations = dummyException.getStackTrace();
             // Caller will be the third element
             String cname = "unknown";
             String method = "unknown";
@@ -169,7 +170,7 @@ public class JULLogger implements Log {
                 cname = caller.getClassName();
                 method = caller.getMethodName();
             }
-            if (ex==null) {
+            if (ex == null) {
                 logger.logp(level, cname, method, msg);
             } else {
                 logger.logp(level, cname, method, msg, ex);

@@ -50,7 +50,9 @@ public class LocalFileHandlerTest {
                     return pathname.getName().startsWith("test");
                 }
             }))) {
-                file.delete();
+                if(!file.delete()){
+                    file.deleteOnExit();
+                }
             }
         }
 

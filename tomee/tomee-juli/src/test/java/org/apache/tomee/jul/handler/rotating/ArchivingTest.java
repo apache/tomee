@@ -43,7 +43,7 @@ import static org.junit.Assert.assertTrue;
 public class ArchivingTest {
     @Parameterized.Parameters(name = "{0}")
     public static String[][] formats() {
-        return new String[][] { { "zip" }, { "gzip" } };
+        return new String[][]{{"zip"}, {"gzip"}};
     }
 
     @Parameterized.Parameter(0)
@@ -97,18 +97,19 @@ public class ArchivingTest {
         final File logGzip = new File("target/ArchivingTest-" + format + "/logs/archives/test.2015-09-01.0.log." + format);
         assertTrue(logGzip.getAbsolutePath(), logGzip.isFile());
 
+        // note: size depends on the date so just use a > min
         if ("gzip".equals(format)) {
             try (final GZIPInputStream gis = new GZIPInputStream(new FileInputStream("target/ArchivingTest-gzip/logs/archives/test.2015-09-01.0.log.gzip"))) {
                 final String content = IOUtils.toString(gis);
                 assertTrue(content.contains("INFO: abcdefghij\n"));
-                assertEquals(10258, content.length());
+                assertTrue(content.length() > 10000);
             }
         } else {
             try (final ZipInputStream zis = new ZipInputStream(new FileInputStream("target/ArchivingTest-zip/logs/archives/test.2015-09-01.0.log.zip"))) {
                 assertEquals("test.2015-09-01.0.log", zis.getNextEntry().getName());
                 final String content = IOUtils.toString(zis);
                 assertTrue(content.contains("INFO: abcdefghij\n"));
-                assertEquals(10258, content.length());
+                assertTrue(content.length() > 10000);
                 assertNull(zis.getNextEntry());
             }
         }
@@ -194,7 +195,9 @@ public class ArchivingTest {
                         return pathname.getName().startsWith("test");
                     }
                 }))) {
-                    file.delete();
+                    if (!file.delete()) {
+                        file.deleteOnExit();
+                    }
                 }
             }
         }
@@ -207,7 +210,9 @@ public class ArchivingTest {
                         return pathname.getName().startsWith("test");
                     }
                 }))) {
-                    file.delete();
+                    if (!file.delete()) {
+                        file.deleteOnExit();
+                    }
                 }
             }
         }
