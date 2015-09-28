@@ -529,13 +529,13 @@ public class LocalFileHandler extends Handler {
         }
 
         @Override
-        public void write(final byte buff[]) throws IOException {
+        public void write(final byte[] buff) throws IOException {
             out.write(buff);
             written += buff.length;
         }
 
         @Override
-        public void write(final byte buff[], final int off, final int len) throws IOException {
+        public void write(final byte[] buff, final int off, final int len) throws IOException {
             out.write(buff, off, len);
             written += len;
         }
