@@ -50,27 +50,27 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 /**
- *  NOTE: for simplicity the prefix `org.apache.tomee.jul.handler.rotating.LocalFileHandler.` has been removed of name columns.
- *
- *  |===
- *  | Name                      | Default Value                                     | Description
- *  | filenamePattern           | ${catalina.base}/logs/logs.%s.%03d.log            | where log files are created, it uses String.format() and gives you the date and file number - in this order.
- *  | limit                     | 10 Megabytes                                      | limit size indicating the file should be rotated
- *  | dateCheckInterval         | 5 seconds                                         | how often the date should be computed to rotate the file (don't do it each time for performances reason, means you can get few records of next day in a file name with current day)
- *  | bufferSize                | -1 bytes                                          | if positive the in memory buffer used to store data before flushing them to the disk
- *  | encoding                  | -                                                 | file encoding
- *  | level                     | ALL                                               | level this handler accepts
- *  | filter                    | -                                                 | filter used to check if the message should be logged
- *  | formatter                 | java.util.logging.SimpleFormatter                 | formatter used to format messages
- *  | archiveDirectory          | ${catalina.base}/logs/archives/                   | where compressed logs are put.
- *  | archiveFormat             | gzip                                              | zip or gzip.
- *  | archiveOlderThan          | -1 days                                           | how many days files are kept before being compressed
- *  | purgeOlderThan            | -1 days                                           | how many days files are kept before being deleted, note: it applies on archives and not log files so 2 days of archiving and 3 days of purge makes it deleted after 5 days.
- *  | compressionLevel          | -1                                                | In case of zip archiving the zip compression level (-1 for off or 0-9).
- *  |===
- *
- *  NOTE: archiving and purging are done only when a file is rotated, it means it can be ignored during days if there is no logging activity.
- *
+ * NOTE: for simplicity the prefix `org.apache.tomee.jul.handler.rotating.LocalFileHandler.` has been removed of name columns.
+ * <p/>
+ * |===
+ * | Name                      | Default Value                                     | Description
+ * | filenamePattern           | ${catalina.base}/logs/logs.%s.%03d.log            | where log files are created, it uses String.format() and gives you the date and file number - in this order.
+ * | limit                     | 10 Megabytes                                      | limit size indicating the file should be rotated
+ * | dateCheckInterval         | 5 seconds                                         | how often the date should be computed to rotate the file (don't do it each time for performances reason, means you can get few records of next day in a file name with current day)
+ * | bufferSize                | -1 bytes                                          | if positive the in memory buffer used to store data before flushing them to the disk
+ * | encoding                  | -                                                 | file encoding
+ * | level                     | ALL                                               | level this handler accepts
+ * | filter                    | -                                                 | filter used to check if the message should be logged
+ * | formatter                 | java.util.logging.SimpleFormatter                 | formatter used to format messages
+ * | archiveDirectory          | ${catalina.base}/logs/archives/                   | where compressed logs are put.
+ * | archiveFormat             | gzip                                              | zip or gzip.
+ * | archiveOlderThan          | -1 days                                           | how many days files are kept before being compressed
+ * | purgeOlderThan            | -1 days                                           | how many days files are kept before being deleted, note: it applies on archives and not log files so 2 days of archiving and 3 days of purge makes it deleted after 5 days.
+ * | compressionLevel          | -1                                                | In case of zip archiving the zip compression level (-1 for off or 0-9).
+ * |===
+ * <p/>
+ * NOTE: archiving and purging are done only when a file is rotated, it means it can be ignored during days if there is no logging activity.
+ * <p/>
  * NOTE: archiving and purging is done in a background thread pool, you can configure the number of threads in thanks to
  * `org.apache.tomee.jul.handler.rotating.BackgroundTaskRunner.threads` property in `conf/logging.properties`.
  * Default is 2 which should be fine for most applications.
@@ -207,7 +207,7 @@ public class LocalFileHandler extends Handler {
             writerLock.readLock().lock();
             rotateIfNeeded(tsDate);
 
-            String result;
+            final String result;
             try {
                 result = getFormatter().format(record);
             } catch (final Exception e) {
@@ -392,12 +392,12 @@ public class LocalFileHandler extends Handler {
         }
         if (archiveExpiryDuration > 0) { // archiving log files
             final File[] logs = new File(formatFilename(filenamePattern, "0000-00-00", 0)).getParentFile()
-                .listFiles(new FilenameFilter() {
-                    @Override
-                    public boolean accept(final File dir, final String name) {
-                        return filenameRegex.matcher(name).matches();
-                    }
-                });
+                    .listFiles(new FilenameFilter() {
+                        @Override
+                        public boolean accept(final File dir, final String name) {
+                            return filenameRegex.matcher(name).matches();
+                        }
+                    });
 
             if (logs != null) {
                 for (final File file : logs) {
@@ -514,7 +514,7 @@ public class LocalFileHandler extends Handler {
         return result;
     }
 
-    private class CountingStream extends OutputStream {
+    private final class CountingStream extends OutputStream {
         private final OutputStream out;
 
         private CountingStream(final OutputStream out) {

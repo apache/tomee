@@ -43,7 +43,7 @@ import static org.junit.Assert.assertTrue;
 public class ArchivingTest {
     @Parameterized.Parameters(name = "{0}")
     public static String[][] formats() {
-        return new String[][] { { "zip" }, { "gzip" } };
+        return new String[][]{{"zip"}, {"gzip"}};
     }
 
     @Parameterized.Parameter(0)
@@ -194,7 +194,9 @@ public class ArchivingTest {
                         return pathname.getName().startsWith("test");
                     }
                 }))) {
-                    file.delete();
+                    if (!file.delete()) {
+                        file.deleteOnExit();
+                    }
                 }
             }
         }
@@ -207,7 +209,9 @@ public class ArchivingTest {
                         return pathname.getName().startsWith("test");
                     }
                 }))) {
-                    file.delete();
+                    if (!file.delete()) {
+                        file.deleteOnExit();
+                    }
                 }
             }
         }

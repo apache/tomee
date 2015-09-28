@@ -37,6 +37,7 @@ public class AsyncConsoleHandler extends AsyncFileHandler {
     private static class SingleLineFormatter extends Formatter {
         private static final String SEP = System.getProperty("line.separator", "\n");
 
+        @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
         @Override
         public synchronized String format(final LogRecord record) {
             final boolean exception = record.getThrown() != null;

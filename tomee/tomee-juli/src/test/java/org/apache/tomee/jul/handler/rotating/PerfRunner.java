@@ -98,12 +98,12 @@ public class PerfRunner {
 
     public static void main(final String[] args) throws RunnerException {
         new Runner(new OptionsBuilder()
-            .include(PerfRunner.class.getSimpleName())
-            .forks(0)
-            .warmupIterations(5)
-            .measurementIterations(5)
-            .threads(1)
-            .build())
-            .run();
+                .include(PerfRunner.class.getSimpleName())
+                .forks(0)
+                .warmupIterations(5)
+                .measurementIterations(5)
+                .threads(1)
+                .build())
+                .run();
     }
 }
