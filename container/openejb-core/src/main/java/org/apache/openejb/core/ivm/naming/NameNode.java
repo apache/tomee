@@ -82,7 +82,7 @@ public class NameNode implements Serializable {
                     } catch (final NameNotFoundException e) {
                         n = e;
                     }
-                } else if (!unbound) {
+                } else if (!unbound && myObject == null) {
                     try {
                         return IvmContext.class.cast(getBinding()).mynode.resolve(name);
                     } catch (final NameNotFoundException e) {
