@@ -65,8 +65,8 @@ public class ExecRunner {
         final File timestampFile = new File(distribOutput, "timestamp.txt");
         final boolean forceDelete = Boolean.getBoolean("tomee.runner.force-delete");
         if (forceDelete
-                || !timestampFile.exists()
-                || Long.parseLong(IO.slurp(timestampFile).replace(System.getProperty("line.separator"), "")) < Long.parseLong(config.getProperty("timestamp"))) {
+            || !timestampFile.exists()
+            || Long.parseLong(IO.slurp(timestampFile).replace(System.getProperty("line.separator"), "")) < Long.parseLong(config.getProperty("timestamp"))) {
             if (forceDelete || timestampFile.exists()) {
                 System.out.println("Deleting " + distribOutput.getAbsolutePath());
                 Files.delete(distribOutput);
@@ -97,8 +97,8 @@ public class ExecRunner {
             if (lastSlash > 0) {
                 final String dir = cmd.substring(0, lastSlash);
                 final String script = cmd.substring(lastSlash + 1, cmd.length() - SH_BAT_AUTO.length())
-                        + (System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("win") ? ".bat" : ".sh");
-                cmd = dir + '/' + script;
+                    + (System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("win") ? ".bat" : ".sh");
+                cmd = dir + File.separator + script;
                 final File scriptFile = new File(distribOutput, cmd);
                 if (!scriptFile.exists()) {
                     throw new IllegalArgumentException("Can't find  " + cmd);
@@ -144,6 +144,11 @@ public class ExecRunner {
             server.start(jvmArgs, args[0], true);
             server.getServer().waitFor();
         } else {
+            // TODO: split cmd correctly to support multiple inlined segments in cmd
+            if (cmd.endsWith(".bat") && !cmd.startsWith("cmd.exe")) {
+                params.add("cmd.exe");
+                params.add("/c");
+            } // else suppose the user knows what he does
             params.add(cmd);
             params.addAll(asList(args));
 
