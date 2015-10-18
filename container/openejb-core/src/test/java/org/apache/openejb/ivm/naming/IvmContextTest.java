@@ -26,6 +26,7 @@ import javax.naming.NamingException;
 import java.lang.reflect.Field;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 
 public class IvmContextTest {
@@ -40,10 +41,21 @@ public class IvmContextTest {
         assertEquals("test", root.lookup("global/App.EAR/foo"));
         assertEquals("test", last.lookup("foo"));
 
+        // even after cache clearance
+        last.unbind("missing"); // clear cache
+        assertEquals("test", root.lookup("global/App.EAR/foo"));
+        assertEquals("test", last.lookup("foo"));
+
         // now rebound, shouldnt throw any exception
         final Context lastContext = Contexts.createSubcontexts(root, "global/App.EAR/foo");
         lastContext.rebind("foo", "test2");
+        assertSame(lastContext, last);
         root.rebind("global/App.EAR/foo", "test2");
+        assertEquals("test2", root.lookup("global/App.EAR/foo"));
+        assertEquals("test2", last.lookup("foo"));
+
+        // even after cache clearance
+        lastContext.unbind("missing");
         assertEquals("test2", root.lookup("global/App.EAR/foo"));
         assertEquals("test2", last.lookup("foo"));
     }
