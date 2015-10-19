@@ -77,8 +77,21 @@ public class ExecRunner {
         }
 
         final File[] extracted = distribOutput.listFiles();
-        if (extracted != null && extracted.length == 1) {
-            distribOutput = extracted[0];
+        if (extracted != null) {
+            File newRoot = null;
+            for (final File e : extracted) {
+                if (e.isDirectory()) {
+                    if (newRoot == null) {
+                        newRoot = e;
+                    } else {
+                        newRoot = null;
+                        break;
+                    }
+                }
+            }
+            if (newRoot != null) {
+                distribOutput = newRoot;
+            }
         }
         final File[] scripts = new File(distribOutput, "bin").listFiles();
         if (scripts != null) { // dont use filefilter to avoid dependency issue
