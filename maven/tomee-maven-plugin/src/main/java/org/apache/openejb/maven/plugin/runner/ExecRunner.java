@@ -80,7 +80,7 @@ public class ExecRunner {
         if (extracted != null && extracted.length == 1) {
             distribOutput = extracted[0];
         }
-        final File[] scripts = new File(distribOutput, "conf").listFiles();
+        final File[] scripts = new File(distribOutput, "bin").listFiles();
         if (scripts != null) { // dont use filefilter to avoid dependency issue
             for (final File f : scripts) {
                 if (f.getName().endsWith(".sh") && !f.canExecute()) {
@@ -96,8 +96,9 @@ public class ExecRunner {
             final int lastSlash = cmd.lastIndexOf('/');
             if (lastSlash > 0) {
                 final String dir = cmd.substring(0, lastSlash);
-                final String script = cmd.substring(lastSlash + 1, cmd.length() - SH_BAT_AUTO.length())
-                    + (System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("win") ? ".bat" : ".sh");
+                final boolean isWin = System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("win");
+                final String script = cmd.substring(lastSlash + 1, cmd.length() - SH_BAT_AUTO.length()).replace('/', isWin ? '\\' : '/')
+                    + (isWin ? ".bat" : ".sh");
                 cmd = dir + File.separator + script;
                 final File scriptFile = new File(distribOutput, cmd);
                 if (!scriptFile.exists()) {
