@@ -76,23 +76,6 @@ public class ExecRunner {
             IO.writeString(timestampFile, config.getProperty("timestamp", Long.toString(System.currentTimeMillis())));
         }
 
-        final File[] extracted = distribOutput.listFiles();
-        if (extracted != null) {
-            File newRoot = null;
-            for (final File e : extracted) {
-                if (e.isDirectory()) {
-                    if (newRoot == null) {
-                        newRoot = e;
-                    } else {
-                        newRoot = null;
-                        break;
-                    }
-                }
-            }
-            if (newRoot != null) {
-                distribOutput = newRoot;
-            }
-        }
         final File[] scripts = new File(distribOutput, "bin").listFiles();
         if (scripts != null) { // dont use filefilter to avoid dependency issue
             for (final File f : scripts) {
@@ -112,11 +95,11 @@ public class ExecRunner {
                 final boolean isWin = System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("win");
                 final String script = cmd.substring(lastSlash + 1, cmd.length() - SH_BAT_AUTO.length()).replace('/', isWin ? '\\' : '/')
                         + (isWin ? ".bat" : ".sh");
-                cmd = dir + File.separator + script;
-                final File scriptFile = new File(distribOutput, cmd);
+                final File scriptFile = new File(distribOutput, dir + File.separator + script);
                 if (!scriptFile.exists()) {
                     throw new IllegalArgumentException("Can't find  " + cmd);
                 }
+                cmd = scriptFile.getAbsolutePath();
                 if (cmd.endsWith(".sh")) {
                     if(!scriptFile.setExecutable(true)){
                         System.err.println("Failed make script file executable: " + scriptFile);
@@ -129,6 +112,24 @@ public class ExecRunner {
 
         final Collection<String> params = new ArrayList<>();
         if ("java".equals(cmd)) {
+            final File[] extracted = distribOutput.listFiles();
+            if (extracted != null) {
+                File newRoot = null;
+                for (final File e : extracted) {
+                    if (e.isDirectory()) {
+                        if (newRoot == null) {
+                            newRoot = e;
+                        } else {
+                            newRoot = null;
+                            break;
+                        }
+                    }
+                }
+                if (newRoot != null) {
+                    distribOutput = newRoot;
+                }
+            }
+
             final QuickServerXmlParser parser = QuickServerXmlParser.parse(new File(distribOutput,"conf/server.xml"));
 
             System.setProperty("openejb.home", distribOutput.getAbsolutePath());
