@@ -195,41 +195,23 @@ public class Installer implements InstallerInterface {
     }
 
     private void workaroundOnBat() {
-        {
-            String catalinaBat = Installers.readAll(paths.getCatalinaBatFile(), alerts);
-            if (catalinaBat == null || catalinaBat.contains("set _EXECJAVA=\"%_RUNJAVA%\"") /* already done since we just quote it */) {
-                return;
-            }
-
-            // add our magic bits to the catalina bat file
-            catalinaBat = catalinaBat
-                    .replace("set _EXECJAVA=%_RUNJAVA%", "set _EXECJAVA=\"%_RUNJAVA%\"")
-                    .replace(" %_RUNJAVA%", " \"%_RUNJAVA%\"");
-
-            // overwrite the catalina.bat file
-            if (!Installers.writeAll(paths.getCatalinaBatFile(), catalinaBat, alerts)) {
-                alerts.addInfo("Can't add workarounds for catalina.bat");
-            }
+        final File setclasspath = new File(paths.getCatalinaBinDir(), "setclasspath.bat");
+        String bat = Installers.readAll(setclasspath, alerts);
+        if (bat == null || bat.contains(" NOT DEFINED ") /* already done, tomcat doesnt use yet this new Windows NT 4 syntax */) {
+            return;
         }
-        {
-            final File setclasspath = new File(paths.getCatalinaBinDir(), "setclasspath.bat");
-            String bat = Installers.readAll(setclasspath, alerts);
-            if (bat == null || bat.contains(" NOT DEFINED ") /* already done, tomcat doesnt use yet this new Windows NT 4 syntax */) {
-                return;
-            }
 
-            // add our magic bits to the catalina bat file
-            bat = bat // could be regex but here the diff is explicit which is better IMO
-                    .replace("not \"%JRE_HOME%\" == \"\"", "DEFINED JRE_HOME")
-                    .replace("not \"%JAVA_HOME%\" == \"\"", "DEFINED JAVA_HOME")
-                    .replace("not \"%_RUNJAVA%\" == \"\"", "DEFINED _RUNJAVA")
-                    .replace("not \"%_RUNJDB%\" == \"\"", "DEFINED _RUNJDB")
-                    .replace("\"%JAVA_HOME%\" == \"\"", "NOT DEFINED JAVA_HOME");
+        // add our magic bits to the catalina bat file
+        bat = bat // could be regex but here the diff is explicit which is better IMO
+                .replace("not \"%JRE_HOME%\" == \"\"", "DEFINED JRE_HOME")
+                .replace("not \"%JAVA_HOME%\" == \"\"", "DEFINED JAVA_HOME")
+                .replace("not \"%_RUNJAVA%\" == \"\"", "DEFINED _RUNJAVA")
+                .replace("not \"%_RUNJDB%\" == \"\"", "DEFINED _RUNJDB")
+                .replace("\"%JAVA_HOME%\" == \"\"", "NOT DEFINED JAVA_HOME");
 
-            // overwrite the catalina.bat file
-            if (!Installers.writeAll(setclasspath, bat, alerts)) {
-                alerts.addInfo("Can't add workarounds for setclasspath.bat");
-            }
+        // overwrite the catalina.bat file
+        if (!Installers.writeAll(setclasspath, bat, alerts)) {
+            alerts.addInfo("Can't add workarounds for setclasspath.bat");
         }
     }
 
