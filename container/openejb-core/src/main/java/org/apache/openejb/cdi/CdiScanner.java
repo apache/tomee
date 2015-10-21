@@ -70,9 +70,14 @@ public class CdiScanner implements ScannerService {
     private final Set<Class<?>> classes = new HashSet<>();
     private final Set<Class<?>> startupClasses = new HashSet<>();
     private final Set<URL> beansXml = new HashSet<>();
+    private final boolean logDebug;
 
     private WebBeansContext webBeansContext;
     private ClassLoader containerLoader;
+
+    public CdiScanner() {
+        logDebug = "true".equals(SystemInstance.get().getProperty("openejb.cdi.noclassdeffound.log", "false"));
+    }
 
     public void setContext(final WebBeansContext webBeansContext) {
         this.webBeansContext = webBeansContext;
@@ -313,12 +318,22 @@ public class CdiScanner implements ScannerService {
      */
     private Class load(final String className, final ClassLoader classLoader) {
         try {
-            return classLoader.loadClass(className);
+            final Class<?> loadClass = classLoader.loadClass(className);
+            tryToMakeItFail(loadClass);
+            return loadClass;
         } catch (final ClassNotFoundException e) {
             return null;
         } catch (final NoClassDefFoundError e) {
+            if (logDebug) {
+                Logger.getInstance(LogCategory.OPENEJB_CDI, CdiScanner.class).warning(className + " -> " + e);
+            }
             return null;
         }
+    }
+
+    private void tryToMakeItFail(final Class<?> loadClass) { // we try to avoid later NoClassDefFoundError
+        loadClass.getDeclaredFields();
+        loadClass.getDeclaredMethods();
     }
 
     @Override
