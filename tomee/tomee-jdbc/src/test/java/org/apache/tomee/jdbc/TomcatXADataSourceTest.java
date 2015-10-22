@@ -18,6 +18,7 @@ package org.apache.tomee.jdbc;
 
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.junit.ApplicationComposer;
+import org.apache.openejb.resource.jdbc.managed.local.ManagedDataSource;
 import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.Module;
 import org.apache.openejb.testng.PropertiesBuilder;
@@ -27,16 +28,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.annotation.Resource;
-import javax.management.AttributeNotFoundException;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanException;
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
-import javax.management.ReflectionException;
 import javax.sql.DataSource;
-import java.lang.management.ManagementFactory;
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Properties;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -46,8 +42,6 @@ import static org.junit.Assert.assertThat;
 
 @RunWith(ApplicationComposer.class)
 public class TomcatXADataSourceTest {
-    private static final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-
     @Resource(name = "xadb")
     private DataSource ds;
 
@@ -65,36 +59,55 @@ public class TomcatXADataSourceTest {
             .p("txMgr.txRecovery", "true")
             .p("txMgr.logFileDir", "target/test/xa/howl")
 
-                // real XA datasources
+            // real XA datasources
             .p("xa", "new://Resource?class-name=" + JDBCXADataSource.class.getName())
             .p("xa.url", "jdbc:hsqldb:mem:tomcat-xa")
             .p("xa.user", "sa")
             .p("xa.password", "")
             .p("xa.SkipImplicitAttributes", "true")
+            .p("xa.SkipPropertiesFallback", "true") // otherwise goes to connection properties
 
             .p("xadb", "new://Resource?type=DataSource")
             .p("xadb.xaDataSource", "xa")
             .p("xadb.JtaManaged", "true")
+            .p("xadb.MaxIdle", "25")
+            .p("xadb.MaxActive", "25")
+            .p("xadb.InitialSize", "3")
 
             .build();
     }
 
     @Test
-    public void check() throws Exception {
+    public void check() throws SQLException {
         assertNotNull(ds);
-        final Connection c = ds.getConnection();
-        assertNotNull(c);
-        assertThat(c.getMetaData().getConnection(), instanceOf(JDBCXAConnectionWrapper.class));
-        c.close();
+        final TomEEDataSourceCreator.TomEEDataSource tds = TomEEDataSourceCreator.TomEEDataSource.class.cast(ManagedDataSource.class.cast(ds).getDelegate());
 
-        assertEquals(0, getActiveConnections("xadb"));
-    }
+        assertEquals(3, tds.getIdle()); // InitSize
 
+        try (final Connection c = ds.getConnection()) {
+            assertNotNull(c);
 
-    private int getActiveConnections(final String dataSourceName)
-            throws MalformedObjectNameException, MBeanException, AttributeNotFoundException, InstanceNotFoundException, ReflectionException {
-        final ObjectName objectName = new ObjectName("openejb.management:ObjectType=datasources,DataSource=" + dataSourceName);
-        final Object activeConnectionsAttribute = server.getAttribute(objectName, "Active");
-        return (int) (Integer) activeConnectionsAttribute;
+            final Connection connection = c.getMetaData().getConnection(); // just to do something and force the connection init
+            assertThat(connection, instanceOf(JDBCXAConnectionWrapper.class));
+        } // here we close the connection so we are back in the initial state
+
+        assertEquals(0, tds.getActive());
+        assertEquals(3, tds.getIdle());
+
+        for (int it = 0; it < 5; it++) { // ensures it always works and not only the first time
+            final Collection<Connection> connections = new ArrayList<>(25);
+            for (int i = 0; i < 25; i++) {
+                final Connection connection = ds.getConnection();
+                connections.add(connection);
+                connection.getMetaData(); // trigger connection retrieving otherwise nothing is done (pool is not used)
+            }
+            assertEquals(25, tds.getActive());
+            assertEquals(0, tds.getIdle());
+            for (final Connection toClose : connections) {
+                toClose.close();
+            }
+            assertEquals(0, tds.getActive());
+            assertEquals(25, tds.getIdle());
+        }
     }
 }
