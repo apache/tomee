@@ -18,6 +18,7 @@ package org.apache.tomee.jdbc;
 
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.junit.ApplicationComposer;
+import org.apache.openejb.resource.jdbc.managed.local.ManagedDataSource;
 import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.Module;
 import org.apache.openejb.testng.PropertiesBuilder;
@@ -30,9 +31,12 @@ import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Properties;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
@@ -66,6 +70,9 @@ public class TomcatXADataSourceTest {
             .p("xadb", "new://Resource?type=DataSource")
             .p("xadb.xaDataSource", "xa")
             .p("xadb.JtaManaged", "true")
+            .p("xadb.MaxIdle", "25")
+            .p("xadb.MaxActive", "25")
+            .p("xadb.InitialSize", "3")
 
             .build();
     }
@@ -73,10 +80,34 @@ public class TomcatXADataSourceTest {
     @Test
     public void check() throws SQLException {
         assertNotNull(ds);
-        final Connection c = ds.getConnection();
-        assertNotNull(c);
-        assertThat(c.getMetaData().getConnection(), instanceOf(JDBCXAConnectionWrapper.class));
-        c.close();
+        final TomEEDataSourceCreator.TomEEDataSource tds = TomEEDataSourceCreator.TomEEDataSource.class.cast(ManagedDataSource.class.cast(ds).getDelegate());
 
+        assertEquals(3, tds.getIdle()); // InitSize
+
+        try (final Connection c = ds.getConnection()) {
+            assertNotNull(c);
+
+            final Connection connection = c.getMetaData().getConnection(); // just to do something and force the connection init
+            assertThat(connection, instanceOf(JDBCXAConnectionWrapper.class));
+        } // here we close the connection so we are back in the initial state
+
+        assertEquals(0, tds.getActive());
+        assertEquals(3, tds.getIdle());
+
+        for (int it = 0; it < 5; it++) { // ensures it always works and not only the first time
+            final Collection<Connection> connections = new ArrayList<>(25);
+            for (int i = 0; i < 25; i++) {
+                final Connection connection = ds.getConnection();
+                connections.add(connection);
+                connection.getMetaData(); // trigger connection retrieving otherwise nothing is done (pool is not used)
+            }
+            assertEquals(25, tds.getActive());
+            assertEquals(0, tds.getIdle());
+            for (final Connection toClose : connections) {
+                toClose.close();
+            }
+            assertEquals(0, tds.getActive());
+            assertEquals(25, tds.getIdle());
+        }
     }
 }
