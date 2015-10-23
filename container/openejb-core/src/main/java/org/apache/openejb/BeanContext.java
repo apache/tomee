@@ -79,6 +79,7 @@ import javax.enterprise.inject.spi.InterceptionType;
 import javax.enterprise.inject.spi.Interceptor;
 import javax.naming.Context;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.SynchronizationType;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
@@ -757,11 +758,11 @@ public class BeanContext extends DeploymentContext {
         return injections;
     }
 
-    public Index<EntityManagerFactory, Map> getExtendedEntityManagerFactories() {
+    public Index<EntityManagerFactory, EntityManagerConfiguration> getExtendedEntityManagerFactories() {
         return getStateful().extendedEntityManagerFactories;
     }
 
-    public void setExtendedEntityManagerFactories(final Index<EntityManagerFactory, Map> extendedEntityManagerFactories) {
+    public void setExtendedEntityManagerFactories(final Index<EntityManagerFactory, EntityManagerConfiguration> extendedEntityManagerFactories) {
         this.getStateful().extendedEntityManagerFactories = extendedEntityManagerFactories;
     }
 
@@ -1934,7 +1935,7 @@ public class BeanContext extends DeploymentContext {
 
     private static class Stateful {
 
-        private Index<EntityManagerFactory, Map> extendedEntityManagerFactories;
+        private Index<EntityManagerFactory, EntityManagerConfiguration> extendedEntityManagerFactories;
         private Duration statefulTimeout;
         private final List<Method> removeMethods = new ArrayList<Method>();
     }
@@ -1970,6 +1971,24 @@ public class BeanContext extends DeploymentContext {
 
         public Class<?> getProxy() {
             return proxy; // let it generate a NPE if null, shouldn't occur (tested elsewhere) excepted for test where we don't use it
+        }
+    }
+
+    public static class EntityManagerConfiguration {
+        private final Map properties;
+        private final SynchronizationType synchronizationType;
+
+        public EntityManagerConfiguration(final Map properties, final SynchronizationType synchronizationType) {
+            this.properties = properties;
+            this.synchronizationType = synchronizationType;
+        }
+
+        public Map getProperties() {
+            return properties;
+        }
+
+        public SynchronizationType getSynchronizationType() {
+            return synchronizationType;
         }
     }
 }

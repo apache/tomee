@@ -73,6 +73,7 @@ import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.SynchronizationType;
 import javax.transaction.Transaction;
 import java.io.Serializable;
 import java.lang.reflect.Method;
@@ -381,7 +382,7 @@ public class StatefulContainer implements RpcContainer {
         if (preventExtendedEntityManagerSerialization) {
             return true;
         }
-        final Index<EntityManagerFactory, Map> factories = beanContext.getExtendedEntityManagerFactories();
+        final Index<EntityManagerFactory, BeanContext.EntityManagerConfiguration> factories = beanContext.getExtendedEntityManagerFactories();
         return !(factories != null && factories.size() > 0) && beanContext.isPassivable();
     }
 
@@ -889,18 +890,25 @@ public class StatefulContainer implements RpcContainer {
 
     private Index<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker> createEntityManagers(final BeanContext beanContext) {
         // create the extended entity managers
-        final Index<EntityManagerFactory, Map> factories = beanContext.getExtendedEntityManagerFactories();
+        final Index<EntityManagerFactory, BeanContext.EntityManagerConfiguration> factories = beanContext.getExtendedEntityManagerFactories();
         Index<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker> entityManagers = null;
         if (factories != null && factories.size() > 0) {
-            entityManagers = new Index<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker>(new ArrayList<EntityManagerFactory>(factories.keySet()));
-            for (final Map.Entry<EntityManagerFactory, Map> entry : factories.entrySet()) {
+            entityManagers = new Index<>(new ArrayList<>(factories.keySet()));
+            for (final Map.Entry<EntityManagerFactory, BeanContext.EntityManagerConfiguration> entry : factories.entrySet()) {
                 final EntityManagerFactory entityManagerFactory = entry.getKey();
-                final Map properties = entry.getValue();
 
                 JtaEntityManagerRegistry.EntityManagerTracker entityManagerTracker = entityManagerRegistry.getInheritedEntityManager(entityManagerFactory);
                 final EntityManager entityManager;
                 if (entityManagerTracker == null) {
-                    if (properties != null) {
+                    final Map properties = entry.getValue().getProperties();
+                    final SynchronizationType synchronizationType = entry.getValue().getSynchronizationType();
+                    if (synchronizationType != null) {
+                        if (properties != null) {
+                            entityManager = entityManagerFactory.createEntityManager(synchronizationType, properties);
+                        } else {
+                            entityManager = entityManagerFactory.createEntityManager(synchronizationType);
+                        }
+                    } else if (properties != null) {
                         entityManager = entityManagerFactory.createEntityManager(properties);
                     } else {
                         entityManager = entityManagerFactory.createEntityManager();
@@ -923,7 +931,7 @@ public class StatefulContainer implements RpcContainer {
         final BeanContext beanContext = callContext.getBeanContext();
 
         // get the factories
-        final Index<EntityManagerFactory, Map> factories = beanContext.getExtendedEntityManagerFactories();
+        final Index<EntityManagerFactory, BeanContext.EntityManagerConfiguration> factories = beanContext.getExtendedEntityManagerFactories();
         if (factories == null) {
             return;
         }

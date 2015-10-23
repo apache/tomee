@@ -25,11 +25,18 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.cmp.CmpUtil;
 import org.apache.openejb.dyni.DynamicSubclass;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.persistence.JtaEntityManager;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.Index;
 import org.apache.openejb.util.Messages;
 
+import javax.ejb.TimedObject;
+import javax.ejb.Timer;
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.SynchronizationType;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,11 +46,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import javax.ejb.TimedObject;
-import javax.ejb.Timer;
-import javax.naming.Context;
-import javax.naming.NamingException;
-import javax.persistence.EntityManagerFactory;
 
 class EnterpriseBeanBuilder {
     private final EnterpriseBeanInfo bean;
@@ -231,20 +233,25 @@ class EnterpriseBeanBuilder {
 
             }
 
-            final Map<EntityManagerFactory, Map> extendedEntityManagerFactories = new HashMap<EntityManagerFactory, Map>();
+            final Map<EntityManagerFactory, BeanContext.EntityManagerConfiguration> extendedEntityManagerFactories = new HashMap<>();
             for (final PersistenceContextReferenceInfo info : statefulBeanInfo.jndiEnc.persistenceContextRefs) {
                 if (info.extended) {
                     try {
                         final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
                         final Object o = containerSystem.getJNDIContext().lookup(PersistenceBuilder.getOpenEJBJndiName(info.unitId));
-                        extendedEntityManagerFactories.put((EntityManagerFactory) o, info.properties);
+                        final EntityManagerFactory emf = EntityManagerFactory.class.cast(o);
+                        extendedEntityManagerFactories.put(
+                            emf,
+                            new BeanContext.EntityManagerConfiguration(
+                                info.properties,
+                                JtaEntityManager.isJPA21(emf) && info.synchronizationType != null ? SynchronizationType.valueOf(info.synchronizationType) : null));
                     } catch (final NamingException e) {
                         throw new OpenEJBException("PersistenceUnit '" + info.unitId + "' not found for EXTENDED ref '" + info.referenceName + "'");
                     }
 
                 }
             }
-            deployment.setExtendedEntityManagerFactories(new Index<EntityManagerFactory, Map>(extendedEntityManagerFactories));
+            deployment.setExtendedEntityManagerFactories(new Index<>(extendedEntityManagerFactories));
         }
 
         if (ejbType.isSession() || ejbType.isMessageDriven()) {

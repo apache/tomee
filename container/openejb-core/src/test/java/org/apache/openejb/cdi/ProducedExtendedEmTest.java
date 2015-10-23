@@ -96,11 +96,13 @@ public class ProducedExtendedEmTest {
     private A a;
 
     @Test
-    @Ignore("will be done thanks to OWB new impl")
     public void checkEm() {
         try {
             a.getDelegateClassName();
         } catch (final EJBException ee) {
+            // an entity manager should already be registered for this extended persistence unit
+            // valid since we dont call it in the context of the stateful
+            // note: we could enhance it later if needed
             assertNotNull(ee);
             assertThat(ee.getCause(), instanceOf(IllegalStateException.class));
         }
