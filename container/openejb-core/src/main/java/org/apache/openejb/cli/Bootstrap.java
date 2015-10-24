@@ -17,12 +17,15 @@
 
 package org.apache.openejb.cli;
 
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemClassPath;
+import org.apache.openejb.util.PropertyPlaceHolderHelper;
 import org.apache.openejb.util.URLs;
 
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
+import java.util.StringTokenizer;
 
 /**
  * @version $Rev$ $Date$
@@ -82,11 +85,51 @@ public class Bootstrap {
     }
 
     private static void setupClasspath() {
+        final String base = System.getProperty(OPENEJB_BASE_PROPERTY_NAME, "");
+        final String home = System.getProperty("catalina.home", System.getProperty(OPENEJB_HOME_PROPERTY_NAME, base));
         try {
-            final File lib = new File(System.getProperty(OPENEJB_HOME_PROPERTY_NAME) + File.separator + "lib");
+            final File lib = new File(home + File.separator + "lib");
             final SystemClassPath systemCP = new SystemClassPath();
-            systemCP.addJarsToPath(lib);
-            systemCP.addJarToPath(lib.toURI().toURL()); // add dir too like Tomcat/TomEE
+            File config = new File(base, "conf/catalina.properties");
+            if (!config.isFile()) {
+                config = new File(home, "conf/catalina.properties");
+            }
+            if (config.isFile()) { // like org.apache.catalina.startup.Bootstrap.createClassLoader()
+                String val = IO.readProperties(config).getProperty("common.loader", lib.getAbsolutePath());
+                val = PropertyPlaceHolderHelper.simpleValue(val.replace("${catalina.", "${openejb.")); // base/home
+
+                final StringTokenizer tokenizer = new StringTokenizer(val, ",");
+                while (tokenizer.hasMoreElements()) {
+                    String repository = tokenizer.nextToken().trim();
+                    if (repository.isEmpty()) {
+                        continue;
+                    }
+
+                    if (repository.startsWith("\"") && repository.endsWith("\"")) {
+                        repository = repository.substring(1, repository.length() - 1);
+                    }
+
+                    if (repository.endsWith("*.jar")) {
+                        final File dir = new File(repository.substring(0, repository.length() - "*.jar".length()));
+                        if (dir.isDirectory()) {
+                            systemCP.addJarsToPath(dir);
+                        }
+                    } else if (repository.endsWith(".jar")) {
+                        final File file = new File(repository);
+                        if (file.isFile()) {
+                            systemCP.addJarToPath(file.toURI().toURL());
+                        }
+                    } else {
+                        final File dir = new File(repository);
+                        if (dir.isDirectory()) {
+                            systemCP.addJarToPath(dir.toURI().toURL());
+                        }
+                    }
+                }
+            } else {
+                systemCP.addJarsToPath(lib);
+                systemCP.addJarToPath(lib.toURI().toURL());
+            }
         } catch (final Exception e) {
             System.err.println("Error setting up the classpath: " + e.getClass() + ": " + e.getMessage());
             e.printStackTrace();
