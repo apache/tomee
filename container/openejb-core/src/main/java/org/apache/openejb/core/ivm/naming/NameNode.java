@@ -83,7 +83,7 @@ public class NameNode implements Serializable {
                     } catch (final NameNotFoundException e) {
                         n = e;
                     }
-                } else if (!subTreeUnbound && !unbound && myContext != null) {
+                } else if (!subTreeUnbound && !unbound && myContext != null && !Federation.class.isInstance(myObject)) {
                     try {
                         return myContext.mynode.resolve(name);
                     } catch (final NameNotFoundException e) {
