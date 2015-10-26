@@ -913,7 +913,7 @@ public class StatefulContainer implements RpcContainer {
                     } else {
                         entityManager = entityManagerFactory.createEntityManager();
                     }
-                    entityManagerTracker = new JtaEntityManagerRegistry.EntityManagerTracker(entityManager);
+                    entityManagerTracker = new JtaEntityManagerRegistry.EntityManagerTracker(entityManager, synchronizationType != SynchronizationType.UNSYNCHRONIZED);
                 } else {
                     entityManagerTracker.incCounter();
                 }
