@@ -20,7 +20,6 @@ import org.apache.openejb.config.RemoteServer;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Zips;
-import org.apache.openejb.util.Pipe;
 import org.apache.tomee.util.QuickServerXmlParser;
 
 import java.io.File;
@@ -144,6 +143,7 @@ public class ExecRunner {
             params.addAll(asList(args));
 
             final ProcessBuilder builder = new ProcessBuilder(params.toArray(new String[params.size()]))
+                .inheritIO()
                 .directory(findBase(distribOutput));
 
             final String existingOpts = System.getenv("CATALINA_OPTS");
@@ -152,19 +152,7 @@ public class ExecRunner {
                 builder.environment().put("CATALINA_OPTS", identityOrEmpty(catalinaOpts) + " " + identityOrEmpty(existingOpts) + " " + identityOrEmpty(additionalArgs));
             }
 
-            boolean redirectOut = false;
-            try { // java >= 7
-                ProcessBuilder.class.getDeclaredMethod("inheritIO").invoke(builder);
-            } catch (final Throwable th){ // java 6
-                redirectOut = true;
-            }
-
-            final Process process = builder.start();
-            if (redirectOut) {
-                Pipe.pipe(process);
-            }
-
-            process.waitFor();
+            builder.start().waitFor();
         }
 
         System.out.flush();
