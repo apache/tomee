@@ -79,11 +79,7 @@ public class ExecRunner {
         final File[] scripts = new File(distribOutput, "bin").listFiles();
         if (scripts != null) { // dont use filefilter to avoid dependency issue
             for (final File f : scripts) {
-                if (f.getName().endsWith(".sh") && !f.canExecute()) {
-                    if(!f.setExecutable(true, true)){
-                        System.err.println("Failed make file executable: " + f);
-                    }
-                }
+                setExecutable(f);
             }
         }
 
@@ -100,11 +96,7 @@ public class ExecRunner {
                     throw new IllegalArgumentException("Can't find  " + cmd);
                 }
                 cmd = scriptFile.getAbsolutePath();
-                if (cmd.endsWith(".sh")) {
-                    if(!scriptFile.setExecutable(true)){
-                        System.err.println("Failed make script file executable: " + scriptFile);
-                    }
-                }
+                setExecutable(scriptFile); // in case it is not in bin/
             }
         }
 
@@ -112,27 +104,11 @@ public class ExecRunner {
 
         final Collection<String> params = new ArrayList<>();
         if ("java".equals(cmd)) {
-            final File[] extracted = distribOutput.listFiles();
-            if (extracted != null) {
-                File newRoot = null;
-                for (final File e : extracted) {
-                    if (e.isDirectory()) {
-                        if (newRoot == null) {
-                            newRoot = e;
-                        } else {
-                            newRoot = null;
-                            break;
-                        }
-                    }
-                }
-                if (newRoot != null) {
-                    distribOutput = newRoot;
-                }
-            }
+            final File base = findBase(distribOutput);
 
-            final QuickServerXmlParser parser = QuickServerXmlParser.parse(new File(distribOutput,"conf/server.xml"));
+            final QuickServerXmlParser parser = QuickServerXmlParser.parse(new File(base,"conf/server.xml"));
 
-            System.setProperty("openejb.home", distribOutput.getAbsolutePath());
+            System.setProperty("openejb.home", base.getAbsolutePath());
             System.setProperty("server.shutdown.port", parser.stop());
             System.setProperty("server.shutdown.command", config.getProperty("shutdownCommand"));
 
@@ -167,7 +143,8 @@ public class ExecRunner {
             params.add(cmd);
             params.addAll(asList(args));
 
-            final ProcessBuilder builder = new ProcessBuilder(params.toArray(new String[params.size()])).directory(distribOutput);
+            final ProcessBuilder builder = new ProcessBuilder(params.toArray(new String[params.size()]))
+                .directory(findBase(distribOutput));
 
             final String existingOpts = System.getenv("CATALINA_OPTS");
             final String catalinaOpts = config.getProperty("catalinaOpts");
@@ -193,6 +170,35 @@ public class ExecRunner {
         System.out.flush();
         System.err.flush();
         System.out.println("Exited Successfully!");
+    }
+
+    private static void setExecutable(final File f) {
+        if (f.getName().endsWith(".sh") && !f.canExecute()) {
+            if(!f.setExecutable(true, true)){
+                System.err.println("Failed make file executable: " + f);
+            }
+        }
+    }
+
+    private static File findBase(final File distribOutput) {
+        final File[] extracted = distribOutput.listFiles();
+        if (extracted != null) {
+            File newRoot = null;
+            for (final File e : extracted) {
+                if (e.isDirectory()) {
+                    if (newRoot == null) {
+                        newRoot = e;
+                    } else {
+                        newRoot = null;
+                        break;
+                    }
+                }
+            }
+            if (newRoot != null) {
+                return newRoot;
+            }
+        }
+        return distribOutput;
     }
 
     private static String identityOrEmpty(final String value) {
