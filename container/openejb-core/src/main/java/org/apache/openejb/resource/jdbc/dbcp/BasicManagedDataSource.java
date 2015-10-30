@@ -226,6 +226,9 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
 
                 // override previous password value
                 super.setPassword(plainPwd);
+
+                // as soon as we already decrypted the password, we don't want it to be decrypted again
+                passwordCipher = null;
             }
 
             // get the plugin
