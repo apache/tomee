@@ -26,6 +26,7 @@ import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.Module;
 import org.apache.openejb.util.Strings;
 import org.apache.openejb.util.reflection.Reflections;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,26 +36,28 @@ import javax.ejb.EJB;
 import javax.ejb.EJBContext;
 import javax.ejb.LocalBean;
 import javax.ejb.Singleton;
+import javax.ejb.Startup;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.DriverPropertyInfo;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.sql.Statement;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(ApplicationComposer.class)
 public class CipheredPasswordDataSourceTest {
-    private static final String URL = "jdbc:hsqldb:mem:managed;hsqldb.tx=MVCC"; // mvcc otherwise multiple transaction tests will fail
-    private static final String USER = "sa";
-    private static final String PASSWORD = "";
+    private static final String URL = "jdbc:fake://sthg:3306";
+    private static final String USER = "pete";
     private static final String ENCRYPTED_PASSWORD = "This is the encrypted value.";
-    private static final String TABLE = "PUBLIC.MANAGED_DATASOURCE_TEST";
 
     @EJB
     private Persister persistManager;
@@ -62,35 +65,29 @@ public class CipheredPasswordDataSourceTest {
     @Resource
     private DataSource ds;
 
-    @BeforeClass
-    public static void createTable() throws SQLException, ClassNotFoundException {
-        Class.forName("org.hsqldb.jdbcDriver");
-
-        final Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
-        final Statement statement = connection.createStatement();
-        statement.execute("CREATE TABLE " + TABLE + "(ID INTEGER)");
-        statement.close();
-        connection.commit();
-        connection.close();
-    }
-
     @Configuration
     public Properties config() {
         final Properties p = new Properties();
         p.put("openejb.jdbc.datasource-creator", "dbcp");
 
         p.put("managed", "new://Resource?type=DataSource");
-        p.put("managed.JdbcDriver", "org.hsqldb.jdbcDriver");
+        p.put("managed.JdbcDriver", FakeDriver.class.getName());
         p.put("managed.JdbcUrl", URL);
         p.put("managed.UserName", USER);
         p.put("managed.Password", ENCRYPTED_PASSWORD);
         p.put("managed.PasswordCipher", EmptyPasswordCipher.class.getName());
         p.put("managed.JtaManaged", "true");
-        p.put("managed.initialSize", "1");
+        p.put("managed.initialSize", "10");
         p.put("managed.maxActive", "10");
-        p.put("managed.maxIdle", "1");
-        p.put("managed.minIdle", "1");
+        p.put("managed.maxIdle", "10");
+        p.put("managed.minIdle", "10");
         p.put("managed.maxWait", "200");
+        p.put("managed.defaultAutoCommit", "false");
+        p.put("managed.defaultReadOnly", "false");
+        p.put("managed.testOnBorrow", "true");
+        p.put("managed.testOnReturn", "true");
+        p.put("managed.testWhileIdle", "true");
+
         return p;
     }
 
@@ -101,31 +98,27 @@ public class CipheredPasswordDataSourceTest {
 
     }
 
-    @Test
-    public void rebuild() throws SQLException {
-        connection(true);
+    @Before
+    public void createDatasource(){
+        // This is to make sure TomEE created the data source.
+        persistManager.save();
     }
 
     @Test
-    public void noRebuild() throws SQLException {
-        connection(false);
-    }
+    public void rebuild() {
+        // because of the exception at startup, the pool creating aborted
+        // before fixing this bug, the password was already decrypted, but the data source field
+        // wasn't yet initialized, so this.data source == null
+        // but the next time we try to initialize it, it tries to decrypt and already decrypted password
 
+        try {
+            ds.getConnection();
 
-    public void connection(final boolean rebuild) throws SQLException {
-        // the first time the pool is created, the password is decrypted
-        // but the BasicManagedDataSource did not recall that so next time
-        // it tries to decrypt again the password
-        ds.getConnection();
-
-        // not sure how that is possible, but that happened to reproduce the issue
-        if (rebuild) {
-            Reflections.set(ds, "dataSource", null);
+        } catch (final SQLException e) {
+            System.out.println(e.getMessage());
+            // success - it throws the SQLException from the connect
+            // but it does not fail with the IllegalArgumentException from the Password Cipher
         }
-
-        // this should re create the pool and try to call again the password cipher #decrypt
-        // on an already clear text password
-        ds.getConnection();
     }
 
     public static class EmptyPasswordCipher implements PasswordCipher {
@@ -138,56 +131,63 @@ public class CipheredPasswordDataSourceTest {
         @Override
         public String decrypt(char[] encryptedPassword) {
             System.out.println(String.format(">>> Decrypt password '%s'", new String(encryptedPassword)));
+
+            // we want to know if the password as already been called
             if (encryptedPassword.length == 0) {
                 throw new IllegalArgumentException("Can only decrypt a non empty string.");
             }
+
             return "";
         }
     }
 
-    private static boolean exists(final int id) throws SQLException {
-        final Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
-        final Statement statement = connection.createStatement();
-        final ResultSet result = statement.executeQuery("SELECT count(*) AS NB FROM " + TABLE + " WHERE ID = " + id);
-        try {
-            assertTrue(result.next());
-            return result.getInt(1) == 1;
-        } finally {
-            statement.close();
-            connection.close();
+    public static class FakeDriver implements java.sql.Driver {
+        public boolean acceptsURL(final String url) throws SQLException {
+            return false;
         }
-    }
 
-    private static void save(final DataSource ds, final int id) throws SQLException {
-        execute(ds, "INSERT INTO " + TABLE + "(ID) VALUES(" + id + ")");
-    }
+        public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+            return null;
+        }
 
-    private static void execute(final DataSource ds, final String sql) throws SQLException {
-        final Connection connection = ds.getConnection();
-        final Statement statement = connection.createStatement();
-        statement.executeUpdate(sql);
-        statement.close();
-        connection.close();
+        public Connection connect(final String url, final Properties info) throws SQLException {
+            throw new SQLException("Pete said it first fails here!");
+        }
+
+        public int getMajorVersion() {
+            return 0;
+        }
+
+        public int getMinorVersion() {
+            return 0;
+        }
+
+        public DriverPropertyInfo[] getPropertyInfo(final String url, final Properties info) throws SQLException {
+            return new DriverPropertyInfo[0];
+        }
+
+        public boolean jdbcCompliant() {
+            return false;
+        }
     }
 
     @LocalBean
     @Singleton
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public static class Persister {
+
         @Resource(name = "managed")
         private DataSource ds;
 
-        @Resource
-        private EJBContext context;
+        public void save() {
+            try {
+                ds.getConnection();
 
-        public void save() throws SQLException {
-            CipheredPasswordDataSourceTest.save(ds, 10);
-        }
-
-        public void saveAndRollback() throws SQLException {
-            CipheredPasswordDataSourceTest.save(ds, 11);
-            context.setRollbackOnly();
+            } catch (SQLException e) {
+                System.err.println("Generated SQL error > " + e.getMessage());
+            }
         }
     }
+
 
 }
