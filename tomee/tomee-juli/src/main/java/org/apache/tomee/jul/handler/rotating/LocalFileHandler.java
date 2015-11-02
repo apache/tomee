@@ -554,7 +554,7 @@ public class LocalFileHandler extends Handler {
         return result;
     }
 
-    private class CountingStream extends OutputStream {
+    private final class CountingStream extends OutputStream {
         private final OutputStream out;
 
         private CountingStream(final OutputStream out) {
