@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.resource.jdbc;
 
-import org.apache.commons.dbcp.PoolableConnection;
 import org.apache.openejb.cipher.PasswordCipher;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SingletonBean;
@@ -41,17 +40,11 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.DriverPropertyInfo;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
-import java.sql.Statement;
 import java.util.Properties;
 import java.util.logging.Logger;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(ApplicationComposer.class)
 public class CipheredPasswordDataSourceTest {
