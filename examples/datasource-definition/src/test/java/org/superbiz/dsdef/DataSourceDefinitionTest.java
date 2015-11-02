@@ -99,7 +99,7 @@ public class DataSourceDefinitionTest {
 
     @Test
     public void lookup() throws NamingException {
-        final Object o = container.getContext().lookup("java:app/jdbc/persister");
+        final Object o = container.getContext().lookup("java:persister");
         assertNotNull(o);
         assertEquals(persister.getDs(), o);
     }

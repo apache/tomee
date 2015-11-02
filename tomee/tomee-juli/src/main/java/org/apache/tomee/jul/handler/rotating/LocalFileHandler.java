@@ -16,6 +16,8 @@
  */
 package org.apache.tomee.jul.handler.rotating;
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,8 +29,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.nio.file.Files;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.sql.Timestamp;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
@@ -377,14 +377,13 @@ public class LocalFileHandler extends Handler {
             if (archives != null) {
                 for (final File archive : archives) {
                     try {
-                        final BasicFileAttributes attr = Files.readAttributes(archive.toPath(), BasicFileAttributes.class);
-                        if (now - attr.creationTime().toMillis() > purgeExpiryDuration) {
-                            if (!Files.deleteIfExists(archive.toPath())) {
+                        if (FileUtils.isFileOlder(archive, now - purgeExpiryDuration)) {
+                            if (!FileUtils.deleteQuietly(archive)) {
                                 // Do not try to delete on exit cause we will find it again
-                                reportError("Can't delete " + archive.getAbsolutePath() + ".", null, ErrorManager.GENERIC_FAILURE);
+                                reportError("Failed to delete " + archive.getAbsolutePath() + ".", null, ErrorManager.GENERIC_FAILURE);
                             }
                         }
-                    } catch (final IOException e) {
+                    } catch (final Exception e) {
                         throw new IllegalStateException(e);
                     }
                 }
@@ -402,11 +401,11 @@ public class LocalFileHandler extends Handler {
             if (logs != null) {
                 for (final File file : logs) {
                     try {
-                        final BasicFileAttributes attr = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
-                        if (attr.creationTime().toMillis() < now && now - attr.lastModifiedTime().toMillis() > archiveExpiryDuration) {
+                        final boolean older = FileUtils.isFileOlder(file, now);
+                        if (older && now - file.lastModified() > archiveExpiryDuration) {
                             createArchive(file);
                         }
-                    } catch (final IOException e) {
+                    } catch (final Exception e) {
                         throw new IllegalStateException(e);
                     }
                 }
@@ -497,10 +496,10 @@ public class LocalFileHandler extends Handler {
             }
         }
         try {
-            if (!Files.deleteIfExists(source.toPath())) {
+            if (!FileUtils.deleteQuietly(source)) {
                 reportError("Can't delete " + source.getAbsolutePath() + ".", null, ErrorManager.GENERIC_FAILURE);
             }
-        } catch (final IOException e) {
+        } catch (final Exception e) {
             throw new IllegalStateException(e);
         }
     }
