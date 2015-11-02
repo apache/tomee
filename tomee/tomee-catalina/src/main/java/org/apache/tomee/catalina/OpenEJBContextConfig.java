@@ -63,6 +63,13 @@ import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.web.context.WebConversationFilter;
 import org.apache.xbean.finder.IAnnotationFinder;
 
+import javax.servlet.ServletContainerInitializer;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.ws.rs.core.Application;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -83,9 +90,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import javax.servlet.ServletContainerInitializer;
-import javax.servlet.http.HttpServlet;
-import javax.ws.rs.core.Application;
 
 public class OpenEJBContextConfig extends ContextConfig {
     private static Logger logger = Logger.getInstance(LogCategory.OPENEJB, OpenEJBContextConfig.class);
@@ -426,6 +430,32 @@ public class OpenEJBContextConfig extends ContextConfig {
         }
 
         final ClassLoader classLoader = context.getLoader().getClassLoader();
+
+        try {
+            classLoader.loadClass("org.apache.tomcat.websocket.server.DefaultServerEndpointConfigurator");
+            context.addServletContainerInitializer(new ServletContainerInitializer() {
+                @Override
+                public void onStartup(final Set<Class<?>> c, final ServletContext ctx) throws ServletException {
+                    ctx.addListener(new ServletContextListener() {
+                        @Override
+                        public void contextInitialized(final ServletContextEvent sce) {
+                            //no -op
+                        }
+
+                        @Override
+                        public void contextDestroyed(final ServletContextEvent sce) { // ensure we cleanup our "eviction" processes
+                            try {
+                                org.apache.tomee.catalina.websocket.JavaEEDefaultServerEnpointConfigurator.unregisterProcesses(sce.getServletContext());
+                            } catch (final Throwable th) {
+                                // no-op
+                            }
+                        }
+                    });
+                }
+            }, null);
+        } catch (final Throwable noWebSocket) {
+            // no-op: ok
+        }
 
         // add myfaces auto-initializer if mojarra is not present
         try {

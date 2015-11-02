@@ -25,6 +25,7 @@ import org.apache.webbeans.exception.WebBeansCreationException;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.naming.NamingException;
+import javax.servlet.ServletContext;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -40,11 +41,25 @@ public class JavaeeInstanceManager implements InstanceManager {
         this.webContext = webContext;
     }
 
+    public ServletContext getServletContext() {
+        return webContext == null ? null : webContext.getServletContext();
+    }
+
     @Override
     public Object newInstance(final Class<?> clazz) throws IllegalAccessException, InvocationTargetException, NamingException, InstantiationException {
         try {
             final Object object = webContext.newInstance(clazz);
             postConstruct(object, clazz);
+            return object;
+        } catch (final OpenEJBException | WebBeansCreationException | WebBeansConfigurationException e) {
+            throw (InstantiationException) new InstantiationException(e.getMessage()).initCause(e);
+        }
+    }
+
+    public WebContext.Instance newWeakableInstance(final Class<?> clazz) throws IllegalAccessException, InvocationTargetException, NamingException, InstantiationException {
+        try {
+            final WebContext.Instance object = webContext.newWeakableInstance(clazz);
+            postConstruct(object.getValue(), clazz);
             return object;
         } catch (final OpenEJBException | WebBeansCreationException | WebBeansConfigurationException e) {
             throw (InstantiationException) new InstantiationException(e.getMessage()).initCause(e);
@@ -178,5 +193,4 @@ public class JavaeeInstanceManager implements InstanceManager {
             preDestroy.setAccessible(accessibility);
         }
     }
-
 }

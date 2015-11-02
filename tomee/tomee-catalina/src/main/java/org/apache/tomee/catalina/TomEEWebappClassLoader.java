@@ -430,6 +430,21 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
             }
             return Collections.enumeration(list);
         }
+        if ("META-INF/services/javax.websocket.ContainerProvider".equals(name)) {
+            final Collection<URL> list = new ArrayList<>(Collections.list(super.getResources(name)));
+            final Iterator<URL> it = list.iterator();
+            while (it.hasNext()) {
+                final URL next = it.next();
+                final File file = Files.toFile(next);
+                if (!file.isFile() && NewLoaderLogic.skip(next)) {
+                    it.remove();
+                }
+            }
+            if (list.size() == 1) {
+                return Collections.enumeration(list);
+            }
+            return Collections.enumeration(list);
+        }
         return URLClassLoaderFirst.filterResources(name, super.getResources(name));
     }
 
