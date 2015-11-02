@@ -156,7 +156,7 @@ public class LocalFileHandler extends Handler {
             }
         }
 
-        setLevel(Level.parse(getProperty(className + ".level", "" + Level.ALL)));
+        setLevel(Level.parse(getProperty(className + ".level", Level.ALL.getName())));
 
         final String filterName = getProperty(className + ".filter", null);
         if (filterName != null) {

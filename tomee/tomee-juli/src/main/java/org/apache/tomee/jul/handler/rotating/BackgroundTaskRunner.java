@@ -45,8 +45,8 @@ class BackgroundTaskRunner {
                 private final String namePrefix = "com.tomitribe.logging.jul.handler.BackgroundTaskThread-";
 
                 {
-                    SecurityManager s = System.getSecurityManager();
-                    group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
+                    final SecurityManager s = System.getSecurityManager();
+                    group = s != null ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
                 }
 
                 @Override
