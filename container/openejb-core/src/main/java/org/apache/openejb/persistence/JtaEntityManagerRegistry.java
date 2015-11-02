@@ -109,7 +109,7 @@ public class JtaEntityManagerRegistry {
 
             // if transaction is active, we need to register the entity manager with the transaction manager
             if (transactionActive) {
-                if (synchronizationType != SynchronizationType.UNSYNCHRONIZED) {
+                if (entityManagerTracker.autoJoinTx) {
                     entityManager.joinTransaction();
                 }
                 transactionRegistry.putResource(txKey, entityManager);
@@ -215,7 +215,8 @@ public class JtaEntityManagerRegistry {
             if (isTransactionActive()) {
                 for (final Map.Entry<EntityManagerFactory, EntityManagerTracker> entry : entityManagers.entrySet()) {
                     final EntityManagerFactory entityManagerFactory = entry.getKey();
-                    final EntityManager entityManager = entry.getValue().getEntityManager();
+                    final EntityManagerTracker tracker = entry.getValue();
+                    final EntityManager entityManager = tracker.getEntityManager();
                     final EntityManagerTxKey txKey = new EntityManagerTxKey(entityManagerFactory);
                     final EntityManager oldEntityManager = (EntityManager) transactionRegistry.getResource(txKey);
                     if (entityManager == oldEntityManager) {
@@ -225,7 +226,9 @@ public class JtaEntityManagerRegistry {
                         throw new EntityManagerAlreadyRegisteredException("Another entity manager is already registered for this persistence unit");
                     }
 
-                    entityManager.joinTransaction();
+                    if (tracker.autoJoinTx) {
+                        entityManager.joinTransaction();
+                    }
                     transactionRegistry.putResource(txKey, entityManager);
                 }
             }
@@ -269,8 +272,11 @@ public class JtaEntityManagerRegistry {
 
             for (final Map.Entry<EntityManagerFactory, EntityManagerTracker> entry : entityManagers.entrySet()) {
                 final EntityManagerFactory entityManagerFactory = entry.getKey();
-                final EntityManager entityManager = entry.getValue().getEntityManager();
-                entityManager.joinTransaction();
+                final EntityManagerTracker value = entry.getValue();
+                final EntityManager entityManager = value.getEntityManager();
+                if (value.autoJoinTx) {
+                    entityManager.joinTransaction();
+                }
                 final EntityManagerTxKey txKey = new EntityManagerTxKey(entityManagerFactory);
                 transactionRegistry.putResource(txKey, entityManager);
             }
@@ -323,14 +329,16 @@ public class JtaEntityManagerRegistry {
         // must take care of the first inheritance level
         private transient int counter;
         private final EntityManager entityManager;
+        private final boolean autoJoinTx;
 
-        public EntityManagerTracker(final EntityManager entityManager) {
+        public EntityManagerTracker(final EntityManager entityManager, final boolean autoJoinTx) {
             if (entityManager == null) {
                 throw new NullPointerException("entityManager is null.");
             }
 
             this.counter = 0;
             this.entityManager = entityManager;
+            this.autoJoinTx = autoJoinTx;
         }
 
         public int incCounter() {

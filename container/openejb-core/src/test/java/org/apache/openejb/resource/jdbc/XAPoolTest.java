@@ -14,11 +14,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.tomee.jdbc;
+package org.apache.openejb.resource.jdbc;
 
+import org.apache.commons.dbcp2.BasicDataSource;
+import org.apache.commons.dbcp2.managed.ManagedConnection;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.resource.jdbc.managed.local.ManagedDataSource;
+import org.apache.openejb.resource.jdbc.dbcp.ManagedDataSourceWithRecovery;
+import org.apache.openejb.resource.jdbc.pool.DefaultDataSourceCreator;
 import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.Module;
 import org.apache.openejb.testng.PropertiesBuilder;
@@ -39,9 +42,10 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(ApplicationComposer.class)
-public class TomcatXADataSourceTest {
+public class XAPoolTest {
     @Resource(name = "xadb")
     private DataSource ds;
 
@@ -53,15 +57,15 @@ public class TomcatXADataSourceTest {
     @Configuration
     public Properties props() {
         return new PropertiesBuilder()
-            .p("openejb.jdbc.datasource-creator", TomEEDataSourceCreator.class.getName())
+            .p("openejb.jdbc.datasource-creator", DefaultDataSourceCreator.class.getName())
 
             .p("txMgr", "new://TransactionManager?type=TransactionManager")
             .p("txMgr.txRecovery", "true")
             .p("txMgr.logFileDir", "target/test/xa/howl")
 
-            // real XA datasources
+                // real XA datasources
             .p("xa", "new://Resource?class-name=" + JDBCXADataSource.class.getName())
-            .p("xa.url", "jdbc:hsqldb:mem:tomcat-xa")
+            .p("xa.url", "jdbc:hsqldb:mem:dbcpxa")
             .p("xa.user", "sa")
             .p("xa.password", "")
             .p("xa.SkipImplicitAttributes", "true")
@@ -71,7 +75,7 @@ public class TomcatXADataSourceTest {
             .p("xadb.xaDataSource", "xa")
             .p("xadb.JtaManaged", "true")
             .p("xadb.MaxIdle", "25")
-            .p("xadb.MaxActive", "25")
+            .p("xadb.MaxTotal", "25")
             .p("xadb.InitialSize", "3")
 
             .build();
@@ -80,19 +84,20 @@ public class TomcatXADataSourceTest {
     @Test
     public void check() throws SQLException {
         assertNotNull(ds);
-        final TomEEDataSourceCreator.TomEEDataSource tds = TomEEDataSourceCreator.TomEEDataSource.class.cast(ManagedDataSource.class.cast(ds).getDelegate());
+        final BasicDataSource tds = ManagedDataSourceWithRecovery.class.cast(ds);
 
-        assertEquals(3, tds.getIdle()); // InitSize
+        assertEquals(0, tds.getNumIdle()); // db not yet used so no connection at all (dbcp behavior)
 
         try (final Connection c = ds.getConnection()) {
             assertNotNull(c);
 
             final Connection connection = c.getMetaData().getConnection(); // just to do something and force the connection init
-            assertThat(connection, instanceOf(JDBCXAConnectionWrapper.class));
+            assertThat(connection, instanceOf(ManagedConnection.class));
+            assertTrue(connection.toString().contains("URL=jdbc:hsqldb:mem:dbcpxa, UserName=SA, HSQL Database Engine Driver"));
         } // here we close the connection so we are back in the initial state
 
-        assertEquals(0, tds.getActive());
-        assertEquals(3, tds.getIdle());
+        assertEquals(0, tds.getNumActive());
+        assertEquals(3, tds.getNumIdle());
 
         for (int it = 0; it < 5; it++) { // ensures it always works and not only the first time
             final Collection<Connection> connections = new ArrayList<>(25);
@@ -101,13 +106,15 @@ public class TomcatXADataSourceTest {
                 connections.add(connection);
                 connection.getMetaData(); // trigger connection retrieving otherwise nothing is done (pool is not used)
             }
-            assertEquals(25, tds.getActive());
-            assertEquals(0, tds.getIdle());
+            assertEquals(25, tds.getNumActive());
+            assertEquals(0, tds.getNumIdle());
             for (final Connection toClose : connections) {
                 toClose.close();
             }
-            assertEquals(0, tds.getActive());
-            assertEquals(25, tds.getIdle());
+            assertEquals(0, tds.getNumActive());
+            assertEquals(25, tds.getNumIdle());
         }
     }
 }
+
+

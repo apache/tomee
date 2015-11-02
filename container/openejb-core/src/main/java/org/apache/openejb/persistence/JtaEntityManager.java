@@ -118,7 +118,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
         this.wrapNoTxQueries = wrapConfig == null || "true".equalsIgnoreCase(wrapConfig);
     }
 
-    private static boolean isJPA21(final EntityManagerFactory entityManagerFactory) {
+    public static boolean isJPA21(final EntityManagerFactory entityManagerFactory) {
         return ReloadableEntityManagerFactory.class.isInstance(entityManagerFactory) ?
                 isJPA21(ReloadableEntityManagerFactory.class.cast(entityManagerFactory).getDelegate())
                 : hasMethod(entityManagerFactory, "createEntityManager", SynchronizationType.class);

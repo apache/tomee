@@ -38,6 +38,7 @@ public class NameNode implements Serializable {
     private Object myObject;
     private transient IvmContext myContext;
     private boolean unbound;
+    private boolean subTreeUnbound;
 
     public NameNode(final NameNode parent, final ParsedName name, final Object obj, final NameNode parentTree) {
         atomicName = name.getComponent();
@@ -74,11 +75,17 @@ public class NameNode implements Serializable {
         NameNotFoundException n = null;
         final int pos = name.getPos();
         if (compareResult == ParsedName.IS_EQUAL && name.getComponent().equals(atomicName)) {
-            // hashcodes and String valuse are equal
+            // hashcodes and String values are equal
             if (name.next()) {
                 if (subTree != null) {
                     try {
                         return subTree.resolve(name);
+                    } catch (final NameNotFoundException e) {
+                        n = e;
+                    }
+                } else if (!subTreeUnbound && !unbound && myContext != null && !Federation.class.isInstance(myObject)) {
+                    try {
+                        return myContext.mynode.resolve(name);
                     } catch (final NameNotFoundException e) {
                         n = e;
                     }
@@ -137,6 +144,7 @@ public class NameNode implements Serializable {
                 }
                 if (subTree == null) {
                     subTree = new NameNode(this, name, obj, this);
+                    subTreeUnbound = false;
                 } else {
                     subTree.bind(name, obj);
                 }
@@ -222,6 +230,7 @@ public class NameNode implements Serializable {
         if (compareResult == ParsedName.IS_EQUAL) {
             if (subTree == null) {
                 subTree = node;
+                subTreeUnbound = false;
                 subTree.parentTree = this;
             } else {
                 subTree.bind(node);
@@ -271,17 +280,18 @@ public class NameNode implements Serializable {
     private void unbind(final NameNode node) {
         if (subTree == node) {
             subTree = null;
+            subTreeUnbound = true;
         } else if (grtrTree == node) {
             grtrTree = null;
         } else if (lessTree == node) {
             lessTree = null;
         }
-        rebalance(this, node);
+        rebalance(node);
     }
 
-    private void rebalance(final NameNode tree, final NameNode node) {
+    private void rebalance(final NameNode node) {
         if (node.subTree != null) {
-            tree.bind(node.subTree);
+            this.bind(node.subTree);
         }
         if (node.lessTree != null) {
             this.bind(node.lessTree);

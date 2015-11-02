@@ -69,6 +69,7 @@ import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.SynchronizationType;
 import javax.transaction.Transaction;
 import java.lang.reflect.Method;
 import java.rmi.NoSuchObjectException;
@@ -776,23 +777,30 @@ public class ManagedContainer implements RpcContainer {
 
     private Index<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker> createEntityManagers(final BeanContext beanContext) {
         // create the extended entity managers
-        final Index<EntityManagerFactory, Map> factories = beanContext.getExtendedEntityManagerFactories();
+        final Index<EntityManagerFactory, BeanContext.EntityManagerConfiguration> factories = beanContext.getExtendedEntityManagerFactories();
         Index<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker> entityManagers = null;
         if (factories != null && factories.size() > 0) {
             entityManagers = new Index<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker>(new ArrayList<EntityManagerFactory>(factories.keySet()));
-            for (final Map.Entry<EntityManagerFactory, Map> entry : factories.entrySet()) {
+            for (final Map.Entry<EntityManagerFactory, BeanContext.EntityManagerConfiguration> entry : factories.entrySet()) {
                 final EntityManagerFactory entityManagerFactory = entry.getKey();
-                final Map properties = entry.getValue();
 
                 JtaEntityManagerRegistry.EntityManagerTracker entityManagerTracker = entityManagerRegistry.getInheritedEntityManager(entityManagerFactory);
                 final EntityManager entityManager;
                 if (entityManagerTracker == null) {
-                    if (properties != null) {
+                    final SynchronizationType synchronizationType = entry.getValue().getSynchronizationType();
+                    final Map properties = entry.getValue().getProperties();
+                    if (synchronizationType != null) {
+                        if (properties != null) {
+                            entityManager = entityManagerFactory.createEntityManager(synchronizationType, properties);
+                        } else {
+                            entityManager = entityManagerFactory.createEntityManager(synchronizationType);
+                        }
+                    } else if (properties != null) {
                         entityManager = entityManagerFactory.createEntityManager(properties);
                     } else {
                         entityManager = entityManagerFactory.createEntityManager();
                     }
-                    entityManagerTracker = new JtaEntityManagerRegistry.EntityManagerTracker(entityManager);
+                    entityManagerTracker = new JtaEntityManagerRegistry.EntityManagerTracker(entityManager, synchronizationType != SynchronizationType.UNSYNCHRONIZED);
                 } else {
                     entityManagerTracker.incCounter();
                 }
@@ -810,7 +818,7 @@ public class ManagedContainer implements RpcContainer {
         final BeanContext beanContext = callContext.getBeanContext();
 
         // get the factories
-        final Index<EntityManagerFactory, Map> factories = beanContext.getExtendedEntityManagerFactories();
+        final Index<EntityManagerFactory, BeanContext.EntityManagerConfiguration> factories = beanContext.getExtendedEntityManagerFactories();
         if (factories == null) {
             return;
         }

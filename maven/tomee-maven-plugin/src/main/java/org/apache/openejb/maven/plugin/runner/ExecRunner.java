@@ -20,7 +20,6 @@ import org.apache.openejb.config.RemoteServer;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Zips;
-import org.apache.openejb.util.Pipe;
 import org.apache.tomee.util.QuickServerXmlParser;
 
 import java.io.File;
@@ -76,18 +75,10 @@ public class ExecRunner {
             IO.writeString(timestampFile, config.getProperty("timestamp", Long.toString(System.currentTimeMillis())));
         }
 
-        final File[] extracted = distribOutput.listFiles();
-        if (extracted != null && extracted.length == 1) {
-            distribOutput = extracted[0];
-        }
-        final File[] scripts = new File(distribOutput, "conf").listFiles();
+        final File[] scripts = new File(distribOutput, "bin").listFiles();
         if (scripts != null) { // dont use filefilter to avoid dependency issue
             for (final File f : scripts) {
-                if (f.getName().endsWith(".sh") && !f.canExecute()) {
-                    if(!f.setExecutable(true, true)){
-                        System.err.println("Failed make file executable: " + f);
-                    }
-                }
+                setExecutable(f);
             }
         }
 
@@ -96,18 +87,15 @@ public class ExecRunner {
             final int lastSlash = cmd.lastIndexOf('/');
             if (lastSlash > 0) {
                 final String dir = cmd.substring(0, lastSlash);
-                final String script = cmd.substring(lastSlash + 1, cmd.length() - SH_BAT_AUTO.length())
-                        + (System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("win") ? ".bat" : ".sh");
-                cmd = dir + File.separator + script;
-                final File scriptFile = new File(distribOutput, cmd);
+                final boolean isWin = System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("win");
+                final String script = cmd.substring(lastSlash + 1, cmd.length() - SH_BAT_AUTO.length()).replace('/', isWin ? '\\' : '/')
+                        + (isWin ? ".bat" : ".sh");
+                final File scriptFile = new File(distribOutput, dir + File.separator + script);
                 if (!scriptFile.exists()) {
                     throw new IllegalArgumentException("Can't find  " + cmd);
                 }
-                if (cmd.endsWith(".sh")) {
-                    if(!scriptFile.setExecutable(true)){
-                        System.err.println("Failed make script file executable: " + scriptFile);
-                    }
-                }
+                cmd = scriptFile.getAbsolutePath();
+                setExecutable(scriptFile); // in case it is not in bin/
             }
         }
 
@@ -115,9 +103,11 @@ public class ExecRunner {
 
         final Collection<String> params = new ArrayList<>();
         if ("java".equals(cmd)) {
-            final QuickServerXmlParser parser = QuickServerXmlParser.parse(new File(distribOutput,"conf/server.xml"));
+            final File base = findBase(distribOutput);
 
-            System.setProperty("openejb.home", distribOutput.getAbsolutePath());
+            final QuickServerXmlParser parser = QuickServerXmlParser.parse(new File(base,"conf/server.xml"));
+
+            System.setProperty("openejb.home", base.getAbsolutePath());
             System.setProperty("server.shutdown.port", parser.stop());
             System.setProperty("server.shutdown.command", config.getProperty("shutdownCommand"));
 
@@ -152,7 +142,9 @@ public class ExecRunner {
             params.add(cmd);
             params.addAll(asList(args));
 
-            final ProcessBuilder builder = new ProcessBuilder(params.toArray(new String[params.size()])).directory(distribOutput);
+            final ProcessBuilder builder = new ProcessBuilder(params.toArray(new String[params.size()]))
+                .inheritIO()
+                .directory(findBase(distribOutput));
 
             final String existingOpts = System.getenv("CATALINA_OPTS");
             final String catalinaOpts = config.getProperty("catalinaOpts");
@@ -160,24 +152,41 @@ public class ExecRunner {
                 builder.environment().put("CATALINA_OPTS", identityOrEmpty(catalinaOpts) + " " + identityOrEmpty(existingOpts) + " " + identityOrEmpty(additionalArgs));
             }
 
-            boolean redirectOut = false;
-            try { // java >= 7
-                ProcessBuilder.class.getDeclaredMethod("inheritIO").invoke(builder);
-            } catch (final Throwable th){ // java 6
-                redirectOut = true;
-            }
-
-            final Process process = builder.start();
-            if (redirectOut) {
-                Pipe.pipe(process);
-            }
-
-            process.waitFor();
+            builder.start().waitFor();
         }
 
         System.out.flush();
         System.err.flush();
         System.out.println("Exited Successfully!");
+    }
+
+    private static void setExecutable(final File f) {
+        if (f.getName().endsWith(".sh") && !f.canExecute()) {
+            if(!f.setExecutable(true, true)){
+                System.err.println("Failed make file executable: " + f);
+            }
+        }
+    }
+
+    private static File findBase(final File distribOutput) {
+        final File[] extracted = distribOutput.listFiles();
+        if (extracted != null) {
+            File newRoot = null;
+            for (final File e : extracted) {
+                if (e.isDirectory()) {
+                    if (newRoot == null) {
+                        newRoot = e;
+                    } else {
+                        newRoot = null;
+                        break;
+                    }
+                }
+            }
+            if (newRoot != null) {
+                return newRoot;
+            }
+        }
+        return distribOutput;
     }
 
     private static String identityOrEmpty(final String value) {

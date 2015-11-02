@@ -448,6 +448,10 @@ public abstract class RESTService implements ServerService, SelfManaging {
             configuration = PojoUtil.findConfiguration(pojoConfigurations, "jaxrs-application");
         }
 
+        if (configuration != null) {
+            LOGGER.info("Registered JAX-RS Configuration: " + configuration);
+        }
+
         final String base = getAddress(contextRoot);
         final String nopath;
         if (base.endsWith("/") && prefix.startsWith("/")) {

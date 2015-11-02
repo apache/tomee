@@ -133,9 +133,10 @@ public class Instance implements Serializable, Cache.TimeOut {
         }
     }
 
-    public synchronized Map<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker> getEntityManagers(final Index<EntityManagerFactory, Map> factories) {
+    public synchronized Map<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker> getEntityManagers(
+            final Index<EntityManagerFactory, BeanContext.EntityManagerConfiguration> factories) {
         if (entityManagers == null && entityManagerArray != null) {
-            entityManagers = new HashMap<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker>();
+            entityManagers = new HashMap<>();
             for (int i = 0; i < entityManagerArray.length; i++) {
                 final EntityManagerFactory entityManagerFactory = factories.getKey(i);
                 final JtaEntityManagerRegistry.EntityManagerTracker entityManager = entityManagerArray[i];

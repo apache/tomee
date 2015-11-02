@@ -54,6 +54,10 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp2.managed.Bas
      * not ciphered. The {@link org.apache.openejb.cipher.PlainTextPasswordCipher} can also be used.
      */
     private String passwordCipher;
+
+    // keep tracking the user configured password in case we need it to be decrypted again
+    private String initialPassword;
+
     private JMXBasicDataSource jmxDs;
 
     public BasicManagedDataSource(final String name) {
@@ -85,7 +89,7 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp2.managed.Bas
 
     private void setJndiXaDataSource(final String xaDataSource) {
         setXaDataSourceInstance( // proxy cause we don't know if this datasource was created before or not the delegate
-            XADataSourceResource.proxy(getDriverClassLoader() != null ? getDriverClassLoader() : Thread.currentThread().getContextClassLoader(), xaDataSource));
+                XADataSourceResource.proxy(getDriverClassLoader() != null ? getDriverClassLoader() : Thread.currentThread().getContextClassLoader(), xaDataSource));
 
         if (getTransactionManager() == null) {
             setTransactionManager(OpenEJB.getTransactionManager());
@@ -128,6 +132,19 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp2.managed.Bas
         l.lock();
         try {
             this.passwordCipher = passwordCipher;
+        } finally {
+            l.unlock();
+        }
+    }
+
+    @Override
+    public void setPassword(final String password) {
+        final ReentrantLock l = lock;
+        l.lock();
+        try {
+            // keep the encrypted value if it's encrypted
+            this.initialPassword = password;
+            super.setPassword(password);
         } finally {
             l.unlock();
         }
@@ -229,7 +246,9 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp2.managed.Bas
             // check password codec if available
             if (null != passwordCipher) {
                 final PasswordCipher cipher = PasswordCipherFactory.getPasswordCipher(passwordCipher);
-                final String plainPwd = cipher.decrypt(getPassword().toCharArray());
+
+                // always use the initial encrypted value
+                final String plainPwd = cipher.decrypt(initialPassword.toCharArray());
 
                 // override previous password value
                 super.setPassword(plainPwd);

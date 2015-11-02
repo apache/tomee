@@ -55,6 +55,10 @@ public class BasicDataSource extends org.apache.commons.dbcp2.BasicDataSource im
      * not ciphered. The {@link org.apache.openejb.cipher.PlainTextPasswordCipher} can also be used.
      */
     private String passwordCipher;
+
+    // keep tracking the user configured password in case we need it to be decrypted again
+    private String initialPassword;
+
     private JMXBasicDataSource jmxDs;
     private CommonDataSource delegate;
     private String name;
@@ -128,6 +132,18 @@ public class BasicDataSource extends org.apache.commons.dbcp2.BasicDataSource im
         }
     }
 
+    @Override
+    public void setPassword(final String password) {
+        final ReentrantLock l = lock;
+        l.lock();
+        try {
+            // keep the encrypted value if it's encrypted
+            this.initialPassword = password;
+            super.setPassword(password);
+        } finally {
+            l.unlock();
+        }
+    }
 
     public String getUserName() {
         final ReentrantLock l = lock;
@@ -226,7 +242,9 @@ public class BasicDataSource extends org.apache.commons.dbcp2.BasicDataSource im
             // check password codec if available
             if (null != passwordCipher && !"PlainText".equals(passwordCipher)) {
                 final PasswordCipher cipher = PasswordCipherFactory.getPasswordCipher(passwordCipher);
-                final String plainPwd = cipher.decrypt(getPassword().toCharArray());
+
+                // always use the initial encrypted value
+                final String plainPwd = cipher.decrypt(initialPassword.toCharArray());
 
                 // override previous password value
                 super.setPassword(plainPwd);
