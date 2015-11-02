@@ -46,7 +46,8 @@ public abstract class AbstractCommandMojo extends AbstractAddressMojo {
         try {
             return new InitialContext(props).lookup(name);
         } catch (final Exception e) {
-            throw new TomEEException(e.getMessage(), e);
+            throw new TomEEException("Not able to execute " + getClass().getSimpleName() +
+                ", maybe add -Dopenejb.system.apps=true -Dtomee.remote.support=true to tomee", e);
         }
     }
 }

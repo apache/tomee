@@ -130,7 +130,6 @@ public class TomcatLoader implements Loader {
     }
 
     public void initDefaults(final Properties properties) {
-        setIfNull(properties, "openejb.system.apps", "true");
         setIfNull(properties, "openejb.deployments.classpath", "false");
         setIfNull(properties, "openejb.deployments.classpath.filter.systemapps", "false");
 
