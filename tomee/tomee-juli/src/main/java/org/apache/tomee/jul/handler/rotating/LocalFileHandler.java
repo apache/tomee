@@ -83,7 +83,7 @@ import java.util.zip.ZipOutputStream;
 public class LocalFileHandler extends Handler {
     private static final int BUFFER_SIZE = 8102;
 
-    private long limit = 0;
+    private long limit;
     private int bufferSize = -1;
     private Pattern filenameRegex;
     private Pattern archiveFilenameRegex;
@@ -569,13 +569,13 @@ public class LocalFileHandler extends Handler {
         }
 
         @Override
-        public void write(final byte buff[]) throws IOException {
+        public void write(final byte[] buff) throws IOException {
             out.write(buff);
             written += buff.length;
         }
 
         @Override
-        public void write(final byte buff[], final int off, final int len) throws IOException {
+        public void write(final byte[] buff, final int off, final int len) throws IOException {
             out.write(buff, off, len);
             written += len;
         }

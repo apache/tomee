@@ -111,7 +111,7 @@ class Size {
         return unit.toBytes(size);
     }
 
-    private static class Normalize {
+    private static final class Normalize {
         private final long a;
         private final long b;
         private final SizeUnit base;

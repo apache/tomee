@@ -34,7 +34,7 @@ public final class ReloadableLog {
 
     public static Log newLog(final String name, final String factory) {
         return Log.class.cast(Proxy.newProxyInstance(
-            ReloadableLog.class.getClassLoader(), INTERFACES, new ReloadableLogHandler(factory, name)));
+                ReloadableLog.class.getClassLoader(), INTERFACES, new ReloadableLogHandler(factory, name)));
     }
 
     private static final class ReloadableLogHandler implements InvocationHandler {
@@ -46,7 +46,7 @@ public final class ReloadableLog {
         private volatile String factory;
         private final String name;
         private final AtomicReference<Log> delegate = new AtomicReference<Log>();
-        private volatile boolean done = false;
+        private volatile boolean done;
 
         public ReloadableLogHandler(final String factory, final String name) {
             this.factory = factory;
@@ -93,10 +93,10 @@ public final class ReloadableLog {
 
         private Log newInstance(final String impl) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException {
             return Log.class.cast(Thread.currentThread()
-                        .getContextClassLoader()
-                        .loadClass(impl)
-                        .getConstructor(String.class)
-                        .newInstance(name));
+                    .getContextClassLoader()
+                    .loadClass(impl)
+                    .getConstructor(String.class)
+                    .newInstance(name));
         }
 
         @Override
