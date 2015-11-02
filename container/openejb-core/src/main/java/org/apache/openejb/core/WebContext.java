@@ -25,7 +25,6 @@ import org.apache.openejb.cdi.ConstructorInjectionBean;
 import org.apache.webbeans.component.InjectionTargetBean;
 import org.apache.webbeans.config.WebBeansContext;
 
-import javax.enterprise.context.Dependent;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.naming.Context;
@@ -132,7 +131,7 @@ public class WebContext {
     public <T> Instance newWeakableInstance(final Class<T> beanClass) throws OpenEJBException {
         final WebBeansContext webBeansContext = getWebBeansContext();
         final ConstructorInjectionBean<Object> beanDefinition = getConstructorInjectionBean(beanClass, webBeansContext);
-        final CreationalContext<Object> creationalContext;
+        CreationalContext<Object> creationalContext;
         final Object o;
         if (webBeansContext == null) {
             creationalContext = null;
@@ -155,6 +154,9 @@ public class WebContext {
         if (webBeansContext != null) {
             final InjectionTargetBean<Object> bean = InjectionTargetBean.class.cast(beanDefinition);
             bean.getInjectionTarget().inject(beanInstance, creationalContext);
+            if (shouldBeReleased(bean.getScope())) {
+                creationalContexts.put(beanInstance, creationalContext);
+            }
         }
         return new Instance(beanInstance, creationalContext);
     }
@@ -229,9 +231,7 @@ public class WebContext {
                 final InjectionTargetBean<Object> bean = InjectionTargetBean.class.cast(beanDefinition);
                 bean.getInjectionTarget().inject(beanInstance, creationalContext);
 
-                // if the bean is dependent simply cleanup the creational context once it is created
-                final Class<? extends Annotation> scope = beanDefinition.getScope();
-                if (scope == null || Dependent.class.equals(scope)) {
+                if (shouldBeReleased(beanDefinition.getScope())) {
                     creationalContexts.put(beanInstance, creationalContext);
                 }
             }
@@ -240,6 +240,10 @@ public class WebContext {
         } catch (final NamingException e) {
             throw new OpenEJBException(e);
         }
+    }
+
+    private boolean shouldBeReleased(final Class<? extends Annotation> scope) {
+        return scope == null || !getWebBeansContext().getBeanManagerImpl().isNormalScope(scope);
     }
 
     public void setBindings(final Map<String, Object> bindings) {
