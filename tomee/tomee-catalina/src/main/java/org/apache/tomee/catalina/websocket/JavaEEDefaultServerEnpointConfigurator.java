@@ -141,7 +141,7 @@ public class JavaEEDefaultServerEnpointConfigurator extends DefaultServerEndpoin
         }
     }
 
-    private static class CdiCleanUpBackgroundProcess implements BackgroundProcess {
+    private static final class CdiCleanUpBackgroundProcess implements BackgroundProcess {
         private volatile int period = 1; // 1s by default
         private volatile int acceptRetries = 3; // in case there is latency between this call and registerSession()
         private volatile Set<Session> sessions;
