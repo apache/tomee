@@ -101,7 +101,7 @@ class
         return unit.toMillis(time);
     }
 
-    private static class Normalize {
+    private static final class Normalize {
         private final long a;
         private final long b;
         private final TimeUnit base;
