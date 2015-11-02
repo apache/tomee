@@ -18,7 +18,8 @@ package org.apache.tomee.jul.handler.rotating;
 
 import java.util.concurrent.TimeUnit;
 
-class Duration {
+class
+        Duration {
     private long time;
     private TimeUnit unit = TimeUnit.MILLISECONDS;
 
@@ -101,9 +102,9 @@ class Duration {
     }
 
     private static class Normalize {
-        private long a;
-        private long b;
-        private TimeUnit base;
+        private final long a;
+        private final long b;
+        private final TimeUnit base;
 
         private Normalize(final Duration a, final Duration b) {
             this.base = lowest(a, b);
@@ -112,10 +113,18 @@ class Duration {
         }
 
         private static TimeUnit lowest(final Duration a, final Duration b) {
-            if (a.unit == null) return b.unit;
-            if (b.unit == null) return a.unit;
-            if (a.time == 0) return b.unit;
-            if (b.time == 0) return a.unit;
+            if (a.unit == null) {
+                return b.unit;
+            }
+            if (b.unit == null) {
+                return a.unit;
+            }
+            if (a.time == 0) {
+                return b.unit;
+            }
+            if (b.time == 0) {
+                return a.unit;
+            }
             return TimeUnit.values()[Math.min(a.unit.ordinal(), b.unit.ordinal())];
         }
     }
@@ -127,7 +136,7 @@ class Duration {
 
     private static void invalidFormat(final String text) {
         throw new IllegalArgumentException("Illegal duration format: '" + text +
-            "'.  Valid examples are '10s' or '10 seconds'.");
+                "'.  Valid examples are '10s' or '10 seconds'.");
     }
 
     private static TimeUnit parseUnit(final String u) {
@@ -135,42 +144,102 @@ class Duration {
             return null;
         }
 
-        if ("NANOSECONDS".equalsIgnoreCase(u)) return TimeUnit.NANOSECONDS;
-        if ("NANOSECOND".equalsIgnoreCase(u)) return TimeUnit.NANOSECONDS;
-        if ("NANOS".equalsIgnoreCase(u)) return TimeUnit.NANOSECONDS;
-        if ("NANO".equalsIgnoreCase(u)) return TimeUnit.NANOSECONDS;
-        if ("NS".equalsIgnoreCase(u)) return TimeUnit.NANOSECONDS;
+        if ("NANOSECONDS".equalsIgnoreCase(u)) {
+            return TimeUnit.NANOSECONDS;
+        }
+        if ("NANOSECOND".equalsIgnoreCase(u)) {
+            return TimeUnit.NANOSECONDS;
+        }
+        if ("NANOS".equalsIgnoreCase(u)) {
+            return TimeUnit.NANOSECONDS;
+        }
+        if ("NANO".equalsIgnoreCase(u)) {
+            return TimeUnit.NANOSECONDS;
+        }
+        if ("NS".equalsIgnoreCase(u)) {
+            return TimeUnit.NANOSECONDS;
+        }
 
-        if ("MICROSECONDS".equalsIgnoreCase(u)) return TimeUnit.MICROSECONDS;
-        if ("MICROSECOND".equalsIgnoreCase(u)) return TimeUnit.MICROSECONDS;
-        if ("MICROS".equalsIgnoreCase(u)) return TimeUnit.MICROSECONDS;
-        if ("MICRO".equalsIgnoreCase(u)) return TimeUnit.MICROSECONDS;
+        if ("MICROSECONDS".equalsIgnoreCase(u)) {
+            return TimeUnit.MICROSECONDS;
+        }
+        if ("MICROSECOND".equalsIgnoreCase(u)) {
+            return TimeUnit.MICROSECONDS;
+        }
+        if ("MICROS".equalsIgnoreCase(u)) {
+            return TimeUnit.MICROSECONDS;
+        }
+        if ("MICRO".equalsIgnoreCase(u)) {
+            return TimeUnit.MICROSECONDS;
+        }
 
-        if ("MILLISECONDS".equalsIgnoreCase(u)) return TimeUnit.MILLISECONDS;
-        if ("MILLISECOND".equalsIgnoreCase(u)) return TimeUnit.MILLISECONDS;
-        if ("MILLIS".equalsIgnoreCase(u)) return TimeUnit.MILLISECONDS;
-        if ("MILLI".equalsIgnoreCase(u)) return TimeUnit.MILLISECONDS;
-        if ("MS".equalsIgnoreCase(u)) return TimeUnit.MILLISECONDS;
+        if ("MILLISECONDS".equalsIgnoreCase(u)) {
+            return TimeUnit.MILLISECONDS;
+        }
+        if ("MILLISECOND".equalsIgnoreCase(u)) {
+            return TimeUnit.MILLISECONDS;
+        }
+        if ("MILLIS".equalsIgnoreCase(u)) {
+            return TimeUnit.MILLISECONDS;
+        }
+        if ("MILLI".equalsIgnoreCase(u)) {
+            return TimeUnit.MILLISECONDS;
+        }
+        if ("MS".equalsIgnoreCase(u)) {
+            return TimeUnit.MILLISECONDS;
+        }
 
-        if ("SECONDS".equalsIgnoreCase(u)) return TimeUnit.SECONDS;
-        if ("SECOND".equalsIgnoreCase(u)) return TimeUnit.SECONDS;
-        if ("SEC".equalsIgnoreCase(u)) return TimeUnit.SECONDS;
-        if ("S".equalsIgnoreCase(u)) return TimeUnit.SECONDS;
+        if ("SECONDS".equalsIgnoreCase(u)) {
+            return TimeUnit.SECONDS;
+        }
+        if ("SECOND".equalsIgnoreCase(u)) {
+            return TimeUnit.SECONDS;
+        }
+        if ("SEC".equalsIgnoreCase(u)) {
+            return TimeUnit.SECONDS;
+        }
+        if ("S".equalsIgnoreCase(u)) {
+            return TimeUnit.SECONDS;
+        }
 
-        if ("MINUTES".equalsIgnoreCase(u)) return TimeUnit.MINUTES;
-        if ("MINUTE".equalsIgnoreCase(u)) return TimeUnit.MINUTES;
-        if ("MIN".equalsIgnoreCase(u)) return TimeUnit.MINUTES;
-        if ("M".equalsIgnoreCase(u)) return TimeUnit.MINUTES;
+        if ("MINUTES".equalsIgnoreCase(u)) {
+            return TimeUnit.MINUTES;
+        }
+        if ("MINUTE".equalsIgnoreCase(u)) {
+            return TimeUnit.MINUTES;
+        }
+        if ("MIN".equalsIgnoreCase(u)) {
+            return TimeUnit.MINUTES;
+        }
+        if ("M".equalsIgnoreCase(u)) {
+            return TimeUnit.MINUTES;
+        }
 
-        if ("HOURS".equalsIgnoreCase(u)) return TimeUnit.HOURS;
-        if ("HOUR".equalsIgnoreCase(u)) return TimeUnit.HOURS;
-        if ("HRS".equalsIgnoreCase(u)) return TimeUnit.HOURS;
-        if ("HR".equalsIgnoreCase(u)) return TimeUnit.HOURS;
-        if ("H".equalsIgnoreCase(u)) return TimeUnit.HOURS;
+        if ("HOURS".equalsIgnoreCase(u)) {
+            return TimeUnit.HOURS;
+        }
+        if ("HOUR".equalsIgnoreCase(u)) {
+            return TimeUnit.HOURS;
+        }
+        if ("HRS".equalsIgnoreCase(u)) {
+            return TimeUnit.HOURS;
+        }
+        if ("HR".equalsIgnoreCase(u)) {
+            return TimeUnit.HOURS;
+        }
+        if ("H".equalsIgnoreCase(u)) {
+            return TimeUnit.HOURS;
+        }
 
-        if ("DAYS".equalsIgnoreCase(u)) return TimeUnit.DAYS;
-        if ("DAY".equalsIgnoreCase(u)) return TimeUnit.DAYS;
-        if ("D".equalsIgnoreCase(u)) return TimeUnit.DAYS;
+        if ("DAYS".equalsIgnoreCase(u)) {
+            return TimeUnit.DAYS;
+        }
+        if ("DAY".equalsIgnoreCase(u)) {
+            return TimeUnit.DAYS;
+        }
+        if ("D".equalsIgnoreCase(u)) {
+            return TimeUnit.DAYS;
+        }
 
         throw new IllegalArgumentException("Unknown time unit '" + u + "'");
     }
