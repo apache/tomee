@@ -154,7 +154,11 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
             opts = opts.trim();
         }
         if (opts == null || opts.isEmpty()) {
-            return Arrays.asList("-Dorg.apache.catalina.STRICT_SERVLET_COMPLIANCE=false", ARQUILLIAN_FILTER);
+            return Arrays.asList(
+                "-Dorg.apache.catalina.STRICT_SERVLET_COMPLIANCE=false",
+                ARQUILLIAN_FILTER,
+                "-Dopenejb.system.apps=true", "-Dtomee.remote.support=true"
+            );
         }
 
         final List<String> splitOnSpace = new ArrayList<String>();
@@ -168,6 +172,8 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
             splitOnSpace.add("-Dorg.apache.catalina.STRICT_SERVLET_COMPLIANCE=false");
         }
         splitOnSpace.add(ARQUILLIAN_FILTER);
+        splitOnSpace.add("-Dopenejb.system.apps=true");
+        splitOnSpace.add("-Dtomee.remote.support=true");
         return splitOnSpace;
     }
 

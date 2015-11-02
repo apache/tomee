@@ -173,7 +173,10 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
 
             container = new RemoteServer();
             container.setPortStartup(httpPort);
-            container.start(Arrays.asList("-Dorg.apache.openejb.servlet.filters=" + ArquillianFilterRunner.class.getName() + "=" + ServletMethodExecutor.ARQUILLIAN_SERVLET_MAPPING), "start", true);
+            container.start(Arrays.asList(
+                "-Dopenejb.system.apps=true",
+                "-Dtomee.remote.support=true",
+                "-Dorg.apache.openejb.servlet.filters=" + ArquillianFilterRunner.class.getName() + "=" + ServletMethodExecutor.ARQUILLIAN_SERVLET_MAPPING), "start", true);
             container.killOnExit();
         } catch (final Exception e) {
             throw new LifecycleException("Unable to start remote container", e);

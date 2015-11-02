@@ -44,7 +44,7 @@ import java.util.Map;
  * @version $Rev$ $Date$
  */
 public class GlobalListenerSupport implements PropertyChangeListener, LifecycleListener {
-    private static final boolean REMOTE_SUPPORT = SystemInstance.get().getOptions().get("tomee.remote.support", true);
+    private static final boolean REMOTE_SUPPORT = SystemInstance.get().getOptions().get("tomee.remote.support", false);
 
     /**
      * The LifecycleEvent type for the "component init" event.

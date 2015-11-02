@@ -104,6 +104,10 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
         s.getExtensions().addAll(s.getUpdateOnlyExtenions());
         if (reloadOnUpdate) {
             deployOpenEjbApplication = true;
+            if (systemVariables == null) {
+                systemVariables = new HashMap<>();
+                systemVariables.put("tomee.remote.support", "true");
+            }
         }
     }
 
