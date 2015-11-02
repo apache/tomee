@@ -53,7 +53,7 @@ public class WebContext {
     private Context jndiEnc;
     private final AppContext appContext;
     private Map<String, Object> bindings;
-    private final Map<Object, CreationalContext<?>> creatonalContexts = new ConcurrentHashMap<Object, CreationalContext<?>>();
+    private final Map<Object, CreationalContext<?>> creationalContexts = new ConcurrentHashMap<>();
     private WebBeansContext webbeansContext;
     private String contextRoot;
     private String host;
@@ -129,8 +129,7 @@ public class WebContext {
         return appContext;
     }
 
-    public Object newInstance(final Class beanClass) throws OpenEJBException {
-
+    public <T> Instance newWeakableInstance(final Class<T> beanClass) throws OpenEJBException {
         final WebBeansContext webBeansContext = getWebBeansContext();
         final ConstructorInjectionBean<Object> beanDefinition = getConstructorInjectionBean(beanClass, webBeansContext);
         final CreationalContext<Object> creationalContext;
@@ -156,10 +155,16 @@ public class WebContext {
         if (webBeansContext != null) {
             final InjectionTargetBean<Object> bean = InjectionTargetBean.class.cast(beanDefinition);
             bean.getInjectionTarget().inject(beanInstance, creationalContext);
-
-            creatonalContexts.put(beanInstance, creationalContext);
         }
-        return beanInstance;
+        return new Instance(beanInstance, creationalContext);
+    }
+
+    public Object newInstance(final Class beanClass) throws OpenEJBException {
+        final Instance instance = newWeakableInstance(beanClass);
+        if (instance.getCreationalContext() != null) {
+            creationalContexts.put(instance.getValue(), instance.getCreationalContext());
+        }
+        return instance.getValue();
     }
 
     private ConstructorInjectionBean<Object> getConstructorInjectionBean(final Class beanClass, final WebBeansContext webBeansContext) {
@@ -227,7 +232,7 @@ public class WebContext {
                 // if the bean is dependent simply cleanup the creational context once it is created
                 final Class<? extends Annotation> scope = beanDefinition.getScope();
                 if (scope == null || Dependent.class.equals(scope)) {
-                    creatonalContexts.put(beanInstance, creationalContext);
+                    creationalContexts.put(beanInstance, creationalContext);
                 }
             }
 
@@ -262,9 +267,27 @@ public class WebContext {
     }
 
     public void destroy(final Object o) {
-        final CreationalContext<?> ctx = creatonalContexts.remove(o);
+        final CreationalContext<?> ctx = creationalContexts.remove(o);
         if (ctx != null) {
             ctx.release();
+        }
+    }
+
+    public static class Instance {
+        private final Object value;
+        private final CreationalContext<?> cc;
+
+        public Instance(final Object value, final CreationalContext<?> cc) {
+            this.value = value;
+            this.cc = cc;
+        }
+
+        public Object getValue() {
+            return value;
+        }
+
+        public CreationalContext<?> getCreationalContext() {
+            return cc;
         }
     }
 }
