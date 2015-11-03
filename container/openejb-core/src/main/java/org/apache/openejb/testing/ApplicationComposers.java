@@ -99,6 +99,15 @@ import org.apache.xbean.finder.filter.Filter;
 import org.apache.xbean.finder.filter.Filters;
 import org.xml.sax.InputSource;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.SessionScoped;
+import javax.enterprise.inject.spi.Extension;
+import javax.inject.Inject;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -120,15 +129,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.enterprise.context.RequestScoped;
-import javax.enterprise.context.SessionScoped;
-import javax.enterprise.inject.spi.Extension;
-import javax.inject.Inject;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 
 import static java.util.Arrays.asList;
 import static org.apache.openejb.config.DeploymentFilterable.DEPLOYMENTS_CLASSPATH_PROPERTY;
@@ -431,6 +431,7 @@ public class ApplicationComposers {
                 String[] excludes = null;
                 Class<?>[] cdiInterceptors = null;
                 Class<?>[] cdiAlternatives = null;
+                Class<?>[] cdiStereotypes = null;
                 Class<?>[] cdiDecorators = null;
                 boolean cdi = false;
                 boolean innerClassesAsBean = false;
@@ -441,8 +442,8 @@ public class ApplicationComposers {
                     cdiInterceptors = classesAnnotation.cdiInterceptors();
                     cdiDecorators = classesAnnotation.cdiDecorators();
                     cdiAlternatives = classesAnnotation.cdiAlternatives();
-                    cdi = classesAnnotation.cdi() || cdiAlternatives.length > 0
-                        || cdiDecorators.length > 0 || cdiInterceptors.length > 0;
+                    cdiStereotypes = classesAnnotation.cdiStereotypes();
+                    cdi = isCdi(classesAnnotation.cdi(), cdiInterceptors, cdiAlternatives, cdiStereotypes, cdiDecorators);
                 } else if (classesAnnotationOld != null) {
                     classes = classesAnnotationOld.value();
                 }
@@ -458,7 +459,7 @@ public class ApplicationComposers {
                         method.getAnnotation(Descriptors.class), method.getAnnotation(JaxrsProviders.class),
                         webApp,
                         globalJarsAnnotation, jarsAnnotation,
-                        classes, excludes, cdiInterceptors, cdiAlternatives, cdiDecorators, cdi, innerClassesAsBean,
+                        classes, excludes, cdiInterceptors, cdiAlternatives, cdiDecorators, cdiStereotypes, cdi, innerClassesAsBean,
                         defaultConfig);
                 } else if (obj instanceof WebModule) { // will add the ejbmodule too
                     webModulesNb++;
@@ -471,7 +472,7 @@ public class ApplicationComposers {
                     final EjbModule ejbModule = DeploymentLoader.addWebModule(webModule, appModule);
                     ejbModule.getProperties().put(CdiScanner.OPENEJB_CDI_FILTER_CLASSLOADER, "false");
                     if (cdi) {
-                        ejbModule.setBeans(beans(new Beans(), cdiDecorators, cdiInterceptors, cdiAlternatives));
+                        ejbModule.setBeans(beans(new Beans(), cdiDecorators, cdiInterceptors, cdiAlternatives, cdiStereotypes));
                     }
 
                     Collection<File> files = findFiles(jarsAnnotation);
@@ -489,7 +490,7 @@ public class ApplicationComposers {
                     ejbModule.initAppModule(appModule);
                     appModule.getEjbModules().add(ejbModule);
                     if (cdi) {
-                        ejbModule.setBeans(beans(new Beans(), cdiDecorators, cdiInterceptors, cdiAlternatives));
+                        ejbModule.setBeans(beans(new Beans(), cdiDecorators, cdiInterceptors, cdiAlternatives, cdiStereotypes));
                     }
 
                     Collection<File> files = findFiles(jarsAnnotation);
@@ -509,7 +510,7 @@ public class ApplicationComposers {
 
                     appModule.getEjbModules().add(ejbModule);
                     if (cdi) {
-                        ejbModule.setBeans(beans(new Beans(), cdiDecorators, cdiInterceptors, cdiAlternatives));
+                        ejbModule.setBeans(beans(new Beans(), cdiDecorators, cdiInterceptors, cdiAlternatives, cdiStereotypes));
                     }
 
                     Collection<File> files = findFiles(jarsAnnotation);
@@ -528,7 +529,7 @@ public class ApplicationComposers {
                     ejbModule.setBeans(beans);
                     appModule.getEjbModules().add(ejbModule);
                     if (cdi) {
-                        ejbModule.setBeans(beans(new Beans(), cdiDecorators, cdiInterceptors, cdiAlternatives));
+                        ejbModule.setBeans(beans(new Beans(), cdiDecorators, cdiInterceptors, cdiAlternatives, cdiStereotypes));
                     }
                     Collection<File> files = findFiles(jarsAnnotation);
                     if (defaultConfig) {
@@ -565,7 +566,7 @@ public class ApplicationComposers {
                     ejbModule.setBeans(beans);
                     appModule.getEjbModules().add(ejbModule);
                     if (cdi) {
-                        ejbModule.setBeans(beans(beans, cdiDecorators, cdiInterceptors, cdiAlternatives));
+                        ejbModule.setBeans(beans(beans, cdiDecorators, cdiInterceptors, cdiAlternatives, cdiStereotypes));
                     }
                     Collection<File> files = findFiles(jarsAnnotation);
                     if (defaultConfig) {
@@ -639,7 +640,7 @@ public class ApplicationComposers {
                     appModule, testBean, additionalDescriptors,
                     null, null,
                     webapp, globalJarsAnnotation, null, classClasses.value(), classClasses.excludes(),
-                    classClasses.cdiInterceptors(), classClasses.cdiAlternatives(), classClasses.cdiDecorators(),
+                    classClasses.cdiInterceptors(), classClasses.cdiAlternatives(), classClasses.cdiDecorators(), classClasses.cdiStereotypes(),
                     classClasses.cdi(), classClasses.innerClassesAsBean(), testClass.getAnnotation(Default.class) != null);
             webModulesNb++;
             moduleNumber++;
@@ -759,6 +760,14 @@ public class ApplicationComposers {
         testClassFinders.put(this, testClassFinder);
     }
 
+    private boolean isCdi(final boolean cdi, final Class<?>[] cdiInterceptors,
+                          final Class<?>[] cdiAlternatives, final Class<?>[] cdiStereotypes,
+                          final Class<?>[] cdiDecorators) {
+        return cdi || cdiAlternatives.length > 0
+            || cdiDecorators.length > 0 || cdiInterceptors.length > 0
+            || cdiStereotypes.length > 0;
+    }
+
     protected boolean mockCdiContexts() {
         return "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.testing.start-cdi-contexts", "true"));
     }
@@ -774,6 +783,7 @@ public class ApplicationComposers {
                           final Class<?>[] cdiInterceptors,
                           final Class<?>[] cdiAlternatives,
                           final Class<?>[] cdiDecorators,
+                           final Class<?>[] cdiStereotypes,
                           final boolean cdi,
                           final boolean innerClassesAsBean,
                           final boolean autoConfig) throws OpenEJBException {
@@ -808,8 +818,8 @@ public class ApplicationComposers {
 
         final EjbModule ejbModule = DeploymentLoader.addWebModule(webModule, appModule);
         ejbModule.getProperties().put(CdiScanner.OPENEJB_CDI_FILTER_CLASSLOADER, "false");
-        if (cdi) {
-            ejbModule.setBeans(beans(new Beans(), cdiDecorators, cdiInterceptors, cdiAlternatives));
+        if (isCdi(cdi, cdiInterceptors, cdiAlternatives, cdiStereotypes, cdiDecorators)) {
+            ejbModule.setBeans(beans(new Beans(), cdiDecorators, cdiInterceptors, cdiAlternatives, cdiStereotypes));
         }
 
         Class<?>[] classes = cdiClasses;
@@ -970,7 +980,7 @@ public class ApplicationComposers {
     }
 
     private Beans beans(final Beans beans, final Class<?>[] cdiDecorators, final Class<?>[] cdiInterceptors,
-                        final Class<?>[] cdiAlternatives) {
+                        final Class<?>[] cdiAlternatives, final Class<?>[] cdiStereotypes) {
         if (cdiDecorators != null) {
             for (final Class<?> clazz : cdiDecorators) {
                 beans.addDecorator(clazz);
@@ -984,6 +994,11 @@ public class ApplicationComposers {
         if (cdiAlternatives != null) {
             for (final Class<?> clazz : cdiAlternatives) {
                 beans.addAlternativeClass(clazz);
+            }
+        }
+        if (cdiStereotypes != null) {
+            for (final Class<?> clazz : cdiStereotypes) {
+                beans.addAlternativeStereotype(clazz);
             }
         }
         return beans;
