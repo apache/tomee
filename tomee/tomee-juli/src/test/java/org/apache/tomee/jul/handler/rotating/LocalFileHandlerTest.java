@@ -98,7 +98,7 @@ public class LocalFileHandlerTest {
 
         final InputStream is = new FileInputStream(new File(out, "test.day1.1.log"));
         final List<String> lines = IOUtils.readLines(is);
-        //TODO - Why is this 96 on my machine? assertEquals(19, lines.size());
+        assertEquals(19, lines.size());
         assertEquals(string10chars, lines.iterator().next());
         is.close();
 
@@ -121,7 +121,7 @@ public class LocalFileHandlerTest {
     public static class MessageOnlyFormatter extends Formatter {
         @Override
         public String format(final LogRecord record) {
-            return record.getMessage() + String.format("%n");
+            return record.getMessage() + "\r";
         }
     }
 }
