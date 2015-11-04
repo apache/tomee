@@ -141,13 +141,13 @@ public class ApplicationComposers {
 
     public static final String OPENEJB_APPLICATION_COMPOSER_CONTEXT = "openejb.application.composer.context";
     private static final Class[] MODULE_TYPES = {IAnnotationFinder.class, ClassesArchive.class,
-        AppModule.class, WebModule.class, EjbModule.class,
-        Application.class,
-        WebApp.class, EjbJar.class, EnterpriseBean.class,
-        Persistence.class, PersistenceUnit.class,
-        Connector.class, Beans.class,
-        Class[].class, Class.class,
-        Resources.class
+            AppModule.class, WebModule.class, EjbModule.class,
+            Application.class,
+            WebApp.class, EjbJar.class, EnterpriseBean.class,
+            Persistence.class, PersistenceUnit.class,
+            Connector.class, Beans.class,
+            Class[].class, Class.class,
+            Resources.class
     };
 
     static {
@@ -155,7 +155,7 @@ public class ApplicationComposers {
     }
 
     private final Map<Object, ClassFinder> testClassFinders;
-    private Class<?> testClass;
+    private final Class<?> testClass;
     private ServiceManagerProxy serviceManager;
 
     // invocation context
@@ -455,12 +455,12 @@ public class ApplicationComposers {
                     }
                     webModulesNb++;
                     addWebApp(
-                        appModule, testBean, additionalDescriptors,
-                        method.getAnnotation(Descriptors.class), method.getAnnotation(JaxrsProviders.class),
-                        webApp,
-                        globalJarsAnnotation, jarsAnnotation,
-                        classes, excludes, cdiInterceptors, cdiAlternatives, cdiDecorators, cdiStereotypes, cdi, innerClassesAsBean,
-                        defaultConfig);
+                            appModule, testBean, additionalDescriptors,
+                            method.getAnnotation(Descriptors.class), method.getAnnotation(JaxrsProviders.class),
+                            webApp,
+                            globalJarsAnnotation, jarsAnnotation,
+                            classes, excludes, cdiInterceptors, cdiAlternatives, cdiDecorators, cdiStereotypes, cdi, innerClassesAsBean,
+                            defaultConfig);
                 } else if (obj instanceof WebModule) { // will add the ejbmodule too
                     webModulesNb++;
 
@@ -764,10 +764,14 @@ public class ApplicationComposers {
                           final Class<?>[] cdiAlternatives, final Class<?>[] cdiStereotypes,
                           final Class<?>[] cdiDecorators) {
         return cdi
-            || (cdiAlternatives != null && cdiAlternatives.length > 0)
-            || (cdiDecorators != null && cdiDecorators.length > 0)
-            || (cdiInterceptors != null && cdiInterceptors.length > 0)
-            || (cdiStereotypes != null && cdiStereotypes.length > 0);
+                || isNotNullOrEmpty(cdiAlternatives)
+                || isNotNullOrEmpty(cdiDecorators)
+                || isNotNullOrEmpty(cdiInterceptors)
+                || isNotNullOrEmpty(cdiStereotypes);
+    }
+
+    private boolean isNotNullOrEmpty(final Class<?>[] ca) {
+        return null != ca && ca.length > 0;
     }
 
     protected boolean mockCdiContexts() {
@@ -775,20 +779,20 @@ public class ApplicationComposers {
     }
 
     private void addWebApp(final AppModule appModule, final ManagedBean testBean,
-                          final Map<String, URL> additionalDescriptors,
-                          final Descriptors descriptors,
-                          final JaxrsProviders providers,
-                          final WebApp webapp, final Jars globalJarsAnnotation,
-                          final Jars jarsAnnotation,
-                          final Class<?>[] cdiClasses,
-                          final String[] excludes,
-                          final Class<?>[] cdiInterceptors,
-                          final Class<?>[] cdiAlternatives,
-                          final Class<?>[] cdiDecorators,
+                           final Map<String, URL> additionalDescriptors,
+                           final Descriptors descriptors,
+                           final JaxrsProviders providers,
+                           final WebApp webapp, final Jars globalJarsAnnotation,
+                           final Jars jarsAnnotation,
+                           final Class<?>[] cdiClasses,
+                           final String[] excludes,
+                           final Class<?>[] cdiInterceptors,
+                           final Class<?>[] cdiAlternatives,
+                           final Class<?>[] cdiDecorators,
                            final Class<?>[] cdiStereotypes,
-                          final boolean cdi,
-                          final boolean innerClassesAsBean,
-                          final boolean autoConfig) throws OpenEJBException {
+                           final boolean cdi,
+                           final boolean innerClassesAsBean,
+                           final boolean autoConfig) throws OpenEJBException {
         String root = webapp.getContextRoot();
         if (root == null) {
             root = "/openejb";
@@ -964,7 +968,7 @@ public class ApplicationComposers {
         final String[] value = jarsAnnotation.value();
         final Collection<File> files = new ArrayList<>(value.length);
         for (final String v : value) {
-            int size = files.size();
+            final int size = files.size();
             for (final URL path : classpathAppsUrls) {
                 final File file = URLs.toFile(path);
                 if (file.getName().startsWith(v) && file.getName().endsWith(".jar")) {
@@ -1151,7 +1155,7 @@ public class ApplicationComposers {
             final ClassLoader loader = Thread.currentThread().getContextClassLoader();
             if (descriptors instanceof Descriptors) {
                 for (final Descriptor descriptor : ((Descriptors) descriptors).value()) {
-                    URL resource = loader.getResource(descriptor.path());
+                    final URL resource = loader.getResource(descriptor.path());
                     try {
                         dds.put(descriptor.name(), resource == null ? new File(descriptor.path()).toURI().toURL() : resource);
                     } catch (final MalformedURLException e) {
@@ -1161,7 +1165,7 @@ public class ApplicationComposers {
             } else {
                 if (descriptors instanceof org.apache.openejb.junit.Descriptors) {
                     for (final org.apache.openejb.junit.Descriptor descriptor : ((org.apache.openejb.junit.Descriptors) descriptors).value()) {
-                        URL resource = loader.getResource(descriptor.path());
+                        final URL resource = loader.getResource(descriptor.path());
                         try {
                             dds.put(descriptor.name(), resource == null ? new File(descriptor.path()).toURI().toURL() : resource);
                         } catch (final MalformedURLException e) {
@@ -1209,7 +1213,7 @@ public class ApplicationComposers {
             serviceManagerClass = classLoader.loadClass("org.apache.openejb.server.FilteredServiceManager");
         } catch (final ClassNotFoundException e) {
             final String msg = "Services filtering requires class 'org.apache.openejb.server.FilteredServiceManager' to be available.  " +
-                "Make sure you have the openejb-server-*.jar in your classpath.";
+                    "Make sure you have the openejb-server-*.jar in your classpath.";
             throw new IllegalStateException(msg, e);
         }
 
@@ -1453,13 +1457,13 @@ public class ApplicationComposers {
         }
     }
 
-    public static void run(final Class<?> type, String... args) {
+    public static void run(final Class<?> type, final String... args) {
         final ApplicationComposers composer = new ApplicationComposers(type);
         try {
             Object instance;
             try {
                 final Constructor<?> constructor = type.getConstructor(String[].class);
-                instance = constructor.newInstance(new Object[] { args });
+                instance = constructor.newInstance(new Object[]{args});
             } catch (final Exception e) {
                 instance = type.newInstance();
             }
@@ -1494,7 +1498,7 @@ public class ApplicationComposers {
                             if (sessionManager != null) {
                                 final Class<?>[] paramTypes = {WebContext.class};
                                 for (final WebContext web : composer.appContext.getWebContexts()) {
-                                    Reflections.invokeByReflection(sessionManager, "destroy", paramTypes, new Object[] { web });
+                                    Reflections.invokeByReflection(sessionManager, "destroy", paramTypes, new Object[]{web});
                                 }
                             }
                         } catch (final Throwable e) {
