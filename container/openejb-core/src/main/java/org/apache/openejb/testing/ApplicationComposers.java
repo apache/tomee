@@ -763,9 +763,11 @@ public class ApplicationComposers {
     private boolean isCdi(final boolean cdi, final Class<?>[] cdiInterceptors,
                           final Class<?>[] cdiAlternatives, final Class<?>[] cdiStereotypes,
                           final Class<?>[] cdiDecorators) {
-        return cdi || cdiAlternatives.length > 0
-            || cdiDecorators.length > 0 || cdiInterceptors.length > 0
-            || cdiStereotypes.length > 0;
+        return cdi
+            || (cdiAlternatives != null && cdiAlternatives.length > 0)
+            || (cdiDecorators != null && cdiDecorators.length > 0)
+            || (cdiInterceptors != null && cdiInterceptors.length > 0)
+            || (cdiStereotypes != null && cdiStereotypes.length > 0);
     }
 
     protected boolean mockCdiContexts() {
