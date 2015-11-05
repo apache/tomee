@@ -357,15 +357,17 @@ public class RemoteServer {
                 throw (RuntimeException) new OpenEJBRuntimeException("Cannot start the server.  Exception: " + e.getClass().getName() + ": " + e.getMessage()).initCause(e);
             }
 
-            if (debug) {
-                if (!connect(port, Integer.MAX_VALUE)) {
-                    destroy();
-                    throw new OpenEJBRuntimeException("Could not connect to server");
-                }
-            } else {
-                if (!connect(port, tries)) {
-                    destroy();
-                    throw new OpenEJBRuntimeException("Could not connect to server");
+            if (port > 0) {
+                if (debug) {
+                    if (!connect(port, Integer.MAX_VALUE)) {
+                        destroy();
+                        throw new OpenEJBRuntimeException("Could not connect to server");
+                    }
+                } else {
+                    if (!connect(port, tries)) {
+                        destroy();
+                        throw new OpenEJBRuntimeException("Could not connect to server");
+                    }
                 }
             }
 
@@ -412,7 +414,7 @@ public class RemoteServer {
             final Field f = server.get().getClass().getDeclaredField("pid");
             f.setAccessible(true);
             final int pid = (Integer) f.get(server.get());
-            new ProcessBuilder("kill",  "-3",  Integer.toString(pid))
+            new ProcessBuilder("kill", "-3", Integer.toString(pid))
                     .redirectOutput(ProcessBuilder.Redirect.INHERIT)
                     .redirectError(ProcessBuilder.Redirect.INHERIT)
                     .start();

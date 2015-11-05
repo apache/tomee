@@ -30,6 +30,12 @@ public final class NetworkUtil {
         // no-op
     }
 
+    /**
+     * Get the next available port using ServerSocket(0).
+     * This is not random and will result in port duplicates if many threads call this concurrently
+     *
+     * @return an unused port at the time of calling
+     */
     public static int getNextAvailablePort() {
         return getNextAvailablePort(new int[]{0});
     }
