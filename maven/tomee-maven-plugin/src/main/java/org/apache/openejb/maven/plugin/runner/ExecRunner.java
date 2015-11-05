@@ -63,7 +63,7 @@ public class ExecRunner {
         final String distrib = config.getProperty("distribution");
         final String workingDir = config.getProperty("workingDir");
         final InputStream distribIs = contextClassLoader.getResourceAsStream(distrib);
-        File distribOutput = new File(workingDir);
+        final File distribOutput = new File(workingDir);
         final File timestampFile = new File(distribOutput, "timestamp.txt");
         final boolean forceDelete = Boolean.getBoolean("tomee.runner.force-delete");
         if (forceDelete
