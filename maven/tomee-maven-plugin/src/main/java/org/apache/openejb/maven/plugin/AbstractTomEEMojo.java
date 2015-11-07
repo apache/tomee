@@ -247,7 +247,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
     @Parameter
     protected List<String> endorsedLibs;
-    
+
     @Parameter
     protected List<String> javaagents;
 
@@ -740,9 +740,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         if (tomeeHttpsPort != null && tomeeHttpsPort > 0 && parser.value("HTTPS", null) == null) {
             // ensure connector is not commented
             value = value.replace("<Service name=\"Catalina\">", "<Service name=\"Catalina\">\n"
-                + "    <Connector port=\"" + tomeeHttpsPort + "\" protocol=\"HTTP/1.1\" SSLEnabled=\"true\"\n" +
-                "                scheme=\"https\" secure=\"true\"\n" +
-                "                clientAuth=\"false\" sslProtocol=\"TLS\" keystoreFile=\"" + keystoreFilePath + "\" />\n");
+                    + "    <Connector port=\"" + tomeeHttpsPort + "\" protocol=\"HTTP/1.1\" SSLEnabled=\"true\"\n" +
+                    "                scheme=\"https\" secure=\"true\"\n" +
+                    "                clientAuth=\"false\" sslProtocol=\"TLS\" keystoreFile=\"" + keystoreFilePath + "\" />\n");
         }
 
         if (tomeeHttpsPort == null) {
@@ -754,12 +754,12 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         try {
             writer = new FileWriter(serverXml);
             writer.write(value
-                .replace(parser.http(), Integer.toString(this.getTomeeHttpPortChecked()))
-                .replace(parser.https(), Integer.toString(tomeeHttpsPort))
-                .replace(parser.ajp(), Integer.toString(tomeeAjpPort))
-                .replace(parser.stop(), Integer.toString(this.getTomeeShutdownPortChecked()))
-                .replace(parser.host(), tomeeHost)
-                .replace(parser.appBase(), webappDir));
+                    .replace(parser.http(), Integer.toString(this.getTomeeHttpPortChecked()))
+                    .replace(parser.https(), Integer.toString(tomeeHttpsPort))
+                    .replace(parser.ajp(), Integer.toString(tomeeAjpPort))
+                    .replace(parser.stop(), Integer.toString(this.getTomeeShutdownPortChecked()))
+                    .replace(parser.host(), tomeeHost)
+                    .replace(parser.appBase(), webappDir));
         } catch (final IOException e) {
             throw new TomEEException(e.getMessage(), e);
         } finally {
@@ -858,8 +858,8 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             server.setPortStartup(this.getTomeeHttpPortChecked());
 
             getLog().info("Running '" + getClass().getName().replace("TomEEMojo", "").toLowerCase(Locale.ENGLISH)
-                + "'. Configured TomEE in plugin is " + tomeeHost + ":" + this.getTomeeHttpPortChecked()
-                + " (plugin shutdown port is " + this.getTomeeShutdownPortChecked() + " and https port is " + tomeeHttpsPort + ")");
+                    + "'. Configured TomEE in plugin is " + tomeeHost + ":" + this.getTomeeHttpPortChecked()
+                    + " (plugin shutdown port is " + this.getTomeeShutdownPortChecked() + " and https port is " + tomeeHttpsPort + ")");
         } else {
             getLog().info("Running '" + getClass().getSimpleName().replace("TomEEMojo", "").toLowerCase(Locale.ENGLISH));
         }
@@ -890,7 +890,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                         break;
                     }
 
-                    if("ignore".equals(line)){
+                    if ("ignore".equals(line)) {
                         continue;
                     }
 
@@ -913,14 +913,14 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     }
 
     private synchronized int getTomeeHttpPortChecked() {
-        if(this.tomeeHttpPort <=  0){
+        if (this.tomeeHttpPort <= 0) {
             this.tomeeHttpPort = NetworkUtil.getNextAvailablePort();
         }
         return this.tomeeHttpPort;
     }
 
     private synchronized int getTomeeShutdownPortChecked() {
-        if(this.tomeeShutdownPort <=  0){
+        if (this.tomeeShutdownPort <= 0) {
             this.tomeeHttpPort = NetworkUtil.getNextAvailablePort();
         }
         return this.tomeeHttpPort;
@@ -1176,11 +1176,19 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     }
 
     protected void serverCmd(final RemoteServer server, final List<String> strings) {
-        try {
-            server.start(strings, getCmd(), checkStarted);
-        } catch (final OpenEJBRuntimeException e) {
-            getLog().warn("Failed to check or track server startup on port: " + this.getTomeeHttpPortChecked());
+
+        final Process p = this.server.getServer();
+
+        if (null == p) {
+
+            try {
+                server.start(strings, getCmd(), checkStarted);
+            } catch (final Exception e) {
+                //TODO - Optional server.destroy() call
+                getLog().warn("Failed to check or track server startup on port: " + this.getTomeeHttpPortChecked());
+            }
         }
+
     }
 
     protected void addShutdownHooks(final RemoteServer server) {
@@ -1200,16 +1208,16 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             try {
                 if ("snapshots".equals(apacheRepos) || "true".equals(apacheRepos)) {
                     remoteRepos.add(new DefaultArtifactRepository("apache", "https://repository.apache.org/content/repositories/snapshots/",
-                        new DefaultRepositoryLayout(),
-                        new ArtifactRepositoryPolicy(true, UPDATE_POLICY_DAILY, CHECKSUM_POLICY_WARN),
-                        new ArtifactRepositoryPolicy(false, UPDATE_POLICY_NEVER, CHECKSUM_POLICY_WARN)));
+                            new DefaultRepositoryLayout(),
+                            new ArtifactRepositoryPolicy(true, UPDATE_POLICY_DAILY, CHECKSUM_POLICY_WARN),
+                            new ArtifactRepositoryPolicy(false, UPDATE_POLICY_NEVER, CHECKSUM_POLICY_WARN)));
                 } else {
                     try {
                         new URI(apacheRepos); // to check it is a uri
                         remoteRepos.add(new DefaultArtifactRepository("additional-repo-tomee-mvn-plugin", apacheRepos,
-                            new DefaultRepositoryLayout(),
-                            new ArtifactRepositoryPolicy(true, UPDATE_POLICY_DAILY, CHECKSUM_POLICY_WARN),
-                            new ArtifactRepositoryPolicy(true, UPDATE_POLICY_NEVER, CHECKSUM_POLICY_WARN)));
+                                new DefaultRepositoryLayout(),
+                                new ArtifactRepositoryPolicy(true, UPDATE_POLICY_DAILY, CHECKSUM_POLICY_WARN),
+                                new ArtifactRepositoryPolicy(true, UPDATE_POLICY_NEVER, CHECKSUM_POLICY_WARN)));
                     } catch (final URISyntaxException e) {
                         // ignored, use classical repos
                     }
@@ -1223,7 +1231,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         }
 
         if ((tomeeClassifier != null && (tomeeClassifier.isEmpty() || tomeeClassifier.equals("ignore")))
-            || ("org.apache.openejb".equals(tomeeGroupId) && "openejb-standalone".equals(tomeeArtifactId))) {
+                || ("org.apache.openejb".equals(tomeeGroupId) && "openejb-standalone".equals(tomeeArtifactId))) {
             tomeeClassifier = null;
         }
 
@@ -1258,8 +1266,8 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                 if (!dest.exists()) {
                     final File parent = dest.getParentFile();
                     if ((!parent.exists() && !parent.mkdirs())
-                        || (!parent.canWrite() && !parent.setWritable(true))
-                        || (!parent.canRead() && !parent.setReadable(true))) {
+                            || (!parent.canWrite() && !parent.setWritable(true))
+                            || (!parent.canRead() && !parent.setReadable(true))) {
                         throw new RuntimeException("Failed to create or set permissions on: " + parent);
                     }
                 }
@@ -1316,16 +1324,16 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
     private void ensureAppsFolderExistAndIsConfiguredByDefault(final File file) throws IOException {
         if ("openejb".equals(container.toLowerCase(Locale.ENGLISH))
-            || (file.exists()
-            && (
-            (apps != null && !apps.isEmpty())
-                || (!"pom".equals(packaging) && !"war".equals(packaging))))) { // webapps doesn't need apps folder in tomee
+                || (file.exists()
+                && (
+                (apps != null && !apps.isEmpty())
+                        || (!"pom".equals(packaging) && !"war".equals(packaging))))) { // webapps doesn't need apps folder in tomee
             final FileWriter writer = new FileWriter(file);
             final String rootTag = container.toLowerCase(Locale.ENGLISH);
             writer.write("<?xml version=\"1.0\"?>\n" +
-                "<" + rootTag + ">\n" +
-                "  <Deployments dir=\"apps\" />\n" +
-                "</" + rootTag + ">\n");
+                    "<" + rootTag + ">\n" +
+                    "  <Deployments dir=\"apps\" />\n" +
+                    "</" + rootTag + ">\n");
             writer.close();
 
             final File appsFolder = new File(catalinaBase, "apps");

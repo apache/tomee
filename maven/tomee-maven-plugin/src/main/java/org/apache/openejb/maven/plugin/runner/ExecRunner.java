@@ -42,7 +42,7 @@ public class ExecRunner {
     public static void main(final String[] rawArgs) throws Exception {
         final String[] args;
         if (rawArgs == null || rawArgs.length == 0) {
-            args = new String[] { "run" };
+            args = new String[]{"run"};
         } else {
             args = rawArgs;
         }
@@ -65,8 +65,8 @@ public class ExecRunner {
         final File timestampFile = new File(distribOutput, "timestamp.txt");
         final boolean forceDelete = Boolean.getBoolean("tomee.runner.force-delete");
         if (forceDelete
-            || !timestampFile.exists()
-            || Long.parseLong(IO.slurp(timestampFile).replace(System.getProperty("line.separator"), "")) < Long.parseLong(config.getProperty("timestamp"))) {
+                || !timestampFile.exists()
+                || Long.parseLong(IO.slurp(timestampFile).replace(System.getProperty("line.separator"), "")) < Long.parseLong(config.getProperty("timestamp"))) {
             if (forceDelete || timestampFile.exists()) {
                 System.out.println("Deleting " + distribOutput.getAbsolutePath());
                 Files.delete(distribOutput);
@@ -80,7 +80,7 @@ public class ExecRunner {
         if (scripts != null) { // dont use filefilter to avoid dependency issue
             for (final File f : scripts) {
                 if (f.getName().endsWith(".sh") && !f.canExecute()) {
-                    if(!f.setExecutable(true, true)){
+                    if (!f.setExecutable(true, true)) {
                         System.err.println("Failed make file executable: " + f);
                     }
                 }
@@ -94,14 +94,14 @@ public class ExecRunner {
                 final String dir = cmd.substring(0, lastSlash);
                 final boolean isWin = System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("win");
                 final String script = cmd.substring(lastSlash + 1, cmd.length() - SH_BAT_AUTO.length()).replace('/', isWin ? '\\' : '/')
-                    + (isWin ? ".bat" : ".sh");
+                        + (isWin ? ".bat" : ".sh");
                 final File scriptFile = new File(distribOutput, dir + File.separator + script);
                 if (!scriptFile.exists()) {
                     throw new IllegalArgumentException("Can't find  " + cmd);
                 }
                 cmd = scriptFile.getAbsolutePath();
                 if (cmd.endsWith(".sh")) {
-                    if(!scriptFile.setExecutable(true)){
+                    if (!scriptFile.setExecutable(true)) {
                         System.err.println("Failed make script file executable: " + scriptFile);
                     }
                 }
@@ -130,7 +130,7 @@ public class ExecRunner {
                 }
             }
 
-            final QuickServerXmlParser parser = QuickServerXmlParser.parse(new File(distribOutput,"conf/server.xml"));
+            final QuickServerXmlParser parser = QuickServerXmlParser.parse(new File(distribOutput, "conf/server.xml"));
 
             System.setProperty("openejb.home", distribOutput.getAbsolutePath());
             System.setProperty("server.shutdown.port", parser.stop());
@@ -156,8 +156,12 @@ public class ExecRunner {
             if ("run".equals(args[0])) {
                 args[0] = "start";
             }
-            server.start(jvmArgs, args[0], true);
-            server.getServer().waitFor();
+            try {
+                server.start(jvmArgs, args[0], true);
+                server.getServer().waitFor();
+            } catch (final Exception e) {
+                server.destroy();
+            }
         } else {
             // TODO: split cmd correctly to support multiple inlined segments in cmd
             if (cmd.endsWith(".bat") && !cmd.startsWith("cmd.exe")) {
@@ -178,7 +182,7 @@ public class ExecRunner {
             boolean redirectOut = false;
             try { // java >= 7
                 ProcessBuilder.class.getDeclaredMethod("inheritIO").invoke(builder);
-            } catch (final Throwable th){ // java 6
+            } catch (final Throwable th) { // java 6
                 redirectOut = true;
             }
 

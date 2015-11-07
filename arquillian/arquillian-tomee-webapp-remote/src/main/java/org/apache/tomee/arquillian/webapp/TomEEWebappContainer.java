@@ -16,6 +16,7 @@
  */
 package org.apache.tomee.arquillian.webapp;
 
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.arquillian.common.ArquillianFilterRunner;
 import org.apache.openejb.arquillian.common.Files;
 import org.apache.openejb.arquillian.common.IO;
@@ -149,7 +150,12 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
 
                 final RemoteServer tmpContainer = new RemoteServer();
                 tmpContainer.setPortStartup(httpPort);
-                tmpContainer.start();
+                try {
+                    tmpContainer.start();
+                } catch (final Exception e) {
+                    tmpContainer.destroy();
+                    throw e;
+                }
 
                 final URL url = new URL(baseUrl);
                 logger.info("Calling TomEE Installer Servlet on " + url);
@@ -179,6 +185,7 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
             container.start(Arrays.asList("-Dorg.apache.openejb.servlet.filters=" + ArquillianFilterRunner.class.getName() + "=" + ServletMethodExecutor.ARQUILLIAN_SERVLET_MAPPING), "start", true);
             container.killOnExit();
         } catch (final Exception e) {
+            container.destroy();
             throw new LifecycleException("Unable to start remote container", e);
         }
     }

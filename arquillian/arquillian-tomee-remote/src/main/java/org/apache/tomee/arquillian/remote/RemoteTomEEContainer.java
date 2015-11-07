@@ -129,6 +129,7 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
                 }
             }
         } catch (final Exception e) {
+            container.destroy();
             logger.log(Level.SEVERE, "Unable to start remote container", e);
             throw new LifecycleException("Unable to start remote container:" + e.getMessage(), e);
         } finally {
