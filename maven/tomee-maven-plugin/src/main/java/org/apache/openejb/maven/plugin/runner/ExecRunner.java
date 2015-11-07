@@ -44,7 +44,7 @@ public class ExecRunner {
     public static void main(final String[] rawArgs) throws Exception {
         final String[] args;
         if (rawArgs == null || rawArgs.length == 0) {
-            args = new String[] { "run" };
+            args = new String[]{"run"};
         } else {
             args = rawArgs;
         }
@@ -173,18 +173,18 @@ public class ExecRunner {
                 params.addAll(asList(args));
 
                 final ProcessBuilder builder = new ProcessBuilder(params.toArray(new String[params.size()]))
-                    .inheritIO()
-                    .directory(findBase(distribOutput));
+                        .inheritIO()
+                        .directory(findBase(distribOutput));
 
                 final String existingOpts = System.getenv("CATALINA_OPTS");
                 final String catalinaOpts = config.getProperty("catalinaOpts");
                 if (catalinaOpts != null || existingOpts != null || additionalArgs != null) { // inherit from existing env
                     builder.environment()
-                        .put("CATALINA_OPTS",
-                            identityOrEmpty(catalinaOpts) + " " +
-                            identityOrEmpty(existingOpts) + " " +
-                            identityOrEmpty(additionalArgs) + " " +
-                            identityOrEmpty(String.class.cast(map.get("jvmArgs"))));
+                            .put("CATALINA_OPTS",
+                                    identityOrEmpty(catalinaOpts) + " " +
+                                            identityOrEmpty(existingOpts) + " " +
+                                            identityOrEmpty(additionalArgs) + " " +
+                                            identityOrEmpty(String.class.cast(map.get("jvmArgs"))));
                 }
 
                 if (doWait) {
@@ -225,7 +225,7 @@ public class ExecRunner {
 
     private static void setExecutable(final File f) {
         if (f.getName().endsWith(".sh") && !f.canExecute()) {
-            if(!f.setExecutable(true, true)){
+            if (!f.setExecutable(true, true)) {
                 System.err.println("Failed make file executable: " + f);
             }
         }
