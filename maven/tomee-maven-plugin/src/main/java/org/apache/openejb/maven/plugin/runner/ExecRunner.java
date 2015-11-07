@@ -152,7 +152,14 @@ public class ExecRunner {
                 if ("run".equals(args[0])) {
                     args[0] = "start";
                 }
-                server.start(jvmArgs, args[0], true);
+
+                try {
+                    server.start(jvmArgs, args[0], true);
+                } catch (final Exception e) {
+                    server.destroy();
+                    throw e;
+                }
+
                 if (doWait) {
                     server.getServer().waitFor();
                 }

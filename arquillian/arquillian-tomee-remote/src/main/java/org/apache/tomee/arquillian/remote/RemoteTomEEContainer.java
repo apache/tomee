@@ -116,7 +116,14 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
 
             container = new RemoteServer();
             container.setPortStartup(httpPort);
-            container.start(args(), "start", true);
+
+            try {
+                container.start(args(), "start", true);
+            } catch (final Exception e) {
+                container.destroy();
+                throw e;
+            }
+
             container.killOnExit();
 
             if (configuration.getProperties() != null) {

@@ -1352,7 +1352,8 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     protected void serverCmd(final RemoteServer server, final List<String> strings) {
         try {
             server.start(strings, getCmd(), checkStarted);
-        } catch (final OpenEJBRuntimeException e) {
+        } catch (final Exception e) {
+            //TODO - Optional server.destroy()
             getLog().warn("Failed to check or track server startup on port: " + this.tomeeHttpPort);
         }
     }
