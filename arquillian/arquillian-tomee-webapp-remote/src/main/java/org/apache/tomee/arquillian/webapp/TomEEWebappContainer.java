@@ -16,7 +16,6 @@
  */
 package org.apache.tomee.arquillian.webapp;
 
-import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.arquillian.common.ArquillianFilterRunner;
 import org.apache.openejb.arquillian.common.Files;
 import org.apache.openejb.arquillian.common.IO;
