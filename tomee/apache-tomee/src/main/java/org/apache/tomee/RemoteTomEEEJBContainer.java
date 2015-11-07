@@ -96,7 +96,7 @@ public class RemoteTomEEEJBContainer extends EJBContainer {
                 instance.container.setPortStartup(Integer.parseInt(parser.http()));
 
                 try {
-                    instance.container.start();
+                    instance.container.start(Arrays.asList("-Dopenejb.system.apps=true", "-Dtomee.remote.support=true"), "start", true);
                 } catch (final Exception e) {
                     instance.container.destroy();
                     throw e;
