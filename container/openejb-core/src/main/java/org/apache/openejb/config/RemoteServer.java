@@ -171,7 +171,7 @@ public class RemoteServer {
 
     private void cmd(final List<String> additionalArgs, final String cmd, final boolean checkPortAvailable) {
         boolean ok = true;
-        final int port = START.equals(cmd) ? portStartup : portShutdown;
+        final int port = START.equals(cmd) && portStartup > 0 ? portStartup : portShutdown;
 
         if (checkPortAvailable) {
             ok = !connect(port, 1);

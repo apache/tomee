@@ -886,22 +886,22 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
             // ensure connector is not commented
             value = value.replace("<Service name=\"Catalina\">", "<Service name=\"Catalina\">\n"
-                    + "    <Connector port=\"" + this.getTomeeHttpsPortChecked() + "\" protocol=\"HTTP/1.1\" SSLEnabled=\"true\"\n" +
+                    + "    <Connector port=\"" + tomeeHttpsPort + "\" protocol=\"HTTP/1.1\" SSLEnabled=\"true\"\n" +
                     "                scheme=\"https\" secure=\"true\"\n" +
                     "                clientAuth=\"false\" sslProtocol=\"TLS\" keystoreFile=\"" + keystorePath + "\" />\n");
         }
 
         if (tomeeHttpPort != null) {
-            value = value.replace("\"" + parser.http() + "\"", "\"" + this.getTomeeHttpPortChecked() + "\"");
+            value = value.replace("\"" + parser.http() + "\"", "\"" + tomeeHttpPort + "\"");
         }
         if (tomeeHttpsPort != null) {
-            value = value.replace("\"" + parser.https() + "\"", "\"" + this.getTomeeHttpsPortChecked() + "\"");
+            value = value.replace("\"" + parser.https() + "\"", "\"" + tomeeHttpsPort + "\"");
         }
         if (tomeeAjpPort != null) {
             value = value.replace("\"" + parser.ajp() + "\"", "\"" + tomeeAjpPort + "\"");
         }
         if (tomeeShutdownPort != null) {
-            value = value.replace("\"" + parser.stop() + "\"", "\"" + this.getTomeeShutdownPortChecked() + "\"");
+            value = value.replace("\"" + parser.stop() + "\"", "\"" + tomeeShutdownPort + "\"");
         }
         if (webappDir != null) {
             value = value.replace("\"" + parser.value("app-base", "webapps") + "\"", "\"" + webappDir + "\"");
@@ -993,6 +993,12 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             classpaths = new ArrayList<>();
         }
 
+        // init ports if needed
+        tomeeHttpPort = getOrInitPort(tomeeHttpPort);
+        tomeeHttpsPort = getOrInitPort(tomeeHttpsPort);
+        tomeeAjpPort = getOrInitPort(tomeeAjpPort);
+        tomeeShutdownPort = getOrInitPort(tomeeShutdownPort);
+
         final List<String> strings = generateJVMArgs();
 
         // init env for RemoteServer
@@ -1001,7 +1007,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             System.setProperty("openejb.server.debug", "true");
             System.setProperty("server.debug.port", Integer.toString(debugPort));
         }
-        System.setProperty("server.shutdown.port", String.valueOf(this.getTomeeShutdownPortChecked()));
+        System.setProperty("server.shutdown.port", String.valueOf(tomeeShutdownPort));
         System.setProperty("server.shutdown.command", tomeeShutdownCommand);
 
         server = new RemoteServer(getConnectAttempts(), debug);
@@ -1010,8 +1016,11 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         addShutdownHooks(server); // some shutdown hooks are always added (see UpdatableTomEEMojo)
 
         if (TOM_EE.equals(container)) {
-
-            server.setPortStartup(tomeeHttpPort == null ? this.getTomeeHttpsPortChecked() : this.getTomeeHttpPortChecked());
+            try {
+                server.setPortStartup(Integer.parseInt(tomeeHttpPort == null ? tomeeHttpsPort : tomeeHttpPort));
+            } catch (final NumberFormatException nfe) {
+                // no-op
+            }
 
             getLog().info("Running '" + getClass().getName().replace("TomEEMojo", "").toLowerCase(Locale.ENGLISH)
                     + "'. Configured TomEE in plugin is " + tomeeHost + ":" + server.getPortStartup()
@@ -1068,34 +1077,15 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         }
     }
 
-    private synchronized int getTomeeHttpPortChecked() {
-        int port = Integer.parseInt(this.tomeeHttpPort);
-
-        if (port <= 0) {
-            port = NetworkUtil.getNextAvailablePort();
-            this.tomeeHttpPort = String.valueOf(port);
+    private static String getOrInitPort(final String raw) {
+        try {
+            if (Integer.parseInt(raw) <= 0) {
+                return Integer.toString(NetworkUtil.getNextAvailablePort());
+            }
+        } catch (final NumberFormatException nfe) {
+            // no-op, surely a placeholder
         }
-        return port;
-    }
-
-    private synchronized int getTomeeHttpsPortChecked() {
-        int port = Integer.parseInt(this.tomeeHttpsPort);
-
-        if (port <= 0) {
-            port = NetworkUtil.getNextAvailablePort();
-            this.tomeeHttpsPort = String.valueOf(port);
-        }
-        return port;
-    }
-
-    private synchronized int getTomeeShutdownPortChecked() {
-        int port = Integer.parseInt(this.tomeeShutdownPort);
-
-        if (port <= 0) {
-            port = NetworkUtil.getNextAvailablePort();
-            this.tomeeShutdownPort = String.valueOf(port);
-        }
-        return port;
+        return raw;
     }
 
     private String getNextLine(final Scanner reader) {

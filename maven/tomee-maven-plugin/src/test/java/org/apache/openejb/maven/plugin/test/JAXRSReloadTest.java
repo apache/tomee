@@ -70,16 +70,13 @@ public class JAXRSReloadTest {
     protected boolean forceReloadable = true;
 
     @Config
-    protected boolean deployOpenEjbApplication = true;
-
-    @Config
     private File catalinaBase = JAXRS_APP.getParentFile().getParentFile();
 
     @Config
     private File deployedFile = JAXRS_APP;
 
     @Config
-    private String args = "-Dopenejb.classloader.forced-load=" + Endpoint.class.getPackage().getName();
+    private String args = "-Dtomee.remote.support=true -Dopenejb.classloader.forced-load=" + Endpoint.class.getPackage().getName();
 
     @Test
     public void simpleStart() throws Exception {
