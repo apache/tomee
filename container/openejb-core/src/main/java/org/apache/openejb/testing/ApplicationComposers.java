@@ -169,6 +169,7 @@ public class ApplicationComposers {
     private final Collection<String> globalJndiEntries = new ArrayList<>();
     private final Collection<Runnable> beforeDestroyAfterRunnables = new ArrayList<>();
     private final Collection<Runnable> afterRunnables = new ArrayList<>();
+    private final Properties originalProperties = (Properties) System.getProperties().clone();
 
     public ApplicationComposers(final Object... modules) {
         this(modules[0].getClass(), modules);
@@ -1058,6 +1059,7 @@ public class ApplicationComposers {
             if (originalLoader != null) {
                 Thread.currentThread().setContextClassLoader(originalLoader);
             }
+            System.setProperties(originalProperties);
         }
     }
 
