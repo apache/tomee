@@ -150,6 +150,7 @@ public final class ApplicationComposers {
     private MockHttpSession session;
     private MockServletContext servletContext;
     private final Collection<String> globalJndiEntries = new ArrayList<String>();
+    private final Properties originalProperties = (Properties) System.getProperties().clone();
 
     public ApplicationComposers(final Object... modules) {
         this(modules[0].getClass(), modules);
@@ -1032,6 +1033,7 @@ public final class ApplicationComposers {
             }
         }
 
+        System.setProperties(originalProperties);
         OpenEJB.destroy();
     }
 
