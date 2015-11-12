@@ -1059,7 +1059,9 @@ public class ApplicationComposers {
             if (originalLoader != null) {
                 Thread.currentThread().setContextClassLoader(originalLoader);
             }
-            System.setProperties(originalProperties);
+            if (originalProperties != null) {
+                System.setProperties(originalProperties);
+            }
         }
     }
 
