@@ -25,11 +25,16 @@ import org.junit.Test;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
 
 public class TomEEMavenPluginTest {
+
+    private final Logger logger = Logger.getLogger(TomEEMavenPluginTest.class.getName());
+
     @Rule
     public TomEEMavenPluginRule TMPRule = new TomEEMavenPluginRule();
 
@@ -47,6 +52,7 @@ public class TomEEMavenPluginTest {
             return IO.slurp(url);
         } catch (final IOException e) {
             if (attempts < 1) {
+                logger.log(Level.SEVERE, "Failed to connect to: " + url, e);
                 throw e;
             } else {
                 try {

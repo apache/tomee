@@ -755,7 +755,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             writer = new FileWriter(serverXml);
             writer.write(value
                     .replace(parser.http(), Integer.toString(this.getTomeeHttpPortChecked()))
-                    .replace(parser.https(), Integer.toString(tomeeHttpsPort))
+                    .replace(parser.https(), Integer.toString(this.getTomeeHttpsPortChecked()))
                     .replace(parser.ajp(), Integer.toString(tomeeAjpPort))
                     .replace(parser.stop(), Integer.toString(this.getTomeeShutdownPortChecked()))
                     .replace(parser.host(), tomeeHost)
@@ -859,7 +859,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
             getLog().info("Running '" + getClass().getName().replace("TomEEMojo", "").toLowerCase(Locale.ENGLISH)
                     + "'. Configured TomEE in plugin is " + tomeeHost + ":" + this.getTomeeHttpPortChecked()
-                    + " (plugin shutdown port is " + this.getTomeeShutdownPortChecked() + " and https port is " + tomeeHttpsPort + ")");
+                    + " (plugin shutdown port is " + this.getTomeeShutdownPortChecked() + " and https port is " + this.getTomeeHttpsPortChecked() + ")");
         } else {
             getLog().info("Running '" + getClass().getSimpleName().replace("TomEEMojo", "").toLowerCase(Locale.ENGLISH));
         }
@@ -919,11 +919,18 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         return this.tomeeHttpPort;
     }
 
+    private synchronized int getTomeeHttpsPortChecked() {
+        if (this.tomeeHttpsPort <= 0) {
+            this.tomeeHttpsPort = NetworkUtil.getNextAvailablePort();
+        }
+        return this.tomeeHttpsPort;
+    }
+
     private synchronized int getTomeeShutdownPortChecked() {
         if (this.tomeeShutdownPort <= 0) {
-            this.tomeeHttpPort = NetworkUtil.getNextAvailablePort();
+            this.tomeeShutdownPort = NetworkUtil.getNextAvailablePort();
         }
-        return this.tomeeHttpPort;
+        return this.tomeeShutdownPort;
     }
 
     private String getNextLine(final Scanner reader) {
