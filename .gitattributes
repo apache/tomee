@@ -35,4 +35,4 @@
 *.png           binary
 *.so            binary
 *.war           binary
-*.zip filter=lfs -crlf
+*.zip           binary
