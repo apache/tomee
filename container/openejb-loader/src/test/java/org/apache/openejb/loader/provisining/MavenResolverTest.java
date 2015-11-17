@@ -40,7 +40,7 @@ public class MavenResolverTest {
 
     @Test
     public void local() throws Exception {
-        assertEquals(ProvisioningResolver.LocalInputStream.class.getName(), resolver.resolve("mvn:junit:junit:4.11:jar").getClass().getName()); // use version of the pom to ensure it is local
+        assertEquals(ProvisioningResolver.LocalInputStream.class.getName(), resolver.resolve("mvn:junit:junit:4.12:jar").getClass().getName()); // use version of the pom to ensure it is local
     }
 
     @Test
