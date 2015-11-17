@@ -24,7 +24,7 @@ Build and start the demo:
 
 Open:
 
-    http://localhost:8080/myfaces-codi-1.1.1-SNAPSHOT/
+    http://localhost:8080/myfaces-codi-1.1.1/
 
 This example shows how to improve JSF2/CDI/BV/JPA applications with features provided by Apache MyFaces CODI and ExtVal.
 

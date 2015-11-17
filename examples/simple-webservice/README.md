@@ -192,7 +192,7 @@ When run you should see output similar to the following.
     INFO - OpenEJB http://tomee.apache.org/
     INFO - Startup: Sat Feb 18 19:11:50 PST 2012
     INFO - Copyright 1999-2012 (C) Apache OpenEJB Project, All Rights Reserved.
-    INFO - Version: 4.0.0-beta-3
+    INFO - Version: 4.7.3
     INFO - Build date: 20120218
     INFO - Build time: 03:32
     INFO - ********************************************************************************
@@ -318,7 +318,7 @@ With so much going on it can make things look more complex than they are.  It ca
 
 If we look at the jar built by maven, we'll see the application itself is quite small:
 
-    $ jar tvf target/simple-webservice-1.1.1-SNAPSHOT.jar
+    $ jar tvf target/simple-webservice-1.1.1.jar
          0 Sat Feb 18 19:17:06 PST 2012 META-INF/
        127 Sat Feb 18 19:17:04 PST 2012 META-INF/MANIFEST.MF
          0 Sat Feb 18 19:17:02 PST 2012 org/

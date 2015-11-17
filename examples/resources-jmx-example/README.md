@@ -373,15 +373,15 @@ When run you should see output similar to the following.
 	Apr 15, 2015 12:40:09 PM org.apache.openejb.arquillian.common.Setup findHome
 	INFO: Unable to find home in: /Users/jgallimore/tmp/tomee-1.7.x/examples/resources-jmx-example/resources-jmx-ejb/target/apache-tomee-remote
 	Apr 15, 2015 12:40:09 PM org.apache.openejb.arquillian.common.MavenCache getArtifact
-	INFO: Downloading org.apache.openejb:apache-tomee:1.7.2-SNAPSHOT:zip:plus please wait...
+	INFO: Downloading org.apache.openejb:apache-tomee:1.7.3:zip:plus please wait...
 	Apr 15, 2015 12:40:10 PM org.apache.openejb.arquillian.common.Zips unzip
-	INFO: Extracting '/Users/jgallimore/.m2/repository/org/apache/openejb/apache-tomee/1.7.2-SNAPSHOT/apache-tomee-1.7.2-SNAPSHOT-plus.zip' to '/Users/jgallimore/tmp/tomee-1.7.x/examples/resources-jmx-example/resources-jmx-ejb/target/apache-tomee-remote'
+	INFO: Extracting '/Users/jgallimore/.m2/repository/org/apache/openejb/apache-tomee/1.7.3/apache-tomee-1.7.3-plus.zip' to '/Users/jgallimore/tmp/tomee-1.7.x/examples/resources-jmx-example/resources-jmx-ejb/target/apache-tomee-remote'
 	Apr 15, 2015 12:40:12 PM org.apache.tomee.arquillian.remote.RemoteTomEEContainer configure
-	INFO: Downloaded container to: /Users/jgallimore/tmp/tomee-1.7.x/examples/resources-jmx-example/resources-jmx-ejb/target/apache-tomee-remote/apache-tomee-plus-1.7.2-SNAPSHOT
+	INFO: Downloaded container to: /Users/jgallimore/tmp/tomee-1.7.x/examples/resources-jmx-example/resources-jmx-ejb/target/apache-tomee-remote/apache-tomee-plus-1.7.3
 	Started server process on port: 61309
 	objc[20102]: Class JavaLaunchHelper is implemented in both /Library/Java/JavaVirtualMachines/jdk1.7.0_71.jdk/Contents/Home/jre/bin/java and /Library/Java/JavaVirtualMachines/jdk1.7.0_71.jdk/Contents/Home/jre/lib/libinstrument.dylib. One of the two will be used. Which one is undefined.
 	Apr 15, 2015 12:40:14 PM org.apache.catalina.startup.VersionLoggerListener log
-	INFO: Server version:        Apache Tomcat (TomEE)/7.0.61 (1.7.2-SNAPSHOT)
+	INFO: Server version:        Apache Tomcat (TomEE)/7.0.61 (1.7.3)
 	Apr 15, 2015 12:40:14 PM org.apache.catalina.startup.VersionLoggerListener log
 	INFO: Server built:          Mar 27 2015 12:03:56 UTC
 	Apr 15, 2015 12:40:14 PM org.apache.catalina.startup.VersionLoggerListener log
@@ -399,9 +399,9 @@ When run you should see output similar to the following.
 	Apr 15, 2015 12:40:14 PM org.apache.catalina.startup.VersionLoggerListener log
 	INFO: JVM Vendor:            Oracle Corporation
 	Apr 15, 2015 12:40:14 PM org.apache.catalina.startup.VersionLoggerListener log
-	INFO: CATALINA_BASE:         /Users/jgallimore/tmp/tomee-1.7.x/examples/resources-jmx-example/resources-jmx-ejb/target/apache-tomee-remote/apache-tomee-plus-1.7.2-SNAPSHOT
+	INFO: CATALINA_BASE:         /Users/jgallimore/tmp/tomee-1.7.x/examples/resources-jmx-example/resources-jmx-ejb/target/apache-tomee-remote/apache-tomee-plus-1.7.3
 	Apr 15, 2015 12:40:14 PM org.apache.catalina.startup.VersionLoggerListener log
-	INFO: CATALINA_HOME:         /Users/jgallimore/tmp/tomee-1.7.x/examples/resources-jmx-example/resources-jmx-ejb/target/apache-tomee-remote/apache-tomee-plus-1.7.2-SNAPSHOT
+	INFO: CATALINA_HOME:         /Users/jgallimore/tmp/tomee-1.7.x/examples/resources-jmx-example/resources-jmx-ejb/target/apache-tomee-remote/apache-tomee-plus-1.7.3
 	Apr 15, 2015 12:40:14 PM org.apache.catalina.startup.VersionLoggerListener log
 	INFO: Command line argument: -XX:+HeapDumpOnOutOfMemoryError
 	Apr 15, 2015 12:40:14 PM org.apache.catalina.startup.VersionLoggerListener log
@@ -421,21 +421,21 @@ When run you should see output similar to the following.
 	Apr 15, 2015 12:40:14 PM org.apache.catalina.startup.VersionLoggerListener log
 	INFO: Command line argument: -Dorg.apache.openejb.servlet.filters=org.apache.openejb.arquillian.common.ArquillianFilterRunner=/ArquillianServletRunner
 	Apr 15, 2015 12:40:14 PM org.apache.catalina.startup.VersionLoggerListener log
-	INFO: Command line argument: -Djava.util.logging.config.file=/Users/jgallimore/tmp/tomee-1.7.x/examples/resources-jmx-example/resources-jmx-ejb/target/apache-tomee-remote/apache-tomee-plus-1.7.2-SNAPSHOT/conf/logging.properties
+	INFO: Command line argument: -Djava.util.logging.config.file=/Users/jgallimore/tmp/tomee-1.7.x/examples/resources-jmx-example/resources-jmx-ejb/target/apache-tomee-remote/apache-tomee-plus-1.7.3/conf/logging.properties
 	Apr 15, 2015 12:40:14 PM org.apache.catalina.startup.VersionLoggerListener log
-	INFO: Command line argument: -javaagent:/Users/jgallimore/tmp/tomee-1.7.x/examples/resources-jmx-example/resources-jmx-ejb/target/apache-tomee-remote/apache-tomee-plus-1.7.2-SNAPSHOT/lib/openejb-javaagent.jar
+	INFO: Command line argument: -javaagent:/Users/jgallimore/tmp/tomee-1.7.x/examples/resources-jmx-example/resources-jmx-ejb/target/apache-tomee-remote/apache-tomee-plus-1.7.3/lib/openejb-javaagent.jar
 	Apr 15, 2015 12:40:14 PM org.apache.catalina.startup.VersionLoggerListener log
 	INFO: Command line argument: -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
 	Apr 15, 2015 12:40:14 PM org.apache.catalina.startup.VersionLoggerListener log
-	INFO: Command line argument: -Djava.io.tmpdir=/Users/jgallimore/tmp/tomee-1.7.x/examples/resources-jmx-example/resources-jmx-ejb/target/apache-tomee-remote/apache-tomee-plus-1.7.2-SNAPSHOT/temp
+	INFO: Command line argument: -Djava.io.tmpdir=/Users/jgallimore/tmp/tomee-1.7.x/examples/resources-jmx-example/resources-jmx-ejb/target/apache-tomee-remote/apache-tomee-plus-1.7.3/temp
 	Apr 15, 2015 12:40:14 PM org.apache.catalina.startup.VersionLoggerListener log
-	INFO: Command line argument: -Djava.endorsed.dirs=/Users/jgallimore/tmp/tomee-1.7.x/examples/resources-jmx-example/resources-jmx-ejb/target/apache-tomee-remote/apache-tomee-plus-1.7.2-SNAPSHOT/endorsed
+	INFO: Command line argument: -Djava.endorsed.dirs=/Users/jgallimore/tmp/tomee-1.7.x/examples/resources-jmx-example/resources-jmx-ejb/target/apache-tomee-remote/apache-tomee-plus-1.7.3/endorsed
 	Apr 15, 2015 12:40:14 PM org.apache.catalina.startup.VersionLoggerListener log
-	INFO: Command line argument: -Dcatalina.base=/Users/jgallimore/tmp/tomee-1.7.x/examples/resources-jmx-example/resources-jmx-ejb/target/apache-tomee-remote/apache-tomee-plus-1.7.2-SNAPSHOT
+	INFO: Command line argument: -Dcatalina.base=/Users/jgallimore/tmp/tomee-1.7.x/examples/resources-jmx-example/resources-jmx-ejb/target/apache-tomee-remote/apache-tomee-plus-1.7.3
 	Apr 15, 2015 12:40:14 PM org.apache.catalina.startup.VersionLoggerListener log
-	INFO: Command line argument: -Dcatalina.home=/Users/jgallimore/tmp/tomee-1.7.x/examples/resources-jmx-example/resources-jmx-ejb/target/apache-tomee-remote/apache-tomee-plus-1.7.2-SNAPSHOT
+	INFO: Command line argument: -Dcatalina.home=/Users/jgallimore/tmp/tomee-1.7.x/examples/resources-jmx-example/resources-jmx-ejb/target/apache-tomee-remote/apache-tomee-plus-1.7.3
 	Apr 15, 2015 12:40:14 PM org.apache.catalina.startup.VersionLoggerListener log
-	INFO: Command line argument: -Dcatalina.ext.dirs=/Users/jgallimore/tmp/tomee-1.7.x/examples/resources-jmx-example/resources-jmx-ejb/target/apache-tomee-remote/apache-tomee-plus-1.7.2-SNAPSHOT/lib
+	INFO: Command line argument: -Dcatalina.ext.dirs=/Users/jgallimore/tmp/tomee-1.7.x/examples/resources-jmx-example/resources-jmx-ejb/target/apache-tomee-remote/apache-tomee-plus-1.7.3/lib
 	Apr 15, 2015 12:40:14 PM org.apache.catalina.startup.VersionLoggerListener log
 	INFO: Command line argument: -Dorg.apache.tomcat.util.http.ServerCookie.ALLOW_HTTP_SEPARATORS_IN_V0=true
 	Apr 15, 2015 12:40:14 PM org.apache.catalina.startup.VersionLoggerListener log
@@ -457,7 +457,7 @@ When run you should see output similar to the following.
 	Apr 15, 2015 12:40:16 PM org.apache.openejb.OpenEJB$Instance <init>
 	INFO: Copyright 1999-2013 (C) Apache OpenEJB Project, All Rights Reserved.
 	Apr 15, 2015 12:40:16 PM org.apache.openejb.OpenEJB$Instance <init>
-	INFO: Version: 4.7.2-SNAPSHOT
+	INFO: Version: 4.7.3
 	Apr 15, 2015 12:40:16 PM org.apache.openejb.OpenEJB$Instance <init>
 	INFO: Build date: 20150415
 	Apr 15, 2015 12:40:16 PM org.apache.openejb.OpenEJB$Instance <init>
@@ -465,15 +465,15 @@ When run you should see output similar to the following.
 	Apr 15, 2015 12:40:16 PM org.apache.openejb.OpenEJB$Instance <init>
 	INFO: ********************************************************************************
 	Apr 15, 2015 12:40:16 PM org.apache.openejb.OpenEJB$Instance <init>
-	INFO: openejb.home = /Users/jgallimore/tmp/tomee-1.7.x/examples/resources-jmx-example/resources-jmx-ejb/target/apache-tomee-remote/apache-tomee-plus-1.7.2-SNAPSHOT
+	INFO: openejb.home = /Users/jgallimore/tmp/tomee-1.7.x/examples/resources-jmx-example/resources-jmx-ejb/target/apache-tomee-remote/apache-tomee-plus-1.7.3
 	Apr 15, 2015 12:40:16 PM org.apache.openejb.OpenEJB$Instance <init>
-	INFO: openejb.base = /Users/jgallimore/tmp/tomee-1.7.x/examples/resources-jmx-example/resources-jmx-ejb/target/apache-tomee-remote/apache-tomee-plus-1.7.2-SNAPSHOT
+	INFO: openejb.base = /Users/jgallimore/tmp/tomee-1.7.x/examples/resources-jmx-example/resources-jmx-ejb/target/apache-tomee-remote/apache-tomee-plus-1.7.3
 	Apr 15, 2015 12:40:16 PM org.apache.openejb.cdi.CdiBuilder initializeOWB
 	INFO: Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@4a00b74b
 	Apr 15, 2015 12:40:16 PM org.apache.openejb.cdi.CdiBuilder initializeOWB
 	INFO: Succeeded in installing singleton service
 	Apr 15, 2015 12:40:17 PM org.apache.openejb.config.ConfigurationFactory init
-	INFO: openejb configuration file is '/Users/jgallimore/tmp/tomee-1.7.x/examples/resources-jmx-example/resources-jmx-ejb/target/apache-tomee-remote/apache-tomee-plus-1.7.2-SNAPSHOT/conf/tomee.xml'
+	INFO: openejb configuration file is '/Users/jgallimore/tmp/tomee-1.7.x/examples/resources-jmx-example/resources-jmx-ejb/target/apache-tomee-remote/apache-tomee-plus-1.7.3/conf/tomee.xml'
 	Apr 15, 2015 12:40:17 PM org.apache.openejb.config.ConfigurationFactory configureService
 	INFO: Configuring Service(id=Tomcat Security Service, type=SecurityService, provider-id=Tomcat Security Service)
 	Apr 15, 2015 12:40:17 PM org.apache.openejb.config.ConfigurationFactory configureService
@@ -563,7 +563,7 @@ When run you should see output similar to the following.
 	Apr 15, 2015 12:40:20 PM org.apache.catalina.core.StandardService startInternal
 	INFO: Starting service Catalina
 	Apr 15, 2015 12:40:20 PM org.apache.catalina.core.StandardEngine startInternal
-	INFO: Starting Servlet Engine: Apache Tomcat (TomEE)/7.0.61 (1.7.2-SNAPSHOT)
+	INFO: Starting Servlet Engine: Apache Tomcat (TomEE)/7.0.61 (1.7.3)
 	Apr 15, 2015 12:40:21 PM org.apache.coyote.AbstractProtocol start
 	INFO: Starting ProtocolHandler ["http-bio-61309"]
 	Apr 15, 2015 12:40:21 PM org.apache.coyote.AbstractProtocol start
@@ -609,7 +609,7 @@ When run you should see output similar to the following.
 	Apr 15, 2015 12:40:24 PM org.apache.openejb.assembler.classic.Assembler createRecipe
 	INFO: Creating Container(id=Default Managed Container)
 	Apr 15, 2015 12:40:24 PM org.apache.openejb.core.managed.SimplePassivater init
-	INFO: Using directory /Users/jgallimore/tmp/tomee-1.7.x/examples/resources-jmx-example/resources-jmx-ejb/target/apache-tomee-remote/apache-tomee-plus-1.7.2-SNAPSHOT/temp for stateful session passivation
+	INFO: Using directory /Users/jgallimore/tmp/tomee-1.7.x/examples/resources-jmx-example/resources-jmx-ejb/target/apache-tomee-remote/apache-tomee-plus-1.7.3/temp for stateful session passivation
 	Apr 15, 2015 12:40:24 PM org.apache.openejb.config.AutoConfig processResourceRef
 	INFO: Auto-linking resource-ref 'java:comp/env/jmx/Hello' in bean jmx-ejb.Comp1256115069 to Resource(id=jmx/Hello)
 	Apr 15, 2015 12:40:24 PM org.apache.openejb.config.AutoConfig processResourceRef
