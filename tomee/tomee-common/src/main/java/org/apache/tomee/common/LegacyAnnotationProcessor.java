@@ -65,16 +65,16 @@ public class LegacyAnnotationProcessor {
         while (clazz != null) {
             final Method[] methods = clazz.getDeclaredMethods();
             Method postConstruct = null;
-            for (int i = 0; i < methods.length; i++) {
-                if (methods[i].isAnnotationPresent(PostConstruct.class)) {
+            for (final Method method : methods) {
+                if (method.isAnnotationPresent(PostConstruct.class)) {
                     if ((postConstruct != null)
-                            || (methods[i].getParameterTypes().length != 0)
-                            || (Modifier.isStatic(methods[i].getModifiers()))
-                            || (methods[i].getExceptionTypes().length > 0)
-                            || (!methods[i].getReturnType().getName().equals("void"))) {
+                            || (method.getParameterTypes().length != 0)
+                            || (Modifier.isStatic(method.getModifiers()))
+                            || (method.getExceptionTypes().length > 0)
+                            || (!method.getReturnType().getName().equals("void"))) {
                         throw new IllegalArgumentException("Invalid PostConstruct annotation");
                     }
-                    postConstruct = methods[i];
+                    postConstruct = method;
                 }
             }
 
@@ -102,16 +102,16 @@ public class LegacyAnnotationProcessor {
         while (clazz != null) {
             final Method[] methods = clazz.getDeclaredMethods();
             Method preDestroy = null;
-            for (int i = 0; i < methods.length; i++) {
-                if (methods[i].isAnnotationPresent(PreDestroy.class)) {
+            for (final Method method : methods) {
+                if (method.isAnnotationPresent(PreDestroy.class)) {
                     if ((preDestroy != null)
-                            || (methods[i].getParameterTypes().length != 0)
-                            || (Modifier.isStatic(methods[i].getModifiers()))
-                            || (methods[i].getExceptionTypes().length > 0)
-                            || (!methods[i].getReturnType().getName().equals("void"))) {
+                            || (method.getParameterTypes().length != 0)
+                            || (Modifier.isStatic(method.getModifiers()))
+                            || (method.getExceptionTypes().length > 0)
+                            || (!method.getReturnType().getName().equals("void"))) {
                         throw new IllegalArgumentException("Invalid PreDestroy annotation");
                     }
-                    preDestroy = methods[i];
+                    preDestroy = method;
                 }
             }
 
@@ -144,34 +144,34 @@ public class LegacyAnnotationProcessor {
         while (clazz != null) {
             // Initialize fields annotations
             final Field[] fields = clazz.getDeclaredFields();
-            for (int i = 0; i < fields.length; i++) {
-                if (fields[i].isAnnotationPresent(Resource.class)) {
+            for (final Field field : fields) {
+                if (field.isAnnotationPresent(Resource.class)) {
                     final Resource annotation =
-                            fields[i].getAnnotation(Resource.class);
-                    lookupFieldResource(context, instance, fields[i],
+                            field.getAnnotation(Resource.class);
+                    lookupFieldResource(context, instance, field,
                             annotation.name(), clazz);
                 }
-                if (fields[i].isAnnotationPresent(EJB.class)) {
-                    final EJB annotation = fields[i].getAnnotation(EJB.class);
-                    lookupFieldResource(context, instance, fields[i],
+                if (field.isAnnotationPresent(EJB.class)) {
+                    final EJB annotation = field.getAnnotation(EJB.class);
+                    lookupFieldResource(context, instance, field,
                             annotation.name(), clazz);
                 }
-                if (fields[i].isAnnotationPresent(WebServiceRef.class)) {
+                if (field.isAnnotationPresent(WebServiceRef.class)) {
                     final WebServiceRef annotation =
-                            fields[i].getAnnotation(WebServiceRef.class);
-                    lookupFieldResource(context, instance, fields[i],
+                            field.getAnnotation(WebServiceRef.class);
+                    lookupFieldResource(context, instance, field,
                             annotation.name(), clazz);
                 }
-                if (fields[i].isAnnotationPresent(PersistenceContext.class)) {
+                if (field.isAnnotationPresent(PersistenceContext.class)) {
                     final PersistenceContext annotation =
-                            fields[i].getAnnotation(PersistenceContext.class);
-                    lookupFieldResource(context, instance, fields[i],
+                            field.getAnnotation(PersistenceContext.class);
+                    lookupFieldResource(context, instance, field,
                             annotation.name(), clazz);
                 }
-                if (fields[i].isAnnotationPresent(PersistenceUnit.class)) {
+                if (field.isAnnotationPresent(PersistenceUnit.class)) {
                     final PersistenceUnit annotation =
-                            fields[i].getAnnotation(PersistenceUnit.class);
-                    lookupFieldResource(context, instance, fields[i],
+                            field.getAnnotation(PersistenceUnit.class);
+                    lookupFieldResource(context, instance, field,
                             annotation.name(), clazz);
                 }
             }
@@ -179,33 +179,33 @@ public class LegacyAnnotationProcessor {
             // Initialize methods annotations
             final Method[] methods = clazz.getDeclaredMethods();
 
-            for (int i = 0; i < methods.length; i++) {
-                if (methods[i].isAnnotationPresent(Resource.class)) {
-                    final Resource annotation = methods[i].getAnnotation(Resource.class);
-                    lookupMethodResource(context, instance, methods[i],
+            for (final Method method : methods) {
+                if (method.isAnnotationPresent(Resource.class)) {
+                    final Resource annotation = method.getAnnotation(Resource.class);
+                    lookupMethodResource(context, instance, method,
                             annotation.name(), clazz);
                 }
-                if (methods[i].isAnnotationPresent(EJB.class)) {
-                    final EJB annotation = methods[i].getAnnotation(EJB.class);
-                    lookupMethodResource(context, instance, methods[i],
+                if (method.isAnnotationPresent(EJB.class)) {
+                    final EJB annotation = method.getAnnotation(EJB.class);
+                    lookupMethodResource(context, instance, method,
                             annotation.name(), clazz);
                 }
-                if (methods[i].isAnnotationPresent(WebServiceRef.class)) {
+                if (method.isAnnotationPresent(WebServiceRef.class)) {
                     final WebServiceRef annotation =
-                            methods[i].getAnnotation(WebServiceRef.class);
-                    lookupMethodResource(context, instance, methods[i],
+                            method.getAnnotation(WebServiceRef.class);
+                    lookupMethodResource(context, instance, method,
                             annotation.name(), clazz);
                 }
-                if (methods[i].isAnnotationPresent(PersistenceContext.class)) {
+                if (method.isAnnotationPresent(PersistenceContext.class)) {
                     final PersistenceContext annotation =
-                            methods[i].getAnnotation(PersistenceContext.class);
-                    lookupMethodResource(context, instance, methods[i],
+                            method.getAnnotation(PersistenceContext.class);
+                    lookupMethodResource(context, instance, method,
                             annotation.name(), clazz);
                 }
-                if (methods[i].isAnnotationPresent(PersistenceUnit.class)) {
+                if (method.isAnnotationPresent(PersistenceUnit.class)) {
                     final PersistenceUnit annotation =
-                            methods[i].getAnnotation(PersistenceUnit.class);
-                    lookupMethodResource(context, instance, methods[i],
+                            method.getAnnotation(PersistenceUnit.class);
+                    lookupMethodResource(context, instance, method,
                             annotation.name(), clazz);
                 }
             }
@@ -222,8 +222,7 @@ public class LegacyAnnotationProcessor {
                                               final Object instance, final Field field, final String name, final Class<?> clazz)
             throws NamingException, IllegalAccessException {
 
-        Object lookedupResource = null;
-        boolean accessibility = false;
+        final Object lookedupResource;
 
         if ((name != null) && (name.length() > 0)) {
             lookedupResource = context.lookup(name);
@@ -231,7 +230,7 @@ public class LegacyAnnotationProcessor {
             lookedupResource = context.lookup(clazz.getName() + "/" + field.getName());
         }
 
-        accessibility = field.isAccessible();
+        final boolean accessibility = field.isAccessible();
         field.setAccessible(true);
         field.set(instance, lookedupResource);
         field.setAccessible(accessibility);
@@ -251,17 +250,15 @@ public class LegacyAnnotationProcessor {
             throw new IllegalArgumentException("Invalid method resource injection annotation");
         }
 
-        Object lookedupResource = null;
-        boolean accessibility = false;
+        final Object lookedupResource;
 
-        if ((name != null) &&
-                (name.length() > 0)) {
+        if ((name != null) && (name.length() > 0)) {
             lookedupResource = context.lookup(name);
         } else {
             lookedupResource = context.lookup(clazz.getName() + "/" + method.getName().substring(3));
         }
 
-        accessibility = method.isAccessible();
+        final boolean accessibility = method.isAccessible();
         method.setAccessible(true);
         method.invoke(instance, lookedupResource);
         method.setAccessible(accessibility);
