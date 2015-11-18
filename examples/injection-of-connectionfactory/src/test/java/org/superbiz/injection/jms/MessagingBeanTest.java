@@ -26,9 +26,10 @@ public class MessagingBeanTest extends TestCase {
 
     public void test() throws Exception {
 
-        final Context context = EJBContainer.createEJBContainer().getContext();
+        final EJBContainer ejbContainer = EJBContainer.createEJBContainer();
+        final Context context = ejbContainer.getContext();
 
-        Messages messages = (Messages) context.lookup("java:global/injection-of-connectionfactory/Messages");
+        final Messages messages = (Messages) context.lookup("java:global/injection-of-connectionfactory/Messages");
 
         messages.sendMessage("Hello World!");
         messages.sendMessage("How are you?");
@@ -37,6 +38,9 @@ public class MessagingBeanTest extends TestCase {
         assertEquals(messages.receiveMessage(), "Hello World!");
         assertEquals(messages.receiveMessage(), "How are you?");
         assertEquals(messages.receiveMessage(), "Still spinning?");
+
+        context.close();
+        ejbContainer.close();
     }
 }
 //END SNIPPET: code

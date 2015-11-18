@@ -20,6 +20,7 @@ package org.apache.openejb;
 import org.apache.openejb.core.ivm.naming.JndiUrlReference;
 import org.apache.openejb.injection.FallbackPropertyInjector;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.resource.activemq.ConnectionFactoryWrapper;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -28,6 +29,7 @@ import org.apache.xbean.naming.reference.SimpleReference;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
+import javax.jms.ConnectionFactory;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import java.lang.reflect.InvocationTargetException;
@@ -97,6 +99,7 @@ public class InjectionProcessor<T> {
         return instance;
     }
 
+    @SuppressWarnings("unchecked")
     private void construct() throws OpenEJBException {
         if (instance != null) {
             throw new IllegalStateException("Instance already constructed");
@@ -179,6 +182,7 @@ public class InjectionProcessor<T> {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void fillInjectionProperties(final ObjectRecipe objectRecipe) {
         if (injections == null) {
             return;
@@ -201,7 +205,7 @@ public class InjectionProcessor<T> {
             clazz = suppliedInstance.getClass();
         }
 
-        if (context != null) {
+        if (null != context && null != clazz) {
             for (final Injection injection : injections) {
                 if (injection.getTarget() == null) {
                     continue;
@@ -222,7 +226,13 @@ public class InjectionProcessor<T> {
                         } catch (final NamingException e) {
                             if (value instanceof JndiUrlReference) {
                                 try {
-                                    value = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext()
+                                    final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+
+                                    if(null == containerSystem){
+                                        throw new IllegalStateException("ContainerSystem has not been initialized");
+                                    }
+
+                                    value = containerSystem.getJNDIContext()
                                         .lookup(((JndiUrlReference) value).getJndiName());
                                 } catch (final NamingException e1) {
                                     value = null;
@@ -240,6 +250,12 @@ public class InjectionProcessor<T> {
                 }
 
                 if (value != null) {
+
+                    if(ConnectionFactory.class.isInstance(value)){
+                        //Wrap
+                        value = new ConnectionFactoryWrapper(ConnectionFactory.class.cast(value));
+                    }
+
                     final String prefix;
                     if (usePrefix) {
                         prefix = injection.getTarget().getName() + "/";

@@ -87,6 +87,7 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
 
             final URI uri = new URI(cleanUpUri(brokerURI.getSchemeSpecificPart(), compositeData.getParameters(), params));
             broker = BrokerFactory.createBroker(uri);
+            broker.setUseShutdownHook(false);
             brokers.put(brokerURI, broker);
 
             if (persistenceAdapter != null) {
@@ -116,9 +117,14 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
 
                             try {
                                 final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+
+                                if (null == containerSystem) {
+                                    throw new IllegalArgumentException("ContainerSystem has not been initialized");
+                                }
+
                                 final Context context = containerSystem.getJNDIContext();
                                 final Object obj = context.lookup("openejb/Resource/" + resouceId);
-                                if (!(obj instanceof DataSource)) {
+                                if (!DataSource.class.isInstance(obj)) {
                                     throw new IllegalArgumentException("Resource with id " + resouceId
                                             + " is not a DataSource, but is " + obj.getClass().getName());
                                 }
