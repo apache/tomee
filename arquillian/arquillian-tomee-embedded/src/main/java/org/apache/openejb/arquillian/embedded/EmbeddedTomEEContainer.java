@@ -98,6 +98,8 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
         configuration.setSslProtocol(tomeeConfiguration.getSslProtocol());
         configuration.setWithEjbRemote(tomeeConfiguration.isWithEjbRemote());
 
+        configuration.setWebResourceCached(tomeeConfiguration.isWebResourcesCached());
+
         if (tomeeConfiguration.getRoles() != null) {
             configuration.setRoles(new HashMap<String, String>(Map.class.cast(tomeeConfiguration.getRolesAsProperties())));
         }

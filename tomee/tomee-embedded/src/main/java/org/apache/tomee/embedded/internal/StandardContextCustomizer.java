@@ -63,7 +63,9 @@ public class StandardContextCustomizer {
 
         switch (event.getType()) {
             case Lifecycle.BEFORE_START_EVENT:
-                final WebResourceRoot resources = new StandardRoot(context);
+                final StandardRoot resources = new StandardRoot(context);
+                resources.setCachingAllowed(config.areWebResourcesCached());
+
                 context.setResources(resources);
                 if (!module.getProperties().containsKey("fakeJarLocation")) {
                     context.setDocBase(module.getJarLocation());
