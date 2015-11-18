@@ -70,6 +70,9 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.logging.Level;
+
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 public class StatelessInstanceManager {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
@@ -165,6 +168,29 @@ public class StatelessInstanceManager {
                 ThreadContext.exit(oldCallContext);
             }
             return null;
+        }
+    }
+
+    public void destroy() {
+        if (executor != null) {
+            executor.shutdown();
+            try {
+                if (!executor.awaitTermination(10000, MILLISECONDS)) {
+                    java.util.logging.Logger.getLogger(this.getClass().getName()).log(Level.WARNING, getClass().getSimpleName() + " pool  timeout expired");
+                }
+            } catch (final InterruptedException e) {
+                Thread.interrupted();
+            }
+        }
+        if (scheduledExecutor != null) {
+            scheduledExecutor.shutdown();
+            try {
+                if (!scheduledExecutor.awaitTermination(10000, MILLISECONDS)) {
+                    java.util.logging.Logger.getLogger(this.getClass().getName()).log(Level.WARNING, getClass().getSimpleName() + " pool  timeout expired");
+                }
+            } catch (final InterruptedException e) {
+                Thread.interrupted();
+            }
         }
     }
 

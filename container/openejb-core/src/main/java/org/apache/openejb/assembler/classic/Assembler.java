@@ -1808,6 +1808,20 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             systemInstance.removeComponent(EjbResolver.class);
             systemInstance.fireEvent(new AssemblerDestroyed());
             systemInstance.removeObservers();
+
+            if (DestroyableResource.class.isInstance(this.securityService)) {
+                DestroyableResource.class.cast(this.securityService).destroyResource();
+            }
+            if (DestroyableResource.class.isInstance(this.transactionManager)) {
+                DestroyableResource.class.cast(this.transactionManager).destroyResource();
+            }
+
+            for (final Container c : this.containerSystem.containers()) {
+                if (DestroyableResource.class.isInstance(c)) { // TODO: should we use auto closeable there?
+                    DestroyableResource.class.cast(c).destroyResource();
+                }
+            }
+
             SystemInstance.reset();
         } finally {
             l.unlock();

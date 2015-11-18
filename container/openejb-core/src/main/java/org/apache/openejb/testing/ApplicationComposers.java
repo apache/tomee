@@ -182,7 +182,10 @@ public class ApplicationComposers {
         testClassFinders.put(this, new ClassFinder(ancestors(klass))); // using this temporary since we don't have yet the instance
         if (additionalModules != null) {
             for (final Object o : additionalModules) {
-                testClassFinders.put(o, new ClassFinder(ancestors(o.getClass())));
+                final Class<?> aClass = o.getClass();
+                if (aClass != klass) {
+                    testClassFinders.put(o, new ClassFinder(ancestors(aClass)));
+                }
             }
         }
 
@@ -349,7 +352,11 @@ public class ApplicationComposers {
                 annotatedMethods = newAnnotatedMethods;
                 map.put(key, annotatedMethods);
             } else {
-                annotatedMethods.addAll(newAnnotatedMethods);
+                for (final Method m : newAnnotatedMethods) {
+                    if (!annotatedMethods.contains(m)) {
+                        annotatedMethods.add(m);
+                    }
+                }
             }
         }
         return map;

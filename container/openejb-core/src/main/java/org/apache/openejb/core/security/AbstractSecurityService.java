@@ -19,6 +19,7 @@ package org.apache.openejb.core.security;
 
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.InterfaceType;
+import org.apache.openejb.api.resource.DestroyableResource;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.ThreadContextListener;
 import org.apache.openejb.core.security.jaas.GroupPrincipal;
@@ -58,7 +59,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * to clients, is mostly secure, and can be deserialized in a client vm without
  * addition openejb-core classes.
  */
-public abstract class AbstractSecurityService implements SecurityService<UUID>, ThreadContextListener, BasicPolicyConfiguration.RoleResolver {
+public abstract class AbstractSecurityService implements DestroyableResource, SecurityService<UUID>, ThreadContextListener, BasicPolicyConfiguration.RoleResolver {
 
     private static final Map<Object, Identity> identities = new ConcurrentHashMap<Object, Identity>();
     protected static final ThreadLocal<Identity> clientIdentity = new ThreadLocal<Identity>();
@@ -82,6 +83,11 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
         updateSecurityContext();
 
         SystemInstance.get().setComponent(BasicPolicyConfiguration.RoleResolver.class, this);
+    }
+
+    @Override
+    public void destroyResource() {
+        // no-op
     }
 
     public String getRealmName() {
