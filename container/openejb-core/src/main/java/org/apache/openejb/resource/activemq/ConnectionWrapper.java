@@ -10,7 +10,15 @@
  */
 package org.apache.openejb.resource.activemq;
 
-import javax.jms.*;
+import javax.jms.Connection;
+import javax.jms.ConnectionConsumer;
+import javax.jms.ConnectionMetaData;
+import javax.jms.Destination;
+import javax.jms.ExceptionListener;
+import javax.jms.JMSException;
+import javax.jms.ServerSessionPool;
+import javax.jms.Session;
+import javax.jms.Topic;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -108,8 +116,12 @@ public class ConnectionWrapper implements Connection {
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         final ConnectionWrapper that = (ConnectionWrapper) o;
 

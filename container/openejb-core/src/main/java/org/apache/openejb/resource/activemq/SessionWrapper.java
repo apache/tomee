@@ -10,7 +10,24 @@
  */
 package org.apache.openejb.resource.activemq;
 
-import javax.jms.*;
+import javax.jms.BytesMessage;
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.MapMessage;
+import javax.jms.Message;
+import javax.jms.MessageConsumer;
+import javax.jms.MessageListener;
+import javax.jms.MessageProducer;
+import javax.jms.ObjectMessage;
+import javax.jms.Queue;
+import javax.jms.QueueBrowser;
+import javax.jms.Session;
+import javax.jms.StreamMessage;
+import javax.jms.TemporaryQueue;
+import javax.jms.TemporaryTopic;
+import javax.jms.TextMessage;
+import javax.jms.Topic;
+import javax.jms.TopicSubscriber;
 import java.io.Serializable;
 
 public class SessionWrapper implements Session {
@@ -49,8 +66,8 @@ public class SessionWrapper implements Session {
     }
 
     @Override
-    public MessageConsumer createConsumer(final Destination destination, final String messageSelector, final boolean NoLocal) throws JMSException {
-        return session.createConsumer(destination, messageSelector, NoLocal);
+    public MessageConsumer createConsumer(final Destination destination, final String messageSelector, final boolean noLocal) throws JMSException {
+        return session.createConsumer(destination, messageSelector, noLocal);
     }
 
     @Override
@@ -179,8 +196,12 @@ public class SessionWrapper implements Session {
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         final SessionWrapper that = (SessionWrapper) o;
 
