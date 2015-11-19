@@ -21,6 +21,8 @@ import javax.jms.Session;
 import javax.jms.Topic;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ConnectionWrapper implements Connection {
 
@@ -89,6 +91,8 @@ public class ConnectionWrapper implements Connection {
                 next.close();
             } catch (final Exception e) {
                 //no-op
+            } finally {
+                Logger.getLogger(ConnectionFactoryWrapper.class.getName()).log(Level.SEVERE, "Closed a JMS session. You have an application that fails to close this session");
             }
         }
 

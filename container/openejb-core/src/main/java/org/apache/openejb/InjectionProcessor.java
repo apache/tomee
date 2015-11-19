@@ -20,6 +20,7 @@ package org.apache.openejb;
 import org.apache.openejb.core.ivm.naming.JndiUrlReference;
 import org.apache.openejb.injection.FallbackPropertyInjector;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.resource.activemq.ConnectionFactoryWrapper;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -28,9 +29,6 @@ import org.apache.xbean.naming.reference.SimpleReference;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.QueueConnection;
-import javax.jms.TopicConnection;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import java.lang.reflect.InvocationTargetException;
@@ -252,9 +250,9 @@ public class InjectionProcessor<T> {
 
                 if (value != null) {
 
-                    if(ConnectionFactory.class.isInstance(value) && !TopicConnection.class.isInstance(value) && !QueueConnection.class.isInstance(value)){
+                    if("org.apache.activemq.ra.ActiveMQConnectionFactory".equals(value.getClass().getName())){
                         //Wrap
-                        //value = new ConnectionFactoryWrapper(ConnectionFactory.class.cast(value));
+                        value = new ConnectionFactoryWrapper(value);
                     }
 
                     final String prefix;
