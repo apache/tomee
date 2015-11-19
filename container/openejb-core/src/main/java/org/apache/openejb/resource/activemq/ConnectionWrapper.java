@@ -16,15 +16,20 @@ import javax.jms.ConnectionMetaData;
 import javax.jms.Destination;
 import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
+import javax.jms.Queue;
+import javax.jms.QueueConnection;
+import javax.jms.QueueSession;
 import javax.jms.ServerSessionPool;
 import javax.jms.Session;
 import javax.jms.Topic;
+import javax.jms.TopicConnection;
+import javax.jms.TopicSession;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ConnectionWrapper implements Connection {
+public class ConnectionWrapper implements Connection, TopicConnection, QueueConnection {
 
     private final ArrayList<SessionWrapper> sessions = new ArrayList<SessionWrapper>();
 
@@ -52,6 +57,26 @@ public class ConnectionWrapper implements Connection {
     @Override
     public String getClientID() throws JMSException {
         return con.getClientID();
+    }
+
+    @Override
+    public TopicSession createTopicSession(final boolean transacted, final int acknowledgeMode) throws JMSException {
+        return TopicConnection.class.cast(this.con).createTopicSession(transacted, acknowledgeMode);
+    }
+
+    @Override
+    public ConnectionConsumer createConnectionConsumer(final Topic topic, final String messageSelector, final ServerSessionPool sessionPool, final int maxMessages) throws JMSException {
+        return TopicConnection.class.cast(this.con).createConnectionConsumer(topic, messageSelector, sessionPool, maxMessages);
+    }
+
+    @Override
+    public QueueSession createQueueSession(final boolean transacted, final int acknowledgeMode) throws JMSException {
+        return QueueConnection.class.cast(this.con).createQueueSession(transacted, acknowledgeMode);
+    }
+
+    @Override
+    public ConnectionConsumer createConnectionConsumer(final Queue queue, final String messageSelector, final ServerSessionPool sessionPool, final int maxMessages) throws JMSException {
+        return QueueConnection.class.cast(this.con).createConnectionConsumer(queue, messageSelector, sessionPool, maxMessages);
     }
 
     @Override
@@ -137,4 +162,6 @@ public class ConnectionWrapper implements Connection {
     public int hashCode() {
         return con.hashCode();
     }
+
+
 }

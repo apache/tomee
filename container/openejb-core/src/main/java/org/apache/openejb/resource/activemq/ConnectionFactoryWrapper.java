@@ -70,21 +70,21 @@ public class ConnectionFactoryWrapper implements ConnectionFactory, TopicConnect
 
     @Override
     public QueueConnection createQueueConnection() throws JMSException {
-        return this.factory.createQueueConnection();
+        return QueueConnection.class.cast(getConnection(this.factory.createQueueConnection()));
     }
 
     @Override
     public QueueConnection createQueueConnection(final String userName, final String password) throws JMSException {
-        return this.factory.createQueueConnection(userName, password);
+        return QueueConnection.class.cast(getConnection(this.factory.createQueueConnection(userName, password)));
     }
 
     @Override
     public TopicConnection createTopicConnection() throws JMSException {
-        return this.factory.createTopicConnection();
+        return TopicConnection.class.cast(getConnection(this.factory.createTopicConnection()));
     }
 
     @Override
     public TopicConnection createTopicConnection(final String userName, final String password) throws JMSException {
-        return this.factory.createTopicConnection(userName, password);
+        return TopicConnection.class.cast(getConnection(this.factory.createTopicConnection(userName, password)));
     }
 }
