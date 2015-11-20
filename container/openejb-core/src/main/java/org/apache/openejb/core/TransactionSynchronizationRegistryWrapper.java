@@ -44,30 +44,37 @@ public class TransactionSynchronizationRegistryWrapper implements TransactionSyn
         return registry;
     }
 
+    @Override
     public Object getResource(final Object o) {
         return getRegistry().getResource(o);
     }
 
+    @Override
     public boolean getRollbackOnly() {
         return getRegistry().getRollbackOnly();
     }
 
+    @Override
     public Object getTransactionKey() {
         return getRegistry().getTransactionKey();
     }
 
+    @Override
     public int getTransactionStatus() {
         return getRegistry().getTransactionStatus();
     }
 
+    @Override
     public void putResource(final Object o, final Object o1) {
         getRegistry().putResource(o, o1);
     }
 
+    @Override
     public void registerInterposedSynchronization(final Synchronization synchronization) {
         getRegistry().registerInterposedSynchronization(synchronization);
     }
 
+    @Override
     public void setRollbackOnly() {
         getRegistry().setRollbackOnly();
     }

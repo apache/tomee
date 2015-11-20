@@ -34,6 +34,7 @@ public class SimpleTransactionSynchronizationRegistry implements TransactionSync
         this.transactionManager = transactionManager;
     }
 
+    @Override
     public Transaction getTransactionKey() {
         try {
             return transactionManager.getTransaction();
@@ -42,6 +43,7 @@ public class SimpleTransactionSynchronizationRegistry implements TransactionSync
         }
     }
 
+    @Override
     public Object getResource(final Object key) {
         final Transaction transaction = getActiveTransaction();
         final Map<Object, Object> resources = transactionResources.get(transaction);
@@ -51,6 +53,7 @@ public class SimpleTransactionSynchronizationRegistry implements TransactionSync
         return resources.get(key);
     }
 
+    @Override
     public void putResource(final Object key, final Object value) {
         final Transaction transaction = getActiveTransaction();
 
@@ -69,6 +72,7 @@ public class SimpleTransactionSynchronizationRegistry implements TransactionSync
         resources.put(key, value);
     }
 
+    @Override
     public int getTransactionStatus() {
         try {
             return transactionManager.getStatus();
@@ -77,6 +81,7 @@ public class SimpleTransactionSynchronizationRegistry implements TransactionSync
         }
     }
 
+    @Override
     public void registerInterposedSynchronization(final Synchronization synchronization) {
         if (synchronization == null) {
             throw new NullPointerException("synchronization is null");
@@ -91,6 +96,7 @@ public class SimpleTransactionSynchronizationRegistry implements TransactionSync
     }
 
 
+    @Override
     public boolean getRollbackOnly() {
         final Transaction transaction = getActiveTransaction();
         try {
@@ -100,6 +106,7 @@ public class SimpleTransactionSynchronizationRegistry implements TransactionSync
         }
     }
 
+    @Override
     public void setRollbackOnly() {
         final Transaction transaction = getActiveTransaction();
         try {
@@ -132,9 +139,11 @@ public class SimpleTransactionSynchronizationRegistry implements TransactionSync
             this.transaction = transaction;
         }
 
+        @Override
         public void beforeCompletion() {
         }
 
+        @Override
         public void afterCompletion(final int i) {
             transactionResources.remove(transaction);
         }

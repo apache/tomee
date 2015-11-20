@@ -38,8 +38,8 @@ public class MovieTest {
 
     private EJBContainer container;
 
-    private Context getContext(String user, String pass) throws NamingException {
-        Properties p = new Properties();
+    private Context getContext(final String user, final String pass) throws NamingException {
+        final Properties p = new Properties();
         p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
         p.setProperty("openejb.authentication.realmName", "ScriptLogin");
         p.put(Context.SECURITY_PRINCIPAL, user);
@@ -53,7 +53,7 @@ public class MovieTest {
         final ClassLoader ctxCl = Thread.currentThread().getContextClassLoader();
         System.setProperty("openejb.ScriptLoginModule.scriptURI", ctxCl.getResource("loginscript.js").toExternalForm());
 
-        Properties p = new Properties();
+        final Properties p = new Properties();
         p.put("movieDatabase", "new://Resource?type=DataSource");
         p.put("movieDatabase.JdbcDriver", "org.hsqldb.jdbcDriver");
         p.put("movieDatabase.JdbcUrl", "jdbc:hsqldb:mem:moviedb");
@@ -76,10 +76,10 @@ public class MovieTest {
             movies.addMovie(new Movie("Joel Coen", "Fargo", 1996));
             movies.addMovie(new Movie("Joel Coen", "The Big Lebowski", 1998));
 
-            List<Movie> list = movies.getMovies();
+            final List<Movie> list = movies.getMovies();
             Assert.assertEquals("List.size()", 3, list.size());
 
-            for (Movie movie : list) {
+            for (final Movie movie : list) {
                 movies.deleteMovie(movie);
             }
 
@@ -98,14 +98,14 @@ public class MovieTest {
             movies.addMovie(new Movie("Joel Coen", "Fargo", 1996));
             movies.addMovie(new Movie("Joel Coen", "The Big Lebowski", 1998));
 
-            List<Movie> list = movies.getMovies();
+            final List<Movie> list = movies.getMovies();
             Assert.assertEquals("List.size()", 3, list.size());
 
-            for (Movie movie : list) {
+            for (final Movie movie : list) {
                 try {
                     movies.deleteMovie(movie);
                     Assert.fail("Employees should not be allowed to delete");
-                } catch (EJBAccessException e) {
+                } catch (final EJBAccessException e) {
                     // Good, Employees cannot delete things
                 }
             }
@@ -122,21 +122,21 @@ public class MovieTest {
         try {
             movies.addMovie(new Movie("Quentin Tarantino", "Reservoir Dogs", 1992));
             Assert.fail("Unauthenticated users should not be able to add movies");
-        } catch (EJBAccessException e) {
+        } catch (final EJBAccessException e) {
             // Good, guests cannot add things
         }
 
         try {
             movies.deleteMovie(null);
             Assert.fail("Unauthenticated users should not be allowed to delete");
-        } catch (EJBAccessException e) {
+        } catch (final EJBAccessException e) {
             // Good, Unauthenticated users cannot delete things
         }
 
         try {
             // Read access should be allowed
             movies.getMovies();
-        } catch (EJBAccessException e) {
+        } catch (final EJBAccessException e) {
             Assert.fail("Read access should be allowed");
         }
     }
@@ -146,14 +146,14 @@ public class MovieTest {
         try {
             getContext("eddie", "panama");
             Assert.fail("supposed to have a login failure here");
-        } catch (javax.naming.AuthenticationException e) {
+        } catch (final javax.naming.AuthenticationException e) {
             //expected
         }
 
         try {
             getContext("jimmy", "foxylady");
             Assert.fail("supposed to have a login failure here");
-        } catch (javax.naming.AuthenticationException e) {
+        } catch (final javax.naming.AuthenticationException e) {
             //expected
         }
     }
