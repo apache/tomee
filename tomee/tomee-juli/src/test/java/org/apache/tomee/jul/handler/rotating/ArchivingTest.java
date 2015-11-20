@@ -106,14 +106,14 @@ public class ArchivingTest {
         if ("gzip".equals(format)) {
             try (final GZIPInputStream gis = new GZIPInputStream(new FileInputStream("target/ArchivingTest-gzip/logs/archives/test.2015-09-01.0.log.gzip"))) {
                 final String content = IOUtils.toString(gis);
-                assertTrue(content.contains("INFO: abcdefghij\n"));
+                assertTrue(content.contains("INFO: abcdefghij" + System.lineSeparator()));
                 assertTrue(content.length() > 10000);
             }
         } else {
             try (final ZipInputStream zis = new ZipInputStream(new FileInputStream("target/ArchivingTest-zip/logs/archives/test.2015-09-01.0.log.zip"))) {
                 assertEquals("test.2015-09-01.0.log", zis.getNextEntry().getName());
                 final String content = IOUtils.toString(zis);
-                assertTrue(content.contains("INFO: abcdefghij\n"));
+                assertTrue(content.contains("INFO: abcdefghij" + System.lineSeparator()));
                 assertTrue(content.length() > 10000);
                 assertNull(zis.getNextEntry());
             }
