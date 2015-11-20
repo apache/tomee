@@ -48,7 +48,7 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
     protected final TransactionType transactionType;
 
     protected final TransactionManager transactionManager;
-    private final TransactionSynchronizationRegistry synchronizationRegistry;
+    private TransactionSynchronizationRegistry synchronizationRegistry;
     private Map<Object, Object> resources;
     private final List<TransactionSynchronization> synchronizations = new LinkedList<TransactionSynchronization>();
     private boolean rollbackOnly;
@@ -56,15 +56,24 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
     public JtaTransactionPolicy(final TransactionType transactionType, final TransactionManager transactionManager) {
         this.transactionType = transactionType;
         this.transactionManager = transactionManager;
-        synchronizationRegistry = SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class);
     }
 
+    private TransactionSynchronizationRegistry getSynchronizationRegistry() {
+        if (null == this.synchronizationRegistry) {
+            this.synchronizationRegistry = SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class);
+        }
+
+        return this.synchronizationRegistry;
+    }
+
+    @Override
     public TransactionType getTransactionType() {
         return transactionType;
     }
 
     public abstract Transaction getCurrentTransaction();
 
+    @Override
     public boolean isTransactionActive() {
         final Transaction trasaction = getCurrentTransaction();
         if (trasaction == null) {
@@ -79,6 +88,7 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
         }
     }
 
+    @Override
     public boolean isRollbackOnly() {
         final Transaction trasaction = getCurrentTransaction();
         if (trasaction != null) {
@@ -93,6 +103,7 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
         }
     }
 
+    @Override
     public void setRollbackOnly() {
         setRollbackOnly(null);
     }
@@ -107,9 +118,10 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
         }
     }
 
+    @Override
     public Object getResource(final Object key) {
         if (isTransactionActive()) {
-            return synchronizationRegistry.getResource(key);
+            return this.getSynchronizationRegistry().getResource(key);
         }
 
         if (resources == null) {
@@ -118,9 +130,10 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
         return resources.get(key);
     }
 
+    @Override
     public void putResource(final Object key, final Object value) {
         if (isTransactionActive()) {
-            synchronizationRegistry.putResource(key, value);
+            this.getSynchronizationRegistry().putResource(key, value);
         }
 
         if (resources == null) {
@@ -129,10 +142,12 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
         resources.put(key, value);
     }
 
+    @Override
     public Object removeResource(final Object key) {
         if (isTransactionActive()) {
-            final Object value = synchronizationRegistry.getResource(key);
-            synchronizationRegistry.putResource(key, null);
+            final TransactionSynchronizationRegistry sr = this.getSynchronizationRegistry();
+            final Object value = sr.getResource(key);
+            sr.putResource(key, null);
             return value;
         }
 
@@ -142,13 +157,16 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
         return resources.remove(key);
     }
 
+    @Override
     public void registerSynchronization(final TransactionSynchronization synchronization) {
         if (isTransactionActive()) {
-            synchronizationRegistry.registerInterposedSynchronization(new Synchronization() {
+            this.getSynchronizationRegistry().registerInterposedSynchronization(new Synchronization() {
+                @Override
                 public void beforeCompletion() {
                     synchronization.beforeCompletion();
                 }
 
+                @Override
                 public void afterCompletion(final int s) {
                     final TransactionSynchronization.Status status;
                     if (s == Status.STATUS_COMMITTED) {
@@ -185,6 +203,7 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
         }
     }
 
+    @Override
     public void enlistResource(final XAResource xaResource) throws SystemException {
         final Transaction transaction = getCurrentTransaction();
         if (transaction != null) {
