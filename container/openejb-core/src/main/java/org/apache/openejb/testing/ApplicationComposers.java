@@ -732,7 +732,12 @@ public class ApplicationComposers {
         System.getProperties().put(OPENEJB_APPLICATION_COMPOSER_CONTEXT, appContext.getGlobalJndiContext());
 
         // test injections
-        final ClassFinder testClassFinder = testClassFinders.remove(inputTestInstance);
+        ClassFinder testClassFinder = testClassFinders.remove(inputTestInstance);
+        if (testClassFinder == null) {
+            testClassFinders.put(inputTestInstance, testClassFinders.remove(this));
+            testClassFinder = testClassFinders.remove(inputTestInstance);
+        }
+
         final List<Field> fields = new ArrayList<>(testClassFinder.findAnnotatedFields(AppResource.class));
         fields.addAll(testClassFinder.findAnnotatedFields(org.apache.openejb.junit.AppResource.class));
         for (final Field field : fields) {
