@@ -19,11 +19,13 @@ import javax.jms.TopicConnection;
 import javax.jms.TopicConnectionFactory;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ConnectionFactoryWrapper implements ConnectionFactory, TopicConnectionFactory, QueueConnectionFactory {
 
+    private static final ReentrantLock lock = new ReentrantLock();
     private static final ArrayList<ConnectionWrapper> connections = new ArrayList<ConnectionWrapper>();
 
     private final org.apache.activemq.ra.ActiveMQConnectionFactory factory;
@@ -45,30 +47,45 @@ public class ConnectionFactoryWrapper implements ConnectionFactory, TopicConnect
     }
 
     private static Connection getConnection(final String name, final Connection connection) {
-        final ConnectionWrapper wrapper = new ConnectionWrapper(name, connection);
-        connections.add(wrapper);
-        return wrapper;
+        lock.lock();
+        try {
+            final ConnectionWrapper wrapper = new ConnectionWrapper(name, connection);
+            connections.add(wrapper);
+            return wrapper;
+        } finally {
+            lock.unlock();
+        }
     }
 
     protected static void remove(final ConnectionWrapper connectionWrapper) {
-        connections.remove(connectionWrapper);
+        lock.lock();
+        try {
+            connections.remove(connectionWrapper);
+        } finally {
+            lock.unlock();
+        }
     }
 
     public static void closeConnections() {
-        final Iterator<ConnectionWrapper> iterator = connections.iterator();
+        lock.lock();
+        try {
+            final Iterator<ConnectionWrapper> iterator = connections.iterator();
 
-        ConnectionWrapper next;
-        while (iterator.hasNext()) {
-            next = iterator.next();
-            iterator.remove();
-            try {
-                next.close();
-            } catch (final Exception e) {
-                //no-op
-            } finally {
-                Logger.getLogger(ConnectionFactoryWrapper.class.getName()).log(Level.SEVERE, "Closed a JMS connection. You have an application that fails to close a connection "
-                        + "created by this injection path: " + next.getName());
+            ConnectionWrapper next;
+            while (iterator.hasNext()) {
+                next = iterator.next();
+                iterator.remove();
+                try {
+                    next.close();
+                } catch (final Exception e) {
+                    //no-op
+                } finally {
+                    Logger.getLogger(ConnectionFactoryWrapper.class.getName()).log(Level.SEVERE, "Closed a JMS connection. You have an application that fails to close a connection "
+                            + "created by this injection path: " + next.getName());
+                }
             }
+        } finally {
+            lock.unlock();
         }
     }
 

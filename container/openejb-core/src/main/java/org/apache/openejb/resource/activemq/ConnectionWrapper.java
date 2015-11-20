@@ -26,11 +26,13 @@ import javax.jms.TopicConnection;
 import javax.jms.TopicSession;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ConnectionWrapper implements Connection, TopicConnection, QueueConnection {
 
+    private final ReentrantLock lock = new ReentrantLock();
     private final ArrayList<SessionWrapper> sessions = new ArrayList<SessionWrapper>();
 
     private final String name;
@@ -47,13 +49,23 @@ public class ConnectionWrapper implements Connection, TopicConnection, QueueConn
     }
 
     private Session getSession(final Session session) {
-        final SessionWrapper wrapper = new SessionWrapper(this, session);
-        sessions.add(wrapper);
-        return wrapper;
+        lock.lock();
+        try {
+            final SessionWrapper wrapper = new SessionWrapper(this, session);
+            sessions.add(wrapper);
+            return wrapper;
+        } finally {
+            lock.unlock();
+        }
     }
 
     protected void remove(final SessionWrapper wrapper) {
-        sessions.remove(wrapper);
+        lock.lock();
+        try {
+            sessions.remove(wrapper);
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
@@ -108,26 +120,30 @@ public class ConnectionWrapper implements Connection, TopicConnection, QueueConn
 
     @Override
     public void close() throws JMSException {
-
-        final Iterator<SessionWrapper> iterator = sessions.iterator();
-
-        while (iterator.hasNext()) {
-            final SessionWrapper next = iterator.next();
-            iterator.remove();
-            try {
-                next.close();
-            } catch (final Exception e) {
-                //no-op
-            } finally {
-                Logger.getLogger(ConnectionFactoryWrapper.class.getName()).log(Level.SEVERE, "Closed a JMS session. You have an application that fails to close a session "
-                        + "created by this injection path: " + this.name);
-            }
-        }
-
+        lock.lock();
         try {
-            con.close();
+            final Iterator<SessionWrapper> iterator = sessions.iterator();
+
+            while (iterator.hasNext()) {
+                final SessionWrapper next = iterator.next();
+                iterator.remove();
+                try {
+                    next.close();
+                } catch (final Exception e) {
+                    //no-op
+                } finally {
+                    Logger.getLogger(ConnectionFactoryWrapper.class.getName()).log(Level.SEVERE, "Closed a JMS session. You have an application that fails to close a session "
+                            + "created by this injection path: " + this.name);
+                }
+            }
+
+            try {
+                con.close();
+            } finally {
+                ConnectionFactoryWrapper.remove(this);
+            }
         } finally {
-            ConnectionFactoryWrapper.remove(this);
+            lock.unlock();
         }
     }
 
