@@ -27,6 +27,7 @@ import javax.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import java.net.URL;
 import java.util.List;
 import java.util.Properties;
 
@@ -51,7 +52,13 @@ public class MovieTest {
     @Before
     public void setUp() throws Exception {
         final ClassLoader ctxCl = Thread.currentThread().getContextClassLoader();
-        System.setProperty("openejb.ScriptLoginModule.scriptURI", ctxCl.getResource("loginscript.js").toExternalForm());
+        final URL resource = ctxCl.getResource("loginscript.js");
+
+        if (null != resource) {
+            System.setProperty("openejb.ScriptLoginModule.scriptURI", resource.toExternalForm());
+        }else{
+            throw new Exception("Resource loginscript.js was not found");
+        }
 
         final Properties p = new Properties();
         p.put("movieDatabase", "new://Resource?type=DataSource");
