@@ -33,15 +33,17 @@ public class ConnectionWrapper implements Connection, TopicConnection, QueueConn
 
     private final ArrayList<SessionWrapper> sessions = new ArrayList<SessionWrapper>();
 
+    private final String name;
     private final Connection con;
 
-    public ConnectionWrapper(final Connection con) {
+    public ConnectionWrapper(final String name, final Connection con) {
+        this.name = name;
         this.con = con;
     }
 
     @Override
     public Session createSession(final boolean transacted, final int acknowledgeMode) throws JMSException {
-        return getSession(con.createSession(transacted, acknowledgeMode));
+        return this.getSession(con.createSession(transacted, acknowledgeMode));
     }
 
     private Session getSession(final Session session) {
@@ -61,7 +63,7 @@ public class ConnectionWrapper implements Connection, TopicConnection, QueueConn
 
     @Override
     public TopicSession createTopicSession(final boolean transacted, final int acknowledgeMode) throws JMSException {
-        return TopicConnection.class.cast(this.con).createTopicSession(transacted, acknowledgeMode);
+        return TopicSession.class.cast(this.getSession(TopicConnection.class.cast(this.con).createTopicSession(transacted, acknowledgeMode)));
     }
 
     @Override
@@ -71,7 +73,7 @@ public class ConnectionWrapper implements Connection, TopicConnection, QueueConn
 
     @Override
     public QueueSession createQueueSession(final boolean transacted, final int acknowledgeMode) throws JMSException {
-        return QueueConnection.class.cast(this.con).createQueueSession(transacted, acknowledgeMode);
+        return QueueSession.class.cast(this.getSession(QueueConnection.class.cast(this.con).createQueueSession(transacted, acknowledgeMode)));
     }
 
     @Override
@@ -117,7 +119,8 @@ public class ConnectionWrapper implements Connection, TopicConnection, QueueConn
             } catch (final Exception e) {
                 //no-op
             } finally {
-                Logger.getLogger(ConnectionFactoryWrapper.class.getName()).log(Level.SEVERE, "Closed a JMS session. You have an application that fails to close this session");
+                Logger.getLogger(ConnectionFactoryWrapper.class.getName()).log(Level.SEVERE, "Closed a JMS session. You have an application that fails to close a session "
+                        + "created by this injection path: " + this.name);
             }
         }
 
@@ -164,4 +167,7 @@ public class ConnectionWrapper implements Connection, TopicConnection, QueueConn
     }
 
 
+    public String getName() {
+        return this.name;
+    }
 }

@@ -250,10 +250,7 @@ public class InjectionProcessor<T> {
 
                 if (value != null) {
 
-                    if("org.apache.activemq.ra.ActiveMQConnectionFactory".equals(value.getClass().getName())){
-                        //Wrap
-                        value = new ConnectionFactoryWrapper(value);
-                    }
+
 
                     final String prefix;
                     if (usePrefix) {
@@ -262,7 +259,14 @@ public class InjectionProcessor<T> {
                         prefix = "";
                     }
 
-                    objectRecipe.setProperty(prefix + injection.getName(), value);
+                    final String name = prefix + injection.getName();
+
+                    if("org.apache.activemq.ra.ActiveMQConnectionFactory".equals(value.getClass().getName())){
+                        //Wrap
+                        value = new ConnectionFactoryWrapper(name, value);
+                    }
+
+                    objectRecipe.setProperty(name, value);
                 } else {
                     logger.warning("Injection data not found in JNDI context: jndiName='" + injection.getJndiName() + "', target=" + injection.getTarget().getName() + "/" + injection.getName());
                 }

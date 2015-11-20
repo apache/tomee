@@ -21,16 +21,21 @@ import javax.jms.MessageProducer;
 import javax.jms.ObjectMessage;
 import javax.jms.Queue;
 import javax.jms.QueueBrowser;
+import javax.jms.QueueReceiver;
+import javax.jms.QueueSender;
+import javax.jms.QueueSession;
 import javax.jms.Session;
 import javax.jms.StreamMessage;
 import javax.jms.TemporaryQueue;
 import javax.jms.TemporaryTopic;
 import javax.jms.TextMessage;
 import javax.jms.Topic;
+import javax.jms.TopicPublisher;
+import javax.jms.TopicSession;
 import javax.jms.TopicSubscriber;
 import java.io.Serializable;
 
-public class SessionWrapper implements Session {
+public class SessionWrapper implements Session, TopicSession, QueueSession {
 
     private final ConnectionWrapper connectionWrapper;
     private final Session session;
@@ -140,6 +145,11 @@ public class SessionWrapper implements Session {
     }
 
     @Override
+    public TopicPublisher createPublisher(final Topic topic) throws JMSException {
+        return TopicSession.class.cast(this.session).createPublisher(topic);
+    }
+
+    @Override
     public ObjectMessage createObjectMessage() throws JMSException {
         return session.createObjectMessage();
     }
@@ -147,6 +157,16 @@ public class SessionWrapper implements Session {
     @Override
     public Topic createTopic(final String topicName) throws JMSException {
         return session.createTopic(topicName);
+    }
+
+    @Override
+    public TopicSubscriber createSubscriber(final Topic topic) throws JMSException {
+        return TopicSession.class.cast(this.session).createSubscriber(topic);
+    }
+
+    @Override
+    public TopicSubscriber createSubscriber(final Topic topic, final String messageSelector, final boolean noLocal) throws JMSException {
+        return TopicSession.class.cast(this.session).createSubscriber(topic, messageSelector, noLocal);
     }
 
     @Override
@@ -167,6 +187,21 @@ public class SessionWrapper implements Session {
     @Override
     public Queue createQueue(final String queueName) throws JMSException {
         return session.createQueue(queueName);
+    }
+
+    @Override
+    public QueueReceiver createReceiver(final Queue queue) throws JMSException {
+        return QueueSession.class.cast(this.session).createReceiver(queue);
+    }
+
+    @Override
+    public QueueReceiver createReceiver(final Queue queue, final String messageSelector) throws JMSException {
+        return QueueSession.class.cast(this.session).createReceiver(queue, messageSelector);
+    }
+
+    @Override
+    public QueueSender createSender(final Queue queue) throws JMSException {
+        return QueueSession.class.cast(this.session).createSender(queue);
     }
 
     @Override

@@ -27,23 +27,25 @@ public class ConnectionFactoryWrapper implements ConnectionFactory, TopicConnect
     private static final ArrayList<ConnectionWrapper> connections = new ArrayList<ConnectionWrapper>();
 
     private final org.apache.activemq.ra.ActiveMQConnectionFactory factory;
+    private final String name;
 
-    public ConnectionFactoryWrapper(final Object factory) {
+    public ConnectionFactoryWrapper(final String name, final Object factory) {
+        this.name = name;
         this.factory = org.apache.activemq.ra.ActiveMQConnectionFactory.class.cast(factory);
     }
 
     @Override
     public Connection createConnection() throws JMSException {
-        return getConnection(this.factory.createConnection());
+        return getConnection(this.name, this.factory.createConnection());
     }
 
     @Override
     public Connection createConnection(final String userName, final String password) throws JMSException {
-        return getConnection(this.factory.createConnection(userName, password));
+        return getConnection(this.name, this.factory.createConnection(userName, password));
     }
 
-    private static Connection getConnection(final Connection connection) {
-        final ConnectionWrapper wrapper = new ConnectionWrapper(connection);
+    private static Connection getConnection(final String name, final Connection connection) {
+        final ConnectionWrapper wrapper = new ConnectionWrapper(name, connection);
         connections.add(wrapper);
         return wrapper;
     }
@@ -55,36 +57,38 @@ public class ConnectionFactoryWrapper implements ConnectionFactory, TopicConnect
     public static void closeConnections() {
         final Iterator<ConnectionWrapper> iterator = connections.iterator();
 
+        ConnectionWrapper next;
         while (iterator.hasNext()) {
-            final ConnectionWrapper next = iterator.next();
+            next = iterator.next();
             iterator.remove();
             try {
                 next.close();
             } catch (final Exception e) {
                 //no-op
             } finally {
-                Logger.getLogger(ConnectionFactoryWrapper.class.getName()).log(Level.SEVERE, "Closed a JMS connection. You have an application that fails to close this connection");
+                Logger.getLogger(ConnectionFactoryWrapper.class.getName()).log(Level.SEVERE, "Closed a JMS connection. You have an application that fails to close a connection "
+                        + "created by this injection path: " + next.getName());
             }
         }
     }
 
     @Override
     public QueueConnection createQueueConnection() throws JMSException {
-        return QueueConnection.class.cast(getConnection(this.factory.createQueueConnection()));
+        return QueueConnection.class.cast(getConnection(this.name, this.factory.createQueueConnection()));
     }
 
     @Override
     public QueueConnection createQueueConnection(final String userName, final String password) throws JMSException {
-        return QueueConnection.class.cast(getConnection(this.factory.createQueueConnection(userName, password)));
+        return QueueConnection.class.cast(getConnection(this.name, this.factory.createQueueConnection(userName, password)));
     }
 
     @Override
     public TopicConnection createTopicConnection() throws JMSException {
-        return TopicConnection.class.cast(getConnection(this.factory.createTopicConnection()));
+        return TopicConnection.class.cast(getConnection(this.name, this.factory.createTopicConnection()));
     }
 
     @Override
     public TopicConnection createTopicConnection(final String userName, final String password) throws JMSException {
-        return TopicConnection.class.cast(getConnection(this.factory.createTopicConnection(userName, password)));
+        return TopicConnection.class.cast(getConnection(this.name, this.factory.createTopicConnection(userName, password)));
     }
 }
