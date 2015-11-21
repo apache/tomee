@@ -24,9 +24,9 @@ public class XmlFormatterTest {
     @Test
     public void format() {
         assertEquals(
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + System.lineSeparator() + 
-                "<root>" + System.lineSeparator() + 
-                "    <foo id=\"bar\"/>" + System.lineSeparator() + 
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                "<root>\n" +
+                "    <foo id=\"bar\"/>\n" +
                 "</root>\n",
                 XmlFormatter.format("<root><foo id=\"bar\"/></root>"));
     }
