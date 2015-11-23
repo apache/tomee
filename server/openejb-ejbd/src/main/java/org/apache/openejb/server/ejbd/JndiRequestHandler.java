@@ -87,14 +87,19 @@ class JndiRequestHandler extends RequestHandler {
     private Context clientJndiTree;
     private final Context deploymentsJndiTree;
 
-    private Context globalJndiTree;
+    private final Context globalJndiTree;
 
     private final ClusterableRequestHandler clusterableRequestHandler;
-    private Context rootContext;
+    private final Context rootContext;
 
     JndiRequestHandler(final EjbDaemon daemon) throws Exception {
         super(daemon);
         final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+
+        if(null == containerSystem){
+            throw new IllegalStateException("ContainerSystem has not been initialized");
+        }
+
         ejbJndiTree = (Context) containerSystem.getJNDIContext().lookup("openejb/remote");
         deploymentsJndiTree = (Context) containerSystem.getJNDIContext().lookup("openejb/Deployment");
 
@@ -352,7 +357,7 @@ class JndiRequestHandler extends RequestHandler {
                 if (serviceRef.getWsdlURL() != null) {
                     serviceMetaData.setWsdlUrl(serviceRef.getWsdlURL().toExternalForm());
                 }
-                if (portAddresses.size() == 1) {
+                if (null != portAddresses && portAddresses.size() == 1) {
                     final PortAddress portAddress = portAddresses.iterator().next();
                     serviceMetaData.setWsdlUrl(portAddress.getAddress() + "?wsdl");
                 }
@@ -399,18 +404,20 @@ class JndiRequestHandler extends RequestHandler {
                 }
 
                 // add PortRefMetaData for any portAddress not added above
-                for (final PortAddress portAddress : portAddresses) {
-                    PortRefMetaData portRefMetaData = portsByQName.get(portAddress.getPortQName());
-                    if (portRefMetaData == null) {
-                        portRefMetaData = new PortRefMetaData();
-                        portRefMetaData.setQName(portAddress.getPortQName());
-                        portRefMetaData.setServiceEndpointInterface(portAddress.getServiceEndpointInterface());
-                        portRefMetaData.getAddresses().add(portAddress.getAddress());
-                        serviceMetaData.getPortRefs().add(portRefMetaData);
-                    } else {
-                        portRefMetaData.getAddresses().add(portAddress.getAddress());
-                        if (portRefMetaData.getServiceEndpointInterface() == null) {
+                if (portAddresses != null) {
+                    for (final PortAddress portAddress : portAddresses) {
+                        PortRefMetaData portRefMetaData = portsByQName.get(portAddress.getPortQName());
+                        if (portRefMetaData == null) {
+                            portRefMetaData = new PortRefMetaData();
+                            portRefMetaData.setQName(portAddress.getPortQName());
                             portRefMetaData.setServiceEndpointInterface(portAddress.getServiceEndpointInterface());
+                            portRefMetaData.getAddresses().add(portAddress.getAddress());
+                            serviceMetaData.getPortRefs().add(portRefMetaData);
+                        } else {
+                            portRefMetaData.getAddresses().add(portAddress.getAddress());
+                            if (portRefMetaData.getServiceEndpointInterface() == null) {
+                                portRefMetaData.setServiceEndpointInterface(portAddress.getServiceEndpointInterface());
+                            }
                         }
                     }
                 }

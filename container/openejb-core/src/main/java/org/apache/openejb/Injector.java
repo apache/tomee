@@ -33,6 +33,7 @@ public class Injector {
 
     private static Logger logger; // initialized lazily to get the logging config from properties
 
+    @SuppressWarnings("unchecked")
     public static <T> T inject(final T object) {
 
         assert object != null;
@@ -64,19 +65,20 @@ public class Injector {
     }
 
     private static <T> void cdiInjections(final BeanContext context, final T object) {
-        ThreadContext oldContext = null;
         if (context != null) {
+
             final ThreadContext callContext = new ThreadContext(context, null, Operation.INJECTION);
-            oldContext = ThreadContext.enter(callContext);
-        }
-        try {
-            OWBInjector.inject(context.getWebBeansContext().getBeanManagerImpl(), object, null);
-        } catch (final Throwable t) {
-            logger().warning("an error occured while injecting the class '" + object.getClass().getName() + "': " + t.getMessage());
-        } finally {
-            if (context != null) {
+            final ThreadContext oldContext = ThreadContext.enter(callContext);
+
+            try {
+                OWBInjector.inject(context.getWebBeansContext().getBeanManagerImpl(), object, null);
+            } catch (final Throwable t) {
+                logger().warning("An error occurred injecting the class '" + object.getClass().getName() + "': " + t.getMessage());
+            } finally {
                 ThreadContext.exit(oldContext);
             }
+        } else {
+            logger().warning("Provided BeanContext is null");
         }
     }
 

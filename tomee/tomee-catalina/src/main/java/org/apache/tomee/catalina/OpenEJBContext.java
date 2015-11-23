@@ -40,6 +40,7 @@ public class OpenEJBContext implements Context {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Object lookup(final Name name) throws NamingException {
         return getThreadContext().lookup(name);
     }
@@ -47,6 +48,7 @@ public class OpenEJBContext implements Context {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Object lookup(final String name) throws NamingException {
         return getThreadContext().lookup(name);
     }
@@ -54,6 +56,7 @@ public class OpenEJBContext implements Context {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void bind(final Name name, final Object obj) throws NamingException {
         getThreadContext().bind(name, obj);
     }
@@ -61,6 +64,7 @@ public class OpenEJBContext implements Context {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void bind(final String name, final Object obj) throws NamingException {
         getThreadContext().bind(name, obj);
     }
@@ -68,6 +72,7 @@ public class OpenEJBContext implements Context {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void rebind(final Name name, final Object obj) throws NamingException {
         getThreadContext().rebind(name, obj);
     }
@@ -75,6 +80,7 @@ public class OpenEJBContext implements Context {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void rebind(final String name, final Object obj) throws NamingException {
         getThreadContext().rebind(name, obj);
     }
@@ -82,6 +88,7 @@ public class OpenEJBContext implements Context {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void unbind(final Name name) throws NamingException {
         getThreadContext().unbind(name);
     }
@@ -89,6 +96,7 @@ public class OpenEJBContext implements Context {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void unbind(final String name) throws NamingException {
         getThreadContext().unbind(name);
     }
@@ -96,6 +104,7 @@ public class OpenEJBContext implements Context {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void rename(final Name oldName, final Name newName) throws NamingException {
         getThreadContext().rename(oldName, newName);
     }
@@ -103,6 +112,7 @@ public class OpenEJBContext implements Context {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void rename(final String oldName, final String newName) throws NamingException {
         getThreadContext().rename(oldName, newName);
     }
@@ -110,6 +120,7 @@ public class OpenEJBContext implements Context {
     /**
      * {@inheritDoc}
      */
+    @Override
     public NamingEnumeration<NameClassPair> list(final Name name) throws NamingException {
         return getThreadContext().list(name);
     }
@@ -117,6 +128,7 @@ public class OpenEJBContext implements Context {
     /**
      * {@inheritDoc}
      */
+    @Override
     public NamingEnumeration<NameClassPair> list(final String name) throws NamingException {
         return getThreadContext().list(name);
     }
@@ -124,6 +136,7 @@ public class OpenEJBContext implements Context {
     /**
      * {@inheritDoc}
      */
+    @Override
     public NamingEnumeration<Binding> listBindings(final Name name) throws NamingException {
         return getThreadContext().listBindings(name);
     }
@@ -131,6 +144,7 @@ public class OpenEJBContext implements Context {
     /**
      * {@inheritDoc}
      */
+    @Override
     public NamingEnumeration<Binding> listBindings(final String name) throws NamingException {
         return getThreadContext().listBindings(name);
     }
@@ -138,6 +152,7 @@ public class OpenEJBContext implements Context {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void destroySubcontext(final Name name) throws NamingException {
         getThreadContext().destroySubcontext(name);
     }
@@ -145,6 +160,7 @@ public class OpenEJBContext implements Context {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void destroySubcontext(final String name) throws NamingException {
         getThreadContext().destroySubcontext(name);
     }
@@ -152,6 +168,7 @@ public class OpenEJBContext implements Context {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Context createSubcontext(final Name name) throws NamingException {
         return getThreadContext().createSubcontext(name);
     }
@@ -159,6 +176,7 @@ public class OpenEJBContext implements Context {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Context createSubcontext(final String name) throws NamingException {
         return getThreadContext().createSubcontext(name);
     }
@@ -166,6 +184,7 @@ public class OpenEJBContext implements Context {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Object lookupLink(final Name name) throws NamingException {
         return getThreadContext().lookupLink(name);
     }
@@ -173,6 +192,7 @@ public class OpenEJBContext implements Context {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Object lookupLink(final String name) throws NamingException {
         return getThreadContext().lookupLink(name);
     }
@@ -180,6 +200,7 @@ public class OpenEJBContext implements Context {
     /**
      * {@inheritDoc}
      */
+    @Override
     public NameParser getNameParser(final Name name) throws NamingException {
         return getThreadContext().getNameParser(name);
     }
@@ -187,6 +208,7 @@ public class OpenEJBContext implements Context {
     /**
      * {@inheritDoc}
      */
+    @Override
     public NameParser getNameParser(final String name) throws NamingException {
         return getThreadContext().getNameParser(name);
     }
@@ -194,6 +216,7 @@ public class OpenEJBContext implements Context {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Name composeName(final Name name, final Name prefix) throws NamingException {
         return getThreadContext().composeName(name, prefix);
     }
@@ -201,6 +224,7 @@ public class OpenEJBContext implements Context {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String composeName(final String name, final String prefix) throws NamingException {
         return getThreadContext().composeName(name, prefix);
     }
@@ -208,6 +232,7 @@ public class OpenEJBContext implements Context {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Object addToEnvironment(final String propName, final Object propVal) throws NamingException {
         return getThreadContext().addToEnvironment(propName, propVal);
     }
@@ -215,6 +240,7 @@ public class OpenEJBContext implements Context {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Object removeFromEnvironment(final String propName) throws NamingException {
         return getThreadContext().removeFromEnvironment(propName);
     }
@@ -222,6 +248,7 @@ public class OpenEJBContext implements Context {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Hashtable<?, ?> getEnvironment() throws NamingException {
         return getThreadContext().getEnvironment();
     }
@@ -229,6 +256,7 @@ public class OpenEJBContext implements Context {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void close() throws NamingException {
         getThreadContext().close();
     }
@@ -236,6 +264,7 @@ public class OpenEJBContext implements Context {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getNameInNamespace() throws NamingException {
         return "";
     }
@@ -251,8 +280,7 @@ public class OpenEJBContext implements Context {
         if (skipEjbContext(threadContext)) {
             return ContextBindings.getClassLoader();
         }
-        final Context context = threadContext.getBeanContext().getJndiEnc();
-        return context;
+        return threadContext.getBeanContext().getJndiEnc();
     }
 
     private boolean skipEjbContext(final ThreadContext threadContext) {
@@ -262,5 +290,15 @@ public class OpenEJBContext implements Context {
         return threadContext == null || DeployerEjb.class.equals(threadContext.getBeanContext().getBeanClass());
     }
 
+    @Override
+    protected void finalize() throws Throwable {
+        try {
+            this.close();
+        } catch (final Exception e) {
+            //no-op
+        } finally {
+            super.finalize();
+        }
+    }
 }
 
