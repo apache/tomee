@@ -43,39 +43,31 @@ public class MavenResolverTest {
         assertEquals(ProvisioningResolver.LocalInputStream.class.getName(), resolver.resolve("mvn:junit:junit:4.12:jar").getClass().getName()); // use version of the pom to ensure it is local
     }
 
+    private File getAvailableFile() {
+        File file = null;
+        for (int i = 0; i < 100; i++) {
+            file = new File("target/test/foo_" + i + ".jar");
+            if (!file.exists()) {
+                Files.mkdirs(file.getParentFile());
+                break;
+            }
+        }
+        return file;
+    }
+
+    public void resolveCommon(String path) throws Exception {
+        final File file = getAvailableFile();
+        final FileOutputStream to = new FileOutputStream(file);
+        IO.copy(resolver.resolve(path), to);
+        IO.close(to);
+        assertTrue(file.exists());
+        assertTrue(Collections.list(new JarFile(file).entries()).size() > 300 /* 323 */); // just check it is not an error page
+    }
+
     @Test
     public void resolve() throws Exception {
-        final File file = new File("target/test/foo.jar");
-        Files.remove(file);
-        Files.mkdirs(file.getParentFile());
-        final FileOutputStream to = new FileOutputStream(file);
-        IO.copy(resolver.resolve("mvn:junit:junit:4.12:jar"), to);
-        IO.close(to);
-        assertTrue(file.exists());
-        assertTrue(Collections.list(new JarFile(file).entries()).size() > 300 /* 323 */); // just check it is not an error page
-    }
-
-    @Test
-    public void customRepo() throws Exception {
-        final File file = new File("target/test/foo.jar");
-        Files.remove(file);
-        Files.mkdirs(file.getParentFile());
-        final FileOutputStream to = new FileOutputStream(file);
-        IO.copy(resolver.resolve("mvn:http://repo1.maven.org/maven2/!junit:junit:4.12:jar"), to);
-        IO.close(to);
-        assertTrue(file.exists());
-        assertTrue(Collections.list(new JarFile(file).entries()).size() > 300 /* 323 */); // just check it is not an error page
-    }
-
-    @Test
-    public void latest() throws Exception {
-        final File file = new File("target/test/foo.jar");
-        Files.remove(file);
-        Files.mkdirs(file.getParentFile());
-        final FileOutputStream to = new FileOutputStream(file);
-        IO.copy(resolver.resolve("mvn:http://repo1.maven.org/maven2/!junit:junit:LATEST:jar"), to);
-        IO.close(to);
-        assertTrue(file.exists());
-        assertTrue(Collections.list(new JarFile(file).entries()).size() > 10 /* 323 */); // just check it is not an error page
+        resolveCommon("mvn:junit:junit:4.12:jar");
+        resolveCommon("mvn:http://repo1.maven.org/maven2/!junit:junit:4.12:jar");
+        resolveCommon("mvn:http://repo1.maven.org/maven2/!junit:junit:LATEST:jar");
     }
 }
