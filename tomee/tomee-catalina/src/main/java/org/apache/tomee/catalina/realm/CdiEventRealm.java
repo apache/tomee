@@ -99,12 +99,13 @@ public class CdiEventRealm extends RealmBase {
     public SecurityConstraint[] findSecurityConstraints(final Request request, final Context context) {
         final SecurityConstraint[] sc = super.findSecurityConstraints(request, context);
 
-        if (beanManager() == null) {
+        final BeanManager beanManager = beanManager();
+        if (beanManager == null) {
             return sc;
         }
 
         final FindSecurityConstraintsEvent event = new FindSecurityConstraintsEvent(request.getRequest(), context.getPath());
-        beanManager().fireEvent(event);
+        beanManager.fireEvent(event);
 
         if (!event.getRoles().isEmpty()) {
             final SecurityConstraint s = new SecurityConstraint();

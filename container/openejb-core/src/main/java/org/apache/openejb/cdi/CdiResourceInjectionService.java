@@ -42,7 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CdiResourceInjectionService implements ResourceInjectionService {
-    private Logger logger = Logger.getInstance(LogCategory.OPENEJB.createChild("cdi"), CdiResourceInjectionService.class);
+    private final Logger logger = Logger.getInstance(LogCategory.OPENEJB.createChild("cdi"), CdiResourceInjectionService.class);
 
     private final CdiPlugin ejbPlugin;
     private final List<BeanContext> compContexts = new ArrayList<BeanContext>();

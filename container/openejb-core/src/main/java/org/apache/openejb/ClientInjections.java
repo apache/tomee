@@ -39,7 +39,13 @@ public final class ClientInjections {
 
         final Context clients;
         try {
-            clients = (Context) SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext()
+            final ContainerSystem component = SystemInstance.get().getComponent(ContainerSystem.class);
+
+            if(null == component){
+                throw new IllegalStateException("ContainerSystem has not been initialized");
+            }
+
+            clients = (Context) component.getJNDIContext()
                 .lookup("openejb/client/");
         } catch (final NamingException e) {
             throw new OpenEJBException(object.getClass().getName(), e);

@@ -38,7 +38,7 @@ public class Messages {
     @Resource
     private Queue chatQueue;
 
-    public void sendMessage(String text) throws JMSException {
+    public void sendMessage(final String text) throws JMSException {
 
         Connection connection = null;
         Session session = null;
@@ -51,11 +51,11 @@ public class Messages {
             session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
             // Create a MessageProducer from the Session to the Topic or Queue
-            MessageProducer producer = session.createProducer(chatQueue);
+            final MessageProducer producer = session.createProducer(chatQueue);
             producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
 
             // Create a message
-            TextMessage message = session.createTextMessage(text);
+            final TextMessage message = session.createTextMessage(text);
 
             // Tell the producer to send the message
             producer.send(message);
@@ -86,7 +86,7 @@ public class Messages {
             consumer = session.createConsumer(chatQueue);
 
             // Wait for a message
-            TextMessage message = (TextMessage) consumer.receive(1000);
+            final TextMessage message = (TextMessage) consumer.receive(1000);
 
             return message.getText();
         } finally {
