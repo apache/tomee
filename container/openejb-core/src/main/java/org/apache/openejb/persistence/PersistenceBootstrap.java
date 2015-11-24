@@ -17,17 +17,24 @@
 
 package org.apache.openejb.persistence;
 
+import org.apache.openejb.config.NewLoaderLogic;
 import org.apache.openejb.core.TempClassLoader;
 import org.apache.openejb.javaagent.Agent;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Saxs;
 import org.apache.xbean.finder.ClassLoaders;
+import org.apache.xbean.finder.UrlSet;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.spi.PersistenceProvider;
+import javax.sql.DataSource;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,11 +61,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.spi.PersistenceProvider;
-import javax.sql.DataSource;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
 
 import static org.apache.openejb.loader.JarLocation.decode;
 
@@ -130,27 +132,29 @@ public class PersistenceBootstrap {
             final List<URL> urls = new LinkedList<URL>();
             for (final String pXmlName : pXmlNames) { // find persistence.xml in the classloader and in WEB-INF
                 urls.addAll(Collections.list(classLoader.getResources("META-INF/" + pXmlName)));
-                try {
-                    final Collection<URL> loaderUrls = ClassLoaders.findUrls(classLoader);
-                    for (final URL url : loaderUrls) {
-                        final File file = toFile(url);
-                        if ("classes".equals(file.getName()) && "WEB-INF".equals(file.getParentFile().getName())) {
-                            final File pXml = new File(file.getParentFile(), pXmlName);
-                            if (pXml.exists()) {
-                                urls.add(pXml.toURI().toURL());
+                if ("true".equals(args.getProperty("web-scan", "false"))) { // findUrls is slow for small tests and rarely needed
+                    try {
+                        final Collection<URL> loaderUrls = findUrls(classLoader, args);
+                        for (final URL url : loaderUrls) {
+                            final File file = toFile(url);
+                            if ("classes".equals(file.getName()) && "WEB-INF".equals(file.getParentFile().getName())) {
+                                final File pXml = new File(file.getParentFile(), pXmlName);
+                                if (pXml.exists()) {
+                                    urls.add(pXml.toURI().toURL());
+                                }
+                                break;
                             }
-                            break;
-                        }
-                        if (file.getName().endsWith(".jar") && file.getParentFile().getName().equals("lib") && "WEB-INF".equals(file.getParentFile().getParentFile().getName())) {
-                            final File pXml = new File(file.getParentFile().getParentFile(), pXmlName);
-                            if (pXml.exists()) {
-                                urls.add(pXml.toURI().toURL());
+                            if (file.getName().endsWith(".jar") && file.getParentFile().getName().equals("lib") && "WEB-INF".equals(file.getParentFile().getParentFile().getName())) {
+                                final File pXml = new File(file.getParentFile().getParentFile(), pXmlName);
+                                if (pXml.exists()) {
+                                    urls.add(pXml.toURI().toURL());
+                                }
+                                break;
                             }
-                            break;
                         }
+                    } catch (final Throwable th) {
+                        // no-op
                     }
-                } catch (final Throwable th) {
-                    // no-op
                 }
             }
 
@@ -234,6 +238,17 @@ public class PersistenceBootstrap {
         }
     }
 
+    private static Set<URL> findUrls(final ClassLoader classLoader, final Properties args) throws IOException {
+        if ("true".equals(args.getProperty("fast-scan", "true"))) {
+            try {
+                return new HashSet<>(NewLoaderLogic.applyBuiltinExcludes(new UrlSet(ClassLoaders.findUrls(classLoader)).excludeJvm()).getUrls());
+            } catch (final Throwable fallback) {
+                // let it fallback
+            }
+        }
+        return ClassLoaders.findUrls(classLoader);
+    }
+
     // don't force eager init
     private static String getAltDD() {
         final String property = "openejb.altdd.prefix";
@@ -290,11 +305,11 @@ public class PersistenceBootstrap {
         final SAXParser parser = Saxs.namespaceAwareFactory().newSAXParser();
 
         parser.parse(inputSource, new DefaultHandler() {
-            private StringBuilder characters = new StringBuilder();
+            private final StringBuilder characters = new StringBuilder(100);
             private Unit unit;
 
             public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) {
-                characters = new StringBuilder(100);
+                characters.setLength(0);
 
                 if (localName.equals("persistence-unit")) {
                     startPersistenceUnit(uri, localName, qName, attributes);
