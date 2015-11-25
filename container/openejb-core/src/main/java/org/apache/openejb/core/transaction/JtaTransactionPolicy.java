@@ -121,7 +121,13 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
     @Override
     public Object getResource(final Object key) {
         if (isTransactionActive()) {
-            return this.getSynchronizationRegistry().getResource(key);
+            final TransactionSynchronizationRegistry sr = this.getSynchronizationRegistry();
+
+            if (null != sr) {
+                return sr.getResource(key);
+            }else{
+                logger.warning("TransactionSynchronizationRegistry has not been initialized");
+            }
         }
 
         if (resources == null) {
