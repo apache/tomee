@@ -67,6 +67,7 @@ public final class CxfUtil {
     public static final String OUT_FAULT_INTERCEPTORS = "out-fault-interceptors";
     public static final String DATABINDING = "databinding";
     public static final String ADDRESS = "address";
+    public static final String PUBLISHED_URL = "published-url";
     public static final String DEBUG = "debug";
     public static final String BUS_PREFIX = "org.apache.openejb.cxf.bus.";
     public static final String BUS_CONFIGURED_FLAG = "openejb.cxf.bus.configured";
@@ -201,6 +202,12 @@ public final class CxfUtil {
         final String changedAddress = beanConfig.getProperty(prefix + ADDRESS);
         if (changedAddress != null && !changedAddress.trim().isEmpty()) {
             svrFactory.setAddress(changedAddress);
+        }
+
+        // published url
+        final String publishedUrl = beanConfig.getProperty(prefix + PUBLISHED_URL);
+        if (publishedUrl != null && !publishedUrl.trim().isEmpty()) {
+            svrFactory.setPublishedEndpointUrl(publishedUrl);
         }
     }
 
