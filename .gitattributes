@@ -21,9 +21,8 @@
 *.tld           text
 *.txt           text
 *.xml           text
-
-# These are windows files. They should use crlf
-*.bat           text eol=crlf
+*.xsd           text
+*.groovy        text
 
 # These files are binary and should be left untouched
 # (binary is a macro for -text -diff)
@@ -39,3 +38,12 @@
 *.so            binary
 *.war           binary
 *.zip           binary
+*.exe           binary
+*.gz            binary
+
+#Windows
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+#Unix/Linux
+*.sh text eol=lf
