@@ -39,6 +39,7 @@ import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.UndeployException;
+import org.apache.openejb.api.jmx.MBean;
 import org.apache.openejb.api.resource.DestroyableResource;
 import org.apache.openejb.assembler.classic.event.AssemblerAfterApplicationCreated;
 import org.apache.openejb.assembler.classic.event.AssemblerBeforeApplicationDestroyed;
@@ -1613,11 +1614,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             final MBeanServer server = LocalMBeanServer.get();
             try {
-                final ObjectName leaf = new ObjectNameBuilder("openejb.user.mbeans")
+                final MBean annotation = clazz.getAnnotation(MBean.class);
+                final ObjectName leaf = annotation == null || annotation.objectName().isEmpty() ? new ObjectNameBuilder("openejb.user.mbeans")
                     .set("application", id)
                     .set("group", clazz.getPackage().getName())
                     .set("name", clazz.getSimpleName())
-                    .build();
+                    .build() : new ObjectName(annotation.objectName());
 
                 server.registerMBean(new DynamicMBeanWrapper(wc, instance), leaf);
                 appMbeans.put(mbeanClass, leaf.getCanonicalName());

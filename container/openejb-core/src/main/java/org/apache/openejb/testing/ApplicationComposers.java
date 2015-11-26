@@ -1039,15 +1039,24 @@ public class ApplicationComposers {
         SystemInstance.get().setComponent((Class<Object>) key, value);
     }
 
-    public void evaluate(final Object testInstance, final Callable<Void> next) throws Exception {
+    public <T> T evaluate(final Object testInstance, final Callable<T> next) throws Exception {
         before(testInstance);
         try {
-            next.call();
+            return next.call();
         } finally {
             ThreadContext.exit(previous);
             after();
         }
+    }
 
+    public void evaluate(final Object testInstance, final Runnable next) throws Exception {
+        evaluate(testInstance, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                next.run();
+                return null;
+            }
+        });
     }
 
     public void after() throws Exception {
