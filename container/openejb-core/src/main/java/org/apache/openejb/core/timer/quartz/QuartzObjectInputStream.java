@@ -17,6 +17,7 @@
 
 package org.apache.openejb.core.timer.quartz;
 
+import org.apache.openejb.core.rmi.BlacklistClassResolver;
 import org.apache.openejb.quartz.spi.ClassLoadHelper;
 
 import java.io.IOException;
@@ -34,6 +35,6 @@ public class QuartzObjectInputStream extends ObjectInputStream {
 
     @Override
     protected Class<?> resolveClass(final ObjectStreamClass desc) throws ClassNotFoundException, IOException {
-        return loader.loadClass(desc.getName());
+        return loader.loadClass(BlacklistClassResolver.DEFAULT.check(desc.getName()));
     }
 }
