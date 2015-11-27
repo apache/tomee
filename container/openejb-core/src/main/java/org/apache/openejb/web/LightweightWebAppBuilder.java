@@ -184,7 +184,12 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
                 final Class<?> clazz = webContext.getClassLoader().loadClass(listener.classname);
                 final Object instance = webContext.newInstance(clazz);
                 if (ServletContextListener.class.isInstance(instance)) {
-                    ((ServletContextListener) instance).contextInitialized(sce);
+                    switchServletContextIfNeeded(sce.getServletContext(), new Runnable() {
+                        @Override
+                        public void run() {
+                            ((ServletContextListener) instance).contextInitialized(sce);
+                        }
+                    });
                 }
 
                 List<Object> list = listeners.get(webAppInfo);
@@ -202,7 +207,12 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
                     if (annotation != null) {
                         final Object instance = webContext.newInstance(clazz);
                         if (ServletContextListener.class.isInstance(instance)) {
-                            ((ServletContextListener) instance).contextInitialized(sce);
+                            switchServletContextIfNeeded(sce.getServletContext(), new Runnable() {
+                                @Override
+                                public void run() {
+                                    ((ServletContextListener) instance).contextInitialized(sce);
+                                }
+                            });
                         }
 
                         List<Object> list = listeners.get(webAppInfo);
@@ -229,15 +239,20 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
 
             // register filters
             for (final FilterInfo info : webAppInfo.filters) {
-                for (final String mapping : info.mappings) {
-                    final FilterConfig config = new SimpleFilterConfig(sce.getServletContext(), info.name, info.initParams);
-                    try {
-                        addFilterMethod.invoke(null, info.classname, webContext, mapping, config);
-                        deployedWebObjects.filterMappings.add(mapping);
-                    } catch (final Exception e) {
-                        LOGGER.warning(e.getMessage(), e);
+                switchServletContextIfNeeded(sce.getServletContext(), new Runnable() {
+                    @Override
+                    public void run() {
+                        for (final String mapping : info.mappings) {
+                            final FilterConfig config = new SimpleFilterConfig(sce.getServletContext(), info.name, info.initParams);
+                            try {
+                                addFilterMethod.invoke(null, info.classname, webContext, mapping, config);
+                                deployedWebObjects.filterMappings.add(mapping);
+                            } catch (final Exception e) {
+                                LOGGER.warning(e.getMessage(), e);
+                            }
+                        }
                     }
-                }
+                });
             }
             for (final ClassListInfo info : webAppInfo.webAnnotatedClasses) {
                 final String url = info.name;
@@ -252,14 +267,19 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
 
                         final FilterConfig config = new SimpleFilterConfig(sce.getServletContext(), info.name, initParams);
                         for (final String[] mappings : asList(annotation.urlPatterns(), annotation.value())) {
-                            for (final String mapping : mappings) {
-                                try {
-                                    addFilterMethod.invoke(null, clazz.getName(), webContext, mapping, config);
-                                    deployedWebObjects.filterMappings.add(mapping);
-                                } catch (final Exception e) {
-                                    LOGGER.warning(e.getMessage(), e);
+                            switchServletContextIfNeeded(sce.getServletContext(), new Runnable() {
+                                @Override
+                                public void run() {
+                                    for (final String mapping : mappings) {
+                                        try {
+                                            addFilterMethod.invoke(null, clazz.getName(), webContext, mapping, config);
+                                            deployedWebObjects.filterMappings.add(mapping);
+                                        } catch (final Exception e) {
+                                            LOGGER.warning(e.getMessage(), e);
+                                        }
+                                    }
                                 }
-                            }
+                            });
                         }
                     }
                 }
@@ -303,12 +323,17 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
 
                 // deploy
                 for (final String mapping : info.mappings) {
-                    try {
-                        addServletMethod.invoke(null, info.servletClass, webContext, mapping);
-                        deployedWebObjects.mappings.add(mapping);
-                    } catch (final Exception e) {
-                        LOGGER.warning(e.getMessage(), e);
-                    }
+                    switchServletContextIfNeeded(sce.getServletContext(), new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                addServletMethod.invoke(null, info.servletClass, webContext, mapping);
+                                deployedWebObjects.mappings.add(mapping);
+                            } catch (final Exception e) {
+                                LOGGER.warning(e.getMessage(), e);
+                            }
+                        }
+                    });
                 }
             }
 
@@ -319,14 +344,19 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
                     final WebServlet annotation = clazz.getAnnotation(WebServlet.class);
                     if (annotation != null) {
                         for (final String[] mappings : asList(annotation.urlPatterns(), annotation.value())) {
-                            for (final String mapping : mappings) {
-                                try {
-                                    addServletMethod.invoke(null, clazz.getName(), webContext, mapping);
-                                    deployedWebObjects.mappings.add(mapping);
-                                } catch (final Exception e) {
-                                    LOGGER.warning(e.getMessage(), e);
+                            switchServletContextIfNeeded(sce.getServletContext(), new Runnable() {
+                                @Override
+                                public void run() {
+                                    for (final String mapping : mappings) {
+                                        try {
+                                            addServletMethod.invoke(null, clazz.getName(), webContext, mapping);
+                                            deployedWebObjects.mappings.add(mapping);
+                                        } catch (final Exception e) {
+                                            LOGGER.warning(e.getMessage(), e);
+                                        }
+                                    }
                                 }
-                            }
+                            });
                         }
                     }
                 }
@@ -335,6 +365,26 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
             if (addDefaults != null && tryJsp()) {
                 addDefaults.invoke(null, webContext);
                 deployedWebObjects.mappings.add("*\\.jsp");
+            }
+        }
+    }
+
+    // not thread safe but fine in embedded mode which is the only mode of this builder
+    private void switchServletContextIfNeeded(final ServletContext sc, final Runnable runnable) {
+        if (sc == null) {
+            runnable.run();
+            return;
+        }
+        final SystemInstance systemInstance = SystemInstance.get();
+        final ServletContext old = systemInstance.getComponent(ServletContext.class);
+        systemInstance.setComponent(ServletContext.class, sc);
+        try {
+            runnable.run();
+        } finally {
+            if (old == null) {
+                systemInstance.removeComponent(ServletContext.class);
+            } else {
+                systemInstance.setComponent(ServletContext.class, old);
             }
         }
     }
@@ -381,27 +431,37 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
             final List<Object> listenerInstances = listeners.remove(webAppInfo);
 
             if (addServletMethod != null) {
-                for (final String mapping : context.mappings) {
-                    try {
-                        removeServletMethod.invoke(null, mapping, context.webContext);
-                    } catch (final Exception e) {
-                        // no-op
-                    }
-                }
+                switchServletContextIfNeeded(sce.getServletContext(), new Runnable() {
+                    @Override
+                    public void run() {
+                        for (final String mapping : context.mappings) {
+                            try {
+                                removeServletMethod.invoke(null, mapping, context.webContext);
+                            } catch (final Exception e) {
+                                // no-op
+                            }
+                        }
 
-                for (final String mapping : context.filterMappings) {
-                    try {
-                        removeFilterMethod.invoke(null, mapping, context.webContext);
-                    } catch (final Exception e) {
-                        // no-op
+                        for (final String mapping : context.filterMappings) {
+                            try {
+                                removeFilterMethod.invoke(null, mapping, context.webContext);
+                            } catch (final Exception e) {
+                                // no-op
+                            }
+                        }
                     }
-                }
+                });
             }
 
             if (listenerInstances != null) {
                 for (final Object instance : listenerInstances) {
                     if (ServletContextListener.class.isInstance(instance)) {
-                        ((ServletContextListener) instance).contextDestroyed(sce);
+                        switchServletContextIfNeeded(sce.getServletContext(), new Runnable() {
+                            @Override
+                            public void run() {
+                                ((ServletContextListener) instance).contextDestroyed(sce);
+                            }
+                        });
                     }
                 }
             }
