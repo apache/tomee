@@ -26,6 +26,9 @@ import java.lang.reflect.Proxy;
  * @version $Rev$ $Date$
  */
 public class EjbObjectInputStream extends ObjectInputStream {
+    public static final BlacklistClassResolver DEFAULT = new BlacklistClassResolver(
+        new String[]{"org.codehaus.groovy.runtime.", "org.apache.commons.collections.functors.", "org.apache.xalan"},
+        null);
 
     public EjbObjectInputStream(final InputStream in) throws IOException {
         super(in);
@@ -33,7 +36,7 @@ public class EjbObjectInputStream extends ObjectInputStream {
 
     @Override
     protected Class<?> resolveClass(final ObjectStreamClass classDesc) throws IOException, ClassNotFoundException {
-        final String n = classDesc.getName();
+        final String n = DEFAULT.check(classDesc.getName());
         final ClassLoader classloader = getClassloader();
         try {
             return Class.forName(n, false, classloader);
@@ -87,4 +90,42 @@ public class EjbObjectInputStream extends ObjectInputStream {
         return Thread.currentThread().getContextClassLoader();
     }
 
+    public static class BlacklistClassResolver {
+        private static final String[] WHITELIST = toArray(System.getProperty("tomee.serialization.class.whitelist"));
+        private static final String[] BLACKLIST = toArray(System.getProperty("tomee.serialization.class.blacklist"));
+
+        private final String[] blacklist;
+        private final String[] whitelist;
+
+        protected BlacklistClassResolver(final String[] blacklist, final String[] whitelist) {
+            this.whitelist = whitelist;
+            this.blacklist = blacklist;
+        }
+
+        protected boolean isBlacklisted(final String name) {
+            return !contains(whitelist, name) && contains(blacklist, name);
+        }
+
+        public final String check(final String name) {
+            if (isBlacklisted(name)) {
+                throw new SecurityException(name + " is not whitelisted as deserialisable, prevented before loading.");
+            }
+            return name;
+        }
+
+        private static String[] toArray(final String property) {
+            return property == null ? null : property.split(" *, *");
+        }
+
+        private static boolean contains(final String[] list, String name) {
+            if (list != null) {
+                for (final String white : list) {
+                    if (name.startsWith(white)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+    }
 }
