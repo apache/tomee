@@ -1,0 +1,19 @@
+<!DOCTYPE walkmod PUBLIC "-//WALKMOD//DTD"  "http://www.walkmod.com/dtd/walkmod-1.1.dtd" >
+<walkmod>
+    <chain name="main-chain">
+      <reader path="." >
+	  <exclude wildcard=".git" />
+          <exclude wildcard="*.bat"/>
+          <exclude wildcard="*.png"/>
+          <exclude wildcard="*.exe"/>
+          <exclude wildcard="*.gif"/>
+          <exclude wildcard="*.ser"/>
+          <exclude wildcard="*.jpg"/>
+       </reader>
+       <walker type="rawfiles:walker" />
+       <writer path="." type="rawfiles:writer" >
+           <param name="platform">unix</param>
+       </writer>
+    </chain>
+</walkmod>
+
