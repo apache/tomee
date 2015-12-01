@@ -21,6 +21,7 @@ import org.apache.catalina.Container;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
 import org.apache.catalina.Lifecycle;
+import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.LifecycleState;
@@ -1059,12 +1060,16 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     }
 
     @Override
-    public void configureStart(final StandardContext standardContext) {
-        TomcatHelper.configureJarScanner(standardContext);
-
+    public void configureStart(final LifecycleEvent event, final StandardContext standardContext) {
         final ContextTransaction contextTransaction = new ContextTransaction();
         contextTransaction.setProperty(org.apache.naming.factory.Constants.FACTORY, UserTransactionFactory.class.getName());
         standardContext.getNamingResources().setTransaction(contextTransaction);
+
+        // ensure NamingContext is available for eager usage (@Observes @Initialized(ApplicationScoped) for instance)
+        standardContext.getNamingContextListener().lifecycleEvent(event);
+
+        TomcatHelper.configureJarScanner(standardContext);
+
         startInternal(standardContext);
 
         // clear a bit log for default case

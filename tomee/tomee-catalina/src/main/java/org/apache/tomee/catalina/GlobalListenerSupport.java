@@ -130,7 +130,7 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
                     contextListener.destroy(standardContext);
                     break;
                 case Lifecycle.CONFIGURE_START_EVENT:
-                    contextListener.configureStart(standardContext);
+                    contextListener.configureStart(event, standardContext);
                     break;
                 default:
             }
@@ -157,7 +157,7 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
                 TomcatHelper.setStopping(true);
                 final TomEEClusterListener tomEEClusterListener = SystemInstance.get().getComponent(TomEEClusterListener.class);
                 if (tomEEClusterListener != null) {
-                    tomEEClusterListener.stop();
+                    TomEEClusterListener.stop();
                 }
             }
 
