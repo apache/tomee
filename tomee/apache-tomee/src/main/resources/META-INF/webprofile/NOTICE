@@ -112,7 +112,6 @@ el-api - Unified Expression Language is dual licensed under 2 OSI approved licen
     COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL - Version 1.1)
     GNU General Public License (GPL - Version 2, June 1991) with the Classpath Exception
 =========================================================================
-=====================================
 Apache CXF NOTICE
 
 Java classes (source and binary) under org.apache.cxf.jaxws.javaee
@@ -134,3 +133,16 @@ This Product also includes software developed by David Heinemeier Hansson.
 
 This product includes software Copyright University of Southampton IT Innovation Centre, 2009
 (http://www.it-innovation.soton.ac.uk).
+=========================================================================
+Apache XBean :: ASM shaded (repackaged)
+Copyright 2005-2013 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+=========================================================================
+This product includes software developed by
+Joda.org (http://www.joda.org/).
+=========================================================================
+This product includes software developed and copyrighted by the The OWASP
+   Foundation (https://www.owasp.org)
+=========================================================================
