@@ -22,6 +22,7 @@ import org.apache.commons.lang3.text.StrSubstitutor;
 import org.apache.openejb.cipher.PasswordCipher;
 import org.apache.openejb.cipher.PasswordCipherException;
 import org.apache.openejb.cipher.PasswordCipherFactory;
+import org.apache.openejb.cipher.SafePasswordCipher;
 import org.apache.openejb.loader.SystemInstance;
 
 import java.util.Map;
@@ -56,17 +57,32 @@ public final class PropertyPlaceHolderHelper {
             return null;
         }
         if (!raw.contains(PREFIX) || !raw.contains(SUFFIX)) {
-            return decryptIfNeeded(raw.replace(PREFIX, "").replace(SUFFIX, ""));
+            return String.class.cast(decryptIfNeeded(raw.replace(PREFIX, "").replace(SUFFIX, ""), false));
         }
 
         String value = SUBSTITUTOR.replace(raw);
         if (!value.equals(raw) && value.startsWith("java:")) {
             value = value.substring(5);
         }
-        return decryptIfNeeded(value.replace(PREFIX, "").replace(SUFFIX, ""));
+        return String.class.cast(decryptIfNeeded(value.replace(PREFIX, "").replace(SUFFIX, ""), false));
     }
 
-    private static String decryptIfNeeded(final String replace) {
+    public static Object simpleValueAsStringOrCharArray(final String raw) {
+        if (raw == null) {
+            return null;
+        }
+        if (!raw.contains(PREFIX) || !raw.contains(SUFFIX)) {
+            return decryptIfNeeded(raw.replace(PREFIX, "").replace(SUFFIX, ""), true);
+        }
+
+        String value = SUBSTITUTOR.replace(raw);
+        if (!value.equals(raw) && value.startsWith("java:")) {
+            value = value.substring(5);
+        }
+        return decryptIfNeeded(value.replace(PREFIX, "").replace(SUFFIX, ""), true);
+    }
+
+    private static Object decryptIfNeeded(final String replace, final boolean acceptCharArray) {
         if (replace.startsWith(CIPHER_PREFIX)) {
             final String algo = replace.substring(CIPHER_PREFIX.length(), replace.indexOf(':', CIPHER_PREFIX.length() + 1));
             PasswordCipher cipher;
@@ -79,7 +95,11 @@ public final class PropertyPlaceHolderHelper {
                     throw new IllegalArgumentException(e);
                 }
             }
-            return cipher.decrypt(replace.substring(CIPHER_PREFIX.length() + algo.length() + 1).toCharArray());
+
+            final char[] input = replace.substring(CIPHER_PREFIX.length() + algo.length() + 1).toCharArray();
+            return acceptCharArray && SafePasswordCipher.class.isInstance(cipher) ?
+                SafePasswordCipher.class.cast(cipher).decryptAsCharArray(input) :
+                cipher.decrypt(input);
         }
         return replace;
     }
@@ -89,7 +109,7 @@ public final class PropertyPlaceHolderHelper {
             return null;
         }
         if (!aw.contains(PREFIX) || !aw.contains(SUFFIX)) {
-            return decryptIfNeeded(aw);
+            return String.class.cast(decryptIfNeeded(aw, false));
         }
 
         String value = CACHE.getProperty(aw);
@@ -121,7 +141,7 @@ public final class PropertyPlaceHolderHelper {
             final Object rawValue = entry.getValue();
             if (rawValue instanceof String) {
                 final String value = (String) rawValue;
-                updated.put(entry.getKey(), cache ? value(value) : simpleValue(value));
+                updated.put(entry.getKey(), cache ? value(value) : simpleValueAsStringOrCharArray(value));
             } else {
                 updated.put(entry.getKey(), rawValue);
             }

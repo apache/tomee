@@ -39,6 +39,7 @@ import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.UndeployException;
+import org.apache.openejb.api.jmx.MBean;
 import org.apache.openejb.api.resource.DestroyableResource;
 import org.apache.openejb.assembler.classic.event.AssemblerAfterApplicationCreated;
 import org.apache.openejb.assembler.classic.event.AssemblerBeforeApplicationDestroyed;
@@ -1613,11 +1614,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             final MBeanServer server = LocalMBeanServer.get();
             try {
-                final ObjectName leaf = new ObjectNameBuilder("openejb.user.mbeans")
+                final MBean annotation = clazz.getAnnotation(MBean.class);
+                final ObjectName leaf = annotation == null || annotation.objectName().isEmpty() ? new ObjectNameBuilder("openejb.user.mbeans")
                     .set("application", id)
                     .set("group", clazz.getPackage().getName())
                     .set("name", clazz.getSimpleName())
-                    .build();
+                    .build() : new ObjectName(annotation.objectName());
 
                 server.registerMBean(new DynamicMBeanWrapper(wc, instance), leaf);
                 appMbeans.put(mbeanClass, leaf.getCanonicalName());
@@ -1808,6 +1810,20 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             systemInstance.removeComponent(EjbResolver.class);
             systemInstance.fireEvent(new AssemblerDestroyed());
             systemInstance.removeObservers();
+
+            if (DestroyableResource.class.isInstance(this.securityService)) {
+                DestroyableResource.class.cast(this.securityService).destroyResource();
+            }
+            if (DestroyableResource.class.isInstance(this.transactionManager)) {
+                DestroyableResource.class.cast(this.transactionManager).destroyResource();
+            }
+
+            for (final Container c : this.containerSystem.containers()) {
+                if (DestroyableResource.class.isInstance(c)) { // TODO: should we use auto closeable there?
+                    DestroyableResource.class.cast(c).destroyResource();
+                }
+            }
+
             SystemInstance.reset();
         } finally {
             l.unlock();
@@ -1833,10 +1849,19 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         Collections.sort(resources, new Comparator<DestroyingResource>() { // end by destroying RA after having closed CF pool (for jms for instanceà
             @Override
             public int compare(final DestroyingResource o1, final DestroyingResource o2) {
-                if (ResourceAdapter.class.isInstance(o2.instance) && !ResourceAdapter.class.isInstance(o1.instance)) {
+                boolean ra1 = isRa(o1.instance);
+                boolean ra2 = isRa(o1.instance);
+                if (ra2 && !ra1) {
                     return -1;
                 }
-                return 1;
+                if (ra1 && !ra2) {
+                    return 1;
+                }
+                return o1.name.compareTo(o2.name);
+            }
+
+            private boolean isRa(final Object instance) {
+                return ResourceAdapter.class.isInstance(instance) || ResourceAdapterReference.class.isInstance(instance);
             }
         });
 
@@ -1851,7 +1876,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         return resources;
     }
 
-    private void destroyResource(final String name, final String className, final Object object) {
+    private void destroyResource(final String name, final String className, final Object inObject) {
+        Object object;
+        try {
+            object = LazyResource.class.isInstance(inObject) && LazyResource.class.cast(inObject).isInitialized() ?
+                LazyResource.class.cast(inObject).getObject() : inObject;
+        } catch (final NamingException e) {
+            object = inObject; // in case it impl DestroyableResource
+        }
 
         Collection<Method> preDestroy = null;
 

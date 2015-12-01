@@ -82,7 +82,8 @@ public class FullRestartContainer extends AbstractContainers implements Containe
 
         try {
             server.start();
-        } catch (final RuntimeException e) {
+        } catch (final Exception e) {
+            server.destroy();
             e.printStackTrace();
             throw e;
         }

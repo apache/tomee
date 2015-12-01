@@ -27,6 +27,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -95,20 +96,24 @@ public class ArchivingTest {
         handler.close();
 
         final File logGzip = new File("target/ArchivingTest-" + format + "/logs/archives/test.2015-09-01.0.log." + format);
-        assertTrue(logGzip.getAbsolutePath(), logGzip.isFile());
-
+        withRetry(5, 1, new Runnable() {
+            @Override
+            public void run() {
+                assertTrue(logGzip.getAbsolutePath(), logGzip.isFile());
+            }
+        });
         // note: size depends on the date so just use a > min
         if ("gzip".equals(format)) {
             try (final GZIPInputStream gis = new GZIPInputStream(new FileInputStream("target/ArchivingTest-gzip/logs/archives/test.2015-09-01.0.log.gzip"))) {
                 final String content = IOUtils.toString(gis);
-                assertTrue(content.contains("INFO: abcdefghij\n"));
+                assertTrue(content.contains("INFO: abcdefghij" + System.lineSeparator()));
                 assertTrue(content.length() > 10000);
             }
         } else {
             try (final ZipInputStream zis = new ZipInputStream(new FileInputStream("target/ArchivingTest-zip/logs/archives/test.2015-09-01.0.log.zip"))) {
                 assertEquals("test.2015-09-01.0.log", zis.getNextEntry().getName());
                 final String content = IOUtils.toString(zis);
-                assertTrue(content.contains("INFO: abcdefghij\n"));
+                assertTrue(content.contains("INFO: abcdefghij" + System.lineSeparator()));
                 assertTrue(content.length() > 10000);
                 assertNull(zis.getNextEntry());
             }
@@ -181,8 +186,28 @@ public class ArchivingTest {
         }
         handler.publish(new LogRecord(Level.INFO, string10chars)); // will trigger the purging
         handler.close();
+        withRetry(5, 1, new Runnable() {
+            @Override
+            public void run() {
+                assertFalse(logArchive.getAbsolutePath() + " was purged", logArchive.exists());
+            }
+        });
+    }
 
-        assertFalse(logArchive.getAbsolutePath() + " was purged", logArchive.exists());
+    private void withRetry(int countDown, long timeout, Runnable assertCallback) {
+        try {
+            assertCallback.run();
+        } catch (AssertionError e) {
+            if (countDown < 1) {
+                throw e;
+            }
+            try {
+                TimeUnit.SECONDS.sleep(timeout);
+            } catch (InterruptedException e1) {
+                Thread.interrupted();
+            }
+            withRetry(--countDown, timeout, assertCallback);
+        }
     }
 
     private static void clean(final String base) {

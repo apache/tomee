@@ -880,7 +880,8 @@ public class TomcatJndiBuilder {
 
         for (final ResourceInfo info : resources) {
             final String name = info.id;
-            if (name == null || naming.findResource(name) != null) {
+            // if invalid or existing or lazy just skip it cause doesnt work during startup
+            if (name == null || naming.findResource(name) != null || info.properties.containsKey("UseAppClassLoader")) {
                 continue;
             }
 

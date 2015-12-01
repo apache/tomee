@@ -466,9 +466,15 @@ public class CxfRsHttpListener implements RsHttpListener {
     }
 
     private static void addMandatoryProviders(final Collection<Object> instances) {
-        instances.add(new WadlDocumentMessageBodyWriter());
-        instances.add(new EJBExceptionMapper());
-        instances.add(new ValidationExceptionMapper());
+        if (!shouldSkipProvider(WadlDocumentMessageBodyWriter.class.getName())) {
+            instances.add(new WadlDocumentMessageBodyWriter());
+        }
+        if (!shouldSkipProvider(EJBExceptionMapper.class.getName())) {
+            instances.add(new EJBExceptionMapper());
+        }
+        if (!shouldSkipProvider(ValidationExceptionMapper.class.getName())) {
+            instances.add(new ValidationExceptionMapper());
+        }
     }
 
     private Object newProvider(final Class<?> clazz) throws IllegalAccessException, InstantiationException {

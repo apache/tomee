@@ -37,6 +37,8 @@ import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * NOTE: Do not add inner or anonymous classes or a dependency without updating ExecMojo
@@ -108,7 +110,13 @@ public class RemoteServer {
     public static void main(final String[] args) {
         assert args.length > 0 : "no arguments supplied: valid arguments are 'start' or 'stop'";
         if (args[0].equalsIgnoreCase(START)) {
-            new RemoteServer().start();
+            final RemoteServer remoteServer = new RemoteServer();
+            try {
+                remoteServer.start();
+            } catch (final Exception e) {
+                remoteServer.destroy();
+                throw e;
+            }
         } else if (args[0].equalsIgnoreCase(STOP)) {
             final RemoteServer remoteServer = new RemoteServer();
             remoteServer.serverHasAlreadyBeenStarted = false;
@@ -136,16 +144,20 @@ public class RemoteServer {
 
     public void destroy() {
 
-        final boolean stopSent = stop();
+        try {
+            final boolean stopSent = stop();
 
-        final Process p = server.get();
-        if (p != null) {
+            final Process p = server.get();
+            if (p != null) {
 
-            if (stopSent) {
-                waitFor(p);
-            } else {
-                p.destroy();
+                if (stopSent) {
+                    waitFor(p);
+                } else {
+                    p.destroy();
+                }
             }
+        } catch (final Exception e) {
+            Logger.getLogger(RemoteServer.class.getName()).log(Level.WARNING, "Failed to destroy server", e);
         }
     }
 
@@ -159,7 +171,7 @@ public class RemoteServer {
 
     private void cmd(final List<String> additionalArgs, final String cmd, final boolean checkPortAvailable) {
         boolean ok = true;
-        final int port = START.equals(cmd) ? portStartup : portShutdown;
+        final int port = START.equals(cmd) && portStartup > 0 ? portStartup : portShutdown;
 
         if (checkPortAvailable) {
             ok = !connect(port, 1);
@@ -357,15 +369,15 @@ public class RemoteServer {
                 throw (RuntimeException) new OpenEJBRuntimeException("Cannot start the server.  Exception: " + e.getClass().getName() + ": " + e.getMessage()).initCause(e);
             }
 
-            if (debug) {
-                if (!connect(port, Integer.MAX_VALUE)) {
-                    destroy();
-                    throw new OpenEJBRuntimeException("Could not connect to server");
-                }
-            } else {
-                if (!connect(port, tries)) {
-                    destroy();
-                    throw new OpenEJBRuntimeException("Could not connect to server");
+            if (port > 0) {
+                if (debug) {
+                    if (!connect(port, Integer.MAX_VALUE)) {
+                        throw new OpenEJBRuntimeException("Could not connect to server: " + this.host + ":" + port);
+                    }
+                } else {
+                    if (!connect(port, tries)) {
+                        throw new OpenEJBRuntimeException("Could not connect to server: " + this.host + ":" + port);
+                    }
                 }
             }
 
@@ -412,7 +424,7 @@ public class RemoteServer {
             final Field f = server.get().getClass().getDeclaredField("pid");
             f.setAccessible(true);
             final int pid = (Integer) f.get(server.get());
-            new ProcessBuilder("kill",  "-3",  Integer.toString(pid))
+            new ProcessBuilder("kill", "-3", Integer.toString(pid))
                     .redirectOutput(ProcessBuilder.Redirect.INHERIT)
                     .redirectError(ProcessBuilder.Redirect.INHERIT)
                     .start();

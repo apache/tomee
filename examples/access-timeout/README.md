@@ -50,7 +50,7 @@ The semantics of the value element are as follows:
 Just as simple as that !
 
 ###What exception would the client receive, with a timeout ?
-Quoting from the spec, "if a client-invoked business method is in progress on an instance when another client-invoked call, from the same or different client, arrives at the same instance of a stateful session bean, if the second client is a client of the beanÕs business interface or no-interface view, the concurrent invocation must result in the second client receiving a javax.ejb.ConcurrentAccessException[15]. If the EJB 2.1 client view is used, the container must throw a java.rmi.RemoteException if the second client is a remote client, or a javax.ejb.EJBException if the second client is a local client"
+Quoting from the spec, "if a client-invoked business method is in progress on an instance when another client-invoked call, from the same or different client, arrives at the same instance of a stateful session bean, if the second client is a client of the beanï¿½s business interface or no-interface view, the concurrent invocation must result in the second client receiving a javax.ejb.ConcurrentAccessException[15]. If the EJB 2.1 client view is used, the container must throw a java.rmi.RemoteException if the second client is a remote client, or a javax.ejb.EJBException if the second client is a local client"
 
 ### No standard default
 

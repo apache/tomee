@@ -16,6 +16,7 @@
  */
 package org.apache.tomee.catalina;
 
+import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.core.StandardServer;
@@ -99,5 +100,5 @@ public interface ContextListener {
      */
     void checkHost(StandardHost standardHost);
 
-    void configureStart(StandardContext standardContext);
+    void configureStart(LifecycleEvent event, StandardContext standardContext);
 }

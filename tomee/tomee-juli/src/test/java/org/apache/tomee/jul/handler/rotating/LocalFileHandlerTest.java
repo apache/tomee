@@ -34,7 +34,6 @@ import java.util.logging.Formatter;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
-import static java.lang.System.lineSeparator;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -50,7 +49,7 @@ public class LocalFileHandlerTest {
                     return pathname.getName().startsWith("test");
                 }
             }))) {
-                if(!file.delete()){
+                if (!file.delete()) {
                     file.deleteOnExit();
                 }
             }
@@ -124,7 +123,7 @@ public class LocalFileHandlerTest {
     public static class MessageOnlyFormatter extends Formatter {
         @Override
         public String format(final LogRecord record) {
-            return record.getMessage() + lineSeparator();
+            return record.getMessage() + "\r";
         }
     }
 }

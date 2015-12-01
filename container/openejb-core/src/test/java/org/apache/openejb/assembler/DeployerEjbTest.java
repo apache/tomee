@@ -204,7 +204,7 @@ public class DeployerEjbTest {
             deployments.getDeployments().add(d12);
 
             final Deployments d2 = new Deployments();
-            d2.setFile("/foo/bar/app.war");
+            d2.setFile(new File(File.listRoots()[0], "/foo/bar/app.war").getAbsolutePath());
             deployments.getDeployments().add(d2);
 
             try (final FileOutputStream fos = new FileOutputStream(file)) {
@@ -221,7 +221,7 @@ public class DeployerEjbTest {
             assertDeployementsSize(file, 1);
         }
         {
-            save.invoke(new DeployerEjb(), new File("/foo/bar/app.war"), false);
+            save.invoke(new DeployerEjb(), new File(File.listRoots()[0], "/foo/bar/app.war"), false);
             assertDeployementsSize(file, 0);
         }
     }

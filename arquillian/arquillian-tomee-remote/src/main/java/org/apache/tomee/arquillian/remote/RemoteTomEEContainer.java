@@ -30,6 +30,7 @@ import org.jboss.arquillian.container.spi.client.container.LifecycleException;
 import org.jboss.arquillian.protocol.servlet.ServletMethodExecutor;
 import org.jboss.shrinkwrap.api.Archive;
 
+import javax.naming.NamingException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,7 +44,6 @@ import java.util.Properties;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.naming.NamingException;
 
 public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguration> {
     private static final Logger logger = Logger.getLogger(RemoteTomEEContainer.class.getName());
@@ -116,7 +116,14 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
 
             container = new RemoteServer();
             container.setPortStartup(httpPort);
-            container.start(args(), "start", true);
+
+            try {
+                container.start(args(), "start", true);
+            } catch (final Exception e) {
+                container.destroy();
+                throw e;
+            }
+
             container.killOnExit();
 
             if (configuration.getProperties() != null) {
@@ -155,9 +162,9 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
         }
         if (opts == null || opts.isEmpty()) {
             return Arrays.asList(
-                "-Dorg.apache.catalina.STRICT_SERVLET_COMPLIANCE=false",
-                ARQUILLIAN_FILTER,
-                "-Dopenejb.system.apps=true", "-Dtomee.remote.support=true"
+                    "-Dorg.apache.catalina.STRICT_SERVLET_COMPLIANCE=false",
+                    ARQUILLIAN_FILTER,
+                    "-Dopenejb.system.apps=true", "-Dtomee.remote.support=true"
             );
         }
 
@@ -282,9 +289,9 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
         final File conf = new File(configuration.getConf());
 
         return !(conf.exists()
-            && (new File(conf, "logging.properties").exists()
-            || new File(conf, "log4j.properties").exists()
-            || new File(conf, "log4j.xml").exists()));
+                && (new File(conf, "logging.properties").exists()
+                || new File(conf, "log4j.properties").exists()
+                || new File(conf, "log4j.xml").exists()));
     }
 
     @Override

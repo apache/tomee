@@ -67,6 +67,8 @@ public class Configuration {
      */
     private String tempDir = new File(System.getProperty("java.io.tmpdir"), "tomee-embedded_" + System.currentTimeMillis()).getAbsolutePath();
 
+    private boolean webResourceCached = true;
+
     public int getHttpPort() {
         return httpPort;
     }
@@ -332,5 +334,13 @@ public class Configuration {
     public Configuration setRealm(final Realm realm) {
         this.realm = realm;
         return this;
+    }
+
+    public boolean areWebResourcesCached() {
+        return webResourceCached;
+    }
+
+    public void setWebResourceCached(boolean cached) {
+        this.webResourceCached = cached;
     }
 }

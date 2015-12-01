@@ -26,7 +26,6 @@ import java.util.Map;
 
 @SuppressWarnings("deprecation")
 public class PasswordCipherFactory {
-
     /**
      * Create a {@link org.apache.openejb.cipher.PasswordCipher} instance from the
      * passwordCipher class name.

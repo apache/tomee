@@ -35,6 +35,8 @@ public @interface Classes {
 
     Class<?>[] cdiAlternatives() default {};
 
+    Class<?>[] cdiStereotypes() default {};
+
     boolean cdi() default false;
 
     // only for WebApp ATM

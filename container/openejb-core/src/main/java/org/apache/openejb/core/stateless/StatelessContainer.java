@@ -23,6 +23,7 @@ import org.apache.openejb.InterfaceType;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.SystemException;
+import org.apache.openejb.api.resource.DestroyableResource;
 import org.apache.openejb.cdi.CurrentCreationalContext;
 import org.apache.openejb.core.ExceptionType;
 import org.apache.openejb.core.Operation;
@@ -59,7 +60,7 @@ import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleSyste
 /**
  * @org.apache.xbean.XBean element="statelessContainer"
  */
-public class StatelessContainer implements org.apache.openejb.RpcContainer {
+public class StatelessContainer implements org.apache.openejb.RpcContainer, DestroyableResource {
 
     private final ConcurrentMap<Class<?>, List<Method>> interceptorCache = new ConcurrentHashMap<Class<?>, List<Method>>();
     private final StatelessInstanceManager instanceManager;
@@ -324,5 +325,10 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
             }
         }
         return annotated;
+    }
+
+    @Override
+    public void destroyResource() {
+        this.instanceManager.destroy();
     }
 }

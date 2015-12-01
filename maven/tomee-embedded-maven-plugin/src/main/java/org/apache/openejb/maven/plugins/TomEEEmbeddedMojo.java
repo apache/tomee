@@ -126,6 +126,9 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
     @Parameter(property = "tomee-embedded-plugin.useProjectClasspath", defaultValue = "true")
     protected boolean useProjectClasspath;
 
+    @Parameter(property = "tomee-embedded-plugin.webResourceCached", defaultValue = "true")
+    protected boolean webResourceCached;
+
     @Parameter(property = "tomee-embedded-plugin.modules", defaultValue = "${project.build.outputDirectory}")
     protected List<File> modules;
 

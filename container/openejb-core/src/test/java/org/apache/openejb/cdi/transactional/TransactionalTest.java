@@ -31,16 +31,20 @@ import javax.transaction.RollbackException;
 import javax.transaction.Status;
 import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
+import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.Transactional;
 import javax.transaction.TransactionalException;
 import javax.transaction.UserTransaction;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static javax.transaction.Transactional.TxType.MANDATORY;
 import static javax.transaction.Transactional.TxType.NOT_SUPPORTED;
 import static javax.transaction.Transactional.TxType.REQUIRED;
+import static javax.transaction.Transactional.TxType.REQUIRES_NEW;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.fail;
 
 @RunWith(ApplicationComposer.class)
@@ -263,10 +267,30 @@ public class TransactionalTest {
         }
     }
 
+    @Test
+    public void requiresNew() {
+        final AtomicReference<Transaction> tx2 = new AtomicReference<>();
+        final Transaction tx1 = bean.defaultTx(new Runnable() {
+            @Override
+            public void run() {
+                tx2.set(bean.newTx(new Runnable() {
+                    @Override
+                    public void run() {
+                      // no-op
+                    }
+                }));
+            }
+        });
+        assertNotSame(tx1, tx2.get());
+    }
+
     @Transactional(value = REQUIRED, rollbackOn = AnCheckedException.class)
     public static class TxBean {
         @Resource
         private UserTransaction ut;
+
+        @Resource
+        private TransactionManager txMgr;
 
         @Transactional(value = REQUIRED)
         public void required() {
@@ -324,6 +348,16 @@ public class TransactionalTest {
             throw new AnCheckedException();
         }
 
+        @Transactional
+        public Transaction defaultTx(final Runnable runnable) {
+            runnable.run();
+            try {
+                return txMgr.getTransaction();
+            } catch (SystemException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+
         @Transactional(REQUIRED)
         public void checked(Runnable runnable) throws AnCheckedException {
             runnable.run();
@@ -334,6 +368,16 @@ public class TransactionalTest {
         public void runtimeChecked(Runnable runnable) throws AnException {
             runnable.run();
             throw new AnException();
+        }
+
+        @Transactional(REQUIRES_NEW)
+        public Transaction newTx(final Runnable runnable) {
+            runnable.run();
+            try {
+                return txMgr.getTransaction();
+            } catch (SystemException e) {
+                throw new IllegalStateException(e);
+            }
         }
 
         @Transactional(value = REQUIRED, dontRollbackOn = AnotherException.class)

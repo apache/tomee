@@ -5,14 +5,14 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.tomee;
 
@@ -69,8 +69,8 @@ public class RemoteTomEEEJBContainer extends EJBContainer {
             }
 
             if ((provider == null && ejbContainerProviders > 1)
-                || (!RemoteTomEEEJBContainer.class.equals(provider)
-                && !CONTAINER_NAMES.contains(String.valueOf(provider)))) {
+                    || (!RemoteTomEEEJBContainer.class.equals(provider)
+                    && !CONTAINER_NAMES.contains(String.valueOf(provider)))) {
                 return null;
             }
 
@@ -94,7 +94,14 @@ public class RemoteTomEEEJBContainer extends EJBContainer {
                 instance = new RemoteTomEEEJBContainer();
                 instance.container = new RemoteServer();
                 instance.container.setPortStartup(Integer.parseInt(parser.http()));
-                instance.container.start();
+
+                try {
+                    instance.container.start(Arrays.asList("-Dopenejb.system.apps=true", "-Dtomee.remote.support=true"), "start", true);
+                } catch (final Exception e) {
+                    instance.container.destroy();
+                    throw e;
+                }
+
                 instance.context = new InitialContext(new Properties() {{
                     setProperty(Context.INITIAL_CONTEXT_FACTORY, RemoteInitialContextFactory.class.getName());
                     setProperty(Context.PROVIDER_URL, remoteEjb);

@@ -308,7 +308,12 @@
       <!-- not supported by embedded adapter -->
       <class name="org.jboss.cdi.tck.tests.lookup.injection.non.contextual.InjectionIntoNonContextualComponentTest">
         <methods>
-          <exclude name="testInjectionIntoTagHandler" />
+          <exclude name=".*" />
+        </methods>
+      </class>
+      <class name="org.jboss.cdi.tck.tests.implementation.enterprise.lifecycle.EnterpriseBeanLifecycleTest">
+        <methods>
+          <exclude name="testDestroyRemovesSFSB" />
         </methods>
       </class>
       <class name="org.jboss.cdi.tck.tests.context.conversation.filter.ConversationFilterTest">

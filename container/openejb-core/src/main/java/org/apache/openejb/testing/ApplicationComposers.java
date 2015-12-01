@@ -99,6 +99,15 @@ import org.apache.xbean.finder.filter.Filter;
 import org.apache.xbean.finder.filter.Filters;
 import org.xml.sax.InputSource;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.SessionScoped;
+import javax.enterprise.inject.spi.Extension;
+import javax.inject.Inject;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -120,15 +129,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.enterprise.context.RequestScoped;
-import javax.enterprise.context.SessionScoped;
-import javax.enterprise.inject.spi.Extension;
-import javax.inject.Inject;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 
 import static java.util.Arrays.asList;
 import static org.apache.openejb.config.DeploymentFilterable.DEPLOYMENTS_CLASSPATH_PROPERTY;
@@ -141,13 +141,13 @@ public class ApplicationComposers {
 
     public static final String OPENEJB_APPLICATION_COMPOSER_CONTEXT = "openejb.application.composer.context";
     private static final Class[] MODULE_TYPES = {IAnnotationFinder.class, ClassesArchive.class,
-        AppModule.class, WebModule.class, EjbModule.class,
-        Application.class,
-        WebApp.class, EjbJar.class, EnterpriseBean.class,
-        Persistence.class, PersistenceUnit.class,
-        Connector.class, Beans.class,
-        Class[].class, Class.class,
-        Resources.class
+            AppModule.class, WebModule.class, EjbModule.class,
+            Application.class,
+            WebApp.class, EjbJar.class, EnterpriseBean.class,
+            Persistence.class, PersistenceUnit.class,
+            Connector.class, Beans.class,
+            Class[].class, Class.class,
+            Resources.class
     };
 
     static {
@@ -155,7 +155,7 @@ public class ApplicationComposers {
     }
 
     private final Map<Object, ClassFinder> testClassFinders;
-    private Class<?> testClass;
+    private final Class<?> testClass;
     private ServiceManagerProxy serviceManager;
 
     // invocation context
@@ -169,6 +169,7 @@ public class ApplicationComposers {
     private final Collection<String> globalJndiEntries = new ArrayList<>();
     private final Collection<Runnable> beforeDestroyAfterRunnables = new ArrayList<>();
     private final Collection<Runnable> afterRunnables = new ArrayList<>();
+    private Properties originalProperties;
 
     public ApplicationComposers(final Object... modules) {
         this(modules[0].getClass(), modules);
@@ -181,7 +182,10 @@ public class ApplicationComposers {
         testClassFinders.put(this, new ClassFinder(ancestors(klass))); // using this temporary since we don't have yet the instance
         if (additionalModules != null) {
             for (final Object o : additionalModules) {
-                testClassFinders.put(o, new ClassFinder(ancestors(o.getClass())));
+                final Class<?> aClass = o.getClass();
+                if (aClass != klass) {
+                    testClassFinders.put(o, new ClassFinder(ancestors(aClass)));
+                }
             }
         }
 
@@ -348,7 +352,11 @@ public class ApplicationComposers {
                 annotatedMethods = newAnnotatedMethods;
                 map.put(key, annotatedMethods);
             } else {
-                annotatedMethods.addAll(newAnnotatedMethods);
+                for (final Method m : newAnnotatedMethods) {
+                    if (!annotatedMethods.contains(m)) {
+                        annotatedMethods.add(m);
+                    }
+                }
             }
         }
         return map;
@@ -431,6 +439,7 @@ public class ApplicationComposers {
                 String[] excludes = null;
                 Class<?>[] cdiInterceptors = null;
                 Class<?>[] cdiAlternatives = null;
+                Class<?>[] cdiStereotypes = null;
                 Class<?>[] cdiDecorators = null;
                 boolean cdi = false;
                 boolean innerClassesAsBean = false;
@@ -441,8 +450,8 @@ public class ApplicationComposers {
                     cdiInterceptors = classesAnnotation.cdiInterceptors();
                     cdiDecorators = classesAnnotation.cdiDecorators();
                     cdiAlternatives = classesAnnotation.cdiAlternatives();
-                    cdi = classesAnnotation.cdi() || cdiAlternatives.length > 0
-                        || cdiDecorators.length > 0 || cdiInterceptors.length > 0;
+                    cdiStereotypes = classesAnnotation.cdiStereotypes();
+                    cdi = isCdi(classesAnnotation.cdi(), cdiInterceptors, cdiAlternatives, cdiStereotypes, cdiDecorators);
                 } else if (classesAnnotationOld != null) {
                     classes = classesAnnotationOld.value();
                 }
@@ -454,12 +463,12 @@ public class ApplicationComposers {
                     }
                     webModulesNb++;
                     addWebApp(
-                        appModule, testBean, additionalDescriptors,
-                        method.getAnnotation(Descriptors.class), method.getAnnotation(JaxrsProviders.class),
-                        webApp,
-                        globalJarsAnnotation, jarsAnnotation,
-                        classes, excludes, cdiInterceptors, cdiAlternatives, cdiDecorators, cdi, innerClassesAsBean,
-                        defaultConfig);
+                            appModule, testBean, additionalDescriptors,
+                            method.getAnnotation(Descriptors.class), method.getAnnotation(JaxrsProviders.class),
+                            webApp,
+                            globalJarsAnnotation, jarsAnnotation,
+                            classes, excludes, cdiInterceptors, cdiAlternatives, cdiDecorators, cdiStereotypes, cdi, innerClassesAsBean,
+                            defaultConfig);
                 } else if (obj instanceof WebModule) { // will add the ejbmodule too
                     webModulesNb++;
 
@@ -471,7 +480,7 @@ public class ApplicationComposers {
                     final EjbModule ejbModule = DeploymentLoader.addWebModule(webModule, appModule);
                     ejbModule.getProperties().put(CdiScanner.OPENEJB_CDI_FILTER_CLASSLOADER, "false");
                     if (cdi) {
-                        ejbModule.setBeans(beans(new Beans(), cdiDecorators, cdiInterceptors, cdiAlternatives));
+                        ejbModule.setBeans(beans(new Beans(), cdiDecorators, cdiInterceptors, cdiAlternatives, cdiStereotypes));
                     }
 
                     Collection<File> files = findFiles(jarsAnnotation);
@@ -489,7 +498,7 @@ public class ApplicationComposers {
                     ejbModule.initAppModule(appModule);
                     appModule.getEjbModules().add(ejbModule);
                     if (cdi) {
-                        ejbModule.setBeans(beans(new Beans(), cdiDecorators, cdiInterceptors, cdiAlternatives));
+                        ejbModule.setBeans(beans(new Beans(), cdiDecorators, cdiInterceptors, cdiAlternatives, cdiStereotypes));
                     }
 
                     Collection<File> files = findFiles(jarsAnnotation);
@@ -509,7 +518,7 @@ public class ApplicationComposers {
 
                     appModule.getEjbModules().add(ejbModule);
                     if (cdi) {
-                        ejbModule.setBeans(beans(new Beans(), cdiDecorators, cdiInterceptors, cdiAlternatives));
+                        ejbModule.setBeans(beans(new Beans(), cdiDecorators, cdiInterceptors, cdiAlternatives, cdiStereotypes));
                     }
 
                     Collection<File> files = findFiles(jarsAnnotation);
@@ -528,7 +537,7 @@ public class ApplicationComposers {
                     ejbModule.setBeans(beans);
                     appModule.getEjbModules().add(ejbModule);
                     if (cdi) {
-                        ejbModule.setBeans(beans(new Beans(), cdiDecorators, cdiInterceptors, cdiAlternatives));
+                        ejbModule.setBeans(beans(new Beans(), cdiDecorators, cdiInterceptors, cdiAlternatives, cdiStereotypes));
                     }
                     Collection<File> files = findFiles(jarsAnnotation);
                     if (defaultConfig) {
@@ -565,7 +574,7 @@ public class ApplicationComposers {
                     ejbModule.setBeans(beans);
                     appModule.getEjbModules().add(ejbModule);
                     if (cdi) {
-                        ejbModule.setBeans(beans(beans, cdiDecorators, cdiInterceptors, cdiAlternatives));
+                        ejbModule.setBeans(beans(beans, cdiDecorators, cdiInterceptors, cdiAlternatives, cdiStereotypes));
                     }
                     Collection<File> files = findFiles(jarsAnnotation);
                     if (defaultConfig) {
@@ -639,7 +648,7 @@ public class ApplicationComposers {
                     appModule, testBean, additionalDescriptors,
                     null, null,
                     webapp, globalJarsAnnotation, null, classClasses.value(), classClasses.excludes(),
-                    classClasses.cdiInterceptors(), classClasses.cdiAlternatives(), classClasses.cdiDecorators(),
+                    classClasses.cdiInterceptors(), classClasses.cdiAlternatives(), classClasses.cdiDecorators(), classClasses.cdiStereotypes(),
                     classClasses.cdi(), classClasses.innerClassesAsBean(), testClass.getAnnotation(Default.class) != null);
             webModulesNb++;
             moduleNumber++;
@@ -723,7 +732,12 @@ public class ApplicationComposers {
         System.getProperties().put(OPENEJB_APPLICATION_COMPOSER_CONTEXT, appContext.getGlobalJndiContext());
 
         // test injections
-        final ClassFinder testClassFinder = testClassFinders.remove(inputTestInstance);
+        ClassFinder testClassFinder = testClassFinders.remove(inputTestInstance);
+        if (testClassFinder == null) {
+            testClassFinders.put(inputTestInstance, testClassFinders.remove(this));
+            testClassFinder = testClassFinders.remove(inputTestInstance);
+        }
+
         final List<Field> fields = new ArrayList<>(testClassFinder.findAnnotatedFields(AppResource.class));
         fields.addAll(testClassFinder.findAnnotatedFields(org.apache.openejb.junit.AppResource.class));
         for (final Field field : fields) {
@@ -759,24 +773,39 @@ public class ApplicationComposers {
         testClassFinders.put(this, testClassFinder);
     }
 
+    private boolean isCdi(final boolean cdi, final Class<?>[] cdiInterceptors,
+                          final Class<?>[] cdiAlternatives, final Class<?>[] cdiStereotypes,
+                          final Class<?>[] cdiDecorators) {
+        return cdi
+                || isNotNullOrEmpty(cdiAlternatives)
+                || isNotNullOrEmpty(cdiDecorators)
+                || isNotNullOrEmpty(cdiInterceptors)
+                || isNotNullOrEmpty(cdiStereotypes);
+    }
+
+    private boolean isNotNullOrEmpty(final Class<?>[] ca) {
+        return null != ca && ca.length > 0;
+    }
+
     protected boolean mockCdiContexts() {
         return "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.testing.start-cdi-contexts", "true"));
     }
 
     private void addWebApp(final AppModule appModule, final ManagedBean testBean,
-                          final Map<String, URL> additionalDescriptors,
-                          final Descriptors descriptors,
-                          final JaxrsProviders providers,
-                          final WebApp webapp, final Jars globalJarsAnnotation,
-                          final Jars jarsAnnotation,
-                          final Class<?>[] cdiClasses,
-                          final String[] excludes,
-                          final Class<?>[] cdiInterceptors,
-                          final Class<?>[] cdiAlternatives,
-                          final Class<?>[] cdiDecorators,
-                          final boolean cdi,
-                          final boolean innerClassesAsBean,
-                          final boolean autoConfig) throws OpenEJBException {
+                           final Map<String, URL> additionalDescriptors,
+                           final Descriptors descriptors,
+                           final JaxrsProviders providers,
+                           final WebApp webapp, final Jars globalJarsAnnotation,
+                           final Jars jarsAnnotation,
+                           final Class<?>[] cdiClasses,
+                           final String[] excludes,
+                           final Class<?>[] cdiInterceptors,
+                           final Class<?>[] cdiAlternatives,
+                           final Class<?>[] cdiDecorators,
+                           final Class<?>[] cdiStereotypes,
+                           final boolean cdi,
+                           final boolean innerClassesAsBean,
+                           final boolean autoConfig) throws OpenEJBException {
         String root = webapp.getContextRoot();
         if (root == null) {
             root = "/openejb";
@@ -808,8 +837,8 @@ public class ApplicationComposers {
 
         final EjbModule ejbModule = DeploymentLoader.addWebModule(webModule, appModule);
         ejbModule.getProperties().put(CdiScanner.OPENEJB_CDI_FILTER_CLASSLOADER, "false");
-        if (cdi) {
-            ejbModule.setBeans(beans(new Beans(), cdiDecorators, cdiInterceptors, cdiAlternatives));
+        if (isCdi(cdi, cdiInterceptors, cdiAlternatives, cdiStereotypes, cdiDecorators)) {
+            ejbModule.setBeans(beans(new Beans(), cdiDecorators, cdiInterceptors, cdiAlternatives, cdiStereotypes));
         }
 
         Class<?>[] classes = cdiClasses;
@@ -952,7 +981,7 @@ public class ApplicationComposers {
         final String[] value = jarsAnnotation.value();
         final Collection<File> files = new ArrayList<>(value.length);
         for (final String v : value) {
-            int size = files.size();
+            final int size = files.size();
             for (final URL path : classpathAppsUrls) {
                 final File file = URLs.toFile(path);
                 if (file.getName().startsWith(v) && file.getName().endsWith(".jar")) {
@@ -970,7 +999,7 @@ public class ApplicationComposers {
     }
 
     private Beans beans(final Beans beans, final Class<?>[] cdiDecorators, final Class<?>[] cdiInterceptors,
-                        final Class<?>[] cdiAlternatives) {
+                        final Class<?>[] cdiAlternatives, final Class<?>[] cdiStereotypes) {
         if (cdiDecorators != null) {
             for (final Class<?> clazz : cdiDecorators) {
                 beans.addDecorator(clazz);
@@ -984,6 +1013,11 @@ public class ApplicationComposers {
         if (cdiAlternatives != null) {
             for (final Class<?> clazz : cdiAlternatives) {
                 beans.addAlternativeClass(clazz);
+            }
+        }
+        if (cdiStereotypes != null) {
+            for (final Class<?> clazz : cdiStereotypes) {
+                beans.addAlternativeStereotype(clazz);
             }
         }
         return beans;
@@ -1005,15 +1039,24 @@ public class ApplicationComposers {
         SystemInstance.get().setComponent((Class<Object>) key, value);
     }
 
-    public void evaluate(final Object testInstance, final Callable<Void> next) throws Exception {
+    public <T> T evaluate(final Object testInstance, final Callable<T> next) throws Exception {
         before(testInstance);
         try {
-            next.call();
+            return next.call();
         } finally {
             ThreadContext.exit(previous);
             after();
         }
+    }
 
+    public void evaluate(final Object testInstance, final Runnable next) throws Exception {
+        evaluate(testInstance, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                next.run();
+                return null;
+            }
+        });
     }
 
     public void after() throws Exception {
@@ -1036,6 +1079,9 @@ public class ApplicationComposers {
             runAll(afterRunnables);
             if (originalLoader != null) {
                 Thread.currentThread().setContextClassLoader(originalLoader);
+            }
+            if (originalProperties != null) {
+                System.setProperties(originalProperties);
             }
         }
     }
@@ -1134,7 +1180,7 @@ public class ApplicationComposers {
             final ClassLoader loader = Thread.currentThread().getContextClassLoader();
             if (descriptors instanceof Descriptors) {
                 for (final Descriptor descriptor : ((Descriptors) descriptors).value()) {
-                    URL resource = loader.getResource(descriptor.path());
+                    final URL resource = loader.getResource(descriptor.path());
                     try {
                         dds.put(descriptor.name(), resource == null ? new File(descriptor.path()).toURI().toURL() : resource);
                     } catch (final MalformedURLException e) {
@@ -1144,7 +1190,7 @@ public class ApplicationComposers {
             } else {
                 if (descriptors instanceof org.apache.openejb.junit.Descriptors) {
                     for (final org.apache.openejb.junit.Descriptor descriptor : ((org.apache.openejb.junit.Descriptors) descriptors).value()) {
-                        URL resource = loader.getResource(descriptor.path());
+                        final URL resource = loader.getResource(descriptor.path());
                         try {
                             dds.put(descriptor.name(), resource == null ? new File(descriptor.path()).toURI().toURL() : resource);
                         } catch (final MalformedURLException e) {
@@ -1192,7 +1238,7 @@ public class ApplicationComposers {
             serviceManagerClass = classLoader.loadClass("org.apache.openejb.server.FilteredServiceManager");
         } catch (final ClassNotFoundException e) {
             final String msg = "Services filtering requires class 'org.apache.openejb.server.FilteredServiceManager' to be available.  " +
-                "Make sure you have the openejb-server-*.jar in your classpath.";
+                    "Make sure you have the openejb-server-*.jar in your classpath.";
             throw new IllegalStateException(msg, e);
         }
 
@@ -1216,6 +1262,7 @@ public class ApplicationComposers {
     }
 
     public void startContainer(final Object instance) throws Exception {
+        originalProperties = (Properties) System.getProperties().clone();
         originalLoader = Thread.currentThread().getContextClassLoader();
         testClassFinders.remove(this); // see constructor
 
@@ -1436,13 +1483,13 @@ public class ApplicationComposers {
         }
     }
 
-    public static void run(final Class<?> type, String... args) {
+    public static void run(final Class<?> type, final String... args) {
         final ApplicationComposers composer = new ApplicationComposers(type);
         try {
             Object instance;
             try {
                 final Constructor<?> constructor = type.getConstructor(String[].class);
-                instance = constructor.newInstance(new Object[] { args });
+                instance = constructor.newInstance(new Object[]{args});
             } catch (final Exception e) {
                 instance = type.newInstance();
             }
@@ -1477,7 +1524,7 @@ public class ApplicationComposers {
                             if (sessionManager != null) {
                                 final Class<?>[] paramTypes = {WebContext.class};
                                 for (final WebContext web : composer.appContext.getWebContexts()) {
-                                    Reflections.invokeByReflection(sessionManager, "destroy", paramTypes, new Object[] { web });
+                                    Reflections.invokeByReflection(sessionManager, "destroy", paramTypes, new Object[]{web});
                                 }
                             }
                         } catch (final Throwable e) {

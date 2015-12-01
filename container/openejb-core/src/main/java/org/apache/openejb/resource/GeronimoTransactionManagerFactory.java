@@ -19,8 +19,10 @@
 package org.apache.openejb.resource;
 
 import org.apache.geronimo.transaction.log.HOWLLog;
+import org.apache.geronimo.transaction.manager.ExponentialtIntervalRetryScheduler;
 import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
 import org.apache.geronimo.transaction.manager.TransactionLog;
+import org.apache.geronimo.transaction.manager.TransactionManagerImpl;
 import org.apache.geronimo.transaction.manager.WrapperNamedXAResource;
 import org.apache.geronimo.transaction.manager.XidFactory;
 import org.apache.geronimo.transaction.manager.XidFactoryImpl;
@@ -29,12 +31,16 @@ import org.apache.openejb.api.jmx.Description;
 import org.apache.openejb.api.jmx.MBean;
 import org.apache.openejb.api.jmx.ManagedAttribute;
 import org.apache.openejb.api.jmx.ManagedOperation;
+import org.apache.openejb.api.resource.DestroyableResource;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.util.Duration;
 
+import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
+import java.lang.reflect.Field;
+import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -102,7 +108,7 @@ public class GeronimoTransactionManagerFactory {
             ((HOWLLog) txLog).doStart();
         }
 
-        final GeronimoTransactionManager geronimoTransactionManager = new GeronimoTransactionManager(defaultTransactionTimeoutSeconds, xidFactory, txLog);
+        final GeronimoTransactionManager geronimoTransactionManager = new DestroyableTransactionManager(defaultTransactionTimeoutSeconds, xidFactory, txLog);
         final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management")
             .set("j2eeType", "TransactionManager");
         LocalMBeanServer.registerDynamicWrapperSilently(
@@ -110,6 +116,30 @@ public class GeronimoTransactionManagerFactory {
             jmxName.build());
 
         return geronimoTransactionManager;
+    }
+
+    public static class DestroyableTransactionManager extends GeronimoTransactionManager implements DestroyableResource {
+        public DestroyableTransactionManager(final int defaultTransactionTimeoutSeconds, final XidFactory xidFactory, final TransactionLog transactionLog) throws XAException {
+            super(defaultTransactionTimeoutSeconds, xidFactory, transactionLog);
+        }
+
+        @Override
+        public void destroyResource() {
+            // try to clean up
+            try {
+                final Field f = TransactionManagerImpl.class.getDeclaredField("retryScheduler");
+                f.setAccessible(true);
+                final ExponentialtIntervalRetryScheduler rs = ExponentialtIntervalRetryScheduler.class.cast(f.get(this));
+
+                final Field t = ExponentialtIntervalRetryScheduler.class.getDeclaredField("timer");
+                t.setAccessible(true);
+
+                final Timer timer = Timer.class.cast(t.get(rs));
+                timer.cancel();
+            } catch (final Throwable notImportant) {
+                // no-op
+            }
+        }
     }
 
     public static class GeronimoXAResourceWrapper implements XAResourceWrapper {

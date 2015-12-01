@@ -45,6 +45,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
 import java.util.Properties;
@@ -70,6 +71,18 @@ public class ExecMojo extends BuildTomEEMojo {
 
     @Parameter(property = "tomee-plugin.script", defaultValue = DEFAULT_SCRIPT)
     private String script;
+
+    @Parameter(property = "tomee-plugin.waitFor", defaultValue = "true")
+    private boolean waitFor;
+
+    @Parameter
+    private List<String> additionalClasses;
+
+    @Parameter
+    private List<String> preTasks;
+
+    @Parameter
+    private List<String> postTasks;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -104,7 +117,7 @@ public class ExecMojo extends BuildTomEEMojo {
         config.put("command", DEFAULT_SCRIPT.equals(script) ? (skipArchiveRootFolder ? "" : catalinaBase.getName() + "/") + DEFAULT_SCRIPT : script);
         final List<String> jvmArgs = generateJVMArgs();
 
-        final String catalinaOpts = toString(jvmArgs);
+        final String catalinaOpts = toString(jvmArgs, " ");
         config.put("catalinaOpts", catalinaOpts);
         config.put("timestamp", Long.toString(System.currentTimeMillis()));
         // java only
@@ -122,6 +135,14 @@ public class ExecMojo extends BuildTomEEMojo {
         if (!encodingSet) { // forcing encoding for launched process to be able to read conf files
             config.put("jvmArg." + i, "-Dfile.encoding=UTF-8");
         }
+
+        if (preTasks != null) {
+            config.put("preTasks", toString(preTasks, ","));
+        }
+        if (postTasks != null) {
+            config.put("postTasks", toString(postTasks, ","));
+        }
+        config.put("waitFor", Boolean.toString(waitFor));
 
         // create an executable jar with main runner and zipFile
         final FileOutputStream fileOutputStream = new FileOutputStream(execFile);
@@ -174,21 +195,44 @@ public class ExecMojo extends BuildTomEEMojo {
                     Options.class, Options.NullLog.class, Options.TomEEPropertyAdapter.class, Options.NullOptions.class,
                     Options.Log.class
                     )) {
-                final String name = clazz.getName().replace('.', '/') + ".class";
-                os.putArchiveEntry(new JarArchiveEntry(name));
-                IOUtils.copy(getClass().getResourceAsStream('/' + name), os);
-                os.closeArchiveEntry();
+                addToJar(os, clazz);
             }
         }
+        addClasses(additionalClasses, os);
+        addClasses(preTasks, os);
+        addClasses(postTasks, os);
 
         IOUtil.close(os);
         IOUtil.close(fileOutputStream);
     }
 
-    private static String toString(final List<String> strings) {
+    private void addClasses(final List<String> classes, final ArchiveOutputStream os) throws IOException {
+        if (classes != null) { // user classes
+            for (final String className : classes) {
+                addToJar(os, load(className));
+            }
+        }
+    }
+
+    private void addToJar(final ArchiveOutputStream os, final Class<?> clazz) throws IOException {
+        final String name = clazz.getName().replace('.', '/') + ".class";
+        os.putArchiveEntry(new JarArchiveEntry(name));
+        IOUtils.copy(getClass().getResourceAsStream('/' + name), os);
+        os.closeArchiveEntry();
+    }
+
+    private Class<?> load(final String className) {
+        try {
+            return Thread.currentThread().getContextClassLoader().loadClass(className);
+        } catch (final ClassNotFoundException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
+    private static String toString(final List<String> strings, final String sep) {
         final StringBuilder builder = new StringBuilder();
         for (final String s : strings) {
-            builder.append(s).append(" ");
+            builder.append(s).append(sep);
         }
         return builder.toString();
     }

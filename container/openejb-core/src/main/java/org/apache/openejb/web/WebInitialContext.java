@@ -21,7 +21,9 @@ import org.apache.openejb.core.ivm.naming.Reference;
 
 import javax.naming.Context;
 import javax.naming.LinkRef;
+import javax.naming.NameNotFoundException;
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Map;
@@ -47,9 +49,21 @@ public class WebInitialContext implements InvocationHandler {
                 } else if (lookedUp instanceof LinkRef) {
                     return ((Context) proxy).lookup(((LinkRef) lookedUp).getLinkName());
                 }
+                try {
+                    return method.invoke(delegate, args);
+                } catch (final InvocationTargetException nnfe) {
+                    if (NameNotFoundException.class.isInstance(nnfe.getTargetException())) {
+                        return lookedUp;
+                    }
+                    throw nnfe.getTargetException();
+                }
             }
         }
-        return method.invoke(delegate, args);
+        try {
+            return method.invoke(delegate, args);
+        } catch (final InvocationTargetException nnfe) {
+            throw nnfe.getTargetException();
+        }
     }
 
     private static String normalize(final String arg) {

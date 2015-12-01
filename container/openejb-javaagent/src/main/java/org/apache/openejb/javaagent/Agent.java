@@ -17,7 +17,13 @@
 
 package org.apache.openejb.javaagent;
 
-import java.io.*;
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
@@ -252,23 +258,26 @@ public class Agent {
     }
 
     private static class BootstrapTransformer implements ClassFileTransformer {
-
-        private boolean done;
-
         @Override
         public byte[] transform(final ClassLoader loader, final String className, final Class<?> classBeingRedefined, final ProtectionDomain protectionDomain, final byte[] classfileBuffer) throws IllegalClassFormatException {
-
             try {
                 bootstrap(loader);
             } catch (final Throwable e) {
-                done = true;
+                removeThis();
             }
-
             return classfileBuffer;
         }
 
+        private void removeThis() {
+            try {
+                instrumentation.removeTransformer(this);
+            } catch (final Throwable th) {
+                // no-op
+            }
+        }
+
         private void bootstrap(final ClassLoader loader) {
-            if (loader == null || done) {
+            if (loader == null) {
                 return;
             }
 
@@ -279,16 +288,13 @@ public class Agent {
                 return;
             }
 
-            // We found the classloader that has the openejb-core jar
-            // we need to mark ourselves as "done" so that when we attempt to load
-            // the PersistenceBootstrap class it doesn't cause an infinite loop
-            done = true;
-
             try {
                 final Class<?> bootstrapClass = loader.loadClass(bootstrapClassName);
                 final Method bootstrap = bootstrapClass.getMethod("bootstrap", ClassLoader.class);
                 bootstrap.invoke(null, loader);
+                removeThis();
             } catch (final Throwable e) {
+                removeThis();
                 Logger.getLogger(Agent.class.getName()).log(Level.WARNING, "Failed to invoke bootstrap: " + e.getMessage());
             }
         }

@@ -153,7 +153,12 @@ public class ContainersImplTomEE extends AbstractContainers implements Container
     @Override
     public void setup() throws IOException {
         System.out.println("Setup called");
-        server.start(Arrays.asList("-Dopenejb.classloader.forced-load=org.apache.openejb.tck"), "start", true);
+        try {
+            server.start(Arrays.asList("-Dopenejb.classloader.forced-load=org.apache.openejb.tck"), "start", true);
+        } catch (final Exception e) {
+            cleanup();
+            throw e;
+        }
         System.out.println("Started");
     }
 

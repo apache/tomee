@@ -345,7 +345,7 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
 
         // mainly for tomee-maven-plugin
         initAdditionalRepos();
-        if (additionalRepos != null) {
+        if (additionalRepos != null && !additionalRepos.isEmpty()) {
             for (final File f : additionalRepos) {
                 final DirResourceSet webResourceSet = new PremptiveDirResourceSet(resources, "/", f.getAbsolutePath(), "/");
                 resources.addPreResources(webResourceSet);

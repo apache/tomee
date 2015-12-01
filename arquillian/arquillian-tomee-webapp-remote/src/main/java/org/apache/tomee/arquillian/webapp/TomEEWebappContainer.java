@@ -146,7 +146,13 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
 
                 final RemoteServer tmpContainer = new RemoteServer();
                 tmpContainer.setPortStartup(httpPort);
-                tmpContainer.start();
+
+                try {
+                    tmpContainer.start();
+                } catch (final Exception e) {
+                    tmpContainer.destroy();
+                    throw e;
+                }
 
                 final URL url = new URL(baseUrl);
                 logger.info("Calling TomEE Installer Servlet on " + url);
@@ -174,12 +180,15 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
             container = new RemoteServer();
             container.setPortStartup(httpPort);
             container.start(Arrays.asList(
-                "-Dopenejb.system.apps=true",
-                "-Dtomee.remote.support=true",
-                "-Dorg.apache.openejb.servlet.filters=" + ArquillianFilterRunner.class.getName() + "=" + ServletMethodExecutor.ARQUILLIAN_SERVLET_MAPPING), "start", true);
+                    "-Dopenejb.system.apps=true",
+                    "-Dtomee.remote.support=true",
+                    "-Dorg.apache.openejb.servlet.filters=" + ArquillianFilterRunner.class.getName() + "=" + ServletMethodExecutor.ARQUILLIAN_SERVLET_MAPPING), "start", true);
             container.killOnExit();
         } catch (final Exception e) {
-            throw new LifecycleException("Unable to start remote container", e);
+            if (null != container) {
+                container.destroy();
+            }
+            throw new LifecycleException("Unable to start remote container on port: " + httpPort, e);
         }
     }
 

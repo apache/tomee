@@ -44,6 +44,15 @@ public class EmbeddedTomEEConfiguration extends TomEEConfiguration {
     private String sslProtocol;
     private String users;
     private String roles;
+    private boolean webResourcesCached = true;
+
+    public boolean isWebResourcesCached() {
+        return webResourcesCached;
+    }
+
+    public void setWebResourcesCached(final boolean webResourcesCached) {
+        this.webResourcesCached = webResourcesCached;
+    }
 
     public boolean isWithEjbRemote() {
         return withEjbRemote;
