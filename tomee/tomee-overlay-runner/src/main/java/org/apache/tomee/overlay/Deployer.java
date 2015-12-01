@@ -27,7 +27,7 @@ import javax.servlet.ServletContext;
 public final class Deployer {
     public static void deploy(final ServletContext ctx) {
         final TomcatWebAppBuilder builder = SystemInstance.get().getComponent(TomcatWebAppBuilder.class);
-        builder.configureStart(StandardContext.class.cast(Reflections.get(Reflections.get(ctx, "context"), "context")));
+        builder.configureStart(null, StandardContext.class.cast(Reflections.get(Reflections.get(ctx, "context"), "context")));
     }
 
     private Deployer() {

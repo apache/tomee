@@ -48,7 +48,7 @@ public class LazyObjectReference<T> extends Reference {
         return instance != null;
     }
 
-    public static class LazyNamingException extends NamingException {
+    public static final class LazyNamingException extends NamingException {
         private LazyNamingException(final String message) {
             super(message);
         }
