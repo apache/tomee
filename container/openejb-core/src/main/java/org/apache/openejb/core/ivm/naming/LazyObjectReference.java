@@ -36,7 +36,7 @@ public class LazyObjectReference<T> extends Reference {
                     try {
                         instance = creator.call();
                     } catch (final Exception e) {
-                        throw new NamingException(e.getMessage());
+                        throw new LazyNamingException(e.getMessage());
                     }
                 }
             }
@@ -46,5 +46,11 @@ public class LazyObjectReference<T> extends Reference {
 
     public boolean isInitialized() {
         return instance != null;
+    }
+
+    public static class LazyNamingException extends NamingException {
+        private LazyNamingException(final String message) {
+            super(message);
+        }
     }
 }
