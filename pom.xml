@@ -442,11 +442,11 @@
             </description>
             <downloadPage>http://tomee.apache.org/downloads.html</downloadPage>
             <homepage>${project.url}</homepage>
-            <license>https://svn.apache.org/repos/asf/tomee/tomee/trunk/LICENSE</license>
+            <license>https://git-wip-us.apache.org/repos/asf?p=tomee.git;a=blob_plain;f=LICENSE;hb=HEAD</license>
             <mailingList>http://tomee.apache.org/support.html</mailingList>
             <name>Apache TomEE</name>
-            <scmAnonymous>http://svn.apache.org/viewvc/tomee/tomee/trunk/</scmAnonymous>
-            <scmDeveloper>https://svn.apache.org/repos/asf/tomee/tomee/trunk</scmDeveloper>
+            <scmAnonymous>https://git-wip-us.apache.org/repos/asf/tomee.git</scmAnonymous>
+            <scmDeveloper>https://git-wip-us.apache.org/repos/asf/tomee.git</scmDeveloper>
             <shortdesc>Apache TomEE is an all-Apache Java EE 6 Web Profile stack for Apache Tomcat</shortdesc>
             <vendor>${project.organization.name}</vendor>
           </doapOptions>
