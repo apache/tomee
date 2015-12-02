@@ -38,11 +38,17 @@
 *.xsd           text
 *.yml           text
 
-openejb
-ejbd
-ejbds
-NOTICE          text
+activemq        text
+amq4factory     text
+amq5factory     text
+cipher          text
+ejbd            text
+ejbds           text
+jaas            text
 LICENSE         text
+NOTICE          text
+openejb         text
+Static3DES      text
 
 # These files are binary and should be left untouched
 # (binary is a macro for -text -diff)

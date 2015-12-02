@@ -1065,8 +1065,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         contextTransaction.setProperty(org.apache.naming.factory.Constants.FACTORY, UserTransactionFactory.class.getName());
         standardContext.getNamingResources().setTransaction(contextTransaction);
 
-        // ensure NamingContext is available for eager usage (@Observes @Initialized(ApplicationScoped) for instance)
-        standardContext.getNamingContextListener().lifecycleEvent(event);
+        if (event != null) {
+            // ensure NamingContext is available for eager usage (@Observes @Initialized(ApplicationScoped) for instance)
+            standardContext.getNamingContextListener().lifecycleEvent(event);
+        }
 
         TomcatHelper.configureJarScanner(standardContext);
 
