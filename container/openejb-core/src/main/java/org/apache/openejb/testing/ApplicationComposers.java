@@ -373,8 +373,7 @@ public class ApplicationComposers {
 
     @SuppressWarnings("unchecked")
     public void before(final Object inputTestInstance) throws Exception {
-        // we hacked testInstance while we were not aware of it, now we can solve it
-        testClassFinders.put(inputTestInstance, testClassFinders.remove(this));
+        fixFakeClassFinder(inputTestInstance);
 
         startContainer(inputTestInstance);
 
@@ -385,6 +384,8 @@ public class ApplicationComposers {
     }
 
     public void deployApp(final Object inputTestInstance) throws Exception {
+        final ClassFinder testClassFinder = fixFakeClassFinder(inputTestInstance);
+
         final ClassLoader loader = testClass.getClassLoader();
         AppModule appModule = new AppModule(loader, testClass.getSimpleName());
 
@@ -731,13 +732,6 @@ public class ApplicationComposers {
 
         System.getProperties().put(OPENEJB_APPLICATION_COMPOSER_CONTEXT, appContext.getGlobalJndiContext());
 
-        // test injections
-        ClassFinder testClassFinder = testClassFinders.remove(inputTestInstance);
-        if (testClassFinder == null) {
-            testClassFinders.put(inputTestInstance, testClassFinders.remove(this));
-            testClassFinder = testClassFinders.remove(inputTestInstance);
-        }
-
         final List<Field> fields = new ArrayList<>(testClassFinder.findAnnotatedFields(AppResource.class));
         fields.addAll(testClassFinder.findAnnotatedFields(org.apache.openejb.junit.AppResource.class));
         for (final Field field : fields) {
@@ -771,6 +765,29 @@ public class ApplicationComposers {
 
         // switch back since next test will use another instance
         testClassFinders.put(this, testClassFinder);
+    }
+
+    private ClassFinder fixFakeClassFinder(final Object inputTestInstance) {
+        // test injections, we faked the instance before having it so ensuring we use the right finder
+        ClassFinder testClassFinder = testClassFinders.get(inputTestInstance);
+        if (testClassFinder == null) {
+            final ApplicationComposers self = this;
+            final ClassFinder remove = testClassFinders.remove(self);
+            if (remove != null) {
+                testClassFinders.put(inputTestInstance, remove);
+                testClassFinder = remove;
+                afterRunnables.add(new Runnable() { // reset state for next test
+                    @Override
+                    public void run() {
+                        final ClassFinder classFinder = testClassFinders.remove(inputTestInstance);
+                        if (classFinder != null) {
+                            testClassFinders.put(self, classFinder);
+                        }
+                    }
+                });
+            }
+        }
+        return testClassFinder;
     }
 
     private boolean isCdi(final boolean cdi, final Class<?>[] cdiInterceptors,
@@ -1264,7 +1281,7 @@ public class ApplicationComposers {
     public void startContainer(final Object instance) throws Exception {
         originalProperties = (Properties) System.getProperties().clone();
         originalLoader = Thread.currentThread().getContextClassLoader();
-        testClassFinders.remove(this); // see constructor
+        fixFakeClassFinder(instance);
 
         // For the moment we just take the first @Configuration method
         // maybe later we can add something fancy to allow multiple configurations using a qualifier
