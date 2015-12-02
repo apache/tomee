@@ -23,6 +23,7 @@ import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.Module;
+import org.apache.openejb.testing.SimpleLog;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -51,12 +52,15 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+@SimpleLog
 @RunWith(ApplicationComposer.class)
 public class BeanValidationTest {
     @EJB
     private PersistManager persistManager;
+
     @Resource
     private Validator validator;
+
     @Resource
     private ValidatorFactory validatorFactory;
 
