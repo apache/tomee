@@ -385,6 +385,13 @@ public class ApplicationComposers {
     }
 
     public void deployApp(final Object inputTestInstance) throws Exception {
+        // test injections
+        ClassFinder testClassFinder = testClassFinders.remove(inputTestInstance);
+        if (testClassFinder == null) {
+            testClassFinders.put(inputTestInstance, testClassFinders.remove(this));
+            testClassFinder = testClassFinders.remove(inputTestInstance);
+        }
+
         final ClassLoader loader = testClass.getClassLoader();
         AppModule appModule = new AppModule(loader, testClass.getSimpleName());
 
@@ -730,13 +737,6 @@ public class ApplicationComposers {
         System.setProperty(Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
         System.getProperties().put(OPENEJB_APPLICATION_COMPOSER_CONTEXT, appContext.getGlobalJndiContext());
-
-        // test injections
-        ClassFinder testClassFinder = testClassFinders.remove(inputTestInstance);
-        if (testClassFinder == null) {
-            testClassFinders.put(inputTestInstance, testClassFinders.remove(this));
-            testClassFinder = testClassFinders.remove(inputTestInstance);
-        }
 
         final List<Field> fields = new ArrayList<>(testClassFinder.findAnnotatedFields(AppResource.class));
         fields.addAll(testClassFinder.findAnnotatedFields(org.apache.openejb.junit.AppResource.class));
