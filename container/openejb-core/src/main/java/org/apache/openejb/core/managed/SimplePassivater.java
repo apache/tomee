@@ -19,6 +19,7 @@ package org.apache.openejb.core.managed;
 
 import org.apache.openejb.SystemException;
 import org.apache.openejb.core.EnvProps;
+import org.apache.openejb.core.ObjectInputStreamFiltered;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
@@ -107,7 +108,7 @@ public class SimplePassivater implements PassivationStrategy {
             if (sessionFile.exists()) {
                 logger.info("Activating from file " + sessionFile);
 
-                final ObjectInputStream ois = new ObjectInputStream(IO.read(sessionFile));
+                final ObjectInputStream ois = new ObjectInputStreamFiltered(IO.read(sessionFile));
                 final Object state = ois.readObject();
                 ois.close();
                 if (!sessionFile.delete()) {

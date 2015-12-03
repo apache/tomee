@@ -17,12 +17,12 @@
 
 package org.apache.openejb.resource.jdbc.logging;
 
+import org.apache.openejb.core.ObjectInputStreamFiltered;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
 import java.io.ByteArrayInputStream;
-import java.io.ObjectInputStream;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.sql.ParameterMetaData;
@@ -88,7 +88,7 @@ public class LoggingPreparedSqlStatement implements InvocationHandler {
                                 final ByteArrayInputStream bais = ByteArrayInputStream.class.cast(param.value);
                                 try {
                                     bais.reset(); // already read when arriving here - mainly openjpa case
-                                    val = new ObjectInputStream(bais).readObject().toString();
+                                    val = new ObjectInputStreamFiltered(bais).readObject().toString();
                                 } catch (final Exception e) {
                                     val = param.value.toString();
                                 }
