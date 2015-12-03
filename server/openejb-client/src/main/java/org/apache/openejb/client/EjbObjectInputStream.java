@@ -91,8 +91,8 @@ public class EjbObjectInputStream extends ObjectInputStream {
     }
 
     public static class BlacklistClassResolver {
-        private static final String[] WHITELIST = toArray(System.getProperty("tomee.serialization.class.whitelist"));
-        private static final String[] BLACKLIST = toArray(System.getProperty("tomee.serialization.class.blacklist"));
+        //TODO- private static final String[] WHITELIST = toArray(System.getProperty("tomee.serialization.class.whitelist"));
+        //TODO- private static final String[] BLACKLIST = toArray(System.getProperty("tomee.serialization.class.blacklist"));
 
         private final String[] blacklist;
         private final String[] whitelist;
@@ -113,11 +113,11 @@ public class EjbObjectInputStream extends ObjectInputStream {
             return name;
         }
 
-        private static String[] toArray(final String property) {
-            return property == null ? null : property.split(" *, *");
-        }
+//        private static String[] toArray(final String property) {
+//            return property == null ? null : property.split(" *, *");
+//        }
 
-        private static boolean contains(final String[] list, String name) {
+        private static boolean contains(final String[] list, final String name) {
             if (list != null) {
                 for (final String white : list) {
                     if (name.startsWith(white)) {
