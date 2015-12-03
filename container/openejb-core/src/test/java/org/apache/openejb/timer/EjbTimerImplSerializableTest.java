@@ -18,6 +18,7 @@ package org.apache.openejb.timer;
 
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.MethodContext;
+import org.apache.openejb.core.ObjectInputStreamFiltered;
 import org.apache.openejb.core.timer.CalendarTimerData;
 import org.apache.openejb.core.timer.EjbTimeoutJob;
 import org.apache.openejb.core.timer.EjbTimerService;
@@ -113,7 +114,7 @@ public class EjbTimerImplSerializableTest {
 
     private static Object deserialize(final byte[] serial) throws Exception {
         final ByteArrayInputStream bais = new ByteArrayInputStream(serial);
-        final ObjectInputStream ois = new ObjectInputStream(bais);
+        final ObjectInputStream ois = new ObjectInputStreamFiltered(bais);
         return ois.readObject();
     }
 

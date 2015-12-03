@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.transaction;
 
+import org.apache.openejb.core.ObjectInputStreamFiltered;
 import org.junit.Test;
 
 import javax.transaction.TransactionRolledbackException;
@@ -42,7 +43,7 @@ public class SerializationOfTransactionRolledBackExceptionTest {
 
     private static Object deserialize(final byte[] serial) throws Exception {
         final ByteArrayInputStream bais = new ByteArrayInputStream(serial);
-        final ObjectInputStream ois = new ObjectInputStream(bais);
+        final ObjectInputStream ois = new ObjectInputStreamFiltered(bais);
         return ois.readObject();
     }
 

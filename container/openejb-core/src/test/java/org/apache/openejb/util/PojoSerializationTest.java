@@ -17,6 +17,7 @@
 package org.apache.openejb.util;
 
 import junit.framework.TestCase;
+import org.apache.openejb.core.ObjectInputStreamFiltered;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -47,7 +48,7 @@ public class PojoSerializationTest extends TestCase {
         out.close();
 
         final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        final ObjectInputStream in = new ObjectInputStream(bais);
+        final ObjectInputStream in = new ObjectInputStreamFiltered(bais);
 
         for (int i = count; i > 0; i--) {
             final Green actual = (Green) in.readObject();
@@ -69,7 +70,7 @@ public class PojoSerializationTest extends TestCase {
         out.close();
 
         final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        final ObjectInputStream in = new ObjectInputStream(bais);
+        final ObjectInputStream in = new ObjectInputStreamFiltered(bais);
         final Green actual = (Green) in.readObject();
 
         assertEquals(green, actual);
