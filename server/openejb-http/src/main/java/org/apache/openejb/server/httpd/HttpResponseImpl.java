@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,8 +31,8 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLConnection;
 import java.net.URLEncoder;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -105,6 +105,7 @@ public class HttpResponseImpl implements HttpResponse {
      * @param name  the name of the header
      * @param value the value of the header
      */
+    @Override
     public void setHeader(final String name, final String value) {
         headers.put(name, value);
     }
@@ -180,6 +181,7 @@ public class HttpResponseImpl implements HttpResponse {
      * @param name The name of the header
      * @return the value of the header
      */
+    @Override
     public String getHeader(final String name) {
         return headers.get(name);
     }
@@ -191,7 +193,7 @@ public class HttpResponseImpl implements HttpResponse {
 
     @Override
     public Collection<String> getHeaders(final String s) {
-        return Arrays.asList(headers.get(s));
+        return Collections.singletonList(headers.get(s));
     }
 
     @Override
@@ -225,6 +227,7 @@ public class HttpResponseImpl implements HttpResponse {
      *
      * @return the OutputStream to send data to the browser
      */
+    @Override
     public ServletOutputStream getOutputStream() {
         return sosi;
     }
@@ -239,6 +242,7 @@ public class HttpResponseImpl implements HttpResponse {
         return commited;
     }
 
+    @Override
     public void flushBuffer() throws IOException {
         // there is really no way to flush
     }
@@ -287,6 +291,7 @@ public class HttpResponseImpl implements HttpResponse {
      *
      * @param type the type to be sent to the browser (i.e. "text/html")
      */
+    @Override
     public void setContentType(final String type) {
         setHeader("Content-Type", type);
     }
@@ -301,6 +306,7 @@ public class HttpResponseImpl implements HttpResponse {
      *
      * @return the content type (i.e. "text/html")
      */
+    @Override
     public String getContentType() {
         return getHeader("Content-Type");
     }
@@ -322,6 +328,7 @@ public class HttpResponseImpl implements HttpResponse {
     /**
      * resets the data to be sent to the browser
      */
+    @Override
     public void reset() {
         initBody();
     }
@@ -555,6 +562,7 @@ public class HttpResponseImpl implements HttpResponse {
      * @param message the error message to be sent
      * @return the HttpResponseImpl that this error belongs to
      */
+    @SuppressWarnings("unused")
     protected static HttpResponseImpl createError(final String message) {
         return createError(message, null);
     }
@@ -568,11 +576,11 @@ public class HttpResponseImpl implements HttpResponse {
      */
     protected static HttpResponseImpl createError(String message, final Throwable t) {
         final HttpResponseImpl res = new HttpResponseImpl(500, "Internal Server Error", "text/html");
-        PrintWriter body = null;
+        final PrintWriter body;
         try {
             body = res.getWriter();
         } catch (final IOException e) { // impossible normally
-            // no-op
+            return res;
         }
 
         body.println("<html>");
@@ -590,14 +598,17 @@ public class HttpResponseImpl implements HttpResponse {
         }
 
         if (t != null) {
+
+            PrintWriter writer = null;
+
             try {
                 body.println("<br><br>");
                 body.println("Stack Trace:<br>");
                 final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                final PrintWriter writer = new PrintWriter(baos);
+                writer = new PrintWriter(baos);
                 t.printStackTrace(writer);
                 writer.flush();
-                writer.close();
+
                 message = new String(baos.toByteArray());
                 final StringTokenizer msg = new StringTokenizer(message, "\n\r");
 
@@ -606,6 +617,11 @@ public class HttpResponseImpl implements HttpResponse {
                     body.println("<br>");
                 }
             } catch (final Exception e) {
+                //no-op
+            } finally {
+                if (writer != null) {
+                    writer.close();
+                }
             }
         }
 
@@ -621,13 +637,16 @@ public class HttpResponseImpl implements HttpResponse {
      * @param ip the ip that is forbidden
      * @return the HttpResponseImpl that this error belongs to
      */
+    @SuppressWarnings("unused")
     protected static HttpResponseImpl createForbidden(final String ip) {
+
         final HttpResponseImpl res = new HttpResponseImpl(403, "Forbidden", "text/html");
-        PrintWriter body = null;
+        final PrintWriter body;
+
         try {
             body = res.getWriter();
         } catch (final IOException e) { // normally impossible
-            // no-op
+            return res;
         }
 
         body.println("<html>");
@@ -702,6 +721,7 @@ public class HttpResponseImpl implements HttpResponse {
         this.content = content;
     }
 
+    @Override
     public void setStatusMessage(final String responseString) {
         this.setResponseString(responseString);
     }

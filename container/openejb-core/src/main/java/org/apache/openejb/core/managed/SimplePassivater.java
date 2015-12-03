@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.openejb.core.managed;
 
 import org.apache.openejb.SystemException;
 import org.apache.openejb.core.EnvProps;
+import org.apache.openejb.core.ObjectInputStreamFiltered;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
@@ -107,9 +107,18 @@ public class SimplePassivater implements PassivationStrategy {
             if (sessionFile.exists()) {
                 logger.info("Activating from file " + sessionFile);
 
-                final ObjectInputStream ois = new ObjectInputStream(IO.read(sessionFile));
-                final Object state = ois.readObject();
-                ois.close();
+                Object state = null;
+                ObjectInputStream ois = null;
+
+                try {
+                    ois = new ObjectInputStreamFiltered(IO.read(sessionFile));
+                    state = ois.readObject();
+                } finally {
+                    if (ois != null) {
+                        ois.close();
+                    }
+                }
+
                 if (!sessionFile.delete()) {
                     sessionFile.deleteOnExit();
                 }

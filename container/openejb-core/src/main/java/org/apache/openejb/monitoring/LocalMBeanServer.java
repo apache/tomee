@@ -184,7 +184,7 @@ public final class LocalMBeanServer implements MBeanServer {
 
     @Override
     public Set<ObjectInstance> queryMBeans(final ObjectName name, final QueryExp query) {
-        return queryMBeans(name, query);
+        return s().queryMBeans(name, query);
     }
 
     @Override

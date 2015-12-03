@@ -16,13 +16,15 @@
  */
 package org.apache.openejb.core.rmi;
 
+import java.io.ObjectStreamClass;
+
 public class BlacklistClassResolver {
     private static final String[] WHITELIST = toArray(System.getProperty("tomee.serialization.class.whitelist"));
     private static final String[] BLACKLIST = toArray(System.getProperty("tomee.serialization.class.blacklist"));
 
     public static final BlacklistClassResolver DEFAULT = new BlacklistClassResolver(
-        new String[] { "org.codehaus.groovy.runtime.", "org.apache.commons.collections.functors.", "org.apache.xalan" },
-        null);
+            new String[]{"org.codehaus.groovy.runtime.", "org.apache.commons.collections.functors.", "org.apache.xalan"},
+            null);
 
     private final String[] blacklist;
     private final String[] whitelist;
@@ -36,6 +38,11 @@ public class BlacklistClassResolver {
         return !contains(whitelist, name) && contains(blacklist, name);
     }
 
+    public final ObjectStreamClass check(final ObjectStreamClass classDesc) {
+        check(classDesc.getName());
+        return classDesc;
+    }
+
     public final String check(final String name) {
         if (isBlacklisted(name)) {
             throw new SecurityException(name + " is not whitelisted as deserialisable, prevented before loading.");
@@ -47,7 +54,7 @@ public class BlacklistClassResolver {
         return property == null ? null : property.split(" *, *");
     }
 
-    private static boolean contains(final String[] list, String name) {
+    private static boolean contains(final String[] list, final String name) {
         if (list != null) {
             for (final String white : list) {
                 if (name.startsWith(white)) {
