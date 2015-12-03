@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.core.rmi;
 
+import java.io.ObjectStreamClass;
+
 public class BlacklistClassResolver {
     public static final BlacklistClassResolver DEFAULT = new BlacklistClassResolver(
         toArray(System.getProperty(
@@ -35,6 +37,11 @@ public class BlacklistClassResolver {
         return (whitelist != null && !contains(whitelist, name)) || contains(blacklist, name);
     }
 
+    public final ObjectStreamClass check(final ObjectStreamClass classDesc) {
+        check(classDesc.getName());
+        return classDesc;
+    }
+
     public final String check(final String name) {
         if (isBlacklisted(name)) {
             throw new SecurityException(name + " is not whitelisted as deserialisable, prevented before loading.");
@@ -46,7 +53,7 @@ public class BlacklistClassResolver {
         return property == null ? null : property.split(" *, *");
     }
 
-    private static boolean contains(final String[] list, String name) {
+    private static boolean contains(final String[] list, final String name) {
         if (list != null) {
             for (final String white : list) {
                 if (name.startsWith(white)) {

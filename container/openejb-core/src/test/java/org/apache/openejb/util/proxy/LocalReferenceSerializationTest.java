@@ -18,6 +18,7 @@
 package org.apache.openejb.util.proxy;
 
 import org.apache.openejb.ProxyInfo;
+import org.apache.openejb.core.ObjectInputStreamFiltered;
 import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
@@ -102,7 +103,7 @@ public class LocalReferenceSerializationTest {
         oos.writeObject(bean);
 
         final ByteArrayInputStream bis = new ByteArrayInputStream(baos.toByteArray());
-        final ObjectInputStream ois = new ObjectInputStream(bis);
+        final ObjectInputStream ois = new ObjectInputStreamFiltered(bis);
         return (T) ois.readObject();
     }
 

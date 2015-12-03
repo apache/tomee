@@ -17,6 +17,7 @@
 
 package org.apache.openejb.util.proxy;
 
+import org.apache.openejb.core.ObjectInputStreamFiltered;
 import org.apache.openejb.jee.Empty;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.junit.ApplicationComposer;
@@ -54,7 +55,7 @@ public class LocalBeanProxySerializationTest {
         oos.writeObject(bean);
 
         final ByteArrayInputStream bis = new ByteArrayInputStream(baos.toByteArray());
-        final ObjectInputStream ois = new ObjectInputStream(bis);
+        final ObjectInputStream ois = new ObjectInputStreamFiltered(bis);
         final SampleLocalBean deserialized = (SampleLocalBean) ois.readObject();
         assertEquals(5, deserialized.add(2, 3));
     }
