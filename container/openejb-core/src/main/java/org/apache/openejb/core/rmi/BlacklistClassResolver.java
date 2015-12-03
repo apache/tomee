@@ -19,8 +19,8 @@ package org.apache.openejb.core.rmi;
 import java.io.ObjectStreamClass;
 
 public class BlacklistClassResolver {
-    private static final String[] WHITELIST = toArray(System.getProperty("tomee.serialization.class.whitelist"));
-    private static final String[] BLACKLIST = toArray(System.getProperty("tomee.serialization.class.blacklist"));
+    //TODO - private static final String[] WHITELIST = toArray(System.getProperty("tomee.serialization.class.whitelist"));
+    //TODO - private static final String[] BLACKLIST = toArray(System.getProperty("tomee.serialization.class.blacklist"));
 
     public static final BlacklistClassResolver DEFAULT = new BlacklistClassResolver(
             new String[]{"org.codehaus.groovy.runtime.", "org.apache.commons.collections.functors.", "org.apache.xalan"},

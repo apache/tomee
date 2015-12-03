@@ -117,7 +117,7 @@ public class EjbObjectInputStream extends ObjectInputStream {
             return property == null ? null : property.split(" *, *");
         }
 
-        private static boolean contains(final String[] list, String name) {
+        private static boolean contains(final String[] list, final String name) {
             if (list != null) {
                 for (final String white : list) {
                     if (name.startsWith(white)) {
