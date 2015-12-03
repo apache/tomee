@@ -57,6 +57,7 @@ public class PojoSerialization implements Serializable {
         final Class<?> unsafeClass;
         try {
             unsafeClass = AccessController.doPrivileged(new PrivilegedAction<Class<?>>() {
+                @Override
                 public Class<?> run() {
                     try {
                         return Thread.currentThread().getContextClassLoader().loadClass("sun.misc.Unsafe");
@@ -74,6 +75,7 @@ public class PojoSerialization implements Serializable {
         }
 
         unsafe = AccessController.doPrivileged(new PrivilegedAction<Object>() {
+            @Override
             public Object run() {
                 try {
                     final Field field = unsafeClass.getDeclaredField("theUnsafe");
@@ -85,6 +87,7 @@ public class PojoSerialization implements Serializable {
             }
         });
         allocateInstance = AccessController.doPrivileged(new PrivilegedAction<Method>() {
+            @Override
             public Method run() {
                 try {
                     final Method mtd = unsafeClass.getDeclaredMethod("allocateInstance", Class.class);
@@ -96,6 +99,7 @@ public class PojoSerialization implements Serializable {
             }
         });
         objectFieldOffset = AccessController.doPrivileged(new PrivilegedAction<Method>() {
+            @Override
             public Method run() {
                 try {
                     final Method mtd = unsafeClass.getDeclaredMethod("objectFieldOffset", Field.class);
@@ -107,6 +111,7 @@ public class PojoSerialization implements Serializable {
             }
         });
         putInt = AccessController.doPrivileged(new PrivilegedAction<Method>() {
+            @Override
             public Method run() {
                 try {
                     final Method mtd = unsafeClass.getDeclaredMethod("putInt", Object.class, long.class, int.class);
@@ -118,6 +123,7 @@ public class PojoSerialization implements Serializable {
             }
         });
         putLong = AccessController.doPrivileged(new PrivilegedAction<Method>() {
+            @Override
             public Method run() {
                 try {
                     final Method mtd = unsafeClass.getDeclaredMethod("putLong", Object.class, long.class, long.class);
@@ -129,6 +135,7 @@ public class PojoSerialization implements Serializable {
             }
         });
         putShort = AccessController.doPrivileged(new PrivilegedAction<Method>() {
+            @Override
             public Method run() {
                 try {
                     final Method mtd = unsafeClass.getDeclaredMethod("putShort", Object.class, long.class, short.class);
@@ -140,6 +147,7 @@ public class PojoSerialization implements Serializable {
             }
         });
         putChar = AccessController.doPrivileged(new PrivilegedAction<Method>() {
+            @Override
             public Method run() {
                 try {
                     final Method mtd = unsafeClass.getDeclaredMethod("putChar", Object.class, long.class, char.class);
@@ -151,6 +159,7 @@ public class PojoSerialization implements Serializable {
             }
         });
         putByte = AccessController.doPrivileged(new PrivilegedAction<Method>() {
+            @Override
             public Method run() {
                 try {
                     final Method mtd = unsafeClass.getDeclaredMethod("putByte", Object.class, long.class, byte.class);
@@ -162,6 +171,7 @@ public class PojoSerialization implements Serializable {
             }
         });
         putFloat = AccessController.doPrivileged(new PrivilegedAction<Method>() {
+            @Override
             public Method run() {
                 try {
                     final Method mtd = unsafeClass.getDeclaredMethod("putFloat", Object.class, long.class, float.class);
@@ -173,6 +183,7 @@ public class PojoSerialization implements Serializable {
             }
         });
         putDouble = AccessController.doPrivileged(new PrivilegedAction<Method>() {
+            @Override
             public Method run() {
                 try {
                     final Method mtd = unsafeClass.getDeclaredMethod("putDouble", Object.class, long.class, double.class);
@@ -184,6 +195,7 @@ public class PojoSerialization implements Serializable {
             }
         });
         putBoolean = AccessController.doPrivileged(new PrivilegedAction<Method>() {
+            @Override
             public Method run() {
                 try {
                     final Method mtd = unsafeClass.getDeclaredMethod("putBoolean", Object.class, long.class, boolean.class);
@@ -195,6 +207,7 @@ public class PojoSerialization implements Serializable {
             }
         });
         putObject = AccessController.doPrivileged(new PrivilegedAction<Method>() {
+            @Override
             public Method run() {
                 try {
                     final Method mtd = unsafeClass.getDeclaredMethod("putObject", Object.class, long.class, Object.class);
@@ -250,7 +263,7 @@ public class PojoSerialization implements Serializable {
                 case FIELD: {
                     final String fieldName = in.readUTF();
                     final Object value = in.readObject();
-                    Field field = null;
+                    final Field field;
                     try {
                         field = clazz.getDeclaredField(fieldName);
                     } catch (final NoSuchFieldException e) {
@@ -314,21 +327,21 @@ public class PojoSerialization implements Serializable {
         try {
             if (type.isPrimitive()) {
                 if (type.equals(Integer.TYPE)) {
-                    putInt.invoke(unsafe, object, offset, ((Integer) value).intValue());
+                    putInt.invoke(unsafe, object, offset, value);
                 } else if (type.equals(Long.TYPE)) {
-                    putLong.invoke(unsafe, object, offset, ((Long) value).longValue());
+                    putLong.invoke(unsafe, object, offset, value);
                 } else if (type.equals(Short.TYPE)) {
-                    putShort.invoke(unsafe, object, offset, ((Short) value).shortValue());
+                    putShort.invoke(unsafe, object, offset, value);
                 } else if (type.equals(Character.TYPE)) {
-                    putChar.invoke(unsafe, object, offset, ((Character) value).charValue());
+                    putChar.invoke(unsafe, object, offset, value);
                 } else if (type.equals(Byte.TYPE)) {
-                    putByte.invoke(unsafe, object, offset, ((Byte) value).byteValue());
+                    putByte.invoke(unsafe, object, offset, value);
                 } else if (type.equals(Float.TYPE)) {
-                    putFloat.invoke(unsafe, object, offset, ((Float) value).floatValue());
+                    putFloat.invoke(unsafe, object, offset, value);
                 } else if (type.equals(Double.TYPE)) {
-                    putDouble.invoke(unsafe, object, offset, ((Double) value).doubleValue());
+                    putDouble.invoke(unsafe, object, offset, value);
                 } else if (type.equals(Boolean.TYPE)) {
-                    putBoolean.invoke(unsafe, object, offset, ((Boolean) value).booleanValue());
+                    putBoolean.invoke(unsafe, object, offset, value);
                 } else {
                     throw new IllegalStateException("Unknown primitive type: " + type.getName());
                 }

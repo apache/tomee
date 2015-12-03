@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.tck.cdi.tomee.embedded;
 
+import org.apache.openejb.core.ObjectInputStreamFiltered;
 import org.apache.openejb.core.ivm.IntraVmCopyMonitor;
 import org.apache.openejb.core.ivm.IntraVmProxy;
 
@@ -30,17 +31,18 @@ import java.io.ObjectOutputStream;
 */
 public class BeansImpl implements org.jboss.jsr299.tck.spi.Beans {
 
-    public boolean isProxy(Object instance) {
+    @Override
+    public boolean isProxy(final Object instance) {
         System.out.println("isProxy: " + instance);
         return instance instanceof IntraVmProxy || instance.getClass().getName().contains("$Owb");
     }
 
     @Override
-    public byte[] serialize(Object instance) throws IOException {
+    public byte[] serialize(final Object instance) throws IOException {
         IntraVmCopyMonitor.prePassivationOperation();
         try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ObjectOutputStream os = new ObjectOutputStream(baos);
+            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            final ObjectOutputStream os = new ObjectOutputStream(baos);
             os.writeObject(instance);
             os.flush();
             return baos.toByteArray();
@@ -50,9 +52,9 @@ public class BeansImpl implements org.jboss.jsr299.tck.spi.Beans {
     }
 
     @Override
-    public Object deserialize(byte[] bytes) throws IOException, ClassNotFoundException {
-        ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-        ObjectInputStream is = new ObjectInputStream(bais);
+    public Object deserialize(final byte[] bytes) throws IOException, ClassNotFoundException {
+        final ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+        final ObjectInputStream is = new ObjectInputStreamFiltered(bais);
         return is.readObject();
     }
 }

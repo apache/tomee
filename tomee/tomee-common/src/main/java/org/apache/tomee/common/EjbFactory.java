@@ -34,6 +34,7 @@ import java.io.ObjectOutputStream;
 import java.util.Hashtable;
 
 public class EjbFactory extends AbstractObjectFactory {
+    @Override
     public Object getObjectInstance(final Object object, final Name name, final Context context, final Hashtable environment) throws Exception {
         // ignore non ejb-refs
         if (!(object instanceof EjbRef)) {
@@ -52,6 +53,7 @@ public class EjbFactory extends AbstractObjectFactory {
         return value;
     }
 
+    @Override
     protected String buildJndiName(final Reference reference) throws NamingException {
         final String jndiName;// get and verify deploymentId
         final String deploymentId = NamingUtil.getProperty(reference, NamingUtil.DEPLOYMENT_ID);
@@ -91,8 +93,7 @@ public class EjbFactory extends AbstractObjectFactory {
 
             final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
             final ObjectInputStream in = new EjbObjectInputStream(bais);
-            final Object copy = in.readObject();
-            return copy;
+            return in.readObject();
         } finally {
             IntraVmCopyMonitor.postCrossClassLoaderOperation();
         }

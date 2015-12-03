@@ -14,27 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.apache.openejb.core.timer.quartz;
+package org.apache.openejb.core;
 
 import org.apache.openejb.core.rmi.BlacklistClassResolver;
-import org.apache.openejb.quartz.spi.ClassLoadHelper;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectStreamClass;
 
-public class QuartzObjectInputStream extends ObjectInputStream {
-    private final ClassLoadHelper loader;
+/**
+ * Ensures blacklisted classes cannot be loaded
+ */
+public class ObjectInputStreamFiltered extends ObjectInputStream {
 
-    public QuartzObjectInputStream(final InputStream binaryInput, final ClassLoadHelper classLoadHelper) throws IOException {
-        super(binaryInput);
-        this.loader = classLoadHelper;
+    public ObjectInputStreamFiltered(final InputStream in) throws IOException {
+        super(in);
     }
 
     @Override
-    protected Class<?> resolveClass(final ObjectStreamClass desc) throws ClassNotFoundException, IOException {
-        return loader.loadClass(BlacklistClassResolver.DEFAULT.check(desc.getName()));
+    protected Class resolveClass(final ObjectStreamClass classDesc) throws IOException, ClassNotFoundException {
+        return super.resolveClass(BlacklistClassResolver.DEFAULT.check(classDesc));
     }
 }

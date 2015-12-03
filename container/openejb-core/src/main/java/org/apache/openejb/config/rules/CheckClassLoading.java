@@ -190,8 +190,8 @@ public class CheckClassLoading extends ValidationBase {
 
     public static class DiffItem {
         private Collection<String> files = new ArrayList<String>();
-        private String file1;
-        private String file2;
+        private final String file1;
+        private final String file2;
 
         public DiffItem(final Collection<String> files, final String file1, final String file2) {
             this.files = files;

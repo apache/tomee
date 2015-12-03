@@ -154,23 +154,32 @@ public abstract class TimerData implements Serializable {
             throw new IOException(e);
         }
 
-        final String mtd = in.readUTF();
-        final BeanContext beanContext = SystemInstance.get().getComponent(ContainerSystem.class).getBeanContext(deploymentId);
         scheduler = timerService.getScheduler();
-        for (final Iterator<Map.Entry<Method, MethodContext>> it = beanContext.iteratorMethodContext(); it.hasNext(); ) {
-            final MethodContext methodContext = it.next().getValue();
+
+        final String mtd = in.readUTF();
+        final ContainerSystem component = SystemInstance.get().getComponent(ContainerSystem.class);
+
+        if (component != null) {
+            final BeanContext beanContext = component.getBeanContext(deploymentId);
+
+            for (final Iterator<Map.Entry<Method, MethodContext>> it = beanContext.iteratorMethodContext(); it.hasNext(); ) {
+                final MethodContext methodContext = it.next().getValue();
             /* this doesn't work in all cases
             if (methodContext.getSchedules().isEmpty()) {
                 continue;
             }
             */
 
-            final Method method = methodContext.getBeanMethod();
-            if (method != null && method.getName().equals(mtd)) { // maybe we should check parameters too
-                setTimeoutMethod(method);
-                break;
+                final Method method = methodContext.getBeanMethod();
+                if (method != null && method.getName().equals(mtd)) { // maybe we should check parameters too
+                    setTimeoutMethod(method);
+                    break;
+                }
             }
+        } else {
+            log.warning("ContainerSystem component is not available");
         }
+
     }
 
     public void stop() {
@@ -213,6 +222,7 @@ public abstract class TimerData implements Serializable {
         return timer;
     }
 
+    @SuppressWarnings("unused")
     public boolean isNewTimer() {
         return newTimer;
     }
