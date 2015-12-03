@@ -585,11 +585,11 @@ public class HttpResponseImpl implements HttpResponse {
      */
     protected static HttpResponseImpl createError(String message, final Throwable t) {
         final HttpResponseImpl res = new HttpResponseImpl(500, "Internal Server Error", "text/html");
-        PrintWriter body = null;
+        final PrintWriter body;
         try {
             body = res.getWriter();
         } catch (final IOException e) { // impossible normally
-            // no-op
+            return res;
         }
 
         body.println("<html>");
@@ -644,11 +644,11 @@ public class HttpResponseImpl implements HttpResponse {
      */
     protected static HttpResponseImpl createForbidden(final String ip) {
         final HttpResponseImpl res = new HttpResponseImpl(403, "Forbidden", "text/html");
-        PrintWriter body = null;
+        final PrintWriter body;
         try {
             body = res.getWriter();
         } catch (final IOException e) { // normally impossible
-            // no-op
+            return res;
         }
 
         body.println("<html>");
