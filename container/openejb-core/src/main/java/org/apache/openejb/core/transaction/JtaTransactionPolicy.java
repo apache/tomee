@@ -125,7 +125,7 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
 
             if (null != sr) {
                 return sr.getResource(key);
-            }else{
+            } else {
                 logger.warning("TransactionSynchronizationRegistry has not been initialized");
             }
         }
@@ -155,11 +155,17 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
 
     @Override
     public Object removeResource(final Object key) {
+
         if (isTransactionActive()) {
+
             final TransactionSynchronizationRegistry sr = this.getSynchronizationRegistry();
-            final Object value = sr.getResource(key);
-            sr.putResource(key, null);
-            return value;
+            if (null != sr) {
+                final Object value = sr.getResource(key);
+                sr.putResource(key, null);
+                return value;
+            } else {
+                logger.warning("TransactionSynchronizationRegistry has not been initialized");
+            }
         }
 
         if (resources == null) {
@@ -170,27 +176,35 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
 
     @Override
     public void registerSynchronization(final TransactionSynchronization synchronization) {
-        if (isTransactionActive()) {
-            this.getSynchronizationRegistry().registerInterposedSynchronization(new Synchronization() {
-                @Override
-                public void beforeCompletion() {
-                    synchronization.beforeCompletion();
-                }
 
-                @Override
-                public void afterCompletion(final int s) {
-                    final TransactionSynchronization.Status status;
-                    if (s == Status.STATUS_COMMITTED) {
-                        status = TransactionSynchronization.Status.COMMITTED;
-                    } else if (s == Status.STATUS_ROLLEDBACK) {
-                        status = TransactionSynchronization.Status.ROLLEDBACK;
-                    } else {
-                        status = TransactionSynchronization.Status.UNKNOWN;
+        if (isTransactionActive()) {
+
+            final TransactionSynchronizationRegistry sr = this.getSynchronizationRegistry();
+            if (null != sr) {
+                sr.registerInterposedSynchronization(new Synchronization() {
+                    @Override
+                    public void beforeCompletion() {
+                        synchronization.beforeCompletion();
                     }
 
-                    synchronization.afterCompletion(status);
-                }
-            });
+                    @Override
+                    public void afterCompletion(final int s) {
+                        final TransactionSynchronization.Status status;
+                        if (s == Status.STATUS_COMMITTED) {
+                            status = TransactionSynchronization.Status.COMMITTED;
+                        } else if (s == Status.STATUS_ROLLEDBACK) {
+                            status = TransactionSynchronization.Status.ROLLEDBACK;
+                        } else {
+                            status = TransactionSynchronization.Status.UNKNOWN;
+                        }
+
+                        synchronization.afterCompletion(status);
+                    }
+                });
+            } else {
+                logger.warning("TransactionSynchronizationRegistry has not been initialized");
+            }
+
         } else {
             synchronizations.add(synchronization);
         }
