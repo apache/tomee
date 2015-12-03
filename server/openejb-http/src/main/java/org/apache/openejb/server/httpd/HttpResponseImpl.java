@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -572,6 +572,7 @@ public class HttpResponseImpl implements HttpResponse {
      * @param message the error message to be sent
      * @return the HttpResponseImpl that this error belongs to
      */
+    @SuppressWarnings("unused")
     protected static HttpResponseImpl createError(final String message) {
         return createError(message, null);
     }
@@ -611,14 +612,17 @@ public class HttpResponseImpl implements HttpResponse {
         }
 
         if (t != null) {
+
+            PrintWriter writer = null;
+
             try {
                 body.println("<br><br>");
                 body.println("Stack Trace:<br>");
                 final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                final PrintWriter writer = new PrintWriter(baos);
+                writer = new PrintWriter(baos);
                 t.printStackTrace(writer);
                 writer.flush();
-                writer.close();
+
                 message = new String(baos.toByteArray());
                 final StringTokenizer msg = new StringTokenizer(message, "\n\r");
 
@@ -627,6 +631,11 @@ public class HttpResponseImpl implements HttpResponse {
                     body.println("<br>");
                 }
             } catch (final Exception e) {
+                //no-op
+            } finally {
+                if (writer != null) {
+                    writer.close();
+                }
             }
         }
 
@@ -642,6 +651,7 @@ public class HttpResponseImpl implements HttpResponse {
      * @param ip the ip that is forbidden
      * @return the HttpResponseImpl that this error belongs to
      */
+    @SuppressWarnings("unused")
     protected static HttpResponseImpl createForbidden(final String ip) {
         final HttpResponseImpl res = new HttpResponseImpl(403, "Forbidden", "text/html");
         final PrintWriter body;
