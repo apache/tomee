@@ -113,9 +113,9 @@ public class EjbObjectInputStream extends ObjectInputStream {
             return name;
         }
 
-        private static String[] toArray(final String property) {
-            return property == null ? null : property.split(" *, *");
-        }
+//        private static String[] toArray(final String property) {
+//            return property == null ? null : property.split(" *, *");
+//        }
 
         private static boolean contains(final String[] list, final String name) {
             if (list != null) {
