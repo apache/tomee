@@ -26,7 +26,7 @@
   <parent>
     <groupId>org.apache</groupId>
     <artifactId>apache</artifactId>
-    <version>15</version>
+    <version>17</version>
   </parent>
 
   <groupId>org.apache.openejb</groupId>
@@ -43,7 +43,7 @@
   <inceptionYear>1999</inceptionYear>
 
   <prerequisites>
-    <maven>3.0.5</maven>
+    <maven>3.2.5</maven>
   </prerequisites>
 
   <issueManagement>
@@ -313,7 +313,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-doap-plugin</artifactId>
-          <version>1.1</version>
+          <version>1.2</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -326,6 +326,11 @@
               <version>1.2</version>
             </dependency>
           </dependencies>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <version>2.8.2</version>
         </plugin>
       </plugins>
     </pluginManagement>
