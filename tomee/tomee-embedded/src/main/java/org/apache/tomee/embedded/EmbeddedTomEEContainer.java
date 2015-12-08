@@ -36,6 +36,7 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -95,7 +96,8 @@ public final class EmbeddedTomEEContainer extends EJBContainer {
 
     public static class EmbeddedTomEEContainerProvider implements EJBContainerProvider {
         @Override
-        public EJBContainer createEJBContainer(final Map<?, ?> properties) {
+        public EJBContainer createEJBContainer(final Map<?, ?> props) {
+            final Map<?, ?> properties = props == null ? new HashMap<>() : props;
             final Object provider = properties.get(EJBContainer.PROVIDER);
             int ejbContainerProviders = 1;
             try {
@@ -137,6 +139,15 @@ public final class EmbeddedTomEEContainer extends EJBContainer {
                 configuration.setHttpPort(port);
             }
             System.setProperty(TOMEE_EJBCONTAINER_HTTP_PORT, Integer.toString(configuration.getHttpPort()));
+
+            for (final Map.Entry<?, ?> entry : properties.entrySet()) {
+                final Object key = entry.getKey();
+                final Object value = entry.getValue();
+                if (String.class.isInstance(key) && String.class.isInstance(value)) {
+                    configuration.property(String.valueOf(key), String.valueOf(value));
+                }
+            }
+
             etc.container.setup(configuration);
             try {
                 etc.container.start();
