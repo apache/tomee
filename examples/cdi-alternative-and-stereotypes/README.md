@@ -88,7 +88,7 @@ all qualifiers in your tests.
 # Output
 
     Running org.superbiz.cdi.stereotype.StereotypeTest
-    Apache OpenEJB 4.0.0-beta-2-SNAPSHOT    build: 20111030-07:54
+    Apache OpenEJB 4.7.4-SNAPSHOT    build: 20111030-07:54
     http://tomee.apache.org/
     INFO - openejb.home = /opt/dev/openejb/openejb-trunk/examples/cdi-alternative-and-stereotypes
     INFO - openejb.base = /opt/dev/openejb/openejb-trunk/examples/cdi-alternative-and-stereotypes
