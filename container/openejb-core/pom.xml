@@ -326,6 +326,7 @@
             -Dopenejb.classloader.forced-load=org.apache.openejb
             -enableassertions
             -Dopenejb.descriptors.output.folder=./dump/
+            -Dorg.apache.activemq.SERIALIZABLE_PACKAGES=org,java
           </argLine>
           <workingDirectory>${project.basedir}/target</workingDirectory>
           <systemPropertyVariables>
