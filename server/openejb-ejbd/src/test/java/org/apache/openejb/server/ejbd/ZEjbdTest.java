@@ -20,7 +20,6 @@ import org.apache.openejb.client.RemoteInitialContextFactory;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceDaemon;
 import org.apache.openejb.server.ServiceManager;
@@ -28,6 +27,7 @@ import org.apache.openejb.server.SimpleServiceManager;
 import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.Module;
+import org.apache.openejb.testing.RandomPort;
 import org.apache.openejb.util.reflection.Reflections;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,6 +43,8 @@ import static org.junit.Assert.assertTrue;
 @EnableServices("ejbd")
 @RunWith(ApplicationComposer.class)
 public class ZEjbdTest {
+    @RandomPort("ejbd")
+    private int ejbd;
 
     @Configuration
     public Properties configuration() {
@@ -82,10 +84,9 @@ public class ZEjbdTest {
     }
 
     private void remoteCall(final String scheme) throws NamingException {
-        final int port = SystemInstance.get().getOptions().get("ejbd.port", 4201);
         final Context ctx = new InitialContext(new Properties() {{
             setProperty(Context.INITIAL_CONTEXT_FACTORY, RemoteInitialContextFactory.class.getName());
-            setProperty(Context.PROVIDER_URL, scheme + "://localhost:" + port + "?connectTimeout=1000&readTimeout=1000");
+            setProperty(Context.PROVIDER_URL, scheme + "://localhost:" + ejbd + "?connectTimeout=1000&readTimeout=1000");
         }});
         assertEquals("hello", ((AppClientTest.OrangeBusinessRemote) ctx.lookup("OrangeRemote")).echo("olleh"));
     }
