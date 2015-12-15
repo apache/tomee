@@ -26,9 +26,7 @@ import java.lang.reflect.Proxy;
  * @version $Rev$ $Date$
  */
 public class EjbObjectInputStream extends ObjectInputStream {
-    public static final BlacklistClassResolver DEFAULT = new BlacklistClassResolver(
-        new String[]{"org.codehaus.groovy.runtime.", "org.apache.commons.collections.functors.", "org.apache.xalan"},
-        null);
+    public static final BlacklistClassResolver DEFAULT = new BlacklistClassResolver();
 
     public EjbObjectInputStream(final InputStream in) throws IOException {
         super(in);
@@ -91,11 +89,16 @@ public class EjbObjectInputStream extends ObjectInputStream {
     }
 
     public static class BlacklistClassResolver {
-        //TODO- private static final String[] WHITELIST = toArray(System.getProperty("tomee.serialization.class.whitelist"));
-        //TODO- private static final String[] BLACKLIST = toArray(System.getProperty("tomee.serialization.class.blacklist"));
+        private static final String[] WHITELIST = toArray(System.getProperty("tomee.serialization.class.whitelist"));
+        private static final String[] BLACKLIST = toArray(System.getProperty(
+            "tomee.serialization.class.blacklist", "org.codehaus.groovy.runtime.,org.apache.commons.collections.functors.,org.apache.xalan,java.lang.Process"));
 
         private final String[] blacklist;
         private final String[] whitelist;
+
+        protected BlacklistClassResolver() {
+            this(BLACKLIST, WHITELIST);
+        }
 
         protected BlacklistClassResolver(final String[] blacklist, final String[] whitelist) {
             this.whitelist = whitelist;
@@ -113,11 +116,11 @@ public class EjbObjectInputStream extends ObjectInputStream {
             return name;
         }
 
-//        private static String[] toArray(final String property) {
-//            return property == null ? null : property.split(" *, *");
-//        }
+        private static String[] toArray(final String property) {
+            return property == null ? null : property.split(" *, *");
+        }
 
-        private static boolean contains(final String[] list, final String name) {
+        private static boolean contains(final String[] list, String name) {
             if (list != null) {
                 for (final String white : list) {
                     if (name.startsWith(white)) {
