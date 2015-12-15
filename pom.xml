@@ -94,7 +94,7 @@
     <tomee.version>${project.version}</tomee.version>
     
     <!-- to change easily the javaee api version -->
-    <javaee-api.version>7.0-SNAPSHOT</javaee-api.version>
+    <javaee-api.version>7.0</javaee-api.version>
 
     <openjpa.version>2.4.0</openjpa.version>
     <org.apache.openwebbeans.version>1.6.2</org.apache.openwebbeans.version>
