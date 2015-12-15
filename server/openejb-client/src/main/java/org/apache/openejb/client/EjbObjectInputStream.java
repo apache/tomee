@@ -106,7 +106,7 @@ public class EjbObjectInputStream extends ObjectInputStream {
         }
 
         protected boolean isBlacklisted(final String name) {
-            return !contains(whitelist, name) && contains(blacklist, name);
+            return (whitelist != null && !contains(whitelist, name)) || contains(blacklist, name);
         }
 
         public final String check(final String name) {
