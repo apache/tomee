@@ -22,7 +22,7 @@ public class BlacklistClassResolver {
     public static final BlacklistClassResolver DEFAULT = new BlacklistClassResolver(
         toArray(System.getProperty(
             "tomee.serialization.class.blacklist",
-            "org.codehaus.groovy.runtime.,org.apache.commons.collections.functors.,org.apache.xalan")),
+            "org.codehaus.groovy.runtime.,org.apache.commons.collections.functors.,org.apache.xalan,java.lang.Process")),
         toArray(System.getProperty("tomee.serialization.class.whitelist")));
 
     private final String[] blacklist;

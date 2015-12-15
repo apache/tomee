@@ -26,9 +26,7 @@ import java.lang.reflect.Proxy;
  * @version $Rev$ $Date$
  */
 public class EjbObjectInputStream extends ObjectInputStream {
-    public static final BlacklistClassResolver DEFAULT = new BlacklistClassResolver(
-        new String[]{"org.codehaus.groovy.runtime.", "org.apache.commons.collections.functors.", "org.apache.xalan"},
-        null);
+    private static final BlacklistClassResolver DEFAULT = new BlacklistClassResolver();
 
     public EjbObjectInputStream(final InputStream in) throws IOException {
         super(in);
@@ -92,10 +90,15 @@ public class EjbObjectInputStream extends ObjectInputStream {
 
     public static class BlacklistClassResolver {
         private static final String[] WHITELIST = toArray(System.getProperty("tomee.serialization.class.whitelist"));
-        private static final String[] BLACKLIST = toArray(System.getProperty("tomee.serialization.class.blacklist"));
+        private static final String[] BLACKLIST = toArray(System.getProperty(
+            "tomee.serialization.class.blacklist", "org.codehaus.groovy.runtime.,org.apache.commons.collections.functors.,org.apache.xalan,java.lang.Process"));
 
         private final String[] blacklist;
         private final String[] whitelist;
+
+        protected BlacklistClassResolver() {
+            this(BLACKLIST, WHITELIST);
+        }
 
         protected BlacklistClassResolver(final String[] blacklist, final String[] whitelist) {
             this.whitelist = whitelist;
