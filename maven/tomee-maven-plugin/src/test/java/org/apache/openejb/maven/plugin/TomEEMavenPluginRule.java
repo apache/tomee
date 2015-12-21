@@ -236,6 +236,7 @@ public class TomEEMavenPluginRule implements MethodRule {
         tomEEMojo.checkStarted = true;
 
         tomEEMojo.overrideOnUnzip = true;
+        tomEEMojo.skipRootFolderOnUnzip = true;
 
         // we mock all the artifact resolution in test
         tomEEMojo.remoteRepos = new LinkedList<ArtifactRepository>();

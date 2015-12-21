@@ -360,6 +360,11 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
      */
     @Parameter(property = "tomee-plugin.override-on-unzip", defaultValue = "true")
     protected boolean overrideOnUnzip;
+    /**
+     * if a file is already there when unpacking tomee zip should it be overriden?
+     */
+    @Parameter(property = "tomee-plugin.skip-root-folder-on-unzip", defaultValue = "true")
+    protected boolean skipRootFolderOnUnzip;
 
     /**
      * the actual path used in server.xml for the https keystore if relevant.
@@ -1411,14 +1416,16 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             while (entries.hasMoreElements()) {
                 final ZipEntry entry = entries.nextElement();
                 String name = entry.getName();
-                int idx = name.indexOf("/");
-                if (idx < 0) {
-                    idx = name.indexOf(File.separator);
+                if (skipRootFolderOnUnzip) {
+                    int idx = name.indexOf("/");
+                    if (idx < 0) {
+                        idx = name.indexOf(File.separator);
+                    }
+                    if (idx < 0) {
+                        continue;
+                    }
+                    name = name.substring(idx + 1);
                 }
-                if (idx < 0) {
-                    continue;
-                }
-                name = name.substring(idx + 1);
                 final File dest = new File(catalinaBase.getAbsolutePath(), name);
                 if (!dest.exists()) {
                     final File parent = dest.getParentFile();
