@@ -78,7 +78,6 @@ public class KeepAliveServer implements ServerService {
     }
 
     private void closeInactiveSessions() {
-
         if (!this.running.get()) {
             return;
         }
@@ -97,6 +96,8 @@ public class KeepAliveServer implements ServerService {
 
         final List<Session> current = new ArrayList<Session>();
         current.addAll(this.sessions.values());
+        
+    	logger.debug("Checking for timed out sessions to close. Active sessions:" + current.size());
 
         for (final Session session : current) {
 
@@ -109,6 +110,7 @@ public class KeepAliveServer implements ServerService {
                         backlog--;
 
                         try {
+                    		logger.debug("Closing session, last request was " + (now - session.lastRequest.get()) + "ms ago");
                             session.close();
                         } catch (final Throwable e) {
                             //Ignore
