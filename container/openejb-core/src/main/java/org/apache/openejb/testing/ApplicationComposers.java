@@ -561,13 +561,13 @@ public class ApplicationComposers {
                     final Persistence persistence = (Persistence) obj;
                     appModule.addPersistenceModule(
                             new PersistenceModule(appModule, implicitRootUrl(method.getAnnotation(PersistenceRootUrl.class)), persistence));
-
+                    notBusinessModuleNumber++;
                 } else if (obj instanceof PersistenceUnit) {
 
                     final PersistenceUnit unit = (PersistenceUnit) obj;
                     appModule.addPersistenceModule(
                             new PersistenceModule(appModule, implicitRootUrl(method.getAnnotation(PersistenceRootUrl.class)), new Persistence(unit)));
-
+                    notBusinessModuleNumber++;
                 } else if (obj instanceof Beans) {
 
                     final Beans beans = (Beans) obj;
