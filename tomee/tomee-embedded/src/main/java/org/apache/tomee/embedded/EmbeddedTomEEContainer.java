@@ -138,7 +138,6 @@ public final class EmbeddedTomEEContainer extends EJBContainer {
                 }
                 configuration.setHttpPort(port);
             }
-            System.setProperty(TOMEE_EJBCONTAINER_HTTP_PORT, Integer.toString(configuration.getHttpPort()));
 
             for (final Map.Entry<?, ?> entry : properties.entrySet()) {
                 final Object key = entry.getKey();
@@ -151,6 +150,9 @@ public final class EmbeddedTomEEContainer extends EJBContainer {
             etc.container.setup(configuration);
             try {
                 etc.container.start();
+
+                // later to ensure random port are not overwritten
+                System.setProperty(TOMEE_EJBCONTAINER_HTTP_PORT, Integer.toString(configuration.getHttpPort()));
 
                 if (modules instanceof File) {
                     etc.deployedIds.add(etc.container.deploy(appId, ((File) modules), appId != null).getId());
