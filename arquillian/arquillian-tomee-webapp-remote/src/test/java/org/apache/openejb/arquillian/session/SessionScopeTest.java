@@ -22,6 +22,7 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -29,20 +30,21 @@ import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
+import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 
 @RunWith(Arquillian.class)
 public class SessionScopeTest {
-    public static final String TEST_SESSION_URL = "http://127.0.0.1:" + System.getProperty("tomee.httpPort", "10080") + "/test/session";
+    @ArquillianResource
+    private URL webappUrl;
 
-    @Deployment
+    @Deployment(testable = false)
     public static WebArchive createDeployment() {
         return ShrinkWrap.create(WebArchive.class, "test.war").addClass(PojoSessionScoped.class).addClass(PojoSessionScopedServletWrapper.class).addAsLibraries(new File("target/test-libs/commons-httpclient.jar")).addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
                     .setWebXML(new StringAsset(
@@ -54,16 +56,17 @@ public class SessionScopeTest {
 
     @Test
     public void testShouldBeAbleToAccessServletAndEjb() throws Exception {
+        final String sessionUrl = webappUrl.toExternalForm() + "session";
         String[] sessionResult = new String[2];
         for (int i = 0; i < sessionResult.length; i++) {
             HttpClient client = new HttpClient();
-            HttpMethod get = new GetMethod(TEST_SESSION_URL);
+            HttpMethod get = new GetMethod(sessionUrl);
             String[] contents = new String[2];
             try {
                 for (int j = 0; j < contents.length; j++) {
                     int out = client.executeMethod(get);
                     if (out != 200) {
-                        throw new RuntimeException("get " + TEST_SESSION_URL + " returned " + out);
+                        throw new RuntimeException("get " + sessionUrl + " returned " + out);
                     }
                     contents[j] = get.getResponseBodyAsString();
                 }
