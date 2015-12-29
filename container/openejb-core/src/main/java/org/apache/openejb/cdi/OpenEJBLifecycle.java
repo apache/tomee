@@ -73,9 +73,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
 
 /**
  * @version $Rev:$ $Date:$
@@ -111,7 +108,6 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
     /**
      * Manages unused conversations
      */
-    private ScheduledExecutorService service;
 
     public OpenEJBLifecycle(final WebBeansContext webBeansContext) {
         this.webBeansContext = webBeansContext;
@@ -121,8 +117,6 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         this.jndiService = webBeansContext.getService(JNDIService.class);
         this.scannerService = webBeansContext.getScannerService();
         this.contextsService = webBeansContext.getContextsService();
-
-        initApplication(null);
     }
 
     @Override
@@ -282,11 +276,6 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         logger.debug("OpenWebBeans Container is stopping.");
 
         try {
-            //Sub-classes operations
-            if (service != null) {
-                service.shutdownNow();
-            }
-
             // Fire shut down
             if (WebappBeanManager.class.isInstance(beanManager)) {
                 WebappBeanManager.class.cast(beanManager).beforeStop();
@@ -381,23 +370,10 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
     }
 
     public void startServletContext(final ServletContext servletContext) {
-        if (service != null) {
-            return;
-        }
-        service = initializeServletContext(servletContext, webBeansContext);
+        initializeServletContext(servletContext, webBeansContext);
     }
 
-    public static ScheduledExecutorService initializeServletContext(final ServletContext servletContext, final WebBeansContext context) {
-
-        final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1, new ThreadFactory() {
-            @Override
-            public Thread newThread(final Runnable runable) {
-                final Thread t = new Thread(runable, "OwbConversationCleaner-" + servletContext.getContextPath());
-                t.setDaemon(true);
-                return t;
-            }
-        });
-
+    public static void initializeServletContext(final ServletContext servletContext, final WebBeansContext context) {
         final ELAdaptor elAdaptor = context.getService(ELAdaptor.class);
         final ELResolver resolver = elAdaptor.getOwbELResolver();
         //Application is configured as JSP
@@ -409,8 +385,6 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
 
         // Add BeanManager to the 'javax.enterprise.inject.spi.BeanManager' servlet context attribute
         servletContext.setAttribute(BeanManager.class.getName(), context.getBeanManagerImpl());
-
-        return executorService;
     }
 
     /**

@@ -23,6 +23,10 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.Collection;
+
+import static java.util.Arrays.asList;
 
 // some helper reused accross several modules
 public final class Proxys {
@@ -36,9 +40,13 @@ public final class Proxys {
                 new Class<?>[] { HttpSession.class, Serializable.class }, new ThreadLocalSessionFromRequestHandler(threadLocal, defaultValue));
     }
 
-    public static <T> T handlerProxy(final Class<T> type, final InvocationHandler raw) {
+    public static <T> T handlerProxy(final InvocationHandler raw, final Class<T> main, final Class<?>... type) {
+        final Collection<Class<?>> types = new ArrayList<>(type.length + 2);
+        types.add(main);
+        types.addAll(asList(type));
+        types.add(Serializable.class);
         return (T) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
-                new Class<?>[] { type, Serializable.class }, new EnsureExceptionIsUnwrapped(raw));
+                types.toArray(new Class<?>[types.size()]), new EnsureExceptionIsUnwrapped(raw));
     }
 
     private Proxys() {

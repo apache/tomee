@@ -82,15 +82,21 @@ public class CdiAppContextsService extends WebContextsService implements Context
             } else if (ServletContextEvent.class.isInstance(initializeObject)) {
                 event = ServletContextEvent.class.cast(initializeObject).getServletContext();
             }
-            Object appEvent = event != null ? event : applicationContext;
-            webBeansContext.getBeanManagerImpl().fireEvent(
-                    appEvent,
-                    new EventMetadataImpl(null,
-                            ServletContext.class.isInstance(appEvent) ? ServletContext.class : Object.class, null,
-                            new Annotation[]{InitializedLiteral.INSTANCE_APPLICATION_SCOPED},
-                            webBeansContext),
-                    false);
+            if (!FiredManually.class.isInstance(event)) {
+                applicationStarted(event);
+            }
         }
+    }
+
+    public void applicationStarted(final Object event) {
+        Object appEvent = event != null ? event : applicationContext;
+        webBeansContext.getBeanManagerImpl().fireEvent(
+                appEvent,
+                new EventMetadataImpl(null,
+                        ServletContext.class.isInstance(appEvent) ? ServletContext.class : Object.class, null,
+                        new Annotation[]{InitializedLiteral.INSTANCE_APPLICATION_SCOPED},
+                        webBeansContext),
+                false);
     }
 
     public void destroy(final Object destroyObject) {
@@ -106,4 +112,6 @@ public class CdiAppContextsService extends WebContextsService implements Context
 
         super.destroyRequestContext(requestEvent);
     }
+
+    public interface FiredManually {}
 }

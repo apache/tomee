@@ -33,6 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class EmbeddedServletContext extends MockServletContext {
     private final Map<String, Object> attributes = new ConcurrentHashMap<>();
+    private final Map<String, String> initParameters = new ConcurrentHashMap<>();
 
     private Collection<ResourceProvider> resourceProviders = new ArrayList<>();
 
@@ -40,6 +41,22 @@ public class EmbeddedServletContext extends MockServletContext {
         for (final ResourceProvider rp : ServiceLoader.load(ResourceProvider.class, EmbeddedServletContext.class.getClassLoader())) {
             resourceProviders.add(rp);
         }
+    }
+
+    @Override
+    public String getInitParameter(final String name) {
+        return initParameters.get(name);
+    }
+
+    @Override
+    public Enumeration<String> getInitParameterNames() {
+        return Collections.enumeration(initParameters.keySet());
+    }
+
+    @Override
+    public boolean setInitParameter(final String name, final String value) {
+        initParameters.put(name, value);
+        return true;
     }
 
     @Override
@@ -87,6 +104,11 @@ public class EmbeddedServletContext extends MockServletContext {
     @Override
     public int getEffectiveMajorVersion() {
         return 3;
+    }
+
+    @Override
+    public int getMinorVersion() {
+        return 1;
     }
 
     @Override

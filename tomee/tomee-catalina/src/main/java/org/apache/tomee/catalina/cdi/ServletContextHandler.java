@@ -23,27 +23,42 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.tomee.catalina.OpenEJBSecurityListener;
 
+import javax.servlet.ServletContext;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class ServletContextHandler implements InvocationHandler {
+    private final ConcurrentMap<ClassLoader, ServletContext> contexts = new ConcurrentHashMap<>();
+
     @Override
     public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-        // ITE are handler by Proxys
+        // ITE are handled by Proxys
         final Request request = OpenEJBSecurityListener.requests.get();
         if (request != null) {
             return method.invoke(request.getServletContext(), args);
         }
 
+        final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        final ServletContext c = contexts.get(contextClassLoader);
+        if (c != null) {
+            return method.invoke(c, args);
+        }
+
         OpenEJBSecurityListener.requests.remove(); // can be a not container thread so clean it up
         for (final AppContext a : SystemInstance.get().getComponent(ContainerSystem.class).getAppContexts()) {
             for (final WebContext w : a.getWebContexts()) {
-                if (w.getClassLoader() == Thread.currentThread().getContextClassLoader()) { // not in CXF so == should be fine
+                if (w.getClassLoader() == contextClassLoader) { // not in CXF so == should be fine
                     return method.invoke(w.getServletContext(), args);
                 }
             }
         }
 
-        throw new IllegalStateException("Didnt find a web context for " + Thread.currentThread().getContextClassLoader());
+        throw new IllegalStateException("Didnt find a web context for " + contextClassLoader);
+    }
+
+    public ConcurrentMap<ClassLoader, ServletContext> getContexts() {
+        return contexts;
     }
 }
