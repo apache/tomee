@@ -16,43 +16,35 @@
  */
 package org.apache.openejb.resolver;
 
-import org.apache.openejb.loader.IO;
-import org.apache.openejb.resolver.maven.Handler;
-import org.apache.openejb.resolver.maven.Parser;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.loader.provisining.MavenResolver;
+import org.apache.openejb.loader.provisining.ProvisioningResolver;
+import org.apache.openejb.resolver.maven.ShrinkwrapBridge;
 
-import java.io.File;
-import java.net.URL;
+import java.io.FileInputStream;
+import java.io.InputStream;
 
-import static org.apache.openejb.loader.provisining.ProvisioningResolver.cacheFile;
+public class Resolver extends MavenResolver {
+    public InputStream resolve(final String rawLocation) {
+        final boolean initialized = SystemInstance.isInitialized();
+        if (!initialized) {
+            SystemInstance.get().setComponent(ProvisioningResolver.class, new ProvisioningResolver());
+        }
 
-public class Resolver {
-    public String resolve(final String rawLocation) throws Exception {
-        if (rawLocation.startsWith("mvn:") && rawLocation.length() > "mvn:".length()) {
-
-            final String info = rawLocation.substring("mvn".length());
-            final Parser parser = new Parser(info);
-            final File file = cacheFile(parser.getArtifactPath());
-            if (!file.exists() || !file.canRead()) {
+        try {
+            if (rawLocation.startsWith("mvn:") && rawLocation.length() > "mvn:".length()) {
                 try {
-                    final URL url = new URL(rawLocation.substring("mvn:".length()), "localhost", -1, info, new Handler());
-                    final File parentFile = file.getParentFile();
-                    if (!parentFile.exists()) {
-                        if (!parentFile.mkdirs()) {
-                            throw new Exception("Failed to create: " + parentFile);
-                        }
-                    }
-                    IO.copy(IO.read(url), file);
-                } catch (Exception e) {
-                    if (file.exists()) {
-                        if (!file.delete()) {
-                            file.deleteOnExit();
-                        }
-                    }
-                    throw e;
+                    return new FileInputStream(new ShrinkwrapBridge().resolve(rawLocation));
+                } catch (final Throwable th) {
+                    // try aether if not in a mvn build
+                    th.printStackTrace();
                 }
             }
-            return file.getPath();
+            return super.resolve(rawLocation);
+        } finally {
+            if (!initialized) {
+                SystemInstance.reset();
+            }
         }
-        return rawLocation;
     }
 }
