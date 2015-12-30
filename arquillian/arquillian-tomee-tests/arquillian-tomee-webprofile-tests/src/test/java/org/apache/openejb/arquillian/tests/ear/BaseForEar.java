@@ -32,7 +32,10 @@ public abstract class BaseForEar {
     public static EnterpriseArchive createDeployment() {
         return ShrinkWrap.create(EnterpriseArchive.class, "red.ear")
             .addAsModule(ShrinkWrap.create(WebArchive.class, "bean.war")
-                .addClass(Bean.class).addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml"));
+                .addClasses(
+                    BaseForEar.class, EarNoTestMethodTest.class, // test stack and marking the webapp as the module under test
+                    Bean.class) // the tested instance
+                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml"));
     }
 
     @Inject
