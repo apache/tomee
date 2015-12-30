@@ -16,11 +16,30 @@
  */
 package org.apache.openejb.arquillian.tests.ear;
 
-import org.jboss.arquillian.junit.Arquillian;
-import org.junit.runner.RunWith;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Test;
 
-// https://issues.apache.org/jira/browse/TOMEE-1689
-@RunWith(Arquillian.class)
-public class EarNoTestMethodTest extends BaseForEar {
-    // nothing there to ensure we still find it thanks to @RunWith
+import javax.inject.Inject;
+
+import static org.junit.Assert.assertEquals;
+
+public abstract class BaseForEar {
+    @Deployment
+    public static EnterpriseArchive createDeployment() {
+        return ShrinkWrap.create(EnterpriseArchive.class, "red.ear")
+            .addAsModule(ShrinkWrap.create(WebArchive.class, "bean.war")
+                .addClass(Bean.class).addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml"));
+    }
+
+    @Inject
+    private Bean bean;
+
+    @Test
+    public void run() {
+        assertEquals(Test.class.getName(), bean.getMessage());
+    }
 }
