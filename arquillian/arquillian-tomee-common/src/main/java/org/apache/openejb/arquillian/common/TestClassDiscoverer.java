@@ -53,13 +53,13 @@ public class TestClassDiscoverer implements AdditionalBeanDiscoverer {
         final Map<Class<?>, WebModule> webTestClasses = new HashMap<>();
         final Set<ClassLoader> saw = new HashSet<>();
         if (module.getClassLoader() != null) {
-            addTests(findMarkers(module.getClassLoader()), module.getEarLibFinder(), testClasses);
+            addTests(findMarkers(module.getClassLoader()), findClassMarkers(module.getClassLoader()), module.getEarLibFinder(), testClasses);
             saw.add(module.getClassLoader());
         }
         for (final WebModule web : module.getWebModules()) {
             if (web.getClassLoader() != null && !saw.contains(web.getClassLoader())) {
-                final Set<Class<?>> classes = new HashSet<Class<?>>();
-                addTests(findMarkers(web.getClassLoader()), web.getFinder(), classes);
+                final Set<Class<?>> classes = new HashSet<>();
+                addTests(findMarkers(web.getClassLoader()), findClassMarkers(web.getClassLoader()), web.getFinder(), classes);
                 saw.add(web.getClassLoader());
                 for (final Class<?> c : classes) {
                     webTestClasses.put(c, web);
@@ -82,13 +82,13 @@ public class TestClassDiscoverer implements AdditionalBeanDiscoverer {
         }
         for (final EjbModule ejb : module.getEjbModules()) {
             if (ejb.getClassLoader() != null && !saw.contains(ejb.getClassLoader())) {
-                addTests(findMarkers(ejb.getClassLoader()), ejb.getFinder(), testClasses);
+                addTests(findMarkers(ejb.getClassLoader()), findClassMarkers(ejb.getClassLoader()), ejb.getFinder(), testClasses);
                 saw.add(ejb.getClassLoader());
             }
         }
         for (final ConnectorModule connector : module.getConnectorModules()) {
             if (connector.getClassLoader() != null && !saw.contains(connector.getClassLoader())) {
-                addTests(findMarkers(connector.getClassLoader()), connector.getFinder(), testClasses);
+                addTests(findMarkers(connector.getClassLoader()), findClassMarkers(connector.getClassLoader()), connector.getFinder(), testClasses);
                 saw.add(connector.getClassLoader());
             }
         }
@@ -177,6 +177,18 @@ public class TestClassDiscoverer implements AdditionalBeanDiscoverer {
         return module;
     }
 
+    private Set<Class<? extends Annotation>> findClassMarkers(final ClassLoader contextClassLoader) {
+        final Set<Class<? extends Annotation>> testMarkers = new HashSet<>();
+        for (final String s : asList("org.junit.runner.RunWith", Discover.class.getName())) {
+            try {
+                testMarkers.add((Class<? extends Annotation>) contextClassLoader.loadClass(s));
+            } catch (final Throwable e) {
+                // no-op
+            }
+        }
+        return testMarkers;
+    }
+
     private Set<Class<? extends Annotation>> findMarkers(final ClassLoader contextClassLoader) {
         final Set<Class<? extends Annotation>> testMarkers = new HashSet<>();
         for (final String s : asList("org.junit.Test", "org.testng.annotations.Test")) {
@@ -189,7 +201,8 @@ public class TestClassDiscoverer implements AdditionalBeanDiscoverer {
         return testMarkers;
     }
 
-    private static void addTests(final Set<Class<? extends Annotation>> testMarkers, final IAnnotationFinder finder, final Set<Class<?>> testClasses) {
+    private static void addTests(final Set<Class<? extends Annotation>> testMarkers, final Set<Class<? extends Annotation>> classMarkers,
+                                 final IAnnotationFinder finder, final Set<Class<?>> testClasses) {
         if (finder == null) {
             return;
         }
@@ -203,6 +216,13 @@ public class TestClassDiscoverer implements AdditionalBeanDiscoverer {
                         // no-op
                     }
                 }
+            } catch (final NoClassDefFoundError ncdfe) {
+                // no-op
+            }
+        }
+        for (final Class<? extends Annotation> marker : classMarkers) {
+            try {
+                testClasses.addAll(finder.findAnnotatedClasses(marker));
             } catch (final NoClassDefFoundError ncdfe) {
                 // no-op
             }
