@@ -49,6 +49,10 @@ import org.apache.tomee.util.QuickServerXmlParser;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.util.FileUtils;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import javax.script.SimpleBindings;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.Closeable;
@@ -60,6 +64,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
@@ -234,6 +239,12 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
     @Parameter
     protected List<String> customizers;
+
+    @Parameter
+    protected List<String> jsCustomizers;
+
+    @Parameter
+    protected List<String> groovyCustomizers;
 
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     protected MavenProject project;
@@ -498,11 +509,59 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                     thread.setContextClassLoader(currentLoader);
                 }
             }
+
+            scriptCustomization(jsCustomizers, "js");
+            scriptCustomization(groovyCustomizers, "groovy");
         } else {
             alignConfigOnServerXmlCurrentConfig();
         }
 
         run();
+    }
+
+    private void scriptCustomization(final List<String> customizers, final String ext) throws MojoExecutionException {
+        if (customizers != null) {
+            final ScriptEngine engine = new ScriptEngineManager().getEngineByExtension(ext);
+            if (engine == null) {
+                throw new IllegalStateException("No engine for " + ext + ". Maybe add the JSR223 implementation as plugin dependency.");
+            }
+            for (final String js : customizers) {
+                try {
+                    final SimpleBindings bindings = new SimpleBindings();
+                    bindings.put("catalinaBase", catalinaBase.getAbsolutePath());
+                    bindings.put("resolver", new Resolver() {
+                        @Override
+                        public File resolve(final String group, final String artifact, final String version,
+                                            final String classifier, final String type) {
+                            try {
+                                return AbstractTomEEMojo.this.resolve(group, artifact, version, classifier, type);
+                            } catch (final ArtifactResolutionException | ArtifactNotFoundException e) {
+                                throw new IllegalArgumentException(e);
+                            }
+                        }
+                        @Override
+                        public File resolve(final String group, final String artifact, final String version) {
+                            try {
+                                return AbstractTomEEMojo.this.resolve(group, artifact, version, null, "jar");
+                            } catch (final ArtifactResolutionException | ArtifactNotFoundException e) {
+                                throw new IllegalArgumentException(e);
+                            }
+                        }
+                        @Override
+                        public File resolve(final String group, final String artifact, final String version, final String type) {
+                            try {
+                                return AbstractTomEEMojo.this.resolve(group, artifact, version, null, type);
+                            } catch (final ArtifactResolutionException | ArtifactNotFoundException e) {
+                                throw new IllegalArgumentException(e);
+                            }
+                        }
+                    });
+                    engine.eval(new StringReader(js), bindings);
+                } catch (final ScriptException e) {
+                    throw new MojoExecutionException(e.getMessage(), e);
+                }
+            }
+        }
     }
 
     private void alignConfigOnServerXmlCurrentConfig() {
@@ -776,9 +835,13 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             classifier = null;
         }
 
-        final Artifact artifact = factory.createDependencyArtifact(infos[0], infos[1], createFromVersion(infos[2]), type, classifier, SCOPE_COMPILE);
-        resolver.resolve(artifact, remoteRepos, local);
-        return artifact.getFile();
+        return resolve(infos[0], infos[1], infos[2], classifier, type);
+    }
+
+    private File resolve(final String group, final String artifact, final String version, final String classifier, final String type) throws ArtifactResolutionException, ArtifactNotFoundException {
+        final Artifact dependencyArtifact = factory.createDependencyArtifact(group, artifact, createFromVersion(version), type, classifier, SCOPE_COMPILE);
+        resolver.resolve(dependencyArtifact, remoteRepos, local);
+        return dependencyArtifact.getFile();
     }
 
     private void copyWar() {
@@ -1541,4 +1604,10 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     }
 
     public abstract String getCmd();
+
+    public interface Resolver {
+        File resolve(String group, String artifact, String version, String classifier, String type);
+        File resolve(String group, String artifact, String version, String type);
+        File resolve(String group, String artifact, String version);
+    }
 }
