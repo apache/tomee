@@ -103,7 +103,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>7.0-SNAPSHOT</version>
+      <version>7.0</version>
       <scope>provided</scope>
     </dependency>
 
