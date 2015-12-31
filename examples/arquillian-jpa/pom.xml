@@ -17,7 +17,7 @@
   <version>1.1.0-SNAPSHOT</version>
 
   <properties>
-    <arquillian.version>1.1.5.Final</arquillian.version>
+    <arquillian.version>1.1.10.Final</arquillian.version>
     <arquillian-persistence.version>1.0.0.Alpha7</arquillian-persistence.version>
     <tomee.version>7.0.0-SNAPSHOT</tomee.version>
 

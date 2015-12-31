@@ -122,7 +122,7 @@
 
     <batchee.version>0.2-incubating</batchee.version>    
 
-    <version.arquillian>1.1.8.Final</version.arquillian>
+    <version.arquillian>1.1.10.Final</version.arquillian>
     <version.shrinkwrap.descriptor>2.0.0-alpha-7</version.shrinkwrap.descriptor>
     <version.shrinkwrap.shrinkwrap>1.2.2</version.shrinkwrap.shrinkwrap>
 
@@ -183,7 +183,7 @@
     <version.groovy>2.4.2</version.groovy>
 
     <!-- arquillian related -->
-    <version.arquillian.bom>1.1.5.Final</version.arquillian.bom>
+    <version.arquillian.bom>1.1.10.Final</version.arquillian.bom>
     <version.shrinkwrap.resolver.bom>2.1.0</version.shrinkwrap.resolver.bom>
   </properties>
 

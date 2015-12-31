@@ -73,6 +73,10 @@
           <groupId>net.sf.ehcache</groupId>
           <artifactId>ehcache</artifactId>
         </exclusion>
+        <exclusion>
+          <artifactId>guava</artifactId>
+          <groupId>com.google.guava</groupId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
