@@ -18,6 +18,7 @@ package org.apache.tomee.catalina;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.WebContext;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.tomcat.InstanceManager;
 import org.apache.webbeans.exception.WebBeansConfigurationException;
 import org.apache.webbeans.exception.WebBeansCreationException;
@@ -92,8 +93,17 @@ public class JavaeeInstanceManager implements InstanceManager {
         if (o == null) {
             return;
         }
-        preDestroy(o, o.getClass());
-        webContext.destroy(o);
+        final Object unwrapped = unwrap(o);
+        preDestroy(unwrapped, unwrapped.getClass());
+        webContext.destroy(unwrapped);
+        if (unwrapped != o) { // PojoEndpointServer, they create and track a cc so release it
+            webContext.destroy(o);
+        }
+    }
+
+    private Object unwrap(final Object o) {
+        return "org.apache.tomcat.websocket.pojo.PojoEndpointServer".equals(o.getClass().getName()) ?
+            WebSocketTypes.unwrapWebSocketPojo(o) : o;
     }
 
     public void inject(final Object o) {
@@ -191,6 +201,38 @@ public class JavaeeInstanceManager implements InstanceManager {
             preDestroy.setAccessible(true);
             preDestroy.invoke(instance);
             preDestroy.setAccessible(accessibility);
+        }
+    }
+
+    private static class WebSocketTypes { // extracted for lazy loading
+        private static final WebSocketTypes WEB_SOCKET_TYPES = new WebSocketTypes();
+        private final Method getPojo;
+
+        private WebSocketTypes() {
+            Method tmp;
+            try {
+                tmp = WebSocketTypes.class.getClassLoader()
+                    .loadClass("org.apache.tomcat.websocket.pojo.PojoEndpointBase")
+                    .getDeclaredMethod("getPojo");
+                tmp.setAccessible(true);
+            } catch (final NoSuchMethodException e) {
+                if ("true".equals(SystemInstance.get().getProperty("tomee.websocket.skip", "false"))) {
+                    tmp = null;
+                } else {
+                    throw new IllegalStateException(e);
+                }
+            } catch (final ClassNotFoundException e) {
+                tmp = null; // no websocket support
+            }
+            getPojo = tmp;
+        }
+
+        private static Object unwrapWebSocketPojo(final Object o) {
+            try {
+                return WEB_SOCKET_TYPES.getPojo == null ? o : WEB_SOCKET_TYPES.getPojo.invoke(o);
+            } catch (final IllegalAccessException | InvocationTargetException | NullPointerException e) {
+                return o;
+            }
         }
     }
 }
