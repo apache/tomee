@@ -49,6 +49,10 @@ public class JavaeeInstanceManager implements InstanceManager {
     @Override
     public Object newInstance(final Class<?> clazz) throws IllegalAccessException, InvocationTargetException, NamingException, InstantiationException {
         try {
+            if ("org.apache.tomcat.websocket.server.WsHttpUpgradeHandler".equals(clazz.getName())) {
+                return clazz.newInstance();
+            }
+
             final Object object = webContext.newInstance(clazz);
             postConstruct(object, clazz);
             return object;
