@@ -24,6 +24,8 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
 
 import javax.security.auth.login.LoginException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.concurrent.Callable;
 
 public abstract class CUTask<T> extends ManagedTaskListenerTask implements Comparable<Object> {
@@ -45,7 +47,7 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask implements Compa
         final ThreadContext threadContext = ThreadContext.getThreadContext();
         initialContext = new Context(
             associate, stateTmp, threadContext == null ? null : threadContext.get(AbstractSecurityService.SecurityContext.class),
-            threadContext, Thread.currentThread().getContextClassLoader());
+            threadContext, Thread.currentThread().getContextClassLoader(), null);
     }
 
     protected T invoke(final Callable<T> call) throws Exception {
@@ -76,6 +78,8 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask implements Compa
     }
 
     public static final class Context {
+        public static final ThreadLocal<Context> CURRENT = new ThreadLocal<>();
+
         /*
         private static final Class<?>[] THREAD_SCOPES = new Class<?>[] {
                 RequestScoped.class, SessionScoped.class, ConversationScoped.class
@@ -87,6 +91,7 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask implements Compa
         private final ClassLoader loader;
         private final boolean associate;
         private final AbstractSecurityService.SecurityContext securityContext;
+        private final Context stack;
 
         /* propagation of CDI context seems wrong
         private final CdiAppContextsService contextService;
@@ -94,15 +99,17 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask implements Compa
         */
 
         private Context currentContext;
+        private Collection<Runnable> exitTasks;
 
         private Context(final boolean associate, final Object initialSecurityServiceState,
                         final AbstractSecurityService.SecurityContext securityContext, final ThreadContext initialThreadContext,
-                        final ClassLoader initialLoader) {
+                        final ClassLoader initialLoader, final Context stack) {
             this.associate = associate;
             this.securityServiceState = initialSecurityServiceState;
             this.securityContext = securityContext;
             this.threadContext = initialThreadContext;
             this.loader = initialLoader;
+            this.stack = stack;
 
             /* propagation of CDI context seems wrong
             final ContextsService genericContextsService = WebBeansContext.currentInstance().getContextsService();
@@ -148,16 +155,26 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask implements Compa
                 oldCtx = null;
             }
 
-            currentContext = new Context(associate, threadState, securityContext, oldCtx, oldCl);
+            currentContext = new Context(associate, threadState, securityContext, oldCtx, oldCl, this);
 
             /* propagation of CDI context seems wrong
             if (cdiState != null) {
                 contextService.restoreState(cdiState);
             }
             */
+
+            CURRENT.set(this);
         }
 
         public void exit() {
+            // exit tasks are designed to be in execution added post tasks so execution them before next ones
+            // ie inversed ordered compared to init phase
+            if (exitTasks != null) {
+                for (Runnable r : exitTasks) {
+                    r.run();
+                }
+            }
+
             if (threadContext != null) { // ensure we use the same condition as point A, see OPENEJB-2109
                 ThreadContext.exit(currentContext.threadContext);
             }
@@ -176,7 +193,19 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask implements Compa
             */
 
             Thread.currentThread().setContextClassLoader(currentContext.loader);
+            if (currentContext.stack == null) {
+                CURRENT.remove();
+            } else {
+                CURRENT.set(currentContext.stack);
+            }
             currentContext = null;
+        }
+
+        public void pushExitTask(final Runnable runnable) {
+            if (exitTasks == null) {
+                exitTasks = new ArrayList<>(2);
+            }
+            exitTasks.add(runnable);
         }
     }
 
