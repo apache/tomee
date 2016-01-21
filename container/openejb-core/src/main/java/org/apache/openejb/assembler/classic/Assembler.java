@@ -2659,7 +2659,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     public void createResource(final ResourceInfo serviceInfo) throws OpenEJBException {
         final boolean usesCdiPwdCipher = usesCdiPwdCipher(serviceInfo);
         final Object service = "true".equalsIgnoreCase(String.valueOf(serviceInfo.properties.remove("Lazy"))) || usesCdiPwdCipher ?
-                newLazyResource(serviceInfo) :
+            newLazyResource(serviceInfo) :
                 doCreateResource(serviceInfo);
         if (usesCdiPwdCipher && !serviceInfo.properties.contains("InitializeAfterDeployment")) {
             serviceInfo.properties.put("InitializeAfterDeployment", "true");
@@ -2696,25 +2696,22 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     private LazyResource newLazyResource(final ResourceInfo serviceInfo) {
-        final ClassLoader loader = Thread.currentThread().getContextClassLoader();
         return new LazyResource(new Callable<Object>() {
             @Override
             public Object call() throws Exception {
                 final boolean appClassLoader = "true".equals(serviceInfo.properties.remove("UseAppClassLoader"));
 
-                ClassLoader old = null;
-
+                final Thread thread = Thread.currentThread();
+                final ClassLoader old = thread.getContextClassLoader();
                 if (!appClassLoader) {
-                    old = Thread.currentThread().getContextClassLoader();
-                    Thread.currentThread().setContextClassLoader(loader);
-                }
+                    final ClassLoader classLoader = Assembler.class.getClassLoader();
+                    thread.setContextClassLoader(classLoader == null ? ClassLoader.getSystemClassLoader() : classLoader);
+                } // else contextually we should have the app loader
 
                 try {
                     return doCreateResource(serviceInfo);
                 } finally {
-                    if (old != null) {
-                        Thread.currentThread().setContextClassLoader(old);
-                    }
+                    thread.setContextClassLoader(old);
                 }
             }
         });
