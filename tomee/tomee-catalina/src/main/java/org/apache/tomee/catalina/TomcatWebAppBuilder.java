@@ -143,7 +143,6 @@ import javax.naming.StringRefAddr;
 import javax.servlet.ServletContext;
 import javax.servlet.SessionTrackingMode;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspFactory;
 import javax.sql.DataSource;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
