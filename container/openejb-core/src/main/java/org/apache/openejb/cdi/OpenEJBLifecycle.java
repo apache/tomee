@@ -374,6 +374,10 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
     }
 
     public static void initializeServletContext(final ServletContext servletContext, final WebBeansContext context) {
+        if (context == null || !context.getBeanManagerImpl().isInUse()) {
+            return;
+        }
+
         final ELAdaptor elAdaptor = context.getService(ELAdaptor.class);
         final ELResolver resolver = elAdaptor.getOwbELResolver();
         //Application is configured as JSP

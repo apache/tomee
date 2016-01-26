@@ -131,9 +131,22 @@ import org.apache.tomee.common.UserTransactionFactory;
 import org.apache.tomee.loader.TomcatHelper;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.spi.ContextsService;
-import org.apache.webbeans.spi.adaptor.ELAdaptor;
 import org.omg.CORBA.ORB;
 
+import javax.ejb.spi.HandleDelegate;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NameNotFoundException;
+import javax.naming.NamingException;
+import javax.naming.Reference;
+import javax.naming.StringRefAddr;
+import javax.servlet.ServletContext;
+import javax.servlet.SessionTrackingMode;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspFactory;
+import javax.sql.DataSource;
+import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -157,22 +170,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import javax.ejb.spi.HandleDelegate;
-import javax.el.ELResolver;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NameNotFoundException;
-import javax.naming.NamingException;
-import javax.naming.Reference;
-import javax.naming.StringRefAddr;
-import javax.servlet.ServletContext;
-import javax.servlet.SessionTrackingMode;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspApplicationContext;
-import javax.servlet.jsp.JspFactory;
-import javax.sql.DataSource;
-import javax.transaction.TransactionManager;
-import javax.transaction.TransactionSynchronizationRegistry;
 
 import static java.util.Arrays.asList;
 import static org.apache.tomee.catalina.Contexts.warPath;
@@ -1375,16 +1372,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 }
             }
 
-            final JspFactory factory = JspFactory.getDefaultFactory();
-            if (factory != null) {
-                final JspApplicationContext applicationCtx = factory.getJspApplicationContext(standardContext.getServletContext());
-                final WebBeansContext context = appContext.getWebBeansContext();
-                if (context != null && context.getBeanManagerImpl().isInUse()) {
-                    // Registering ELResolver with JSP container
-                    final ELAdaptor elAdaptor = context.getService(ELAdaptor.class);
-                    final ELResolver resolver = elAdaptor.getOwbELResolver();
-                    applicationCtx.addELResolver(resolver);
-                }
+            final WebBeansContext webBeansContext = appContext.getWebBeansContext();
+            if (webBeansContext != null && webBeansContext.getBeanManagerImpl().isInUse()) {
+                OpenEJBLifecycle.initializeServletContext(standardContext.getServletContext(), webBeansContext);
             }
         }
 
