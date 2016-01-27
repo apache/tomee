@@ -1185,8 +1185,6 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                 final String value = entry.getValue();
                 if (value == null) {
                     strings.add("-D" + key);
-                } else if (value.contains(" ")) {
-                    strings.add(String.format("'-D%s=%s'", key, value));
                 } else {
                     strings.add(String.format("-D%s=%s", key, value));
                 }
