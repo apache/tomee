@@ -42,6 +42,7 @@ import java.lang.reflect.Proxy;
 import java.rmi.RemoteException;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 @SimpleLog
 @RunWith(ApplicationComposer.class)
@@ -162,7 +163,7 @@ public class SimpleCmpTest {
                 final Object registry = handler.getBeanContext().get(
                         Thread.currentThread().getContextClassLoader() // private so use reflection
                                 .loadClass("org.apache.openejb.core.ivm.BaseEjbProxyHandler$ProxyRegistry"));
-                assertNotNull(registry); // not even instantiated since we have a wrapper (stateless)
+                assertNull(registry); // not even instantiated since we have a wrapper (stateless)
             } catch (final ClassNotFoundException e) {
                 throw new IllegalStateException(e);
             }
