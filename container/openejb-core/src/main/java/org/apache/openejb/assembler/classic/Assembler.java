@@ -696,330 +696,337 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     private AppContext createApplication(final AppInfo appInfo, ClassLoader classLoader, final boolean start) throws OpenEJBException, IOException, NamingException {
         try {
-            mergeServices(appInfo);
-        } catch (final URISyntaxException e) {
-            logger.info("Can't merge resources.xml services and appInfo.properties");
-        }
-
-        // The path is used in the UrlCache, command line deployer, JNDI name templates, tomcat integration and a few other places
-        if (appInfo.appId == null) {
-            throw new IllegalArgumentException("AppInfo.appId cannot be null");
-        }
-        if (appInfo.path == null) {
-            appInfo.path = appInfo.appId;
-        }
-
-        Extensions.addExtensions(classLoader, appInfo.eventClassesNeedingAppClassloader);
-        logger.info("createApplication.start", appInfo.path);
-        final Context containerSystemContext = containerSystem.getJNDIContext();
-        
-        // To start out, ensure we don't already have any beans deployed with duplicate IDs.  This
-        // is a conflict we can't handle.
-        final List<String> used = new ArrayList<String>();
-        for (final EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
-            for (final EnterpriseBeanInfo beanInfo : ejbJarInfo.enterpriseBeans) {
-                if (containerSystem.getBeanContext(beanInfo.ejbDeploymentId) != null) {
-                    used.add(beanInfo.ejbDeploymentId);
-                }
-            }
-        }
-
-        if (used.size() > 0) {
-            String message = logger.error("createApplication.appFailedDuplicateIds", appInfo.path);
-            for (final String id : used) {
-                logger.error("createApplication.deploymentIdInUse", id);
-                message += "\n    " + id;
-            }
-            throw new DuplicateDeploymentIdException(message);
-        }
-
-        //Construct the global and app jndi contexts for this app
-        final InjectionBuilder injectionBuilder = new InjectionBuilder(classLoader);
-
-        final Set<Injection> injections = new HashSet<Injection>();
-        injections.addAll(injectionBuilder.buildInjections(appInfo.globalJndiEnc));
-        injections.addAll(injectionBuilder.buildInjections(appInfo.appJndiEnc));
-
-        final JndiEncBuilder globalBuilder = new JndiEncBuilder(appInfo.globalJndiEnc, injections, appInfo.appId, null, GLOBAL_UNIQUE_ID, classLoader, appInfo.properties);
-        final Map<String, Object> globalBindings = globalBuilder.buildBindings(JndiEncBuilder.JndiScope.global);
-        final Context globalJndiContext = globalBuilder.build(globalBindings);
-
-        final JndiEncBuilder appBuilder = new JndiEncBuilder(appInfo.appJndiEnc, injections, appInfo.appId, null, appInfo.appId, classLoader, appInfo.properties);
-        final Map<String, Object> appBindings = appBuilder.buildBindings(JndiEncBuilder.JndiScope.app);
-        final Context appJndiContext = appBuilder.build(appBindings);
-
-        try {
-            // Generate the cmp2/cmp1 concrete subclasses
-            final CmpJarBuilder cmpJarBuilder = new CmpJarBuilder(appInfo, classLoader);
-            final File generatedJar = cmpJarBuilder.getJarFile();
-            if (generatedJar != null) {
-                classLoader = ClassLoaderUtil.createClassLoader(appInfo.path, new URL[]{generatedJar.toURI().toURL()}, classLoader);
-            }
-
-            final AppContext appContext = new AppContext(appInfo.appId, SystemInstance.get(), classLoader, globalJndiContext, appJndiContext, appInfo.standaloneModule);
-            appContext.getProperties().putAll(appInfo.properties);
-            appContext.getInjections().addAll(injections);
-            appContext.getBindings().putAll(globalBindings);
-            appContext.getBindings().putAll(appBindings);
-
-            containerSystem.addAppContext(appContext);
-
-            appContext.set(AsynchronousPool.class, AsynchronousPool.create(appContext));
-
-            final Map<String, LazyValidatorFactory> lazyValidatorFactories = new HashMap<String, LazyValidatorFactory>();
-            final Map<String, LazyValidator> lazyValidators = new HashMap<String, LazyValidator>();
-            final boolean isGeronimo = SystemInstance.get().hasProperty("openejb.geronimo");
-
-            // try to not create N times the same validator for a single app
-            final Map<ComparableValidationConfig, ValidatorFactory> validatorFactoriesByConfig = new HashMap<ComparableValidationConfig, ValidatorFactory>();
-            if (!isGeronimo) {
-                // Bean Validation
-                // ValidatorFactory needs to be put in the map sent to the entity manager factory
-                // so it has to be constructed before
-                final List<CommonInfoObject> vfs = listCommonInfoObjectsForAppInfo(appInfo);
-                final Map<String, ValidatorFactory> validatorFactories = new HashMap<String, ValidatorFactory>();
-
-                for (final CommonInfoObject info : vfs) {
-                    if (info.validationInfo == null) {
-                        continue;
-                    }
-
-                    final ComparableValidationConfig conf = new ComparableValidationConfig(
-                            info.validationInfo.providerClassName, info.validationInfo.messageInterpolatorClass,
-                            info.validationInfo.traversableResolverClass, info.validationInfo.constraintFactoryClass,
-                            info.validationInfo.parameterNameProviderClass, info.validationInfo.version,
-                            info.validationInfo.propertyTypes, info.validationInfo.constraintMappings,
-                            info.validationInfo.executableValidationEnabled, info.validationInfo.validatedTypes
-                    );
-                    ValidatorFactory factory = validatorFactoriesByConfig.get(conf);
-                    if (factory == null) {
-                        try { // lazy cause of CDI :(
-                            final LazyValidatorFactory handler = new LazyValidatorFactory(classLoader, info.validationInfo);
-                            factory = (ValidatorFactory) Proxy.newProxyInstance(
-                                    appContext.getClassLoader(), VALIDATOR_FACTORY_INTERFACES, handler);
-                            lazyValidatorFactories.put(info.uniqueId, handler);
-                        } catch (final ValidationException ve) {
-                            logger.warning("can't build the validation factory for module " + info.uniqueId, ve);
-                            continue;
-                        }
-                        validatorFactoriesByConfig.put(conf, factory);
-                    } else {
-                        lazyValidatorFactories.put(info.uniqueId, LazyValidatorFactory.class.cast(Proxy.getInvocationHandler(factory)));
-                    }
-                    validatorFactories.put(info.uniqueId, factory);
-                }
-
-                // validators bindings
-                for (final Entry<String, ValidatorFactory> validatorFactory : validatorFactories.entrySet()) {
-                    final String id = validatorFactory.getKey();
-                    final ValidatorFactory factory = validatorFactory.getValue();
-                    try {
-                        containerSystemContext.bind(VALIDATOR_FACTORY_NAMING_CONTEXT + id, factory);
-
-                        Validator validator;
-                        try {
-                            final LazyValidator lazyValidator = new LazyValidator(factory);
-                            validator = (Validator) Proxy.newProxyInstance(appContext.getClassLoader(), VALIDATOR_INTERFACES, lazyValidator);
-                            lazyValidators.put(id, lazyValidator);
-                        } catch (final Exception e) {
-                            logger.error(e.getMessage(), e);
-                            continue;
-                        }
-
-                        containerSystemContext.bind(VALIDATOR_NAMING_CONTEXT + id, validator);
-                    } catch (final NameAlreadyBoundException e) {
-                        throw new OpenEJBException("ValidatorFactory already exists for module " + id, e);
-                    } catch (final Exception e) {
-                        throw new OpenEJBException(e);
-                    }
-                }
-
-                validatorFactories.clear();
-            }
-
-            // JPA - Persistence Units MUST be processed first since they will add ClassFileTransformers
-            // to the class loader which must be added before any classes are loaded
-            final Map<String, String> units = new HashMap<String, String>();
-            final PersistenceBuilder persistenceBuilder = new PersistenceBuilder(persistenceClassLoaderHandler);
-            for (final PersistenceUnitInfo info : appInfo.persistenceUnits) {
-                final ReloadableEntityManagerFactory factory;
-                try {
-                    factory = persistenceBuilder.createEntityManagerFactory(info, classLoader, validatorFactoriesByConfig);
-                    containerSystem.getJNDIContext().bind(PERSISTENCE_UNIT_NAMING_CONTEXT + info.id, factory);
-                    units.put(info.name, PERSISTENCE_UNIT_NAMING_CONTEXT + info.id);
-                } catch (final NameAlreadyBoundException e) {
-                    throw new OpenEJBException("PersistenceUnit already deployed: " + info.persistenceUnitRootUrl);
-                } catch (final Exception e) {
-                    throw new OpenEJBException(e);
-                }
-
-                factory.register();
-            }
-
-            logger.debug("Loaded peristence units: " + units);
-
-            // Connectors
-            for (final ConnectorInfo connector : appInfo.connectors) {
-                final ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
-                Thread.currentThread().setContextClassLoader(classLoader);
-                try {
-                    // todo add undeployment code for these
-                    if (connector.resourceAdapter != null) {
-                        createResource(connector.resourceAdapter);
-                    }
-                    for (final ResourceInfo outbound : connector.outbound) {
-                        createResource(outbound);
-                        outbound.properties.setProperty("openejb.connector", "true"); // set it after as a marker but not as an attribute (no getOpenejb().setConnector(...))
-                    }
-                    for (final MdbContainerInfo inbound : connector.inbound) {
-                        createContainer(inbound);
-                    }
-                    for (final ResourceInfo adminObject : connector.adminObject) {
-                        createResource(adminObject);
-                    }
-                } finally {
-                    Thread.currentThread().setContextClassLoader(oldClassLoader);
-                }
-            }
-
-            final List<BeanContext> allDeployments = initEjbs(classLoader, appInfo, appContext, injections, new ArrayList<BeanContext>(), null);
-
-            if ("true".equalsIgnoreCase(SystemInstance.get()
-                .getProperty(PROPAGATE_APPLICATION_EXCEPTIONS,
-                    appInfo.properties.getProperty(PROPAGATE_APPLICATION_EXCEPTIONS, "false")))) {
-                propagateApplicationExceptions(appInfo, classLoader, allDeployments);
-            }
-
-            if (shouldStartCdi(appInfo)) {
-                new CdiBuilder().build(appInfo, appContext, allDeployments);
-                ensureWebBeansContext(appContext);
-                appJndiContext.bind("app/BeanManager", appContext.getBeanManager());
-                appContext.getBindings().put("app/BeanManager", appContext.getBeanManager());
-            } else { // ensure we can reuse it in tomcat to remove OWB filters
-                appInfo.properties.setProperty("openejb.cdi.activated", "false");
-            }
-
-            // now cdi is started we can try to bind real validator factory and validator
-            if (!isGeronimo) {
-                for (final Entry<String, LazyValidator> lazyValidator : lazyValidators.entrySet()) {
-                    final String id = lazyValidator.getKey();
-                    final ValidatorFactory factory = lazyValidatorFactories.get(lazyValidator.getKey()).getFactory();
-                    try {
-                        final String factoryName = VALIDATOR_FACTORY_NAMING_CONTEXT + id;
-                        containerSystemContext.unbind(factoryName);
-                        containerSystemContext.bind(factoryName, factory);
-
-                        final String validatoryName = VALIDATOR_NAMING_CONTEXT + id;
-                        try { // do it after factory cause of TCKs which expects validator to be created later
-                            final Validator val = lazyValidator.getValue().getValidator();
-                            containerSystemContext.unbind(validatoryName);
-                            containerSystemContext.bind(validatoryName, val);
-                        } catch (final Exception e) {
-                            logger.error(e.getMessage(), e);
-                        }
-                    } catch (final NameAlreadyBoundException e) {
-                        throw new OpenEJBException("ValidatorFactory already exists for module " + id, e);
-                    } catch (final Exception e) {
-                        throw new OpenEJBException(e);
-                    }
-                }
-            }
-
-            startEjbs(start, allDeployments);
-
-            // App Client
-            for (final ClientInfo clientInfo : appInfo.clients) {
-                // determine the injections
-                final List<Injection> clientInjections = injectionBuilder.buildInjections(clientInfo.jndiEnc);
-
-                // build the enc
-                final JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(clientInfo.jndiEnc, clientInjections, "Bean", clientInfo.moduleId, null, clientInfo.uniqueId, classLoader, new Properties());
-                // if there is at least a remote client classes
-                // or if there is no local client classes
-                // then, we can set the client flag
-                if (clientInfo.remoteClients.size() > 0 || clientInfo.localClients.size() == 0) {
-                    jndiEncBuilder.setClient(true);
-
-                }
-                jndiEncBuilder.setUseCrossClassLoaderRef(false);
-                final Context context = jndiEncBuilder.build(JndiEncBuilder.JndiScope.comp);
-
-                //                Debug.printContext(context);
-
-                containerSystemContext.bind("openejb/client/" + clientInfo.moduleId, context);
-
-                if (clientInfo.path != null) {
-                    context.bind("info/path", clientInfo.path);
-                }
-                if (clientInfo.mainClass != null) {
-                    context.bind("info/mainClass", clientInfo.mainClass);
-                }
-                if (clientInfo.callbackHandler != null) {
-                    context.bind("info/callbackHandler", clientInfo.callbackHandler);
-                }
-                context.bind("info/injections", clientInjections);
-
-                for (final String clientClassName : clientInfo.remoteClients) {
-                    containerSystemContext.bind("openejb/client/" + clientClassName, clientInfo.moduleId);
-                }
-
-                for (final String clientClassName : clientInfo.localClients) {
-                    containerSystemContext.bind("openejb/client/" + clientClassName, clientInfo.moduleId);
-                    logger.getChildLogger("client").info("createApplication.createLocalClient", clientClassName, clientInfo.moduleId);
-                }
-            }
-
-            // WebApp
-            final SystemInstance systemInstance = SystemInstance.get();
-
-            final WebAppBuilder webAppBuilder = systemInstance.getComponent(WebAppBuilder.class);
-            if (webAppBuilder != null) {
-                webAppBuilder.deployWebApps(appInfo, classLoader);
-            }
-
-            if (start) {
-                final EjbResolver globalEjbResolver = systemInstance.getComponent(EjbResolver.class);
-                globalEjbResolver.addAll(appInfo.ejbJars);
-            }
-
-            // bind all global values on global context
-            bindGlobals(appContext.getBindings());
-
-            validateCdiResourceProducers(appContext, appInfo);
-
-            // deploy MBeans
-            for (final String mbean : appInfo.mbeans) {
-                deployMBean(appContext.getWebBeansContext(), classLoader, mbean, appInfo.jmx, appInfo.appId);
-            }
-            for (final EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
-                for (final String mbean : ejbJarInfo.mbeans) {
-                    deployMBean(appContext.getWebBeansContext(), classLoader, mbean, appInfo.jmx, ejbJarInfo.moduleName);
-                }
-            }
-            for (final ConnectorInfo connectorInfo : appInfo.connectors) {
-                for (final String mbean : connectorInfo.mbeans) {
-                    deployMBean(appContext.getWebBeansContext(), classLoader, mbean, appInfo.jmx, appInfo.appId + ".add-lib");
-                }
-            }
-
-            postConstructResources(appInfo.resourceIds, classLoader, containerSystemContext, appContext);
-            
-            deployedApplications.put(appInfo.path, appInfo);
-            resumePersistentSchedulers(appContext);
-
-            systemInstance.fireEvent(new AssemblerAfterApplicationCreated(appInfo, appContext, allDeployments));
-            logger.info("createApplication.success", appInfo.path);
-
-            return appContext;
-        } catch (final ValidationException | DeploymentException ve) {
-            throw ve;
-        } catch (final Throwable t) {
             try {
-                destroyApplication(appInfo);
-            } catch (final Exception e1) {
-                logger.debug("createApplication.undeployFailed", e1, appInfo.path);
+                mergeServices(appInfo);
+            } catch (final URISyntaxException e) {
+                logger.info("Can't merge resources.xml services and appInfo.properties");
             }
-            throw new OpenEJBException(messages.format("createApplication.failed", appInfo.path), t);
+
+            // The path is used in the UrlCache, command line deployer, JNDI name templates, tomcat integration and a few other places
+            if (appInfo.appId == null) {
+                throw new IllegalArgumentException("AppInfo.appId cannot be null");
+            }
+            if (appInfo.path == null) {
+                appInfo.path = appInfo.appId;
+            }
+
+            Extensions.addExtensions(classLoader, appInfo.eventClassesNeedingAppClassloader);
+            logger.info("createApplication.start", appInfo.path);
+            final Context containerSystemContext = containerSystem.getJNDIContext();
+
+            // To start out, ensure we don't already have any beans deployed with duplicate IDs.  This
+            // is a conflict we can't handle.
+            final List<String> used = new ArrayList<String>();
+            for (final EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
+                for (final EnterpriseBeanInfo beanInfo : ejbJarInfo.enterpriseBeans) {
+                    if (containerSystem.getBeanContext(beanInfo.ejbDeploymentId) != null) {
+                        used.add(beanInfo.ejbDeploymentId);
+                    }
+                }
+            }
+
+            if (used.size() > 0) {
+                String message = logger.error("createApplication.appFailedDuplicateIds", appInfo.path);
+                for (final String id : used) {
+                    logger.error("createApplication.deploymentIdInUse", id);
+                    message += "\n    " + id;
+                }
+                throw new DuplicateDeploymentIdException(message);
+            }
+
+            //Construct the global and app jndi contexts for this app
+            final InjectionBuilder injectionBuilder = new InjectionBuilder(classLoader);
+
+            final Set<Injection> injections = new HashSet<Injection>();
+            injections.addAll(injectionBuilder.buildInjections(appInfo.globalJndiEnc));
+            injections.addAll(injectionBuilder.buildInjections(appInfo.appJndiEnc));
+
+            final JndiEncBuilder globalBuilder = new JndiEncBuilder(appInfo.globalJndiEnc, injections, appInfo.appId, null, GLOBAL_UNIQUE_ID, classLoader, appInfo.properties);
+            final Map<String, Object> globalBindings = globalBuilder.buildBindings(JndiEncBuilder.JndiScope.global);
+            final Context globalJndiContext = globalBuilder.build(globalBindings);
+
+            final JndiEncBuilder appBuilder = new JndiEncBuilder(appInfo.appJndiEnc, injections, appInfo.appId, null, appInfo.appId, classLoader, appInfo.properties);
+            final Map<String, Object> appBindings = appBuilder.buildBindings(JndiEncBuilder.JndiScope.app);
+            final Context appJndiContext = appBuilder.build(appBindings);
+
+            try {
+                // Generate the cmp2/cmp1 concrete subclasses
+                final CmpJarBuilder cmpJarBuilder = new CmpJarBuilder(appInfo, classLoader);
+                final File generatedJar = cmpJarBuilder.getJarFile();
+                if (generatedJar != null) {
+                    classLoader = ClassLoaderUtil.createClassLoader(appInfo.path, new URL[]{generatedJar.toURI().toURL()}, classLoader);
+                }
+
+                final AppContext appContext = new AppContext(appInfo.appId, SystemInstance.get(), classLoader, globalJndiContext, appJndiContext, appInfo.standaloneModule);
+                appContext.getProperties().putAll(appInfo.properties);
+                appContext.getInjections().addAll(injections);
+                appContext.getBindings().putAll(globalBindings);
+                appContext.getBindings().putAll(appBindings);
+
+                containerSystem.addAppContext(appContext);
+
+                appContext.set(AsynchronousPool.class, AsynchronousPool.create(appContext));
+
+                final Map<String, LazyValidatorFactory> lazyValidatorFactories = new HashMap<String, LazyValidatorFactory>();
+                final Map<String, LazyValidator> lazyValidators = new HashMap<String, LazyValidator>();
+                final boolean isGeronimo = SystemInstance.get().hasProperty("openejb.geronimo");
+
+                // try to not create N times the same validator for a single app
+                final Map<ComparableValidationConfig, ValidatorFactory> validatorFactoriesByConfig = new HashMap<ComparableValidationConfig, ValidatorFactory>();
+                if (!isGeronimo) {
+                    // Bean Validation
+                    // ValidatorFactory needs to be put in the map sent to the entity manager factory
+                    // so it has to be constructed before
+                    final List<CommonInfoObject> vfs = listCommonInfoObjectsForAppInfo(appInfo);
+                    final Map<String, ValidatorFactory> validatorFactories = new HashMap<String, ValidatorFactory>();
+
+                    for (final CommonInfoObject info : vfs) {
+                        if (info.validationInfo == null) {
+                            continue;
+                        }
+
+                        final ComparableValidationConfig conf = new ComparableValidationConfig(
+                                info.validationInfo.providerClassName, info.validationInfo.messageInterpolatorClass,
+                                info.validationInfo.traversableResolverClass, info.validationInfo.constraintFactoryClass,
+                                info.validationInfo.parameterNameProviderClass, info.validationInfo.version,
+                                info.validationInfo.propertyTypes, info.validationInfo.constraintMappings,
+                                info.validationInfo.executableValidationEnabled, info.validationInfo.validatedTypes
+                        );
+                        ValidatorFactory factory = validatorFactoriesByConfig.get(conf);
+                        if (factory == null) {
+                            try { // lazy cause of CDI :(
+                                final LazyValidatorFactory handler = new LazyValidatorFactory(classLoader, info.validationInfo);
+                                factory = (ValidatorFactory) Proxy.newProxyInstance(
+                                        appContext.getClassLoader(), VALIDATOR_FACTORY_INTERFACES, handler);
+                                lazyValidatorFactories.put(info.uniqueId, handler);
+                            } catch (final ValidationException ve) {
+                                logger.warning("can't build the validation factory for module " + info.uniqueId, ve);
+                                continue;
+                            }
+                            validatorFactoriesByConfig.put(conf, factory);
+                        } else {
+                            lazyValidatorFactories.put(info.uniqueId, LazyValidatorFactory.class.cast(Proxy.getInvocationHandler(factory)));
+                        }
+                        validatorFactories.put(info.uniqueId, factory);
+                    }
+
+                    // validators bindings
+                    for (final Entry<String, ValidatorFactory> validatorFactory : validatorFactories.entrySet()) {
+                        final String id = validatorFactory.getKey();
+                        final ValidatorFactory factory = validatorFactory.getValue();
+                        try {
+                            containerSystemContext.bind(VALIDATOR_FACTORY_NAMING_CONTEXT + id, factory);
+
+                            Validator validator;
+                            try {
+                                final LazyValidator lazyValidator = new LazyValidator(factory);
+                                validator = (Validator) Proxy.newProxyInstance(appContext.getClassLoader(), VALIDATOR_INTERFACES, lazyValidator);
+                                lazyValidators.put(id, lazyValidator);
+                            } catch (final Exception e) {
+                                logger.error(e.getMessage(), e);
+                                continue;
+                            }
+
+                            containerSystemContext.bind(VALIDATOR_NAMING_CONTEXT + id, validator);
+                        } catch (final NameAlreadyBoundException e) {
+                            throw new OpenEJBException("ValidatorFactory already exists for module " + id, e);
+                        } catch (final Exception e) {
+                            throw new OpenEJBException(e);
+                        }
+                    }
+
+                    validatorFactories.clear();
+                }
+
+                // JPA - Persistence Units MUST be processed first since they will add ClassFileTransformers
+                // to the class loader which must be added before any classes are loaded
+                final Map<String, String> units = new HashMap<String, String>();
+                final PersistenceBuilder persistenceBuilder = new PersistenceBuilder(persistenceClassLoaderHandler);
+                for (final PersistenceUnitInfo info : appInfo.persistenceUnits) {
+                    final ReloadableEntityManagerFactory factory;
+                    try {
+                        factory = persistenceBuilder.createEntityManagerFactory(info, classLoader, validatorFactoriesByConfig);
+                        containerSystem.getJNDIContext().bind(PERSISTENCE_UNIT_NAMING_CONTEXT + info.id, factory);
+                        units.put(info.name, PERSISTENCE_UNIT_NAMING_CONTEXT + info.id);
+                    } catch (final NameAlreadyBoundException e) {
+                        throw new OpenEJBException("PersistenceUnit already deployed: " + info.persistenceUnitRootUrl);
+                    } catch (final Exception e) {
+                        throw new OpenEJBException(e);
+                    }
+
+                    factory.register();
+                }
+
+                logger.debug("Loaded peristence units: " + units);
+
+                // Connectors
+                for (final ConnectorInfo connector : appInfo.connectors) {
+                    final ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
+                    Thread.currentThread().setContextClassLoader(classLoader);
+                    try {
+                        // todo add undeployment code for these
+                        if (connector.resourceAdapter != null) {
+                            createResource(connector.resourceAdapter);
+                        }
+                        for (final ResourceInfo outbound : connector.outbound) {
+                            createResource(outbound);
+                            outbound.properties.setProperty("openejb.connector", "true"); // set it after as a marker but not as an attribute (no getOpenejb().setConnector(...))
+                        }
+                        for (final MdbContainerInfo inbound : connector.inbound) {
+                            createContainer(inbound);
+                        }
+                        for (final ResourceInfo adminObject : connector.adminObject) {
+                            createResource(adminObject);
+                        }
+                    } finally {
+                        Thread.currentThread().setContextClassLoader(oldClassLoader);
+                    }
+                }
+
+                final List<BeanContext> allDeployments = initEjbs(classLoader, appInfo, appContext, injections, new ArrayList<BeanContext>(), null);
+
+                if ("true".equalsIgnoreCase(SystemInstance.get()
+                        .getProperty(PROPAGATE_APPLICATION_EXCEPTIONS,
+                                appInfo.properties.getProperty(PROPAGATE_APPLICATION_EXCEPTIONS, "false")))) {
+                    propagateApplicationExceptions(appInfo, classLoader, allDeployments);
+                }
+
+                if (shouldStartCdi(appInfo)) {
+                    new CdiBuilder().build(appInfo, appContext, allDeployments);
+                    ensureWebBeansContext(appContext);
+                    appJndiContext.bind("app/BeanManager", appContext.getBeanManager());
+                    appContext.getBindings().put("app/BeanManager", appContext.getBeanManager());
+                } else { // ensure we can reuse it in tomcat to remove OWB filters
+                    appInfo.properties.setProperty("openejb.cdi.activated", "false");
+                }
+
+                // now cdi is started we can try to bind real validator factory and validator
+                if (!isGeronimo) {
+                    for (final Entry<String, LazyValidator> lazyValidator : lazyValidators.entrySet()) {
+                        final String id = lazyValidator.getKey();
+                        final ValidatorFactory factory = lazyValidatorFactories.get(lazyValidator.getKey()).getFactory();
+                        try {
+                            final String factoryName = VALIDATOR_FACTORY_NAMING_CONTEXT + id;
+                            containerSystemContext.unbind(factoryName);
+                            containerSystemContext.bind(factoryName, factory);
+
+                            final String validatoryName = VALIDATOR_NAMING_CONTEXT + id;
+                            try { // do it after factory cause of TCKs which expects validator to be created later
+                                final Validator val = lazyValidator.getValue().getValidator();
+                                containerSystemContext.unbind(validatoryName);
+                                containerSystemContext.bind(validatoryName, val);
+                            } catch (final Exception e) {
+                                logger.error(e.getMessage(), e);
+                            }
+                        } catch (final NameAlreadyBoundException e) {
+                            throw new OpenEJBException("ValidatorFactory already exists for module " + id, e);
+                        } catch (final Exception e) {
+                            throw new OpenEJBException(e);
+                        }
+                    }
+                }
+
+                startEjbs(start, allDeployments);
+
+                // App Client
+                for (final ClientInfo clientInfo : appInfo.clients) {
+                    // determine the injections
+                    final List<Injection> clientInjections = injectionBuilder.buildInjections(clientInfo.jndiEnc);
+
+                    // build the enc
+                    final JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(clientInfo.jndiEnc, clientInjections, "Bean", clientInfo.moduleId, null, clientInfo.uniqueId, classLoader, new Properties());
+                    // if there is at least a remote client classes
+                    // or if there is no local client classes
+                    // then, we can set the client flag
+                    if (clientInfo.remoteClients.size() > 0 || clientInfo.localClients.size() == 0) {
+                        jndiEncBuilder.setClient(true);
+
+                    }
+                    jndiEncBuilder.setUseCrossClassLoaderRef(false);
+                    final Context context = jndiEncBuilder.build(JndiEncBuilder.JndiScope.comp);
+
+                    //                Debug.printContext(context);
+
+                    containerSystemContext.bind("openejb/client/" + clientInfo.moduleId, context);
+
+                    if (clientInfo.path != null) {
+                        context.bind("info/path", clientInfo.path);
+                    }
+                    if (clientInfo.mainClass != null) {
+                        context.bind("info/mainClass", clientInfo.mainClass);
+                    }
+                    if (clientInfo.callbackHandler != null) {
+                        context.bind("info/callbackHandler", clientInfo.callbackHandler);
+                    }
+                    context.bind("info/injections", clientInjections);
+
+                    for (final String clientClassName : clientInfo.remoteClients) {
+                        containerSystemContext.bind("openejb/client/" + clientClassName, clientInfo.moduleId);
+                    }
+
+                    for (final String clientClassName : clientInfo.localClients) {
+                        containerSystemContext.bind("openejb/client/" + clientClassName, clientInfo.moduleId);
+                        logger.getChildLogger("client").info("createApplication.createLocalClient", clientClassName, clientInfo.moduleId);
+                    }
+                }
+
+                // WebApp
+                final SystemInstance systemInstance = SystemInstance.get();
+
+                final WebAppBuilder webAppBuilder = systemInstance.getComponent(WebAppBuilder.class);
+                if (webAppBuilder != null) {
+                    webAppBuilder.deployWebApps(appInfo, classLoader);
+                }
+
+                if (start) {
+                    final EjbResolver globalEjbResolver = systemInstance.getComponent(EjbResolver.class);
+                    globalEjbResolver.addAll(appInfo.ejbJars);
+                }
+
+                // bind all global values on global context
+                bindGlobals(appContext.getBindings());
+
+                validateCdiResourceProducers(appContext, appInfo);
+
+                // deploy MBeans
+                for (final String mbean : appInfo.mbeans) {
+                    deployMBean(appContext.getWebBeansContext(), classLoader, mbean, appInfo.jmx, appInfo.appId);
+                }
+                for (final EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
+                    for (final String mbean : ejbJarInfo.mbeans) {
+                        deployMBean(appContext.getWebBeansContext(), classLoader, mbean, appInfo.jmx, ejbJarInfo.moduleName);
+                    }
+                }
+                for (final ConnectorInfo connectorInfo : appInfo.connectors) {
+                    for (final String mbean : connectorInfo.mbeans) {
+                        deployMBean(appContext.getWebBeansContext(), classLoader, mbean, appInfo.jmx, appInfo.appId + ".add-lib");
+                    }
+                }
+
+                postConstructResources(appInfo.resourceIds, classLoader, containerSystemContext, appContext);
+
+                deployedApplications.put(appInfo.path, appInfo);
+                resumePersistentSchedulers(appContext);
+
+                systemInstance.fireEvent(new AssemblerAfterApplicationCreated(appInfo, appContext, allDeployments));
+                logger.info("createApplication.success", appInfo.path);
+
+                return appContext;
+            } catch (final ValidationException | DeploymentException ve) {
+                throw ve;
+            } catch (final Throwable t) {
+                try {
+                    destroyApplication(appInfo);
+                } catch (final Exception e1) {
+                    logger.debug("createApplication.undeployFailed", e1, appInfo.path);
+                }
+                throw new OpenEJBException(messages.format("createApplication.failed", appInfo.path), t);
+            }
+        } finally {
+            // cleanup there as well by safety cause we have multiple deployment mode (embedded, tomcat...)
+            for (final WebAppInfo webApp : appInfo.webApps) {
+                appInfo.properties.remove(webApp);
+            }
         }
     }
 

@@ -832,6 +832,18 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             final AppModule appModule = deploymentLoader.load(jarFile, null);
             final AppInfo appInfo = configureApplication(appModule);
 
+            // we need the finder for web scanning so push it to what sees TomcatWebAppBuilder, ie the info tree
+            // this is clean up in Assembler for safety and TomcatWebAppBuilder when used
+            if (!appModule.getWebModules().isEmpty()) {
+                for (final WebAppInfo info : appInfo.webApps) {
+                    for (final EjbModule ejbModule : appModule.getEjbModules()) {
+                        if (ejbModule.getModuleId().equals(info.moduleId) && ejbModule.getFinder() != null) {
+                            appInfo.properties.put(info, ejbModule);
+                        }
+                    }
+                }
+            }
+
             // TODO This is temporary -- we need to do this in AppInfoBuilder
             appInfo.paths.add(appInfo.path);
             appInfo.paths.add(jarFile.getAbsolutePath());

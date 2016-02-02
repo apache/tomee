@@ -446,137 +446,143 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      */
     @Override
     public void deployWebApps(final AppInfo appInfo, final ClassLoader classLoader) throws Exception {
-        for (final WebAppInfo webApp : appInfo.webApps) {
-            // look for context.xml
-            final File war = new File(webApp.path);
-            InputStream contextXml = null;
-            URL contextXmlUrl = null;
-            if (war.isDirectory()) {
-                final File cXml = new File(war, Constants.ApplicationContextXml).getAbsoluteFile();
-                if (cXml.exists()) {
-                    contextXml = IO.read(cXml);
-                    contextXmlUrl = cXml.toURI().toURL();
-                    logger.info("using context file " + cXml.getAbsolutePath());
-                }
-            } else { // war
-                final JarFile warAsJar = new JarFile(war);
-                final JarEntry entry = warAsJar.getJarEntry(Constants.ApplicationContextXml);
-                if (entry != null) {
-                    contextXmlUrl = new URL("jar:" + war.getAbsoluteFile().toURI().toURL().toExternalForm() + "!/" + Constants.ApplicationContextXml);
-                    contextXml = warAsJar.getInputStream(entry);
-                }
-            }
-
-            if (isAlreadyDeployed(appInfo, webApp)) {
-                continue;
-            }
-
-            StandardContext standardContext;
-            {
-                final ClassLoader containerLoader = Helper.get();
-                final Host host = hosts.getDefault();
-                if (StandardHost.class.isInstance(host) && !StandardContext.class.getName().equals(StandardHost.class.cast(host).getContextClass())) {
-                    try {
-                        standardContext = StandardContext.class.cast(containerLoader.loadClass(StandardHost.class.cast(host).getContextClass()).newInstance());
-                    } catch (final Throwable th) {
-                        logger.warning("Can't use context class specified, using default StandardContext", th);
-                        standardContext = new StandardContext();
+        try {
+            for (final WebAppInfo webApp : appInfo.webApps) {
+                // look for context.xml
+                final File war = new File(webApp.path);
+                InputStream contextXml = null;
+                URL contextXmlUrl = null;
+                if (war.isDirectory()) {
+                    final File cXml = new File(war, Constants.ApplicationContextXml).getAbsoluteFile();
+                    if (cXml.exists()) {
+                        contextXml = IO.read(cXml);
+                        contextXmlUrl = cXml.toURI().toURL();
+                        logger.info("using context file " + cXml.getAbsolutePath());
                     }
-                } else {
-                    standardContext = new StandardContext();
-                }
-                // should be optional but in maven parent is app loader and not maven loader which is the real parent
-                final ClassLoader currentParent = standardContext.getParentClassLoader();
-                if (currentParent == null || isParent(currentParent, containerLoader)) {
-                    standardContext.setParentClassLoader(containerLoader);
-                }
-            }
-            if (contextXml != null) {
-                standardContext.setConfigFile(contextXmlUrl);
-            }
-
-            if (standardContext.getPath() != null) {
-                webApp.contextRoot = standardContext.getPath();
-            }
-            if (webApp.contextRoot.startsWith("/") || webApp.contextRoot.startsWith(File.separator)) {
-                webApp.contextRoot = webApp.contextRoot.substring(1);
-            }
-            if (webApp.contextRoot.startsWith(File.separator)) {
-                webApp.contextRoot = webApp.contextRoot.replaceFirst(File.separator, "");
-            }
-
-            // /!\ take care, StandardContext default host = "_" and not null or localhost
-            final String hostname = Contexts.getHostname(standardContext);
-            if (hostname != null && !"_".equals(hostname)) {
-                webApp.host = hostname;
-            }
-
-            final ApplicationParameter appParam = new ApplicationParameter();
-            appParam.setName(OPENEJB_WEBAPP_MODULE_ID);
-            appParam.setValue(webApp.moduleId);
-            standardContext.addApplicationParameter(appParam);
-
-            if (!isAlreadyDeployed(appInfo, webApp)) {
-                if (standardContext.getPath() == null) {
-                    if (webApp.contextRoot != null && webApp.contextRoot.startsWith("/")) {
-                        standardContext.setPath(webApp.contextRoot);
-                    } else if (isRoot(webApp.contextRoot)) {
-                        standardContext.setPath("");
-                    } else {
-                        standardContext.setPath("/" + webApp.contextRoot);
+                } else { // war
+                    final JarFile warAsJar = new JarFile(war);
+                    final JarEntry entry = warAsJar.getJarEntry(Constants.ApplicationContextXml);
+                    if (entry != null) {
+                        contextXmlUrl = new URL("jar:" + war.getAbsoluteFile().toURI().toURL().toExternalForm() + "!/" + Constants.ApplicationContextXml);
+                        contextXml = warAsJar.getInputStream(entry);
                     }
                 }
-                if (standardContext.getDocBase() == null) {
-                    standardContext.setDocBase(webApp.path);
-                }
-                if (standardContext.getDocBase() != null && standardContext.getDocBase().endsWith(".war")) {
-                    DeploymentLoader.unpack(new File(standardContext.getDocBase()));
-                    if (standardContext.getPath().endsWith(".war")) {
-                        standardContext.setPath(removeFirstSlashAndWar("/" + standardContext.getPath()));
-                        standardContext.setName(standardContext.getPath());
-                        webApp.contextRoot = standardContext.getPath();
-                    }
-                    standardContext.setDocBase(standardContext.getDocBase().substring(0, standardContext.getDocBase().length() - 4));
-                }
-                if (isRoot(standardContext.getName())) {
-                    standardContext.setName("");
-                    webApp.contextRoot = "";
-                }
 
-                if (isAlreadyDeployed(appInfo, webApp)) { // possible because of the previous renaming
+                if (isAlreadyDeployed(appInfo, webApp)) {
                     continue;
                 }
 
-                // add classloader which is an URLClassLoader created by openejb
-                // {@see Assembler}
-                //
-                // we add it as parent classloader since we scanned classes with this classloader
-                // that's why we force delegate to true.
-                //
-                // However since this classloader and the webappclassloader will have a lot
-                // of common classes/resources we have to avoid duplicated resources
-                // so we contribute a custom loader.
-                //
-                // Note: the line standardContext.getLoader().setDelegate(true);
-                // could be hardcoded in the custom loader
-                // but here we have all the classloading logic
-                if (classLoader != null) {
-                    standardContext.setParentClassLoader(classLoader);
-                    standardContext.setDelegate(true);
+                StandardContext standardContext;
+                {
+                    final ClassLoader containerLoader = Helper.get();
+                    final Host host = hosts.getDefault();
+                    if (StandardHost.class.isInstance(host) && !StandardContext.class.getName().equals(StandardHost.class.cast(host).getContextClass())) {
+                        try {
+                            standardContext = StandardContext.class.cast(containerLoader.loadClass(StandardHost.class.cast(host).getContextClass()).newInstance());
+                        } catch (final Throwable th) {
+                            logger.warning("Can't use context class specified, using default StandardContext", th);
+                            standardContext = new StandardContext();
+                        }
+                    } else {
+                        standardContext = new StandardContext();
+                    }
+                    // should be optional but in maven parent is app loader and not maven loader which is the real parent
+                    final ClassLoader currentParent = standardContext.getParentClassLoader();
+                    if (currentParent == null || isParent(currentParent, containerLoader)) {
+                        standardContext.setParentClassLoader(containerLoader);
+                    }
+                }
+                if (contextXml != null) {
+                    standardContext.setConfigFile(contextXmlUrl);
                 }
 
-                String host = webApp.host;
-                if (host == null) {
-                    host = hosts.getDefaultHost();
-                    logger.info("using default host: " + host);
+                if (standardContext.getPath() != null) {
+                    webApp.contextRoot = standardContext.getPath();
+                }
+                if (webApp.contextRoot.startsWith("/") || webApp.contextRoot.startsWith(File.separator)) {
+                    webApp.contextRoot = webApp.contextRoot.substring(1);
+                }
+                if (webApp.contextRoot.startsWith(File.separator)) {
+                    webApp.contextRoot = webApp.contextRoot.replaceFirst(File.separator, "");
                 }
 
-                if (classLoader != null) {
-                    appInfo.autoDeploy = false;
-                    deployWar(standardContext, host, appInfo);
-                } else { // force a normal deployment with lazy building of AppInfo
-                    deployWar(standardContext, host, null);
+                // /!\ take care, StandardContext default host = "_" and not null or localhost
+                final String hostname = Contexts.getHostname(standardContext);
+                if (hostname != null && !"_".equals(hostname)) {
+                    webApp.host = hostname;
                 }
+
+                final ApplicationParameter appParam = new ApplicationParameter();
+                appParam.setName(OPENEJB_WEBAPP_MODULE_ID);
+                appParam.setValue(webApp.moduleId);
+                standardContext.addApplicationParameter(appParam);
+
+                if (!isAlreadyDeployed(appInfo, webApp)) {
+                    if (standardContext.getPath() == null) {
+                        if (webApp.contextRoot != null && webApp.contextRoot.startsWith("/")) {
+                            standardContext.setPath(webApp.contextRoot);
+                        } else if (isRoot(webApp.contextRoot)) {
+                            standardContext.setPath("");
+                        } else {
+                            standardContext.setPath("/" + webApp.contextRoot);
+                        }
+                    }
+                    if (standardContext.getDocBase() == null) {
+                        standardContext.setDocBase(webApp.path);
+                    }
+                    if (standardContext.getDocBase() != null && standardContext.getDocBase().endsWith(".war")) {
+                        DeploymentLoader.unpack(new File(standardContext.getDocBase()));
+                        if (standardContext.getPath().endsWith(".war")) {
+                            standardContext.setPath(removeFirstSlashAndWar("/" + standardContext.getPath()));
+                            standardContext.setName(standardContext.getPath());
+                            webApp.contextRoot = standardContext.getPath();
+                        }
+                        standardContext.setDocBase(standardContext.getDocBase().substring(0, standardContext.getDocBase().length() - 4));
+                    }
+                    if (isRoot(standardContext.getName())) {
+                        standardContext.setName("");
+                        webApp.contextRoot = "";
+                    }
+
+                    if (isAlreadyDeployed(appInfo, webApp)) { // possible because of the previous renaming
+                        continue;
+                    }
+
+                    // add classloader which is an URLClassLoader created by openejb
+                    // {@see Assembler}
+                    //
+                    // we add it as parent classloader since we scanned classes with this classloader
+                    // that's why we force delegate to true.
+                    //
+                    // However since this classloader and the webappclassloader will have a lot
+                    // of common classes/resources we have to avoid duplicated resources
+                    // so we contribute a custom loader.
+                    //
+                    // Note: the line standardContext.getLoader().setDelegate(true);
+                    // could be hardcoded in the custom loader
+                    // but here we have all the classloading logic
+                    if (classLoader != null) {
+                        standardContext.setParentClassLoader(classLoader);
+                        standardContext.setDelegate(true);
+                    }
+
+                    String host = webApp.host;
+                    if (host == null) {
+                        host = hosts.getDefaultHost();
+                        logger.info("using default host: " + host);
+                    }
+
+                    if (classLoader != null) {
+                        appInfo.autoDeploy = false;
+                        deployWar(standardContext, host, appInfo);
+                    } else { // force a normal deployment with lazy building of AppInfo
+                        deployWar(standardContext, host, null);
+                    }
+                }
+            }
+        } finally { // cleanup temp var passing
+            for (final WebAppInfo webApp : appInfo.webApps) {
+                appInfo.properties.remove(webApp);
             }
         }
     }
@@ -616,6 +622,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 final ContextInfo contextInfo = addContextInfo(host, standardContext);
                 contextInfo.appInfo = info;
                 contextInfo.deployer = deployer;
+                contextInfo.module = extractModule(standardContext, info);
             }
 
             deployer.manageApp(standardContext);
@@ -626,11 +633,22 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     final ContextInfo contextInfo = addContextInfo(host, standardContext);
                     contextInfo.appInfo = info;
                     contextInfo.host = theHost;
+                    contextInfo.module = extractModule(standardContext, info);
                 }
 
                 theHost.addChild(standardContext);
             }
         }
+    }
+
+    private EjbModule extractModule(final StandardContext standardContext, final AppInfo appInfo) {
+        for (final WebAppInfo app : appInfo.webApps) {
+            if (app.path != null && warPath(standardContext).equals(rootPath(new File(app.path)))) {
+                // see org.apache.openejb.config.ConfigurationFactory.configureApplication(java.io.File)
+                return EjbModule.class.cast(appInfo.properties.remove(app));
+            }
+        }
+        return null;
     }
 
     public synchronized ContextInfo standaAloneWebAppInfo(final File file) {
@@ -1112,6 +1130,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
         if (contextInfo == null) {
             final AppModule appModule = loadApplication(standardContext);
+            appModule.getProperties().put("loader.from", "tomcat");
 
             if (standardContext.getNamingResources() instanceof OpenEJBNamingResource) {
                 final Collection<String> importedNames = new ArrayList<>(); // we can get the same resource twice as in tomcat
@@ -1235,6 +1254,12 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             }
         } else {
             contextInfo.standardContext = standardContext;
+            if (contextInfo.module != null && contextInfo.module.getFinder() != null) { // TODO: make it more explicit or less hacky not using properties
+                final OpenEJBContextConfig openEJBContextConfig = findOpenEJBContextConfig(standardContext);
+                if (openEJBContextConfig != null) {
+                    openEJBContextConfig.finder(contextInfo.module.getFinder(), contextInfo.module.getClassLoader());
+                }
+            }
         }
 
         final String id = getId(standardContext);
@@ -1392,13 +1417,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     }
 
     public void setFinderOnContextConfig(final StandardContext standardContext, final AppModule appModule) {
-        OpenEJBContextConfig openEJBContextConfig = null;
-        for (final LifecycleListener listener : standardContext.findLifecycleListeners()) {
-            if (OpenEJBContextConfig.class.isInstance(listener)) {
-                openEJBContextConfig = OpenEJBContextConfig.class.cast(listener);
-                break;
-            }
-        }
+        final OpenEJBContextConfig openEJBContextConfig = findOpenEJBContextConfig(standardContext);
         if (openEJBContextConfig != null) {
             for (final EjbModule ejbModule : appModule.getEjbModules()) {
                 if (ejbModule.getFile() != null && warPath(standardContext).equals(rootPath(ejbModule.getFile()))) {
@@ -1407,6 +1426,17 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 }
             }
         }
+    }
+
+    private OpenEJBContextConfig findOpenEJBContextConfig(StandardContext standardContext) {
+        OpenEJBContextConfig openEJBContextConfig = null;
+        for (final LifecycleListener listener : standardContext.findLifecycleListeners()) {
+            if (OpenEJBContextConfig.class.isInstance(listener)) {
+                openEJBContextConfig = OpenEJBContextConfig.class.cast(listener);
+                break;
+            }
+        }
+        return openEJBContextConfig;
     }
 
     private static File rootPath(final File file) {
@@ -1583,6 +1613,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
         // if appInfo is null this is a failed deployment... just ignore
         final ContextInfo contextInfo = getContextInfo(standardContext);
+        contextInfo.module = null; // shouldnt be there after startup (actually we shouldnt need it from info tree but our scanning does)
         if (contextInfo != null && contextInfo.appInfo == null) {
             return;
         } else if (contextInfo == null) { // openejb webapp loaded from the LoaderServlet
@@ -2475,6 +2506,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         public StandardContext standardContext;
         public HostConfig deployer;
         public Host host;
+        public EjbModule module; // just during startup
         public String version;
         public Collection<String> resourceNames = Collections.emptyList();
 
