@@ -23,12 +23,31 @@ import org.apache.openejb.InterfaceType;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.RpcContainer;
+import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.ThreadContextListener;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 
+import javax.ejb.AccessLocalException;
+import javax.ejb.EJBException;
+import javax.ejb.EJBTransactionRequiredException;
+import javax.ejb.EJBTransactionRolledbackException;
+import javax.ejb.NoSuchEJBException;
+import javax.ejb.NoSuchObjectLocalException;
+import javax.ejb.TransactionRequiredLocalException;
+import javax.ejb.TransactionRolledbackLocalException;
+import javax.transaction.RollbackException;
+import javax.transaction.Status;
+import javax.transaction.Synchronization;
+import javax.transaction.SystemException;
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
+import javax.transaction.TransactionRequiredException;
+import javax.transaction.TransactionRolledbackException;
+import javax.transaction.TransactionSynchronizationRegistry;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -54,16 +73,6 @@ import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.ReentrantLock;
-import javax.ejb.AccessLocalException;
-import javax.ejb.EJBException;
-import javax.ejb.EJBTransactionRequiredException;
-import javax.ejb.EJBTransactionRolledbackException;
-import javax.ejb.NoSuchEJBException;
-import javax.ejb.NoSuchObjectLocalException;
-import javax.ejb.TransactionRequiredLocalException;
-import javax.ejb.TransactionRolledbackLocalException;
-import javax.transaction.TransactionRequiredException;
-import javax.transaction.TransactionRolledbackException;
 
 import static org.apache.openejb.core.ivm.IntraVmCopyMonitor.State.CLASSLOADER_COPY;
 import static org.apache.openejb.core.ivm.IntraVmCopyMonitor.State.COPY;
@@ -74,6 +83,25 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
     private static final String OPENEJB_LOCALCOPY = "openejb.localcopy";
     private static final boolean REMOTE_COPY_ENABLED = parseRemoteCopySetting();
+    static {
+        ThreadContext.addThreadContextListener(new ThreadContextListener() {
+            @Override
+            public void contextEntered(final ThreadContext oldContext, final ThreadContext newContext) {
+                // no-op
+            }
+
+            @Override
+            public void contextExited(final ThreadContext exitedContext, final ThreadContext reenteredContext) {
+                if (exitedContext != null) {
+                    final ProxyRegistry proxyRegistry = exitedContext.get(ProxyRegistry.class);
+                    if (proxyRegistry != null) {
+                        proxyRegistry.liveHandleRegistry.clear();
+                    }
+                }
+            }
+        });
+    }
+
     public final Object deploymentID;
     public final Object primaryKey;
     protected final InterfaceType interfaceType;
@@ -640,12 +668,58 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
     public ConcurrentMap getLiveHandleRegistry() {
         final BeanContext beanContext = getBeanContext();
-        ProxyRegistry proxyRegistry = beanContext.get(ProxyRegistry.class);
-        if (proxyRegistry == null) {
-            proxyRegistry = new ProxyRegistry();
-            beanContext.set(ProxyRegistry.class, proxyRegistry);
+
+        final ThreadContext tc = ThreadContext.getThreadContext();
+        if (tc != null && tc.getBeanContext() != beanContext /* parent bean */ && tc.getCurrentOperation() == Operation.BUSINESS) {
+            ProxyRegistry registry = tc.get(ProxyRegistry.class);
+            if (registry == null) {
+                registry = new ProxyRegistry();
+                tc.set(ProxyRegistry.class, registry);
+            }
+            return registry.liveHandleRegistry;
+        } else { // use the tx if there
+            final SystemInstance systemInstance = SystemInstance.get();
+            final TransactionManager txMgr = systemInstance.getComponent(TransactionManager.class);
+            try {
+                final Transaction tx = txMgr.getTransaction();
+                if (tx != null && tx.getStatus() == Status.STATUS_ACTIVE) {
+                    final TransactionSynchronizationRegistry registry = systemInstance.getComponent(TransactionSynchronizationRegistry.class);
+                    final String resourceKey = ProxyRegistry.class.getName();
+                    ConcurrentMap map = ConcurrentMap.class.cast(registry.getResource(resourceKey));
+                    if (map == null) {
+                        map = new ConcurrentHashMap();
+                        registry.putResource(resourceKey, map);
+                        try {
+                            final ConcurrentMap tmp = map;
+                            tx.registerSynchronization(new Synchronization() {
+                                @Override
+                                public void beforeCompletion() {
+                                    // no-op
+                                }
+
+                                @Override
+                                public void afterCompletion(final int status) {
+                                    tmp.clear();
+                                }
+                            });
+                        } catch (final RollbackException e) { // not really possible since we check the status
+                            // let it go to default
+                        }
+                    }
+                    return map;
+                }
+            } catch (final SystemException e) {
+                // let it go to default
+            }
+
+            // back to default but it doesnt release the memory
+            ProxyRegistry proxyRegistry = beanContext.get(ProxyRegistry.class);
+            if (proxyRegistry == null) {
+                proxyRegistry = new ProxyRegistry();
+                beanContext.set(ProxyRegistry.class, proxyRegistry);
+            }
+            return proxyRegistry.liveHandleRegistry;
         }
-        return proxyRegistry.liveHandleRegistry;
     }
 
     private void writeObject(final ObjectOutputStream out) throws IOException {
