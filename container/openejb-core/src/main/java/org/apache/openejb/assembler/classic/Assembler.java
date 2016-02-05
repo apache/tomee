@@ -1245,7 +1245,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                         }
                     }
                 } catch (final Exception e) {
-                    logger.fatal("Error calling @PostConstruct method on " + resourceInfo.id);
+                    logger.fatal("Error calling PostConstruct method on " + resourceInfo.id);
+                    logger.fatal("Resource " + resourceInfo.id + " could not be initialized. Application will be undeployed.");
                     throw new OpenEJBException(e);
                 }
             }
@@ -2353,8 +2354,45 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     private void destroyLookedUpResource(final Context globalContext, final String id, final String name) throws NamingException {
-        final Object object = globalContext.lookup(name);
-        final String clazz;
+    	
+    	Object object = null;
+    	
+    	try {
+			object = globalContext.lookup(name);
+		} catch (NamingException e) {
+			// if we catch a NamingException, check to see if the resource is a LaztObjectReference that has not been initialized correctly
+			final String ctx = name.substring(0, name.lastIndexOf("/"));
+			final String objName = name.substring(ctx.length() + 1);
+			final NamingEnumeration<Binding> bindings = globalContext.listBindings(ctx);
+			while (bindings.hasMoreElements()) {
+				final Binding binding = bindings.nextElement();
+				if (!binding.getName().equals(objName)) continue;
+				if (!LazyObjectReference.class.isInstance(binding.getObject())) continue;
+				
+				final LazyObjectReference<?> ref = LazyObjectReference.class.cast(binding.getObject());
+				if (! ref.isInitialized()) {
+					globalContext.unbind(name);
+
+					// TODO: refactor this method out
+					//Ensure ResourceInfo for this resource is removed
+		            final OpenEjbConfiguration configuration = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
+		            final Iterator<ResourceInfo> iterator = configuration.facilities.resources.iterator();
+		            while (iterator.hasNext()) {
+		                final ResourceInfo info = iterator.next();
+		                if (name.equals(OPENEJB_RESOURCE_JNDI_PREFIX + info.id)) {
+		                    iterator.remove();
+		                    break;
+		                }
+		            }
+					
+					return;
+				}
+			}
+			
+			throw e;
+		}
+    	
+		final String clazz;
         if (object == null) { // should it be possible?
             clazz = "?";
         } else {
