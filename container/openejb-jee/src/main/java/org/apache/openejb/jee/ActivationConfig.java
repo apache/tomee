@@ -54,7 +54,7 @@ import java.util.Properties;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "activation-configType", propOrder = {
-    "description",
+    "descriptions",
     "activationConfigProperty"
 })
 public class ActivationConfig {
