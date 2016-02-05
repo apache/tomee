@@ -46,7 +46,7 @@ import java.util.Map;
 import java.util.Properties;
 
 public class OpenEjbBrokerFactoryTest extends TestCase {
-    private final int brokerPort = NetworkUtil.getNextAvailablePort(new int[]{61616, 0});
+    private final int brokerPort = NetworkUtil.getNextAvailablePort(new int[]{7272 /* try to not use default AMQ port */, 0});
 
     public void testBrokerUri() throws Exception {
         final String prefix = ActiveMQFactory.getBrokerMetaFile();
