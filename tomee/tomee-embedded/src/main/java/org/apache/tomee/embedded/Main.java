@@ -37,6 +37,7 @@ public class Main {
     public static final String DIRECTORY = "directory";
     public static final String DOC_BASE = "doc-base";
     public static final String AS_WAR = "as-war";
+    public static final String RENAMING = "renaming";
 
     public static void main(final String[] args) {
         final CommandLineParser parser = new PosixParser();
@@ -90,7 +91,7 @@ public class Main {
             if (autoWar) { // nothing deployed check if we are a war and deploy ourself then
                 final File me = jarLocation(Main.class);
                 if (me.getName().endsWith(".war")) {
-                    container.deploy(contexts == null || i == contexts.length ? "" : contexts[i], me, true);
+                    container.deploy(contexts == null || i == contexts.length ? "" : contexts[i], me, line.hasOption(RENAMING));
                 }
             }
 
@@ -119,6 +120,7 @@ public class Main {
         options.addOption("d", DIRECTORY, true, "TomEE directory");
         options.addOption("c", AS_WAR, false, "deploy classpath as war");
         options.addOption("b", DOC_BASE, true, "when deploy classpath as war, the doc base");
+        options.addOption(null, RENAMING, true, "for fat war only, is renaming of the context supported");
         return options;
     }
 
