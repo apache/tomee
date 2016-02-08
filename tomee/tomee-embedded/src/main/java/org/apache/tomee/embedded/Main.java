@@ -90,7 +90,7 @@ public class Main {
             if (autoWar) { // nothing deployed check if we are a war and deploy ourself then
                 final File me = jarLocation(Main.class);
                 if (me.getName().endsWith(".war")) {
-                    container.deploy(contexts == null || i == contexts.length ? "" : contexts[i], me);
+                    container.deploy(contexts == null || i == contexts.length ? "" : contexts[i], me, true);
                 }
             }
 
