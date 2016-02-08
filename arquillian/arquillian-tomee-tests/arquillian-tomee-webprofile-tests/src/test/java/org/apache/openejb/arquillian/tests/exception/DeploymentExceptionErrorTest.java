@@ -44,7 +44,7 @@ public class DeploymentExceptionErrorTest {
     @Deployment(testable = false)
     @ShouldThrowException(OpenEJBRuntimeException.class)
     public static WebArchive war() {
-        return ShrinkWrap.create(WebArchive.class)
+        return ShrinkWrap.create(WebArchive.class, "DeploymentExceptionErrorTest.war")
                     .addAsWebInfResource(new StringAsset(Descriptors.create(BeansDescriptor.class)
                             .getOrCreateInterceptors()
                                 .clazz("i.dont.exist.so.i.ll.make.the.deployment.fail")

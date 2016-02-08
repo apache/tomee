@@ -238,7 +238,8 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
     }
 
     @Override
-    protected boolean filter(final String name) {
+    protected boolean filter(final String inName, final boolean isClassName) {
+        final String name = inName == null ||isClassName ? inName : inName.replace('/', '.').replace(".class", "");
         if ("org.apache.tomee.mojarra.TomEEInjectionProvider".equals(name)) {
             return false;
         }

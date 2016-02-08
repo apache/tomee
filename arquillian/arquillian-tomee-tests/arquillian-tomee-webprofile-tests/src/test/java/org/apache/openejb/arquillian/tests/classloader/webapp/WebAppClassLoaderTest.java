@@ -44,7 +44,7 @@ public class WebAppClassLoaderTest {
 
     @Deployment
     public static WebArchive war() {
-        return ShrinkWrap.create(WebArchive.class)
+        return ShrinkWrap.create(WebArchive.class, "WebAppClassLoaderTest.war")
                 .addClasses(HashCdiExtension.class, HashServlet.class)
                 .addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
                 .addAsServiceProvider(Extension.class, HashCdiExtension.class);

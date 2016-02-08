@@ -29,16 +29,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.net.URL;
 
 /**
@@ -57,8 +47,6 @@ public class EarTest {
         ejbJar.addClass(Bean.class);
 
         final WebArchive webapp = ShrinkWrap.create(WebArchive.class, "green.war").addClass(Hello.class);
-        System.out.println(webapp.toString(true));
-        System.out.println();
 
         final EnterpriseArchive ear = ShrinkWrap.create(EnterpriseArchive.class, "red.ear").addAsModule(ejbJar).addAsModule(webapp);
         ear.addAsLibraries(JarLocation.jarLocation(Test.class));
@@ -68,10 +56,7 @@ public class EarTest {
 
     @Test
     public void test() throws Exception {
-
         final URL servlet = new URL(url, "/red/green/blue");
-
-        System.out.println(servlet.toExternalForm());
         final String slurp = IO.slurp(servlet);
         Assert.assertEquals(Test.class.getName(), slurp);
     }

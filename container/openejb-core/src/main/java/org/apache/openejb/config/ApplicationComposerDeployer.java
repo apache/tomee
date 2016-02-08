@@ -157,11 +157,11 @@ public class ApplicationComposerDeployer implements DynamicDeployer {
             } else if (Persistence.class.isInstance(result)) {
                 final Persistence persistence = Persistence.class.cast(result);
                 if (!persistence.getPersistenceUnit().isEmpty()) {
-                    appModule.getPersistenceModules().add(new PersistenceModule(persistence.getPersistenceUnit().iterator().next().getName(), persistence));
+                    appModule.getPersistenceModules().add(new PersistenceModule(appModule, rootUrl(ejbModule), persistence));
                 }
             } else if (PersistenceUnit.class.isInstance(result)) {
                 final PersistenceUnit unit = PersistenceUnit.class.cast(result);
-                appModule.addPersistenceModule(new PersistenceModule(unit.getName(), new Persistence(unit)));
+                appModule.addPersistenceModule(new PersistenceModule(appModule, rootUrl(ejbModule), new Persistence(unit)));
             } else if (Beans.class.isInstance(result)) {
                 final Beans beans = Beans.class.cast(result);
                 ejbModule.setBeans(beans);
@@ -172,6 +172,14 @@ public class ApplicationComposerDeployer implements DynamicDeployer {
             throw new IllegalStateException(e);
         }
         return instance;
+    }
+
+    private String rootUrl(final EjbModule ejbModule) {
+        try {
+            return ejbModule.getModuleUri().toURL().toExternalForm();
+        } catch (final Exception e) { // malformed, npe...shouldn't occur at this point
+            return null; // actually would be nicer to return null by default to skip any other scanning but needed by some provider and us sometimes
+        }
     }
 
     private void configureClasses(final WebModule web, final EjbModule ejbModule,

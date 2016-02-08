@@ -29,6 +29,7 @@ import javax.naming.NamingException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -177,22 +178,21 @@ public class CoreContainerSystem implements ContainerSystem {
         AppContext context = apps.get(id);
 
         if (null == context && null != id) {
-            context = apps.get(id.toString().toLowerCase());
+            context = apps.get(id.toString().toLowerCase(Locale.ENGLISH));
         }
 
         return context;
     }
 
     public void addAppContext(final AppContext appContext) {
-        apps.put(appContext.getId().toLowerCase(), appContext);
+        apps.put(appContext.getId().toLowerCase(Locale.ENGLISH), appContext);
     }
 
     public AppContext removeAppContext(final Object id) {
-
         AppContext context = apps.remove(id);
 
         if (null == context && null != id) {
-            context = apps.remove(id.toString().toLowerCase());
+            context = apps.remove(id.toString().toLowerCase(Locale.ENGLISH));
         }
 
         return context;

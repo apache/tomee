@@ -52,7 +52,7 @@ public class OverloadedEjbObserverMethodsTest {
 
     @Deployment
     public static WebArchive archive() {
-        return ShrinkWrap.create(WebArchive.class)
+        return ShrinkWrap.create(WebArchive.class, "OverloadedEjbObserverMethodsTest.war")
                 .addClasses(Painter.class, Orange.class, Green.class)
                 .addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
     }

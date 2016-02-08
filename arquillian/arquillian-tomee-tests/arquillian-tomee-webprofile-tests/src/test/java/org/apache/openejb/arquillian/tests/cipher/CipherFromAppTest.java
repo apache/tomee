@@ -43,7 +43,10 @@ public class CipherFromAppTest {
                 .addAsWebInfResource(new StringAsset("" +
                         "<resource>" +
                         "   <Resource type=\"DataSource\" id=\"cipher\">" +
-                        "       PasswordCipher = constant" +
+                        "       PasswordCipher = constant\n" +
+                        // tomcat-jdbc doesnt support invalid credentials
+                        "       InitialSize = 0\n" +
+                        "       MinIdle = 0\n" +
                         "   </Resource>" +
                         "</resource>"), "resources.xml");
     }

@@ -50,7 +50,7 @@ public class PersistenceModule implements DeploymentModule {
 
     public void setRootUrl(final String rootUrl) {
         this.rootUrl = rootUrl;
-        this.uri = URLs.uri(rootUrl);
+        this.uri = rootUrl == null ? null : URLs.uri(rootUrl);
     }
 
     public Persistence getPersistence() {

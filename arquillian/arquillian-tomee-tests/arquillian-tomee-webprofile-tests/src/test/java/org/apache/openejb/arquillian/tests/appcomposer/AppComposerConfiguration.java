@@ -26,6 +26,8 @@ import org.apache.openejb.testing.Module;
 public class AppComposerConfiguration {
     @Module
     public static PersistenceUnit unit() {
-        return new PersistenceUnit("jpa");
+        final PersistenceUnit jpa = new PersistenceUnit("jpa");
+        jpa.setExcludeUnlistedClasses(true);
+        return jpa;
     }
 }
