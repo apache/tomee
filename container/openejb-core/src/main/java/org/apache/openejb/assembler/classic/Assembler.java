@@ -2370,8 +2370,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             final NamingEnumeration<Binding> bindings = globalContext.listBindings(ctx);
             while (bindings.hasMoreElements()) {
                 final Binding binding = bindings.nextElement();
-                if (!binding.getName().equals(objName)) continue;
-                if (!LazyObjectReference.class.isInstance(binding.getObject())) continue;
+                if (!binding.getName().equals(objName)) {
+                    continue;
+                }
+                if (!LazyObjectReference.class.isInstance(binding.getObject())) {
+                    continue;
+                }
                 
                 final LazyObjectReference<?> ref = LazyObjectReference.class.cast(binding.getObject());
                 if (! ref.isInitialized()) {

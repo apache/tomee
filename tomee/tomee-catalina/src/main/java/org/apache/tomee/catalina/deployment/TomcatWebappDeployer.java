@@ -42,6 +42,7 @@ public class TomcatWebappDeployer implements WebAppDeployer {
         final Collection<String> alreadyDeployed = tomcatWebAppBuilder.availableApps();
 
         final AppInfo appInfo = fakeInfo(file, host, context);
+        appInfo.properties.setProperty("tomcat.unpackWar", "false");
         try {
             tomcatWebAppBuilder.deployWebApps(appInfo, null); // classloader == null -> standalone war
         } catch (final Exception e) { // tomcat lost the real exception (only in lifecycle exception string) so try to find it back

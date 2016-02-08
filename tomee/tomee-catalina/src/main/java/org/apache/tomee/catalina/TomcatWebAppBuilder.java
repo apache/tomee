@@ -492,6 +492,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                         standardContext.setParentClassLoader(containerLoader);
                     }
                 }
+                standardContext.setUnpackWAR(!"false".equalsIgnoreCase(appInfo.properties.getProperty("tomcat.unpackWar")));
                 if (contextXml != null) {
                     standardContext.setConfigFile(contextXmlUrl);
                 }
