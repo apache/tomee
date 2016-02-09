@@ -1664,7 +1664,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             } catch (final NamingException ignored) {
                 // no resource adapters were created
             }
-            destroyResourceTree(namingEnumeration);
+            destroyResourceTree("openejb/Resource", namingEnumeration);
 
             try {
                 containerSystem.getJNDIContext().unbind("java:global");
@@ -1683,17 +1683,27 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
     }
 
-    private Collection<DestroyingResource> destroyResourceTree(final NamingEnumeration<Binding> namingEnumeration) {
+    //TODO: add Jndi name to DestroyingResource
+    private Collection<DestroyingResource> destroyResourceTree(final String name, NamingEnumeration<Binding> namingEnumeration) {
         final List<DestroyingResource> resources = new LinkedList<DestroyingResource>();
         while (namingEnumeration != null && namingEnumeration.hasMoreElements()) {
             final Binding binding = namingEnumeration.nextElement();
+            final String boundName = name + "/" + binding.getName();
             final Object object = binding.getObject();
             if (Context.class.isInstance(object)) {
                 try {
-                    resources.addAll(destroyResourceTree(Context.class.cast(object).listBindings("")));
-                } catch (final Exception ignored) {
-                    // no-op
+                    NamingEnumeration<Binding> bindings = Context.class.cast(object).listBindings("");
+                    resources.addAll(destroyResourceTree(boundName, bindings));
+                } catch (final NamingException e) {
+                    logger.error("Error removing bindings from " + boundName, e);
                 }
+            } else if (LazyResource.class.isInstance(object)) {
+                removeResourceInfo(boundName);
+                try {
+					containerSystem.getJNDIContext().unbind(boundName);
+				} catch (NamingException e) {
+					logger.error("Error unbinding " + boundName, e);
+				}
             } else {
                 resources.add(new DestroyingResource(binding.getName(), binding.getClassName(), object));
             }
@@ -1792,7 +1802,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             final Iterator<ResourceInfo> iterator = configuration.facilities.resources.iterator();
             while (iterator.hasNext()) {
                 final ResourceInfo info = iterator.next();
-                if (name.equals(info.id)) {
+                if (name.equals(OPENEJB_RESOURCE_JNDI_PREFIX + info.id)) {
                     iterator.remove();
                     break;
                 }
@@ -2210,15 +2220,21 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             // if we catch a NamingException, check to see if the resource is a LaztObjectReference that has not been initialized correctly
             final String ctx = name.substring(0, name.lastIndexOf("/"));
             final String objName = name.substring(ctx.length() + 1);
+            
             final NamingEnumeration<Binding> bindings = globalContext.listBindings(ctx);
             while (bindings.hasMoreElements()) {
                 final Binding binding = bindings.nextElement();
-                if (!binding.getName().equals(objName)) continue;
-                if (!LazyObjectReference.class.isInstance(binding.getObject())) continue;
+                if (!binding.getName().equals(objName)) {
+                	continue;
+                }
+                
+                if (!LazyObjectReference.class.isInstance(binding.getObject())) {
+                	continue;
+                }
                 
                 final LazyObjectReference<?> ref = LazyObjectReference.class.cast(binding.getObject());
                 if (! ref.isInitialized()) {
-                    globalContext.unbind(name);
+            		globalContext.unbind(name);
                     removeResourceInfo(name);
                     return;
                 }
