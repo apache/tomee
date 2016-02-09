@@ -1684,7 +1684,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     //TODO: add Jndi name to DestroyingResource
-    private Collection<DestroyingResource> destroyResourceTree(final String name, NamingEnumeration<Binding> namingEnumeration) {
+    private Collection<DestroyingResource> destroyResourceTree(final String name, final NamingEnumeration<Binding> namingEnumeration) {
         final List<DestroyingResource> resources = new LinkedList<DestroyingResource>();
         while (namingEnumeration != null && namingEnumeration.hasMoreElements()) {
             final Binding binding = namingEnumeration.nextElement();
@@ -1692,7 +1692,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             final Object object = binding.getObject();
             if (Context.class.isInstance(object)) {
                 try {
-                    NamingEnumeration<Binding> bindings = Context.class.cast(object).listBindings("");
+                    final NamingEnumeration<Binding> bindings = Context.class.cast(object).listBindings("");
                     resources.addAll(destroyResourceTree(boundName, bindings));
                 } catch (final NamingException e) {
                     logger.error("Error removing bindings from " + boundName, e);
