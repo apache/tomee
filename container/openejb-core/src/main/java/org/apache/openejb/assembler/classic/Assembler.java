@@ -1700,10 +1700,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             } else if (LazyResource.class.isInstance(object)) {
                 removeResourceInfo(boundName);
                 try {
-					containerSystem.getJNDIContext().unbind(boundName);
-				} catch (NamingException e) {
-					logger.error("Error unbinding " + boundName, e);
-				}
+                    containerSystem.getJNDIContext().unbind(boundName);
+                } catch (NamingException e) {
+                    logger.error("Error unbinding " + boundName, e);
+                }
             } else {
                 resources.add(new DestroyingResource(binding.getName(), binding.getClassName(), object));
             }
@@ -2225,16 +2225,16 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             while (bindings.hasMoreElements()) {
                 final Binding binding = bindings.nextElement();
                 if (!binding.getName().equals(objName)) {
-                	continue;
+                    continue;
                 }
                 
                 if (!LazyObjectReference.class.isInstance(binding.getObject())) {
-                	continue;
+                    continue;
                 }
                 
                 final LazyObjectReference<?> ref = LazyObjectReference.class.cast(binding.getObject());
                 if (! ref.isInitialized()) {
-            		globalContext.unbind(name);
+                    globalContext.unbind(name);
                     removeResourceInfo(name);
                     return;
                 }
