@@ -254,6 +254,9 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
     // will be in the webapp
     @Override
     public void start() throws LifecycleException {
+        if (this.repositories == null) {
+            this.repositories = new String[0];
+        }
         super.start(); // do it first otherwise we can't use this as classloader
 
         // mainly for tomee-maven-plugin
