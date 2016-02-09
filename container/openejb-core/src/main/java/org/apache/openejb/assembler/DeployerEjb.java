@@ -25,6 +25,7 @@ import org.apache.openejb.UndeployException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.DeploymentExceptionManager;
+import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentLoader;
@@ -248,6 +249,9 @@ public class DeployerEjb implements Deployer {
                 appInfo.appId = properties.getProperty(OPENEJB_DEPLOYER_FORCED_APP_ID_PROP);
             }
 
+            if (!appInfo.webApps.isEmpty()) {
+                appInfo.properties.setProperty("tomcat.unpackWar", "false");
+            }
             assembler.createApplication(appInfo);
 
             saveIfNeeded(properties, file, appInfo);
