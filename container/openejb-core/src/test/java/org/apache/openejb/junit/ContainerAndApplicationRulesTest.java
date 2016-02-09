@@ -17,6 +17,7 @@
 package org.apache.openejb.junit;
 
 import org.apache.openejb.api.configuration.PersistenceUnitDefinition;
+import org.apache.openejb.testing.ContainerProperties;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
@@ -41,6 +42,7 @@ public class ContainerAndApplicationRulesTest {
         assertNull(instanceContainer.getInstance(Container.class).ignored);
     }
 
+    @ContainerProperties(@ContainerProperties.Property(name = "openejb.conf.file", value = ContainerProperties.Property.IGNORED))
     @org.apache.openejb.testing.Classes(cdi = true, value = Ignored.class) // @Classes invalid for a container
     public static class Container {
         @Inject

@@ -1352,8 +1352,12 @@ public class ApplicationComposers {
         if (configAnnot != null) {
             for (final ContainerProperties.Property p : configAnnot.value()) {
                 final String value = p.value();
+                if (ContainerProperties.Property.IGNORED.equals(value)) {
+                    System.clearProperty(p.name()); // enforces some clean up since we can't set null in a hash table
+                    continue;
+                }
                 final String name = p.name();
-                configuration.put(name, ContainerProperties.Property.IGNORED.equals(value) ? null : value);
+                configuration.put(name, value);
                 if (value.contains("${")) {
                     if (propertiesToSetAgain == null) {
                         propertiesToSetAgain = new LinkedList<>();
