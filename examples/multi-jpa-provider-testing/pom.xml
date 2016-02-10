@@ -22,7 +22,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>multi-jpa-provider-testing</artifactId>
   <packaging>jar</packaging>
-  <version>1.1.1-TT.3</version>
+  <version>4.7.4-TT.2-SNAPSHOT</version>
   <name>OpenEJB :: Examples :: Multiple JPA providers</name>
 
   <properties>
@@ -100,14 +100,14 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.11</version>
+      <version>4.12</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>arquillian-openejb-embedded-4</artifactId>
-      <version>4.7.3-TT.4</version>
+      <version>4.7.4-TT.2-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -136,7 +136,7 @@
     <dependency> <!-- just a facade pom which will bring hibernate for us -->
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core-hibernate</artifactId>
-      <version>4.7.3-TT.4</version>
+      <version>4.7.4-TT.2-SNAPSHOT</version>
       <scope>test</scope>
       <type>pom</type>
     </dependency>

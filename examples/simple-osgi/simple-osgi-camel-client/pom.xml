@@ -23,7 +23,7 @@
   <parent>
     <artifactId>simple-osgi</artifactId>
     <groupId>org.superbiz</groupId>
-    <version>1.1.1-TT.3</version>
+    <version>4.7.4-TT.2-SNAPSHOT</version>
   </parent>
 
   <artifactId>simple-osgi-camel-client</artifactId>
@@ -42,7 +42,6 @@
               org.superbiz.osgi.calculator,
               org.apache.openejb.client;version="[4.0,5.0)"
             </Import-Package>
-            <Include-Resource>${pom.basedir}/src/main/resources</Include-Resource>
           </instructions>
         </configuration>
       </plugin>

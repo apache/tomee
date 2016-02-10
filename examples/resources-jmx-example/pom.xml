@@ -24,13 +24,13 @@
   <groupId>org.superbiz</groupId>
   <artifactId>resources-jmx</artifactId>
   <packaging>pom</packaging>
-  <version>1.1.1-TT.3</version>
+  <version>4.7.4-TT.2-SNAPSHOT</version>
   <name>OpenEJB :: Examples :: Resources/JMX Example</name>
   
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.openejb>4.7.3-TT.4</version.openejb>
-    <version.tomee>1.7.3-TT.4</version.tomee>
+    <version.openejb>4.7.4-TT.2-SNAPSHOT</version.openejb>
+    <version.tomee>1.7.4-TT.2-SNAPSHOT</version.tomee>
     <version.openjpa>2.4.0</version.openjpa>
   </properties>
   
@@ -84,7 +84,7 @@
       <dependency>
         <groupId>org.superbiz</groupId>
         <artifactId>resources-jmx-ejb</artifactId>
-        <version>1.1.1-TT.3</version>
+        <version>4.7.4-TT.2-SNAPSHOT</version>
         <type>ejb</type>
         <scope>compile</scope>
       </dependency>
@@ -99,7 +99,7 @@
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>4.11</version>
+        <version>4.12</version>
         <type>jar</type>
         <scope>test</scope>
       </dependency>

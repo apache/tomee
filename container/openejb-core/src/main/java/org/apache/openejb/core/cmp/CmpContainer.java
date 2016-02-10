@@ -731,8 +731,7 @@ public class CmpContainer implements RpcContainer {
                 if (results.size() != 1) {
                     throw new ObjectNotFoundException("A Enteprise bean with deployment_id = " +
                         beanContext.getDeploymentID() +
-                        " and primarykey = " +
-                        args[0] +
+                        (args != null && args.length >= 1 ? " and primarykey = " + args[0] : "") +
                         " Does not exist");
                 }
 

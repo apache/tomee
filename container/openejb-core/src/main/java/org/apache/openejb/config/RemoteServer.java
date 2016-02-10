@@ -37,6 +37,8 @@ import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 //import org.apache.openejb.loader.IO;
 
@@ -107,7 +109,13 @@ public class RemoteServer {
     public static void main(final String[] args) {
         assert args.length > 0 : "no arguments supplied: valid arguments are 'start' or 'stop'";
         if (args[0].equalsIgnoreCase(START)) {
-            new RemoteServer().start();
+            final RemoteServer remoteServer = new RemoteServer();
+            try {
+                remoteServer.start();
+            } catch (final Exception e) {
+                remoteServer.destroy();
+                e.printStackTrace(System.err);
+            }
         } else if (args[0].equalsIgnoreCase(STOP)) {
             final RemoteServer remoteServer = new RemoteServer();
             remoteServer.serverHasAlreadyBeenStarted = false;
@@ -135,16 +143,20 @@ public class RemoteServer {
 
     public void destroy() {
 
-        final boolean stopSent = stop();
+        try {
+            final boolean stopSent = stop();
 
-        final Process p = server.get();
-        if (p != null) {
+            final Process p = server.get();
+            if (p != null) {
 
-            if (stopSent) {
-                waitFor(p);
-            } else {
-                p.destroy();
+                if (stopSent) {
+                    waitFor(p);
+                } else {
+                    p.destroy();
+                }
             }
+        } catch (final Exception e) {
+            Logger.getLogger(RemoteServer.class.getName()).log(Level.WARNING, "Failed to destroy remote server process", e);
         }
     }
 
@@ -361,13 +373,11 @@ public class RemoteServer {
 
             if (debug) {
                 if (!connect(port, Integer.MAX_VALUE)) {
-                    destroy();
-                    throw new OpenEJBRuntimeException("Could not connect to server");
+                    throw new OpenEJBRuntimeException("Could not connect to server: " + this.host + ":" + port);
                 }
             } else {
                 if (!connect(port, tries)) {
-                    destroy();
-                    throw new OpenEJBRuntimeException("Could not connect to server");
+                    throw new OpenEJBRuntimeException("Could not connect to server: " + this.host + ":" + port);
                 }
             }
 

@@ -92,7 +92,7 @@ import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked", "unused"})
 public class BeanContext extends DeploymentContext {
 
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, BeanContext.class);
@@ -235,8 +235,8 @@ public class BeanContext extends DeploymentContext {
     private final boolean localbean;
     private Duration accessTimeout;
 
-    private Set<Class<?>> asynchronousClasses = new HashSet<Class<?>>();
-    private Set<String> asynchronousMethodSignatures = new HashSet<String>();
+    private final Set<Class<?>> asynchronousClasses = new HashSet<Class<?>>();
+    private final Set<String> asynchronousMethodSignatures = new HashSet<String>();
     private Class<?> proxyClass;
 
     private Mdb mdb;
@@ -1791,7 +1791,7 @@ public class BeanContext extends DeploymentContext {
         private Class cmpImplClass;
         private String abstractSchemaName;
         private Class pkClass;
-        private Set<String> remoteQueryResults = new TreeSet<String>();
+        private final Set<String> remoteQueryResults = new TreeSet<String>();
         private boolean isReentrant;
         private final Map<Method, Method> postCreateMethodMap = new HashMap<Method, Method>();
     }

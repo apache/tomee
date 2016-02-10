@@ -21,6 +21,7 @@ import org.apache.openejb.assembler.classic.DeploymentExceptionManager;
 import org.apache.openejb.cdi.CdiBuilder;
 import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.resource.activemq.ConnectionFactoryWrapper;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.spi.Assembler;
 import org.apache.openejb.spi.ContainerSystem;
@@ -261,12 +262,17 @@ public final class OpenEJB {
     }
 
     public static void destroy() {
+
         final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
+
         if (assembler != null) {
             assembler.destroy();
         } else {
             SystemInstance.reset();
         }
+
+        ConnectionFactoryWrapper.closeConnections();
+
         instance = null;
     }
 

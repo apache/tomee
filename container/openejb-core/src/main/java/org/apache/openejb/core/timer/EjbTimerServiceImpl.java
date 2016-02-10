@@ -251,7 +251,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
             if (driverDelegate != null && StdJDBCDelegate.class.getName().equals(driverDelegate)) {
                 properties.put("org.apache.openejb.quartz.jobStore.driverDelegateClass", PatchedStdJDBCDelegate.class.getName());
             } else if (driverDelegate != null) {
-                log.info("You use " + driverDelegate + " driver delegate with quartz, ensure it doesn't use ObjectInputStream otherwise your custom TimerData can induce some issues");
+                log.info("Using '" + driverDelegate + "' driver delegate with quartz so ensure it does not use ObjectInputStream, else your custom TimerData may encounter issues");
             }
 
             // adding our custom persister

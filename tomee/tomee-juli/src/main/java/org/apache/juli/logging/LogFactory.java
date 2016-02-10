@@ -27,16 +27,16 @@ import java.util.logging.LogManager;
 // tomcat doesn't have any spi mecanism so forking this class
 public /* abstract */ class LogFactory {
     public static final String FACTORY_PROPERTY =
-            "org.apache.commons.logging.LogFactory";
+        "org.apache.commons.logging.LogFactory";
 
     public static final String FACTORY_DEFAULT =
-            "org.apache.commons.logging.impl.LogFactoryImpl";
+        "org.apache.commons.logging.impl.LogFactoryImpl";
 
     public static final String FACTORY_PROPERTIES =
-            "commons-logging.properties";
+        "commons-logging.properties";
 
     public static final String HASHTABLE_IMPLEMENTATION_PROPERTY =
-            "org.apache.commons.logging.LogFactory.HashtableImpl";
+        "org.apache.commons.logging.LogFactory.HashtableImpl";
 
     private static LogFactory singleton=new LogFactory();
     private final Collection<String> names = new HashSet<String>();
@@ -89,7 +89,7 @@ public /* abstract */ class LogFactory {
     }
 
     public Log getInstance(final Class<?> clazz)
-            throws LogConfigurationException {
+        throws LogConfigurationException {
         return getInstance( clazz.getName());
     }
 
@@ -98,13 +98,13 @@ public /* abstract */ class LogFactory {
     }
 
     public static Log getLog(final Class<?> clazz)
-            throws LogConfigurationException {
+        throws LogConfigurationException {
         return getFactory().getInstance(clazz);
 
     }
 
     public static Log getLog(final String name)
-            throws LogConfigurationException {
+        throws LogConfigurationException {
         return getFactory().getInstance(name);
 
     }
@@ -114,7 +114,7 @@ public /* abstract */ class LogFactory {
         // need to use the passed in classLoader, the default implementation
         // does not so calling reset in that case will break things
         if (!LogManager.getLogManager().getClass().getName().equals(
-                "java.util.logging.LogManager")) {
+            "java.util.logging.LogManager")) {
             LogManager.getLogManager().reset();
         }
     }

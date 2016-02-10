@@ -21,12 +21,12 @@
   <groupId>org.superbiz</groupId>
   <artifactId>resources-declared-in-webapp</artifactId>
   <packaging>war</packaging>
-  <version>1.1.1-TT.3</version>
+  <version>4.7.4-TT.2-SNAPSHOT</version>
   <name>OpenEJB :: Web Examples :: Resource Declared In A Webapp</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <openejb.version>4.7.3-TT.4</openejb.version>
+    <openejb.version>4.7.4-TT.2-SNAPSHOT</openejb.version>
   </properties>
 
   <repositories>

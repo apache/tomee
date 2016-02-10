@@ -23,7 +23,7 @@
   <artifactId>jsf-cdi-and-ejb</artifactId>
   <packaging>war</packaging>
   <name>OpenEJB :: Web Examples :: JSF - CDI and EJB</name>
-  <version>1.1.1-TT.3</version>
+  <version>4.7.4-TT.2-SNAPSHOT</version>
   <url>http://tomee.apache.org</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -104,7 +104,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.11</version>
+      <version>4.12</version>
       <scope>test</scope>
     </dependency>
     <dependency>

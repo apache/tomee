@@ -14,7 +14,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>deltaspike-fullstack</artifactId>
   <name>OpenEJB :: Examples :: JSF2/CDI/BV/JPA/DeltaSpike</name>
-  <version>1.1.1-TT.3</version>
+  <version>4.7.4-TT.2-SNAPSHOT</version>
 
   <packaging>war</packaging>
 
@@ -22,8 +22,8 @@
     <version.myfaces2>2.2.3</version.myfaces2>
     <version.deltaspike>1.0.1</version.deltaspike>
     <version.extval>2.0.8</version.extval>
-    <version.openejb>4.7.3-TT.4</version.openejb>
-    <version.tomee>1.7.3-TT.4</version.tomee>
+    <version.openejb>4.7.4-TT.2-SNAPSHOT</version.openejb>
+    <version.tomee>1.7.4-TT.2-SNAPSHOT</version.tomee>
   </properties>
 
   <build>
@@ -130,7 +130,7 @@
     <dependency>
       <groupId>commons-collections</groupId>
       <artifactId>commons-collections</artifactId>
-      <version>3.2.1</version>
+      <version>3.2.2</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -222,7 +222,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.11</version>
+      <version>4.12</version>
       <scope>test</scope>
     </dependency>
     <dependency>

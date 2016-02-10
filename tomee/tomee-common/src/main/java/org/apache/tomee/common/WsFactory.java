@@ -54,10 +54,13 @@ public class WsFactory extends AbstractObjectFactory {
             final String serviceClassName = NamingUtil.getProperty(ref, NamingUtil.WS_CLASS);
             Class<? extends Service> serviceClass = Service.class;
             if (serviceClassName != null) {
-                serviceClass = NamingUtil.loadClass(serviceClassName).asSubclass(Service.class);
-                if (serviceClass == null) {
+                final Class<?> loadClass = NamingUtil.loadClass(serviceClassName);
+
+                if (loadClass == null) {
                     throw new NamingException("Could not load service type class "+ serviceClassName);
                 }
+
+                serviceClass = loadClass.asSubclass(Service.class);
             }
 
             // load the reference class which is the ultimate type of the port
@@ -73,20 +76,23 @@ public class WsFactory extends AbstractObjectFactory {
 
             // Service QName
             QName serviceQName = null;
-            if (NamingUtil.getProperty(ref, NamingUtil.WS_QNAME) != null) {
-                serviceQName = QName.valueOf(NamingUtil.getProperty(ref, NamingUtil.WS_QNAME));
+            String property = NamingUtil.getProperty(ref, NamingUtil.WS_QNAME);
+            if (property != null) {
+                serviceQName = QName.valueOf(property);
             }
 
             // WSDL URL
             URL wsdlUrl = null;
-            if (NamingUtil.getProperty(ref, NamingUtil.WSDL_URL) != null) {
-                wsdlUrl = new URL(NamingUtil.getProperty(ref, NamingUtil.WSDL_URL));
+            property = NamingUtil.getProperty(ref, NamingUtil.WSDL_URL);
+            if (property != null) {
+                wsdlUrl = new URL(property);
             }
 
             // Port QName
             QName portQName = null;
-            if (NamingUtil.getProperty(ref, NamingUtil.WS_PORT_QNAME) != null) {
-                portQName = QName.valueOf(NamingUtil.getProperty(ref, NamingUtil.WS_PORT_QNAME));
+            property = NamingUtil.getProperty(ref, NamingUtil.WS_PORT_QNAME);
+            if (property != null) {
+                portQName = QName.valueOf(property);
             }
 
             // port refs

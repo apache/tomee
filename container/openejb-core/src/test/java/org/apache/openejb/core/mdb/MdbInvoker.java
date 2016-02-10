@@ -1,42 +1,39 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.openejb.core.mdb;
 
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.MessageProducer;
-import javax.jms.ObjectMessage;
-import javax.jms.Session;
+import javax.jms.*;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.locks.ReentrantLock;
+import java.lang.IllegalStateException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class MdbInvoker implements MessageListener {
+    private final ReentrantLock lock = new ReentrantLock();
     private final Map<String, Method> signatures = new TreeMap<String, Method>();
     private final Object target;
     private Connection connection;
     private Session session;
-    private ConnectionFactory connectionFactory;
+    private final ConnectionFactory connectionFactory;
 
     public MdbInvoker(final ConnectionFactory connectionFactory, final Object target) throws JMSException {
         this.target = target;
@@ -47,45 +44,59 @@ public class MdbInvoker implements MessageListener {
         }
     }
 
-    public synchronized void destroy() {
-        MdbUtil.close(session);
-        session = null;
-        MdbUtil.close(connection);
-        connection = null;
+    public void destroy() {
+
+        lock.lock();
+
+        try {
+            MdbUtil.close(session);
+            session = null;
+            MdbUtil.close(connection);
+            connection = null;
+        } finally {
+            lock.unlock();
+        }
     }
 
-    private synchronized Session getSession() throws JMSException {
-        connection = connectionFactory.createConnection();
-        connection.start();
-        session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-        return session;
+    private Session getSession() throws JMSException {
+        lock.lock();
+
+        try {
+            connection = connectionFactory.createConnection();
+            connection.start();
+            session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+            return session;
+        } finally {
+            lock.unlock();
+        }
     }
 
     public void onMessage(final Message message) {
-        if (!(message instanceof ObjectMessage)) return;
-
         try {
+            if (message == null) throw new NullPointerException("request message is null");
+
+            if (!ObjectMessage.class.isInstance(message))
+                throw new IllegalArgumentException("Expected a ObjectMessage request but got a " + message.getClass().getName());
+
             final Session session = getSession();
             if (session == null) throw new IllegalStateException("Invoker has been destroyed");
 
-            if (message == null) throw new NullPointerException("request message is null");
-            if (!(message instanceof ObjectMessage))
-                throw new IllegalArgumentException("Expected a ObjectMessage request but got a " + message.getClass().getName());
             final ObjectMessage objectMessage = (ObjectMessage) message;
             final Serializable object = objectMessage.getObject();
-            if (object == null) throw new NullPointerException("object in ObjectMessage is null");
-            if (!(object instanceof Map)) {
-                if (message instanceof ObjectMessage)
-                    throw new IllegalArgumentException("Expected a Map contained in the ObjectMessage request but got a " + object.getClass().getName());
-            }
-            final Map request = (Map) object;
 
+            if (object == null) throw new NullPointerException("object in ObjectMessage is null");
+
+            if (!(object instanceof Map)) {
+                throw new IllegalArgumentException("Expected a Map contained in the ObjectMessage request but got a " + object.getClass().getName());
+            }
+
+            final Map request = (Map) object;
             final String signature = (String) request.get("method");
             final Method method = signatures.get(signature);
             final Object[] args = (Object[]) request.get("args");
-
             boolean exception = false;
-            Object result = null;
+            Object result;
+
             try {
                 result = method.invoke(target, args);
             } catch (final IllegalAccessException e) {
@@ -98,6 +109,7 @@ public class MdbInvoker implements MessageListener {
             }
 
             MessageProducer producer = null;
+
             try {
                 // create response
                 final Map<String, Object> response = new TreeMap<String, Object>();
@@ -120,8 +132,8 @@ public class MdbInvoker implements MessageListener {
                 MdbUtil.close(producer);
                 destroy();
             }
-        } catch (final Throwable e) {
-            e.printStackTrace();
+        } catch (final Exception e) {
+            Logger.getLogger(MdbInvoker.class.getName()).log(Level.WARNING, "MdbInvoker.onMessage: " + message, e);
         }
     }
 }

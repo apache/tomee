@@ -54,6 +54,8 @@ import static org.apache.openejb.loader.Files.mkdirs;
 
 @Mojo(name = "exec", requiresDependencyResolution = ResolutionScope.RUNTIME_PLUS_SYSTEM)
 public class ExecMojo extends BuildTomEEMojo {
+    private static final String DEFAULT_SCRIPT = "bin/catalina[.sh|.bat]";
+
     @Parameter(property = "tomee-plugin.exec-file", defaultValue = "${project.build.directory}/${project.build.finalName}-exec.jar")
     protected File execFile;
 
@@ -66,7 +68,7 @@ public class ExecMojo extends BuildTomEEMojo {
     @Parameter(property = "tomee-plugin.runtime-working-dir", defaultValue = ".distribution")
     private String runtimeWorkingDir;
 
-    @Parameter(property = "tomee-plugin.script", defaultValue = "bin/catalina[.sh|.bat]")
+    @Parameter(property = "tomee-plugin.script", defaultValue = DEFAULT_SCRIPT)
     private String script;
 
     @Override
@@ -99,7 +101,7 @@ public class ExecMojo extends BuildTomEEMojo {
         final Properties config = new Properties();
         config.put("distribution", distributionName);
         config.put("workingDir", runtimeWorkingDir);
-        config.put("command", script);
+        config.put("command", DEFAULT_SCRIPT.equals(script) ? (skipArchiveRootFolder ? "" : catalinaBase.getName() + "/") + DEFAULT_SCRIPT : script);
         final List<String> jvmArgs = generateJVMArgs();
 
         final String catalinaOpts = toString(jvmArgs);
@@ -162,16 +164,16 @@ public class ExecMojo extends BuildTomEEMojo {
 
         { // Main + utility
             for (final Class<?> clazz : asList(
-                    ExecRunner.class,
-                    Files.class, Files.PatternFileFilter.class, Files.DeleteThread.class,
-                    Files.FileRuntimeException.class, Files.FileDoesNotExistException.class, Files.NoopOutputStream.class,
-                    LoaderRuntimeException.class,
-                    Pipe.class, IO.class, Zips.class, JarLocation.class,
-                    RemoteServer.class, RemoteServer.CleanUpThread.class,
-                    OpenEJBRuntimeException.class, Join.class, QuickServerXmlParser.class,
-                    Options.class, Options.NullLog.class, Options.TomEEPropertyAdapter.class, Options.NullOptions.class,
-                    Options.Log.class
-                    )) {
+                ExecRunner.class,
+                Files.class, Files.PatternFileFilter.class, Files.DeleteThread.class,
+                Files.FileRuntimeException.class, Files.FileDoesNotExistException.class, Files.NoopOutputStream.class,
+                LoaderRuntimeException.class,
+                Pipe.class, IO.class, Zips.class, JarLocation.class,
+                RemoteServer.class, RemoteServer.CleanUpThread.class,
+                OpenEJBRuntimeException.class, Join.class, QuickServerXmlParser.class,
+                Options.class, Options.NullLog.class, Options.TomEEPropertyAdapter.class, Options.NullOptions.class,
+                Options.Log.class
+            )) {
                 final String name = clazz.getName().replace('.', '/') + ".class";
                 os.putArchiveEntry(new JarArchiveEntry(name));
                 IOUtils.copy(getClass().getResourceAsStream('/' + name), os);

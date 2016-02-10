@@ -127,7 +127,7 @@ public class ManagedScheduledExecutorServiceTest {
 
         final boolean done = future.isDone();
         assertNotNull("Bad done value for future: " + future, done);
-        assertTrue(done);
+        assertTrue("Unexpected state", done);
         final boolean cancelled = future.isCancelled();
         assertNotNull("Bad cancelled value for future: " + future, cancelled);
         assertTrue(cancelled);

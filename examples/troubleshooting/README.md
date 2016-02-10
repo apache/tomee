@@ -300,7 +300,7 @@ Title: Troubleshooting
     2011-10-29 11:50:20,012 - DEBUG - Descriptors path: jar:file:/Users/dblevins/.m2/repository/org/apache/xbean/xbean-asm-shaded/3.8/xbean-asm-shaded-3.8.jar!/
     2011-10-29 11:50:20,012 - DEBUG - Descriptors path: jar:file:/Users/dblevins/.m2/repository/org/apache/openwebbeans/openwebbeans-ee-common/1.1.1/openwebbeans-ee-common-1.1.1.jar!/
     2011-10-29 11:50:20,012 - DEBUG - Descriptors path: jar:file:/Users/dblevins/.m2/repository/commons-pool/commons-pool/1.5.6/commons-pool-1.5.6.jar!/
-    2011-10-29 11:50:20,012 - DEBUG - Descriptors path: jar:file:/Users/dblevins/.m2/repository/commons-collections/commons-collections/3.2.1/commons-collections-3.2.1.jar!/
+    2011-10-29 11:50:20,012 - DEBUG - Descriptors path: jar:file:/Users/dblevins/.m2/repository/commons-collections/commons-collections/3.2.2/commons-collections-3.2.1.jar!/
     2011-10-29 11:50:20,013 - DEBUG - Descriptors path: jar:file:/Users/dblevins/.m2/repository/commons-logging/commons-logging-api/1.1/commons-logging-api-1.1.jar!/
     2011-10-29 11:50:20,013 - DEBUG - Descriptors path: jar:file:/Users/dblevins/.m2/repository/org/apache/openwebbeans/openwebbeans-impl/1.1.1/openwebbeans-impl-1.1.1.jar!/
     2011-10-29 11:50:20,013 - DEBUG - Descriptors path: jar:file:/Users/dblevins/.m2/repository/org/apache/xbean/xbean-finder-shaded/3.8/xbean-finder-shaded-3.8.jar!/

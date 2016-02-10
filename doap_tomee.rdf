@@ -78,7 +78,7 @@
 
     <repository>
       <Repository>
-        <location rdf:resource="http://svn.apache.org/viewvc/tomee/tomee/trunk/"/>
+        <location rdf:resource="https://git1-us-west.apache.org/repos/asf?p=tomee.git"/>
       </Repository>
     </repository>
 
@@ -88,7 +88,7 @@
 
     <repository>
       <Repository>
-        <location rdf:resource="https://svn.apache.org/repos/asf/tomee/tomee/trunk"/>
+        <location rdf:resource="https://git-wip-us.apache.org/repos/asf/tomee.git"/>
       </Repository>
     </repository>
 
@@ -117,15 +117,15 @@
     <release>
       <Version>
         <name>Apache TomEE</name>
-        <revision>1.6.0.2</revision>
-        <file-release>http://repo.maven.apache.org/maven2/org/apache/openejb/tomee/1.6.0.2/tomee-1.6.0.2.pom</file-release>
+        <revision>1.7.2</revision>
+        <file-release>http://repo.maven.apache.org/maven2/org/apache/openejb/tomee/1.7.2/tomee-1.7.2.pom</file-release>
       </Version>
     </release>
     <release>
       <Version>
         <name>Apache OpenEJB</name>
-        <revision>4.6.0.2</revision>
-        <file-release>http://central.maven.org/maven2/org/apache/openejb/openejb/4.6.0.2/openejb-4.6.0.2.pom</file-release>
+        <revision>4.7.2</revision>
+        <file-release>http://central.maven.org/maven2/org/apache/openejb/openejb/4.7.2/openejb-4.7.2.pom</file-release>
       </Version>
     </release>
 

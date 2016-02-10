@@ -17,6 +17,8 @@
 
 package org.apache.openejb.core.ivm;
 
+import org.apache.openejb.core.rmi.BlacklistClassResolver;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -32,9 +34,11 @@ public class EjbObjectInputStream extends ObjectInputStream {
         super(in);
     }
 
+    @Override
     protected Class resolveClass(final ObjectStreamClass classDesc) throws IOException, ClassNotFoundException {
+        final String checkedName = BlacklistClassResolver.DEFAULT.check(classDesc.getName());
         try {
-            return Class.forName(classDesc.getName(), false, getClassloader());
+            return Class.forName(checkedName, false, getClassloader());
         } catch (final ClassNotFoundException e) {
             final String n = classDesc.getName();
             if (n.equals("boolean")) {
@@ -62,10 +66,11 @@ public class EjbObjectInputStream extends ObjectInputStream {
                 return double.class;
             }
 
-            return getClass().getClassLoader().loadClass(classDesc.getName()); // if CCL is not correct
+            return getClass().getClassLoader().loadClass(checkedName); // if CCL is not correct
         }
     }
 
+    @Override
     protected Class resolveProxyClass(final String[] interfaces) throws IOException, ClassNotFoundException {
         final Class[] cinterfaces = new Class[interfaces.length];
         for (int i = 0; i < interfaces.length; i++) {

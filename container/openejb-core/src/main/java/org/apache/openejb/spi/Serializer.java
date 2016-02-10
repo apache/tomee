@@ -14,8 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.openejb.spi;
+
+import org.apache.openejb.core.ObjectInputStreamFiltered;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -26,18 +27,36 @@ import java.io.ObjectOutputStream;
 public class Serializer {
 
     public static Object deserialize(final byte[] bytes)
-        throws IOException, ClassNotFoundException {
-        final ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-        final ObjectInputStream ois = new ObjectInputStream(bais);
-        return ois.readObject();
+            throws IOException, ClassNotFoundException {
+
+        ObjectInputStream ois = null;
+
+        try {
+            final ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+            ois = new ObjectInputStreamFiltered(bais);
+            return ois.readObject();
+        } finally {
+            if (ois != null) {
+                ois.close();
+            }
+        }
     }
 
     public static byte[] serialize(final Object object) throws IOException {
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        final ObjectOutputStream oos = new ObjectOutputStream(baos);
-        oos.writeObject(object);
-        oos.flush();
-        return baos.toByteArray();
+
+        ObjectOutputStream oos = null;
+
+        try {
+            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            oos = new ObjectOutputStream(baos);
+            oos.writeObject(object);
+            oos.flush();
+            return baos.toByteArray();
+        } finally {
+            if (oos != null) {
+                oos.close();
+            }
+        }
     }
 
 }

@@ -54,7 +54,7 @@ public class NamingUtil {
 
     // these two attributes are used to be able to cleanup quickly the registry (otherwise we need to duplicate a lot of logic)
     private static StandardContext currentContext;
-    private static Map<StandardContext, Collection<String>> ID_BY_CONTEXT = new HashMap<StandardContext, Collection<String>>();
+    private static final Map<StandardContext, Collection<String>> ID_BY_CONTEXT = new HashMap<StandardContext, Collection<String>>();
 
     public static String getProperty(final Reference ref, final String name) {
         final RefAddr addr = ref.get(name);
@@ -104,8 +104,7 @@ public class NamingUtil {
         if (token == null) {
             return null;
         }
-        final T object = (T) registry.get(token);
-        return object;
+        return (T) registry.get(token);
     }
 
     public static Class<?> loadClass(final String className) {
@@ -116,8 +115,7 @@ public class NamingUtil {
             final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             if (classLoader != null) {
                 try {
-                    final Class clazz = classLoader.loadClass(className);
-                    return clazz;
+                    return classLoader.loadClass(className);
                 } catch(final ClassNotFoundException e) {
                     // no-op
                 }

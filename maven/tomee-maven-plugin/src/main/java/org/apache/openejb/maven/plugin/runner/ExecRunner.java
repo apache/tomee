@@ -42,7 +42,7 @@ public class ExecRunner {
     public static void main(final String[] rawArgs) throws Exception {
         final String[] args;
         if (rawArgs == null || rawArgs.length == 0) {
-            args = new String[] { "run" };
+            args = new String[]{"run"};
         } else {
             args = rawArgs;
         }
@@ -76,15 +76,11 @@ public class ExecRunner {
             IO.writeString(timestampFile, config.getProperty("timestamp", Long.toString(System.currentTimeMillis())));
         }
 
-        final File[] extracted = distribOutput.listFiles();
-        if (extracted != null && extracted.length == 1) {
-            distribOutput = extracted[0];
-        }
-        final File[] scripts = new File(distribOutput, "conf").listFiles();
+        final File[] scripts = new File(distribOutput, "bin").listFiles();
         if (scripts != null) { // dont use filefilter to avoid dependency issue
             for (final File f : scripts) {
                 if (f.getName().endsWith(".sh") && !f.canExecute()) {
-                    if(!f.setExecutable(true, true)){
+                    if (!f.setExecutable(true, true)) {
                         System.err.println("Failed make file executable: " + f);
                     }
                 }
@@ -96,15 +92,16 @@ public class ExecRunner {
             final int lastSlash = cmd.lastIndexOf('/');
             if (lastSlash > 0) {
                 final String dir = cmd.substring(0, lastSlash);
-                final String script = cmd.substring(lastSlash + 1, cmd.length() - SH_BAT_AUTO.length())
-                        + (System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("win") ? ".bat" : ".sh");
-                cmd = dir + '/' + script;
-                final File scriptFile = new File(distribOutput, cmd);
+                final boolean isWin = System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("win");
+                final String script = cmd.substring(lastSlash + 1, cmd.length() - SH_BAT_AUTO.length()).replace('/', isWin ? '\\' : '/')
+                        + (isWin ? ".bat" : ".sh");
+                final File scriptFile = new File(distribOutput, dir + File.separator + script);
                 if (!scriptFile.exists()) {
                     throw new IllegalArgumentException("Can't find  " + cmd);
                 }
+                cmd = scriptFile.getAbsolutePath();
                 if (cmd.endsWith(".sh")) {
-                    if(!scriptFile.setExecutable(true)){
+                    if (!scriptFile.setExecutable(true)) {
                         System.err.println("Failed make script file executable: " + scriptFile);
                     }
                 }
@@ -115,7 +112,25 @@ public class ExecRunner {
 
         final Collection<String> params = new ArrayList<String>();
         if ("java".equals(cmd)) {
-            final QuickServerXmlParser parser = QuickServerXmlParser.parse(new File(distribOutput,"conf/server.xml"));
+            final File[] extracted = distribOutput.listFiles();
+            if (extracted != null) {
+                File newRoot = null;
+                for (final File e : extracted) {
+                    if (e.isDirectory()) {
+                        if (newRoot == null) {
+                            newRoot = e;
+                        } else {
+                            newRoot = null;
+                            break;
+                        }
+                    }
+                }
+                if (newRoot != null) {
+                    distribOutput = newRoot;
+                }
+            }
+
+            final QuickServerXmlParser parser = QuickServerXmlParser.parse(new File(distribOutput, "conf/server.xml"));
 
             System.setProperty("openejb.home", distribOutput.getAbsolutePath());
             System.setProperty("server.shutdown.port", parser.stop());
@@ -141,9 +156,18 @@ public class ExecRunner {
             if ("run".equals(args[0])) {
                 args[0] = "start";
             }
-            server.start(jvmArgs, args[0], true);
-            server.getServer().waitFor();
+            try {
+                server.start(jvmArgs, args[0], true);
+                server.getServer().waitFor();
+            } catch (final Exception e) {
+                server.destroy();
+            }
         } else {
+            // TODO: split cmd correctly to support multiple inlined segments in cmd
+            if (cmd.endsWith(".bat") && !cmd.startsWith("cmd.exe")) {
+                params.add("cmd.exe");
+                params.add("/c");
+            } // else suppose the user knows what he does
             params.add(cmd);
             params.addAll(asList(args));
 
@@ -158,7 +182,7 @@ public class ExecRunner {
             boolean redirectOut = false;
             try { // java >= 7
                 ProcessBuilder.class.getDeclaredMethod("inheritIO").invoke(builder);
-            } catch (final Throwable th){ // java 6
+            } catch (final Throwable th) { // java 6
                 redirectOut = true;
             }
 
