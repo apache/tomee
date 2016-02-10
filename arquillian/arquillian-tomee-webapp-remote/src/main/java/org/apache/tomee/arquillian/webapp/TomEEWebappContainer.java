@@ -83,7 +83,7 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
 
             if (openejbHome == null) {
 
-                downloadTomcat(workingDirectory, configuration.getTomcatVersion());
+                downloadTomcat(workingDirectory, configuration.getTomcatVersion(), configuration.getDir());
 
                 openejbHome = Setup.findHome(workingDirectory);
 
@@ -92,7 +92,7 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
                 final File webapp = new File(openejbHome, "webapps" + s + "tomee");
 
                 Files.mkdir(webapp);
-                downloadOpenEJBWebapp(webapp);
+                downloadOpenEJBWebapp(webapp, configuration.getDir());
 
                 System.setProperty("catalina.home", openejbHome.getAbsolutePath());
                 System.setProperty("catalina.base", openejbHome.getAbsolutePath());
@@ -202,13 +202,13 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
         }
     }
 
-    protected void downloadOpenEJBWebapp(final File targetDirectory) throws LifecycleException {
+    protected void downloadOpenEJBWebapp(final File targetDirectory, final String defaultTempDir) throws LifecycleException {
         final String artifactName = configuration.getArtifactName();
-        final File zipFile = Setup.downloadFile(artifactName, null);
+        final File zipFile = Setup.downloadFile(artifactName, null, defaultTempDir);
         Zips.unzip(zipFile, targetDirectory);
     }
 
-    protected void downloadTomcat(final File catalinaDirectory, final String tomcatVersion) throws LifecycleException {
+    protected void downloadTomcat(final File catalinaDirectory, final String tomcatVersion, final String defaultTempDir) throws LifecycleException {
         String source = null;
 
         try {
@@ -222,7 +222,7 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
             throw new LifecycleException("Unable to find URL for Tomcat " + tomcatVersion);
         }
 
-        final File zipFile = Setup.downloadFile("org.apache.tomcat:tomcat:" + tomcatVersion + ":zip", source);
+        final File zipFile = Setup.downloadFile("org.apache.tomcat:tomcat:" + tomcatVersion + ":zip", source, defaultTempDir);
         Zips.unzip(zipFile, catalinaDirectory);
     }
 

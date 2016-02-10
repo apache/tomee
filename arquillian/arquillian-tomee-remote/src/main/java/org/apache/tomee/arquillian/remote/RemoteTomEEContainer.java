@@ -215,7 +215,7 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
         tomeeHome = Setup.findHome(workingDirectory);
 
         if (tomeeHome == null) {
-            tomeeHome = Setup.downloadAndUnpack(workingDirectory, configuration.getArtifactName());
+            tomeeHome = Setup.downloadAndUnpack(workingDirectory, configuration.getArtifactName(), configuration.getDir());
 
             logger.log(Level.INFO, "Downloaded container to: " + tomeeHome);
         }

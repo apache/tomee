@@ -145,19 +145,21 @@ public class Setup {
         return null;
     }
 
-    public static File downloadAndUnpack(final File dir, final String artifactID) throws LifecycleException {
+    public static File downloadAndUnpack(final File dir, final String artifactID, final String defaultTempDir) throws LifecycleException {
 
-        final File zipFile = downloadFile(artifactID, null);
+        final File zipFile = downloadFile(artifactID, null, defaultTempDir);
 
         Zips.unzip(zipFile, dir);
 
         return findHome(dir);
     }
 
-    public static File downloadFile(final String artifactName, final String altUrl) {
-        final String cache = SystemInstance.get().getOptions().get(ProvisioningResolver.OPENEJB_DEPLOYER_CACHE_FOLDER, (String) null);
-        if (cache == null) { // let the user override it
-            System.setProperty(ProvisioningResolver.OPENEJB_DEPLOYER_CACHE_FOLDER, "target");
+    public static File downloadFile(final String artifactName, final String altUrl, final String defaultTempDir) {
+        final String cache = SystemInstance.isInitialized() ?
+            SystemInstance.get().getOptions().get(ProvisioningResolver.OPENEJB_DEPLOYER_CACHE_FOLDER, (String) null) :
+            System.getProperty(ProvisioningResolver.OPENEJB_DEPLOYER_CACHE_FOLDER);
+        if (cache == null && defaultTempDir != null) { // let the user override it
+            System.setProperty(ProvisioningResolver.OPENEJB_DEPLOYER_CACHE_FOLDER, defaultTempDir);
         }
 
         try {
