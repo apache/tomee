@@ -27,62 +27,77 @@ public class Log4jLogStream implements LogStream {
         logger = Logger.getLogger(logCategory.getName());
     }
 
+    @Override
     public boolean isFatalEnabled() {
         return logger.isEnabledFor(Level.FATAL);
     }
 
+    @Override
     public void fatal(final String message) {
         logger.fatal(message);
     }
 
+    @Override
     public void fatal(final String message, final Throwable t) {
         logger.fatal(message, t);
     }
 
+    @Override
     public boolean isErrorEnabled() {
         return logger.isEnabledFor(Level.ERROR);
     }
 
+    @Override
     public void error(final String message) {
         logger.error(message);
     }
 
+    @Override
     public void error(final String message, final Throwable t) {
         logger.error(message, t);
     }
 
+    @Override
     public boolean isWarnEnabled() {
         return logger.isEnabledFor(Level.WARN);
     }
 
+    @Override
     public void warn(final String message) {
         logger.warn(message);
     }
 
+    @Override
     public void warn(final String message, final Throwable t) {
         logger.warn(message, t);
     }
 
+    @Override
     public boolean isInfoEnabled() {
         return logger.isInfoEnabled();
     }
 
+    @Override
     public void info(final String message) {
         logger.info(message);
     }
 
+    @Override
     public void info(final String message, final Throwable t) {
         logger.info(message, t);
     }
 
+    @Override
     public boolean isDebugEnabled() {
         return logger.isDebugEnabled();
     }
 
+    @Override
     public void debug(final String message) {
         logger.debug(message);
     }
 
+    @Override
     public void debug(final String message, final Throwable t) {
         logger.debug(message, t);
     }

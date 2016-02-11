@@ -23,6 +23,7 @@ public class AnnotatedServletTests extends ServletTestClient {
         super("AnnotatedServlet");
     }
 
+    @Override
     protected void setUp() throws Exception{
         super.setUp();
         testServlet = newServletProxy(JndiTestServlet.class);
