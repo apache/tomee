@@ -1701,7 +1701,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 removeResourceInfo(boundName);
                 try {
                     containerSystem.getJNDIContext().unbind(boundName);
-                } catch (NamingException e) {
+                } catch (final NamingException e) {
                     logger.error("Error unbinding " + boundName, e);
                 }
             } else {
@@ -2186,7 +2186,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 throw undeployException;
             }
 
-            this.resetSlf4j();
+            Assembler.resetSlf4j(logger);
+            Logger.configure(true);
 
             logger.debug("destroyApplication.success", appInfo.path);
         } finally {
@@ -2194,7 +2195,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
     }
 
-    private void resetSlf4j() {
+    private static void resetSlf4j(final Logger logger) {
 
         final Method m = Assembler.SLF4J_RESET.get();
 
@@ -2216,7 +2217,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         
         try {
             object = globalContext.lookup(name);
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             // if we catch a NamingException, check to see if the resource is a LaztObjectReference that has not been initialized correctly
             final String ctx = name.substring(0, name.lastIndexOf("/"));
             final String objName = name.substring(ctx.length() + 1);
