@@ -41,6 +41,7 @@ import org.apache.openejb.util.JuliLogStreamFactory;
 import org.apache.tomee.catalina.TomEERuntimeException;
 import org.apache.tomee.embedded.Configuration;
 import org.apache.tomee.embedded.Container;
+import org.apache.tomee.livereload.LiveReloadInstaller;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.util.FileUtils;
 
@@ -195,6 +196,12 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
     @Parameter
     protected PlexusConfiguration inlinedTomEEXml;
 
+    @Parameter //a dvanced config but a simple boolean will be used for defaults (withLiveReload)
+    private LiveReload liveReload;
+
+    @Parameter(property = "tomee-plugin.liveReload", defaultValue = "false")
+    private boolean withLiveReload;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (!classpathAsWar && "pom".equals(packaging)) {
@@ -262,6 +269,9 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
                             container.undeploy(warFile.getAbsolutePath());
                         }
                         container.stop();
+                    } catch (final NoClassDefFoundError noClassDefFoundError) {
+                        // debug cause it is too late to shutdown properly so don't pollute logs
+                        getLog().debug("can't stop TomEE", noClassDefFoundError);
                     } catch (final Exception e) {
                         getLog().error("can't stop TomEE", e);
                     } finally {
@@ -312,6 +322,8 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
             getLog().error("can't start TomEE", e);
         }
 
+        installLiveReloadEndpointIfNeeded();
+
         try {
             String line;
             final Scanner scanner = new Scanner(System.in);
@@ -334,6 +346,17 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
             }
             thread.setContextClassLoader(loader);
             System.setProperties(originalSystProp);
+        }
+    }
+
+    private void installLiveReloadEndpointIfNeeded() {
+        if (withLiveReload && liveReload == null) {
+            liveReload = new LiveReload();
+        }
+        if (liveReload != null) {
+            LiveReloadInstaller.install(
+                liveReload.getPath(), liveReload.getPort(),
+                liveReload.getWatchedFolder() == null ? docBase.getAbsolutePath() : liveReload.getWatchedFolder());
         }
     }
 
@@ -389,7 +412,7 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
         for (final Artifact artifact : (Set<Artifact>) project.getArtifacts()) {
             final String scope = artifact.getScope();
             if ((applicationScopes == null && !(Artifact.SCOPE_COMPILE.equals(scope) || Artifact.SCOPE_RUNTIME.equals(scope)))
-                    || (applicationScopes != null && !applicationScopes.contains(scope))) {
+                || (applicationScopes != null && !applicationScopes.contains(scope))) {
                 continue;
             }
             try {
