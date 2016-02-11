@@ -79,6 +79,14 @@ public class ContextualJndiReference extends IntraVmJndiReference {
 
     @Override
     public Object getObject() throws NamingException {
+        final Object delegate = findDelegate();
+        if (Reference.class.isInstance(delegate)) {
+            return Reference.class.cast(delegate).getObject();
+        }
+        return delegate;
+    }
+
+    private Object findDelegate() throws NameNotFoundException {
         final Boolean rawValue = !followReference.get();
         followReference.remove();
         if (rawValue) {
