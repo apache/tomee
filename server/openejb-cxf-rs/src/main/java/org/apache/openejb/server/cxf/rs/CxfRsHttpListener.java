@@ -114,7 +114,9 @@ import javax.management.openmbean.TabularData;
 import javax.naming.Context;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.ConstrainedTo;
 import javax.ws.rs.RuntimeType;
@@ -187,10 +189,19 @@ public class CxfRsHttpListener implements RsHttpListener {
     @Override
     public void onMessage(final HttpRequest httpRequest, final HttpResponse httpResponse) throws Exception {
         // fix the address (to manage multiple connectors)
-        if (HttpRequestImpl.class.isInstance(httpRequest)) {
-            final HttpRequestImpl requestImpl = HttpRequestImpl.class.cast(httpRequest);
-            requestImpl.initPathFromContext((!context.startsWith("/") ? "/" : "") + context);
-            requestImpl.initServletPath(servlet);
+        {
+            ServletRequest unwrapped = httpRequest;
+            while (ServletRequestAdapter.class.isInstance(unwrapped)) {
+                unwrapped = ServletRequestAdapter.class.cast(unwrapped).getRequest();
+            }
+            while (HttpServletRequestWrapper.class.isInstance(unwrapped)) {
+                unwrapped = HttpServletRequestWrapper.class.cast(unwrapped).getRequest();
+            }
+            if (HttpRequestImpl.class.isInstance(unwrapped)) {
+                final HttpRequestImpl requestImpl = HttpRequestImpl.class.cast(unwrapped);
+                requestImpl.initPathFromContext((!context.startsWith("/") ? "/" : "") + context);
+                requestImpl.initServletPath(servlet);
+            }
         }
 
         boolean matchedStatic = false;
