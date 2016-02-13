@@ -33,7 +33,7 @@
 
   <properties>
     <suite.name>passing</suite.name>
-    <cdi-tck.version>1.2.4.Final</cdi-tck.version>
+    <cdi-tck.version>${cdi.tck.12.version}</cdi-tck.version>
   </properties>
 
   <dependencies>

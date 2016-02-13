@@ -27,6 +27,10 @@
   <packaging>pom</packaging>
   <name>OpenEJB :: TCK</name>
 
+  <properties>
+    <cdi.tck.12.version>1.2.8.Final</cdi.tck.12.version>
+  </properties>
+
   <modules>
     <module>cdi-embedded</module>
     <module>cdi-tomee</module>
