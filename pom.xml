@@ -642,6 +642,7 @@
               <reportFile>${project.build.directory}/${project.build.finalName}.rat</reportFile>
               <excludes>
                 <exclude>**/target/**/*</exclude>
+		<exclude>/**/js/livereload.js</exclude>
 
                 <!-- left around after creating the site -->
                 <exclude>**/cobertura.ser</exclude>
