@@ -294,6 +294,12 @@
         </methods>
       </class>
 
+      <!-- CDI-581 / CDITCK-509 -->
+      <class name="org.jboss.cdi.tck.tests.extensions.lifecycle.processBeanAttributes.specialization.VetoTest">
+        <methods>
+          <exclude name=".*"/>
+        </methods>
+      </class>
 
       <!-- not in web profile and not supported by embedded adapter anyway -->
       <class name="org.jboss.cdi.tck.tests.deployment.packaging.rar.ResourceAdapterArchiveTest">
