@@ -94,7 +94,6 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         //initialize owb context, cf geronimo's OpenWebBeansGBean
         final Properties properties = new Properties();
 
-        final Map<Class<?>, Object> services = new HashMap<>();
         properties.setProperty(OpenWebBeansConfiguration.APPLICATION_IS_JSP, "true");
         properties.setProperty(OpenWebBeansConfiguration.USE_EJB_DISCOVERY, "true");
         //from CDI builder
@@ -125,21 +124,35 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         properties.put(ResourceInjectionService.class.getName(), CdiResourceInjectionService.class.getName());
         properties.put(TransactionService.class.getName(), OpenEJBTransactionService.class.getName());
 
-        services.put(BeanArchiveService.class, new OpenEJBBeanInfoService());
+        // NOTE: ensure user can extend/override all the services = set it only if not present in properties, see WebBeansContext#getService()
+        final Map<Class<?>, Object> services = new HashMap<>();
         services.put(AppContext.class, appContext);
-        services.put(JNDIService.class, new OpenEJBJndiService());
-        try {
-            services.put(ELAdaptor.class, new CustomELAdapter(appContext));
-        } catch (final NoClassDefFoundError noClassDefFoundError) {
-            // no-op: no javax.el
+        if (!properties.containsKey(ApplicationBoundaryService.class.getName())) {
+            services.put(ApplicationBoundaryService.class, new DefaultApplicationBoundaryService());
         }
-        services.put(ScannerService.class, new CdiScanner());
-        services.put(ApplicationBoundaryService.class, new DefaultApplicationBoundaryService());
-        final LoaderService loaderService = SystemInstance.get().getComponent(LoaderService.class);
-        if (loaderService == null && !properties.containsKey(LoaderService.class.getName())) {
-            services.put(LoaderService.class, new OptimizedLoaderService());
-        } else if (loaderService != null) {
-            services.put(LoaderService.class, loaderService);
+        if (!properties.containsKey(ScannerService.class.getName())) {
+            services.put(ScannerService.class, new CdiScanner());
+        }
+        if (!properties.containsKey(JNDIService.class.getName())) {
+            services.put(JNDIService.class, new OpenEJBJndiService());
+        }
+        if (!properties.containsKey(BeanArchiveService.class.getName())) {
+            services.put(BeanArchiveService.class, new OpenEJBBeanInfoService());
+        }
+        if (!properties.containsKey(ELAdaptor.class.getName())) {
+            try {
+                services.put(ELAdaptor.class, new CustomELAdapter(appContext));
+            } catch (final NoClassDefFoundError noClassDefFoundError) {
+                // no-op: no javax.el
+            }
+        }
+        if (!properties.containsKey(LoaderService.class.getName())) {
+            final LoaderService loaderService = SystemInstance.get().getComponent(LoaderService.class);
+            if (loaderService == null && !properties.containsKey(LoaderService.class.getName())) {
+                services.put(LoaderService.class, new OptimizedLoaderService());
+            } else if (loaderService != null) {
+                services.put(LoaderService.class, loaderService);
+            }
         }
 
         final ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
