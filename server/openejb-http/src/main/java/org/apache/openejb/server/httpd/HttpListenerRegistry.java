@@ -128,7 +128,7 @@ public class HttpListenerRegistry implements HttpListener {
         defaultContextTypes.put("txt", "text/plain");
         defaultContextTypes.put("xml", "application/xml");
         defaultContextTypes.put("xsl", "application/xml");
-        defaultContextTypes.put("js", "text/javascript");
+        defaultContextTypes.put("js", "application/javascript");
         defaultContextTypes.put("gif", "image/gif");
         defaultContextTypes.put("jpeg", "image/jpeg");
         defaultContextTypes.put("jpg", "image/jpeg");
@@ -197,7 +197,7 @@ public class HttpListenerRegistry implements HttpListener {
                     if (url != null) {
                         serveResource(servletPath, response, url);
                     } else {
-                        final String pathWithoutSlash = "/".equals(path) ? welcomeFile :
+                        final String pathWithoutSlash = "/".equals(path) || "".equals(servletPath) || "/".equals(servletPath) ? welcomeFile :
                                 (servletPath.startsWith("/") ? servletPath.substring(1) : servletPath);
                         url = defaultClassLoader.getResource("META-INF/resources/" + pathWithoutSlash);
                         if (url != null) {

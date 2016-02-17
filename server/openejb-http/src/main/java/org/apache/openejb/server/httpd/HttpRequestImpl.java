@@ -293,7 +293,7 @@ public class HttpRequestImpl implements HttpRequest {
         if (servletPath != null) {
             return servletPath;
         }
-        if ("/".equals(path) && uri != null) { // not initialized, contextpath = "" so let use it for our router (HttpListenerRegistry)
+        if ("/".equals(path) && uri != null && "".equals(contextPath)) { // not initialized, contextpath = "" so let use it for our router (HttpListenerRegistry)
             return uri.getPath();
         }
         return path;
