@@ -141,7 +141,7 @@ public class SingleApplicationComposerRunner extends BlockJUnit4ClassRunner {
         }
         if (!started) {
             final Object app = APP.get();
-            new ApplicationComposers(app.getClass()) {
+            final ApplicationComposers composers = new ApplicationComposers(app.getClass()) {
                 @Override
                 public void deployApp(final Object inputTestInstance) throws Exception {
                     super.deployApp(inputTestInstance);
@@ -164,7 +164,9 @@ public class SingleApplicationComposerRunner extends BlockJUnit4ClassRunner {
                         started = true;
                     }
                 }
-            }.before(app);
+            };
+            composers.before(app);
+            composers.handleLifecycle(app.getClass(), app);
         }
     }
 

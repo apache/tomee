@@ -1517,43 +1517,8 @@ public class ApplicationComposers {
             composer.before(instance);
 
             final CountDownLatch latch = new CountDownLatch(1);
-            final Object appInstance = instance;
-            composer.beforeDestroyAfterRunnables.add(new Runnable() {
-                @Override
-                public void run() {
-                    for (final Map.Entry<Object, ClassFinder> m : composer.testClassFinders.entrySet()) {
-                        for (final Method mtd : m.getValue().findAnnotatedMethods(PreDestroy.class)) {
-                            if (mtd.getParameterTypes().length == 0) {
-                                try {
-                                    mtd.invoke(mtd.getDeclaringClass() == type ? appInstance : m.getKey());
-                                } catch (final IllegalAccessException | InvocationTargetException e) {
-                                    // no-op
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-            if (!composer.appContext.getWebContexts().isEmpty()) {
-                composer.beforeDestroyAfterRunnables.add(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            final Object sessionManager = SystemInstance.get().getComponent(
-                                    ParentClassLoaderFinder.Helper.get().loadClass("org.apache.openejb.server.httpd.session.SessionManager")
-                            );
-                            if (sessionManager != null) {
-                                final Class<?>[] paramTypes = {WebContext.class};
-                                for (final WebContext web : composer.appContext.getWebContexts()) {
-                                    Reflections.invokeByReflection(sessionManager, "destroy", paramTypes, new Object[]{web});
-                                }
-                            }
-                        } catch (final Throwable e) {
-                            // no-op
-                        }
-                    }
-                });
-            }
+            composer.handleLifecycle(type, instance);
+
             composer.afterRunnables.add(new Runnable() {
                 @Override
                 public void run() {
@@ -1571,19 +1536,63 @@ public class ApplicationComposers {
                 }
             });
 
-            for (final Map.Entry<Object, ClassFinder> m : composer.testClassFinders.entrySet()) {
-                for (final Method mtd : m.getValue().findAnnotatedMethods(PostConstruct.class)) {
-                    if (mtd.getParameterTypes().length == 0) {
-                        mtd.invoke(mtd.getDeclaringClass() == type ? instance : m.getKey());
-                    }
-                }
-            }
-
             latch.await();
         } catch (final InterruptedException ie) {
             Thread.interrupted();
         } catch (final Exception e) {
             throw new OpenEJBRuntimeException(e);
+        }
+    }
+
+    public void handleLifecycle(final Class<?> type, final Object appInstance) throws IllegalAccessException, InvocationTargetException {
+        beforeDestroyAfterRunnables.add(new Runnable() {
+            @Override
+            public void run() {
+                for (final Map.Entry<Object, ClassFinder> m : testClassFinders.entrySet()) {
+                    for (final Method mtd : m.getValue().findAnnotatedMethods(PreDestroy.class)) {
+                        if (mtd.getParameterTypes().length == 0) {
+                            if (!mtd.isAccessible()) {
+                                mtd.setAccessible(true);
+                            }
+                            try {
+                                mtd.invoke(mtd.getDeclaringClass() == type ? appInstance : m.getKey());
+                            } catch (final IllegalAccessException | InvocationTargetException e) {
+                                // no-op
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        if (!appContext.getWebContexts().isEmpty()) {
+            beforeDestroyAfterRunnables.add(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        final Object sessionManager = SystemInstance.get().getComponent(
+                                ParentClassLoaderFinder.Helper.get().loadClass("org.apache.openejb.server.httpd.session.SessionManager")
+                        );
+                        if (sessionManager != null) {
+                            final Class<?>[] paramTypes = {WebContext.class};
+                            for (final WebContext web : appContext.getWebContexts()) {
+                                Reflections.invokeByReflection(sessionManager, "destroy", paramTypes, new Object[]{web});
+                            }
+                        }
+                    } catch (final Throwable e) {
+                        // no-op
+                    }
+                }
+            });
+        }
+        for (final Map.Entry<Object, ClassFinder> m : testClassFinders.entrySet()) {
+            for (final Method mtd : m.getValue().findAnnotatedMethods(PostConstruct.class)) {
+                if (mtd.getParameterTypes().length == 0) {
+                    if (!mtd.isAccessible()) {
+                        mtd.setAccessible(true);
+                    }
+                    mtd.invoke(mtd.getDeclaringClass() == type ? appInstance : m.getKey());
+                }
+            }
         }
     }
 
