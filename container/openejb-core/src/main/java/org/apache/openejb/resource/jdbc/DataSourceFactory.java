@@ -45,6 +45,7 @@ import java.io.Flushable;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Proxy;
 import java.sql.Driver;
 import java.sql.SQLException;
@@ -75,6 +76,8 @@ public class DataSourceFactory {
     public static final String GLOBAL_FLUSH_PROPERTY = "openejb.jdbc.flushable";
     public static final String POOL_PROPERTY = "openejb.datasource.pool";
     public static final String DATA_SOURCE_CREATOR_PROP = "DataSourceCreator";
+    public static final String HANDLER_PROPERTY = "TomEEProxyHandler";
+    public static final String GLOBAL_HANDLER_PROPERTY = "openejb.jdbc.handler";
 
     private static final Map<CommonDataSource, AlternativeDriver> driverByDataSource = new HashMap<>();
 
@@ -97,6 +100,7 @@ public class DataSourceFactory {
         final Properties properties = asProperties(definition);
         final Set<String> originalKeys = properties.stringPropertyNames();
 
+        final String handler = SystemInstance.get().getOptions().get(GLOBAL_HANDLER_PROPERTY, (String) properties.remove(HANDLER_PROPERTY));
         boolean flushable = SystemInstance.get().getOptions().get(GLOBAL_FLUSH_PROPERTY,
             "true".equalsIgnoreCase((String) properties.remove(FLUSHABLE_PROPERTY)));
 
@@ -239,6 +243,8 @@ public class DataSourceFactory {
                     }
                 }
 
+                ds = wrapIfNeeded(handler, ds);
+
                 if (logSql) {
                     ds = makeItLogging(ds, logPackages);
                 }
@@ -273,6 +279,8 @@ public class DataSourceFactory {
                     resettableDataSourceHandler.updateDelegate(ds);
                     ds = makeSerializableFlushableDataSourceProxy(ds, resettableDataSourceHandler);
                 }
+            } else {
+                ds = wrapIfNeeded(handler, ds);
             }
 
             return ds;
@@ -281,6 +289,32 @@ public class DataSourceFactory {
                 Thread.currentThread().setContextClassLoader(oldLoader);
             }
         }
+    }
+
+    private static CommonDataSource wrapIfNeeded(final String handler, final CommonDataSource ds) throws InstantiationException, IllegalAccessException {
+        if (handler != null) {
+            try {
+                final Class<?> handlerClass = Thread.currentThread().getContextClassLoader().loadClass(handler);
+                InvocationHandler instance;
+                try {
+                    instance = InvocationHandler.class.cast(handlerClass.getConstructor(DataSource.class).newInstance(ds));
+                } catch (final InvocationTargetException e) {
+                    throw new IllegalStateException(e.getCause());
+                } catch (final NoSuchMethodException e) {
+                    try {
+                        instance = InvocationHandler.class.cast(handlerClass.getConstructor(CommonDataSource.class).newInstance(ds));
+                    } catch (final InvocationTargetException e2) {
+                        throw new IllegalStateException(e.getCause());
+                    } catch (final NoSuchMethodException e2) {
+                        instance = InvocationHandler.class.cast(handlerClass.newInstance());
+                    }
+                }
+                return wrapWithHandler(ds, instance);
+            } catch (ClassNotFoundException e) {
+                throw new IllegalArgumentException("Can't find handler: " + handler, e);
+            }
+        }
+        return ds;
     }
 
     public static CommonDataSource makeSerializableFlushableDataSourceProxy(final CommonDataSource ds, final InvocationHandler handler) {
@@ -320,6 +354,13 @@ public class DataSourceFactory {
 
     public static void setCreatedWith(final DataSourceCreator creator, final CommonDataSource ds) {
         creatorByDataSource.put(ds, creator);
+    }
+
+    private static CommonDataSource wrapWithHandler(final CommonDataSource ds, final InvocationHandler instance) {
+        return (CommonDataSource) Proxy.newProxyInstance(
+            Thread.currentThread().getContextClassLoader(),
+            new Class<?>[]{DataSource.class.isInstance(ds) ? DataSource.class : XADataSource.class, Serializable.class},
+            instance);
     }
 
     public static DataSource makeItLogging(final CommonDataSource ds, final String packagesStr) {
