@@ -2189,7 +2189,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             Assembler.resetSlf4j(logger);
             Logger.configure(true);
 
-            logger.debug("destroyApplication.success", appInfo.path);
+            logger.info("destroyApplication.success", appInfo.path);
         } finally {
             l.unlock();
         }
