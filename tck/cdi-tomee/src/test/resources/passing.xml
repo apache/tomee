@@ -26,11 +26,13 @@
     <listener class-name="org.jboss.cdi.tck.impl.testng.ConfigurationLoggingListener"/>
     <listener class-name="org.jboss.cdi.tck.impl.testng.ProgressLoggingTestListener"/>
     <!-- Optional - it's recommended to disable the default JUnit XML reporter -->
+    <!-- too slow to be there by default
     <listener class-name="org.testng.reporters.SuiteHTMLReporter"/>
     <listener class-name="org.testng.reporters.FailedReporter"/>
     <listener class-name="org.testng.reporters.XMLReporter"/>
     <listener class-name="org.testng.reporters.EmailableReporter"/>
     <listener class-name="org.apache.openejb.tck.testng.HTMLReporter"/>
+    -->
   </listeners>
 
   <test name="JSR-346 TCK">
