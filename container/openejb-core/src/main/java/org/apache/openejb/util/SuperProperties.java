@@ -295,6 +295,7 @@ public class SuperProperties extends Properties {
         this.spaceAfterComment = spaceAfterComment;
     }
 
+    @Override
     public String getProperty(final String name) {
         final Object result = get(name);
         String property = result instanceof String ? (String) result : null;
@@ -304,6 +305,7 @@ public class SuperProperties extends Properties {
         return property;
     }
 
+    @Override
     public String getProperty(final String name, final String defaultValue) {
         final Object result = get(name);
         String property = result instanceof String ? (String) result : null;
@@ -316,6 +318,7 @@ public class SuperProperties extends Properties {
         return property;
     }
 
+    @Override
     public synchronized Object setProperty(final String name, final String value) {
         return put(name, value);
     }
@@ -374,6 +377,7 @@ public class SuperProperties extends Properties {
         return attributes;
     }
 
+    @Override
     public void list(final PrintStream out) {
         if (out == null) {
             throw new NullPointerException();
@@ -399,6 +403,7 @@ public class SuperProperties extends Properties {
         }
     }
 
+    @Override
     public void list(final PrintWriter writer) {
         if (writer == null) {
             throw new NullPointerException();
@@ -424,6 +429,7 @@ public class SuperProperties extends Properties {
         }
     }
 
+    @Override
     public synchronized void load(final InputStream in) throws IOException {
         // never null, when empty we are processing the white space at the beginning of the line
         StringBuilder key = new StringBuilder();
@@ -776,6 +782,7 @@ public class SuperProperties extends Properties {
         return (char) unicode;
     }
 
+    @Override
     public Enumeration<?> propertyNames() {
         if (defaults == null) {
             return keys();
@@ -793,6 +800,7 @@ public class SuperProperties extends Properties {
         return set.keys();
     }
 
+    @Override
     @SuppressWarnings({"deprecation"})
     public void save(final OutputStream out, final String comment) {
         try {
@@ -802,6 +810,7 @@ public class SuperProperties extends Properties {
         }
     }
 
+    @Override
     public synchronized void store(final OutputStream out, final String headComment) throws IOException {
         final OutputStreamWriter writer = new OutputStreamWriter(out, "ISO8859_1");
         if (headComment != null) {
@@ -941,6 +950,7 @@ public class SuperProperties extends Properties {
         }
     }
 
+    @Override
     public synchronized void loadFromXML(final InputStream in) throws IOException {
         if (in == null) {
             throw new NullPointerException();
@@ -1054,20 +1064,24 @@ public class SuperProperties extends Properties {
             }
 
             builder.setErrorHandler(new ErrorHandler() {
+                @Override
                 public void warning(final SAXParseException e) throws SAXException {
                     throw e;
                 }
 
+                @Override
                 public void error(final SAXParseException e) throws SAXException {
                     throw e;
                 }
 
+                @Override
                 public void fatalError(final SAXParseException e) throws SAXException {
                     throw e;
                 }
             });
 
             builder.setEntityResolver(new EntityResolver() {
+                @Override
                 public InputSource resolveEntity(final String publicId,
                                                  final String systemId) throws SAXException, IOException {
                     if (systemId.equals(PROP_DTD_NAME)) {
@@ -1082,10 +1096,12 @@ public class SuperProperties extends Properties {
         return builder;
     }
 
+    @Override
     public void storeToXML(final OutputStream os, final String comment) throws IOException {
         storeToXML(os, comment, "UTF-8");
     }
 
+    @Override
     public synchronized void storeToXML(final OutputStream os, final String headComment, final String encoding) throws IOException {
         if (os == null || encoding == null) {
             throw new NullPointerException();
@@ -1181,19 +1197,23 @@ public class SuperProperties extends Properties {
     // Delegate all remaining methods to the properties object
     //
 
+    @Override
     public boolean isEmpty() {
         return properties.isEmpty();
     }
 
+    @Override
     public int size() {
         return properties.size();
     }
 
+    @Override
     public Object get(Object key) {
         key = normalize(key);
         return properties.get(key);
     }
 
+    @Override
     public Object put(Object key, final Object value) {
         key = normalize(key);
         if (key instanceof String) {
@@ -1205,6 +1225,7 @@ public class SuperProperties extends Properties {
         return properties.put(key, value);
     }
 
+    @Override
     public Object remove(Object key) {
         key = normalize(key);
         comments.remove(key);
@@ -1212,6 +1233,7 @@ public class SuperProperties extends Properties {
         return properties.remove(key);
     }
 
+    @Override
     public void putAll(final Map<?, ?> t) {
         for (final Map.Entry<?, ?> entry : t.entrySet()) {
             put(entry.getKey(), entry.getValue());
@@ -1232,10 +1254,12 @@ public class SuperProperties extends Properties {
      *
      * @return an unmodifiable view of the keys
      */
+    @Override
     public Set<Object> keySet() {
         return Collections.unmodifiableSet(properties.keySet());
     }
 
+    @Override
     public Enumeration<Object> keys() {
         return Collections.enumeration(properties.keySet());
     }
@@ -1245,6 +1269,7 @@ public class SuperProperties extends Properties {
      *
      * @return an unmodifiable view of the values
      */
+    @Override
     public Collection<Object> values() {
         return Collections.unmodifiableCollection(properties.values());
     }
@@ -1254,33 +1279,40 @@ public class SuperProperties extends Properties {
      *
      * @return an unmodifiable view of the entries
      */
+    @Override
     public Set<Map.Entry<Object, Object>> entrySet() {
         return Collections.unmodifiableSet(properties.entrySet());
     }
 
+    @Override
     public Enumeration<Object> elements() {
         return Collections.enumeration(properties.values());
     }
 
+    @Override
     public boolean containsKey(Object key) {
         key = normalize(key);
         return properties.containsKey(key);
     }
 
+    @Override
     public boolean containsValue(final Object value) {
         return properties.containsValue(value);
     }
 
+    @Override
     public boolean contains(final Object value) {
         return properties.containsValue(value);
     }
 
+    @Override
     public void clear() {
         properties.clear();
         comments.clear();
         attributes.clear();
     }
 
+    @Override
     @SuppressWarnings({"unchecked"})
     public Object clone() {
         final SuperProperties clone = (SuperProperties) super.clone();
@@ -1306,6 +1338,7 @@ public class SuperProperties extends Properties {
         return properties.toString();
     }
 
+    @Override
     protected void rehash() {
     }
 
