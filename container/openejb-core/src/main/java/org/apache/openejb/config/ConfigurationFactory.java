@@ -427,8 +427,9 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
 
         configLocation = ConfigUtils.searchForConfiguration(configLocation);
+
         if (configLocation != null) {
-            logger.info("openejb configuration file is '" + configLocation + "'");
+            logger.info("TomEE configuration file is '" + configLocation + "'");
             props.setProperty(CONFIGURATION_PROPERTY, configLocation);
         }
 
@@ -439,7 +440,11 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             sys.containerSystem.containers.add(serviceInfo);
         } else if (!offline) {
             final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
-            assembler.createContainer(serviceInfo);
+            if (assembler != null) {
+                assembler.createContainer(serviceInfo);
+            }else{
+                throw new OpenEJBException("ContainerInfo: Assembler has not been defined");
+            }
         }
     }
 
@@ -448,7 +453,11 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             sys.facilities.resources.add(serviceInfo);
         } else if (!offline) {
             final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
-            assembler.createResource(serviceInfo);
+            if (assembler != null) {
+                assembler.createResource(serviceInfo);
+            }else{
+                throw new OpenEJBException("ResourceInfo: Assembler has not been defined");
+            }
         }
     }
 
@@ -684,10 +693,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     }
 
     public ArrayList<File> getModulesFromClassPath(final List<File> declaredApps, final ClassLoader classLoader) {
-        final FileUtils base = SystemInstance.get().getBase();
 
-        final List<URL> classpathAppsUrls = new ArrayList<URL>();
-        DeploymentsResolver.loadFromClasspath(base, classpathAppsUrls, classLoader);
+        final List<URL> classpathAppsUrls = DeploymentsResolver.loadFromClasspath(classLoader);
 
         final ArrayList<File> jarFiles = new ArrayList<File>();
         for (final URL path : classpathAppsUrls) {

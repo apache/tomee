@@ -289,7 +289,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
             } else if (time < 10000) {
                 logger.warning("Searched " + urlSize + " classpath urls in " + time + " milliseconds.  Average " + time / urlSize + " milliseconds per url.");
                 logger.warning("Consider adjusting your " +
-                    CLASSPATH_EXCLUDE + " and " + CLASSPATH_INCLUDE + " settings.  Current settings: exclude='" +
+                        CLASSPATH_EXCLUDE + " and " + CLASSPATH_INCLUDE + " settings.  Current settings: exclude='" +
                         searchResult.exclude + "', include='" + searchResult.include + "'");
             } else {
                 logger.fatal("Searched " + urlSize + " classpath urls in " + time + " milliseconds.  Average " + time / urlSize + " milliseconds per url.  TOO LONG!");
@@ -312,11 +312,17 @@ public class DeploymentsResolver implements DeploymentFilterable {
         return new ArrayList<>();
     }
 
+    /**
+     * Use {@link #loadFromClasspath(ClassLoader)}
+     */
     @Deprecated
     public static void loadFromClasspath(final FileUtils ignored, final List<URL> jarList, final ClassLoader classLoader) {
         jarList.addAll(loadFromClasspath(classLoader));
     }
 
+    /**
+     * Use {@link #processUrls(String, List, ClassLoader, Set, List)}
+     */
     @Deprecated
     public static void processUrls(final String caller,
                                    final List<URL> urls,
@@ -352,10 +358,10 @@ public class DeploymentsResolver implements DeploymentFilterable {
 
                 final Class<? extends DeploymentModule> moduleType = deploymentLoader.discoverModuleType(url, classLoader, requireDescriptors);
                 if (AppModule.class.isAssignableFrom(moduleType) ||
-                    EjbModule.class.isAssignableFrom(moduleType) ||
-                    PersistenceModule.class.isAssignableFrom(moduleType) ||
-                    ConnectorModule.class.isAssignableFrom(moduleType) ||
-                    ClientModule.class.isAssignableFrom(moduleType)) {
+                        EjbModule.class.isAssignableFrom(moduleType) ||
+                        PersistenceModule.class.isAssignableFrom(moduleType) ||
+                        ConnectorModule.class.isAssignableFrom(moduleType) ||
+                        ClientModule.class.isAssignableFrom(moduleType)) {
 
                     final URL archive = toFileUrl(url);
 
