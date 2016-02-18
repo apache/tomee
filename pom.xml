@@ -97,9 +97,9 @@
     <javaee-api.version>7.0</javaee-api.version>
 
     <openjpa.version>2.4.0</openjpa.version>
-    <org.apache.openwebbeans.version>1.6.3-SNAPSHOT</org.apache.openwebbeans.version>
+    <org.apache.openwebbeans.version>1.6.3</org.apache.openwebbeans.version>
     <jcs.version>2.0-M1</jcs.version>
-    <johnzon.version>0.9.2-incubating</johnzon.version>
+    <johnzon.version>0.9.3-incubating</johnzon.version>
 
     <!-- Maven module versions -->
     <maven-bundle-plugin.version>2.3.7</maven-bundle-plugin.version>
@@ -686,18 +686,14 @@
     </profile>
   </profiles>
   <repositories>
-    <!--<repository>-->
-    <!--<id>codehaus-snapshot</id>-->
-    <!--<name>CodeHaus SNAPSHOT repository</name>-->
-    <!--<url>http://snapshots.repository.codehaus.org</url>-->
-    <!--<releases>-->
-    <!--<enabled>false</enabled>-->
-    <!--</releases>-->
-    <!--<snapshots>-->
-    <!--<enabled>true</enabled>-->
-    <!--</snapshots>-->
-    <!--</repository>-->
-    <!-- Apache snapshots -->
+    <repository>
+      <id>owb-staging</id>
+      <url>https://repository.apache.org/content/repositories/orgapacheopenwebbeans-1016/</url>
+    </repository>
+    <repository>
+      <id>johnzon-staging</id>
+      <url>https://repository.apache.org/content/repositories/orgapachejohnzon-1013/</url>
+    </repository>
     <repository>
       <id>apache-snapshots</id>
       <name>Apache Snapshots Repository</name>

@@ -656,9 +656,11 @@ public class CxfRsHttpListener implements RsHttpListener {
 
             boolean customJsonProvider = false;
             for (final ProviderInfo<?> o : values) { // using getName to not suppose any classloader setup
-                if (ConfigurableJohnzonProvider.class.getName().equals(o.getResourceClass().getName())
+                final String name = o.getResourceClass().getName();
+                if ("org.apache.johnzon.jaxrs.ConfigurableJohnzonProvider".equals(name)
+                    || "org.apache.johnzon.jaxrs.jsonb.jaxrs.JsonbJaxrsProvider".equals(name)
                     // contains in case of proxying
-                    || o.getResourceClass().getName().contains("com.fasterxml.jackson.jaxrs.json")) {
+                    || name.contains("com.fasterxml.jackson.jaxrs.json")) {
                     customJsonProvider = true;
                     break; //  cause we only handle json for now
                 }
@@ -667,7 +669,7 @@ public class CxfRsHttpListener implements RsHttpListener {
             if (customJsonProvider) {
                 final Iterator<ProviderInfo<?>> it = values.iterator();
                 while (it.hasNext()) {
-                    if (JohnzonProvider.class.getName().equals(it.next().getResourceClass().getName())) {
+                    if ("org.apache.johnzon.jaxrs.JohnzonProvider".equals(it.next().getResourceClass().getName())) {
                         it.remove();
                         break;
                     }
