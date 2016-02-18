@@ -59,14 +59,23 @@ import java.util.Set;
  */
 public class SuperProperties extends Properties {
 
+    private static final int EOF = -1;
+    private static final int LINE_ENDING = -4200;
+    private static final int ENCODED_EQUALS = -5000;
+    private static final int ENCODED_COLON = -5001;
+    private static final int ENCODED_SPACE = -5002;
+    private static final int ENCODED_TAB = -5003;
+    private static final int ENCODED_NEWLINE = -5004;
+    private static final int ENCODED_CARRIAGE_RETURN = -5005;
+    private static final Class<String> STRING = String.class;
     private static final String PROP_DTD_NAME = "http://java.sun.com/dtd/properties.dtd";
 
     private static final String PROP_DTD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-        + "    <!ELEMENT properties (comment?, entry*) >"
-        + "    <!ATTLIST properties version CDATA #FIXED \"1.0\" >"
-        + "    <!ELEMENT comment (#PCDATA) >"
-        + "    <!ELEMENT entry (#PCDATA) >"
-        + "    <!ATTLIST entry key CDATA #REQUIRED >";
+            + "    <!ELEMENT properties (comment?, entry*) >"
+            + "    <!ATTLIST properties version CDATA #FIXED \"1.0\" >"
+            + "    <!ELEMENT comment (#PCDATA) >"
+            + "    <!ELEMENT entry (#PCDATA) >"
+            + "    <!ATTLIST entry key CDATA #REQUIRED >";
 
 
     /**
@@ -298,7 +307,7 @@ public class SuperProperties extends Properties {
     @Override
     public String getProperty(final String name) {
         final Object result = get(name);
-        String property = result instanceof String ? (String) result : null;
+        String property = STRING.isInstance(result) ? STRING.cast(result) : null;
         if (property == null && defaults != null) {
             property = defaults.getProperty(name);
         }
@@ -308,7 +317,7 @@ public class SuperProperties extends Properties {
     @Override
     public String getProperty(final String name, final String defaultValue) {
         final Object result = get(name);
-        String property = result instanceof String ? (String) result : null;
+        String property = STRING.isInstance(result) ? STRING.cast(result) : null;
         if (property == null && defaults != null) {
             property = defaults.getProperty(name);
         }
@@ -385,19 +394,7 @@ public class SuperProperties extends Properties {
         final StringBuilder buffer = new StringBuilder(80);
         final Enumeration<?> keys = propertyNames();
         while (keys.hasMoreElements()) {
-            final String key = (String) keys.nextElement();
-            buffer.append(key);
-            buffer.append('=');
-            String property = (String) get(key);
-            if (property == null) {
-                property = defaults.getProperty(key);
-            }
-            if (property.length() > 40) {
-                buffer.append(property.substring(0, 37));
-                buffer.append("...");
-            } else {
-                buffer.append(property);
-            }
+            appendProperty(buffer, keys);
             out.println(buffer.toString());
             buffer.setLength(0);
         }
@@ -411,21 +408,25 @@ public class SuperProperties extends Properties {
         final StringBuilder buffer = new StringBuilder(80);
         final Enumeration<?> keys = propertyNames();
         while (keys.hasMoreElements()) {
-            final String key = (String) keys.nextElement();
-            buffer.append(key);
-            buffer.append('=');
-            String property = (String) get(key);
-            while (property == null) {
-                property = defaults.getProperty(key);
-            }
-            if (property.length() > 40) {
-                buffer.append(property.substring(0, 37));
-                buffer.append("...");
-            } else {
-                buffer.append(property);
-            }
+            appendProperty(buffer, keys);
             writer.println(buffer.toString());
             buffer.setLength(0);
+        }
+    }
+
+    private void appendProperty(final StringBuilder buffer, final Enumeration<?> keys) {
+        final String key = keys.nextElement().toString();
+        buffer.append(key);
+        buffer.append('=');
+        String property = get(key).toString();
+        if (property == null) {
+            property = defaults.getProperty(key);
+        }
+        if (property.length() > 40) {
+            buffer.append(property.substring(0, 37));
+            buffer.append("...");
+        } else {
+            buffer.append(property);
         }
     }
 
@@ -558,20 +559,7 @@ public class SuperProperties extends Properties {
                         }
                         commentLineIndent = Math.min(commentIndent, commentLineIndent);
 
-                        if (commentLine.toString().trim().startsWith("@")) {
-                            // process property attribute
-                            final String attribute = commentLine.toString().trim().substring(1);
-                            final String[] parts = attribute.split("=", 2);
-                            final String attributeName = parts[0].trim();
-                            final String attributeValue = parts.length == 2 ? parts[1].trim() : "";
-                            attributes.put(attributeName, attributeValue);
-                        } else {
-                            // append comment
-                            if (comment.length() != 0) {
-                                comment.append(lineSeparator);
-                            }
-                            comment.append(commentLine.toString().substring(commentLineIndent));
-                        }
+                        checkForAttributeOrAppend(comment, attributes, commentLine, commentLineIndent);
                         continue;
                     }
                     break;
@@ -640,14 +628,22 @@ public class SuperProperties extends Properties {
         }
     }
 
-    private static final int EOF = -1;
-    private static final int LINE_ENDING = -4200;
-    private static final int ENCODED_EQUALS = -5000;
-    private static final int ENCODED_COLON = -5001;
-    private static final int ENCODED_SPACE = -5002;
-    private static final int ENCODED_TAB = -5003;
-    private static final int ENCODED_NEWLINE = -5004;
-    private static final int ENCODED_CARRIAGE_RETURN = -5005;
+    private void checkForAttributeOrAppend(final StringBuilder comment, final LinkedHashMap<String, String> attributes, final StringBuilder commentLine, final int commentLineIndent) {
+        if (commentLine.toString().trim().startsWith("@")) {
+            // process property attribute
+            final String attribute = commentLine.toString().trim().substring(1);
+            final String[] parts = attribute.split("=", 2);
+            final String attributeName = parts[0].trim();
+            final String attributeValue = parts.length == 2 ? parts[1].trim() : "";
+            attributes.put(attributeName, attributeValue);
+        } else {
+            // append comment
+            if (comment.length() != 0) {
+                comment.append(lineSeparator);
+            }
+            comment.append(commentLine.toString().substring(commentLineIndent));
+        }
+    }
 
     private int decodeNextCharacter(final InputStream in) throws IOException {
         boolean lineContinuation = false;
@@ -824,8 +820,8 @@ public class SuperProperties extends Properties {
         boolean firstProperty = true;
         final StringBuilder buffer = new StringBuilder(200);
         for (final Map.Entry<Object, Object> entry : entrySet()) {
-            final String key = (String) entry.getKey();
-            final String value = (String) entry.getValue();
+            final String key = entry.getKey().toString();
+            final String value = entry.getValue().toString();
 
             if (!firstProperty && spaceBetweenProperties) {
                 buffer.append(lineSeparator);
@@ -1019,20 +1015,7 @@ public class SuperProperties extends Properties {
                             }
                             commentLineIndent = Math.min(commentIndent, commentLineIndent);
 
-                            if (commentLine.toString().trim().startsWith("@")) {
-                                // process property attribute
-                                final String attribute = commentLine.toString().trim().substring(1);
-                                final String[] parts = attribute.split("=", 2);
-                                final String attributeName = parts[0].trim();
-                                final String attributeValue = parts.length == 2 ? parts[1].trim() : "";
-                                attributes.put(attributeName, attributeValue);
-                            } else {
-                                // append comment
-                                if (comment.length() != 0) {
-                                    comment.append(lineSeparator);
-                                }
-                                comment.append(commentLine.toString().substring(commentLineIndent));
-                            }
+                            checkForAttributeOrAppend(comment, attributes, commentLine, commentLineIndent);
 
                             firstLine = false;
                         } while (nextByte > 0);
@@ -1133,8 +1116,8 @@ public class SuperProperties extends Properties {
         // properties
         boolean firstProperty = true;
         for (final Map.Entry<Object, Object> entry : entrySet()) {
-            final String key = (String) entry.getKey();
-            final String value = (String) entry.getValue();
+            final String key = entry.getKey().toString();
+            final String value = entry.getValue().toString();
 
             if (!firstProperty && spaceBetweenProperties) {
                 buf.append(lineSeparator);
@@ -1149,7 +1132,7 @@ public class SuperProperties extends Properties {
                 buf.append(lineSeparator);
 
                 // comments can't contain "--" so we shrink all sequences of them to a single "-"
-                comment = comment.replaceAll("--*", "-");
+                comment = null != comment ? comment.replaceAll("--*", "-") : "";
                 dumpComment(buf, comment, attributes, "");
 
                 buf.append(indent);
@@ -1187,10 +1170,10 @@ public class SuperProperties extends Properties {
         * to use them safely in XML
         */
         return s.replaceAll("&", "&amp;")
-            .replaceAll("<", "&lt;")
-            .replaceAll(">", "&gt;")
-            .replaceAll("\u0027", "&apos;")
-            .replaceAll("\"", "&quot;");
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll("\u0027", "&apos;")
+                .replaceAll("\"", "&quot;");
     }
 
     //
@@ -1216,8 +1199,8 @@ public class SuperProperties extends Properties {
     @Override
     public Object put(Object key, final Object value) {
         key = normalize(key);
-        if (key instanceof String) {
-            final String name = (String) key;
+        if (STRING.isInstance(key)) {
+            final String name = STRING.cast(key);
             if (!attributes.containsKey(name)) {
                 attributes.put(name, new LinkedHashMap<String, String>());
             }
@@ -1343,8 +1326,9 @@ public class SuperProperties extends Properties {
     }
 
     private Object normalize(final Object key) {
-        if (key instanceof String) {
-            return normalize((String) key);
+
+        if (STRING.isInstance(key)) {
+            return normalize(STRING.cast(key));
         }
         return key;
     }
@@ -1358,26 +1342,37 @@ public class SuperProperties extends Properties {
             return property;
         }
 
-        for (final Object o : keySet()) {
-            if (o instanceof String) {
-                final String key = (String) o;
+        String key = findKey(property, keySet());
+        if (key != null) {
+            return key;
+        }
+
+        if (defaults != null) {
+            key = findKey(property, defaults.keySet());
+            if (key != null) {
+                return key;
+            }
+        }
+
+        return property;
+    }
+
+    /**
+     * Find property key or null
+     *
+     * @param property String
+     * @param keySet   Set
+     * @return String or null
+     */
+    private String findKey(final String property, final Set<Object> keySet) {
+        for (final Object o : keySet) {
+            if (String.class.isInstance(o)) {
+                final String key = String.class.cast(o);
                 if (key.equalsIgnoreCase(property)) {
                     return key;
                 }
             }
         }
-
-        if (defaults != null) {
-            for (final Object o : defaults.keySet()) {
-                if (o instanceof String) {
-                    final String key = (String) o;
-                    if (key.equalsIgnoreCase(property)) {
-                        return key;
-                    }
-                }
-            }
-        }
-
-        return property;
+        return null;
     }
 }
