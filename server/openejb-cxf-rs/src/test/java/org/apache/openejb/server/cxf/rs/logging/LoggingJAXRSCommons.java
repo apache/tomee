@@ -51,7 +51,7 @@ public class LoggingJAXRSCommons {
     protected static int port = -1;
     protected Collection<String> msgs;
 
-    protected boolean assertJAXRSConfiguration() {
+    protected synchronized boolean assertJAXRSConfiguration() {
         final Iterator<String> iterator = msgs.iterator();
         while (iterator.hasNext()) {
             if (iterator.next().contains("Registered JAX-RS Configuration:")) {
@@ -121,7 +121,9 @@ public class LoggingJAXRSCommons {
         looger.addHandler(new Handler() {
             @Override
             public void publish(final LogRecord record) {
-                msgs.add(record.getMessage());
+                synchronized (LoggingJAXRSCommons.this) {
+                    msgs.add(record.getMessage());
+                }
             }
 
             @Override
@@ -135,7 +137,9 @@ public class LoggingJAXRSCommons {
             }
 
             public Collection getMsg() {
-                return msgs;
+                synchronized (LoggingJAXRSCommons.this) {
+                    return msgs;
+                }
             }
         });
     }
