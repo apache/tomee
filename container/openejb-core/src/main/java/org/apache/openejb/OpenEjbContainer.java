@@ -170,10 +170,12 @@ public final class OpenEjbContainer extends EJBContainer {
         final ReentrantLock lock = LOCK;
         lock.lock();
 
-        if (logger().isDebugEnabled()) {
+        final Logger log = logger();
+        
+        if (log.isDebugEnabled()) {
             final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
             for (final StackTraceElement element : stackTrace) {
-                logger().debug("Called by: " + element);
+                log.debug("Called by: " + element);
             }
         }
 
@@ -197,7 +199,7 @@ public final class OpenEjbContainer extends EJBContainer {
                     try {
                         assembler.destroyApplication(info);
                     } catch (final UndeployException e) {
-                        logger().error(e.getMessage(), e);
+                        log.error(e.getMessage(), e);
                     }
                 }
             }
@@ -205,10 +207,10 @@ public final class OpenEjbContainer extends EJBContainer {
             try {
                 stopContexts(webBeanContext.getContextsService(), servletContext, session);
             } catch (final Exception e) {
-                logger().warning("can't stop all CDI contexts", e);
+                log.warning("can't stop all CDI contexts", e);
             }
 
-            logger().info("Destroying OpenEJB container");
+            log.info("Destroying OpenEJB container");
             OpenEJB.destroy();
             instance = null;
         } finally {
