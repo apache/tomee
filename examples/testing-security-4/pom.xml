@@ -25,7 +25,7 @@
   <artifactId>testing-security-4</artifactId>
   <packaging>jar</packaging>
   <version>1.1.1-SNAPSHOT</version>
-  <name>OpenEJB :: Examples :: Testing Security Script Service Provider</name>
+  <name>OpenEJB :: Examples :: Testing Security 4 Script Service Provider</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
