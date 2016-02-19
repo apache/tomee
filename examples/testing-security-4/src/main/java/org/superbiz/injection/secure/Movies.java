@@ -18,6 +18,7 @@ package org.superbiz.injection.secure;
 
 //START SNIPPET: code
 
+import javax.annotation.PreDestroy;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateful;
@@ -27,6 +28,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContextType;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.util.List;
 
 @Stateful
@@ -36,20 +38,19 @@ public class Movies {
     private EntityManager entityManager;
 
     @RolesAllowed({"Employee", "Manager"})
-    public void addMovie(Movie movie) throws Exception {
+    public void addMovie(final Movie movie) throws Exception {
         entityManager.persist(movie);
     }
 
     @RolesAllowed({"Manager"})
-    public void deleteMovie(Movie movie) throws Exception {
+    public void deleteMovie(final Movie movie) throws Exception {
         entityManager.remove(movie);
     }
 
     @PermitAll
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<Movie> getMovies() throws Exception {
-        Query query = entityManager.createQuery("SELECT m from Movie as m");
-        return query.getResultList();
+        return entityManager.createQuery("SELECT m from Movie as m", Movie.class).getResultList();
     }
 }
 //END SNIPPET: code

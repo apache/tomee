@@ -38,8 +38,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class RemoteTomEEEJBContainer extends EJBContainer {
+
+    /**
+     * Used to synchronize the container create and close methods
+     */
+    private static final ReentrantLock LOCK = new ReentrantLock();
+
     private static RemoteTomEEEJBContainer instance;
     private RemoteServer container;
     private InitialContext context;
@@ -57,8 +64,15 @@ public class RemoteTomEEEJBContainer extends EJBContainer {
 
     @Override
     public void close() {
-        instance.container.destroy();
-        instance.container = null;
+        final ReentrantLock lock = LOCK;
+        lock.lock();
+
+        try {
+            instance.container.destroy();
+            instance.container = null;
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
@@ -71,83 +85,91 @@ public class RemoteTomEEEJBContainer extends EJBContainer {
 
         @Override
         public EJBContainer createEJBContainer(final Map<?, ?> properties) {
-            final Object provider = properties.get(EJBContainer.PROVIDER);
-            int ejbContainerProviders = 1;
-            try {
-                ejbContainerProviders = ProviderLocator.getServices(EJBContainerProvider.class.getName(), EJBContainer.class, Thread.currentThread().getContextClassLoader()).size();
-            } catch (final Exception e) {
-                // no-op
-            }
 
-            if ((provider == null && ejbContainerProviders > 1)
-                    || (!RemoteTomEEEJBContainer.class.equals(provider)
-                    && !CONTAINER_NAMES.contains(String.valueOf(provider)))) {
-                return null;
-            }
-
-            if (instance != null) {
-                return instance;
-            }
-
-            final Object modules = properties.get(EJBContainer.MODULES);
-
-            System.getProperties().putAll(properties);
-            final File home = new File(System.getProperty("openejb.home", "doesn't exist"));
-            if (!home.exists()) {
-                throw new IllegalArgumentException("You need to set openejb.home");
-            }
-
-            final QuickServerXmlParser parser = QuickServerXmlParser.parse(new File(home, "conf/server.xml"));
-            final String remoteEjb = System.getProperty(Context.PROVIDER_URL, "http://" + parser.host() + ":" + parser.http() + "/tomee/ejb");
+            final ReentrantLock lock = LOCK;
+            lock.lock();
 
             try {
-                instance = new RemoteTomEEEJBContainer();
-                instance.container = new RemoteServer();
-                instance.container.setPortStartup(Integer.parseInt(parser.http()));
+                final Object provider = properties.get(EJBContainer.PROVIDER);
+                int ejbContainerProviders = 1;
+                try {
+                    ejbContainerProviders = ProviderLocator.getServices(EJBContainerProvider.class.getName(), EJBContainer.class, Thread.currentThread().getContextClassLoader()).size();
+                } catch (final Exception e) {
+                    // no-op
+                }
+
+                if ((provider == null && ejbContainerProviders > 1)
+                        || (!RemoteTomEEEJBContainer.class.equals(provider)
+                        && !CONTAINER_NAMES.contains(String.valueOf(provider)))) {
+                    return null;
+                }
+
+                if (instance != null) {
+                    return instance;
+                }
+
+                final Object modules = properties.get(EJBContainer.MODULES);
+
+                System.getProperties().putAll(properties);
+                final File home = new File(System.getProperty("openejb.home", "doesn't exist"));
+                if (!home.exists()) {
+                    throw new IllegalArgumentException("You need to set openejb.home");
+                }
+
+                final QuickServerXmlParser parser = QuickServerXmlParser.parse(new File(home, "conf/server.xml"));
+                final String remoteEjb = System.getProperty(Context.PROVIDER_URL, "http://" + parser.host() + ":" + parser.http() + "/tomee/ejb");
 
                 try {
-                    instance.container.start();
-                } catch (final Exception e) {
-                    instance.container.destroy();
-                    throw e;
-                }
+                    instance = new RemoteTomEEEJBContainer();
+                    instance.container = new RemoteServer();
+                    instance.container.setPortStartup(Integer.parseInt(parser.http()));
 
-                instance.context = new InitialContext(new Properties() {{
-                    setProperty(Context.INITIAL_CONTEXT_FACTORY, RemoteInitialContextFactory.class.getName());
-                    setProperty(Context.PROVIDER_URL, remoteEjb);
-                }});
-
-                final Deployer deployer = Deployer.class.cast(instance.context.lookup("openejb/DeployerBusinessRemote"));
-
-                if (modules instanceof File) {
-                    final File file = File.class.cast(modules);
-                    deployFile(deployer, file);
-                } else if (modules instanceof String) {
-                    final String path = String.class.cast(modules);
-                    final File file = new File(path);
-                    deployFile(deployer, file);
-                } else if (modules instanceof String[]) {
-                    for (final String path : (String[]) modules) {
-                        deployFile(deployer, new File(path));
+                    try {
+                        instance.container.start();
+                    } catch (final Exception e) {
+                        instance.container.destroy();
+                        throw e;
                     }
-                } else if (modules instanceof File[]) {
-                    for (final File file : (File[]) modules) {
+
+                    instance.context = new InitialContext(new Properties() {{
+                        setProperty(Context.INITIAL_CONTEXT_FACTORY, RemoteInitialContextFactory.class.getName());
+                        setProperty(Context.PROVIDER_URL, remoteEjb);
+                    }});
+
+                    final Deployer deployer = Deployer.class.cast(instance.context.lookup("openejb/DeployerBusinessRemote"));
+
+                    if (modules instanceof File) {
+                        final File file = File.class.cast(modules);
                         deployFile(deployer, file);
-                    }
-                } // else suppose already deployed
+                    } else if (modules instanceof String) {
+                        final String path = String.class.cast(modules);
+                        final File file = new File(path);
+                        deployFile(deployer, file);
+                    } else if (modules instanceof String[]) {
+                        for (final String path : (String[]) modules) {
+                            deployFile(deployer, new File(path));
+                        }
+                    } else if (modules instanceof File[]) {
+                        for (final File file : (File[]) modules) {
+                            deployFile(deployer, file);
+                        }
+                    } // else suppose already deployed
 
-                return instance;
-            } catch (final OpenEJBException e) {
-                throw new EJBException(e);
-            } catch (final MalformedURLException e) {
-                throw new EJBException(e);
-            } catch (final ValidationException ve) {
-                throw ve;
-            } catch (final Exception e) {
-                if (e instanceof EJBException) {
-                    throw (EJBException) e;
+                    return instance;
+                } catch (final OpenEJBException e) {
+                    throw new EJBException(e);
+                } catch (final MalformedURLException e) {
+                    throw new EJBException(e);
+                } catch (final ValidationException ve) {
+                    throw ve;
+                } catch (final Exception e) {
+                    if (e instanceof EJBException) {
+                        throw (EJBException) e;
+                    }
+                    throw new TomEERemoteEJBContainerException("initialization exception", e);
                 }
-                throw new TomEERemoteEJBContainerException("initialization exception", e);
+            } finally {
+                lock.unlock();
             }
         }
     }
