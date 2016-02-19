@@ -285,6 +285,9 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         try {
             if (callContext == null && localClientIdentity != null) {
                 final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
+                if(null == securityService){
+                    throw new RuntimeException("SecurityService has not been initialized");
+                }
                 securityService.associate(localClientIdentity);
             }
             if (strategy == CLASSLOADER_COPY || getBeanContext().getInterfaceType(interfce) == InterfaceType.BUSINESS_REMOTE) {
@@ -301,7 +304,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
                     IntraVmCopyMonitor.post();
                 }
 
-            } else if (strategy == COPY && args != null && args.length > 0) {
+            } else if (strategy == COPY && args.length > 0) {
 
                 IntraVmCopyMonitor.pre(strategy);
                 try {
@@ -330,7 +333,9 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
             if (callContext == null && localClientIdentity != null) {
                 final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
-                securityService.disassociate();
+                if(null != securityService){
+                    securityService.disassociate();
+                }
             }
         }
     }
@@ -521,7 +526,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
     protected Object[] copyArgs(final Object[] objects) throws IOException, ClassNotFoundException {
         if (objects == null) {
-            return objects;
+            return null;
         }
         /*
             while copying the arguments is necessary. Its not necessary to copy the array itself,
@@ -631,7 +636,11 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     public BeanContext getBeanContext() {
         final BeanContext beanContext = beanContextRef.get();
         if (beanContext == null || beanContext.isDestroyed()) {
-            invalidateReference();
+            try {
+                invalidateReference();
+            } catch (final IllegalStateException e) {
+                //no-op, as we are about to throw a better reason
+            }
             throw new IllegalStateException("Bean '" + deploymentID + "' has been undeployed.");
         }
         return beanContext;
@@ -663,6 +672,11 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         in.defaultReadObject();
 
         final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+
+        if(null == containerSystem){
+            throw new RuntimeException("ContainerSystem has not been initialized");
+        }
+
         setBeanContext(containerSystem.getBeanContext(deploymentID));
         container = (RpcContainer) getBeanContext().getContainer();
 
