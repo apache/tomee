@@ -21,6 +21,7 @@ import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.core.WebContext;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.server.httpd.part.CommonsFileUploadPartFactory;
 import org.apache.openejb.server.httpd.session.SessionManager;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.ArrayEnumeration;
@@ -69,6 +70,7 @@ import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpUpgradeHandler;
 import javax.servlet.http.Part;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 
 /**
@@ -77,6 +79,7 @@ import static java.util.Collections.singletonList;
  */
 public class HttpRequestImpl implements HttpRequest {
     private static final String FORM_URL_ENCODED = "application/x-www-form-urlencoded";
+    private static final String MULTIPART_FORM_DATA = "multipart/form-data";
     private static final String TRANSFER_ENCODING = "Transfer-Encoding";
     private static final String CHUNKED = "chunked";
 
@@ -122,7 +125,7 @@ public class HttpRequestImpl implements HttpRequest {
      */
     private final Map<String, List<String>> parameters = new HashMap<>();
 
-    private final Map<String, Part> parts = new HashMap<>();
+    private volatile Collection<Part> parts;
 
     /**
      * Cookies sent from the client
@@ -217,7 +220,15 @@ public class HttpRequestImpl implements HttpRequest {
 
     @Override
     public Part getPart(String s) throws IOException, ServletException {
-        return parts.get(s);
+        getParts(); // ensure it is initialized
+        if (parts != null) {
+            for (final Part p : parts) {
+                if (s.equals(p.getName())) {
+                    return p;
+                }
+            }
+        }
+        return null;
     }
 
     @Override
@@ -227,7 +238,10 @@ public class HttpRequestImpl implements HttpRequest {
 
     @Override
     public Collection<Part> getParts() throws IOException, ServletException {
-        return parts.values();
+        if (parts == null) { // assume it is not init
+            parts = CommonsFileUploadPartFactory.read(this);
+        }
+        return parts;
     }
 
     public void noPathInfo() { // todo: enhance it
@@ -662,7 +676,7 @@ public class HttpRequestImpl implements HttpRequest {
         contentType = getHeader(HttpRequest.HEADER_CONTENT_TYPE);
 
         final boolean hasBody = hasBody();
-        if (hasBody && contentType != null && contentType.startsWith(FORM_URL_ENCODED)) {
+        if (hasBody && contentType != null && (contentType.startsWith(FORM_URL_ENCODED) || contentType.startsWith(MULTIPART_FORM_DATA))) {
             String rawParams;
 
             try {
@@ -696,7 +710,6 @@ public class HttpRequestImpl implements HttpRequest {
                     value = "";
 
                 formParams.put(name, value);
-                //System.out.println(name + ": " + value);
             }
         } else if (hasBody && CHUNKED.equals(headers.get(TRANSFER_ENCODING))) {
             try {
@@ -1027,6 +1040,10 @@ public class HttpRequestImpl implements HttpRequest {
         final WebBeansContext webBeansContext = WebBeansContext.currentInstance();
         return webBeansContext != null ?
                 new WebBeansFilter.AsynContextWrapper(asyncContext, servletRequest, webBeansContext) : asyncContext;
+    }
+
+    public void addInternalParameter(final String key, final String val) {
+        parameters.put(key, asList(val));
     }
 
     public String getParameter(String name) {
