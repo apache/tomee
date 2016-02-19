@@ -34,14 +34,17 @@ public class ManagedObjectHandler extends EjbObjectProxyHandler {
         super(beanContext, pk, interfaceType, interfaces, mainInterface);
     }
 
+    @Override
     public Object getRegistryId() {
         return new RegistryId(container, deploymentID, primaryKey);
     }
 
+    @Override
     protected Object getPrimaryKey(final Method method, final Object[] args, final Object proxy) throws Throwable {
         throw new RemoteException("Session objects are private resources and do not have primary keys");
     }
 
+    @Override
     protected Object isIdentical(final Method method, final Object[] args, final Object proxy) throws Throwable {
         checkAuthorization(method);
 
@@ -66,6 +69,7 @@ public class ManagedObjectHandler extends EjbObjectProxyHandler {
         return false;
     }
 
+    @Override
     protected Object remove(final Class interfce, final Method method, final Object[] args, final Object proxy) throws Throwable {
         checkAuthorization(method);
         final Object value = container.invoke(deploymentID, interfaceType, interfce, method, args, primaryKey);

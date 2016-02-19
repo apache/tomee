@@ -55,6 +55,7 @@ public class EntityEjbObjectHandler extends EjbObjectProxyHandler {
         return new RegistryId(container, deploymentId, primaryKey);
     }
 
+    @Override
     public Object getRegistryId() {
         if (registryId == null) {
             registryId = getRegistryId(container, deploymentID, primaryKey);
@@ -62,10 +63,12 @@ public class EntityEjbObjectHandler extends EjbObjectProxyHandler {
         return registryId;
     }
 
+    @Override
     protected Object getPrimaryKey(final Method method, final Object[] args, final Object proxy) throws Throwable {
         return primaryKey;
     }
 
+    @Override
     protected Object isIdentical(final Method method, final Object[] args, final Object proxy) throws Throwable {
         checkAuthorization(method);
 
@@ -89,6 +92,7 @@ public class EntityEjbObjectHandler extends EjbObjectProxyHandler {
         return false;
     }
 
+    @Override
     protected Object remove(final Class interfce, final Method method, final Object[] args, final Object proxy) throws Throwable {
         checkAuthorization(method);
         final Object value = container.invoke(deploymentID, interfaceType, interfce, method, args, primaryKey);
@@ -100,6 +104,7 @@ public class EntityEjbObjectHandler extends EjbObjectProxyHandler {
         return value;
     }
 
+    @Override
     public void invalidateReference() {
         // entity bean object references should not be invalidated since they
         // will automatically hook up to a new instance of the bean using the

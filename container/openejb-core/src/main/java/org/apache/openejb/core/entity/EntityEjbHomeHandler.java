@@ -43,6 +43,7 @@ public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
         super(beanContext, interfaceType, interfaces, mainInterface);
     }
 
+    @Override
     public Object createProxy(final Object primaryKey, final Class mainInterface) {
         final Object proxy = super.createProxy(primaryKey, mainInterface);
         final EjbObjectProxyHandler handler = (EjbObjectProxyHandler) ProxyManager.getInvocationHandler(proxy);
@@ -59,6 +60,7 @@ public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
 
     }
 
+    @Override
     protected Object findX(final Class interfce, final Method method, final Object[] args, final Object proxy) throws Throwable {
         final Object retValue;
         try {
@@ -71,8 +73,8 @@ public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
         if (retValue instanceof Collection) {
             final Object[] proxyInfos = ((Collection) retValue).toArray();
             final Vector proxies = new Vector();
-            for (int i = 0; i < proxyInfos.length; i++) {
-                final ProxyInfo proxyInfo = (ProxyInfo) proxyInfos[i];
+            for (final Object o : proxyInfos) {
+                final ProxyInfo proxyInfo = (ProxyInfo) o;
                 proxies.addElement(createProxy(proxyInfo.getPrimaryKey(), getMainInterface()));
             }
             return proxies;
@@ -101,6 +103,7 @@ public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
 
     }
 
+    @Override
     protected Object removeByPrimaryKey(final Class interfce, final Method method, final Object[] args, final Object proxy) throws Throwable {
         final Object primKey = args[0];
 
@@ -152,6 +155,7 @@ public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
         return sb.toString();
     }
 
+    @Override
     protected EjbObjectProxyHandler newEjbObjectHandler(final BeanContext beanContext, final Object pk, final InterfaceType interfaceType, final List<Class> interfaces, final Class mainInterface) {
         return new EntityEjbObjectHandler(getBeanContext(), pk, interfaceType, interfaces, mainInterface);
     }
