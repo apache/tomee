@@ -316,7 +316,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
             final IntraVmCopyMonitor.State oldStrategy = strategy;
             if (getBeanContext().isAsynchronous(method) || getBeanContext().getComponentType().equals(BeanType.MANAGED)) {
-                strategy = IntraVmCopyMonitor.State.NONE;
+                strategy = NONE;
             }
 
             try {
