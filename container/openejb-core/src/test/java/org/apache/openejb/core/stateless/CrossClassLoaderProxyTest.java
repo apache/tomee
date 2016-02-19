@@ -278,7 +278,7 @@ public class CrossClassLoaderProxyTest extends TestCase {
         WidgetRemote create() throws CreateException, RemoteException;
     }
 
-    public static enum Lifecycle {
+    public enum Lifecycle {
         CONSTRUCTOR, POST_CONSTRUCT, BUSINESS_METHOD, PRE_DESTROY
     }
 

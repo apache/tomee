@@ -46,19 +46,19 @@ public class EjbResolver {
         String getEjbLink();
     }
 
-    public static enum Type {
-        UNKNOWN, LOCAL, REMOTE;
+    public enum Type {
+        UNKNOWN, LOCAL, REMOTE
     }
 
-    public static enum Scope {
-        GLOBAL, EAR, EJBJAR;
+    public enum Scope {
+        GLOBAL, EAR, EJBJAR
     }
 
     private final Map<String, EnterpriseBeanInfo> deployments = new TreeMap<String, EnterpriseBeanInfo>();
     private final LinkResolver<String> resolver = new LinkResolver<String>();
     private final Map<Interfaces, List<Interfaces>> interfaces = new TreeMap<Interfaces, List<Interfaces>>();
 
-    private EjbResolver parent;
+    private final EjbResolver parent;
 
     private final Scope scope;
 
@@ -191,7 +191,7 @@ public class EjbResolver {
 
     private List<Interfaces> filter(final List<Interfaces> list, final String name) {
         final String shortName = name.replaceAll(".*/", "");
-        final List<Interfaces> matches = new ArrayList();
+        final List<Interfaces> matches = new ArrayList<Interfaces>();
         for (final Interfaces entry : list) {
             if (name.equalsIgnoreCase(entry.getId())) {
                 matches.add(entry);
@@ -203,7 +203,7 @@ public class EjbResolver {
     }
 
     private List<Interfaces> filter(final List<Interfaces> list, final Type type) {
-        final List<Interfaces> matches = new ArrayList();
+        final List<Interfaces> matches = new ArrayList<Interfaces>();
         for (final Interfaces entry : list) {
             if (type == Type.UNKNOWN || type == entry.type) {
                 matches.add(entry);
@@ -253,7 +253,7 @@ public class EjbResolver {
         private final String homeInterface;
         private final String objectInterface;
 
-        public Interfaces(final String objectInterface, final Type type, final String id) {
+        Interfaces(final String objectInterface, final Type type, final String id) {
             if (objectInterface == null) {
                 throw new NullPointerException("objectInterface is null");
             }
@@ -263,7 +263,7 @@ public class EjbResolver {
             this.id = id;
         }
 
-        public Interfaces(String homeInterface, final String objectInterface, final Type type, final String id) {
+        Interfaces(String homeInterface, final String objectInterface, final Type type, final String id) {
             if (homeInterface == null) {
                 homeInterface = "<none>";
             }
@@ -276,7 +276,7 @@ public class EjbResolver {
             this.id = id;
         }
 
-        public Interfaces(String homeInterface, final String objectInterface) {
+        Interfaces(String homeInterface, final String objectInterface) {
             if (homeInterface == null) {
                 homeInterface = "<none>";
             }
@@ -317,6 +317,7 @@ public class EjbResolver {
             return result;
         }
 
+        @Override
         public int compareTo(final Object o) {
             if (this == o) {
                 return 0;

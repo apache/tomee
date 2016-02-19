@@ -138,7 +138,7 @@ public class JaxWsInvocationTest extends TestCase {
         assertEquals(join("\n", expected), join("\n", calls));
     }
 
-    public static enum Call {
+    public enum Call {
         WebServiceProvider_Invoke_BEFORE,
         EjbInterceptor_Invoke_BEFORE,
         Bean_Invoke_BEFORE,

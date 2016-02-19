@@ -38,7 +38,7 @@ public class JaxRpcOperationInfo {
 
     public Collection<JaxRpcFaultInfo> faults = new ArrayList<JaxRpcFaultInfo>();
 
-    public static enum OperationStyle {
+    public enum OperationStyle {
         ONE_WAY, REQUEST_RESPONSE, SOLICIT_RESPONSE, NOTIFICATION
     }
 }

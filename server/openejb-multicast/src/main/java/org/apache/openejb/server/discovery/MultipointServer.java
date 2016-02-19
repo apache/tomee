@@ -502,7 +502,7 @@ public class MultipointServer {
         }
     }
 
-    private static enum State {
+    private enum State {
         OPEN,
         GREETING,
         LISTING,

@@ -27,7 +27,7 @@ public class ClusterResponse implements Response {
 
     private static final long serialVersionUID = 5399831296584206574L;
 
-    public static enum Code {
+    public enum Code {
         CURRENT,
         UPDATE,
         FAILURE

@@ -171,7 +171,7 @@ public final class OpenEjbContainer extends EJBContainer {
         lock.lock();
 
         final Logger log = logger();
-        
+
         if (log.isDebugEnabled()) {
             final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
             for (final StackTraceElement element : stackTrace) {

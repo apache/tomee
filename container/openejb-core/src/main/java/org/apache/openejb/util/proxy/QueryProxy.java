@@ -65,7 +65,7 @@ public class QueryProxy implements InvocationHandler {
 
     private EntityManager em;
 
-    private static enum QueryType {
+    private enum QueryType {
         NAMED, NATIVE, OTHER
     }
 

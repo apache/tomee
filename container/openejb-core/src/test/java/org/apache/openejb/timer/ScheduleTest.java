@@ -242,7 +242,7 @@ public class ScheduleTest extends TestCase {
         }
     }
 
-    public static enum Call {
+    public enum Call {
 
         BEAN_TIMEOUT,
         BEAN_BEFORE_AROUNDTIMEOUT,

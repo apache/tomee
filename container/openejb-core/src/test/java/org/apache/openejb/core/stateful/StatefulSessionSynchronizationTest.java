@@ -424,7 +424,7 @@ public class StatefulSessionSynchronizationTest extends TestCase {
     public static class SubBeanI extends BaseBeanB implements SessionSynchronization {
     }
 
-    public static enum Call {
+    public enum Call {
         BEAN_METHOD, BEAN_AROUND_INVOKE_BEGIN, BEAN_AROUND_INVOKE_AFTER, INTERCEPTOR_AROUND_INVOKE_BEGIN, INTERCEPTOR_AROUND_INVOKE_AFTER, BEAN_AFTER_BEGIN, BEAN_BEFORE_COMPLETION, BEAN_AFTER_COMPLETION, BAD_VALUE, INTERCEPTOR_AFTER_BEGIN, INTERCEPTOR_BEFORE_COMPLETION, INTERCEPTOR_AFTER_COMPLETION
     }
 }

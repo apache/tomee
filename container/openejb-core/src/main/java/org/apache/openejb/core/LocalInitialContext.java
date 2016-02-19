@@ -60,7 +60,7 @@ public class LocalInitialContext extends ContextWrapper {
     private final Options options;
     private ServiceManagerProxy serviceManager;
 
-    public static enum Close {
+    public enum Close {
         LOGOUT,
         DESTROY
     }

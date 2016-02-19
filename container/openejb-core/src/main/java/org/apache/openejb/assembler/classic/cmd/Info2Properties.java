@@ -52,7 +52,7 @@ import java.util.Properties;
  * @version $Rev$ $Date$
  */
 public class Info2Properties {
-    private static Messages messages = new Messages(Info2Properties.class);
+    private static final Messages messages = new Messages(Info2Properties.class);
 
     private static final String defaultServerUrl = "ejbd://localhost:4201";
 
@@ -308,10 +308,11 @@ public class Info2Properties {
     static class Filter extends FilterOutputStream {
         private boolean pastFirstLine;
 
-        public Filter(final OutputStream out) {
+        Filter(final OutputStream out) {
             super(out);
         }
 
+        @Override
         public void write(final int b) throws IOException {
             if (pastFirstLine) {
                 super.write(b);
@@ -324,10 +325,11 @@ public class Info2Properties {
 
     static class CommentsFilter extends FilterOutputStream {
 
-        public CommentsFilter(final OutputStream out) {
+        CommentsFilter(final OutputStream out) {
             super(out);
         }
 
+        @Override
         public void write(final int b) throws IOException {
             super.write(b);
 

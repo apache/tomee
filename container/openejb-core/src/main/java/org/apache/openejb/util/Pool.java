@@ -777,7 +777,7 @@ public class Pool<T> {
 
     }
 
-    public static enum Event {
+    public enum Event {
         FULL, IDLE, AGED, FLUSHED, GC
     }
 

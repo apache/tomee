@@ -155,7 +155,7 @@ public class OpenEJBHttpServer implements HttpServer {
 
     }
 
-    public static enum Output {
+    public enum Output {
         REQUEST,
         RESPONSE
     }

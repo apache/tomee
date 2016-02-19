@@ -137,7 +137,7 @@ public class StatelessMetaAnnotationTest extends TestCase {
 
     }
 
-    public static enum Lifecycle {
+    public enum Lifecycle {
         CONSTRUCTOR, INJECTION, POST_CONSTRUCT, BUSINESS_METHOD, PRE_DESTROY
     }
 

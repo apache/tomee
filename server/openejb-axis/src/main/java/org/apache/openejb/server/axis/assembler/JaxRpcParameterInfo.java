@@ -26,7 +26,7 @@ public class JaxRpcParameterInfo {
     public QName xmlType;
     public String javaType;
 
-    public static enum Mode {
+    public enum Mode {
         IN(true, false),
         OUT(false, true),
         INOUT(true, true);

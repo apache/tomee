@@ -40,7 +40,7 @@ public class LinkResolverTest extends TestCase {
         assertEquals(Thing.TWO, resolver.resolveLink("../some/./other.jar#two", moduleUri));
     }
 
-    private static enum Thing {
+    private enum Thing {
         ONE, TWO
     }
 }

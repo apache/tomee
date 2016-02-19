@@ -83,7 +83,7 @@ public class CallbackOverridesTest extends TestCase {
         assertEquals(Collections.EMPTY_LIST, callbacks);
     }
 
-    public static enum Callback {
+    public enum Callback {
         POST_CONSTRUCT,
         PRE_PASSIVATE,
         POST_ACTIVATE,

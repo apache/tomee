@@ -197,7 +197,7 @@ public class EJBResponse implements ClusterableResponse {
         }
     }
 
-    public static enum Time {
+    public enum Time {
         TOTAL,
         CONTAINER,
         SERIALIZATION,

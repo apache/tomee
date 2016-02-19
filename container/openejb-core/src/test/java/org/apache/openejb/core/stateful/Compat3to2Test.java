@@ -104,7 +104,7 @@ public class Compat3to2Test extends TestCase {
 
     public static List<Call> calls = new ArrayList<Call>();
 
-    public static enum Call {
+    public enum Call {
         // construction
         Constructor, PostConstruct, EjbCreate, EjbPassivate1,
         // business method

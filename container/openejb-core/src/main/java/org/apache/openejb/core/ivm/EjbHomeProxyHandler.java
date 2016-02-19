@@ -64,7 +64,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
 
     private final Map<String, MethodType> dispatchTable;
 
-    private static enum MethodType {
+    private enum MethodType {
         CREATE,
         FIND,
         HOME_HANDLE,

@@ -127,7 +127,7 @@ public class ExecutorBuilder {
     /**
      * @version $Rev$ $Date$
      */
-    public static enum QueueType {
+    public enum QueueType {
         ARRAY,
         LINKED,
         PRIORITY,

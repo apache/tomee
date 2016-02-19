@@ -55,7 +55,7 @@ public enum RequestMethodCode {
         }
     }
 
-    private RequestMethodCode(final int code) {
+    RequestMethodCode(final int code) {
         this.code = code;
     }
 

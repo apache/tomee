@@ -107,7 +107,7 @@ public class QuartzMdbContainerTest extends TestCase {
 
     }
 
-    public static enum Lifecycle {
+    public enum Lifecycle {
         CONSTRUCTOR, INJECTION, POST_CONSTRUCT, ON_MESSAGE
     }
 

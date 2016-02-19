@@ -33,7 +33,7 @@ public @interface Log {
 
     Level value() default Level.INFO;
 
-    public static enum Level {
+    public enum Level {
         SEVERE,
         WARNING,
         INFO,

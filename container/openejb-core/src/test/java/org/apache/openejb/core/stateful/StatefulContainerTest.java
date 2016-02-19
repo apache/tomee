@@ -287,7 +287,7 @@ public class StatefulContainerTest extends TestCase {
 
     }
 
-    public static enum Lifecycle {
+    public enum Lifecycle {
         // construction
         CONSTRUCTOR, INJECTION, POST_CONSTRUCT, PRE_PASSIVATE1,
         // business method

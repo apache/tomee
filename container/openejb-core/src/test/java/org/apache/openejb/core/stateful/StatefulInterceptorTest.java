@@ -117,7 +117,7 @@ public class StatefulInterceptorTest extends TestCase {
         assertEquals(join("\n", expected), join("\n", calls));
     }
 
-    public static enum Call {
+    public enum Call {
         Default_PostConstruct_BEFORE,
         Class_PostConstruct_BEFORE,
         Bean_PostConstruct,

@@ -263,7 +263,7 @@ public class TimeoutAroundTest extends TestCase {
 
     }
 
-    public static enum Call {
+    public enum Call {
         BEAN_TIMEOUT, BEAN_BEFORE_AROUNDTIMEOUT, BEAN_AFTER_AROUNDTIMEOUT, BAD_VALUE, INTERCEPTOR_BEFORE_AROUNDTIMEOUT, INTERCEPTOR_AFTER_AROUNDTIMEOUT
     }
 
