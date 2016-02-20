@@ -687,14 +687,6 @@
   </profiles>
   <repositories>
     <repository>
-      <id>owb-staging</id>
-      <url>https://repository.apache.org/content/repositories/orgapacheopenwebbeans-1016/</url>
-    </repository>
-    <repository>
-      <id>johnzon-staging</id>
-      <url>https://repository.apache.org/content/repositories/orgapachejohnzon-1013/</url>
-    </repository>
-    <repository>
       <id>apache-snapshots</id>
       <name>Apache Snapshots Repository</name>
       <url>https://repository.apache.org/content/groups/snapshots</url>
