@@ -96,7 +96,7 @@
     <!-- to change easily the javaee api version -->
     <javaee-api.version>7.0</javaee-api.version>
 
-    <openjpa.version>2.4.0</openjpa.version>
+    <openjpa.version>2.4.1</openjpa.version>
     <org.apache.openwebbeans.version>1.6.3</org.apache.openwebbeans.version>
     <jcs.version>2.0-M1</jcs.version>
     <johnzon.version>0.9.3-incubating</johnzon.version>
