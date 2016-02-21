@@ -79,7 +79,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>7.0.0-SNAPSHOT</version>
+      <version>7.0.0-M2</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
