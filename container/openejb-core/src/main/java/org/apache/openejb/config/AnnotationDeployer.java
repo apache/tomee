@@ -2211,12 +2211,23 @@ public class AnnotationDeployer implements DynamicDeployer {
              */
             for (final Servlet servlet : webApp.getServlet()) {
                 final String servletName = servlet.getServletName();
-                if ("javax.ws.rs.core.Application".equals(servletName)) {
-                    servlet.setServletName(ProvidedJAXRSApplication.class.getName());
-                    webModule.getRestApplications().add(ProvidedJAXRSApplication.class.getName());
-                    for (final ServletMapping mapping : webApp.getServletMapping()) {
-                        if (servletName.equals(mapping.getServletName())) {
-                            mapping.setServletName(ProvidedJAXRSApplication.class.getName());
+                if ("javax.ws.rs.core.Application".equals(servletName) || "javax.ws.rs.Application".equals(servletName)) {
+                    // check first if there is a real application as init param
+                    boolean done = false;
+                    for (final ParamValue pv : servlet.getInitParam()) {
+                        if ("javax.ws.rs.core.Application".equals(pv.getParamName()) || "javax.ws.rs.Application".equals(pv.getParamName())) {
+                            webModule.getRestApplications().add(pv.getParamValue());
+                            done = true;
+                            break;
+                        }
+                    }
+                    if (!done) {
+                        servlet.setServletName(ProvidedJAXRSApplication.class.getName());
+                        webModule.getRestApplications().add(ProvidedJAXRSApplication.class.getName());
+                        for (final ServletMapping mapping : webApp.getServletMapping()) {
+                            if (servletName.equals(mapping.getServletName())) {
+                                mapping.setServletName(ProvidedJAXRSApplication.class.getName());
+                            }
                         }
                     }
                     continue;
