@@ -38,6 +38,29 @@ import org.apache.webbeans.annotation.EmptyAnnotationLiteral;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.InjectionPoint;
+import javax.enterprise.inject.spi.PassivationCapable;
+import javax.enterprise.util.AnnotationLiteral;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.Produces;
+import javax.ws.rs.container.ResourceContext;
+import javax.ws.rs.container.ResourceInfo;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.Request;
+import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.ext.ContextResolver;
+import javax.ws.rs.ext.Provider;
+import javax.ws.rs.ext.Providers;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -55,26 +78,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.InjectionPoint;
-import javax.enterprise.inject.spi.PassivationCapable;
-import javax.enterprise.util.AnnotationLiteral;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.container.ResourceContext;
-import javax.ws.rs.container.ResourceInfo;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.Request;
-import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.ext.ContextResolver;
-import javax.ws.rs.ext.Providers;
 
 import static java.util.Arrays.asList;
 
@@ -197,13 +200,13 @@ public class CxfRSService extends RESTService {
                 final String userProviders = SystemInstance.get().getProperty("openejb.jaxrs.client.providers");
                 if (userProviders == null) {
                     (all = new ArrayList<>(2)).addAll(asList(
-                            new JohnzonProvider<>(),
-                            new JsrProvider()
+                        new TomEEJohnzonProvider<>(),
+                        new JsrProvider()
                     ));
                 } else {
                     all = new ArrayList<>(4 /* blind guess */);
                     for (String p : userProviders.split(" *, *")) {
-                        p= p.trim();
+                        p = p.trim();
                         if (p.isEmpty()) {
                             continue;
                         }
@@ -212,8 +215,8 @@ public class CxfRSService extends RESTService {
                     }
 
                     all.addAll(asList( // added after to be after in the list once sorted
-                            new JohnzonProvider<>(),
-                            new JsrProvider()));
+                        new TomEEJohnzonProvider<>(),
+                        new JsrProvider()));
                 }
                 bus.setProperty("org.apache.cxf.jaxrs.bus.providers", all);
             } catch (final Exception e) {
@@ -354,5 +357,11 @@ public class CxfRSService extends RESTService {
                 throw ite.getCause();
             }
         }
+    }
+
+    @Provider
+    @Produces({"application/json", "application/*+json"})
+    @Consumes({"application/json", "application/*+json"})
+    public class TomEEJohnzonProvider<T> extends JohnzonProvider<T> {
     }
 }
