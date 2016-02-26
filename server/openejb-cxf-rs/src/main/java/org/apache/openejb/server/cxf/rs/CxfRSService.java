@@ -362,12 +362,12 @@ public class CxfRSService extends RESTService {
     @Provider
     @Produces({"application/json", "application/*+json"})
     @Consumes({"application/json", "application/*+json"})
-    public class TomEEJohnzonProvider<T> extends JohnzonProvider<T> {
+    public static class TomEEJohnzonProvider<T> extends JohnzonProvider<T> {
     }
 
     @Provider
     @Produces({"application/json", "application/*+json"})
     @Consumes({"application/json", "application/*+json"})
-    public class TomEEJsonpProvider extends JsrProvider {
+    public static class TomEEJsonpProvider extends JsrProvider {
     }
 }
