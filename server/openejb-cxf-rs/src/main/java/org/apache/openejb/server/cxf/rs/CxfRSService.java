@@ -201,7 +201,7 @@ public class CxfRSService extends RESTService {
                 if (userProviders == null) {
                     (all = new ArrayList<>(2)).addAll(asList(
                         new TomEEJohnzonProvider<>(),
-                        new JsrProvider()
+                        new TomEEJsonpProvider()
                     ));
                 } else {
                     all = new ArrayList<>(4 /* blind guess */);
@@ -216,7 +216,7 @@ public class CxfRSService extends RESTService {
 
                     all.addAll(asList( // added after to be after in the list once sorted
                         new TomEEJohnzonProvider<>(),
-                        new JsrProvider()));
+                        new TomEEJsonpProvider()));
                 }
                 bus.setProperty("org.apache.cxf.jaxrs.bus.providers", all);
             } catch (final Exception e) {
@@ -363,5 +363,11 @@ public class CxfRSService extends RESTService {
     @Produces({"application/json", "application/*+json"})
     @Consumes({"application/json", "application/*+json"})
     public class TomEEJohnzonProvider<T> extends JohnzonProvider<T> {
+    }
+
+    @Provider
+    @Produces({"application/json", "application/*+json"})
+    @Consumes({"application/json", "application/*+json"})
+    public class TomEEJsonpProvider extends JsrProvider {
     }
 }
