@@ -454,7 +454,7 @@ public class TomcatWsRegistry implements WsRegistry {
         private final String path;
         private final int hash;
 
-        public Key(final String moduleId, final String path) {
+        public Key(final String path, final String moduleId) {
             this.moduleId = moduleId;
             this.path = path;
             this.hash = 31 * (moduleId != null ? moduleId.hashCode() : 0) + path.hashCode();
