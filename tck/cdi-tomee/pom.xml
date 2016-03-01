@@ -246,6 +246,7 @@
           </suiteXmlFiles>
           <!--<forkMode>once</forkMode>-->
           <systemPropertyVariables>
+            <tomee.serialization.class.blacklist>-</tomee.serialization.class.blacklist>
             <org.jboss.testharness.standalone>false</org.jboss.testharness.standalone>
             <org.jboss.testharness.runIntegrationTests>true</org.jboss.testharness.runIntegrationTests>
             <org.jboss.testharness.container.forceRestart>true</org.jboss.testharness.container.forceRestart>
