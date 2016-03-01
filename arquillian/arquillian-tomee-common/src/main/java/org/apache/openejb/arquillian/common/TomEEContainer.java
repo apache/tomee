@@ -75,6 +75,13 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         this.options = new Options(System.getProperties());
     }
 
+    protected void resetSerialization() {
+        if (this.configuration.isUnsafeEjbd() && "-".equals(System.getProperty("tomee.serialization.class.blacklist"))) {
+            System.clearProperty("tomee.serialization.class.blacklist");
+            Setup.reloadClientSerializationConfig();
+        }
+    }
+
     protected boolean isTestable(final Archive<?> archive, final DeploymentDescription deploymentDescription) {
         return deploymentDescription != null
                 && deploymentDescription.isArchiveDeployment()
@@ -196,6 +203,10 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
             waitForShutdown(socket, 10);
         } catch (final Exception e) {
             throw new LifecycleException("Unable to stop TomEE", e);
+        } finally {
+            if (this.configuration.isUnsafeEjbd() && "-".equals(System.getProperty("tomee.serialization.class.blacklist"))) {
+                System.clearProperty("tomee.serialization.class.blacklist");
+            }
         }
     }
 

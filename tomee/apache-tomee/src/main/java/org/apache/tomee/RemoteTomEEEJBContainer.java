@@ -22,6 +22,7 @@ import org.apache.openejb.assembler.Deployer;
 import org.apache.openejb.assembler.DeployerEjb;
 import org.apache.openejb.client.RemoteInitialContextFactory;
 import org.apache.openejb.config.RemoteServer;
+import org.apache.openejb.client.EjbObjectInputStream;
 import org.apache.openejb.loader.IO;
 import org.apache.tomee.util.QuickServerXmlParser;
 
@@ -119,13 +120,21 @@ public class RemoteTomEEEJBContainer extends EJBContainer {
                 final QuickServerXmlParser parser = QuickServerXmlParser.parse(new File(home, "conf/server.xml"));
                 final String remoteEjb = System.getProperty(Context.PROVIDER_URL, "http://" + parser.host() + ":" + parser.http() + "/tomee/ejb");
 
+                final String blacklist = System.getProperty("tomee.serialization.class.blacklist");
+                if (blacklist == null) {
+                    System.setProperty("tomee.serialization.class.blacklist", "-");
+                    EjbObjectInputStream.reloadResolverConfig();
+                }
                 try {
                     instance = new RemoteTomEEEJBContainer();
                     instance.container = new RemoteServer();
                     instance.container.setPortStartup(Integer.parseInt(parser.http()));
 
                     try {
-                        instance.container.start();
+	                   instance.container.start(Arrays.asList(
+                            "-Dtomee.serialization.class.blacklist=" + System.getProperty("tomee.serialization.class.blacklist"),
+                            "-Dopenejb.system.apps=true", "-Dtomee.remote.support=true"),
+                            "start", true);
                     } catch (final Exception e) {
                         instance.container.destroy();
                         throw e;
@@ -167,6 +176,11 @@ public class RemoteTomEEEJBContainer extends EJBContainer {
                         throw (EJBException) e;
                     }
                     throw new TomEERemoteEJBContainerException("initialization exception", e);
+                } finally {
+                    if (blacklist == null) {
+                        System.clearProperty("tomee.serialization.class.blacklist");
+                        EjbObjectInputStream.reloadResolverConfig();
+                    }
                 }
             } finally {
                 lock.unlock();

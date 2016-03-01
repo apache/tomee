@@ -21,12 +21,18 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectStreamClass;
 import java.lang.reflect.Proxy;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @version $Rev$ $Date$
  */
 public class EjbObjectInputStream extends ObjectInputStream {
-    public static final BlacklistClassResolver DEFAULT = new BlacklistClassResolver();
+     private static final AtomicReference<BlacklistClassResolver> RESOLVER_ATOMIC_REFERENCE =
+        new AtomicReference<BlacklistClassResolver>(new BlacklistClassResolver());
+
+    public static void reloadResolverConfig() {
+        RESOLVER_ATOMIC_REFERENCE.set(new BlacklistClassResolver());
+    }
 
     public EjbObjectInputStream(final InputStream in) throws IOException {
         super(in);
@@ -34,7 +40,7 @@ public class EjbObjectInputStream extends ObjectInputStream {
 
     @Override
     protected Class<?> resolveClass(final ObjectStreamClass classDesc) throws IOException, ClassNotFoundException {
-        final String n = DEFAULT.check(classDesc.getName());
+        final String n = RESOLVER_ATOMIC_REFERENCE.get().check(classDesc.getName());
         final ClassLoader classloader = getClassloader();
         try {
             return Class.forName(n, false, classloader);
@@ -89,15 +95,14 @@ public class EjbObjectInputStream extends ObjectInputStream {
     }
 
     public static class BlacklistClassResolver {
-        private static final String[] WHITELIST = toArray(System.getProperty("tomee.serialization.class.whitelist"));
-        private static final String[] BLACKLIST = toArray(System.getProperty(
-            "tomee.serialization.class.blacklist", "org.codehaus.groovy.runtime.,org.apache.commons.collections.functors.,org.apache.xalan,java.lang.Process"));
-
         private final String[] blacklist;
         private final String[] whitelist;
 
         protected BlacklistClassResolver() {
-            this(BLACKLIST, WHITELIST);
+            this(toArray(System.getProperty(
+                "tomee.serialization.class.blacklist",
+                "org.codehaus.groovy.runtime.,org.apache.commons.collections.functors.,org.apache.xalan,java.lang.Process")),
+                toArray(System.getProperty("tomee.serialization.class.whitelist")));
         }
 
         protected BlacklistClassResolver(final String[] blacklist, final String[] whitelist) {
@@ -106,12 +111,15 @@ public class EjbObjectInputStream extends ObjectInputStream {
         }
 
         protected boolean isBlacklisted(final String name) {
+            if (name != null && name.startsWith("[L") && name.endsWith(";")) {
+                return isBlacklisted(name.substring(2, name.length() - 1));
+            }
             return (whitelist != null && !contains(whitelist, name)) || contains(blacklist, name);
         }
 
         public final String check(final String name) {
             if (isBlacklisted(name)) {
-                throw new SecurityException(name + " is not whitelisted as deserialisable, prevented before loading.");
+                throw new SecurityException(name + " is not whitelisted as deserialisable, prevented before loading it.");
             }
             return name;
         }
@@ -123,7 +131,7 @@ public class EjbObjectInputStream extends ObjectInputStream {
         private static boolean contains(final String[] list, String name) {
             if (list != null) {
                 for (final String white : list) {
-                    if (name.startsWith(white)) {
+                    if ("*".equals(white) || name.startsWith(white)) {
                         return true;
                     }
                 }
