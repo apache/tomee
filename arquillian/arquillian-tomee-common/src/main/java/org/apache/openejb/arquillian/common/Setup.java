@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.Socket;
 import java.util.Collection;
@@ -306,12 +307,23 @@ public class Setup {
         if (configuration.isUnsafeEjbd() && "*".equals(properties.getProperty("tomee.serialization.class.blacklist", "-").trim())) {
             properties.remove("tomee.serialization.class.blacklist");
             properties.put("tomee.serialization.class.whitelist", "*");
+            System.setProperty("tomee.serialization.class.blacklist", System.getProperty("tomee.serialization.class.blacklist", "-"));
+            reloadClientSerializationConfig();
         }
 
         try {
             IO.writeProperties(file, properties);
         } catch (final IOException e) {
             LOGGER.log(Level.SEVERE, "Can't save system properties " + file.getAbsolutePath(), e);
+        }
+    }
+
+    public static void reloadClientSerializationConfig() {
+        try {
+            Thread.currentThread().getContextClassLoader().loadClass("org.apache.openejb.client.EjbObjectInputStream")
+                .getMethod("reloadResolverConfig").invoke(null);
+        } catch (final IllegalAccessException | InvocationTargetException | ClassNotFoundException | NoSuchMethodException e) {
+            // not a pb normally
         }
     }
 
