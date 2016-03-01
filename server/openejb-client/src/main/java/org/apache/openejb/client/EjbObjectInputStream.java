@@ -123,7 +123,7 @@ public class EjbObjectInputStream extends ObjectInputStream {
         private static boolean contains(final String[] list, String name) {
             if (list != null) {
                 for (final String white : list) {
-                    if (name.startsWith(white)) {
+                    if ("*".equals(white) || name.startsWith(white)) {
                         return true;
                     }
                 }

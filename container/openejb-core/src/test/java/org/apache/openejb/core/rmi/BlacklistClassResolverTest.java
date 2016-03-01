@@ -38,4 +38,12 @@ public class BlacklistClassResolverTest {
     public void whiteList() {
         assertFalse(new BlacklistClassResolver(null, new String[] { "org.apache.xalan" }).isBlacklisted("org.apache.xalan.Foo"));
     }
+
+    @Test
+    public void wildcard() {
+        final BlacklistClassResolver classResolver = new BlacklistClassResolver(new String[]{"*"}, new String[] {"white", "com.white"});
+        assertTrue(classResolver.isBlacklisted("white.Foo"));
+        assertTrue(classResolver.isBlacklisted("com.white.test"));
+        assertTrue(classResolver.isBlacklisted("other.test"));
+    }
 }

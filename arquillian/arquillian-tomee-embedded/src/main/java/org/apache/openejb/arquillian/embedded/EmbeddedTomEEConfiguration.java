@@ -172,7 +172,15 @@ public class EmbeddedTomEEConfiguration extends TomEEConfiguration {
             return new Properties();
         }
 
-        return toProperties(properties);
+        final Properties properties = toProperties(this.properties);
+        if (properties != null && isUnsafeEjbd() &&
+            "*".equals(properties.getProperty("tomee.serialization.class.blacklist", "-").trim())) {
+
+            properties.remove("tomee.serialization.class.blacklist");
+            properties.put("tomee.serialization.class.whitelist", "*");
+        }
+
+        return properties;
     }
 
     private static Properties toProperties(final String value) {

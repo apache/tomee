@@ -303,6 +303,11 @@ public class Setup {
             properties.put("openejb.session.manager", "org.apache.tomee.catalina.session.QuickSessionManager");
         }
 
+        if (configuration.isUnsafeEjbd() && "*".equals(properties.getProperty("tomee.serialization.class.blacklist", "-").trim())) {
+            properties.remove("tomee.serialization.class.blacklist");
+            properties.put("tomee.serialization.class.whitelist", "*");
+        }
+
         try {
             IO.writeProperties(file, properties);
         } catch (final IOException e) {

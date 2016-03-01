@@ -56,7 +56,7 @@ public class BlacklistClassResolver {
     private static boolean contains(final String[] list, final String name) {
         if (list != null) {
             for (final String white : list) {
-                if (name.startsWith(white)) {
+                if ("*".equals(white) || name.startsWith(white)) {
                     return true;
                 }
             }
