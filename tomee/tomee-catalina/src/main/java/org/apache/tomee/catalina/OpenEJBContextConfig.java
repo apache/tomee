@@ -201,7 +201,9 @@ public class OpenEJBContextConfig extends ContextConfig {
                 try { // remove only "fake" servlets to let users use their own stuff
                     if (child != null) {
                         final String servletClass = StandardWrapper.class.cast(child).getServletClass();
-                        if ("org.apache.openejb.server.rest.OpenEJBRestServlet".equals(servletClass) || !HttpServlet.class.isAssignableFrom(info.loader().loadClass(servletClass))) {
+                        if (servletClass == null
+                            || "org.apache.openejb.server.rest.OpenEJBRestServlet".equals(servletClass)
+                            || !HttpServlet.class.isAssignableFrom(info.loader().loadClass(servletClass))) {
                             context.removeChild(child);
                         }
                     }

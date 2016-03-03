@@ -30,7 +30,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>7.0.0-M2</tomee.version>
+    <tomee.version>7.0.0-M3</tomee.version>
   </properties>
   
   <modules>
@@ -106,8 +106,8 @@
     </dependencies>
   </dependencyManagement>
 
-    <!--
-	   This section allows you to configure where to publish libraries for sharing.
+  <!--
+  This section allows you to configure where to publish libraries for sharing.
   It is not required and may be deleted.  For more information see:
   http://maven.apache.org/plugins/maven-deploy-plugin/
   -->

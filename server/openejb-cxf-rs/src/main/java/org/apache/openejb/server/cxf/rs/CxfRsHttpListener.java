@@ -666,10 +666,12 @@ public class CxfRsHttpListener implements RsHttpListener {
                 }
             }
 
-            if (customJsonProvider) {
+            if (customJsonProvider) { // remove JohnzonProvider default versions
                 final Iterator<ProviderInfo<?>> it = values.iterator();
                 while (it.hasNext()) {
-                    if ("org.apache.johnzon.jaxrs.JohnzonProvider".equals(it.next().getResourceClass().getName())) {
+                    final String name = it.next().getResourceClass().getName();
+                    if ("org.apache.johnzon.jaxrs.JohnzonProvider".equals(name) ||
+                        "org.apache.openejb.server.cxf.rs.CxfRSService$TomEEJohnzonProvider".equals(name)) {
                         it.remove();
                         break;
                     }
