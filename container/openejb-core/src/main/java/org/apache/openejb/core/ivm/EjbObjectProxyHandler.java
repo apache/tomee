@@ -253,7 +253,7 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
             final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
 
             if(null == securityService){
-                throw new RuntimeException("SecurityService has not been initialized");
+                throw new OpenEJBRuntimeException("SecurityService has not been initialized");
             }
 
             Object stateTmp = securityService.currentState();

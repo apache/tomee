@@ -21,6 +21,7 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.BeanType;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.core.ThreadContext;
@@ -286,7 +287,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
             if (callContext == null && localClientIdentity != null) {
                 final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
                 if(null == securityService){
-                    throw new RuntimeException("SecurityService has not been initialized");
+                    throw new OpenEJBRuntimeException("SecurityService has not been initialized");
                 }
                 securityService.associate(localClientIdentity);
             }
@@ -674,7 +675,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
 
         if(null == containerSystem){
-            throw new RuntimeException("ContainerSystem has not been initialized");
+            throw new OpenEJBRuntimeException("ContainerSystem has not been initialized");
         }
 
         setBeanContext(containerSystem.getBeanContext(deploymentID));
