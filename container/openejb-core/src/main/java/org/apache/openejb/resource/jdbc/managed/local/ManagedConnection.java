@@ -169,7 +169,7 @@ public class ManagedConnection implements InvocationHandler {
     }
 
     private Object unwrapIfNeeded(final Object arg) {
-        if (!Proxy.isProxyClass(arg.getClass())) {
+        if (arg == null || !Proxy.isProxyClass(arg.getClass())) {
             return arg;
         }
         final InvocationHandler handler = Proxy.getInvocationHandler(arg);
