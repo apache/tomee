@@ -19,6 +19,7 @@ package org.apache.tomee.jdbc;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.resource.jdbc.managed.local.ManagedDataSource;
+import org.apache.openejb.testing.Classes;
 import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.Module;
 import org.apache.openejb.testng.PropertiesBuilder;
@@ -28,6 +29,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.annotation.Resource;
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -39,13 +42,18 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 @RunWith(ApplicationComposer.class)
 public class TomcatXADataSourceTest {
     @Resource(name = "xadb")
     private DataSource ds;
 
+    @EJB
+    private TxP tx;
+
     @Module
+    @Classes(TxP.class)
     public EjbJar mandatory() {
         return new EjbJar();
     }
@@ -108,6 +116,40 @@ public class TomcatXADataSourceTest {
             }
             assertEquals(0, tds.getActive());
             assertEquals(25, tds.getIdle());
+        }
+
+        // in tx
+        for (int it = 0; it < 5; it++) { // ensures it always works and not only the first time
+            for (int i = 0; i < 25; i++) {
+                tx.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Connection c = null;
+                            for (int i = 0; i < 25; i++) {
+                                final Connection connection = ds.getConnection();
+                                connection.getMetaData(); // trigger connection retrieving otherwise nothing is done (pool is not used)
+                                if (c != null) {
+                                    assertEquals(c, connection);
+                                } else {
+                                    c = connection;
+                                }
+                            }
+                        } catch (final SQLException sql) {
+                            fail(sql.getMessage());
+                        }
+                    }
+                });
+            }
+            assertEquals(0, tds.getActive());
+            assertEquals(25, tds.getIdle());
+        }
+    }
+
+    @Singleton
+    public static class TxP {
+        public void run(final Runnable r) {
+            r.run();
         }
     }
 }

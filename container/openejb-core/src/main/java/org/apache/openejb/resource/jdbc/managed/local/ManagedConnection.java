@@ -35,6 +35,7 @@ import javax.transaction.xa.XAResource;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Wrapper;
@@ -77,7 +78,7 @@ public class ManagedConnection implements InvocationHandler {
             return hashCode();
         }
         if ("equals".equals(mtdName)) {
-            return args[0] == this || (delegate != null && delegate.equals(args[0]));
+            return args[0] == this || (delegate != null && delegate.equals(unwrapIfNeeded(args[0])));
         }
 
         // allow to get delegate if needed by the underlying program
@@ -137,15 +138,17 @@ public class ManagedConnection implements InvocationHandler {
 
                     transaction.registerSynchronization(new ClosingSynchronization(xaConnection, delegate));
 
-                    try {
-                        setAutoCommit(false);
-                    } catch (final SQLException xae) { // we are alreay in a transaction so this can't be called from a user perspective - some XA DataSource prevents it in their code
-                        final String message = "Can't set auto commit to false cause the XA datasource doesn't support it, this is likely an issue";
-                        final Logger logger = Logger.getInstance(LogCategory.OPENEJB_RESOURCE_JDBC, ManagedConnection.class);
-                        if (logger.isDebugEnabled()) { // we don't want to print the exception by default
-                            logger.warning(message, xae);
-                        } else {
-                            logger.warning(message);
+                    if (xaConnection == null) {
+                        try {
+                            setAutoCommit(false);
+                        } catch (final SQLException xae) { // we are alreay in a transaction so this can't be called from a user perspective - some XA DataSource prevents it in their code
+                            final String message = "Can't set auto commit to false cause the XA datasource doesn't support it, this is likely an issue";
+                            final Logger logger = Logger.getInstance(LogCategory.OPENEJB_RESOURCE_JDBC, ManagedConnection.class);
+                            if (logger.isDebugEnabled()) { // we don't want to print the exception by default
+                                logger.warning(message, xae);
+                            } else {
+                                logger.warning(message);
+                            }
                         }
                     }
                 } else if (delegate == null) { // shouldn't happen
@@ -163,6 +166,14 @@ public class ManagedConnection implements InvocationHandler {
         } catch (final InvocationTargetException ite) {
             throw ite.getTargetException();
         }
+    }
+
+    private Object unwrapIfNeeded(final Object arg) {
+        if (!Proxy.isProxyClass(arg.getClass())) {
+            return arg;
+        }
+        final InvocationHandler handler = Proxy.getInvocationHandler(arg);
+        return ManagedConnection.class.isInstance(handler) ? ManagedConnection.class.cast(handler).delegate : arg;
     }
 
     protected Object newConnection() throws SQLException {
