@@ -49,6 +49,7 @@ public class SingletonProviderTest {
         final HttpURLConnection conn = HttpURLConnection.class.cast(new URL(base.toExternalForm() + "app/need-provider").openConnection());
         assertEquals("ok", IO.slurp(conn.getInputStream()));
         conn.getInputStream().close();
+        assertEquals(1, ApplicationSample.count);
     }
 
     @Path("need-provider")
@@ -68,8 +69,11 @@ public class SingletonProviderTest {
     }
 
     public static class ApplicationSample extends Application {
+        public static volatile int count = 0;
+
         @Override
         public Set<Object> getSingletons() {
+            count++;
             return new HashSet<Object>() {{
                 add(new NeedAProvider());
                 add(new DontLetResourcesFail());
