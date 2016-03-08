@@ -44,6 +44,7 @@ import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.PassivationCapable;
 import javax.enterprise.util.AnnotationLiteral;
+import javax.json.JsonStructure;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
@@ -55,8 +56,11 @@ import javax.ws.rs.container.ResourceContext;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
@@ -65,6 +69,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.io.Writer;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
@@ -363,11 +368,30 @@ public class CxfRSService extends RESTService {
     @Produces({"application/json", "application/*+json"})
     @Consumes({"application/json", "application/*+json"})
     public static class TomEEJohnzonProvider<T> extends JohnzonProvider<T> {
+        @Override
+        public boolean isWriteable(final Class<?> rawType, final Type genericType,
+                                   final Annotation[] annotations, final MediaType mediaType) {
+            return super.isWriteable(rawType, genericType, annotations, mediaType)
+                && !OutputStream.class.isAssignableFrom(rawType)
+                && !StreamingOutput.class.isAssignableFrom(rawType)
+                && !Writer.class.isAssignableFrom(rawType)
+                && !Response.class.isAssignableFrom(rawType)
+                && !JsonStructure.class.isAssignableFrom(rawType);
+        }
     }
 
     @Provider
     @Produces({"application/json", "application/*+json"})
     @Consumes({"application/json", "application/*+json"})
     public static class TomEEJsonpProvider extends JsrProvider {
+        @Override
+        public boolean isWriteable(final Class<?> rawType, final Type genericType,
+                                   final Annotation[] annotations, final MediaType mediaType) {
+            return super.isWriteable(rawType, genericType, annotations, mediaType)
+                && !OutputStream.class.isAssignableFrom(rawType)
+                && !StreamingOutput.class.isAssignableFrom(rawType)
+                && !Writer.class.isAssignableFrom(rawType)
+                && !Response.class.isAssignableFrom(rawType);
+        }
     }
 }
