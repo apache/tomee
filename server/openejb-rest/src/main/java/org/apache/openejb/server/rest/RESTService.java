@@ -51,6 +51,12 @@ import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.xbean.finder.MetaAnnotatedClass;
 
+import javax.naming.Context;
+import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.Application;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -67,12 +73,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import javax.naming.Context;
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.ext.Provider;
 
 @SuppressWarnings("UnusedDeclaration")
 public abstract class RESTService implements ServerService, SelfManaging {
@@ -154,6 +154,9 @@ public abstract class RESTService implements ServerService, SelfManaging {
                     } catch (final Exception e) {
                         throw new OpenEJBRestRuntimeException("can't create class " + app, e);
                     }
+
+                    application = "true".equalsIgnoreCase(appInfo.properties.getProperty("openejb.cxf-rs.cache-application", "true"))
+                        ? new InternalApplication(application) /* caches singletons and classes */ : application;
 
                     final Set<Class<?>> classes = new HashSet<>(application.getClasses());
                     final Set<Object> singletons = application.getSingletons();

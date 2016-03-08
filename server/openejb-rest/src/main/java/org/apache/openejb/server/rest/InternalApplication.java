@@ -27,6 +27,10 @@ public class InternalApplication extends Application {
 
     public InternalApplication(final Application original) {
         this.original = original;
+        if (original != null) {
+            singletons.addAll(original.getSingletons());
+            classes.addAll(original.getClasses());
+        }
     }
 
     @Override
