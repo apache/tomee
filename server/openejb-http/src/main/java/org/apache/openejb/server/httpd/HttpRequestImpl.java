@@ -1173,16 +1173,15 @@ public class HttpRequestImpl implements HttpRequest {
     }
 
     public void initPathFromContext(final String context) {
-        if (!"/".equals(path)) { // already done
+        if (!"/".equals(path) && !"".equals(contextPath)) { // already done
             return;
         }
 
         final String rawPath = requestRawPath();
         if (context != null) {
             if (context.endsWith("/")) {
-                final int endIndex = context.length() - 1;
-                path = rawPath.substring(endIndex, rawPath.length());
-                contextPath = context.substring(0, endIndex);
+                path = rawPath.substring(0, rawPath.length());
+                contextPath = "";
             } else {
                 path = rawPath.substring(context.length(), rawPath.length());
                 contextPath = context;

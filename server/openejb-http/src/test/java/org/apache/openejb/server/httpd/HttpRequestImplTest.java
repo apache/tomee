@@ -25,6 +25,7 @@ import org.junit.Test;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
@@ -46,5 +47,20 @@ public class HttpRequestImplTest {
         assertNotNull(session);
         session.invalidate();
         assertNull(req.getSession(false));
+    }
+
+    @Test
+    public void initContext() throws URISyntaxException {
+        final HttpRequestImpl req = new HttpRequestImpl(new URI("http://localhost:1234/api/foo/bar"));
+        req.setUri(req.getSocketURI());
+
+        req.initPathFromContext("/");
+        assertEquals("/api/foo/bar", req.getServletPath());
+
+        req.initPathFromContext("/api"); // reinit, happens with cxf + embedded http
+        assertEquals("/foo/bar", req.getServletPath());
+
+        req.initPathFromContext("/api/bar"); // that's too late we tolerate a wrong context only if its value is "/"
+        assertEquals("/foo/bar", req.getServletPath());
     }
 }
