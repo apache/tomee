@@ -1515,17 +1515,11 @@ public class ApplicationComposers {
                 instance = type.newInstance();
             }
             composer.before(instance);
+            composer.testClassFinders.remove(composer); // fix this workaround used for tests but breaking standalone mode
 
             final CountDownLatch latch = new CountDownLatch(1);
-            composer.handleLifecycle(type, instance);
 
-            composer.afterRunnables.add(new Runnable() {
-                @Override
-                public void run() {
-                    latch.countDown();
-                }
-            });
-            Runtime.getRuntime().addShutdownHook(new Thread() {
+            final Thread hook = new Thread() {
                 @Override
                 public void run() {
                     try {
@@ -1534,7 +1528,18 @@ public class ApplicationComposers {
                         // no-op
                     }
                 }
+            };
+            Runtime.getRuntime().addShutdownHook(hook);
+            composer.afterRunnables.add(new Runnable() {
+                @Override
+                public void run() {
+                    Runtime.getRuntime().removeShutdownHook(hook);
+                    latch.countDown();
+                }
             });
+
+            // do it after having added the latch countdown hook to avoid to block if start and stop very fast
+            composer.handleLifecycle(type, instance);
 
             latch.await();
         } catch (final InterruptedException ie) {

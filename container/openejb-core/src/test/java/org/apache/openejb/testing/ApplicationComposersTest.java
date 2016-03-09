@@ -20,6 +20,7 @@ import org.apache.openejb.testing.app.Application;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class ApplicationComposersTest {
@@ -32,6 +33,7 @@ public class ApplicationComposersTest {
 
     @Test
     public void run() throws InterruptedException {
+        Application.startCount = 0;
         final Thread t = new Thread() {
             @Override
             public void run() {
@@ -41,5 +43,6 @@ public class ApplicationComposersTest {
         t.start();
         t.join();
         assertTrue(ok);
+        assertEquals(1, Application.startCount);
     }
 }

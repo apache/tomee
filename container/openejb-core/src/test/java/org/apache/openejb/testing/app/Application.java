@@ -30,6 +30,7 @@ import static org.junit.Assert.assertNotNull;
 
 @Classes(cdi = true, value = Application.CdiBean.class)
 public class Application {
+    public static volatile int startCount = 0;
     private final String[] args;
 
     public Application(String[] args) {
@@ -44,6 +45,7 @@ public class Application {
 
     @PostConstruct
     public void init() {
+        startCount++;
         try {
             assertNotNull(bean);
             assertEquals("run", bean.run());
