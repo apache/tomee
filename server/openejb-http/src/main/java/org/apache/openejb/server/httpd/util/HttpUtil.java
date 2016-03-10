@@ -233,7 +233,7 @@ public final class HttpUtil {
         path += mapping.startsWith("*.") ? WILDCARD + "\\" + mapping.substring(1) : mapping;
 
         if (path.endsWith("*")) {
-            path = path.substring(0, path.length()) + WILDCARD;
+            path = path.substring(0, path.length() - 1) + WILDCARD;
         }
         return path;
     }
