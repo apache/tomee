@@ -68,7 +68,7 @@ public class CDIApplicationTest {
 
     @Test
     public void isCdi() {
-        assertEquals(2, MyCdiRESTApplication.injection.size());
+        assertEquals(1, MyCdiRESTApplication.injection.size());
         for (final Boolean b : MyCdiRESTApplication.injection) {
             assertTrue(b);
         }

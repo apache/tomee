@@ -22,9 +22,12 @@ import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.server.cxf.rs.logging.LoggingJAXRSCommons;
 import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.Module;
+import org.apache.openejb.testing.RandomPort;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.net.URL;
 
 import static org.junit.Assert.assertTrue;
 
@@ -32,11 +35,8 @@ import static org.junit.Assert.assertTrue;
 @EnableServices("jax-rs")
 @RunWith(ApplicationComposer.class)
 public class LoggingJAXRSWebAppModuleClassConfigurationTest extends LoggingJAXRSCommons {
-
-    @BeforeClass
-    public static void beforeClass() throws Exception {
-        configurePort();
-    }
+    @RandomPort("http")
+    private URL base;
 
     @Module
     public AppModule service() throws Exception {
