@@ -557,7 +557,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             rIds.add(resourceInfo.id);
         }
         rIds.removeAll(reservedResourceIds);
-        postConstructResources(rIds, ParentClassLoaderFinder.Helper.get(), systemInstance.getComponent(ContainerSystem.class).getJNDIContext(), null);
+        final ContainerSystem component = systemInstance.getComponent(ContainerSystem.class);
+        if (component != null) {
+            postConstructResources(rIds, ParentClassLoaderFinder.Helper.get(), component.getJNDIContext(), null);
+        }else{
+            throw new RuntimeException("ContainerSystem has not been initialzed");
+        }
 
         // Containers
         for (final ContainerInfo serviceInfo : containerSystemInfo.containers) {
@@ -716,14 +721,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             // To start out, ensure we don't already have any beans deployed with duplicate IDs.  This
             // is a conflict we can't handle.
-            final List<String> used = new ArrayList<String>();
-            for (final EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
-                for (final EnterpriseBeanInfo beanInfo : ejbJarInfo.enterpriseBeans) {
-                    if (containerSystem.getBeanContext(beanInfo.ejbDeploymentId) != null) {
-                        used.add(beanInfo.ejbDeploymentId);
-                    }
-                }
-            }
+            final List<String> used = getDuplicates(appInfo);
 
             if (used.size() > 0) {
                 String message = logger.error("createApplication.appFailedDuplicateIds", appInfo.path);
@@ -817,7 +815,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                         try {
                             containerSystemContext.bind(VALIDATOR_FACTORY_NAMING_CONTEXT + id, factory);
 
-                            Validator validator;
+                            final Validator validator;
                             try {
                                 final LazyValidator lazyValidator = new LazyValidator(factory);
                                 validator = (Validator) Proxy.newProxyInstance(appContext.getClassLoader(), VALIDATOR_INTERFACES, lazyValidator);
@@ -1028,6 +1026,18 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 appInfo.properties.remove(webApp);
             }
         }
+    }
+
+    private List<String> getDuplicates(final AppInfo appInfo) {
+        final List<String> used = new ArrayList<String>();
+        for (final EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
+            for (final EnterpriseBeanInfo beanInfo : ejbJarInfo.enterpriseBeans) {
+                if (containerSystem.getBeanContext(beanInfo.ejbDeploymentId) != null) {
+                    used.add(beanInfo.ejbDeploymentId);
+                }
+            }
+        }
+        return used;
     }
 
     private boolean shouldStartCdi(final AppInfo appInfo) {
@@ -1373,17 +1383,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         final EjbJarBuilder ejbJarBuilder = new EjbJarBuilder(props, appContext);
         for (final EjbJarInfo ejbJar : appInfo.ejbJars) {
-            boolean skip = false;
-            if (!appInfo.webAppAlone) {
-                if (webappId == null) {
-                    skip = ejbJar.webapp; // we look for the lib part of the ear so deploy only if not a webapp
-                } else if (!ejbJar.webapp
-                        || (!ejbJar.moduleId.equals(webappId) && !ejbJar.properties.getProperty("openejb.ejbmodule.webappId", "-").equals(webappId))) {
-                    skip = true; // we look for a particular webapp deployment so deploy only if this webapp
-                }
-            }
 
-            if (skip) {
+            if (isSkip(appInfo, webappId, ejbJar)) {
                 continue;
             }
 
@@ -1509,6 +1510,19 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             appContext.getBeanContexts().add(b);
         }
         return ejbs;
+    }
+
+    private boolean isSkip(final AppInfo appInfo, final String webappId, final EjbJarInfo ejbJar) {
+        boolean skip = false;
+        if (!appInfo.webAppAlone) {
+            if (webappId == null) {
+                skip = ejbJar.webapp; // we look for the lib part of the ear so deploy only if not a webapp
+            } else if (!ejbJar.webapp
+                    || (!ejbJar.moduleId.equals(webappId) && !ejbJar.properties.getProperty("openejb.ejbmodule.webappId", "-").equals(webappId))) {
+                skip = true; // we look for a particular webapp deployment so deploy only if this webapp
+            }
+        }
+        return skip;
     }
 
     private TimerStore newTimerStore(final BeanContext beanContext) {
@@ -1757,7 +1771,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         l.lock();
 
         try {
-            SystemInstance systemInstance = SystemInstance.get();
+            final SystemInstance systemInstance = SystemInstance.get();
             systemInstance.fireEvent(new ContainerSystemPreDestroy());
 
             try {
@@ -1857,8 +1871,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         Collections.sort(resources, new Comparator<DestroyingResource>() { // end by destroying RA after having closed CF pool (for jms for instanceà
             @Override
             public int compare(final DestroyingResource o1, final DestroyingResource o2) {
-                boolean ra1 = isRa(o1.instance);
-                boolean ra2 = isRa(o1.instance);
+                final boolean ra1 = isRa(o1.instance);
+                final boolean ra2 = isRa(o1.instance);
                 if (ra2 && !ra1) {
                     return -1;
                 }
@@ -1893,7 +1907,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             object = inObject; // in case it impl DestroyableResource
         }
 
-        Collection<Method> preDestroy = null;
+        final Collection<Method> preDestroy = null;
 
         if (object instanceof ResourceAdapterReference) {
             final ResourceAdapterReference resourceAdapter = (ResourceAdapterReference) object;
@@ -1959,7 +1973,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         try {
             //Ensure ResourceInfo for this resource is removed
             final OpenEjbConfiguration configuration = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
-            final Iterator<ResourceInfo> iterator = configuration.facilities.resources.iterator();
+            final Iterator<ResourceInfo> iterator;
+            if (configuration != null) {
+                iterator = configuration.facilities.resources.iterator();
+            }else{
+                throw new Exception("OpenEjbConfiguration has not been initialized");
+            }
             while (iterator.hasNext()) {
                 final ResourceInfo info = iterator.next();
                 if (name.equals(info.id)) {
@@ -2034,6 +2053,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             SystemInstance.get().fireEvent(new AssemblerBeforeApplicationDestroyed(appInfo, appContext));
 
+            //noinspection ConstantConditions
             if (null == appContext) {
                 logger.warning("Application id '" + appInfo.appId + "' not found in: " + Arrays.toString(containerSystem.getAppContextKeys()));
                 return;
@@ -2358,12 +2378,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     private void destroyLookedUpResource(final Context globalContext, final String id, final String name) throws NamingException {
-        
-        Object object = null;
-        
+
+        final Object object;
+
         try {
             object = globalContext.lookup(name);
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             // if we catch a NamingException, check to see if the resource is a LaztObjectReference that has not been initialized correctly
             final String ctx = name.substring(0, name.lastIndexOf("/"));
             final String objName = name.substring(ctx.length() + 1);
@@ -2376,7 +2396,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 if (!LazyObjectReference.class.isInstance(binding.getObject())) {
                     continue;
                 }
-                
+
                 final LazyObjectReference<?> ref = LazyObjectReference.class.cast(binding.getObject());
                 if (! ref.isInitialized()) {
                     globalContext.unbind(name);
@@ -2384,10 +2404,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     return;
                 }
             }
-            
+
             throw e;
         }
-        
+
         final String clazz;
         if (object == null) { // should it be possible?
             clazz = "?";
@@ -2440,10 +2460,15 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     jars.add(url);
                 }
             } catch (final RuntimeException re) {
-                logger.warning("can't find open-jpa-integration jar");
+                logger.warning("Unable to find the open-jpa-integration jar");
             }
         }
-        jars.addAll(Arrays.asList(SystemInstance.get().getComponent(ClassLoaderEnricher.class).applicationEnrichment()));
+        final ClassLoaderEnricher component = SystemInstance.get().getComponent(ClassLoaderEnricher.class);
+        if (component != null) {
+            jars.addAll(Arrays.asList(component.applicationEnrichment()));
+        }else {
+            logger.warning("Unable to find open-jpa-integration jar");
+        }
 
         // Create the class loader
         final ClassLoader parent = ParentClassLoaderFinder.Helper.get();
@@ -2805,6 +2830,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
                 @Override
                 public Set<Object> keySet() {
+                    //noinspection unchecked
                     return Set.class.cast(unsetProperties.keySet());
                 }
 
@@ -3022,7 +3048,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 url = prop.getProperty("jdbcUrl");
             }
             if (url == null) {
-                logger.debug("can't find url for " + serviceInfo.id + " will not monitor it");
+                logger.debug("Unable to find url for " + serviceInfo.id + " will not monitor it");
             } else {
                 final String host = extractHost(url);
                 if (host != null) {
@@ -3317,7 +3343,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
 
             if (logger == null) {
-                logger = SystemInstance.get().getComponent(Assembler.class).logger;
+                final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
+                if (assembler != null) {
+                    logger = assembler.logger;
+                }else {
+                    System.err.println("Assembler has not been initialized");
+                }
             }
             unusedProperty(info.id, logger, property);
         }
@@ -3331,21 +3362,21 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         if (isInternalProperty(property)) {
             return;
         }
-        parentLogger.getChildLogger("service").warning("unusedProperty", property, id);
+        if (null != parentLogger) {
+            parentLogger.getChildLogger("service").warning("unusedProperty {0} - {1}", property, id);
+        }else{
+            System.out.println("unusedProperty: " + property + " - " + id);
+        }
     }
 
-    private static boolean isInternalProperty(String property) {
-        if (property.equalsIgnoreCase("ServiceId")) {
-            return true;
-        }
-        if (property.equalsIgnoreCase("transactionManager")) {
-            return true;
-        }
-        return false;
+    private static boolean isInternalProperty(final String property) {
+        return property.equalsIgnoreCase("ServiceId") || property.equalsIgnoreCase("transactionManager");
     }
 
     private static void unusedProperty(final String id, final String property) {
-        unusedProperty(id, SystemInstance.get().getComponent(Assembler.class).logger, property);
+        final Assembler component = SystemInstance.get().getComponent(Assembler.class);
+        final Logger logger = component != null ? component.logger : null;
+        unusedProperty(id, logger, property);
     }
 
     public static ObjectRecipe prepareRecipe(final ServiceInfo info) {
@@ -3422,7 +3453,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     transformers.add(classFileTransformer);
                 }
             } else if (!logged.getAndSet(true)) {
-                SystemInstance.get().getComponent(Assembler.class).logger.info("assembler.noAgent");
+                final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
+                if (assembler != null) {
+                    assembler.logger.info("assembler.noAgent");
+                } else {
+                    System.err.println("addTransformer: Assembler not initialized: JAVA AGENT NOT INSTALLED");
+                }
             }
         }
 
@@ -3436,7 +3472,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                         instrumentation.removeTransformer(transformer);
                     }
                 } else {
-                    SystemInstance.get().getComponent(Assembler.class).logger.info("assembler.noAgent");
+                    final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
+                    if (assembler != null) {
+                        assembler.logger.info("assembler.noAgent");
+                    }else {
+                        System.err.println("destroy: Assembler not initialized: JAVA AGENT NOT INSTALLED");
+                    }
                 }
             }
         }
@@ -3496,8 +3537,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     public static final class ResourceAdapterReference extends Reference {
-        private transient ResourceAdapter ra;
-        private transient Executor pool;
+        private final transient ResourceAdapter ra;
+        private final transient Executor pool;
         private final String jndi;
 
         public ResourceAdapterReference(final ResourceAdapter ra, final Executor pool, final String jndi) {
@@ -3525,9 +3566,16 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         protected Object readResolve() throws ObjectStreamException {
             try {
-                return SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext().lookup(jndi);
+                final ContainerSystem component = SystemInstance.get().getComponent(ContainerSystem.class);
+                if (component != null) {
+                    return component.getJNDIContext().lookup(jndi);
+                } else {
+                    throw new NamingException("ContainerSystem has not been initialized");
+                }
             } catch (final NamingException e) {
-                throw new InvalidObjectException("name not found: " + jndi);
+                final InvalidObjectException objectException = new InvalidObjectException("name not found: " + jndi);
+                objectException.initCause(e);
+                throw objectException;
             }
         }
     }
@@ -3549,8 +3597,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     public static class ResourceInstance extends Reference implements Serializable, DestroyableResource {
         private final String name;
         private final Object delegate;
-        private transient Collection<Method> preDestroys;
-        private transient CreationalContext<?> context;
+        private final transient Collection<Method> preDestroys;
+        private final transient CreationalContext<?> context;
 
         public ResourceInstance(final String name, final Object delegate, final Collection<Method> preDestroys, final CreationalContext<?> context) {
             this.name = name;
@@ -3574,7 +3622,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     }
                     m.invoke(o);
                 } catch (final Exception e) {
-                    SystemInstance.get().getComponent(Assembler.class).logger.error(e.getMessage(), e);
+                    final Assembler component = SystemInstance.get().getComponent(Assembler.class);
+                    if (component != null) {
+                        component.logger.error(e.getMessage(), e);
+                    }else {
+                        System.err.println("" + e.getMessage());
+                    }
                 }
             }
             try {
@@ -3590,8 +3643,13 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         // which is never serialized (IvmContext)
         Object readResolve() throws ObjectStreamException {
             try {
-                return SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext().lookup(name);
-            } catch (final NamingException e) {
+                final ContainerSystem component = SystemInstance.get().getComponent(ContainerSystem.class);
+                if (component != null) {
+                    return component.getJNDIContext().lookup(name);
+                }else {
+                    throw new Exception("ContainerSystem is not initialized");
+                }
+            } catch (final Exception e) {
                 throw new IllegalStateException(e);
             }
         }

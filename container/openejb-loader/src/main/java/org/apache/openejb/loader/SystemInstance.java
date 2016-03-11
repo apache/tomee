@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * This class aims to be the one and only static in the entire system
@@ -121,7 +122,7 @@ public final class SystemInstance {
         try {
             homeDirCanonicalPath = home.getDirectory().getCanonicalPath();
             baseDirCanonicalPath = base.getDirectory().getCanonicalPath();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new LoaderRuntimeException("Failed to create default instance of SystemInstance", e);
         }
         this.internalProperties.setProperty("openejb.home", homeDirCanonicalPath);
@@ -141,6 +142,7 @@ public final class SystemInstance {
         return observerManager.removeObserver(observer);
     }
 
+    @SuppressWarnings("unused")
     public long getStartTime() {
         return startTime;
     }
@@ -210,6 +212,7 @@ public final class SystemInstance {
      * @return the object associated with the class type or null
      * @throws IllegalStateException of the component isn't found
      */
+    @SuppressWarnings("unchecked")
     public <T> T getComponent(final Class<T> type) {
         final T component = (T) components.get(type);
         if (component != null) {
@@ -223,13 +226,15 @@ public final class SystemInstance {
                     .loadClass(classname).newInstance());
                 components.put(type, instance);
                 return instance;
-            } catch (final Exception e) {
+            } catch (final Throwable e) {
                 // no-op
+                System.err.println("Failed to load class: " + classname);
             }
         }
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T removeComponent(final Class<T> type) {
         final T component = (T) components.remove(type);
 
@@ -243,6 +248,7 @@ public final class SystemInstance {
     /**
      * @param type the class type of the component required
      */
+    @SuppressWarnings("unchecked")
     public <T> T setComponent(final Class<T> type, final T value) {
         final T removed = (T) components.put(type, value);
 
@@ -257,7 +263,7 @@ public final class SystemInstance {
         return removed;
     }
 
-    private static SystemInstance system;
+    private static final AtomicReference<SystemInstance> system = new AtomicReference<SystemInstance>();
 
     static {
         reset();
@@ -272,7 +278,7 @@ public final class SystemInstance {
     public static synchronized void reset() {
         try {
             System.clearProperty("openejb.loader");
-            system = new SystemInstance(new Properties()); // don't put system properties here, it is already done
+            system.set(new SystemInstance(new Properties())); // don't put system properties here, it is already done
             initialized = false;
         } catch (final Exception e) {
             throw new LoaderRuntimeException("Failed to create default instance of SystemInstance", e);
@@ -283,7 +289,7 @@ public final class SystemInstance {
         if (initialized) {
             return;
         }
-        system = new SystemInstance(properties);
+        system.set(new SystemInstance(properties));
         // WARNING: reverse order since we don't overwrite existing entries
         readSystemProperties(get().currentProfile());
         readSystemProperties();
@@ -291,7 +297,7 @@ public final class SystemInstance {
 
 
         // if the user read System.getProperties() instead of our properties, used in bval-tomee tck for instance
-        System.getProperties().putAll(system.getProperties());
+        System.getProperties().putAll(system.get().getProperties());
 
         initialized = true;
         get().setProperty("openejb.profile.custom", Boolean.toString(!get().isDefaultProfile()));
@@ -300,8 +306,7 @@ public final class SystemInstance {
     }
 
     private static void initDefaultComponents() {
-        final SystemInstance systemInstance = get();
-        systemInstance.components.put(ProvisioningResolver.class, new ProvisioningResolver());
+        system.get().components.put(ProvisioningResolver.class, new ProvisioningResolver());
     }
 
     private static void readUserSystemProperties() {
@@ -310,23 +315,26 @@ public final class SystemInstance {
     }
 
     public File getConf(final String subPath) {
+
         File conf = null;
+        final FileUtils base = system.get().getBase();
+
         try {
-            conf = system.getBase().getDirectory("conf");
+            conf = base.getDirectory("conf");
         } catch (final IOException e) {
             // no-op
         }
 
         if (conf == null || !conf.exists()) {
             try {
-                conf = system.getBase().getDirectory("etc");
+                conf = base.getDirectory("etc");
             } catch (final IOException e) {
                 // no-op
             }
         }
 
         if (conf == null || !conf.exists()) {
-            return new File(system.getBase().getDirectory(), "conf");
+            return new File(base.getDirectory(), "conf");
         }
         if (subPath == null) {
             return conf;
@@ -343,7 +351,7 @@ public final class SystemInstance {
         }
 
         // Read in and apply the conf/system.properties
-        final File conf = system.getConf(completePrefix + "system.properties");
+        final File conf = system.get().getConf(completePrefix + "system.properties");
         if (conf != null && conf.exists()) {
             addSystemProperties(conf);
         }
@@ -366,8 +374,9 @@ public final class SystemInstance {
         }
 
         for (final String key : systemProperties.stringPropertyNames()) {
-            if (system.getProperty(key) == null) {
-                system.setProperty(key, systemProperties.getProperty(key));
+            final SystemInstance systemInstance = system.get();
+            if (systemInstance.getProperty(key) == null) {
+                systemInstance.setProperty(key, systemProperties.getProperty(key));
             }
         }
         // don't override system props
@@ -375,7 +384,7 @@ public final class SystemInstance {
     }
 
     public static SystemInstance get() {
-        return system;
+        return system.get();
     }
 
     public String currentProfile() {

@@ -199,7 +199,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>${javaee-api.version}</version>
+      <version>${version.javaee-api}</version>
       <classifier>tomcat</classifier>
       <scope>provided</scope>
     </dependency>

@@ -94,7 +94,7 @@
     <tomee.version>${project.version}</tomee.version>
     
     <!-- to change easily the javaee api version -->
-    <javaee-api.version>7.0</javaee-api.version>
+    <version.javaee-api>7.0-1-SNAPSHOT</version.javaee-api>
 
     <openjpa.version>2.4.1</openjpa.version>
     <org.apache.openwebbeans.version>1.6.3</org.apache.openwebbeans.version>
@@ -325,6 +325,16 @@
           <artifactId>maven-deploy-plugin</artifactId>
           <version>2.8.2</version>
         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.19.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.5</version>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -332,7 +342,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
-        <version>2.5.1</version>
+        <version>2.5.3</version>
         <configuration>
           <!-- the following settings are important when working with git -->
           <localCheckout>true</localCheckout>
@@ -772,13 +782,13 @@
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>javaee-api</artifactId>
-        <version>${javaee-api.version}</version>
+        <version>${version.javaee-api}</version>
         <classifier>tomcat</classifier>
       </dependency>
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>javaee-api</artifactId>
-        <version>${javaee-api.version}</version>
+        <version>${version.javaee-api}</version>
       </dependency>
       <dependency>
         <groupId>xml-resolver</groupId>
