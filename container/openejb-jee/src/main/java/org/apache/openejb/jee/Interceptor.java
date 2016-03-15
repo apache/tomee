@@ -76,6 +76,7 @@ import java.util.Map;
     "postConstruct",
     "preDestroy",
     "dataSource",
+    "jmsConnectionFactories",
     "postActivate",
     "prePassivate",
     "afterBegin",

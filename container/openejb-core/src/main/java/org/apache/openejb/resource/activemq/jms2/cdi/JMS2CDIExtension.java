@@ -17,6 +17,8 @@
 package org.apache.openejb.resource.activemq.jms2.cdi;
 
 import org.apache.openejb.OpenEJB;
+import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
+import org.apache.openejb.assembler.classic.ResourceInfo;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 
@@ -83,16 +85,34 @@ public class JMS2CDIExtension implements Extension {
             final JMSSessionMode sessionMode = annotated.getAnnotation(JMSSessionMode.class);
             final JMSPasswordCredential credential = annotated.getAnnotation(JMSPasswordCredential.class);
 
-            final String jndi = jmsConnectionFactory == null ? null : "openejb:Resource/" + jmsConnectionFactory.value();
+            final String jndi = "openejb:Resource/" +
+                (jmsConnectionFactory == null ? findAnyConnectionFactory() : jmsConnectionFactory.value());
             return new Key(
                 jndi,
                 credential != null ? credential.userName() : null,
                 credential != null ? credential.password() : null,
                 sessionMode != null ? sessionMode.value() : null);
         }
+
+        private String findAnyConnectionFactory() {
+            final OpenEjbConfiguration component = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
+            if (component != null && component.facilities != null) {
+                for (final ResourceInfo ri : component.facilities.resources) {
+                    if (ri.types.contains("javax.jms.ConnectionFactory")) {
+                        return ri.id;
+                    }
+                }
+
+                // try the default one
+                return "DefaultJMSConnectionFactory";
+            }
+            // something is wrong, just fail
+            throw new IllegalArgumentException(
+                "No connection factory found, either use @JMSConnectionFactory JMSContext or define a connection factory");
+        }
     }
 
-    public static abstract class AutoContextDestruction implements Serializable {
+    public abstract static class AutoContextDestruction implements Serializable {
         private transient Map<Key, JMSContext> contexts = new ConcurrentHashMap<>();
 
         public void push(final Key key, final JMSContext c) {
@@ -159,20 +179,13 @@ public class JMS2CDIExtension implements Extension {
                     return connectionFactoryInstance;
                 }
                 try {
-                    return connectionFactoryInstance = connectionFactory == null ?
-                        findDefaultConnectionFactory() :
-                        ConnectionFactory.class.cast(
-                            SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext()
-                                .lookup(connectionFactory));
+                    return connectionFactoryInstance = ConnectionFactory.class.cast(
+                        SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext()
+                            .lookup(connectionFactory));
                 } catch (final NamingException e) {
                     throw new JMSRuntimeException(e.getMessage(), null, e);
                 }
             }
-        }
-
-        private ConnectionFactory findDefaultConnectionFactory() {
-            // TODO: link scanning to auto create a default and use it there? See AutoConfig
-            throw new IllegalArgumentException("You have to specify @JMSConnectionFactory");
         }
 
         public JMSContext create() {

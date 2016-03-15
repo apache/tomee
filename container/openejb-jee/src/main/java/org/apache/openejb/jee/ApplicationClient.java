@@ -88,7 +88,8 @@ import java.util.Map;
     "preDestroy",
     "callbackHandler",
     "messageDestination",
-    "dataSource"
+    "dataSource",
+    "jmsConnectionFactories"
 
 })
 public class ApplicationClient implements JndiConsumer, Lifecycle, NamedModule {

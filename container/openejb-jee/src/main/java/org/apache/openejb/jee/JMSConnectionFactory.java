@@ -32,6 +32,7 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "jms-connection-factoryType", propOrder = {
     "name",
+    "descriptions",
     "className",
     "interfaceName",
     "resourceAdapter",

@@ -44,7 +44,7 @@ import javax.jms.TransactionInProgressRuntimeException;
 import javax.jms.TransactionRolledBackException;
 import javax.jms.TransactionRolledBackRuntimeException;
 
-class JMS2 {
+final class JMS2 {
     private JMS2() {
         // no-op
     }

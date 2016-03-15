@@ -137,6 +137,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "postConstruct",
     "preDestroy",
     "dataSource",
+    "jmsConnectionFactories",
     "postActivate",
     "prePassivate",
     "securityRoleRef",

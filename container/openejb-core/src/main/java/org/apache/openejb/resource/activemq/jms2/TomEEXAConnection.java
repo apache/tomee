@@ -1,6 +1,5 @@
 package org.apache.openejb.resource.activemq.jms2;
 
-import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQXAConnection;
 import org.apache.activemq.management.JMSStatsImpl;
 import org.apache.activemq.transport.Transport;
@@ -20,23 +19,23 @@ public class TomEEXAConnection extends ActiveMQXAConnection {
 
     @Override
     public Session createSession(final int sessionMode) throws JMSException {
-        return null;
+        return super.createSession(sessionMode == Session.SESSION_TRANSACTED, sessionMode);
     }
 
     @Override
     public Session createSession() throws JMSException {
-        return null;
+        return createSession(Session.AUTO_ACKNOWLEDGE);
     }
 
     @Override
     public ConnectionConsumer createSharedDurableConnectionConsumer(final Topic topic, final String subscriptionName, final String messageSelector,
                                                                     final ServerSessionPool sessionPool, final int maxMessages) throws JMSException {
-        return null;
+        throw new IllegalStateException("Not allowed in a RA");
     }
 
     @Override
     public ConnectionConsumer createSharedConnectionConsumer(final Topic topic, final String subscriptionName, final String messageSelector,
                                                              final ServerSessionPool sessionPool, final int maxMessages) throws JMSException {
-        return null;
+        throw new IllegalStateException("Not allowed in a RA");
     }
 }

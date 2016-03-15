@@ -278,4 +278,8 @@ public class DelegateMessage implements Message {
     public void clearBody() throws JMSException {
         message.clearBody();
     }
+
+    public Message unwrap() {
+        return message;
+    }
 }

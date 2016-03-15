@@ -104,6 +104,7 @@ import java.util.Map;
     "postConstruct",
     "preDestroy",
     "dataSource",
+    "jmsConnectionFactories",
     "securityRoleRef",
     "securityIdentity",
     "query"

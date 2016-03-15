@@ -107,6 +107,9 @@ public class JMS2AMQTest {
     @JMSConnectionFactory("cf")
     private JMSContext context;
 
+    @Inject // just there to ensure the injection works and we don't require @JMSConnectionFactory
+    private JMSContext defaultContext;
+
     @Before
     public void resetLatch() {
         Listener.reset();
@@ -232,6 +235,12 @@ public class JMS2AMQTest {
         } catch (final JMSRuntimeException ex) {
             fail(ex.getMessage());
         }
+    }
+
+    @Test
+    public void sendToMdbWithDefaultCf() throws Exception {
+        defaultContext.createProducer().send(destination, TEXT);
+        assertTrue(Listener.sync());
     }
 
     @Test

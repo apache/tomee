@@ -92,7 +92,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "persistenceContextRef",
     "persistenceUnitRef",
     "messageDestination",
-    "dataSource"
+    "dataSource",
+    "jmsConnectionFactories"
 })
 public class Application implements JndiConsumer, NamedModule {
 

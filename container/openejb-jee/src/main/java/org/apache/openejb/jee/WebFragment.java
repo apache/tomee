@@ -93,6 +93,7 @@ import java.util.Map;
     "messageDestination",
     "ordering",
     "dataSource",
+    "jmsConnectionFactories",
     "name"
 
 })
