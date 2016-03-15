@@ -20,6 +20,9 @@ import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.util.Archives;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.ejb.Singleton;
@@ -33,6 +36,15 @@ import static org.junit.Assert.assertEquals;
  * @version $Rev$ $Date$
  */
 public class EarModuleNamesTest {
+    @BeforeClass
+    public static void preventDefaults() {
+        System.setProperty("openejb.environment.default", "false");
+    }
+
+    @AfterClass
+    public static void reset() {
+        System.clearProperty("openejb.environment.default");
+    }
 
     @Test
     public void testDefaultIdEjbJar() throws Exception {
