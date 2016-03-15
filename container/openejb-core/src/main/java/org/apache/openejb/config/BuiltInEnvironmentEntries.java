@@ -95,8 +95,10 @@ public class BuiltInEnvironmentEntries implements DynamicDeployer {
             add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/DefaultManagedScheduledExecutorService").type(ManagedScheduledExecutorService.class));
             add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/DefaultManagedThreadFactory").type(ManagedThreadFactory.class));
             try {
+                final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+                contextClassLoader.loadClass("org.apache.activemq.ActiveMQSslConnectionFactory");
                 final ResourceEnvRef ref = new ResourceEnvRef().name("java:comp/DefaultJMSConnectionFactory")
-                    .type(Thread.currentThread().getContextClassLoader().loadClass("javax.jms.ConnectionFactory"));
+                    .type(contextClassLoader.loadClass("javax.jms.ConnectionFactory"));
                 add(jndi.getResourceEnvRefMap(), ref);
             } catch (final ClassNotFoundException | NoClassDefFoundError notThere) {
                 // no-op
