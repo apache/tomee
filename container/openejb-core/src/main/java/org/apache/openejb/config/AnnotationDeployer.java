@@ -68,6 +68,7 @@ import org.apache.openejb.jee.Interceptor;
 import org.apache.openejb.jee.InterceptorBinding;
 import org.apache.openejb.jee.Invokable;
 import org.apache.openejb.jee.IsolationLevel;
+import org.apache.openejb.jee.JMSConnectionFactory;
 import org.apache.openejb.jee.JndiConsumer;
 import org.apache.openejb.jee.JndiReference;
 import org.apache.openejb.jee.License;
@@ -202,6 +203,8 @@ import javax.enterprise.inject.spi.Extension;
 import javax.interceptor.ExcludeClassInterceptors;
 import javax.interceptor.ExcludeDefaultInterceptors;
 import javax.interceptor.Interceptors;
+import javax.jms.JMSConnectionFactoryDefinition;
+import javax.jms.JMSConnectionFactoryDefinitions;
 import javax.jms.Queue;
 import javax.jws.HandlerChain;
 import javax.jws.WebService;
@@ -4000,6 +4003,22 @@ public class AnnotationDeployer implements DynamicDeployer {
                 final DataSourceDefinition definition = annotated.getAnnotation(DataSourceDefinition.class);
                 buildDataSourceDefinition(consumer, definition);
             }
+
+            //
+            // @JMSConnectionFactoryDefinition
+            //
+
+            for (final Annotated<Class<?>> annotated : annotationFinder.findMetaAnnotatedClasses(JMSConnectionFactoryDefinitions.class)) {
+                final JMSConnectionFactoryDefinitions defs = annotated.getAnnotation(JMSConnectionFactoryDefinitions.class);
+                for (final JMSConnectionFactoryDefinition definition : defs.value()) {
+                    buildConnectionFactoryDefinition(consumer, definition);
+                }
+            }
+
+            for (final Annotated<Class<?>> annotated : annotationFinder.findMetaAnnotatedClasses(JMSConnectionFactoryDefinition.class)) {
+                final JMSConnectionFactoryDefinition definition = annotated.getAnnotation(JMSConnectionFactoryDefinition.class);
+                buildConnectionFactoryDefinition(consumer, definition);
+            }
         }
 
         private void buildContext(final JndiConsumer consumer, final Member member) {
@@ -4649,6 +4668,43 @@ public class AnnotationDeployer implements DynamicDeployer {
                     persistenceContextRef.getInjectionTarget().add(target);
                 }
             }
+        }
+
+        private void buildConnectionFactoryDefinition(final JndiConsumer consumer, final JMSConnectionFactoryDefinition definition) {
+            final JMSConnectionFactory connectionFactory = new JMSConnectionFactory();
+            connectionFactory.setName(definition.name());
+            connectionFactory.setMinPoolSize(definition.minPoolSize());
+            connectionFactory.setMaxPoolSize(definition.maxPoolSize());
+            connectionFactory.setClassName(definition.className());
+            connectionFactory.setInterfaceName(definition.interfaceName());
+            connectionFactory.setClientId(definition.clientId());
+            connectionFactory.setUser(definition.user());
+            connectionFactory.setPassword(definition.password());
+            connectionFactory.setResourceAdapter(definition.resourceAdapter());
+            connectionFactory.setTransactional(definition.transactional());
+
+            for (final String s : definition.properties()) {
+                final int equal = s.indexOf('=');
+                if (equal < s.length() - 1) {
+                    final SuperProperties props = new SuperProperties();
+                    try {
+                        props.load(new ByteArrayInputStream(s.getBytes()));
+                        for (final String key : props.stringPropertyNames()) {
+                            if (!key.isEmpty()) {
+                                connectionFactory.property(key, props.getProperty(key));
+                            }
+                        }
+                    } catch (final IOException e) {
+                        final String key = s.substring(0, equal).trim();
+                        final String value = s.substring(equal + 1).trim();
+                        connectionFactory.property(key, value);
+                    }
+                } else {
+                    connectionFactory.property(s.trim(), "");
+                }
+            }
+
+            consumer.getJMSConnectionFactories().add(connectionFactory);
         }
 
         private void buildDataSourceDefinition(final JndiConsumer consumer, final DataSourceDefinition d) {

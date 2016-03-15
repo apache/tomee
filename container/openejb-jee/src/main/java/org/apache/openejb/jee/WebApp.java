@@ -161,6 +161,8 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     protected KeyedCollection<String, PersistenceUnitRef> persistenceUnitRef;
     @XmlElement(name = "data-source", required = true)
     protected KeyedCollection<String, DataSource> dataSource;
+    @XmlElement(name = "jms-connection-factory", required = true)
+    protected KeyedCollection<String, JMSConnectionFactory> jmsConnectionFactories;
     @XmlElement(name = "post-construct", required = true)
     protected List<LifecycleCallback> postConstruct;
     @XmlElement(name = "pre-destroy", required = true)
@@ -569,6 +571,21 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
         this.version = value;
     }
 
+    public Collection<JMSConnectionFactory> getJMSConnectionFactory() {
+        if (jmsConnectionFactories == null) {
+            jmsConnectionFactories = new KeyedCollection<>();
+        }
+        return this.jmsConnectionFactories;
+    }
+
+    public Map<String, JMSConnectionFactory> getJMSConnectionFactoryMap() {
+        if (jmsConnectionFactories == null) {
+            jmsConnectionFactories = new KeyedCollection<>();
+        }
+        return this.jmsConnectionFactories.toMap();
+    }
+
+
     public Collection<DataSource> getDataSource() {
         if (dataSource == null) {
             dataSource = new KeyedCollection<String, DataSource>();
@@ -758,5 +775,15 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
         l.setListenerClass(classname);
         getListener().add(l);
         return this;
+    }
+
+    @Override
+    public Collection<JMSConnectionFactory> getJMSConnectionFactories() {
+        return jmsConnectionFactories == null ? (jmsConnectionFactories = new KeyedCollection<>()) : jmsConnectionFactories;
+    }
+
+    @Override
+    public Map<String, JMSConnectionFactory> getJMSConnectionFactoriesMap() {
+        return KeyedCollection.class.cast(getJMSConnectionFactories()).toMap();
     }
 }

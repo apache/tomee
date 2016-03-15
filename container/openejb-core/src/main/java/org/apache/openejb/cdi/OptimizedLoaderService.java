@@ -19,6 +19,7 @@ package org.apache.openejb.cdi;
 
 import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.resource.activemq.jms2.cdi.JMS2CDIExtension;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.classloader.ClassLoaderAwareHandler;
@@ -87,6 +88,10 @@ public class OptimizedLoaderService implements LoaderService {
             }
         }
 
+        if (hasJms()) {
+            list.add(new JMS2CDIExtension());
+        }
+
         final Collection<Extension> extensionCopy = new ArrayList<>(list);
 
         final Iterator<Extension> it = list.iterator();
@@ -98,6 +103,15 @@ public class OptimizedLoaderService implements LoaderService {
             }
         }
         return list;
+    }
+
+    private boolean hasJms() {
+        try {
+            Thread.currentThread().getContextClassLoader().loadClass("org.apache.activemq.ra.ActiveMQManagedConnectionFactory");
+            return true;
+        } catch (final NoClassDefFoundError | ClassNotFoundException e) {
+            return false;
+        }
     }
 
     // mainly intended to avoid conflicts between internal and overrided spec extensions
@@ -167,7 +181,7 @@ public class OptimizedLoaderService implements LoaderService {
                 clazz = loader.loadClass("org.apache.webbeans.jsf.plugin.OpenWebBeansJsfPlugin");
                 try {
                     list.add(OpenWebBeansPlugin.class.cast(
-                            Proxy.newProxyInstance(loader, new Class<?>[]{OpenWebBeansPlugin.class}, new ClassLoaderAwareHandler(clazz.getSimpleName(), clazz.newInstance(), loader))));
+                        Proxy.newProxyInstance(loader, new Class<?>[]{OpenWebBeansPlugin.class}, new ClassLoaderAwareHandler(clazz.getSimpleName(), clazz.newInstance(), loader))));
                 } catch (final Exception e) {
                     log.error("Unable to load OpenWebBeansPlugin: OpenWebBeansJsfPlugin");
                 }

@@ -136,6 +136,8 @@ public class Application implements JndiConsumer, NamedModule {
     protected KeyedCollection<String, MessageDestination> messageDestination;
     @XmlElement(name = "data-source")
     protected KeyedCollection<String, DataSource> dataSource;
+    @XmlElement(name = "jms-connection-factory", required = true)
+    protected KeyedCollection<String, JMSConnectionFactory> jmsConnectionFactories;
     @XmlAttribute(required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected java.lang.String version;
@@ -414,5 +416,15 @@ public class Application implements JndiConsumer, NamedModule {
 
     public void setId(final java.lang.String value) {
         this.id = value;
+    }
+
+    @Override
+    public Collection<JMSConnectionFactory> getJMSConnectionFactories() {
+        return jmsConnectionFactories == null ? (jmsConnectionFactories = new KeyedCollection<>()) : jmsConnectionFactories;
+    }
+
+    @Override
+    public Map<String, JMSConnectionFactory> getJMSConnectionFactoriesMap() {
+        return KeyedCollection.class.cast(getJMSConnectionFactories()).toMap();
     }
 }

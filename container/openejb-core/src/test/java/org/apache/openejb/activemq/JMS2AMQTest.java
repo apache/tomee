@@ -1,0 +1,314 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.openejb.activemq;
+
+import org.apache.activemq.ActiveMQXAConnectionFactory;
+import org.apache.openejb.jee.MessageDrivenBean;
+import org.apache.openejb.junit.ApplicationComposer;
+import org.apache.openejb.testing.Configuration;
+import org.apache.openejb.testing.Module;
+import org.apache.openejb.testing.SimpleLog;
+import org.apache.openejb.testng.PropertiesBuilder;
+import org.apache.webbeans.config.WebBeansContext;
+import org.apache.webbeans.spi.ContextsService;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import javax.annotation.Resource;
+import javax.ejb.ActivationConfigProperty;
+import javax.ejb.MessageDriven;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.jms.ConnectionFactory;
+import javax.jms.JMSConnectionFactory;
+import javax.jms.JMSConsumer;
+import javax.jms.JMSContext;
+import javax.jms.JMSException;
+import javax.jms.JMSRuntimeException;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+import javax.jms.Queue;
+import javax.jms.TextMessage;
+import javax.jms.XAConnectionFactory;
+import java.util.Properties;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+
+import static java.lang.Thread.sleep;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+@SimpleLog
+@RunWith(ApplicationComposer.class)
+public class JMS2AMQTest {
+    private static final String TEXT = "foo";
+
+    @Configuration
+    public Properties config() {
+        return new PropertiesBuilder()
+
+            .p("amq", "new://Resource?type=ActiveMQResourceAdapter")
+            .p("amq.DataSource", "")
+            .p("amq.BrokerXmlConfig", "broker:(vm://localhost)")
+
+            .p("target", "new://Resource?type=Queue")
+
+            .p("mdbs", "new://Container?type=MESSAGE")
+            .p("mdbs.ResourceAdapter", "amq")
+
+            .p("cf", "new://Resource?type=" + ConnectionFactory.class.getName())
+            .p("cf.ResourceAdapter", "amq")
+
+            .p("xaCf", "new://Resource?class-name=" + ActiveMQXAConnectionFactory.class.getName())
+            .p("xaCf.BrokerURL", "vm://localhost")
+
+            .build();
+    }
+
+    @Module
+    public MessageDrivenBean jar() {
+        return new MessageDrivenBean(Listener.class);
+    }
+
+    @Resource(name = "target")
+    private Queue destination;
+
+    @Resource(name = "target2")
+    private Queue destination2;
+
+    @Resource(name = "target3")
+    private Queue destination3;
+
+    @Resource(name = "xaCf")
+    private XAConnectionFactory xacf;
+
+    @Resource(name = "cf")
+    private ConnectionFactory cf;
+
+    @Inject
+    @JMSConnectionFactory("cf")
+    private JMSContext context;
+
+    @Before
+    public void resetLatch() {
+        Listener.reset();
+    }
+
+    @Test
+    public void cdi() throws InterruptedException {
+        final String text = TEXT + "3";
+
+        final AtomicReference<Throwable> error = new AtomicReference<>();
+        final CountDownLatch ready = new CountDownLatch(1);
+        final CountDownLatch over = new CountDownLatch(1);
+        new Thread() {
+            {
+                setName(JMS2AMQTest.class.getName() + ".cdi#receiver");
+            }
+
+            @Override
+            public void run() {
+                final ContextsService contextsService = WebBeansContext.currentInstance().getContextsService();
+                contextsService.startContext(RequestScoped.class, null); // spec defines it for request scope an transaction scope
+                try {
+                    ready.countDown();
+                    assertEquals(text, context.createConsumer(destination3).receiveBody(String.class, TimeUnit.MINUTES.toMillis(1)));
+                } catch (final Throwable t) {
+                    error.set(t);
+                } finally {
+                    contextsService.endContext(RequestScoped.class, null);
+                    over.countDown();
+                }
+            }
+        }.start();
+
+        ready.await(1, TimeUnit.MINUTES);
+        sleep(150); // just to ensure we called receive already
+
+        // now send the message
+        try (final JMSContext context = cf.createContext()) {
+            context.createProducer().send(destination3, text);
+        } catch (final JMSRuntimeException ex) {
+            fail(ex.getMessage());
+        }
+
+        over.await(1, TimeUnit.MINUTES);
+
+        // ensure we got the message and no exception
+        final Throwable exception = error.get();
+        if (exception != null) {
+            exception.printStackTrace();
+        }
+        assertNull(exception == null ? "ok" : exception.getMessage(), exception);
+    }
+
+    @Test
+    public void cdiListenerAPI() throws InterruptedException {
+        final String text = TEXT + "4";
+
+        final AtomicReference<Throwable> error = new AtomicReference<>();
+        final CountDownLatch ready = new CountDownLatch(1);
+        final CountDownLatch over = new CountDownLatch(1);
+        new Thread() {
+            {
+                setName(JMS2AMQTest.class.getName() + ".cdiListenerAPI#receiver");
+            }
+
+            @Override
+            public void run() {
+                final ContextsService contextsService = WebBeansContext.currentInstance().getContextsService();
+                contextsService.startContext(RequestScoped.class, null);
+                try {
+                    final JMSConsumer consumer = context.createConsumer(destination3);
+                    consumer.setMessageListener(new MessageListener() {
+                        @Override
+                        public void onMessage(final Message message) {
+                            try {
+                                assertEquals(text, message.getBody(String.class));
+                            } catch (final Throwable e) {
+                                error.set(e);
+                            } finally {
+                                over.countDown();
+                                consumer.close();
+                            }
+                        }
+                    });
+                    ready.countDown();
+                } catch (final Throwable t) {
+                    error.set(t);
+                } finally {
+                    try {
+                        over.await(1, TimeUnit.MINUTES);
+                    } catch (final InterruptedException e) {
+                        Thread.interrupted();
+                    }
+                    contextsService.endContext(RequestScoped.class, null);
+                }
+            }
+        }.start();
+
+        ready.await(1, TimeUnit.MINUTES);
+
+        // now send the message
+        try (final JMSContext context = cf.createContext()) {
+            context.createProducer().send(destination3, text);
+        } catch (final JMSRuntimeException ex) {
+            fail(ex.getMessage());
+        }
+
+        over.await(1, TimeUnit.MINUTES);
+
+        // ensure we got the message and no exception
+        final Throwable exception = error.get();
+        if (exception != null) {
+            exception.printStackTrace();
+        }
+        assertNull(exception == null ? "ok" : exception.getMessage(), exception);
+    }
+
+    @Test
+    public void sendToMdb() throws Exception {
+        try (final JMSContext context = cf.createContext()) {
+            context.createProducer().send(destination, TEXT);
+            assertTrue(Listener.sync());
+        } catch (final JMSRuntimeException ex) {
+            fail(ex.getMessage());
+        }
+    }
+
+    @Test
+    public void receive() throws InterruptedException {
+        final String text = TEXT + "2";
+        final AtomicReference<Throwable> error = new AtomicReference<>();
+        final CountDownLatch ready = new CountDownLatch(1);
+        final CountDownLatch over = new CountDownLatch(1);
+        new Thread() {
+            @Override
+            public void run() {
+                {
+                    setName(JMS2AMQTest.class.getName() + ".receive#receiver");
+                }
+
+                try (final JMSContext context = cf.createContext()) {
+                    try (final JMSConsumer consumer = context.createConsumer(destination2)) {
+                        ready.countDown();
+                        assertEquals(text, consumer.receiveBody(String.class, TimeUnit.MINUTES.toMillis(1)));
+                    }
+                } catch (final Throwable ex) {
+                    error.set(ex);
+                } finally {
+                    over.countDown();
+                }
+            }
+        }.start();
+
+        ready.await(1, TimeUnit.MINUTES);
+        sleep(150); // just to ensure we called receive already
+
+        // now send the message
+        try (final JMSContext context = cf.createContext()) {
+            context.createProducer().send(destination2, text);
+        } catch (final JMSRuntimeException ex) {
+            fail(ex.getMessage());
+        }
+
+        over.await(1, TimeUnit.MINUTES);
+
+        // ensure we got the message and no exception
+        final Throwable exception = error.get();
+        if (exception != null) {
+            exception.printStackTrace();
+        }
+        assertNull(exception == null ? "ok" : exception.getMessage(), exception);
+    }
+
+    @MessageDriven(activationConfig = {
+        @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
+        @ActivationConfigProperty(propertyName = "destination", propertyValue = "target")
+    })
+    public static class Listener implements MessageListener {
+        public static volatile CountDownLatch latch;
+        public static volatile boolean ok = false;
+
+        @Override
+        public void onMessage(final Message message) {
+            try {
+                try {
+                    ok = TextMessage.class.isInstance(message) && TEXT.equals(TextMessage.class.cast(message).getText());
+                } catch (final JMSException e) {
+                    // no-op
+                }
+            } finally {
+                latch.countDown();
+            }
+        }
+
+        public static void reset() {
+            latch = new CountDownLatch(1);
+            ok = false;
+        }
+
+        public static boolean sync() throws InterruptedException {
+            latch.await(1, TimeUnit.MINUTES);
+            return ok;
+        }
+    }
+}

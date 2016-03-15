@@ -48,6 +48,7 @@ import static org.apache.openejb.jee.FilterMapping$JAXB.readFilterMapping;
 import static org.apache.openejb.jee.FilterMapping$JAXB.writeFilterMapping;
 import static org.apache.openejb.jee.Icon$JAXB.readIcon;
 import static org.apache.openejb.jee.Icon$JAXB.writeIcon;
+import static org.apache.openejb.jee.JMSConnectionFactory$JAXB.readJMSConnectionFactory;
 import static org.apache.openejb.jee.JspConfig$JAXB.readJspConfig;
 import static org.apache.openejb.jee.JspConfig$JAXB.writeJspConfig;
 import static org.apache.openejb.jee.LifecycleCallback$JAXB.readLifecycleCallback;
@@ -166,6 +167,7 @@ public class WebApp$JAXB
         List<org.apache.openejb.jee.LifecycleCallback> preDestroy = null;
         List<MessageDestination> messageDestination = null;
         KeyedCollection<String, DataSource> dataSource = null;
+        KeyedCollection<String, JMSConnectionFactory> jmsConnectionFactories = null;
 
         // Check xsi:type
         final QName xsiType = reader.getXsiType();
@@ -582,6 +584,18 @@ public class WebApp$JAXB
                     }
                 }
                 dataSource.add(dataSourceItem);
+            } else if (("jms-connection-factory" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: dataSource
+                final JMSConnectionFactory connectionFactory = readJMSConnectionFactory(elementReader, context);
+                if (jmsConnectionFactories == null) {
+                    jmsConnectionFactories = webApp.jmsConnectionFactories;
+                    if (jmsConnectionFactories != null) {
+                        jmsConnectionFactories.clear();
+                    } else {
+                        jmsConnectionFactories = new KeyedCollection<>();
+                    }
+                }
+                jmsConnectionFactories.add(connectionFactory);
             } else if (("module-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: moduleName
                 final String moduleNameRaw = elementReader.getElementAsString();

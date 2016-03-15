@@ -75,7 +75,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -614,6 +613,7 @@ public class ReadDescriptors implements DynamicDeployer {
                         mergeOnlyMissingEntries(webModule.getWebApp().getPersistenceUnitRefMap(), webFragment.getPersistenceUnitRef());
                         mergeOnlyMissingEntries(webModule.getWebApp().getMessageDestinationRefMap(), webFragment.getMessageDestinationRef());
                         mergeOnlyMissingEntries(webModule.getWebApp().getDataSourceMap(), webFragment.getDataSource());
+                        mergeOnlyMissingEntries(webModule.getWebApp().getJMSConnectionFactoriesMap(), webFragment.getJMSConnectionFactories());
                         mergeOnlyMissingEntries(webModule.getWebApp().getEjbLocalRefMap(), webFragment.getEjbLocalRef());
                         mergeOnlyMissingEntries(webModule.getWebApp().getEjbRefMap(), webFragment.getEjbRef());
                         mergeOnlyMissingEntries(webModule.getWebApp().getServiceRefMap(), webFragment.getServiceRef());

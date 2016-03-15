@@ -682,7 +682,7 @@
           id="Default JMS Connection Factory"
           service="Resource"
           types="javax.jms.ConnectionFactory, javax.jms.QueueConnectionFactory, javax.jms.TopicConnectionFactory, QueueConnectionFactory, TopicConnectionFactory"
-          class-name="org.apache.activemq.ra.ActiveMQManagedConnectionFactory">
+          class-name="org.apache.openejb.resource.activemq.jms2.TomEEManagedConnectionFactory">
 
     ResourceAdapter Default JMS Resource Adapter
 

@@ -17,7 +17,11 @@
 
 package org.apache.openejb.resource.activemq;
 
+import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerService;
+import org.apache.activemq.ra.ActiveMQConnectionRequestInfo;
+import org.apache.activemq.ra.MessageActivationSpec;
+import org.apache.openejb.resource.activemq.jms2.TomEEConnectionFactory;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -181,6 +185,13 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
         } catch (final InterruptedException ex) {
             Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQResourceAdapter.class).getChildLogger("service").warning("Gave up on ActiveMQ shutdown after " + timeout + "ms", ex);
         }
+    }
+
+    @Override
+    protected ActiveMQConnectionFactory createConnectionFactory(final ActiveMQConnectionRequestInfo connectionRequestInfo, final MessageActivationSpec activationSpec) {
+        final ActiveMQConnectionFactory factory = new TomEEConnectionFactory();
+        connectionRequestInfo.configure(factory, activationSpec);
+        return factory;
     }
 
     private void stopImpl() throws Exception {

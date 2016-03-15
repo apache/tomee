@@ -112,6 +112,8 @@ public class Interceptor implements JndiConsumer, Session {
     protected KeyedCollection<String, PersistenceUnitRef> persistenceUnitRef;
     @XmlElement(name = "data-source", required = true)
     protected KeyedCollection<String, DataSource> dataSource;
+    @XmlElement(name = "jms-connection-factory", required = true)
+    protected KeyedCollection<String, JMSConnectionFactory> jmsConnectionFactories;
     @XmlElement(name = "post-construct", required = true)
     protected List<LifecycleCallback> postConstruct;
     @XmlElement(name = "pre-destroy", required = true)
@@ -436,5 +438,13 @@ public class Interceptor implements JndiConsumer, Session {
         getAroundTimeout().add(new AroundTimeout(interceptorClass, method));
     }
 
+    @Override
+    public Collection<JMSConnectionFactory> getJMSConnectionFactories() {
+        return jmsConnectionFactories == null ? (jmsConnectionFactories = new KeyedCollection<>()) : jmsConnectionFactories;
+    }
 
+    @Override
+    public Map<String, JMSConnectionFactory> getJMSConnectionFactoriesMap() {
+        return KeyedCollection.class.cast(getJMSConnectionFactories()).toMap();
+    }
 }

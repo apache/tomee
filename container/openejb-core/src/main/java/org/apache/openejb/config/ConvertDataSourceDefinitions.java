@@ -28,15 +28,13 @@ import org.apache.openejb.util.PropertyPlaceHolderHelper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
 /**
  * @version $Rev$ $Date$
  */
-public class ConvertDataSourceDefinitions implements DynamicDeployer {
+public class ConvertDataSourceDefinitions extends BaseConvertDefinitions {
 
     @Override
     public AppModule deploy(final AppModule appModule) throws OpenEJBException {
@@ -61,10 +59,7 @@ public class ConvertDataSourceDefinitions implements DynamicDeployer {
 
 
     private Resource toResource(final DataSource datasource) {
-        String name = datasource.getName();
-        name = name.replaceFirst("java:comp/env/", "");
-        name = name.replaceFirst("java:/", "");
-        name = name.replaceFirst("java:", "");
+        final String name = cleanUpName(datasource.getName());
 
         final Resource def = new Resource(name, javax.sql.DataSource.class.getName());
 
@@ -148,36 +143,4 @@ public class ConvertDataSourceDefinitions implements DynamicDeployer {
 
         properties.put(key, PropertyPlaceHolderHelper.value(String.valueOf(value)));
     }
-
-    private List<JndiConsumer> collectConsumers(final AppModule appModule) {
-
-        final List<JndiConsumer> jndiConsumers = new ArrayList<JndiConsumer>();
-
-        for (final ClientModule module : appModule.getClientModules()) {
-            final JndiConsumer consumer = module.getApplicationClient();
-            if (consumer == null) {
-                continue;
-            }
-            jndiConsumers.add(consumer);
-        }
-
-        for (final WebModule webModule : appModule.getWebModules()) {
-            final JndiConsumer consumer = webModule.getWebApp();
-            if (consumer == null) {
-                continue;
-            }
-            jndiConsumers.add(consumer);
-        }
-
-        for (final EjbModule ejbModule : appModule.getEjbModules()) {
-            Collections.addAll(jndiConsumers, ejbModule.getEjbJar().getEnterpriseBeans());
-        }
-
-        if (appModule.getApplication() != null) {
-            jndiConsumers.add(appModule.getApplication());
-        }
-
-        return jndiConsumers;
-    }
-
 }

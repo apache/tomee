@@ -22,6 +22,8 @@ import org.apache.geronimo.connector.outbound.ConnectionReturnAction;
 import org.apache.geronimo.connector.outbound.ConnectionTrackingInterceptor;
 import org.apache.geronimo.connector.outbound.ManagedConnectionInfo;
 import org.apache.geronimo.connector.outbound.connectiontracking.ConnectionTracker;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.DissociatableManagedConnection;
@@ -126,11 +128,15 @@ public class AutoConnectionTracker implements ConnectionTracker {
             }
 
             try {
-                final Object value = method.invoke(handle, args);
-                return value;
+                return method.invoke(handle, args);
             } catch (final InvocationTargetException ite) {
                 // catch InvocationTargetExceptions and turn them into the target exception (if there is one)
                 final Throwable t = ite.getTargetException();
+                if (AbstractMethodError.class.isInstance(t)) {
+                    // "debug" info
+                    Logger.getInstance(LogCategory.OPENEJB, AutoConnectionTracker.class)
+                        .error("Missing method: " + method + " on " + handle);
+                }
                 if (t != null) {
                     throw t;
                 }

@@ -167,6 +167,8 @@ public class EntityBean implements RemoteBean {
     protected List<LifecycleCallback> preDestroy;
     @XmlElement(name = "data-source")
     protected KeyedCollection<String, DataSource> dataSource;
+    @XmlElement(name = "jms-connection-factory", required = true)
+    protected KeyedCollection<String, JMSConnectionFactory> jmsConnectionFactories;
     @XmlElement(name = "security-role-ref", required = true)
     protected List<SecurityRoleRef> securityRoleRef;
     @XmlElement(name = "security-identity")
@@ -599,5 +601,15 @@ public class EntityBean implements RemoteBean {
     }
 
     public void setTransactionType(final TransactionType type) {
+    }
+
+    @Override
+    public Collection<JMSConnectionFactory> getJMSConnectionFactories() {
+        return jmsConnectionFactories == null ? (jmsConnectionFactories = new KeyedCollection<>()) : jmsConnectionFactories;
+    }
+
+    @Override
+    public Map<String, JMSConnectionFactory> getJMSConnectionFactoriesMap() {
+        return KeyedCollection.class.cast(getJMSConnectionFactories()).toMap();
     }
 }
