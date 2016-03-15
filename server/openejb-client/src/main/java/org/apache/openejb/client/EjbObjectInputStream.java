@@ -119,7 +119,10 @@ public class EjbObjectInputStream extends ObjectInputStream {
 
         public final String check(final String name) {
             if (isBlacklisted(name)) {
-                throw new SecurityException(name + " is not whitelisted as deserialisable, prevented before loading it.");
+                throw new SecurityException(name + " is not whitelisted as deserialisable, prevented before loading it, " +
+                    "customize tomee.serialization.class.blacklist and tomee.serialization.class.whitelist to add it to not fail there. " +
+                    "-Dtomee.serialization.class.blacklist=- -Dtomee.serialization.class.whitelist=" + name +
+                    " for instance (or in conf/system.properties).");
             }
             return name;
         }
