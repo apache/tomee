@@ -494,7 +494,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
             String mapping = null;
 
             final String name = appClazz.getName();
-            if (name.equals(s.servletClass) || name.equals(s.servletName)) {
+            if (name.equals(s.servletClass) || name.equals(s.servletName) || "javax.ws.rs.core.Application ".equals(s.servletName)) {
                 mapping = s.mappings.iterator().next();
             } else {
                 for (final ParamValueInfo pvi : s.initParams) {
@@ -518,6 +518,9 @@ public abstract class RESTService implements ServerService, SelfManaging {
                 break;
             }
         }
+        if (builder != null) { // https://issues.apache.org/jira/browse/CXF-5702
+            return builder.toString();
+        }
 
         // annotation
         final ApplicationPath path = appClazz.getAnnotation(ApplicationPath.class);
@@ -527,12 +530,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
                 appPath = appPath.substring(0, appPath.length() - 1);
             }
 
-            if (builder == null) {
-                builder = new StringBuilder();
-            } else if (builder.length() > 0 && builder.charAt(builder.length() - 1) != '/') {
-                builder.append('/');
-            }
-
+            builder = new StringBuilder();
             if (appPath.startsWith("/")) {
                 builder.append(appPath.substring(1));
             } else {

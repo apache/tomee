@@ -54,7 +54,7 @@ public class SimpleApplicationWithLongMappingTest {
     @BeforeClass
     public static void beforeClass() {
         port = NetworkUtil.getNextAvailablePort();
-        BASE_URL = "http://localhost:" + port + "/foo/mapping/part2/my-app/";
+        BASE_URL = "http://localhost:" + port + "/foo/mapping/part2";
     }
 
     @Configuration
