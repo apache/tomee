@@ -1290,10 +1290,10 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                     strings.add("-javaagent:" + jar.getAbsolutePath() + args);
                 } catch (final Exception e) {
                     getLog().warn("Can't find " + javaagent);
-                    strings.add("-javaagent:" + javaagent);
+                    strings.add("-javaagent:" + javaagent + args);
                 }
             } else {
-                strings.add("-javaagent:" + javaagent);
+                strings.add("-javaagent:" + javaagent + args);
             }
 
             if (persistJavaagents) {
