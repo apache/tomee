@@ -675,10 +675,6 @@
 
     # How long to wait for broker startup
     StartupTimeout 10 seconds
-
-    # we don't want it to be created if we don't actually use JMS but we have this default connection factory
-    # we don't use Lazy cause the lazyness it would still be eager cause of the connection factory creation
-    StartWhenNeeded true
   </ServiceProvider>
 
   <ServiceProvider
