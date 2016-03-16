@@ -31,6 +31,7 @@ import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
 import java.security.Principal;
+import java.util.Properties;
 
 public class TomcatHelper {
     private static StandardServer server;
@@ -158,7 +159,19 @@ public class TomcatHelper {
             if ("true".equalsIgnoreCase(SystemInstance.get().getProperty("tomee.tomcat.override.jar-scanner", "true"))
                     && !TomEEJarScanner.class.isInstance(standardContext.getJarScanner())
                     && StandardJarScanner.class.isInstance(standardContext.getJarScanner())) {
-                standardContext.setJarScanner(new TomEEJarScanner());
+                final TomEEJarScanner jarScanner = new TomEEJarScanner();
+
+                final Properties properties = SystemInstance.get().getProperties();
+                final String scanClasspath = properties.getProperty(TomEEJarScanner.class.getName() + ".scanClassPath");
+                if (scanClasspath != null) {
+                    jarScanner.setScanClassPath(Boolean.parseBoolean(scanClasspath));
+                }
+                final String scanBootstrap = properties.getProperty(TomEEJarScanner.class.getName() + ".scanBootstrapClassPath");
+                if (scanBootstrap != null) {
+                    jarScanner.setScanBootstrapClassPath(Boolean.parseBoolean(scanBootstrap));
+                }
+
+                standardContext.setJarScanner(jarScanner);
             }
         } catch (final Exception e) {
             // ignore
