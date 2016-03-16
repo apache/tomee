@@ -360,7 +360,7 @@ public class AnnotationDeployer implements DynamicDeployer {
     public AnnotationDeployer() {
         discoverAnnotatedBeans = new DiscoverAnnotatedBeans();
         processAnnotatedBeans = new ProcessAnnotatedBeans(SystemInstance.get().getOptions().get("openejb.jaxws.add-remote", false));
-        builtInEnvironmentEntries = new BuiltInEnvironmentEntries(SystemInstance.get().getOptions().get("openejb.environment.default", true));
+        builtInEnvironmentEntries = new BuiltInEnvironmentEntries(SystemInstance.get().getOptions().get("openejb.environment.default", false));
         envEntriesPropertiesDeployer = new EnvEntriesPropertiesDeployer();
         mBeanDeployer = new MBeanDeployer();
         mergeWebappJndiContext = new MergeWebappJndiContext();

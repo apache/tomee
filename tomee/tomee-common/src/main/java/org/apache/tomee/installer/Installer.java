@@ -716,6 +716,10 @@ public class Installer implements InstallerInterface {
                 systemPropertiesWriter.write("# openejb.check.classloader.verbose = false\n");
 
                 systemPropertiesWriter.write("\n");
+                systemPropertiesWriter.write("# Activate EE default resources (ManagedExecutorService, JMSConnectionFactory if JMS is there...)");
+                systemPropertiesWriter.write("openejb.environment.default = true\n");
+
+                systemPropertiesWriter.write("\n");
                 systemPropertiesWriter.write("# tomee.jaxws.subcontext = webservices\n");
                 systemPropertiesWriter.write("# tomee.jaxws.oldsubcontext = false\n");
 

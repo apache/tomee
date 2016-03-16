@@ -18,6 +18,7 @@ package org.apache.openejb.activemq;
 
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Classes;
+import org.apache.openejb.testing.ContainerProperties;
 import org.apache.openejb.testing.SimpleLog;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,6 +37,7 @@ import static org.junit.Assert.fail;
 @SimpleLog
 @Classes(cdi = true, innerClassesAsBean = true)
 @RunWith(ApplicationComposer.class)
+@ContainerProperties(@ContainerProperties.Property(name = "openejb.environment.default", value = "true")) // off in embedded mode OOTB
 public class JMS2AMQDefaultConnectionFactoryTest {
     @Inject
     private JMSContext defaultContext;
