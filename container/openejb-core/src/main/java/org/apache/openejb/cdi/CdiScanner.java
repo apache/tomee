@@ -239,9 +239,9 @@ public class CdiScanner implements ScannerService {
             if (scanModeAnnotated) {
                 try {
                     Logger.getInstance(LogCategory.OPENEJB, CdiScanner.class.getName())
-                            .info("No beans.xml in " + bda.uri.toASCIIString()
-                                    + " looking all classes to find CDI beans, maybe think to add a beans.xml or "
-                                    + "add it to exclusions.list");
+                            .info("Using annotated mode for " + bda.uri.toASCIIString()
+                                    + " looking all classes to find CDI beans, maybe think to add a beans.xml if not there or "
+                                    + "add the jar to exclusions.list");
                 } catch (final Exception ex) {
                     // no-op: not a big deal
                 }
