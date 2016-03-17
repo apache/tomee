@@ -31,7 +31,20 @@ import java.util.concurrent.Callable;
 public abstract class CUTask<T> extends ManagedTaskListenerTask implements Comparable<Object> {
     private static final SecurityService SECURITY_SERVICE = SystemInstance.get().getComponent(SecurityService.class);
 
+    // only updated in container startup phase, no concurrency possible, don't use it at runtime!
+    private static volatile ContainerListener[] CONTAINER_LISTENERS = new ContainerListener[0];
+
+    public static void addContainerListener(final ContainerListener cl) {
+        final ContainerListener[] array = new ContainerListener[CONTAINER_LISTENERS.length + 1];
+        if (CONTAINER_LISTENERS.length > 0) {
+            System.arraycopy(CONTAINER_LISTENERS, 0, array, 0, CONTAINER_LISTENERS.length);
+        }
+        array[CONTAINER_LISTENERS.length] = cl;
+        CONTAINER_LISTENERS = array;
+    }
+
     private final Context initialContext;
+    private final Object[] containerListenerStates;
 
     public CUTask(final Object task) {
         super(task);
@@ -48,10 +61,27 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask implements Compa
         initialContext = new Context(
             associate, stateTmp, threadContext == null ? null : threadContext.get(AbstractSecurityService.SecurityContext.class),
             threadContext, Thread.currentThread().getContextClassLoader(), null);
+        if (CONTAINER_LISTENERS.length > 0) {
+            containerListenerStates = new Object[CONTAINER_LISTENERS.length];
+            for (int i = 0; i < CONTAINER_LISTENERS.length; i++) {
+                containerListenerStates[i] = CONTAINER_LISTENERS[i].onCreation();
+            }
+        } else {
+            containerListenerStates = null;
+        }
     }
 
     protected T invoke(final Callable<T> call) throws Exception {
         initialContext.enter();
+        final Object[] oldStates;
+        if (CONTAINER_LISTENERS.length > 0) {
+            oldStates = new Object[CONTAINER_LISTENERS.length];
+            for (int i = 0; i < CONTAINER_LISTENERS.length; i++) {
+                oldStates[i] = CONTAINER_LISTENERS[i].onStart(containerListenerStates[i]);
+            }
+        } else {
+            oldStates = null;
+        }
 
         Throwable throwable = null;
         try {
@@ -62,9 +92,16 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask implements Compa
             taskAborted(throwable);
             return rethrow(t);
         } finally {
-            taskDone(future, executor, delegate, throwable);
-
-            initialContext.exit();
+            try {
+                taskDone(future, executor, delegate, throwable);
+            } finally {
+                if (CONTAINER_LISTENERS.length > 0) {
+                    for (int i = 0; i < CONTAINER_LISTENERS.length; i++) {
+                        CONTAINER_LISTENERS[i].onEnd(oldStates[i]);
+                    }
+                }
+                initialContext.exit();
+            }
         }
     }
 
@@ -212,5 +249,11 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask implements Compa
     @Override
     public int compareTo(final Object o) {
         return Comparable.class.isInstance(delegate) ? Comparable.class.cast(delegate).compareTo(o) : -1;
+    }
+
+    public interface ContainerListener<T> {
+        T onCreation();
+        T onStart(T state);
+        void onEnd(T oldState);
     }
 }

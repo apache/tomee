@@ -24,18 +24,27 @@ import org.apache.openejb.testing.RandomPort;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.net.URL;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicReference;
+import javax.annotation.Resource;
+import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.container.Suspended;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import java.net.URL;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 @EnableServices("jaxrs")
 @Classes(cdi = true, innerClassesAsBean = true)
@@ -46,10 +55,25 @@ public class SuspendedTest {
     public static class Endpoint {
         private static final CountDownLatch LATCH = new CountDownLatch(1);
         private volatile AsyncResponse current;
+        private static volatile Future<String> asyncPath;
+
+        @Context
+        private UriInfo info;
+
+        @Resource
+        private ManagedExecutorService es;
 
         @GET
         public String async(@Suspended final AsyncResponse response) {
             if (current == null) {
+                asyncPath = es.submit(new Callable<String>() {
+                    @Override
+                    public String call() throws Exception {
+                        final String path = info.getPath();
+                        assertNotNull(path);
+                        return path;
+                    }
+                });
                 current = response;
                 LATCH.countDown();
                 return "ignored";
@@ -58,11 +82,23 @@ public class SuspendedTest {
             }
         }
 
+        @GET
+        @Path("path")
+        public String path() {
+            try {
+                return asyncPath.get();
+            } catch (final InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+                fail();
+                return null;
+            }
+        }
+
         @POST
         @Path("answer")
         public void async(final String response) {
             current.resume(response); // spec doesnt mandate a new thread here but tomcat does
-        }        
+        }
     }
 
     @RandomPort("http")
@@ -83,5 +119,6 @@ public class SuspendedTest {
         WebClient.create(url.toExternalForm() + "openejb/touch").path("answer").post("hello");
         end.await();
         assertEquals("hello", response.get().readEntity(String.class));
+        assertEquals("touch", WebClient.create(url.toExternalForm() + "openejb/touch").path("path").get(String.class));
     }
 }

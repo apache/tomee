@@ -33,6 +33,7 @@ import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.cxf.transport.util.CxfUtil;
 import org.apache.openejb.server.rest.RESTService;
 import org.apache.openejb.server.rest.RsHttpListener;
+import org.apache.openejb.threads.task.CUTask;
 import org.apache.webbeans.annotation.AnyLiteral;
 import org.apache.webbeans.annotation.EmptyAnnotationLiteral;
 import org.apache.webbeans.config.WebBeansContext;
@@ -169,6 +170,27 @@ public class CxfRSService extends RESTService {
     public void init(final Properties properties) throws Exception {
         super.init(properties);
         SystemInstance.get().setComponent(RESTResourceFinder.class, new CxfRESTResourceFinder());
+
+        try {
+            CUTask.addContainerListener(new CUTask.ContainerListener() {
+                @Override
+                public Object onCreation() {
+                    return Contexts.state();
+                }
+
+                @Override
+                public Object onStart(final Object state) {
+                    return Contexts.restore(state);
+                }
+
+                @Override
+                public void onEnd(final Object oldState) {
+                    Contexts.restore(oldState);
+                }
+            });
+        } catch(final Throwable th) {
+            // unlikely but means the container core has been customized so just ignore it
+        }
 
         CxfUtil.configureBus();
 

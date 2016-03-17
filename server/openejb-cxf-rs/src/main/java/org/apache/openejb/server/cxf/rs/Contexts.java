@@ -26,8 +26,11 @@ import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.Message;
 import org.apache.openejb.cdi.CdiAppContextsService;
 import org.apache.openejb.rest.ThreadLocalContextManager;
+import org.apache.openejb.threads.task.CUTask;
 
 import javax.annotation.Resource;
+import javax.enterprise.concurrent.ManagedExecutorService;
+import javax.enterprise.concurrent.ManagedTaskListener;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
@@ -52,6 +55,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Future;
 
 public final class Contexts {
     private static final ThreadLocal<Exchange> EXCHANGE = new ThreadLocal<>();
@@ -191,7 +195,25 @@ public final class Contexts {
     }
 
     public static <T> T find(final Class<T> clazz) {
-        return JAXRSUtils.createContextValue(EXCHANGE.get().getInMessage(), null, clazz);
+        final Message m = JAXRSUtils.getCurrentMessage();
+        if (m  != null) {
+            return JAXRSUtils.createContextValue(m, null, clazz);
+        }
+        final Exchange exchange = EXCHANGE.get();
+        if (exchange == null) {
+            throw new IllegalStateException("No CXF message in that thread so can't use " + clazz);
+        }
+        return JAXRSUtils.createContextValue(exchange.getInMessage(), null, clazz);
+    }
+
+    public static Object state() {
+        return EXCHANGE.get();
+    }
+
+    public static Object restore(final Object oldState) {
+        final Object old = state();
+        EXCHANGE.set(Exchange.class.cast(oldState));
+        return old;
     }
 
     private static class CleanUpThreadLocal implements Runnable {
