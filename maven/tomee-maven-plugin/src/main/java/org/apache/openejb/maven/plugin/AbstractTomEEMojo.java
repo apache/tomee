@@ -1276,7 +1276,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                 args = "";
             }
 
-            String path = javaagent;Connection
+            String path = javaagent;
             if (!new File(javaagent).isFile()) {
                 try {
                     final File jar = mvnToFile(javaagent, "jar");
