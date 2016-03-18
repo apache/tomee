@@ -37,9 +37,13 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
+
+import static java.util.Arrays.asList;
 
 @Mojo(name = "zip", requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class ApplicationComposerZipMojo extends ApplicationComposerMojo {
@@ -60,6 +64,9 @@ public class ApplicationComposerZipMojo extends ApplicationComposerMojo {
 
     @Parameter
     protected String classifier;
+
+    @Parameter
+    private String[] excludedArtifacts;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -91,7 +98,11 @@ public class ApplicationComposerZipMojo extends ApplicationComposerMojo {
         }
 
         // app deps
+        final Collection<String> excludedAnyway = excludedArtifacts == null ? Collections.<String>emptyList() : asList(excludedArtifacts);
         for (final Artifact artifact : (Set<Artifact>) project.getArtifacts()) {
+            if (excludedAnyway.contains(artifact.getGroupId() + ":" + artifact.getArtifactId())) {
+                continue;
+            }
             final File file = artifact.getFile();
             try {
                 final File to = new File(lib, file.getName());
