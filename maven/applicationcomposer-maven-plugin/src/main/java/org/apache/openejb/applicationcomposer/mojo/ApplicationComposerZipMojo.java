@@ -22,6 +22,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
@@ -40,7 +41,7 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 
-@Mojo(name = "zip")
+@Mojo(name = "zip", requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class ApplicationComposerZipMojo extends ApplicationComposerMojo {
     @Parameter(defaultValue = "${project.build.directory}/${project.build.finalName}-applicationcomposer")
     protected File workDir;

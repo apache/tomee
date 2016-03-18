@@ -21,6 +21,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.testing.ApplicationComposers;
 
@@ -28,14 +29,24 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-@Mojo(name = "run")
+import static java.util.Arrays.asList;
+
+@Mojo(name = "run", requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class ApplicationComposerRunMojo extends ApplicationComposerMojo {
     @Parameter
     private String[] args;
+
+    @Parameter
+    private String[] acceptScopes;
+
+    @Parameter
+    private String[] excludedArtifacts;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -75,7 +86,15 @@ public class ApplicationComposerRunMojo extends ApplicationComposerMojo {
 
     private Collection<URL> findDeps() {
         final List<URL> urls = new ArrayList<>();
+        final Collection<String> passingScoped = acceptScopes == null ? asList("compile", "runtime") : asList(acceptScopes);
+        final Collection<String> excludedAnyway = excludedArtifacts == null ? Collections.<String>emptyList() : asList(excludedArtifacts);
         for (final Artifact artifact : (Set<Artifact>) project.getArtifacts()) {
+            if (!passingScoped.contains(artifact.getScope())) {
+                continue;
+            }
+            if (excludedAnyway.contains(artifact.getGroupId() + ":" + artifact.getArtifactId())) {
+                continue;
+            }
             try {
                 urls.add(artifact.getFile().toURI().toURL());
             } catch (final MalformedURLException e) {
