@@ -5,14 +5,14 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.tomee.embedded;
 
@@ -30,7 +30,6 @@ import org.apache.catalina.startup.Catalina;
 import org.apache.catalina.startup.CatalinaProperties;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.commons.lang3.text.StrSubstitutor;
-import org.apache.coyote.http11.Http11Protocol;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.Injector;
@@ -83,8 +82,11 @@ import org.apache.velocity.runtime.log.NullLogChute;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.apache.xbean.finder.UrlSet;
 import org.apache.xbean.finder.filter.Filters;
+import org.apache.xbean.recipe.ObjectRecipe;
 import org.codehaus.swizzle.stream.ReplaceStringsInputStream;
 
+import javax.naming.Context;
+import javax.naming.NamingException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -102,8 +104,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
-import javax.naming.Context;
-import javax.naming.NamingException;
 
 import static java.util.Arrays.asList;
 
@@ -479,16 +479,19 @@ public class Container implements AutoCloseable {
         }
 
         if (tomcat.getRawConnector() == null && !configuration.isSkipHttp()) {
-            final Connector connector = new Connector(Http11Protocol.class.getName());
+            final Connector connector = createConnector();
             connector.setPort(configuration.getHttpPort());
-            connector.setAttribute("connectionTimeout", "3000");
+            if (connector.getAttribute("connectionTimeout") == null) {
+                connector.setAttribute("connectionTimeout", "3000");
+            }
+
             tomcat.getService().addConnector(connector);
             tomcat.setConnector(connector);
         }
 
         // create https connector
         if (configuration.isSsl()) {
-            final Connector httpsConnector = new Connector(Http11Protocol.class.getName());
+            final Connector httpsConnector = createConnector();
             httpsConnector.setPort(configuration.getHttpsPort());
             httpsConnector.setSecure(true);
             httpsConnector.setProperty("SSLEnabled", "true");
@@ -501,8 +504,12 @@ public class Container implements AutoCloseable {
                 httpsConnector.setAttribute("keystorePass", configuration.getKeystorePass());
             }
             httpsConnector.setAttribute("keystoreType", configuration.getKeystoreType());
-            httpsConnector.setAttribute("clientAuth", configuration.getClientAuth());
-            httpsConnector.setAttribute("keyAlias", configuration.getKeyAlias());
+            if (configuration.getClientAuth() != null) {
+                httpsConnector.setAttribute("clientAuth", configuration.getClientAuth());
+            }
+            if (configuration.getKeyAlias() != null) {
+                httpsConnector.setAttribute("keyAlias", configuration.getKeyAlias());
+            }
 
             tomcat.getService().addConnector(httpsConnector);
 
@@ -597,6 +604,33 @@ public class Container implements AutoCloseable {
         if (configuration.isWithEjbRemote()) {
             tomcat.getHost().addChild(new TomEERemoteWebapp());
         }
+    }
+
+    protected Connector createConnector() {
+        final Connector connector;
+        final Properties properties = configuration.getProperties();
+        if (properties != null) {
+            final Map<String, String> attributes = new HashMap<>();
+            final ObjectRecipe recipe = new ObjectRecipe(Connector.class);
+            for (final String key : properties.stringPropertyNames()) {
+                if (!key.startsWith("connector.")) {
+                    continue;
+                }
+                final String substring = key.substring("connector.".length());
+                if (!substring.startsWith("attributes.")) {
+                    recipe.setProperty(substring, properties.getProperty(key));
+                } else {
+                    attributes.put(substring.substring("attributes.".length()), properties.getProperty(key));
+                }
+            }
+            connector = recipe.getProperties().isEmpty() ?  new Connector() : Connector.class.cast(recipe.create());
+            for (final Map.Entry<String, String> attr : attributes.entrySet()) {
+                connector.setAttribute(attr.getKey(), attr.getValue());
+            }
+        } else {
+            connector = new Connector();
+        }
+        return connector;
     }
 
     private static Server createServer(final String serverXml) {

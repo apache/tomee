@@ -38,6 +38,9 @@ public class Main {
     public static final String DOC_BASE = "doc-base";
     public static final String AS_WAR = "as-war";
     public static final String RENAMING = "renaming";
+    public static final String SERVER_XML = "serverxml";
+    public static final String TOMEE_XML = "tomeexml";
+    public static final String PROPERTY = "property";
 
     public static void main(final String[] args) {
         final CommandLineParser parser = new PosixParser();
@@ -121,6 +124,9 @@ public class Main {
         options.addOption("c", AS_WAR, false, "deploy classpath as war");
         options.addOption("b", DOC_BASE, true, "when deploy classpath as war, the doc base");
         options.addOption(null, RENAMING, true, "for fat war only, is renaming of the context supported");
+        options.addOption(null, SERVER_XML, true, "the server.xml path");
+        options.addOption(null, TOMEE_XML, true, "the tomee.xml path");
+        options.addOption(null, PROPERTY, true, "some container properties");
         return options;
     }
 
@@ -130,6 +136,22 @@ public class Main {
         config.setHttpPort(Integer.parseInt(args.getOptionValue(PORT, "8080")));
         config.setStopPort(Integer.parseInt(args.getOptionValue(SHUTDOWN, "8005")));
         config.setDir(args.getOptionValue(DIRECTORY, new File(new File("."), "apache-tomee").getAbsolutePath()));
+        if (args.hasOption(SERVER_XML)) {
+            config.setServerXml(args.getOptionValue(SERVER_XML));
+        }
+        if (args.hasOption(TOMEE_XML)) {
+            config.property("openejb.conf.file", args.getOptionValue(TOMEE_XML));
+        }
+        if (args.hasOption(PROPERTY)) {
+            for (final String opt : args.getOptionValues(PROPERTY)) {
+                final int sep = opt.indexOf('=');
+                if (sep > 0) {
+                    config.property(opt.substring(0, sep), opt.substring(sep + 1));
+                } else {
+                    config.property(opt, "true");
+                }
+            }
+        }
         return config;
     }
 
