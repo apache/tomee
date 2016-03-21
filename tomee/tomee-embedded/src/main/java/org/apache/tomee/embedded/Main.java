@@ -132,7 +132,6 @@ public class Main {
 
     private static Configuration createConfiguration(final CommandLine args) {
         final Configuration config = new Configuration();
-        config.setDir(System.getProperty("java.io.tmpdir"));
         config.setHttpPort(Integer.parseInt(args.getOptionValue(PORT, "8080")));
         config.setStopPort(Integer.parseInt(args.getOptionValue(SHUTDOWN, "8005")));
         config.setDir(args.getOptionValue(DIRECTORY, new File(new File("."), "apache-tomee").getAbsolutePath()));
