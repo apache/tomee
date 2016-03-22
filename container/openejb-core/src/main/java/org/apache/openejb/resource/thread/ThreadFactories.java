@@ -23,7 +23,7 @@ import javax.enterprise.concurrent.ManagedThreadFactory;
 import javax.naming.NamingException;
 import java.util.concurrent.ThreadFactory;
 
-class ThreadFactories {
+final class ThreadFactories {
     private ThreadFactories() {
         // no-op
     }
@@ -42,7 +42,7 @@ class ThreadFactories {
         }
     }
 
-    private static class ManageMyThreadFactory implements ManagedThreadFactory {
+    private static final class ManageMyThreadFactory implements ManagedThreadFactory {
         private final ThreadFactory delegate;
 
         private ManageMyThreadFactory(final ThreadFactory delegate) {
