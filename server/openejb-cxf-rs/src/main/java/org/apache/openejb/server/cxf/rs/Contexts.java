@@ -201,7 +201,7 @@ public final class Contexts {
         }
         final Exchange exchange = EXCHANGE.get();
         if (exchange == null) {
-            throw new IllegalStateException("No CXF message in that thread so can't use " + clazz);
+            throw new IllegalStateException("No CXF message usable for JAX-RS @Context injections in that thread so can't use " + clazz);
         }
         return JAXRSUtils.createContextValue(exchange.getInMessage(), null, clazz);
     }
