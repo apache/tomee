@@ -44,16 +44,16 @@ public class ManagedExecutorServiceImplFactory {
     private ExecutorService createExecutorService() {
         final BlockingQueue<Runnable> blockingQueue;
         if (queue <= 0) {
-            blockingQueue = new LinkedBlockingQueue<Runnable>();
+            blockingQueue = new LinkedBlockingQueue<>();
         } else {
-            blockingQueue = new ArrayBlockingQueue<Runnable>(queue);
+            blockingQueue = new ArrayBlockingQueue<>(queue);
         }
 
         ManagedThreadFactory managedThreadFactory;
         try {
             managedThreadFactory = "org.apache.openejb.threads.impl.ManagedThreadFactoryImpl".equals(threadFactory) ?
                     new ManagedThreadFactoryImpl() :
-                    ManagedThreadFactory.class.cast(Thread.currentThread().getContextClassLoader().loadClass(threadFactory).newInstance());
+                    ThreadFactories.findThreadFactory(threadFactory);
         } catch (final Exception e) {
             Logger.getInstance(LogCategory.OPENEJB, ManagedExecutorServiceImplFactory.class).warning("Can't create configured thread factory: " + threadFactory, e);
             managedThreadFactory = new ManagedThreadFactoryImpl();
