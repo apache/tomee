@@ -25,8 +25,6 @@ import org.apache.catalina.Service;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.servlets.DefaultServlet;
-import org.apache.coyote.http11.Http11Protocol;
-import org.apache.openejb.server.httpd.ServerServlet;
 import org.apache.tomcat.websocket.server.WsSci;
 import org.apache.tomee.catalina.IgnoredStandardContext;
 import org.apache.tomee.catalina.OpenEJBValve;
@@ -35,7 +33,6 @@ import org.apache.tomee.loader.TomcatHelper;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import javax.servlet.http.HttpServlet;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Collections;
@@ -60,7 +57,7 @@ public class LiveReloadInstaller {
         }
 
         // add connector
-        final Connector connector = new Connector(Http11Protocol.class.getName());
+        final Connector connector = new Connector();
         connector.setPort(port);
         connector.setAttribute("connectionTimeout", "30000");
         service.addConnector(connector);
