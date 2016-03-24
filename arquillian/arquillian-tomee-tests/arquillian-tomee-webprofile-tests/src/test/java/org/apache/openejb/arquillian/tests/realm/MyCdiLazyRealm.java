@@ -123,4 +123,9 @@ public class MyCdiLazyRealm implements Realm {
     public void removePropertyChangeListener(final PropertyChangeListener listener) {
         // no-op
     }
+
+    @Override
+    public String[] getRoles(final Principal principal) {
+        return new String[0];
+    }
 }
