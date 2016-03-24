@@ -302,16 +302,16 @@ public class TempClassLoader extends URLClassLoader {
                 final String s1 = o1.toExternalForm().replace(File.separatorChar, '/');
                 final String s2 = o2.toExternalForm().replace(File.separatorChar, '/');
                 if (FORCE_MAVEN_FIRST) { // tomee maven plugin dev feature
-                    if (s1.contains("/target/classes/")) {
+                    if (s1.contains("/target/classes/") || s1.contains("/build/classes/main/")) {
                         return -1;
                     }
-                    if (s2.contains("/target/classes/")) {
+                    if (s2.contains("/target/classes/") || s2.contains("/build/classes/main/")) {
                         return 1;
                     }
-                    if (s1.contains("/target/test-classes/")) {
+                    if (s1.contains("/target/test-classes/") || s1.contains("/build/classes/test/")) {
                         return -1;
                     }
-                    if (s2.contains("/target/test-classes/")) {
+                    if (s2.contains("/target/test-classes/") || s2.contains("/build/classes/test/")) {
                         return 1;
                     }
                 }

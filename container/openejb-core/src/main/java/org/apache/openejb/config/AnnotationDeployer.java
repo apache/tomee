@@ -1305,8 +1305,10 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                     // passing jar location to be able to manage maven classes/test-classes which have the same moduleId
                     String id = ejbModule.getModuleId();
-                    if (ejbModule.getJarLocation() != null && ejbModule.getJarLocation().contains(ejbModule.getModuleId() + "/target/test-classes".replace("/", File.separator))) {
-                        // with maven if both src/main/java and src/test/java are deployed
+                    if (ejbModule.getJarLocation() != null &&
+                            (ejbModule.getJarLocation().contains(ejbModule.getModuleId() + "/target/test-classes".replace("/", File.separator)) ||
+                            ejbModule.getJarLocation().contains(ejbModule.getModuleId() + "/build/classes/test".replace("/", File.separator)))) {
+                        // with maven/gradle if both src/main/java and src/test/java are deployed
                         // moduleId.Comp exists twice so it fails
                         // here we simply modify the test comp bean name to avoid it
                         id += "_test";

@@ -186,7 +186,7 @@ public class NewLoaderLogic {
         try {
             final File file = URLs.toFile(url);
 
-            final String name = filter(file).getName();
+            final String name = NameFiltering.filter(file).getName();
 
             if (skip(includeFilter, excludeFilter, name)) {
                 return true;
@@ -380,21 +380,6 @@ public class NewLoaderLogic {
         }
 
         return list.toArray(new String[list.size()]);
-    }
-
-    private static File filter(File location) {
-        final List<String> invalid = new ArrayList<String>();
-        invalid.add("classes");
-        invalid.add("test-classes");
-        invalid.add("target");
-        invalid.add("build");
-        invalid.add("dist");
-        invalid.add("bin");
-
-        while (invalid.contains(location.getName())) {
-            location = location.getParentFile();
-        }
-        return location;
     }
 
     @SuppressWarnings("UseOfSystemOutOrSystemErr")

@@ -23,9 +23,7 @@ import org.apache.openejb.util.URLs;
 
 import java.io.File;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -147,19 +145,8 @@ public interface DeploymentModule {
             return overriden;
         }
 
-        private String moduleName(File location) {
-            final List<String> invalid = new ArrayList<String>();
-            invalid.add("classes");
-            invalid.add("test-classes");
-            invalid.add("target");
-            invalid.add("build");
-            invalid.add("dist");
-            invalid.add("bin");
-
-            while (invalid.contains(location.getName())) {
-                location = location.getParentFile();
-            }
-            return stripExtension(location.getName());
+        private String moduleName(final File location) {
+            return stripExtension(NameFiltering.filter(location).getName());
         }
 
         private String stripExtension(final String name) {
