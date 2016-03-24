@@ -43,15 +43,16 @@ import java.util.List;
 import java.util.Map;
 
 public class LowTypedRealm implements Realm {
-    private static final Class<?>[] AUTHENTICATE_STRING_ARGS = new Class<?>[] { String.class };
-    private static final Class<?>[] SIMPLE_AUTHENTICATE_ARGS = new Class<?>[] { String.class, String.class };
-    private static final Class<?>[] AUTHENTICATE_ARGS = new Class<?>[] { String.class, String.class, String.class, String.class, String.class, String.class, String.class, String.class };
-    private static final Class<?>[] GSCONTEXT_AUTHENTICATE = new Class<?>[] { GSSContext.class, Boolean.class };
-    private static final Class<?>[] X509CERT_AUTHENTICATE = new Class<?>[] { X509Certificate[].class };
-    private static final Class<?>[] FIND_SECURITY_CONSTRAINTS_CONSTRAINT = new Class<?>[] { HttpServletRequest.class, String.class };
-    private static final Class<?>[] HAS_RESOURCE_PERMISSION_CONSTRAINT = new Class<?>[] { HttpServletRequest.class, HttpServletResponse.class, Object[].class, String.class };
-    private static final Class<?>[] HAS_ROLE_CONSTRAINT = new Class<?>[] { Principal.class, String.class };
-    private static final Class<?>[] HAS_USER_DATA_PERMISSION_CONSTRAINT = new Class<?>[] { HttpServletRequest.class, HttpServletResponse.class, Object[].class };
+    private static final Class<?>[] GET_ROLES_ARGS = new Class<?>[]{Principal.class};
+    private static final Class<?>[] AUTHENTICATE_STRING_ARGS = new Class<?>[]{String.class};
+    private static final Class<?>[] SIMPLE_AUTHENTICATE_ARGS = new Class<?>[]{String.class, String.class};
+    private static final Class<?>[] AUTHENTICATE_ARGS = new Class<?>[]{String.class, String.class, String.class, String.class, String.class, String.class, String.class, String.class};
+    private static final Class<?>[] GSCONTEXT_AUTHENTICATE = new Class<?>[]{GSSContext.class, Boolean.class};
+    private static final Class<?>[] X509CERT_AUTHENTICATE = new Class<?>[]{X509Certificate[].class};
+    private static final Class<?>[] FIND_SECURITY_CONSTRAINTS_CONSTRAINT = new Class<?>[]{HttpServletRequest.class, String.class};
+    private static final Class<?>[] HAS_RESOURCE_PERMISSION_CONSTRAINT = new Class<?>[]{HttpServletRequest.class, HttpServletResponse.class, Object[].class, String.class};
+    private static final Class<?>[] HAS_ROLE_CONSTRAINT = new Class<?>[]{Principal.class, String.class};
+    private static final Class<?>[] HAS_USER_DATA_PERMISSION_CONSTRAINT = new Class<?>[]{HttpServletRequest.class, HttpServletResponse.class, Object[].class};
 
     private final Object delegate;
 
@@ -64,6 +65,7 @@ public class LowTypedRealm implements Realm {
     private final Method hasResourcePermissionMethod;
     private final Method hasRoleConstraintMethod;
     private final Method hasUserDataMethod;
+    private final Method getRoles;
 
     private Container container;
 
@@ -81,6 +83,7 @@ public class LowTypedRealm implements Realm {
         hasResourcePermissionMethod = findMethod(clazz, HAS_RESOURCE_PERMISSION_CONSTRAINT);
         hasRoleConstraintMethod = findMethod(clazz, HAS_ROLE_CONSTRAINT);
         hasUserDataMethod = findMethod(clazz, HAS_USER_DATA_PERMISSION_CONSTRAINT);
+        getRoles = findMethod(clazz, GET_ROLES_ARGS);
     }
 
     private Method findMethod(final Class<?> clazz, final Class<?>[] argTypes) {
@@ -129,6 +132,11 @@ public class LowTypedRealm implements Realm {
     @Override
     public void removePropertyChangeListener(final PropertyChangeListener listener) {
         // no-op
+    }
+
+    @Override
+    public String[] getRoles(final Principal principal) {
+        return (String[]) invoke(getRoles, principal);
     }
 
     @Override

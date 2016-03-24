@@ -56,6 +56,7 @@ import org.apache.tomee.loader.TomcatHelper;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.net.URL;
+import java.security.Security;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -130,6 +131,13 @@ public class TomcatLoader implements Loader {
     }
 
     public void initDefaults(final Properties properties) {
+        try {
+            SecurityEnv.init();
+        } catch (final Throwable t) {
+            // ignore
+        }
+
+        setIfNull(properties, "authconfigprovider.factory", "false");
         setIfNull(properties, "openejb.deployments.classpath", "false");
         setIfNull(properties, "openejb.deployments.classpath.filter.systemapps", "false");
 
@@ -444,6 +452,18 @@ public class TomcatLoader implements Loader {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private static final class SecurityEnv {
+        private SecurityEnv() {
+            // no-op
+        }
+
+        public static void init() {
+            if (Security.getProperty("authconfigprovider.factory") == null) { // the API we use doesn't have the right default
+                Security.setProperty("authconfigprovider.factory", "org.apache.catalina.authenticator.jaspic.AuthConfigFactoryImpl");
             }
         }
     }

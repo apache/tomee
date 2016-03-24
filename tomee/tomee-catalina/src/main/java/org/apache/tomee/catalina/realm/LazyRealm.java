@@ -325,4 +325,9 @@ public class LazyRealm extends LifecycleBase implements Realm {
         }
         support.removePropertyChangeListener(listener);
     }
+
+    @Override
+    public String[] getRoles(final Principal principal) {
+        return instance().getRoles(principal);
+    }
 }

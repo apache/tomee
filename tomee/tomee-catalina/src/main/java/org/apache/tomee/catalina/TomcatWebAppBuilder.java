@@ -49,6 +49,7 @@ import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.startup.Constants;
 import org.apache.catalina.startup.ContextConfig;
 import org.apache.catalina.startup.HostConfig;
+import org.apache.catalina.startup.OpenEJBContextConfig;
 import org.apache.catalina.users.MemoryUserDatabase;
 import org.apache.catalina.webresources.DirResourceSet;
 import org.apache.naming.ContextAccessController;

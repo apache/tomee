@@ -24,10 +24,10 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.LifecycleState;
 import org.apache.catalina.Valve;
-import org.apache.catalina.comet.CometEvent;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
-import org.apache.catalina.util.LifecycleSupport;
+import org.apache.catalina.ha.CatalinaCluster;
+import org.apache.catalina.ha.ClusterValve;
 import org.apache.openejb.config.sys.PropertiesAdapter;
 import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.tomee.catalina.TomEERuntimeException;
@@ -36,19 +36,22 @@ import org.apache.xbean.recipe.Option;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
+import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-public class LazyValve implements Valve, Lifecycle, Contained {
+public class LazyValve implements ClusterValve, Lifecycle, Contained {
     private String delegateClassName;
     private String properties;
     private Container container;
     private Valve next;
+    private CatalinaCluster cluster;
 
     private volatile Valve delegate;
     private volatile boolean init;
     private volatile boolean start;
     private volatile LifecycleState state;
-    private final LifecycleSupport lifecycleSupport = new LifecycleSupport(this);
+    private final List<LifecycleListener> lifecycleListeners = new CopyOnWriteArrayList<>();
 
     public void setDelegateClassName(String delegateClassName) {
         this.delegateClassName = delegateClassName;
@@ -101,7 +104,7 @@ public class LazyValve implements Valve, Lifecycle, Contained {
                         if (init) {
                             try {
                                 final Lifecycle lifecycle = Lifecycle.class.cast(delegate);
-                                for (final LifecycleListener listener : lifecycleSupport.findLifecycleListeners()) {
+                                for (final LifecycleListener listener : lifecycleListeners) {
                                     lifecycle.addLifecycleListener(listener);
                                 }
                                 lifecycle.init();
@@ -112,6 +115,9 @@ public class LazyValve implements Valve, Lifecycle, Contained {
                                 // no-op
                             }
                         }
+                    }
+                    if (ClusterValve.class.isInstance(delegate)) {
+                        ClusterValve.class.cast(delegate).setCluster(cluster);
                     }
                 }
             }
@@ -153,28 +159,23 @@ public class LazyValve implements Valve, Lifecycle, Contained {
     }
 
     @Override
-    public void event(final Request request, final Response response, final CometEvent event) throws IOException, ServletException {
-        instance().event(request, response, event);
-    }
-
-    @Override
     public boolean isAsyncSupported() {
         return instance().isAsyncSupported();
     }
 
     @Override
     public void addLifecycleListener(final LifecycleListener listener) {
-        lifecycleSupport.addLifecycleListener(listener);
+        lifecycleListeners.add(listener);
     }
 
     @Override
     public LifecycleListener[] findLifecycleListeners() {
-        return lifecycleSupport.findLifecycleListeners();
+        return lifecycleListeners.toArray(new LifecycleListener[0]);
     }
 
     @Override
     public void removeLifecycleListener(final LifecycleListener listener) {
-        lifecycleSupport.removeLifecycleListener(listener);
+        lifecycleListeners.remove(listener);
     }
 
     @Override
@@ -234,5 +235,15 @@ public class LazyValve implements Valve, Lifecycle, Contained {
         if (delegate != null && Contained.class.isInstance(delegate)) {
             Contained.class.cast(delegate).setContainer(container);
         }
+    }
+
+    @Override
+    public CatalinaCluster getCluster() {
+        return cluster;
+    }
+
+    @Override
+    public void setCluster(final CatalinaCluster catalinaCluster) {
+        this.cluster = catalinaCluster;
     }
 }

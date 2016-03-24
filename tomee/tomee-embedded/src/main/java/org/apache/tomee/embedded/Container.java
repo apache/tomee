@@ -397,6 +397,7 @@ public class Container implements AutoCloseable {
         final String catalinaBase = base.getAbsolutePath();
 
         // set the env before calling anoything on tomcat or Catalina!!
+        // TODO: save previous value and restore in stop
         System.setProperty("catalina.base", catalinaBase);
         System.setProperty("openejb.deployments.classpath", "false");
         System.setProperty("catalina.home", catalinaBase);
@@ -498,7 +499,7 @@ public class Container implements AutoCloseable {
             httpsConnector.setProperty("sslProtocol", configuration.getSslProtocol());
 
             if (configuration.getKeystoreFile() != null) {
-                httpsConnector.setAttribute("keystoreFile", configuration.getKeystoreFile());
+                httpsConnector.setAttribute("", configuration.getKeystoreFile());
             }
             if (configuration.getKeystorePass() != null) {
                 httpsConnector.setAttribute("keystorePass", configuration.getKeystorePass());
@@ -623,7 +624,7 @@ public class Container implements AutoCloseable {
                     attributes.put(substring.substring("attributes.".length()), properties.getProperty(key));
                 }
             }
-            connector = recipe.getProperties().isEmpty() ?  new Connector() : Connector.class.cast(recipe.create());
+            connector = recipe.getProperties().isEmpty() ? new Connector() : Connector.class.cast(recipe.create());
             for (final Map.Entry<String, String> attr : attributes.entrySet()) {
                 connector.setAttribute(attr.getKey(), attr.getValue());
             }

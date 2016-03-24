@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.tomee.catalina;
+package org.apache.catalina.startup;
 
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
@@ -24,7 +24,6 @@ import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardWrapper;
 import org.apache.catalina.deploy.NamingResourcesImpl;
 import org.apache.catalina.realm.DataSourceRealm;
-import org.apache.catalina.startup.ContextConfig;
 import org.apache.catalina.webresources.FileResource;
 import org.apache.naming.factory.Constants;
 import org.apache.openejb.assembler.classic.AppInfo;
@@ -54,6 +53,9 @@ import org.apache.tomcat.util.descriptor.web.FilterMap;
 import org.apache.tomcat.util.descriptor.web.JspPropertyGroup;
 import org.apache.tomcat.util.descriptor.web.WebXml;
 import org.apache.tomcat.util.digester.Digester;
+import org.apache.tomee.catalina.IgnoredStandardContext;
+import org.apache.tomee.catalina.OpenEJBNamingResource;
+import org.apache.tomee.catalina.TomcatWebAppBuilder;
 import org.apache.tomee.catalina.realm.TomEEDataSourceRealm;
 import org.apache.tomee.common.NamingUtil;
 import org.apache.tomee.common.ResourceFactory;
@@ -89,6 +91,8 @@ import java.util.Set;
 
 public class OpenEJBContextConfig extends ContextConfig {
     private static Logger logger = Logger.getInstance(LogCategory.OPENEJB, OpenEJBContextConfig.class);
+
+    private static final HashMap<String, JavaClassCacheEntry> EMPTY_MAP = new HashMap<>();
 
     private static final String MYFACES_TOMEEM_CONTAINER_INITIALIZER = "org.apache.tomee.myfaces.TomEEMyFacesContainerInitializer";
     private static final String TOMEE_MYFACES_CONTEXT_LISTENER = "org.apache.tomee.myfaces.TomEEMyFacesContextListener";
@@ -552,7 +556,8 @@ public class OpenEJBContextConfig extends ContextConfig {
     @Override
     protected void processAnnotationsWebResource(final WebResource webResource,
                                                  final WebXml fragment,
-                                                 final boolean handlesTypesOnly) {
+                                                 final boolean handlesTypesOnly,
+                                                 final Map<String,JavaClassCacheEntry> javaClassCache) {
         final WebAppInfo webAppInfo = info.get();
         if (webAppInfo != null && FileResource.class.isInstance(webResource)) {
             final File file = new File(FileResource.class.cast(webResource).getCanonicalPath());
@@ -570,18 +575,21 @@ public class OpenEJBContextConfig extends ContextConfig {
                 }
             }
         } else {
-            super.processAnnotationsWebResource(webResource, fragment, handlesTypesOnly);
+            super.processAnnotationsWebResource(webResource, fragment, handlesTypesOnly, javaClassCache);
         }
     }
 
     @Override
     protected void processAnnotationsStream(final InputStream is, final WebXml fragment,
-                                            final boolean handlesTypesOnly) throws ClassFormatException, IOException {
+                                            final boolean handlesTypesOnly,
+                                            final Map<String,JavaClassCacheEntry> javaClassCache)
+            throws ClassFormatException, IOException {
         // no-op
     }
 
     @Override
-    protected void checkHandlesTypes(final JavaClass javaClass) {
+    protected void checkHandlesTypes(final JavaClass javaClass,
+                                     final Map<String,JavaClassCacheEntry> javaClassCache) {
         // no-op
     }
 
@@ -592,7 +600,8 @@ public class OpenEJBContextConfig extends ContextConfig {
     }
 
     @Override
-    protected void processAnnotationsFile(final File file, final WebXml fragment, final boolean handlesTypesOnly) {
+    protected void processAnnotationsFile(final File file, final WebXml fragment, final boolean handlesTypesOnly,
+                                          final Map<String,JavaClassCacheEntry> javaClassCache) {
         try {
             if (NewLoaderLogic.skip(file.toURI().toURL())) {
                 return;
@@ -603,7 +612,7 @@ public class OpenEJBContextConfig extends ContextConfig {
 
         final WebAppInfo webAppInfo = info.get();
         if (webAppInfo == null) {
-            super.processAnnotationsFile(file, fragment, handlesTypesOnly);
+            super.processAnnotationsFile(file, fragment, handlesTypesOnly, javaClassCache);
             return;
         }
 
@@ -611,14 +620,15 @@ public class OpenEJBContextConfig extends ContextConfig {
     }
 
     @Override
-    protected void processAnnotationsUrl(final URL currentUrl, final WebXml fragment, final boolean handlesTypeOnly) {
+    protected void processAnnotationsUrl(final URL currentUrl, final WebXml fragment, final boolean handlesTypeOnly,
+                                         final Map<String,JavaClassCacheEntry> javaClassCache) {
         if (NewLoaderLogic.skip(currentUrl)) { // we potentially see all common loader urls
             return;
         }
 
         final WebAppInfo webAppInfo = info.get();
         if (webAppInfo == null) {
-            super.processAnnotationsUrl(currentUrl, fragment, handlesTypeOnly);
+            super.processAnnotationsUrl(currentUrl, fragment, handlesTypeOnly, javaClassCache);
             return;
         }
 
@@ -654,12 +664,13 @@ public class OpenEJBContextConfig extends ContextConfig {
         }
     }
 
-    private void internalProcessAnnotationsStream(final Collection<String> urls, final WebXml fragment, final boolean handlesTypeOnly) {
+    private void internalProcessAnnotationsStream(final Collection<String> urls, final WebXml fragment,
+                                                  final boolean handlesTypeOnly) {
         for (final String url : urls) {
             InputStream is = null;
             try {
                 is = new URL(url).openStream();
-                super.processAnnotationsStream(is, fragment, handlesTypeOnly);
+                super.processAnnotationsStream(is, fragment, handlesTypeOnly, EMPTY_MAP);
             } catch (final IOException e) {
                 throw new IllegalArgumentException(e);
             } finally {
