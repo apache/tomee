@@ -906,8 +906,13 @@ public class ApplicationComposers {
                 libs = new LinkedList<>();
             }
             libs.add(thisJar);
-            if ("test-classes".equals(thisJar.getName()) && "target".equals(thisJar.getParentFile().getName())) {
+            if ("test-classes".equals(thisJar.getName()) && "target".equals(thisJar.getParentFile().getName())) { // mvn
                 final File mainClasses = new File(thisJar.getParentFile(), "classes");
+                if (mainClasses.exists()) {
+                    libs.add(mainClasses);
+                }
+            } else if ("test".equals(thisJar.getName()) && "classes".equals(thisJar.getParentFile().getName())) { // gradle
+                final File mainClasses = new File(thisJar.getParentFile(), "main");
                 if (mainClasses.exists()) {
                     libs.add(mainClasses);
                 }
