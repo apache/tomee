@@ -29,8 +29,10 @@ import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -238,17 +240,17 @@ public class RemoteServer {
                 }
 
                 if (javaOpts != null) {
-                    Collections.addAll(argsList, javaOpts.split(" +"));
+                    argsList.addAll(parse(javaOpts));
                 }
 
                 final Map<String, String> addedArgs = new HashMap<String, String>();
                 if (additionalArgs != null) {
                     for (final String arg : additionalArgs) {
-                        final String[] values = arg.split("=");
-                        if (values.length == 1) {
-                            addedArgs.put(values[0], "null");
+                        final int equal = arg.indexOf('=');
+                        if (equal < 0) {
+                            addedArgs.put(arg, "null");
                         } else {
-                            addedArgs.put(values[0], values[1]);
+                            addedArgs.put(arg.substring(0, equal), arg.substring(equal + 1));
                         }
                         argsList.add(arg);
                     }
@@ -707,5 +709,37 @@ public class RemoteServer {
                 }
             }
         }
+    }
+
+    private static Collection<String> parse(final String raw) {
+        final Collection<String> result = new LinkedList<>();
+
+        Character end = null;
+        boolean escaped = false;
+        final StringBuilder current = new StringBuilder();
+        for (int i = 0; i < raw.length(); i++) {
+            final char c = raw.charAt(i);
+            if (escaped) {
+                escaped = false;
+                current.append(c);
+            } else if ((end != null && end == c) || (c == ' ' && end == null)) {
+                if (current.length() > 0) {
+                    result.add(current.toString());
+                    current.setLength(0);
+                }
+                end = null;
+            } else if (c == '\\') {
+                escaped = true;
+            } else if (c == '"' || c == '\'') {
+                end = c;
+            } else {
+                current.append(c);
+            }
+        }
+        if (current.length() > 0) {
+            result.add(current.toString());
+        }
+
+        return result;
     }
 }
