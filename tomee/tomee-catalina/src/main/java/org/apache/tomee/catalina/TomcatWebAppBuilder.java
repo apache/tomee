@@ -35,6 +35,7 @@ import org.apache.catalina.Valve;
 import org.apache.catalina.WebResource;
 import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.WebResourceSet;
+import org.apache.catalina.Wrapper;
 import org.apache.catalina.core.ContainerBase;
 import org.apache.catalina.core.NamingContextListener;
 import org.apache.catalina.core.StandardContext;
@@ -98,6 +99,7 @@ import org.apache.openejb.core.ivm.IntraVmProxy;
 import org.apache.openejb.core.ivm.naming.SystemComponentReference;
 import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.WebApp;
+import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.httpd.BeginWebBeansListener;
@@ -1811,7 +1813,28 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
         addConfiguredDocBases(standardContext, contextInfo);
 
+        ensureMyFacesDontLooseFacesContext(standardContext);
+    }
 
+    private void ensureMyFacesDontLooseFacesContext(final StandardContext standardContext) {
+        for (final Container w : standardContext.findChildren()) {
+            if (!Wrapper.class.isInstance(w)) {
+                continue;
+            }
+            final Wrapper wrapper = Wrapper.class.cast(w);
+            if ("FacesServlet".equals(wrapper.getName()) && "javax.faces.webapp.FacesServlet".equals(wrapper.getServletClass())) {
+                final ClassLoader loader = standardContext.getLoader().getClassLoader();
+                try {
+                    if (Files.toFile(loader.getResource("javax/faces/webapp/FacesServlet.class")).getName().startsWith("myfaces")) {
+                        loader.loadClass("org.apache.tomee.myfaces.TomEEWorkaroundFacesServlet");
+                        wrapper.setServletClass("org.apache.tomee.myfaces.TomEEWorkaroundFacesServlet");
+                        break;
+                    }
+                } catch (final Throwable t) {
+                    // not there, not a big deal in most of cases
+                }
+            }
+        }
     }
 
     private static String appVersion(final AppInfo appInfo) {
