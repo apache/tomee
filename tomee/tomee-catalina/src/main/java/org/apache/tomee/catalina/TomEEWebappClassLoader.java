@@ -414,7 +414,7 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
             return super.getResourceAsStream(name);
         } catch (final NullPointerException npe) {
             // workaround cause of a bug in tomcat 8.5.0
-            final URL url = super.findResource(name);
+            final URL url = super.getResource(name);
             if (url != null) {
                 try {
                     return url.openStream();
