@@ -116,10 +116,10 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
         }
 
         if (tomeeConfiguration.getRoles() != null) {
-            configuration.setRoles(new HashMap<>(Map.class.cast(tomeeConfiguration.getRolesAsProperties())));
+            configuration.setRoles(new HashMap<String, String>(Map.class.cast(tomeeConfiguration.getRolesAsProperties())));
         }
         if (tomeeConfiguration.getUsers() != null) {
-            configuration.setUsers(new HashMap<>(Map.class.cast(tomeeConfiguration.getUsersAsProperties())));
+            configuration.setUsers(new HashMap<String, String>(Map.class.cast(tomeeConfiguration.getUsersAsProperties())));
         }
 
         return configuration;

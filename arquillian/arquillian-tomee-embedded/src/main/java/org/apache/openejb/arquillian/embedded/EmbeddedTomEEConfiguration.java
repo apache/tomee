@@ -25,7 +25,6 @@ import org.jboss.arquillian.config.descriptor.api.Multiline;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
