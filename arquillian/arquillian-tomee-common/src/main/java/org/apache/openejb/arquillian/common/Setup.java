@@ -30,6 +30,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -417,17 +418,34 @@ public class Setup {
                 args = null;
             }
 
-            final Set<String> locations = ProvisioningUtil.realLocation(trim);
-            for (final String location : locations) {
-                final File from = new File(location);
-                try {
-                    final File to = new File(libFolder, from.getName());
-                    org.apache.openejb.loader.IO.copy(from, to);
-                    if (args != null) {
-                        configs.put(to, args);
+            if (trim.startsWith("remove:")) { // like mvn plugin, needed to use plus but switch something like the jpa provider
+                final String prefix = trim.substring("remove:".length());
+                final File[] children = libFolder.listFiles(new FilenameFilter() {
+                    @Override
+                    public boolean accept(final File dir, final String name) {
+                        return name.startsWith(prefix);
                     }
-                } catch (final IOException e) {
-                    throw new IllegalArgumentException(e);
+                });
+                if (children != null && children.length > 0) {
+                    for (final File child : children) {
+                        if (!IO.delete(child) && child.getName().endsWith(".jar")) { // try to rename it to have it ignored
+                            child.renameTo(new File(child.getParentFile(), child.getName() + "_renamed"));
+                        }
+                    }
+                }
+            } else {
+                final Set<String> locations = ProvisioningUtil.realLocation(trim);
+                for (final String location : locations) {
+                    final File from = new File(location);
+                    try {
+                        final File to = new File(libFolder, from.getName());
+                        org.apache.openejb.loader.IO.copy(from, to);
+                        if (args != null) {
+                            configs.put(to, args);
+                        }
+                    } catch (final IOException e) {
+                        throw new IllegalArgumentException(e);
+                    }
                 }
             }
         }
