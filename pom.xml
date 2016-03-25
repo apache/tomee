@@ -180,7 +180,7 @@
     <version.axiom>1.2.14</version.axiom>
     <version.xalan>2.7.1</version.xalan>
     <version.hibernate>4.2.18.Final</version.hibernate>
-    <version.eclipselink>2.4.2</version.eclipselink>
+    <version.eclipselink>2.5.2</version.eclipselink>
     <version.groovy>2.4.2</version.groovy>
 
     <!-- arquillian related -->
