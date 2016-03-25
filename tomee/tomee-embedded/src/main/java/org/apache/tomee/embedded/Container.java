@@ -30,6 +30,7 @@ import org.apache.catalina.startup.Catalina;
 import org.apache.catalina.startup.CatalinaProperties;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.coyote.http2.Http2Protocol;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.Injector;
@@ -485,6 +486,9 @@ public class Container implements AutoCloseable {
             if (connector.getAttribute("connectionTimeout") == null) {
                 connector.setAttribute("connectionTimeout", "3000");
             }
+            if (configuration.isHttp2()) { // would likely need SSLHostConfig programmatically
+                connector.addUpgradeProtocol(new Http2Protocol());
+            }
 
             tomcat.getService().addConnector(connector);
             tomcat.setConnector(connector);
@@ -512,11 +516,22 @@ public class Container implements AutoCloseable {
                 httpsConnector.setAttribute("keyAlias", configuration.getKeyAlias());
             }
 
+            if (configuration.isHttp2()) { // would likely need SSLHostConfig programmatically
+                httpsConnector.addUpgradeProtocol(new Http2Protocol());
+            }
+
             tomcat.getService().addConnector(httpsConnector);
 
             if (configuration.isSkipHttp()) {
                 tomcat.setConnector(httpsConnector);
             }
+        }
+
+        for (final Connector c : configuration.getConnectors()) {
+            tomcat.getService().addConnector(c);
+        }
+        if (!configuration.isSkipHttp() && !configuration.isSsl() && !configuration.getConnectors().isEmpty()) {
+            tomcat.setConnector(configuration.getConnectors().iterator().next());
         }
 
         // Bootstrap Tomcat

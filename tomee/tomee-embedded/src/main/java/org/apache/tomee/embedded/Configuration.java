@@ -17,9 +17,11 @@
 package org.apache.tomee.embedded;
 
 import org.apache.catalina.Realm;
+import org.apache.catalina.connector.Connector;
 import org.apache.openejb.util.NetworkUtil;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -61,6 +63,11 @@ public class Configuration {
 
     private Map<String, String> users;
     private Map<String, String> roles;
+
+    private boolean http2;
+
+    private final Collection<Connector> connectors = new ArrayList<>();
+    private final Collection<ConfigurationCustomizer> customizers = new ArrayList<>();
 
     /**
      * when needed temp file only (deployClasspathAsWebapp() for instance)
@@ -342,5 +349,25 @@ public class Configuration {
 
     public void setWebResourceCached(boolean cached) {
         this.webResourceCached = cached;
+    }
+
+    public boolean isHttp2() {
+        return http2;
+    }
+
+    public void setHttp2(final boolean http2) {
+        this.http2 = http2;
+    }
+
+    public Collection<Connector> getConnectors() {
+        return connectors;
+    }
+
+    public void addCustomizer(final ConfigurationCustomizer configurationCustomizer) {
+        configurationCustomizer.customize(this);
+    }
+
+    public interface ConfigurationCustomizer {
+        void customize(Configuration configuration);
     }
 }

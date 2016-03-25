@@ -25,6 +25,7 @@ import org.jboss.arquillian.config.descriptor.api.Multiline;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
@@ -45,6 +46,24 @@ public class EmbeddedTomEEConfiguration extends TomEEConfiguration {
     private String users;
     private String roles;
     private boolean webResourcesCached = true;
+    private boolean http2;
+    private String configurationCustomizers;
+
+    public boolean isHttp2() {
+        return http2;
+    }
+
+    public void setHttp2(final boolean http2) {
+        this.http2 = http2;
+    }
+
+    public void setConfigurationCustomizers(final String configurationCustomizers) {
+        this.configurationCustomizers = configurationCustomizers;
+    }
+
+    public String getConfigurationCustomizers() {
+        return configurationCustomizers;
+    }
 
     public boolean isWebResourcesCached() {
         return webResourcesCached;

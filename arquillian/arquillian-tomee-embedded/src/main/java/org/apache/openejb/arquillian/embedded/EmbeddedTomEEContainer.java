@@ -86,6 +86,7 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
         configuration.setServerXml(tomeeConfiguration.getServerXml());
         configuration.setProperties(tomeeConfiguration.systemPropertiesAsProperties());
         configuration.setQuickSession(tomeeConfiguration.isQuickSession());
+        configuration.setHttp2(tomeeConfiguration.isHttp2());
 
         configuration.setSsl(tomeeConfiguration.isSsl());
         configuration.setHttpsPort(tomeeConfiguration.getHttpsPort());
@@ -100,11 +101,25 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
 
         configuration.setWebResourceCached(tomeeConfiguration.isWebResourcesCached());
 
+        if (tomeeConfiguration.getConfigurationCustomizers() != null) {
+            for (final String s : tomeeConfiguration.getConfigurationCustomizers().split(",")) {
+                final String trim = s.trim();
+                if (!trim.isEmpty()) {
+                    try {
+                        final Class<?> type = Thread.currentThread().getContextClassLoader().loadClass(trim);
+                        configuration.addCustomizer(Configuration.ConfigurationCustomizer.class.cast(type.newInstance()));
+                    } catch (final Exception e) {
+                        throw new IllegalArgumentException(e);
+                    }
+                }
+            }
+        }
+
         if (tomeeConfiguration.getRoles() != null) {
-            configuration.setRoles(new HashMap<String, String>(Map.class.cast(tomeeConfiguration.getRolesAsProperties())));
+            configuration.setRoles(new HashMap<>(Map.class.cast(tomeeConfiguration.getRolesAsProperties())));
         }
         if (tomeeConfiguration.getUsers() != null) {
-            configuration.setUsers(new HashMap<String, String>(Map.class.cast(tomeeConfiguration.getUsersAsProperties())));
+            configuration.setUsers(new HashMap<>(Map.class.cast(tomeeConfiguration.getUsersAsProperties())));
         }
 
         return configuration;

@@ -119,6 +119,7 @@ import org.apache.tomcat.util.descriptor.web.ContextTransaction;
 import org.apache.tomcat.util.descriptor.web.FilterDef;
 import org.apache.tomcat.util.descriptor.web.FilterMap;
 import org.apache.tomcat.util.descriptor.web.ResourceBase;
+import org.apache.tomcat.util.http.CookieProcessor;
 import org.apache.tomcat.util.scan.StandardJarScanFilter;
 import org.apache.tomee.catalina.cdi.ServletContextHandler;
 import org.apache.tomee.catalina.cdi.WebBeansThreadBindingListener;
@@ -1044,6 +1045,20 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 filterMap.setFilterName(clazzMapping[0]);
                 filterMap.addURLPattern(clazzMapping[1]);
                 standardContext.addFilterMapBefore(filterMap);
+            }
+        }
+
+        // mainly to get back compatibility with tomcat <= 8.0
+        final String cookieProcessor = SystemInstance.get().getProperty("tomee.tomcat.cookieProcessor");
+        if (cookieProcessor != null) {
+            // not that important for now if we use the container loader, we mainly want to be able to access
+            // the legacy one
+            final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+            try {
+                final Class<?> cookieProcessorClass = contextClassLoader.loadClass(cookieProcessor.trim());
+                standardContext.setCookieProcessor(CookieProcessor.class.cast(cookieProcessorClass.newInstance()));
+            } catch (final Exception e) {
+                throw new IllegalArgumentException("Cannot set CookieProcessor: " + cookieProcessor);
             }
         }
     }

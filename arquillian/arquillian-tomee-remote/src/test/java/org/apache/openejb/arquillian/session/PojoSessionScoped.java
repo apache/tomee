@@ -36,6 +36,7 @@ public class PojoSessionScoped implements Serializable {
     @PostConstruct
     public void initId() {
         id = ID.incrementAndGet();
+        System.out.println(id);
     }
 
     public int getId() {

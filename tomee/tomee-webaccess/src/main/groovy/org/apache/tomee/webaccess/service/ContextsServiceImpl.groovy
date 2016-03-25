@@ -64,7 +64,7 @@ class ContextsServiceImpl {
             def name = "${prefix}:type=Manager,context=/$baseName,host=localhost" as String
             try {
                 def contextBean = server.getObjectInstance(new ObjectName(name))
-                def maxInactiveInterval = server.getAttribute(contextBean.objectName, 'maxInactiveInterval') as Long
+                def maxInactiveInterval = server.getAttribute(contextBean.objectName, 'sessionMaxAliveTime') as Integer
                 def getValue = { String operationName, String sessionId ->
                     try {
                         server.invoke(contextBean.objectName, operationName, [sessionId] as Object[], ['java.lang.String'] as String[])
