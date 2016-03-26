@@ -23,7 +23,6 @@ import org.apache.openejb.arquillian.common.TestObserver;
 import org.apache.openejb.arquillian.common.TomEEInjectionEnricher;
 import org.apache.openejb.arquillian.common.deployment.DeploymentExceptionObserver;
 import org.apache.openejb.arquillian.common.deployment.DeploymentExceptionProvider;
-import org.apache.openejb.arquillian.transaction.OpenEJBTransactionProvider;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.test.spi.TestEnricher;
@@ -41,8 +40,15 @@ public class EmbeddedTomEEExtension implements LoadableExtension {
                 .observer(RemoteInitialContextObserver.class)
                 .observer(TestObserver.class)
                 .service(TestEnricher.class, TomEEInjectionEnricher.class)
-                .service(TransactionProvider.class, OpenEJBTransactionProvider.class)
                 .service(ResourceProvider.class, DeploymentExceptionProvider.class);
+
+            try {
+                builder.service(TransactionProvider.class,
+                        (Class<? extends TransactionProvider>) Thread.currentThread().getContextClassLoader()
+                                .loadClass("org.apache.openejb.arquillian.transaction.OpenEJBTransactionProvider"));
+            } catch (final Throwable t) {
+                // skip, not mandatory
+            }
         }
     }
 }
