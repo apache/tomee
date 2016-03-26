@@ -18,7 +18,6 @@
 package org.apache.tomee.arquillian.remote;
 
 import org.apache.openejb.arquillian.common.TomEEInjectionEnricher;
-import org.apache.openejb.arquillian.transaction.OpenEJBTransactionProvider;
 import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.test.spi.TestEnricher;
 import org.jboss.arquillian.transaction.spi.provider.TransactionProvider;
@@ -28,7 +27,14 @@ public class RemoteTomEERemoteExtension implements RemoteLoadableExtension {
     @Override
     public void register(final ExtensionBuilder builder) {
         builder.observer(RemoteTomEEObserver.class)
-            .service(TestEnricher.class, TomEEInjectionEnricher.class)
-            .service(TransactionProvider.class, OpenEJBTransactionProvider.class);
+                .service(TestEnricher.class, TomEEInjectionEnricher.class);
+
+        try {
+            builder.service(TransactionProvider.class,
+                    (Class<? extends TransactionProvider>) Thread.currentThread().getContextClassLoader()
+                            .loadClass("org.apache.openejb.arquillian.transaction.OpenEJBTransactionProvider"));
+        } catch (final Throwable t) {
+            // skip, not mandatory
+        }
     }
 }
