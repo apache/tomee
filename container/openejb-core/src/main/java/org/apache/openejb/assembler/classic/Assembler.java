@@ -220,9 +220,11 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
@@ -245,6 +247,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     public static final String OPENEJB_URL_PKG_PREFIX = IvmContext.class.getPackage().getName();
     public static final String OPENEJB_JPA_DEPLOY_TIME_ENHANCEMENT_PROP = "openejb.jpa.deploy-time-enhancement";
     public static final String PROPAGATE_APPLICATION_EXCEPTIONS = "openejb.propagate.application-exceptions";
+    public static final String TOMEE_DATASOURCE_DESTROY_TIMEOUT = "tomee.datasource.destroy.timeout.ms";
     public static final String TIMER_STORE_CLASS = "timerStore.class";
     public static final String OPENEJB_TIMERS_ON = "openejb.timers.on";
     public static final Class<?>[] VALIDATOR_FACTORY_INTERFACES = new Class<?>[]{ValidatorFactory.class};
@@ -1741,11 +1744,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     logger.debug("Stopping ResourceAdapter: " + className);
                 }
 
-                if (ExecutorService.class.isInstance(resourceAdapter.pool)) {
+                if (null != resourceAdapter.pool && ExecutorService.class.isInstance(resourceAdapter.pool)) {
                     final ExecutorService es = ExecutorService.class.cast(resourceAdapter.pool);
-                    if (null != es) {
-                        es.shutdownNow();
-                    }
+                    es.shutdownNow();
                 }
                 resourceAdapter.ra.stop();
             } catch (final Throwable t) {
@@ -1765,13 +1766,51 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 logger.fatal("ResourceAdapter Shutdown Failed: " + name, t);
             }
         } else if (DataSourceFactory.knows(object)) {
-            logger.info("Closing DataSource: " + name);
+
+            int timeout;
 
             try {
-                DataSourceFactory.destroy(object);
-            } catch (final Throwable t) {
-                //Ignore
+                timeout = Integer.parseInt(SystemInstance.get().getProperty(TOMEE_DATASOURCE_DESTROY_TIMEOUT, "1000"));
+                if(timeout < 50){
+                    logger.warning(TOMEE_DATASOURCE_DESTROY_TIMEOUT + " must be at least 50");
+                    timeout = 50;
+                }
+                if(timeout > 30000){
+                    timeout = 30000;
+                    logger.warning(TOMEE_DATASOURCE_DESTROY_TIMEOUT + " must not be greater than 30000");
+                }
+            } catch (final Exception e) {
+                timeout = 1000;
             }
+
+            final CountDownLatch latch = new CountDownLatch(1);
+            final Thread thread = new Thread("DataSource-Shutdown-" + name) {
+                @Override
+                public void run() {
+                    try {
+                        DataSourceFactory.destroy(object);
+                        logger.info("Closed DataSource: " + name);
+                    } catch (final Throwable t) {
+                        //Ignore
+                    } finally {
+                        latch.countDown();
+                    }
+                }
+            };
+
+            thread.start();
+
+            boolean closed;
+            try {
+                closed = latch.await(timeout, TimeUnit.MILLISECONDS);
+            } catch (final InterruptedException e) {
+                closed = false;
+            }
+
+            if (!closed) {
+                logger.warning("Failed to close DataSource within " + timeout + "ms: " + name);
+            }
+
         } else if (ConnectorReference.class.isInstance(object)) {
             final ConnectorReference cr = ConnectorReference.class.cast(object);
             try {
@@ -1799,12 +1838,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         try {
             //Ensure ResourceInfo for this resource is removed
             final OpenEjbConfiguration configuration = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
-            final Iterator<ResourceInfo> iterator = configuration.facilities.resources.iterator();
-            while (iterator.hasNext()) {
-                final ResourceInfo info = iterator.next();
-                if (name.equals(OPENEJB_RESOURCE_JNDI_PREFIX + info.id)) {
-                    iterator.remove();
-                    break;
+            if (configuration != null) {
+                final Iterator<ResourceInfo> iterator = configuration.facilities.resources.iterator();
+                while (iterator.hasNext()) {
+                    final ResourceInfo info = iterator.next();
+                    if (name.equals(OPENEJB_RESOURCE_JNDI_PREFIX + info.id)) {
+                        iterator.remove();
+                        break;
+                    }
                 }
             }
         } catch (final Exception e) {
@@ -3312,7 +3353,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         protected Object readResolve() throws ObjectStreamException {
             try {
                 return SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext().lookup(jndi);
-            } catch (final NamingException e) {
+            } catch (final Exception e) {
                 throw new InvalidObjectException("name not found: " + jndi);
             }
         }
