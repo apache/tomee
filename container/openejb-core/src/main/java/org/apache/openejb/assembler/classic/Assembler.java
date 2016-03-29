@@ -119,6 +119,7 @@ import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Contexts;
 import org.apache.openejb.util.DaemonThreadFactory;
+import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.ExecutorBuilder;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.LogCategory;
@@ -200,15 +201,19 @@ import javax.validation.ValidationException;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.Externalizable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InvalidObjectException;
 import java.io.ObjectStreamException;
+import java.io.PrintStream;
 import java.io.Serializable;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadInfo;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -232,9 +237,11 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
@@ -263,6 +270,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     Messages messages = new Messages(Assembler.class.getPackage().getName());
     public final Logger logger;
+    public final String resourceDestroyTimeout;
+    public final boolean threadStackOnTimeout;
     private final CoreContainerSystem containerSystem;
     private final PersistenceClassLoaderHandler persistenceClassLoaderHandler;
     private final JndiBuilder jndiBuilder;
@@ -325,6 +334,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     public Assembler(final JndiFactory jndiFactory) {
         logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, Assembler.class);
         skipLoaderIfPossible = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.classloader.skip-app-loader-if-possible", "true"));
+        resourceDestroyTimeout = SystemInstance.get().getProperty("openejb.resources.destroy.timeout");
+        threadStackOnTimeout = "true".equals(SystemInstance.get().getProperty("openejb.resources.destroy.stack-on-timeout", "false"));
         persistenceClassLoaderHandler = new PersistenceClassLoaderHandlerImpl();
 
         installNaming();
@@ -1909,6 +1920,44 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         final Collection<Method> preDestroy = null;
 
+        if (resourceDestroyTimeout != null) {
+            final Duration d = new Duration(resourceDestroyTimeout);
+            final ExecutorService es = Executors.newSingleThreadExecutor(new DaemonThreadFactory("openejb-resource-destruction-" + name));
+            final Object o = object;
+            try {
+                es.submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        doResourceDestruction(name, className, o);
+                    }
+                }).get(d.getTime(), d.getUnit());
+            } catch (final InterruptedException e) {
+                Thread.interrupted();
+            } catch (final ExecutionException e) {
+                throw RuntimeException.class.cast(e.getCause());
+            } catch (final TimeoutException e) {
+                logger.error("Can't destroy " + name + " in " + resourceDestroyTimeout + ", giving up.", e);
+                if (threadStackOnTimeout) {
+                    final ThreadInfo[] dump = ManagementFactory.getThreadMXBean().dumpAllThreads(false, false);
+                    final ByteArrayOutputStream writer = new ByteArrayOutputStream();
+                    final PrintStream stream = new PrintStream(writer);
+                    for (final ThreadInfo info : dump) {
+                        stream.println('"' + info.getThreadName() + "\" suspended=" + info.isSuspended() + " state=" + info.getThreadState());
+                        for (final StackTraceElement traceElement : info.getStackTrace()) {
+                            stream.println("\tat " + traceElement);
+                        }
+                    }
+                    logger.info("Dump on " + name + " destruction timeout:\n" + new String(writer.toByteArray()));
+                }
+            }
+        } else {
+            doResourceDestruction(name, className, object);
+        }
+
+        removeResourceInfo(name);
+    }
+
+    private void doResourceDestruction(final String name, final String className, final Object object) {
         if (object instanceof ResourceAdapterReference) {
             final ResourceAdapterReference resourceAdapter = (ResourceAdapterReference) object;
             try {
@@ -1965,8 +2014,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         } else if (logger.isDebugEnabled() && !DataSource.class.isInstance(object)) {
             logger.debug("Not processing resource on destroy: " + className);
         }
-
-        removeResourceInfo(name);
     }
 
     public void removeResourceInfo(final String name) {
