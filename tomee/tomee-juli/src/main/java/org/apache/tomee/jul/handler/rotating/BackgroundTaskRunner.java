@@ -42,7 +42,7 @@ class BackgroundTaskRunner {
             EXECUTOR_SERVICE = Executors.newFixedThreadPool(Integer.parseInt(threadCount == null ? "2" : threadCount), new ThreadFactory() {
                 private final ThreadGroup group;
                 private final AtomicInteger threadNumber = new AtomicInteger(1);
-                private final String namePrefix = "com.tomitribe.logging.jul.handler.BackgroundTaskThread-";
+                private final String namePrefix = "org.apache.tomee.jul.handler.rotating.BackgroundTaskRunner-";
 
                 {
                     final SecurityManager s = System.getSecurityManager();
