@@ -16,10 +16,16 @@
  */
 package org.apache.tomee.catalina;
 
+import org.apache.catalina.core.DefaultInstanceManager;
+import org.apache.catalina.core.StandardContext;
+import org.apache.catalina.deploy.NamingResourcesImpl;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.core.WebContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.tomcat.InstanceManager;
+import org.apache.tomcat.util.descriptor.web.Injectable;
+import org.apache.tomcat.util.descriptor.web.InjectionTarget;
 import org.apache.webbeans.exception.WebBeansConfigurationException;
 import org.apache.webbeans.exception.WebBeansCreationException;
 
@@ -30,16 +36,21 @@ import javax.servlet.ServletContext;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @version $Rev$ $Date$
  */
 public class JavaeeInstanceManager implements InstanceManager {
-
     private final WebContext webContext;
+    private final StandardContext webapp;
+    private volatile InstanceManager defaultInstanceManager;
 
-    public JavaeeInstanceManager(final WebContext webContext) {
+    public JavaeeInstanceManager(final StandardContext webapp, final WebContext webContext) {
         this.webContext = webContext;
+        this.webapp = webapp;
     }
 
     public ServletContext getServletContext() {
@@ -49,16 +60,39 @@ public class JavaeeInstanceManager implements InstanceManager {
     @Override
     public Object newInstance(final Class<?> clazz) throws IllegalAccessException, InvocationTargetException, NamingException, InstantiationException {
         try {
-            if ("org.apache.tomcat.websocket.server.WsHttpUpgradeHandler".equals(clazz.getName())) {
+            final String name = clazz.getName();
+            if ("org.apache.tomcat.websocket.server.WsHttpUpgradeHandler".equals(name)
+                    || "org.apache.tomee.myfaces.TomEEMyFacesContextListener".equals(name)
+                    || "org.apache.openejb.server.httpd.WebBeansFilter".equals(name)
+                    || "org.apache.catalina.servlets.DefaultServlet".equals(name)
+                    || "org.apache.jasper.servlet.JspServlet".equals(name)) {
                 return clazz.newInstance();
             }
 
             final Object object = webContext.newInstance(clazz);
-            postConstruct(object, clazz);
+            if (isJsp(object.getClass())) {
+                if (defaultInstanceManager == null) { // lazy cause can not be needed
+                    synchronized (this) {
+                        if (defaultInstanceManager == null) {
+                            defaultInstanceManager = new DefaultInstanceManager(
+                                    webapp.getNamingContextListener().getEnvContext(),
+                                    TomcatInjections.buildInjectionMap(webapp.getNamingResources()), webapp,
+                                    ParentClassLoaderFinder.Helper.get());
+                        }
+                    }
+                }
+                defaultInstanceManager.newInstance(object);
+            } else {
+                postConstruct(object, clazz);
+            }
             return object;
         } catch (final OpenEJBException | WebBeansCreationException | WebBeansConfigurationException e) {
             throw (InstantiationException) new InstantiationException(e.getMessage()).initCause(e);
         }
+    }
+
+    private boolean isJsp(final Class<?> type) {
+        return type.getSuperclass().getName().equals("org.apache.jasper.runtime.HttpJspBase");
     }
 
     public WebContext.Instance newWeakableInstance(final Class<?> clazz) throws IllegalAccessException, InvocationTargetException, NamingException, InstantiationException {
@@ -84,6 +118,11 @@ public class JavaeeInstanceManager implements InstanceManager {
 
     @Override
     public void newInstance(final Object o) throws IllegalAccessException, InvocationTargetException, NamingException {
+        final String name = o.getClass().getName();
+        if ("org.apache.tomee.webservices.CXFJAXRSFilter".equals(name)
+            || "org.apache.tomcat.websocket.server.WsFilter".equals(name)) {
+            return;
+        }
         try {
             webContext.inject(o);
             postConstruct(o, o.getClass());
@@ -97,8 +136,21 @@ public class JavaeeInstanceManager implements InstanceManager {
         if (o == null) {
             return;
         }
+        final String name = o.getClass().getName();
+        if ("org.apache.tomcat.websocket.server.WsHttpUpgradeHandler".equals(name)
+                || "org.apache.tomee.myfaces.TomEEMyFacesContextListener".equals(name)
+                || "org.apache.openejb.server.httpd.WebBeansFilter".equals(name)
+                || "org.apache.catalina.servlets.DefaultServlet".equals(name)
+                || "org.apache.jasper.servlet.JspServlet".equals(name)) {
+            return;
+        }
+
         final Object unwrapped = unwrap(o);
-        preDestroy(unwrapped, unwrapped.getClass());
+        if (isJsp(o.getClass())) {
+            defaultInstanceManager.destroyInstance(o);
+        } else {
+            preDestroy(unwrapped, unwrapped.getClass());
+        }
         webContext.destroy(unwrapped);
         if (unwrapped != o) { // PojoEndpointServer, they create and track a cc so release it
             webContext.destroy(o);
@@ -236,6 +288,54 @@ public class JavaeeInstanceManager implements InstanceManager {
                 return WEB_SOCKET_TYPES.getPojo == null ? o : WEB_SOCKET_TYPES.getPojo.invoke(o);
             } catch (final IllegalAccessException | InvocationTargetException | NullPointerException e) {
                 return o;
+            }
+        }
+    }
+
+    private static final class TomcatInjections { // load when needed
+        private TomcatInjections() {
+            // no-op
+        }
+
+        private static Map<String, Map<String, String>> buildInjectionMap(final NamingResourcesImpl namingResources) {
+            final Map<String, Map<String, String>> injectionMap = new HashMap<>();
+            for (final Injectable resource: namingResources.findLocalEjbs()) {
+                addInjectionTarget(resource, injectionMap);
+            }
+            for (final Injectable resource: namingResources.findEjbs()) {
+                addInjectionTarget(resource, injectionMap);
+            }
+            for (final Injectable resource: namingResources.findEnvironments()) {
+                addInjectionTarget(resource, injectionMap);
+            }
+            for (final Injectable resource: namingResources.findMessageDestinationRefs()) {
+                addInjectionTarget(resource, injectionMap);
+            }
+            for (final Injectable resource: namingResources.findResourceEnvRefs()) {
+                addInjectionTarget(resource, injectionMap);
+            }
+            for (final Injectable resource: namingResources.findResources()) {
+                addInjectionTarget(resource, injectionMap);
+            }
+            for (final Injectable resource: namingResources.findServices()) {
+                addInjectionTarget(resource, injectionMap);
+            }
+            return injectionMap;
+        }
+
+        private static void addInjectionTarget(final Injectable resource, final Map<String, Map<String, String>> injectionMap) {
+            final List<InjectionTarget> injectionTargets = resource.getInjectionTargets();
+            if (injectionTargets != null && !injectionTargets.isEmpty()) {
+                final String jndiName = resource.getName();
+                for (final InjectionTarget injectionTarget: injectionTargets) {
+                    final String clazz = injectionTarget.getTargetClass();
+                    Map<String, String> injections = injectionMap.get(clazz);
+                    if (injections == null) {
+                        injections = new HashMap<>();
+                        injectionMap.put(clazz, injections);
+                    }
+                    injections.put(injectionTarget.getTargetName(), jndiName);
+                }
             }
         }
     }

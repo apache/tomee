@@ -1398,7 +1398,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 webContext.getBindings().putAll(appContext.getBindings());
                 webContext.getBindings().putAll(getJndiBuilder(classLoader, webAppInfo, injections, appContext.getProperties()).buildBindings(JndiEncBuilder.JndiScope.comp));
 
-                final JavaeeInstanceManager instanceManager = new JavaeeInstanceManager(webContext);
+                final JavaeeInstanceManager instanceManager = new JavaeeInstanceManager(standardContext, webContext);
                 standardContext.setInstanceManager(instanceManager);
                 instanceManagers.put(classLoader, instanceManager);
                 standardContext.getServletContext().setAttribute(InstanceManager.class.getName(), standardContext.getInstanceManager());
