@@ -2258,8 +2258,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         
         try {
             object = globalContext.lookup(name);
-        } catch (final NamingException e) {
-            // if we catch a NamingException, check to see if the resource is a LaztObjectReference that has not been initialized correctly
+        } catch (final Exception e) {
+            // if we catch an Exception, check to see if the resource is a LaztObjectReference that has not been initialized correctly
             final String ctx = name.substring(0, name.lastIndexOf("/"));
             final String objName = name.substring(ctx.length() + 1);
             
