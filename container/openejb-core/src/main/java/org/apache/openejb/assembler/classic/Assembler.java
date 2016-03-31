@@ -2282,7 +2282,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
             }
             
-            throw e;
+            throw new NamingException(e.getMessage());
         }
         
         final String clazz;
