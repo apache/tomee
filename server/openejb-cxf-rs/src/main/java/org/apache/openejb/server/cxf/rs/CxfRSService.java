@@ -169,6 +169,11 @@ public class CxfRSService extends RESTService {
     @Override
     public void init(final Properties properties) throws Exception {
         super.init(properties);
+
+        System.setProperty("org.apache.johnzon.max-string-length",
+                SystemInstance.get().getProperty("org.apache.johnzon.max-string-length",
+                        properties.getProperty("org.apache.johnzon.max-string-length", "4096")));
+
         SystemInstance.get().setComponent(RESTResourceFinder.class, new CxfRESTResourceFinder());
 
         try {
