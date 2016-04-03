@@ -33,6 +33,7 @@ import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.Transactional;
 import javax.transaction.TransactionalException;
 import javax.transaction.UserTransaction;
@@ -44,7 +45,9 @@ import static javax.transaction.Transactional.TxType.NOT_SUPPORTED;
 import static javax.transaction.Transactional.TxType.REQUIRED;
 import static javax.transaction.Transactional.TxType.REQUIRES_NEW;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 @RunWith(ApplicationComposer.class)
@@ -124,7 +127,7 @@ public class TransactionalTest {
     @Test
     public void runtimeException() throws Exception {
         for (int i = 0; i < 2; i++) {
-            final AtomicInteger status = new AtomicInteger();
+            final AtomicInteger status = new AtomicInteger(-1);
             try {
                 bean.runtimeEx(new Runnable() {
                     @Override
@@ -284,6 +287,17 @@ public class TransactionalTest {
         assertNotSame(tx1, tx2.get());
     }
 
+    @Test
+    public void rb() {
+        try {
+            bean.exceptionOnCompletion();
+            fail();
+        } catch (final TransactionalException te) {
+            assertNotNull(te);
+            assertTrue(IllegalArgumentException.class.isInstance(te.getCause()));
+        }
+    }
+
     @Transactional(value = REQUIRED, rollbackOn = AnCheckedException.class)
     public static class TxBean {
         @Resource
@@ -295,6 +309,22 @@ public class TransactionalTest {
         @Transactional(value = REQUIRED)
         public void required() {
             assertHasTx();
+        }
+
+        @Transactional
+        public void exceptionOnCompletion() {
+            TransactionSynchronizationRegistry.class.cast(txMgr)
+                    .registerInterposedSynchronization(new Synchronization() {
+                        @Override
+                        public void beforeCompletion() {
+                            throw new IllegalArgumentException();
+                        }
+
+                        @Override
+                        public void afterCompletion(final int status) {
+                            // no-op
+                        }
+                    });
         }
 
         @Transactional(value = REQUIRED)

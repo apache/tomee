@@ -21,12 +21,14 @@ import org.apache.openejb.OpenEJB;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.core.CoreUserTransaction;
 import org.apache.openejb.core.transaction.TransactionPolicy;
+import org.apache.openejb.core.transaction.TransactionRolledbackException;
 import org.apache.openejb.loader.SystemInstance;
 
 import javax.enterprise.inject.spi.AnnotatedMethod;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.CDI;
 import javax.interceptor.InvocationContext;
+import javax.transaction.RollbackException;
 import javax.transaction.TransactionManager;
 import javax.transaction.Transactional;
 import javax.transaction.TransactionalException;
@@ -34,6 +36,8 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static java.util.Arrays.asList;
 
@@ -44,7 +48,6 @@ public abstract class InterceptorBase implements Serializable {
     private transient volatile ConcurrentMap<Method, Boolean> rollback = new ConcurrentHashMap<>();
 
     protected Object intercept(final InvocationContext ic) throws Exception {
-        Exception error = null;
         TransactionPolicy policy = null;
 
         final boolean forbidsUt = doesForbidUtUsage();
@@ -60,58 +63,85 @@ public abstract class InterceptorBase implements Serializable {
 
         try {
             policy = getPolicy();
-            return ic.proceed();
+            final Object proceed = ic.proceed();
+            policy.commit(); // force commit there to ensure we can catch synchro exceptions
+            return proceed;
         } catch (final Exception e) {
-            error = e;
             if (illegalStateException == e) {
                 throw e;
             }
-            throw new TransactionalException(e.getMessage(), e);
+
+            Exception error = unwrap(e);
+            if (error != null && (!HANDLE_EXCEPTION_ONLY_FOR_CLIENT || policy.isNewTransaction())) {
+                final Method method = ic.getMethod();
+                if (rollback == null) {
+                    synchronized (this) {
+                        if (rollback == null) {
+                            rollback = new ConcurrentHashMap<>();
+                        }
+                    }
+                }
+                Boolean doRollback = rollback.get(method);
+                if (doRollback != null) {
+                    if (doRollback && policy != null && policy.isTransactionActive()) {
+                        policy.setRollbackOnly();
+                    }
+                } else {
+                    // computed lazily but we could cache it later for sure if that's really a normal case
+                    final AnnotatedType<?> annotatedType = CDI.current().getBeanManager().createAnnotatedType(method.getDeclaringClass());
+                    Transactional tx = null;
+                    for (final AnnotatedMethod<?> m : annotatedType.getMethods()) {
+                        if (method.equals(m.getJavaMember())) {
+                            tx = m.getAnnotation(Transactional.class);
+                            break;
+                        }
+                    }
+                    if (tx == null) {
+                        tx = annotatedType.getAnnotation(Transactional.class);
+                    }
+                    if (tx != null) {
+                        doRollback = new ExceptionPriotiryRules(tx.rollbackOn(), tx.dontRollbackOn()).accept(error, method.getExceptionTypes());
+                        rollback.putIfAbsent(method, doRollback);
+                        if (doRollback && policy != null && policy.isTransactionActive()) {
+                            policy.setRollbackOnly();
+                        }
+                    }
+                }
+            }
+            if (policy != null) {
+                try {
+                    policy.commit();
+                } catch (final Exception ex) {
+                    // no-op: swallow to keep the right exception
+                    final Logger logger = Logger.getLogger(getClass().getName());
+                    if (logger.isLoggable(Level.FINE)) {
+                        logger.fine("Swallowing: " + ex.getMessage());
+                    }
+                }
+            }
+
+            throw new TransactionalException(e.getMessage(), error);
         } finally {
             if (forbidsUt) {
                 CoreUserTransaction.resetError(oldEx);
             }
-
-            if (policy != null) {
-                if (error != null && (!HANDLE_EXCEPTION_ONLY_FOR_CLIENT || policy.isNewTransaction())) {
-                    final Method method = ic.getMethod();
-                    if (rollback == null) {
-                        synchronized (this) {
-                            if (rollback == null) {
-                                rollback = new ConcurrentHashMap<>();
-                            }
-                        }
-                    }
-                    Boolean doRollback = rollback.get(method);
-                    if (doRollback != null) {
-                        if (doRollback) {
-                            policy.setRollbackOnly();
-                        }
-                    } else {
-                        // computed lazily but we could cache it later for sure if that's really a normal case
-                        final AnnotatedType<?> annotatedType = CDI.current().getBeanManager().createAnnotatedType(method.getDeclaringClass());
-                        Transactional tx = null;
-                        for (final AnnotatedMethod<?> m : annotatedType.getMethods()) {
-                            if (method.equals(m.getJavaMember())) {
-                                tx = m.getAnnotation(Transactional.class);
-                                break;
-                            }
-                        }
-                        if (tx == null) {
-                            tx = annotatedType.getAnnotation(Transactional.class);
-                        }
-                        if (tx != null) {
-                            doRollback = new ExceptionPriotiryRules(tx.rollbackOn(), tx.dontRollbackOn()).accept(error, method.getExceptionTypes());
-                            rollback.putIfAbsent(method, doRollback);
-                            if (doRollback) {
-                                policy.setRollbackOnly();
-                            }
-                        }
-                    }
-                }
-                policy.commit();
-            }
         }
+    }
+
+    private Exception unwrap(Exception e) {
+        Exception error = e;
+        while (error != null &&
+                (ApplicationException.class.isInstance(error) || SystemException.class.isInstance(error) || TransactionRolledbackException.class.isInstance(error))) {
+            final Throwable cause = error.getCause();
+            if (cause == error) {
+                break;
+            }
+            error = Exception.class.isInstance(cause) ? Exception.class.cast(cause) : null;
+        }
+        if (RollbackException.class.isInstance(error) && Exception.class.isInstance(error.getCause())) {
+            error = Exception.class.cast(error.getCause());
+        }
+        return error;
     }
 
     protected boolean doesForbidUtUsage() {
