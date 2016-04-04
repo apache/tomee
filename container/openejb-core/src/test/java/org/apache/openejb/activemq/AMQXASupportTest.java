@@ -100,14 +100,7 @@ public class AMQXASupportTest {
 
 
         final Connection connection = cf.createConnection();
-        try {
-            final Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            final MessageProducer producer = session.createProducer(destination);
-            producer.send(session.createTextMessage(TEXT));
-            assertTrue(Listener.sync());
-        } finally {
-            connection.close();
-        }
+        testConnection(connection);
     }
 
     @Test
@@ -116,6 +109,10 @@ public class AMQXASupportTest {
 
         final Connection connection = xacf.createXAConnection();
         assertThat(connection, instanceOf(XAConnection.class));
+        testConnection(connection);
+    }
+
+    private void testConnection(final Connection connection) throws JMSException, InterruptedException {
         try {
             final Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             final MessageProducer producer = session.createProducer(destination);
