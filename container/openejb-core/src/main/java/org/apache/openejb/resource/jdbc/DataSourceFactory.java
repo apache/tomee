@@ -39,6 +39,7 @@ import org.apache.xbean.recipe.Option;
 import org.apache.xbean.recipe.Recipe;
 
 import javax.sql.CommonDataSource;
+import javax.sql.ConnectionPoolDataSource;
 import javax.sql.DataSource;
 import javax.sql.XADataSource;
 import java.io.Flushable;
@@ -173,17 +174,18 @@ public class DataSourceFactory {
                     recipe.setProperty("url", properties.getProperty("JdbcUrl"));
                 }
 
-                final DataSource dataSource = (DataSource) recipe.create();
+                final CommonDataSource dataSource = (CommonDataSource) recipe.create();
+                final boolean isDs = DataSource.class.isInstance(dataSource);
 
                 if (managed) {
-                    if (usePool(properties)) {
-                        ds = creator.poolManaged(name, dataSource, properties);
+                    if (isDs && usePool(properties)) {
+                        ds = creator.poolManaged(name, DataSource.class.cast(dataSource), properties);
                     } else {
                         ds = creator.managed(name, dataSource);
                     }
                 } else {
-                    if (usePool(properties)) {
-                        ds = creator.pool(name, dataSource, properties);
+                    if (isDs && usePool(properties)) {
+                        ds = creator.pool(name, DataSource.class.cast(dataSource), properties);
                     } else {
                         ds = dataSource;
                     }
@@ -437,7 +439,12 @@ public class DataSourceFactory {
     }
 
     private static boolean createDataSourceFromClass(final Class<?> impl) {
-        return DataSource.class.isAssignableFrom(impl) && !SystemInstance.get().getOptions().get("org.apache.openejb.resource.jdbc.hot.deploy", false);
+        return isDataSource(impl) && !SystemInstance.get().getOptions().get("org.apache.openejb.resource.jdbc.hot.deploy", false);
+    }
+
+    private static boolean isDataSource(final Class<?> impl) {
+        return DataSource.class.isAssignableFrom(impl) || XADataSource.class.isAssignableFrom(impl) ||
+                ConnectionPoolDataSource.class.isAssignableFrom(impl);
     }
 
     private static boolean usePool(final Properties properties) {
