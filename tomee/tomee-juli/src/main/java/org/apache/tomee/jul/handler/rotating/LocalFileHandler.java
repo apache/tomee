@@ -26,10 +26,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.sql.Timestamp;
+import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -42,7 +45,6 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
-import java.util.logging.SimpleFormatter;
 import java.util.regex.Pattern;
 import java.util.zip.Deflater;
 import java.util.zip.GZIPOutputStream;
@@ -67,6 +69,8 @@ import java.util.zip.ZipOutputStream;
  * | archiveOlderThan          | -1 days                                           | how many days files are kept before being compressed
  * | purgeOlderThan            | -1 days                                           | how many days files are kept before being deleted, note: it applies on archives and not log files so 2 days of archiving and 3 days of purge makes it deleted after 5 days.
  * | compressionLevel          | -1                                                | In case of zip archiving the zip compression level (-1 for off or 0-9).
+ * | formatterPattern          | -                                                 | SimpleFormatter pattern (ignored if formatter is provided).
+ * | formatterLocale           | -                                                 | Locale to use.
  * |===
  * <p/>
  * NOTE: archiving and purging are done only when a file is rotated, it means it can be ignored during days if there is no logging activity.
@@ -172,15 +176,72 @@ public class LocalFileHandler extends Handler {
             try {
                 setFormatter(Formatter.class.cast(cl.loadClass(formatterName).newInstance()));
             } catch (final Exception e) {
-                setFormatter(new SimpleFormatter());
+                setFormatter(newSimpleFormatter(className));
             }
         } else {
-            setFormatter(new SimpleFormatter());
+            setFormatter(newSimpleFormatter(className));
         }
 
         setErrorManager(new ErrorManager());
 
         lastTimestamp = System.currentTimeMillis();
+    }
+
+    private Formatter newSimpleFormatter(final String className) {
+        final String defaultFormat = System.getProperty("java.util.logging.SimpleFormatter.format", "%1$tb %1$td, %1$tY %1$tl:%1$tM:%1$tS %1$Tp %2$s%n%4$s: %5$s%6$s%n");
+        final String format = getProperty(className + ".formatterPattern", defaultFormat);
+        final String locale = getProperty(className + ".formatterLocale", null);
+        return new PatternFormatter(format, locale == null ? Locale.getDefault() : newLocale(locale));
+    }
+
+    private Locale newLocale(final String str) { // LocaleUtils [lang3]
+        if (str == null) {
+            return null;
+        }
+        if (str.isEmpty()) {
+            return new Locale("", "");
+        }
+        if (str.contains("#")) {
+            throw new IllegalArgumentException("Invalid locale format: " + str);
+        }
+        final int len = str.length();
+        if (len < 2) {
+            throw new IllegalArgumentException("Invalid locale format: " + str);
+        }
+        final char ch0 = str.charAt(0);
+        if (ch0 == '_') {
+            if (len < 3) {
+                throw new IllegalArgumentException("Invalid locale format: " + str);
+            }
+            final char ch1 = str.charAt(1);
+            final char ch2 = str.charAt(2);
+            if (!Character.isUpperCase(ch1) || !Character.isUpperCase(ch2)) {
+                throw new IllegalArgumentException("Invalid locale format: " + str);
+            }
+            if (len == 3) {
+                return new Locale("", str.substring(1, 3));
+            }
+            if (len < 5) {
+                throw new IllegalArgumentException("Invalid locale format: " + str);
+            }
+            if (str.charAt(3) != '_') {
+                throw new IllegalArgumentException("Invalid locale format: " + str);
+            }
+            return new Locale("", str.substring(1, 3), str.substring(4));
+        }
+
+        final String[] split = str.split("_", -1);
+        final int occurrences = split.length -1;
+        switch (occurrences) {
+            case 0:
+                return new Locale(str.toUpperCase(Locale.ENGLISH));
+            case 1:
+                return new Locale(split[0], split[1]);
+            case 2:
+                return new Locale(split[0], split[1], split[2]);
+            default:
+                throw new IllegalArgumentException("Invalid locale format: " + str);
+        }
     }
 
     protected String currentDate() {
@@ -548,6 +609,59 @@ public class LocalFileHandler extends Handler {
         @Override
         public void close() throws IOException {
             out.close();
+        }
+    }
+
+    public static class PatternFormatter extends Formatter {
+        private final ThreadLocal<Date> date = new ThreadLocal<Date>() {
+            @Override
+            protected Date initialValue() {
+                return new Date();
+            }
+        };
+
+        private final String format;
+        private final Locale locale;
+
+        public PatternFormatter(final String format, final Locale locale) {
+            this.format = format;
+            this.locale = locale;
+        }
+
+        @Override
+        public String format(final LogRecord record) {
+            final Date date = this.date.get();
+            date.setTime(record.getMillis());
+
+            String source;
+            if (record.getSourceClassName() != null) {
+                source = record.getSourceClassName();
+                if (record.getSourceMethodName() != null) {
+                    source += " " + record.getSourceMethodName();
+                }
+            } else {
+                source = record.getLoggerName();
+            }
+
+            final String message = formatMessage(record);
+
+            String throwable = "";
+            final Throwable thrown = record.getThrown();
+            if (thrown != null) {
+                final StringWriter sw = new StringWriter();
+                final PrintWriter pw = new PrintWriter(sw);
+                pw.println();
+                thrown.printStackTrace(pw);
+                pw.close();
+                throwable = sw.toString();
+            }
+
+            return String.format(
+                    locale, format,
+                    date, source,
+                    record.getLoggerName(),
+                    Locale.ENGLISH == locale ? record.getLevel().getName() : record.getLevel().getLocalizedName(),
+                    message, throwable);
         }
     }
 }
