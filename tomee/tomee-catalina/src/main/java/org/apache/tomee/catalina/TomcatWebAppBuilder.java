@@ -1709,67 +1709,72 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             ContextAccessController.setReadOnly(listenerName);
         }
 
-        // owb integration filters
-        final WebBeansContext webBeansContext = getWebBeansContext(contextInfo);
-        if (webBeansContext != null) {
-            // it is important to have a begin and a end listener
-            // to be sure to create contexts before other listeners
-            // and destroy contexts after other listeners
+        thread.setContextClassLoader(classLoader);
+        try {
+            // owb integration filters
+            final WebBeansContext webBeansContext = getWebBeansContext(contextInfo);
+            if (webBeansContext != null) {
+                // it is important to have a begin and a end listener
+                // to be sure to create contexts before other listeners
+                // and destroy contexts after other listeners
 
-            final BeginWebBeansListener beginWebBeansListener = new BeginWebBeansListener(webBeansContext);
-            final EndWebBeansListener endWebBeansListener = new EndWebBeansListener(webBeansContext);
+                final BeginWebBeansListener beginWebBeansListener = new BeginWebBeansListener(webBeansContext);
+                final EndWebBeansListener endWebBeansListener = new EndWebBeansListener(webBeansContext);
 
-            {
-                final Object[] appEventListeners = standardContext.getApplicationEventListeners();
-                final Object[] newEventListeners = new Object[appEventListeners.length + 2];
+                {
+                    final Object[] appEventListeners = standardContext.getApplicationEventListeners();
+                    final Object[] newEventListeners = new Object[appEventListeners.length + 2];
 
-                newEventListeners[0] = beginWebBeansListener;
-                System.arraycopy(appEventListeners, 0, newEventListeners, 1, appEventListeners.length);
-                newEventListeners[newEventListeners.length - 1] = endWebBeansListener;
-                standardContext.setApplicationEventListeners(newEventListeners);
+                    newEventListeners[0] = beginWebBeansListener;
+                    System.arraycopy(appEventListeners, 0, newEventListeners, 1, appEventListeners.length);
+                    newEventListeners[newEventListeners.length - 1] = endWebBeansListener;
+                    standardContext.setApplicationEventListeners(newEventListeners);
+                }
+
+                {
+                    final Object[] lifecycleListeners = standardContext.getApplicationLifecycleListeners();
+                    final Object[] newLifecycleListeners = new Object[lifecycleListeners.length + 2];
+
+                    newLifecycleListeners[0] = beginWebBeansListener;
+                    System.arraycopy(lifecycleListeners, 0, newLifecycleListeners, 1, lifecycleListeners.length);
+                    newLifecycleListeners[newLifecycleListeners.length - 1] = endWebBeansListener;
+                    standardContext.setApplicationLifecycleListeners(newLifecycleListeners);
+                }
+
+                // also add the ThreadBindingListener to clean up async thread executions
+                {
+                    WebBeansThreadBindingListener webBeansThreadBindingListener = new WebBeansThreadBindingListener(webBeansContext, standardContext.getThreadBindingListener());
+                    standardContext.setThreadBindingListener(webBeansThreadBindingListener);
+                }
+
+                final ContextsService contextsService = webBeansContext.getContextsService();
+                if (CdiAppContextsService.class.isInstance(contextsService)) { // here ServletContext is usable
+                    CdiAppContextsService.class.cast(contextsService).applicationStarted(standardContext.getServletContext());
+                }
+            } else {
+                // just add the end listener to be able to stack tasks to execute at the request end
+                final EndWebBeansListener endWebBeansListener = new EndWebBeansListener(webBeansContext);
+
+                {
+                    final Object[] appEventListeners = standardContext.getApplicationEventListeners();
+                    final Object[] newEventListeners = new Object[appEventListeners.length + 1];
+
+                    System.arraycopy(appEventListeners, 0, newEventListeners, 1, appEventListeners.length);
+                    newEventListeners[newEventListeners.length - 1] = endWebBeansListener;
+                    standardContext.setApplicationEventListeners(newEventListeners);
+                }
+
+                {
+                    final Object[] lifecycleListeners = standardContext.getApplicationLifecycleListeners();
+                    final Object[] newLifecycleListeners = new Object[lifecycleListeners.length + 1];
+
+                    System.arraycopy(lifecycleListeners, 0, newLifecycleListeners, 1, lifecycleListeners.length);
+                    newLifecycleListeners[newLifecycleListeners.length - 1] = endWebBeansListener;
+                    standardContext.setApplicationLifecycleListeners(newLifecycleListeners);
+                }
             }
-
-            {
-                final Object[] lifecycleListeners = standardContext.getApplicationLifecycleListeners();
-                final Object[] newLifecycleListeners = new Object[lifecycleListeners.length + 2];
-
-                newLifecycleListeners[0] = beginWebBeansListener;
-                System.arraycopy(lifecycleListeners, 0, newLifecycleListeners, 1, lifecycleListeners.length);
-                newLifecycleListeners[newLifecycleListeners.length - 1] = endWebBeansListener;
-                standardContext.setApplicationLifecycleListeners(newLifecycleListeners);
-            }
-
-            // also add the ThreadBindingListener to clean up async thread executions
-            {
-                WebBeansThreadBindingListener webBeansThreadBindingListener = new WebBeansThreadBindingListener(webBeansContext, standardContext.getThreadBindingListener());
-                standardContext.setThreadBindingListener(webBeansThreadBindingListener);
-            }
-
-            final ContextsService contextsService = webBeansContext.getContextsService();
-            if (CdiAppContextsService.class.isInstance(contextsService)) { // here ServletContext is usable
-                CdiAppContextsService.class.cast(contextsService).applicationStarted(standardContext.getServletContext());
-            }
-        } else {
-            // just add the end listener to be able to stack tasks to execute at the request end
-            final EndWebBeansListener endWebBeansListener = new EndWebBeansListener(webBeansContext);
-
-            {
-                final Object[] appEventListeners = standardContext.getApplicationEventListeners();
-                final Object[] newEventListeners = new Object[appEventListeners.length + 1];
-
-                System.arraycopy(appEventListeners, 0, newEventListeners, 1, appEventListeners.length);
-                newEventListeners[newEventListeners.length - 1] = endWebBeansListener;
-                standardContext.setApplicationEventListeners(newEventListeners);
-            }
-
-            {
-                final Object[] lifecycleListeners = standardContext.getApplicationLifecycleListeners();
-                final Object[] newLifecycleListeners = new Object[lifecycleListeners.length + 1];
-
-                System.arraycopy(lifecycleListeners, 0, newLifecycleListeners, 1, lifecycleListeners.length);
-                newLifecycleListeners[newLifecycleListeners.length - 1] = endWebBeansListener;
-                standardContext.setApplicationLifecycleListeners(newLifecycleListeners);
-            }
+        } finally {
+            thread.setContextClassLoader(originalLoader);
         }
 
         LinkageErrorProtection.preload(standardContext);
