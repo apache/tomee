@@ -31,10 +31,7 @@ import org.apache.openejb.config.ValidationFailure;
 import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SingletonBean;
-import org.apache.openejb.jee.StatelessBean;
 import org.junit.AfterClass;
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -87,10 +84,10 @@ public class DependsOnTest extends TestCase {
 
         final EjbJar ejbJar = new EjbJar();
 
-        ejbJar.addEnterpriseBean(new StatelessBean(Two.class));
+        ejbJar.addEnterpriseBean(new SingletonBean(Two.class));
         ejbJar.addEnterpriseBean(new SingletonBean(One.class));
         ejbJar.addEnterpriseBean(new SingletonBean(Four.class));
-        ejbJar.addEnterpriseBean(new StatelessBean(Three.class));
+        ejbJar.addEnterpriseBean(new SingletonBean(Three.class));
 
         // startup and trigger @PostConstruct
         assembler.createApplication(config.configureApplication(ejbJar));
