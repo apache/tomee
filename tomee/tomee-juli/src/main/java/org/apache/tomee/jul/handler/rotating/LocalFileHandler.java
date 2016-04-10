@@ -16,8 +16,6 @@
  */
 package org.apache.tomee.jul.handler.rotating;
 
-import org.apache.commons.io.FileUtils;
-
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -377,8 +375,18 @@ public class LocalFileHandler extends Handler {
             if (archives != null) {
                 for (final File archive : archives) {
                     try {
-                        if (FileUtils.isFileOlder(archive, now - purgeExpiryDuration)) {
-                            if (!FileUtils.deleteQuietly(archive)) {
+                        /*
+                         Java 7 / TomEE 7.x implementation does
+
+                         final BasicFileAttributes attr = Files.readAttributes(archive.toPath(), BasicFileAttributes.class);
+                         if (now - attr.creationTime().toMillis() > purgeExpiryDuration) {
+
+                         We can't do the creationTime, so using lastModified as fallback. For the archive, creation will be close
+                         to lastModified, so worth case, we'll miss one cycle
+                          */
+                        final long lastModified = archive.lastModified();
+                        if (now - lastModified > purgeExpiryDuration) {
+                            if (!archive.delete()) {
                                 // Do not try to delete on exit cause we will find it again
                                 reportError("Failed to delete " + archive.getAbsolutePath() + ".", null, ErrorManager.GENERIC_FAILURE);
                             }
@@ -401,7 +409,7 @@ public class LocalFileHandler extends Handler {
             if (logs != null) {
                 for (final File file : logs) {
                     try {
-                        final boolean older = FileUtils.isFileOlder(file, now);
+                        final boolean older = file.lastModified() < now;
                         if (older && now - file.lastModified() > archiveExpiryDuration) {
                             createArchive(file);
                         }
@@ -496,7 +504,7 @@ public class LocalFileHandler extends Handler {
             }
         }
         try {
-            if (!FileUtils.deleteQuietly(source)) {
+            if (!source.delete()) {
                 reportError("Can't delete " + source.getAbsolutePath() + ".", null, ErrorManager.GENERIC_FAILURE);
             }
         } catch (final Exception e) {
