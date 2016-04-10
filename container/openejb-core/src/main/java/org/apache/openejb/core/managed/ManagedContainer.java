@@ -217,7 +217,7 @@ public class ManagedContainer implements RpcContainer {
         return methods;
     }
 
-    public static enum MethodType {
+    public enum MethodType {
         CREATE,
         REMOVE,
         BUSINESS

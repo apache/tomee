@@ -24,6 +24,7 @@ import org.apache.cxf.jaxrs.utils.AnnotationUtils;
 import org.apache.cxf.jaxrs.utils.JAXRSUtils;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.Message;
+import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.openejb.cdi.CdiAppContextsService;
 import org.apache.openejb.rest.ThreadLocalContextManager;
 
@@ -32,12 +33,21 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.Request;
+import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Providers;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public final class Contexts {
     private static final ThreadLocal<Exchange> EXCHANGE = new ThreadLocal<Exchange>();
@@ -143,7 +153,15 @@ public final class Contexts {
     }
 
     public static <T> T find(final Class<T> clazz) {
-        return JAXRSUtils.createContextValue(EXCHANGE.get().getInMessage(), null, clazz);
+        final Message m = PhaseInterceptorChain.getCurrentMessage();
+        if (m  != null) {
+            return JAXRSUtils.createContextValue(m, null, clazz);
+        }
+        final Exchange exchange = EXCHANGE.get();
+        if (exchange == null) {
+            throw new IllegalStateException("No CXF message usable for JAX-RS @Context injections in that thread so can't use " + clazz);
+        }
+        return JAXRSUtils.createContextValue(exchange.getInMessage(), null, clazz);
     }
 
     private static class CleanUpThreadLocal implements Runnable {

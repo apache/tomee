@@ -31,7 +31,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 public class EndpointHandler implements InvocationHandler, MessageEndpoint {
-    private static enum State {
+    private enum State {
         /**
          * The handler has been initialized and is ready for invoation
          */

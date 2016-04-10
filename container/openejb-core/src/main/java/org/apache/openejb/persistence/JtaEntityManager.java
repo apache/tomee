@@ -646,7 +646,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
         }
     }
 
-    private static enum Op {
+    private enum Op {
         clear, close, contains, createNamedQuery, createNativeQuery, createQuery, find, flush, getFlushMode, getReference, getTransaction, lock, merge, refresh, remove, setFlushMode, persist, detach, getLockMode, unwrap, setProperty, getCriteriaBuilder, getProperties, getMetamodel, joinTransaction, getDelegate;
 
         public Timer start(final JtaEntityManager em) {

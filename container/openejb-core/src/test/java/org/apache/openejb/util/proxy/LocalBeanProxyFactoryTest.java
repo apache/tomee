@@ -933,7 +933,7 @@ public class LocalBeanProxyFactoryTest extends TestCase {
         }
     }
 
-    public static enum Color {
+    public enum Color {
         RED, GREEN, BLUE;
     }
 

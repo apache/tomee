@@ -146,7 +146,7 @@ public class ClientMulticastDiscoveryTest extends TestCase {
 
     }
 
-    public static enum Host {
+    public enum Host {
         RED,
         BLUE,
         GREEN

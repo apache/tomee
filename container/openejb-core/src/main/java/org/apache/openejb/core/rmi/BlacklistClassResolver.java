@@ -34,6 +34,9 @@ public class BlacklistClassResolver {
     }
 
     protected boolean isBlacklisted(final String name) {
+        if (name != null && name.startsWith("[L") && name.endsWith(";")) {
+            return isBlacklisted(name.substring(2, name.length() - 1));
+        }
         return (whitelist != null && !contains(whitelist, name)) || contains(blacklist, name);
     }
 
@@ -56,7 +59,7 @@ public class BlacklistClassResolver {
     private static boolean contains(final String[] list, final String name) {
         if (list != null) {
             for (final String white : list) {
-                if (name.startsWith(white)) {
+                if ("*".equals(white) || name.startsWith(white)) {
                     return true;
                 }
             }

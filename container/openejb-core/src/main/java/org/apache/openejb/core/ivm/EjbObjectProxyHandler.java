@@ -150,7 +150,11 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
             * problem with the container system.
             */
         } catch (final SystemException se) {
-            invalidateReference();
+            try {
+                invalidateReference();
+            } catch (final IllegalStateException ignore) {
+                logger.debug("Tried to invalidate reference before processing system error: " +ignore.getMessage());
+            }
             exc = se.getRootCause() != null ? se.getRootCause() : se;
             logger.debug("The container received an unexpected exception: ", exc);
             throw new RemoteException("Container has suffered a SystemException", exc);
@@ -247,6 +251,11 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
         if (beanContext.isAsynchronous(method)) {
 
             final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
+
+            if(null == securityService){
+                throw new OpenEJBRuntimeException("SecurityService has not been initialized");
+            }
+
             Object stateTmp = securityService.currentState();
             final boolean associate;
             if (stateTmp == null) {

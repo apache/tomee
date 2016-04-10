@@ -156,9 +156,9 @@ public class JndiEncInfoBuilder {
 
             if (info.ejbDeploymentId == null) {
                 if (info.link != null) {
-                    logger.warning("config.noBeanFoundEjbLink", ref.getName(), ejbName, ref.getEjbLink());
+                    logger.info("config.noBeanFoundEjbLink", ref.getName(), ejbName, ref.getEjbLink());
                 } else {
-                    logger.warning("config.noBeanFound", ref.getName(), ejbName, ref.getEjbLink());
+                    logger.info("config.noBeanFound", ref.getName(), ejbName, ref.getEjbLink());
                 }
 
             } else {

@@ -567,11 +567,11 @@ public class MethodInfoUtil {
     }
 
 
-    public static enum Level {
+    public enum Level {
         PACKAGE, BEAN, OVERLOADED_METHOD, EXACT_METHOD
     }
 
-    public static enum View {
+    public enum View {
         CLASS, ANY, INTERFACE;
     }
 

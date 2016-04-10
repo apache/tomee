@@ -72,7 +72,31 @@ public class JMXDeployer {
             return new String[]{"ERR:" + e.getMessage()};
         }
     }
+    @ManagedOperation
+    @Description("Reload the specified application")
+    public String reload(final String moduleId) {
+        try {
+            final Collection<AppInfo> apps = deployer().getDeployedApps();
+            boolean found = false;
+            for (final AppInfo info : apps) {
+                if (info.path.equals(moduleId)) {
+                    found = true;
+                    break;
+                }
+            }
 
+            if (found) {
+                deployer().reload(moduleId);
+                return "OK";
+            } else {
+                return "NOT FOUND";
+            }
+
+        } catch (final Exception e) {
+            return "ERR:" + e.getMessage();
+        }
+    }
+    
     private static Deployer deployer() throws NamingException {
         final Properties p = new Properties();
         p.setProperty(Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());

@@ -208,7 +208,7 @@ public class OptionsTest extends TestCase {
         options.setLogger(log);
     }
 
-    public static enum Colors {
+    public enum Colors {
         RED, GREEN, BLUE;
     }
 

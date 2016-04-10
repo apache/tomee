@@ -43,7 +43,7 @@ public enum RequestType {
         }
     }
 
-    private RequestType(final byte code) {
+    RequestType(final byte code) {
         this.code = code;
     }
 

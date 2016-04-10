@@ -44,11 +44,11 @@ public class InterceptorBindingBuilder {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, InterceptorBindingBuilder.class.getPackage().getName());
     private final List<InterceptorBindingInfo> packageAndClassBindings;
 
-    public static enum Level {
+    public enum Level {
         PACKAGE, ANNOTATION_CLASS, CLASS, ANNOTATION_METHOD, OVERLOADED_METHOD, EXACT_METHOD
     }
 
-    public static enum Type {
+    public enum Type {
         ADDITION_OR_LOWER_EXCLUSION, SAME_LEVEL_EXCLUSION, SAME_AND_LOWER_EXCLUSION, EXPLICIT_ORDERING
     }
 

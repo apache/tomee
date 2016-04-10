@@ -34,5 +34,4 @@
     <exclude name="AvoidThreadGroup"/>
   </rule>
 
-
 </ruleset>

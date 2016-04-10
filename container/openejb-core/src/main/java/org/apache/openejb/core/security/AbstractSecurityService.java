@@ -27,8 +27,6 @@ import org.apache.openejb.core.security.jacc.BasicPolicyConfiguration;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.CallerPrincipal;
 import org.apache.openejb.spi.SecurityService;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
 
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
@@ -64,7 +62,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * addition openejb-core classes.
  */
 public abstract class AbstractSecurityService implements SecurityService<UUID>, ThreadContextListener, BasicPolicyConfiguration.RoleResolver {
-    private static Logger logger = Logger.getInstance(LogCategory.OPENEJB_SECURITY, AbstractSecurityService.class);
+
     private static final Timer timer = new Timer("AbstractSecurityService.Timer", true);
     private static final Map<UUID, Identity> identities = new ConcurrentHashMap<UUID, Identity>();
     protected static final ThreadLocal<Identity> clientIdentity = new ThreadLocal<Identity>();
@@ -233,7 +231,6 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
         identity.setTimeout(accessTimeout);
 
         final UUID token = identity.getToken();
-        logger.debug("Registering identity {0}", token.toString());
         identities.put(token, identity);
 
         return token;
@@ -241,8 +238,6 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
 
     @Override
     public void logout(final UUID securityIdentity) throws LoginException {
-        logger.debug("Logging out identity {0}", securityIdentity.toString());
-        
         final Identity identity = identities.get(securityIdentity);
         if (identity == null) {
             throw new LoginException("Identity is not currently logged in: " + securityIdentity);

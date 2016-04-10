@@ -388,6 +388,7 @@ public class DataSourceFactory {
         if (instance == null) {
             return;
         }
+
         final DataSourceCreator remove = creatorByDataSource.remove(instance);
         remove.destroy(instance);
 
@@ -399,7 +400,7 @@ public class DataSourceFactory {
 
     // remove proxy added by us in front of the datasource returned by the creator
     private static Object realInstance(final Object o) {
-        if (o == null || !(o instanceof DataSource)) {
+        if (o == null || !DataSource.class.isInstance(o)) {
             return o;
         }
 

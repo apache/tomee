@@ -45,6 +45,7 @@ public class TomEEConfiguration implements ContainerConfiguration {
     protected String portRange = ""; // only used if port < 0, empty means whatever, can be "1024-65535"
     protected String preloadClasses; // just a client classloader.loadClass(), value is comma separated qualified names. Useful with maven resolver for instance
     protected boolean quickSession = true;
+    protected boolean unsafeEjbd = true;
     protected boolean unpackWars = true;
 
     protected String properties = "";
@@ -52,6 +53,14 @@ public class TomEEConfiguration implements ContainerConfiguration {
     protected boolean keepServerXmlAsThis;
     protected boolean singleDumpByArchiveName;
     protected Collection<String> singleDeploymentByArchiveName = Collections.emptyList();
+
+    public boolean isUnsafeEjbd() {
+        return unsafeEjbd;
+    }
+
+    public void setUnsafeEjbd(final boolean unsafeEjbd) {
+        this.unsafeEjbd = unsafeEjbd;
+    }
 
     public boolean isUnpackWars() {
         return unpackWars;

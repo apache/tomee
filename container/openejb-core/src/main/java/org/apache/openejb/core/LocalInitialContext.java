@@ -60,7 +60,7 @@ public class LocalInitialContext extends ContextWrapper {
     private final Options options;
     private ServiceManagerProxy serviceManager;
 
-    public static enum Close {
+    public enum Close {
         LOGOUT,
         DESTROY
     }
@@ -141,12 +141,14 @@ public class LocalInitialContext extends ContextWrapper {
     @SuppressWarnings("unchecked")
     private void logout() {
         try {
-            final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
             if (clientIdentity != null) {
                 if (logger.isDebugEnabled()) {
                     logger.debug("Logging out: " + clientIdentity);
                 }
-                securityService.logout(clientIdentity);
+                final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
+                if (null != securityService) {
+                    securityService.logout(clientIdentity);
+                }
                 ClientSecurity.setIdentity(null);
             }
         } catch (final LoginException e) {

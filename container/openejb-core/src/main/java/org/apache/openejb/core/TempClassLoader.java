@@ -221,7 +221,7 @@ public class TempClassLoader extends URLClassLoader {
         return this.skip.contains(Skip.ALL) || URLClassLoaderFirst.shouldSkip(name);
     }
 
-    public static enum Skip {
+    public enum Skip {
         NONE, ANNOTATIONS, ENUMS, ALL
     }
 

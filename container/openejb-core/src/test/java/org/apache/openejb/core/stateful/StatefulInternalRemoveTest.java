@@ -91,7 +91,7 @@ public class StatefulInternalRemoveTest extends TestCase {
 
     }
 
-    public static enum Lifecycle {
+    public enum Lifecycle {
         CONSTRUCTOR,
         POST_CONSTRUCT,
         BUSINESS_METHOD,

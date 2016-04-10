@@ -48,7 +48,7 @@ public enum MethodIntf {
 
     private final String name;
 
-    private MethodIntf(final String name) {
+    MethodIntf(final String name) {
         this.name = name;
     }
 

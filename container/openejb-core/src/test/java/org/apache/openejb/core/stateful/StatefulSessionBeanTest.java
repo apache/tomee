@@ -105,7 +105,7 @@ public class StatefulSessionBeanTest extends TestCase {
 
     public static List<Call> calls = new ArrayList<Call>();
 
-    public static enum Call {
+    public enum Call {
         // construction
         Constructor, SetSessionContext, EjbCreate, EjbPassivate1,
         // business method

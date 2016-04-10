@@ -125,6 +125,8 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
             this.container.stop();
         } catch (final Exception e) {
             throw new LifecycleException("Unable to stop server", e);
+        } finally {
+            resetSerialization();
         }
     }
 

@@ -1161,7 +1161,7 @@ public class SunConversion implements DynamicDeployer {
         }
     }
 
-    private static enum TokenType {
+    private enum TokenType {
         WHITESPACE, SYMBOL, NORMAL
     }
 

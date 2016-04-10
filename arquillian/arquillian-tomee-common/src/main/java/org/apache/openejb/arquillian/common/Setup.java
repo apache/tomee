@@ -297,6 +297,13 @@ public class Setup {
             properties.put("openejb.session.manager", "org.apache.tomee.catalina.session.QuickSessionManager");
         }
 
+        if (configuration.isUnsafeEjbd() && "*".equals(properties.getProperty("tomee.serialization.class.blacklist", "-").trim())) {
+            properties.remove("tomee.serialization.class.blacklist");
+            properties.put("tomee.serialization.class.whitelist", "*");
+            System.setProperty("tomee.serialization.class.blacklist", System.getProperty("tomee.serialization.class.blacklist", "-"));
+            reloadClientSerializationConfig();
+        }
+
         try {
             IO.writeProperties(file, properties);
         } catch (final IOException e) {
@@ -304,6 +311,14 @@ public class Setup {
         }
     }
 
+    public static void reloadClientSerializationConfig() {
+        try {
+            Thread.currentThread().getContextClassLoader().loadClass("org.apache.openejb.client.EjbObjectInputStream")
+                .getMethod("reloadResolverConfig").invoke(null);
+        } catch (final Exception e) {
+            // not a pb normally
+        }
+    }
 
     public static void synchronizeFolder(final File tomeeHome, final String src, final String dir) {
         if (src != null && !src.isEmpty()) {

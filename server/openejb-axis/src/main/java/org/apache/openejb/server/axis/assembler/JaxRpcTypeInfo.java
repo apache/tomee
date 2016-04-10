@@ -36,7 +36,7 @@ public class JaxRpcTypeInfo {
 
     public final Collection<JaxRpcFieldInfo> fields = new ArrayList<JaxRpcFieldInfo>();
 
-    public static enum SerializerType {
+    public enum SerializerType {
         ARRAY, ENUM, LIST, OTHER
     }
 }

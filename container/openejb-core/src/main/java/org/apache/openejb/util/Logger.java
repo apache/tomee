@@ -33,7 +33,7 @@ import java.util.ResourceBundle;
 public class Logger {
     private static final String SUFFIX = ".Messages";
     private static final String OPENEJB = "org.apache.openejb";
-    private static LogStreamFactory logStreamFactory;
+    private static volatile LogStreamFactory logStreamFactory;
 
     // don't return the instance since it needs to stay private but export which one is used to allow integration with other libs (as tomcat ;))
     @SuppressWarnings("UnusedDeclaration")
@@ -45,10 +45,20 @@ public class Logger {
     }
 
     public static synchronized void configure() {
+        configure(false);
+    }
+
+    public static synchronized void configure(final boolean reset) {
+
+        if(reset){
+            logStreamFactory = null;
+        }
+
         configure(System.getProperties());
     }
 
     public static synchronized void configure(final Properties config) {
+
         if (logStreamFactory != null) {
             return;
         }

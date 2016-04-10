@@ -154,7 +154,9 @@ public class ContainersImplTomEE extends AbstractContainers implements Container
     public void setup() throws IOException {
         System.out.println("Setup called");
         try {
-            server.start(Arrays.asList("-Dopenejb.classloader.forced-load=org.apache.openejb.tck"), "start", true);
+            server.start(Arrays.asList(
+                "-Dtomee.serialization.class.blacklist=-", "-Dopenejb.classloader.forced-load=org.apache.openejb.tck"),
+                "start", true);
         } catch (final Exception e) {
             cleanup();
             e.printStackTrace();

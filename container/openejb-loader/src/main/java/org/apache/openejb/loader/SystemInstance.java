@@ -287,10 +287,13 @@ public final class SystemInstance {
             return;
         }
         system = new SystemInstance(properties);
-        readUserSystemProperties();
-        readSystemProperties();
+        // WARNING: reverse order since we don't overwrite existing entries
         readSystemProperties(get().currentProfile());
-        System.getProperties().putAll(system.getProperties()); // if the user read System.getProperties() instead of our properties, used in bval-tomee tck for instance
+        readSystemProperties();
+        readUserSystemProperties();
+
+        // if the user read System.getProperties() instead of our properties, used in bval-tomee tck for instance
+        System.getProperties().putAll(system.getProperties());
         initialized = true;
         get().setProperty("openejb.profile.custom", Boolean.toString(!get().isDefaultProfile()));
     }
@@ -356,7 +359,13 @@ public final class SystemInstance {
             return;
         }
 
-        system.getProperties().putAll(systemProperties);
+        for (final String key : systemProperties.stringPropertyNames()) {
+            if (system.getProperty(key) == null) {
+                system.setProperty(key, systemProperties.getProperty(key));
+            }
+        }
+        // don't override system props
+        // system.getProperties().putAll(systemProperties);
     }
 
     public static SystemInstance get() {

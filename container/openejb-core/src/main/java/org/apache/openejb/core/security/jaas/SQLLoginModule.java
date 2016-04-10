@@ -404,7 +404,7 @@ public class SQLLoginModule implements LoginModule {
 
         public final String name;
 
-        private Option(final String name) {
+        Option(final String name) {
             this.name = name;
         }
 

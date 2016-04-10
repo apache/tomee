@@ -79,6 +79,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.LogManager;
 
 import static org.apache.openejb.cdi.ScopeHelper.startContexts;
@@ -88,6 +89,7 @@ import static org.apache.openejb.cdi.ScopeHelper.stopContexts;
  * @version $Rev$ $Date$
  */
 public final class OpenEjbContainer extends EJBContainer {
+
     static {
         // if tomee embedded was ran we'll lost log otherwise
         final String logManger = System.getProperty("java.util.logging.manager");
@@ -107,11 +109,16 @@ public final class OpenEjbContainer extends EJBContainer {
         }
     }
 
+    /**
+     * Used to synchronize the container create and close methods
+     */
+    private static final ReentrantLock LOCK = new ReentrantLock();
+
     public static final String OPENEJB_EMBEDDED_REMOTABLE = "openejb.embedded.remotable";
     public static final String OPENEJB_EJBCONTAINER_CLOSE = "openejb.ejbcontainer.close";
     public static final String OPENEJB_EJBCONTAINER_CLOSE_SINGLE = "single-jvm";
 
-    private static OpenEjbContainer instance;
+    private static volatile OpenEjbContainer instance;
     private static Logger logger; // initialized lazily to get the logging config from properties
 
     private ServiceManagerProxy serviceManager;
@@ -144,7 +151,9 @@ public final class OpenEjbContainer extends EJBContainer {
     @Override
     protected void finalize() throws Throwable {
         try {
-            this.close();
+            if (this.equals(instance)) {
+                this.close();
+            }
         } catch (final Exception e) {
             //no-op
         } finally {
@@ -152,52 +161,61 @@ public final class OpenEjbContainer extends EJBContainer {
         }
     }
 
-    @Override
-    public void close() {
-        if (isSingleClose()) {
-            return;
-        }
-        doClose();
-    }
-
     private static boolean isSingleClose() {
         return OPENEJB_EJBCONTAINER_CLOSE_SINGLE.equals(SystemInstance.get().getProperty(OPENEJB_EJBCONTAINER_CLOSE, "by-invocation"));
     }
 
-    private synchronized void doClose() {
-        if (instance == null) {
-            return;
-        }
+    private void doClose() {
 
-        if (serviceManager != null) {
-            serviceManager.stop();
-        }
-        try {
-            globalJndiContext.close();
-        } catch (final NamingException e) {
-            throw new IllegalStateException(e);
-        }
+        final ReentrantLock lock = LOCK;
+        lock.lock();
 
-        final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
-        if (assembler != null) {
-            for (final AppInfo info : assembler.getDeployedApplications()) {
-                try {
-                    assembler.destroyApplication(info);
-                } catch (final UndeployException e) {
-                    logger().error(e.getMessage(), e);
-                }
+        final Logger log = logger();
+
+        if (log.isDebugEnabled()) {
+            final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+            for (final StackTraceElement element : stackTrace) {
+                log.debug("Called by: " + element);
             }
         }
 
         try {
-            stopContexts(webBeanContext.getContextsService(), servletContext, session);
-        } catch (final Exception e) {
-            logger().warning("can't stop all CDI contexts", e);
-        }
+            if (instance == null) {
+                return;
+            }
 
-        logger().info("Destroying OpenEJB container");
-        OpenEJB.destroy();
-        instance = null;
+            if (serviceManager != null) {
+                serviceManager.stop();
+            }
+            try {
+                globalJndiContext.close();
+            } catch (final NamingException e) {
+                throw new IllegalStateException(e);
+            }
+
+            final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
+            if (assembler != null) {
+                for (final AppInfo info : assembler.getDeployedApplications()) {
+                    try {
+                        assembler.destroyApplication(info);
+                    } catch (final UndeployException e) {
+                        log.error(e.getMessage(), e);
+                    }
+                }
+            }
+
+            try {
+                stopContexts(webBeanContext.getContextsService(), servletContext, session);
+            } catch (final Exception e) {
+                log.warning("can't stop all CDI contexts", e);
+            }
+
+            log.info("Destroying OpenEJB container");
+            OpenEJB.destroy();
+            instance = null;
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
@@ -226,174 +244,198 @@ public final class OpenEjbContainer extends EJBContainer {
         return logger;
     }
 
+    @Override
+    public void close() {
+
+        final ReentrantLock lock = LOCK;
+        lock.lock();
+
+        try {
+            if (isSingleClose()) {
+                return;
+            }
+            doClose();
+        } finally {
+            lock.unlock();
+        }
+    }
+
     public static class Provider implements EJBContainerProvider {
         public static final String OPENEJB_ADDITIONNAL_CALLERS_KEY = "openejb.additionnal.callers";
 
         @Override
         public EJBContainer createEJBContainer(Map<?, ?> map) {
-            if (map == null) { // JBoss EJB API pass null when calling EJBContainer.createEJBContainer()
-                map = new HashMap<Object, Object>();
-            }
 
-            if (isOtherProvider(map)) {
-                return null;
-            }
-
-            if (instance != null || OpenEJB.isInitialized()) {
-                if (!isSingleClose()) {
-                    logger().info("EJBContainer already initialized.  Call ejbContainer.close() to allow reinitialization");
-                }
-                return instance;
-            }
-
+            final ReentrantLock lock = LOCK;
+            lock.lock();
 
             try {
-                // reset to be able to run this container then tomee one etc...
-                if (System.getProperties().containsKey(Context.URL_PKG_PREFIXES)) {
-                    System.getProperties().remove(Context.URL_PKG_PREFIXES);
+                if (map == null) { // JBoss EJB API pass null when calling EJBContainer.createEJBContainer()
+                    map = new HashMap<Object, Object>();
                 }
 
-                final Properties properties = new Properties();
-                properties.putAll(map);
+                if (isOtherProvider(map)) {
+                    return null;
+                }
 
-                SystemInstance.reset();
-                SystemInstance.init(properties);
-                SystemInstance.get().setProperty("openejb.embedded", "true");
-                SystemInstance.get().setProperty(EJBContainer.class.getName(), "true");
-
-                if (SystemInstance.get().getComponent(ParentClassLoaderFinder.class) == null) {
-                    ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-                    if (tccl == null) {
-                        tccl = OpenEjbContainer.class.getClassLoader();
+                if (instance != null || OpenEJB.isInitialized()) {
+                    if (!isSingleClose()) {
+                        logger().info("EJBContainer already initialized.  Call ejbContainer.close() to allow reinitialization");
                     }
-                    SystemInstance.get().setComponent(ParentClassLoaderFinder.class, new ProvidedClassLoaderFinder(tccl));
+                    return instance;
                 }
 
-                OptionsLog.install();
 
-                OpenEJB.init(properties);
-
-                Core.warmup(); // don't do it too eagerly to avoid to not have properties
-
-                DeploymentLoader.reloadAltDD(); // otherwise hard to use multiple altdd with several start/stop in the same JVM
-
-                final ConfigurationFactory configurationFactory = new ConfigurationFactory();
-
-
-                final AppModule appModule = load(map, configurationFactory);
-
-                final Set<String> callers;
-                if (map.containsKey(OPENEJB_ADDITIONNAL_CALLERS_KEY)) {
-                    callers = new LinkedHashSet<String>();
-                    callers.addAll(Arrays.asList(((String) map.get(OPENEJB_ADDITIONNAL_CALLERS_KEY)).split(",")));
-                } else {
-                    callers = NewLoaderLogic.callers();
-                }
-
-                final EjbJar ejbJar = new EjbJar();
-                final OpenejbJar openejbJar = new OpenejbJar();
-
-                for (final String caller : callers) {
-
-                    if (!isValid(caller)) {
-                        continue;
-                    }
-
-                    String name = caller;
-                    if (name.contains("$")) {
-                        name = caller.replace("$", "_");
-                    }
-
-                    final ManagedBean bean = ejbJar.addEnterpriseBean(new ManagedBean(name, caller, true));
-                    bean.localBean();
-
-                    // set it to bean so it can get UserTransaction injection
-                    bean.setTransactionType(TransactionType.BEAN);
-
-                    final EjbDeployment ejbDeployment = openejbJar.addEjbDeployment(bean);
-
-                    // important in case any other deploment id formats are specified
-                    ejbDeployment.setDeploymentId(name);
-                }
-
-                appModule.getEjbModules().add(new EjbModule(ejbJar, openejbJar));
-
-
-                final AppInfo appInfo;
                 try {
+                    // reset to be able to run this container then tomee one etc...
+                    if (System.getProperties().containsKey(Context.URL_PKG_PREFIXES)) {
+                        System.getProperties().remove(Context.URL_PKG_PREFIXES);
+                    }
 
-                    appInfo = configurationFactory.configureApplication(appModule);
+                    final Properties properties = new Properties();
+                    properties.putAll(map);
 
-                } catch (final ValidationFailedException e) {
+                    SystemInstance.reset();
+                    SystemInstance.init(properties);
+                    SystemInstance.get().setProperty("openejb.embedded", "true");
+                    SystemInstance.get().setProperty(EJBContainer.class.getName(), "true");
 
-                    logger().warning("configureApplication.loadFailed", appModule.getModuleId(), e.getMessage()); // DO not include the stacktrace in the message
+                    if (SystemInstance.get().getComponent(ParentClassLoaderFinder.class) == null) {
+                        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+                        if (tccl == null) {
+                            tccl = OpenEjbContainer.class.getClassLoader();
+                        }
+                        SystemInstance.get().setComponent(ParentClassLoaderFinder.class, new ProvidedClassLoaderFinder(tccl));
+                    }
 
-                    throw new InvalidApplicationException(e);
+                    OptionsLog.install();
+
+                    OpenEJB.init(properties);
+
+                    Core.warmup(); // don't do it too eagerly to avoid to not have properties
+
+                    DeploymentLoader.reloadAltDD(); // otherwise hard to use multiple altdd with several start/stop in the same JVM
+
+                    final ConfigurationFactory configurationFactory = new ConfigurationFactory();
+
+
+                    final AppModule appModule = load(map, configurationFactory);
+
+                    final Set<String> callers;
+                    if (map.containsKey(OPENEJB_ADDITIONNAL_CALLERS_KEY)) {
+                        callers = new LinkedHashSet<String>();
+                        callers.addAll(Arrays.asList(((String) map.get(OPENEJB_ADDITIONNAL_CALLERS_KEY)).split(",")));
+                    } else {
+                        callers = NewLoaderLogic.callers();
+                    }
+
+                    final EjbJar ejbJar = new EjbJar();
+                    final OpenejbJar openejbJar = new OpenejbJar();
+
+                    for (final String caller : callers) {
+
+                        if (!isValid(caller)) {
+                            continue;
+                        }
+
+                        String name = caller;
+                        if (name.contains("$")) {
+                            name = caller.replace("$", "_");
+                        }
+
+                        final ManagedBean bean = ejbJar.addEnterpriseBean(new ManagedBean(name, caller, true));
+                        bean.localBean();
+
+                        // set it to bean so it can get UserTransaction injection
+                        bean.setTransactionType(TransactionType.BEAN);
+
+                        final EjbDeployment ejbDeployment = openejbJar.addEjbDeployment(bean);
+
+                        // important in case any other deploment id formats are specified
+                        ejbDeployment.setDeploymentId(name);
+                    }
+
+                    appModule.getEjbModules().add(new EjbModule(ejbJar, openejbJar));
+
+
+                    final AppInfo appInfo;
+                    try {
+
+                        appInfo = configurationFactory.configureApplication(appModule);
+
+                    } catch (final ValidationFailedException e) {
+
+                        logger().warning("configureApplication.loadFailed", appModule.getModuleId(), e.getMessage()); // DO not include the stacktrace in the message
+
+                        throw new InvalidApplicationException(e);
+
+                    } catch (final OpenEJBException e) {
+                        // DO NOT REMOVE THE EXCEPTION FROM THIS LOG MESSAGE
+                        // removing this message causes NO messages to be printed when embedded
+                        logger().warning("configureApplication.loadFailed", e, appModule.getModuleId(), e.getMessage());
+
+                        throw new ConfigureApplicationException(e);
+                    }
+
+                    final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
+
+                    if (null == assembler) {
+                        throw new IllegalStateException("Assembler has not been initialized");
+                    }
+
+                    final AppContext appContext;
+
+                    try {
+                        appContext = assembler.createApplication(appInfo, appModule.getClassLoader());
+                    } catch (final ValidationException ve) {
+                        throw ve;
+                    } catch (final Exception e) {
+                        throw new AssembleApplicationException(e);
+                    }
+
+
+                    final OpenEjbContainer openEjbContainer = instance = new OpenEjbContainer(map, appContext);
+                    if (isSingleClose()) {
+                        Runtime.getRuntime().addShutdownHook(new Thread() {
+                            @Override
+                            public void run() {
+                                if (instance != null) {
+                                    instance.doClose();
+                                }
+                            }
+                        });
+                    }
+                    return openEjbContainer;
 
                 } catch (final OpenEJBException e) {
-                    // DO NOT REMOVE THE EXCEPTION FROM THIS LOG MESSAGE
-                    // removing this message causes NO messages to be printed when embedded
-                    logger().warning("configureApplication.loadFailed", e, appModule.getModuleId(), e.getMessage());
 
-                    throw new ConfigureApplicationException(e);
-                }
+                    throw new EJBException(e);
 
-                final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
+                } catch (final MalformedURLException e) {
 
-                if(null == assembler){
-                    throw new IllegalStateException("Assembler has not been initialized");
-                }
+                    throw new EJBException(e);
 
-                final AppContext appContext;
-
-                try {
-                    appContext = assembler.createApplication(appInfo, appModule.getClassLoader());
                 } catch (final ValidationException ve) {
                     throw ve;
                 } catch (final Exception e) {
-                    throw new AssembleApplicationException(e);
-                }
 
+                    if (e instanceof EJBException) {
 
-                final OpenEjbContainer openEjbContainer = instance = new OpenEjbContainer(map, appContext);
-                if (isSingleClose()) {
-                    Runtime.getRuntime().addShutdownHook(new Thread() {
-                        @Override
-                        public void run() {
-                            if (instance != null) {
-                                instance.doClose();
-                            }
+                        throw (EJBException) e;
+                    }
+
+                    throw new InitializationException(e);
+                } finally {
+                    if (instance == null && OpenEJB.isInitialized()) {
+                        try {
+                            OpenEJB.destroy();
+                        } catch (final Exception e) {
+                            // no-op
                         }
-                    });
-                }
-                return openEjbContainer;
-
-            } catch (final OpenEJBException e) {
-
-                throw new EJBException(e);
-
-            } catch (final MalformedURLException e) {
-
-                throw new EJBException(e);
-
-            } catch (final ValidationException ve) {
-                throw ve;
-            } catch (final Exception e) {
-
-                if (e instanceof EJBException) {
-
-                    throw (EJBException) e;
-                }
-
-                throw new InitializationException(e);
-            } finally {
-                if (instance == null && OpenEJB.isInitialized()) {
-                    try {
-                        OpenEJB.destroy();
-                    } catch (final Exception e) {
-                        // no-op
                     }
                 }
+            } finally {
+                lock.unlock();
             }
         }
 
@@ -590,7 +632,7 @@ public final class OpenEjbContainer extends EJBContainer {
         private static boolean isOtherProvider(final Map<?, ?> properties) {
             final Object provider = properties.get(EJBContainer.PROVIDER);
             return provider != null && !provider.equals(OpenEjbContainer.class) && !provider.equals(OpenEjbContainer.class.getName())
-                && !"openejb".equals(provider);
+                    && !"openejb".equals(provider);
         }
 
         private boolean match(final String s, final File file) {

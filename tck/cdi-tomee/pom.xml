@@ -19,7 +19,7 @@
   <parent>
     <artifactId>tck</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.7.4-TT.2-SNAPSHOT</version>
+    <version>4.7.5-TT.1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>cdi-tomee</artifactId>
@@ -246,6 +246,7 @@
           </suiteXmlFiles>
           <!--<forkMode>once</forkMode>-->
           <systemPropertyVariables>
+            <tomee.serialization.class.blacklist>-</tomee.serialization.class.blacklist>
             <org.jboss.testharness.standalone>false</org.jboss.testharness.standalone>
             <org.jboss.testharness.runIntegrationTests>true</org.jboss.testharness.runIntegrationTests>
             <org.jboss.testharness.container.forceRestart>true</org.jboss.testharness.container.forceRestart>

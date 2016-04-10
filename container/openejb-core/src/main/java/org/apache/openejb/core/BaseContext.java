@@ -53,7 +53,7 @@ import java.util.Properties;
  */
 public abstract class BaseContext implements EJBContext, Serializable {
 
-    public static enum Call {
+    public enum Call {
         getEJBObject, getEJBLocalObject, isCallerInRole, setRollbackOnly, getCallerPrincipal, getRollbackOnly, getTimerService, getUserTransaction, getBusinessObject, timerMethod, getInvokedBusinessInterface, UserTransactionMethod, getMessageContext, getPrimaryKey, getContextData
 
     }

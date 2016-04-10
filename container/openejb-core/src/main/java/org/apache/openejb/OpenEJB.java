@@ -103,8 +103,8 @@ public final class OpenEJB {
 
             final Logger logger2 = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
             final String[] bannerValues = new String[]{
-                null, versionInfo.getUrl(), new Date().toString(), versionInfo.getCopyright(),
-                versionInfo.getVersion(), versionInfo.getDate(), versionInfo.getTime(), null
+                    null, versionInfo.getUrl(), new Date().toString(), versionInfo.getCopyright(),
+                    versionInfo.getVersion(), versionInfo.getDate(), versionInfo.getTime(), null
             };
             for (int i = 0; i < bannerValues.length; i++) {
                 if (bannerValues[i] == null) {
@@ -173,9 +173,9 @@ public final class OpenEJB {
                 if (containerSystem.containers().length > 0) {
                     final Container[] c = containerSystem.containers();
                     logger.debug("startup.debugContainersType");
-                    for (int i = 0; i < c.length; i++) {
+                    for (final Container aC : c) {
                         String entry = "   ";
-                        switch (c[i].getContainerType()) {
+                        switch (aC.getContainerType()) {
                             case BMP_ENTITY:
                                 entry += "BMP ENTITY  ";
                                 break;
@@ -191,43 +191,48 @@ public final class OpenEJB {
                             case MESSAGE_DRIVEN:
                                 entry += "MESSAGE     ";
                                 break;
+                            case SINGLETON:
+                                entry += "SINGLETON     ";
+                                break;
                         }
-                        entry += c[i].getContainerID();
+                        entry += aC.getContainerID();
                         logger.debug("startup.debugEntry", entry);
                     }
                 }
 
-                logger.debug("startup.debugDeployments", containerSystem.deployments().length);
-                if (containerSystem.deployments().length > 0) {
-                    logger.debug("startup.debugDeploymentsType");
-                    final BeanContext[] d = containerSystem.deployments();
-                    for (int i = 0; i < d.length; i++) {
-                        String entry = "   ";
-                        switch (d[i].getComponentType()) {
-                            case BMP_ENTITY:
-                                entry += "BMP_ENTITY  ";
-                                break;
-                            case CMP_ENTITY:
-                                entry += "CMP_ENTITY  ";
-                                break;
-                            case STATEFUL:
-                                entry += "STATEFUL    ";
-                                break;
-                            case MANAGED:
-                                entry += "MANAGED     ";
-                                break;
-                            case STATELESS:
-                                entry += "STATELESS   ";
-                                break;
-                            case SINGLETON:
-                                entry += "SINGLETON   ";
-                                break;
-                            case MESSAGE_DRIVEN:
-                                entry += "MESSAGE     ";
-                                break;
+                if (logger.isDebugEnabled()) {
+                    logger.debug("startup.debugDeployments", containerSystem.deployments().length);
+                    if (containerSystem.deployments().length > 0) {
+                        logger.debug("startup.debugDeploymentsType");
+                        final BeanContext[] d = containerSystem.deployments();
+                        for (final BeanContext aD : d) {
+                            String entry = "   ";
+                            switch (aD.getComponentType()) {
+                                case BMP_ENTITY:
+                                    entry += "BMP_ENTITY  ";
+                                    break;
+                                case CMP_ENTITY:
+                                    entry += "CMP_ENTITY  ";
+                                    break;
+                                case STATEFUL:
+                                    entry += "STATEFUL    ";
+                                    break;
+                                case MANAGED:
+                                    entry += "MANAGED     ";
+                                    break;
+                                case STATELESS:
+                                    entry += "STATELESS   ";
+                                    break;
+                                case SINGLETON:
+                                    entry += "SINGLETON   ";
+                                    break;
+                                case MESSAGE_DRIVEN:
+                                    entry += "MESSAGE     ";
+                                    break;
+                            }
+                            entry += aD.getDeploymentID();
+                            logger.debug("startup.debugEntry", entry);
                         }
-                        entry += d[i].getDeploymentID();
-                        logger.debug("startup.debugEntry", entry);
                     }
                 }
             }
@@ -261,7 +266,7 @@ public final class OpenEJB {
         }
     }
 
-    public static void destroy() {
+    public static synchronized void destroy() {
 
         final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
 
@@ -289,7 +294,7 @@ public final class OpenEJB {
     /**
      * 2 usages
      */
-    public static void init(final Properties initProps, final ApplicationServer appServer) throws OpenEJBException {
+    public static synchronized void init(final Properties initProps, final ApplicationServer appServer) throws OpenEJBException {
         if (isInitialized()) {
             if (instance != null) {
                 final String msg = messages.message("startup.alreadyInitialized");

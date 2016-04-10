@@ -53,9 +53,10 @@ import java.util.List;
  */
 public class CheckCallbacks extends ValidationBase {
 
+    @Override
     public void validate(final EjbModule module) {
         for (final EnterpriseBean bean : module.getEjbJar().getEnterpriseBeans()) {
-            Class ejbClass = null;
+            final Class ejbClass;
             try {
                 ejbClass = loadClass(bean.getEjbClass());
             } catch (final OpenEJBException e) {
@@ -199,7 +200,7 @@ public class CheckCallbacks extends ValidationBase {
         }
 
         for (final Interceptor interceptor : module.getEjbJar().getInterceptors()) {
-            Class interceptorClass = null;
+            final Class interceptorClass;
             try {
                 interceptorClass = loadClass(interceptor.getInterceptorClass());
             } catch (final OpenEJBException e) {
@@ -246,7 +247,7 @@ public class CheckCallbacks extends ValidationBase {
 
     private void checkAroundTypeInvoke(final String aroundType, final Class ejbClass, final String declaringClassName, final String declaringMethodName, final String componentName) {
         try {
-            Class<?> declaringClass = null;
+            final Class<?> declaringClass;
             try {
                 declaringClass = declaringClassName == null ? ejbClass : loadClass(declaringClassName);
             } catch (final OpenEJBException e) {
@@ -299,7 +300,7 @@ public class CheckCallbacks extends ValidationBase {
 
     private void checkCallback(final Class<?> ejbClass, final String type, final CallbackMethod callback, final EnterpriseBean bean, final Class... parameterTypes) {
         try {
-            Class<?> delcaringClass = null;
+            final Class<?> delcaringClass;
             try {
                 delcaringClass = callback.getClassName() == null ? ejbClass : loadClass(callback.getClassName());
             } catch (final OpenEJBException e) {
@@ -370,7 +371,7 @@ public class CheckCallbacks extends ValidationBase {
 
     private void checkCallback(final Class interceptorClass, final String type, final CallbackMethod callback, final Interceptor interceptor) {
         try {
-            Class<?> delcaringClass = null;
+            final Class<?> delcaringClass;
             try {
                 delcaringClass = callback.getClassName() == null ? interceptorClass : loadClass(callback.getClassName());
             } catch (final OpenEJBException e) {

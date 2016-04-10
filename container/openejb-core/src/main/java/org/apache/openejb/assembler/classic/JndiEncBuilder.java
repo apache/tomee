@@ -99,7 +99,7 @@ import java.util.concurrent.Callable;
 public class JndiEncBuilder {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, JndiEncBuilder.class.getPackage().getName());
 
-    public static enum JndiScope {
+    public enum JndiScope {
         comp,
         module,
         app,

@@ -102,8 +102,8 @@ public class EJBCronTrigger extends CronTriggerImpl {
 
     private final FieldExpression[] expressions = new FieldExpression[7];
 
-    private TimeZone timezone;
-    private String rawValue;
+    private final TimeZone timezone;
+    private final String rawValue;
 
     public EJBCronTrigger(final ScheduleExpression expr) throws ParseException {
 
@@ -676,14 +676,14 @@ public class EJBCronTrigger extends CronTriggerImpl {
             return isDynamicRangeExpression;
         }
 
-        public RangeExpression(final int field, final int start, final int end, final int start2) {
+        RangeExpression(final int field, final int start, final int end, final int start2) {
             super(field);
             this.start = start;
             this.end = end;
             this.start2 = start2;
         }
 
-        public RangeExpression(final Matcher m, final int field) throws ParseException {
+        RangeExpression(final Matcher m, final int field) throws ParseException {
 
             super(field);
 
@@ -921,9 +921,8 @@ public class EJBCronTrigger extends CronTriggerImpl {
         private final List<WeekdayExpression> weekDayExpressions = new ArrayList<WeekdayExpression>();
 
         private final List<DaysFromLastDayExpression> daysFromLastDayExpressions = new ArrayList<DaysFromLastDayExpression>();
-        ;
 
-        public ListExpression(final Matcher m, final int field) throws ParseException {
+        ListExpression(final Matcher m, final int field) throws ParseException {
             super(field);
             initialize(m);
         }
@@ -938,13 +937,10 @@ public class EJBCronTrigger extends CronTriggerImpl {
 
                 if (value.equals(LAST_IDENTIFIER)) {
                     daysFromLastDayExpressions.add(new DaysFromLastDayExpression());
-                    continue;
                 } else if (daysToLastMatcher.matches()) {
                     daysFromLastDayExpressions.add(new DaysFromLastDayExpression(daysToLastMatcher));
-                    continue;
                 } else if (weekDayMatcher.matches()) {
                     weekDayExpressions.add(new WeekdayExpression(weekDayMatcher));
-                    continue;
                 } else if (rangeMatcher.matches()) {
 
                     final RangeExpression rangeExpression = new RangeExpression(rangeMatcher, field);
@@ -1030,7 +1026,7 @@ public class EJBCronTrigger extends CronTriggerImpl {
         private final int start;
         private final int interval;
 
-        public IncrementExpression(final Matcher m, final int field) {
+        IncrementExpression(final Matcher m, final int field) {
             super(field);
             final int minValue = CALENDAR.getMinimum(field);
             start = m.group(1).equals("*") ? minValue : Integer.parseInt(m.group(1));
@@ -1057,7 +1053,7 @@ public class EJBCronTrigger extends CronTriggerImpl {
                 }
 
             } else {
-                return new Integer(start);
+                return start;
             }
 
             return null;
@@ -1084,7 +1080,7 @@ public class EJBCronTrigger extends CronTriggerImpl {
                 }
 
             } else {
-                return new Integer(start);
+                return start;
             }
 
             return null;
@@ -1096,7 +1092,7 @@ public class EJBCronTrigger extends CronTriggerImpl {
         private final Integer ordinal; // null means last
         private final int weekday;
 
-        public WeekdayExpression(final Matcher m) throws ParseException {
+        WeekdayExpression(final Matcher m) throws ParseException {
             super(Calendar.DAY_OF_MONTH);
             final Character firstChar = m.group(1).charAt(0);
             ordinal = Character.isDigit(firstChar) ? Integer.valueOf(firstChar.toString()) : null;
@@ -1151,12 +1147,12 @@ public class EJBCronTrigger extends CronTriggerImpl {
 
         private final int days;
 
-        public DaysFromLastDayExpression(final Matcher m) {
+        DaysFromLastDayExpression(final Matcher m) {
             super(Calendar.DAY_OF_MONTH);
             days = new Integer(m.group(1));
         }
 
-        public DaysFromLastDayExpression() {
+        DaysFromLastDayExpression() {
             super(Calendar.DAY_OF_MONTH);
             this.days = 0;
         }
@@ -1181,7 +1177,7 @@ public class EJBCronTrigger extends CronTriggerImpl {
 
     private static class AsteriskExpression extends FieldExpression {
 
-        public AsteriskExpression(final int field) {
+        AsteriskExpression(final int field) {
             super(field);
         }
 

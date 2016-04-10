@@ -245,7 +245,7 @@ public class StatefulContainer implements RpcContainer {
         return cache;
     }
 
-    public static enum MethodType {
+    public enum MethodType {
         CREATE,
         REMOVE,
         BUSINESS

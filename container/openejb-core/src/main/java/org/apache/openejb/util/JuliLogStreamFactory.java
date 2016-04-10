@@ -37,14 +37,10 @@ import java.util.logging.Logger;
 public class JuliLogStreamFactory implements LogStreamFactory {
     public static final String OPENEJB_LOG_COLOR_PROP = "openejb.log.color";
 
-    private static String consoleHandlerClazz;
-    private static boolean useOpenEJBHandler;
+    private static volatile String consoleHandlerClazz;
+    private static volatile boolean useOpenEJBHandler;
 
-    public LogStream createLogStream(final LogCategory logCategory) {
-        return new JuliLogStream(logCategory);
-    }
-
-    static {
+    public JuliLogStreamFactory() {
         final boolean tomee = is("org.apache.tomee.catalina.TomcatLoader");
         final boolean embedded = is("org.apache.tomee.embedded.Container");
 
@@ -99,6 +95,11 @@ public class JuliLogStreamFactory implements LogStreamFactory {
         } catch (final Throwable th) {
             // ignored, surely arquillian remote only so OWB is not here
         }
+    }
+
+    @Override
+    public LogStream createLogStream(final LogCategory logCategory) {
+        return new JuliLogStream(logCategory);
     }
 
     private static void setRootLogger(final OpenEJBLogManager value) {

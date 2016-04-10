@@ -193,7 +193,7 @@ public class Report {
 
     }
 
-    public static enum Status {
+    public enum Status {
         PASS, FAIL, ERROR;
     }
     public static class TestResult {

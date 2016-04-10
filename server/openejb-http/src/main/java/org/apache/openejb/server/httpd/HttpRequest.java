@@ -31,7 +31,7 @@ public interface HttpRequest extends java.io.Serializable, HttpServletRequest {
     /**
      * Request methods
      */
-    public static enum Method {
+    public enum Method {
         OPTIONS, GET, HEAD, POST, PUT, DELETE, TRACE, CONNECT, PATCH, UNSUPPORTED
     }
 
