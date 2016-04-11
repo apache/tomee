@@ -15,8 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-version="${version.openejb}"
-port=8080
+version="${tomee.version}"
 
 DEBUG=
 #DEBUG="-Xnoagent -Djava.compiler=NONE -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"
@@ -32,19 +31,11 @@ esac
 
 if $cygwin; then
   [ -n "$JAVA_HOME" ] && JAVA_HOME=`cygpath --unix "$JAVA_HOME"`
-  [ -n "$JRE_HOME" ] && JRE_HOME=`cygpath --unix "$JRE_HOME"`
-  [ -n "$TOMEE_HOME" ] && TOMEE_HOME=`cygpath --unix "$TOMEE_HOME"`
-  [ -n "$CATALINA_BASE" ] && CATALINA_BASE=`cygpath --unix "$CATALINA_BASE"`
-  [ -n "$CLASSPATH" ] && CLASSPATH=`cygpath --path --unix "$CLASSPATH"`
+  [ -n "$TOMEE_BASE" ] && TOMEE_BASE=`cygpath --unix "$TOMEE_BASE"`
 fi
 if $cygwin; then
   JAVA_HOME=`cygpath --absolute --windows "$JAVA_HOME"`
-  JRE_HOME=`cygpath --absolute --windows "$JRE_HOME"`
-  TOMEE_HOME=`cygpath --absolute --windows "$TOMEE_HOME"`
-  CATALINA_BASE=`cygpath --absolute --windows "$CATALINA_BASE"`
-  CATALINA_TMPDIR=`cygpath --absolute --windows "$CATALINA_TMPDIR"`
-  CLASSPATH=`cygpath --path --windows "$CLASSPATH"`
-  JAVA_ENDORSED_DIRS=`cygpath --path --windows "$JAVA_ENDORSED_DIRS"`
+  TOMEE_BASE=`cygpath --absolute --windows "$TOMEE_BASE"`
 fi
 
 PRG="$0"
@@ -58,9 +49,10 @@ while [ -h "$PRG" ]; do
   fi
 done
 PRGDIR=`dirname "$PRG"`
-[ -z "$TOMEE_HOME" ] && TOMEE_HOME=`cd "$PRGDIR/.." >/dev/null; pwd`
+[ -z "$TOMEE_BASE" ] && TOMEE_BASE=`cd "$PRGDIR/.." >/dev/null; pwd`
 
-. "$TOMEE_HOME"/bin/setclasspath.sh
+. "$TOMEE_BASE"/bin/setclasspath.sh
+[[ -f "$TOMEE_BASE"/bin/setenv.sh ]] && . "$TOMEE_BASE"/bin/setenv.sh
 
 if [ -z $JAVA_HOME ]; then
   JAVA="java"
@@ -68,8 +60,8 @@ else
   JAVA=$JAVA_HOME"/bin/java"
 fi
 
-CP="$TOMEE_HOME/lib"
-for i in $TOMEE_HOME/lib/*.jar; do
+CP="$TOMEE_BASE/lib"
+for i in $TOMEE_BASE/lib/*.jar; do
   CP="$CP:$i"
 done
 
@@ -77,10 +69,13 @@ done
 if [ "$1" = "deploy" ] || [ "$1" = "undeploy" ]; then
     if [ $# -eq 2 ]; then
         echo "${1}ing $2"
-        $JAVA $DEBUG -Dopenejb.base="$TOMEE_HOME" -cp "\"$CP\"" org.apache.openejb.cli.Bootstrap $1 -s http://localhost:$port/tomee/ejb $2
+        $JAVA $DEBUG -Dopenejb.base="$TOMEE_BASE" -cp "\"$CP\"" org.apache.openejb.cli.Bootstrap $1 -s auto $2
     else
         echo "Usage: <tomee.sh> $1 <path>"
     fi
+elif [ "$1" = "start" ] || [ "$1" = "stop" ]; then
+    echo "To start or stop TomEE please use catalina.sh/startup.sh/shutdown.sh instead of tomee.sh"
 else
-    $JAVA $DEBUG -Dopenejb.base="$TOMEE_HOME" -cp "\"$CP\"" org.apache.openejb.cli.Bootstrap $*
+    $JAVA $DEBUG -Dopenejb.base="$TOMEE_BASE" -cp "\"$CP\"" org.apache.openejb.cli.Bootstrap $*
 fi
+

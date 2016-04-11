@@ -26,6 +26,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.apache.openejb.cipher.PasswordCipher;
+import org.apache.openejb.cipher.PasswordCipherException;
 import org.apache.openejb.cipher.PasswordCipherFactory;
 import org.apache.openejb.cli.SystemExitException;
 import org.apache.openejb.util.Join;
@@ -41,7 +42,7 @@ import java.util.Map;
  */
 public class Cipher {
 
-    private static Messages messages = new Messages(Cipher.class);
+    private static final Messages messages = new Messages(Cipher.class);
 
     public static void main(final String[] args) throws SystemExitException {
 
@@ -93,14 +94,13 @@ public class Cipher {
                 System.out.println(new String(cipher.encrypt(plainPassword)));
             }
 
-        } catch (final RuntimeException e) {
+        } catch (final PasswordCipherException e) {
             System.out.println("Could not load password cipher implementation class. Check your classpath.");
 
             availableCiphers();
 
             throw new SystemExitException(-1);
         }
-
     }
 
     private static void availableCiphers() {
