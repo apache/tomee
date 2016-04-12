@@ -1692,6 +1692,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         while (namingEnumeration != null && namingEnumeration.hasMoreElements()) {
             final Binding binding = namingEnumeration.nextElement();
             final String boundName = name + "/" + binding.getName();
+
+            String id = boundName;
+            if (id.startsWith(OPENEJB_RESOURCE_JNDI_PREFIX)) {
+                id = id.substring(OPENEJB_RESOURCE_JNDI_PREFIX.length());
+            }
+
             final Object object = binding.getObject();
             if (Context.class.isInstance(object)) {
                 try {
@@ -1701,7 +1707,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     logger.error("Error removing bindings from " + boundName, e);
                 }
             } else if (LazyResource.class.isInstance(object)) {
-                removeResourceInfo(boundName);
+                removeResourceInfo(id);
                 try {
                     containerSystem.getJNDIContext().unbind(boundName);
                 } catch (final NamingException e) {
@@ -1842,7 +1848,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 final Iterator<ResourceInfo> iterator = configuration.facilities.resources.iterator();
                 while (iterator.hasNext()) {
                     final ResourceInfo info = iterator.next();
-                    if (name.equals(OPENEJB_RESOURCE_JNDI_PREFIX + info.id)) {
+                    if (name.equals(info.id)) {
                         iterator.remove();
                         break;
                     }
@@ -2273,7 +2279,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             final LazyObjectReference<?> ref = LazyObjectReference.class.cast(binding.getObject());
             if (! ref.isInitialized()) {
                 globalContext.unbind(name);
-                removeResourceInfo(name);
+                removeResourceInfo(id);
                 return;
             }
         }
