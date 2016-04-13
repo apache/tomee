@@ -41,6 +41,7 @@ import javax.annotation.PreDestroy;
 import javax.ejb.DependsOn;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import javax.ejb.Stateless;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -83,7 +84,7 @@ public class DependsOnTest extends TestCase {
         statelessContainer.properties.setProperty("MaxSize", "1");
         assembler.createContainer(statelessContainer);
 
-        actual.clear();
+        actualConstruct.clear();
 
         final EjbJar ejbJar = new EjbJar();
 
@@ -95,16 +96,16 @@ public class DependsOnTest extends TestCase {
         // startup and trigger @PostConstruct
         assembler.createApplication(config.configureApplication(ejbJar));
 
-        assertEquals(expected(four, three, two, one), actual);
+        assertEquals(expected(four, three, two, one), actualConstruct);
 
-        actual.clear();
+        actualDestroy.clear();
 
         // startup and trigger @PreDestroy
         for (final AppInfo appInfo : assembler.getDeployedApplications()) {
             assembler.destroyApplication(appInfo.path);
         }
 
-        assertEquals(expected(one, two, three, four), actual);
+        assertEquals(expected(one, two, three, four), actualDestroy);
     }
 
     public void testNoStartUp() throws Exception {
@@ -121,7 +122,7 @@ public class DependsOnTest extends TestCase {
         // containers
         assembler.createContainer(config.configureService(SingletonSessionContainerInfo.class));
 
-        actual.clear();
+        actualConstruct.clear();
 
         final EjbJar ejbJar = new EjbJar();
 
@@ -133,16 +134,16 @@ public class DependsOnTest extends TestCase {
         // startup and trigger @PostConstruct
         assembler.createApplication(config.configureApplication(ejbJar));
 
-        assertEquals(expected(four, three, two, one), actual);
+        assertEquals(expected(four, three, two, one), actualConstruct);
 
-        actual.clear();
+        actualDestroy.clear();
 
         // startup and trigger @PreDestroy
         for (final AppInfo appInfo : assembler.getDeployedApplications()) {
             assembler.destroyApplication(appInfo.path);
         }
 
-        assertEquals(expected(one, two, three, four), actual);
+        assertEquals(expected(one, two, three, four), actualDestroy);
     }
 
     public void testNoSuchEjb() throws Exception {
@@ -213,7 +214,9 @@ public class DependsOnTest extends TestCase {
         return Arrays.asList(strings);
     }
 
-    private final static List<String> actual = new ArrayList<String>();
+    private final static List<String> actualConstruct = new ArrayList<String>();
+
+    private final static List<String> actualDestroy = new ArrayList<String>();
 
     public static interface Bean {
 
@@ -225,9 +228,13 @@ public class DependsOnTest extends TestCase {
     public static class One implements Bean {
 
         @PostConstruct
+        public void callbackConstruct() {
+            actualConstruct.add(one);
+        }
+
         @PreDestroy
-        public void callback() {
-            actual.add(one);
+        public void callbackDestroy() {
+            actualDestroy.add(one);
         }
     }
 
@@ -237,9 +244,13 @@ public class DependsOnTest extends TestCase {
     public static class Two implements Bean {
 
         @PostConstruct
+        public void callbackConstruct() {
+            actualConstruct.add(two);
+        }
+
         @PreDestroy
-        public void callback() {
-            actual.add(two);
+        public void callbackDestroy() {
+            actualDestroy.add(two);
         }
     }
 
@@ -249,9 +260,13 @@ public class DependsOnTest extends TestCase {
     public static class Three implements Bean {
 
         @PostConstruct
+        public void callbackConstruct() {
+            actualConstruct.add(three);
+        }
+
         @PreDestroy
-        public void callback() {
-            actual.add(three);
+        public void callbackDestroy() {
+            actualDestroy.add(three);
         }
     }
 
@@ -260,9 +275,13 @@ public class DependsOnTest extends TestCase {
     public static class Four implements Bean {
 
         @PostConstruct
+        public void callbackConstruct() {
+            actualConstruct.add(four);
+        }
+
         @PreDestroy
-        public void callback() {
-            actual.add(four);
+        public void callbackDestroy() {
+            actualDestroy.add(four);
         }
     }
 }
