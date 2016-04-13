@@ -34,7 +34,9 @@ import static org.junit.Assert.assertTrue;
 @ContainerProperties({
         @ContainerProperties.Property(name = "r1", value = "new://Resource?class-name=org.apache.openejb.assembler.classic.LazyResourceTest$MyResource1"),
         @ContainerProperties.Property(name = "r2", value = "new://Resource?class-name=org.apache.openejb.assembler.classic.LazyResourceTest$MyResource2"),
-        @ContainerProperties.Property(name = "r2.Lazy", value = "true")
+        @ContainerProperties.Property(name = "r2.Lazy", value = "true"),
+        @ContainerProperties.Property(name = "sub/r3", value = "new://Resource?class-name=org.apache.openejb.assembler.classic.LazyResourceTest$MyResource3"),
+        @ContainerProperties.Property(name = "sub/r3.Lazy", value = "true")
 })
 public class LazyResourceTest {
     @Test
@@ -59,5 +61,7 @@ public class LazyResourceTest {
         public MyResource2() {
             count++;
         }
+    }
+    public static class MyResource3 {
     }
 }

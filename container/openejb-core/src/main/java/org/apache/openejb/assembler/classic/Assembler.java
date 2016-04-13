@@ -1829,7 +1829,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             } catch (final NamingException ignored) {
                 // no resource adapters were created
             }
-            destroyResourceTree(namingEnumeration);
+            destroyResourceTree("", namingEnumeration);
 
             try {
                 containerSystem.getJNDIContext().unbind("java:global");
@@ -1863,19 +1863,21 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
     }
 
-    private Collection<DestroyingResource> destroyResourceTree(final NamingEnumeration<Binding> namingEnumeration) {
+    private Collection<DestroyingResource> destroyResourceTree(final String base, final NamingEnumeration<Binding> namingEnumeration) {
         final List<DestroyingResource> resources = new LinkedList<DestroyingResource>();
         while (namingEnumeration != null && namingEnumeration.hasMoreElements()) {
             final Binding binding = namingEnumeration.nextElement();
             final Object object = binding.getObject();
             if (Context.class.isInstance(object)) {
                 try {
-                    resources.addAll(destroyResourceTree(Context.class.cast(object).listBindings("")));
+                    resources.addAll(destroyResourceTree(
+                            IvmContext.class.isInstance(object) ? IvmContext.class.cast(object).mynode.getAtomicName() : "",
+                            Context.class.cast(object).listBindings("")));
                 } catch (final Exception ignored) {
                     // no-op
                 }
             } else {
-                resources.add(new DestroyingResource(binding.getName(), binding.getClassName(), object));
+                resources.add(new DestroyingResource((base == null || base.isEmpty() ? "" : (base + '/')) + binding.getName(), binding.getClassName(), object));
             }
         }
 
