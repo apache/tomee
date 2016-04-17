@@ -22,9 +22,6 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
-  <modules>
-    <module>gradle</module>
-  </modules>
 
   <parent>
     <groupId>org.apache</groupId>
@@ -488,6 +485,7 @@
       <modules>
         <module>itests</module>
         <module>maven</module>
+        <module>gradle</module>
         <module>container</module>
         <module>server</module>
         <module>examples</module>
@@ -514,6 +512,7 @@
       <id>quick</id>
       <modules>
         <module>maven</module>
+        <module>gradle</module>
         <module>container</module>
         <module>server</module>
         <module>assembly</module>
@@ -617,6 +616,7 @@
       <modules>
         <module>itests</module>
         <module>maven</module>
+        <module>gradle</module>
         <module>container</module>
         <module>server</module>
         <module>examples</module>
