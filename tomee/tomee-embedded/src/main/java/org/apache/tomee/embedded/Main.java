@@ -41,6 +41,7 @@ public class Main {
     public static final String SERVER_XML = "serverxml";
     public static final String TOMEE_XML = "tomeexml";
     public static final String PROPERTY = "property";
+    public static final String SINGLE_CLASSLOADER = "single-classloader";
 
     public static void main(final String[] args) {
         final CommandLineParser parser = new PosixParser();
@@ -87,8 +88,10 @@ public class Main {
                 autoWar = false;
             }
             if (line.hasOption(AS_WAR)) {
-                container.deployClasspathAsWebApp(contexts == null || i == contexts.length ? "" : contexts[i],
-                        line.hasOption(DOC_BASE) ? new File(line.getOptionValue(DOC_BASE)) : null);
+                container.deployClasspathAsWebApp(
+                        contexts == null || i == contexts.length ? "" : contexts[i],
+                        line.hasOption(DOC_BASE) ? new File(line.getOptionValue(DOC_BASE)) : null,
+                        line.hasOption(SINGLE_CLASSLOADER));
                 autoWar = false;
             }
             if (autoWar) { // nothing deployed check if we are a war and deploy ourself then
