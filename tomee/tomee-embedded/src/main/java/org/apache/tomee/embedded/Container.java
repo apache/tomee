@@ -115,6 +115,14 @@ public class Container implements AutoCloseable {
     static {
         // org.apache.naming
         Assembler.installNaming("org.apache.naming", true);
+        if (!Boolean.getBoolean("tomee.embedded.javaagent.auto.skip")) {
+            try { // needs tools.jar to be in the cp to work but if so avoids the need of the jaavagent on the JVM
+                org.apache.openejb.javaagent.Agent.getInstrumentation();
+                org.apache.openejb.persistence.PersistenceBootstrap.bootstrap(Container.class.getClassLoader());
+            } catch (final Throwable th) {
+                // not important
+            }
+        }
     }
 
     private final Map<String, String> moduleIds = new HashMap<>(); // TODO: manage multimap

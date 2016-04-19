@@ -80,6 +80,7 @@ import static org.apache.openejb.loader.JarLocation.decode;
 public class PersistenceBootstrap {
 
     public static final String DEFAULT_PROVIDER = getDefaultProvider();
+    private static volatile boolean systemDone;
 
     private static String getDefaultProvider() { // TODO: we shouldn't use a logger here, too early!
         final Class<PersistenceBootstrap> clzz = PersistenceBootstrap.class;
@@ -102,6 +103,14 @@ public class PersistenceBootstrap {
     private static boolean debug;
 
     public static void bootstrap(final ClassLoader classLoader) {
+        if (classLoader == PersistenceBootstrap.class.getClassLoader()/*virtual system loader*/) {
+            // no need to sync it otherwise far worse things should get sync
+            if (systemDone) {
+                return;
+            }
+            systemDone = true;
+        }
+
         final Properties args = getAgentArgs(classLoader);
 
         debug = args.getProperty("debug", "false").equalsIgnoreCase("true");
