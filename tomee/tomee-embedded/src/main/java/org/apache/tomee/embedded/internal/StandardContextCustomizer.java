@@ -18,9 +18,11 @@
  */
 package org.apache.tomee.embedded.internal;
 
+import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
+import org.apache.catalina.Loader;
 import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.webresources.StandardRoot;
@@ -33,6 +35,7 @@ import org.apache.tomee.catalina.TomcatWebAppBuilder;
 import org.apache.tomee.embedded.Configuration;
 import org.apache.tomee.embedded.SecurityConstaintBuilder;
 
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.net.URL;
 import java.util.List;
@@ -40,10 +43,12 @@ import java.util.List;
 public class StandardContextCustomizer {
     private final WebModule module;
     private final Configuration config;
+    private final ClassLoader loader;
 
-    public StandardContextCustomizer(final Configuration configuration, final WebModule webModule) {
+    public StandardContextCustomizer(final Configuration configuration, final WebModule webModule, final boolean keepClassloader) {
         module = webModule;
         config = configuration;
+        loader = keepClassloader ? Thread.currentThread().getContextClassLoader() : null;
     }
 
     public void customize(@Observes final LifecycleEvent event) {
@@ -90,22 +95,88 @@ public class StandardContextCustomizer {
                     }
                 }
 
-                if (config != null) {
-                    if (config.getLoginConfig() != null) {
-                        context.setLoginConfig(config.getLoginConfig().build());
-                    }
-                    for (final SecurityConstaintBuilder sc : config.getSecurityConstraints()) {
-                        context.addConstraint(sc.build());
-                    }
-                    if (config.getWebXml() != null) {
-                        context.getServletContext().setAttribute(Globals.ALT_DD_ATTR, config.getWebXml());
-                    }
+                if (config.getLoginConfig() != null) {
+                    context.setLoginConfig(config.getLoginConfig().build());
+                }
+                for (final SecurityConstaintBuilder sc : config.getSecurityConstraints()) {
+                    context.addConstraint(sc.build());
+                }
+                if (config.getWebXml() != null) {
+                    context.getServletContext().setAttribute(Globals.ALT_DD_ATTR, config.getWebXml());
+                }
+
+                if (loader != null) {
+                    context.setLoader(new ProvidedLoader(loader));
                 }
                 break;
             case Lifecycle.CONFIGURE_START_EVENT:
                 SystemInstance.get().getComponent(TomcatWebAppBuilder.class).setFinderOnContextConfig(context, module.appModule());
                 break;
             default:
+        }
+    }
+
+    private static final class ProvidedLoader implements Loader {
+        private final ClassLoader delegate;
+        private Context context;
+
+        private ProvidedLoader(final ClassLoader loader) {
+            this.delegate = loader;
+        }
+
+        @Override
+        public void backgroundProcess() {
+            // no-op
+        }
+
+        @Override
+        public ClassLoader getClassLoader() {
+            return delegate;
+        }
+
+        @Override
+        public Context getContext() {
+            return context;
+        }
+
+        @Override
+        public void setContext(final Context context) {
+            this.context = context;
+        }
+
+        @Override
+        public boolean modified() {
+            return false;
+        }
+
+        @Override
+        public boolean getDelegate() {
+            return false;
+        }
+
+        @Override
+        public void setDelegate(final boolean delegate) {
+            // ignore
+        }
+
+        @Override
+        public boolean getReloadable() {
+            return false;
+        }
+
+        @Override
+        public void setReloadable(final boolean reloadable) {
+            // no-op
+        }
+
+        @Override
+        public void addPropertyChangeListener(final PropertyChangeListener listener) {
+            // no-op
+        }
+
+        @Override
+        public void removePropertyChangeListener(final PropertyChangeListener listener) {
+            // no-op
         }
     }
 }

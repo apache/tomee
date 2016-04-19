@@ -150,7 +150,17 @@ public class Container implements AutoCloseable {
         return deployClasspathAsWebApp(context, docBase, Collections.<String>emptyList(), dependencies);
     }
 
+    // used by maven and gradle (reflection)
+    public Container deployClasspathAsWebApp(final String context, final File docBase, final boolean singleClassLoader) {
+        return deployClasspathAsWebApp(context, docBase, Collections.<String>emptyList(), singleClassLoader);
+    }
+
     public Container deployClasspathAsWebApp(final String context, final File docBase, final List<String> callers, final String... dependencies) {
+        return deployClasspathAsWebApp(context, docBase, callers, false, dependencies);
+    }
+
+    public Container deployClasspathAsWebApp(final String context, final File docBase, final List<String> callers,
+                                             final boolean singleLoader, final String... dependencies) {
         final List<URL> jarList = new DeploymentsResolver.ClasspathSearcher().loadUrls(Thread.currentThread().getContextClassLoader()).getUrls();
         if (dependencies != null) {
             for (final String dep : dependencies) {
@@ -172,7 +182,7 @@ public class Container implements AutoCloseable {
                     NewLoaderLogic.applyBuiltinExcludes(
                             new UrlSet(jarList), NewLoaderLogic.ADDITIONAL_INCLUDE == null ?
                                     null : Filters.prefixes(NewLoaderLogic.ADDITIONAL_INCLUDE.split("[ \t\n\n]*,[ \t\n\n]*"))).getUrls(),
-                    docBase,
+                    docBase, singleLoader,
                     callers == null || callers.isEmpty() ? null : callers.toArray(new String[callers.size()]));
         } catch (final MalformedURLException e) {
             return deployPathsAsWebapp(context, jarList, docBase);
@@ -196,6 +206,11 @@ public class Container implements AutoCloseable {
     }
 
     public Container deployPathsAsWebapp(final String context, final List<URL> jarList, final File docBase, final String... additionalCallers) {
+        return deployPathsAsWebapp(context, jarList, docBase, false, additionalCallers);
+    }
+
+    public Container deployPathsAsWebapp(final String context, final List<URL> jarList, final File docBase,
+                                         final boolean keepClassloader, final String... additionalCallers) {
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
         final SystemInstance systemInstance = SystemInstance.get();
 
@@ -253,7 +268,7 @@ public class Container implements AutoCloseable {
 
         addCallersAsEjbModule(loader, app, additionalCallers);
 
-        systemInstance.addObserver(new StandardContextCustomizer(configuration, webModule));
+        systemInstance.addObserver(new StandardContextCustomizer(configuration, webModule, keepClassloader));
         systemInstance.setComponent(AnnotationDeployer.FolderDDMapper.class, new AnnotationDeployer.FolderDDMapper() {
             @Override
             public File getDDFolder(final File dir) {

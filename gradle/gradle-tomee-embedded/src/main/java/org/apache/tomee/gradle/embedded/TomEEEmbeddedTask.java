@@ -98,6 +98,10 @@ public class TomEEEmbeddedTask extends DefaultTask {
 
     @Optional
     @Input
+    private boolean singleClassloader = false;
+
+    @Optional
+    @Input
     private boolean ssl = false;
 
     @Optional
@@ -305,7 +309,7 @@ public class TomEEEmbeddedTask extends DefaultTask {
 
             Runtime.getRuntime().addShutdownHook(hook);
 
-            containerClass.getMethod("deployClasspathAsWebApp", String.class, File.class, String[].class).invoke(container, context, docBase, new String[0]);
+            containerClass.getMethod("deployClasspathAsWebApp", String.class, File.class, boolean.class).invoke(container, context, docBase, singleClassloader);
 
             getLogger().info("TomEE embedded started on " + configClass.getMethod("getHost").invoke(config) + ":" + configClass.getMethod("getHttpPort").invoke(config));
         } catch (final Exception e) {

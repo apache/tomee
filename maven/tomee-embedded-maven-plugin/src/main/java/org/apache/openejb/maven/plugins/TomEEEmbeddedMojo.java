@@ -130,6 +130,9 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
     @Parameter(property = "tomee-embedded-plugin.webResourceCached", defaultValue = "true")
     protected boolean webResourceCached;
 
+    @Parameter(property = "tomee-embedded-plugin.singleClassLoader", defaultValue = "false" /* for compat */)
+    protected boolean singleClassLoader;
+
     @Parameter(property = "tomee-embedded-plugin.modules", defaultValue = "${project.build.outputDirectory}")
     protected List<File> modules;
 
@@ -295,7 +298,7 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
                     if (useProjectClasspath) {
                         thread.setContextClassLoader(createClassLoader(loader));
                     }
-                    container.deployClasspathAsWebApp(context, docBase); // null is handled properly so no issue here
+                    container.deployClasspathAsWebApp(context, docBase, singleClassLoader);
                 }
             }
 
