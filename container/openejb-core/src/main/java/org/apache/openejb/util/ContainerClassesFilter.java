@@ -42,6 +42,7 @@ public class ContainerClassesFilter implements Filter {
         final Set<String> excluded = new HashSet<>();
         excluded.add("javax");
         excluded.add("org.apache.myfaces");
+        excluded.add("org.apache.bval");
         excluded.add("org.apache.cxf");
         excluded.add("org.apache.oro");
         excluded.add("org.apache.ws");

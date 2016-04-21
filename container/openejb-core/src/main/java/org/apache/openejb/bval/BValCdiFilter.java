@@ -26,6 +26,11 @@ public class BValCdiFilter implements BValExtension.AnnotatedTypeFilter {
 
     @Override
     public boolean accept(final AnnotatedType<?> annotatedType) {
-        return delegate.accept(annotatedType.getJavaClass().getName());
+        final String name = annotatedType.getJavaClass().getName();
+        if (name.startsWith("org.apache.openejb.")) {
+            final String sub = name.substring("org.apache.openejb.".length());
+            return !sub.startsWith("cdi.transactional") && !sub.startsWith("resource.activemq.jms2");
+        }
+        return delegate.accept(name);
     }
 }

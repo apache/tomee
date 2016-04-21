@@ -19,6 +19,7 @@ package org.apache.openejb.log.logger;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.openejb.util.reflection.Reflections;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,6 +49,18 @@ public class Log4j2Logger extends AbstractDelegatingLogger {
     public Log4j2Logger(final String name, final String resourceBundleName) {
         super(name, resourceBundleName);
         log = LogManager.getLogger(name);
+    }
+
+    @Override
+    public void setLevel(final Level newLevel) throws SecurityException {
+        try {
+            Reflections.invokeByReflection(
+                    log, "setLevel",
+                    new Class<?>[]{org.apache.logging.log4j.Level.class},
+                    new Object[]{TO_LOG4J.get(newLevel)});
+        } catch (final Throwable ignore) {
+            // no-op
+        }
     }
 
     public Level getLevel() {

@@ -23,7 +23,9 @@ import org.apache.cxf.endpoint.EndpointException;
 import org.apache.cxf.endpoint.ManagedEndpoint;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.endpoint.ServerImpl;
+import org.apache.cxf.feature.Feature;
 import org.apache.cxf.helpers.IOUtils;
+import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.JAXRSServiceImpl;
 import org.apache.cxf.jaxrs.ext.ResourceComparator;
@@ -41,6 +43,10 @@ import org.apache.cxf.message.Message;
 import org.apache.cxf.service.invoker.Invoker;
 import org.apache.cxf.transport.DestinationFactory;
 import org.apache.cxf.transport.servlet.BaseUrlHelper;
+import org.apache.cxf.validation.BeanValidationFeature;
+import org.apache.cxf.validation.BeanValidationInInterceptor;
+import org.apache.cxf.validation.BeanValidationOutInterceptor;
+import org.apache.cxf.validation.BeanValidationProvider;
 import org.apache.johnzon.jaxrs.WadlDocumentMessageBodyWriter;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
@@ -145,6 +151,10 @@ public class CxfRsHttpListener implements RsHttpListener {
 
     private static final Map<String, String> STATIC_CONTENT_TYPES;
     private static final String[] DEFAULT_WELCOME_FILES = new String[]{"/index.html", "/index.htm"};
+
+    // we have proxies etc so we can't really give it to cxf properly,
+    // bval impl supports it (message just uses Object instead of the real instance)
+    private static final Object FAKE_SERVICE_OBJECT = new Object();
 
     private final DestinationFactory transportFactory;
     private final String wildcard;
@@ -321,7 +331,7 @@ public class CxfRsHttpListener implements RsHttpListener {
                            final Collection<Object> additionalProviders,
                            final ServiceConfiguration configuration) {
         deploy(contextRoot, loadedClazz, fullContext, new OpenEJBPerRequestPojoResourceProvider(loader, loadedClazz, injections, context, owbCtx),
-            null, app, null, additionalProviders, configuration, owbCtx);
+                null, app, null, additionalProviders, configuration, owbCtx);
     }
 
     @Override
@@ -334,8 +344,8 @@ public class CxfRsHttpListener implements RsHttpListener {
         final Object proxy = ProxyEJB.subclassProxy(beanContext);
 
         deploy(contextRoot, beanContext.getBeanClass(), fullContext, new NoopResourceProvider(beanContext.getBeanClass(), proxy),
-            proxy, null, new OpenEJBEJBInvoker(Collections.singleton(beanContext)), additionalProviders, configuration,
-            beanContext.getWebBeansContext());
+                proxy, null, new OpenEJBEJBInvoker(Collections.singleton(beanContext)), additionalProviders, configuration,
+                beanContext.getWebBeansContext());
     }
 
     private void deploy(final String contextRoot, final Class<?> clazz, final String address, final ResourceProvider rp, final Object serviceBean,
@@ -471,10 +481,10 @@ public class CxfRsHttpListener implements RsHttpListener {
 
     private static boolean shouldSkipProvider(final String name) {
         return "false".equalsIgnoreCase(SystemInstance.get().getProperty(name + ".activated", "true"))
-            || name.startsWith("org.apache.wink.common.internal.");
+                || name.startsWith("org.apache.wink.common.internal.");
     }
 
-    private static void addMandatoryProviders(final Collection<Object> instances) {
+    private static void addMandatoryProviders(final Collection<Object> instances, final ServiceConfiguration serviceConfiguration) {
         if (!shouldSkipProvider(WadlDocumentMessageBodyWriter.class.getName())) {
             instances.add(new WadlDocumentMessageBodyWriter());
         }
@@ -483,6 +493,19 @@ public class CxfRsHttpListener implements RsHttpListener {
         }
         if (!shouldSkipProvider(ValidationExceptionMapper.class.getName())) {
             instances.add(new ValidationExceptionMapper());
+            final String level = SystemInstance.get()
+                    .getProperty(
+                        "openejb.cxf.rs.bval.log.level",
+                        serviceConfiguration.getProperties().getProperty(CXF_JAXRS_PREFIX + "bval.log.level"));
+            if (level != null) {
+                try {
+                    LogUtils.getL7dLogger(ValidationExceptionMapper.class).setLevel(Level.parse(level));
+                } catch (final UnsupportedOperationException uoe) {
+                    LOGGER.warning("Can't set level " + level + " on " +
+                            "org.apache.cxf.jaxrs.validation.ValidationExceptionMapper logger, " +
+                            "please configure it in your logging framework.");
+                }
+            }
         }
     }
 
@@ -554,7 +577,7 @@ public class CxfRsHttpListener implements RsHttpListener {
                         factory.setResourceProvider(clazz, new NoopResourceProvider(restServiceInfo.context.getBeanClass(), proxy));
                     } else {
                         factory.setResourceProvider(clazz, new OpenEJBPerRequestPojoResourceProvider(
-                            classLoader, clazz, injections, context, owbCtx));
+                                classLoader, clazz, injections, context, owbCtx));
                     }
                 }
             }
@@ -656,9 +679,9 @@ public class CxfRsHttpListener implements RsHttpListener {
             for (final ProviderInfo<?> o : values) { // using getName to not suppose any classloader setup
                 final String name = o.getResourceClass().getName();
                 if ("org.apache.johnzon.jaxrs.ConfigurableJohnzonProvider".equals(name)
-                    || "org.apache.johnzon.jaxrs.jsonb.jaxrs.JsonbJaxrsProvider".equals(name)
-                    // contains in case of proxying
-                    || name.contains("com.fasterxml.jackson.jaxrs.json")) {
+                        || "org.apache.johnzon.jaxrs.jsonb.jaxrs.JsonbJaxrsProvider".equals(name)
+                        // contains in case of proxying
+                        || name.contains("com.fasterxml.jackson.jaxrs.json")) {
                     customJsonProvider = true;
                     break; //  cause we only handle json for now
                 }
@@ -669,7 +692,7 @@ public class CxfRsHttpListener implements RsHttpListener {
                 while (it.hasNext()) {
                     final String name = it.next().getResourceClass().getName();
                     if ("org.apache.johnzon.jaxrs.JohnzonProvider".equals(name) ||
-                        "org.apache.openejb.server.cxf.rs.CxfRSService$TomEEJohnzonProvider".equals(name)) {
+                            "org.apache.openejb.server.cxf.rs.CxfRSService$TomEEJohnzonProvider".equals(name)) {
                         it.remove();
                         break;
                     }
@@ -777,8 +800,8 @@ public class CxfRsHttpListener implements RsHttpListener {
         // effective logging
 
         LOGGER.info("REST Application: " + Logs.forceLength(prefix, addressSize, true) + " -> " +
-            (InternalApplication.class.isInstance(application) && InternalApplication.class.cast(application).getOriginal() != null ?
-            InternalApplication.class.cast(application).getOriginal() : application));
+                (InternalApplication.class.isInstance(application) && InternalApplication.class.cast(application).getOriginal() != null ?
+                        InternalApplication.class.cast(application).getOriginal() : application));
 
         Collections.sort(resourcesToLog);
 
@@ -786,29 +809,29 @@ public class CxfRsHttpListener implements RsHttpListener {
 
             // Init and register MBeans
             final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management")
-                .set("j2eeType", "JAX-RS")
-                .set("J2EEServer", "openejb")
-                .set("J2EEApplication", base)
-                .set("EndpointType", resource.type)
-                .set("name", resource.classname);
+                    .set("j2eeType", "JAX-RS")
+                    .set("J2EEServer", "openejb")
+                    .set("J2EEApplication", base)
+                    .set("EndpointType", resource.type)
+                    .set("name", resource.classname);
 
             final ObjectName jmxObjectName = jmxName.build();
             LocalMBeanServer.registerDynamicWrapperSilently(
-                new RestServiceMBean(resource),
-                jmxObjectName);
+                    new RestServiceMBean(resource),
+                    jmxObjectName);
 
             jmxNames.add(jmxObjectName);
 
             LOGGER.info("     Service URI: "
-                + Logs.forceLength(resource.address, addressSize, true) + " -> "
-                + Logs.forceLength(resource.type, 4, false) + " "
-                + Logs.forceLength(resource.classname, classSize, true));
+                    + Logs.forceLength(resource.address, addressSize, true) + " -> "
+                    + Logs.forceLength(resource.type, 4, false) + " "
+                    + Logs.forceLength(resource.classname, classSize, true));
 
             for (final Logs.LogOperationEndpointInfo log : resource.operations) {
                 LOGGER.info("          "
-                    + Logs.forceLength(log.http, resource.methodSize, false) + " "
-                    + Logs.forceLength(log.address, addressSize, true) + " ->      "
-                    + Logs.forceLength(log.method, resource.methodStrSize, true));
+                        + Logs.forceLength(log.http, resource.methodSize, false) + " "
+                        + Logs.forceLength(log.address, addressSize, true) + " ->      "
+                        + Logs.forceLength(log.method, resource.methodStrSize, true));
             }
 
             resource.operations.clear();
@@ -844,6 +867,46 @@ public class CxfRsHttpListener implements RsHttpListener {
         }
         CxfUtil.configureEndpoint(factory, serviceConfiguration, CXF_JAXRS_PREFIX);
 
+        // activate bval
+        boolean bvalActive = Boolean.parseBoolean(
+                SystemInstance.get().getProperty("openejb.cxf.rs.bval.active",
+                        serviceConfiguration.getProperties().getProperty(CXF_JAXRS_PREFIX + "bval.active", "true")));
+        if (factory.getFeatures() == null && bvalActive) {
+            factory.setFeatures(new ArrayList<Feature>());
+        } else if (bvalActive) { // check we should activate it and user didn't configure it
+            for (final Feature f : factory.getFeatures()) {
+                if (BeanValidationFeature.class.isInstance(f)) {
+                    bvalActive = false;
+                    break;
+                }
+            }
+            for (final Interceptor<?> i : factory.getInInterceptors()) {
+                if (BeanValidationInInterceptor.class.isInstance(i)) {
+                    bvalActive = false;
+                    break;
+                }
+            }
+            for (final Interceptor<?> i : factory.getOutInterceptors()) {
+                if (BeanValidationOutInterceptor.class.isInstance(i)) {
+                    bvalActive = false;
+                    break;
+                }
+            }
+        }
+        if (bvalActive) {
+            final BeanValidationProvider provider = new BeanValidationProvider();
+
+            final BeanValidationInInterceptor in = new BeanValidationInInterceptor();
+            in.setProvider(provider);
+            in.setServiceObject(FAKE_SERVICE_OBJECT);
+            factory.getInInterceptors().add(in);
+
+            final BeanValidationOutInterceptor out = new BeanValidationOutInterceptor();
+            out.setProvider(provider);
+            out.setServiceObject(FAKE_SERVICE_OBJECT);
+            factory.getOutInterceptors().add(out);
+        }
+
         final Collection<ServiceInfo> services = serviceConfiguration.getAvailableServices();
 
         final String staticSubresourceResolution = serviceConfiguration.getProperties().getProperty(CXF_JAXRS_PREFIX + STATIC_SUB_RESOURCE_RESOLUTION_KEY);
@@ -858,7 +921,7 @@ public class CxfRsHttpListener implements RsHttpListener {
                 ResourceComparator instance = (ResourceComparator) ServiceInfos.resolve(services, resourceComparator);
                 if (instance == null) {
                     instance = (ResourceComparator) Thread.currentThread().getContextClassLoader()
-                        .loadClass(resourceComparator).newInstance();
+                            .loadClass(resourceComparator).newInstance();
                 }
                 factory.setResourceComparator(instance);
             } catch (final Exception e) {
@@ -920,11 +983,11 @@ public class CxfRsHttpListener implements RsHttpListener {
         }
 
         if (!ignoreAutoProviders) {
-            addMandatoryProviders(providers);
+            addMandatoryProviders(providers, serviceConfiguration);
         }
 
         SystemInstance.get().fireEvent(new ExtensionProviderRegistration(
-            AppFinder.findAppContextOrWeb(Thread.currentThread().getContextClassLoader(), AppFinder.AppContextTransformer.INSTANCE), providers));
+                AppFinder.findAppContextOrWeb(Thread.currentThread().getContextClassLoader(), AppFinder.AppContextTransformer.INSTANCE), providers));
 
         if (!providers.isEmpty()) {
             factory.setProviders(providers);
@@ -934,7 +997,7 @@ public class CxfRsHttpListener implements RsHttpListener {
     private Comparator<?> findProviderComparator(final ServiceConfiguration serviceConfiguration, final WebBeansContext ctx) {
         final String comparatorKey = CXF_JAXRS_PREFIX + "provider-comparator";
         final String comparatorClass = serviceConfiguration.getProperties()
-            .getProperty(comparatorKey, SystemInstance.get().getProperty(comparatorKey));
+                .getProperty(comparatorKey, SystemInstance.get().getProperty(comparatorKey));
 
         Comparator<Object> comparator = null;
         if (comparatorClass == null) {
@@ -1026,8 +1089,8 @@ public class CxfRsHttpListener implements RsHttpListener {
             final boolean loadersNotNull = classLoader1 != null && classLoader2 != null;
 
             if (classLoader1 != classLoader2
-                && loadersNotNull
-                && !classLoader1.equals(classLoader2) && !classLoader2.equals(classLoader1)) {
+                    && loadersNotNull
+                    && !classLoader1.equals(classLoader2) && !classLoader2.equals(classLoader1)) {
                 if (isParent(classLoader1, classLoader2)) {
                     return 1;
                 }
@@ -1042,9 +1105,9 @@ public class CxfRsHttpListener implements RsHttpListener {
 
                 if (MessageBodyWriter.class.isInstance(o1.getProvider())) {
                     final List<MediaType> types1 =
-                        JAXRSUtils.sortMediaTypes(JAXRSUtils.getProviderProduceTypes(MessageBodyWriter.class.cast(o1.getProvider())), JAXRSUtils.MEDIA_TYPE_QS_PARAM);
+                            JAXRSUtils.sortMediaTypes(JAXRSUtils.getProviderProduceTypes(MessageBodyWriter.class.cast(o1.getProvider())), JAXRSUtils.MEDIA_TYPE_QS_PARAM);
                     final List<MediaType> types2 =
-                        JAXRSUtils.sortMediaTypes(JAXRSUtils.getProviderProduceTypes(MessageBodyWriter.class.cast(o2.getProvider())), JAXRSUtils.MEDIA_TYPE_QS_PARAM);
+                            JAXRSUtils.sortMediaTypes(JAXRSUtils.getProviderProduceTypes(MessageBodyWriter.class.cast(o2.getProvider())), JAXRSUtils.MEDIA_TYPE_QS_PARAM);
 
                     if (types1.contains(MediaType.WILDCARD_TYPE) && !types2.contains(MediaType.WILDCARD_TYPE)) {
                         return 1;
@@ -1059,9 +1122,9 @@ public class CxfRsHttpListener implements RsHttpListener {
                     }
                 } else if (MessageBodyReader.class.isInstance(o1.getProvider())) { // else is not super good but using both is not sa well so let it be for now
                     final List<MediaType> types1 =
-                        JAXRSUtils.sortMediaTypes(JAXRSUtils.getProviderConsumeTypes(MessageBodyReader.class.cast(o1.getProvider())), null);
+                            JAXRSUtils.sortMediaTypes(JAXRSUtils.getProviderConsumeTypes(MessageBodyReader.class.cast(o1.getProvider())), null);
                     final List<MediaType> types2 =
-                        JAXRSUtils.sortMediaTypes(JAXRSUtils.getProviderConsumeTypes(MessageBodyReader.class.cast(o2.getProvider())), null);
+                            JAXRSUtils.sortMediaTypes(JAXRSUtils.getProviderConsumeTypes(MessageBodyReader.class.cast(o2.getProvider())), null);
 
                     if (types1.contains(MediaType.WILDCARD_TYPE) && !types2.contains(MediaType.WILDCARD_TYPE)) {
                         return 1;

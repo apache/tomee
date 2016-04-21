@@ -371,7 +371,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             try { // bval jars are optional so do it by reflection
                 final ClassLoader loader = ParentClassLoaderFinder.Helper.get();
                 final Object filter = loader.loadClass("org.apache.openejb.bval.BValCdiFilter").newInstance();
-                loader.loadClass("org.apache.bval.cdi.BValExtension").getMethod("setAnnotatedTypeFilter").invoke(null, filter);
+                loader.loadClass("org.apache.bval.cdi.BValExtension")
+                        .getMethod(
+                            "setAnnotatedTypeFilter",
+                            loader.loadClass("org.apache.bval.cdi.BValExtension$AnnotatedTypeFilter"))
+                        .invoke(null, filter);
             } catch (final Throwable th) {
                 // ignore, bval not compatible or not present
             }
