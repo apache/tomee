@@ -16,8 +16,10 @@
  */
 package org.apache.openejb.server.cxf.rs;
 
+import javax.ejb.EJBAccessException;
 import javax.ejb.EJBException;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Providers;
@@ -31,8 +33,18 @@ public class EJBExceptionMapper implements ExceptionMapper<EJBException> {
         final Exception cause = ejbException.getCausedByException();
         if (cause != null) {
             final Class causeClass = cause.getClass();
-            return providers.getExceptionMapper(causeClass).toResponse(cause);
+            final ExceptionMapper exceptionMapper = providers.getExceptionMapper(causeClass);
+            if (exceptionMapper == null) {
+                return defaultResponse(cause);
+            }
+            return exceptionMapper.toResponse(cause);
+        } else if (EJBAccessException.class.isInstance(ejbException)) {
+            return Response.status(Response.Status.FORBIDDEN).build();
         }
-        throw ejbException;
+        return defaultResponse(ejbException);
+    }
+
+    private Response defaultResponse(Exception cause) {
+        return Response.serverError().type(MediaType.TEXT_PLAIN_TYPE).entity(cause.getMessage()).build();
     }
 }

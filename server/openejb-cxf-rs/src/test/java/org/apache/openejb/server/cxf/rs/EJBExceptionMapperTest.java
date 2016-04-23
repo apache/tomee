@@ -17,94 +17,67 @@
 package org.apache.openejb.server.cxf.rs;
 
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.openejb.OpenEjbContainer;
-import org.apache.openejb.config.DeploymentFilterable;
-import org.apache.openejb.server.cxf.rs.beans.SimpleEJB;
-import org.apache.openejb.util.NetworkUtil;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.apache.openejb.junit.ApplicationComposer;
+import org.apache.openejb.testing.Classes;
+import org.apache.openejb.testing.EnableServices;
+import org.apache.openejb.testing.RandomPort;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
-import javax.ejb.embeddable.EJBContainer;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
-import java.util.Properties;
+import javax.ws.rs.ext.ExceptionMapper;
+import javax.ws.rs.ext.Provider;
 
 import static org.junit.Assert.assertEquals;
 
-@SuppressWarnings("FieldCanBeLocal")
+@EnableServices("jaxrs")
+@Classes(cdi = true, innerClassesAsBean = true)
+@RunWith(ApplicationComposer.class)
 public class EJBExceptionMapperTest {
-    private static EJBContainer container;
-    private static RESTIsCoolOne service;
-    private static int port = -1;
-
-    @BeforeClass
-    public static void start() throws Exception {
-        port = NetworkUtil.getNextAvailablePort();
-        final Properties properties = new Properties();
-        properties.setProperty("httpejbd.port", Integer.toString(port));
-        properties.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*openejb-cxf-rs.*");
-        properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
-        container = EJBContainer.createEJBContainer(properties);
-        service = (RESTIsCoolOne) container.getContext().lookup("java:/global/openejb-cxf-rs/RESTIsCoolOne");
-    }
-
-    @AfterClass
-    public static void close() throws Exception {
-        if (container != null) {
-            container.close();
-        }
-    }
-
+    @RandomPort("http")
+    private int port;
 
     @Test
-    public void rest() {
-        final Response response = WebClient.create("http://localhost:" + port + "/openejb-cxf-rs").path("/ejbsecu/rest").get();
-        assertEquals(500, response.getStatus());
+    public void security() {
+        final Response response = WebClient.create("http://localhost:" + port + "/openejb").path("/ejbsecu/rest").get();
+        assertEquals(403, response.getStatus());
     }
 
+    @Test
+    public void businessError() {
+        final Response response = WebClient.create("http://localhost:" + port + "/openejb").path("/ejbsecu/oops").get();
+        assertEquals(234, response.getStatus());
+    }
+
+    @Provider
+    public static class IllegalMapper implements ExceptionMapper<IllegalArgumentException> {
+        @Override
+        public Response toResponse(final IllegalArgumentException exception) {
+            return Response.status(234).build();
+        }
+    }
 
     @Singleton
-    @RolesAllowed("Something that does not exit at all")
     @Lock(LockType.READ)
-    @Path("/ejbsecu")
+    @Path("ejbsecu")
     public static class RESTIsCoolOne {
-        @EJB
-        private SimpleEJB simpleEJB;
-        @javax.ws.rs.core.Context
-        Request request;
-
-        @Path("/normal")
+        @Path("rest")
+        @RolesAllowed("Something that does not exit at all")
         @GET
-        public String normal() {
-            return simpleEJB.ok();
+        public boolean secu() {
+            return true;
         }
 
-        @Path("/rest")
+        @Path("/oops")
         @GET
-        public String rest() {
-            return simpleEJB.ok();
-        }
-
-        @Path("/param")
-        @GET
-        public String param(@QueryParam("arg") @DefaultValue("true") final String p) {
-            return p;
-        }
-
-        @Path("/field")
-        @GET
-        public boolean field() {
-            return "GET".equals(request.getMethod());
+        public boolean err() {
+            throw new IllegalArgumentException("oops");
         }
     }
 }
