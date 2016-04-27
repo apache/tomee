@@ -81,23 +81,6 @@
       <url>https://repository.apache.org/content/groups/snapshots</url>
       <snapshots/>
     </repository>
-    <repository>
-      <id>sonatype-snapshot</id>
-      <name>Sonatype Snapshot Repository</name>
-      <url>http://oss.sonatype.org/content/repositories/snapshots</url>
-      <snapshots/>
-    </repository>
-    <repository>
-      <id>codehaus-snapshot</id>
-      <name>Codehaus Snapshot Repository</name>
-      <url>http://nexus.codehaus.org/snapshots</url>
-      <snapshots/>
-    </repository>
-    <repository>
-      <id>codehaus</id>
-      <name>Codehaus Repository</name>
-      <url>https://nexus.codehaus.org/content/groups/public</url>
-    </repository>
   </repositories>
 
   <dependencies>
