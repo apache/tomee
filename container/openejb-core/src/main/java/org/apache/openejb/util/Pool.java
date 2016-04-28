@@ -184,6 +184,7 @@ public class Pool<T> {
         throw new IllegalArgumentException(minName + " cannot be greater than " + maxName + ": " + minName + "=" + min + ", " + maxName + "=" + max);
     }
 
+    @Managed
     public void flush() {
         stats.flushes.record();
         poolVersion.incrementAndGet();
