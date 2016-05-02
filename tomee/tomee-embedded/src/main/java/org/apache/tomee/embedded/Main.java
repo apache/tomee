@@ -16,9 +16,6 @@
  */
 package org.apache.tomee.embedded;
 
-import java.io.File;
-import java.util.Set;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -26,6 +23,9 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.apache.openejb.loader.ProvisioningUtil;
+
+import java.io.File;
+import java.util.Set;
 
 import static org.apache.openejb.loader.JarLocation.jarLocation;
 
@@ -67,8 +67,8 @@ public class Main {
             }
 
             boolean autoWar = true;
-            int i = 0;
             if (line.hasOption(PATH)) {
+                int i = 0;
                 for (final String path : line.getOptionValues(PATH)) {
                     final Set<String> locations = ProvisioningUtil.realLocation(path);
                     for (final String location : locations) {
@@ -86,18 +86,18 @@ public class Main {
                     }
                 }
                 autoWar = false;
-            }
-            if (line.hasOption(AS_WAR)) {
-                container.deployClasspathAsWebApp(
-                        contexts == null || i == contexts.length ? "" : contexts[i],
-                        line.hasOption(DOC_BASE) ? new File(line.getOptionValue(DOC_BASE)) : null,
-                        line.hasOption(SINGLE_CLASSLOADER));
+            } else if (line.hasOption(AS_WAR)) {
+                deployClasspath(line, container, contexts);
                 autoWar = false;
+            } else { // nothing to deploy
+                autoWar = true;
             }
             if (autoWar) { // nothing deployed check if we are a war and deploy ourself then
                 final File me = jarLocation(Main.class);
                 if (me.getName().endsWith(".war")) {
-                    container.deploy(contexts == null || i == contexts.length ? "" : contexts[i], me, line.hasOption(RENAMING));
+                    container.deploy(contexts == null || 0 == contexts.length ? "" : contexts[0], me, line.hasOption(RENAMING));
+                } else {
+                    deployClasspath(line, container, contexts);
                 }
             }
 
@@ -115,6 +115,13 @@ public class Main {
         } catch (final Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static void deployClasspath(final CommandLine line, final Container container, final String[] contexts) {
+        container.deployClasspathAsWebApp(
+                contexts == null || 0 == contexts.length ? "" : contexts[0],
+                line.hasOption(DOC_BASE) ? new File(line.getOptionValue(DOC_BASE)) : null,
+                line.hasOption(SINGLE_CLASSLOADER));
     }
 
     private static Options createOptions() {
