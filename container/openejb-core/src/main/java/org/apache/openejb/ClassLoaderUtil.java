@@ -470,6 +470,9 @@ public class ClassLoaderUtil {
         } catch (final ClassNotFoundException | NoSuchFieldException e) {
             // not a sun vm
         } catch (final Throwable e) {
+            if (Boolean.getBoolean("openejb.java9.hack")) {
+                return; // reflection fails cause internals are not exported, close() is called and should be fine
+            }
             logger.error("Unable to clear Sun JarFileFactory cache", e);
         }
     }

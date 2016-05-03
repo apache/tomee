@@ -69,10 +69,13 @@ public final class URLs {
     }
 
     public static UrlSet cullSystemJars(final UrlSet original) throws IOException {
+        final String sunboot = System.getProperty("sun.boot.class.path", "");
         UrlSet urls = new UrlSet(original.getUrls());
         urls = urls.exclude(ClassLoader.getSystemClassLoader().getParent());
         urls = urls.excludeJvm();
-        urls = urls.excludePaths(System.getProperty("sun.boot.class.path", ""));
+        if (!sunboot.isEmpty()) { // else on java9 it excludes new File(".") so all maven builds fail
+            urls = urls.excludePaths(sunboot);
+        }
         urls = urls.exclude(".*/JavaVM.framework/.*");
         return urls;
     }
