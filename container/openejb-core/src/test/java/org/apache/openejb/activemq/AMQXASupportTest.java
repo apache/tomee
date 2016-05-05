@@ -119,7 +119,11 @@ public class AMQXASupportTest {
             producer.send(session.createTextMessage(TEXT));
             assertTrue(Listener.sync());
         } finally {
-            connection.close();
+            try {
+                connection.close();
+            } catch (final JMSException e) {
+                //no-op
+            }
         }
     }
 

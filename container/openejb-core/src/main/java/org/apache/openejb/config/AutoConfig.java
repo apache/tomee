@@ -2063,8 +2063,9 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                     return -1;
                 } else if (o2.startsWith(prefix)) {
                     return 1;
+                } else {
+                    return resourceIds.indexOf(o2) - resourceIds.indexOf(o1);
                 }
-                return resourceIds.indexOf(o1) - resourceIds.indexOf(o2);
             }
         });
         String idd = null;
@@ -2269,7 +2270,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         return null;
     }
 
-    private static class AppResources {
+    static class AppResources {
 
         private String appId;
 
@@ -2307,7 +2308,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         public AppResources() {
         }
 
-        public AppResources(final AppModule appModule) {
+        protected AppResources(final AppModule appModule) {
 
             this.appId = appModule.getModuleId();
 
