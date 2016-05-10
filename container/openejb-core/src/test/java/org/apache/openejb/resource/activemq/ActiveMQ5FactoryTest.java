@@ -18,11 +18,14 @@
 package org.apache.openejb.resource.activemq;
 
 import org.apache.activemq.broker.BrokerService;
+import org.apache.activemq.network.NetworkConnector;
 import org.apache.activemq.security.JaasAuthenticationPlugin;
 import org.junit.Test;
 
 import java.net.URI;
+import java.net.URLEncoder;
 
+import static java.util.Arrays.asList;
 import static org.apache.openejb.util.NetworkUtil.getNextAvailablePort;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -43,5 +46,20 @@ public class ActiveMQ5FactoryTest {
         assertEquals(1, bs.getPlugins().length);
         assertTrue(JaasAuthenticationPlugin.class.isInstance(bs.getPlugins()[0]));
         assertFalse(JaasAuthenticationPlugin.class.cast(bs.getPlugins()[0]).isDiscoverLoginConfig()); // default is true
+    }
+
+    @Test
+    public void duplex() throws Exception {
+        final int port = getNextAvailablePort();
+        for (final boolean b : asList(true, false)) {
+            // broker:(tcp://localhost:${port})?networkConnectorURIs=static%3A%2F%2Ftcp%3A%2F%2Flocalhost%3A${port}%3Fduplex%3Dtrue
+            final URI brokerURI = new URI("amq5factory:broker:(tcp://localhost:" + port + ")?" +
+                    "networkConnectorURIs=" + URLEncoder.encode("static://tcp://localhost:" + port + "?duplex=" + b, "UTF-8"));
+            final BrokerService bs = new ActiveMQ5Factory().createBroker(brokerURI);
+            bs.stop();
+            ActiveMQ5Factory.brokers.remove(brokerURI);
+            final NetworkConnector nc = bs.getNetworkConnectors().iterator().next();
+            assertEquals("duplex is " + b, b, nc.isDuplex());
+        }
     }
 }
