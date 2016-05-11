@@ -121,7 +121,7 @@
 
     <jaxb.version>2.2.6</jaxb.version>
 
-    <tomcat.version>7.0.53</tomcat.version>
+    <tomcat.version>7.0.69</tomcat.version>
 
     <!-- used mainly by jetty modules -->
     <cxf.version>2.6.14</cxf.version>
@@ -164,7 +164,7 @@
     <commons-logging-api.version>1.1</commons-logging-api.version>
     <commons-dbcp.version>1.4</commons-dbcp.version>
     <commons-pool.version>1.5.7</commons-pool.version>
-    <commons-collections.version>3.2.1</commons-collections.version>
+    <commons-collections.version>3.2.2</commons-collections.version>
     <commons-codec.version>1.7</commons-codec.version>
     <commons-fileupload.version>1.2.2</commons-fileupload.version>
     <commons-discovery.version>0.5</commons-discovery.version>
@@ -1414,7 +1414,7 @@
       <dependency>
         <groupId>org.apache.ws.security</groupId>
         <artifactId>wss4j</artifactId>
-        <version>1.6.11</version>
+        <version>1.6.19</version>
         <exclusions>
           <exclusion>
             <artifactId>commons-logging</artifactId>

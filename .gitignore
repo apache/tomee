@@ -7,3 +7,4 @@ target
 *.iml
 *.log
 *~
+dependency-reduced-pom.xml

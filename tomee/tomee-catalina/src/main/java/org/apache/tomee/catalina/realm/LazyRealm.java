@@ -1,5 +1,4 @@
-/**
- *
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -9,11 +8,11 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.tomee.catalina.realm;
 
@@ -21,12 +20,15 @@ import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
+import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
+import org.apache.catalina.LifecycleState;
 import org.apache.catalina.Realm;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
 import org.apache.catalina.deploy.SecurityConstraint;
+import org.apache.catalina.util.LifecycleBase;
 import org.apache.openejb.config.sys.PropertiesAdapter;
 import org.apache.tomee.catalina.TomEERuntimeException;
 import org.apache.webbeans.config.WebBeansContext;
@@ -38,21 +40,30 @@ import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.security.Principal;
 import java.security.cert.X509Certificate;
 import java.util.Properties;
 import java.util.Set;
 
-public class LazyRealm implements Realm {
+public class LazyRealm extends LifecycleBase implements Realm {
     private String realmClass;
     private String properties;
-    private boolean cdi = false;
+    private String name;
+    private boolean cdi;
 
-    private volatile Realm delegate = null;
-    private Container container = null;
+    private volatile boolean init;
+    private volatile boolean start;
+    private volatile Realm delegate;
+    private Context container;
+    private final PropertyChangeSupport support = new PropertyChangeSupport(this);
 
-    private CreationalContext<Object> creationalContext = null;
+    private CreationalContext<Object> creationalContext;
+
+    public void setName(final String name) {
+        this.name = name;
+    }
 
     public void setRealmClass(final String realmClass) {
         this.realmClass = realmClass;
@@ -80,7 +91,7 @@ public class LazyRealm implements Realm {
                     final Class<?> clazz;
                     try {
                         clazz = cl.loadClass(realmClass);
-                    } catch (ClassNotFoundException e) {
+                    } catch (final ClassNotFoundException e) {
                         throw new TomEERuntimeException(e);
                     }
 
@@ -97,13 +108,26 @@ public class LazyRealm implements Realm {
                                 recipe.setAllProperties(props);
                             }
                             instance = recipe.create();
-                        } catch (Exception e) {
+                        } catch (final Exception e) {
                             throw new TomEERuntimeException(e);
                         }
                     } else {
-                        final BeanManager bm = WebBeansContext.currentInstance().getBeanManagerImpl();
+                        final WebBeansContext webBeansContext;
+                        try {
+                            webBeansContext = WebBeansContext.currentInstance();
+                            if (webBeansContext == null) {
+                                return null;
+                            }
+                        } catch (final IllegalStateException ise) {
+                            return null; // too early to have a cdi bean, skip these methods - mainly init() but @PostConstruct works then
+                        }
+
+                        final BeanManager bm = webBeansContext.getBeanManagerImpl();
                         final Set<Bean<?>> beans = bm.getBeans(clazz);
                         final Bean<?> bean = bm.resolve(beans);
+                        if (bean == null) {
+                            return null;
+                        }
                         creationalContext = bm.createCreationalContext(null);
                         instance = bm.getReference(bean, clazz, creationalContext);
                     }
@@ -113,20 +137,86 @@ public class LazyRealm implements Realm {
                     }
                     if (instance instanceof Realm) {
                         delegate = (Realm) instance;
+                        delegate.setContainer(container);
+                        if (Lifecycle.class.isInstance(delegate)) {
+                            if (init) {
+                                try {
+                                    final Lifecycle lifecycle = Lifecycle.class.cast(delegate);
+                                    lifecycle.init();
+                                    if (start) {
+                                        lifecycle.start();
+                                    }
+                                } catch (final LifecycleException e) {
+                                    // no-op
+                                }
+                            }
+                        }
                     } else {
                         delegate = new LowTypedRealm(instance);
+                        delegate.setContainer(container);
                     }
-                    delegate.setContainer(container);
+                    for (final PropertyChangeListener listener : support.getPropertyChangeListeners()) {
+                        delegate.addPropertyChangeListener(listener);
+                    }
                 }
             }
         }
         return delegate;
     }
 
+    private Class<?> loadClass() {
+        if (container != null && container.getLoader() != null && container.getLoader().getClassLoader() != null) {
+            try {
+                return container.getLoader().getClassLoader().loadClass(realmClass);
+            } catch (final ClassNotFoundException e) {
+                // no-op
+            }
+        }
+        return null;
+    }
+
+    @Override
+    protected void initInternal() throws LifecycleException {
+        final Class<?> r = loadClass();
+        if (r != null && Lifecycle.class.isAssignableFrom(r) && instance() != null) {
+            Lifecycle.class.cast(delegate).init();
+        } else {
+            init = true;
+        }
+    }
+
+    @Override
+    protected void startInternal() throws LifecycleException {
+        final Class<?> r = loadClass();
+        if (r != null && Lifecycle.class.isAssignableFrom(r) && instance() != null) {
+            Lifecycle.class.cast(instance()).start();
+        } else {
+            start = true;
+        }
+        setState(LifecycleState.STARTING);
+    }
+
+    @Override
+    protected void stopInternal() throws LifecycleException {
+        final Class<?> r = loadClass();
+        if (r != null && Lifecycle.class.isAssignableFrom(r) && instance() != null) {
+            Lifecycle.class.cast(delegate).stop();
+        }
+        setState(LifecycleState.STOPPING);
+    }
+
+    @Override
+    protected void destroyInternal() throws LifecycleException {
+        final Class<?> r = loadClass();
+        if (r != null && Lifecycle.class.isAssignableFrom(r) && instance() != null) {
+            Lifecycle.class.cast(delegate).destroy();
+        }
+    }
+
     @Override
     public Container getContainer() {
         if (delegate != null) {
-            return instance().getContainer();
+            return delegate.getContainer();
         }
         return container;
     }
@@ -145,20 +235,35 @@ public class LazyRealm implements Realm {
         });
 
         if (delegate != null) {
-            instance().setContainer(container);
+            delegate.setContainer(container);
         } else {
-            this.container = container;
+            this.container = Context.class.cast(container);
         }
     }
 
     @Override
     public String getInfo() {
+        if (name != null) {
+            return name;
+        }
+        final Realm instance = instance();
+        if (instance == null) {
+            return getClass().getName() + "/1.0";
+        }
         return instance().getInfo();
     }
 
     @Override
     public void addPropertyChangeListener(final PropertyChangeListener listener) {
-        instance().addPropertyChangeListener(listener);
+        if (delegate != null) {
+            delegate.addPropertyChangeListener(listener);
+        }
+        support.addPropertyChangeListener(listener);
+    }
+
+    @Override
+    public Principal authenticate(final String s) {
+        return instance().authenticate(s);
     }
 
     @Override
@@ -184,7 +289,9 @@ public class LazyRealm implements Realm {
 
     @Override
     public void backgroundProcess() {
-        instance().backgroundProcess();
+        if (delegate != null) {
+            instance().backgroundProcess();
+        }
     }
 
     @Override
@@ -194,8 +301,8 @@ public class LazyRealm implements Realm {
 
     @Override
     public boolean hasResourcePermission(final Request request, final Response response,
-                                         final SecurityConstraint[] constraint, final Context context) throws IOException {
-        return instance().hasResourcePermission(request, response, constraint, context);
+                                         final SecurityConstraint[] securityConstraints, final Context context) throws IOException {
+        return instance().hasResourcePermission(request, response, securityConstraints, context);
     }
 
     @Override
@@ -204,12 +311,16 @@ public class LazyRealm implements Realm {
     }
 
     @Override
-    public boolean hasUserDataPermission(final Request request, final Response response, final SecurityConstraint[] constraint) throws IOException {
-        return instance().hasUserDataPermission(request, response, constraint);
+    public boolean hasUserDataPermission(final Request request, final Response response,
+                                         final SecurityConstraint[] securityConstraints) throws IOException {
+        return instance().hasUserDataPermission(request, response, securityConstraints);
     }
 
     @Override
     public void removePropertyChangeListener(final PropertyChangeListener listener) {
-        instance().removePropertyChangeListener(listener);
+        if (delegate != null) {
+            delegate.removePropertyChangeListener(listener);
+        }
+        support.removePropertyChangeListener(listener);
     }
 }
