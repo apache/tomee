@@ -344,8 +344,12 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
         String uri = schemeSpecificPart;
         for (final Map.Entry<String, String> entry : parameters.entrySet()) {
             if (!params.containsKey(entry.getKey())) {
-                final String kv = entry.getKey() + "=" + encodeURI(entry.getValue());
-                final int idx = uri.indexOf(kv);
+                String kv = entry.getKey() + "=" + encodeURI(entry.getValue());
+                int idx = uri.indexOf(kv);
+                if (idx < 0) {
+                    kv = entry.getKey() + "=" + entry.getValue();
+                    idx = uri.indexOf(kv);
+                }
                 if (idx >= 0) {
                     final int andIdx = idx + kv.length();
                     if (andIdx < uri.length() && uri.charAt(andIdx) == '&') {
