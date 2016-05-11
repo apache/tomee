@@ -226,8 +226,12 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
     public void stop() throws LifecycleException {
         // only stop the container if we started it
         if (shutdown) {
-            Setup.removeArquillianBeanDiscoverer(openejbHome);
-            container.destroy();
+            try {
+                Setup.removeArquillianBeanDiscoverer(openejbHome);
+                container.destroy();
+            } finally {
+                resetSerialization();
+            }
         }
     }
 

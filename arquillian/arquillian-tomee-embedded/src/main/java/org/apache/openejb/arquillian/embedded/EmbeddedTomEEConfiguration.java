@@ -138,6 +138,13 @@ public class EmbeddedTomEEConfiguration extends TomEEConfiguration {
                 // no-op
             }
         }
+
+        if ("*".equals(properties.getProperty("tomee.serialization.class.blacklist", "-").trim())) {
+            properties.remove("tomee.serialization.class.blacklist");
+            properties.put("tomee.serialization.class.whitelist", "*");
+            System.setProperty("tomee.serialization.class.blacklist", System.getProperty("tomee.serialization.class.blacklist", "-"));
+        }
+
         return properties;
     }
 }

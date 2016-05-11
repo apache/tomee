@@ -650,6 +650,14 @@ public class Installer {
                 systemPropertiesWriter.write("# for more information please see http://openejb.apache.org/properties-listing.html\n");
 
                 systemPropertiesWriter.write("\n");
+                systemPropertiesWriter.write(
+                        "# allowed packages to be deserialized, by security we denied all by default, " +
+                        "tune tomee.serialization.class.whitelist packages to change it\n");
+                systemPropertiesWriter.write("# tomee.remote.support = true\n");
+                systemPropertiesWriter.write("tomee.serialization.class.blacklist = *\n");
+                systemPropertiesWriter.write("# tomee.serialization.class.whitelist = my.package\n");
+
+                systemPropertiesWriter.write("\n");
                 systemPropertiesWriter.write("# openejb.check.classloader = false\n");
                 systemPropertiesWriter.write("# openejb.check.classloader.verbose = false\n");
 

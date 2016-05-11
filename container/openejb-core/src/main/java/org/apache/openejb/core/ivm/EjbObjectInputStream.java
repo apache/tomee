@@ -1,4 +1,4 @@
- /*
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.openejb.core.ivm;
+
+import org.apache.openejb.core.rmi.BlacklistClassResolver;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,36 +30,55 @@ import java.lang.reflect.Proxy;
  */
 public class EjbObjectInputStream extends ObjectInputStream {
 
-    public EjbObjectInputStream(InputStream in) throws IOException {
+    public EjbObjectInputStream(final InputStream in) throws IOException {
         super(in);
     }
 
-    protected Class resolveClass(ObjectStreamClass classDesc) throws IOException, ClassNotFoundException {
+    @Override
+    protected Class resolveClass(final ObjectStreamClass classDesc) throws IOException, ClassNotFoundException {
+        final String checkedName = BlacklistClassResolver.DEFAULT.check(classDesc.getName());
         try {
-            return Class.forName(classDesc.getName(), false, getClassloader());
-        } catch (ClassNotFoundException e) {
-            String n = classDesc.getName();
-            if (n.equals("boolean")) return boolean.class;
-            if (n.equals("byte")) return byte.class;
-            if (n.equals("char")) return char.class;
-            if (n.equals("short")) return short.class;
-            if (n.equals("int")) return int.class;
-            if (n.equals("long")) return long.class;
-            if (n.equals("float")) return float.class;
-            if (n.equals("double")) return double.class;
+            return Class.forName(checkedName, false, getClassloader());
+        } catch (final ClassNotFoundException e) {
+            final String n = classDesc.getName();
+            if (n.equals("boolean")) {
+                return boolean.class;
+            }
+            if (n.equals("byte")) {
+                return byte.class;
+            }
+            if (n.equals("char")) {
+                return char.class;
+            }
+            if (n.equals("short")) {
+                return short.class;
+            }
+            if (n.equals("int")) {
+                return int.class;
+            }
+            if (n.equals("long")) {
+                return long.class;
+            }
+            if (n.equals("float")) {
+                return float.class;
+            }
+            if (n.equals("double")) {
+                return double.class;
+            }
 
-            return getClass().getClassLoader().loadClass(classDesc.getName()); // if CCL is not correct
+            return getClass().getClassLoader().loadClass(checkedName); // if CCL is not correct
         }
     }
 
-    protected Class resolveProxyClass(String[] interfaces) throws IOException, ClassNotFoundException {
-        Class[] cinterfaces = new Class[interfaces.length];
-        for (int i = 0; i < interfaces.length; i++)
+    protected Class resolveProxyClass(final String[] interfaces) throws IOException, ClassNotFoundException {
+        final Class[] cinterfaces = new Class[interfaces.length];
+        for (int i = 0; i < interfaces.length; i++) {
             cinterfaces[i] = getClassloader().loadClass(interfaces[i]);
+        }
 
         try {
             return Proxy.getProxyClass(getClassloader(), cinterfaces);
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             throw new ClassNotFoundException(null, e);
         }
     }
