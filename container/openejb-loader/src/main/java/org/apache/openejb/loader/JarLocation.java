@@ -30,18 +30,13 @@ public class JarLocation {
         return jarLocation(JarLocation.class);
     }
 
-    public static File jarLocation(final Class clazz) {
+    public static File jarFromResource(final String resourceName) {
+        return jarFromResource(Thread.currentThread().getContextClassLoader(), resourceName);
+    }
+
+    public static File jarFromResource(final ClassLoader loader, final String resourceName) {
         try {
-            final String classFileName = clazz.getName().replace(".", "/") + ".class";
-
-            final ClassLoader loader = clazz.getClassLoader();
-            URL url;
-            if (loader != null) {
-                url = loader.getResource(classFileName);
-            } else {
-                url = clazz.getResource(classFileName);
-            }
-
+            URL url = loader.getResource(resourceName);
             if (url == null) {
                 throw new IllegalStateException("classloader.getResource(classFileName) returned a null URL");
             }
@@ -62,10 +57,22 @@ public class JarLocation {
                 return new File(decode(url.getFile()));
 
             } else if ("file".equals(url.getProtocol())) {
-                return toFile(classFileName, url);
+                return toFile(resourceName, url);
             } else {
                 throw new IllegalArgumentException("Unsupported URL scheme: " + url.toExternalForm());
             }
+        } catch (final RuntimeException e) {
+            throw e;
+        } catch (final Exception e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static File jarLocation(final Class clazz) {
+        try {
+            final String classFileName = clazz.getName().replace(".", "/") + ".class";
+            final ClassLoader loader = clazz.getClassLoader();
+            return jarFromResource(loader, classFileName);
         } catch (final RuntimeException e) {
             throw e;
         } catch (final Exception e) {
