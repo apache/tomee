@@ -53,6 +53,9 @@ import java.util.Properties;
 import static java.util.Arrays.asList;
 import static org.apache.openejb.loader.Files.mkdirs;
 
+/**
+ * Creates an executable jar of the application.
+ */
 @Mojo(name = "exec", requiresDependencyResolution = ResolutionScope.RUNTIME_PLUS_SYSTEM)
 public class ExecMojo extends BuildTomEEMojo {
     private static final String DEFAULT_SCRIPT = "bin/catalina[.sh|.bat]";
