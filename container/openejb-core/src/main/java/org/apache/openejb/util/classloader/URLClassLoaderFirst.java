@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -8,16 +8,16 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 package org.apache.openejb.util.classloader;
 
 import org.apache.openejb.core.ParentClassLoaderFinder;
-import org.apache.openejb.core.TempClassLoader;
 import org.apache.openejb.loader.SystemInstance;
 
 import java.io.IOException;
@@ -39,7 +39,6 @@ public class URLClassLoaderFirst extends URLClassLoader {
     private static final boolean SKIP_COMMONS_NET = skipLib("org.apache.commons.net.pop3.POP3Client");
 
     // first skip container APIs if not in the jaxrs or plus version
-    private static final boolean SKIP_JAXRS = skipLib("org.apache.cxf.jaxrs.JAXRSInvoker");
     private static final boolean SKIP_JAXWS = skipLib("org.apache.cxf.jaxws.support.JaxWsImplementorInfo");
     private static final boolean SKIP_JMS = skipLib("org.apache.activemq.broker.BrokerFactory");
 
@@ -52,6 +51,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
     }
 
     public static final String SLF4J_BINDER_CLASS = "org/slf4j/impl/StaticLoggerBinder.class";
+    private static final URL SLF4J_CONTAINER = URLClassLoaderFirst.class.getClassLoader().getResource(SLF4J_BINDER_CLASS);
     private static final String CLASS_EXT = ".class";
     public static final ClassLoader SYSTEM_CLASS_LOADER = ClassLoader.getSystemClassLoader();
 
@@ -72,8 +72,8 @@ public class URLClassLoaderFirst extends URLClassLoader {
     private static boolean skipLib(final String includedClass) {
         try {
             URLClassLoaderFirst.class.getClassLoader().loadClass(includedClass);
-            return true;
-        } catch (ClassNotFoundException e) {
+            return "true".equalsIgnoreCase(System.getProperty(includedClass + ".skip", "true"));
+        } catch (final ClassNotFoundException e) {
             return false;
         }
     }
@@ -86,7 +86,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
     }
 
     @Override
-    public Class<?> loadClass(final String name, final boolean resolve) throws ClassNotFoundException {
+    public synchronized Class<?> loadClass(final String name, final boolean resolve) throws ClassNotFoundException {
         // already loaded?
         Class<?> clazz = findLoadedClass(name);
         if (clazz != null) {
@@ -106,13 +106,13 @@ public class URLClassLoaderFirst extends URLClassLoader {
                     }
                     return clazz;
                 }
-            } catch (ClassNotFoundException ignored) {
+            } catch (final ClassNotFoundException ignored) {
                 // no-op
             }
         }
 
         // look for it in this classloader
-        boolean ok = !(shouldSkip(name) || shouldDelegateToTheContainer(this, name));
+        final boolean ok = !(shouldSkip(name) || shouldDelegateToTheContainer(this, name));
         if (ok) {
             clazz = loadInternal(name, resolve);
             if (clazz != null) {
@@ -153,13 +153,17 @@ public class URLClassLoaderFirst extends URLClassLoader {
                 }
                 return clazz;
             }
-        } catch (ClassNotFoundException ignored) {
+        } catch (final ClassNotFoundException ignored) {
             // no-op
         }
         return null;
     }
 
-    private Class<?> loadInternal(final String name, final boolean resolve) {
+    public Class<?> findAlreadyLoadedClass(final String name) {
+        return super.findLoadedClass(name);
+    }
+
+    public Class<?> loadInternal(final String name, final boolean resolve) {
         try {
             final Class<?> clazz = findClass(name);
             if (clazz != null) {
@@ -168,7 +172,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
                 }
                 return clazz;
             }
-        } catch (ClassNotFoundException ignored) {
+        } catch (final ClassNotFoundException ignored) {
             // no-op
         }
         return null;
@@ -189,25 +193,37 @@ public class URLClassLoaderFirst extends URLClassLoader {
             return false;
         }
 
-        for (String prefix : FORCED_SKIP) {
+        for (final String prefix : FORCED_SKIP) {
             if (name.startsWith(prefix)) {
                 return true;
             }
         }
-        for (String prefix : FORCED_LOAD) {
+        for (final String prefix : FORCED_LOAD) {
             if (name.startsWith(prefix)) {
                 return false;
             }
         }
 
-        if (name.startsWith("java.")) return true;
-        if (name.startsWith("javax.faces.")) return false;
-        if (name.startsWith("javax.mail.")) return false;
-        if (name.startsWith("javax.")) return isInServer(name);
-        if (name.startsWith("sun.")) return isInJvm(name);
+        if (name.startsWith("java.")) {
+            return true;
+        }
+        if (name.startsWith("javax.faces.")) {
+            return false;
+        }
+        if (name.startsWith("javax.mail.")) {
+            return false;
+        }
+        if (name.startsWith("javax.")) {
+            return isInServer(name);
+        }
+        if (name.startsWith("sun.")) {
+            return isInJvm(name);
+        }
 
         // can be provided in the webapp
-        if (name.startsWith("javax.servlet.jsp.jstl")) return false;
+        if (name.startsWith("javax.servlet.jsp.jstl")) {
+            return false;
+        }
 
         if (name.startsWith("org.")) {
             final String org = name.substring("org.".length());
@@ -216,25 +232,54 @@ public class URLClassLoaderFirst extends URLClassLoader {
                 final String apache = org.substring("apache.".length());
 
                 // the following block is classes which enrich webapp classloader
-                if (apache.startsWith("webbeans.jsf")) return false;
-                if (apache.startsWith("tomee.mojarra.")) return false;
+                if (apache.startsWith("webbeans.jsf")) {
+                    return false;
+                }
+                if (apache.startsWith("tomee.mojarra.")) {
+                    return false;
+                }
 
                 // here we find server classes
-                if (apache.startsWith("bval.")) return true;
-                if (apache.startsWith("openjpa.")) return true;
-                if (apache.startsWith("derby.")) return true;
-                if (apache.startsWith("xbean.")) return true;
-                if (apache.startsWith("geronimo.")) return true;
-                if (apache.startsWith("coyote")) return true;
-                if (apache.startsWith("webbeans.")) return true;
-                if (apache.startsWith("log4j") && SKIP_LOG4J) return true;
-                if (apache.startsWith("catalina")) return true;
-                if (apache.startsWith("jasper.")) return true;
-                if (apache.startsWith("tomcat.")) return true;
-                if (apache.startsWith("el.")) return true;
+                if (apache.startsWith("bval.")) {
+                    return true;
+                }
+                if (apache.startsWith("openjpa.")) {
+                    return true;
+                }
+                if (apache.startsWith("xbean.")) {
+                    return !apache.substring("xbean.".length()).startsWith("spring");
+                }
+                if (apache.startsWith("geronimo.")) {
+                    return true;
+                }
+                if (apache.startsWith("coyote.")) {
+                    return true;
+                }
+                if (apache.startsWith("webbeans.")) {
+                    return true;
+                }
+                if (apache.startsWith("log4j.") && SKIP_LOG4J) {
+                    return true;
+                }
+                if (apache.startsWith("catalina.")) {
+                    return true;
+                }
+                if (apache.startsWith("jasper.")) {
+                    return true;
+                }
+                if (apache.startsWith("tomcat.")) {
+                    return true;
+                }
+                if (apache.startsWith("el.")) {
+                    return true;
+                }
                 // if (apache.startsWith("jsp")) return true; // precompiled jsp have to be loaded from the webapp
-                if (apache.startsWith("naming")) return true;
-                if (apache.startsWith("taglibs.")) return true;
+                if (apache.startsWith("naming.")) {
+                    return true;
+                }
+                if (apache.startsWith("taglibs.standard.")) {
+                    return true;
+                }
 
                 if (apache.startsWith("openejb.")) { // skip all excepted webapp enrichment artifacts
                     return !isWebAppEnrichment(apache.substring("openejb.".length()));
@@ -244,17 +289,42 @@ public class URLClassLoaderFirst extends URLClassLoader {
                     final String commons = apache.substring("commons.".length());
 
                     // don't stop on commons package since we don't bring all commons
-                    if (commons.startsWith("beanutils")) return true;
-                    if (commons.startsWith("cli")) return true;
-                    if (commons.startsWith("codec")) return true;
-                    if (commons.startsWith("collections")) return true;
-                    if (commons.startsWith("dbcp")) return true;
-                    if (commons.startsWith("digester")) return true;
-                    if (commons.startsWith("jocl")) return true;
-                    if (commons.startsWith("lang")) return true;
-                    if (commons.startsWith("logging")) return false;
-                    if (commons.startsWith("pool")) return true;
-                    if (commons.startsWith("net") && SKIP_COMMONS_NET) return true;
+                    if (commons.startsWith("beanutils.")) {
+                        return isInServer(name);
+                    }
+                    if (commons.startsWith("cli.")) {
+                        return true;
+                    }
+                    if (commons.startsWith("codec.")) {
+                        return true;
+                    }
+                    if (commons.startsWith("collections.")) {
+                        return true;
+                    }
+                    if (commons.startsWith("dbcp.")) {
+                        return true;
+                    }
+                    if (commons.startsWith("digester.")) {
+                        return true;
+                    }
+                    if (commons.startsWith("jocl.")) {
+                        return true;
+                    }
+                    if (commons.startsWith("lang.")) { // openjpa
+                        return true;
+                    }
+                    if (commons.startsWith("lang3.")) {  // us
+                        return true;
+                    }
+                    if (commons.startsWith("logging.")) {
+                        return false;
+                    }
+                    if (commons.startsWith("pool.")) {
+                        return true;
+                    }
+                    if (commons.startsWith("net.") && SKIP_COMMONS_NET) {
+                        return true;
+                    }
 
                     return false;
                 }
@@ -263,73 +333,142 @@ public class URLClassLoaderFirst extends URLClassLoader {
                     // we bring only myfaces-impl (+api but that's javax)
                     // mainly inspired from a comparison with tomahawk packages
                     final String myfaces = name.substring("myfaces.".length());
-                    if (myfaces.startsWith("shared")) return true;
-                    if (myfaces.startsWith("ee6.")) return true;
-                    if (myfaces.startsWith("lifecycle.")) return true;
-                    if (myfaces.startsWith("context.")) return true;
-                    if (myfaces.startsWith("logging.")) return true;
+                    if (myfaces.startsWith("shared.")) {
+                        return true;
+                    }
+                    if (myfaces.startsWith("ee6.")) {
+                        return true;
+                    }
+                    if (myfaces.startsWith("lifecycle.")) {
+                        return true;
+                    }
+                    if (myfaces.startsWith("context.")) {
+                        return true;
+                    }
+                    if (myfaces.startsWith("logging.")) {
+                        return true;
+                    }
                     // tomahawk uses component.html package
-                    if (myfaces.startsWith("component.visit.") || myfaces.equals("component.ComponentResourceContainer")) return true;
-                    if (myfaces.startsWith("application.")) return true;
-                    if (myfaces.startsWith("config.")) return true;
-                    if (myfaces.startsWith("event.")) return true;
+                    if (myfaces.startsWith("component.visit.") || myfaces.equals("component.ComponentResourceContainer")) {
+                        return true;
+                    }
+                    if (myfaces.startsWith("application.")) {
+                        return true;
+                    }
+                    if (myfaces.startsWith("config.")) {
+                        return true;
+                    }
+                    if (myfaces.startsWith("event.")) {
+                        return true;
+                    }
 
-                    if (myfaces.startsWith("resource.")) return true;
-                    if (myfaces.startsWith("el.")) return true;
-                    if (myfaces.startsWith("spi.")) return true;
-                    if (myfaces.startsWith("convert.")) return true;
-                    if (myfaces.startsWith("debug.")) return true;
-                    if (myfaces.startsWith("util.")) return true;
-                    if (myfaces.startsWith("view.")) return true;
-                    if (myfaces.equals("convert.ConverterUtils")) return true;
+                    if (myfaces.startsWith("resource.")) {
+                        return true;
+                    }
+                    if (myfaces.startsWith("el.")) {
+                        return true;
+                    }
+                    if (myfaces.startsWith("spi.")) {
+                        return true;
+                    }
+                    if (myfaces.startsWith("convert.")) {
+                        return true;
+                    }
+                    if (myfaces.startsWith("debug.")) {
+                        return true;
+                    }
+                    if (myfaces.startsWith("util.")) {
+                        return true;
+                    }
+                    if (myfaces.startsWith("view.")) {
+                        return true;
+                    }
+                    if (myfaces.equals("convert.ConverterUtils")) {
+                        return true;
+                    }
 
                     if (myfaces.startsWith("renderkit.")) {
                         final String renderkit = myfaces.substring("renderkit.".length());
-                        if (renderkit.startsWith("html.Html")) return true;
-                        char firstNextletter = renderkit.charAt(0);
-                        if (Character.isUpperCase(firstNextletter)) return true;
+                        if (renderkit.startsWith("html.Html")) {
+                            return true;
+                        }
+                        final char firstNextletter = renderkit.charAt(0);
+                        if (Character.isUpperCase(firstNextletter)) {
+                            return true;
+                        }
                         return false;
                     }
 
                     if (myfaces.startsWith("taglib.")) {
                         final String taglib = myfaces.substring("taglib.".length());
-                        if (taglib.startsWith("html.Html")) return true;
-                        if (taglib.startsWith("core.")) return true;
+                        if (taglib.startsWith("html.Html")) {
+                            return true;
+                        }
+                        if (taglib.startsWith("core.")) {
+                            return true;
+                        }
                         return false;
                     }
 
                     if (myfaces.startsWith("webapp.")) {
                         final String webapp = myfaces.substring("webapp.".length());
-                        if (webapp.startsWith("Faces")) return true;
-                        if (webapp.startsWith("Jsp")) return true;
-                        if (webapp.startsWith("Startup")) return true;
-                        if (webapp.equals("AbstractFacesInitializer")) return true;
-                        if (webapp.equals("MyFacesServlet")) return true;
-                        if (webapp.equals("ManagedBeanDestroyerListener")) return true;
-                        if (webapp.equals("WebConfigParamsLogger")) return true;
+                        if (webapp.startsWith("Faces")) {
+                            return true;
+                        }
+                        if (webapp.startsWith("Jsp")) {
+                            return true;
+                        }
+                        if (webapp.startsWith("Startup")) {
+                            return true;
+                        }
+                        if (webapp.equals("AbstractFacesInitializer")) {
+                            return true;
+                        }
+                        if (webapp.equals("MyFacesServlet")) {
+                            return true;
+                        }
+                        if (webapp.equals("ManagedBeanDestroyerListener")) {
+                            return true;
+                        }
+                        if (webapp.equals("WebConfigParamsLogger")) {
+                            return true;
+                        }
                         return false;
                     }
 
                     return false;
                 }
 
+                if (apache.startsWith("activemq.")) {
+                    return SKIP_JMS && isInServer(name);
+                }
+
                 return false;
             }
 
             // other org packages
-            if (org.startsWith("hsqldb.") && SKIP_HSQLDB) return true;
+            if (org.startsWith("hsqldb.") && SKIP_HSQLDB) {
+                return true;
+            }
             if (org.startsWith("codehaus.swizzle.")) {
                 final String swizzle = org.substring("codehaus.swizzle.".length());
-                if (swizzle.startsWith("stream.")) return true;
-                if (swizzle.startsWith("rss.")) return true;
-                if (swizzle.startsWith("Grep.class") || swizzle.startsWith("Lexer.class")) return true;
+                if (swizzle.startsWith("stream.")) {
+                    return true;
+                }
+                if (swizzle.startsWith("rss.")) {
+                    return true;
+                }
+                if (swizzle.startsWith("Grep.class") || swizzle.startsWith("Lexer.class")) {
+                    return true;
+                }
                 return false;
             }
-            if (org.startsWith("w3c.dom")) {
+            if (org.startsWith("w3c.dom.") || org.startsWith("xml.sax.")) {
                 return isInJvm(name);
             }
-            if (org.startsWith("quartz")) return true;
-            if (org.startsWith("eclipse.jdt.")) return true;
+            if (org.startsWith("eclipse.jdt.")) {
+                return true;
+            }
 
             // let an app use its own slf4j impl (so its own api too)
             // if (org.startsWith("slf4j")) return true;
@@ -338,8 +477,12 @@ public class URLClassLoaderFirst extends URLClassLoader {
         }
 
         // other packages
-        if (name.startsWith("com.sun.")) return isInJvm(name);
-        if (name.startsWith("serp.bytecode")) return true;
+        if (name.startsWith("com.sun.")) {
+            return isInJvm(name);
+        }
+        if (name.startsWith("serp.bytecode.")) {
+            return true;
+        }
 
         return false;
     }
@@ -351,9 +494,12 @@ public class URLClassLoaderFirst extends URLClassLoader {
     private static boolean isInServer(final String name) {
         if (name.startsWith("javax.")) {
             final String sub = name.substring("javax.".length());
-            if (sub.startsWith("ws.rs.")) return SKIP_JAXRS;
-            if (sub.startsWith("jws.")) return SKIP_JAXWS;
-            if (sub.startsWith("jms.")) return SKIP_JMS;
+            if (sub.startsWith("jws.")) {
+                return SKIP_JAXWS;
+            }
+            if (sub.startsWith("jms.")) {
+                return SKIP_JMS;
+            }
         }
         return ParentClassLoaderFinder.Helper.get().getResource(name.replace('.', '/') + ".class") != null;
     }
@@ -382,14 +528,6 @@ public class URLClassLoaderFirst extends URLClassLoader {
 
     }
 
-    private static ClassLoader findParent(final ClassLoader loader) {
-        ClassLoader parentLoader = loader.getParent();
-        while (parentLoader != null && TempClassLoader.class.isInstance(parentLoader) && URLClassLoaderFirst.class.getClassLoader() != parentLoader) {
-            parentLoader = parentLoader.getParent();
-        }
-        return parentLoader;
-    }
-
     // in org.apache.openejb.
     private static boolean isWebAppEnrichment(final String openejb) {
         return openejb.startsWith("hibernate.") || openejb.startsWith("jpa.integration.")
@@ -411,9 +549,24 @@ public class URLClassLoaderFirst extends URLClassLoader {
     }
 
     public static boolean shouldSkipSlf4j(final ClassLoader loader, final String name) {
-        final URL resource = loader.getResource(SLF4J_BINDER_CLASS);
-        return name != null && name.startsWith("org.slf4j.") && resource != null
-                && resource.equals(findParent(loader).getResource(SLF4J_BINDER_CLASS));
+        if (name == null || !name.startsWith("org.slf4j.")) {
+            return false;
+        }
+
+        try { // using getResource here just returns randomly the container one so we need getResources
+            final Enumeration<URL> resources = loader.getResources(SLF4J_BINDER_CLASS);
+            while (resources.hasMoreElements()) {
+                final URL resource = resources.nextElement();
+                if (!resource.equals(SLF4J_CONTAINER)) {
+                    // applicative slf4j
+                    return false;
+                }
+            }
+        } catch (final Throwable e) {
+            // no-op
+        }
+
+        return true;
     }
 
     // useful method for SPI

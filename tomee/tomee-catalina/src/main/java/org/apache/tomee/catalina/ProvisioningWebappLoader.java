@@ -1,5 +1,4 @@
-/**
- *
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -9,11 +8,11 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.tomee.catalina;
 
@@ -25,28 +24,33 @@ import org.apache.openejb.classloader.ClassLoaderConfigurer;
 import org.apache.openejb.classloader.CompositeClassLoaderConfigurer;
 import org.apache.openejb.config.QuickJarsTxtParser;
 import org.apache.openejb.loader.ProvisioningUtil;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.reflection.Reflections;
 
 import java.io.File;
 
 /**
  * Usage example in META-INF/context.xml
- *
-
- <Context antiJARLocking="true" >
-     <Loader
-         className="org.apache.tomee.catalina.ProvisioningWebappLoader"
-         searchExternalFirst="true"
-         virtualClasspath="mvn:commons-el:commons-el:1.0;mvn:commons-el:commons-el:1.0"
-         searchVirtualFirst="true"
-     />
- </Context>
-
- *
+ * <p/>
+ * <p/>
+ * <Context antiJARLocking="true" >
+ * <Loader
+ * className="org.apache.tomee.catalina.ProvisioningWebappLoader"
+ * searchExternalFirst="true"
+ * virtualClasspath="mvn:commons-el:commons-el:1.0;mvn:commons-el:commons-el:1.0"
+ * searchVirtualFirst="true"
+ * />
+ * </Context>
  */
 public class ProvisioningWebappLoader extends VirtualWebappLoader {
+    public static final boolean SKIP_BACKGROUND_PROCESS = "true".equals(SystemInstance.get().getProperty("tomee.classloader.skip-background-process", "false"));
+
     @Override
     public void backgroundProcess() {
+        if (SKIP_BACKGROUND_PROCESS) {
+            return;
+        }
+
         final ClassLoader classloader = super.getClassLoader();
         if (classloader instanceof LazyStopWebappClassLoader) {
             final LazyStopWebappClassLoader lazyStopWebappClassLoader = (LazyStopWebappClassLoader) classloader;
@@ -62,11 +66,19 @@ public class ProvisioningWebappLoader extends VirtualWebappLoader {
     }
 
     @Override
+    public boolean modified() {
+        if (SKIP_BACKGROUND_PROCESS) {
+            return false;
+        }
+        return super.modified();
+    }
+
+    @Override
     protected void startInternal() throws LifecycleException {
         // standard tomcat part
         final StringBuilder builder = new StringBuilder();
         final String classpath = String.class.cast(Reflections.get(this, "virtualClasspath"));
-        if (!classpath.isEmpty()) {
+        if (classpath != null && !classpath.isEmpty()) {
             for (final String s : String.class.cast(classpath).split(";")) {
                 builder.append(ProvisioningUtil.realLocation(s)).append(";");
             }
@@ -92,10 +104,11 @@ public class ProvisioningWebappLoader extends VirtualWebappLoader {
         Reflections.set(this, "virtualClasspath", cp);
 
         LazyStopWebappClassLoader.initContext(configurer);
+        LazyStopWebappClassLoader.initContext(Context.class.cast(getContainer()));
         try {
             super.startInternal();
         } finally {
-            LazyStopWebappClassLoader.cleanInitContext();
+            LazyStopWebappClassLoader.cleanContext();
         }
     }
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,12 +16,14 @@
  */
 package org.apache.tomee.catalina;
 
+import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.loader.WebappClassLoader;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.classloader.ClassLoaderConfigurer;
 import org.apache.openejb.classloader.WebAppEnricher;
 import org.apache.openejb.config.NewLoaderLogic;
+import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
@@ -31,63 +33,63 @@ import org.apache.openejb.util.classloader.URLClassLoaderFirst;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Map;
 
 public class LazyStopWebappClassLoader extends WebappClassLoader {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, LazyStopWebappClassLoader.class.getName());
     private static final ThreadLocal<ClassLoaderConfigurer> INIT_CONFIGURER = new ThreadLocal<ClassLoaderConfigurer>();
+    private static final ThreadLocal<Context> CONTEXT = new ThreadLocal<Context>();
 
     public static final String TOMEE_WEBAPP_FIRST = "tomee.webapp-first";
+    public static final String CLASS_EXTENSION = ".class";
 
-    private boolean restarting = false;
-    private boolean forceStopPhase = Boolean.parseBoolean(SystemInstance.get().getProperty("tomee.webappclassloader.force-stop-phase", "false"));
-    private ClassLoaderConfigurer configurer = null;
+    private boolean restarting;
+    private final boolean forceStopPhase = Boolean.parseBoolean(SystemInstance.get().getProperty("tomee.webappclassloader.force-stop-phase", "false"));
+    private ClassLoaderConfigurer configurer;
+    private final boolean isEar;
+    private final ClassLoader containerClassLoader;
+    private volatile boolean originalDelegate;
     private final int hashCode;
-
-    // ugly but break the whole container in embedded mode at least, tomcat change had a lot of side effect
-    private void setj2seClassLoader(final ClassLoader loader) {
-        try {
-            final Field field = WebappClassLoader.class.getDeclaredField("j2seClassLoader");
-
-            if (!field.isAccessible()) {
-                field.setAccessible(true);
-            }
-
-            if (Modifier.isFinal(field.getModifiers())) {
-                final Field modifiersField = Field.class.getDeclaredField("modifiers");
-                modifiersField.setAccessible(true);
-                modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-            }
-
-            field.set(this, loader);
-        } catch (final Exception e) {
-            LOGGER.warning("Can't set field j2seClassLoader");
-        }
-    }
+    private Collection<File> additionalRepos;
+    private final Map<String, Boolean> filterTempCache = new HashMap<String, Boolean>(); // used only in sync block + isEar
 
     public LazyStopWebappClassLoader() {
-        setj2seClassLoader(getSystemClassLoader());
+        j2seClassLoader = getSystemClassLoader();
         hashCode = construct();
+        containerClassLoader = ParentClassLoaderFinder.Helper.get();
+        isEar = getParent() != containerClassLoader;
+        originalDelegate = getDelegate();
     }
 
     public LazyStopWebappClassLoader(final ClassLoader parent) {
         super(parent);
-        setj2seClassLoader(getSystemClassLoader());
+        j2seClassLoader = getSystemClassLoader();
         hashCode = construct();
+        setJavaseClassLoader(getSystemClassLoader());
+        containerClassLoader = ParentClassLoaderFinder.Helper.get();
+        isEar = getParent() != containerClassLoader;
+        originalDelegate = getDelegate();
     }
 
     private int construct() {
         setDelegate(isDelegate());
         configurer = INIT_CONFIGURER.get();
         return super.hashCode();
+    }
+
+    @Override
+    public void setDelegate(final boolean delegate) {
+        this.delegate = delegate;
+        this.originalDelegate = delegate;
     }
 
     @Override
@@ -98,8 +100,13 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
         }
     }
 
+    public Collection<File> getAdditionalRepos() {
+        initAdditionalRepos();
+        return additionalRepos;
+    }
+
     @Override
-    public Class<?> loadClass(final String name) throws ClassNotFoundException {
+    public Class<?> loadClass(final String name, final boolean resolve) throws ClassNotFoundException {
         if ("org.apache.openejb.hibernate.OpenEJBJtaPlatform".equals(name)
                 || "org.apache.openejb.jpa.integration.hibernate.PrefixNamingStrategy".equals(name)
                 || "org.apache.openejb.jpa.integration.eclipselink.PrefixSessionCustomizer".equals(name)
@@ -107,15 +114,14 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
                 || "org.apache.tomee.mojarra.TomEEInjectionProvider".equals(name)) {
             // don't load them from system classloader (breaks all in embedded mode and no sense in other cases)
             synchronized (this) {
-                final ClassLoader old = j2seClassLoader;
-                setj2seClassLoader(NoClassClassLoader.INSTANCE);
-                final boolean delegate = getDelegate();
-                setDelegate(false);
+                final ClassLoader old = getJavaseClassLoader();
+                j2seClassLoader = NoClassClassLoader.INSTANCE;
+                delegate = false;
                 try {
-                    return super.loadClass(name);
+                    return super.loadClass(name, resolve);
                 } finally {
-                    setj2seClassLoader(old);
-                    setDelegate(delegate);
+                    setJavaseClassLoader(old);
+                    setDelegate(originalDelegate);
                 }
             }
         }
@@ -123,34 +129,73 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
         // avoid to redefine classes from server in this classloader is it not already loaded
         if (URLClassLoaderFirst.shouldDelegateToTheContainer(this, name)) { // dynamic validation handling overriding
             try {
-                return OpenEJB.class.getClassLoader().loadClass(name);
-            } catch (ClassNotFoundException e) {
-                return super.loadClass(name);
-            } catch (NoClassDefFoundError ncdfe) {
-                return super.loadClass(name);
+                return OpenEJB.class.getClassLoader().loadClass(name); // we could use containerClassLoader but this is server loader so cut it even more
+            } catch (final ClassNotFoundException e) {
+                synchronized (this) {
+                    return super.loadClass(name, resolve);
+                }
+            } catch (final NoClassDefFoundError ncdfe) {
+                synchronized (this) {
+                    return super.loadClass(name, resolve);
+                }
             }
         } else if (name.startsWith("javax.faces.") || name.startsWith("org.apache.webbeans.jsf.")) {
-            final boolean delegate = getDelegate();
             synchronized (this) {
-                setDelegate(false);
+                delegate = false;
                 try {
-                    return super.loadClass(name);
+                    return super.loadClass(name, resolve);
                 } finally {
-                    setDelegate(delegate);
+                    setDelegate(originalDelegate);
                 }
             }
         }
-        return super.loadClass(name);
+        synchronized (this) { // TODO: rework it to avoid it and get aligned on Java 7 classloaders (but not a big issue)
+            if (isEar) {
+                final boolean filter = filter(name);
+                filterTempCache.put(name, filter); // will be called again by super.loadClass() so cache it
+                if (!filter) {
+                    if (URLClassLoaderFirst.class.isInstance(getParent())) { // true
+                        final URLClassLoaderFirst urlClassLoaderFirst = URLClassLoaderFirst.class.cast(getParent());
+                        Class<?> c = urlClassLoaderFirst.findAlreadyLoadedClass(name);
+                        if (c != null) {
+                            return c;
+                        }
+                        c = urlClassLoaderFirst.loadInternal(name, resolve);
+                        if (c != null) {
+                            return c;
+                        }
+                    }
+                    return loadWithDelegate(getResource(name.replace('.', '/') + CLASS_EXTENSION) == null, resolve, name);
+                }
+            }
+            return super.loadClass(name, resolve);
+        }
     }
 
-    @Override
-    protected boolean validate(final String name) { // static validation, mainly container stuff
-        return !URLClassLoaderFirst.shouldSkip(name);
+    private Class<?> loadWithDelegate(final boolean delegate, final boolean resolve, final String name) throws ClassNotFoundException {
+        setDelegate(delegate);
+        try {
+            return super.loadClass(name, resolve);
+        } finally {
+            filterTempCache.remove(name); // no more needed since class is loaded, avoid to waste mem
+            setDelegate(originalDelegate);
+        }
     }
 
     @Override
     protected boolean filter(final String name) {
-        return !"org.apache.tomee.mojarra.TomEEInjectionProvider".equals(name) && URLClassLoaderFirst.shouldSkip(name);
+        if ("org.apache.tomee.mojarra.TomEEInjectionProvider".equals(name)) {
+            return false;
+        }
+        if (isEar) { // check we are called from super and we already cached the result in loadClass
+            synchronized (this) {
+                final Boolean cache = filterTempCache.get(name);
+                if (cache != null) {
+                    return cache;
+                }
+            }
+        }
+        return URLClassLoaderFirst.shouldSkip(name);
     }
 
     public void internalStop() throws LifecycleException {
@@ -179,6 +224,29 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
         return restarting;
     }
 
+    public synchronized void initAdditionalRepos() {
+        if (additionalRepos != null) {
+            return;
+        }
+        if (CONTEXT.get() != null) {
+            additionalRepos = new LinkedList<File>();
+            final String root = CONTEXT.get().getServletContext().getRealPath("/");
+            if (root != null) {
+                final String externalRepositories = SystemInstance.get().getProperty("tomee." + new File(root).getName() + ".externalRepositories");
+                if (externalRepositories != null) {
+                    setSearchExternalFirst(true);
+                    for (final String additional : externalRepositories.split(",")) {
+                        final String trim = additional.trim();
+                        if (!trim.isEmpty()) {
+                            final File file = new File(trim);
+                            additionalRepos.add(file);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     // embeddeding implementation of sthg (JPA, JSF) can lead to classloading issues if we don't enrich the webapp
     // with our integration jars
     // typically the class will try to be loaded by the common classloader
@@ -186,7 +254,22 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
     // will be in the webapp
     @Override
     public void start() throws LifecycleException {
+        if (this.repositories == null) {
+            this.repositories = new String[0];
+        }
         super.start(); // do it first otherwise we can't use this as classloader
+
+        // mainly for tomee-maven-plugin
+        initAdditionalRepos();
+        if (additionalRepos != null) {
+            for (final File f : additionalRepos) {
+                try { // not addURL to look here first
+                    super.addRepository(f.toURI().toURL().toExternalForm());
+                } catch (final MalformedURLException e) {
+                    LOGGER.error(e.getMessage());
+                }
+            }
+        }
 
         // add configurer enrichments
         if (configurer != null) {
@@ -198,7 +281,7 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
         }
 
         // add internal enrichments
-        for (URL url : SystemInstance.get().getComponent(WebAppEnricher.class).enrichment(this)) {
+        for (final URL url : SystemInstance.get().getComponent(WebAppEnricher.class).enrichment(this)) {
             super.addURL(url);
         }
     }
@@ -210,7 +293,7 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
     }
 
     @Override
-    protected boolean validateJarFile(File file) throws IOException {
+    protected boolean validateJarFile(final File file) throws IOException {
         return super.validateJarFile(file) && TomEEClassLoaderEnricher.validateJarFile(file) && jarIsAccepted(file);
     }
 
@@ -224,7 +307,7 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
                 LOGGER.warning("jar '" + file.getAbsolutePath() + "' is excluded: " + file.getName() + ". It will be ignored.");
                 return false;
             }
-        } catch (MalformedURLException e) {
+        } catch (final MalformedURLException e) {
             // no-op
         }
         return true;
@@ -282,8 +365,13 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
         INIT_CONFIGURER.set(configurer);
     }
 
-    public static void cleanInitContext() {
+    public static void initContext(final Context ctx) {
+        CONTEXT.set(ctx);
+    }
+
+    public static void cleanContext() {
         INIT_CONFIGURER.remove();
+        CONTEXT.remove();
     }
 
     private static class NoClassClassLoader extends ClassLoader {
