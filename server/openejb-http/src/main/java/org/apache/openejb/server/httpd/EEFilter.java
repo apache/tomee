@@ -17,6 +17,8 @@
 package org.apache.openejb.server.httpd;
 
 import org.apache.openejb.cdi.CdiAppContextsService;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.SecurityService;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.spi.ContextsService;
 
@@ -35,22 +37,36 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import java.io.IOException;
+import java.util.Properties;
 
-public class WebBeansFilter implements Filter { // its pupose is to start/stop request scope in async tasks
+// its pupose is to start/stop request scope in async tasks
+// and ensure logout is propagated to security service
+public class EEFilter implements Filter {
+    private SecurityService securityService;
+    private boolean active;
+
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
-        // no-op
+        final SystemInstance si = SystemInstance.isInitialized() ? SystemInstance.get() : null;
+        final Properties config = si != null ? si.getProperties() : System.getProperties();
+        securityService = si != null ? si.getComponent(SecurityService.class) : null;
+        active = Boolean.parseBoolean(config.getProperty("tomee.http.request.wrap", "true"));
     }
 
     @Override
     public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse, final FilterChain filterChain) throws IOException, ServletException {
         if (!HttpServletRequest.class.isInstance(servletRequest)) {
-            filterChain.doFilter(servletRequest, servletResponse);
+            filterChain.doFilter(active && HttpServletRequest.class.isInstance(servletRequest) ?
+                    new NoCdiRequest(HttpServletRequest.class.cast(servletRequest), this) : servletRequest, servletResponse);
             return;
         }
-        WebBeansContext ctx = null;
+        WebBeansContext ctx;
         filterChain.doFilter(servletRequest.isAsyncSupported() &&  (ctx = WebBeansContext.currentInstance()) != null ?
-                new CdiRequest(HttpServletRequest.class.cast(servletRequest), ctx) : servletRequest, servletResponse);
+                new CdiRequest(HttpServletRequest.class.cast(servletRequest), ctx, this) : servletRequest, servletResponse);
+    }
+
+    private void onLogout(final HttpServletRequest request) {
+        securityService.onLogout(request);
     }
 
     @Override
@@ -58,11 +74,29 @@ public class WebBeansFilter implements Filter { // its pupose is to start/stop r
         // no-op
     }
 
-    public static class CdiRequest extends HttpServletRequestWrapper {
+    public static class NoCdiRequest extends HttpServletRequestWrapper {
+        private final EEFilter filter;
+
+        public NoCdiRequest(final HttpServletRequest cast, final EEFilter filter) {
+            super(cast);
+            this.filter = filter;
+        }
+
+        @Override
+        public void logout() throws ServletException {
+            try {
+                super.logout();
+            } finally {
+                filter.onLogout(HttpServletRequest.class.cast(getRequest()));
+            }
+        }
+    }
+
+    public static class CdiRequest extends NoCdiRequest {
         private final WebBeansContext webBeansContext;
 
-        public CdiRequest(final HttpServletRequest cast, final WebBeansContext webBeansContext) {
-            super(cast);
+        public CdiRequest(final HttpServletRequest cast, final WebBeansContext webBeansContext, final EEFilter filter) {
+            super(cast, filter);
             this.webBeansContext = webBeansContext;
         }
 

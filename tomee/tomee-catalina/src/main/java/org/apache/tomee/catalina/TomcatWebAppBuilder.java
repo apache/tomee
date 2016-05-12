@@ -288,7 +288,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         SystemInstance.get().setComponent(Hosts.class, hosts);
         for (final Service service : standardServer.findServices()) {
             if (service.getContainer() instanceof Engine) {
-                final Engine engine = (Engine) service.getContainer();
+                final Engine engine = service.getContainer();
 
                 // add the global router if relevant
                 final URL globalRouterConf = RouterValve.serverRouterConfigurationURL();
@@ -1620,8 +1620,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         final Realm realm = standardContext.getRealm();
         final ClassLoader classLoader = standardContext.getLoader().getClassLoader();
         final Thread thread = Thread.currentThread();
+        final ClassLoader originalLoader = thread.getContextClassLoader();
         if (realm != null && !(realm instanceof TomEERealm) && (standardContext.getParent() == null || (!realm.equals(standardContext.getParent().getRealm())))) {
-            final ClassLoader originalLoader = thread.getContextClassLoader();
             thread.setContextClassLoader(classLoader);
             try {
                 standardContext.setRealm(tomeeRealm(realm));
@@ -1651,7 +1651,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
         // bind extra stuff at the java:comp level which can only be
         // bound after the context is created
-        final ClassLoader originalLoader = thread.getContextClassLoader();
         thread.setContextClassLoader(classLoader);
 
         final NamingContextListener ncl = standardContext.getNamingContextListener();

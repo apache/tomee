@@ -20,6 +20,7 @@ package org.apache.openejb.spi;
 import org.apache.openejb.InterfaceType;
 
 import javax.security.auth.login.LoginException;
+import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.security.Principal;
 
@@ -77,4 +78,11 @@ public interface SecurityService<T> extends Service {
     void setState(Object o);
 
     Object currentState();
+
+    /**
+     * Called when request.logout() is triggered. Intended to remove context propagation.
+     *
+     * @param request the http request triggering the logout.
+     */
+    void onLogout(HttpServletRequest request);
 }

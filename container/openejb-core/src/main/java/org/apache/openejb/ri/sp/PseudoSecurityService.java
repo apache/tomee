@@ -21,6 +21,7 @@ import org.apache.openejb.InterfaceType;
 import org.apache.openejb.spi.SecurityService;
 
 import javax.security.auth.login.LoginException;
+import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.security.Principal;
 import java.util.Collections;
@@ -78,5 +79,10 @@ public class PseudoSecurityService implements SecurityService {
 
     public Object currentState() {
         return null;
+    }
+
+    @Override
+    public void onLogout(final HttpServletRequest request) {
+        // no-op
     }
 }

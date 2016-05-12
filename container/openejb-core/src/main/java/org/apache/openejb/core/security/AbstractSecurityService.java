@@ -34,6 +34,7 @@ import javax.security.auth.login.LoginException;
 import javax.security.jacc.EJBMethodPermission;
 import javax.security.jacc.PolicyConfigurationFactory;
 import javax.security.jacc.PolicyContext;
+import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.security.AccessControlContext;
@@ -88,6 +89,10 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
     @Override
     public void destroyResource() {
         // no-op
+    }
+
+    public void onLogout(final HttpServletRequest request) {
+        clientIdentity.remove();
     }
 
     public String getRealmName() {
