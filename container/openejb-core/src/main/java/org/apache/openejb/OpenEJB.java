@@ -41,7 +41,6 @@ import java.util.concurrent.atomic.AtomicReference;
  * @version $Rev$ $Date$
  */
 public final class OpenEJB {
-
     private static Instance instance;
 
     private OpenEJB() {

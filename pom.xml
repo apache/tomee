@@ -162,7 +162,7 @@
     <commons-net.version>3.3</commons-net.version>
 
     <bval.version>1.1.1</bval.version>
-    <org.apache.activemq.version>5.13.0</org.apache.activemq.version>
+    <org.apache.activemq.version>5.13.3</org.apache.activemq.version>
     <org.springframework.version>3.1.4.RELEASE</org.springframework.version>
     <junit.version>4.12</junit.version>
     <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
@@ -180,7 +180,7 @@
     <version.axiom>1.2.14</version.axiom>
     <version.xalan>2.7.1</version.xalan>
     <version.hibernate>4.2.18.Final</version.hibernate>
-    <version.eclipselink>2.5.2</version.eclipselink>
+    <version.eclipselink>2.6.3</version.eclipselink>
     <version.groovy>2.4.2</version.groovy>
 
     <!-- arquillian related -->

@@ -2064,6 +2064,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 } else if (o2.startsWith(prefix)) {
                     return 1;
                 }
+                // make it stable with prefixed comparison + keep existing ordering (bck compat)
                 return resourceIds.indexOf(o1) - resourceIds.indexOf(o2);
             }
         });
@@ -2269,7 +2270,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         return null;
     }
 
-    private static class AppResources {
+    /*private*/ static class AppResources {
 
         private String appId;
 

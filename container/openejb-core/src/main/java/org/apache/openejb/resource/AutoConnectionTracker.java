@@ -33,12 +33,17 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class AutoConnectionTracker implements ConnectionTracker {
     private final ConcurrentMap<ManagedConnectionInfo, ProxyPhantomReference> references = new ConcurrentHashMap<ManagedConnectionInfo, ProxyPhantomReference>();
     private final ReferenceQueue referenceQueue = new ReferenceQueue();
+
+    public Set<ManagedConnectionInfo> connections() {
+        return references.keySet();
+    }
 
     /**
      * Releases any managed connections held by a garbage collected connection proxy.

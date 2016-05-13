@@ -197,6 +197,7 @@ public class StatelessPoolStatsTest extends TestCase {
             "FilterAttributes",
             "Filters the attributes that show up in the MBeanInfo.  The exclude is applied first, then any attributes that match the include are re-added.  It may be required to disconnect and reconnect the JMX console to force a refresh of the MBeanInfo",
             operations, "void", MBeanOperationInfo.UNKNOWN));
+        expectedOperations.add(new MBeanOperationInfo("flush", "", new MBeanParameterInfo[0], "void", MBeanOperationInfo.UNKNOWN));
 
         final List<MBeanOperationInfo> actualOperations = new ArrayList<MBeanOperationInfo>();
         actualOperations.addAll(Arrays.asList(poolMBeanInfo.getOperations()));

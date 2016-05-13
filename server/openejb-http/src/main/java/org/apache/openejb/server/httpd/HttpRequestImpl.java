@@ -1031,7 +1031,7 @@ public class HttpRequestImpl implements HttpRequest {
         return startAsync(this, HttpResponse.class.cast(getAttribute("openejb_response")));
     }
 
-    @Override // avoids the need of org.apache.openejb.server.httpd.WebBeansFilter in embedded mode
+    @Override // avoids the need of org.apache.openejb.server.httpd.EEFilter in embedded mode
     public AsyncContext startAsync(final ServletRequest servletRequest, final ServletResponse servletResponse) {
         setAttribute("openejb_async", "true");
         final OpenEJBAsyncContext asyncContext = new OpenEJBAsyncContext(HttpServletRequest.class.cast(servletRequest) /* TODO */, servletResponse, contextPath);
@@ -1039,7 +1039,7 @@ public class HttpRequestImpl implements HttpRequest {
         asyncStarted = true;
         final WebBeansContext webBeansContext = WebBeansContext.currentInstance();
         return webBeansContext != null ?
-                new WebBeansFilter.AsynContextWrapper(asyncContext, servletRequest, webBeansContext) : asyncContext;
+                new EEFilter.AsynContextWrapper(asyncContext, servletRequest, webBeansContext) : asyncContext;
     }
 
     public void addInternalParameter(final String key, final String val) {

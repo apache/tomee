@@ -32,11 +32,12 @@ import static org.junit.Assert.assertEquals;
 public class KahaDBSupportTest {
     @Test
     public void create() throws Exception {
-        final BrokerService broker = BrokerFactory.createBroker(new URI("openejb:broker:(tcp://localhost:" + NetworkUtil.getNextAvailablePort() + ")?usekahadb=true&kahadb.directory=target/kahatest"));
+        final String path = "target/kahatest" + System.currentTimeMillis();
+        final BrokerService broker = BrokerFactory.createBroker(new URI("openejb:broker:(tcp://localhost:" + NetworkUtil.getNextAvailablePort() + ")?usekahadb=true&kahadb.directory=" + path));
         try {
             assertThat(broker.getPersistenceAdapter(), instanceOf(KahaDBPersistenceAdapter.class));
             final KahaDBPersistenceAdapter adapter = KahaDBPersistenceAdapter.class.cast(broker.getPersistenceAdapter());
-            assertEquals(new File("target/kahatest"), adapter.getDirectory());
+            assertEquals(new File(path), adapter.getDirectory());
         } finally {
             broker.stop();
         }

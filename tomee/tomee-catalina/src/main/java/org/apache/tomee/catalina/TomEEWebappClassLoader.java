@@ -138,6 +138,8 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
         if ("org.apache.openejb.hibernate.OpenEJBJtaPlatform".equals(name)
                 || "org.apache.openejb.jpa.integration.hibernate.PrefixNamingStrategy".equals(name)
                 || "org.apache.openejb.jpa.integration.eclipselink.PrefixSessionCustomizer".equals(name)
+                || "org.apache.openejb.jpa.integration.eclipselink.OpenEJBServerPlatform".equals(name)
+                || "org.apache.openejb.jpa.integration.eclipselink.OpenEJBServerPlatform$OpenEJBJTATransactionController".equals(name)
                 || "org.apache.openejb.eclipselink.JTATransactionController".equals(name)
                 || "org.apache.tomee.mojarra.TomEEInjectionProvider".equals(name)) {
             // don't load them from system classloader (breaks all in embedded mode and no sense in other cases)

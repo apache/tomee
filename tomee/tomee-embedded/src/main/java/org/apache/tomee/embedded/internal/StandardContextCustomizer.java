@@ -90,8 +90,10 @@ public class StandardContextCustomizer {
                             resources.createWebResourceSet(WebResourceRoot.ResourceSetType.RESOURCE_JAR, "/", absolutePath, "", "/META-INF/resources");
                         }
                     } else {
-                        resources.createWebResourceSet(WebResourceRoot.ResourceSetType.CLASSES_JAR, "/WEB-INF/lib", absolutePath, null, "/");
-                        resources.createWebResourceSet(WebResourceRoot.ResourceSetType.RESOURCE_JAR, "/", url, "/META-INF/resources");
+                        if (absolutePath.endsWith(".jar") || Boolean.getBoolean("tomee.embedded.resources.add-war-as-jar")) {
+                            resources.createWebResourceSet(WebResourceRoot.ResourceSetType.CLASSES_JAR, "/WEB-INF/lib", absolutePath, null, "/");
+                            resources.createWebResourceSet(WebResourceRoot.ResourceSetType.RESOURCE_JAR, "/", url, "/META-INF/resources");
+                        } // else endsWith .war => ignore
                     }
                 }
 

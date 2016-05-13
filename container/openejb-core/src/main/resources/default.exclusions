@@ -57,6 +57,7 @@ commons-logging-
 commons-logging-api-
 commons-net-
 commons-pool-
+commons-pool2-
 cryptacular-
 cssparser-
 cxf-

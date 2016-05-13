@@ -21,11 +21,14 @@ import org.apache.activemq.broker.BrokerFactory;
 import org.apache.activemq.broker.BrokerFactoryHandler;
 import org.apache.activemq.broker.BrokerPlugin;
 import org.apache.activemq.broker.BrokerService;
+import org.apache.activemq.network.DiscoveryNetworkConnector;
+import org.apache.activemq.network.NetworkConnector;
 import org.apache.activemq.ra.ActiveMQResourceAdapter;
 import org.apache.activemq.store.PersistenceAdapter;
 import org.apache.activemq.store.PersistenceAdapterFactory;
 import org.apache.activemq.store.jdbc.JDBCPersistenceAdapter;
 import org.apache.activemq.store.memory.MemoryPersistenceAdapter;
+import org.apache.activemq.util.IntrospectionSupport;
 import org.apache.activemq.util.URISupport;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
@@ -35,11 +38,17 @@ import org.apache.xbean.propertyeditor.PropertyEditorException;
 import org.apache.xbean.propertyeditor.PropertyEditors;
 import org.apache.xbean.recipe.ObjectRecipe;
 
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -48,9 +57,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
-import javax.naming.Context;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
 
 public class ActiveMQ5Factory implements BrokerFactoryHandler {
 
@@ -89,8 +95,8 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
             }
 
             final BrokerPlugin[] plugins = createPlugins(params);
-            final URI uri = new URI(cleanUpUri(brokerURI.getSchemeSpecificPart(), compositeData.getParameters(), params));
-            broker = BrokerFactory.createBroker(uri);
+            final URI uri = new URI(cleanUpUri(brokerURI.getRawSchemeSpecificPart(), compositeData.getParameters(), params));
+            broker = "broker".equals(uri.getScheme()) ? newDefaultBroker(uri) : BrokerFactory.createBroker(uri);
             if (plugins != null) {
                 broker.setPlugins(plugins);
             }
@@ -127,7 +133,7 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
                                 final Object obj = context.lookup("openejb/Resource/" + resouceId);
                                 if (!(obj instanceof DataSource)) {
                                     throw new IllegalArgumentException("Resource with id " + resouceId
-                                        + " is not a DataSource, but is " + obj.getClass().getName());
+                                            + " is not a DataSource, but is " + obj.getClass().getName());
                                 }
                                 dataSource = (DataSource) obj;
                             } catch (final NamingException e) {
@@ -179,9 +185,9 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
                         //Start before returning - this is known to be safe.
                         if (!bs.isStarted()) {
                             Logger
-                                .getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class)
-                                .getChildLogger("service")
-                                .info("Starting ActiveMQ BrokerService");
+                                    .getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class)
+                                    .getChildLogger("service")
+                                    .info("Starting ActiveMQ BrokerService");
                             bs.start();
                         }
 
@@ -189,9 +195,9 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
 
                         //Force a checkpoint to initialize pools
                         Logger
-                            .getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class)
-                            .getChildLogger("service")
-                            .info("Starting ActiveMQ checkpoint");
+                                .getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class)
+                                .getChildLogger("service")
+                                .info("Starting ActiveMQ checkpoint");
                         bs.getPersistenceAdapter().checkpoint(true);
                         started.set(true);
 
@@ -220,9 +226,9 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
             try {
                 timeout = Integer.parseInt(properties.getProperty("startuptimeout", "30000"));
                 Logger
-                    .getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class)
-                    .getChildLogger("service")
-                    .info("Using ActiveMQ startup timeout of " + timeout + "ms");
+                        .getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class)
+                        .getChildLogger("service")
+                        .info("Using ActiveMQ startup timeout of " + timeout + "ms");
             } catch (final Throwable e) {
                 //Ignore
             }
@@ -238,19 +244,72 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
 
             if (null != throwable) {
                 Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class).getChildLogger("service").error("ActiveMQ failed to start broker",
-                    throwable);
+                        throwable);
             } else if (started.get()) {
                 Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class).getChildLogger("service").info("ActiveMQ broker started");
             } else {
                 Logger
-                    .getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class)
-                    .getChildLogger("service")
-                    .warning("ActiveMQ failed to start broker within " + timeout + " seconds - It may be unusable");
+                        .getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class)
+                        .getChildLogger("service")
+                        .warning("ActiveMQ failed to start broker within " + timeout + " seconds - It may be unusable");
             }
 
         }
 
         return broker;
+    }
+
+    // forking org.apache.activemq.broker.DefaultBrokerFactory.createBroker() to support network connector properties
+    private BrokerService newDefaultBroker(final URI uri) throws Exception {
+        final URISupport.CompositeData compositeData = URISupport.parseComposite(uri);
+        final Map<String, String> params = new HashMap<String, String>(compositeData.getParameters());
+
+        final BrokerService brokerService = newPatchedBrokerService();
+
+        IntrospectionSupport.setProperties(brokerService, params);
+        if (!params.isEmpty()) {
+            String msg = "There are " + params.size()
+                    + " Broker options that couldn't be set on the BrokerService."
+                    + " Check the options are spelled correctly."
+                    + " Unknown parameters=[" + params + "]."
+                    + " This BrokerService cannot be started.";
+            throw new IllegalArgumentException(msg);
+        }
+
+        if (compositeData.getPath() != null) {
+            brokerService.setBrokerName(compositeData.getPath());
+        }
+
+        for (final URI component : compositeData.getComponents()) {
+            if ("network".equals(component.getScheme())) {
+                brokerService.addNetworkConnector(component.getSchemeSpecificPart());
+            } else if ("proxy".equals(component.getScheme())) {
+                brokerService.addProxyConnector(component.getSchemeSpecificPart());
+            } else {
+                brokerService.addConnector(component);
+            }
+        }
+        return brokerService;
+    }
+
+    private BrokerService newPatchedBrokerService() {
+        return new BrokerService() {
+            @Override
+            public NetworkConnector addNetworkConnector(final URI discoveryAddress) throws Exception {
+                final NetworkConnector connector = new DiscoveryNetworkConnector(discoveryAddress);
+                try { // try to set properties to broker too
+                    final Map<String, String> props = URISupport.parseParameters(discoveryAddress);
+                    if (!props.containsKey("skipConnector")) {
+                        IntrospectionSupport.setProperties(connector, props);
+                    }
+                } catch (final URISyntaxException e) {
+                    // low level cause not supported by AMQ by default
+                    Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class).getChildLogger("service")
+                            .debug(e.getMessage());
+                }
+                return addNetworkConnector(connector);
+            }
+        };
     }
 
     private BrokerPlugin[] createPlugins(final Map<String, String> params) {
@@ -285,8 +344,12 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
         String uri = schemeSpecificPart;
         for (final Map.Entry<String, String> entry : parameters.entrySet()) {
             if (!params.containsKey(entry.getKey())) {
-                final String kv = entry.getKey() + "=" + entry.getValue();
-                final int idx = uri.indexOf(kv);
+                String kv = entry.getKey() + "=" + encodeURI(entry.getValue());
+                int idx = uri.indexOf(kv);
+                if (idx < 0) {
+                    kv = entry.getKey() + "=" + entry.getValue();
+                    idx = uri.indexOf(kv);
+                }
                 if (idx >= 0) {
                     final int andIdx = idx + kv.length();
                     if (andIdx < uri.length() && uri.charAt(andIdx) == '&') {
@@ -298,6 +361,14 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
             }
         }
         return uri;
+    }
+
+    private static String encodeURI(final String value) {
+        try {
+            return URLEncoder.encode(value, "UTF-8");
+        } catch (final UnsupportedEncodingException e) {
+            return value;
+        }
     }
 
     private static PersistenceAdapter createPersistenceAdapter(final String clazz, final String prefix, final Map<String, String> params) throws IllegalAccessException, InvocationTargetException, ClassNotFoundException, InstantiationException {

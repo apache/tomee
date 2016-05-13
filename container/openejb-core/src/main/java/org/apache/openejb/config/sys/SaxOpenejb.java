@@ -17,6 +17,7 @@
 
 package org.apache.openejb.config.sys;
 
+import org.apache.openejb.config.SystemProperty;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Saxs;
 import org.xml.sax.Attributes;
@@ -314,6 +315,11 @@ class SaxOpenejb extends StackHandler {
             if (importedOpenEJB.deployments != null) {
                 for (final Deployments deployment : importedOpenEJB.deployments) {
                     openejb.add(deployment);
+                }
+            }
+            if (importedOpenEJB.systemProperties != null) {
+                for (final SystemProperty systemProp : importedOpenEJB.systemProperties) {
+                    openejb.add(systemProp);
                 }
             }
         }

@@ -39,7 +39,7 @@ import org.apache.openejb.config.NewLoaderLogic;
 import org.apache.openejb.config.ServiceUtils;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.server.httpd.WebBeansFilter;
+import org.apache.openejb.server.httpd.EEFilter;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URLs;
@@ -410,8 +410,8 @@ public class OpenEJBContextConfig extends ContextConfig {
             asyncOwbFilter.setAsyncSupported("true");
             asyncOwbFilter.setDescription("OpenEJB CDI Filter - to propagate @RequestScoped in async tasks");
             asyncOwbFilter.setDisplayName("OpenEJB CDI");
-            asyncOwbFilter.setFilterClass(WebBeansFilter.class.getName());
-            asyncOwbFilter.setFilterName(WebBeansFilter.class.getName());
+            asyncOwbFilter.setFilterClass(EEFilter.class.getName());
+            asyncOwbFilter.setFilterName(EEFilter.class.getName());
             context.addFilterDef(asyncOwbFilter);
 
             final FilterMap asyncOwbMapping = new FilterMap();
