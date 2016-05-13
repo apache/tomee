@@ -22,6 +22,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectStreamClass;
 import java.lang.reflect.Proxy;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.regex.Pattern;
 
 /**
  * @version $Rev$ $Date$
@@ -98,6 +99,8 @@ public class EjbObjectInputStream extends ObjectInputStream {
         private final String[] blacklist;
         private final String[] whitelist;
 
+        public static final Pattern PRIMITIVE_ARRAY = Pattern.compile("^\\[+[BCDFIJSVZ]$");
+
         protected BlacklistClassResolver() {
             this(toArray(System.getProperty(
                 "tomee.serialization.class.blacklist",
@@ -111,6 +114,11 @@ public class EjbObjectInputStream extends ObjectInputStream {
         }
 
         protected boolean isBlacklisted(final String name) {
+            // allow primitive arrays
+            if (PRIMITIVE_ARRAY.matcher(name).matches()) {
+                return false;
+            }
+
             if (name != null && name.startsWith("[L") && name.endsWith(";")) {
                 return isBlacklisted(name.substring(2, name.length() - 1));
             }
