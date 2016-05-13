@@ -16,10 +16,9 @@
  */
 package org.superbiz.jsf;
 
-import javax.ejb.Remote;
+import javax.ejb.Local;
 
-@Remote
+@Local
 public interface Calculator {
-
-    public double add(double x, double y);
+    double add(double x, double y);
 }
