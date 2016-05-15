@@ -17,6 +17,7 @@
 package org.apache.openejb.core.rmi;
 
 import java.io.ObjectStreamClass;
+import java.util.regex.Pattern;
 
 public class BlacklistClassResolver {
     public static final BlacklistClassResolver DEFAULT = new BlacklistClassResolver(
@@ -24,6 +25,9 @@ public class BlacklistClassResolver {
             "tomee.serialization.class.blacklist",
             "org.codehaus.groovy.runtime.,org.apache.commons.collections.functors.,org.apache.xalan,java.lang.Process")),
         toArray(System.getProperty("tomee.serialization.class.whitelist")));
+
+
+    public static final Pattern PRIMITIVE_ARRAY = Pattern.compile("^\\[+[BCDFIJSVZ]$");
 
     private final String[] blacklist;
     private final String[] whitelist;
@@ -34,6 +38,12 @@ public class BlacklistClassResolver {
     }
 
     protected boolean isBlacklisted(final String name) {
+
+        // allow primitive arrays
+        if (PRIMITIVE_ARRAY.matcher(name).matches()) {
+            return false;
+        }
+
         if (name != null && name.startsWith("[L") && name.endsWith(";")) {
             return isBlacklisted(name.substring(2, name.length() - 1));
         }

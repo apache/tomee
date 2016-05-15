@@ -22,7 +22,30 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.ContainerInfo;
 import org.apache.openejb.assembler.classic.ResourceInfo;
 import org.apache.openejb.config.sys.Resource;
-import org.apache.openejb.jee.*;
+import org.apache.openejb.jee.ActivationConfig;
+import org.apache.openejb.jee.ActivationConfigProperty;
+import org.apache.openejb.jee.AdminObject;
+import org.apache.openejb.jee.AssemblyDescriptor;
+import org.apache.openejb.jee.ConnectionDefinition;
+import org.apache.openejb.jee.Connector;
+import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.EntityBean;
+import org.apache.openejb.jee.InboundResourceadapter;
+import org.apache.openejb.jee.InjectionTarget;
+import org.apache.openejb.jee.JndiConsumer;
+import org.apache.openejb.jee.JndiReference;
+import org.apache.openejb.jee.MessageDestination;
+import org.apache.openejb.jee.MessageDestinationRef;
+import org.apache.openejb.jee.MessageDrivenBean;
+import org.apache.openejb.jee.MessageListener;
+import org.apache.openejb.jee.OutboundResourceAdapter;
+import org.apache.openejb.jee.PersistenceContextRef;
+import org.apache.openejb.jee.PersistenceRef;
+import org.apache.openejb.jee.PersistenceType;
+import org.apache.openejb.jee.ResourceAdapter;
+import org.apache.openejb.jee.ResourceRef;
+import org.apache.openejb.jee.SessionBean;
+import org.apache.openejb.jee.SessionType;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.jee.jpa.unit.TransactionType;
@@ -1997,14 +2020,15 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         Collections.sort(resourceIds, new Comparator<String>() { // sort from webapp to global resources
             @Override
             public int compare(final String o1, final String o2) { // don't change global order, just put app scoped resource before others
-                if (o1.startsWith(prefix) && o2.startsWith(prefix)) {
+                  if (o1.startsWith(prefix) && o2.startsWith(prefix)) {
                     return resourceIds.indexOf(o1) - resourceIds.indexOf(o2);
                 } else if (o1.startsWith(prefix)) {
                     return -1;
                 } else if (o2.startsWith(prefix)) {
                     return 1;
+                } else {
+                    return resourceIds.indexOf(o2) - resourceIds.indexOf(o1);
                 }
-                return resourceIds.indexOf(o1) - resourceIds.indexOf(o2);
             }
         });
         String idd = null;
@@ -2195,7 +2219,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         return null;
     }
 
-    private static class AppResources {
+    protected static class AppResources {
 
         private String appId;
 
