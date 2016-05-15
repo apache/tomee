@@ -22,7 +22,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>multi-jpa-provider-testing</artifactId>
   <packaging>jar</packaging>
-  <version>1.1.2-SNAPSHOT-SNAPSHOT</version>
+  <version>1.1.2-SNAPSHOT</version>
   <name>OpenEJB :: Examples :: Multiple JPA providers</name>
 
   <properties>

@@ -20,7 +20,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>datasource-versioning</artifactId>
   <packaging>jar</packaging>
-  <version>1.1.2-SNAPSHOT-SNAPSHOT</version>
+  <version>1.1.2-SNAPSHOT</version>
   <name>OpenEJB :: Examples :: Datasource Versioning</name>
 
   <properties>
