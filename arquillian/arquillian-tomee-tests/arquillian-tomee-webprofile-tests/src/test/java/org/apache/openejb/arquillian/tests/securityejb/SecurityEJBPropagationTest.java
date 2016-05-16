@@ -23,7 +23,6 @@ import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -46,7 +45,6 @@ public class SecurityEJBPropagationTest {
     private URL base;
 
     @Test
-    @Ignore("we need to upgrade to tomcat 8.5.1 cause org.apache.catalina.connector.Response.applicationResponse init should be null and not this")
     public void run() throws IOException {
         assertEquals("testtestnullguest", IO.slurp(new URL(base.toExternalForm() + "test?doLogin=true")));
     }
