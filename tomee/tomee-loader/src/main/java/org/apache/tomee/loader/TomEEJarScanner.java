@@ -109,7 +109,7 @@ public class TomEEJarScanner extends StandardJarScanner {
                     return false;
                 }
             }
-            if (jarName.startsWith("johnzon-")) {
+            if (jarName.startsWith("johnzon-") || jarName.startsWith("xx-arquillian-tomee-")) {
                 return false; // but we scan it in openejb scanning
             }
             return !NewLoaderLogic.skip(jarName) && (delegate == null || delegate.check(jarScanType, jarName));
