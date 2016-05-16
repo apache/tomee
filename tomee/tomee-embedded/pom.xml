@@ -90,6 +90,72 @@
                   <exclude>org.apache.activemq.protobuf:*</exclude>
                   <exclude>org.fusesource.hawtbuf:hawtbuf</exclude>
                   <exclude>org.apache.myfaces.core:*</exclude>
+                  <!-- jaxws -->
+                  <exclude>joda-time:joda-time</exclude>
+                  <exclude> commons-codec:commons-codec</exclude>
+                  <exclude>${project.groupId}:tomee-webservices</exclude>
+                  <exclude>${project.groupId}:openejb-webservices</exclude>
+                  <exclude>${project.groupId}:openejb-cxf</exclude>
+                  <exclude>org.apache.wss4j:*</exclude>
+                  <exclude>org.apache.santuario:xmlsec</exclude>
+                  <exclude>org.opensaml:*</exclude>
+                  <exclude>org.jasypt:*</exclude>
+                  <exclude>net.shibboleth.utilities:java-support</exclude>
+                  <exclude>org.cryptacular:cryptacular</exclude>
+                  <exclude>org.bouncycastle:bcprov-jdk15on</exclude>
+                  <exclude>org.apache.neethi:neethi</exclude>
+                  <exclude>org.apache.cxf:cxf-rt-frontend-jaxws</exclude>
+                  <exclude>org.apache.cxf:cxf-rt-bindings-soap</exclude>
+                  <exclude>org.apache.cxf:cxf-rt-bindings-xml</exclude>
+                  <exclude>org.apache.cxf:cxf-rt-frontend-simple</exclude>
+                  <exclude>org.apache.cxf:cxf-rt-wsdl</exclude>
+                  <exclude>org.apache.cxf:cxf-rt-databinding-jaxb</exclude>
+                  <exclude>org.apache.cxf:cxf-rt-ws-addr</exclude>
+                  <exclude>org.apache.cxf:cxf-rt-ws-security</exclude>
+                  <exclude>org.apache.cxf:cxf-rt-ws-policy</exclude>
+                  <exclude>org.apache.cxf:cxf-rt-security-saml</exclude>
+                  <exclude>org.apache.ws.xmlschema:xmlschema-core</exclude>
+                  <exclude>xml-resolver:xml-resolver</exclude>
+                  <exclude>com.sun.xml.messaging.saaj:saaj-impl</exclude>
+                  <exclude>org.jvnet.mimepull:mimepull</exclude>
+                  <exclude>wsdl4j:wsdl4j</exclude>
+                </excludes>
+              </artifactSet>
+            </configuration>
+          </execution>
+          <execution> <!-- kind of webprofile plus JAX-WS minus JSF -->
+            <id>jaxws-shade</id>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <shadedClassifierName>jaxws</shadedClassifierName>
+              <artifactSet>
+                <excludes>
+                  <exclude>junit:junit</exclude>
+                  <exclude>*:jaxb-api</exclude>
+                  <exclude>*:jaxb-impl</exclude>
+                  <exclude>org.apache.activemq:*</exclude>
+                  <exclude>org.apache.activemq.protobuf:*</exclude>
+                  <exclude>org.fusesource.hawtbuf:hawtbuf</exclude>
+                  <exclude>org.apache.myfaces.core:*</exclude>
+                  <!-- jaxrs -->
+                  <exclude>${project.groupId}:tomee-jaxrs</exclude>
+                  <exclude>${project.groupId}:openejb-rest</exclude>
+                  <exclude>${project.groupId}:openejb-cxf-rs</exclude>
+                  <exclude>org.apache.cxf:cxf-rt-rs-service-description</exclude>
+                  <exclude>org.apache.cxf:cxf-rt-rs-client</exclude>
+                  <exclude>org.apache.cxf:cxf-rt-frontend-jaxrs</exclude>
+                  <exclude>org.apache.cxf:cxf-rt-rs-extension-search</exclude>
+                  <exclude>org.apache.cxf:cxf-rt-rs-json-basic</exclude>
+                  <exclude>org.apache.cxf:cxf-rt-rs-security-cors</exclude>
+                  <exclude>org.apache.cxf:cxf-rt-rs-security-oauth2</exclude>
+                  <exclude>org.apache.cxf:cxf-rt-rs-security-jose-jaxrs</exclude>
+                  <exclude>org.apache.cxf:cxf-rt-rs-security-jose</exclude>
+                  <exclude>org.apache.cxf:cxf-rt-rs-extension-providers</exclude>
+                  <exclude>org.apache.johnzon:johnzon-jaxrs</exclude>
+                  <exclude>org.apache.johnzon:johnzon-mapper</exclude>
                 </excludes>
               </artifactSet>
             </configuration>
@@ -124,6 +190,11 @@
                 Solution would be to handle it more deeply in our myfaces integration
                 -->
                 <exclude>META-INF/faces-config.xml</exclude>
+
+                <!-- to avoid to not be able to run the shade -->
+                <exclude>META-INF/*.SF</exclude>
+                <exclude>META-INF/*.DSA</exclude>
+                <exclude>META-INF/*.RSA</exclude>
               </excludes>
             </filter>
           </filters>
@@ -324,6 +395,11 @@
     <dependency> <!-- now in webprofile -->
       <groupId>${project.groupId}</groupId>
       <artifactId>tomee-jaxrs</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>tomee-webservices</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
