@@ -55,14 +55,17 @@ public class EEFilter implements Filter {
 
     @Override
     public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse, final FilterChain filterChain) throws IOException, ServletException {
+        final boolean shouldWrap = active && HttpServletRequest.class.isInstance(servletRequest);
         if (!HttpServletRequest.class.isInstance(servletRequest)) {
-            filterChain.doFilter(active && HttpServletRequest.class.isInstance(servletRequest) ?
+            filterChain.doFilter(shouldWrap ?
                     new NoCdiRequest(HttpServletRequest.class.cast(servletRequest), this) : servletRequest, servletResponse);
             return;
         }
         WebBeansContext ctx;
         filterChain.doFilter(servletRequest.isAsyncSupported() &&  (ctx = WebBeansContext.currentInstance()) != null ?
-                new CdiRequest(HttpServletRequest.class.cast(servletRequest), ctx, this) : servletRequest, servletResponse);
+                    new CdiRequest(HttpServletRequest.class.cast(servletRequest), ctx, this) :
+                    (shouldWrap ? new NoCdiRequest(HttpServletRequest.class.cast(servletRequest), this) : servletRequest),
+                servletResponse);
     }
 
     private void onLogout(final HttpServletRequest request) {
