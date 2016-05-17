@@ -36,7 +36,7 @@ public class TomEEEmbeddedExtension {
 
     public String getTomeeVersion() {
         if (tomeeVersion == null) {
-            tomeeVersion = "7.0.0-M3";
+            tomeeVersion = "7.0.0";
             try {
                 try (final InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("META-INF/maven/org.apache.tomee.gradle/tomee-embedded/pom.properties")) {
                     final Properties p = new Properties();

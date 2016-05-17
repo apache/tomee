@@ -26,7 +26,7 @@
   <artifactId>jsf-managedBean-and-ejb</artifactId>
   <packaging>war</packaging>
   <name>OpenEJB :: Web Examples :: JSF - ManangedBean and EJB</name>
-  <version>1.1.0-SNAPSHOT</version>
+  <version>1.1.0</version>
   <url>http://tomee.apache.org</url>
 
   <properties>
@@ -49,7 +49,7 @@
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>7.0.0-SNAPSHOT</version>
+        <version>7.0.0</version>
       </plugin>
     </plugins>
   </build>
