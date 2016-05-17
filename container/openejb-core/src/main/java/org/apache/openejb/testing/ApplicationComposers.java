@@ -1183,12 +1183,15 @@ public class ApplicationComposers {
             }
 
             final File file = URLs.toFile(url);
-            if (file.getName().endsWith("persistence.xml")) {
+            final String filename = file.getName();
+            if (filename.endsWith("persistence.xml")) {
                 final String parent = file.getParentFile().getName();
                 if (parent.equalsIgnoreCase("META-INF")) {
                     return file.getParentFile().getParentFile().getAbsolutePath();
                 }
                 return file.getParentFile().getAbsolutePath();
+            } else if (filename.endsWith(".jar")) {
+                return file.toURI().toURL().toExternalForm();
             }
             return url.toExternalForm();
         } catch (final IOException e) {

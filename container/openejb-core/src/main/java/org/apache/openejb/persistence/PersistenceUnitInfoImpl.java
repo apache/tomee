@@ -275,6 +275,14 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
     private URL toUrl(final File root) throws MalformedURLException {
         if (!root.isFile() && root.getPath().startsWith("jar:file:")) {
             try {
+                final String absolutePath = root.getAbsolutePath();
+                final int endIndex = absolutePath.indexOf('!');
+                if (endIndex > 0) {
+                    final File file = new File(absolutePath.substring(0, endIndex));
+                    if (file.isFile() && file.getName().endsWith(".jar")) {
+                        return file.toURI().toURL();
+                    }
+                }
                 return new URL(root.getPath());
             } catch (final MalformedURLException me) {
                 // no-op keep previous behavior
