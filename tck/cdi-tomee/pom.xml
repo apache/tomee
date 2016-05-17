@@ -207,6 +207,7 @@
                 <delete dir="${openejb.home}/webapps/docs" />
                 <delete dir="${openejb.home}/webapps/manager" />
                 <delete dir="${openejb.home}/webapps/host-manager" />
+                <delete file="${openejb.home}/conf/system.properties" />
                 <replace file="${openejb.home}/conf/server.xml" token="8080" value="${tomee.http.port}" />
                 <replace file="${openejb.home}/conf/server.xml" token="8443" value="${tomee.ssl.port}" />
                 <replace file="${openejb.home}/conf/server.xml" token="8005" value="${tomee.shutdown.port}" />
