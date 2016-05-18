@@ -15,30 +15,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-version="${tomee.version}"
+version="7.0.0"
 
 DEBUG=
 #DEBUG="-Xnoagent -Djava.compiler=NONE -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"
 
-# get java
+#
+# classpath, copied from catalina.sh
+#
 cygwin=false
 darwin=false
 os400=false
 case "`uname`" in
-  CYGWIN*) cygwin=true;;
-  Darwin*) darwin=true;;
+CYGWIN*) cygwin=true;;
+Darwin*) darwin=true;;
+OS400*) os400=true;;
 esac
 
-if $cygwin; then
-  [ -n "$JAVA_HOME" ] && JAVA_HOME=`cygpath --unix "$JAVA_HOME"`
-  [ -n "$TOMEE_BASE" ] && TOMEE_BASE=`cygpath --unix "$TOMEE_BASE"`
-fi
-if $cygwin; then
-  JAVA_HOME=`cygpath --absolute --windows "$JAVA_HOME"`
-  TOMEE_BASE=`cygpath --absolute --windows "$TOMEE_BASE"`
-fi
-
 PRG="$0"
+
 while [ -h "$PRG" ]; do
   ls=`ls -ld "$PRG"`
   link=`expr "$ls" : '.*-> \(.*\)$'`
@@ -48,34 +43,89 @@ while [ -h "$PRG" ]; do
     PRG=`dirname "$PRG"`/"$link"
   fi
 done
+
 PRGDIR=`dirname "$PRG"`
-[ -z "$TOMEE_BASE" ] && TOMEE_BASE=`cd "$PRGDIR/.." >/dev/null; pwd`
+[ -z "$CATALINA_HOME" ] && CATALINA_HOME=`cd "$PRGDIR/.." >/dev/null; pwd`
+[ -z "$CATALINA_BASE" ] && CATALINA_BASE="$CATALINA_HOME"
 
-. "$TOMEE_BASE"/bin/setclasspath.sh
-[[ -f "$TOMEE_BASE"/bin/setenv.sh ]] && . "$TOMEE_BASE"/bin/setenv.sh
+CLASSPATH=
 
-if [ -z $JAVA_HOME ]; then
-  JAVA="java"
-else
-  JAVA=$JAVA_HOME"/bin/java"
+if [ -r "$CATALINA_BASE/bin/setenv.sh" ]; then
+  . "$CATALINA_BASE/bin/setenv.sh"
+elif [ -r "$CATALINA_HOME/bin/setenv.sh" ]; then
+  . "$CATALINA_HOME/bin/setenv.sh"
+fi
+if $cygwin; then
+  [ -n "$JAVA_HOME" ] && JAVA_HOME=`cygpath --unix "$JAVA_HOME"`
+  [ -n "$JRE_HOME" ] && JRE_HOME=`cygpath --unix "$JRE_HOME"`
+  [ -n "$CATALINA_HOME" ] && CATALINA_HOME=`cygpath --unix "$CATALINA_HOME"`
+  [ -n "$CATALINA_BASE" ] && CATALINA_BASE=`cygpath --unix "$CATALINA_BASE"`
+  [ -n "$CLASSPATH" ] && CLASSPATH=`cygpath --path --unix "$CLASSPATH"`
+fi
+if $os400; then
+  COMMAND='chgjob job('$JOBNAME') runpty(6)'
+  system $COMMAND
+  export QIBM_MULTI_THREADED=Y
 fi
 
-CP="$TOMEE_BASE/lib"
-for i in $TOMEE_BASE/lib/*.jar; do
-  CP="$CP:$i"
+if $os400; then
+  . "$CATALINA_HOME"/bin/setclasspath.sh
+else
+  if [ -r "$CATALINA_HOME"/bin/setclasspath.sh ]; then
+    . "$CATALINA_HOME"/bin/setclasspath.sh
+  else
+    echo "Cannot find $CATALINA_HOME/bin/setclasspath.sh"
+    echo "This file is needed to run this program"
+    exit 1
+  fi
+fi
+
+if [ ! -z "$CLASSPATH" ] ; then
+  CLASSPATH="$CLASSPATH":
+fi
+
+if [ -r "$CATALINA_BASE/bin/tomcat-juli.jar" ] ; then
+  CLASSPATH=$CLASSPATH:$CATALINA_BASE/bin/tomcat-juli.jar
+else
+  CLASSPATH=$CLASSPATH:$CATALINA_HOME/bin/tomcat-juli.jar
+fi
+if [ -z "$LOGGING_CONFIG" ]; then
+  if [ -r "$CATALINA_BASE"/conf/logging.properties ]; then
+    LOGGING_CONFIG="-Djava.util.logging.config.file=$CATALINA_BASE/conf/logging.properties"
+  else
+    # Bugzilla 45585
+    LOGGING_CONFIG="-Dnop"
+  fi
+fi
+
+if [ -z "$JSSE_OPTS" ] ; then
+  JSSE_OPTS="-Djdk.tls.ephemeralDHKeySize=2048"
+fi
+JAVA_OPTS="$JAVA_OPTS $JSSE_OPTS"
+
+CLASSPATH="$CATALINA_HOME/lib"
+for i in "$CATALINA_HOME"/lib/*.jar; do
+  CLASSPATH="$CLASSPATH:$i"
 done
+
+if $cygwin; then
+  JAVA_HOME=`cygpath --absolute --windows "$JAVA_HOME"`
+  JRE_HOME=`cygpath --absolute --windows "$JRE_HOME"`
+  CATALINA_HOME=`cygpath --absolute --windows "$CATALINA_HOME"`
+  CATALINA_BASE=`cygpath --absolute --windows "$CATALINA_BASE"`
+  CLASSPATH=`cygpath --path --windows "$CLASSPATH"`
+fi
 
 # execute the command
 if [ "$1" = "deploy" ] || [ "$1" = "undeploy" ]; then
     if [ $# -eq 2 ]; then
         echo "${1}ing $2"
-        $JAVA $DEBUG -Dopenejb.base="$TOMEE_BASE" -cp "\"$CP\"" org.apache.openejb.cli.Bootstrap $1 -s auto $2
+        "$_RUNJAVA" $DEBUG $LOGGING_MANAGER -Dopenejb.base="$CATALINA_BASE" -cp "$CLASSPATH" org.apache.openejb.cli.Bootstrap $1 -s auto $2
     else
         echo "Usage: <tomee.sh> $1 <path>"
     fi
 elif [ "$1" = "start" ] || [ "$1" = "stop" ]; then
     echo "To start or stop TomEE please use catalina.sh/startup.sh/shutdown.sh instead of tomee.sh"
 else
-    $JAVA $DEBUG -Dopenejb.base="$TOMEE_BASE" -cp "\"$CP\"" org.apache.openejb.cli.Bootstrap $*
+    "$_RUNJAVA" $DEBUG $LOGGING_MANAGER -Dopenejb.base="$CATALINA_BASE" -cp "$CLASSPATH" org.apache.openejb.cli.Bootstrap $*
 fi
-
