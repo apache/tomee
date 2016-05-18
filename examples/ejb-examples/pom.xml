@@ -57,7 +57,7 @@
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>7.0.0-SNAPSHOT</version>
+        <version>7.0.1-SNAPSHOT</version>
         <configuration>
           <context>/ejb-examples</context>
           <tomeeClassifier>plus</tomeeClassifier>
