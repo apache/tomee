@@ -811,8 +811,11 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 + Contexts.getHostname(standardContext).replace("_", hosts.getDefaultHost()) + " -> "
                 + finalName(standardContext.getPath()));
 
-        if (FORCE_RELOADABLE && getContextInfo(standardContext) == null) { // don't do it for ears
-            standardContext.setReloadable(true);
+        if (FORCE_RELOADABLE) {
+            final ContextInfo ctxInfo = getContextInfo(standardContext);
+            if (ctxInfo == null || (ctxInfo.appInfo != null && ctxInfo.appInfo.webAppAlone)) { // don't do it for ears
+                standardContext.setReloadable(true);
+            }
         }
         if (SKIP_TLD) {
             if (standardContext.getJarScanner() != null && standardContext.getJarScanner().getJarScanFilter() != null) {

@@ -16,13 +16,26 @@
  */
 package org.superbiz;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 @Path("endpoint")
+@Produces(MediaType.TEXT_PLAIN)
+@ApplicationScoped
 public class Endpoint {
+    private final long init = System.currentTimeMillis();
+
     @GET
     public String get() {
         return "ok";
+    }
+
+    @GET
+    @Path("timestamp")
+    public long timestamp() {
+        return init;
     }
 }

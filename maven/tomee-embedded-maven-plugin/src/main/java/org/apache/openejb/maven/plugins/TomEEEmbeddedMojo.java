@@ -30,6 +30,10 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.UndeployException;
+import org.apache.openejb.assembler.classic.AppInfo;
+import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.core.ProvidedClassLoaderFinder;
 import org.apache.openejb.loader.Files;
@@ -37,6 +41,7 @@ import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.maven.util.MavenLogStreamFactory;
 import org.apache.openejb.maven.util.XmlFormatter;
+import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.JuliLogStreamFactory;
 import org.apache.tomee.catalina.TomEERuntimeException;
 import org.apache.tomee.embedded.Configuration;
@@ -45,17 +50,22 @@ import org.apache.tomee.livereload.LiveReloadInstaller;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.util.FileUtils;
 
+import javax.naming.NamingException;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
+import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.logging.SimpleFormatter;
 
@@ -67,101 +77,191 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project.packaging}")
     protected String packaging;
 
+    /**
+     * When not in classpath mode which war to deploy.
+     */
     @Parameter(defaultValue = "${project.build.directory}/${project.build.finalName}")
     protected File warFile;
 
+    /**
+     * HTTP port.
+     */
     @Parameter(property = "tomee-embedded-plugin.http", defaultValue = "8080")
     protected int httpPort;
 
+    /**
+     * HTTPS port if relevant.
+     */
     @Parameter(property = "tomee-embedded-plugin.httpsPort", defaultValue = "8443")
     protected int httpsPort;
 
-    @Parameter(property = "tomee-embedded-plugin.ajp", defaultValue = "8009")
-    protected int ajpPort = 8009;
-
+    /**
+     * Shutdown port.
+     */
     @Parameter(property = "tomee-embedded-plugin.stop", defaultValue = "8005")
     protected int stopPort;
 
+    /**
+     * Server host.
+     */
     @Parameter(property = "tomee-embedded-plugin.host", defaultValue = "localhost")
     protected String host;
 
-    @Parameter(property = "tomee-embedded-plugin.lib", defaultValue = "${project.build.directory}/apache-tomee-embedded")
+    /**
+     * Temporary working directory.
+     */
+    @Parameter(property = "tomee-embedded-plugin.dir", defaultValue = "${project.build.directory}/apache-tomee-embedded")
     protected String dir;
 
+    /**
+     * For https connector the keystore location.
+     */
     @Parameter(property = "tomee-embedded-plugin.keystoreFile")
     protected String keystoreFile;
 
+    /**
+     * For https connector the keystore password.
+     */
     @Parameter(property = "tomee-embedded-plugin.keystorePass")
     protected String keystorePass;
 
+    /**
+     * For https connector the keystore type.
+     */
     @Parameter(property = "tomee-embedded-plugin.keystoreType", defaultValue = "JKS")
     protected String keystoreType;
 
+    /**
+     * For https connector if client auth is activated.
+     */
     @Parameter(property = "tomee-embedded-plugin.clientAuth")
     protected String clientAuth;
 
+    /**
+     * For https connector the keystore alias to use.
+     */
     @Parameter(property = "tomee-embedded-plugin.keyAlias")
     protected String keyAlias;
 
+    /**
+     * For https connector the SSL protocol.
+     */
     @Parameter(property = "tomee-embedded-plugin.sslProtocol")
     protected String sslProtocol;
 
+    /**
+     * Where is the server.xml to use if provided.
+     */
     @Parameter
     protected File serverXml;
 
+    /**
+     * Is https activated.
+     */
     @Parameter(property = "tomee-embedded-plugin.ssl", defaultValue = "false")
     protected boolean ssl;
 
+    /**
+     * Is EJBd activated.
+     */
     @Parameter(property = "tomee-embedded-plugin.withEjbRemote", defaultValue = "false")
     protected boolean withEjbRemote;
 
+    /**
+     * Should we use a fast but unsecured session id generation implementation.
+     */
     @Parameter(property = "tomee-embedded-plugin.quickSession", defaultValue = "true")
     protected boolean quickSession;
 
+    /**
+     * Should we skip http connector (and rely only on other connectors if setup).
+     */
     @Parameter(property = "tomee-embedded-plugin.skipHttp", defaultValue = "false")
     protected boolean skipHttp;
 
+    /**
+     * Deploy the classpath as a webapp (instead of deploying a war).
+     */
     @Parameter(property = "tomee-embedded-plugin.classpathAsWar", defaultValue = "false")
     protected boolean classpathAsWar;
 
+    /**
+     * Use pom dependencies when classpathAsWar=true.
+     */
     @Parameter(property = "tomee-embedded-plugin.useProjectClasspath", defaultValue = "true")
     protected boolean useProjectClasspath;
 
+    /**
+     * Used to deactivate tomcat web resources caching (useful to get F5 working).
+     */
     @Parameter(property = "tomee-embedded-plugin.webResourceCached", defaultValue = "true")
     protected boolean webResourceCached;
 
+    /**
+     * Avoid to create multiple classloaders and use root one for the application.
+     */
     @Parameter(property = "tomee-embedded-plugin.singleClassLoader", defaultValue = "false" /* for compat */)
     protected boolean singleClassLoader;
 
+    /**
+     * Support for reload command (ie redeploy the webapp by undeploying/deploying).
+     */
+    @Parameter(property = "tomee-embedded-plugin.forceReloadable", defaultValue = "true")
+    protected boolean forceReloadable;
+
+    /**
+     * Additional modules.
+     */
     @Parameter(property = "tomee-embedded-plugin.modules", defaultValue = "${project.build.outputDirectory}")
     protected List<File> modules;
 
+    /**
+     * Where is docBase/web resources.
+     */
     @Parameter(property = "tomee-embedded-plugin.docBase", defaultValue = "${project.basedir}/src/main/webapp")
     protected File docBase;
 
+    /**
+     * Context name.
+     */
     @Parameter(property = "tomee-embedded-plugin.context")
     protected String context;
 
+    /**
+     * TomEE properties.
+     */
     @Parameter // don't call it properties to avoid to break getConfig()
     protected Map<String, String> containerProperties;
 
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     private MavenProject project;
 
+    /**
+     * Should TomEE use maven logging system instead of default one.
+     */
     @Parameter(property = "tomee-embedded-plugin.mavenLog", defaultValue = "true")
     private boolean mavenLog;
 
+    /**
+     * Don't try to update port/host in server.xml.
+     */
     @Parameter(property = "tomee-embedded-plugin.keepServerXmlAsThis", defaultValue = "false")
     private boolean keepServerXmlAsThis;
 
+    /**
+     * User/Password map.
+     */
     @Parameter
     private Map<String, String> users;
 
+    /**
+     * Role/users map.
+     */
     @Parameter
     private Map<String, String> roles;
 
     /**
-     * force webapp to be reloadable
+     * force webapp to be support JSP reloading.
      */
     @Parameter(property = "tomee-plugin.jsp-development", defaultValue = "true")
     private boolean forceJspDevelopment;
@@ -178,9 +278,15 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project.remoteArtifactRepositories}", readonly = true)
     private List<ArtifactRepository> remoteRepos;
 
+    /**
+     * Additional applications to deploy.
+     */
     @Parameter
     private List<String> applications;
 
+    /**
+     * Scopes to take into account when deploying the project classpath.
+     */
     @Parameter
     private List<String> applicationScopes;
 
@@ -193,17 +299,32 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
     @Parameter(property = "tomee-plugin.work", defaultValue = "${project.build.directory}/tomee-embedded-work")
     private File workDir;
 
+    /**
+     * serverl.xml content directly in the pom.xml.
+     */
     @Parameter
     protected PlexusConfiguration inlinedServerXml;
 
+    /**
+     * tomee.xml directly in the pom.xml.
+     */
     @Parameter
     protected PlexusConfiguration inlinedTomEEXml;
 
-    @Parameter //a dvanced config but a simple boolean will be used for defaults (withLiveReload)
+    /**
+     * Advanced configuration for live reload (to change port, context...).
+     */
+    @Parameter //advanced config but a simple boolean will be used for defaults (withLiveReload)
     private LiveReload liveReload;
 
+    /**
+     * Use livereload.
+     */
     @Parameter(property = "tomee-plugin.liveReload", defaultValue = "false")
     private boolean withLiveReload;
+
+    private Map<String, Command> commands;
+    private String deployedName;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -291,16 +412,7 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
 
             Runtime.getRuntime().addShutdownHook(hook);
 
-            if (!skipCurrentProject) {
-                if (!classpathAsWar) {
-                    container.deploy('/' + (context == null ? warFile.getName() : context), warFile, true);
-                } else {
-                    if (useProjectClasspath) {
-                        thread.setContextClassLoader(createClassLoader(loader));
-                    }
-                    container.deployClasspathAsWebApp(context, docBase, singleClassLoader);
-                }
-            }
+            deployedName = doDeploy(thread, loader, container, useProjectClasspath);
 
             if (applications != null && !applications.isEmpty()) {
                 Files.mkdirs(applicationCopyFolder);
@@ -329,7 +441,7 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
 
         try {
             String line;
-            final Scanner scanner = new Scanner(System.in);
+            final Scanner scanner = newScanner();
             while ((line = scanner.nextLine()) != null) {
                 switch (line.trim()) {
                     case "exit":
@@ -337,6 +449,11 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
                         Runtime.getRuntime().removeShutdownHook(hook);
                         container.close();
                         return;
+                    case "reload":
+                        reload(thread, loader, container);
+                        break;
+                    default:
+                        onMissingCommand(line);
                 }
             }
         } catch (final Exception e) {
@@ -350,6 +467,67 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
             thread.setContextClassLoader(loader);
             System.setProperties(originalSystProp);
         }
+    }
+
+    protected Scanner newScanner() {
+        return new Scanner(System.in);
+    }
+
+    private String doDeploy(final Thread thread, final ClassLoader loader, final Container container, final boolean useProjectClasspath) throws OpenEJBException, IOException, NamingException {
+        if (!skipCurrentProject) {
+            if (!classpathAsWar) {
+                final String name = '/' + (context == null ? warFile.getName() : context);
+                container.deploy(name, warFile, true);
+                return name;
+            } else {
+                if (useProjectClasspath) {
+                    thread.setContextClassLoader(createClassLoader(loader));
+                }
+                container.deployClasspathAsWebApp(context, docBase, singleClassLoader);
+            }
+        }
+        return context;
+    }
+
+    protected void onMissingCommand(final String line) {
+        if (line == null) {
+            return;
+        }
+        if (commands == null) { // lazy loading
+            commands = new HashMap<>();
+            for (final Command c : ServiceLoader.load(Command.class)) {
+                commands.put(c.name(), c);
+            }
+        }
+        { // direct command
+            final Command c = commands.get(line.trim());
+            if (c != null) {
+                c.invoke(line);
+                return;
+            }
+        }
+        // else match by "startsWith" all possible commands
+        for (final Map.Entry<String, Command> c : commands.entrySet()) {
+            if (line.startsWith(c.getKey())) {
+                c.getValue().invoke(line);
+            }
+        }
+    }
+
+    protected synchronized void reload(final Thread thread, final ClassLoader loader, final Container container) throws OpenEJBException, NamingException, IOException {
+        getLog().info("Redeploying " + (deployedName == null ? '/' : deployedName));
+        try {
+            final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
+            if (classpathAsWar) { // this doesn't track module names so no need to go through container.undeploy()
+                assembler.destroyApplication(assembler.getDeployedApplications().iterator().next().path);
+            } else {
+                container.undeploy(deployedName);
+            }
+        } catch (final UndeployException e) {
+            throw new IllegalStateException(e);
+        }
+        doDeploy(thread, loader, container, false/*already done*/);
+        getLog().info("Redeployed " + (deployedName == null ? '/' : deployedName));
     }
 
     private void installLiveReloadEndpointIfNeeded() {
@@ -447,7 +625,7 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
 
     private Configuration getConfig() { // lazy way but it works fine
         final Configuration config = new Configuration();
-        for (final Field field : getClass().getDeclaredFields()) {
+        for (final Field field : TomEEEmbeddedMojo.class.getDeclaredFields()) {
             try {
                 final Field configField = Configuration.class.getDeclaredField(field.getName());
                 field.setAccessible(true);
@@ -475,6 +653,33 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
             }
             config.getProperties().put("tomee.jsp-development", "true");
         }
+        if (forceReloadable) {
+            if (config.getProperties() == null) {
+                config.setProperties(new Properties());
+            }
+            config.getProperties().setProperty("tomee.force-reloadable", "true");
+        }
         return config;
+    }
+
+    /**
+     * A potential command identified by a name.
+     *
+     * Note that reload and quit/exit are built in commands.
+     *
+     * It is recommanded to prefix the command by something specific to your set of commands.
+     */
+    public interface Command {
+        /**
+         * @return the string to invoke this comamnd.
+         */
+        String name();
+
+        /**
+         * Executes this command.
+         *
+         * @param line the raw line entered by the user.
+         */
+        void invoke(String line);
     }
 }

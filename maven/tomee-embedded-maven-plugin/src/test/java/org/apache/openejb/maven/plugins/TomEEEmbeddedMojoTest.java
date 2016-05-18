@@ -25,54 +25,68 @@ import org.apache.openejb.util.NetworkUtil;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Scanner;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static java.lang.System.lineSeparator;
+import static java.lang.Thread.sleep;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class TomEEEmbeddedMojoTest {
     @Test
-    public void run() throws MojoFailureException, MojoExecutionException, IOException {
+    public void run() throws MojoFailureException, MojoExecutionException, IOException, InterruptedException {
+        final File docBase = new File("target/TomEEEmbeddedMojoTest/base");
+        docBase.mkdirs();
+        try (final FileWriter w = new FileWriter(new File(docBase, "index.html"))) {
+            w.write("initial");
+        }
+
+        // we use a dynamic InputStream to be able to simulate commands without hacking System.in
+        final Input input = new Input();
+        final Semaphore reloaded = new Semaphore(0);
         final CountDownLatch started = new CountDownLatch(1);
-        final TomEEEmbeddedMojo mojo = new TomEEEmbeddedMojo();
+        final TomEEEmbeddedMojo mojo = new TomEEEmbeddedMojo() {
+            @Override
+            protected Scanner newScanner() {
+                return new Scanner(input);
+            }
+        };
         mojo.classpathAsWar = true;
         mojo.httpPort = NetworkUtil.getNextAvailablePort();
         mojo.ssl = false;
+        mojo.docBase = docBase;
+        mojo.forceReloadable = true;
+        mojo.webResourceCached = false;
         mojo.containerProperties = new HashMap<>();
         mojo.containerProperties.put(DeploymentFilterable.CLASSPATH_INCLUDE, ".*tomee-embedded-maven-plugin.*");
         mojo.containerProperties.put("openejb.additional.include", "tomee-embedded-maven-plugin");
-        mojo.setLog(new SystemStreamLog() { // not the best solution...
+        mojo.setLog(new SystemStreamLog() { // not the best solution but fine for now...
             @Override
             public void info(final CharSequence charSequence) {
                 final String string = charSequence.toString();
                 if (string.startsWith("TomEE embedded started on") || string.equals("can't start TomEE")) {
                     started.countDown();
+                } else if (string.contains("Redeployed /")) {
+                    reloaded.release();
                 }
                 super.info(charSequence);
             }
         });
 
-        final InputStream originalIn = System.in;
-        final ByteArrayInputStream newIn = new ByteArrayInputStream("exit".getBytes());
-        final CountDownLatch sendExitLatch = new CountDownLatch(1);
         final CountDownLatch stopped = new CountDownLatch(1);
-        System.setIn(new InputStream() {
-            @Override
-            public int read() throws IOException {
-                try {
-                    sendExitLatch.await();
-                } catch (final InterruptedException e) {
-                    Thread.interrupted();
-                }
-                return newIn.read();
-            }
-        });
 
         final AtomicReference<Exception> error = new AtomicReference<>();
         final Thread mojoThread = new Thread() {
@@ -93,22 +107,101 @@ public class TomEEEmbeddedMojoTest {
         };
         mojoThread.start();
         try {
-            try {
-                started.await(10, TimeUnit.MINUTES);
-            } catch (final InterruptedException e) {
-                Thread.interrupted();
-            }
-            assertNull("all started fine", error.get());
-            assertEquals("ok", IO.slurp(new URL("http://localhost:" + mojo.httpPort + "/endpoint/")).trim());
+            started.await(10, TimeUnit.MINUTES);
+        } catch (final InterruptedException e) {
+            Thread.interrupted();
+        }
 
-            sendExitLatch.countDown();
-            try {
-                stopped.await(5, TimeUnit.MINUTES);
+        assertNull("all started fine", error.get());
+        assertEquals("ok", IO.slurp(new URL("http://localhost:" + mojo.httpPort + "/endpoint/")).trim());
+
+        long initTs = timestamp(mojo);
+
+        assertEquals("initial", IO.slurp(new URL("http://localhost:" + mojo.httpPort + "/")).trim());
+        try (final FileWriter w = new FileWriter(new File(docBase, "index.html"))) {
+            w.write("changed");
+        }
+        assertEquals("changed", IO.slurp(new URL("http://localhost:" + mojo.httpPort + "/")).trim());
+
+        assertEquals(timestamp(mojo), initTs);
+
+        for (int i = 0; i < 4; i++) { // ensure it works multiple times
+            System.out.println("Reloading, #" + (i + 1));
+
+            try { // ensure timestamp changed even on super fast machines
+                sleep(200);
             } catch (final InterruptedException e) {
                 Thread.interrupted();
+                fail();
             }
-        } finally {
-            System.setIn(originalIn);
+
+            input.write("reload");
+            reloaded.tryAcquire(5, TimeUnit.MINUTES);
+            final long newTimestamp = timestamp(mojo);
+            assertTrue(Integer.toString(i) + " iteration", newTimestamp > initTs);
+            initTs = newTimestamp;
+
+            try { // check timestamp is fixed and we didn't code wrong the test
+                sleep(200);
+            } catch (final InterruptedException e) {
+                Thread.interrupted();
+                fail();
+            }
+            assertEquals(timestamp(mojo), initTs);
+
+        }
+
+        input.write("exit");
+        stopped.await(5, TimeUnit.MINUTES);
+        input.close();
+    }
+
+    private long timestamp(final TomEEEmbeddedMojo mojo) throws IOException {
+        return Long.parseLong(IO.slurp(new URL("http://localhost:" + mojo.httpPort + "/endpoint/timestamp")).trim());
+    }
+
+    private static final class Input extends InputStream {
+        private final Semaphore inputSema = new Semaphore(0);
+        private InputStream currentInput = null;
+        private boolean metEnd = true;
+
+        private void write(final String data) {
+            try {
+                currentInput = new ByteArrayInputStream((data + lineSeparator()).getBytes("UTF-8"));
+            } catch (final UnsupportedEncodingException e) {
+                currentInput = new ByteArrayInputStream((data + lineSeparator()).getBytes());
+            }
+            inputSema.release();
+        }
+
+        @Override
+        public int read() throws IOException {
+            int read;
+            if (currentInput == null || (read = currentInput.read()) < 0) {
+                if (!metEnd) { // ensure scanner gets an end event
+                    metEnd = true;
+                    currentInput = null;
+                    return -1;
+                }
+
+                try {
+                    inputSema.acquire(1);
+                } catch (final InterruptedException e) {
+                    Thread.interrupted();
+                    fail();
+                }
+                read = currentInput != null ? currentInput.read() : -1;
+                if (read > 0) {
+                    metEnd = false;
+                }
+            }
+            return read;
+        }
+
+        @Override
+        public void close() throws IOException {
+            inputSema.release();
+            super.close();
         }
     }
 }
