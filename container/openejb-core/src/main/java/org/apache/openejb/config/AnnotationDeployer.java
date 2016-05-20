@@ -856,18 +856,22 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
 
                     if (!containsConfigProperty(configProperties, name)) {
-                        if (type != null) {
-                            final ConfigProperty configProperty = new ConfigProperty();
-                            configProperties.add(configProperty);
+                        final ConfigProperty configProperty = new ConfigProperty();
+                        configProperties.add(configProperty);
 
-                            Object value = null;
+                        Object value = null;
+                        if (propertyDescriptor.getReadMethod() != null) {
                             try {
                                 value = propertyDescriptor.getReadMethod().invoke(o);
                             } catch (final Exception e) {
                                 // no-op
                             }
+                        }
 
-                            javax.resource.spi.ConfigProperty annotation = propertyDescriptor.getWriteMethod().getAnnotation(javax.resource.spi.ConfigProperty.class);
+                        final Method write = propertyDescriptor.getWriteMethod();
+                        javax.resource.spi.ConfigProperty annotation = null;
+                        if (write != null) {
+                            annotation = write.getAnnotation(javax.resource.spi.ConfigProperty.class);
                             if (annotation == null) {
                                 try {
                                     // if there's no annotation on the setter, we'll try and scrape one off the field itself (assuming the same name)
@@ -876,22 +880,22 @@ public class AnnotationDeployer implements DynamicDeployer {
                                     // no-op : getDeclaredField() throws exceptions and does not return null
                                 }
                             }
+                        }
 
-                            configProperty.setConfigPropertyName(name);
-                            configProperty.setConfigPropertyType(getConfigPropertyType(annotation, type));
-                            if (value != null) {
-                                configProperty.setConfigPropertyValue(value.toString());
-                            }
+                        configProperty.setConfigPropertyName(name);
+                        configProperty.setConfigPropertyType(getConfigPropertyType(annotation, type));
+                        if (value != null) {
+                            configProperty.setConfigPropertyValue(value.toString());
+                        }
 
-                            if (annotation != null) {
-                                if (annotation.defaultValue() != null && annotation.defaultValue().length() > 0) {
-                                    configProperty.setConfigPropertyValue(annotation.defaultValue());
-                                }
-                                configProperty.setConfigPropertyConfidential(annotation.confidential());
-                                configProperty.setConfigPropertyIgnore(annotation.ignore());
-                                configProperty.setConfigPropertySupportsDynamicUpdates(annotation.supportsDynamicUpdates());
-                                configProperty.setDescriptions(stringsToTexts(annotation.description()));
+                        if (annotation != null) {
+                            if (annotation.defaultValue() != null && annotation.defaultValue().length() > 0) {
+                                configProperty.setConfigPropertyValue(annotation.defaultValue());
                             }
+                            configProperty.setConfigPropertyConfidential(annotation.confidential());
+                            configProperty.setConfigPropertyIgnore(annotation.ignore());
+                            configProperty.setConfigPropertySupportsDynamicUpdates(annotation.supportsDynamicUpdates());
+                            configProperty.setDescriptions(stringsToTexts(annotation.description()));
                         }
                     }
                 }
