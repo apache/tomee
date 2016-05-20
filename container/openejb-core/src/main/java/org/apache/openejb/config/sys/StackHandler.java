@@ -251,6 +251,8 @@ public class StackHandler extends DefaultHandler {
             attributes.add("jndi");
             attributes.add("aliases");
             attributes.add("properties-provider");
+            attributes.add("property-provider");
+            attributes.add("depends-on");
             return attributes;
         }
     }
