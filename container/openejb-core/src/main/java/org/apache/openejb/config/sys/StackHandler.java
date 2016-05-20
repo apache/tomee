@@ -233,6 +233,10 @@ public class StackHandler extends DefaultHandler {
             if (aliases != null) {
                 service.getAliases().addAll(Arrays.asList(aliases.split(",")));
             }
+            final String dependsOn = attributes.getValue("depends-on");
+            if (dependsOn != null) {
+                service.getDependsOn().addAll(Arrays.asList(dependsOn.split(",")));
+            }
         }
 
         @Override

@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,8 +59,13 @@ public class Resource extends AbstractService {
     @XmlAttribute(name = "pre-destroy")
     protected String preDestroy;
 
-    @XmlElement(name = "aliases")
+    @XmlAttribute(name = "aliases")
+    @XmlJavaTypeAdapter(ListAdapter.class)
     protected List<String> aliases = new ArrayList<String>();
+
+    @XmlAttribute(name = "depends-on")
+    @XmlJavaTypeAdapter(ListAdapter.class)
+    protected List<String> dependsOn = new ArrayList<>();
 
     public Resource(final String id) {
         super(id);
@@ -98,6 +104,10 @@ public class Resource extends AbstractService {
 
     public List<String> getAliases() {
         return aliases;
+    }
+
+    public List<String> getDependsOn() {
+        return dependsOn;
     }
 
     public String getPostConstruct() {

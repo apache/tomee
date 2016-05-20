@@ -455,7 +455,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         } else if (!offline) {
             final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
             if (assembler != null) {
-                assembler.createResource(serviceInfo);
+                assembler.createResource(null, serviceInfo);
             }else{
                 throw new OpenEJBException("ResourceInfo: Assembler has not been defined");
             }
@@ -800,6 +800,10 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                     final String aliases = map.remove("aliases");
                     if (aliases != null) {
                         resource.getAliases().addAll(Arrays.asList(aliases.split(",")));
+                    }
+                    final String depOn = map.remove("depends-on");
+                    if (depOn != null) {
+                        resource.getDependsOn().addAll(Arrays.asList(depOn.split(",")));
                     }
                     resource.setPostConstruct(map.remove("post-construct"));
                     resource.setPreDestroy(map.remove("pre-destroy"));
@@ -1279,6 +1283,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 ri.postConstruct = resource.getPostConstruct();
                 ri.preDestroy = resource.getPreDestroy();
                 ri.aliases.addAll(resource.getAliases());
+                ri.dependsOn.addAll(resource.getDependsOn());
             }
 
             if (service.getClasspath() != null && service.getClasspath().length() > 0) {
@@ -1719,6 +1724,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                     }
                 }
                 refs.remove(getName(resourceInfo)); // can happen with serviceId for instance, avoid cicular dep issue
+                refs.addAll(resourceInfo.dependsOn);
                 return refs;
             }
         });

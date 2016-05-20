@@ -146,6 +146,17 @@ public final class ServiceInfos {
         serviceRecipe.allow(Option.FIELD_INJECTION);
         serviceRecipe.allow(Option.PRIVATE_PROPERTIES);
 
+        setProperties(services, info, serviceRecipe);
+
+        final Object service = serviceRecipe.create();
+
+        SystemInstance.get().addObserver(service); // TODO: remove it? in all case the observer should remove itself when done
+        Assembler.logUnusedProperties(serviceRecipe, info);
+
+        return service;
+    }
+
+    public static void setProperties(final Collection<ServiceInfo> services, final ServiceInfo info, final ObjectRecipe serviceRecipe) {
         for (final Map.Entry<Object, Object> entry : info.properties.entrySet()) { // manage links
             final String key = entry.getKey().toString();
             final Object value = entry.getValue();
@@ -172,13 +183,6 @@ public final class ServiceInfos {
                 serviceRecipe.setProperty(key, entry.getValue());
             }
         }
-
-        final Object service = serviceRecipe.create();
-
-        SystemInstance.get().addObserver(service); // TODO: remove it? in all case the observer should remove itself when done
-        Assembler.logUnusedProperties(serviceRecipe, info);
-
-        return service;
     }
 
     public interface Factory {
