@@ -134,7 +134,7 @@ public class GetterConnectorTest {
         }
     }
     public static class MyMcf implements ManagedConnectionFactory, ValidatingManagedConnectionFactory {
-        private final Set<ManagedConnection> connections = new HashSet<>();
+        private final Set<ManagedConnection> connections = new HashSet<ManagedConnection>();
         private final AtomicBoolean evicted = new AtomicBoolean(false);
         private final AtomicBoolean destroyed = new AtomicBoolean(false);
 
