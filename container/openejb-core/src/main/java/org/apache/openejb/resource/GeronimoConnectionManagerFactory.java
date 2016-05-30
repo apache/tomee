@@ -495,14 +495,14 @@ public class GeronimoConnectionManagerFactory {
                 try {
                     final Map<ManagedConnection, ManagedConnectionInfo> connections;
                     if (stack instanceof SinglePoolConnectionInterceptor) {
-                        connections = new HashMap<>();
+                        connections = new HashMap<ManagedConnection, ManagedConnectionInfo>();
                         for (final ManagedConnectionInfo info : (List<ManagedConnectionInfo>) pool) {
                             connections.put(info.getManagedConnection(), info);
                         }
                     } else if (stack instanceof SinglePoolMatchAllConnectionInterceptor) {
                         connections = (Map<ManagedConnection, ManagedConnectionInfo>) pool;
                     } else {
-                        connections = new HashMap<>();
+                        connections = new HashMap<ManagedConnection, ManagedConnectionInfo>();
                     }
                     for (final ManagedConnectionInfo info : autoConnectionTracker.connections()) {
                         connections.put(info.getManagedConnection(), info);
