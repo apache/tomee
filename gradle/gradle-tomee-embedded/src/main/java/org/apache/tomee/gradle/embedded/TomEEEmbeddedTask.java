@@ -673,6 +673,14 @@ public class TomEEEmbeddedTask extends DefaultTask {
         this.classpath = classpath;
     }
 
+    public void setSingleClassloader(final boolean singleClassloader) {
+        this.singleClassloader = singleClassloader;
+    }
+
+    public void setLogLevel(final LogLevel logLevel) {
+        this.logLevel = logLevel;
+    }
+
     private static final class LogSetup {
         private final LoggingManager logging;
         private final LogLevel stdOutLvl;
