@@ -238,6 +238,13 @@
       <plugin>
         <groupId>com.googlecode.jslint4java</groupId>
         <artifactId>jslint4java-maven-plugin</artifactId>
+        <dependencies>
+          <dependency>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-utils</artifactId>
+            <version>3.0.24</version>
+          </dependency>
+        </dependencies>
         <configuration>
           <failOnError>true</failOnError>
           <options>

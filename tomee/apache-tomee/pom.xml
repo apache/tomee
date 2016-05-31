@@ -242,6 +242,11 @@
             <artifactId>xbean-asm5-shaded</artifactId>
             <version>${xbeanVersion}</version>
           </dependency>
+          <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>2.4.3</version>
+          </dependency>
         </dependencies>
         <configuration>
           <classpathScope>runtime</classpathScope>
@@ -409,4 +414,3 @@
   </build>
 
 </project>
-
