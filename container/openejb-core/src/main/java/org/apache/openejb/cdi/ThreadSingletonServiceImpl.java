@@ -213,16 +213,22 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
 
     private void setConfiguration(final OpenWebBeansConfiguration configuration) {
         //from CDI builder
-        configuration.setProperty(SecurityService.class.getName(), ManagedSecurityService.class.getName());
-        configuration.setProperty(OpenWebBeansConfiguration.INTERCEPTOR_FORCE_NO_CHECKED_EXCEPTIONS, "false");
+        setProperty(configuration, SecurityService.class.getName(), ManagedSecurityService.class.getName());
+        setProperty(configuration, OpenWebBeansConfiguration.INTERCEPTOR_FORCE_NO_CHECKED_EXCEPTIONS, "false");
         // configuration.setProperty(OpenWebBeansConfiguration.APPLICATION_IS_JSP, "true");
 
-        configuration.setProperty(OpenWebBeansConfiguration.CONTAINER_LIFECYCLE, OpenEJBLifecycle.class.getName());
-        configuration.setProperty(OpenWebBeansConfiguration.TRANSACTION_SERVICE, OpenEJBTransactionService.class.getName());
-        configuration.setProperty(OpenWebBeansConfiguration.SCANNER_SERVICE, CdiScanner.class.getName());
-        configuration.setProperty(OpenWebBeansConfiguration.CONTEXTS_SERVICE, CdiAppContextsService.class.getName());
-        configuration.setProperty(OpenWebBeansConfiguration.VALIDATOR_SERVICE, OpenEJBValidatorService.class.getName());
-        configuration.setProperty(ResourceInjectionService.class.getName(), CdiResourceInjectionService.class.getName());
+        setProperty(configuration, OpenWebBeansConfiguration.CONTAINER_LIFECYCLE, OpenEJBLifecycle.class.getName());
+        setProperty(configuration, OpenWebBeansConfiguration.TRANSACTION_SERVICE, OpenEJBTransactionService.class.getName());
+        setProperty(configuration, OpenWebBeansConfiguration.SCANNER_SERVICE, CdiScanner.class.getName());
+        setProperty(configuration, OpenWebBeansConfiguration.CONTEXTS_SERVICE, CdiAppContextsService.class.getName());
+        setProperty(configuration, OpenWebBeansConfiguration.VALIDATOR_SERVICE, OpenEJBValidatorService.class.getName());
+        setProperty(configuration, ResourceInjectionService.class.getName(), CdiResourceInjectionService.class.getName());
+    }
+
+    private void setProperty(final OpenWebBeansConfiguration configuration, final String name, final String value) {
+        if (configuration.getProperty(name) == null) {
+            configuration.setProperty(name, value);
+        }
     }
 
     @Override
