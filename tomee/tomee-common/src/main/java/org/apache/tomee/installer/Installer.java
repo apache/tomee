@@ -711,6 +711,12 @@ public class Installer implements InstallerInterface {
                 systemPropertiesWriter.write("tomee.serialization.class.blacklist = *\n");
                 systemPropertiesWriter.write("# tomee.serialization.class.whitelist = my.package\n");
 
+                systemPropertiesWriter.write("# Johnzon prevents too big string to be unserialized by default\n");
+                systemPropertiesWriter.write("# You can either configure it by Mapper/Parser instance or globally\n");
+                systemPropertiesWriter.write("# With this property:\n");
+                systemPropertiesWriter.write("# org.apache.johnzon.max-string-length = 8192\n");
+
+
                 systemPropertiesWriter.write("\n");
                 systemPropertiesWriter.write("# openejb.check.classloader = false\n");
                 systemPropertiesWriter.write("# openejb.check.classloader.verbose = false\n");

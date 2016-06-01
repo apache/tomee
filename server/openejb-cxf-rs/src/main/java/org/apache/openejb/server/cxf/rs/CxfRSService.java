@@ -172,7 +172,7 @@ public class CxfRSService extends RESTService {
 
         System.setProperty("org.apache.johnzon.max-string-length",
                 SystemInstance.get().getProperty("org.apache.johnzon.max-string-length",
-                        properties.getProperty("org.apache.johnzon.max-string-length", "4096")));
+                        properties.getProperty("org.apache.johnzon.max-string-length", "8192")));
 
         SystemInstance.get().setComponent(RESTResourceFinder.class, new CxfRESTResourceFinder());
 
