@@ -161,8 +161,18 @@ public final class ServiceInfos {
             final String key = entry.getKey().toString();
             final Object value = entry.getValue();
             if (value instanceof String) {
-                final String valueStr = value.toString();
-                if (valueStr.startsWith("$")) {
+                String valueStr = value.toString();
+                if (valueStr.startsWith("collection:")) { // for now only supports Service cause that's where it is useful but feel free to enrich it
+                    valueStr = valueStr.substring("collection:".length());
+                    final String[] elt = valueStr.split(" *, *");
+                    final List<Object> val = new ArrayList<>(elt.length);
+                    for (final String e : elt) {
+                        if (!e.trim().isEmpty()) {
+                            val.add(resolve(services, e.startsWith("$") ? e.substring(1) : e));
+                        }
+                    }
+                    serviceRecipe.setProperty(key, val);
+                } else if (valueStr.startsWith("$")) {
                     serviceRecipe.setProperty(key, resolve(services, valueStr.substring(1)));
                 } else if (valueStr.startsWith("@")) {
                     final Context jndiContext = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
