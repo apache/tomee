@@ -16,6 +16,7 @@
  */
 package org.apache.tomee.catalina;
 
+import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Realm;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.Request;
@@ -34,9 +35,11 @@ import java.security.cert.X509Certificate;
 public class TomEERealm extends CombinedRealm {
     public static final String SECURITY_NOTE = TomEERealm.class.getName() + ".securityContext";
 
-    private final TomcatSecurityService securityService;
+    private TomcatSecurityService securityService;
 
-    public TomEERealm() {
+    @Override
+    protected void startInternal() throws LifecycleException {
+        super.startInternal();
         this.securityService = (TomcatSecurityService) SystemInstance.get().getComponent(SecurityService.class);
     }
 
@@ -91,8 +94,11 @@ public class TomEERealm extends CombinedRealm {
     }
 
     private Principal logInTomEE(final Principal pcp) {
-        if (pcp == null || securityService == null) {
-            return pcp;
+        if (pcp == null) {
+            return null;
+        }
+        if (securityService == null) { // tomee-embedded get it later than startInternals so we need it this way
+            securityService = (TomcatSecurityService) SystemInstance.get().getComponent(SecurityService.class);
         }
 
         // normally we don't care about oldstate because the listener already contains one
