@@ -149,7 +149,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         if (!properties.containsKey(LoaderService.class.getName())) {
             final LoaderService loaderService = SystemInstance.get().getComponent(LoaderService.class);
             if (loaderService == null && !properties.containsKey(LoaderService.class.getName())) {
-                services.put(LoaderService.class, new OptimizedLoaderService());
+                services.put(LoaderService.class, new OptimizedLoaderService(appContext.getProperties()));
             } else if (loaderService != null) {
                 services.put(LoaderService.class, loaderService);
             }

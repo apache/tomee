@@ -1495,6 +1495,7 @@ public class ApplicationComposers {
         private final Class<? extends Extension>[] extensions;
 
         protected ExtensionAwareOptimizedLoaderService(final Class<? extends Extension>[] extensions) {
+            super(new Properties());
             this.extensions = extensions;
         }
 
