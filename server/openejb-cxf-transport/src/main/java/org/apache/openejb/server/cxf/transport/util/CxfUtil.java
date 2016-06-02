@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.server.cxf.transport.util;
 
-import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.binding.BindingFactory;
@@ -30,12 +29,14 @@ import org.apache.cxf.feature.Feature;
 import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.interceptor.InterceptorProvider;
 import org.apache.cxf.management.InstrumentationManager;
+import org.apache.cxf.management.counters.CounterRepository;
 import org.apache.cxf.management.jmx.InstrumentationManagerImpl;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.transport.http.HttpDestinationFactory;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.ServiceInfo;
+import org.apache.openejb.assembler.classic.event.AssemblerBeforeApplicationDestroyed;
 import org.apache.openejb.assembler.classic.event.AssemblerDestroyed;
 import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
 import org.apache.openejb.assembler.classic.util.ServiceInfos;
@@ -55,6 +56,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
@@ -269,7 +271,8 @@ public final class CxfUtil {
         }
 
         // activate jmx, by default isEnabled() == false in InstrumentationManagerImpl
-        if ("true".equalsIgnoreCase(systemInstance.getProperty("openejb.cxf.jmx", "true"))) {
+        final boolean hasMonitoring = hasMonitoring(systemInstance);
+        if (hasMonitoring || "true".equalsIgnoreCase(systemInstance.getProperty("openejb.cxf.jmx", "true"))) {
             final InstrumentationManager mgr = bus.getExtension(InstrumentationManager.class);
             if (InstrumentationManagerImpl.class.isInstance(mgr)) {
                 bus.setExtension(LocalMBeanServer.get(), MBeanServer.class); // just to keep everything consistent
@@ -287,8 +290,10 @@ public final class CxfUtil {
 
                 // failed when bus was constructed or even if passed we switch the MBeanServer
                 manager.init();
-                manager.register();
             }
+        }
+        if (hasMonitoring) {
+            new CounterRepository().setBus(bus);
         }
 
         final ServiceConfiguration configuration = new ServiceConfiguration(systemInstance.getProperties(),
@@ -318,6 +323,10 @@ public final class CxfUtil {
 
         systemInstance.getProperties().setProperty(BUS_CONFIGURED_FLAG, "true");
         systemInstance.fireEvent(new BusCreated(bus));
+    }
+
+    private static boolean hasMonitoring(final SystemInstance systemInstance) {
+        return "true".equalsIgnoreCase(systemInstance.getProperty("openejb.cxf.monitoring.jmx", "false"));
     }
 
     private static class ClientAwareBusHandler implements InvocationHandler {
@@ -351,6 +360,20 @@ public final class CxfUtil {
                 }
             }
             systemInstance.removeObserver(this);
+        }
+
+        public void destroy(@Observes final AssemblerBeforeApplicationDestroyed ignored) {
+            final SystemInstance systemInstance = SystemInstance.get();
+            final Bus bus = getBus();
+
+            // avoid to leak, we can enhance it to remove endpoints by app but not sure it does worth the effort
+            // alternative can be a bus per app but would enforce us to change some deeper part of our config/design
+            if ("true".equalsIgnoreCase(systemInstance.getProperty("openejb.cxf.monitoring.jmx.clear-on-undeploy", "true"))) {
+                final CounterRepository repo = bus.getExtension(CounterRepository.class);
+                if (repo != null) {
+                    repo.getCounters().clear();
+                }
+            }
         }
     }
 }
