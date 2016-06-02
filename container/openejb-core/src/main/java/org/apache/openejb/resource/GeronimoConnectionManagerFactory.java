@@ -53,6 +53,7 @@ import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -418,7 +419,11 @@ public class GeronimoConnectionManagerFactory {
             do {
                 if (current instanceof AbstractSinglePoolConnectionInterceptor) {
                     try {
-                        foundLock = (ReadWriteLock) AbstractSinglePoolConnectionInterceptor.class.getField("resizeLock").get(current);
+                        final Field resizeLock = AbstractSinglePoolConnectionInterceptor.class.getDeclaredField("resizeLock");
+                        if (!resizeLock.isAccessible()) {
+                            resizeLock.setAccessible(true);
+                        }
+                        foundLock = (ReadWriteLock) resizeLock.get(current);
                     } catch (final IllegalAccessException | NoSuchFieldException e) {
                         // no-op
                     }
