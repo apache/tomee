@@ -559,10 +559,21 @@ public class URLClassLoaderFirst extends URLClassLoader {
     public static boolean isFilterableResource(final String name) {
         // currently bean validation, Slf4j, myfaces (because of enrichment)
         return name != null
-            && ("META-INF/services/javax.validation.spi.ValidationProvider".equals(name)
+            && (
+                // bval
+                "META-INF/services/javax.validation.spi.ValidationProvider".equals(name)
+                // jaxrs 2
             || "META-INF/services/javax.ws.rs.client.ClientBuilder".equals(name)
+                // jcache
             || "META-INF/services/javax.cache.spi.CachingProvider".equals(name)
+                // javamail
+            || "META-INF/javamail.default.providers".equals(name)
+            || "META-INF/javamail.default.address.map".equals(name)
+            || "META-INF/javamail.charset.map".equals(name)
+            || "META-INF/mailcap".equals(name)
+                // myfaces
             || name.startsWith("META-INF/services/org.apache.myfaces.spi")
+                // slf4h
             || SLF4J_BINDER_CLASS.equals(name));
     }
 
