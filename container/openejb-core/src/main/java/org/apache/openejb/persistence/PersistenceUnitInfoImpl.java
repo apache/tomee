@@ -561,6 +561,9 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
         if (name.startsWith("com.sun.")) {
             return true;
         }
+        if (name.startsWith("jdk.")) {
+            return true;
+        }
         if (name.startsWith("javassist")) {
             return true;
         }
