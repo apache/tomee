@@ -36,7 +36,7 @@ public class NotFoundTest {
     @Deployment(testable = false)
     public static Archive<?> app() {
         return ShrinkWrap.create(WebArchive.class, "notfound.war")
-                .addClasses(App.class, Endpoint.class)
+                .addClasses(App.class, Endpoint.class, CustomHandler.class)
                 .addAsWebInfResource(new StringAsset(
                         "<openejb-jar>" +
                         "   <pojo-deployment class-name=\"jaxrs-application\">" +
@@ -52,7 +52,7 @@ public class NotFoundTest {
 
     @Test
     public void run() {
-        assertEquals("failed", ClientBuilder.newClient().target(base.toExternalForm() + "api/missing").request().get(String.class));
-        assertEquals("t", ClientBuilder.newClient().target(base.toExternalForm() + "api/there").request().get(String.class));
+        assertEquals("failed", ClientBuilder.newClient().target(base.toExternalForm() + "api/missing").request().get().readEntity(String.class));
+        assertEquals("t", ClientBuilder.newClient().target(base.toExternalForm() + "api/there").request().get().readEntity(String.class));
     }
 }
