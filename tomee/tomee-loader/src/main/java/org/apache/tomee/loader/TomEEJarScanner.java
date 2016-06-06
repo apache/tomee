@@ -38,8 +38,10 @@ import java.util.Set;
 
 // todo: share common tld parsing, tomcat has a built in method for it, ensure we reuse it
 public class TomEEJarScanner extends StandardJarScanner {
+    private static final TomEEFilter DEFAULT_JAR_SCAN_FILTER = new TomEEFilter(null);
+
     public TomEEJarScanner() {
-        setJarScanFilter(new TomEEFilter(null));
+        setJarScanFilter(DEFAULT_JAR_SCAN_FILTER);
     }
 
     private void configureFilter(final JarScanFilter jarScanFilter) {
@@ -91,9 +93,13 @@ public class TomEEJarScanner extends StandardJarScanner {
         }
     }
 
-    private static class TomEEFilter implements JarScanFilter {
+    public /*context.xml*/ static class TomEEFilter implements JarScanFilter {
         private static final Filter INCLUDE = Filters.tokens("javax.faces-2.", "spring-security-taglibs", "spring-webmvc");
         private final JarScanFilter delegate;
+
+        public TomEEFilter() {
+            this(null);
+        }
 
         public TomEEFilter(final JarScanFilter jarScanFilter) {
             this.delegate = jarScanFilter;
