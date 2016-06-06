@@ -573,7 +573,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
             || "META-INF/mailcap".equals(name)
                 // myfaces
             || name.startsWith("META-INF/services/org.apache.myfaces.spi")
-                // slf4h
+                // slf4j
             || SLF4J_BINDER_CLASS.equals(name));
     }
 
