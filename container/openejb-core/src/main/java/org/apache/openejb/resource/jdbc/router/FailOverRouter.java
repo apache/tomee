@@ -64,7 +64,7 @@ public class FailOverRouter extends AbstractRouter {
     }
 
     @PostConstruct
-    private void init() {
+    public void init() {
         initDataSources();
         initStrategy();
         initFacade();
