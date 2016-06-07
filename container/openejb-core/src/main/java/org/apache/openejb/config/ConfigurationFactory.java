@@ -116,6 +116,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -1233,6 +1234,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 propertiesProvider = SystemInstance.get().getProperty(PropertiesResourceProvider.class.getName());
             }
             if (propertiesProvider != null) {
+                propertiesProvider = unaliasPropertiesProvider(propertiesProvider);
+
                 // don't trim them, user wants to handle it himself, let him do it
                 final ObjectRecipe recipe = new ObjectRecipe(propertiesProvider);
                 recipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
@@ -1299,6 +1302,19 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         } catch (final Throwable e) {
             final String message = logger.fatal("configureService.failed", e, (null != service ? service.getId() : ""));
             throw new OpenEJBException(message, e);
+        }
+    }
+
+    private static String unaliasPropertiesProvider(final String propertiesProvider) {
+        switch (propertiesProvider.toLowerCase(Locale.ENGLISH)) {
+            case "heroku":
+                return "org.apache.openejb.resource.heroku.HerokuDatabasePropertiesProvider";
+            case "openshift:mysql":
+                return "org.apache.openejb.resource.openshift.OpenshiftMySQLPropertiesProvider";
+            case "openshift:postgresql":
+                return "org.apache.openejb.resource.openshift.OpenshiftPostgreSQLPropertiesProvider";
+            default:
+                return propertiesProvider;
         }
     }
 
