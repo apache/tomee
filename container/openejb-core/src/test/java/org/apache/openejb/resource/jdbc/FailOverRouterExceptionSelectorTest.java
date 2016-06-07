@@ -68,10 +68,11 @@ import java.util.logging.Logger;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 @Classes
 @RunWith(ApplicationComposer.class)
-public class FailOverRouterErrorHandlerTest {
+public class FailOverRouterExceptionSelectorTest {
     @Resource(name = "routedDs")
     private DataSource failover;
 
@@ -91,9 +92,9 @@ public class FailOverRouterErrorHandlerTest {
             }
             assertEquals(0, handler.errors.size());
         }
-
-        { // failover
+        { // failover "normal"
             ControllableDriver.actives.remove("1");
+            SimpleSelector.failoverOnError = true;
             try (final Connection c = failover.getConnection()) {
                 c.createStatement();
             }
@@ -104,6 +105,35 @@ public class FailOverRouterErrorHandlerTest {
             assertTrue(SQLException.class.isInstance(errors.get("delegate1")));
             assertEquals("failed", errors.get("delegate1").getMessage());
         }
+        handler.errors.clear();
+        { // failover "skipped"
+            ControllableDriver.actives.remove("2");
+            ControllableDriver.actives.add("1");
+            SimpleSelector.failoverOnError = false;
+            try {
+                failover.getConnection().close();
+                fail("should have failed");
+            } catch (final SQLException sqle) {
+                // expected
+            }
+
+            assertEquals(0, handler.errors.size());
+        }
+        { // back to "normal"
+            ControllableDriver.actives.remove("2");
+            ControllableDriver.actives.add("1");
+            SimpleSelector.failoverOnError = true;
+            try (final Connection c = failover.getConnection()) {
+                c.createStatement();
+            }
+
+            assertEquals(1, handler.errors.size());
+            final Map<String, Throwable> errors = handler.errors.iterator().next();
+            assertTrue(errors.containsKey("delegate2"));
+            assertTrue(SQLException.class.isInstance(errors.get("delegate2")));
+            assertEquals("failed", errors.get("delegate2").getMessage());
+        }
+        handler.errors.clear();
     }
 
     @Configuration
@@ -114,6 +144,7 @@ public class FailOverRouterErrorHandlerTest {
             // router
             .property("router", "new://Resource?class-name=" + FailOverRouter.class.getName())
             .property("router.datasourceNames", "delegate1,delegate2")
+            .property("router.exceptionSelectorInstance", "$selector")
             .property("router.errorHandlerInstance", "@errorHandler")
 
             // routed DS
@@ -135,18 +166,21 @@ public class FailOverRouterErrorHandlerTest {
             .property("delegate2.TestOnBorrow", "true")
             .property("delegate2.validationQuery", "select 1")
 
+            // exception selector
+            .property("selector", "new://Service?class-name=" + SimpleSelector.class.getName())
+
             // error handler
             .property("errorHandler", "new://Resource?class-name=" + SimpleHandler.class.getName())
 
             .build();
     }
 
-    public static class SimpleHandler implements FailOverRouter.ErrorHandler {
-        private final Collection<Map<String, Throwable>> errors = new ArrayList<>();
+    public static class SimpleSelector implements FailOverRouter.ExceptionSelector {
+        static volatile boolean failoverOnError = false;
 
         @Override
-        public void onError(final Map<String, Throwable> errorByFailingDataSource, final FailOverRouter.DataSourceHolder finallyUsedOrNull) {
-            errors.add(errorByFailingDataSource);
+        public boolean shouldFailover(final Throwable sqle) {
+            return failoverOnError;
         }
     }
 
@@ -2150,6 +2184,15 @@ public class FailOverRouterErrorHandlerTest {
         @Override
         public Logger getParentLogger() throws SQLFeatureNotSupportedException {
             return null;
+        }
+    }
+
+    public static class SimpleHandler implements FailOverRouter.ErrorHandler {
+        private final Collection<Map<String, Throwable>> errors = new ArrayList<>();
+
+        @Override
+        public void onError(final Map<String, Throwable> errorByFailingDataSource, final FailOverRouter.DataSourceHolder finallyUsedOrNull) {
+            errors.add(errorByFailingDataSource);
         }
     }
 }

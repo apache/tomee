@@ -32,6 +32,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -47,6 +48,7 @@ public class FailOverRouter extends AbstractRouter {
 
     public static final String DEFAULT_STRATEGY = "default";
 
+    private ExceptionSelector exceptionSelectorRuntime;
     private ErrorHandler errorHandlerRuntime;
     private Strategy strategyRuntime;
     private DataSource facade;
@@ -82,6 +84,21 @@ public class FailOverRouter extends AbstractRouter {
 
     public void setStrategyInstance(final Strategy strategy) {
         this.strategyRuntime = strategy;
+    }
+
+    public void setExceptionSelectorInstance(final ExceptionSelector selector) {
+        exceptionSelectorRuntime = selector;
+    }
+
+    public void setExceptionSelector(final String selector) {
+        try {
+            exceptionSelectorRuntime = "mysql".equalsIgnoreCase(selector) ?
+                    new MySQLExceptionSelector() :
+                    ExceptionSelector.class.cast(Thread.currentThread().getContextClassLoader()
+                            .loadClass(selector.trim()).newInstance());
+        } catch (final InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     public void setErrorHandlerInstance(final ErrorHandler errorHandler) {
@@ -214,7 +231,7 @@ public class FailOverRouter extends AbstractRouter {
     private void initFacade() {
         facade = DataSource.class.cast(Proxy.newProxyInstance(
                 Thread.currentThread().getContextClassLoader(),
-                new Class<?>[]{DataSource.class}, new FacadeHandler(dataSources, strategyRuntime, errorHandlerRuntime)));
+                new Class<?>[]{DataSource.class}, new FacadeHandler(dataSources, strategyRuntime, errorHandlerRuntime, exceptionSelectorRuntime)));
     }
 
     public Collection<DataSourceHolder> getDataSources() {
@@ -230,15 +247,18 @@ public class FailOverRouter extends AbstractRouter {
     private static class FacadeHandler implements InvocationHandler {
         private static final TransactionSynchronizationRegistry SYNCHRONIZATION_REGISTRY = SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class);
 
+        private final TransactionManager transactionManager;
         private final Collection<DataSourceHolder> delegates;
         private final Strategy strategy;
-        private final TransactionManager transactionManager;
         private final ErrorHandler handler;
+        private final ExceptionSelector selector;
 
-        public FacadeHandler(final Collection<DataSourceHolder> dataSources, final Strategy strategy, final ErrorHandler handler) {
+        public FacadeHandler(final Collection<DataSourceHolder> dataSources, final Strategy strategy,
+                             final ErrorHandler handler, final ExceptionSelector selector) {
             this.delegates = dataSources;
             this.strategy = strategy;
             this.handler = handler;
+            this.selector = selector;
             this.transactionManager = OpenEJB.getTransactionManager();
         }
 
@@ -290,6 +310,14 @@ public class FailOverRouter extends AbstractRouter {
                         break;
                     }
                 } catch (final InvocationTargetException ite) {
+                    final Throwable cause = ite.getTargetException();
+                    if (selector != null && !selector.shouldFailover(cause)) {
+                        if (failed != null) {
+                            handler.onError(failed, ds);
+                        }
+                        throw cause;
+                    }
+
                     if (handler != null) {
                         if (failed == null) {
                             failed = new HashMap<>();
@@ -312,6 +340,38 @@ public class FailOverRouter extends AbstractRouter {
             }
             strategy.used(used);
             return out;
+        }
+    }
+
+    public interface ExceptionSelector {
+        boolean shouldFailover(final Throwable sqle);
+    }
+
+    public abstract class SQLExceptionSelector implements ExceptionSelector {
+        @Override
+        public boolean shouldFailover(final Throwable sqle) {
+            return SQLException.class.isInstance(sqle) && shouldFailover(SQLException.class.cast(sqle));
+        }
+
+        abstract boolean shouldFailover(final SQLException sqle);
+    }
+
+    public class MySQLExceptionSelector extends SQLExceptionSelector {
+        private final Class<?> communicationException;
+
+        public MySQLExceptionSelector() {
+            try {
+                communicationException = Thread.currentThread().getContextClassLoader().loadClass("com.mysql.jdbc.CommunicationsException");
+            } catch (final ClassNotFoundException e) {
+                throw new IllegalArgumentException("com.mysql.jdbc.CommunicationsException not available, please use another ExceptionSelector");
+            }
+        }
+
+        @Override
+        public boolean shouldFailover(final SQLException ex) {
+            final String sqlState = ex.getSQLState();
+            return (sqlState != null && sqlState.startsWith("08")) ||
+                    communicationException.isInstance(ex);
         }
     }
 

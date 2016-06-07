@@ -168,24 +168,14 @@ public final class ServiceInfos {
                     final List<Object> val = new ArrayList<>(elt.length);
                     for (final String e : elt) {
                         if (!e.trim().isEmpty()) {
-                            val.add(resolve(services, e.startsWith("$") ? e.substring(1) : e));
+                            val.add(e.startsWith("@") ? lookup(e) : resolve(services, e.startsWith("$") ? e.substring(1) : e));
                         }
                     }
                     serviceRecipe.setProperty(key, val);
                 } else if (valueStr.startsWith("$")) {
                     serviceRecipe.setProperty(key, resolve(services, valueStr.substring(1)));
                 } else if (valueStr.startsWith("@")) {
-                    final Context jndiContext = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
-                    try {
-                        serviceRecipe.setProperty(key, jndiContext.lookup(JndiConstants.OPENEJB_RESOURCE_JNDI_PREFIX + valueStr.substring(1)));
-                    } catch (final NamingException e) {
-                        try {
-                            serviceRecipe.setProperty(key, jndiContext.lookup(valueStr.substring(1)));
-                        } catch (final NamingException e1) {
-                            Logger.getInstance(LogCategory.OPENEJB, ServiceInfos.class).warning("Value " + valueStr + " starting with @ but doesn't point to an existing resource, using raw value");
-                            serviceRecipe.setProperty(key, value);
-                        }
-                    }
+                    serviceRecipe.setProperty(key, lookup(value));
                 } else {
                     serviceRecipe.setProperty(key, value);
                 }
@@ -193,6 +183,24 @@ public final class ServiceInfos {
                 serviceRecipe.setProperty(key, entry.getValue());
             }
         }
+    }
+
+    private static Object lookup(final Object value) {
+        final String name = String.valueOf(value).substring(1);
+        final Context jndiContext = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
+        Object lookup;
+        try {
+            lookup = jndiContext.lookup(JndiConstants.OPENEJB_RESOURCE_JNDI_PREFIX + name);
+        } catch (final NamingException e) {
+            try {
+                lookup = jndiContext.lookup(name);
+            } catch (final NamingException e1) {
+                Logger.getInstance(LogCategory.OPENEJB, ServiceInfos.class)
+                        .warning("Value " + name + " starting with @ but doesn't point to an existing resource, using raw value");
+                lookup = value;
+            }
+        }
+        return lookup;
     }
 
     public interface Factory {
