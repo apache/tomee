@@ -100,7 +100,11 @@ public final class Reflections {
     }
 
     public static Object get(final Object instance, final String field) {
-        Class<?> clazz = instance.getClass();
+        return get(instance.getClass(), instance, field);
+    }
+
+    public static Object get(final Class<?> aClass, final Object instance, final String field) {
+        Class<?> clazz = aClass;
         while (clazz != null) {
             try {
                 final Field f = clazz.getDeclaredField(field);

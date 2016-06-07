@@ -120,5 +120,9 @@ public class TomEEJarScanner extends StandardJarScanner {
             }
             return !NewLoaderLogic.skip(jarName) && (delegate == null || delegate.check(jarScanType, jarName));
         }
+
+        public JarScanFilter getDelegate() {
+            return delegate;
+        }
     }
 }

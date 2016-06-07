@@ -2313,7 +2313,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             }
 
             if (!cp.isEmpty()) {
-                return new DeploymentLoader.ExternalConfiguration(cp.toArray(new String[cp.size()]));
+                return new DeploymentLoader.ExternalConfiguration(cp.toArray(new String[cp.size()]), null /*for now doesnt make sense, todo: configure*/);
             }
         }
         return null;

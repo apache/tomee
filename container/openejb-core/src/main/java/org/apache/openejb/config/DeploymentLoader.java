@@ -1004,7 +1004,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         // context.xml can define some additional libraries
         if (config != null) { // we don't test all !=null inline to show that config will get extra params in the future and that it is hierarchic
-            if (config.getClasspath() != null) {
+            if (config.getClasspath() != null && config.getClasspath().length > 0) {
                 final Set<URL> contextXmlUrls = new LinkedHashSet<>();
                 for (final String location : config.getClasspath()) {
                     try {
@@ -1034,7 +1034,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         final ClassLoader warClassLoader = ClassLoaderUtil.createTempClassLoader(appId, webUrlsArray, parentClassLoader);
 
         // create web module
-        final List<URL> scannableUrls = filterWebappUrls(webUrlsArray, descriptors.get(NewLoaderLogic.EXCLUSION_FILE));
+        final List<URL> scannableUrls = filterWebappUrls(webUrlsArray, config == null ? null : config.customerFilter, descriptors.get(NewLoaderLogic.EXCLUSION_FILE));
         // executable war will add war in scannable urls, we don't want it since it will surely contain tomee, cxf, ...
         if (Boolean.parseBoolean(systemInstance.getProperty("openejb.core.skip-war-in-loader", "true"))) {
             File archive = warFile;
@@ -1130,7 +1130,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         }
     }
 
-    public static List<URL> filterWebappUrls(final URL[] webUrls, final URL exclusions) {
+    public static List<URL> filterWebappUrls(final URL[] webUrls, final Filter filter, final URL exclusions) {
         Filter excludeFilter = null;
         if (exclusions != null) {
             try {
@@ -1143,7 +1143,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         UrlSet urls = new UrlSet(webUrls);
         try {
-            urls = NewLoaderLogic.applyBuiltinExcludes(urls, null, excludeFilter);
+            urls = NewLoaderLogic.applyBuiltinExcludes(urls, filter, excludeFilter);
         } catch (final MalformedURLException e) {
             return Arrays.asList(webUrls);
         }
@@ -2142,9 +2142,15 @@ public class DeploymentLoader implements DeploymentFilterable {
 
     public static class ExternalConfiguration {
         private final String[] classpath;
+        private final Filter customerFilter;
 
-        public ExternalConfiguration(final String[] classpath) {
+        public ExternalConfiguration(final String[] classpath, final Filter customerFilter) {
             this.classpath = classpath;
+            this.customerFilter = customerFilter;
+        }
+
+        public Filter getCustomerFilter() {
+            return customerFilter;
         }
 
         public String[] getClasspath() {
