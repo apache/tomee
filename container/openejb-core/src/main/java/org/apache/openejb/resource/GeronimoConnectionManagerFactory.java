@@ -297,26 +297,26 @@ public class GeronimoConnectionManagerFactory {
 
             // partition by contector properties such as username and password on a jdbc connection
             return new PartitionedPool(poolMaxSize,
-                poolMinSize,
-                connectionMaxWaitMilliseconds,
-                connectionMaxIdleMinutes,
-                allConnectionsEqual,
-                !allConnectionsEqual,
-                assumeOneMatch,
-                true,
-                false);
+                    poolMinSize,
+                    connectionMaxWaitMilliseconds,
+                    connectionMaxIdleMinutes,
+                    allConnectionsEqual,
+                    !allConnectionsEqual,
+                    assumeOneMatch,
+                    true,
+                    false);
         } else if ("by-subject".equalsIgnoreCase(partitionStrategy)) {
 
             // partition by caller subject
             return new PartitionedPool(poolMaxSize,
-                poolMinSize,
-                connectionMaxWaitMilliseconds,
-                connectionMaxIdleMinutes,
-                allConnectionsEqual,
-                !allConnectionsEqual,
-                assumeOneMatch,
-                false,
-                true);
+                    poolMinSize,
+                    connectionMaxWaitMilliseconds,
+                    connectionMaxIdleMinutes,
+                    allConnectionsEqual,
+                    !allConnectionsEqual,
+                    assumeOneMatch,
+                    false,
+                    true);
         }
 
         throw new IllegalArgumentException("Unknown partition strategy " + partitionStrategy);
@@ -481,7 +481,7 @@ public class GeronimoConnectionManagerFactory {
                                   final AutoConnectionTracker autoConnectionTracker) {
                 this.stack = stack;
                 this.lock = lock;
-                this.pool = pool;
+                this.pool = pool == null ? new Object() : pool;
                 this.autoConnectionTracker = autoConnectionTracker;
 
                 if (!SinglePoolConnectionInterceptor.class.isInstance(stack) && !SinglePoolMatchAllConnectionInterceptor.class.isInstance(stack)) {
@@ -491,46 +491,48 @@ public class GeronimoConnectionManagerFactory {
 
             @Override
             public void run() {
-                if (lock != null) {
-                    lock.writeLock().lock();
-                }
+                synchronized (pool) {
+                    if (lock != null) {
+                        lock.writeLock().lock();
+                    }
 
-                try {
-                    final Map<ManagedConnection, ManagedConnectionInfo> connections;
-                    if (stack instanceof SinglePoolConnectionInterceptor) {
-                        connections = new HashMap<>();
-                        for (final ManagedConnectionInfo info : (List<ManagedConnectionInfo>) pool) {
+                    try {
+                        final Map<ManagedConnection, ManagedConnectionInfo> connections;
+                        if (stack instanceof SinglePoolConnectionInterceptor) {
+                            connections = new HashMap<>();
+                            for (final ManagedConnectionInfo info : (List<ManagedConnectionInfo>) pool) {
+                                connections.put(info.getManagedConnection(), info);
+                            }
+                        } else if (stack instanceof SinglePoolMatchAllConnectionInterceptor) {
+                            connections = (Map<ManagedConnection, ManagedConnectionInfo>) pool;
+                        } else {
+                            connections = new HashMap<>();
+                        }
+                        for (final ManagedConnectionInfo info : autoConnectionTracker.connections()) {
                             connections.put(info.getManagedConnection(), info);
                         }
-                    } else if (stack instanceof SinglePoolMatchAllConnectionInterceptor) {
-                        connections = (Map<ManagedConnection, ManagedConnectionInfo>) pool;
-                    } else {
-                        connections = new HashMap<>();
-                    }
-                    for (final ManagedConnectionInfo info : autoConnectionTracker.connections()) {
-                        connections.put(info.getManagedConnection(), info);
-                    }
 
-                    // destroy invalid connections
-                    try {
-                        final Set<ManagedConnection> invalids = ValidatingManagedConnectionFactory.class.cast(getManagedConnectionFactory())
-                            .getInvalidConnections(connections.keySet());
-                        if (invalids != null) {
-                            for (final ManagedConnection invalid : invalids) {
-                                final ManagedConnectionInfo mci = connections.get(invalid);
-                                if (mci != null) {
-                                    stack.returnConnection(new ConnectionInfo(mci), ConnectionReturnAction.DESTROY);
-                                    continue;
+                        // destroy invalid connections
+                        try {
+                            final Set<ManagedConnection> invalids = ValidatingManagedConnectionFactory.class.cast(getManagedConnectionFactory())
+                                    .getInvalidConnections(connections.keySet());
+                            if (invalids != null) {
+                                for (final ManagedConnection invalid : invalids) {
+                                    final ManagedConnectionInfo mci = connections.get(invalid);
+                                    if (mci != null) {
+                                        stack.returnConnection(new ConnectionInfo(mci), ConnectionReturnAction.DESTROY);
+                                        continue;
+                                    }
+                                    log.error("Can't find " + invalid + " in " + pool);
                                 }
-                                log.error("Can't find " + invalid + " in " + pool);
                             }
+                        } catch (final ResourceException e) {
+                            log.error(e.getMessage(), e);
                         }
-                    } catch (final ResourceException e) {
-                        log.error(e.getMessage(), e);
-                    }
-                } finally {
-                    if (lock != null) {
-                        lock.writeLock().unlock();
+                    } finally {
+                        if (lock != null) {
+                            lock.writeLock().unlock();
+                        }
                     }
                 }
             }

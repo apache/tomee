@@ -53,6 +53,32 @@ public class GeronimoConnectionManagerFactoryTest {
         factory.setPartitionStrategy("none");
         factory.setTransactionManager(new TransactionManagerImpl());
         factory.setPoolMinSize(1);
+        factory.setAllConnectionsEqual(true);
+        final GenericConnectionManager mgr = factory.create();
+        mgr.doStart();
+        try {
+            mgr.allocateConnection(mcf, new ConnectionRequestInfo() { // just to use it
+            });
+            sleep(2500);
+            assertTrue(mcf.evicted.get());
+            assertTrue(mcf.destroyed.get());
+        } finally {
+            mgr.doStop();
+        }
+    }
+
+    @Test
+    public void evictionNotAllEquals() throws Exception {
+        final MyMcf mcf = new MyMcf();
+
+        final GeronimoConnectionManagerFactory factory = new GeronimoConnectionManagerFactory();
+        factory.setValidationInterval(new Duration("1 second"));
+        factory.setTransactionSupport("local");
+        factory.setMcf(mcf);
+        factory.setPooling(true);
+        factory.setPartitionStrategy("none");
+        factory.setTransactionManager(new TransactionManagerImpl());
+        factory.setPoolMinSize(1);
         factory.setAllConnectionsEqual(false);
         final GenericConnectionManager mgr = factory.create();
         mgr.doStart();
