@@ -482,7 +482,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
         }
 
         // other packages
-        if (name.startsWith("com.sun.")) {
+        if (name.startsWith("com.")) {
             final String sub = name.substring("com.".length());
             if (sub.startsWith("sun.")) {
                 return !name.startsWith("sun.mail.") && isInJvm(name);
