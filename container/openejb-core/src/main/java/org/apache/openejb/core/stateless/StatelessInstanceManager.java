@@ -104,7 +104,7 @@ public class StatelessInstanceManager {
         this.closeTimeout = closeTimeout;
         this.poolBuilder = poolBuilder;
         this.scheduledExecutor = ses;
-        if (ScheduledThreadPoolExecutor.class.isInstance(ses)) {
+        if (ScheduledThreadPoolExecutor.class.isInstance(ses) && !ScheduledThreadPoolExecutor.class.cast(ses).getRemoveOnCancelPolicy()) {
             ScheduledThreadPoolExecutor.class.cast(ses).setRemoveOnCancelPolicy(true);
         }
 

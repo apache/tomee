@@ -325,6 +325,7 @@
 
     CloseTimeout = 5 minutes
 
+    # if set to true,
     # back to previous behavior (TomEE 1.x) where 1 scheduler thread was used for stateless eviction
     # by bean (ie for 500 stateless beans you get 500 eviction threads)
     UseOneSchedulerThreadByBean = false
