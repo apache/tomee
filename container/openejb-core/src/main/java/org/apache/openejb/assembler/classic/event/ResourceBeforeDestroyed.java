@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.assembler.classic.event;
 
-import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.api.resource.DestroyableResource;
 import org.apache.openejb.observer.Event;
 
 @Event
@@ -27,8 +27,8 @@ public class ResourceBeforeDestroyed extends ResourceEvent {
 
     @Override
     public void replaceBy(final Object newResource) {
-        if (Assembler.ResourceInstance.class.isInstance(resource)) {
-            Assembler.ResourceInstance.class.cast(resource).destroyResource();
+        if (DestroyableResource.class.isInstance(resource)) {
+            DestroyableResource.class.cast(resource).destroyResource();
         }
         super.replaceBy(newResource);
     }
