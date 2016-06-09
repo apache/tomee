@@ -48,6 +48,8 @@ import org.apache.openejb.assembler.classic.event.AssemblerDestroyed;
 import org.apache.openejb.assembler.classic.event.BeforeStartEjbs;
 import org.apache.openejb.assembler.classic.event.ContainerSystemPostCreate;
 import org.apache.openejb.assembler.classic.event.ContainerSystemPreDestroy;
+import org.apache.openejb.assembler.classic.event.ResourceCreated;
+import org.apache.openejb.assembler.classic.event.ResourceBeforeDestroyed;
 import org.apache.openejb.assembler.classic.util.ServiceInfos;
 import org.apache.openejb.assembler.monitoring.JMXContainer;
 import org.apache.openejb.async.AsynchronousPool;
@@ -1965,7 +1967,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         removeResourceInfo(name);
     }
 
-    private void doResourceDestruction(final String name, final String className, final Object object) {
+    private void doResourceDestruction(final String name, final String className, final Object jndiObject) {
+        final ResourceBeforeDestroyed event = new ResourceBeforeDestroyed(jndiObject, name);
+        SystemInstance.get().fireEvent(event);
+        final Object object = event.getReplacement() == null ? jndiObject : event.getReplacement();
         if (object instanceof ResourceAdapterReference) {
             final ResourceAdapterReference resourceAdapter = (ResourceAdapterReference) object;
             try {
@@ -2955,7 +2960,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         Object service = serviceRecipe.create(loader);
         if (customLoader) {
-            final Collection<Class<?>> apis = new ArrayList<>(Arrays.asList(service.getClass().getInterfaces()));
+            final Collection<Class<?>> apis = new ArrayList<Class<?>>(Arrays.asList(service.getClass().getInterfaces()));
 
             if (apis.size() - (apis.contains(Serializable.class) ? 1 : 0) - (apis.contains(Externalizable.class) ? 1 : 0) > 0) {
                 service = Proxy.newProxyInstance(loader, apis.toArray(new Class<?>[apis.size()]), new ClassLoaderAwareHandler(null, service, loader));
@@ -3129,7 +3134,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 logUnusedProperties(serviceRecipe, serviceInfo);
             } // else wait post construct
         }
-        return service;
+
+        final ResourceCreated event = new ResourceCreated(service, serviceInfo.id);
+        SystemInstance.get().fireEvent(event);
+        return event.getReplacement() == null ? service : event.getReplacement();
     }
 
     private void bindResource(final String id, final Object service, final boolean canReplace) throws OpenEJBException {
@@ -3672,6 +3680,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         private final Object delegate;
         private final transient Collection<Method> preDestroys;
         private final transient CreationalContext<?> context;
+        private volatile boolean destroyed = false;
 
         public ResourceInstance(final String name, final Object delegate, final Collection<Method> preDestroys, final CreationalContext<?> context) {
             this.name = name;
@@ -3686,7 +3695,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         @Override
-        public void destroyResource() {
+        public synchronized void destroyResource() {
+            if (destroyed) {
+                return;
+            }
             final Object o = unwrapReference(delegate);
             for (final Method m : preDestroys) {
                 try {
@@ -3710,6 +3722,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             } catch (final Exception e) {
                 // no-op
             }
+            destroyed = true;
         }
 
         // we don't care unwrapping the resource here since we want to keep ResourceInstance data for destruction
