@@ -179,6 +179,19 @@ public class FailOverRouter extends AbstractRouter {
                     }
                 };
                 break;
+            case "static":
+                strategyRuntime = new Strategy() { // no auto adaption (if first ds is always faster for instance)
+                    @Override
+                    public Collection<DataSourceHolder> prepare(final Collection<DataSourceHolder> list) {
+                        return list;
+                    }
+
+                    @Override
+                    public void used(final DataSourceHolder holder) {
+                        // no-op
+                    }
+                };
+                break;
             case DEFAULT_STRATEGY:
             default:
                 strategyRuntime = new Strategy() { // use the list and save a working item as first one
