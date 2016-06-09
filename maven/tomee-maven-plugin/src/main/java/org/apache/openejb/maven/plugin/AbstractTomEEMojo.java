@@ -159,9 +159,6 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     @Parameter(property = "tomee-plugin.ajp")
     protected String tomeeAjpPort;
 
-    @Parameter(property = "tomee-plugin.https")
-    protected String tomeeHttpsPort;
-
     @Parameter(property = "tomee-plugin.args")
     protected String args;
 
