@@ -123,7 +123,7 @@
 
     <batchee.version>0.2-incubating</batchee.version>    
 
-    <version.arquillian>1.1.10.Final</version.arquillian>
+    <version.arquillian>1.1.11.Final</version.arquillian>
     <version.shrinkwrap.descriptor>2.0.0-alpha-7</version.shrinkwrap.descriptor>
     <version.shrinkwrap.shrinkwrap>1.2.2</version.shrinkwrap.shrinkwrap>
 
