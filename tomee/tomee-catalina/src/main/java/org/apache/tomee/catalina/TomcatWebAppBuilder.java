@@ -1313,7 +1313,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
             // ensure matching (see getId() usage)
             webAppInfo.host = Contexts.getHostname(standardContext);
-            webAppInfo.contextRoot = standardContext.getName();
+            webAppInfo.contextRoot = standardContext.getPath();
 
             // save jsf stuff
             final Map<String, Set<String>> scannedJsfClasses = new HashMap<String, Set<String>>();
