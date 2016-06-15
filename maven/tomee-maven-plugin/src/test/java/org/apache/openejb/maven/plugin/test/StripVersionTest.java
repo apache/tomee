@@ -64,7 +64,7 @@ public class StripVersionTest {
         assertEquals(1, new File(catalinaBase, "lib").listFiles(new FilenameFilter() {
             @Override
             public boolean accept(final File dir, final String name) {
-                return  name.equals("log4j2-tomee.jar");
+                return  name.equals("plexus-utils.jar");
             }
         }).length);
         assertEquals(1, new File(catalinaBase, "webapps").listFiles(new FilenameFilter() {
