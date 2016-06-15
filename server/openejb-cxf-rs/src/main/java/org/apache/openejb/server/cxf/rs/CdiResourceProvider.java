@@ -51,6 +51,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public abstract class CdiResourceProvider implements ResourceProvider {
+    public static final String INSTANCE_KEY = CdiResourceProvider.class.getName() + ".instance";
+
     protected final Collection<Injection> injections;
     protected final Context context;
     protected final WebBeansContext webbeansContext;
@@ -140,6 +142,11 @@ public abstract class CdiResourceProvider implements ResourceProvider {
 
     @Override
     public Object getInstance(final Message m) {
+        final Object existing = m.getExchange().get(INSTANCE_KEY);
+        if (existing != null) {
+            return existing;
+        }
+
         Contexts.bind(m.getExchange(), contextTypes);
 
         BeanCreator creator;
@@ -159,15 +166,20 @@ public abstract class CdiResourceProvider implements ResourceProvider {
         final Thread thread = Thread.currentThread();
         final ClassLoader oldLoader = thread.getContextClassLoader();
         thread.setContextClassLoader(classLoader);
+        Object instance;
         try {
-            return creator.create();
+            instance = creator.create();
         } catch (final NoBeanFoundException nbfe) {
             creator = new DefaultBeanCreator(m, constructor);
             m.put(BeanCreator.class, creator);
-            return creator.create();
+            instance = creator.create();
         } finally {
             thread.setContextClassLoader(oldLoader);
         }
+
+        m.getExchange().put(INSTANCE_KEY, instance);
+
+        return instance;
     }
 
     protected abstract BeanCreator getDefaultBeanCreator(Message m);

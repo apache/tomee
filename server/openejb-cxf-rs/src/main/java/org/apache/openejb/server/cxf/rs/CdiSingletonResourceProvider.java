@@ -25,13 +25,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 
 public class CdiSingletonResourceProvider extends CdiResourceProvider {
-    private final Object instance;
     private final BeanCreator creator;
 
-    public CdiSingletonResourceProvider(final ClassLoader loader, final Class<?> clazz, final Object instance, final Collection<Injection> injectionCollection, final Context initialContext, final WebBeansContext owbCtx) {
+    public CdiSingletonResourceProvider(final ClassLoader loader, final Class<?> clazz, final Object instance,
+                                        final Collection<Injection> injectionCollection, final Context initialContext,
+                                        final WebBeansContext owbCtx) {
         super(loader, clazz, injectionCollection, initialContext, owbCtx);
-        this.instance = instance;
-
         if (normalScopeCreator != null) { // if the singleton is a normal scoped bean then use cdi instance instead of provided one
             creator = normalScopeCreator;
         } else { // do injections only

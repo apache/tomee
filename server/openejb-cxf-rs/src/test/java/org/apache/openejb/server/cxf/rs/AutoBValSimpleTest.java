@@ -14,7 +14,7 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.openejb.server.cxf;
+package org.apache.openejb.server.cxf.rs;
 
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Classes;
@@ -36,7 +36,7 @@ import java.net.URL;
 import static org.junit.Assert.assertEquals;
 
 @EnableServices("jaxrs")
-@Classes(innerClassesAsBean = true)
+@Classes(innerClassesAsBean = true, cdi = true)
 @RunWith(ApplicationComposer.class)
 public class AutoBValSimpleTest {
     @RandomPort("http")
@@ -52,7 +52,7 @@ public class AutoBValSimpleTest {
     @Test
     public void failing() {
         assertEquals( // see org.apache.cxf.jaxrs.validation.ValidationExceptionMapper.toResponse()
-                Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+                Response.Status.BAD_REQUEST.getStatusCode(),
                 client().path("openejb/AutoBValSimpleTest/toolong").request(MediaType.TEXT_PLAIN).get().getStatus());
     }
 
