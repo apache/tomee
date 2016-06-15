@@ -22,11 +22,10 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.List;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class StripVersionTest {
@@ -53,26 +52,9 @@ public class StripVersionTest {
 
     @Test
     public void sironaIsInstalledAndPersisted() throws Exception {
-        assertTrue(catalinaBase.exists());
-
-        assertEquals(1, new File(catalinaBase, "javaagent").listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(final File dir, final String name) {
-                return name.equals("sirona-javaagent-shaded.jar");
-            }
-        }).length);
-        assertEquals(1, new File(catalinaBase, "lib").listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(final File dir, final String name) {
-                return  name.equals("plexus-utils.jar");
-            }
-        }).length);
-        assertEquals(1, new File(catalinaBase, "webapps").listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(final File dir, final String name) {
-                return name.equals("tomee-webaccess.war");
-            }
-        }).length);
-
+        for (final String file : asList("javaagent/sirona-javaagent-shaded.jar", "lib/plexus-utils.jar", "webapps/tomee-webaccess.war")) {
+            final File fullFile = new File(catalinaBase, file);
+            assertTrue(fullFile.getAbsolutePath(), fullFile.isFile());
+        }
     }
 }
