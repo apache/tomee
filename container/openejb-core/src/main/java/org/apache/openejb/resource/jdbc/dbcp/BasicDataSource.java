@@ -29,6 +29,8 @@ import org.apache.openejb.resource.jdbc.IsolationLevels;
 import org.apache.openejb.resource.jdbc.plugin.DataSourcePlugin;
 import org.apache.openejb.util.reflection.Reflections;
 
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 import javax.sql.XADataSource;
@@ -267,6 +269,11 @@ public class BasicDataSource extends org.apache.commons.dbcp2.BasicDataSource im
     public void setName(final String name) {
         registerAsMbean(name);
         this.name = name;
+    }
+
+    @Override
+    public ObjectName preRegister(final MBeanServer server, final ObjectName name) {
+        return name;
     }
 
     Object writeReplace() throws ObjectStreamException {

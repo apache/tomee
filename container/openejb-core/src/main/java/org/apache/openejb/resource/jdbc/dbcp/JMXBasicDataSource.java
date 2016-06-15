@@ -26,11 +26,11 @@ import org.apache.openejb.monitoring.DynamicMBeanWrapper;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
 
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
 
 // @MBean: don't put it since it is not a pojo
 @Internal
@@ -47,26 +47,17 @@ public class JMXBasicDataSource {
         if (LocalMBeanServer.isJMXActive()) {
             objectName = ObjectNameBuilder.uniqueName("datasources", name, ds);
             final MBeanServer server = LocalMBeanServer.get();
-            try {
-                if (server.isRegistered(objectName)) {
-                    server.unregisterMBean(objectName);
-                }
-                server.registerMBean(new DynamicMBeanWrapper(this), objectName);
-            } catch (final Exception e) {
-                e.printStackTrace(); // TODO
-            }
+            LocalMBeanServer.registerSilently(new DynamicMBeanWrapper(this), objectName);
         }
     }
 
     public void unregister() {
-        if (objectName == null) {
-            return;
-        }
-
-        try {
-            LocalMBeanServer.get().unregisterMBean(objectName);
-        } catch (final Exception e) {
-            // ignored
+        if (objectName != null) {
+            try {
+                LocalMBeanServer.get().unregisterMBean(objectName);
+            } catch (final Exception e) {
+                // ignored
+            }
         }
     }
 

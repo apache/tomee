@@ -28,6 +28,9 @@ import org.apache.openejb.resource.jdbc.plugin.DataSourcePlugin;
 import org.apache.openejb.resource.jdbc.pool.XADataSourceResource;
 import org.apache.openejb.util.reflection.Reflections;
 
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import javax.sql.DataSource;
 import java.io.File;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
@@ -36,7 +39,6 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
-import javax.sql.DataSource;
 
 @SuppressWarnings({"UnusedDeclaration"})
 public class BasicManagedDataSource extends org.apache.commons.dbcp2.managed.BasicManagedDataSource implements Serializable {
@@ -339,6 +341,11 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp2.managed.Bas
         } finally {
             l.unlock();
         }
+    }
+
+    @Override
+    public ObjectName preRegister(final MBeanServer server, final ObjectName name) {
+        return name;
     }
 
     Object writeReplace() throws ObjectStreamException {
