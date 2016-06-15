@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.maven.plugin.test;
 
-import org.apache.openejb.loader.IO;
 import org.apache.openejb.maven.plugin.Config;
 import org.apache.openejb.maven.plugin.TomEEMavenPluginRule;
 import org.junit.Rule;
@@ -26,37 +25,54 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.List;
 
-import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class PersistJavaagentTest {
+public class StripVersionTest {
     @Rule
     public TomEEMavenPluginRule TMPRule = new TomEEMavenPluginRule();
 
     @Config
-    private final List<String> javaagents = asList("org.apache.sirona:sirona-javaagent:0.2-incubating:jar:shaded");
+    private final List<String> javaagents = singletonList("org.apache.sirona:sirona-javaagent:0.2-incubating:jar:shaded");
 
     @Config
+    private final List<String> libs = singletonList("org.apache.tomee:log4j2-tomee:7.0.0" /*use release to avoid nasty deps*/);
+
+    @Config
+    private final List<String> webapps = singletonList("org.apache.tomee:tomee-webaccess:7.0.0" /*use release to avoid nasty deps*/);
+
+    @Config // otherwise they are not copied
     private final boolean persistJavaagents = true;
 
     @Config
-    private final File catalinaBase = new File("target/tomee-agent");
+    private boolean stripVersion = true;
+
+    @Config
+    private final File catalinaBase = new File("target/tomee-stripversion");
 
     @Test
     public void sironaIsInstalledAndPersisted() throws Exception {
         assertTrue(catalinaBase.exists());
 
-        // artifact was copied
         assertEquals(1, new File(catalinaBase, "javaagent").listFiles(new FilenameFilter() {
             @Override
             public boolean accept(final File dir, final String name) {
-                return name.equals("sirona-javaagent-0.2-incubating-shaded.jar");
+                return name.equals("sirona-javaagent-shaded.jar");
+            }
+        }).length);
+        assertEquals(1, new File(catalinaBase, "lib").listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(final File dir, final String name) {
+                return  name.equals("log4j2-tomee.jar");
+            }
+        }).length);
+        assertEquals(1, new File(catalinaBase, "webapps").listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(final File dir, final String name) {
+                return name.equals("tomee-webaccess.war");
             }
         }).length);
 
-        // catalina.sh was updated
-        final String catalinaSh = IO.slurp(new File(catalinaBase, "bin/catalina.sh"));
-        assertTrue(catalinaSh, catalinaSh.contains("-javaagent:$CATALINA_HOME/javaagent/sirona-javaagent"));
     }
 }

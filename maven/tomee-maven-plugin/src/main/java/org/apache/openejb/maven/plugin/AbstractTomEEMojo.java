@@ -531,7 +531,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                         public File resolve(final String group, final String artifact, final String version,
                                             final String classifier, final String type) {
                             try {
-                                return AbstractTomEEMojo.this.resolve(group, artifact, version, classifier, type);
+                                return AbstractTomEEMojo.this.resolve(group, artifact, version, classifier, type).resolved;
                             } catch (final ArtifactResolutionException | ArtifactNotFoundException e) {
                                 throw new IllegalArgumentException(e);
                             }
@@ -539,7 +539,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                         @Override
                         public File resolve(final String group, final String artifact, final String version) {
                             try {
-                                return AbstractTomEEMojo.this.resolve(group, artifact, version, null, "jar");
+                                return AbstractTomEEMojo.this.resolve(group, artifact, version, null, "jar").resolved;
                             } catch (final ArtifactResolutionException | ArtifactNotFoundException e) {
                                 throw new IllegalArgumentException(e);
                             }
@@ -547,7 +547,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                         @Override
                         public File resolve(final String group, final String artifact, final String version, final String type) {
                             try {
-                                return AbstractTomEEMojo.this.resolve(group, artifact, version, null, type);
+                                return AbstractTomEEMojo.this.resolve(group, artifact, version, null, type).resolved;
                             } catch (final ArtifactResolutionException | ArtifactNotFoundException e) {
                                 throw new IllegalArgumentException(e);
                             }
@@ -759,38 +759,20 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             }
         } else {
             try {
-                final File file = mvnToFile(lib, defaultType);
+                final FileWithMavenMeta file = mvnToFile(lib, defaultType);
                 if (extractedName == null && (stripVersion || isWar && stripWarVersion)) {
-                    String currentName = file.getName();
-                    currentName = currentName.endsWith("." + defaultType) ?
-                            currentName.substring(0, currentName.length() - defaultType.length() - 1) : currentName;
-                    currentName = currentName.endsWith("-SNAPSHOT") ?
-                            currentName.substring(0, currentName.length() - "-SNAPSHOT".length()) : currentName;
-
-                    int idx = currentName.length() - 1;
-                    while (idx >= 0) {
-                        if (currentName.charAt(idx) == '-') {
-                            break;
-                        }
-                        idx--;
-                    }
-                    if (idx > 0) {
-                        extractedName = currentName.substring(0, idx);
-                        if (!isExplodedWar) { // works for libs
-                            extractedName += "." + defaultType;
-                        }
-                    }
+                    extractedName = file.stripVersion(!isExplodedWar);
                 }
 
-                if (!unzip && !isExplodedWar) {
+                if (!unzip) {
                     final File dest;
                     if (extractedName == null) {
-                        dest = new File(destParent, file.getName());
+                        dest = new File(destParent, file.resolved.getName());
                     } else {
                         dest = new File(destParent, extractedName);
                     }
 
-                    is = new BufferedInputStream(new FileInputStream(file));
+                    is = new BufferedInputStream(new FileInputStream(file.resolved));
                     os = new BufferedOutputStream(new FileOutputStream(dest));
                     copy(is, os);
 
@@ -798,9 +780,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                 } else {
                     if (isExplodedWar) {
                         destParent = Files.mkdirs(new File(rawDestParent, extractedName != null ?
-                                extractedName : file.getName().replace(".war", "")));
+                                extractedName : file.resolved.getName().replace(".war", "")));
                     }
-                    Zips.unzip(file, destParent, !isExplodedWar);
+                    Zips.unzip(file.resolved, destParent, !isExplodedWar);
 
                     getLog().info("Unzipped '" + lib + "' in '" + destParent.getAbsolutePath());
                 }
@@ -814,7 +796,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         }
     }
 
-    private File mvnToFile(final String lib, final String defaultType) throws ArtifactResolutionException, ArtifactNotFoundException {
+    private FileWithMavenMeta mvnToFile(final String lib, final String defaultType) throws ArtifactResolutionException, ArtifactNotFoundException {
         final String[] infos = lib.split(":");
         final String classifier;
         final String type;
@@ -835,10 +817,10 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         return resolve(infos[0], infos[1], infos[2], classifier, type);
     }
 
-    private File resolve(final String group, final String artifact, final String version, final String classifier, final String type) throws ArtifactResolutionException, ArtifactNotFoundException {
+    private FileWithMavenMeta resolve(final String group, final String artifact, final String version, final String classifier, final String type) throws ArtifactResolutionException, ArtifactNotFoundException {
         final Artifact dependencyArtifact = factory.createDependencyArtifact(group, artifact, createFromVersion(version), type, classifier, SCOPE_COMPILE);
         resolver.resolve(dependencyArtifact, remoteRepos, local);
-        return dependencyArtifact.getFile();
+        return new FileWithMavenMeta(group, artifact, version, classifier, type, dependencyArtifact.getFile());
     }
 
     private void copyWar() {
@@ -1276,15 +1258,18 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             String path = javaagent;
             if (!new File(javaagent).isFile()) {
                 try {
-                    final File jar = mvnToFile(javaagent, "jar");
+                    final FileWithMavenMeta jar = mvnToFile(javaagent, "jar");
                     if (persistJavaagents) {
                         final File javaagentFolder = new File(catalinaBase, "javaagent");
                         Files.mkdirs(javaagentFolder);
-                        final String name = jar.getName();
+                        String name = jar.resolved.getName();
+                        if (stripVersion) {
+                            name = jar.stripVersion(true);
+                        }
                         path = "$CATALINA_HOME/javaagent/" + name;
-                        IO.copy(jar, new File(javaagentFolder, name));
+                        IO.copy(jar.resolved, new File(javaagentFolder, name));
                     }
-                    strings.add("-javaagent:" + jar.getAbsolutePath() + args);
+                    strings.add("-javaagent:" + jar.resolved.getAbsolutePath() + args);
                 } catch (final Exception e) {
                     getLog().warn("Can't find " + javaagent);
                     strings.add("-javaagent:" + javaagent + args);
@@ -1604,5 +1589,28 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         File resolve(String group, String artifact, String version, String classifier, String type);
         File resolve(String group, String artifact, String version, String type);
         File resolve(String group, String artifact, String version);
+    }
+
+    private static class FileWithMavenMeta {
+        private final String group;
+        private final String artifact;
+        private final String version;
+        private final String classifier;
+        private final String type;
+        private final File resolved;
+
+        private FileWithMavenMeta(final String group, final String artifact, final String version,
+                                 final String classifier, final String type, final File resolved) {
+            this.group = group;
+            this.artifact = artifact;
+            this.version = version;
+            this.classifier = classifier;
+            this.type = type;
+            this.resolved = resolved;
+        }
+
+        String stripVersion(final boolean keepExtension) {
+            return artifact + (classifier != null && !classifier.isEmpty() ? "-" + classifier : "") +  "." + type;
+        }
     }
 }
