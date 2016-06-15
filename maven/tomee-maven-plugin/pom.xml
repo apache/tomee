@@ -83,6 +83,12 @@
       <scope>test</scope>
       <classifier>webprofile</classifier>
       <type>zip</type>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.sirona</groupId>
@@ -90,6 +96,25 @@
       <version>0.2-incubating</version>
       <scope>test</scope>
       <classifier>shaded</classifier>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>tomee-webaccess</artifactId>
+      <version>7.0.0</version>
+      <type>war</type>
+      <scope>test</scope>
+      <exclusions>
+      <exclusion>
+        <groupId>*</groupId>
+        <artifactId>*</artifactId>
+      </exclusion>
+    </exclusions>
     </dependency>
   </dependencies>
 

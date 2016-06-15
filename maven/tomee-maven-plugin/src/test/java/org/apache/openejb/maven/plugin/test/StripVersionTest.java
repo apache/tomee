@@ -37,7 +37,7 @@ public class StripVersionTest {
     private final List<String> javaagents = singletonList("org.apache.sirona:sirona-javaagent:0.2-incubating:jar:shaded");
 
     @Config
-    private final List<String> libs = singletonList("org.apache.tomee:log4j2-tomee:7.0.0" /*use release to avoid nasty deps*/);
+    private final List<String> libs = singletonList("org.codehaus.plexus:plexus-utils:3.0.17");
 
     @Config
     private final List<String> webapps = singletonList("org.apache.tomee:tomee-webaccess:7.0.0" /*use release to avoid nasty deps*/);
