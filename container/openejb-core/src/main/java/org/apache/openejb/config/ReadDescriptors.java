@@ -931,18 +931,30 @@ public class ReadDescriptors implements DynamicDeployer {
         public URL getUrl() {
             return url;
         }
+
+        @Override
+        public String toString() {
+            return "UrlSource{url=" + url + '}';
+        }
     }
 
     public static class StringSource implements Source {
         private final byte[] bytes;
+        private final String toString;
 
         public StringSource(final String content) {
+            toString = content;
             bytes = content.getBytes();
         }
 
         @Override
         public InputStream get() throws IOException {
             return new ByteArrayInputStream(bytes);
+        }
+
+        @Override
+        public String toString() {
+            return "StringSource{content=" + toString + '}';
         }
     }
 }

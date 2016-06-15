@@ -583,6 +583,11 @@ public class OpenEJBArchiveProcessor {
         public InputStream get() throws IOException {
             return asset.openStream();
         }
+
+        @Override
+        public String toString() {
+            return "AssetSource{asset=" + asset + '}';
+        }
     }
 
     // mainly extended to be sure to reuse our tip about scanning for CDI
