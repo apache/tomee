@@ -277,14 +277,27 @@ public class Container implements AutoCloseable {
         addCallersAsEjbModule(loader, app, additionalCallers);
 
         systemInstance.addObserver(new StandardContextCustomizer(configuration, webModule, keepClassloader));
-        systemInstance.setComponent(AnnotationDeployer.FolderDDMapper.class, new AnnotationDeployer.FolderDDMapper() {
-            @Override
-            public File getDDFolder(final File dir) {
-                // maven
-                return dir.getName().equals("classes") && dir.getParentFile().getName().equals("target") ?
-                        new File(docBase, "WEB-INF") : null;
-            }
-        });
+        if (systemInstance.getComponent(AnnotationDeployer.FolderDDMapper.class) == null) {
+            systemInstance.setComponent(AnnotationDeployer.FolderDDMapper.class, new AnnotationDeployer.FolderDDMapper() {
+                @Override
+                public File getDDFolder(final File dir) {
+                    try {
+                        return isMaven(dir) || isGradle(dir) ? new File(docBase, "WEB-INF") : null;
+                    } catch (final RuntimeException re) { // folder doesn't exist -> test is stopped which is expected
+                        return null;
+                    }
+                }
+
+                private boolean isGradle(final File dir) {
+                    return dir.getName().equals("classes") && dir.getParentFile().getName().equals("target");
+                }
+
+                private boolean isMaven(final File dir) {
+                    return dir.getName().equals("main") && dir.getParentFile().getName().equals("classes")
+                            && dir.getParentFile().getParentFile().getName().equals("build");
+                }
+            });
+        }
 
         try {
             final AppInfo appInfo = configurationFactory.configureApplication(app);

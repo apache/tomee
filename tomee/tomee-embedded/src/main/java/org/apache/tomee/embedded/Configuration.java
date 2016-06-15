@@ -67,7 +67,6 @@ public class Configuration {
     private boolean http2;
 
     private final Collection<Connector> connectors = new ArrayList<>();
-    private final Collection<ConfigurationCustomizer> customizers = new ArrayList<>();
 
     /**
      * when needed temp file only (deployClasspathAsWebapp() for instance)
