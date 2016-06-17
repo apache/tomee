@@ -48,8 +48,8 @@ import org.apache.openejb.assembler.classic.event.AssemblerDestroyed;
 import org.apache.openejb.assembler.classic.event.BeforeStartEjbs;
 import org.apache.openejb.assembler.classic.event.ContainerSystemPostCreate;
 import org.apache.openejb.assembler.classic.event.ContainerSystemPreDestroy;
-import org.apache.openejb.assembler.classic.event.ResourceCreated;
 import org.apache.openejb.assembler.classic.event.ResourceBeforeDestroyed;
+import org.apache.openejb.assembler.classic.event.ResourceCreated;
 import org.apache.openejb.assembler.classic.util.ServiceInfos;
 import org.apache.openejb.assembler.monitoring.JMXContainer;
 import org.apache.openejb.async.AsynchronousPool;
@@ -2958,9 +2958,27 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             throw new OpenEJBException("Unable to create a classloader for " + serviceInfo.id, e);
         }
 
+        if (!customLoader && serviceInfo.classpathAPI != null) {
+            throw new IllegalArgumentException("custom-api provided but not classpath used for " + serviceInfo.id);
+        }
+
         Object service = serviceRecipe.create(loader);
         if (customLoader) {
-            final Collection<Class<?>> apis = new ArrayList<Class<?>>(Arrays.asList(service.getClass().getInterfaces()));
+            final Collection<Class<?>> apis;
+            if (serviceInfo.classpathAPI == null) {
+                apis = new ArrayList<Class<?>>(Arrays.asList(service.getClass().getInterfaces()));
+            } else {
+                final String[] split = serviceInfo.classpathAPI.split(" *, *");
+                apis = new ArrayList<>(split.length);
+                final ClassLoader apiLoader = Thread.currentThread().getContextClassLoader();
+                for (final String fqn : split) {
+                    try {
+                        apis.add(apiLoader.loadClass(fqn));
+                    } catch (final ClassNotFoundException e) {
+                        throw new IllegalArgumentException(fqn + " not usable as API for " + serviceInfo.id, e);
+                    }
+                }
+            }
 
             if (apis.size() - (apis.contains(Serializable.class) ? 1 : 0) - (apis.contains(Externalizable.class) ? 1 : 0) > 0) {
                 service = Proxy.newProxyInstance(loader, apis.toArray(new Class<?>[apis.size()]), new ClassLoaderAwareHandler(null, service, loader));

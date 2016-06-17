@@ -798,6 +798,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                     service.setClasspath(cp);
                 }
 
+                service.setClasspathAPI(map.remove("classpath-api"));
+
                 if (object instanceof Resource) {
                     final Resource resource = Resource.class.cast(object);
                     final String aliases = map.remove("aliases");
@@ -1281,6 +1283,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             if (service.getClasspath() != null && service.getClasspath().length() > 0) {
                 info.classpath = resolveClasspath(service.getClasspath());
             }
+            info.classpathAPI = service.getClasspathAPI();
 
             specialProcessing(info);
 

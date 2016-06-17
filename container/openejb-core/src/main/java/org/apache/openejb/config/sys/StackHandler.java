@@ -183,6 +183,9 @@ public class StackHandler extends DefaultHandler {
             if (attributes.getValue("classpath") != null) {
                 service.setClasspath(attributes.getValue("classpath"));
             }
+            if (attributes.getValue("classpath-api") != null) {
+                service.setClasspathAPI(attributes.getValue("classpath-api"));
+            }
 
             checkAttributes(attributes, getAttributes());
         }

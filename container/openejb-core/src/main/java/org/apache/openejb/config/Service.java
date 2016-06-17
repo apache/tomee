@@ -66,6 +66,8 @@ public interface Service {
 
     String getClasspath();
 
+    String getClasspathAPI();
+
     String getPropertiesProvider();
 
     String getTemplate();
