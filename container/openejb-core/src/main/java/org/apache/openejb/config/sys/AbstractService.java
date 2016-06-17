@@ -83,6 +83,8 @@ public abstract class AbstractService implements Service {
     @XmlAttribute(name = "properties-provider")
     private String propertiesProvider;
 
+    @XmlAttribute(name = "template")
+    private String template;
 
     protected AbstractService(final String id) {
         this(id, null, null);
@@ -225,6 +227,14 @@ public abstract class AbstractService implements Service {
 
     public void setClasspath(final String classpath) {
         this.classpath = classpath;
+    }
+
+    public String getTemplate() {
+        return template;
+    }
+
+    public void setTemplate(final String template) {
+        this.template = template;
     }
 
     @Override

@@ -224,6 +224,7 @@ public class StackHandler extends DefaultHandler {
             service.setJndi(attributes.getValue("jndi"));
             service.setPostConstruct(attributes.getValue("post-construct"));
             service.setPreDestroy(attributes.getValue("pre-destroy"));
+            service.setTemplate(attributes.getValue("template"));
             service.setPropertiesProvider(attributes.getValue("property-provider"));
             if (service.getPropertiesProvider() == null) {
                 service.setPropertiesProvider(attributes.getValue("properties-provider"));

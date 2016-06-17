@@ -22,6 +22,7 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.Vendor;
 import org.apache.openejb.api.Proxy;
 import org.apache.openejb.api.resource.PropertiesResourceProvider;
+import org.apache.openejb.api.resource.Template;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.BmpEntityContainerInfo;
@@ -790,6 +791,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 service.setConstructor(map.remove("constructor"));
                 service.setFactoryName(map.remove("factory-name"));
                 service.setPropertiesProvider(map.remove("properties-provider"));
+                service.setTemplate(map.remove("template"));
 
                 final String cp = map.remove("classpath");
                 if (null != cp) {
@@ -1156,30 +1158,23 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 }
             }
 
-            final String providerType = getProviderType(service);
-
-            final ServiceProvider provider = resolveServiceProvider(service, infoType);
-
-            if (provider == null) {
-                final List<ServiceProvider> providers = ServiceUtils.getServiceProvidersByServiceType(providerType);
-                final StringBuilder sb = new StringBuilder();
-                final List<String> types = new ArrayList<String>();
-                for (final ServiceProvider p : providers) {
-                    for (final String type : p.getTypes()) {
-                        if (types.contains(type)) {
-                            continue;
-                        }
-                        types.add(type);
-                        sb.append(System.getProperty("line.separator"));
-                        sb.append("  <").append(p.getService());
-                        sb.append(" id=\"").append(service.getId()).append('"');
-                        sb.append(" type=\"").append(type).append("\"/>");
-                    }
+            {
+                String template = service.getTemplate();
+                if (template == null) {
+                    template = SystemInstance.get().getProperty(Template.class.getName());
                 }
-                final String noProviderMessage = messages.format("configureService.noProviderForService", providerType, service.getId(), service.getType(), service.getProvider(), sb.toString());
-                throw new NoSuchProviderException(noProviderMessage);
+                if (template != null) {
+                    template = unaliasPropertiesProvider(template);
+
+                    // don't trim them, user wants to handle it himself, let him do it
+                    final ObjectRecipe recipe = newObjectRecipe(template);
+                    recipe.setProperty("serviceId", service.getId());
+                    // note: we can also use reflection if needed to limit the dependency
+                    Template.class.cast(recipe.create()).configure(service);
+                }
             }
 
+            final ServiceProvider provider = getServiceProvider(service, infoType);
             if (service.getId() == null) {
                 service.setId(provider.getId());
             }
@@ -1225,38 +1220,32 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 props.putAll(provider.getProperties());
             }
 
-            props.putAll(serviceProperties);
+            if (serviceProperties != null) {
+                props.putAll(serviceProperties);
+            }
             props.putAll(overrides);
 
-            // force user properties last
-            String propertiesProvider = service.getPropertiesProvider();
-            if (propertiesProvider == null) {
-                propertiesProvider = SystemInstance.get().getProperty(PropertiesResourceProvider.class.getName());
-            }
-            if (propertiesProvider != null) {
-                propertiesProvider = unaliasPropertiesProvider(propertiesProvider);
+            {// force user properties last
+                String propertiesProvider = service.getPropertiesProvider();
+                if (propertiesProvider == null) {
+                    propertiesProvider = SystemInstance.get().getProperty(PropertiesResourceProvider.class.getName());
+                }
+                if (propertiesProvider != null) {
+                    propertiesProvider = unaliasPropertiesProvider(propertiesProvider);
 
-                // don't trim them, user wants to handle it himself, let him do it
-                final ObjectRecipe recipe = new ObjectRecipe(propertiesProvider);
-                recipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
-                recipe.allow(Option.PRIVATE_PROPERTIES);
-                recipe.allow(Option.FIELD_INJECTION);
-                recipe.allow(Option.NAMED_PARAMETERS);
-                recipe.allow(Option.IGNORE_MISSING_PROPERTIES);
-                recipe.setFactoryMethod("provides");
-                recipe.setProperty("serviceId", service.getId());
-                recipe.setProperties(props);
-                recipe.setProperty("properties", props); // let user get all config
-                final Properties p = Properties.class.cast(recipe.create());
+                    // don't trim them, user wants to handle it himself, let him do it
+                    final ObjectRecipe recipe = newObjectRecipe(propertiesProvider);
+                    recipe.setFactoryMethod("provides");
+                    recipe.setProperty("serviceId", service.getId());
+                    recipe.setProperties(props);
+                    recipe.setProperty("properties", props); // let user get all config
+                    final Properties p = Properties.class.cast(recipe.create());
 
-                props.putAll(p);
+                    props.putAll(p);
+                }
             }
 
             props.remove(IGNORE_DEFAULT_VALUES_PROP);
-
-            if (providerType != null && !provider.getService().equals(providerType)) {
-                throw new OpenEJBException(messages.format("configureService.wrongProviderType", service.getId(), providerType));
-            }
 
             final T info;
             try {
@@ -1305,6 +1294,49 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
     }
 
+    private <T extends ServiceInfo> ServiceProvider getServiceProvider(
+            final org.apache.openejb.config.Service service,
+            final Class<? extends T> infoType) throws OpenEJBException {
+        final String providerType = getProviderType(service);
+
+        final ServiceProvider provider = resolveServiceProvider(service, infoType);
+
+        if (provider == null) {
+            final List<ServiceProvider> providers = ServiceUtils.getServiceProvidersByServiceType(providerType);
+            final StringBuilder sb = new StringBuilder();
+            final List<String> types = new ArrayList<String>();
+            for (final ServiceProvider p : providers) {
+                for (final String type : p.getTypes()) {
+                    if (types.contains(type)) {
+                        continue;
+                    }
+                    types.add(type);
+                    sb.append(System.getProperty("line.separator"));
+                    sb.append("  <").append(p.getService());
+                    sb.append(" id=\"").append(service.getId()).append('"');
+                    sb.append(" type=\"").append(type).append("\"/>");
+                }
+            }
+            final String noProviderMessage = messages.format("configureService.noProviderForService", providerType, service.getId(), service.getType(), service.getProvider(), sb.toString());
+            throw new NoSuchProviderException(noProviderMessage);
+        }
+
+        if (!provider.getService().equals(providerType)) {
+            throw new OpenEJBException(messages.format("configureService.wrongProviderType", service.getId(), providerType));
+        }
+        return provider;
+    }
+
+    private ObjectRecipe newObjectRecipe(final String template) {
+        final ObjectRecipe recipe = new ObjectRecipe(template);
+        recipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
+        recipe.allow(Option.PRIVATE_PROPERTIES);
+        recipe.allow(Option.FIELD_INJECTION);
+        recipe.allow(Option.NAMED_PARAMETERS);
+        recipe.allow(Option.IGNORE_MISSING_PROPERTIES);
+        return recipe;
+    }
+
     private static String unaliasPropertiesProvider(final String propertiesProvider) {
         switch (propertiesProvider.toLowerCase(Locale.ENGLISH)) {
             case "heroku":
@@ -1316,6 +1348,10 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             default:
                 return propertiesProvider;
         }
+    }
+
+    private static String unaliasTemplate(final String value) {
+        return value;
     }
 
     /**
