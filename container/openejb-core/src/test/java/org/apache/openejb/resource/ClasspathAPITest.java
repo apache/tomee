@@ -41,7 +41,7 @@ public class ClasspathAPITest {
         return new PropertiesBuilder()
                 .p("r", "new://Resource?class-name=org.apache.openejb.resource.ClasspathAPITest$MyImpl&" +
                         "classpath-api=java.util.concurrent.Callable&" +
-                        "classpath=" + jarLocation(ClasspathAPITest.class).toURI().toASCIIString())
+                        "classpath=" + jarLocation(ClasspathAPITest.class).getAbsoluteFile().toURI().toASCIIString())
                 .build();
     }
 
