@@ -24,6 +24,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.annotation.Resource;
+import java.io.File;
+import java.nio.file.Path;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 
@@ -38,10 +40,13 @@ import static org.junit.Assert.fail;
 public class ClasspathAPITest {
     @Configuration
     public Properties config() {
+        // using relative path avoids issue between IDE/surefire (. = target for surefire) and URI format
+        final Path here = new File(".").getAbsoluteFile().toPath();
+        final Path classes = jarLocation(ClasspathAPITest.class).getAbsoluteFile().toPath();
         return new PropertiesBuilder()
                 .p("r", "new://Resource?class-name=org.apache.openejb.resource.ClasspathAPITest$MyImpl&" +
                         "classpath-api=java.util.concurrent.Callable&" +
-                        "classpath=" + jarLocation(ClasspathAPITest.class).getAbsoluteFile().toURI().toASCIIString())
+                        "classpath=" + classes.relativize(here).toString().replace(File.separator, "/"))
                 .build();
     }
 
