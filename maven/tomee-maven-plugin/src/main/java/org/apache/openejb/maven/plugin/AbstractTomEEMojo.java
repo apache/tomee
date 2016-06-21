@@ -303,6 +303,12 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     @Parameter(defaultValue = "${project.build.directory}/${project.build.finalName}", readonly = true)
     protected File workWarFile;
 
+    @Parameter(defaultValue = "${project.build.finalName}", readonly = true)
+    protected String finalName;
+
+    @Parameter(defaultValue = "${project.artifactId}", readonly = true)
+    protected String artifactId;
+
     @Parameter(property = "tomee-plugin.remove-default-webapps", defaultValue = "true")
     protected boolean removeDefaultWebapps;
 
@@ -761,7 +767,8 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             try {
                 final FileWithMavenMeta file = mvnToFile(lib, defaultType);
                 if (extractedName == null && (stripVersion || isWar && stripWarVersion)) {
-                    extractedName = file.stripVersion(!isExplodedWar);
+                    extractedName = isCurrentArtifact(file) && file.version != null ? finalName.replace("-" + file.version, "") :
+                            file.stripVersion(!isExplodedWar);
                 }
 
                 if (!unzip) {
@@ -794,6 +801,10 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                 close(os);
             }
         }
+    }
+
+    private boolean isCurrentArtifact(final FileWithMavenMeta file) {
+        return file.artifact.equals(artifactId);
     }
 
     private FileWithMavenMeta mvnToFile(final String lib, final String defaultType) throws ArtifactResolutionException, ArtifactNotFoundException {
