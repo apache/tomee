@@ -18,7 +18,6 @@
 package org.apache.openejb.core.security;
 
 import org.apache.openejb.core.security.jaas.UsernamePasswordCallbackHandler;
-import org.apache.openejb.core.security.jacc.BasicJaccProvider;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.ConfUtils;
 import org.apache.xbean.finder.archive.FileArchive;
