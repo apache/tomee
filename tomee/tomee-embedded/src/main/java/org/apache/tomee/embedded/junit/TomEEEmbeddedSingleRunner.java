@@ -16,6 +16,7 @@
  */
 package org.apache.tomee.embedded.junit;
 
+import org.apache.openejb.config.sys.Openejb;
 import org.apache.openejb.testing.Application;
 import org.apache.openejb.testing.Classes;
 import org.apache.openejb.testing.ContainerProperties;
@@ -26,6 +27,7 @@ import org.apache.tomee.embedded.Container;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.inject.OWBInjector;
 import org.apache.xbean.finder.AnnotationFinder;
+import org.apache.xbean.finder.archive.ClassesArchive;
 import org.apache.xbean.finder.archive.FileArchive;
 import org.junit.rules.MethodRule;
 import org.junit.rules.TestRule;
@@ -43,6 +45,7 @@ import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,11 +53,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import static org.apache.openejb.loader.JarLocation.jarLocation;
+import static org.apache.openejb.util.Classes.ancestors;
 
 /**
  * see org.apache.tomee.embedded.SingleInstanceRunnerTest for a sample.
@@ -65,6 +70,7 @@ import static org.apache.openejb.loader.JarLocation.jarLocation;
  * Note: @Application classes are only searched in the same jar as the test.
  *
  * Model:
+ * - @Configuration: programmatic properties - note injections don't work there.
  * - @Classes: only context value is used.
  * - @ContainerProperties: to configure the container
  * - @WebResource: first value can be used to set the docBase (other values are ignored)
@@ -181,6 +187,7 @@ public class TomEEEmbeddedSingleRunner extends BlockJUnit4ClassRunner {
                 started = true;
 
                 final Class<?> appClass = APP.get().getClass();
+                final AnnotationFinder finder = new AnnotationFinder(new ClassesArchive(ancestors(appClass)));
 
                 // setup the container config reading class annotation, using a randome http port and deploying the classpath
                 final Configuration configuration = new Configuration();
@@ -188,6 +195,24 @@ public class TomEEEmbeddedSingleRunner extends BlockJUnit4ClassRunner {
                 if (props != null) {
                     for (final ContainerProperties.Property p : props.value()) {
                         configuration.property(p.name(), p.value());
+                    }
+                }
+
+                Openejb openejb = null;
+                final List<Method> annotatedMethods = finder.findAnnotatedMethods(org.apache.openejb.testing.Configuration.class);
+                if (annotatedMethods.size() > 1) {
+                    throw new IllegalArgumentException("Only one @Configuration is supported: " + annotatedMethods);
+                }
+                for (final Method m : annotatedMethods) {
+                    final Object o = m.invoke(APP.get());
+                    if (Properties.class.isInstance(o)) {
+                        final Properties properties = Properties.class.cast(o);
+                        if (configuration.getProperties() == null) {
+                            configuration.setProperties(new Properties());
+                        }
+                        configuration.getProperties().putAll(properties);
+                    } else {
+                        throw new IllegalArgumentException("Unsupported " + o + " for @Configuration");
                     }
                 }
 

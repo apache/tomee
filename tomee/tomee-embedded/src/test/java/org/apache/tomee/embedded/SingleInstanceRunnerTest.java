@@ -22,6 +22,7 @@ import org.apache.openejb.testing.Application;
 import org.apache.openejb.testing.Classes;
 import org.apache.openejb.testing.ContainerProperties;
 import org.apache.openejb.testing.RandomPort;
+import org.apache.openejb.testng.PropertiesBuilder;
 import org.apache.tomee.embedded.junit.TomEEEmbeddedSingleRunner;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -30,6 +31,7 @@ import org.junit.runner.RunWith;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -51,6 +53,7 @@ public class SingleInstanceRunnerTest {
     public void run() {
         assertNotNull(SystemInstance.get().getComponent(Assembler.class));
         assertEquals("set", SystemInstance.get().getProperty("t"));
+        assertEquals("p", SystemInstance.get().getProperty("prog"));
         assertEquals("128463", SystemInstance.get().getProperty("my.server.port"));
         assertNotEquals(8080, app.port);
         assertTrue(app.base.toExternalForm().endsWith("/app"));
@@ -67,6 +70,11 @@ public class SingleInstanceRunnerTest {
 
         @RandomPort("http")
         private URL base;
+
+        @org.apache.openejb.testing.Configuration
+        public Properties add() {
+            return new PropertiesBuilder().p("prog", "p").build();
+        }
     }
 
     public static class MyTask implements TomEEEmbeddedSingleRunner.LifecycleTask {
