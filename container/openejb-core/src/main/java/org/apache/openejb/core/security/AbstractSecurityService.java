@@ -70,7 +70,7 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
     protected SecurityContext defaultContext;
 
     public AbstractSecurityService() {
-        this(BasicJaccProvider.class.getName());
+        this(autoJaccProvider());
     }
 
     public AbstractSecurityService(final String jaccProvider) {
@@ -329,6 +329,12 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
             return false;
         }
         return true;
+    }
+
+    protected static String autoJaccProvider() {
+        return SystemInstance.isInitialized() ?
+                SystemInstance.get().getProperty(JaccProvider.class.getName(), BasicJaccProvider.class.getName()) :
+                BasicJaccProvider.class.getName();
     }
 
     protected static void installJacc() {

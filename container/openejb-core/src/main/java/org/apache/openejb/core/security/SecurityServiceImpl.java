@@ -39,7 +39,7 @@ public class SecurityServiceImpl extends AbstractSecurityService {
     private static final Map<Object, LoginContext> contexts = new ConcurrentHashMap<Object, LoginContext>();
 
     public SecurityServiceImpl() {
-        this(BasicJaccProvider.class.getName());
+        this(autoJaccProvider());
     }
 
     public SecurityServiceImpl(final String jaccProviderClass) {
