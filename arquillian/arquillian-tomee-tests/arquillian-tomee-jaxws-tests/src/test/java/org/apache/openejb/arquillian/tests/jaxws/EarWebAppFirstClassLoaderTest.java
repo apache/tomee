@@ -17,11 +17,14 @@
 package org.apache.openejb.arquillian.tests.jaxws;
 
 import org.apache.openejb.arquillian.common.IO;
+import org.apache.tomee.catalina.TomEEWebappLoader;
+import org.apache.tomee.catalina.WebAppFirstEarClassLoader;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
@@ -30,29 +33,34 @@ import org.jboss.shrinkwrap.resolver.api.maven.strategy.AcceptScopesStrategy;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeFalse;
 
-@RunWith(Arquillian.class) // TODO: move it and EarWebAppFirstClassLoaderTest to webprofile?
-public class EarClassLoaderTest {
+@RunWith(Arquillian.class) // TODO: move it and EarClassLoaderTest to webprofile?
+public class EarWebAppFirstClassLoaderTest {
     @Deployment(testable = false)
     public static Archive<?> ear() {
+        final File[] joda = Maven.resolver()
+                .offline()
+                .resolve("joda-time:joda-time:2.5")
+                .withClassPathResolution(true)
+                .using(new AcceptScopesStrategy(ScopeType.COMPILE, ScopeType.RUNTIME))
+                .asFile();
         return ShrinkWrap.create(EnterpriseArchive.class, "broken.ear")
-                .addAsModule(
-                        ShrinkWrap.create(WebArchive.class, "broken-web.war")
-                                .addClasses(LoadJodaFromTheWebAppResource.class)
-                                .addAsLibraries(
-                                        Maven.resolver()
-                                                .offline()
-                                                .resolve("joda-time:joda-time:2.5")
-                                                .withClassPathResolution(true)
-                                                .using(new AcceptScopesStrategy(ScopeType.COMPILE, ScopeType.RUNTIME))
-                                                .asFile()
-                                )
-                );
+                .addAsLibraries(joda)
+                .addAsModule(ShrinkWrap.create(WebArchive.class, "broken-web.war")
+                        .addClasses(LoadJodaFromTheWebAppResource.class)
+                        .addAsManifestResource(new StringAsset(
+                                "<Context>" +
+                                        "<Loader className=\"" + TomEEWebappLoader.class.getName() +
+                                        "\" loaderClass=\"" + WebAppFirstEarClassLoader.class.getName() + "\" />" +
+                                "</Context>"), "context.xml")
+                        .addAsLibraries(joda));
     }
 
     @ArquillianResource
@@ -60,9 +68,9 @@ public class EarClassLoaderTest {
 
     @Test
     public void checkIfWasCorretlyLoaded() throws IOException {
-        // embedded case uses the classpath for a lot of reasons
         assumeFalse(System.getProperty("openejb.arquillian.adapter", "embedded").contains("embedded"));
         final String slurp = IO.slurp(new URL(url.toExternalForm() + (url.getPath().isEmpty() ? "/broken-web/" : "") + "joda"));
         assertTrue(slurp.endsWith("broken-web/WEB-INF/lib/joda-time-2.5.jar"));
+        assertFalse(slurp.endsWith("broken/lib/joda-time-2.5.jar")); // useless cause of the previous but to make it obvious
     }
 }

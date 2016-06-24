@@ -69,6 +69,7 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
     private static final ThreadLocal<Context> CONTEXT = new ThreadLocal<>();
 
     public static final String TOMEE_WEBAPP_FIRST = "tomee.webapp-first";
+    public static final String TOMEE_EAR_DEFAULT = "tomee.ear.webapp-first";
 
     static {
         boolean result = ClassLoader.registerAsParallelCapable();
@@ -95,7 +96,7 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
         hashCode = construct();
         setJavaseClassLoader(getSystemClassLoader());
         containerClassLoader = ParentClassLoaderFinder.Helper.get();
-        isEar = getParent() != null && !getParent().equals(containerClassLoader);
+        isEar = getParent() != null && !getParent().equals(containerClassLoader) && defaultEarBehavior();
         originalDelegate = getDelegate();
     }
 
@@ -104,7 +105,7 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
         hashCode = construct();
         setJavaseClassLoader(getSystemClassLoader());
         containerClassLoader = ParentClassLoaderFinder.Helper.get();
-        isEar = getParent() != null && !getParent().equals(containerClassLoader);
+        isEar = getParent() != null && !getParent().equals(containerClassLoader) && defaultEarBehavior();
         originalDelegate = getDelegate();
     }
 
@@ -181,7 +182,7 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
         }
         synchronized (this) { // TODO: rework it to avoid it and get aligned on Java 7 classloaders (but not a big issue)
             if (isEar) {
-                final boolean filter = filter(name);
+                final boolean filter = filter(name, true);
                 filterTempCache.put(name, filter); // will be called again by super.loadClass() so cache it
                 if (!filter) {
                     if (URLClassLoaderFirst.class.isInstance(getParent())) { // true
@@ -403,7 +404,11 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
         return true;
     }
 
-    public static boolean isDelegate() {
+    protected boolean defaultEarBehavior() {
+        return !SystemInstance.get().getOptions().get(TOMEE_EAR_DEFAULT, false /*bck compat*/);
+    }
+
+    private static boolean isDelegate() {
         return !SystemInstance.get().getOptions().get(TOMEE_WEBAPP_FIRST, true);
     }
 
