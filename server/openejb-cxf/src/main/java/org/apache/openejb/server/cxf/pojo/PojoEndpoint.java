@@ -108,7 +108,7 @@ public class PojoEndpoint extends CxfEndpoint {
         try {
             final WebBeansContext webBeansContext = WebBeansContext.currentInstance();
             final BeanManagerImpl bm = webBeansContext.getBeanManagerImpl();
-            if (bm.isInUse()) { // try cdi bean
+            if (bm != null && bm.isInUse()) { // try cdi bean
                 if (JAXWS_AS_CDI_BEANS) {
                     try {
                         final Set<Bean<?>> beans = bm.getBeans(instance);
@@ -152,7 +152,7 @@ public class PojoEndpoint extends CxfEndpoint {
                 injectionProcessor.createInstance();
                 implementor = injectionProcessor.getInstance();
                 injector = injectCxfResources(implementor);
-                if (!JAXWS_AS_CDI_BEANS && bm.isInUse()) {
+                if (!JAXWS_AS_CDI_BEANS && bm != null && bm.isInUse()) {
                     final CreationalContextImpl creationalContext = bm.createCreationalContext(null);
                     OWBInjector.inject(bm, implementor, null);
                     toClean = creationalContext;
