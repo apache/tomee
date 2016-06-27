@@ -20,7 +20,7 @@
   <parent>
     <artifactId>tck</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>7.0.1-SNAPSHOT</version>
+    <version>7.0.2-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>cdi-tomee-embedded</artifactId>
