@@ -52,7 +52,7 @@ public class EndWebBeansListener implements ServletContextListener, ServletReque
         if (webBeansContext != null) {
             this.contextsService = CdiAppContextsService.class.cast(webBeansContext.getService(ContextsService.class));
             this.cleanUpSession = Boolean.parseBoolean(webBeansContext.getOpenWebBeansConfiguration()
-                    .getProperty("tomee.session.remove-cdi-beans-on-passivate", "true"));
+                    .getProperty("tomee.session.remove-cdi-beans-on-passivate", "false"));
         } else {
             this.contextsService = null;
             this.cleanUpSession = false; // ignored anyway
