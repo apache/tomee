@@ -22,6 +22,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
@@ -38,6 +39,7 @@ public class AvoidConflictTest {
     public static Archive<?> war() {
         return ShrinkWrap.create(WebArchive.class, "AvoidConflictTest.war")
                     .addClasses(TheResource.class, SimpleServlet.class, PreviousFilter.class)
+                    .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
                     .addAsWebResource(new StringAsset("static"), "index.html")
                     .addAsWebResource(new StringAsset("JSP <%= 5 %>"), "sample.jsp");
     }

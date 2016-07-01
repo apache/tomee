@@ -22,6 +22,8 @@ import org.apache.openejb.Injection;
 import org.apache.openejb.InjectionProcessor;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.cdi.ConstructorInjectionBean;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.webbeans.component.InjectionTargetBean;
 import org.apache.webbeans.config.WebBeansContext;
 
@@ -44,6 +46,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class WebContext {
     private String id;
@@ -52,7 +55,7 @@ public class WebContext {
     private Context jndiEnc;
     private final AppContext appContext;
     private Map<String, Object> bindings;
-    private final Map<Object, CreationalContext<?>> creationalContexts = new ConcurrentHashMap<>();
+    private final ConcurrentMap<Object, CreationalContext<?>> creationalContexts = new ConcurrentHashMap<>();
     private WebBeansContext webbeansContext;
     private String contextRoot;
     private String host;
@@ -149,24 +152,28 @@ public class WebContext {
         final Context unwrap = InjectionProcessor.unwrap(getInitialContext());
         final InjectionProcessor injectionProcessor = new InjectionProcessor(o, injections, unwrap);
 
-        final Object beanInstance = injectionProcessor.createInstance();
+        final Object beanInstance;
+        try {
+            beanInstance = injectionProcessor.createInstance();
 
-        if (webBeansContext != null) {
-            final InjectionTargetBean<Object> bean = InjectionTargetBean.class.cast(beanDefinition);
-            bean.getInjectionTarget().inject(beanInstance, creationalContext);
-            if (shouldBeReleased(bean.getScope())) {
-                creationalContexts.put(beanInstance, creationalContext);
+            if (webBeansContext != null) {
+                final InjectionTargetBean<Object> bean = InjectionTargetBean.class.cast(beanDefinition);
+                bean.getInjectionTarget().inject(beanInstance, creationalContext);
+                if (shouldBeReleased(bean.getScope())) {
+                    creationalContexts.put(beanInstance, creationalContext);
+                }
             }
+        } catch (final OpenEJBException oejbe) {
+            if (creationalContext != null) {
+                creationalContext.release();
+            }
+            throw oejbe;
         }
         return new Instance(beanInstance, creationalContext);
     }
 
     public Object newInstance(final Class beanClass) throws OpenEJBException {
-        final Instance instance = newWeakableInstance(beanClass);
-        if (instance.getCreationalContext() != null) {
-            creationalContexts.put(instance.getValue(), instance.getCreationalContext());
-        }
-        return instance.getValue();
+        return newWeakableInstance(beanClass).getValue();
     }
 
     private ConstructorInjectionBean<Object> getConstructorInjectionBean(final Class beanClass, final WebBeansContext webBeansContext) {
@@ -237,7 +244,7 @@ public class WebContext {
             }
 
             return beanInstance;
-        } catch (final NamingException e) {
+        } catch (final NamingException | OpenEJBException e) {
             throw new OpenEJBException(e);
         }
     }
@@ -275,6 +282,18 @@ public class WebContext {
         if (ctx != null) {
             ctx.release();
         }
+    }
+
+    public void release() {
+        for (final CreationalContext<?> cc : creationalContexts.values()) {
+            try {
+                cc.release();
+            } catch (final RuntimeException re) {
+                Logger.getInstance(LogCategory.OPENEJB, WebContext.class.getName())
+                        .warning("Can't release properly a creational context", re);
+            }
+        }
+        creationalContexts.clear();
     }
 
     public static class Instance {
