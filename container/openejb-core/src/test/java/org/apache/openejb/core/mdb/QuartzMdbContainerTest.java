@@ -40,10 +40,7 @@ import org.apache.openejb.resource.quartz.QuartzResourceAdapter;
 import org.apache.openejb.quartz.Job;
 import org.apache.openejb.quartz.JobExecutionContext;
 import org.apache.openejb.quartz.JobExecutionException;
-import org.apache.openejb.resource.quartz.JobSpec;
-import org.apache.openejb.resource.quartz.QuartzResourceAdapter;
 import org.junit.AfterClass;
-import org.junit.Assert;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;

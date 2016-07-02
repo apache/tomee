@@ -17,8 +17,6 @@
 package org.apache.openejb.server;
 
 import org.apache.openejb.monitoring.Managed;
-import org.apache.openejb.server.ServerService;
-import org.apache.openejb.server.ServiceException;
 
 import java.io.InputStream;
 import java.io.OutputStream;

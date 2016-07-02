@@ -17,7 +17,6 @@
 package org.apache.openejb.junit;
 
 import org.apache.openejb.api.LocalClient;
-import org.apache.openejb.junit.RunTestAs;
 import org.apache.openejb.junit.ejbs.BasicEjbLocal;
 import org.apache.openejb.junit.ejbs.SecuredEjbLocal;
 
