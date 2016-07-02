@@ -23,6 +23,7 @@ import org.apache.cxf.transport.DestinationFactory;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.johnzon.jaxrs.JohnzonProvider;
 import org.apache.johnzon.jaxrs.JsrProvider;
+import org.apache.johnzon.mapper.MapperBuilder;
 import org.apache.openejb.cdi.WebBeansContextBeforeDeploy;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.observer.Observes;
@@ -395,6 +396,10 @@ public class CxfRSService extends RESTService {
     @Produces({"application/json", "application/*+json"})
     @Consumes({"application/json", "application/*+json"})
     public static class TomEEJohnzonProvider<T> extends JohnzonProvider<T> {
+        public TomEEJohnzonProvider() {
+            super(new MapperBuilder().setAccessModeName("both").build(), null);
+        }
+
         @Override
         public boolean isWriteable(final Class<?> rawType, final Type genericType,
                                    final Annotation[] annotations, final MediaType mediaType) {

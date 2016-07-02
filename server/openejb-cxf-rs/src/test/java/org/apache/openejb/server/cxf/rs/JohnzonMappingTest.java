@@ -16,15 +16,14 @@
  */
 package org.apache.openejb.server.cxf.rs;
 
+import org.apache.johnzon.mapper.JohnzonProperty;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.ContainerProperties;
 import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.RandomPort;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -33,64 +32,42 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 
 @EnableServices("jaxrs")
-@Classes(/*cdi = false, */innerClassesAsBean = true)
+@Classes(innerClassesAsBean = true)
 @RunWith(ApplicationComposer.class)
-@ContainerProperties(@ContainerProperties.Property(name = "openejb.cxf.rs.bval.log.level", value = "INFO"))
 public class JohnzonMappingTest {
     @RandomPort("http")
     private URL base;
 
     @Test
-    public void passing() {
-        final Payload payload = new Payload();
-        payload.setName("ok");
+    public void mapping() {
         assertEquals(
-                "ok",
-                ClientBuilder.newClient().target(base.toExternalForm()).path("openejb/test").request(MediaType.APPLICATION_JSON_TYPE)
-                        .post(Entity.entity(payload, MediaType.APPLICATION_JSON_TYPE), Payload.class)
+                "no",
+                ClientBuilder.newClient().target(base.toExternalForm()).path("openejb/JohnzonMappingTest").request(MediaType.APPLICATION_JSON_TYPE)
+                        .post(Entity.entity("{\"_name\":\"yes\"}", MediaType.APPLICATION_JSON_TYPE), Payload.class)
                         .getName());
     }
 
-    @Test
-    public void inFailing() {
-        final Payload payload = new Payload();
-        assertEquals(
-                Response.Status.BAD_REQUEST.getStatusCode(), // thanks to the mapper
-                ClientBuilder.newClient().target(base.toExternalForm()).path("openejb/test").request(MediaType.APPLICATION_JSON_TYPE)
-                        .post(Entity.entity(payload, MediaType.APPLICATION_JSON_TYPE)).getStatus());
-    }
-
-    @Test
-    public void outFailing() {
-        final Payload payload = new Payload();
-        payload.setName("empty");
-        assertEquals(
-                Response.Status.BAD_REQUEST.getStatusCode(), // thanks to the mapper
-                ClientBuilder.newClient().target(base.toExternalForm()).path("openejb/test").request(MediaType.APPLICATION_JSON_TYPE)
-                        .post(Entity.entity(payload, MediaType.APPLICATION_JSON_TYPE)).getStatus());
-    }
-
-    @Path("test")
+    @Path("JohnzonMappingTest")
     public static class ValidateMe {
         @POST
-        @Valid
         @Consumes(MediaType.APPLICATION_JSON)
         @Produces(MediaType.APPLICATION_JSON)
-        public Payload get(@Valid final Payload in) {
+        public Payload get(final Payload in) {
+            assertEquals("yes", in.getName());
             final Payload payload = new Payload();
-            payload.setName("empty".equals(in.name) ? null : in.name);
+            payload.setName("no");
             return payload;
         }
     }
 
     public static class Payload {
         @NotNull
+        @JohnzonProperty("_name")
         private String name;
 
         public String getName() {
