@@ -269,7 +269,7 @@ public class ContextLookupSingletonPojoBean {
     public void lookupBooleanEntry() throws TestFailureException {
         try {
             try {
-                final Boolean expected = new Boolean(true);
+                final Boolean expected = Boolean.TRUE;
                 final Boolean actual = (Boolean) getSessionContext().lookup("singleton/references/Boolean");
 
                 Assert.assertNotNull("The Boolean looked up is null", actual);

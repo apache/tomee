@@ -133,7 +133,7 @@ public class StatelessRmiIiopTests extends StatelessTestClient {
 
     public void test07_returnBooleanObject() {
         try {
-            final Boolean expected = new Boolean(true);
+            final Boolean expected = Boolean.TRUE;
             final Boolean actual = ejbObject.returnBooleanObject(expected);
             assertEquals(expected, actual);
         } catch (final Exception e) {
@@ -153,7 +153,7 @@ public class StatelessRmiIiopTests extends StatelessTestClient {
 
     public void test09_returnBooleanObjectArray() {
         try {
-            final Boolean[] expected = {new Boolean(true), new Boolean(false), new Boolean(true)};
+            final Boolean[] expected = {Boolean.TRUE, Boolean.FALSE, Boolean.TRUE};
             final Boolean[] actual = ejbObject.returnBooleanObjectArray(expected);
 
             assertNotNull("The array returned is null", actual);

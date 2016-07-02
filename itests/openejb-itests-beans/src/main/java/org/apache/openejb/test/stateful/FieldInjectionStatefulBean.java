@@ -237,7 +237,7 @@ public class FieldInjectionStatefulBean implements SessionBean {
 
     public void lookupBooleanEntry() throws TestFailureException {
         try {
-            final Boolean expected = new Boolean(true);
+            final Boolean expected = Boolean.TRUE;
 
             Assert.assertNotNull("The Boolean looked up is null", booolean);
             Assert.assertEquals(expected, booolean);
