@@ -33,6 +33,31 @@ public class AsyncConsoleHandler extends AsyncFileHandler {
         delegate.publish(record);
     }
 
+    @Override
+    public void close() {
+        delegate.close();
+    }
+
+    @Override
+    public void flush() {
+        delegate.flush();
+    }
+
+    @Override
+    protected void open() {
+        // no-op
+    }
+
+    @Override
+    protected void closeWriter() {
+        // no-op
+    }
+
+    @Override
+    protected void openWriter() {
+        // no-op
+    }
+
     // copy cause of classloading
     private static class SingleLineFormatter extends Formatter {
         private static final String SEP = System.getProperty("line.separator", "\n");
