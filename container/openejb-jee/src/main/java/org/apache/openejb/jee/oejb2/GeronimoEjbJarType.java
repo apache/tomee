@@ -16,16 +16,6 @@
  */
 package org.apache.openejb.jee.oejb2;
 
-import org.apache.openejb.jee.oejb2.EnvironmentType;
-import org.apache.openejb.jee.oejb2.MessageDestinationType;
-import org.apache.openejb.jee.oejb2.AbstractSecurityType;
-import org.apache.openejb.jee.oejb2.AbstractServiceType;
-import org.apache.openejb.jee.oejb2.AbstractNamingEntryType;
-import org.apache.openejb.jee.oejb2.EjbRefType;
-import org.apache.openejb.jee.oejb2.EjbLocalRefType;
-import org.apache.openejb.jee.oejb2.ServiceRefType;
-import org.apache.openejb.jee.oejb2.ResourceRefType;
-import org.apache.openejb.jee.oejb2.ResourceEnvRefType;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 
 import javax.xml.bind.annotation.XmlElement;

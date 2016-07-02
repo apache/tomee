@@ -181,7 +181,7 @@ public class StatefulBeanTxTests extends org.apache.openejb.test.NamedTestCase {
             final Account expected = new Account("123-45-6789", "Joe", "Cool", 40000);
             Account actual = new Account();
 
-            ejbObject.openAccount(expected, new Boolean(false));
+            ejbObject.openAccount(expected, Boolean.FALSE);
             actual = ejbObject.retreiveAccount(expected.getSsn());
 
             assertNotNull("The transaction was not commited.  The record is null", actual);
@@ -205,7 +205,7 @@ public class StatefulBeanTxTests extends org.apache.openejb.test.NamedTestCase {
         // Try and add the account in a transaction.  This should fail and 
         // throw a RollbackException
         try {
-            ejbObject.openAccount(expected, new Boolean(true));
+            ejbObject.openAccount(expected, Boolean.TRUE);
             fail("A javax.transaction.RollbackException should have been thrown.");
         } catch (final RollbackException re) {
             // Good.
