@@ -66,8 +66,14 @@ public class FailingJspTest {
 
             // bug in org.apache.jasper.servlet.JspServletWrapper.destroy()
             tracked2.removeAll(tracked1);
-            assertEquals(String.valueOf(tracked2), 0, tracked2.size());
+            assertEquals(String.valueOf(tracked2), 1, tracked2.size());
         }
+
+        final Collection<Object> tracked2 = getTrackedContexts(ctx);
+
+        // bug in org.apache.jasper.servlet.JspServletWrapper.destroy()
+        tracked2.removeAll(tracked1);
+        assertEquals(String.valueOf(tracked2), 0, tracked2.size());
     }
 
     private Collection<Object> getTrackedContexts(final WebContext ctx) {
