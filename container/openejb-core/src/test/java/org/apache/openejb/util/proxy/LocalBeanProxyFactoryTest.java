@@ -293,7 +293,7 @@ public class LocalBeanProxyFactoryTest extends TestCase {
         assertEquals(1, invocationHandler.getCalls().length);
         final Call call = invocationHandler.getCalls()[0];
         assertEquals("isTrue", call.getMethodName());
-        assertTrue(Arrays.equals(new Class<?>[]{Boolean.TYPE}, call.getParameterTypes()));
+        assertTrue(Arrays.equals(new Class<?>[]{Boolean.class}, call.getParameterTypes()));
     }
 
     @Test
