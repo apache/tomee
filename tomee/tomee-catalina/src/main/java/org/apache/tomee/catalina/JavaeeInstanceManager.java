@@ -55,7 +55,8 @@ public class JavaeeInstanceManager implements InstanceManager {
         this.webapp = webapp;
         this.skipContainerTags = SystemInstance.get().getProperty(
                 "tomee.tomcat.instance-manager.skip-container-tags", "org.apache.taglibs.standard.,javax.servlet.jsp.jstl.").split(" *, *");
-        this.skipPrefixes = SystemInstance.get().getProperty("tomee.tomcat.instance-manager.skip-cdi", "").split(" *, *");
+        final String[] skipCdi = SystemInstance.get().getProperty("tomee.tomcat.instance-manager.skip-cdi", "").split(" *, *");
+        this.skipPrefixes = skipCdi.length == 1 && skipCdi[0].isEmpty() ? new String[0] : skipCdi;
     }
 
     public ServletContext getServletContext() {
@@ -75,12 +76,11 @@ public class JavaeeInstanceManager implements InstanceManager {
             }
 
             final Object object = isSkip(name, skipPrefixes) ? clazz.newInstance() : webContext.newInstance(clazz);
-            if (isJsp(object.getClass())) {
+            if (isJsp(clazz)) {
                 initDefaultInstanceMgr();
                 defaultInstanceManager.newInstance(object);
-            } else {
-                postConstruct(object, clazz);
             }
+            postConstruct(object, clazz);
             return object;
         } catch (final OpenEJBException | WebBeansCreationException | WebBeansConfigurationException e) {
             throw (InstantiationException) new InstantiationException(e.getMessage()).initCause(e);
@@ -133,7 +133,7 @@ public class JavaeeInstanceManager implements InstanceManager {
             return;
         }
         try {
-            if (isSkip(name, skipPrefixes)) {
+            if (!isSkip(name, skipPrefixes)) {
                 webContext.inject(o);
             }
             postConstruct(o, o.getClass());
@@ -170,9 +170,8 @@ public class JavaeeInstanceManager implements InstanceManager {
         try {
             if (isJsp(o.getClass())) {
                 defaultInstanceManager.destroyInstance(o);
-            } else {
-                preDestroy(unwrapped, unwrapped.getClass());
             }
+            preDestroy(unwrapped, unwrapped.getClass());
         } finally {
             webContext.destroy(unwrapped);
             if (unwrapped != o) { // PojoEndpointServer, they create and track a cc so release it
