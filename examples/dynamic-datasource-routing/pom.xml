@@ -24,7 +24,7 @@
   <name>OpenEJB :: Examples :: Dynamic Datasource Routing</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <openejb.version>4.7.5-TT.4</openejb.version>
+    <openejb.version>4.7.5-TT.5-SNAPSHOT</openejb.version>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
