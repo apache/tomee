@@ -71,13 +71,13 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>4.7.5-TT.4-SNAPSHOT</version>
+      <version>4.7.5-TT.5-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-jee-accessors</artifactId>
-      <version>4.7.5-TT.4-SNAPSHOT</version>
+      <version>4.7.5-TT.5-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
