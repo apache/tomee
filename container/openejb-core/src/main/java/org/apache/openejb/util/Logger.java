@@ -22,6 +22,7 @@ import org.apache.openejb.loader.SystemInstance;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -231,13 +232,10 @@ public class Logger {
     /**
      * Builds a Logger object and returns it
      */
-    private static final Computable<Object[], Logger> loggerResolver = new Computable<Object[], Logger>() {
+    private static final Computable<LoggerKey, Logger> loggerResolver = new Computable<LoggerKey, Logger>() {
         @Override
-        public Logger compute(final Object[] args) throws InterruptedException {
-            final LogCategory category = (LogCategory) args[0];
-            final LogStream logStream = logStreamFactory.createLogStream(category);
-            final String baseName = (String) args[1];
-            return new Logger(category, logStream, baseName);
+        public Logger compute(final LoggerKey args) throws InterruptedException {
+            return new Logger(args.category, logStreamFactory.createLogStream(args.category), args.baseName);
         }
     };
 
@@ -254,22 +252,22 @@ public class Logger {
     /**
      * Cache of parent-child relationships between resource names
      */
-    private static final Computable<String, String> heirarchyCache = new Memoizer<String, String>(heirarchyResolver);
+    private static final Computable<String, String> heirarchyCache = new Memoizer<>(heirarchyResolver);
 
     /**
      * Cache of ResourceBundles
      */
-    private static final Computable<String, ResourceBundle> bundleCache = new Memoizer<String, ResourceBundle>(bundleResolver);
+    private static final Computable<String, ResourceBundle> bundleCache = new Memoizer<>(bundleResolver);
 
     /**
      * Cache of Loggers
      */
-    private static final Computable<Object[], Logger> loggerCache = new Memoizer<Object[], Logger>(loggerResolver);
+    private static final Computable<LoggerKey, Logger> loggerCache = new Memoizer<>(loggerResolver);
 
     /**
      * Cache of MessageFormats
      */
-    private static final Computable<String, MessageFormat> messageFormatCache = new Memoizer<String, MessageFormat>(messageFormatResolver);
+    private static final Computable<String, MessageFormat> messageFormatCache = new Memoizer<>(messageFormatResolver);
 
     /**
      * Finds a Logger from the cache and returns it. If not found in cache then builds a Logger and returns it.
@@ -282,7 +280,7 @@ public class Logger {
         configure();
 
         try {
-            return loggerCache.compute(new Object[]{category, baseName});
+            return loggerCache.compute(new LoggerKey(category, baseName));
         } catch (final InterruptedException e) {
             // Don't return null here. Just create a new Logger and set it up.
             // It will not be stored in the cache, but a later lookup for the
@@ -697,4 +695,36 @@ public class Logger {
         return key;
     }
 
+    protected static class LoggerKey implements Serializable {
+        protected final LogCategory category;
+        protected final String baseName;
+        private final int hash;
+
+        protected LoggerKey(final LogCategory category, final String baseName) {
+            this.category = category;
+            this.baseName = baseName;
+
+            int result = category.hashCode();
+            hash = 31 * result + baseName.hashCode();
+        }
+
+        @Override
+        public boolean equals(final Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            final LoggerKey loggerKey = LoggerKey.class.cast(o);
+            return category.equals(loggerKey.category) && baseName.equals(loggerKey.baseName);
+
+        }
+
+        @Override
+        public int hashCode() {
+            return hash;
+        }
+    }
 }
