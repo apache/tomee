@@ -15,10 +15,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-version="7.0.0"
-
-DEBUG=
-#DEBUG="-Xnoagent -Djava.compiler=NONE -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"
 
 #
 # classpath, copied from catalina.sh
@@ -114,6 +110,12 @@ if $cygwin; then
   CATALINA_HOME=`cygpath --absolute --windows "$CATALINA_HOME"`
   CATALINA_BASE=`cygpath --absolute --windows "$CATALINA_BASE"`
   CLASSPATH=`cygpath --path --windows "$CLASSPATH"`
+fi
+
+DEBUG=
+if [ $# -ge 2 ] && [ "$1" == "debug" ]; then
+    shift
+    DEBUG="-Xnoagent -Djava.compiler=NONE -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=${JPDA_SUSPEND:-y},address=${JPDA_ADDRESS:-5005}"
 fi
 
 # execute the command
