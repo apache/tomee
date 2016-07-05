@@ -18,6 +18,11 @@
 package org.apache.openejb.resource.jdbc.dbcp;
 
 import org.apache.commons.dbcp2.ConnectionFactory;
+import org.apache.commons.dbcp2.PoolableConnection;
+import org.apache.commons.dbcp2.PoolingDataSource;
+import org.apache.commons.dbcp2.managed.ManagedConnection;
+import org.apache.commons.dbcp2.managed.ManagedDataSource;
+import org.apache.commons.dbcp2.managed.TransactionRegistry;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.cipher.PasswordCipher;
 import org.apache.openejb.cipher.PasswordCipherFactory;
@@ -34,6 +39,7 @@ import javax.sql.DataSource;
 import java.io.File;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
@@ -65,6 +71,33 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp2.managed.Bas
     public BasicManagedDataSource(final String name) {
         registerAsMbean(name);
         this.name = name;
+    }
+
+    @Override
+    protected DataSource createDataSourceInstance() throws SQLException {
+        final TransactionRegistry transactionRegistry = getTransactionRegistry();
+        if (transactionRegistry == null) {
+            throw new IllegalStateException("TransactionRegistry has not been set");
+        }
+        if (getConnectionPool() == null) {
+            throw new IllegalStateException("Pool has not been set");
+        }
+        final PoolingDataSource<PoolableConnection> pds = new ManagedDataSource<PoolableConnection>(getConnectionPool(), transactionRegistry) {
+            @Override
+            public Connection getConnection() throws SQLException {
+                return new ManagedConnection<PoolableConnection>(getPool(), transactionRegistry, isAccessToUnderlyingConnectionAllowed()) {
+                    @Override
+                    public void close() throws SQLException {
+                        if (getDelegateInternal() == null) {
+                            return;
+                        }
+                        super.close();
+                    }
+                };
+            }
+        };
+        pds.setAccessToUnderlyingConnectionAllowed(isAccessToUnderlyingConnectionAllowed());
+        return pds;
     }
 
     @Override
