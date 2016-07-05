@@ -18,6 +18,9 @@
 package org.apache.openejb.resource.jdbc.dbcp;
 
 import org.apache.commons.dbcp.ConnectionFactory;
+import org.apache.commons.dbcp.managed.ManagedConnection;
+import org.apache.commons.dbcp.managed.ManagedDataSource;
+import org.apache.commons.dbcp.managed.TransactionRegistry;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.cipher.PasswordCipher;
 import org.apache.openejb.cipher.PasswordCipherFactory;
@@ -29,6 +32,7 @@ import org.apache.openejb.resource.jdbc.pool.XADataSourceResource;
 
 import javax.sql.DataSource;
 import java.io.File;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
@@ -77,6 +81,31 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
             }
         }
         return super.createConnectionFactory();
+    }
+
+    @Override
+    protected void createDataSourceInstance() throws SQLException {
+        final TransactionRegistry transactionRegistry = getTransactionRegistry();
+        if (transactionRegistry == null) {
+            throw new IllegalStateException("TransactionRegistry has not been set");
+        }
+        if (connectionPool == null) {
+            throw new IllegalStateException("Pool has not been set");
+        }
+        super.dataSource = new ManagedDataSource(connectionPool, transactionRegistry) {
+            @Override
+            public Connection getConnection() throws SQLException {
+                return new ManagedConnection(connectionPool, transactionRegistry, isAccessToUnderlyingConnectionAllowed()) {
+                    @Override
+                    public void close() throws SQLException {
+                        if (getDelegateInternal() == null) {
+                            return;
+                        }
+                        super.close();
+                    }
+                };
+            }
+        };
     }
 
     private void setJndiXaDataSource(final String xaDataSource) {
