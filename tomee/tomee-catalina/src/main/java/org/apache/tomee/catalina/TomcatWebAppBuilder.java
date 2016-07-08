@@ -100,7 +100,6 @@ import org.apache.openejb.core.ivm.naming.SystemComponentReference;
 import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.loader.Files;
-import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.httpd.BeginWebBeansListener;
 import org.apache.openejb.server.httpd.EndWebBeansListener;
@@ -152,7 +151,6 @@ import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -454,12 +452,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             for (final WebAppInfo webApp : appInfo.webApps) {
                 // look for context.xml
                 final File war = new File(webApp.path);
-                InputStream contextXml = null;
                 URL contextXmlUrl = null;
                 if (war.isDirectory()) {
                     final File cXml = new File(war, Constants.ApplicationContextXml).getAbsoluteFile();
                     if (cXml.exists()) {
-                        contextXml = IO.read(cXml);
                         contextXmlUrl = cXml.toURI().toURL();
                         logger.info("using context file " + cXml.getAbsolutePath());
                     }
@@ -468,7 +464,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     final JarEntry entry = warAsJar.getJarEntry(Constants.ApplicationContextXml);
                     if (entry != null) {
                         contextXmlUrl = new URL("jar:" + war.getAbsoluteFile().toURI().toURL().toExternalForm() + "!/" + Constants.ApplicationContextXml);
-                        contextXml = warAsJar.getInputStream(entry);
                     }
                 }
 
@@ -497,7 +492,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     }
                 }
                 standardContext.setUnpackWAR(!"false".equalsIgnoreCase(appInfo.properties.getProperty("tomcat.unpackWar")));
-                if (contextXml != null) {
+                if (contextXmlUrl != null) {
                     standardContext.setConfigFile(contextXmlUrl);
                 }
 
