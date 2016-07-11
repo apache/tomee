@@ -85,7 +85,9 @@ public class DbcpNPEXAConnectionTest {
 
     @Test
     public void check() throws SQLException {
-        ejb.newConn().close(); // no NPE
+        final Connection con = ejb.newConn();
+        con.close(); // no NPE
+        Assert.assertTrue("Connection was not closed", con.isClosed());
         final GenericObjectPool pool =  GenericObjectPool.class.cast(Reflections.get(ds, "connectionPool"));
         assertEquals(0, pool.getNumActive());
     }
@@ -96,7 +98,9 @@ public class DbcpNPEXAConnectionTest {
         private DataSource ds;
 
         public Connection newConn() throws SQLException {
-            ds.getConnection().close(); // first connection is not "shared" so closes correctly
+            final Connection con = ds.getConnection();
+            con.close(); // first connection is not "shared" so closes correctly
+            Assert.assertTrue("Connection was not closed", con.isClosed());
             return use(ds.getConnection()); // this one is shared so delegate will be null and close outside JTA will fail
         }
     }
