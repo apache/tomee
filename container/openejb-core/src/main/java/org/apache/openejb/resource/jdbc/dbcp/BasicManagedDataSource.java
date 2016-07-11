@@ -88,10 +88,20 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp2.managed.Bas
                 return new ManagedConnection<PoolableConnection>(getPool(), transactionRegistry, isAccessToUnderlyingConnectionAllowed()) {
                     @Override
                     public void close() throws SQLException {
-                        if (getDelegateInternal() == null) {
-                            return;
+                        if (!isClosedInternal()) {
+                            try {
+                                if (null != getDelegateInternal()) {
+                                    super.close();
+                                }
+                            } finally {
+                                setClosedInternal(true);
+                            }
                         }
-                        super.close();
+                    }
+
+                    @Override
+                    public boolean isClosed() throws SQLException {
+                        return isClosedInternal() || null != getDelegateInternal() && getDelegateInternal().isClosed();
                     }
                 };
             }
