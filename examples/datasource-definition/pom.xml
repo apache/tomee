@@ -24,7 +24,7 @@
   <name>OpenEJB :: Examples :: Datasource Definition</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <openejb.version>4.7.5-TT.6-SNAPSHOT</openejb.version>
+    <openejb.version>4.7.5-TT.6</openejb.version>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
