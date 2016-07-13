@@ -353,6 +353,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
+          <trimStackTrace>false</trimStackTrace>
           <reuseForks>false</reuseForks>
           <!-- to be removed when all test lifecycles are fixed -->
         </configuration>
