@@ -21,7 +21,7 @@
 
   <groupId>org.superbiz</groupId>
   <artifactId>projectstage-demo</artifactId>
-  <version>1.1.2-SNAPSHOT</version>
+  <version>1.1.2</version>
   <name>OpenEJB :: Examples :: DeltaSpike ProjectStage</name>
 
   <dependencies>
