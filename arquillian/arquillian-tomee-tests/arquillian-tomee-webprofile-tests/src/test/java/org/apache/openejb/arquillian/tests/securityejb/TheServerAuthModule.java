@@ -5,17 +5,18 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.openejb.arquillian.tests.securityejb;
 
+import javax.enterprise.inject.spi.CDI;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -70,6 +71,8 @@ public class TheServerAuthModule implements ServerAuthModule {
             throw (AuthException) new AuthException().initCause(e);
         }
 
+        cdi(messageInfo, "vr");
+
         return SUCCESS;
     }
 
@@ -79,12 +82,27 @@ public class TheServerAuthModule implements ServerAuthModule {
     }
 
     @Override
-    public AuthStatus secureResponse(MessageInfo messageInfo, Subject serviceSubject) throws AuthException {
+    public AuthStatus secureResponse(final MessageInfo messageInfo, final Subject serviceSubject) throws AuthException {
+        cdi(messageInfo, "sr");
         return AuthStatus.SEND_SUCCESS;
     }
 
+    private void cdi(final MessageInfo messageInfo, final String msg) throws AuthException {
+        final HttpServletRequest request = HttpServletRequest.class.cast(messageInfo.getRequestMessage());
+        final HttpServletResponse response = HttpServletResponse.class.cast(messageInfo.getResponseMessage());
+        if (request.getParameter("bean") != null) {
+            final TheBean cdiBean = CDI.current().select(TheBean.class).get();
+            cdiBean.set(msg);
+            try {
+                response.getWriter().write(String.valueOf(request.getAttribute("cdi")));
+            } catch (final IOException e) {
+                throw new AuthException(e.getMessage());
+            }
+        }
+    }
+
     @Override
-    public void cleanSubject(MessageInfo messageInfo, Subject subject) throws AuthException {
-        // no-op
+    public void cleanSubject(final MessageInfo messageInfo, final Subject subject) throws AuthException {
+        cdi(messageInfo, "cs");
     }
 }

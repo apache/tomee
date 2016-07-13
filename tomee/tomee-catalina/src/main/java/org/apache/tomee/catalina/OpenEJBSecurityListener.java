@@ -17,9 +17,12 @@
 package org.apache.tomee.catalina;
 
 import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.Response;
+import org.apache.catalina.valves.ValveBase;
 
 import javax.servlet.AsyncEvent;
 import javax.servlet.AsyncListener;
+import javax.servlet.ServletException;
 import java.io.IOException;
 
 public class OpenEJBSecurityListener implements AsyncListener {
@@ -36,36 +39,55 @@ public class OpenEJBSecurityListener implements AsyncListener {
 
     @Override
     public void onComplete(final AsyncEvent asyncEvent) throws IOException {
-        exit();
+        asyncExit();
     }
 
     @Override
     public void onError(final AsyncEvent asyncEvent) throws IOException {
-        exit();
+        asyncExit();
     }
 
     @Override
     public void onStartAsync(final AsyncEvent asyncEvent) throws IOException {
         asyncEvent.getAsyncContext().addListener(this); // super vicious isnt it? that's in servlet spec, start != end events.
+        requests.set(request);
         enter();
     }
 
     @Override
     public void onTimeout(final AsyncEvent asyncEvent) throws IOException {
-        exit();
+        asyncExit();
+    }
+
+    private void asyncExit() {
+        try {
+            exit();
+        } finally {
+            requests.remove();
+        }
     }
 
     public void enter() {
-        requests.set(request);
         if (securityService != null && request.getWrapper() != null) {
             oldState = securityService.enterWebApp(request.getWrapper().getRealm(), request.getPrincipal(), request.getWrapper().getRunAs());
         }
     }
 
     public void exit() {
-        requests.remove();
         if (securityService != null) {
             securityService.exitWebApp(oldState);
+        }
+    }
+
+    public static class RequestCapturer extends ValveBase {
+        @Override
+        public void invoke(final Request request, final Response response) throws IOException, ServletException {
+            requests.set(request);
+            try {
+                getNext().invoke(request, response);
+            } finally {
+                requests.remove();
+            }
         }
     }
 }

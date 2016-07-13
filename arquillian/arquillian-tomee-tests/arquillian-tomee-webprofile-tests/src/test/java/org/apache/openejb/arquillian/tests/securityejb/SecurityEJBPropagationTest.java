@@ -37,7 +37,7 @@ public class SecurityEJBPropagationTest {
     public static Archive<?> app() {
         return ShrinkWrap.create(WebArchive.class, "jaspic-ejb.war")
                 .addClasses(
-                        TheAuthConfigProvider.class, TheEJb.class, TheServlet.class, Init.class,
+                        TheAuthConfigProvider.class, TheEJb.class, TheServlet.class, Init.class, TheBean.class,
                         TheServerAuthConfig.class, TheServerAuthContext.class, TheServerAuthModule.class, TheServerAuthModule.class);
     }
 
@@ -47,5 +47,10 @@ public class SecurityEJBPropagationTest {
     @Test
     public void run() throws IOException {
         assertEquals("testtestnullguest", IO.slurp(new URL(base.toExternalForm() + "test?doLogin=true")));
+    }
+
+    @Test
+    public void cdi() throws IOException {
+        assertEquals("vrcstesttestnullguestsr", IO.slurp(new URL(base.toExternalForm() + "test?doLogin=true&bean=true")));
     }
 }
