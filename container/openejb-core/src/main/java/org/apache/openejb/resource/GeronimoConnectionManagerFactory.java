@@ -78,7 +78,7 @@ public class GeronimoConnectionManagerFactory {
     private int poolMaxSize = 10;
     private int poolMinSize;
     private boolean allConnectionsEqual = true;
-    private boolean assumeOneMatch = false;
+    private boolean assumeOneMatch;
     private int connectionMaxWaitMilliseconds = 5000;
     private int connectionMaxIdleMinutes = 15;
     private ManagedConnectionFactory mcf;
@@ -438,9 +438,9 @@ public class GeronimoConnectionManagerFactory {
             this.lock = foundLock;
 
             Object foundPool = null;
-            if (current instanceof AbstractSinglePoolConnectionInterceptor) {
+            if (AbstractSinglePoolConnectionInterceptor.class.isInstance(current)) {
                 foundPool = Reflections.get(current, "pool");
-            } else if (current instanceof MultiPoolConnectionInterceptor) {
+            } else if (MultiPoolConnectionInterceptor.class.isInstance(current)) {
                 log.warn("validation on stack " + stack + " not supported");
             }
             this.pool = foundPool;

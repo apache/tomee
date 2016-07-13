@@ -84,10 +84,10 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
     }
 
     @Override
-    protected void createDataSourceInstance() throws SQLException {
-        final TransactionRegistry transactionRegistry = getTransactionRegistry();
-        if (transactionRegistry == null) {
-            throw new IllegalStateException("TransactionRegistry has not been set");
+     protected void createDataSourceInstance() throws SQLException {
+         final TransactionRegistry transactionRegistry = getTransactionRegistry();
+         if (transactionRegistry == null) {
+             throw new IllegalStateException("TransactionRegistry has not been set");
         }
         if (connectionPool == null) {
             throw new IllegalStateException("Pool has not been set");
