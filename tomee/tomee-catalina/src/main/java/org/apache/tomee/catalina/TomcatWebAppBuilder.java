@@ -307,7 +307,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                         final StandardHost host = (StandardHost) engineChild;
                         manageCluster(host.getCluster());
                         addTomEERealm(host);
-                        host.addValve(new OpenEJBSecurityListener.RequestCapturer());
+                        host.getPipeline().addValve(new OpenEJBSecurityListener.RequestCapturer());
                         hosts.add(host);
                         for (final LifecycleListener listener : host.findLifecycleListeners()) {
                             if (listener instanceof HostConfig) {

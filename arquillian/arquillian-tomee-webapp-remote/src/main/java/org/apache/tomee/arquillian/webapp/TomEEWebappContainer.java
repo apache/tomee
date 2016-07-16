@@ -157,10 +157,13 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
                 final URL url = new URL(baseUrl);
                 logger.info("Calling TomEE Installer Servlet on " + url);
 
-                for (int i = 0; i < 3; i++) {
+                for (int i = 0; i < Integer.getInteger("tomee.webapp.container.client.retries", 3); i++) {
                     final URLConnection uc = url.openConnection();
                     // dG9tZWU6dG9tZWU= --> Base64 of tomee:tomee
                     final String authorizationString = "Basic dG9tZWU6dG9tZWU=";
+                    final int timeout = Integer.getInteger("tomee.webapp.container.client.timeout", 60000);
+                    uc.setConnectTimeout(timeout);
+                    uc.setReadTimeout(timeout);
                     uc.setRequestProperty("Authorization", authorizationString);
                     try {
                         final InputStream is = uc.getInputStream();
