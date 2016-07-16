@@ -16,6 +16,7 @@
  */
 package org.apache.tomee.catalina;
 
+import org.apache.catalina.LifecycleException;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
 import org.apache.catalina.valves.ValveBase;
@@ -80,6 +81,15 @@ public class OpenEJBSecurityListener implements AsyncListener {
     }
 
     public static class RequestCapturer extends ValveBase {
+        public RequestCapturer() {
+            super(true);
+        }
+
+        @Override
+        protected synchronized void startInternal() throws LifecycleException {
+            super.startInternal();
+        }
+
         @Override
         public void invoke(final Request request, final Response response) throws IOException, ServletException {
             requests.set(request);
