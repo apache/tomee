@@ -97,7 +97,7 @@ public class Installer implements InstallerInterface {
         addTomEEJuli();
 
         addTomEEAdminConfInTomcatUsers();
-        addTomEELinkToTomcatHome();
+        // addTomEELinkToTomcatHome(); // we don't provide tomee GUI anymore
 
         workaroundOnBat();
 
@@ -152,14 +152,14 @@ public class Installer implements InstallerInterface {
         final String content;
         if (!securityActivated) {
             content =
-                    "  <!-- Activate those lines to get access to TomEE GUI -->\n" +
+                    "  <!-- Activate those lines to get access to TomEE GUI if added (tomee-webaccess) -->\n" +
                             "  <!--\n" +
                             roleUserTags +
                             "  -->\n" +
                             "</tomcat-users>\n";
         } else {
             content =
-                    "  <!-- Activate those lines to get access to TomEE GUI\n -->" +
+                    "  <!-- Activate those lines to get access to TomEE GUI if added (tomee-webaccess)\n -->" +
                             roleUserTags +
                             "</tomcat-users>\n";
 
@@ -185,7 +185,7 @@ public class Installer implements InstallerInterface {
         moveLibs();
 
         addTomEEAdminConfInTomcatUsers();
-        addTomEELinkToTomcatHome();
+        // addTomEELinkToTomcatHome(); // we don't provide it anymore
 
         workaroundOnBat();
 
@@ -233,6 +233,7 @@ public class Installer implements InstallerInterface {
         }
     }
 
+    /*
     private void addTomEELinkToTomcatHome() {
         final File home = paths.getHome();
         if(!home.exists()) {
@@ -255,6 +256,7 @@ public class Installer implements InstallerInterface {
                         "                    </div>");
         Installers.writeAll(home, newIndeJsp, alerts);
     }
+*/
 
     private void moveLibs() {
         final File libs = paths.getCatalinaLibDir();
