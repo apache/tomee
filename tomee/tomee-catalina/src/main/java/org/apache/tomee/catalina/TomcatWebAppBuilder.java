@@ -74,6 +74,7 @@ import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.InjectionBuilder;
 import org.apache.openejb.assembler.classic.JndiEncBuilder;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
+import org.apache.openejb.assembler.classic.OpenEjbConfigurationFactory;
 import org.apache.openejb.assembler.classic.PersistenceUnitInfo;
 import org.apache.openejb.assembler.classic.ReloadableEntityManagerFactory;
 import org.apache.openejb.assembler.classic.ResourceInfo;
@@ -322,7 +323,13 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
         SystemInstance.get().addObserver(new ClusterObserver(clusters));
 
-        configurationFactory = new ConfigurationFactory();
+        final OpenEjbConfigurationFactory component = SystemInstance.get().getComponent(OpenEjbConfigurationFactory.class);
+        ConfigurationFactory configurationFactory = ConfigurationFactory.class.isInstance(component) ?
+                ConfigurationFactory.class.cast(component) : SystemInstance.get().getComponent(ConfigurationFactory.class);
+        if (configurationFactory == null) {
+            configurationFactory = new ConfigurationFactory();
+        }
+        this.configurationFactory = configurationFactory;
         deploymentLoader = new DeploymentLoader();
 
         servletContextHandler = new ServletContextHandler();
