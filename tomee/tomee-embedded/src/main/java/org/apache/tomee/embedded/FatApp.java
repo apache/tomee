@@ -23,7 +23,7 @@ import static java.util.Arrays.asList;
 
 // Main like forcing --as-war --single-classloader
 // commong for fatjars
-public class FatApp {
+public final class FatApp {
     public static void main(final String[] args) {
         final Collection<String> a = args == null || args.length == 0 ? new ArrayList<String>() : new ArrayList<>(asList(args));
         if (!a.contains("--as-war")) {
