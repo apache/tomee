@@ -219,7 +219,7 @@ public class TomEEEmbeddedSingleRunner extends BlockJUnit4ClassRunner {
                 final Collection<Closeable> postTasks = new ArrayList<>();
                 final LifecycleTasks tasks = appClass.getAnnotation(LifecycleTasks.class);
                 if (tasks != null) {
-                    for (final Class<? extends LifecycleTask> type : tasks.value()) {
+                    for (final Class<? extends org.apache.tomee.embedded.LifecycleTask> type : tasks.value()) {
                         postTasks.add(type.newInstance().beforeContainerStartup());
                     }
                 }
@@ -366,13 +366,12 @@ public class TomEEEmbeddedSingleRunner extends BlockJUnit4ClassRunner {
         }
     }
 
-    public interface LifecycleTask {
-        Closeable beforeContainerStartup();
+    public interface LifecycleTask extends org.apache.tomee.embedded.LifecycleTask {
     }
 
     @Retention(RUNTIME)
     @Target(TYPE)
     public @interface LifecycleTasks {
-        Class<? extends LifecycleTask>[] value();
+        Class<? extends org.apache.tomee.embedded.LifecycleTask>[] value();
     }
 }
