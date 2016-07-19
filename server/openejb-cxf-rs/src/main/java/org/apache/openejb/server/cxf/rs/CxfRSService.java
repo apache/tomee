@@ -92,6 +92,7 @@ public class CxfRSService extends RESTService {
 
     private static final String NAME = "cxf-rs";
     private DestinationFactory destinationFactory;
+    private boolean factoryByListener;
 
     @Override
     public void service(final InputStream in, final OutputStream out) throws ServiceException, IOException {
@@ -170,6 +171,7 @@ public class CxfRSService extends RESTService {
     @Override
     public void init(final Properties properties) throws Exception {
         super.init(properties);
+        factoryByListener = "true".equalsIgnoreCase(properties.getProperty("openejb.cxf-rs.factoryByListener", "false"));
 
         System.setProperty("org.apache.johnzon.max-string-length",
                 SystemInstance.get().getProperty("org.apache.johnzon.max-string-length",
@@ -289,7 +291,7 @@ public class CxfRSService extends RESTService {
 
     @Override
     protected RsHttpListener createHttpListener() {
-        return new CxfRsHttpListener(destinationFactory, getWildcard());
+        return new CxfRsHttpListener(!factoryByListener ? destinationFactory : new HTTPTransportFactory(), getWildcard());
     }
 
     private static class ContextLiteral extends EmptyAnnotationLiteral<Context> implements Context {
