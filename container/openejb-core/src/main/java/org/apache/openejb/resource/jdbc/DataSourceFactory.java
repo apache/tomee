@@ -269,6 +269,7 @@ public class DataSourceFactory {
 
                         final Map<String, Object> recipeProps = new HashMap<>(objectRecipe == null ? new HashMap<String, Object>() : objectRecipe.getProperties());
                         recipeProps.remove("properties");
+                        recipeProps.put("OpenEJBResourceClasspath", String.valueOf(useAlternativeDriver));
 
                         flushConfig = new FlushableDataSourceHandler.FlushConfig(recipeProps);
                         flushableDataSourceHandler = new FlushableDataSourceHandler(ds, flushConfig, resettableDataSourceHandler);

@@ -36,7 +36,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class FlushableDataSourceHandler implements DelegatableHandler {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, FlushableDataSourceHandler.class);
     public static final String[] FACTORY_ARGS = new String[]{
-        "ServiceId", "JtaManaged", "JdbcDriver", "Definition", "MaxWaitTime", "TimeBetweenEvictionRuns", "MinEvictableIdleTime"
+        "ServiceId", "JtaManaged", "JdbcDriver", "Definition", "MaxWaitTime", "TimeBetweenEvictionRuns", "MinEvictableIdleTime", "OpenEJBResourceClasspath"
     };
 
     private final FlushConfig config;
