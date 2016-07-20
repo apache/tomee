@@ -578,7 +578,7 @@
       service="Resource"
       types="javax.sql.DataSource, DataSource"
       factory-name="create"
-      constructor="ServiceId, JtaManaged, JdbcDriver, Definition, MaxWaitTime, TimeBetweenEvictionRuns, MinEvictableIdleTime"
+          constructor="ServiceId, JtaManaged, JdbcDriver, Definition, MaxWaitTime, TimeBetweenEvictionRuns, MinEvictableIdleTime, OpenEJBResourceClasspath"
       class-name="org.apache.openejb.resource.jdbc.DataSourceFactory">
     ServiceId
 
@@ -777,6 +777,8 @@
     # use only all set values in this config
     # will need a lot of properties but allow to not set some values
     IgnoreDefaultValues = false
+    
+    OpenEJBResourceClasspath = false
   </ServiceProvider>
 
   <ServiceProvider
@@ -784,7 +786,7 @@
       service="Resource"
       types="javax.sql.DataSource, DataSource"
       factory-name="create"
-      constructor="ServiceId, JtaManaged, JdbcDriver, Definition, MaxWaitTime, TimeBetweenEvictionRuns, MinEvictableIdleTime"
+          constructor="ServiceId, JtaManaged, JdbcDriver, Definition, MaxWaitTime, TimeBetweenEvictionRuns, MinEvictableIdleTime, OpenEJBResourceClasspath"
       class-name="org.apache.openejb.resource.jdbc.DataSourceFactory">
     ServiceId
 
@@ -817,7 +819,7 @@
     #
     # NOTE - The "user" and "password" properties will be passed
     # explicitly, so they do not need to be included here.
-
+    
     ConnectionProperties
 
     # The default auto-commit state of new connections
@@ -966,6 +968,8 @@
     # original logical connection wrapper.
 
     AccessToUnderlyingConnectionAllowed false
+    
+    OpenEJBResourceClasspath = false
   </ServiceProvider>
 
   <!--

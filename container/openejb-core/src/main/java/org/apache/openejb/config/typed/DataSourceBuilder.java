@@ -98,7 +98,7 @@ public class DataSourceBuilder extends Resource {
         setType("javax.sql.DataSource");
         setId("DataSource");
 
-        setConstructor("serviceId, jtaManaged, jdbcDriver, definition, maxWaitTime, timeBetweenEvictionRuns, minEvictableIdleTime");
+        setConstructor("serviceId, jtaManaged, jdbcDriver, definition, maxWaitTime, timeBetweenEvictionRuns, minEvictableIdleTime, OpenEJBResourceClasspath");
 
         setFactoryName("create");
 

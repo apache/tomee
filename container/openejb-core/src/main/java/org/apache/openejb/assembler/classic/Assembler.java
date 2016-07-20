@@ -180,6 +180,8 @@ import javax.resource.spi.ResourceAdapter;
 import javax.resource.spi.ResourceAdapterInternalException;
 import javax.resource.spi.XATerminator;
 import javax.resource.spi.work.WorkManager;
+import javax.servlet.ServletContext;
+import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
@@ -2707,6 +2709,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
                 loader = new URLClassLoaderFirst(urls, loader);
                 customLoader = true;
+                serviceRecipe.setProperty("OpenEJBResourceClasspath", "true");
             }
         } catch (final MalformedURLException e) {
             throw new OpenEJBException("Unable to create a classloader for " + serviceInfo.id, e);
@@ -3150,6 +3153,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
             if (property.equalsIgnoreCase("ApplicationWide")) {
                 return;
+            }
+            if (property.equalsIgnoreCase("OpenEJBResourceClasspath")) {
+                continue;
             }
             if (property.equalsIgnoreCase("transactionManager")) {
                 return;
