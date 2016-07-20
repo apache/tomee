@@ -97,7 +97,8 @@ public class DataSourceFactory {
                                           final String definition,
                                           final Duration maxWaitTime,
                                           final Duration timeBetweenEvictionRuns,
-                                          final Duration minEvictableIdleTime) throws IllegalAccessException, InstantiationException, IOException {
+                                          final Duration minEvictableIdleTime,
+                                          final boolean useAlternativeDriver) throws IllegalAccessException, InstantiationException, IOException {
         final Properties properties = asProperties(definition);
         final Set<String> originalKeys = properties.stringPropertyNames();
 
@@ -124,7 +125,7 @@ public class DataSourceFactory {
         final String jdbcUrl = properties.getProperty("JdbcUrl");
 
         final AlternativeDriver driver;
-        if (Driver.class.isAssignableFrom(impl) && jdbcUrl != null) {
+        if (Driver.class.isAssignableFrom(impl) && jdbcUrl != null && useAlternativeDriver) {
             try {
                 driver = new AlternativeDriver((Driver) impl.newInstance(), jdbcUrl);
                 driver.register();
