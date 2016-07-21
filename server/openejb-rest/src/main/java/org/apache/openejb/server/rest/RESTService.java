@@ -156,7 +156,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
                     }
 
                     application = "true".equalsIgnoreCase(appInfo.properties.getProperty("openejb.cxf-rs.cache-application", "true"))
-                        ? new InternalApplication(application) /* caches singletons and classes */ : application;
+                            ? new InternalApplication(application) /* caches singletons and classes */ : application;
 
                     final Set<Class<?>> classes = new HashSet<>(application.getClasses());
                     final Set<Object> singletons = application.getSingletons();
@@ -376,7 +376,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
                 } else {
                     pojoConfigurations = PojoUtil.findPojoConfig(pojoConfigurations, appInfo, webApp);
                     deploySingleton(appInfo.appId, webApp.contextRoot, appPrefix, o, appInstance, classLoader, additionalProviders,
-                        new ServiceConfiguration(PojoUtil.findConfiguration(pojoConfigurations, o.getClass().getName()), appInfo.services));
+                            new ServiceConfiguration(PojoUtil.findConfiguration(pojoConfigurations, o.getClass().getName()), appInfo.services));
                 }
             }
 
@@ -390,7 +390,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
                 } else {
                     pojoConfigurations = PojoUtil.findPojoConfig(pojoConfigurations, appInfo, webApp);
                     deployPojo(appInfo.appId, webApp.contextRoot, appPrefix, clazz, appInstance, classLoader, injections, context, owbCtx, additionalProviders,
-                        new ServiceConfiguration(PojoUtil.findConfiguration(pojoConfigurations, clazz.getName()), appInfo.services));
+                            new ServiceConfiguration(PojoUtil.findConfiguration(pojoConfigurations, clazz.getName()), appInfo.services));
                 }
             }
 
@@ -413,15 +413,15 @@ public abstract class RESTService implements ServerService, SelfManaging {
                         deployEJB(appInfo.appId, webApp.contextRoot, appPrefix, restEjbs.get(clazz).context, additionalProviders, appInfo.services);
                     } else {
                         deployPojo(appInfo.appId, webApp.contextRoot, appPrefix, ctx.getBeanClass(), null, ctx.getClassLoader(), ctx.getInjections(), context,
-                            owbCtx, additionalProviders, new ServiceConfiguration(ctx.getProperties(), appInfo.services));
+                                owbCtx, additionalProviders, new ServiceConfiguration(ctx.getProperties(), appInfo.services));
                     }
                 } else {
                     try {
                         final Class<?> loadedClazz = classLoader.loadClass(clazz);
                         pojoConfigurations = PojoUtil.findPojoConfig(pojoConfigurations, appInfo, webApp);
                         deployPojo(appInfo.appId, webApp.contextRoot, appPrefix, loadedClazz, null, classLoader, injections, context, owbCtx,
-                            additionalProviders,
-                            new ServiceConfiguration(PojoUtil.findConfiguration(pojoConfigurations, loadedClazz.getName()), appInfo.services));
+                                additionalProviders,
+                                new ServiceConfiguration(PojoUtil.findConfiguration(pojoConfigurations, loadedClazz.getName()), appInfo.services));
                     } catch (final ClassNotFoundException e) {
                         throw new OpenEJBRestRuntimeException("can't find class " + clazz, e);
                     }
@@ -467,10 +467,10 @@ public abstract class RESTService implements ServerService, SelfManaging {
         final String host = findHost(contextRoot, appInfo.webApps);
         final RsRegistry.AddressInfo address = rsRegistry.createRsHttpListener(appInfo.appId, contextRoot, listener, classLoader, nopath.substring(NOPATH_PREFIX.length() - 1), host, auth, realm);
 
-        services.add(new DeployedService(address.complete, contextRoot, application.getClass().getName()));
+        services.add(new DeployedService(address.complete, contextRoot, application.getClass().getName(), appInfo.appId));
         listener.deployApplication(application, address.complete.substring(0, address.complete.length() - wildcard.length()), nopath.substring(NOPATH_PREFIX.length(), nopath.length() - wildcard.length()), additionalProviders, restEjbs, // app config
-            classLoader, injections, context, owbCtx, // injection/webapp context
-            new ServiceConfiguration(configuration, appInfo.services)); // deployment config
+                classLoader, injections, context, owbCtx, // injection/webapp context
+                new ServiceConfiguration(configuration, appInfo.services)); // deployment config
     }
 
     private String findHost(final String context, final Collection<WebAppInfo> webs) {
@@ -637,16 +637,16 @@ public abstract class RESTService implements ServerService, SelfManaging {
                         }
 
                         deployApplication(appInfo, next.getValue().path, restEjbs, comp.getClassLoader(), comp.getInjections(),
-                            containerSystem.getAppContext(appInfo.appId).getWebBeansContext(), comp.getJndiContext(),
-                            providers, pojoConfigurations, application, wildcard);
+                                containerSystem.getAppContext(appInfo.appId).getWebBeansContext(), comp.getJndiContext(),
+                                providers, pojoConfigurations, application, wildcard);
                     } else {
                         for (final Map.Entry<String, EJBRestServiceInfo> ejb : restEjbs.entrySet()) {
                             final BeanContext ctx = ejb.getValue().context;
                             if (BeanType.MANAGED.equals(ctx.getComponentType())) {
                                 deployPojo(appInfo.appId, "", ejb.getValue().path, ctx.getBeanClass(), null, ctx.getClassLoader(), ctx.getInjections(),
-                                    ctx.getJndiContext(),
-                                    containerSystem.getAppContext(appInfo.appId).getWebBeansContext(),
-                                    providers, new ServiceConfiguration(ctx.getProperties(), appInfo.services));
+                                        ctx.getJndiContext(),
+                                        containerSystem.getAppContext(appInfo.appId).getWebBeansContext(),
+                                        providers, new ServiceConfiguration(ctx.getProperties(), appInfo.services));
                             } else {
                                 deployEJB(appInfo.appId, "", ejb.getValue().path, ctx, providers, appInfo.services);
                             }
@@ -742,7 +742,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
         final RsHttpListener listener = createHttpListener();
         final RsRegistry.AddressInfo address = rsRegistry.createRsHttpListener(appId, web, listener, classLoader, nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost, auth, realm);
 
-        services.add(new DeployedService(address.complete, web, o.getClass().getName()));
+        services.add(new DeployedService(address.complete, web, o.getClass().getName(), appId));
         listener.deploySingleton(contextRoot, getFullContext(address.base, contextRoot), o, appInstance, additionalProviders, configuration);
 
         LOGGER.info("deployed REST singleton: " + o);
@@ -759,9 +759,9 @@ public abstract class RESTService implements ServerService, SelfManaging {
         final RsHttpListener listener = createHttpListener();
         final RsRegistry.AddressInfo address = rsRegistry.createRsHttpListener(appId, web, listener, classLoader, nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost, auth, realm);
 
-        services.add(new DeployedService(address.complete, contextRoot, loadedClazz.getName()));
+        services.add(new DeployedService(address.complete, contextRoot, loadedClazz.getName(), appId));
         listener.deployPojo(classLoader, contextRoot, getFullContext(address.base, contextRoot), loadedClazz, app, injections, context, owbCtx,
-            additionalProviders, config);
+                additionalProviders, config);
 
         LOGGER.info("REST Service: " + address.complete + "  -> Pojo " + loadedClazz.getName());
     }
@@ -772,9 +772,9 @@ public abstract class RESTService implements ServerService, SelfManaging {
         final RsHttpListener listener = createHttpListener();
         final RsRegistry.AddressInfo address = rsRegistry.createRsHttpListener(appId, web, listener, beanContext.getClassLoader(), nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost, auth, realm);
 
-        services.add(new DeployedService(address.complete, context, beanContext.getBeanClass().getName()));
+        services.add(new DeployedService(address.complete, context, beanContext.getBeanClass().getName(), appId));
         listener.deployEJB(context, getFullContext(address.base, context), beanContext,
-            additionalProviders, new ServiceConfiguration(beanContext.getProperties(), serviceInfos));
+                additionalProviders, new ServiceConfiguration(beanContext.getProperties(), serviceInfos));
 
         LOGGER.info("REST Service: " + address.complete + "  -> EJB " + beanContext.getEjbName());
     }
@@ -899,8 +899,8 @@ public abstract class RESTService implements ServerService, SelfManaging {
         return managedUrl + "/" + wildcard;
     }
 
-    private void undeployRestObject(final String context) {
-        HttpListener listener = rsRegistry.removeListener(context);
+    private void undeployRestObject(final String appId, final String context) {
+        HttpListener listener = rsRegistry.removeListener(appId, context);
         if (listener != null) {
 
             if (BasicAuthHttpListenerWrapper.class.isInstance(listener)) {
@@ -935,8 +935,8 @@ public abstract class RESTService implements ServerService, SelfManaging {
             for (final WebAppInfo webApp : app.webApps) {
                 final List<DeployedService> toRemove = new ArrayList<>();
                 for (final DeployedService service : services) {
-                    if (service.isInWebApp(webApp)) {
-                        undeployRestObject(service.address);
+                    if (service.isInWebApp(app.appId, webApp)) {
+                        undeployRestObject(app.appId, service.address);
                         toRemove.add(service);
                     }
                 }
@@ -980,7 +980,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
         }
 
         for (final DeployedService service : services) {
-            undeployRestObject(service.address);
+            undeployRestObject(service.appId, service.address);
         }
     }
 
@@ -1046,15 +1046,19 @@ public abstract class RESTService implements ServerService, SelfManaging {
         public String address;
         public String webapp;
         public String origin;
+        public String appId;
 
-        public DeployedService(final String address, final String webapp, final String origin) {
+        public DeployedService(final String address, final String webapp, final String origin, final String appId) {
             this.address = address;
             this.webapp = webapp;
             this.origin = origin;
+            this.appId = appId;
         }
 
-        public boolean isInWebApp(final WebAppInfo webApp) {
-            return (webApp.contextRoot != null && webApp.contextRoot.equals(webapp)) || (webapp != null && webapp.startsWith(webApp.contextRoot != null ? webApp.contextRoot : ""));
+        public boolean isInWebApp(final String appId, final WebAppInfo webApp) { // we support paralell deployments so we need app (versionned) + webapp check
+            return !(appId == null && this.appId != null) && !(appId != null && !appId.equals(this.appId))
+                    && ((webApp.contextRoot != null &&
+                    webApp.contextRoot.equals(webapp)) || (webapp != null && webapp.startsWith(webApp.contextRoot != null ? webApp.contextRoot : "")));
         }
     }
 

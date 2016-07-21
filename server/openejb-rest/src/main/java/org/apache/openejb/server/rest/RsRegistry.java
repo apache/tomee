@@ -24,7 +24,7 @@ import java.util.List;
 public interface RsRegistry {
     AddressInfo createRsHttpListener(String appId, String webContext, HttpListener listener, ClassLoader classLoader, String path, String virtualHost, String auth, String realm);
 
-    HttpListener removeListener(String context);
+    HttpListener removeListener(String appId, String context);
 
     public static class AddressInfo {
         public String base;

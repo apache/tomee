@@ -43,7 +43,7 @@ public class RsRegistryImpl extends OpenEJBHttpRegistry implements RsRegistry {
     }
 
     @Override
-    public HttpListener removeListener(String context) {
+    public HttpListener removeListener(final String appId, final String context) {
         String regex = addresses.get(context);
         if (regex != null) {
             HttpListener listener = registry.removeHttpListener(regex);
