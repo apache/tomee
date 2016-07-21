@@ -2917,7 +2917,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         if (serviceInfo.types.contains("DataSource") || serviceInfo.types.contains(DataSource.class.getName())) {
             final Properties props = PropertyPlaceHolderHelper.simpleHolds(serviceInfo.properties);
             if (serviceInfo.properties.containsKey("Definition")) {
-                final Object encoding = serviceInfo.properties.remove("DefitionEncoding");
+                final Object encoding = serviceInfo.properties.remove("DefinitionEncoding");
                 try { // we catch classcast etc..., if it fails it is not important
                     final InputStream is = new ByteArrayInputStream(serviceInfo.properties.getProperty("Definition")
                         .getBytes(encoding != null ? encoding.toString() : "ISO-8859-1"));
