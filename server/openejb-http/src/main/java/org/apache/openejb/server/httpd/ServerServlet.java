@@ -41,7 +41,9 @@ public class ServerServlet extends HttpServlet {
         ejbServer = SystemInstance.get().getComponent(EjbServer.class);
         final String activatedStr = config.getInitParameter(ACTIVATED_INIT_PARAM);
         if (activatedStr != null) {
-            activated = Boolean.getBoolean(ACTIVATED_INIT_PARAM);
+            activated = Boolean.parseBoolean(activatedStr);
+        } else {
+            activated = Boolean.getBoolean(getClass().getName() + '.' + ACTIVATED_INIT_PARAM);
         }
     }
 
