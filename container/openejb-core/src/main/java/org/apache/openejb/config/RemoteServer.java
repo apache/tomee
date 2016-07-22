@@ -60,7 +60,7 @@ public class RemoteServer {
     public static final String START = "start";
     public static final String STOP = "stop";
 
-    private final boolean debug = options.get(OPENEJB_SERVER_DEBUG, false);
+    private boolean debug = options.get(OPENEJB_SERVER_DEBUG, false);
     private final boolean profile = options.get("openejb.server.profile", false);
     private final boolean tomcat;
     private final String javaOpts = System.getProperty("java.opts");
@@ -397,22 +397,26 @@ public class RemoteServer {
             public void run() {
                 try {
                     p.waitFor();
+                    synchronized (kill) {
+                        kill.remove(p);
+                    }
                 } catch (final InterruptedException e) {
-                    //Ignore
+                    Thread.interrupted();
+                } finally {
+                    latch.countDown();
                 }
-
-                latch.countDown();
             }
         }, "process-waitFor");
 
         t.start();
 
         try {
-            if (!latch.await(10, TimeUnit.SECONDS)) {
+            if (!latch.await(Integer.getInteger("openejb.server.waitFor.seconds", 10), TimeUnit.SECONDS)) {
                 killOnExit(p);
                 throw new RuntimeException("Timeout waiting for process");
             }
         } catch (final InterruptedException e) {
+            Thread.interrupted();
             killOnExit(p);
         }
     }
@@ -685,7 +689,9 @@ public class RemoteServer {
     }
 
     private static void killOnExit(final Process p) {
-        kill.add(p);
+        synchronized (kill) {
+            kill.add(p);
+        }
     }
 
     // Shutdown hook for processes
@@ -693,6 +699,10 @@ public class RemoteServer {
 
     static {
         Runtime.getRuntime().addShutdownHook(new CleanUpThread());
+    }
+
+    public void setDebug(final boolean debug) {
+        this.debug = debug;
     }
 
     public static class CleanUpThread extends Thread {

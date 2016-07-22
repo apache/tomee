@@ -43,7 +43,7 @@ public class ServerServlet extends HttpServlet {
         if (activatedStr != null) {
             activated = Boolean.parseBoolean(activatedStr);
         } else {
-            activated = Boolean.getBoolean(getClass().getName() + '.' + ACTIVATED_INIT_PARAM);
+            activated = Boolean.parseBoolean(System.getProperty(getClass().getName() + '.' + ACTIVATED_INIT_PARAM, "true"));
         }
     }
 
