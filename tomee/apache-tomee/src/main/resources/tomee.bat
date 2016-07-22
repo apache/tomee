@@ -10,7 +10,7 @@ rem U.S. Copyright Office.
 rem
 
 
-if "%OS%" == "Windows_NT" setlocal
+setlocal
 
 set port=8080
 
@@ -39,6 +39,13 @@ rem Ensure that any user defined CLASSPATH variables are not used on startup,
 rem but allow them to be specified in setenv.bat, in rare case when it is needed.
 set CLASSPATH=
 
+if not exist "%CATALINA_BASE%\bin\tomcat-juli.jar" goto juliClasspathHome
+set "CLASSPATH=%CLASSPATH%;%CATALINA_BASE%\bin\tomcat-juli.jar"
+goto juliClasspathDone
+:juliClasspathHome
+set "CLASSPATH=%CLASSPATH%;%CATALINA_HOME%\bin\tomcat-juli.jar"
+:juliClasspathDone
+
 rem Get standard Java environment variables
 if exist "%CATALINA_HOME%\bin\setclasspath.bat" goto okSetclasspath
 echo Cannot find "%CATALINA_HOME%\bin\setclasspath.bat"
@@ -52,9 +59,13 @@ if DEFINED CATALINA_TMPDIR goto gotTmpdir
 set "CATALINA_TMPDIR=%CATALINA_BASE%\temp"
 :gotTmpdir
 
-
-rem create classpath
-set "CLASSPATH=%CATALINA_HOME%\lib\*"
+if not exist %CATALINA_BASE% goto :libClasspathHome
+set CLASSPATH=%CLASSPATH%;%CATALINA_BASE%\lib\*
+if "%CATALINA_BASE%" equ %CATALINA_HOME% goto :libClasspathDone
+:libClasspathHome
+if not exist %CATALINA_HOME% goto :libClasspathDone
+set CLASSPATH=%CLASSPATH%;%CATALINA_HOME%\lib\*
+:libClasspathDone
 
 set DEBUG=
 set "args=%*"

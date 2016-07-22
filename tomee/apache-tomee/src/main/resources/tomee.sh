@@ -79,6 +79,7 @@ fi
 if [ ! -z "$CLASSPATH" ] ; then
   CLASSPATH="$CLASSPATH":
 fi
+CLASSPATH="$CLASSPATH""$CATALINA_HOME"/bin/bootstrap.jar
 
 if [ -r "$CATALINA_BASE/bin/tomcat-juli.jar" ] ; then
   CLASSPATH=$CLASSPATH:$CATALINA_BASE/bin/tomcat-juli.jar
@@ -99,7 +100,7 @@ if [ -z "$JSSE_OPTS" ] ; then
 fi
 JAVA_OPTS="$JAVA_OPTS $JSSE_OPTS"
 
-CLASSPATH="$CATALINA_HOME/lib"
+CLASSPATH="$CLASSPATH:$CATALINA_HOME/lib"
 for i in "$CATALINA_HOME"/lib/*.jar; do
   CLASSPATH="$CLASSPATH:$i"
 done
@@ -131,3 +132,4 @@ elif [ "$1" = "start" ] || [ "$1" = "stop" ]; then
 else
     "$_RUNJAVA" $DEBUG $LOGGING_MANAGER -Dopenejb.base="$CATALINA_BASE" -cp "$CLASSPATH" org.apache.openejb.cli.Bootstrap $*
 fi
+
