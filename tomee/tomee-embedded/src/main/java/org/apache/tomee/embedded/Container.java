@@ -73,6 +73,7 @@ import org.apache.tomee.catalina.TomEERuntimeException;
 import org.apache.tomee.catalina.TomcatLoader;
 import org.apache.tomee.catalina.remote.TomEERemoteWebapp;
 import org.apache.tomee.catalina.session.QuickSessionManager;
+import org.apache.tomee.embedded.event.TomEEEmbeddedScannerCreated;
 import org.apache.tomee.embedded.internal.StandardContextCustomizer;
 import org.apache.tomee.util.QuickServerXmlParser;
 import org.apache.velocity.Template;
@@ -81,6 +82,7 @@ import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.log.NullLogChute;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
+import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.UrlSet;
 import org.apache.xbean.finder.filter.Filters;
 import org.apache.xbean.recipe.ObjectRecipe;
@@ -236,16 +238,18 @@ public class Container implements AutoCloseable {
         webModule.setAddedUrls(Collections.<URL>emptyList());
         webModule.setRarUrls(Collections.<URL>emptyList());
         webModule.setScannableUrls(jarList);
+        final AnnotationFinder finder;
         try {
             final String filterContainerClasses = SystemInstance.get().getProperty("tomee.embedded.filter-container-classes");
-            webModule.setFinder(
-                    new FinderFactory.OpenEJBAnnotationFinder(
-                            // skip container classes in scanning for shades
-                            new WebappAggregatedArchive(webModule, jarList,
-                                    // see org.apache.openejb.config.DeploymentsResolver.ClasspathSearcher.cleanUpUrlSet()
-                                    jarList.size() <= 4 || "true".equalsIgnoreCase(filterContainerClasses) ?
-                                            new ContainerClassesFilter(configuration.getProperties()) /* shade */ : null))
-                            .link());
+            finder = new FinderFactory.OpenEJBAnnotationFinder(
+                    // skip container classes in scanning for shades
+                    new WebappAggregatedArchive(webModule, jarList,
+                            // see org.apache.openejb.config.DeploymentsResolver.ClasspathSearcher.cleanUpUrlSet()
+                            jarList.size() <= 4 || "true".equalsIgnoreCase(filterContainerClasses) ?
+                                    new ContainerClassesFilter(configuration.getProperties()) /* shade */ : null))
+                    .link();
+            SystemInstance.get().fireEvent(new TomEEEmbeddedScannerCreated(finder));
+            webModule.setFinder(finder);
         } catch (final Exception e) {
             throw new IllegalArgumentException(e);
         }

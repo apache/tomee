@@ -24,6 +24,8 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.apache.openejb.loader.ProvisioningUtil;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.tomee.embedded.component.TomEEEmbeddedArgs;
 
 import java.io.Closeable;
 import java.io.File;
@@ -121,6 +123,8 @@ public class Main {
             } else {
                 contexts = null;
             }
+
+            SystemInstance.get().setComponent(TomEEEmbeddedArgs.class, new TomEEEmbeddedArgs(args, line));
 
             boolean autoWar;
             if (line.hasOption(PATH)) {
