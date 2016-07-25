@@ -159,6 +159,7 @@
     <module>moviefun-rest</module>
     <module>cdi-event-realm</module>
     <module>resources-jmx-example</module>
+    <module>xa-datasource</module>
   </modules>
 
   <dependencies>
