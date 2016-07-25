@@ -130,6 +130,6 @@ if [ "$1" = "deploy" ] || [ "$1" = "undeploy" ]; then
 elif [ "$1" = "start" ] || [ "$1" = "stop" ]; then
     echo "To start or stop TomEE please use catalina.sh/startup.sh/shutdown.sh instead of tomee.sh"
 else
-    "$_RUNJAVA" $DEBUG $LOGGING_MANAGER -Dopenejb.base="$CATALINA_BASE" -cp "$CLASSPATH" org.apache.openejb.cli.Bootstrap $*
+    "$_RUNJAVA" $DEBUG $LOGGING_MANAGER -Dopenejb.base="$CATALINA_BASE" -cp "$CLASSPATH" org.apache.openejb.cli.Bootstrap "$@"
 fi
 
