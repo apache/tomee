@@ -45,5 +45,10 @@ public class Movies {
         return query.getResultList();
     }
 
+    public void deleteAll() throws Exception {
+        Query query = entityManager.createQuery("DELETE from Movie");
+        query.executeUpdate();
+    }
+
 }
 //END SNIPPET: code
