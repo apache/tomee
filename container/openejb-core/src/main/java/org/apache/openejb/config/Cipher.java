@@ -80,26 +80,28 @@ public class Cipher {
             return;
         }
 
+        final PasswordCipher cipher;
         try {
-            final PasswordCipher cipher = PasswordCipherFactory.getPasswordCipher(cipherName);
-
-            if (line.hasOption("decrypt")) {
-                final String pwdArg = (String) line.getArgList().get(0);
-                final char[] encryptdPassword = pwdArg.toCharArray();
-                System.out.println(cipher.decrypt(encryptdPassword));
-
-            } else { // if option neither encrypt/decrypt is specified, we assume
-                // it is encrypt.
-                final String plainPassword = (String) line.getArgList().get(0);
-                System.out.println(new String(cipher.encrypt(plainPassword)));
-            }
+            cipher = PasswordCipherFactory.getPasswordCipher(cipherName);
 
         } catch (final PasswordCipherException e) {
             System.out.println("Could not load password cipher implementation class. Check your classpath.");
-
             availableCiphers();
 
             throw new SystemExitException(-1);
+        }
+
+        if (line.hasOption("decrypt")) {
+            final String pwdArg = (String) line.getArgList().get(0);
+            final char[] encryptdPassword = pwdArg.toCharArray();
+
+            System.out.println(cipher.decrypt(encryptdPassword));
+
+        } else { // if option neither encrypt/decrypt is specified, we assume
+            // it is encrypt.
+            final String plainPassword = (String) line.getArgList().get(0);
+
+            System.out.println(new String(cipher.encrypt(plainPassword)));
         }
     }
 
@@ -108,7 +110,8 @@ public class Cipher {
             final ResourceFinder finder = new ResourceFinder("META-INF/");
             final Map<String, Class<? extends PasswordCipher>> impls = finder.mapAllImplementations(PasswordCipher.class);
             System.out.println("Available ciphers are: " + Join.join(", ", impls.keySet()));
-        } catch (final Exception dontCare) {
+
+        } catch (final Exception ignore) {
             // no-op
         }
     }
