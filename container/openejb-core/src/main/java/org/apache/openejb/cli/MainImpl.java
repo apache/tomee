@@ -69,8 +69,8 @@ public class MainImpl implements Main {
 
         // create the Options
         final Options options = new Options();
-        options.addOption(null, "version", false, "");
-        options.addOption("h", "help", false, "");
+        options.addOption(null, "version", false, "Display version");
+        options.addOption("h", "help", false, "Display help");
         options.addOption("e", "errors", false, "Produce execution error messages");
 
         CommandLine line = null;
@@ -241,6 +241,7 @@ public class MainImpl implements Main {
             final String footer = "\n" +
                 "Try 'openejb <command> --help' for help on a specific command.\n" +
                 "For example 'openejb deploy --help'.\n" +
+                "Important: to display exceptions while running commands, add -e option.\n" +
                 "\n" +
                 "Apache OpenEJB -- EJB Container System and Server.\n" +
                 "For additional information, see http://tomee.apache.org\n" +
