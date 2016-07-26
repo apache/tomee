@@ -1157,13 +1157,21 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             final AppModule appModule = loadApplication(standardContext);
             appModule.getProperties().put("loader.from", "tomcat");
 
-            if (standardContext.getNamingResources() instanceof OpenEJBNamingResource) {
+            final boolean skipTomeeResourceWrapping = !"true".equalsIgnoreCase(SystemInstance.get().getProperty("tomee.tomcat.resource.wrap", "true"));
+            if (!skipTomeeResourceWrapping && OpenEJBNamingResource.class.isInstance(standardContext.getNamingResources())) {
                 final Collection<String> importedNames = new ArrayList<>(); // we can get the same resource twice as in tomcat
 
                 // add them to the app as resource
+                final boolean forceDataSourceWrapping = "true".equalsIgnoreCase(SystemInstance.get().getProperty("tomee.tomcat.datasource.wrap", "false"));
                 final OpenEJBNamingResource nr = (OpenEJBNamingResource) standardContext.getNamingResources();
                 for (final ResourceBase resource : nr.getTomcatResources()) {
                     final String name = resource.getName();
+
+                    // already init (org.apache.catalina.core.NamingContextListener.addResource())
+                    // skip wrapping to ensure resource consistency
+                    final boolean isDataSource = DataSource.class.getName().equals(resource.getType());
+                    final boolean isAlreadyCreated = ContextResource.class.isInstance(resource) && ContextResource.class.cast(resource).getSingleton() && isDataSource;
+
                     if (!importedNames.contains(name)) {
                         importedNames.add(name);
                     } else {
@@ -1183,7 +1191,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     if (!found) {
                         final Resource newResource;
 
-                        if (DataSource.class.getName().equals(resource.getType())) { // we forward it to TomEE datasources
+                        if (forceDataSourceWrapping || (!isAlreadyCreated && isDataSource)) { // we forward it to TomEE datasources
                             newResource = new Resource(name, resource.getType());
 
                             boolean jta = false;
