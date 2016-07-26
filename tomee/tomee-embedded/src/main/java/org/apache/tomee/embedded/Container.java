@@ -278,7 +278,9 @@ public class Container implements AutoCloseable {
             throw new IllegalStateException(e);
         }
 
-        addCallersAsEjbModule(loader, app, additionalCallers);
+        if (!SystemInstance.isInitialized() || Boolean.parseBoolean(SystemInstance.get().getProperty("tomee.embedded.add-callers", "true"))) {
+            addCallersAsEjbModule(loader, app, additionalCallers);
+        }
 
         systemInstance.addObserver(new StandardContextCustomizer(configuration, webModule, keepClassloader));
         if (systemInstance.getComponent(AnnotationDeployer.FolderDDMapper.class) == null) {
