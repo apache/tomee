@@ -46,6 +46,10 @@ public class HttpConnectionTest {
 
                 final OutputStream responseBody = exchange.getResponseBody();
                 responseBody.write("secure page".getBytes());
+                final String authorization = exchange.getRequestHeaders().getFirst("Authorization");
+                if (authorization != null) {
+                    responseBody.write(authorization.getBytes("UTF-8"));
+                }
                 responseBody.close();
             }
         });
@@ -86,6 +90,38 @@ public class HttpConnectionTest {
             }
 
             Assert.assertTrue("should contain", sb.toString().contains("secure"));
+        }
+    }
+
+    @Test
+    public void httpBasic() throws URISyntaxException, IOException {
+        final HttpConnectionFactory factory = new HttpConnectionFactory();
+        final String url = "http://localhost:" + server.getAddress().getPort() + "/e?authorization=Basic%20token";
+        for (int i = 0; i < 3; i++) {
+            final Connection connection = factory.getConnection(new URI(url));
+
+            BufferedReader br = null;
+            final StringBuilder sb = new StringBuilder();
+            String line;
+            try {
+                br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                while ((line = br.readLine()) != null) {
+                    sb.append(line);
+                }
+            } catch (final IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (br != null) {
+                    try {
+                        br.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                connection.close();
+            }
+
+            Assert.assertTrue("should contain", sb.toString().contains("secure pageBasic token"));
         }
     }
 }

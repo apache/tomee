@@ -79,6 +79,9 @@ public class HttpConnectionFactory implements ConnectionFactory {
             if (params.containsKey("readTimeout")) {
                 httpURLConnection.setReadTimeout(Integer.parseInt(params.get("readTimeout")));
             }
+            if (params.containsKey("authorization")) {
+                httpURLConnection.setRequestProperty("Authorization", params.get("authorization"));
+            }
 
             if (params.containsKey("sslKeyStore") || params.containsKey("sslTrustStore")) {
                 try {
