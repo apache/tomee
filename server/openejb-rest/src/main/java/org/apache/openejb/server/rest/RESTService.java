@@ -1056,9 +1056,27 @@ public abstract class RESTService implements ServerService, SelfManaging {
         }
 
         public boolean isInWebApp(final String appId, final WebAppInfo webApp) { // we support paralell deployments so we need app (versionned) + webapp check
-            return !(appId == null && this.appId != null) && !(appId != null && !appId.equals(this.appId))
-                    && ((webApp.contextRoot != null &&
-                    webApp.contextRoot.equals(webapp)) || (webapp != null && webapp.startsWith(webApp.contextRoot != null ? webApp.contextRoot : "")));
+            final boolean appTest = !(appId == null && this.appId != null) && !(appId != null && !appId.equals(this.appId));
+            return appTest && cleanWeb(webapp).equals(cleanWeb(webApp.contextRoot));
+        }
+
+        private String cleanWeb(final String s) {
+            if (s == null) {
+                return "";
+            }
+            if (s.startsWith("/")) {
+                return cleanWeb(s.substring(1));
+            }
+
+            final int i = s.indexOf("##");
+            if (i > 0) {
+                return cleanWeb(s.substring(0, i));
+            }
+
+            if ("ROOT".equals(s)) {
+                return "";
+            }
+            return s;
         }
     }
 
