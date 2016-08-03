@@ -240,7 +240,7 @@ public class RemoteServer {
                 }
 
                 if (javaOpts != null) {
-                    argsList.addAll(parse(javaOpts));
+                    argsList.addAll(parse(javaOpts.replace("${openejb.base}", home.getAbsolutePath())));
                 }
 
                 final Map<String, String> addedArgs = new HashMap<String, String>();
@@ -250,9 +250,9 @@ public class RemoteServer {
                         if (equal < 0) {
                             addedArgs.put(arg, "null");
                         } else {
-                            addedArgs.put(arg.substring(0, equal), arg.substring(equal + 1));
+                            addedArgs.put(arg.substring(0, equal), arg.substring(equal + 1).replace("${openejb.base}", home.getAbsolutePath()));
                         }
-                        argsList.add(arg);
+                        argsList.add(arg.replace("${openejb.base}", home.getAbsolutePath()));
                     }
                 }
 
@@ -273,7 +273,7 @@ public class RemoteServer {
                     final File openejbJar = lib("openejb-core", lib, webapplib);
                     final StringBuilder cp = new StringBuilder(openejbJar.getAbsolutePath());
                     if (additionalClasspath != null) {
-                        cp.append(ps).append(additionalClasspath);
+                        cp.append(ps).append(additionalClasspath.replace("${openejb.base}", home.getAbsolutePath()));
                     }
 
                     argsList.add("-cp");
@@ -332,7 +332,7 @@ public class RemoteServer {
                         cp.append(ps).append(commonsLoggingJar.getAbsolutePath());
                     }
                     if (additionalClasspath != null) {
-                        cp.append(ps).append(additionalClasspath);
+                        cp.append(ps).append(additionalClasspath.replace("${openejb.base}", home.getAbsolutePath()));
                     }
                     argsList.add(cp.toString());
 

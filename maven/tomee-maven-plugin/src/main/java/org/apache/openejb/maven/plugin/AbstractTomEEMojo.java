@@ -93,6 +93,7 @@ import static org.apache.maven.artifact.repository.ArtifactRepositoryPolicy.CHEC
 import static org.apache.maven.artifact.repository.ArtifactRepositoryPolicy.UPDATE_POLICY_DAILY;
 import static org.apache.maven.artifact.repository.ArtifactRepositoryPolicy.UPDATE_POLICY_NEVER;
 import static org.apache.maven.artifact.versioning.VersionRange.createFromVersion;
+import static org.apache.openejb.loader.Files.mkdirs;
 import static org.apache.openejb.util.JarExtractor.delete;
 import static org.codehaus.plexus.util.FileUtils.deleteDirectory;
 import static org.codehaus.plexus.util.IOUtil.close;
@@ -233,6 +234,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
     @Parameter
     protected List<String> classpaths;
+
+    @Parameter(property = "tomee-plugin.classpathSeparator")
+    protected String classpathSeparator;
 
     @Parameter
     protected List<String> customizers;
@@ -641,8 +645,36 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         if (!classpaths.isEmpty()) {
             final StringBuilder cpBuilder = new StringBuilder();
             for (final String cp : classpaths) {
-                cpBuilder.append(cp);
-                cpBuilder.append(File.pathSeparatorChar);
+                final String[] split = cp.split(":");
+                if (split.length >= 3 /*GAV*/) {
+                    final FileWithMavenMeta jar;
+                    try {
+                        jar = resolve(split[0], split[1], split[2],
+                                split.length > 4 ? split[4] : null, split.length > 3 ? split[3] : "jar");
+                    } catch (final ArtifactResolutionException | ArtifactNotFoundException e) {
+                        throw new IllegalArgumentException(e);
+                    }
+
+                    final File classpathRoot = new File(catalinaBase, "boot");
+                    if (!classpathRoot.isDirectory()) {
+                        mkdirs(classpathRoot);
+                    }
+
+                    final File target = new File(classpathRoot, stripVersion ? jar.stripVersion(true) : jar.resolved.getName());
+                    try {
+                        IO.copy(jar.resolved, target);
+                    } catch (final IOException e) {
+                        throw new IllegalArgumentException(e);
+                    }
+
+                    cpBuilder.append("${openejb.base}/boot/").append(target.getName());
+                } else { // else plain path
+                    cpBuilder.append(cp);
+                }
+                if (classpathSeparator == null) {
+                    classpathSeparator = File.pathSeparator;
+                }
+                cpBuilder.append(classpathSeparator);
             }
             return cpBuilder.substring(0, cpBuilder.length() - 1); // Dump the final path separator
         }
@@ -1621,7 +1653,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         }
 
         String stripVersion(final boolean keepExtension) {
-            return artifact + (classifier != null && !classifier.isEmpty() ? "-" + classifier : "") +  "." + type;
+            return artifact + (classifier != null && !classifier.isEmpty() ? "-" + classifier : "") +  (keepExtension ? "." + type : "");
         }
     }
 }
