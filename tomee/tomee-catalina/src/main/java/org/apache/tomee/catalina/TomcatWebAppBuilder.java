@@ -1772,7 +1772,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     final Object[] appEventListeners = standardContext.getApplicationEventListeners();
                     final Object[] newEventListeners = new Object[appEventListeners.length + 1];
 
-                    System.arraycopy(appEventListeners, 0, newEventListeners, 1, appEventListeners.length);
+                    System.arraycopy(appEventListeners, 0, newEventListeners, 0, appEventListeners.length);
                     newEventListeners[newEventListeners.length - 1] = endWebBeansListener;
                     standardContext.setApplicationEventListeners(newEventListeners);
                 }
@@ -1781,7 +1781,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     final Object[] lifecycleListeners = standardContext.getApplicationLifecycleListeners();
                     final Object[] newLifecycleListeners = new Object[lifecycleListeners.length + 1];
 
-                    System.arraycopy(lifecycleListeners, 0, newLifecycleListeners, 1, lifecycleListeners.length);
+                    System.arraycopy(lifecycleListeners, 0, newLifecycleListeners, 0, lifecycleListeners.length);
                     newLifecycleListeners[newLifecycleListeners.length - 1] = endWebBeansListener;
                     standardContext.setApplicationLifecycleListeners(newLifecycleListeners);
                 }
