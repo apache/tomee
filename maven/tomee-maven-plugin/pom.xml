@@ -110,11 +110,24 @@
       <type>war</type>
       <scope>test</scope>
       <exclusions>
-      <exclusion>
-        <groupId>*</groupId>
-        <artifactId>*</artifactId>
-      </exclusion>
-    </exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <version>2.6.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-jul</artifactId>
+      <version>2.6.2</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
