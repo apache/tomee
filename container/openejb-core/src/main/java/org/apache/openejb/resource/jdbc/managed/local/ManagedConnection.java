@@ -23,6 +23,7 @@ import org.apache.openejb.util.Logger;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Wrapper;
@@ -164,13 +165,20 @@ public class ManagedConnection implements InvocationHandler {
                 (key.user == null ? XADataSource.class.cast(key.ds).getXAConnection() : XADataSource.class.cast(key.ds).getXAConnection(key.user, key.pwd));
         if (XAConnection.class.isInstance(connection)) {
             xaConnection = XAConnection.class.cast(connection);
-            delegate = xaConnection.getConnection();
+            delegate = wrapDelegate(xaConnection, xaConnection.getConnection());
             xaResource = xaConnection.getXAResource();
         } else {
             delegate = Connection.class.cast(connection);
             xaResource = new LocalXAResource(delegate);
         }
         return connection;
+    }
+
+    private Connection wrapDelegate(final XAConnection xaConnection, final Connection connection) {
+        return (Connection) Proxy.newProxyInstance(
+                Thread.currentThread().getContextClassLoader(),
+                new Class<?>[] { Connection.class },
+                new XAConnectionWrapper(xaConnection, connection));
     }
 
     protected void setAutoCommit(final boolean value) throws SQLException {
@@ -233,8 +241,8 @@ public class ManagedConnection implements InvocationHandler {
     private static class ClosingSynchronization implements Synchronization {
         private final Connection connection;
 
-        public ClosingSynchronization(final Connection delegate) {
-            this.connection = delegate;
+        public ClosingSynchronization(final Connection connection) {
+            this.connection = connection;
         }
 
         @Override
@@ -283,6 +291,26 @@ public class ManagedConnection implements InvocationHandler {
         @Override
         public int hashCode() {
             return hash;
+        }
+    }
+
+    private class XAConnectionWrapper implements InvocationHandler {
+        private final XAConnection xaConnection;
+        private final Connection delegate;
+
+        public XAConnectionWrapper(final XAConnection xaConnection, final Connection delegate) {
+            this.xaConnection = xaConnection;
+            this.delegate = delegate;
+        }
+
+        @Override
+        public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+            if ("close".equals(method.getName()) && (args == null || args.length == 0)) {
+                xaConnection.close();
+                return null;
+            } else {
+                return method.invoke(delegate, args);
+            }
         }
     }
 }

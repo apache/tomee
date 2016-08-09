@@ -70,9 +70,9 @@
     code is dependent on any OpenEJB classes.
     -->
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>4.7.5-SNAPSHOT</version>
+      <version>4.7.5-TT.6</version>
       <scope>test</scope>
     </dependency>
 

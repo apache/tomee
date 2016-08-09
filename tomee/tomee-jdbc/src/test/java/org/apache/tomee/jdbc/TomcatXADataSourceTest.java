@@ -27,17 +27,27 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.annotation.Resource;
+import javax.management.AttributeNotFoundException;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanException;
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+import javax.management.ReflectionException;
 import javax.sql.DataSource;
+import java.lang.management.ManagementFactory;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Properties;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 @RunWith(ApplicationComposer.class)
 public class TomcatXADataSourceTest {
+    private static final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+
     @Resource(name = "xadb")
     private DataSource ds;
 
@@ -70,12 +80,21 @@ public class TomcatXADataSourceTest {
     }
 
     @Test
-    public void check() throws SQLException {
+    public void check() throws Exception {
         assertNotNull(ds);
         final Connection c = ds.getConnection();
         assertNotNull(c);
         assertThat(c.getMetaData().getConnection(), instanceOf(JDBCXAConnectionWrapper.class));
         c.close();
 
+        assertEquals(0, getActiveConnections("xadb"));
+    }
+
+
+    private int getActiveConnections(final String dataSourceName)
+            throws MalformedObjectNameException, MBeanException, AttributeNotFoundException, InstanceNotFoundException, ReflectionException {
+        final ObjectName objectName = new ObjectName("openejb.management:ObjectType=datasources,DataSource=" + dataSourceName);
+        final Object activeConnectionsAttribute = server.getAttribute(objectName, "Active");
+        return (int) (Integer) activeConnectionsAttribute;
     }
 }

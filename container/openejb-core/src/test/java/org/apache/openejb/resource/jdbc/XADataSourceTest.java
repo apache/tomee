@@ -33,25 +33,37 @@ import org.junit.runner.RunWith;
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.ejb.Singleton;
+import javax.management.AttributeNotFoundException;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanException;
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+import javax.management.ReflectionException;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.PersistenceContext;
 import java.io.File;
+import java.lang.management.ManagementFactory;
 import java.util.Properties;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 @RunWith(ApplicationComposer.class)
 public class XADataSourceTest {
+
+    private static final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+
     @EJB
     private XAEJB ejb;
 
     @Test
-    public void checkOperationsWork() {
+    public void checkOperationsWork() throws Exception {
         ejb.doSthg();
         ejb.assertPersisted();
         try {
@@ -59,6 +71,16 @@ public class XADataSourceTest {
         } catch (final EJBException ejbEx) {
             assertThat(ejbEx.getCause(), instanceOf(IllegalArgumentException.class));
         }
+
+        assertEquals(0, getActiveConnections("xadbn"));
+        assertEquals(0, getActiveConnections("xadbn2"));
+    }
+
+    private int getActiveConnections(final String dataSourceName)
+            throws MalformedObjectNameException, MBeanException, AttributeNotFoundException, InstanceNotFoundException, ReflectionException {
+        final ObjectName objectName = new ObjectName("openejb.management:ObjectType=datasources,DataSource=" + dataSourceName);
+        final Object activeConnectionsAttribute = server.getAttribute(objectName, "numActive");
+        return (int) (Integer) activeConnectionsAttribute;
     }
 
     @Configuration

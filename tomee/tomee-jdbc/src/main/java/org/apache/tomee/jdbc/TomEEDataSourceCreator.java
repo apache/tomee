@@ -40,13 +40,16 @@ import org.apache.tomcat.jdbc.pool.PooledConnection;
 import javax.management.ObjectName;
 import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
+import javax.sql.XAConnection;
 import javax.sql.XADataSource;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 public class TomEEDataSourceCreator extends PoolDataSourceCreator {
@@ -80,17 +83,17 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
 
         updateProperties(prop, converted, driver);
         final PoolConfiguration config = build(PoolProperties.class, converted);
-        final TomEEDataSource ds = build(TomEEDataSource.class, new TomEEDataSource(config, name), converted);
-
         final String xa = String.class.cast(properties.remove("XaDataSource"));
         if (xa != null) {
-            cleanProperty(ds, "xadatasource");
-
             final XADataSource xaDs = XADataSourceResource.proxy(Thread.currentThread().getContextClassLoader(), xa);
-            ds.setDataSource(xaDs);
+            final TomEEDataSource instance = new TomEEDataSource(config, name, xaDs);
+            return build(TomEEDataSource.class, instance, converted);
+
+        } else {
+            final TomEEDataSource instance = new TomEEDataSource(config, name);
+            return build(TomEEDataSource.class, instance, converted);
         }
 
-        return ds;
     }
 
     private void updateProperties(final SuperProperties properties, final Properties converted, final String driver) {
@@ -215,7 +218,15 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
         }
 
         public TomEEDataSource(final PoolConfiguration poolConfiguration, final String name) {
+            this(poolConfiguration, name, null);
+        }
+
+        public TomEEDataSource(final PoolConfiguration poolConfiguration, final String name, final XADataSource xaDs) {
             super(readOnly(poolConfiguration));
+            if (xaDs != null) {
+                this.setDataSource(xaDs);
+            }
+
             try { // just to force the pool to be created and be able to register the mbean
                 createPool();
                 initJmx(name);
@@ -297,6 +308,16 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
                 }
             }
         }
+
+        @Override
+        public Connection getConnection() throws SQLException {
+            return super.getConnection();
+        }
+
+        @Override
+        public Connection getConnection(final String username, final String password) throws SQLException {
+            return super.getConnection(username, password);
+        }
     }
 
     private static class ReadOnlyConnectionpool implements InvocationHandler {
@@ -330,6 +351,7 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
         @Override
         protected PooledConnection create(final boolean incrementCounter) {
             final PooledConnection con = super.create(incrementCounter);
+
             if (getPoolProperties().getDataSource() == null) { // using driver
                 // init driver with TCCL
                 ClassLoader cl = Thread.currentThread().getContextClassLoader();

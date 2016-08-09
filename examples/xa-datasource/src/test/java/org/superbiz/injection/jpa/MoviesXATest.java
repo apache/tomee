@@ -48,7 +48,7 @@ public class MoviesXATest {
         final PersistenceUnit unit = new PersistenceUnit("movie-unit");
         unit.setJtaDataSource("movieDatabase");
         unit.setNonJtaDataSource("movieDatabaseUnmanaged");
-        unit.setProperty("openjpa.jdbc.SynchronizeMappings", "buildSchema");
+        unit.setProperty("openjpa.jdbc.SynchronizeMappings", "buildSchema(foreignKeys=true,schemaAction='dropDB,add')");
         unit.addClass(Movie.class);
         return unit;
     }
@@ -70,6 +70,7 @@ public class MoviesXATest {
         p.put("movieDatabase.UserName", "admin");
         p.put("movieDatabase.Password", "admin");
         p.put("movieDatabase.MaxActive", "128");
+        p.put("movieDatabase.InitialSize", "2");
         p.put("movieDatabase.MaxIdle", "25");
         p.put("movieDatabase.MinIdle", "10");
         p.put("movieDatabase.AccessToUnderlyingConnectionAllowed", "true");
@@ -88,6 +89,7 @@ public class MoviesXATest {
         p.put("movieDatabaseUnmanaged.UserName", "admin");
         p.put("movieDatabaseUnmanaged.Password", "admin");
         p.put("movieDatabaseUnmanaged.JtaManaged", "false");
+        p.put("movieDatabaseUnmanaged.InitialSize", "2");
         p.put("movieDatabaseUnmanaged.MaxActive", "128");
         p.put("movieDatabaseUnmanaged.MaxIdle", "25");
         p.put("movieDatabaseUnmanaged.MinIdle", "10");
@@ -99,97 +101,6 @@ public class MoviesXATest {
         p.put("movieDatabaseUnmanaged.PoolPreparedStatements", "true");
         p.put("movieDatabaseUnmanaged.MaxOpenPreparedStatements", "1024");
         p.put("movieDatabaseUnmanaged.ValidationQuery", "values 1");
-
-        /*
-
-        Configuration for MS SQL Server
-
-        p.put("movieDatabaseXA", "new://Resource?type=javax.sql.XADataSource&class-name=com.microsoft.sqlserver.jdbc.SQLServerXADataSource");
-        p.put("movieDatabaseXA.DatabaseName", "moviefun");
-        p.put("movieDatabaseXA.URL", "jdbc:sqlserver://localhost:1433;databaseName=moviefun;SelectMethod=cursor;sendStringParametersAsUnicode=false");
-
-        p.put("movieDatabase", "new://Resource?type=DataSource");
-        p.put("movieDatabase.XaDataSource", "movieDatabaseXA");
-        p.put("movieDatabase.UserName", "sa");
-        p.put("movieDatabase.Password", "XXX");
-        p.put("movieDatabase.JtaManaged", "true");
-        p.put("movieDatabase.MaxActive", "128");
-        p.put("movieDatabase.MaxIdle", "25");
-        p.put("movieDatabase.MinIdle", "10");
-        p.put("movieDatabase.AccessToUnderlyingConnectionAllowed", "true");
-        p.put("movieDatabase.TestOnBorrow", "false");
-        p.put("movieDatabase.TestWhileIdle", "true");
-        p.put("movieDatabase.TimeBetweenEvictionRuns", "1 minute");
-        p.put("movieDatabase.MaxWaitTime", "0 seconds");
-        p.put("movieDatabase.PoolPreparedStatements", "true");
-        p.put("movieDatabase.MaxOpenPreparedStatements", "1024");
-        p.put("movieDatabase.ValidationQuery", "select 1");
-
-        p.put("movieDatabaseUnmanaged", "new://Resource?type=DataSource");
-        p.put("movieDatabaseUnmanaged.LogSql", "true");
-        p.put("movieDatabaseUnmanaged.JdbcDriver", "com.microsoft.sqlserver.jdbc.SQLServerDriver");
-        p.put("movieDatabaseUnmanaged.JdbcUrl", "jdbc:sqlserver://localhost:1433;databaseName=moviefun;SelectMethod=cursor;sendStringParametersAsUnicode=false");
-        p.put("movieDatabaseUnmanaged.UserName", "sa");
-        p.put("movieDatabaseUnmanaged.Password", "XXX");
-        p.put("movieDatabaseUnmanaged.JtaManaged", "false");
-        p.put("movieDatabaseUnmanaged.MaxActive", "128");
-        p.put("movieDatabaseUnmanaged.MaxIdle", "25");
-        p.put("movieDatabaseUnmanaged.MinIdle", "10");
-        p.put("movieDatabaseUnmanaged.AccessToUnderlyingConnectionAllowed", "true");
-        p.put("movieDatabaseUnmanaged.TestOnBorrow", "false");
-        p.put("movieDatabaseUnmanaged.TestWhileIdle", "true");
-        p.put("movieDatabaseUnmanaged.TimeBetweenEvictionRuns", "1 minute");
-        p.put("movieDatabaseUnmanaged.MaxWaitTime", "0 seconds");
-        p.put("movieDatabaseUnmanaged.PoolPreparedStatements", "true");
-        p.put("movieDatabaseUnmanaged.MaxOpenPreparedStatements", "1024");
-        p.put("movieDatabaseUnmanaged.ValidationQuery", "select 1");
-
-        p.put("movieDatabaseXA", "new://Resource?type=javax.sql.XADataSource&class-name=oracle.jdbc.xa.client.OracleXADataSource");
-        p.put("movieDatabaseXA.url", "jdbc:oracle:thin:@//localhost:1521/orcl");
-
-        */
-
-        /*
-
-        Configuration for Oracle
-
-        p.put("movieDatabase", "new://Resource?type=DataSource");
-        p.put("movieDatabase.XaDataSource", "movieDatabaseXA");
-        p.put("movieDatabase.JtaManaged", "true");
-        p.put("movieDatabase.UserName", "system");
-        p.put("movieDatabase.Password", "oracle");
-        p.put("movieDatabase.MaxActive", "128");
-        p.put("movieDatabase.MaxIdle", "25");
-        p.put("movieDatabase.MinIdle", "10");
-        p.put("movieDatabase.AccessToUnderlyingConnectionAllowed", "true");
-        p.put("movieDatabase.TestOnBorrow", "false");
-        p.put("movieDatabase.TestWhileIdle", "true");
-        p.put("movieDatabase.TimeBetweenEvictionRuns", "1 minute");
-        p.put("movieDatabase.MaxWaitTime", "0 seconds");
-        p.put("movieDatabase.PoolPreparedStatements", "true");
-        p.put("movieDatabase.MaxOpenPreparedStatements", "1024");
-        p.put("movieDatabase.ValidationQuery", "select 1 from dual");
-
-        p.put("movieDatabaseUnmanaged", "new://Resource?type=DataSource");
-        p.put("movieDatabaseUnmanaged.LogSql", "true");
-        p.put("movieDatabaseUnmanaged.JdbcDriver", "oracle.jdbc.driver.OracleDriver");
-        p.put("movieDatabaseUnmanaged.JdbcUrl", "jdbc:oracle:thin:@//localhost:1521/orcl");
-        p.put("movieDatabaseUnmanaged.UserName", "system");
-        p.put("movieDatabaseUnmanaged.Password", "oracle");
-        p.put("movieDatabaseUnmanaged.JtaManaged", "false");
-        p.put("movieDatabaseUnmanaged.MaxActive", "128");
-        p.put("movieDatabaseUnmanaged.MaxIdle", "25");
-        p.put("movieDatabaseUnmanaged.MinIdle", "10");
-        p.put("movieDatabaseUnmanaged.AccessToUnderlyingConnectionAllowed", "true");
-        p.put("movieDatabaseUnmanaged.TestOnBorrow", "false");
-        p.put("movieDatabaseUnmanaged.TestWhileIdle", "true");
-        p.put("movieDatabaseUnmanaged.TimeBetweenEvictionRuns", "1 minute");
-        p.put("movieDatabaseUnmanaged.MaxWaitTime", "0 seconds");
-        p.put("movieDatabaseUnmanaged.PoolPreparedStatements", "true");
-        p.put("movieDatabaseUnmanaged.MaxOpenPreparedStatements", "1024");
-        p.put("movieDatabaseUnmanaged.ValidationQuery", "select 1 from dual");
-
-        */
 
         System.out.println("Using db: " + db);
 
