@@ -107,7 +107,7 @@ public class PojoEndpoint extends CxfEndpoint {
         Thread.currentThread().setContextClassLoader(loader);
         try {
             final WebBeansContext webBeansContext = WebBeansContext.currentInstance();
-            final BeanManagerImpl bm = webBeansContext.getBeanManagerImpl();
+            final BeanManagerImpl bm = webBeansContext == null ? null : webBeansContext.getBeanManagerImpl();
             if (bm != null && bm.isInUse()) { // try cdi bean
                 if (JAXWS_AS_CDI_BEANS) {
                     try {
