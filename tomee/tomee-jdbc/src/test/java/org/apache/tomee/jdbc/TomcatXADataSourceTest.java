@@ -33,7 +33,9 @@ import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.sql.DataSource;
+import javax.sql.XAConnection;
 import javax.transaction.Synchronization;
+import javax.transaction.Transaction;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -52,6 +54,9 @@ import static org.junit.Assert.fail;
 public class TomcatXADataSourceTest {
     @Resource(name = "xadb")
     private DataSource ds;
+
+    @Resource(name = "xadb2")
+    private DataSource badDs;
 
     @EJB
     private TxP tx;
@@ -85,6 +90,20 @@ public class TomcatXADataSourceTest {
             .p("xadb.MaxIdle", "25")
             .p("xadb.MaxActive", "25")
             .p("xadb.InitialSize", "3")
+
+            .p("xa2", "new://Resource?class-name=" + BadDataSource.class.getName())
+            .p("xa2.url", "jdbc:hsqldb:mem:tomcat-xa")
+            .p("xa2.user", "sa")
+            .p("xa2.password", "")
+            .p("xa2.SkipImplicitAttributes", "true")
+            .p("xa2.SkipPropertiesFallback", "true") // otherwise goes to connection properties
+
+            .p("xadb2", "new://Resource?type=DataSource")
+            .p("xadb2.xaDataSource", "xa2")
+            .p("xadb2.JtaManaged", "true")
+            .p("xadb2.MaxIdle", "25")
+            .p("xadb2.MaxActive", "25")
+            .p("xadb2.InitialSize", "3")
 
             .build();
     }
@@ -221,12 +240,64 @@ public class TomcatXADataSourceTest {
             assertEquals(0, tds.getActive());
             assertEquals(25, tds.getIdle());
         }
+
+        // underlying connection closed when fetch from pool
+        for (int it = 0; it < 5; it++) { // ensures it always works and not only the first time
+            for (int i = 0; i < 25; i++) {
+                tx.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            final Connection ref = badDs.getConnection();
+                            final Transaction transaction = OpenEJB.getTransactionManager().getTransaction();
+
+                            transaction.registerSynchronization(new Synchronization() {
+                                @Override
+                                public void beforeCompletion() {
+                                    // no-op
+                                }
+
+                                @Override
+                                public void afterCompletion(final int status) { // JPA does it
+                                    try {
+                                        ref.close();
+                                    } catch (final SQLException e) {
+                                        fail(e.getMessage());
+                                    }
+                                }
+                            });
+                            ref.getMetaData();
+                        } catch (final Exception sql) {
+                            // we expect this
+                        }
+                    }
+                });
+            }
+            assertEquals(0, tds.getActive());
+            assertEquals(25, tds.getIdle());
+        }
     }
 	
     @Singleton
     public static class TxP {
         public void run(final Runnable r) {
             r.run();
+        }
+    }
+
+    public static class BadDataSource extends JDBCXADataSource {
+
+        public BadDataSource() throws SQLException {
+        }
+
+        @Override
+        public XAConnection getXAConnection() throws SQLException {
+
+            // this closes the underlying connection - which should cause enlist to fail
+            final XAConnection xaConnection = super.getXAConnection();
+            final Connection connection = xaConnection.getConnection();
+            connection.close();
+            return xaConnection;
         }
     }
 }
