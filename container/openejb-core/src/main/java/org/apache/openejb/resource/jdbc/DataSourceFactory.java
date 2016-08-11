@@ -101,7 +101,7 @@ public class DataSourceFactory {
             flushConfig = new FlushableDataSourceHandler.FlushConfig(
                 name, configuredManaged,
                 impl, PropertiesHelper.propertiesToString(properties),
-                maxWaitTime, timeBetweenEvictionRuns, minEvictableIdleTime);
+                maxWaitTime, timeBetweenEvictionRuns, minEvictableIdleTime, useAlternativeDriver);
         } else {
             flushConfig = null;
         }

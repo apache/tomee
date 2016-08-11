@@ -20,6 +20,7 @@ import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
+import javax.sql.CommonDataSource;
 import java.io.Flushable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
@@ -27,7 +28,6 @@ import java.lang.reflect.Method;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import javax.sql.CommonDataSource;
 
 public class FlushableDataSourceHandler implements InvocationHandler {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, FlushableDataSourceHandler.class);
@@ -44,7 +44,16 @@ public class FlushableDataSourceHandler implements InvocationHandler {
     private void createANewDelegate() {
         final CommonDataSource old = delegate;
         try {
-            this.delegate = DataSourceFactory.create(config.name, config.configuredManaged, config.impl, config.definition, config.maxWaitTime, config.timeBetweenEvictionRuns, config.minEvictableIdleTime);
+            this.delegate = DataSourceFactory.create(
+                    config.name,
+                    config.configuredManaged,
+                    config.impl,
+                    config.definition,
+                    config.maxWaitTime,
+                    config.timeBetweenEvictionRuns,
+                    config.minEvictableIdleTime,
+                    config.useAlternativeDriver);
+
         } catch (final Exception e) {
             LOGGER.error("Can't recreate the datasource, keeping old one", e);
             this.delegate = old;
@@ -104,8 +113,10 @@ public class FlushableDataSourceHandler implements InvocationHandler {
         public final Duration maxWaitTime;
         public final Duration timeBetweenEvictionRuns;
         public final Duration minEvictableIdleTime;
+        private final boolean useAlternativeDriver;
 
-        public FlushConfig(final String name, final boolean configuredManaged, final Class impl, final String definition, final Duration maxWaitTime, final Duration timeBetweenEvictionRuns, final Duration minEvictableIdleTime) {
+        public FlushConfig(final String name, final boolean configuredManaged, final Class impl, final String definition, final Duration maxWaitTime, final Duration timeBetweenEvictionRuns, final Duration minEvictableIdleTime,
+                final boolean useAlternativeDriver) {
             this.name = name;
             this.impl = impl;
             this.configuredManaged = configuredManaged;
@@ -113,6 +124,7 @@ public class FlushableDataSourceHandler implements InvocationHandler {
             this.maxWaitTime = maxWaitTime;
             this.timeBetweenEvictionRuns = timeBetweenEvictionRuns;
             this.minEvictableIdleTime = minEvictableIdleTime;
+            this.useAlternativeDriver = useAlternativeDriver;
         }
     }
 }
