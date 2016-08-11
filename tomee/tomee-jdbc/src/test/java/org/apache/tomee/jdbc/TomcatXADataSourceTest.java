@@ -16,8 +16,11 @@
  */
 package org.apache.tomee.jdbc;
 
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.junit.ApplicationComposer;
+import org.apache.openejb.resource.jdbc.managed.local.ManagedDataSource;
+import org.apache.openejb.testing.Classes;
 import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.Module;
 import org.apache.openejb.testng.PropertiesBuilder;
@@ -27,21 +30,44 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.annotation.Resource;
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
+import javax.sql.ConnectionEventListener;
 import javax.sql.DataSource;
+import javax.sql.StatementEventListener;
+import javax.sql.XAConnection;
+import javax.transaction.Synchronization;
+import javax.transaction.Transaction;
+import javax.transaction.xa.XAException;
+import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicReference;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.core.IsInstanceOf.instanceOf;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 @RunWith(ApplicationComposer.class)
 public class TomcatXADataSourceTest {
     @Resource(name = "xadb")
     private DataSource ds;
 
+    @Resource(name = "xadb2")
+    private DataSource badDs;
+
+    @EJB
+    private TxP tx;
+
     @Module
+    @Classes(TxP.class)
     public EjbJar mandatory() {
         return new EjbJar();
     }
@@ -55,16 +81,34 @@ public class TomcatXADataSourceTest {
             .p("txMgr.txRecovery", "true")
             .p("txMgr.logFileDir", "target/test/xa/howl")
 
-                // real XA datasources
+            // real XA datasources
             .p("xa", "new://Resource?class-name=" + JDBCXADataSource.class.getName())
             .p("xa.url", "jdbc:hsqldb:mem:tomcat-xa")
             .p("xa.user", "sa")
             .p("xa.password", "")
             .p("xa.SkipImplicitAttributes", "true")
+            .p("xa.SkipPropertiesFallback", "true") // otherwise goes to connection properties
 
             .p("xadb", "new://Resource?type=DataSource")
             .p("xadb.xaDataSource", "xa")
             .p("xadb.JtaManaged", "true")
+            .p("xadb.MaxIdle", "25")
+            .p("xadb.MaxActive", "25")
+            .p("xadb.InitialSize", "3")
+
+            .p("xa2", "new://Resource?class-name=" + BadDataSource.class.getName())
+            .p("xa2.url", "jdbc:hsqldb:mem:tomcat-xa")
+            .p("xa2.user", "sa")
+            .p("xa2.password", "")
+            .p("xa2.SkipImplicitAttributes", "true")
+            .p("xa2.SkipPropertiesFallback", "true") // otherwise goes to connection properties
+
+            .p("xadb2", "new://Resource?type=DataSource")
+            .p("xadb2.xaDataSource", "xa2")
+            .p("xadb2.JtaManaged", "true")
+            .p("xadb2.MaxIdle", "25")
+            .p("xadb2.MaxActive", "25")
+            .p("xadb2.InitialSize", "3")
 
             .build();
     }
@@ -72,10 +116,286 @@ public class TomcatXADataSourceTest {
     @Test
     public void check() throws SQLException {
         assertNotNull(ds);
-        final Connection c = ds.getConnection();
-        assertNotNull(c);
-        assertThat(c.getMetaData().getConnection(), instanceOf(JDBCXAConnectionWrapper.class));
-        c.close();
+        final TomEEDataSourceCreator.TomEEDataSource tds = TomEEDataSourceCreator.TomEEDataSource.class.cast(ManagedDataSource.class.cast(ds).getDelegate());
 
+        assertEquals(3, tds.getIdle()); // InitSize
+
+        Connection c = null;
+        try {
+            c = ds.getConnection();
+            assertNotNull(c);
+
+            final Connection connection = c.getMetaData().getConnection(); // just to do something and force the connection init
+            assertThat(connection, instanceOf(JDBCXAConnectionWrapper.class));
+        } finally {
+            if (c != null) {
+                c.close();
+            }
+        }
+
+        assertEquals(0, tds.getActive());
+        assertEquals(3, tds.getIdle());
+
+        for (int it = 0; it < 5; it++) { // ensures it always works and not only the first time
+            final Collection<Connection> connections = new ArrayList<Connection>(25);
+            for (int i = 0; i < 25; i++) {
+                final Connection connection = ds.getConnection();
+                connections.add(connection);
+                connection.getMetaData(); // trigger connection retrieving otherwise nothing is done (pool is not used)
+            }
+            assertEquals(25, tds.getActive());
+            assertEquals(0, tds.getIdle());
+            for (final Connection toClose : connections) {
+                toClose.close();
+            }
+            assertEquals(0, tds.getActive());
+            assertEquals(25, tds.getIdle());
+        }
+        // in tx - closing in tx
+        for (int it = 0; it < 5; it++) { // ensures it always works and not only the first time
+            for (int i = 0; i < 25; i++) {
+                tx.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Connection c = null;
+                            for (int i = 0; i < 25; i++) {
+                                final Connection connection = ds.getConnection();
+                                connection.getMetaData(); // trigger connection retrieving otherwise nothing is done (pool is not used)
+                                if (c != null) {
+                                    assertEquals(c.unwrap(Connection.class), connection.unwrap(Connection.class));
+                                } else {
+                                    c = connection;
+                                }
+                            }
+                            c.close(); // ensure we handle properly eager close invocations
+                        } catch (final SQLException sql) {
+                            fail(sql.getMessage());
+                        }
+                    }
+                });
+            }
+            assertEquals(0, tds.getActive());
+            assertEquals(25, tds.getIdle());
+        }
+
+
+        // in tx - closing after tx
+        for (int it = 0; it < 5; it++) { // ensures it always works and not only the first time
+            for (int i = 0; i < 25; i++) {
+                final AtomicReference<Connection> ref = new AtomicReference<Connection>();
+                tx.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Connection c = null;
+                            for (int i = 0; i < 25; i++) {
+                                final Connection connection = ds.getConnection();
+                                connection.getMetaData(); // trigger connection retrieving otherwise nothing is done (pool is not used)
+                                if (c != null) {
+                                    assertEquals(c.unwrap(Connection.class), connection.unwrap(Connection.class));
+                                } else {
+                                    c = connection;
+                                    ref.set(c);
+                                }
+                            }
+                        } catch (final SQLException sql) {
+                            fail(sql.getMessage());
+                        }
+                    }
+                });
+                assertTrue(ref.get().isClosed()); // closed with tx
+                ref.get().close();
+                assertTrue(ref.get().isClosed());
+            }
+            assertEquals(0, tds.getActive());
+            assertEquals(25, tds.getIdle());
+        }
+
+        // in tx - closing in commit
+        for (int it = 0; it < 5; it++) { // ensures it always works and not only the first time
+            for (int i = 0; i < 25; i++) {
+                tx.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            final Connection ref = ds.getConnection();
+                            ref.getMetaData();
+                            OpenEJB.getTransactionManager().getTransaction().registerSynchronization(new Synchronization() {
+                                @Override
+                                public void beforeCompletion() {
+                                    // no-op
+                                }
+
+                                @Override
+                                public void afterCompletion(final int status) { // JPA does it
+                                    try {
+                                        ref.close();
+                                    } catch (final SQLException e) {
+                                        fail(e.getMessage());
+                                    }
+                                }
+                            });
+                        } catch (final Exception sql) {
+                            fail(sql.getMessage());
+                        }
+                    }
+                });
+            }
+            assertEquals(0, tds.getActive());
+            assertEquals(25, tds.getIdle());
+        }
+
+        // underlying connection closed when fetch from pool
+        for (int it = 0; it < 5; it++) { // ensures it always works and not only the first time
+            for (int i = 0; i < 25; i++) {
+                tx.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            final Connection ref = badDs.getConnection();
+                            final Transaction transaction = OpenEJB.getTransactionManager().getTransaction();
+
+                            transaction.registerSynchronization(new Synchronization() {
+                                @Override
+                                public void beforeCompletion() {
+                                    // no-op
+                                }
+
+                                @Override
+                                public void afterCompletion(final int status) { // JPA does it
+                                    try {
+                                        ref.close();
+                                    } catch (final SQLException e) {
+                                        fail(e.getMessage());
+                                    }
+                                }
+                            });
+                            ref.getMetaData();
+                        } catch (final Exception e) {
+                            // we expect this
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+            assertEquals(0, tds.getActive());
+            assertEquals(25, tds.getIdle());
+        }
+    }
+	
+    @Singleton
+    public static class TxP {
+        public void run(final Runnable r) {
+            r.run();
+        }
+    }
+
+    public static class BadDataSource extends JDBCXADataSource {
+        public BadDataSource() throws SQLException {
+            // no-op
+        }
+
+        @Override
+        public XAConnection getXAConnection() throws SQLException {
+            return corrupt(super.getXAConnection());
+        }
+
+        @Override
+        public XAConnection getXAConnection(final String user, final String pwd) throws SQLException {
+            return corrupt(super.getXAConnection());
+        }
+
+        // this closes the underlying connection - which should cause enlist to fail
+        private XAConnection corrupt(final XAConnection xaConnection) throws SQLException {
+            return new XAConnection() {
+                private final XAConnection delegate = xaConnection;
+
+                @Override
+                public XAResource getXAResource() throws SQLException {
+                    return new XAResource() {
+                        @Override
+                        public void commit(final Xid xid, final boolean b) throws XAException {
+
+                        }
+
+                        @Override
+                        public void end(final Xid xid, final int i) throws XAException {
+
+                        }
+
+                        @Override
+                        public void forget(final Xid xid) throws XAException {
+
+                        }
+
+                        @Override
+                        public int getTransactionTimeout() throws XAException {
+                            return 0;
+                        }
+
+                        @Override
+                        public boolean isSameRM(final XAResource xaResource) throws XAException {
+                            return false;
+                        }
+
+                        @Override
+                        public int prepare(final Xid xid) throws XAException {
+                            return 0;
+                        }
+
+                        @Override
+                        public Xid[] recover(final int i) throws XAException {
+                            return new Xid[0];
+                        }
+
+                        @Override
+                        public void rollback(final Xid xid) throws XAException {
+
+                        }
+
+                        @Override
+                        public boolean setTransactionTimeout(final int i) throws XAException {
+                            return false;
+                        }
+
+                        @Override
+                        public void start(final Xid xid, final int i) throws XAException {
+                            throw new XAException("preventing this from being enlisted");
+                        }
+                    };
+                }
+
+                @Override
+                public Connection getConnection() throws SQLException {
+                    return delegate.getConnection();
+                }
+
+                @Override
+                public void close() throws SQLException {
+                    delegate.close();
+                }
+
+                @Override
+                public void addConnectionEventListener(final ConnectionEventListener listener) {
+                    delegate.addConnectionEventListener(listener);
+                }
+
+                @Override
+                public void removeConnectionEventListener(final ConnectionEventListener listener) {
+                    delegate.removeConnectionEventListener(listener);
+                }
+
+                @Override
+                public void addStatementEventListener(final StatementEventListener listener) {
+                    delegate.addStatementEventListener(listener);
+                }
+
+                @Override
+                public void removeStatementEventListener(final StatementEventListener listener) {
+                    delegate.removeStatementEventListener(listener);
+                }
+            };
+        }
     }
 }

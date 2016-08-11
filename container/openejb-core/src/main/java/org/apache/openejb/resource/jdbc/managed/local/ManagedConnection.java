@@ -20,13 +20,6 @@ package org.apache.openejb.resource.jdbc.managed.local;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Wrapper;
-
 import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 import javax.sql.XAConnection;
@@ -39,6 +32,12 @@ import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.xa.XAResource;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Wrapper;
 
 public class ManagedConnection implements InvocationHandler {
     private final TransactionManager transactionManager;
@@ -97,6 +96,17 @@ public class ManagedConnection implements InvocationHandler {
 
             // shouldn't be used without a transaction but if so just delegate to the actual connection
             if (transaction == null) {
+                if ("close".equals(mtdName)) {
+                    if (delegate == null) { // no need to get a connection
+                        return null;
+                    }
+
+                    closeConnection(true);
+                    return null;
+                }
+                if ("isClosed".equals(mtdName) && closed) {
+                    return true;
+                }
                 if (delegate == null) {
                     newConnection();
                 }
@@ -108,27 +118,30 @@ public class ManagedConnection implements InvocationHandler {
                 if (!currentTransaction.equals(transaction)) {
                     throw new SQLException("Connection can not be used while enlisted in another transaction");
                 }
-                return invokeUnderTransaction(delegate, method, args);
+                return invokeUnderTransaction(method, args);
             }
 
             // get the already bound connection to the current transaction or enlist this one in the tx
-            if (isUnderTransaction(transaction.getStatus())) {
-                Connection connection = Connection.class.cast(registry.getResource(key));
+            final int transactionStatus = transaction.getStatus();
+            if (isUnderTransaction(transactionStatus)) {
+                final Connection connection = Connection.class.cast(registry.getResource(key));
                 if (connection == null && delegate == null) {
                     newConnection();
-                    connection = delegate;
 
-                    registry.putResource(key, delegate);
                     currentTransaction = transaction;
                     try {
-                        transaction.enlistResource(getXAResource());
+                        if (!transaction.enlistResource(getXAResource())) {
+                            closeConnection(true);
+                            throw new SQLException("Unable to enlist connection in transaction: enlistResource returns 'false'.");
+                        }
                     } catch (final RollbackException ignored) {
                         // no-op
                     } catch (final SystemException e) {
                         throw new SQLException("Unable to enlist connection the transaction", e);
                     }
 
-                    transaction.registerSynchronization(new ClosingSynchronization(delegate));
+                    registry.putResource(key, delegate);
+                    transaction.registerSynchronization(new ClosingSynchronization());
 
                     try {
                         setAutoCommit(false);
@@ -145,7 +158,14 @@ public class ManagedConnection implements InvocationHandler {
                     delegate = connection;
                 }
 
-                return invokeUnderTransaction(connection, method, args);
+                return invokeUnderTransaction(method, args);
+            }
+
+            if ("isClosed".equals(mtdName) && closed) {
+                return true;
+            }
+            if ("close".equals(mtdName)) { // let it be handled by the ClosingSynchronisation since we have a tx there
+                return close();
             }
 
             // we shouldn't come here, tempted to just throw an exception
@@ -164,8 +184,8 @@ public class ManagedConnection implements InvocationHandler {
                 (key.user == null ? XADataSource.class.cast(key.ds).getXAConnection() : XADataSource.class.cast(key.ds).getXAConnection(key.user, key.pwd));
         if (XAConnection.class.isInstance(connection)) {
             xaConnection = XAConnection.class.cast(connection);
-            delegate = xaConnection.getConnection();
             xaResource = xaConnection.getXAResource();
+            delegate = xaConnection.getConnection();
         } else {
             delegate = Connection.class.cast(connection);
             xaResource = new LocalXAResource(delegate);
@@ -187,7 +207,7 @@ public class ManagedConnection implements InvocationHandler {
         }
     }
 
-    private Object invokeUnderTransaction(final Connection delegate, final Method method, final Object[] args) throws Exception {
+    private Object invokeUnderTransaction(final Method method, final Object[] args) throws Exception {
         final String mtdName = method.getName();
         if ("setAutoCommit".equals(mtdName)
             || "commit".equals(mtdName)
@@ -220,23 +240,7 @@ public class ManagedConnection implements InvocationHandler {
         return new SQLException("can't call " + mtdName + " when the connection is JtaManaged");
     }
 
-    private static void close(final Connection connection) {
-        try {
-            if (!connection.isClosed()) {
-                connection.close();
-            }
-        } catch (final SQLException e) {
-            // no-op
-        }
-    }
-
-    private static class ClosingSynchronization implements Synchronization {
-        private final Connection connection;
-
-        public ClosingSynchronization(final Connection delegate) {
-            this.connection = delegate;
-        }
-
+    private class ClosingSynchronization implements Synchronization {
         @Override
         public void beforeCompletion() {
             // no-op
@@ -244,7 +248,24 @@ public class ManagedConnection implements InvocationHandler {
 
         @Override
         public void afterCompletion(final int status) {
-            close(connection);
+            closeConnection(true);
+        }
+    }
+
+    private void closeConnection(final boolean force) {
+        if (!force && closed) {
+            return;
+        }
+        try {
+            if (xaConnection != null) { // handles the underlying connection
+                xaConnection.close();
+            } else if (delegate != null && !delegate.isClosed()) {
+                delegate.close();
+            }
+        } catch (final SQLException e) {
+            // no-op
+        } finally {
+            close(); // set the flag
         }
     }
 
