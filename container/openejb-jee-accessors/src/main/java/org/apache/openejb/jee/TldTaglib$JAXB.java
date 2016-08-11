@@ -263,9 +263,9 @@ public class TldTaglib$JAXB
                     }
                 }
                 taglibExtension.add(taglibExtensionItem);
-            } else {
+            }/* else { // we are not the one responsible of the failure so don't fail
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "description"), new QName("http://java.sun.com/xml/ns/javaee", "display-name"), new QName("http://java.sun.com/xml/ns/javaee", "icon"), new QName("http://java.sun.com/xml/ns/javaee", "tlib-version"), new QName("http://java.sun.com/xml/ns/javaee", "jsp-version"), new QName("http://java.sun.com/xml/ns/javaee", "short-name"), new QName("http://java.sun.com/xml/ns/javaee", "uri"), new QName("http://java.sun.com/xml/ns/javaee", "validator"), new QName("http://java.sun.com/xml/ns/javaee", "listener"), new QName("http://java.sun.com/xml/ns/javaee", "tag"), new QName("http://java.sun.com/xml/ns/javaee", "tag-file"), new QName("http://java.sun.com/xml/ns/javaee", "function"), new QName("http://java.sun.com/xml/ns/javaee", "taglib-extension"));
-            }
+            }*/
         }
         if (descriptions != null) {
             try {

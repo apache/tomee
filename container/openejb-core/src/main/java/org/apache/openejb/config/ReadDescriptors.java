@@ -825,7 +825,7 @@ public class ReadDescriptors implements DynamicDeployer {
     public static WebApp readWebApp(final URL url) throws OpenEJBException {
         final WebApp webApp;
         try {
-            webApp = (WebApp) WebXml.unmarshal(url);
+            webApp = WebXml.unmarshal(url);
         } catch (final SAXException e) {
             throw new OpenEJBException("Cannot parse the web.xml file: " + url.toExternalForm(), e);
         } catch (final JAXBException e) {
