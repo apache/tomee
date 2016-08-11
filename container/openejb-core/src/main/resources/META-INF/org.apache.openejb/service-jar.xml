@@ -578,7 +578,7 @@
       service="Resource"
       types="javax.sql.DataSource, DataSource"
       factory-name="create"
-          constructor="ServiceId, JtaManaged, JdbcDriver, Definition, MaxWaitTime, TimeBetweenEvictionRuns, MinEvictableIdleTime, OpenEJBResourceClasspath"
+      constructor="ServiceId, JtaManaged, JdbcDriver, Definition, MaxWaitTime, TimeBetweenEvictionRuns, MinEvictableIdleTime, OpenEJBResourceClasspath"
       class-name="org.apache.openejb.resource.jdbc.DataSourceFactory">
     ServiceId
 
@@ -786,7 +786,7 @@
       service="Resource"
       types="javax.sql.DataSource, DataSource"
       factory-name="create"
-          constructor="ServiceId, JtaManaged, JdbcDriver, Definition, MaxWaitTime, TimeBetweenEvictionRuns, MinEvictableIdleTime, OpenEJBResourceClasspath"
+      constructor="ServiceId, JtaManaged, JdbcDriver, Definition, MaxWaitTime, TimeBetweenEvictionRuns, MinEvictableIdleTime, OpenEJBResourceClasspath"
       class-name="org.apache.openejb.resource.jdbc.DataSourceFactory">
     ServiceId
 
