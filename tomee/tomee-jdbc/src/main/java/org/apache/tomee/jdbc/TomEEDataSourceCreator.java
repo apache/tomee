@@ -40,7 +40,6 @@ import org.apache.tomcat.jdbc.pool.PooledConnection;
 import javax.management.ObjectName;
 import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
-import javax.sql.XAConnection;
 import javax.sql.XADataSource;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -49,7 +48,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 public class TomEEDataSourceCreator extends PoolDataSourceCreator {
