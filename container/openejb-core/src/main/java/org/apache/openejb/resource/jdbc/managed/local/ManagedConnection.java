@@ -132,6 +132,7 @@ public class ManagedConnection implements InvocationHandler {
                     currentTransaction = transaction;
                     try {
                         if (!transaction.enlistResource(getXAResource())) {
+                            closeConnection(true);
                             throw new SQLException("Unable to enlist connection in transaction: enlistResource returns 'false'.");
                         }
                     } catch (final RollbackException ignored) {
