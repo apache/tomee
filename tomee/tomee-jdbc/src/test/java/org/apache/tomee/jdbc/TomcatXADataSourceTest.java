@@ -84,18 +84,24 @@ public class TomcatXADataSourceTest {
 
         assertEquals(3, tds.getIdle()); // InitSize
 
-        try (final Connection c = ds.getConnection()) {
+        Connection c = null;
+        try {
+            c = ds.getConnection();
             assertNotNull(c);
 
             final Connection connection = c.getMetaData().getConnection(); // just to do something and force the connection init
             assertThat(connection, instanceOf(JDBCXAConnectionWrapper.class));
-        } // here we close the connection so we are back in the initial state
+        } finally {
+            if (c != null) {
+                c.close();
+            }
+        }
 
         assertEquals(0, tds.getActive());
         assertEquals(3, tds.getIdle());
 
         for (int it = 0; it < 5; it++) { // ensures it always works and not only the first time
-            final Collection<Connection> connections = new ArrayList<>(25);
+            final Collection<Connection> connections = new ArrayList<Connection>(25);
             for (int i = 0; i < 25; i++) {
                 final Connection connection = ds.getConnection();
                 connections.add(connection);

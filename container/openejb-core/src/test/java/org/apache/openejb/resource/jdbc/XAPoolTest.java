@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.resource.jdbc;
 
-import org.apache.commons.dbcp2.BasicDataSource;
-import org.apache.commons.dbcp2.managed.ManagedConnection;
+import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.commons.dbcp.managed.ManagedConnection;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.resource.jdbc.dbcp.ManagedDataSourceWithRecovery;
@@ -25,7 +25,6 @@ import org.apache.openejb.resource.jdbc.pool.DefaultDataSourceCreator;
 import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.Module;
 import org.apache.openejb.testng.PropertiesBuilder;
-import org.hsqldb.jdbc.pool.JDBCXAConnectionWrapper;
 import org.hsqldb.jdbc.pool.JDBCXADataSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -75,6 +74,7 @@ public class XAPoolTest {
             .p("xadb.xaDataSource", "xa")
             .p("xadb.JtaManaged", "true")
             .p("xadb.MaxIdle", "25")
+            .p("xadb.MaxActive", "25")
             .p("xadb.MaxTotal", "25")
             .p("xadb.InitialSize", "3")
 
@@ -88,19 +88,25 @@ public class XAPoolTest {
 
         assertEquals(0, tds.getNumIdle()); // db not yet used so no connection at all (dbcp behavior)
 
-        try (final Connection c = ds.getConnection()) {
+        Connection c = null;
+        try {
+            c = ds.getConnection();
             assertNotNull(c);
 
             final Connection connection = c.getMetaData().getConnection(); // just to do something and force the connection init
             assertThat(connection, instanceOf(ManagedConnection.class));
-            assertTrue(connection.toString().contains("URL=jdbc:hsqldb:mem:dbcpxa, UserName=SA, HSQL Database Engine Driver"));
-        } // here we close the connection so we are back in the initial state
+            assertTrue(connection.toString().contains("jdbc:hsqldb:mem:dbcpxa, UserName=SA, HSQL Database Engine Driver"));
+        } finally {
+            if (c != null) {
+                c.close();
+            }
+        }
 
         assertEquals(0, tds.getNumActive());
         assertEquals(3, tds.getNumIdle());
 
         for (int it = 0; it < 5; it++) { // ensures it always works and not only the first time
-            final Collection<Connection> connections = new ArrayList<>(25);
+            final Collection<Connection> connections = new ArrayList<Connection>(25);
             for (int i = 0; i < 25; i++) {
                 final Connection connection = ds.getConnection();
                 connections.add(connection);
