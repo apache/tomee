@@ -124,7 +124,7 @@ public class ManagedConnection implements InvocationHandler {
             // get the already bound connection to the current transaction or enlist this one in the tx
             final int transactionStatus = transaction.getStatus();
             if (isUnderTransaction(transactionStatus)) {
-                Connection connection = Connection.class.cast(registry.getResource(key));
+                final Connection connection = Connection.class.cast(registry.getResource(key));
                 if (connection == null && delegate == null) {
                     newConnection();
 
