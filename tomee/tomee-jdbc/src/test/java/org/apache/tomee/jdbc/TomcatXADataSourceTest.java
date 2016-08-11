@@ -32,10 +32,15 @@ import org.junit.runner.RunWith;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
+import javax.sql.ConnectionEventListener;
 import javax.sql.DataSource;
+import javax.sql.StatementEventListener;
 import javax.sql.XAConnection;
 import javax.transaction.Synchronization;
 import javax.transaction.Transaction;
+import javax.transaction.xa.XAException;
+import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -43,7 +48,7 @@ import java.util.Collection;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
@@ -267,8 +272,9 @@ public class TomcatXADataSourceTest {
                                 }
                             });
                             ref.getMetaData();
-                        } catch (final Exception sql) {
+                        } catch (final Exception e) {
                             // we expect this
+                            e.printStackTrace();
                         }
                     }
                 });
@@ -286,18 +292,110 @@ public class TomcatXADataSourceTest {
     }
 
     public static class BadDataSource extends JDBCXADataSource {
-
         public BadDataSource() throws SQLException {
+            // no-op
         }
 
         @Override
         public XAConnection getXAConnection() throws SQLException {
+            return corrupt(super.getXAConnection());
+        }
 
-            // this closes the underlying connection - which should cause enlist to fail
-            final XAConnection xaConnection = super.getXAConnection();
-            final Connection connection = xaConnection.getConnection();
-            connection.close();
-            return xaConnection;
+        @Override
+        public XAConnection getXAConnection(final String user, final String pwd) throws SQLException {
+            return corrupt(super.getXAConnection());
+        }
+
+        // this closes the underlying connection - which should cause enlist to fail
+        private XAConnection corrupt(final XAConnection xaConnection) throws SQLException {
+            return new XAConnection() {
+                private final XAConnection delegate = xaConnection;
+
+                @Override
+                public XAResource getXAResource() throws SQLException {
+                    return new XAResource() {
+                        @Override
+                        public void commit(final Xid xid, final boolean b) throws XAException {
+
+                        }
+
+                        @Override
+                        public void end(final Xid xid, final int i) throws XAException {
+
+                        }
+
+                        @Override
+                        public void forget(final Xid xid) throws XAException {
+
+                        }
+
+                        @Override
+                        public int getTransactionTimeout() throws XAException {
+                            return 0;
+                        }
+
+                        @Override
+                        public boolean isSameRM(final XAResource xaResource) throws XAException {
+                            return false;
+                        }
+
+                        @Override
+                        public int prepare(final Xid xid) throws XAException {
+                            return 0;
+                        }
+
+                        @Override
+                        public Xid[] recover(final int i) throws XAException {
+                            return new Xid[0];
+                        }
+
+                        @Override
+                        public void rollback(final Xid xid) throws XAException {
+
+                        }
+
+                        @Override
+                        public boolean setTransactionTimeout(final int i) throws XAException {
+                            return false;
+                        }
+
+                        @Override
+                        public void start(final Xid xid, final int i) throws XAException {
+                            throw new XAException("preventing this from being enlisted");
+                        }
+                    };
+                }
+
+                @Override
+                public Connection getConnection() throws SQLException {
+                    return delegate.getConnection();
+                }
+
+                @Override
+                public void close() throws SQLException {
+                    delegate.close();
+                }
+
+                @Override
+                public void addConnectionEventListener(final ConnectionEventListener listener) {
+                    delegate.addConnectionEventListener(listener);
+                }
+
+                @Override
+                public void removeConnectionEventListener(final ConnectionEventListener listener) {
+                    delegate.removeConnectionEventListener(listener);
+                }
+
+                @Override
+                public void addStatementEventListener(final StatementEventListener listener) {
+                    delegate.addStatementEventListener(listener);
+                }
+
+                @Override
+                public void removeStatementEventListener(final StatementEventListener listener) {
+                    delegate.removeStatementEventListener(listener);
+                }
+            };
         }
     }
 }

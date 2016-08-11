@@ -48,6 +48,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 public class TomEEDataSourceCreator extends PoolDataSourceCreator {
@@ -219,6 +220,10 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
             this(poolConfiguration, name, null);
         }
 
+        @Override public Future<Connection> getConnectionAsync() throws SQLException {
+            return super.getConnectionAsync();
+        }
+
         public TomEEDataSource(final PoolConfiguration poolConfiguration, final String name, final XADataSource xaDs) {
             super(readOnly(poolConfiguration));
             if (xaDs != null) {
@@ -305,16 +310,6 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
                     LOGGER.error("Unable to unregister JDBC pool with JMX", e);
                 }
             }
-        }
-
-        @Override
-        public Connection getConnection() throws SQLException {
-            return super.getConnection();
-        }
-
-        @Override
-        public Connection getConnection(final String username, final String password) throws SQLException {
-            return super.getConnection(username, password);
         }
     }
 
