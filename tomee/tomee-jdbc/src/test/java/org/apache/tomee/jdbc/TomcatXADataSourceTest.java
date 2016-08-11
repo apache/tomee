@@ -16,6 +16,7 @@
  */
 package org.apache.tomee.jdbc;
 
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.resource.jdbc.managed.local.ManagedDataSource;
@@ -32,16 +33,19 @@ import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.sql.DataSource;
+import javax.transaction.Synchronization;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 @RunWith(ApplicationComposer.class)
@@ -118,7 +122,35 @@ public class TomcatXADataSourceTest {
             assertEquals(25, tds.getIdle());
         }
 
-        // in tx
+        // in tx - closing in tx
+        for (int it = 0; it < 5; it++) { // ensures it always works and not only the first time
+            for (int i = 0; i < 25; i++) {
+                tx.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Connection c = null;
+                            for (int i = 0; i < 25; i++) {
+                                final Connection connection = ds.getConnection();
+                                connection.getMetaData(); // trigger connection retrieving otherwise nothing is done (pool is not used)
+                                if (c != null) {
+                                    assertEquals(c, connection);
+                                } else {
+                                    c = connection;
+                                }
+                            }
+                            c.close(); // ensure we handle properly eager close invocations
+                        } catch (final SQLException sql) {
+                            fail(sql.getMessage());
+                        }
+                    }
+                });
+            }
+            assertEquals(0, tds.getActive());
+            assertEquals(25, tds.getIdle());
+        }
+
+        // in tx - not closing
         for (int it = 0; it < 5; it++) { // ensures it always works and not only the first time
             for (int i = 0; i < 25; i++) {
                 tx.run(new Runnable() {
@@ -136,6 +168,72 @@ public class TomcatXADataSourceTest {
                                 }
                             }
                         } catch (final SQLException sql) {
+                            fail(sql.getMessage());
+                        }
+                    }
+                });
+            }
+            assertEquals(0, tds.getActive());
+            assertEquals(25, tds.getIdle());
+        }
+
+        // in tx - closing after tx
+        for (int it = 0; it < 5; it++) { // ensures it always works and not only the first time
+            for (int i = 0; i < 25; i++) {
+                final AtomicReference<Connection> ref = new AtomicReference<>();
+                tx.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Connection c = null;
+                            for (int i = 0; i < 25; i++) {
+                                final Connection connection = ds.getConnection();
+                                connection.getMetaData(); // trigger connection retrieving otherwise nothing is done (pool is not used)
+                                if (c != null) {
+                                    assertEquals(c, connection);
+                                } else {
+                                    c = connection;
+                                    ref.set(c);
+                                }
+                            }
+                        } catch (final SQLException sql) {
+                            fail(sql.getMessage());
+                        }
+                    }
+                });
+                assertTrue(ref.get().isClosed()); // closed with tx
+                ref.get().close();
+                assertTrue(ref.get().isClosed());
+            }
+            assertEquals(0, tds.getActive());
+            assertEquals(25, tds.getIdle());
+        }
+
+        // in tx - closing in commit
+        for (int it = 0; it < 5; it++) { // ensures it always works and not only the first time
+            for (int i = 0; i < 25; i++) {
+                tx.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            final Connection ref = ds.getConnection();
+                            ref.getMetaData();
+                            OpenEJB.getTransactionManager().getTransaction().registerSynchronization(new Synchronization() {
+                                @Override
+                                public void beforeCompletion() {
+                                    // no-op
+                                }
+
+                                @Override
+                                public void afterCompletion(final int status) { // JPA does it
+                                    try {
+                                        ref.close();
+                                    } catch (final SQLException e) {
+                                        fail(e.getMessage());
+                                    }
+                                }
+                            });
+                        } catch (final Exception sql) {
                             fail(sql.getMessage());
                         }
                     }
