@@ -102,6 +102,7 @@ import org.apache.openejb.util.Messages;
 import org.apache.webbeans.spi.BeanArchiveService;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -312,6 +313,28 @@ public class EjbJarInfoBuilder {
                 bda.interceptors.addAll(beans.getInterceptors());
                 bda.decorators.addAll(beans.getDecorators());
                 bda.stereotypeAlternatives.addAll(beans.getAlternativeStereotypes());
+            }
+        } else if (!ejbJar.enterpriseBeans.isEmpty() && Boolean.parseBoolean(jar.getProperties().getProperty("openejb.cdi.activated", "true"))) {
+            // TOMEE-1901
+            ejbJar.beans = new BeansInfo();
+            ejbJar.beans.version = "1.1";
+            ejbJar.beans.discoveryMode = "ANNOTATED";
+
+
+            final BeansInfo.BDAInfo bdaInfo = new BeansInfo.BDAInfo();
+            try {
+                bdaInfo.uri = ejbJar.moduleUri == null ? DEFAULT_BEANS_XML_KEY.toURI() : ejbJar.moduleUri;
+                try {
+                    bdaInfo.uri.toURL();
+                } catch (final MalformedURLException | IllegalArgumentException iae) { // test? fake a URI
+                    bdaInfo.uri = URI.create("jar:file://!/" + bdaInfo.uri.toASCIIString() + "/META-INF/beans.xml");
+                }
+            } catch (final URISyntaxException e) {
+                logger.warning(e.getMessage(), e);
+            }
+            ejbJar.beans.noDescriptorBdas.add(bdaInfo);
+            for (final EnterpriseBeanInfo ebi : ejbJar.enterpriseBeans) {
+                bdaInfo.managedClasses.add(ebi.ejbClass);
             }
         }
 

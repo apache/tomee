@@ -1062,7 +1062,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         if (!"true".equalsIgnoreCase(appInfo.properties.getProperty("openejb.cdi.activated", "true"))) {
             return false;
         }
-        for (final EjbJarInfo ejbJarInfo : appInfo.ejbJars) { // pretty trivial heuristic but fine for 99% of cases
+        for (final EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
             if (ejbJarInfo.beans != null
                     && (!ejbJarInfo.beans.bdas.isEmpty() || !ejbJarInfo.beans.noDescriptorBdas.isEmpty())) {
                 return true;
