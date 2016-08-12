@@ -39,6 +39,7 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URLs;
 import org.apache.openejb.util.classloader.URLClassLoaderFirst;
 import org.apache.openejb.util.reflection.Reflections;
+import org.apache.webbeans.config.WebBeansContext;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,6 +51,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -461,10 +463,24 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
                     it.remove();
                 }
             }
-            if (list.size() == 1) {
-                return Collections.enumeration(list);
-            }
             return Collections.enumeration(list);
+        }
+        if ("META-INF/faces-config.xml".equals(name)) { // mojarra workaround
+            try {
+                if (WebBeansContext.currentInstance() == null && Boolean.parseBoolean(SystemInstance.get().getProperty("tomee.jsf.ignore-owb", "true"))) {
+                    final Collection<URL> list = new HashSet<>(Collections.list(super.getResources(name)));
+                    final Iterator<URL> it = list.iterator();
+                    while (it.hasNext()) {
+                        final String fileName = Files.toFile(it.next()).getName();
+                        if (fileName.startsWith("openwebbeans-"/*jsf|el22*/) && fileName.endsWith(".jar")) {
+                            it.remove();
+                        }
+                    }
+                    return Collections.enumeration(list);
+                }
+            } catch (final Throwable th) {
+                // no-op
+            }
         }
         return URLClassLoaderFirst.filterResources(name, super.getResources(name));
     }

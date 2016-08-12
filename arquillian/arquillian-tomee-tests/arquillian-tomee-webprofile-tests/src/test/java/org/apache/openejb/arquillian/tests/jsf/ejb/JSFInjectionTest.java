@@ -22,6 +22,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,6 +42,7 @@ public class JSFInjectionTest extends JSFs {
     public static WebArchive getArchive() {
         return base("jsf-injection-test.war")
                 .addClasses(DummyEJB.class, DummyManagedBean.class)
+                .addAsWebInfResource(new StringAsset("openejb.cdi.activated = false"), "application.properties") // ensure plume doesn't fail without CDI on
                 .addAsWebResource(new ClassLoaderAsset(
                         JSFInjectionTest.class.getPackage().getName().replace('.', '/').concat("/").concat("dummy.xhtml")), "dummy.xhtml");
     }
