@@ -454,6 +454,15 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
         }
 
         @Override
+        public void defineInterceptorStack(final Bean<T> bean, final AnnotatedType<T> annotatedType, final WebBeansContext webBeansContext) {
+            super.defineInterceptorStack(bean,
+                    isDynamicBean(bean) ?
+                            (AnnotatedType<T>) webBeansContext.getAnnotatedElementFactory()
+                                    .newAnnotatedType(CdiEjbBean.class.cast(bean).getBeanContext().getManagedClass()) : annotatedType,
+                    webBeansContext);
+        }
+
+        @Override
         protected boolean needsProxy() {
             return !bean.beanContext.isDynamicallyImplemented() && super.needsProxy();
         }

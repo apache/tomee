@@ -246,6 +246,8 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -1298,43 +1300,6 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             final IAnnotationFinder finder = ejbModule.getFinder();
 
-
-            final Map<URL, List<String>> managedClasses;
-            {
-                final Beans beans = ejbModule.getBeans();
-
-                if (beans != null) {
-                    managedClasses = beans.getManagedClasses();
-                    getBeanClasses(beans.getUri(), finder, managedClasses, beans.getNotManagedClasses(), ejbModule.getAltDDs());
-
-                    // passing jar location to be able to manage maven classes/test-classes which have the same moduleId
-                    String id = ejbModule.getModuleId();
-                    if (ejbModule.getJarLocation() != null &&
-                            (ejbModule.getJarLocation().contains(ejbModule.getModuleId() + "/target/test-classes".replace("/", File.separator)) ||
-                            ejbModule.getJarLocation().contains(ejbModule.getModuleId() + "/build/classes/test".replace("/", File.separator)))) {
-                        // with maven/gradle if both src/main/java and src/test/java are deployed
-                        // moduleId.Comp exists twice so it fails
-                        // here we simply modify the test comp bean name to avoid it
-                        id += "_test";
-                    }
-                    final String name = BeanContext.Comp.openejbCompName(id);
-                    final org.apache.openejb.jee.ManagedBean managedBean = new CompManagedBean(name, BeanContext.Comp.class);
-                    managedBean.setTransactionType(TransactionType.BEAN);
-                    ejbModule.getEjbJar().addEnterpriseBean(managedBean);
-
-                    if ("true".equals(SystemInstance.get().getProperty("openejb.cdi.support.@Startup", "true"))) {
-                        final List<Annotated<Class<?>>> forceStart = finder.findMetaAnnotatedClasses(Startup.class);
-                        final List<String> startupBeans = beans.getStartupBeans();
-                        for (final Annotated<Class<?>> clazz : forceStart) {
-                            startupBeans.add(clazz.get().getName());
-                        }
-                    }
-                } else {
-                    managedClasses = new HashMap<>();
-                }
-            }
-
-
             // Fill in default sessionType for xml declared EJBs
             for (final EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
                 if (!(bean instanceof SessionBean)) {
@@ -1531,6 +1496,57 @@ public class AnnotationDeployer implements DynamicDeployer {
                     assemblyDescriptor.addApplicationException(exceptionClass, annotation.rollback(), annotation.inherited());
                 } else {
                     mergeApplicationExceptionAnnotation(assemblyDescriptor, exceptionClass, annotation);
+                }
+            }
+
+            { // after having found EJB for auto CDI activation
+                final Map<URL, List<String>> managedClasses;
+                Beans beans = ejbModule.getBeans();
+                if (beans == null && !ejbModule.getEjbJar().getEnterpriseBeansByEjbName().isEmpty()
+                        && Boolean.parseBoolean(ejbModule.getProperties().getProperty("openejb.cdi.activated", "true"))
+                        && Boolean.parseBoolean(SystemInstance.get().getProperty("openejb.cdi.activated-on-ejb", "true"))) {
+                    logger.info("Activating CDI in ACTIVATED mode in module '" + ejbModule.getModuleUri() + "' cause EJB were found\n" +
+                            "  add openejb.cdi.activated=false in application.properties to switch it off or\n" +
+                            "  openejb.cdi.activated-on-ejb=false in conf/system.properties" +
+                            "  to switch it off");
+                    beans = new Beans();
+                    beans.setBeanDiscoveryMode("ANNOTATED");
+                    beans.setVersion("1.1");
+                    try {
+                        ejbModule.getModuleUri().toURL();
+                        beans.setUri(ejbModule.getModuleUri().toASCIIString());
+                    } catch (final MalformedURLException | IllegalArgumentException iae) { // test? fake a URI
+                        beans.setUri(URI.create("jar:file://!/" + ejbModule.getModuleUri().toASCIIString() + "/META-INF/beans.xml").toASCIIString());
+                    }
+                    ejbModule.setBeans(beans);
+                }
+
+                if (beans != null) {
+                    managedClasses = beans.getManagedClasses();
+                    getBeanClasses(beans.getUri(), finder, managedClasses, beans.getNotManagedClasses(), ejbModule.getAltDDs());
+
+                    // passing jar location to be able to manage maven classes/test-classes which have the same moduleId
+                    String id = ejbModule.getModuleId();
+                    if (ejbModule.getJarLocation() != null &&
+                            (ejbModule.getJarLocation().contains(ejbModule.getModuleId() + "/target/test-classes".replace("/", File.separator)) ||
+                                    ejbModule.getJarLocation().contains(ejbModule.getModuleId() + "/build/classes/test".replace("/", File.separator)))) {
+                        // with maven/gradle if both src/main/java and src/test/java are deployed
+                        // moduleId.Comp exists twice so it fails
+                        // here we simply modify the test comp bean name to avoid it
+                        id += "_test";
+                    }
+                    final String name = BeanContext.Comp.openejbCompName(id);
+                    final org.apache.openejb.jee.ManagedBean managedBean = new CompManagedBean(name, BeanContext.Comp.class);
+                    managedBean.setTransactionType(TransactionType.BEAN);
+                    ejbModule.getEjbJar().addEnterpriseBean(managedBean);
+
+                    if ("true".equals(SystemInstance.get().getProperty("openejb.cdi.support.@Startup", "true"))) {
+                        final List<Annotated<Class<?>>> forceStart = finder.findMetaAnnotatedClasses(Startup.class);
+                        final List<String> startupBeans = beans.getStartupBeans();
+                        for (final Annotated<Class<?>> clazz : forceStart) {
+                            startupBeans.add(clazz.get().getName());
+                        }
+                    }
                 }
             }
 
