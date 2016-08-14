@@ -42,7 +42,6 @@ public class JSFInjectionTest extends JSFs {
     public static WebArchive getArchive() {
         return base("jsf-injection-test.war")
                 .addClasses(DummyEJB.class, DummyManagedBean.class)
-                .addAsWebInfResource(new StringAsset("openejb.cdi.activated = false"), "application.properties") // ensure plume doesn't fail without CDI on
                 .addAsWebResource(new ClassLoaderAsset(
                         JSFInjectionTest.class.getPackage().getName().replace('.', '/').concat("/").concat("dummy.xhtml")), "dummy.xhtml");
     }
