@@ -98,6 +98,7 @@ public class ManagedConnection implements InvocationHandler {
             if (transaction == null) {
                 if ("close".equals(mtdName)) {
                     if (delegate == null) { // no need to get a connection
+                        closed = true;
                         return null;
                     }
 
