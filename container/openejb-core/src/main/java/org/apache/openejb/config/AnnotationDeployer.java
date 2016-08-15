@@ -200,6 +200,7 @@ import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.Stereotype;
 import javax.enterprise.inject.spi.DefinitionException;
 import javax.enterprise.inject.spi.Extension;
+import javax.inject.Inject;
 import javax.interceptor.ExcludeClassInterceptors;
 import javax.interceptor.ExcludeDefaultInterceptors;
 import javax.interceptor.Interceptors;
@@ -1504,8 +1505,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                 final boolean deployComp;
                 if (beans == null && !ejbModule.getEjbJar().getEnterpriseBeansByEjbName().isEmpty()
-                        && Boolean.parseBoolean(ejbModule.getProperties().getProperty("openejb.cdi.activated", "true"))
-                        && Boolean.parseBoolean(SystemInstance.get().getProperty("openejb.cdi.activated-on-ejb", "true"))) {
+                        && isActivateCdiForEjbOnlyModules(ejbModule)) {
                     logger.info("Activating CDI in ACTIVATED mode in module '" + ejbModule.getModuleUri() + "' cause EJB were found\n" +
                             "  add openejb.cdi.activated=false in application.properties to switch it off or\n" +
                             "  openejb.cdi.activated-on-ejb=false in conf/system.properties" +
@@ -1565,6 +1565,21 @@ public class AnnotationDeployer implements DynamicDeployer {
             autoJpa(ejbModule);
 
             return ejbModule;
+        }
+
+        private boolean isActivateCdiForEjbOnlyModules(final EjbModule ejbModule) {
+            final String activated = ejbModule.getProperties().getProperty("openejb.cdi.activated");
+            return (activated == null && hasAtInject(ejbModule)) || (activated != null && Boolean.parseBoolean(activated))
+                    || Boolean.parseBoolean(SystemInstance.get().getProperty("openejb.cdi.activated-on-ejb", "false" /*spec should be true but mem + bck compat*/));
+        }
+
+        // quick heuristic to guess if cdi is there, avoid to need more mem when useless
+        private boolean hasAtInject(final EjbModule ejbModule) {
+            final IAnnotationFinder finder = ejbModule.getFinder();
+            return finder != null &&
+                    (!finder.findAnnotatedFields(Inject.class).isEmpty()
+                    || !finder.findAnnotatedConstructors(Inject.class).isEmpty()
+                    || !finder.findAnnotatedMethods(Inject.class).isEmpty());
         }
 
         private SessionType getSessionType(final Class<?> clazz) {

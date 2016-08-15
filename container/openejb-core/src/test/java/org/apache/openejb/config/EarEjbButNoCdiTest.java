@@ -27,18 +27,19 @@ import org.junit.runner.RunWith;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
+// not fully spec compliant but save a bunch of mem for legacy apps
+// + avoid to breaks existing ones so better than the opposite
+// we support config for that anyway
 @RunWith(ApplicationComposer.class)
-public class EarCdiTest {
+public class EarEjbButNoCdiTest {
     @Module
     public EjbJar ejb() {
         return new EjbJar()
-                .enterpriseBean(new StatelessBean(B1.class))
-                .enterpriseBean(new StatelessBean(B2.class));
+                .enterpriseBean(new StatelessBean(B1.class));
     }
 
     @Module
@@ -47,28 +48,18 @@ public class EarCdiTest {
     }
 
     @EJB
-    private B2 b2;
+    private B1 b1;
 
     @Test
     public void check() {
-        assertEquals("1", b2.val());
-        assertNotNull(WebBeansContext.currentInstance());
+        assertEquals("1", b1.val());
+        assertNull(WebBeansContext.currentInstance());
     }
 
     @Stateless
     public static class B1 {
         public String val() {
             return "1";
-        }
-    }
-
-    @Stateless
-    public static class B2 {
-        @Inject
-        private B1 b1;
-
-        public String val() {
-            return b1.val();
         }
     }
 }
