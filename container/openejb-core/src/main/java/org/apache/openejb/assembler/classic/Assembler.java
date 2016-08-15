@@ -2857,6 +2857,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     private Object doCreateResource(final Collection<ServiceInfo> infos, final ResourceInfo serviceInfo) throws OpenEJBException {
+        final String skipPropertiesFallback = (String) serviceInfo.properties.remove("SkipPropertiesFallback"); // do it early otherwise we can loose it
         final ObjectRecipe serviceRecipe = createRecipe(infos, serviceInfo);
         final boolean properties = PropertiesFactory.class.getName().equals(serviceInfo.className);
         if ("false".equalsIgnoreCase(serviceInfo.properties.getProperty("SkipImplicitAttributes", "false")) && !properties) {
@@ -2866,7 +2867,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         serviceInfo.properties.remove("SkipImplicitAttributes");
 
         // if custom instance allow to skip properties fallback to avoid to set unexpectedly it - connectionProps of DBs
-        final String skipPropertiesFallback = (String) serviceInfo.properties.remove("SkipPropertiesFallback");
         final AtomicReference<Properties> injectedProperties = new AtomicReference<>();
         if (!"true".equalsIgnoreCase(skipPropertiesFallback)) {
             serviceRecipe.setProperty("properties", new UnsetPropertiesRecipe() {
@@ -3460,10 +3460,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         if (isInternalProperty(property)) {
             return;
         }
+        final String msg = "unused property '" + property + "' for resource '" + id + "'";
         if (null != parentLogger) {
-            parentLogger.getChildLogger("service").warning("unusedProperty {0} - {1}", property, id);
-        }else{
-            System.out.println("unusedProperty: " + property + " - " + id);
+            parentLogger.getChildLogger("service").warning(msg);
+        } else { // note: we should throw an exception if this is called, shouldnt be possible in our lifecycle
+            System.out.println(msg);
         }
     }
 
