@@ -29,6 +29,12 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.OptionsLog;
 
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -40,12 +46,6 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 
 /**
  * This is the main class for the web administration.  It takes care of the
@@ -209,7 +209,8 @@ public class OpenEJBHttpServer implements HttpServer {
         try {
             response = process(socket, socketURI, in);
             return response != null;
-        } catch (Throwable t) {
+        } catch (final Throwable t) {
+            log.error(t.getMessage(), t);
             response = HttpResponseImpl.createError(t.getMessage(), t);
             return true;
         } finally {
@@ -220,7 +221,7 @@ public class OpenEJBHttpServer implements HttpServer {
                         response.writeMessage(new LoggerOutputStream(log, "debug"), indent);
                     }
                 }
-            } catch (Throwable t2) {
+            } catch (final Throwable t2) {
 
                 if (log.isDebugEnabled()) {
                     log.debug("Could not write response", t2);

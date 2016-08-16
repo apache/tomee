@@ -254,7 +254,7 @@ public class HttpRequestImpl implements HttpRequest {
             return null;
         }
         if (servletPath != null) {
-            return path.substring(servletPath.length());
+            return path.length() < servletPath.length() ? "" : path.substring(servletPath.length());
         }
         return path;
     }
