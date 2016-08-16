@@ -33,7 +33,7 @@
   <name>OpenEJB :: Server :: CXF</name>
 
   <properties>
-    <wss4j.version>2.1.4</wss4j.version>
+    <wss4j.version>2.1.7</wss4j.version>
     <openejb.osgi.import.pkg>
       org.apache.xml.resolver*;resolution:=optional,
       *
