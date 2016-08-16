@@ -36,6 +36,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
@@ -111,6 +112,28 @@ public class OptimizedLoaderService implements LoaderService {
                 }
             }
         }
+
+        if ("true".equals(OptimizedLoaderService.this.config.getProperty("openejb.cdi.extensions.sorted",
+                SystemInstance.get().getProperty("openejb.cdi.extensions.sorted")))) {
+            Collections.sort(list, new Comparator<Extension>() {
+                @Override
+                public int compare(final Extension o1, final Extension o2) {
+                    final int val1 = getVal(o1);
+                    final int val2 = getVal(o1);
+                    if (val1 == val2) {
+                        return o1.getClass().getName().compareTo(o2.getClass().getName());
+                    }
+                    return val1 - val2;
+                }
+
+                private int getVal(final Extension o1) {
+                    final String key = "openejb.cdi.extensions." + o1.getClass().getName() + ".ordinal";
+                    final String config = OptimizedLoaderService.this.config.getProperty(key, SystemInstance.get().getProperty(key));
+                    return config == null ? 0 : Integer.parseInt(config.trim());
+                }
+            });
+        }
+
         return list;
     }
 
