@@ -1153,6 +1153,30 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         ContextInfo contextInfo = getContextInfo(standardContext);
         ClassLoader classLoader = standardContext.getLoader().getClassLoader();
 
+        // bind jta before the app starts to ensure we have it in CDI
+        final Thread thread = Thread.currentThread();
+        final ClassLoader originalLoader = thread.getContextClassLoader();
+        thread.setContextClassLoader(classLoader);
+
+        final String listenerName = standardContext.getNamingContextListener().getName();
+        ContextAccessController.setWritable(listenerName, standardContext.getNamingToken());
+        try {
+            final Context comp = Context.class.cast(ContextBindings.getClassLoader().lookup("comp"));
+
+            // bind TransactionManager
+            final TransactionManager transactionManager = SystemInstance.get().getComponent(TransactionManager.class);
+            safeBind(comp, "TransactionManager", transactionManager);
+
+            // bind TransactionSynchronizationRegistry
+            final TransactionSynchronizationRegistry synchronizationRegistry = SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class);
+            safeBind(comp, "TransactionSynchronizationRegistry", synchronizationRegistry);
+        } catch (final NamingException e) {
+            // no-op
+        } finally {
+            thread.setContextClassLoader(originalLoader);
+            ContextAccessController.setReadOnly(listenerName);
+        }
+
         if (contextInfo == null) {
             final AppModule appModule = loadApplication(standardContext);
             appModule.getProperties().put("loader.from", "tomcat");
@@ -1693,14 +1717,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     logger.warning("no validator factory found for webapp " + currentWebAppInfo.moduleId);
                 }
             }
-
-            // bind TransactionManager
-            final TransactionManager transactionManager = SystemInstance.get().getComponent(TransactionManager.class);
-            safeBind(comp, "TransactionManager", transactionManager);
-
-            // bind TransactionSynchronizationRegistry
-            final TransactionSynchronizationRegistry synchronizationRegistry = SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class);
-            safeBind(comp, "TransactionSynchronizationRegistry", synchronizationRegistry);
 
             if (SystemInstance.get().getComponent(ORB.class) != null) {
                 safeBind(comp, "ORB", new SystemComponentReference(ORB.class));

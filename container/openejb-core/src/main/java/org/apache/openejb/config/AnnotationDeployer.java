@@ -1285,7 +1285,6 @@ public class AnnotationDeployer implements DynamicDeployer {
                 return ejbModule;
             }
 
-
             try {
                 if (ejbModule.getFinder() == null) {
                     ejbModule.setFinder(FinderFactory.createFinder(ejbModule));
@@ -1504,7 +1503,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 Beans beans = ejbModule.getBeans();
 
                 final boolean deployComp;
-                if (beans == null && !ejbModule.getEjbJar().getEnterpriseBeansByEjbName().isEmpty()
+                if (beans == null && !ejbJar.getEnterpriseBeansByEjbName().isEmpty()
                         && isActivateCdiForEjbOnlyModules(ejbModule)) {
                     logger.info("Activating CDI in ACTIVATED mode in module '" + ejbModule.getModuleUri() + "' cause EJB were found\n" +
                             "  add openejb.cdi.activated=false in application.properties to switch it off or\n" +
@@ -1573,7 +1572,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     || Boolean.parseBoolean(SystemInstance.get().getProperty("openejb.cdi.activated-on-ejb", "false" /*spec should be true but mem + bck compat*/));
         }
 
-        // quick heuristic to guess if cdi is there, avoid to need more mem when useless
+        // quick heuristic to guess if cdi is needed, avoid to need more mem when useless
         private boolean hasAtInject(final EjbModule ejbModule) {
             final IAnnotationFinder finder = ejbModule.getFinder();
             return finder != null &&
