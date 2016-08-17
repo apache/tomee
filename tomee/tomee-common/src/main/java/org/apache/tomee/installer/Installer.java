@@ -720,6 +720,12 @@ public class Installer implements InstallerInterface {
 
 
                 systemPropertiesWriter.write("\n");
+                systemPropertiesWriter.write("# Should a jar with at least one EJB activate CDI for this module?\n");
+                systemPropertiesWriter.write("# Spec says so but this can imply more (permgen) memory usage\n");
+                systemPropertiesWriter.write("# openejb.cdi.activated-on-ejb = true\n");
+
+
+                systemPropertiesWriter.write("\n");
                 systemPropertiesWriter.write("# openejb.check.classloader = false\n");
                 systemPropertiesWriter.write("# openejb.check.classloader.verbose = false\n");
 
