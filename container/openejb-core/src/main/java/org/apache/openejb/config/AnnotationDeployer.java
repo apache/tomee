@@ -1569,8 +1569,8 @@ public class AnnotationDeployer implements DynamicDeployer {
         private boolean isActivateCdiForEjbOnlyModules(final EjbModule ejbModule) {
             final String activated = ejbModule.getProperties().getProperty("openejb.cdi.activated");
             final String globalConfig = SystemInstance.get().getProperty("openejb.cdi.activated-on-ejb"); // spec should be true but mem + bck compat
-            return (globalConfig == null || Boolean.parseBoolean(globalConfig) &&
-                    (activated == null && hasAtInject(ejbModule)) || (activated != null && Boolean.parseBoolean(activated)));
+            return (globalConfig == null || Boolean.parseBoolean(globalConfig)) &&
+                    ((activated == null && hasAtInject(ejbModule)) || (activated != null && Boolean.parseBoolean(activated)));
         }
 
         // quick heuristic to guess if cdi is needed, avoid to need more mem when useless
