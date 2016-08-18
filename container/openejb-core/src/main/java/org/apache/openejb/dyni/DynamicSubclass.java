@@ -33,6 +33,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -85,6 +86,18 @@ public class DynamicSubclass implements Opcodes {
             throw new InternalError(DynamicSubclass.class.getSimpleName() + ".createSubclass: " + Debug.printStackTrace(e));
         } finally {
             lock.unlock();
+        }
+    }
+
+    public static void setHandler(final Object instance, final InvocationHandler handler) {
+        try {
+            final Field thisHandler = instance.getClass().getDeclaredField("this$handler");
+            if (!thisHandler.isAccessible()) {
+                thisHandler.setAccessible(true);
+            }
+            thisHandler.set(instance, handler);
+        } catch (final NoSuchFieldException | IllegalAccessException e) {
+            throw new IllegalArgumentException(e);
         }
     }
 
