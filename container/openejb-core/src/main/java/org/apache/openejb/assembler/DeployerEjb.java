@@ -417,9 +417,12 @@ public class DeployerEjb implements Deployer {
             }
         }
         if (appInfo != null) {
-            assembler.destroyApplication(appInfo);
-            if (appInfo.properties.containsKey("save-deployment")) {
-                saveDeployment(new File(moduleId), false);
+            try {
+                assembler.destroyApplication(appInfo);
+            } finally {
+                if (appInfo.properties.containsKey("save-deployment")) {
+                    saveDeployment(new File(moduleId), false);
+                }
             }
         } else {
             throw new NoSuchApplicationException(moduleId);
