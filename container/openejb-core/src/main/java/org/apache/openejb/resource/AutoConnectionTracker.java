@@ -34,14 +34,18 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+
+import static org.apache.commons.lang3.ClassUtils.getAllInterfaces;
 
 public class AutoConnectionTracker implements ConnectionTracker {
     private final ConcurrentMap<ManagedConnectionInfo, ProxyPhantomReference> references = new ConcurrentHashMap<ManagedConnectionInfo, ProxyPhantomReference>();
     private final ReferenceQueue referenceQueue = new ReferenceQueue();
     private final ConcurrentMap<Class<?>, Class<?>> proxies = new ConcurrentHashMap<>();
+    private final ConcurrentMap<Class<?>, Class<?>[]> interfaces = new ConcurrentHashMap<>();
 
     public Set<ManagedConnectionInfo> connections() {
         return references.keySet();
@@ -135,7 +139,24 @@ public class AutoConnectionTracker implements ConnectionTracker {
                 // no-op
             }
         }
-        return Proxy.newProxyInstance(loader, handle.getClass().getInterfaces(), invocationHandler);
+
+        return Proxy.newProxyInstance(loader, getAPi(handle.getClass()), invocationHandler);
+    }
+
+    private Class<?>[] getAPi(final Class<?> aClass) {
+        Class<?>[] found = interfaces.get(aClass);
+        if (found == null) {
+            synchronized (this) {
+                found = interfaces.get(aClass);
+                if (found == null) {
+                    final List<Class<?>> allInterfaces = getAllInterfaces(aClass);
+                    final Class<?>[] asArray = allInterfaces.toArray(new Class<?>[allInterfaces.size()]);
+                    interfaces.put(aClass, asArray);
+                    found = interfaces.get(aClass);
+                }
+            }
+        }
+        return found;
     }
 
     private Class<?> getProxy(final Class<?> aClass, final ClassLoader loader) {
