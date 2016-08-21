@@ -401,7 +401,11 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         {
             try
             {
-                Class.forName("org.apache.jasper.compiler.JspRuntimeContext");
+                try {
+                    Class.forName("org.apache.jasper.servlet.JasperInitializer");
+                } catch (final Throwable th) {
+                    Class.forName("org.apache.jasper.compiler.JspRuntimeContext");
+                }
                 factory = JspFactory.getDefaultFactory();
             }
             catch (Exception e)
