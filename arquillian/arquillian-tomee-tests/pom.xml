@@ -275,6 +275,7 @@
                 </goals>
                 <configuration>
                   <skip>${skip.embedded}</skip>
+                  <argLine>-XX:+CMSClassUnloadingEnabled</argLine>
                   <systemPropertyVariables>
                     <tomee.version>${project.version}</tomee.version>
                     <arquillian.launch>tomee-embedded</arquillian.launch>
