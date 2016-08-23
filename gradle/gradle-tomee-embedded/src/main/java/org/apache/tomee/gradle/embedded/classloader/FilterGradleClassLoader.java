@@ -19,16 +19,19 @@ package org.apache.tomee.gradle.embedded.classloader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Enumeration;
 
 import static java.util.Collections.emptyEnumeration;
 
-public class FilterGradleClassLoader extends ClassLoader { // TODO: make configurable
+public class FilterGradleClassLoader extends ClassLoader {
     private final ClassLoader delegate;
+    private final Collection<String> filtered;
 
-    public FilterGradleClassLoader(final ClassLoader gradle) {
+    public FilterGradleClassLoader(final ClassLoader gradle, final Collection<String> filtered) {
         super(gradle.getParent());
-        delegate = gradle;
+        this.delegate = gradle;
+        this.filtered = filtered;
     }
 
     @Override
@@ -106,16 +109,30 @@ public class FilterGradleClassLoader extends ClassLoader { // TODO: make configu
                         name.startsWith("org.sonatype.") ||
                         name.startsWith("org.testng.") ||
                         name.startsWith("org.yaml.") ||
-                        isForbiddenGradleClass(name)
+                        isForbiddenGradleClass(name) ||
+                        isFiltered(name)
         )) {
             throw new ClassNotFoundException();
         }
     }
 
+    private boolean isFiltered(final String name) {
+        if (filtered == null || name == null) {
+            return false;
+        }
+        for (final String pck : filtered) {
+            if (name.startsWith(pck)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private boolean isForbiddenGradleClass(final String name) { // we need logging classes but we don't want to scan gradle
         return name.startsWith("org.gradle.initialization") || name.startsWith("org.gradle.launcher")
                 || name.startsWith("org.gradle.execution") || name.startsWith("org.gradle.internal")
-                || name.startsWith("org.gradle.tooling") || name.startsWith("org.gradle.api.internal.tasks");
+                || name.startsWith("org.gradle.tooling") || name.startsWith("org.gradle.api.internal.tasks")
+                || name.startsWith("org.gradle.util") || name.startsWith("org.gradle.wrapper");
     }
 
     private boolean checkResource(final String name) {

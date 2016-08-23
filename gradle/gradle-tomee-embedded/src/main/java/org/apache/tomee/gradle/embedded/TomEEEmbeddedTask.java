@@ -21,8 +21,6 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
-import org.gradle.api.logging.LogLevel;
-import org.gradle.api.logging.LoggingManager;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.TaskAction;
@@ -39,6 +37,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
@@ -122,6 +121,10 @@ public class TomEEEmbeddedTask extends DefaultTask {
 
     @Optional
     @Input
+    private Collection<String> classloaderFilteredPackages;
+
+    @Optional
+    @Input
     private boolean webResourceCached = true;
 
     @Optional
@@ -172,10 +175,6 @@ public class TomEEEmbeddedTask extends DefaultTask {
     @Input
     private String dir;
 
-    @Optional
-    @Input
-    private LogLevel logLevel = LogLevel.INFO;
-
     /* TODO if needed
     @Parameter //a dvanced config but a simple boolean will be used for defaults (withLiveReload)
     private LiveReload liveReload;
@@ -192,15 +191,11 @@ public class TomEEEmbeddedTask extends DefaultTask {
 
         final Thread thread = Thread.currentThread();
         final ClassLoader tccl = thread.getContextClassLoader();
-        final LoggingManager logging = getProject().getLogging();
-        final LogSetup logSetup = new LogSetup(logging, logging.getStandardOutputCaptureLevel(), logging.getStandardErrorCaptureLevel(), logLevel).init();
-        logging.setLevel(logLevel);
         thread.setContextClassLoader(createLoader(tccl));
         try {
             doRun();
         } finally {
             thread.setContextClassLoader(tccl);
-            logSetup.reset();
         }
     }
 
@@ -323,13 +318,16 @@ public class TomEEEmbeddedTask extends DefaultTask {
             String line;
             final Scanner scanner = new Scanner(System.in);
             while ((line = scanner.nextLine()) != null) {
-                switch (line.trim()) {
+                final String cmd = line.trim().toLowerCase(Locale.ENGLISH);
+                switch (cmd) {
                     case "exit":
                     case "quit":
                         running.set(false);
                         Runtime.getRuntime().removeShutdownHook(hook);
                         container.close();
                         return;
+                    default:
+                        getLogger().warn("Unknown: '" + cmd + "', use 'exit' or 'quit'");
                 }
             }
         } catch (final Exception e) {
@@ -405,7 +403,7 @@ public class TomEEEmbeddedTask extends DefaultTask {
         addFiles(classpath.getFiles(), urls);
 
         // use JVM loader to avoid the noise of gradle and its plugins
-        return new URLClassLoader(urls.toArray(new URL[urls.size()]), new FilterGradleClassLoader(parent));
+        return new URLClassLoader(urls.toArray(new URL[urls.size()]), new FilterGradleClassLoader(parent, classloaderFilteredPackages));
     }
 
     private void addFiles(final Collection<File> files, final Collection<URL> urls) {
@@ -675,36 +673,5 @@ public class TomEEEmbeddedTask extends DefaultTask {
 
     public void setSingleClassloader(final boolean singleClassloader) {
         this.singleClassloader = singleClassloader;
-    }
-
-    public void setLogLevel(final LogLevel logLevel) {
-        this.logLevel = logLevel;
-    }
-
-    private static final class LogSetup {
-        private final LoggingManager logging;
-        private final LogLevel stdOutLvl;
-        private final LogLevel stdErrLvl;
-        private final LogLevel requiredLvl;
-
-        private LogSetup(final LoggingManager logging, final LogLevel stdOutLvl, final LogLevel stdErrLvl,
-                         final LogLevel requiredLvl) {
-            this.logging = logging;
-            this.stdOutLvl = stdOutLvl;
-            this.stdErrLvl = stdErrLvl;
-            this.requiredLvl = requiredLvl;
-        }
-
-
-        public LogSetup init() {
-            logging.captureStandardError(requiredLvl);
-            logging.captureStandardOutput(requiredLvl);
-            return this;
-        }
-
-        public void reset() {
-            logging.captureStandardError(stdErrLvl);
-            logging.captureStandardOutput(stdOutLvl);
-        }
     }
 }
