@@ -22,7 +22,6 @@ import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.cdi.transactional.TransactionContext;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.AppFinder;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -33,6 +32,7 @@ import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.corespi.se.DefaultApplicationBoundaryService;
 import org.apache.webbeans.intercept.ApplicationScopedBeanInterceptorHandler;
 import org.apache.webbeans.intercept.NormalScopedBeanInterceptorHandler;
+import org.apache.webbeans.intercept.RequestScopedBeanInterceptorHandler;
 import org.apache.webbeans.intercept.SessionScopedBeanInterceptorHandler;
 import org.apache.webbeans.spi.ApplicationBoundaryService;
 import org.apache.webbeans.spi.BeanArchiveService;
@@ -46,17 +46,13 @@ import org.apache.webbeans.spi.ScannerService;
 import org.apache.webbeans.spi.SecurityService;
 import org.apache.webbeans.spi.TransactionService;
 import org.apache.webbeans.spi.adaptor.ELAdaptor;
-import org.apache.webbeans.intercept.RequestScopedBeanInterceptorHandler;
 
-import java.util.Collections;
-import java.util.Comparator;
+import javax.enterprise.inject.spi.DeploymentException;
+import javax.transaction.Transactional;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
-import javax.enterprise.inject.spi.DeploymentException;
-import javax.transaction.Transactional;
 
 /**
  * @version $Rev:$ $Date:$
@@ -287,14 +283,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         context = AppFinder.findAppContextOrWeb(cl, AppFinder.WebBeansContextTransformer.INSTANCE);
         if (context == null) {
             context = contexts.get();
-            if (context == null) {
-                // Fallback strategy is to just grab the first AppContext and assume it is the right one
-                // This kind of algorithm could be greatly improved
-                final List<AppContext> appContexts = SystemInstance.get().getComponent(ContainerSystem.class).getAppContexts();
-                if (appContexts.size() > 0) {
-                    return getWebBeansContext(appContexts);
-                }
-
+            if (context == null) { // any "guess" algortithm there would break prod apps cause AppFinder failed already, let's try to not try to be more clever than we can
                 throw new IllegalStateException("On a thread without an initialized context nor a classloader mapping a deployed app");
             }
         } else { // some cache to avoid to browse each app each time
@@ -302,24 +291,6 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         }
 
         return context;
-    }
-
-    private static WebBeansContext getWebBeansContext(final List<AppContext> appContexts) {
-        Collections.sort(appContexts, new Comparator<AppContext>() {
-            @Override
-            public int compare(final AppContext appContext, final AppContext appContext1) {
-                return cdiSize(appContext1) - cdiSize(appContext);
-            }
-        });
-        return appContexts.get(0).getWebBeansContext();
-    }
-
-    private static int cdiSize(final AppContext ctx) {
-        final WebBeansContext wbc = ctx.getWebBeansContext();
-        if (wbc == null) {
-            return 0;
-        }
-        return wbc.getBeanManagerImpl().getBeans().size();
     }
 
     @Override
