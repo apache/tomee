@@ -331,7 +331,15 @@ public class TomEEEmbeddedSingleRunner extends BlockJUnit4ClassRunner {
     }
 
     private static void composerInject(final Object target) throws IllegalAccessException {
-        OWBInjector.inject(WebBeansContext.currentInstance().getBeanManagerImpl(), target, null);
+        WebBeansContext webBeansContext = null;
+        try {
+            webBeansContext = WebBeansContext.currentInstance();
+        } catch (final IllegalStateException ise) {
+            // no-op
+        }
+        if (webBeansContext != null) {
+            OWBInjector.inject(webBeansContext.getBeanManagerImpl(), target, null);
+        }
 
         final Object app = APP.get();
         final Class<?> aClass = target.getClass();

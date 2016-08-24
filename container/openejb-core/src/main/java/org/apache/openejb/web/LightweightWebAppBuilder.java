@@ -230,7 +230,14 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
             servletDeploymentInfo.put(webAppInfo, deployedWebObjects);
 
             if (webContext.getWebBeansContext() != null) {
-                OpenEJBLifecycle.class.cast(webContext.getWebBeansContext().getService(ContainerLifecycle.class)).startServletContext(sce.getServletContext());
+                final Thread thread = Thread.currentThread();
+                final ClassLoader old = thread.getContextClassLoader();
+                thread.setContextClassLoader(webContext.getClassLoader());
+                try {
+                    OpenEJBLifecycle.class.cast(webContext.getWebBeansContext().getService(ContainerLifecycle.class)).startServletContext(sce.getServletContext());
+                } finally {
+                    thread.setContextClassLoader(old);
+                }
             }
 
             if (addServletMethod == null) { // can't manage filter/servlets

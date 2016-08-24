@@ -35,6 +35,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.cxf.CxfEndpoint;
 import org.apache.openejb.server.cxf.CxfServiceConfiguration;
 import org.apache.openejb.server.cxf.JaxWsImplementorInfoImpl;
+import org.apache.openejb.util.AppFinder;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.webbeans.component.AbstractOwbBean;
@@ -106,7 +107,8 @@ public class PojoEndpoint extends CxfEndpoint {
         final ClassLoader old = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(loader);
         try {
-            final WebBeansContext webBeansContext = WebBeansContext.currentInstance();
+            final WebBeansContext webBeansContext = AppFinder.findAppContextOrWeb(
+                    Thread.currentThread().getContextClassLoader(), AppFinder.WebBeansContextTransformer.INSTANCE);
             final BeanManagerImpl bm = webBeansContext == null ? null : webBeansContext.getBeanManagerImpl();
             if (bm != null && bm.isInUse()) { // try cdi bean
                 if (JAXWS_AS_CDI_BEANS) {

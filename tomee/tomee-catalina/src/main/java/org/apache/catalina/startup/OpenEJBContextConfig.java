@@ -40,6 +40,7 @@ import org.apache.openejb.config.ServiceUtils;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.httpd.EEFilter;
+import org.apache.openejb.util.AppFinder;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URLs;
@@ -405,7 +406,7 @@ public class OpenEJBContextConfig extends ContextConfig {
             return;
         }
 
-        if (WebBeansContext.currentInstance() != null) {
+        if (AppFinder.findAppContextOrWeb(context.getLoader().getClassLoader(), AppFinder.WebBeansContextTransformer.INSTANCE) != null) {
             final FilterDef asyncOwbFilter = new FilterDef();
             asyncOwbFilter.setAsyncSupported("true");
             asyncOwbFilter.setDescription("OpenEJB CDI Filter - to propagate @RequestScoped in async tasks");

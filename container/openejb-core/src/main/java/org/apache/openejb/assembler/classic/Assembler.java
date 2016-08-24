@@ -2838,7 +2838,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         return new LazyResource(new Callable<Object>() {
             @Override
             public Object call() throws Exception {
-                final boolean appClassLoader = "true".equals(serviceInfo.properties.remove("UseAppClassLoader"));
+                final boolean appClassLoader = "true".equals(serviceInfo.properties.remove("UseAppClassLoader"))
+                        || serviceInfo.originAppName != null;
 
                 final Thread thread = Thread.currentThread();
                 final ClassLoader old = thread.getContextClassLoader();

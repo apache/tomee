@@ -34,6 +34,7 @@ import org.apache.openejb.config.QuickJarsTxtParser;
 import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.AppFinder;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URLs;
@@ -467,7 +468,9 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
         }
         if ("META-INF/faces-config.xml".equals(name)) { // mojarra workaround
             try {
-                if (WebBeansContext.currentInstance() == null && Boolean.parseBoolean(SystemInstance.get().getProperty("tomee.jsf.ignore-owb", "true"))) {
+                if (AppFinder.findAppContextOrWeb(
+                        Thread.currentThread().getContextClassLoader(), AppFinder.WebBeansContextTransformer.INSTANCE) == null
+                        && Boolean.parseBoolean(SystemInstance.get().getProperty("tomee.jsf.ignore-owb", "true"))) {
                     final Collection<URL> list = new HashSet<>(Collections.list(super.getResources(name)));
                     final Iterator<URL> it = list.iterator();
                     while (it.hasNext()) {

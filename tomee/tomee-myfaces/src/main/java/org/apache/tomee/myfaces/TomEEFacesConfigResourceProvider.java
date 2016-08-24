@@ -20,6 +20,7 @@ import org.apache.myfaces.config.DefaultFacesConfigResourceProvider;
 import org.apache.myfaces.shared.util.ClassUtils;
 import org.apache.openejb.config.NewLoaderLogic;
 import org.apache.openejb.loader.Files;
+import org.apache.openejb.util.AppFinder;
 import org.apache.openejb.util.URLs;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.xbean.finder.UrlSet;
@@ -126,7 +127,8 @@ public class TomEEFacesConfigResourceProvider extends DefaultFacesConfigResource
         }
 
         try {
-            if (WebBeansContext.currentInstance() == null) {
+            if (AppFinder.findAppContextOrWeb(
+                    Thread.currentThread().getContextClassLoader(), AppFinder.WebBeansContextTransformer.INSTANCE) == null) {
                 final Iterator<URL> toFilter = urlSet.iterator();
                 while (toFilter.hasNext()) {
                     final URL url = toFilter.next();

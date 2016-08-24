@@ -24,6 +24,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.httpd.part.CommonsFileUploadPartFactory;
 import org.apache.openejb.server.httpd.session.SessionManager;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.AppFinder;
 import org.apache.openejb.util.ArrayEnumeration;
 import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.WebBeansContext;
@@ -1037,7 +1038,8 @@ public class HttpRequestImpl implements HttpRequest {
         final OpenEJBAsyncContext asyncContext = new OpenEJBAsyncContext(HttpServletRequest.class.cast(servletRequest) /* TODO */, servletResponse, contextPath);
         asyncContext.internalStartAsync();
         asyncStarted = true;
-        final WebBeansContext webBeansContext = WebBeansContext.currentInstance();
+        final WebBeansContext webBeansContext = AppFinder.findAppContextOrWeb(
+                Thread.currentThread().getContextClassLoader(), AppFinder.WebBeansContextTransformer.INSTANCE);
         return webBeansContext != null ?
                 new EEFilter.AsynContextWrapper(asyncContext, servletRequest, webBeansContext) : asyncContext;
     }

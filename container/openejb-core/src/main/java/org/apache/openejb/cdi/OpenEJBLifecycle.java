@@ -145,16 +145,16 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         try {
             Thread.currentThread().setContextClassLoader(stuff.getClassLoader());
 
+            final AppContext appContext = stuff.getAppContext();
+            if (stuff.getWebContext() == null) { // do it before any other things to keep our singleton finder working
+                appContext.setWebBeansContext(webBeansContext);
+            }
+
             //Load all plugins
             webBeansContext.getPluginLoader().startUp();
 
             //Get Plugin
             final CdiPlugin cdiPlugin = (CdiPlugin) webBeansContext.getPluginLoader().getEjbPlugin();
-
-            final AppContext appContext = stuff.getAppContext();
-            if (stuff.getWebContext() == null) {
-                appContext.setWebBeansContext(webBeansContext);
-            }
 
             cdiPlugin.setClassLoader(stuff.getClassLoader());
             cdiPlugin.setWebBeansContext(webBeansContext);

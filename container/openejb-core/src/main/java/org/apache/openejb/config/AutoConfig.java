@@ -947,7 +947,15 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 resource.setId(modulePrefix + replaceJavaAndSlash(originalId));
             }
             resource.setJndi(PropertyPlaceHolderHelper.value(resource.getJndi()));
-            resource.getProperties().putAll(PropertyPlaceHolderHelper.holds(resource.getProperties()));
+
+            final Thread thread = Thread.currentThread();
+            final ClassLoader oldCl = thread.getContextClassLoader();
+            thread.setContextClassLoader(module.getClassLoader());
+            try {
+                resource.getProperties().putAll(PropertyPlaceHolderHelper.holds(resource.getProperties()));
+            } finally {
+                thread.setContextClassLoader(oldCl);
+            }
 
             final Collection<String> aliases = resource.getAliases();
             if (!aliases.isEmpty()) {

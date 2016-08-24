@@ -171,7 +171,15 @@ public class SingleApplicationComposerRunner extends BlockJUnit4ClassRunner {
     }
 
     private static void composerInject(final Object target) throws IllegalAccessException {
-        OWBInjector.inject(WebBeansContext.currentInstance().getBeanManagerImpl(), target, null);
+        WebBeansContext wbc = null;
+        try {
+            wbc = WebBeansContext.currentInstance();
+        } catch (final IllegalStateException ise) {
+            // no-op
+        }
+        if (wbc != null) {
+            OWBInjector.inject(wbc.getBeanManagerImpl(), target, null);
+        }
 
         final Object app = APP.get();
         final Class<?> aClass = target.getClass();
