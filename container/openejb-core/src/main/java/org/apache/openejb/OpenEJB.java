@@ -116,7 +116,7 @@ public final class OpenEJB {
             logger.info("openejb.base = " + system.getBase().getDirectory().getAbsolutePath());
 
             //OWB support.  The classloader has to be able to load all OWB components including the ones supplied by OpenEjb.
-            CdiBuilder.initializeOWB(getClass().getClassLoader());
+            CdiBuilder.initializeOWB();
 
             final String className = system.getOptions().get("openejb.assembler", (String) null);
 

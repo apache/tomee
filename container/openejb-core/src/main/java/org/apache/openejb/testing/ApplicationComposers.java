@@ -28,9 +28,11 @@ import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
+import org.apache.openejb.cdi.CdiBuilder;
 import org.apache.openejb.cdi.CdiScanner;
 import org.apache.openejb.cdi.OptimizedLoaderService;
 import org.apache.openejb.cdi.ScopeHelper;
+import org.apache.openejb.cdi.ThreadSingletonService;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.ConnectorModule;
@@ -1376,6 +1378,9 @@ public class ApplicationComposers {
         }
 
         SystemInstance.init(configuration);
+        if (SystemInstance.get().getComponent(ThreadSingletonService.class) == null) {
+            CdiBuilder.initializeOWB();
+        }
         for (final Map.Entry<Object, ClassFinder> finder : testClassFinders.entrySet()) {
             for (final Field field : finder.getValue().findAnnotatedFields(RandomPort.class)) {
                 if (!field.isAccessible()) {

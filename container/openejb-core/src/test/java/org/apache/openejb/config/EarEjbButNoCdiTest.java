@@ -29,7 +29,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 // not fully spec compliant but save a bunch of mem for legacy apps
 // + avoid to breaks existing ones so better than the opposite
@@ -53,7 +53,12 @@ public class EarEjbButNoCdiTest {
     @Test
     public void check() {
         assertEquals("1", b1.val());
-        assertNull(WebBeansContext.currentInstance());
+        try {
+            WebBeansContext.currentInstance();
+            fail();
+        } catch (final IllegalStateException ise) {
+            // ok
+        }
     }
 
     @Stateless

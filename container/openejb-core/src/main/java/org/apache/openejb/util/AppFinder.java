@@ -27,14 +27,22 @@ public final class AppFinder {
         final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
         for (final AppContext appContext : containerSystem.getAppContexts()) {
             final ClassLoader appContextClassLoader = appContext.getClassLoader();
+            boolean found = false;
             if (appContextClassLoader.equals(cl) || (cl != null && cl.equals(appContextClassLoader))) { // CxfContainerLoader is not symmetric
-                return transformer.from(appContext);
+                final T from = transformer.from(appContext);
+                found = true;
+                if (from != null) {
+                    return from;
+                }
             }
             for (final WebContext web : appContext.getWebContexts()) {
                 final ClassLoader webClassLoader = web.getClassLoader();
                 if (webClassLoader.equals(cl) || (cl != null && cl.equals(webClassLoader))) {
                     return transformer.from(web);
                 }
+            }
+            if (found) { // for cases where app and webapp share the same classloader
+                break;
             }
         }
         return null;

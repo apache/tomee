@@ -62,7 +62,6 @@ import org.apache.tomee.common.NamingUtil;
 import org.apache.tomee.common.ResourceFactory;
 import org.apache.tomee.jasper.TomEEJasperInitializer;
 import org.apache.tomee.loader.TomcatHelper;
-import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.web.context.WebConversationFilter;
 import org.apache.xbean.finder.IAnnotationFinder;
 

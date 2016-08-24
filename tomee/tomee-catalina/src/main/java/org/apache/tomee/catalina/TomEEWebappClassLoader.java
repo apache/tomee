@@ -40,7 +40,6 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URLs;
 import org.apache.openejb.util.classloader.URLClassLoaderFirst;
 import org.apache.openejb.util.reflection.Reflections;
-import org.apache.webbeans.config.WebBeansContext;
 
 import java.io.File;
 import java.io.IOException;

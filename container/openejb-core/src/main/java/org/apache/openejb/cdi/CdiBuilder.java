@@ -48,7 +48,7 @@ public class CdiBuilder {
         //TODO hack for tests.  Currently initialized in OpenEJB line 90.  cf alternative in AccessTimeoutTest which would
         //presumably have to be replicated in about 70 other tests.
         if (singletonService == null) {
-            singletonService = initializeOWB(getClass().getClassLoader());
+            singletonService = initializeOWB();
         } else {
             logger.info("Existing thread singleton service in SystemInstance(): " + singletonService);
         }
@@ -60,7 +60,7 @@ public class CdiBuilder {
         singletonService.initialize(new StartupObject(appContext, appInfo, allDeployments, webContext));
     }
 
-    public static synchronized ThreadSingletonService initializeOWB(final ClassLoader classLoader) {
+    public static synchronized ThreadSingletonService initializeOWB() {
         logger.info("Created new singletonService " + SINGLETON_SERVICE);
         SystemInstance.get().setComponent(ThreadSingletonService.class, SINGLETON_SERVICE);
         try {
