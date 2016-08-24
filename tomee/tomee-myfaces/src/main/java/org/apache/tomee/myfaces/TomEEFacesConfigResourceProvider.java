@@ -22,7 +22,6 @@ import org.apache.openejb.config.NewLoaderLogic;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.util.AppFinder;
 import org.apache.openejb.util.URLs;
-import org.apache.webbeans.config.WebBeansContext;
 import org.apache.xbean.finder.UrlSet;
 
 import javax.faces.context.ExternalContext;
