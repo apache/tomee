@@ -35,6 +35,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Scanner;
 import java.util.ServiceLoader;
 import java.util.Set;
 
@@ -71,6 +72,7 @@ public class Main {
     public static final String BASIC = "basic";
     public static final String SIMPLE_LOG = "simple-log";
     public static final String PRE_TASK = "pre-task";
+    public static final String INTERACTIVE = "interactive";
 
     public static void main(final String[] args) {
         final CommandLineParser parser = new PosixParser();
@@ -173,6 +175,19 @@ public class Main {
                     }
                 }
             });
+            if (options.hasOption(INTERACTIVE)) {
+                String l;
+                final Scanner scanner = new Scanner(System.in);
+                while ((l = scanner.nextLine()) != null) {
+                    switch (l.trim()) {
+                        case "quit":
+                        case "exit":
+                            return;
+                        default:
+                            System.out.println("Unknown command '" + l + "', supported commands: 'quit', 'exist'");
+                    }
+                }
+            }
             container.await();
         } catch (final Exception e) {
             e.printStackTrace();
@@ -230,6 +245,7 @@ public class Main {
         options.addOption(null, CACHE_WEB_RESOURCES, true, "should web resources be cached");
         options.addOption(null, BASIC, true, "basic authentication if set");
         options.addOption(null, SIMPLE_LOG, true, "should tomee use simple log format (level - message) - demo intended");
+        options.addOption("i", INTERACTIVE, true, "should tomee start and wait for SIGTERM signal or wait for 'exit' to be entered");
         return options;
     }
 
