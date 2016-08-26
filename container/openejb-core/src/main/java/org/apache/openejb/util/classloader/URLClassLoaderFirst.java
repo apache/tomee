@@ -309,6 +309,9 @@ public class URLClassLoaderFirst extends URLClassLoader {
                     if (commons.startsWith("dbcp.")) {
                         return true;
                     }
+                    if (commons.startsWith("dbcp2.")) {
+                        return true;
+                    }
                     if (commons.startsWith("digester.")) {
                         return true;
                     }
@@ -325,6 +328,9 @@ public class URLClassLoaderFirst extends URLClassLoader {
                         return false;
                     }
                     if (commons.startsWith("pool.")) {
+                        return true;
+                    }
+                    if (commons.startsWith("pool2.")) {
                         return true;
                     }
                     if (commons.startsWith("net.") && SKIP_COMMONS_NET) {
