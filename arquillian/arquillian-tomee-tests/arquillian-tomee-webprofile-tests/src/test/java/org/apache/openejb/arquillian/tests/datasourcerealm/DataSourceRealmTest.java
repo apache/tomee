@@ -44,7 +44,7 @@ public class DataSourceRealmTest {
     @Deployment(testable = false)
     public static Archive<?> war() {
         return ShrinkWrap.create(WebArchive.class, DataSourceRealmTest.class.getName() + ".war")
-                .addClasses(AddUser.class)
+                .addClasses(AddUser.class, User.class, Role.class, RoleId.class)
                 .addAsWebInfResource(new StringAsset( // JPA for user/role provisioning and table init
                         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                         "<persistence xmlns=\"http://java.sun.com/xml/ns/persistence\"\n" +
