@@ -58,6 +58,8 @@ public class ContainerClassesFilter implements Filter {
         excluded.add("org.apache.velocity");
         excluded.add("org.apache.wss4j");
         excluded.add("org.apache.commons.logging");
+        excluded.add("org.apache.commons.dbcp2.");
+        excluded.add("org.apache.commons.pool2.");
         excluded.add("org.metatype.sxc");
         excluded.add("org.openejb");
         excluded.add("org.slf4j");
@@ -75,6 +77,17 @@ public class ContainerClassesFilter implements Filter {
         excluded.add("junit");
         excluded.add("org.junit");
         excluded.add("serp");
+        excluded.add("org.terracotta.context.");
+        excluded.add("org.terracotta.modules.ehcache.");
+        excluded.add("org.terracotta.statistics.");
+        excluded.add("org.terracotta.entity.");
+        excluded.add("org.opensaml.");
+        excluded.add("org.cryptacular.");
+        excluded.add("org.bouncycastle.");
+        excluded.add("org.apache.http.");
+        excluded.add("net.shibboleth.utilities.java.support.");
+        excluded.add("com.google.common.");
+        excluded.add("com.google.thirdparty.");
 
         final Set<String> included = new HashSet<>();
         included.add("org.apache.myfaces.cdi");
