@@ -64,6 +64,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
 
     private ContainerSystem containerSystem;
     private boolean gzip;
+    private boolean debugPayload;
     private EJBDSerializer serializer = null;
 
     //Four hours
@@ -80,6 +81,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
         authHandler = new AuthRequestHandler(this);
         clusterHandler = new ClusterRequestHandler(this);
         gzip = "true".equalsIgnoreCase(props.getProperty("gzip", "false"));
+        debugPayload = "true".equalsIgnoreCase(props.getProperty("debugPayload", "true"));
 
         try {
             this.timeout = Integer.parseInt(props.getProperty("timeout", "14400000"));
@@ -177,10 +179,10 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
         try {
 
             final RequestInfos.RequestInfo info = RequestInfos.info();
-            info.setInputStream(new CountingInputStream(rawIn));
+            info.setInputStream(debugPayload ? new CountingInputStream(rawIn) : rawIn);
 
             // Read client Protocol Version
-            final CountingInputStream cis = info.getInputStream();
+            final InputStream cis = info.getInputStream();
             clientProtocol.readExternal(cis);
             ois = new EjbObjectInputStream(cis);
 
@@ -251,9 +253,9 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
             }
 
             try {
-                info.setOutputStream(new CountingOutputStream(rawOut));
+                info.setOutputStream(debugPayload ? new CountingOutputStream(rawOut) : rawOut);
 
-                final CountingOutputStream cos = info.getOutputStream();
+                final OutputStream cos = info.getOutputStream();
 
                 //Let client know we are using the requested protocol to respond
                 clientProtocol.writeExternal(cos);
