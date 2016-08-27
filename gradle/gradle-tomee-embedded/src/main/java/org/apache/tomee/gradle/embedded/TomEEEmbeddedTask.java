@@ -175,6 +175,10 @@ public class TomEEEmbeddedTask extends DefaultTask {
     @Input
     private String dir;
 
+    @Optional
+    @Input
+    private String conf;
+
     /* TODO if needed
     @Parameter //a dvanced config but a simple boolean will be used for defaults (withLiveReload)
     private LiveReload liveReload;

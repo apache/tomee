@@ -32,7 +32,6 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.UndeployException;
-import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.core.ProvidedClassLoaderFinder;
@@ -41,7 +40,6 @@ import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.maven.util.MavenLogStreamFactory;
 import org.apache.openejb.maven.util.XmlFormatter;
-import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.JuliLogStreamFactory;
 import org.apache.tomee.catalina.TomEERuntimeException;
 import org.apache.tomee.embedded.Configuration;
@@ -59,7 +57,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -226,6 +223,12 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
      */
     @Parameter(property = "tomee-embedded-plugin.context")
     protected String context;
+
+    /**
+     * Conf classpath folder.
+     */
+    @Parameter(property = "tomee-embedded-plugin.conf")
+    protected String conf;
 
     /**
      * TomEE properties.

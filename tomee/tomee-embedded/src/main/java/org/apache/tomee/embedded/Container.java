@@ -83,6 +83,7 @@ import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.log.NullLogChute;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.apache.xbean.finder.AnnotationFinder;
+import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.finder.UrlSet;
 import org.apache.xbean.finder.filter.Filters;
 import org.apache.xbean.recipe.ObjectRecipe;
@@ -391,12 +392,35 @@ public class Container implements AutoCloseable {
         Files.mkdirs(base);
         Files.deleteOnExit(base);
 
-        createDirectory(base, "conf");
+        final File conf = createDirectory(base, "conf");
         createDirectory(base, "lib");
         createDirectory(base, "logs");
         createDirectory(base, "temp");
         createDirectory(base, "work");
         createDirectory(base, "webapps");
+
+        synchronize(conf, configuration.getConf());
+    }
+
+    private void synchronize(final File base, final String resourceBase) {
+        if (resourceBase == null) {
+            return;
+        }
+
+        try {
+            final Map<String, URL> urls = new ResourceFinder("").getResourcesMap(resourceBase);
+            for (final Map.Entry<String, URL> u : urls.entrySet()) {
+                try (final InputStream is = u.getValue().openStream()) {
+                    final File to = new File(base, u.getKey());
+                    IO.copy(is, to);
+                    if ("server.xml".equals(u.getKey())) {
+                        configuration.setServerXml(to.getAbsolutePath());
+                    }
+                }
+            }
+        } catch (final IOException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     public File getBase() {
@@ -459,11 +483,13 @@ public class Container implements AutoCloseable {
         final boolean initialized;
         if (configuration.hasServerXml()) {
             final File file = new File(conf, "server.xml");
-            final FileOutputStream fos = new FileOutputStream(file);
-            try {
-                IO.copy(configuration.getServerXmlFile(), fos);
-            } finally {
-                IO.close(fos);
+            if (!file.equals(configuration.getServerXmlFile())) {
+                final FileOutputStream fos = new FileOutputStream(file);
+                try {
+                    IO.copy(configuration.getServerXmlFile(), fos);
+                } finally {
+                    IO.close(fos);
+                }
             }
 
             // respect config (host/port) of the Configuration
@@ -488,7 +514,16 @@ public class Container implements AutoCloseable {
         }
 
         if (props != null && !props.isEmpty()) {
-            final FileWriter systemProperties = new FileWriter(new File(conf, "system.properties"));
+            final File file = new File(conf, "system.properties");
+            if (file.isFile()) {
+                final Properties existing = IO.readProperties(file);
+                for (final String key : existing.stringPropertyNames()) {
+                    if (!props.containsKey(key)) {
+                        props.put(key, existing.getProperty(key));
+                    }
+                }
+            }
+            final FileWriter systemProperties = new FileWriter(file);
             try {
                 props.store(systemProperties, "");
             } finally {
@@ -897,6 +932,11 @@ public class Container implements AutoCloseable {
     }
 
     private void copyTemplateTo(final File targetDir, final String filename) throws Exception {
+        final File file = new File(targetDir, filename);
+        if (file.exists()) {
+            return;
+        }
+
         // don't break apps using Velocity facade
         final VelocityEngine engine = new VelocityEngine();
         engine.setProperty(Velocity.RUNTIME_LOG_LOGSYSTEM, new NullLogChute());
@@ -908,17 +948,22 @@ public class Container implements AutoCloseable {
         final VelocityContext context = new VelocityContext();
         context.put("tomcatHttpPort", Integer.toString(configuration.getHttpPort()));
         context.put("tomcatShutdownPort", Integer.toString(configuration.getStopPort()));
-        final Writer writer = new FileWriter(new File(targetDir, filename));
+        final Writer writer = new FileWriter(file);
         template.merge(context, writer);
         writer.flush();
         writer.close();
     }
 
     private void copyFileTo(final File targetDir, final String filename) throws IOException {
+        final File to = new File(targetDir, filename);
+        if (to.exists()) { // user provided one
+            return;
+        }
+
         final InputStream is = getClass().getResourceAsStream("/org/apache/tomee/configs/" + filename);
         if (is != null) { // should be null since we are using default conf
             try {
-                IO.copy(is, new File(targetDir, filename));
+                IO.copy(is, to);
             } finally {
                 IO.close(is);
             }

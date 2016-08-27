@@ -75,6 +75,8 @@ public class Configuration {
 
     private boolean webResourceCached = true;
 
+    private String conf;
+
     public int getHttpPort() {
         return httpPort;
     }
@@ -364,6 +366,19 @@ public class Configuration {
 
     public void addCustomizer(final ConfigurationCustomizer configurationCustomizer) {
         configurationCustomizer.customize(this);
+    }
+
+    public Configuration conf(final String config) {
+        setConf(config);
+        return this;
+    }
+
+    public String getConf() {
+        return conf;
+    }
+
+    public void setConf(final String conf) {
+        this.conf = conf;
     }
 
     public interface ConfigurationCustomizer {
