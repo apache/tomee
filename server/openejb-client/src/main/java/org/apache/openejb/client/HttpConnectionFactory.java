@@ -18,6 +18,7 @@
 package org.apache.openejb.client;
 
 import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSocketFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -36,7 +37,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class HttpConnectionFactory implements ConnectionFactory {
     // this map only ensures JVM keep alive socket caching works properly
-    private final ConcurrentMap<URI, SSLSocketFactory> socketFactoryMap = new ConcurrentHashMap<>();
+    private final ConcurrentMap<URI, SSLSocketFactory> socketFactoryMap = new ConcurrentHashMap<URI, SSLSocketFactory>();
 
     @Override
     public Connection getConnection(final URI uri) throws IOException {
@@ -44,8 +45,6 @@ public class HttpConnectionFactory implements ConnectionFactory {
     }
 
     public static class HttpConnection implements Connection {
-        private final ConcurrentMap<URI, SSLSocketFactory> socketFactoryMap;
-
         private HttpURLConnection httpURLConnection;
         private InputStream inputStream;
         private OutputStream outputStream;
@@ -53,7 +52,6 @@ public class HttpConnectionFactory implements ConnectionFactory {
 
         public HttpConnection(final URI uri, final ConcurrentMap<URI, SSLSocketFactory> socketFactoryMap) throws IOException {
             this.uri = uri;
-            this.socketFactoryMap = socketFactoryMap;
             final URL url = uri.toURL();
 
             final Map<String, String> params;
@@ -84,10 +82,7 @@ public class HttpConnectionFactory implements ConnectionFactory {
                     SSLSocketFactory sslSocketFactory = socketFactoryMap.get(uri);
                     if (sslSocketFactory == null) {
                         sslSocketFactory = new SSLContextBuilder(params).build().getSocketFactory();
-                        final SSLSocketFactory existing = socketFactoryMap.putIfAbsent(uri, sslSocketFactory);
-                        if (existing != null) {
-                            sslSocketFactory = existing;
-                        }
+                        socketFactoryMap.put(uri, sslSocketFactory);
                     }
 
                     ((HttpsURLConnection) httpURLConnection).setSSLSocketFactory(sslSocketFactory);
