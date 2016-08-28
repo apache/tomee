@@ -406,14 +406,20 @@ public class Client {
 
             if (null != in) {
 
-                // consume anything left in the buffer
-                try {
-                    int read = 0;
-                    while (read > -1) {
-                        read = in.read();
+                // consume anything left in the buffer if we're running in http(s) mode
+                if (HttpConnectionFactory.HttpConnection.class.isInstance(conn)) {
+                    final HttpConnectionFactory.HttpConnection httpConnection = HttpConnectionFactory.HttpConnection.class.cast(conn);
+                    if ("https".equalsIgnoreCase(httpConnection.getURI().getScheme())) {
+
+                        try {
+                            int read = 0;
+                            while (read > -1) {
+                                read = in.read();
+                            }
+                        } catch (Throwable e) {
+                            // ignore
+                        }
                     }
-                } catch (Throwable e) {
-                    // ignore
                 }
 
                 try {
