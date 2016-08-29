@@ -214,20 +214,6 @@ public class OptimizedLoaderService implements LoaderService {
                 // ignore
             }
         }
-        {
-            final Class<?> clazz;
-            try {
-                clazz = loader.loadClass("org.apache.webbeans.jsf.plugin.OpenWebBeansJsfPlugin");
-                try {
-                    list.add(OpenWebBeansPlugin.class.cast(
-                            Proxy.newProxyInstance(loader, new Class<?>[]{OpenWebBeansPlugin.class}, new ClassLoaderAwareHandler(clazz.getSimpleName(), clazz.newInstance(), loader))));
-                } catch (final Exception e) {
-                    log.error("Unable to load OpenWebBeansPlugin: OpenWebBeansJsfPlugin");
-                }
-            } catch (final ClassNotFoundException e) {
-                // ignore
-            }
-        }
         return list;
     }
 

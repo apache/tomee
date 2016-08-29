@@ -651,7 +651,6 @@ When run you should see output similar to the following.
 	Apr 15, 2015 12:40:24 PM org.apache.webbeans.plugins.PluginLoader startUp
 	INFO: Adding OpenWebBeansPlugin : [CdiPlugin]
 	Apr 15, 2015 12:40:24 PM org.apache.webbeans.plugins.PluginLoader startUp
-	INFO: Adding OpenWebBeansPlugin : [OpenWebBeansJsfPlugin]
 	Apr 15, 2015 12:40:25 PM org.apache.webbeans.config.BeansDeployer validateInjectionPoints
 	INFO: All injection points were validated successfully.
 	Apr 15, 2015 12:40:25 PM org.apache.openejb.cdi.OpenEJBLifecycle startApplication
@@ -673,7 +672,6 @@ When run you should see output similar to the following.
 	Apr 15, 2015 12:40:25 PM org.apache.webbeans.plugins.PluginLoader startUp
 	INFO: Adding OpenWebBeansPlugin : [CdiPlugin]
 	Apr 15, 2015 12:40:25 PM org.apache.webbeans.plugins.PluginLoader startUp
-	INFO: Adding OpenWebBeansPlugin : [OpenWebBeansJsfPlugin]
 	Apr 15, 2015 12:40:25 PM org.apache.webbeans.config.BeansDeployer validateInjectionPoints
 	INFO: All injection points were validated successfully.
 	Apr 15, 2015 12:40:25 PM org.apache.openejb.cdi.OpenEJBLifecycle startApplication

@@ -129,7 +129,6 @@ INFO: OpenWebBeans Container is starting...
 Feb 07, 2014 10:40:12 PM org.apache.webbeans.plugins.PluginLoader startUp
 INFO: Adding OpenWebBeansPlugin : [CdiPlugin]
 Feb 07, 2014 10:40:12 PM org.apache.webbeans.plugins.PluginLoader startUp
-INFO: Adding OpenWebBeansPlugin : [OpenWebBeansJsfPlugin]
 Feb 07, 2014 10:40:12 PM org.apache.webbeans.config.BeansDeployer validateInjectionPoints
 INFO: All injection points were validated successfully.
 Feb 07, 2014 10:40:12 PM org.apache.openejb.cdi.OpenEJBLifecycle startApplication
