@@ -46,6 +46,24 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>org.apache.openjpa</groupId>
+        <artifactId>openjpa-maven-plugin</artifactId>
+        <version>2.4.0</version>
+        <configuration>
+          <includes>org/apache/openejb/arquillian/tests/datasourcerealm/*.class</includes>
+          <persistenceXmlFile>src/test/resources/META-INF/build-persistence.xml</persistenceXmlFile>
+        </configuration>
+        <executions>
+          <execution>
+            <id>enhancer</id>
+            <phase>process-test-classes</phase>
+            <goals>
+              <goal>test-enhance</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>

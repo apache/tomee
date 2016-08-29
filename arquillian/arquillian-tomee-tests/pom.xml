@@ -276,10 +276,7 @@
                 </goals>
                 <configuration>
                   <skip>${skip.embedded}</skip>
-                  <argLine>
-                    -javaagent:${settings.localRepository}/org/apache/tomee/openejb-javaagent/${project.version}/openejb-javaagent-${project.version}.jar
-                    -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=768M
-                  </argLine>
+                  <argLine>-javaagent:${settings.localRepository}/org/apache/tomee/openejb-javaagent/${project.version}/openejb-javaagent-${project.version}.jar -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=768M</argLine>
                   <systemPropertyVariables>
                     <tomee.version>${project.version}</tomee.version>
                     <arquillian.launch>tomee-embedded</arquillian.launch>

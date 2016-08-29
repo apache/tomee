@@ -30,6 +30,7 @@
         My\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
         My\ Unmanaged\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
         openejb.classloader.forced-load=org.apache.openejb.arquillian.tests
+        openejb.classloader.forced-skip=org.apache.openejb.arquillian.tests.datasourcerealm.User,org.apache.openejb.arquillian.tests.datasourcerealm.Role,org.apache.openejb.arquillian.tests.datasourcerealm.RoleId
         openejb.ear.use-as-webcontext-base=true
         embedded = true
 

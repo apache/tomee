@@ -47,66 +47,66 @@ public class DataSourceRealmTest {
                 .addClasses(AddUser.class, User.class, Role.class, RoleId.class)
                 .addAsWebInfResource(new StringAsset( // JPA for user/role provisioning and table init
                         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                        "<persistence xmlns=\"http://java.sun.com/xml/ns/persistence\"\n" +
-                        "             xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
-                        "             xsi:schemaLocation=\"\n" +
-                        "              http://java.sun.com/xml/ns/persistence\n" +
-                        "              http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd\"\n" +
-                        "             version=\"2.0\">\n" +
-                        "  <persistence-unit name=\"users\">\n" +
-                        "    <jta-data-source>jdbc/users-managed</jta-data-source>\n" +
-                        "    <non-jta-data-source>jdbc/users</non-jta-data-source>\n" +
-                        "    <class>org.apache.openejb.arquillian.tests.datasourcerealm.User</class>\n" +
-                        "    <class>org.apache.openejb.arquillian.tests.datasourcerealm.Role</class>\n" +
-                        "    <class>org.apache.openejb.arquillian.tests.datasourcerealm.RoleId</class>\n" +
-                        "    <exclude-unlisted-classes>true</exclude-unlisted-classes>\n" +
-                        "    <properties>\n" +
-                        "      <property name=\"openejb.jpa.init-entitymanager\" value=\"true\" />\n" +
-                        "      <property name=\"openjpa.jdbc.SynchronizeMappings\" value=\"buildSchema(ForeignKeys=true)\"/>\n" +
-                        "      <property name=\"openjpa.RuntimeUnenhancedClasses\" value=\"supported\"/>\n" +
-                        "    </properties>\n" +
-                        "  </persistence-unit>\n" +
-                        "</persistence>"), "persistence.xml")
+                                "<persistence xmlns=\"http://java.sun.com/xml/ns/persistence\"\n" +
+                                "             xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+                                "             xsi:schemaLocation=\"\n" +
+                                "              http://java.sun.com/xml/ns/persistence\n" +
+                                "              http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd\"\n" +
+                                "             version=\"2.0\">\n" +
+                                "  <persistence-unit name=\"users\">\n" +
+                                "    <jta-data-source>jdbc/users-managed</jta-data-source>\n" +
+                                "    <non-jta-data-source>jdbc/users</non-jta-data-source>\n" +
+                                "    <class>org.apache.openejb.arquillian.tests.datasourcerealm.User</class>\n" +
+                                "    <class>org.apache.openejb.arquillian.tests.datasourcerealm.Role</class>\n" +
+                                "    <class>org.apache.openejb.arquillian.tests.datasourcerealm.RoleId</class>\n" +
+                                "    <exclude-unlisted-classes>true</exclude-unlisted-classes>\n" +
+                                "    <properties>\n" +
+                                "      <property name=\"openejb.jpa.init-entitymanager\" value=\"true\" />\n" +
+                                "      <property name=\"openjpa.jdbc.SynchronizeMappings\" value=\"buildSchema(ForeignKeys=true)\"/>\n" +
+                                "      <property name=\"openjpa.RuntimeUnenhancedClasses\" value=\"supported\"/>\n" +
+                                "    </properties>\n" +
+                                "  </persistence-unit>\n" +
+                                "</persistence>"), "persistence.xml")
                 .addAsManifestResource(new StringAsset(
                         "<Context>\n" +
-                        "  <Realm className=\"org.apache.catalina.realm.DataSourceRealm\" \n" +
-                        "       dataSourceName=\"jdbc/users\" localDataSource=\"true\"\n" +
-                        "       userTable=\"users\" userNameCol=\"user_name\" userCredCol=\"user_pass\"\n" +
-                        "       userRoleTable=\"user_roles\" roleNameCol=\"user_role\">\n" +
-                        "\n" +
-                        "    <CredentialHandler className=\"org.apache.catalina.realm.MessageDigestCredentialHandler\" algorithm=\"md5\" />\n" +
-                        "  </Realm>\n" +
-                        "</Context>"), "context.xml")
+                                "  <Realm className=\"org.apache.catalina.realm.DataSourceRealm\" \n" +
+                                "       dataSourceName=\"jdbc/users\" localDataSource=\"true\"\n" +
+                                "       userTable=\"users\" userNameCol=\"user_name\" userCredCol=\"user_pass\"\n" +
+                                "       userRoleTable=\"user_roles\" roleNameCol=\"user_role\">\n" +
+                                "\n" +
+                                "    <CredentialHandler className=\"org.apache.catalina.realm.MessageDigestCredentialHandler\" algorithm=\"md5\" />\n" +
+                                "  </Realm>\n" +
+                                "</Context>"), "context.xml")
                 .addAsWebInfResource(new StringAsset(
                         "<Resources>\n" +
-                        "  <Resource id=\"jdbc/users-managed\" type=\"DataSource\">\n" +
-                        "  JtaManaged = true\n" +
-                        "  JdbcUrl = jdbc:hsqldb:mem:DataSourceRealmTest_users\n" +
-                        "  LogSql = true\n" +
-                        "  </Resource>\n" +
-                        "  <Resource id=\"jdbc/users\" type=\"DataSource\">\n" +
-                        "  JtaManaged = false\n" +
-                        "  JdbcUrl = jdbc:hsqldb:mem:DataSourceRealmTest_users\n" +
-                        "  LogSql = true\n" +
-                        "  </Resource>\n" +
-                        "</Resources>"), "resources.xml")
+                                "  <Resource id=\"jdbc/users-managed\" type=\"DataSource\">\n" +
+                                "  JtaManaged = true\n" +
+                                "  JdbcUrl = jdbc:hsqldb:mem:DataSourceRealmTest_users\n" +
+                                "  LogSql = true\n" +
+                                "  </Resource>\n" +
+                                "  <Resource id=\"jdbc/users\" type=\"DataSource\">\n" +
+                                "  JtaManaged = false\n" +
+                                "  JdbcUrl = jdbc:hsqldb:mem:DataSourceRealmTest_users\n" +
+                                "  LogSql = true\n" +
+                                "  </Resource>\n" +
+                                "</Resources>"), "resources.xml")
                 .addAsWebResource(new StringAsset("touched"), "index.html")
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
                 .setWebXML(new StringAsset(
                         Descriptors.create(WebAppDescriptor.class)
                                 .getOrCreateSecurityConstraint()
-                                    .createWebResourceCollection()
-                                        .webResourceName("all")
-                                        .urlPattern("/*")
-                                    .up()
-                                    .getOrCreateAuthConstraint()
-                                        .roleName("arquillian")
-                                    .up()
+                                .createWebResourceCollection()
+                                .webResourceName("all")
+                                .urlPattern("/*")
+                                .up()
+                                .getOrCreateAuthConstraint()
+                                .roleName("arquillian")
+                                .up()
                                 .up()
                                 .getOrCreateLoginConfig()
-                                    .authMethod("BASIC")
+                                .authMethod("BASIC")
                                 .up()
-                        .exportAsString()));
+                                .exportAsString()));
     }
 
     @ArquillianResource
