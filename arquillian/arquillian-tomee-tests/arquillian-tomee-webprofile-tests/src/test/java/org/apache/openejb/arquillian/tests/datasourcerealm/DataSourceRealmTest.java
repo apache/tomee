@@ -64,6 +64,7 @@ public class DataSourceRealmTest {
                                 "      <property name=\"openejb.jpa.init-entitymanager\" value=\"true\" />\n" +
                                 "      <property name=\"openjpa.jdbc.SynchronizeMappings\" value=\"buildSchema(ForeignKeys=true)\"/>\n" +
                                 "      <property name=\"openjpa.RuntimeUnenhancedClasses\" value=\"supported\"/>\n" +
+                                "      <property name=\"eclipselink.ddl-generation\" value=\"drop-and-create-tables\"/>\n" +
                                 "    </properties>\n" +
                                 "  </persistence-unit>\n" +
                                 "</persistence>"), "persistence.xml")
