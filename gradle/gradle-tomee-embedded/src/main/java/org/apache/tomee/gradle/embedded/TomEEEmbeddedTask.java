@@ -21,6 +21,7 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.artifacts.UnknownConfigurationException;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.TaskAction;
@@ -206,10 +207,13 @@ public class TomEEEmbeddedTask extends DefaultTask {
     private void fixConfig() {
         final Project project = getProject();
 
-        // final TomEEEmbeddedExtension extension = TomEEEmbeddedExtension.class.cast(project.findProject(TomEEEmbeddedExtension.NAME));
-
+        // defaults
         if (classpath == null) {
-            classpath = project.getConfigurations().getByName(TomEEEmbeddedExtension.NAME);
+            try {
+                classpath.add(project.getConfigurations().getByName(TomEEEmbeddedExtension.ALIAS).fileCollection());
+            } catch (final UnknownConfigurationException uce) {
+                classpath = project.getConfigurations().getByName(TomEEEmbeddedExtension.NAME);
+            }
         }
 
         if (docBase == null) {
@@ -225,6 +229,32 @@ public class TomEEEmbeddedTask extends DefaultTask {
             final File main = new File(project.getBuildDir(), "classes/main");
             if (main.isDirectory()) {
                 modules = new ArrayList<>(singletonList(main));
+            }
+        }
+
+        // extension override
+        for (final String name : asList(TomEEEmbeddedExtension.NAME, TomEEEmbeddedExtension.ALIAS)) {
+            final TomEEEmbeddedExtension extension = TomEEEmbeddedExtension.class.cast(project.getExtensions().findByName(name));
+            if (extension != null) {
+                for (final Field f : TomEEEmbeddedTask.class.getDeclaredFields()) {
+                    if (f.isAnnotationPresent(Input.class)) {
+                        try {
+                            final Field extField = TomEEEmbeddedExtension.class.getDeclaredField(f.getName());
+                            if (!extField.isAccessible()) {
+                                extField.setAccessible(true);
+                            }
+                            final Object val = extField.get(extension);
+                            if (val != null) {
+                                if (!f.isAccessible()) {
+                                    f.setAccessible(true);
+                                }
+                                f.set(this, val);
+                            }
+                        } catch (final IllegalAccessException | NoSuchFieldException e) {
+                            getLogger().warn("No field " + f.getName() + " in " + extension, e);
+                        }
+                    }
+                }
             }
         }
     }
@@ -344,14 +374,18 @@ public class TomEEEmbeddedTask extends DefaultTask {
 
     private Object getConfig(final Class<?> configClass) throws Exception {
         final Object config = configClass.newInstance();
-        for (final Field field : getClass().getDeclaredFields()) {
+        for (final Field field : TomEEEmbeddedTask.class.getDeclaredFields()) {
             try {
-                final Field configField = Configuration.class.getDeclaredField(field.getName());
-                field.setAccessible(true);
-                configField.setAccessible(true);
+                final Field configField = configClass.getDeclaredField(field.getName());
+                if (!field.isAccessible()) {
+                    field.setAccessible(true);
+                }
 
                 final Object value = field.get(this);
                 if (value != null) {
+                    if (!configField.isAccessible()) {
+                        configField.setAccessible(true);
+                    }
                     configField.set(config, value);
                     getLogger().debug("using " + field.getName() + " = " + value);
                 }
