@@ -404,25 +404,6 @@ public class Client {
                 }
             }
 
-            if (null != in) {
-
-                // consume anything left in the buffer
-                try {
-                    int read = 0;
-                    while (read > -1) {
-                        read = in.read();
-                    }
-                } catch (Throwable e) {
-                    // ignore
-                }
-                
-                try {
-                    in.close();
-                } catch (final Throwable e) {
-                    //Ignore
-                }
-            }
-
             if (null != conn) {
                 try {
                     conn.close();

@@ -1,19 +1,18 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.openejb.client;
 
@@ -29,7 +28,9 @@ import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
 
 /**
@@ -38,23 +39,32 @@ import java.util.concurrent.ConcurrentMap;
 public class HttpConnectionFactory implements ConnectionFactory {
     // this map only ensures JVM keep alive socket caching works properly
     private final ConcurrentMap<URI, SSLSocketFactory> socketFactoryMap = new ConcurrentHashMap<>();
+    private final Queue<byte[]> drainBuffers = new ConcurrentLinkedQueue<>();
 
     @Override
     public Connection getConnection(final URI uri) throws IOException {
-        return new HttpConnection(uri, socketFactoryMap);
+        byte[] buffer = drainBuffers.poll();
+        if (buffer == null) {
+            buffer = new byte[Integer.getInteger("openejb.client.http.drain-buffer.size", 64)];
+        }
+        try {
+            return new HttpConnection(uri, socketFactoryMap, buffer);
+        } finally { // auto adjusting buffer caching, queue avoids leaks (!= ThreadLocal)
+            drainBuffers.add(buffer);
+        }
     }
 
     public static class HttpConnection implements Connection {
-        private final ConcurrentMap<URI, SSLSocketFactory> socketFactoryMap;
-
+        private final byte[] buffer;
         private HttpURLConnection httpURLConnection;
         private InputStream inputStream;
         private OutputStream outputStream;
         private final URI uri;
 
-        public HttpConnection(final URI uri, final ConcurrentMap<URI, SSLSocketFactory> socketFactoryMap) throws IOException {
+        public HttpConnection(final URI uri, final ConcurrentMap<URI, SSLSocketFactory> socketFactoryMap,
+                              final byte[] buffer) throws IOException {
             this.uri = uri;
-            this.socketFactoryMap = socketFactoryMap;
+            this.buffer = buffer;
             final URL url = uri.toURL();
 
             final Map<String, String> params;
@@ -125,6 +135,14 @@ public class HttpConnectionFactory implements ConnectionFactory {
         public void close() throws IOException {
             IOException exception = null;
             if (inputStream != null) {
+                // consume anything left in the buffer
+                try {// use a buffer cause it is faster, check HttpInputStreamImpl
+                    while (inputStream.read(buffer) > -1) {
+                        // no-op
+                    }
+                } catch (final Throwable e) {
+                    // ignore
+                }
                 try {
                     inputStream.close();
                 } catch (final IOException e) {
