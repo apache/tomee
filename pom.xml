@@ -607,6 +607,24 @@
           <id>Codehaus Snapshots</id>
           <url>http://snapshots.repository.codehaus.org/</url>
         </repository>
+        <repository>
+          <id>apache-snapshots</id>
+          <name>Apache Snapshots Repository</name>
+          <url>https://repository.apache.org/content/groups/snapshots</url>
+          <releases>
+            <enabled>false</enabled>
+          </releases>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+        </repository>
+        <!-- TODO Remove this repository once the OWB-1.7.0 VOTE succeeded -->
+        <repository>
+          <snapshots><enabled>false</enabled></snapshots>
+          <releases><enabled>true</enabled></releases>
+          <id>OWB staging repo</id>
+          <url>https://repository.apache.org/content/repositories/orgapacheopenwebbeans-1017/</url>
+        </repository>
       </repositories>
 
       <pluginRepositories>
