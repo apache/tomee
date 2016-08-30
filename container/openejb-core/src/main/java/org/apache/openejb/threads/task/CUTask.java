@@ -22,6 +22,9 @@ import org.apache.openejb.core.ivm.ClientSecurity;
 import org.apache.openejb.core.security.AbstractSecurityService;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.Join;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
 import javax.security.auth.login.LoginException;
 import java.util.ArrayList;
@@ -204,22 +207,48 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask implements Compa
         }
 
         public void exit() {
+            Collection<RuntimeException> errors = null;
+
             // exit tasks are designed to be in execution added post tasks so execution them before next ones
             // ie inversed ordered compared to init phase
             if (exitTasks != null) {
-                for (Runnable r : exitTasks) {
-                    r.run();
+                for (final Runnable r : exitTasks) {
+                    try {
+                        r.run();
+                    } catch (final RuntimeException re) {
+                        if (errors == null) {
+                            errors = new ArrayList<>();
+                        }
+                        errors.add(re);
+                        Logger.getInstance(LogCategory.OPENEJB, CUTask.class).warning(re.getMessage(), re);
+                    }
                 }
             }
 
             if (threadContext != null) { // ensure we use the same condition as point A, see OPENEJB-2109
-                ThreadContext.exit(currentContext.threadContext);
+                try {
+                    ThreadContext.exit(currentContext.threadContext);
+                } catch (final RuntimeException re) {
+                    if (errors == null) {
+                        errors = new ArrayList<>();
+                    }
+                    errors.add(re);
+                    Logger.getInstance(LogCategory.OPENEJB, CUTask.class).warning(re.getMessage(), re);
+                }
             }
 
-            if (!associate) {
-                SECURITY_SERVICE.setState(currentContext.securityServiceState);
-            } else {
-                SECURITY_SERVICE.disassociate();
+            try {
+                if (!associate) {
+                    SECURITY_SERVICE.setState(currentContext.securityServiceState);
+                } else {
+                    SECURITY_SERVICE.disassociate();
+                }
+            } catch (final RuntimeException re) {
+                if (errors == null) {
+                    errors = new ArrayList<>();
+                }
+                errors.add(re);
+                Logger.getInstance(LogCategory.OPENEJB, CUTask.class).warning(re.getMessage(), re);
             }
 
             /* propagation of CDI context seems wrong
@@ -236,6 +265,18 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask implements Compa
                 CURRENT.set(currentContext.stack);
             }
             currentContext = null;
+
+            if (errors != null) {
+                if (errors.size() == 1) {
+                    throw errors.iterator().next();
+                }
+                throw new OpenEJBRuntimeException(Join.join("\n", new Join.NameCallback<RuntimeException>() {
+                    @Override
+                    public String getName(final RuntimeException object) {
+                        return object.getMessage();
+                    }
+                }, errors));
+            }
         }
 
         public void pushExitTask(final Runnable runnable) {

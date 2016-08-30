@@ -61,14 +61,20 @@ public class BasicAuthHttpListenerWrapper implements HttpListener {
             }
         }
 
-        if (token != null || HttpRequest.Method.GET.name().equals(request.getMethod())) {
-            httpListener.onMessage(request, response);
-        } else {
-            // login failed,  return 401
-        }
-
-        if (token != null) {
-            getSecurityService().disassociate();
+        try {
+            if (token != null || HttpRequest.Method.GET.name().equals(request.getMethod())) {
+                httpListener.onMessage(request, response);
+            } else {
+                // login failed,  return 401
+            }
+        } finally {
+            if (token != null) {
+                final SecurityService securityService = getSecurityService();
+                final Object disassociate = securityService.disassociate();
+                if (disassociate != null) {
+                    securityService.logout(disassociate);
+                }
+            }
         }
     }
 
