@@ -38,7 +38,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class HttpConnectionFactory implements ConnectionFactory {
     // this map only ensures JVM keep alive socket caching works properly
-    private final ConcurrentMap<URI, SSLSocketFactory> socketFactoryMap = new ConcurrentHashMap<>();
+    private final ConcurrentMap<URI, SSLSocketFactory> socketFactoryMap = new ConcurrentHashMap<URI, SSLSocketFactory>();
     private final Queue<byte[]> drainBuffers = new ConcurrentLinkedQueue<byte[]>();
 
     @Override

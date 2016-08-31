@@ -354,6 +354,22 @@ public class SocketConnectionFactory implements ConnectionFactory {
 
         @Override
         public void close() throws IOException {
+            if (null != out) {
+                try {
+                    out.close();
+                } catch (final Throwable e) {
+                    //Ignore
+                }
+            }
+
+            if (null != in) {
+                try {
+                    in.close();
+                } catch (final Throwable e) {
+                    //Ignore
+                }
+            }
+
             if (this.discarded) {
                 return;
             }
