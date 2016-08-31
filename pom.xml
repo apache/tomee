@@ -513,7 +513,7 @@
           <snapshots><enabled>false</enabled></snapshots>
           <releases><enabled>true</enabled></releases>
           <id>OWB staging repo</id>
-          <url>https://repository.apache.org/content/repositories/orgapacheopenwebbeans-1017/</url>
+          <url>https://repository.apache.org/content/repositories/orgapacheopenwebbeans-1018/</url>
         </repository>
       </repositories>
     </profile>
