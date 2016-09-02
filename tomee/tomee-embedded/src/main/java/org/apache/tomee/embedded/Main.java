@@ -258,6 +258,7 @@ public class Main {
         options.addOption(null, SIMPLE_LOG, false, "should tomee use simple log format (level - message) - demo intended");
         options.addOption("i", INTERACTIVE, false, "should tomee start and wait for SIGTERM signal or wait for 'exit' to be entered");
         options.addOption(null, CLASSPATH_CONFIGURATION, true, "a properties file containing the configuration to load");
+        options.addOption(null, SINGLE_CLASSLOADER, false, "if the application should use the same classloader as the boot one");
         options.addOption("h", HELP, false, "show help");
         return options;
     }
