@@ -73,6 +73,7 @@ public class Main {
     public static final String SIMPLE_LOG = "simple-log";
     public static final String PRE_TASK = "pre-task";
     public static final String INTERACTIVE = "interactive";
+    public static final String CLASSPATH_CONFIGURATION = "classpath-configuration";
 
     public static void main(final String[] args) {
         final CommandLineParser parser = new PosixParser();
@@ -246,14 +247,18 @@ public class Main {
         options.addOption(null, BASIC, true, "basic authentication if set");
         options.addOption(null, SIMPLE_LOG, true, "should tomee use simple log format (level - message) - demo intended");
         options.addOption("i", INTERACTIVE, true, "should tomee start and wait for SIGTERM signal or wait for 'exit' to be entered");
+        options.addOption(null, CLASSPATH_CONFIGURATION, true, "a properties file containing the configuration to load");
         return options;
     }
 
     private static Configuration createConfiguration(final CommandLine args) {
         final Configuration config = new Configuration();
-        config.setHttpPort(Integer.parseInt(args.getOptionValue(PORT, "8080")));
-        config.setStopPort(Integer.parseInt(args.getOptionValue(SHUTDOWN, "8005")));
-        config.setDir(args.getOptionValue(DIRECTORY, new File(new File("."), "apache-tomee").getAbsolutePath()));
+        if (args.hasOption(CLASSPATH_CONFIGURATION)) {
+            config.loadFromClasspath(args.getOptionValue(CLASSPATH_CONFIGURATION));
+        }
+        config.setHttpPort(Integer.parseInt(args.getOptionValue(PORT, Integer.toString(config.getHttpPort()))));
+        config.setStopPort(Integer.parseInt(args.getOptionValue(SHUTDOWN, Integer.toString(config.getHttpsPort()))));
+        config.setDir(args.getOptionValue(DIRECTORY, config.getDir() == null ? new File(new File("."), "apache-tomee").getAbsolutePath() : config.getDir()));
         if (args.hasOption(SERVER_XML)) {
             config.setServerXml(args.getOptionValue(SERVER_XML));
         }

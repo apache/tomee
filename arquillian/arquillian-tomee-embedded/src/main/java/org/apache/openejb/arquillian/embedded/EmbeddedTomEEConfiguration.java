@@ -47,6 +47,15 @@ public class EmbeddedTomEEConfiguration extends TomEEConfiguration {
     private boolean webResourcesCached = true;
     private boolean http2;
     private String configurationCustomizers;
+    private String classpathConfiguration;
+
+    public String getClasspathConfiguration() {
+        return classpathConfiguration;
+    }
+
+    public void setClasspathConfiguration(final String classpathConfiguration) {
+        this.classpathConfiguration = classpathConfiguration;
+    }
 
     public boolean isHttp2() {
         return http2;

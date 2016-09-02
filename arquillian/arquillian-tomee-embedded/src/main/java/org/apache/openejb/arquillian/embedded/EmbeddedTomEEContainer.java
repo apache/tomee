@@ -101,6 +101,10 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
 
         configuration.setWebResourceCached(tomeeConfiguration.isWebResourcesCached());
 
+        if (tomeeConfiguration.getClasspathConfiguration() != null) {
+            configuration.loadFromClasspath(tomeeConfiguration.getClasspathConfiguration());
+        }
+
         if (tomeeConfiguration.getConfigurationCustomizers() != null) {
             for (final String s : tomeeConfiguration.getConfigurationCustomizers().split(",")) {
                 final String trim = s.trim();
