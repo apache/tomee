@@ -74,6 +74,7 @@ public class Main {
     public static final String PRE_TASK = "pre-task";
     public static final String INTERACTIVE = "interactive";
     public static final String CLASSPATH_CONFIGURATION = "classpath-configuration";
+    public static final String HELP = "help";
 
     public static void main(final String[] args) {
         final CommandLineParser parser = new PosixParser();
@@ -84,7 +85,12 @@ public class Main {
         try {
             line = parser.parse(options, args, true);
         } catch (final ParseException exp) {
-            new HelpFormatter().printHelp("java -jar tomee-embedded-user.jar", options);
+            help(options);
+            return;
+        }
+
+        if (line.hasOption(HELP)) {
+            help(options);
             return;
         }
 
@@ -197,6 +203,10 @@ public class Main {
         }
     }
 
+    private static void help(Options options) {
+        new HelpFormatter().printHelp("java -jar tomee-embedded-user.jar", options);
+    }
+
     private static void close(final Collection<Closeable> post) {
         synchronized (post) {
             for (final Closeable p : post) {
@@ -245,9 +255,10 @@ public class Main {
         options.addOption(null, JAAS_CONFIG, true, "forces tomee to use JAAS with the set config");
         options.addOption(null, CACHE_WEB_RESOURCES, true, "should web resources be cached");
         options.addOption(null, BASIC, true, "basic authentication if set");
-        options.addOption(null, SIMPLE_LOG, true, "should tomee use simple log format (level - message) - demo intended");
-        options.addOption("i", INTERACTIVE, true, "should tomee start and wait for SIGTERM signal or wait for 'exit' to be entered");
+        options.addOption(null, SIMPLE_LOG, false, "should tomee use simple log format (level - message) - demo intended");
+        options.addOption("i", INTERACTIVE, false, "should tomee start and wait for SIGTERM signal or wait for 'exit' to be entered");
         options.addOption(null, CLASSPATH_CONFIGURATION, true, "a properties file containing the configuration to load");
+        options.addOption("h", HELP, false, "show help");
         return options;
     }
 
@@ -268,7 +279,7 @@ public class Main {
         if (args.hasOption(TOMEE_XML)) {
             config.property("openejb.conf.file", args.getOptionValue(TOMEE_XML));
         }
-        if (args.hasOption(SIMPLE_LOG) && Boolean.parseBoolean(args.getOptionValue(SIMPLE_LOG))) {
+        if (args.hasOption(SIMPLE_LOG)) {
             config.property("openejb.jul.forceReload", "true");
         }
         if (args.hasOption(PROPERTY)) {
