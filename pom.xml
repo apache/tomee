@@ -508,13 +508,14 @@
           <url>https://repository.apache.org/content/repositories/snapshots</url>
         </repository>
 
-        <!-- TODO Remove this repository once the OWB-1.7.0 VOTE succeeded -->
+        <!-- Comment this section in and amend it to temporarily add staging repos for TCK tests 
         <repository>
           <snapshots><enabled>false</enabled></snapshots>
           <releases><enabled>true</enabled></releases>
           <id>OWB staging repo</id>
           <url>https://repository.apache.org/content/repositories/orgapacheopenwebbeans-1018/</url>
         </repository>
+        -->
       </repositories>
     </profile>
     <profile>
