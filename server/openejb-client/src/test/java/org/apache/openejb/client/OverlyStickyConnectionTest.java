@@ -91,6 +91,21 @@ public class OverlyStickyConnectionTest extends TestCase {
 
                 @Override
                 public void close() throws IOException {
+                    if (null != out) {
+                        try {
+                            out.close();
+                        } catch (final Throwable e) {
+                            //Ignore
+                        }
+                    }
+
+                    if (null != in) {
+                        try {
+                            in.close();
+                        } catch (final Throwable e) {
+                            //Ignore
+                        }
+                    }
                 }
 
                 @Override

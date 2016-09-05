@@ -396,22 +396,6 @@ public class Client {
 
         } finally {
 
-            if (null != out) {
-                try {
-                    out.close();
-                } catch (final Throwable e) {
-                    //Ignore
-                }
-            }
-
-            if (null != in) {
-                try {
-                    in.close();
-                } catch (final Throwable e) {
-                    //Ignore
-                }
-            }
-
             if (null != conn) {
                 try {
                     conn.close();

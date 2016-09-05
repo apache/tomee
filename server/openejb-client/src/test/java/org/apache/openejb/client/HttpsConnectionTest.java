@@ -57,10 +57,11 @@ public class HttpsConnectionTest {
 
     @Test
     public void testHttps() throws URISyntaxException, IOException {
+        final HttpConnectionFactory factory = new HttpConnectionFactory();
         final String url = "https://" + SERVER + ":" + SERVER_PORT + "/secure" +
             "?sslKeyStore=" + STORE_PATH + "&sslKeyStorePassword=" + STORE_PWD + "&sslKeyStoreProvider=SunX509&sslKeyStoreType=jks" +
             "&sslTrustStore=" + STORE_PATH + "&sslTrustStorePassword=" + STORE_PWD + "&readTimeout=500";
-        final Connection connection = new HttpConnectionFactory().getConnection(new URI(url));
+        Connection connection = new HttpConnectionFactory().getConnection(new URI(url));
 
         BufferedReader br = null;
         final StringBuilder sb = new StringBuilder();
@@ -80,6 +81,7 @@ public class HttpsConnectionTest {
                     e.printStackTrace();
                 }
             }
+            connection.close();
         }
 
         Assert.assertTrue("should contain", sb.toString().contains("secure"));

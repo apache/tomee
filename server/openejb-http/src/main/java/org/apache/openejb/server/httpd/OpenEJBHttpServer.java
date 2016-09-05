@@ -59,6 +59,7 @@ public class OpenEJBHttpServer implements HttpServer {
     private HttpListener listener;
     private Set<Output> print;
     private boolean indent;
+    private boolean debugPayload;
 
     public OpenEJBHttpServer() {
         this(getHttpListenerRegistry());
@@ -102,8 +103,8 @@ public class OpenEJBHttpServer implements HttpServer {
         try {
             RequestInfos.initRequestInfo(socket);
 
-            in = new CountingInputStream(socket.getInputStream());
-            out = new CountingOutputStream(socket.getOutputStream());
+            in = debugPayload ? new CountingInputStream(socket.getInputStream()) : socket.getInputStream();
+            out = debugPayload ? new CountingOutputStream(socket.getOutputStream()) : socket.getOutputStream();
 
             //TODO: if ssl change to https
             final URI socketURI = new URI("http://" + socket.getLocalAddress().getHostAddress() + ":" + socket.getLocalPort());
@@ -152,7 +153,7 @@ public class OpenEJBHttpServer implements HttpServer {
         options.setLogger(new OptionsLog(log));
         print = options.getAll("print", OpenEJBHttpServer.Output.class);
         indent = print.size() > 0 && options.get("indent.xml", false);
-
+        debugPayload = "true".equalsIgnoreCase(props.getProperty("debugPayload", "true"));
     }
 
     public enum Output {
