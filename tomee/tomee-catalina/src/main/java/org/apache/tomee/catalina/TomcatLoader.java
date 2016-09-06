@@ -258,7 +258,7 @@ public class TomcatLoader implements Loader {
 
         final Properties ejbServerProps = new Properties();
         ejbServerProps.putAll(properties);
-        for (final String prop : new String[] { "serializer", "gzip" }) { // ensure -Dejbd.xxx are read
+        for (final String prop : new String[] { "serializer", "gzip", "debugPayload" }) { // ensure -Dejbd.xxx are read
             final String value = SystemInstance.get().getProperty("ejbd." + prop);
             if (value != null) {
                 ejbServerProps.put(prop, value);
