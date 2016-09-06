@@ -21,7 +21,7 @@
   <parent>
     <artifactId>arquillian</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>1.7.5-TT.7-SNAPSHOT</version>
+    <version>1.7.5-TT.7</version>
   </parent>
 
   <artifactId>arquillian-common</artifactId>
