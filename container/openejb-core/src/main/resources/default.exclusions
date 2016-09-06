@@ -36,6 +36,7 @@ bootstrap.jar
 bval-core
 bval-jsr
 c3p0-
+cassandra-driver-core
 catalina-
 catalina.jar
 cglib-
@@ -74,6 +75,7 @@ FastInfoset
 jce.jar
 jfr.jar
 jfxrt.jar
+jnr-
 johnzon-
 fusemq-leveldb-
 geronimo-
@@ -154,6 +156,7 @@ myfaces-impl
 mysql-connector-java-
 neethi-
 nekohtml-
+netty-
 openejb-api
 openejb-client
 openejb-core
