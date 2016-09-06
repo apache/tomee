@@ -60,6 +60,7 @@ public class ContainerClassesFilter implements Filter {
         excluded.add("net.shibboleth.utilities.java.support");
         excluded.add("org.apache.activemq");
         excluded.add("org.apache.bval");
+        excluded.add("org.apache.camel");
         excluded.add("org.apache.commons.beanutils");
         excluded.add("org.apache.commons.cli");
         excluded.add("org.apache.commons.codec");
@@ -114,6 +115,7 @@ public class ContainerClassesFilter implements Filter {
         excluded.add("serp");
 
         final Set<String> included = new HashSet<>();
+        included.add("org.apache.camel.cdi");
         included.add("org.apache.myfaces.cdi");
         // included.add("org.apache.myfaces.application.cdi");
         included.add("org.apache.myfaces.flow.cdi");
