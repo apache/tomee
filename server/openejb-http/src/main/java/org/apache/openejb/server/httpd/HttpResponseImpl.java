@@ -525,20 +525,21 @@ public class HttpResponseImpl implements HttpResponse {
      */
     private void writeHeaders(final DataOutput out) throws IOException {
         for (final Map.Entry<String, List<String>> entry : headers.entrySet()) {
-            out.writeBytes("" + entry.getKey());
-            out.writeBytes(CSP);
             if (entry.getValue().size() == 1) {
-                out.writeBytes("" + entry.getValue().get(0));
+                writeHeader(out, entry.getKey(), entry.getValue().get(0));
             } else if (entry.getValue().size() > 1) {
-                final StringBuilder builder = new StringBuilder();
-                for (final String e : entry.getValue()) {
-                    builder.append(e).append(',');
+                for (final String val : entry.getValue()) {
+                    writeHeader(out, entry.getKey(), val);
                 }
-                builder.setLength(builder.length() - 1);
-                out.write(builder.toString().getBytes(encoding));
             }
-            out.writeBytes(CRLF);
         }
+    }
+
+    private void writeHeader(final DataOutput out, final String name, final String value) throws IOException {
+        out.writeBytes(name);
+        out.writeBytes(CSP);
+        out.writeBytes(value);
+        out.writeBytes(CRLF);
     }
 
     /**
