@@ -717,7 +717,12 @@ public class OpenEJBContextConfig extends ContextConfig {
             file = toFile;
         }
 
-        File current = classAsFile;
+        File current;
+        try { // symb links and windows long home names
+            current = classAsFile.getCanonicalFile();
+        } catch (final IOException e) {
+            current = classAsFile;
+        }
         while (current != null && current.exists()) {
             if (current.equals(file)) {
                 final File parent = current.getParentFile();
