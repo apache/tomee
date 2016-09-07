@@ -57,7 +57,7 @@ public class ManualDeploymentTest {
             final Context ctx = container.addContext("", war.getAbsolutePath());
 
             final Wrapper wrapper = Tomcat.addServlet(ctx, "awesome", AServlet.class.getName());
-            ctx.addServletMapping("/awesome", wrapper.getName());
+            ctx.addServletMappingDecoded("/awesome", wrapper.getName());
 
             assertEquals("Awesome", IO.slurp(new URL("http://localhost:" + configuration.getHttpPort() + "/awesome")).trim());
         } catch (final Exception e) {

@@ -153,7 +153,7 @@ public class OpenEJBContextConfig extends ContextConfig {
 
                         // add servlet to context
                         context.addChild(wrapper);
-                        context.addServletMapping(servlet.mappings.iterator().next(), wrapper.getName());
+                        context.addServletMappingDecoded(servlet.mappings.iterator().next(), wrapper.getName());
                     }
                     break;
                 }

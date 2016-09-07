@@ -120,7 +120,7 @@ public class TomcatHessianRegistry implements HessianRegistry {
         wrapper.setName(HESSIAN.replace("/", "") + "_" + name);
         wrapper.setServlet(new OpenEJBHessianServlet(listener));
         context.addChild(wrapper);
-        context.addServletMapping(servletMapping, wrapper.getName());
+        context.addServletMappingDecoded(servletMapping, wrapper.getName());
 
         if ("BASIC".equals(authMethod) && StandardContext.class.isInstance(context)) {
             final StandardContext standardContext = StandardContext.class.cast(context);
