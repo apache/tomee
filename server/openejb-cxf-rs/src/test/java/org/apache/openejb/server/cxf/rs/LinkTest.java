@@ -48,6 +48,7 @@ public class LinkTest {
     public void get() throws IOException {
         final Response response = ClientBuilder.newClient()
                 .target(base.toExternalForm()).path("openejb/link")
+                // cxf is not consistent for Link and other headers, see org.apache.cxf.transport.http.Headers.copyToResponse()
                 .property("org.apache.cxf.http.header.split", true)
                 .request(WILDCARD_TYPE).get();
         assertEquals(2, Collection.class.cast(response.getHeaders().get("a")).size());
