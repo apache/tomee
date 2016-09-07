@@ -43,6 +43,8 @@ import java.io.StringWriter;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.URI;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -83,9 +85,17 @@ public class OpenEJBHttpServer implements HttpServer {
                 listener == null ? getHttpListenerRegistry() : listener, ParentClassLoaderFinder.Helper.get());
     }
 
-    public static boolean isTextXml(final Map<String, String> headers) {
-        final String contentType = headers.get("Content-Type");
-        return contentType != null && contentType.contains("text/xml");
+    public static boolean isTextXml(final Map<String, List<String>> headers) {
+        final Collection<String> contentType = headers.get("Content-Type");
+        if (contentType == null) {
+            return false;
+        }
+        for (final String current : contentType) {
+            if (current.contains("text/xml")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

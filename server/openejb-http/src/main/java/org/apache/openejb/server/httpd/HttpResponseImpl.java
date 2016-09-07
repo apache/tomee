@@ -33,12 +33,15 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
+
+import static java.util.Collections.singletonList;
 
 /**
  * This class takes care of HTTP Responses.  It sends data back to the browser.
@@ -60,7 +63,7 @@ public class HttpResponseImpl implements HttpResponse {
     /**
      * Response headers
      */
-    private final Map<String, String> headers = new HashMap<String, String>();
+    private final Map<String, List<String>> headers = new HashMap<>();
 
     /**
      * the writer for the response
@@ -110,12 +113,12 @@ public class HttpResponseImpl implements HttpResponse {
      * @param value the value of the header
      */
     public void setHeader(final String name, final String value) {
-        headers.put(name, value);
+        headers.put(name, new ArrayList<>(singletonList(value)));
     }
 
     @Override
     public void setIntHeader(final String s, final int i) {
-        headers.put(s, Integer.toString(i));
+        setHeader(s, Integer.toString(i));
     }
 
     @Override
@@ -131,17 +134,22 @@ public class HttpResponseImpl implements HttpResponse {
 
     @Override
     public void addCookie(final Cookie cookie) {
-        headers.put(cookie.getName(), cookie.getValue());
+        setHeader(cookie.getName(), cookie.getValue());
     }
 
     @Override
     public void addDateHeader(final String s, final long l) {
-        headers.put(s, Long.toString(l));
+        setHeader(s, Long.toString(l));
     }
 
     @Override
     public void addHeader(final String s, final String s1) {
-        headers.put(s, s1);
+        Collection<String> list = headers.get(s);
+        if (list == null) {
+            setHeader(s, s1);
+        } else {
+            list.add(s1);
+        }
     }
 
     @Override
@@ -181,7 +189,8 @@ public class HttpResponseImpl implements HttpResponse {
      * @return the value of the header
      */
     public String getHeader(final String name) {
-        return headers.get(name);
+        final Collection<String> strings = headers.get(name);
+        return strings == null ? null : strings.iterator().next();
     }
 
     @Override
@@ -191,7 +200,7 @@ public class HttpResponseImpl implements HttpResponse {
 
     @Override
     public Collection<String> getHeaders(final String s) {
-        return Collections.singletonList(headers.get(s));
+        return headers.get(s);
     }
 
     @Override
@@ -484,7 +493,7 @@ public class HttpResponseImpl implements HttpResponse {
             return;
         }
 
-        headers.put(HttpRequest.HEADER_SET_COOKIE, SessionManager.EJBSESSIONID + '=' + session.getId() + "; Path=/");
+        setHeader(HttpRequest.HEADER_SET_COOKIE, SessionManager.EJBSESSIONID + '=' + session.getId() + "; Path=/");
     }
 
     /**
@@ -515,10 +524,19 @@ public class HttpResponseImpl implements HttpResponse {
      * @throws java.io.IOException if an exception is thrown
      */
     private void writeHeaders(final DataOutput out) throws IOException {
-        for (final Map.Entry<String, String> entry : headers.entrySet()) {
+        for (final Map.Entry<String, List<String>> entry : headers.entrySet()) {
             out.writeBytes("" + entry.getKey());
             out.writeBytes(CSP);
-            out.writeBytes("" + entry.getValue());
+            if (entry.getValue().size() == 1) {
+                out.writeBytes("" + entry.getValue().get(0));
+            } else if (entry.getValue().size() > 1) {
+                final StringBuilder builder = new StringBuilder();
+                for (final String e : entry.getValue()) {
+                    builder.append(e).append(',');
+                }
+                builder.setLength(builder.length() - 1);
+                out.write(builder.toString().getBytes(encoding));
+            }
             out.writeBytes(CRLF);
         }
     }
