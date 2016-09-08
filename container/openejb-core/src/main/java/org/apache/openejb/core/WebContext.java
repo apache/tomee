@@ -39,11 +39,16 @@ import javax.servlet.ServletContextAttributeListener;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletRequestAttributeListener;
 import javax.servlet.ServletRequestListener;
+import javax.servlet.http.HttpSessionActivationListener;
 import javax.servlet.http.HttpSessionAttributeListener;
+import javax.servlet.http.HttpSessionBindingListener;
 import javax.servlet.http.HttpSessionIdListener;
+import javax.servlet.http.HttpSessionListener;
+
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EventListener;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -201,15 +206,23 @@ public class WebContext {
     }
 
     private static boolean isWeb(final Class<?> beanClass) {
-        return Servlet.class.isAssignableFrom(beanClass)
-            || Filter.class.isAssignableFrom(beanClass)
-            || HttpSessionAttributeListener.class.isAssignableFrom(beanClass)
-            || ServletContextListener.class.isAssignableFrom(beanClass)
-            || HttpSessionAttributeListener.class.isAssignableFrom(beanClass)
-            || ServletRequestListener.class.isAssignableFrom(beanClass)
-            || ServletContextAttributeListener.class.isAssignableFrom(beanClass)
-            || HttpSessionIdListener.class.isAssignableFrom(beanClass)
-            || ServletRequestAttributeListener.class.isAssignableFrom(beanClass);
+        if (Servlet.class.isAssignableFrom(beanClass)
+            || Filter.class.isAssignableFrom(beanClass)) {
+            return true;
+        }
+        if (EventListener.class.isAssignableFrom(beanClass)) {
+            return HttpSessionAttributeListener.class.isAssignableFrom(beanClass)
+                   || ServletContextListener.class.isAssignableFrom(beanClass)
+                   || ServletRequestListener.class.isAssignableFrom(beanClass)
+                   || ServletContextAttributeListener.class.isAssignableFrom(beanClass)
+                   || HttpSessionListener.class.isAssignableFrom(beanClass)
+                   || HttpSessionBindingListener.class.isAssignableFrom(beanClass)
+                   || HttpSessionActivationListener.class.isAssignableFrom(beanClass)
+                   || HttpSessionIdListener.class.isAssignableFrom(beanClass)
+                   || ServletRequestAttributeListener.class.isAssignableFrom(beanClass);
+        }
+
+        return false;
     }
 
     public WebBeansContext getWebBeansContext() {
