@@ -16,7 +16,6 @@
  */
 package org.apache.tomee.embedded.junit;
 
-import org.apache.openejb.config.sys.Openejb;
 import org.apache.openejb.testing.Application;
 import org.apache.openejb.testing.Classes;
 import org.apache.openejb.testing.ContainerProperties;
@@ -198,7 +197,6 @@ public class TomEEEmbeddedSingleRunner extends BlockJUnit4ClassRunner {
                     }
                 }
 
-                Openejb openejb = null;
                 final List<Method> annotatedMethods = finder.findAnnotatedMethods(org.apache.openejb.testing.Configuration.class);
                 if (annotatedMethods.size() > 1) {
                     throw new IllegalArgumentException("Only one @Configuration is supported: " + annotatedMethods);
@@ -244,9 +242,18 @@ public class TomEEEmbeddedSingleRunner extends BlockJUnit4ClassRunner {
                     configuration.randomHttpPort();
                 }
 
+                // at least after LifecycleTasks to inherit from potential states (system properties to get a port etc...)
+                final Configurers configurers = appClass.getAnnotation(Configurers.class);
+                if (tasks != null) {
+                    for (final Class<? extends Configurer> type : configurers.value()) {
+                        type.newInstance().configure(configuration);
+                    }
+                }
+
                 final Classes classes = appClass.getAnnotation(Classes.class);
                 String context = classes != null ? classes.context() : "";
                 context = !context.isEmpty() && context.startsWith("/") ? context.substring(1) : context;
+                // TODO: potentially respect classes() giving to deployClasspath a built Finder
 
                 final WebResource resources = appClass.getAnnotation(WebResource.class);
                 if (resources != null && resources.value().length > 1) {
@@ -381,5 +388,15 @@ public class TomEEEmbeddedSingleRunner extends BlockJUnit4ClassRunner {
     @Target(TYPE)
     public @interface LifecycleTasks {
         Class<? extends org.apache.tomee.embedded.LifecycleTask>[] value();
+    }
+
+    @Retention(RUNTIME)
+    @Target(TYPE)
+    public @interface Configurers {
+        Class<? extends Configurer>[] value();
+    }
+
+    public interface Configurer {
+        void configure(Configuration configuration);
     }
 }

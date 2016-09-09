@@ -40,7 +40,7 @@ import static org.junit.Assert.assertTrue;
 
 // just a manual test to check it works, can't be executed with the rest of the suite,
 // we could use a different surefire execution if we want to add it to the default run
-@Ignore("can't run with by test containers")
+//@Ignore("can't run with by test containers")
 @RunWith(TomEEEmbeddedSingleRunner.class)
 public class SingleInstanceRunnerTest {
     @Application // app can have several injections/helpers
@@ -55,6 +55,7 @@ public class SingleInstanceRunnerTest {
         assertEquals("set", SystemInstance.get().getProperty("t"));
         assertEquals("p", SystemInstance.get().getProperty("prog"));
         assertEquals("128463", SystemInstance.get().getProperty("my.server.port"));
+        assertEquals("true", SystemInstance.get().getProperty("configurer"));
         assertNotEquals(8080, app.port);
         assertTrue(app.base.toExternalForm().endsWith("/app"));
         assertEquals(app.port, port);
@@ -64,6 +65,7 @@ public class SingleInstanceRunnerTest {
     @Classes(context = "app")
     @ContainerProperties(@ContainerProperties.Property(name = "t", value = "set"))
     @TomEEEmbeddedSingleRunner.LifecycleTasks(MyTask.class) // can start a ftp/sftp/elasticsearch/mongo/... server before tomee
+    @TomEEEmbeddedSingleRunner.Configurers(SetMyProperty.class)
     public static class TheApp {
         @RandomPort("http")
         private int port;
@@ -88,6 +90,13 @@ public class SingleInstanceRunnerTest {
                     System.out.println(">>> close");
                 }
             };
+        }
+    }
+
+    public static class SetMyProperty implements TomEEEmbeddedSingleRunner.Configurer {
+        @Override
+        public void configure(final Configuration configuration) {
+            configuration.property("configurer", "true");
         }
     }
 }
