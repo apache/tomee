@@ -46,6 +46,14 @@ public class CountingOutputStream extends FilterOutputStream {
         super.write(b, off, len);
     }
 
+    public void flush() throws IOException {
+        out.flush();
+    }
+
+    public void close() throws IOException {
+        out.close();
+    }
+
     public int getCount() {
         return count;
     }
