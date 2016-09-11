@@ -732,6 +732,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             }
 
             setInitParameter(context, "org.apache.myfaces.LOG_WEB_CONTEXT_PARAMS", "false");
+            setInitParameter(context, "org.apache.myfaces.EL_RESOLVER_COMPARATOR", "org.apache.myfaces.el.unified.OpenWebBeansELResolverComparator");
+            setInitParameter(context, "org.apache.myfaces.EXPRESSION_FACTORY", "org.apache.el.ExpressionFactoryImpl");
         }
     }
 
