@@ -58,7 +58,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
     private ClientObjectFactory clientObjectFactory;
     //    DeploymentIndex deploymentIndex;
     private RequestHandler ejbHandler;
-    private RequestHandler jndiHandler;
+    private JndiRequestHandler jndiHandler;
     private RequestHandler authHandler;
     private RequestHandler logoutHandler;
     private ClusterRequestHandler clusterHandler;
@@ -69,6 +69,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
 
     //Four hours
     private int timeout = 14400000;
+    private boolean countStreams;
 
     public void init(final Properties props) throws Exception {
         containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
@@ -102,6 +103,8 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
         if (discovery != null) {
             discovery.setDiscoveryListener(clusterHandler);
         }
+
+        countStreams = Boolean.parseBoolean(props.getProperty("stream.count", Boolean.toString(jndiHandler.isDebug())));
     }
 
     public void service(final Socket socket) throws IOException {
@@ -177,10 +180,10 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
         try {
 
             final RequestInfos.RequestInfo info = RequestInfos.info();
-            info.setInputStream(new CountingInputStream(rawIn));
+            info.setInputStream(countStreams ? new CountingInputStream(rawIn) : rawIn);
 
             // Read client Protocol Version
-            final CountingInputStream cis = info.getInputStream();
+            final InputStream cis = info.getInputStream();
             clientProtocol.readExternal(cis);
             ois = new EjbObjectInputStream(cis);
 
@@ -209,7 +212,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
                     clusterHandler.getLogger().debug("Failed to write to ClusterResponse", failure);
 
                     try {
-                        info.setOutputStream(new CountingOutputStream(rawOut));
+                        info.setOutputStream(countStreams ? new CountingOutputStream(rawOut) : rawOut);
                         oos = new ObjectOutputStream(info.getOutputStream());
                         clusterResponse.setMetaData(clientProtocol);
                         clusterResponse.writeExternal(oos);
@@ -254,9 +257,9 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
             }
 
             try {
-                info.setOutputStream(new CountingOutputStream(rawOut));
+                info.setOutputStream(countStreams ? new CountingOutputStream(rawOut) : rawOut);
 
-                final CountingOutputStream cos = info.getOutputStream();
+                final OutputStream cos = info.getOutputStream();
 
                 //Let client know we are using the requested protocol to respond
                 clientProtocol.writeExternal(cos);

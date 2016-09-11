@@ -20,6 +20,8 @@ import org.apache.openejb.server.stream.CountingInputStream;
 import org.apache.openejb.server.stream.CountingOutputStream;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -27,7 +29,7 @@ import java.net.SocketAddress;
 
 public final class RequestInfos {
 
-    private static final ThreadLocal<RequestInfo> REQUEST_INFO = new ThreadLocal<RequestInfo>();
+    private static final ThreadLocal<RequestInfo> REQUEST_INFO = new ThreadLocal<>();
 
     private RequestInfos() {
         // no-op
@@ -73,11 +75,10 @@ public final class RequestInfos {
     public static class RequestInfo {
 
         public String ip;
-        private CountingInputStream inputStream;
-        private CountingOutputStream outputStream;
+        private InputStream inputStream;
+        private OutputStream outputStream;
 
-        public CountingInputStream getInputStream() {
-
+        public InputStream getInputStream() {
             if (null == inputStream) {
                 throw new RuntimeException("InputStream has not been set");
             }
@@ -85,7 +86,7 @@ public final class RequestInfos {
             return inputStream;
         }
 
-        public CountingOutputStream getOutputStream() {
+        public OutputStream getOutputStream() {
 
             if (null == outputStream) {
                 throw new RuntimeException("OutputStream has not been set");
@@ -94,11 +95,11 @@ public final class RequestInfos {
             return outputStream;
         }
 
-        public void setInputStream(final CountingInputStream inputStream) {
+        public void setInputStream(final InputStream inputStream) {
             this.inputStream = inputStream;
         }
 
-        public void setOutputStream(final CountingOutputStream outputStream) {
+        public void setOutputStream(final OutputStream outputStream) {
             this.outputStream = outputStream;
         }
 
@@ -106,8 +107,10 @@ public final class RequestInfos {
         public String toString() {
             return "RequestInfo{"
                 + "ip='" + ip + '\''
-                + ", request-size=" + (inputStream != null ? inputStream.getCount() : "unknown")
-                + ", response-size=" + (outputStream != null ? outputStream.getCount() : "unknown")
+                + ", request-size=" + (inputStream != null && CountingInputStream.class.isInstance(inputStream) ?
+                    CountingInputStream.class.cast(inputStream).getCount() : "unknown")
+                + ", response-size=" + (outputStream != null && CountingOutputStream.class.isInstance(outputStream) ?
+                    CountingOutputStream.class.cast(outputStream).getCount() : "unknown")
                 + '}';
         }
     }

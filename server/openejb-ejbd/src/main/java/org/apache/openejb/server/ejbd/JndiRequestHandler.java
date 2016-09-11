@@ -65,8 +65,10 @@ import javax.sql.DataSource;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.xml.namespace.QName;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -83,11 +85,7 @@ class JndiRequestHandler extends RequestHandler {
 
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE.createChild("jndi"), "org.apache.openejb.server.util.resources");
 
-    private final Context ejbJndiTree;
     private Context clientJndiTree;
-    private final Context deploymentsJndiTree;
-
-    private Context globalJndiTree;
 
     private final ClusterableRequestHandler clusterableRequestHandler;
     private Context rootContext;
@@ -95,10 +93,9 @@ class JndiRequestHandler extends RequestHandler {
     JndiRequestHandler(final EjbDaemon daemon) throws Exception {
         super(daemon);
         final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-        ejbJndiTree = (Context) containerSystem.getJNDIContext().lookup("openejb/remote");
-        deploymentsJndiTree = (Context) containerSystem.getJNDIContext().lookup("openejb/Deployment");
-
-        globalJndiTree = (Context) containerSystem.getJNDIContext().lookup("openejb/global");
+        containerSystem.getJNDIContext().lookup("openejb/remote");
+        containerSystem.getJNDIContext().lookup("openejb/Deployment");
+        containerSystem.getJNDIContext().lookup("openejb/global");
 
         rootContext = containerSystem.getJNDIContext();
         try {
@@ -106,6 +103,10 @@ class JndiRequestHandler extends RequestHandler {
         } catch (NamingException ignore) {
         }
         clusterableRequestHandler = newClusterableRequestHandler();
+    }
+
+    public boolean isDebug() {
+        return logger.isDebugEnabled();
     }
 
     protected BasicClusterableRequestHandler newClusterableRequestHandler() {
@@ -210,12 +211,12 @@ class JndiRequestHandler extends RequestHandler {
 
     private void logRequestResponse(final JNDIRequest req, final JNDIResponse res) {
         final RequestInfos.RequestInfo info = RequestInfos.info();
-        final CountingInputStream cis = info.getInputStream();
-        final CountingOutputStream cos = info.getOutputStream();
+        final InputStream cis = info.getInputStream();
+        final OutputStream cos = info.getOutputStream();
 
-        logger.debug("JNDI REQUEST: " + req + " (size = " + (null != cis ? cis.getCount() : 0)
+        logger.debug("JNDI REQUEST: " + req + " (size = " + (null != cis ? CountingInputStream.class.cast(cis).getCount() : 0)
             + "b, remote-ip =" + info.ip
-            + ") -- RESPONSE: " + res + " (size = " + (null != cos ? cos.getCount() : 0) + "b)");
+            + ") -- RESPONSE: " + res + " (size = " + (null != cos ? CountingOutputStream.class.cast(cos).getCount() : 0) + "b)");
     }
 
     private String getPrefix(final JNDIRequest req) throws NamingException {

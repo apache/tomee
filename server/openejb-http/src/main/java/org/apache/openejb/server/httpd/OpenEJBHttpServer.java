@@ -62,6 +62,7 @@ public class OpenEJBHttpServer implements HttpServer {
     private HttpListener listener;
     private Set<Output> print;
     private boolean indent;
+    private boolean countStreams;
 
     public OpenEJBHttpServer() {
         this(null);
@@ -118,8 +119,13 @@ public class OpenEJBHttpServer implements HttpServer {
         try {
             RequestInfos.initRequestInfo(socket);
 
-            in = new CountingInputStream(socket.getInputStream());
-            out = new CountingOutputStream(socket.getOutputStream());
+            if (countStreams) {
+                in = new CountingInputStream(socket.getInputStream());
+                out = new CountingOutputStream(socket.getOutputStream());
+            } else {
+                in = socket.getInputStream();
+                out = socket.getOutputStream();
+            }
 
             //TODO: if ssl change to https
             final URI socketURI = new URI("http://" + socket.getLocalAddress().getHostAddress() + ":" + socket.getLocalPort());
@@ -172,7 +178,7 @@ public class OpenEJBHttpServer implements HttpServer {
         indent = print.size() > 0 && options.get("" +
             "" +
             ".xml", false);
-
+        countStreams = options.get("stream.count", false);
     }
 
     public static enum Output {
