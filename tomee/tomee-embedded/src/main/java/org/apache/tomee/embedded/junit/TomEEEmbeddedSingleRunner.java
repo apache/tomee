@@ -265,7 +265,7 @@ public class TomEEEmbeddedSingleRunner extends BlockJUnit4ClassRunner {
                     webResource = resources.value()[0];
                 } else {
                     final File webapp = new File("src/main/webapp");
-                    if (webapp.isFile()) {
+                    if (webapp.isDirectory()) {
                         webResource = "src/main/webapp";
                     }
                 }
