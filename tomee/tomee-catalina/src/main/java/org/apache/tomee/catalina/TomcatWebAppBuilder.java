@@ -2146,7 +2146,11 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             final File appBase = appBase(standardHost);
             final File[] files = appBase.listFiles();
             if (null != files) {
-                for (File file : files) {
+                for (final File file : files) {
+                    if (file.getName().endsWith(".tmp")) { // tomcat is uploading, see org.apache.catalina.manager.ManagerServlet.deploy(java.io.PrintWriter, org.apache.catalina.util.ContextName, java.lang.String, boolean, javax.servlet.http.HttpServletRequest, org.apache.tomcat.util.res.StringManager)
+                        continue;
+                    }
+
                     final String name = file.getName();
                     // ignore war files
                     if (name.toLowerCase().endsWith(".war") || isRoot(name)
