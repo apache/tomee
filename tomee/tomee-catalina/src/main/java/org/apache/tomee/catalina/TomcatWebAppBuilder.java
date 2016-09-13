@@ -267,6 +267,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     private ClassLoader parentClassLoader;
     private boolean initJEEInfo = true;
     private final ServletContextHandler servletContextHandler;
+    private boolean noHostCheck;
 
     /**
      * Creates a new web application builder
@@ -340,6 +341,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         } catch (final Throwable th) {
             // no-op: can be another API impl, normally we are ok, this is really just a safe belt
         }
+
+        noHostCheck = !Boolean.parseBoolean(SystemInstance.get().getProperty("tomee.host.check", "true"));
     }
 
     private void setComponentsUsedByCDI() {
@@ -2123,6 +2126,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      */
     @Override
     public synchronized void checkHost(final StandardHost standardHost) {
+        if (noHostCheck) {
+            return;
+        }
         if (standardHost.getAutoDeploy()) {
             // Undeploy any modified application
             for (final Iterator<Map.Entry<String, DeployedApplication>> iterator = deployedApps.entrySet().iterator(); iterator.hasNext(); ) {
@@ -2146,7 +2152,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             final File appBase = appBase(standardHost);
             final File[] files = appBase.listFiles();
             if (null != files) {
-                for (final File file : files) {
+                for (File file : files) {
                     if (file.getName().endsWith(".tmp")) { // tomcat is uploading, see org.apache.catalina.manager.ManagerServlet.deploy(java.io.PrintWriter, org.apache.catalina.util.ContextName, java.lang.String, boolean, javax.servlet.http.HttpServletRequest, org.apache.tomcat.util.res.StringManager)
                         continue;
                     }
