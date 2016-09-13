@@ -476,7 +476,7 @@ public class HttpResponseImpl implements HttpResponse {
         if (content == null) {
             writer.flush();
             writer.close();
-            final int length = sosi.getOutputStream().toByteArray().length;
+            final int length = sosi.getOutputStream().size();
             setHeader("Content-Length", length + "");
         } else {
             setHeader("Content-Length", content.getContentLength() + "");
