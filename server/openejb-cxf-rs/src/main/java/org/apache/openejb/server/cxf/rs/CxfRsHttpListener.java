@@ -313,6 +313,12 @@ public class CxfRsHttpListener implements RsHttpListener {
             response.setStatus(HttpURLConnection.HTTP_OK);
         } catch (final IOException ex) {
             throw new ServletException("Static resource " + pathInfo + " can not be written to the output stream");
+        } finally {
+            try{
+                is.close();
+            } catch (Exception ex){
+                LOGGER.error("Failed to close the input stream to one of " + Arrays.toString(DEFAULT_WELCOME_FILES), ex);
+            }
         }
         return true;
     }
