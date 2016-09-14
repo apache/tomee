@@ -27,7 +27,7 @@ import javax.enterprise.inject.spi.Bean;
 
 public class WebappWebBeansContext extends WebBeansContext {
     private final WebBeansContext parent;
-    private BeanManagerImpl bm;
+    private volatile BeanManagerImpl bm;
 
     public WebappWebBeansContext(final Map<Class<?>, Object> services, final Properties properties, final WebBeansContext webBeansContext) {
         super(services, properties);
