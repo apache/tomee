@@ -32,9 +32,6 @@ import java.util.List;
 import static org.apache.openejb.jee.ConfigProperty$JAXB.readConfigProperty;
 import static org.apache.openejb.jee.ConfigProperty$JAXB.writeConfigProperty;
 
-@SuppressWarnings({
-    "StringEquality"
-})
 public class ConnectionDefinition$JAXB
     extends JAXBObject<ConnectionDefinition> {
 
@@ -78,14 +75,14 @@ public class ConnectionDefinition$JAXB
         // Check xsi:type
         final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
-            if (("connection-definitionType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
+            if ((!"connection-definitionType".equals(xsiType.getLocalPart())) || (!"http://java.sun.com/xml/ns/javaee".equals(xsiType.getNamespaceURI()))) {
                 return context.unexpectedXsiType(reader, ConnectionDefinition.class);
             }
         }
 
         // Read attributes
         for (final Attribute attribute : reader.getAttributes()) {
-            if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
+            if (("id".equals(attribute.getLocalName())) && (("".equals(attribute.getNamespace())) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
                 final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, connectionDefinition);
@@ -97,7 +94,7 @@ public class ConnectionDefinition$JAXB
 
         // Read elements
         for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
-            if (("managedconnectionfactory-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            if (("managedconnectionfactory-class".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: managedConnectionFactoryClass
                 final String managedConnectionFactoryClassRaw = elementReader.getElementAsString();
 
@@ -110,7 +107,7 @@ public class ConnectionDefinition$JAXB
                 }
 
                 connectionDefinition.managedConnectionFactoryClass = managedConnectionFactoryClass;
-            } else if (("config-property" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("config-property".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: configProperty
                 final ConfigProperty configPropertyItem = readConfigProperty(elementReader, context);
                 if (configProperty == null) {
@@ -122,7 +119,7 @@ public class ConnectionDefinition$JAXB
                     }
                 }
                 configProperty.add(configPropertyItem);
-            } else if (("connectionfactory-interface" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("connectionfactory-interface".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: connectionFactoryInterface
                 final String connectionFactoryInterfaceRaw = elementReader.getElementAsString();
 
@@ -135,7 +132,7 @@ public class ConnectionDefinition$JAXB
                 }
 
                 connectionDefinition.connectionFactoryInterface = connectionFactoryInterface;
-            } else if (("connectionfactory-impl-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("connectionfactory-impl-class".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: connectionFactoryImplClass
                 final String connectionFactoryImplClassRaw = elementReader.getElementAsString();
 
@@ -148,7 +145,7 @@ public class ConnectionDefinition$JAXB
                 }
 
                 connectionDefinition.connectionFactoryImplClass = connectionFactoryImplClass;
-            } else if (("connection-interface" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("connection-interface".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: connectionInterface
                 final String connectionInterfaceRaw = elementReader.getElementAsString();
 
@@ -161,7 +158,7 @@ public class ConnectionDefinition$JAXB
                 }
 
                 connectionDefinition.connectionInterface = connectionInterface;
-            } else if (("connection-impl-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("connection-impl-class".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: connectionImplClass
                 final String connectionImplClassRaw = elementReader.getElementAsString();
 

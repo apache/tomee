@@ -34,9 +34,6 @@ import static org.apache.openejb.jee.NamedMethod$JAXB.writeNamedMethod;
 import static org.apache.openejb.jee.Timeout$JAXB.readTimeout;
 import static org.apache.openejb.jee.Timeout$JAXB.writeTimeout;
 
-@SuppressWarnings({
-    "StringEquality"
-})
 public class ConcurrentMethod$JAXB
     extends JAXBObject<ConcurrentMethod> {
 
@@ -79,14 +76,14 @@ public class ConcurrentMethod$JAXB
         // Check xsi:type
         final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
-            if (("concurrent-methodType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
+            if ((!"concurrent-methodType".equals(xsiType.getLocalPart())) || (!"http://java.sun.com/xml/ns/javaee".equals(xsiType.getNamespaceURI()))) {
                 return context.unexpectedXsiType(reader, ConcurrentMethod.class);
             }
         }
 
         // Read attributes
         for (final Attribute attribute : reader.getAttributes()) {
-            if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
+            if (("id".equals(attribute.getLocalName())) && (("".equals(attribute.getNamespace())) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
                 final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, concurrentMethod);
@@ -98,17 +95,17 @@ public class ConcurrentMethod$JAXB
 
         // Read elements
         for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
-            if (("method" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            if (("method".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: method
                 final NamedMethod method = readNamedMethod(elementReader, context);
                 concurrentMethod.method = method;
-            } else if (("lock" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("lock".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: lock
                 final ConcurrentLockType lock = parseConcurrentLockType(elementReader, context, elementReader.getElementAsString());
                 if (lock != null) {
                     concurrentMethod.lock = lock;
                 }
-            } else if (("access-timeout" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("access-timeout".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: accessTimeout
                 final Timeout accessTimeout = readTimeout(elementReader, context);
                 concurrentMethod.accessTimeout = accessTimeout;
