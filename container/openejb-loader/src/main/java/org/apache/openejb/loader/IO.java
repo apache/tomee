@@ -153,7 +153,16 @@ public class IO {
     }
 
     public static String slurp(final File file) throws IOException {
-        return slurp(read(file));
+        final InputStream in = read(file);
+        try {
+            return slurp(in);
+        } finally {
+            try {
+                in.close();
+            } catch (IOException ex) {
+                //no-op
+            }
+        }
     }
 
 
