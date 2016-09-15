@@ -243,7 +243,11 @@ public class AnnotationFinder {
                 final JarInputStream jarStream = new JarInputStream(in);
                 return jar(jarStream);
             } finally {
-                in.close();
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    //no-op
+                }
             }
         }
     }
