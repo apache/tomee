@@ -157,6 +157,12 @@ public class UpdateChecker {
                     current = prop.getProperty("version");
                 } catch (final IOException e) {
                     LOGGER.error("can't get tomee version, will use openejb one");
+                }finally {
+                    try {
+                        is.close();
+                    } catch (IOException e) {
+                        // no-op
+                    }
                 }
             }
         }
