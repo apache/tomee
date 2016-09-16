@@ -54,25 +54,25 @@ public class RAFPassivater implements PassivationStrategy {
         try {
             fileID++;
 
-            final RandomAccessFile ras = new RandomAccessFile(System.getProperty("java.io.tmpdir", File.separator + "tmp") + File.separator + "passivation" + fileID + ".ser", "rw");
-            final Iterator iterator = stateTable.keySet().iterator();
-            Pointer lastPointer = null;
-            while (iterator.hasNext()) {
-                final Object id = iterator.next();
-                final Object obj = stateTable.get(id);
-                final byte[] bytes = Serializer.serialize(obj);
-                final long filepointer = ras.getFilePointer();
+            try(RandomAccessFile ras = new RandomAccessFile(System.getProperty("java.io.tmpdir", File.separator + "tmp") + File.separator + "passivation" + fileID + ".ser", "rw")) {
+                final Iterator iterator = stateTable.keySet().iterator();
+                Pointer lastPointer = null;
+                while (iterator.hasNext()) {
+                    final Object id = iterator.next();
+                    final Object obj = stateTable.get(id);
+                    final byte[] bytes = Serializer.serialize(obj);
+                    final long filepointer = ras.getFilePointer();
 
-                if (lastPointer == null) {
-                    lastPointer = new Pointer(fileID, filepointer, (int) filepointer);
-                } else {
-                    lastPointer = new Pointer(fileID, filepointer, (int) (filepointer - lastPointer.filepointer));
+                    if (lastPointer == null) {
+                        lastPointer = new Pointer(fileID, filepointer, (int) filepointer);
+                    } else {
+                        lastPointer = new Pointer(fileID, filepointer, (int) (filepointer - lastPointer.filepointer));
+                    }
+
+                    masterTable.put(id, lastPointer);
+                    ras.write(bytes);
                 }
-
-                masterTable.put(id, lastPointer);
-                ras.write(bytes);
             }
-            ras.close();
         } catch (final Exception e) {
             throw new SystemException(e);
         }
@@ -86,17 +86,14 @@ public class RAFPassivater implements PassivationStrategy {
             return null;
         }
 
-        try {
-            final RandomAccessFile ras = new RandomAccessFile(System.getProperty("java.io.tmpdir", File.separator + "tmp") + File.separator + "passivation" + pointer.fileid + ".ser", "r");
+        try (RandomAccessFile ras = new RandomAccessFile(System.getProperty("java.io.tmpdir", File.separator + "tmp") + File.separator + "passivation" + pointer.fileid + ".ser", "r")) {
             final byte[] bytes = new byte[(int) pointer.bytesize];
             ras.seek(pointer.filepointer);
             ras.readFully(bytes);
-            ras.close();
             return Serializer.deserialize(bytes);
-        } catch (final Exception e) {
+        } catch (Exception e) {
             throw new SystemException(e);
         }
-
     }
 
 }
