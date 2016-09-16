@@ -198,9 +198,9 @@ public class MakeTxLookup implements Opcodes {
             file = new File(file, part);
         }
         file.getParentFile().mkdirs();
-        final FileOutputStream out = new FileOutputStream(file);
-        out.write(cw.toByteArray());
-        out.close();
+        try (FileOutputStream out = new FileOutputStream(file)) {
+            out.write(cw.toByteArray());
+        }
     }
 
 }
