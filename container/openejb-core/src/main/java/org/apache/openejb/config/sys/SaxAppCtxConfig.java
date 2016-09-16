@@ -129,23 +129,22 @@ public class SaxAppCtxConfig {
             private void importFile(final String path) throws SAXException {
                 final File file = new File(path);
                 if (file.exists()) {
-                    try {
-                        parse(module, new InputSource(new FileInputStream(file)), envEntriesDeployer, beanPropertiesDeployer);
+                    try (InputStream inputStream = new FileInputStream(file)) {
+                        parse(module, new InputSource(inputStream), envEntriesDeployer, beanPropertiesDeployer);
                     } catch (final ParserConfigurationException | IOException e) {
                         throw new SAXException(e);
                     }
                 } else { // try in the classpath
                     final ClassLoader cl = module.getClassLoader();
                     if (cl != null) {
-                        final InputStream is = cl.getResourceAsStream(path);
-                        if (is != null) {
-                            try {
+                        try (InputStream is = cl.getResourceAsStream(path)) {
+                            if (is != null) {
                                 parse(module, new InputSource(is), envEntriesDeployer, beanPropertiesDeployer);
-                            } catch (final ParserConfigurationException | IOException e) {
-                                throw new SAXException(e);
+                            } else {
+                                LOGGER.warning("Can't find " + path);
                             }
-                        } else {
-                            LOGGER.warning("Can't find " + path);
+                        } catch (final ParserConfigurationException | IOException e) {
+                            throw new SAXException(e);
                         }
                     } else {
                         LOGGER.warning("Can't find " + path + ", no classloader for the module " + module);
