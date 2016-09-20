@@ -105,6 +105,7 @@ import java.util.Map;
     "preDestroy",
     "dataSource",
     "jmsConnectionFactories",
+    "jmsDestinations",
     "securityRoleRef",
     "securityIdentity",
     "query"

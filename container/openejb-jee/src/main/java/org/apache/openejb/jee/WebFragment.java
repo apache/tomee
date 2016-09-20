@@ -94,6 +94,7 @@ import java.util.Map;
     "ordering",
     "dataSource",
     "jmsConnectionFactories",
+    "jmsDestinations",
     "name"
 
 })

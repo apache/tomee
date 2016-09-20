@@ -96,6 +96,7 @@ import java.util.Map;
     "absoluteOrdering",
     "dataSource",
     "jmsConnectionFactories",
+    "jmsDestinations",
     "moduleName"
 
 })

@@ -77,6 +77,7 @@ import java.util.Map;
     "preDestroy",
     "dataSource",
     "jmsConnectionFactories",
+    "jmsDestinations",
     "postActivate",
     "prePassivate",
     "afterBegin",
