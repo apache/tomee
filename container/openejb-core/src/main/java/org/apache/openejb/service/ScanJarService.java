@@ -126,21 +126,21 @@ public class ScanJarService {
 
                     final File beansXml = new File(file, "META-INF/beans.xml");
                     if (beansXml.exists()) {
-                        final FileInputStream inputStream = new FileInputStream(beansXml);
-                        final Beans beansModel = ReadDescriptors.readBeans(inputStream);
-                        mergedModel.mergeClasses(url, beansModel);
-                        inputStream.close();
+                        try (FileInputStream inputStream = new FileInputStream(beansXml)) {
+                            final Beans beansModel = ReadDescriptors.readBeans(inputStream);
+                            mergedModel.mergeClasses(url, beansModel);
+                        }
                     }
                 } else {
                     final FinderFactory.OpenEJBAnnotationFinder finder = new FinderFactory.OpenEJBAnnotationFinder(new JarArchive(loader, url));
                     mergedModel.getManagedClasses().put(url, finder.getAnnotatedClassNames());
 
                     try (final URLClassLoader cl = new URLClassLoader(new URL[]{ url })) {
-                        final InputStream is = cl.getResourceAsStream("META-INF/beans.xml");
-                        if (is != null) {
-                            final Beans beansModel = ReadDescriptors.readBeans(is);
-                            mergedModel.mergeClasses(url, beansModel);
-                            is.close();
+                        try(InputStream is = cl.getResourceAsStream("META-INF/beans.xml")) {
+                            if (is != null) {
+                                final Beans beansModel = ReadDescriptors.readBeans(is);
+                                mergedModel.mergeClasses(url, beansModel);
+                            }
                         }
                     }
                 }

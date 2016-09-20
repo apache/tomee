@@ -37,16 +37,19 @@ public final class JarCreator {
         final String[] entries = dir.list();
         final JarOutputStream out = new JarOutputStream(new FileOutputStream(zipName));
 
-        String prefix = dir.getAbsolutePath();
-        if (!prefix.endsWith(File.separator)) {
-            prefix += File.separator;
-        }
+        try {
+            String prefix = dir.getAbsolutePath();
+            if (!prefix.endsWith(File.separator)) {
+                prefix += File.separator;
+            }
 
-        for (final String entry : entries) {
-            final File f = new File(dir, entry);
-            jarFile(out, f, prefix);
+            for (final String entry : entries) {
+                final File f = new File(dir, entry);
+                jarFile(out, f, prefix);
+            }
+        }finally {
+            IO.close(out);
         }
-        IO.close(out);
     }
 
     private static void jarFile(final JarOutputStream out, final File f, final String prefix) throws IOException {
@@ -64,12 +67,15 @@ public final class JarCreator {
             final String path = f.getPath().replace(prefix, "");
 
             final FileInputStream in = new FileInputStream(f);
-            final JarEntry entry = new JarEntry(path);
-            out.putNextEntry(entry);
-            while ((bytesRead = in.read(buffer)) != -1) {
-                out.write(buffer, 0, bytesRead);
+            try {
+                final JarEntry entry = new JarEntry(path);
+                out.putNextEntry(entry);
+                while ((bytesRead = in.read(buffer)) != -1) {
+                    out.write(buffer, 0, bytesRead);
+                }
+            } finally {
+                IO.close(in);
             }
-            IO.close(in);
         }
     }
 }

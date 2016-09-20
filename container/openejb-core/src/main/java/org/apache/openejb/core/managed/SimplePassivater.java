@@ -25,11 +25,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.NotSerializableException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.util.Map;
 import java.util.Properties;
 
@@ -77,10 +73,9 @@ public class SimplePassivater implements PassivationStrategy {
             }
 
             logger.info("Passivating to file " + sessionFile);
-            final ObjectOutputStream oos = new ObjectOutputStream(IO.write(sessionFile));
-
-            oos.writeObject(state);// passivate just the bean instance
-            oos.close();
+            try (OutputStream outStream = IO.write(sessionFile); ObjectOutputStream oos = new ObjectOutputStream(outStream)) {
+                oos.writeObject(state);// passivate just the bean instance
+            }
             sessionFile.deleteOnExit();
         } catch (final NotSerializableException nse) {
             logger.error("Passivation failed ", nse);
@@ -108,9 +103,10 @@ public class SimplePassivater implements PassivationStrategy {
             if (sessionFile.exists()) {
                 logger.info("Activating from file " + sessionFile);
 
-                final ObjectInputStream ois = new ObjectInputStreamFiltered(IO.read(sessionFile));
-                final Object state = ois.readObject();
-                ois.close();
+                final Object state;
+                try (InputStream source = IO.read(sessionFile); ObjectInputStream ois = new ObjectInputStreamFiltered(source)) {
+                    state = ois.readObject();
+                }
                 if (!sessionFile.delete()) {
                     sessionFile.deleteOnExit();
                 }

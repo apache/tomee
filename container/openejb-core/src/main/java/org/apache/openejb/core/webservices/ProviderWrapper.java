@@ -464,9 +464,9 @@ public class ProviderWrapper extends Provider {
                     tempFile = File.createTempFile("openejb-jaxws-provider", "tmp", tmp);
                 }
                 tempFile.deleteOnExit();
-                final OutputStream out = IO.write(tempFile);
-                out.write(ProviderWrapper.class.getName().getBytes());
-                out.close();
+                try (OutputStream out = IO.write(tempFile)) {
+                    out.write(ProviderWrapper.class.getName().getBytes());
+                }
                 PROVIDER_URL = tempFile.toURI().toURL();
             } catch (final IOException e) {
                 throw new OpenEJBRuntimeException("Cound not create openejb-jaxws-provider file");
