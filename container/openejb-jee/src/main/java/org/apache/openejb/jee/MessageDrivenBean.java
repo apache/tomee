@@ -23,13 +23,13 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 
@@ -158,6 +158,8 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
     protected KeyedCollection<String, DataSource> dataSource;
     @XmlElement(name = "jms-connection-factory", required = true)
     protected KeyedCollection<String, JMSConnectionFactory> jmsConnectionFactories;
+    @XmlElement(name = "jms-destination")
+    protected KeyedCollection<String, JMSDestination> jmsDestinations;
     @XmlElement(name = "post-construct", required = true)
     protected List<LifecycleCallback> postConstruct;
     @XmlElement(name = "pre-destroy", required = true)
@@ -571,6 +573,16 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
     @Override
     public Map<String, JMSConnectionFactory> getJMSConnectionFactoriesMap() {
         return KeyedCollection.class.cast(getJMSConnectionFactories()).toMap();
+    }
+
+    @Override
+    public Collection<JMSDestination> getJMSDestination() {
+        return jmsDestinations == null ? (jmsDestinations = new KeyedCollection<>()) : jmsDestinations;
+    }
+
+    @Override
+    public Map<String, JMSDestination> getJMSDestinationMap() {
+        return KeyedCollection.class.cast(getJMSDestination()).toMap();
     }
 
 

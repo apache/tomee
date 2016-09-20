@@ -69,6 +69,7 @@ import org.apache.openejb.jee.InterceptorBinding;
 import org.apache.openejb.jee.Invokable;
 import org.apache.openejb.jee.IsolationLevel;
 import org.apache.openejb.jee.JMSConnectionFactory;
+import org.apache.openejb.jee.JMSDestination;
 import org.apache.openejb.jee.JndiConsumer;
 import org.apache.openejb.jee.JndiReference;
 import org.apache.openejb.jee.License;
@@ -206,6 +207,8 @@ import javax.interceptor.ExcludeDefaultInterceptors;
 import javax.interceptor.Interceptors;
 import javax.jms.JMSConnectionFactoryDefinition;
 import javax.jms.JMSConnectionFactoryDefinitions;
+import javax.jms.JMSDestinationDefinition;
+import javax.jms.JMSDestinationDefinitions;
 import javax.jms.Queue;
 import javax.jws.HandlerChain;
 import javax.jws.WebService;
@@ -4065,6 +4068,20 @@ public class AnnotationDeployer implements DynamicDeployer {
                 final JMSConnectionFactoryDefinition definition = annotated.getAnnotation(JMSConnectionFactoryDefinition.class);
                 buildConnectionFactoryDefinition(consumer, definition);
             }
+
+            //
+            // @JMSDestinationDefinition
+            //
+            for (final Annotated<Class<?>> annotated : annotationFinder.findMetaAnnotatedClasses(JMSDestinationDefinitions.class)) {
+                final JMSDestinationDefinitions defs = annotated.getAnnotation(JMSDestinationDefinitions.class);
+                for (final JMSDestinationDefinition definition : defs.value()) {
+                    buildDestinationDefinition(consumer, definition);
+                }
+            }
+
+            for (final Annotated<Class<?>> annotated : annotationFinder.findMetaAnnotatedClasses(JMSDestinationDefinition.class)) {
+                buildDestinationDefinition(consumer, annotated.getAnnotation(JMSDestinationDefinition.class));
+            }
         }
 
         private void buildContext(final JndiConsumer consumer, final Member member) {
@@ -4714,6 +4731,38 @@ public class AnnotationDeployer implements DynamicDeployer {
                     persistenceContextRef.getInjectionTarget().add(target);
                 }
             }
+        }
+
+        private void buildDestinationDefinition(final JndiConsumer consumer, final JMSDestinationDefinition definition) {
+            final JMSDestination destination = new JMSDestination();
+            destination.setName(definition.name());
+            destination.setClassName(definition.className());
+            destination.setInterfaceName(definition.interfaceName());
+            destination.setResourceAdapter(definition.resourceAdapter());
+            destination.setDestinationName(definition.destinationName());
+
+            for (final String s : definition.properties()) {
+                final int equal = s.indexOf('=');
+                if (equal < s.length() - 1) {
+                    final SuperProperties props = new SuperProperties();
+                    try {
+                        props.load(new ByteArrayInputStream(s.getBytes()));
+                        for (final String key : props.stringPropertyNames()) {
+                            if (!key.isEmpty()) {
+                                destination.property(key, props.getProperty(key));
+                            }
+                        }
+                    } catch (final IOException e) {
+                        final String key = s.substring(0, equal).trim();
+                        final String value = s.substring(equal + 1).trim();
+                        destination.property(key, value);
+                    }
+                } else {
+                    destination.property(s.trim(), "");
+                }
+            }
+
+            consumer.getJMSDestination().add(destination);
         }
 
         private void buildConnectionFactoryDefinition(final JndiConsumer consumer, final JMSConnectionFactoryDefinition definition) {

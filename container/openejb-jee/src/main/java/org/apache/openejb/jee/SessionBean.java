@@ -236,6 +236,8 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
     protected KeyedCollection<String, DataSource> dataSource;
     @XmlElement(name = "jms-connection-factory", required = true)
     protected KeyedCollection<String, JMSConnectionFactory> jmsConnectionFactories;
+    @XmlElement(name = "jms-destination")
+    protected KeyedCollection<String, JMSDestination> jmsDestinations;
     @XmlElement(name = "post-activate", required = true)
     protected List<LifecycleCallback> postActivate;
     @XmlElement(name = "pre-passivate", required = true)
@@ -939,5 +941,15 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
     @Override
     public Map<String, JMSConnectionFactory> getJMSConnectionFactoriesMap() {
         return KeyedCollection.class.cast(getJMSConnectionFactories()).toMap();
+    }
+
+    @Override
+    public Collection<JMSDestination> getJMSDestination() {
+        return jmsDestinations == null ? (jmsDestinations = new KeyedCollection<>()) : jmsDestinations;
+    }
+
+    @Override
+    public Map<String, JMSDestination> getJMSDestinationMap() {
+        return KeyedCollection.class.cast(getJMSDestination()).toMap();
     }
 }

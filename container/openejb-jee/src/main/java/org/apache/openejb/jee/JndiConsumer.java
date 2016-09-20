@@ -74,4 +74,8 @@ public interface JndiConsumer {
     Collection<JMSConnectionFactory> getJMSConnectionFactories();
 
     Map<String, JMSConnectionFactory> getJMSConnectionFactoriesMap();
+
+    Collection<JMSDestination> getJMSDestination();
+
+    Map<String, JMSDestination> getJMSDestinationMap();
 }

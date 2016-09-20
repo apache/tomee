@@ -288,6 +288,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         chain.add(new ConvertDataSourceDefinitions());
         chain.add(new ConvertJMSConnectionFactoryDefinitions());
+        chain.add(new ConvertJMSDestinationDefinitions());
         chain.add(new CleanEnvEntries());
         chain.add(new LinkBuiltInTypes());
 
@@ -455,12 +456,16 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         if (sys != null) {
             sys.facilities.resources.add(serviceInfo);
         } else if (!offline) {
-            final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
-            if (assembler != null) {
-                assembler.createResource(null, serviceInfo);
-            }else{
-                throw new OpenEJBException("ResourceInfo: Assembler has not been defined");
-            }
+            doInstall(serviceInfo);
+        }
+    }
+
+    void doInstall(final ResourceInfo serviceInfo) throws OpenEJBException {
+        final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
+        if (assembler != null) {
+            assembler.createResource(null, serviceInfo);
+        } else {
+            throw new OpenEJBException("ResourceInfo: Assembler has not been defined");
         }
     }
 
