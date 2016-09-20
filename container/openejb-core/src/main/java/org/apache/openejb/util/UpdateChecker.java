@@ -149,15 +149,14 @@ public class UpdateChecker {
 
     public boolean usesLatest() {
         if (artifact().contains(TOMEE_ARTIFACT)) {
-            final InputStream is = getClass().getClassLoader().getResourceAsStream("META-INF/maven/org.apache.openejb/tomee-catalina/pom.properties");
-            if (is != null) {
-                final Properties prop = new Properties();
-                try {
+            try (final InputStream is = getClass().getClassLoader().getResourceAsStream("META-INF/maven/org.apache.openejb/tomee-catalina/pom.properties")) {
+                if (is != null) {
+                    final Properties prop = new Properties();
                     prop.load(is);
                     current = prop.getProperty("version");
-                } catch (final IOException e) {
-                    LOGGER.error("can't get tomee version, will use openejb one");
                 }
+            } catch (IOException e) {
+                LOGGER.error("can't get tomee version, will use openejb one");
             }
         }
 
@@ -177,9 +176,9 @@ public class UpdateChecker {
         if (current.equals(latest)) {
             return "running on the latest version";
         }
-        return new StringBuilder("you are using the version ").append(current)
-            .append(", our latest stable version ").append(latest)
-            .append(" is available on ").append(repoUrl).toString();
+        return "you are using the version " + current +
+                ", our latest stable version " + latest +
+                " is available on " + repoUrl;
     }
 
     public void setRepoUrl(final String repoUrl) {

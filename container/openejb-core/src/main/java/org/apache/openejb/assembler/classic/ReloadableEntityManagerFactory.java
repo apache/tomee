@@ -616,13 +616,11 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
             persistence.setVersion(info.getPersistenceXMLSchemaVersion());
             persistence.getPersistenceUnit().add(pu);
 
-            try {
-                final FileWriter writer = new FileWriter(file);
+            try (final FileWriter writer = new FileWriter(file)) {
                 final JAXBContext jc = JAXBContextFactory.newInstance(Persistence.class);
                 final Marshaller marshaller = jc.createMarshaller();
                 marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
                 marshaller.marshal(persistence, writer);
-                writer.close();
             } catch (final Exception e) {
                 LOGGER.error("can't dump pu " + reloadableEntityManagerFactory.getPUname() + " in file " + file, e);
             }
