@@ -35,7 +35,7 @@ public class TomEEConnection extends ActiveMQConnection {
 
     @Override
     public Session createSession(final int sessionMode) throws JMSException {
-        return super.createSession(sessionMode == Session.SESSION_TRANSACTED, sessionMode);
+        return createSession(sessionMode == Session.SESSION_TRANSACTED, sessionMode);
     }
 
     @Override

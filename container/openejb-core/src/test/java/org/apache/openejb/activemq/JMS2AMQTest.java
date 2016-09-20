@@ -65,22 +65,22 @@ public class JMS2AMQTest {
     public Properties config() {
         return new PropertiesBuilder()
 
-            .p("amq", "new://Resource?type=ActiveMQResourceAdapter")
-            .p("amq.DataSource", "")
-            .p("amq.BrokerXmlConfig", "broker:(vm://localhost)")
+                .p("amq", "new://Resource?type=ActiveMQResourceAdapter")
+                .p("amq.DataSource", "")
+                .p("amq.BrokerXmlConfig", "broker:(vm://localhost)")
 
-            .p("target", "new://Resource?type=Queue")
+                .p("target", "new://Resource?type=Queue")
 
-            .p("mdbs", "new://Container?type=MESSAGE")
-            .p("mdbs.ResourceAdapter", "amq")
+                .p("mdbs", "new://Container?type=MESSAGE")
+                .p("mdbs.ResourceAdapter", "amq")
 
-            .p("cf", "new://Resource?type=" + ConnectionFactory.class.getName())
-            .p("cf.ResourceAdapter", "amq")
+                .p("cf", "new://Resource?type=" + ConnectionFactory.class.getName())
+                .p("cf.ResourceAdapter", "amq")
 
-            .p("xaCf", "new://Resource?class-name=" + ActiveMQXAConnectionFactory.class.getName())
-            .p("xaCf.BrokerURL", "vm://localhost")
+                .p("xaCf", "new://Resource?class-name=" + ActiveMQXAConnectionFactory.class.getName())
+                .p("xaCf.BrokerURL", "vm://localhost")
 
-            .build();
+                .build();
     }
 
     @Module
@@ -289,9 +289,56 @@ public class JMS2AMQTest {
         assertNull(exception == null ? "ok" : exception.getMessage(), exception);
     }
 
+    @Test
+    public void receiveGetBody() throws InterruptedException {
+        final String text = TEXT + "2";
+        final AtomicReference<Throwable> error = new AtomicReference<>();
+        final CountDownLatch ready = new CountDownLatch(1);
+        final CountDownLatch over = new CountDownLatch(1);
+        new Thread() {
+            @Override
+            public void run() {
+                {
+                    setName(JMS2AMQTest.class.getName() + ".receiveGetBody#receiver");
+                }
+
+                try (final JMSContext context = cf.createContext()) {
+                    try (final JMSConsumer consumer = context.createConsumer(destination2)) {
+                        ready.countDown();
+                        final Message receive = consumer.receive(TimeUnit.MINUTES.toMillis(1));
+                        assertEquals(text, receive.getBody(String.class));
+                    }
+                } catch (final Throwable ex) {
+                    error.set(ex);
+                } finally {
+                    over.countDown();
+                }
+            }
+        }.start();
+
+        ready.await(1, TimeUnit.MINUTES);
+        sleep(150); // just to ensure we called receive already
+
+        // now send the message
+        try (final JMSContext context = cf.createContext()) {
+            context.createProducer().send(destination2, text);
+        } catch (final JMSRuntimeException ex) {
+            fail(ex.getMessage());
+        }
+
+        over.await(1, TimeUnit.MINUTES);
+
+        // ensure we got the message and no exception
+        final Throwable exception = error.get();
+        if (exception != null) {
+            exception.printStackTrace();
+        }
+        assertNull(exception == null ? "ok" : exception.getMessage(), exception);
+    }
+
     @MessageDriven(activationConfig = {
-        @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
-        @ActivationConfigProperty(propertyName = "destination", propertyValue = "target")
+            @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
+            @ActivationConfigProperty(propertyName = "destination", propertyValue = "target")
     })
     public static class Listener implements MessageListener {
         public static volatile CountDownLatch latch;
@@ -301,7 +348,9 @@ public class JMS2AMQTest {
         public void onMessage(final Message message) {
             try {
                 try {
-                    ok = TextMessage.class.isInstance(message) && TEXT.equals(TextMessage.class.cast(message).getText());
+                    ok = TextMessage.class.isInstance(message)
+                            && TEXT.equals(TextMessage.class.cast(message).getText())
+                            && TEXT.equals(message.getBody(String.class));
                 } catch (final JMSException e) {
                     // no-op
                 }
