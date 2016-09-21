@@ -1,6 +1,7 @@
 package org.apache.openejb.resource.activemq.jms2;
 
 import org.apache.activemq.ActiveMQXAConnection;
+import org.apache.activemq.ActiveMQXASession;
 import org.apache.activemq.management.JMSStatsImpl;
 import org.apache.activemq.transport.Transport;
 import org.apache.activemq.util.IdGenerator;
@@ -15,6 +16,13 @@ public class TomEEXAConnection extends ActiveMQXAConnection {
     protected TomEEXAConnection(final Transport transport, final IdGenerator clientIdGenerator,
                                 final IdGenerator connectionIdGenerator, final JMSStatsImpl factoryStats) throws Exception {
         super(transport, clientIdGenerator, connectionIdGenerator, factoryStats);
+    }
+
+    @Override
+    public Session createSession(final boolean transacted, final int acknowledgeMode) throws JMSException {
+        checkClosedOrFailed();
+        ensureConnectionInfoSent();
+        return new TomEEXASession(this, getNextSessionId(), getXaAckMode() > 0 ? getXaAckMode() : Session.SESSION_TRANSACTED, isDispatchAsync());
     }
 
     @Override
