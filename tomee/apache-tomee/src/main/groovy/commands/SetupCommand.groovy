@@ -49,6 +49,7 @@ class SetupCommand {
         try {
             ant.delete(it)
         } catch (e) {
+            System.gc()
             log.warn("RETRY Deleting: ${it}")
             ant.delete(it)
         }
