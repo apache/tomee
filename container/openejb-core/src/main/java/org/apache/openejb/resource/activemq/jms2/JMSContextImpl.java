@@ -30,6 +30,7 @@ import javax.jms.JMSProducer;
 import javax.jms.JMSRuntimeException;
 import javax.jms.MapMessage;
 import javax.jms.Message;
+import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
 import javax.jms.ObjectMessage;
 import javax.jms.Queue;
@@ -238,9 +239,10 @@ public class JMSContextImpl implements JMSContext {
     @Override
     public JMSConsumer createDurableConsumer(final Topic topic, final String name) {
         try {
-            final JMSConsumerImpl consumer = new JMSConsumerImpl(this, session().createDurableConsumer(topic, name));
+            // JMS 2 only: final JMSConsumerImpl consumer = new JMSConsumerImpl(this, session().createDurableConsumer(topic, name));
+            final MessageConsumer delegate = session().createDurableSubscriber(topic, name);
             checkAutoStart();
-            return consumer;
+            return new JMSConsumerImpl(this, delegate);
         } catch (final JMSException e) {
             throw toRuntimeException(e);
         }
@@ -249,9 +251,10 @@ public class JMSContextImpl implements JMSContext {
     @Override
     public JMSConsumer createDurableConsumer(final Topic topic, final String name, final String messageSelector, final boolean noLocal) {
         try {
-            final JMSConsumerImpl consumer = new JMSConsumerImpl(this, session().createDurableConsumer(topic, name, messageSelector, noLocal));
+            // JMS 2 only: final JMSConsumerImpl consumer = new JMSConsumerImpl(this, session().createDurableConsumer(topic, name, messageSelector, noLocal));
+            final MessageConsumer delegate = session().createDurableSubscriber(topic, name, messageSelector, noLocal);
             checkAutoStart();
-            return consumer;
+            return new JMSConsumerImpl(this, delegate);
         } catch (final JMSException e) {
             throw toRuntimeException(e);
         }
