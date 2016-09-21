@@ -104,9 +104,10 @@ class EjbRequestHandler extends RequestHandler {
         boolean failed = false;
         final CallContext call;
 
+        Object clientIdentity = null;
         try {
             try {
-                final Object clientIdentity = req.getClientIdentity();
+                clientIdentity = req.getClientIdentity();
                 if (clientIdentity != null) {//noinspection unchecked
                     securityService.associate(clientIdentity);
                 }
@@ -156,7 +157,7 @@ class EjbRequestHandler extends RequestHandler {
             }
 
         } finally {
-            if (failed) {
+            if (clientIdentity != null && failed) {
                 securityService.disassociate();
             }
         }

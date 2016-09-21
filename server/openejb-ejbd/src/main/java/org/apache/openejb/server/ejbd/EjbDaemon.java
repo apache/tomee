@@ -34,6 +34,7 @@ import org.apache.openejb.server.context.RequestInfos;
 import org.apache.openejb.server.stream.CountingInputStream;
 import org.apache.openejb.server.stream.CountingOutputStream;
 import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Exceptions;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -70,6 +71,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
     //Four hours
     private int timeout = 14400000;
     private boolean countStreams;
+    private SecurityService securityService;
 
     public void init(final Properties props) throws Exception {
         containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
@@ -105,6 +107,8 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
         }
 
         countStreams = Boolean.parseBoolean(props.getProperty("stream.count", Boolean.toString(jndiHandler.isDebug())));
+
+        securityService = SystemInstance.get().getComponent(SecurityService.class);
     }
 
     public void service(final Socket socket) throws IOException {
@@ -336,6 +340,9 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
                         //Ignore
                     }
                 }
+
+                // enforced in case of exception
+                securityService.disassociate();
             }
         }
     }

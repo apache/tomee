@@ -221,8 +221,10 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
 
     @Override
     public void associate(final UUID securityIdentity) throws LoginException {
-        if (clientIdentity.get() != null) {
-            throw new LoginException("Thread already associated with a client identity.  Refusing to overwrite.");
+        final Identity existing = clientIdentity.get();
+        if (existing != null) {
+            throw new LoginException("Thread already associated with a client identity.  Refusing to overwrite. " +
+                    "(current=" + existing.getToken() + ", refused=" + securityIdentity + ")");
         }
         if (securityIdentity == null) {
             throw new NullPointerException("The security token passed in is null");
