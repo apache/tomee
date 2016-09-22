@@ -121,7 +121,7 @@
     <openejb.osgi.dynamic.import>${openejb.osgi.dynamic.import.pkg}</openejb.osgi.dynamic.import>
     <openejb.osgi.symbolic.name>${project.groupId}.${project.artifactId}</openejb.osgi.symbolic.name>
 
-    <batchee.version>0.2-incubating</batchee.version>    
+    <batchee.version>0.3-incubating</batchee.version>    
 
     <version.arquillian>1.1.11.Final</version.arquillian>
     <version.shrinkwrap.descriptor>2.0.0-alpha-7</version.shrinkwrap.descriptor>
