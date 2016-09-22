@@ -212,6 +212,18 @@ public class Configuration {
                         }
                     }
                     securityConstaint(SecurityConstaintBuilder.class.cast(recipe.create()));
+                } else if (prop.equals("configurationCustomizer.")) {
+                    final String next = prop.substring("configurationCustomizer.".length());
+                    if (next.contains(".")) {
+                        continue;
+                    }
+                    final ObjectRecipe recipe = new ObjectRecipe(SecurityConstaintBuilder.class.getName());
+                    for (final String nestedConfig : config.stringPropertyNames()) {
+                        if (nestedConfig.startsWith(prop)) {
+                            recipe.setProperty(nestedConfig.substring(prop.length() + 1 /*dot*/), config.getProperty(nestedConfig));
+                        }
+                    }
+                    addCustomizer(ConfigurationCustomizer.class.cast(recipe.create()));
                 }
             }
             return this;
