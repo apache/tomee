@@ -1,7 +1,6 @@
 package org.apache.openejb.resource.activemq.jms2;
 
 import org.apache.activemq.ActiveMQXAConnection;
-import org.apache.activemq.ActiveMQXASession;
 import org.apache.activemq.management.JMSStatsImpl;
 import org.apache.activemq.transport.Transport;
 import org.apache.activemq.util.IdGenerator;

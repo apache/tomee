@@ -70,7 +70,7 @@ public class TomEEProducer extends ActiveMQMessageProducer {
         this.deliveryDelay = deliveryDelay;
     }
 
-    private static class ProducerAsyncCallback implements AsyncCallback {
+    private static final class ProducerAsyncCallback implements AsyncCallback {
         private final Message message;
         private final CompletionListener completionListener;
 
