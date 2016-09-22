@@ -85,7 +85,7 @@ public class Logger {
         // we can be called before having SystemInstance so we need this hack to set some specific
         // environment
         // without changing LogStreamFactory contract
-        final String[] specialKeys = new String[] { "openejb.jul.forceReload", "openejb.jul.consoleHandlerClazz" };
+        final String[] specialKeys = new String[] { "openejb.jul.forceReload", "openejb.jul.consoleHandlerClazz", "openejb.logger.external" };
         final String[] originals = new String[specialKeys.length];
         for (int i = 0; i < specialKeys.length; i++) {
             originals[i] = System.getProperty(specialKeys[i]);
