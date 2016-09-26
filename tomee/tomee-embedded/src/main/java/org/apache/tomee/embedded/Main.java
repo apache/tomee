@@ -26,6 +26,7 @@ import org.apache.commons.cli.PosixParser;
 import org.apache.openejb.loader.ProvisioningUtil;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.tomee.embedded.component.TomEEEmbeddedArgs;
+import org.apache.xbean.finder.filter.Filter;
 
 import java.io.Closeable;
 import java.io.File;
@@ -74,6 +75,7 @@ public class Main {
     public static final String PRE_TASK = "pre-task";
     public static final String INTERACTIVE = "interactive";
     public static final String CLASSPATH_CONFIGURATION = "classpath-configuration";
+    public static final String CLASSES_FILTER = "classes-filter";
     public static final String HELP = "help";
 
     public static void main(final String[] args) {
@@ -259,6 +261,7 @@ public class Main {
         options.addOption("i", INTERACTIVE, false, "should tomee start and wait for SIGTERM signal or wait for 'exit' to be entered");
         options.addOption(null, CLASSPATH_CONFIGURATION, true, "a properties file containing the configuration to load");
         options.addOption(null, SINGLE_CLASSLOADER, false, "if the application should use the same classloader as the boot one");
+        options.addOption(null, CLASSES_FILTER, true, "A custom implementation of a xbean filter to exclude classes to not scan");
         options.addOption("h", HELP, false, "show help");
         return options;
     }
@@ -282,6 +285,13 @@ public class Main {
         }
         if (args.hasOption(SIMPLE_LOG)) {
             config.property("openejb.jul.forceReload", "true");
+        }
+        if (args.hasOption(CLASSES_FILTER)) {
+            try {
+                config.classesFilter(Filter.class.cast(Thread.currentThread().getContextClassLoader().loadClass(args.getOptionValue(CLASSES_FILTER)).newInstance()));
+            } catch (final InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+                throw new IllegalArgumentException(e);
+            }
         }
         if (args.hasOption(PROPERTY)) {
             for (final String opt : args.getOptionValues(PROPERTY)) {

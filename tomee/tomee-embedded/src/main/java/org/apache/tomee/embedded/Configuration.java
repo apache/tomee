@@ -20,6 +20,7 @@ import org.apache.catalina.Realm;
 import org.apache.catalina.connector.Connector;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.util.NetworkUtil;
+import org.apache.xbean.finder.filter.Filter;
 import org.apache.xbean.recipe.ObjectRecipe;
 
 import java.io.File;
@@ -69,6 +70,8 @@ public class Configuration {
     private Map<String, String> roles;
 
     private boolean http2;
+
+    private Filter classesFilter;
 
     private final Collection<Connector> connectors = new ArrayList<>();
 
@@ -174,6 +177,14 @@ public class Configuration {
             final String tempDir = config.getProperty("tempDir");
             if (tempDir != null) {
                 setTempDir(tempDir);
+            }
+            final String classesFilterType = config.getProperty("classesFilter");
+            if (classesFilterType != null) {
+                try {
+                    setClassesFilter(Filter.class.cast(Thread.currentThread().getContextClassLoader().loadClass(classesFilterType).newInstance()));
+                } catch (final InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+                    throw new IllegalArgumentException(e);
+                }
             }
             final String conf = config.getProperty("conf");
             if (conf != null) {
@@ -534,6 +545,19 @@ public class Configuration {
 
     public void setConf(final String conf) {
         this.conf = conf;
+    }
+
+    public void setClassesFilter(final Filter filter) {
+        this.classesFilter = filter;
+    }
+
+    public Configuration classesFilter(final Filter filter) {
+        setClassesFilter(filter);
+        return this;
+    }
+
+    public Filter getClassesFilter() {
+        return classesFilter;
     }
 
     public interface ConfigurationCustomizer {

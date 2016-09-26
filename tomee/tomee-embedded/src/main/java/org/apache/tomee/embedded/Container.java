@@ -85,6 +85,7 @@ import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.finder.UrlSet;
+import org.apache.xbean.finder.filter.Filter;
 import org.apache.xbean.finder.filter.Filters;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.codehaus.swizzle.stream.ReplaceStringsInputStream;
@@ -242,12 +243,15 @@ public class Container implements AutoCloseable {
         final AnnotationFinder finder;
         try {
             final String filterContainerClasses = SystemInstance.get().getProperty("tomee.embedded.filter-container-classes");
+            Filter filter = configuration.getClassesFilter();
+            if (filter == null && (jarList.size() <= 4 || "true".equalsIgnoreCase(filterContainerClasses))) {
+                filter = new ContainerClassesFilter(configuration.getProperties());
+            }
             finder = new FinderFactory.OpenEJBAnnotationFinder(
                     // skip container classes in scanning for shades
                     new WebappAggregatedArchive(webModule, jarList,
                             // see org.apache.openejb.config.DeploymentsResolver.ClasspathSearcher.cleanUpUrlSet()
-                            jarList.size() <= 4 || "true".equalsIgnoreCase(filterContainerClasses) ?
-                                    new ContainerClassesFilter(configuration.getProperties()) /* shade */ : null))
+                            filter))
                     .link();
             SystemInstance.get().fireEvent(new TomEEEmbeddedScannerCreated(finder));
             webModule.setFinder(finder);
