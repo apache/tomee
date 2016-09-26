@@ -319,24 +319,25 @@ public class DeploymentLoader implements DeploymentFilterable {
             try {
                 final File file = URLs.toFile(url);
                 if (file.getName().endsWith(".jar")) {
-                    final JarFile jarFile = new JarFile(file);
+                    try (JarFile jarFile = new JarFile(file)) {
 
-                    // TODO: better management of altdd
-                    String name = (ALTDD != null ? ALTDD + "." : "") + "ra.xml";
+                        // TODO: better management of altdd
+                        String name = (ALTDD != null ? ALTDD + "." : "") + "ra.xml";
 
-                    JarEntry entry = jarFile.getJarEntry(name);
-                    if (entry == null) {
-                        name = "META-INF/" + name;
-                        entry = jarFile.getJarEntry(name);
-                    }
-                    if (entry == null) {
-                        continue;
-                    }
+                        JarEntry entry = jarFile.getJarEntry(name);
+                        if (entry == null) {
+                            name = "META-INF/" + name;
+                            entry = jarFile.getJarEntry(name);
+                        }
+                        if (entry == null) {
+                            continue;
+                        }
 
-                    final String jarLocation = file.getAbsolutePath();
-                    final ConnectorModule connectorModule = createConnectorModule(jarLocation, jarLocation, webModule.getClassLoader(), null);
-                    if (connectorModule != null) {
-                        appModule.getConnectorModules().add(connectorModule);
+                        final String jarLocation = file.getAbsolutePath();
+                        final ConnectorModule connectorModule = createConnectorModule(jarLocation, jarLocation, webModule.getClassLoader(), null);
+                        if (connectorModule != null) {
+                            appModule.getConnectorModules().add(connectorModule);
+                        }
                     }
                 }
             } catch (final Exception e) {
@@ -1775,8 +1776,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         if (warFile.isFile()) { // only to discover module type so xml file filtering is enough
             final URL jarURL = new URL("jar", "", -1, warFile.toURI().toURL() + "!/");
-            try {
-                final JarFile jarFile = new JarFile(warFile);
+            try (JarFile jarFile = new JarFile(warFile)) {
                 for (final JarEntry entry : Collections.list(jarFile.entries())) {
                     final String entryName = entry.getName();
                     if (!entry.isDirectory() && entryName.startsWith("WEB-INF/")
@@ -2088,10 +2088,11 @@ public class DeploymentLoader implements DeploymentFilterable {
                 try {
                     final File ar = URLs.toFile(urls);
                     if (!ar.isDirectory() && !ar.getName().endsWith("ar")) { // guess no archive extension, check it is not a hidden war
-                        final JarFile war = new JarFile(ar);
-                        final ZipEntry entry = war.getEntry("WEB-INF/");
-                        if (entry != null) {
-                            logger.warning("you deployed " + urls.toExternalForm() + ", it seems it is a war with no extension, please rename it");
+                        try (JarFile war = new JarFile(ar)) {
+                            final ZipEntry entry = war.getEntry("WEB-INF/");
+                            if (entry != null) {
+                                logger.warning("you deployed " + urls.toExternalForm() + ", it seems it is a war with no extension, please rename it");
+                            }
                         }
                     }
                 } catch (final Exception ignored) {
