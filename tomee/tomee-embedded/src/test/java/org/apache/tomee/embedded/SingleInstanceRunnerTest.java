@@ -24,7 +24,6 @@ import org.apache.openejb.testing.ContainerProperties;
 import org.apache.openejb.testing.RandomPort;
 import org.apache.openejb.testng.PropertiesBuilder;
 import org.apache.tomee.embedded.junit.TomEEEmbeddedSingleRunner;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -64,8 +63,8 @@ public class SingleInstanceRunnerTest {
     @Application
     @Classes(context = "app")
     @ContainerProperties(@ContainerProperties.Property(name = "t", value = "set"))
-    @TomEEEmbeddedSingleRunner.LifecycleTasks(MyTask.class) // can start a ftp/sftp/elasticsearch/mongo/... server before tomee
-    @TomEEEmbeddedSingleRunner.Configurers(SetMyProperty.class)
+    @TomEEEmbeddedApplicationRunner.LifecycleTasks(MyTask.class) // can start a ftp/sftp/elasticsearch/mongo/... server before tomee
+    @TomEEEmbeddedApplicationRunner.Configurers(SetMyProperty.class)
     public static class TheApp {
         @RandomPort("http")
         private int port;
@@ -79,7 +78,7 @@ public class SingleInstanceRunnerTest {
         }
     }
 
-    public static class MyTask implements TomEEEmbeddedSingleRunner.LifecycleTask {
+    public static class MyTask implements LifecycleTask {
         @Override
         public Closeable beforeContainerStartup() {
             System.out.println(">>> start");
@@ -93,7 +92,7 @@ public class SingleInstanceRunnerTest {
         }
     }
 
-    public static class SetMyProperty implements TomEEEmbeddedSingleRunner.Configurer {
+    public static class SetMyProperty implements TomEEEmbeddedApplicationRunner.Configurer {
         @Override
         public void configure(final Configuration configuration) {
             configuration.property("configurer", "true");

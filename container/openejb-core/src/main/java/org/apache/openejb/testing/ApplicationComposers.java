@@ -981,7 +981,7 @@ public class ApplicationComposers {
         }
     }
 
-    private Collection<File> findFiles(final Jars jarsAnnotation) {
+    public static Collection<File> findFiles(final Jars jarsAnnotation) {
         if (jarsAnnotation == null) {
             return null;
         }
@@ -1231,7 +1231,7 @@ public class ApplicationComposers {
         return new HashMap<>();
     }
 
-    private IAnnotationFinder finderFromClasses(final DeploymentModule module, final Class<?>[] value, final Collection<File> others, final String[] excludes) {
+    private static IAnnotationFinder finderFromClasses(final DeploymentModule module, final Class<?>[] value, final Collection<File> others, final String[] excludes) {
         final Collection<Archive> archives = new ArrayList<>(1 + (others == null ? 0 : others.size()));
 
         final Filter filter = excludes == null || excludes.length == 0 ? null : Filters.invert(Filters.prefixes(excludes));

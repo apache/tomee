@@ -212,11 +212,12 @@
             <configuration>
               <excludes>
                 <exclude>**/SingleInstanceRunnerTest*</exclude>
+                <exclude>**/NoScannerSingleRunnerTest*</exclude>
               </excludes>
             </configuration>
           </execution>
           <execution>
-            <id>single-server</id>
+            <id>single-server-default-scanning</id>
             <goals>
               <goal>test</goal>
             </goals>
@@ -224,6 +225,23 @@
               <includes>
                 <include>**/SingleInstanceRunnerTest*</include>
               </includes>
+              <systemPropertyVariables>
+                <tomee.application-composer.application>org.apache.tomee.embedded.SingleInstanceRunnerTest$TheApp</tomee.application-composer.application>
+              </systemPropertyVariables>
+            </configuration>
+          </execution>
+          <execution>
+            <id>single-server-custom-scanning</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <includes>
+                <include>**/NoScannerSingleRunnerTest*</include>
+              </includes>
+              <systemPropertyVariables>
+                <tomee.application-composer.application>org.apache.tomee.embedded.NoScannerSingleRunnerTest$ScanApp</tomee.application-composer.application>
+              </systemPropertyVariables>
             </configuration>
           </execution>
         </executions>

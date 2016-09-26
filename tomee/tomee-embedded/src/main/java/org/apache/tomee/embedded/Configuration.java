@@ -90,156 +90,160 @@ public class Configuration {
                 throw new IllegalArgumentException(resource + " not found");
             }
             final Properties config = IO.readProperties(is, new Properties());
-            final String http = config.getProperty("http");
-            if (http != null) {
-                setHttpPort(Integer.parseInt(http));
-            }
-            final String https = config.getProperty("https");
-            if (https != null) {
-                setHttpsPort(Integer.parseInt(https));
-            }
-            final String stop = config.getProperty("stop");
-            if (stop != null) {
-                setStopPort(Integer.parseInt(stop));
-            }
-            final String host = config.getProperty("host");
-            if (host != null) {
-                setHost(host);
-            }
-            final String dir = config.getProperty("dir");
-            if (dir != null) {
-                setDir(dir);
-            }
-            final String serverXml = config.getProperty("serverXml");
-            if (serverXml != null) {
-                setServerXml(serverXml);
-            }
-            final String keepServerXmlAsThis = config.getProperty("keepServerXmlAsThis");
-            if (keepServerXmlAsThis != null) {
-                setKeepServerXmlAsThis(Boolean.parseBoolean(keepServerXmlAsThis));
-            }
-            final String quickSession = config.getProperty("quickSession");
-            if (quickSession != null) {
-                setQuickSession(Boolean.parseBoolean(quickSession));
-            }
-            final String skipHttp = config.getProperty("skipHttp");
-            if (skipHttp != null) {
-                setSkipHttp(Boolean.parseBoolean(skipHttp));
-            }
-            final String ssl = config.getProperty("ssl");
-            if (ssl != null) {
-                setSsl(Boolean.parseBoolean(ssl));
-            }
-            final String http2 = config.getProperty("http2");
-            if (http2 != null) {
-                setHttp2(Boolean.parseBoolean(http2));
-            }
-            final String webResourceCached = config.getProperty("webResourceCached");
-            if (webResourceCached != null) {
-                setWebResourceCached(Boolean.parseBoolean(webResourceCached));
-            }
-            final String withEjbRemote = config.getProperty("withEjbRemote");
-            if (withEjbRemote != null) {
-                setWithEjbRemote(Boolean.parseBoolean(withEjbRemote));
-            }
-            final String deployOpenEjbApp = config.getProperty("deployOpenEjbApp");
-            if (deployOpenEjbApp != null) {
-                setDeployOpenEjbApp(Boolean.parseBoolean(deployOpenEjbApp));
-            }
-            final String keystoreFile = config.getProperty("keystoreFile");
-            if (keystoreFile != null) {
-                setKeystoreFile(keystoreFile);
-            }
-            final String keystorePass = config.getProperty("keystorePass");
-            if (keystorePass != null) {
-                setKeystorePass(keystorePass);
-            }
-            final String keystoreType = config.getProperty("keystoreType");
-            if (keystoreType != null) {
-                setKeystoreType(keystoreType);
-            }
-            final String clientAuth = config.getProperty("clientAuth");
-            if (clientAuth != null) {
-                setClientAuth(clientAuth);
-            }
-            final String keyAlias = config.getProperty("keyAlias");
-            if (keyAlias != null) {
-                setKeyAlias(keyAlias);
-            }
-            final String sslProtocol = config.getProperty("sslProtocol");
-            if (sslProtocol != null) {
-                setSslProtocol(sslProtocol);
-            }
-            final String webXml = config.getProperty("webXml");
-            if (webXml != null) {
-                setWebXml(webXml);
-            }
-            final String tempDir = config.getProperty("tempDir");
-            if (tempDir != null) {
-                setTempDir(tempDir);
-            }
-            final String classesFilterType = config.getProperty("classesFilter");
-            if (classesFilterType != null) {
-                try {
-                    setClassesFilter(Filter.class.cast(Thread.currentThread().getContextClassLoader().loadClass(classesFilterType).newInstance()));
-                } catch (final InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-                    throw new IllegalArgumentException(e);
-                }
-            }
-            final String conf = config.getProperty("conf");
-            if (conf != null) {
-                setConf(conf);
-            }
-            for (final String prop : config.stringPropertyNames()) {
-                if (prop.startsWith("properties.")) {
-                    property(prop.substring("properties.".length()), config.getProperty(prop));
-                } else if (prop.startsWith("users.")) {
-                    user(prop.substring("users.".length()), config.getProperty(prop));
-                } else if (prop.startsWith("roles.")) {
-                    role(prop.substring("roles.".length()), config.getProperty(prop));
-                } else if (prop.startsWith("connector.")) { // created in container
-                    property(prop, config.getProperty(prop));
-                } else if (prop.equals("realm")) {
-                    final ObjectRecipe recipe = new ObjectRecipe(config.getProperty(prop));
-                    for (final String realmConfig : config.stringPropertyNames()) {
-                        if (realmConfig.startsWith("realm.")) {
-                            recipe.setProperty(realmConfig.substring("realm.".length()), config.getProperty(realmConfig));
-                        }
-                    }
-                    setRealm(Realm.class.cast(recipe.create()));
-                } else if (prop.equals("login")) {
-                    final ObjectRecipe recipe = new ObjectRecipe(LoginConfigBuilder.class.getName());
-                    for (final String nestedConfig : config.stringPropertyNames()) {
-                        if (nestedConfig.startsWith("login.")) {
-                            recipe.setProperty(nestedConfig.substring("login.".length()), config.getProperty(nestedConfig));
-                        }
-                    }
-                    loginConfig(LoginConfigBuilder.class.cast(recipe.create()));
-                } else if (prop.equals("securityConstraint")) {
-                    final ObjectRecipe recipe = new ObjectRecipe(SecurityConstaintBuilder.class.getName());
-                    for (final String nestedConfig : config.stringPropertyNames()) {
-                        if (nestedConfig.startsWith("securityConstraints.")) {
-                            recipe.setProperty(nestedConfig.substring("securityConstraints.".length()), config.getProperty(nestedConfig));
-                        }
-                    }
-                    securityConstaint(SecurityConstaintBuilder.class.cast(recipe.create()));
-                } else if (prop.equals("configurationCustomizer.")) {
-                    final String next = prop.substring("configurationCustomizer.".length());
-                    if (next.contains(".")) {
-                        continue;
-                    }
-                    final ObjectRecipe recipe = new ObjectRecipe(SecurityConstaintBuilder.class.getName());
-                    for (final String nestedConfig : config.stringPropertyNames()) {
-                        if (nestedConfig.startsWith(prop)) {
-                            recipe.setProperty(nestedConfig.substring(prop.length() + 1 /*dot*/), config.getProperty(nestedConfig));
-                        }
-                    }
-                    addCustomizer(ConfigurationCustomizer.class.cast(recipe.create()));
-                }
-            }
+            loadFromProperties(config);
             return this;
         } catch (final IOException e) {
             throw new IllegalStateException(e);
+        }
+    }
+
+    public void loadFromProperties(final Properties config) {
+        final String http = config.getProperty("http");
+        if (http != null) {
+            setHttpPort(Integer.parseInt(http));
+        }
+        final String https = config.getProperty("https");
+        if (https != null) {
+            setHttpsPort(Integer.parseInt(https));
+        }
+        final String stop = config.getProperty("stop");
+        if (stop != null) {
+            setStopPort(Integer.parseInt(stop));
+        }
+        final String host = config.getProperty("host");
+        if (host != null) {
+            setHost(host);
+        }
+        final String dir = config.getProperty("dir");
+        if (dir != null) {
+            setDir(dir);
+        }
+        final String serverXml = config.getProperty("serverXml");
+        if (serverXml != null) {
+            setServerXml(serverXml);
+        }
+        final String keepServerXmlAsThis = config.getProperty("keepServerXmlAsThis");
+        if (keepServerXmlAsThis != null) {
+            setKeepServerXmlAsThis(Boolean.parseBoolean(keepServerXmlAsThis));
+        }
+        final String quickSession = config.getProperty("quickSession");
+        if (quickSession != null) {
+            setQuickSession(Boolean.parseBoolean(quickSession));
+        }
+        final String skipHttp = config.getProperty("skipHttp");
+        if (skipHttp != null) {
+            setSkipHttp(Boolean.parseBoolean(skipHttp));
+        }
+        final String ssl = config.getProperty("ssl");
+        if (ssl != null) {
+            setSsl(Boolean.parseBoolean(ssl));
+        }
+        final String http2 = config.getProperty("http2");
+        if (http2 != null) {
+            setHttp2(Boolean.parseBoolean(http2));
+        }
+        final String webResourceCached = config.getProperty("webResourceCached");
+        if (webResourceCached != null) {
+            setWebResourceCached(Boolean.parseBoolean(webResourceCached));
+        }
+        final String withEjbRemote = config.getProperty("withEjbRemote");
+        if (withEjbRemote != null) {
+            setWithEjbRemote(Boolean.parseBoolean(withEjbRemote));
+        }
+        final String deployOpenEjbApp = config.getProperty("deployOpenEjbApp");
+        if (deployOpenEjbApp != null) {
+            setDeployOpenEjbApp(Boolean.parseBoolean(deployOpenEjbApp));
+        }
+        final String keystoreFile = config.getProperty("keystoreFile");
+        if (keystoreFile != null) {
+            setKeystoreFile(keystoreFile);
+        }
+        final String keystorePass = config.getProperty("keystorePass");
+        if (keystorePass != null) {
+            setKeystorePass(keystorePass);
+        }
+        final String keystoreType = config.getProperty("keystoreType");
+        if (keystoreType != null) {
+            setKeystoreType(keystoreType);
+        }
+        final String clientAuth = config.getProperty("clientAuth");
+        if (clientAuth != null) {
+            setClientAuth(clientAuth);
+        }
+        final String keyAlias = config.getProperty("keyAlias");
+        if (keyAlias != null) {
+            setKeyAlias(keyAlias);
+        }
+        final String sslProtocol = config.getProperty("sslProtocol");
+        if (sslProtocol != null) {
+            setSslProtocol(sslProtocol);
+        }
+        final String webXml = config.getProperty("webXml");
+        if (webXml != null) {
+            setWebXml(webXml);
+        }
+        final String tempDir = config.getProperty("tempDir");
+        if (tempDir != null) {
+            setTempDir(tempDir);
+        }
+        final String classesFilterType = config.getProperty("classesFilter");
+        if (classesFilterType != null) {
+            try {
+                setClassesFilter(Filter.class.cast(Thread.currentThread().getContextClassLoader().loadClass(classesFilterType).newInstance()));
+            } catch (final InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+                throw new IllegalArgumentException(e);
+            }
+        }
+        final String conf = config.getProperty("conf");
+        if (conf != null) {
+            setConf(conf);
+        }
+        for (final String prop : config.stringPropertyNames()) {
+            if (prop.startsWith("properties.")) {
+                property(prop.substring("properties.".length()), config.getProperty(prop));
+            } else if (prop.startsWith("users.")) {
+                user(prop.substring("users.".length()), config.getProperty(prop));
+            } else if (prop.startsWith("roles.")) {
+                role(prop.substring("roles.".length()), config.getProperty(prop));
+            } else if (prop.startsWith("connector.")) { // created in container
+                property(prop, config.getProperty(prop));
+            } else if (prop.equals("realm")) {
+                final ObjectRecipe recipe = new ObjectRecipe(config.getProperty(prop));
+                for (final String realmConfig : config.stringPropertyNames()) {
+                    if (realmConfig.startsWith("realm.")) {
+                        recipe.setProperty(realmConfig.substring("realm.".length()), config.getProperty(realmConfig));
+                    }
+                }
+                setRealm(Realm.class.cast(recipe.create()));
+            } else if (prop.equals("login")) {
+                final ObjectRecipe recipe = new ObjectRecipe(LoginConfigBuilder.class.getName());
+                for (final String nestedConfig : config.stringPropertyNames()) {
+                    if (nestedConfig.startsWith("login.")) {
+                        recipe.setProperty(nestedConfig.substring("login.".length()), config.getProperty(nestedConfig));
+                    }
+                }
+                loginConfig(LoginConfigBuilder.class.cast(recipe.create()));
+            } else if (prop.equals("securityConstraint")) {
+                final ObjectRecipe recipe = new ObjectRecipe(SecurityConstaintBuilder.class.getName());
+                for (final String nestedConfig : config.stringPropertyNames()) {
+                    if (nestedConfig.startsWith("securityConstraints.")) {
+                        recipe.setProperty(nestedConfig.substring("securityConstraints.".length()), config.getProperty(nestedConfig));
+                    }
+                }
+                securityConstaint(SecurityConstaintBuilder.class.cast(recipe.create()));
+            } else if (prop.equals("configurationCustomizer.")) {
+                final String next = prop.substring("configurationCustomizer.".length());
+                if (next.contains(".")) {
+                    continue;
+                }
+                final ObjectRecipe recipe = new ObjectRecipe(SecurityConstaintBuilder.class.getName());
+                for (final String nestedConfig : config.stringPropertyNames()) {
+                    if (nestedConfig.startsWith(prop)) {
+                        recipe.setProperty(nestedConfig.substring(prop.length() + 1 /*dot*/), config.getProperty(nestedConfig));
+                    }
+                }
+                addCustomizer(ConfigurationCustomizer.class.cast(recipe.create()));
+            }
         }
     }
 

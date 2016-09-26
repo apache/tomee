@@ -85,6 +85,7 @@ import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.finder.UrlSet;
+import org.apache.xbean.finder.archive.Archive;
 import org.apache.xbean.finder.filter.Filter;
 import org.apache.xbean.finder.filter.Filters;
 import org.apache.xbean.recipe.ObjectRecipe;
@@ -111,6 +112,7 @@ import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 
 /**
  * @version $Rev$ $Date$
@@ -209,7 +211,7 @@ public class Container implements AutoCloseable {
 
             final List<URL> urls = new ArrayList<>(jarList.length);
             for (final File jar : jarList) {
-                urls.addAll(asList(jar.toURI().toURL()));
+                urls.addAll(singletonList(jar.toURI().toURL()));
             }
             return deployPathsAsWebapp(null, urls, null);
         } catch (final MalformedURLException e) {
@@ -223,43 +225,54 @@ public class Container implements AutoCloseable {
 
     public Container deployPathsAsWebapp(final String context, final List<URL> jarList, final File docBase,
                                          final boolean keepClassloader, final String... additionalCallers) {
+        return deploy(new DeploymentRequest(context, jarList, docBase, keepClassloader, additionalCallers, null));
+    }
+
+    public Container deploy(final DeploymentRequest request) {
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
         final SystemInstance systemInstance = SystemInstance.get();
 
-        String contextRoot = context == null ? "" : context;
+        String contextRoot = request.context == null ? "" : request.context;
         if (!contextRoot.isEmpty() && !contextRoot.startsWith("/")) {
-            contextRoot = "/" + context;
+            contextRoot = "/" + request.context;
         }
 
-        File jarLocation = docBase == null || !docBase.isDirectory() ? fakeRootDir() : docBase;
+        File jarLocation = request.docBase == null || !request.docBase.isDirectory() ? fakeRootDir() : request.docBase;
         final WebModule webModule = new WebModule(new WebApp(), contextRoot, loader, jarLocation.getAbsolutePath(), contextRoot.replace("/", ""));
-        if (docBase == null) {
+        if (request.docBase == null) {
             webModule.getProperties().put("fakeJarLocation", "true");
         }
-        webModule.setUrls(jarList);
+        webModule.setUrls(request.jarList);
         webModule.setAddedUrls(Collections.<URL>emptyList());
         webModule.setRarUrls(Collections.<URL>emptyList());
-        webModule.setScannableUrls(jarList);
+        webModule.setScannableUrls(request.jarList);
         final AnnotationFinder finder;
         try {
-            final String filterContainerClasses = SystemInstance.get().getProperty("tomee.embedded.filter-container-classes");
             Filter filter = configuration.getClassesFilter();
-            if (filter == null && (jarList.size() <= 4 || "true".equalsIgnoreCase(filterContainerClasses))) {
+            if (filter == null &&
+                    (request.jarList.size() <= 4 || "true".equalsIgnoreCase(SystemInstance.get().getProperty("tomee.embedded.filter-container-classes")))) {
                 filter = new ContainerClassesFilter(configuration.getProperties());
             }
-            finder = new FinderFactory.OpenEJBAnnotationFinder(
-                    // skip container classes in scanning for shades
-                    new WebappAggregatedArchive(webModule, jarList,
-                            // see org.apache.openejb.config.DeploymentsResolver.ClasspathSearcher.cleanUpUrlSet()
-                            filter))
-                    .link();
+
+            final Archive archive;
+            if (request.archive == null) {
+                archive = new WebappAggregatedArchive(webModule, request.jarList,
+                        // see org.apache.openejb.config.DeploymentsResolver.ClasspathSearcher.cleanUpUrlSet()
+                        filter);
+            } else if (WebappAggregatedArchive.class.isInstance(request.archive)) {
+                archive = request.archive;
+            } else {
+                archive = new WebappAggregatedArchive(request.archive, request.jarList);
+            }
+
+            finder = new FinderFactory.OpenEJBAnnotationFinder(archive).link();
             SystemInstance.get().fireEvent(new TomEEEmbeddedScannerCreated(finder));
             webModule.setFinder(finder);
         } catch (final Exception e) {
             throw new IllegalArgumentException(e);
         }
 
-        final File beansXml = new File(docBase, "WEB-INF/beans.xml");
+        final File beansXml = new File(request.docBase, "WEB-INF/beans.xml");
         if (beansXml.exists()) { // add it since it is not in the scanned path by default
             try {
                 webModule.getAltDDs().put("beans.xml", beansXml.toURI().toURL());
@@ -284,16 +297,16 @@ public class Container implements AutoCloseable {
         }
 
         if (!SystemInstance.isInitialized() || Boolean.parseBoolean(SystemInstance.get().getProperty("tomee.embedded.add-callers", "true"))) {
-            addCallersAsEjbModule(loader, app, additionalCallers);
+            addCallersAsEjbModule(loader, app, request.additionalCallers);
         }
 
-        systemInstance.addObserver(new StandardContextCustomizer(configuration, webModule, keepClassloader));
+        systemInstance.addObserver(new StandardContextCustomizer(configuration, webModule, request.keepClassloader));
         if (systemInstance.getComponent(AnnotationDeployer.FolderDDMapper.class) == null) {
             systemInstance.setComponent(AnnotationDeployer.FolderDDMapper.class, new AnnotationDeployer.FolderDDMapper() {
                 @Override
                 public File getDDFolder(final File dir) {
                     try {
-                        return isMaven(dir) || isGradle(dir) ? new File(docBase, "WEB-INF") : null;
+                        return isMaven(dir) || isGradle(dir) ? new File(request.docBase, "WEB-INF") : null;
                     } catch (final RuntimeException re) { // folder doesn't exist -> test is stopped which is expected
                         return null;
                     }
@@ -1091,6 +1104,27 @@ public class Container implements AutoCloseable {
                 }
             }
             super.start();
+        }
+    }
+
+    // there to allow to add params without breaking signature each time
+    public static class DeploymentRequest {
+        private final String context;
+        private final List<URL> jarList;
+        private final File docBase;
+        private final boolean keepClassloader;
+        private final String[] additionalCallers;
+        private final Archive archive;
+
+        public DeploymentRequest(final String context, final List<URL> jarList, final File docBase,
+                                 final boolean keepClassloader, final String[] additionalCallers,
+                                 final Archive archive) {
+            this.context = context;
+            this.jarList = jarList == null ? Collections.<URL>emptyList() : jarList;
+            this.docBase = docBase;
+            this.keepClassloader = keepClassloader;
+            this.additionalCallers = additionalCallers;
+            this.archive = archive;
         }
     }
 }
