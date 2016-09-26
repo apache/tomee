@@ -59,13 +59,14 @@ public class TomEEEmbeddedApplicationRunner implements AutoCloseable {
     private volatile Object app;
     private volatile Thread hook;
 
-    public void run(final Object app, final String... args) {
-        start(app, args);
+    public static void run(final Object app, final String... args) {
+        final TomEEEmbeddedApplicationRunner runner = new TomEEEmbeddedApplicationRunner();
+        runner.start(app, args);
         try {
             new CountDownLatch(1).await();
         } catch (final InterruptedException e) {
             Thread.interrupted();
-            close();
+            runner.close();
         }
     }
 
