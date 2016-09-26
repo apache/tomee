@@ -2086,12 +2086,14 @@ public class DeploymentLoader implements DeploymentFilterable {
                 cls = EjbModule.class;
                 // if it is a war just throw an error
                 try {
-                    final File ar = URLs.toFile(urls);
-                    if (!ar.isDirectory() && !ar.getName().endsWith("ar")) { // guess no archive extension, check it is not a hidden war
-                        try (JarFile war = new JarFile(ar)) {
-                            final ZipEntry entry = war.getEntry("WEB-INF/");
-                            if (entry != null) {
-                                logger.warning("you deployed " + urls.toExternalForm() + ", it seems it is a war with no extension, please rename it");
+                    if(logger.isWarningEnabled()) {
+                        final File ar = URLs.toFile(urls);
+                        if (!ar.isDirectory() && !ar.getName().endsWith("ar")) { // guess no archive extension, check it is not a hidden war
+                            try (JarFile war = new JarFile(ar)) {
+                                final ZipEntry entry = war.getEntry("WEB-INF/");
+                                if (entry != null) {
+                                    logger.warning("you deployed " + urls.toExternalForm() + ", it seems it is a war with no extension, please rename it");
+                                }
                             }
                         }
                     }
