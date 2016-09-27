@@ -109,7 +109,7 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
                 broker.setPersistent(true);
                 tomeeConfig(broker);
             } else {
-                final boolean notXbean = !uri.getScheme().toLowerCase().startsWith("xbean");
+                final boolean notXbean = !uri.getScheme().toLowerCase(Locale.ENGLISH).startsWith("xbean");
                 if (notXbean) {
 
                     Object value = properties.get("datasource");
