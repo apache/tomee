@@ -33,6 +33,7 @@ import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.sql.Statement;
 import java.util.Enumeration;
+import java.util.Locale;
 
 public class ImportSql {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, EntityManagerFactoryCallable.class.getName());
@@ -125,7 +126,7 @@ public class ImportSql {
                 }
 
                 try {
-                    if (!trimmedSql.toLowerCase().startsWith("select")) {
+                    if (!trimmedSql.toLowerCase(Locale.ENGLISH).startsWith("select")) {
                         statement.executeUpdate(trimmedSql);
                     } else { // why could it be the case?
                         statement.executeQuery(trimmedSql);
