@@ -42,6 +42,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Locale;
 
 import static org.apache.openejb.util.URLs.toFile;
 import static org.apache.openejb.util.URLs.toFileUrl;
@@ -461,7 +462,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
                     }
                 }
 
-                final boolean isWindows = System.getProperty("os.name", "unknown").toLowerCase().startsWith("windows");
+                final boolean isWindows = System.getProperty("os.name", "unknown").toLowerCase(Locale.ENGLISH).startsWith("windows");
                 if (!isWindows) {
                     urls = urlSet.getUrls();
                 } else {
