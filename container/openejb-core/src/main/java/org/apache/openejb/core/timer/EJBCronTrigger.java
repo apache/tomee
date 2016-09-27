@@ -159,7 +159,7 @@ public class EJBCronTrigger extends CronTriggerImpl {
         }
 
         // Get rid of whitespace and convert to uppercase
-        expr = expr.replaceAll("\\s+", "").toUpperCase();
+        expr = expr.replaceAll("\\s+", "").toUpperCase(Locale.ENGLISH);
 
 
         if (expr.length() > 1 && expr.indexOf(",") > 0) {
