@@ -32,6 +32,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.Locale;
 
 /**
  * @version $Rev$ $Date$
@@ -250,13 +251,13 @@ public class CleanEnvEntries implements DynamicDeployer {
 
             // TODO Technically we should match by case
             final String bestName = "set" + StringUtils.capitalize(target.getInjectionTargetName());
-            final String name = "set" + target.getInjectionTargetName().toLowerCase();
+            final String name = "set" + target.getInjectionTargetName().toLowerCase(Locale.ENGLISH);
             Class<?> found = null;
             for (final Method method : clazz.getDeclaredMethods()) {
                 if (method.getParameterTypes().length == 1) {
                     if (method.getName().equals(bestName)) {
                         return method.getParameterTypes()[0];
-                    } else if (method.getName().toLowerCase().equals(name)) {
+                    } else if (method.getName().toLowerCase(Locale.ENGLISH).equals(name)) {
                         found = method.getParameterTypes()[0];
                     }
                 }
