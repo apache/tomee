@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.Locale;
 
 public class Logger {
     private static final String SUFFIX = ".Messages";
@@ -417,30 +418,30 @@ public class Logger {
 
     @SuppressWarnings("UnusedDeclaration")
     public boolean isLevelEnable(final String level) {
-        if ("info".equals(level.toLowerCase())) {
+        if ("info".equals(level.toLowerCase(Locale.ENGLISH))) {
             return isInfoEnabled();
-        } else if ("debug".equals(level.toLowerCase())) {
+        } else if ("debug".equals(level.toLowerCase(Locale.ENGLISH))) {
             return isDebugEnabled();
-        } else if ("warning".equals(level.toLowerCase())) {
+        } else if ("warning".equals(level.toLowerCase(Locale.ENGLISH))) {
             return isWarningEnabled();
-        } else if ("fatal".equals(level.toLowerCase())) {
+        } else if ("fatal".equals(level.toLowerCase(Locale.ENGLISH))) {
             return isFatalEnabled();
-        } else if ("error".equals(level.toLowerCase())) {
+        } else if ("error".equals(level.toLowerCase(Locale.ENGLISH))) {
             return isErrorEnabled();
         }
         return false;
     }
 
     public void log(final String level, final String message) {
-        if ("info".equals(level.toLowerCase())) {
+        if ("info".equals(level.toLowerCase(Locale.ENGLISH))) {
             info(message);
-        } else if ("debug".equals(level.toLowerCase())) {
+        } else if ("debug".equals(level.toLowerCase(Locale.ENGLISH))) {
             debug(message);
-        } else if ("warning".equals(level.toLowerCase())) {
+        } else if ("warning".equals(level.toLowerCase(Locale.ENGLISH))) {
             warning(message);
-        } else if ("fatal".equals(level.toLowerCase())) {
+        } else if ("fatal".equals(level.toLowerCase(Locale.ENGLISH))) {
             fatal(message);
-        } else if ("error".equals(level.toLowerCase())) {
+        } else if ("error".equals(level.toLowerCase(Locale.ENGLISH))) {
             error(message);
         }
     }
