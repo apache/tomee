@@ -418,30 +418,32 @@ public class Logger {
 
     @SuppressWarnings("UnusedDeclaration")
     public boolean isLevelEnable(final String level) {
-        if ("info".equals(level.toLowerCase(Locale.ENGLISH))) {
+        final String levelLowerCase = level.toLowerCase(Locale.ENGLISH);
+        if ("info".equals(levelLowerCase)) {
             return isInfoEnabled();
-        } else if ("debug".equals(level.toLowerCase(Locale.ENGLISH))) {
+        } else if ("debug".equals(levelLowerCase)) {
             return isDebugEnabled();
-        } else if ("warning".equals(level.toLowerCase(Locale.ENGLISH))) {
+        } else if ("warning".equals(levelLowerCase)) {
             return isWarningEnabled();
-        } else if ("fatal".equals(level.toLowerCase(Locale.ENGLISH))) {
+        } else if ("fatal".equals(levelLowerCase)) {
             return isFatalEnabled();
-        } else if ("error".equals(level.toLowerCase(Locale.ENGLISH))) {
+        } else if ("error".equals(levelLowerCase)) {
             return isErrorEnabled();
         }
         return false;
     }
 
     public void log(final String level, final String message) {
-        if ("info".equals(level.toLowerCase(Locale.ENGLISH))) {
+        final String levelLowerCase = level.toLowerCase(Locale.ENGLISH);
+        if ("info".equals(levelLowerCase)) {
             info(message);
-        } else if ("debug".equals(level.toLowerCase(Locale.ENGLISH))) {
+        } else if ("debug".equals(levelLowerCase)) {
             debug(message);
-        } else if ("warning".equals(level.toLowerCase(Locale.ENGLISH))) {
+        } else if ("warning".equals(levelLowerCase)) {
             warning(message);
-        } else if ("fatal".equals(level.toLowerCase(Locale.ENGLISH))) {
+        } else if ("fatal".equals(levelLowerCase)) {
             fatal(message);
-        } else if ("error".equals(level.toLowerCase(Locale.ENGLISH))) {
+        } else if ("error".equals(levelLowerCase)) {
             error(message);
         }
     }
