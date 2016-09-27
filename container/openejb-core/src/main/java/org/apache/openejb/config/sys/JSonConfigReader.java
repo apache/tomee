@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Locale;
 
 public class JSonConfigReader {
     private static final String COMMENT_KEY = "__";
@@ -76,9 +77,9 @@ public class JSonConfigReader {
             for (final String root : roots) {
                 final String currentRoot;
                 if (root.endsWith("s")) {
-                    currentRoot = root.toLowerCase();
+                    currentRoot = root.toLowerCase(Locale.ENGLISH);
                 } else {
-                    currentRoot = root.toLowerCase() + "s";
+                    currentRoot = root.toLowerCase(Locale.ENGLISH) + "s";
                 }
 
                 final Map<String, Map<String, Map<String, String>>> resources = map(jsConfig.get(currentRoot));
