@@ -38,6 +38,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.Locale;
 
 /**
  * @version $Rev$ $Date$
@@ -254,7 +255,7 @@ public class ProviderGenerator extends Resource {
                     );
                 }
 
-                final String s = lcFirstKey.toLowerCase();
+                final String s = lcFirstKey.toLowerCase(Locale.ENGLISH);
                 if ("long".equals(type) && s.contains("time")) {
                     TimeUnit unit = null;
                     if (s.endsWith("millis")) {
@@ -391,7 +392,7 @@ public class ProviderGenerator extends Resource {
             return "boolean";
         }
 
-        if (key.toLowerCase().endsWith("timeout")) {
+        if (key.toLowerCase(Locale.ENGLISH).endsWith("timeout")) {
             return Duration.class.getName();
         }
 
@@ -400,7 +401,7 @@ public class ProviderGenerator extends Resource {
         }
 
 
-        if (key.toLowerCase().contains("time")) {
+        if (key.toLowerCase(Locale.ENGLISH).contains("time")) {
             try {
                 Long.parseLong(value);
                 return "long";
@@ -416,11 +417,11 @@ public class ProviderGenerator extends Resource {
             // no-op
         }
 
-        if (key.toLowerCase().endsWith("url")) {
+        if (key.toLowerCase(Locale.ENGLISH).endsWith("url")) {
             return URI.class.getName();
         }
 
-        if (key.toLowerCase().endsWith("uri")) {
+        if (key.toLowerCase(Locale.ENGLISH).endsWith("uri")) {
             return URI.class.getName();
         }
 
@@ -466,11 +467,11 @@ public class ProviderGenerator extends Resource {
 
                 String value = map.get(key);
 
-                if (key.toLowerCase().endsWith(".lc")) {
-                    value = map.get(key.substring(0, key.length() - 3)).toLowerCase();
-                } else if (key.toLowerCase().endsWith(".uc")) {
-                    value = map.get(key.substring(0, key.length() - 3)).toUpperCase();
-                } else if (key.toLowerCase().endsWith(".cc")) {
+                if (key.toLowerCase(Locale.ENGLISH).endsWith(".lc")) {
+                    value = map.get(key.substring(0, key.length() - 3)).toLowerCase(Locale.ENGLISH);
+                } else if (key.toLowerCase(Locale.ENGLISH).endsWith(".uc")) {
+                    value = map.get(key.substring(0, key.length() - 3)).toUpperCase(Locale.ENGLISH);
+                } else if (key.toLowerCase(Locale.ENGLISH).endsWith(".cc")) {
                     value = Strings.camelCase(map.get(key.substring(0, key.length() - 3)));
                 }
 
