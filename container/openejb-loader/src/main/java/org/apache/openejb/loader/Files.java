@@ -44,7 +44,7 @@ import static org.apache.openejb.loader.JarLocation.decode;
  */
 public class Files {
     private static final Map<String, MessageDigest> DIGESTS = new HashMap<String, MessageDigest>();
-    private static final boolean IS_WINDOWS = System.getProperty("os.name", "unknown").toLowerCase().startsWith("win");
+    private static final boolean IS_WINDOWS = System.getProperty("os.name", "unknown").toLowerCase(Locale.ENGLISH).startsWith("win");
 
     public static File path(final String... parts) {
         File dir = null;
