@@ -41,6 +41,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Locale;
 
 import static org.apache.openejb.util.PropertyPlaceHolderHelper.holdsWithUpdate;
 
@@ -231,7 +232,7 @@ public abstract class ServiceManager {
                 final File[] files = conf.listFiles(new FilenameFilter() {
                     @Override
                     public boolean accept(final File dir, String name) {
-                        name = name.toLowerCase();
+                        name = name.toLowerCase(Locale.ENGLISH);
                         return name.equals("ejbd.properties")
                             || name.equals("ejbds.properties")
                             || name.equals("admin.properties")
