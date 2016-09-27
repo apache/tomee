@@ -41,6 +41,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.Locale;
 
 /**
  * NOTE: Do not add inner or anonymous classes or a dependency without updating ExecMojo
@@ -182,7 +183,7 @@ public class RemoteServer {
         if (ok) {
             try {
                 if (verbose) {
-                    System.out.println("[] " + cmd.toUpperCase() + " SERVER");
+                    System.out.println("[] " + cmd.toUpperCase(Locale.ENGLISH) + " SERVER");
                 }
 
                 final File home = getHome();
@@ -211,7 +212,7 @@ public class RemoteServer {
                 //File openejbJar = new File(lib, "openejb-core-" + version + ".jar");
 
                 final String java;
-                final boolean isWindows = System.getProperty("os.name", "unknown").toLowerCase().startsWith("windows");
+                final boolean isWindows = System.getProperty("os.name", "unknown").toLowerCase(Locale.ENGLISH).startsWith("windows");
                 if (isWindows && START.equals(cmd) && options.get("server.windows.fork", false)) {
                     // run and forget
                     java = new File(System.getProperty("java.home"), "bin/javaw").getAbsolutePath();
@@ -422,7 +423,7 @@ public class RemoteServer {
     }
 
     public void kill3UNIX() { // debug purpose only
-        if (System.getProperty("os.name", "unknown").toLowerCase().startsWith("windows")) {
+        if (System.getProperty("os.name", "unknown").toLowerCase(Locale.ENGLISH).startsWith("windows")) {
             return;
         }
 

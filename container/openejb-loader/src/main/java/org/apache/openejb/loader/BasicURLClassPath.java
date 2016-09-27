@@ -24,6 +24,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.Locale;
 
 public abstract class BasicURLClassPath implements ClassPath {
     public static ClassLoader getContextClassLoader() {
@@ -70,13 +71,13 @@ public abstract class BasicURLClassPath implements ClassPath {
         final String[] jarNames = dir.list(new java.io.FilenameFilter() {
             @Override
             public boolean accept(final File dir, String name) {
-                name = name.toLowerCase();
+                name = name.toLowerCase(Locale.ENGLISH);
                 return name.endsWith(".jar") || name.endsWith(".zip");
             }
         });
 
         final URL[] jars = new URL[jarNames.length];
-        final boolean isWindows = System.getProperty("os.name", "unknown").toLowerCase().startsWith("win");
+        final boolean isWindows = System.getProperty("os.name", "unknown").toLowerCase(Locale.ENGLISH).startsWith("win");
 
         for (int j = 0; j < jarNames.length; j++) {
             final String name = isWindows ? jarNames[j].toLowerCase() : jarNames[j];

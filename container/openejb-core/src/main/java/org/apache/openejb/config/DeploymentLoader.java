@@ -89,6 +89,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
+import java.util.Locale;
 
 import static java.util.Arrays.asList;
 
@@ -2003,7 +2004,7 @@ public class DeploymentLoader implements DeploymentFilterable {
     private static boolean containsWebAssets(final File[] files) {
         if (files != null) {
             for (final File file : files) {
-                final String fn = file.getName().toLowerCase();
+                final String fn = file.getName().toLowerCase(Locale.ENGLISH);
                 if (fn.endsWith(".jsp")) {
                     return true;
                 }
@@ -2018,7 +2019,7 @@ public class DeploymentLoader implements DeploymentFilterable {
     private static boolean containsEarAssets(final File[] files) {
         if (files != null) {
             for (final File file : files) {
-                final String fn = file.getName().toLowerCase();
+                final String fn = file.getName().toLowerCase(Locale.ENGLISH);
                 if (fn.endsWith(".jar")) {
                     return true;
                 }

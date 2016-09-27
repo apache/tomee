@@ -34,6 +34,7 @@ import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -115,7 +116,7 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
                     }
 
                     setBrokerXmlConfig(ActiveMQFactory.getBrokerMetaFile() + compositeData.toURI());
-                } else if (brokerXmlConfig.toLowerCase().startsWith("xbean:")) {
+                } else if (brokerXmlConfig.toLowerCase(Locale.ENGLISH).startsWith("xbean:")) {
                     setBrokerXmlConfig(ActiveMQFactory.getBrokerMetaFile() + brokerXmlConfig);
                 }
 
