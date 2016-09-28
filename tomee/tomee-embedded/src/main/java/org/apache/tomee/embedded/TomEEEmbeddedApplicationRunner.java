@@ -16,6 +16,7 @@
  */
 package org.apache.tomee.embedded;
 
+import org.apache.openejb.config.DeploymentsResolver;
 import org.apache.openejb.testing.Application;
 import org.apache.openejb.testing.ApplicationComposers;
 import org.apache.openejb.testing.Classes;
@@ -188,6 +189,8 @@ public class TomEEEmbeddedApplicationRunner implements AutoCloseable {
             for (final File f : files) {
                 urls.add(f.toURI().toURL());
             }
+        } else {
+            urls = new DeploymentsResolver.ClasspathSearcher().loadUrls(Thread.currentThread().getContextClassLoader()).getUrls();
         }
 
         final WebResource resources = appClass.getAnnotation(WebResource.class);
