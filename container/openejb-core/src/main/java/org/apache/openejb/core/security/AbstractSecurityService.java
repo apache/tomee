@@ -61,7 +61,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * addition openejb-core classes.
  */
 public abstract class AbstractSecurityService implements DestroyableResource, SecurityService<UUID>, ThreadContextListener, BasicPolicyConfiguration.RoleResolver {
-
     private static final Map<Object, Identity> identities = new ConcurrentHashMap<Object, Identity>();
     protected static final ThreadLocal<Identity> clientIdentity = new ThreadLocal<Identity>();
     protected String defaultUser = "guest";
@@ -222,9 +221,9 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
     @Override
     public void associate(final UUID securityIdentity) throws LoginException {
         final Identity existing = clientIdentity.get();
-        if (existing != null) {
+        if (existing != null && existing.getToken() != null /*can be null if enterWebApp is called, this is not a login without a token*/) {
             throw new LoginException("Thread already associated with a client identity.  Refusing to overwrite. " +
-                    "(current=" + existing.getToken() + ", refused=" + securityIdentity + ")");
+                    "(current=" + existing.getToken() + "/" + existing.getSubject() + ", refused=" + securityIdentity + ")");
         }
         if (securityIdentity == null) {
             throw new NullPointerException("The security token passed in is null");
