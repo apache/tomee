@@ -80,6 +80,7 @@ public class ContainerClassesFilter implements Filter {
         excluded.add("org.apache.jcp");
         excluded.add("org.apache.johnzon");
         excluded.add("org.apache.juli");
+        excluded.add("org.apache.logging.log4j.core");
         excluded.add("org.apache.myfaces");
         excluded.add("org.apache.neethi");
         excluded.add("org.apache.openejb");
