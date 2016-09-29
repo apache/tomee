@@ -102,6 +102,7 @@ import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -279,7 +280,7 @@ public class Container implements AutoCloseable {
             } catch (final MalformedURLException e) {
                 // no-op
             }
-        }
+        } // else no classpath finding since we'll likely find it
         DeploymentLoader.addBeansXmls(webModule);
 
         final AppModule app = new AppModule(loader, null);
@@ -288,6 +289,26 @@ public class Container implements AutoCloseable {
         app.setModuleId(webModule.getModuleId());
         try {
             final Map<String, URL> webDescriptors = DeploymentLoader.getWebDescriptors(jarLocation);
+            if (webDescriptors.isEmpty()) { // likely so let's try to find them in the classpath
+                final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+                final Collection<String> metaDir = asList("META-INF/tomee/", "META-INF/");
+                for (final String dd : asList(
+                        "app-ctx.xml", "module.properties", "application.properties",
+                        "env-entries.properties", NewLoaderLogic.EXCLUSION_FILE,
+                        "web.xml", "ejb-jar.xml", "openejb-jar.xml", "validation.xml")) {
+                    if (Boolean.parseBoolean(SystemInstance.get().getProperty("tomee.embedded.descriptors.classpath." + dd + ".skip"))
+                            || webDescriptors.containsKey(dd)) {
+                        continue;
+                    }
+                    for (final String meta : metaDir) {
+                        final URL url = classLoader.getResource(meta + dd);
+                        if (url != null) {
+                            webDescriptors.put(dd, url);
+                            break;
+                        }
+                    }
+                }
+            }
             webDescriptors.remove("beans.xml");
             webModule.getAltDDs().putAll(webDescriptors);
             DeploymentLoader.addWebModule(webModule, app);
