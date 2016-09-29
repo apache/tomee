@@ -142,6 +142,11 @@ public class Logger {
             if (configFile.size() == 0 && systemProperties.size() == 0) {
                 return;
             }
+            if (systemProperties.size() == 1 && "log4j.configurationFile".equals(systemProperties.stringPropertyNames().iterator().next())) {
+                // not a logger config but the overall config
+                // since log4j2 uses it too we can't pollute logs with warnings there for that only
+                return;
+            }
 
             final LogStream stream = logStreamFactory.createLogStream(LogCategory.OPENEJB);
 
