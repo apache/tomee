@@ -38,7 +38,7 @@ public final class FatApp {
             a.add("--single-classloader");
         }
         if (Thread.currentThread().getContextClassLoader().getResource("tomee-embedded.properties") != null) { // automatic
-            a.add("--classpath-configuration=tomee-embedded.properties");
+            a.add("--configuration-location=tomee-embedded.properties");
         }
         Main.main(a.toArray(new String[a.size()]));
     }

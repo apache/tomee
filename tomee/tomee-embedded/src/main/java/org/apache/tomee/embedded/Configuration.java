@@ -24,6 +24,8 @@ import org.apache.xbean.finder.filter.Filter;
 import org.apache.xbean.recipe.ObjectRecipe;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -84,17 +86,27 @@ public class Configuration {
 
     private String conf;
 
-    public Configuration loadFromClasspath(final String resource) {
-        try (final InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(resource)) {
-            if (is == null) {
-                throw new IllegalArgumentException(resource + " not found");
-            }
+    public Configuration loadFrom(final String resource) {
+        try (final InputStream is = findStream(resource)) {
             final Properties config = IO.readProperties(is, new Properties());
             loadFromProperties(config);
             return this;
         } catch (final IOException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    private InputStream findStream(final String resource) throws FileNotFoundException {
+        InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(resource);
+        if (stream == null) {
+            final File file = new File(resource);
+            if (file.exists()) {
+                return new FileInputStream(file);
+            } else {
+                throw new IllegalArgumentException("Didn't find: " + resource);
+            }
+        }
+        return stream;
     }
 
     public void loadFromProperties(final Properties config) {

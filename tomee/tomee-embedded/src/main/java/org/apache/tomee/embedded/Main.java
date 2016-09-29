@@ -74,7 +74,7 @@ public class Main {
     public static final String SIMPLE_LOG = "simple-log";
     public static final String PRE_TASK = "pre-task";
     public static final String INTERACTIVE = "interactive";
-    public static final String CLASSPATH_CONFIGURATION = "classpath-configuration";
+    public static final String CONFIGURATION = "configuration-location";
     public static final String CLASSES_FILTER = "classes-filter";
     public static final String HELP = "help";
 
@@ -259,7 +259,7 @@ public class Main {
         options.addOption(null, BASIC, true, "basic authentication if set");
         options.addOption(null, SIMPLE_LOG, false, "should tomee use simple log format (level - message) - demo intended");
         options.addOption("i", INTERACTIVE, false, "should tomee start and wait for SIGTERM signal or wait for 'exit' to be entered");
-        options.addOption(null, CLASSPATH_CONFIGURATION, true, "a properties file containing the configuration to load");
+        options.addOption(null, CONFIGURATION, true, "a properties file containing the configuration to load");
         options.addOption(null, SINGLE_CLASSLOADER, false, "if the application should use the same classloader as the boot one");
         options.addOption(null, CLASSES_FILTER, true, "A custom implementation of a xbean filter to exclude classes to not scan");
         options.addOption("h", HELP, false, "show help");
@@ -268,8 +268,8 @@ public class Main {
 
     private static Configuration createConfiguration(final CommandLine args) {
         final Configuration config = new Configuration();
-        if (args.hasOption(CLASSPATH_CONFIGURATION)) {
-            config.loadFromClasspath(args.getOptionValue(CLASSPATH_CONFIGURATION));
+        if (args.hasOption(CONFIGURATION)) {
+            config.loadFrom(args.getOptionValue(CONFIGURATION));
         }
         config.setHttpPort(Integer.parseInt(args.getOptionValue(PORT, Integer.toString(config.getHttpPort()))));
         config.setStopPort(Integer.parseInt(args.getOptionValue(SHUTDOWN, Integer.toString(config.getHttpsPort()))));
