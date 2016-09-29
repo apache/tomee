@@ -31,6 +31,8 @@ import org.apache.xbean.finder.archive.Archive;
 import org.apache.xbean.finder.archive.ClassesArchive;
 import org.apache.xbean.finder.archive.FileArchive;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.enterprise.inject.Vetoed;
 import java.io.Closeable;
 import java.io.File;
@@ -38,6 +40,7 @@ import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
@@ -235,9 +238,34 @@ public class TomEEEmbeddedApplicationRunner implements AutoCloseable {
 
         composerInject(app);
 
+        final AnnotationFinder appFinder = new AnnotationFinder(new ClassesArchive(appClass));
+        for (final Method mtd : appFinder.findAnnotatedMethods(PostConstruct.class)) {
+            if (mtd.getParameterTypes().length == 0) {
+                if (!mtd.isAccessible()) {
+                    mtd.setAccessible(true);
+                }
+                mtd.invoke(app);
+            }
+        }
+
         Runtime.getRuntime().addShutdownHook(hook = new Thread() {
             @Override
             public void run() { // ensure to log errors but not fail there
+                for (final Method mtd : appFinder.findAnnotatedMethods(PreDestroy.class)) {
+                    if (mtd.getParameterTypes().length == 0) {
+                        if (!mtd.isAccessible()) {
+                            mtd.setAccessible(true);
+                        }
+                        try {
+                            mtd.invoke(app);
+                        } catch (final IllegalAccessException e) {
+                            throw new IllegalStateException(e);
+                        } catch (final InvocationTargetException e) {
+                            throw new IllegalStateException(e.getCause());
+                        }
+                    }
+                }
+
                 try {
                     if (container != null) {
                         container.close();
