@@ -59,6 +59,15 @@ public class ContainerClassesFilter implements Filter {
         excluded.add("com.sun.xml.messaging.saaj");
         excluded.add("com.sun.xml.txw2");
         excluded.add("io.netty");
+        excluded.add("io.swagger.annotations");
+        excluded.add("io.swagger.config");
+        excluded.add("io.swagger.converter");
+        excluded.add("io.swagger.core");
+        excluded.add("io.swagger.jackson");
+        excluded.add("io.swagger.jaxrs");
+        excluded.add("io.swagger.model");
+        excluded.add("io.swagger.models");
+        excluded.add("io.swagger.util");
         excluded.add("javax");
         excluded.add("jnr");
         excluded.add("junit");
@@ -101,8 +110,11 @@ public class ContainerClassesFilter implements Filter {
         excluded.add("org.bouncycastle");
         excluded.add("org.codehaus.stax2");
         excluded.add("org.cryptacular");
+        excluded.add("org.eclipse.jdt.core");
+        excluded.add("org.eclipse.jdt.internal");
         excluded.add("org.fusesource.hawtbuf");
         excluded.add("org.hamcrest");
+        excluded.add("org.hsqldb");
         excluded.add("org.jasypt");
         excluded.add("org.jboss.marshalling");
         excluded.add("org.joda.time");
