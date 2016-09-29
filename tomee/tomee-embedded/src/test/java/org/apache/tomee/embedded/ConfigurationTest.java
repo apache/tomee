@@ -56,7 +56,6 @@ public class ConfigurationTest {
                 .p("login", "")
                 .p("login.realmName", "app")
                 .p("login.authMethod", "BASIC")
-                .p("login", "")
                 .p("securityConstraint", "")
                 .p("securityConstraint.authConstraint", "true")
                 .p("securityConstraint.authRole", "**")
