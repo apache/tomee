@@ -169,7 +169,7 @@ public class TomEEEmbeddedApplicationRunner implements AutoCloseable {
 
         // at least after LifecycleTasks to inherit from potential states (system properties to get a port etc...)
         final Configurers configurers = appClass.getAnnotation(Configurers.class);
-        if (tasks != null) {
+        if (configurers != null) {
             for (final Class<? extends Configurer> type : configurers.value()) {
                 type.newInstance().configure(configuration);
             }
