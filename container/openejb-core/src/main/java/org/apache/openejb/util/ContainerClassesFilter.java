@@ -43,9 +43,15 @@ public class ContainerClassesFilter implements Filter {
         excluded.add("com.codehale.metrics");
         excluded.add("com.ctc.wstx");
         excluded.add("com.datastax.driver.core");
+        excluded.add("com.fasterxml.jackson.annotation");
+        excluded.add("com.fasterxml.jackson.core");
+        excluded.add("com.fasterxml.jackson.databind");
+        excluded.add("com.fasterxml.jackson.dataformat");
+        excluded.add("com.fasterxml.jackson.module");
         excluded.add("com.google.common");
         excluded.add("com.google.thirdparty");
         excluded.add("com.ibm.wsdl");
+        excluded.add("com.jcraft.jsch");
         excluded.add("com.kenai.jffi");
         excluded.add("com.kenai.jnr");
         excluded.add("com.sun.istack");
