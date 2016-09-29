@@ -334,17 +334,17 @@ public class Main {
 
                 }
             };
-            realm.setAppName("eyes-of-the-tiger");
+            realm.setAppName("application");
             realm.setConfigFile(new File(jaas).getAbsolutePath());
             config.setRealm(realm);
         }
         if (args.hasOption(BASIC)) {
             config.loginConfig(new LoginConfigBuilder().basic()
-                    .setRealmName(System.getProperty("tomee.embedded.main.basic.realm", "Security")));
+                    .realmName(System.getProperty("tomee.embedded.main.basic.realm", "Security")));
             config.securityConstaint(new SecurityConstaintBuilder().authConstraint(true)
                     .addAuthRole(System.getProperty("tomee.embedded.main.basic.role", "*"))
                     .addCollection("Basic", System.getProperty("tomee.embedded.main.basic.pattern", "/*"))
-                    .setDisplayName(System.getProperty("tomee.embedded.main.basic.display-name", "Basic security")));
+                    .displayName(System.getProperty("tomee.embedded.main.basic.display-name", "Basic security")));
         }
         if (args.hasOption(CACHE_WEB_RESOURCES)) {
             config.setWebResourceCached(Boolean.parseBoolean(args.getOptionValue(CACHE_WEB_RESOURCES)));

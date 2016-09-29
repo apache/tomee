@@ -226,8 +226,8 @@ public class Configuration {
             } else if (prop.equals("securityConstraint")) {
                 final ObjectRecipe recipe = new ObjectRecipe(SecurityConstaintBuilder.class.getName());
                 for (final String nestedConfig : config.stringPropertyNames()) {
-                    if (nestedConfig.startsWith("securityConstraints.")) {
-                        recipe.setProperty(nestedConfig.substring("securityConstraints.".length()), config.getProperty(nestedConfig));
+                    if (nestedConfig.startsWith("securityConstraint.")) {
+                        recipe.setProperty(nestedConfig.substring("securityConstraint.".length()), config.getProperty(nestedConfig));
                     }
                 }
                 securityConstaint(SecurityConstaintBuilder.class.cast(recipe.create()));
@@ -236,9 +236,9 @@ public class Configuration {
                 if (next.contains(".")) {
                     continue;
                 }
-                final ObjectRecipe recipe = new ObjectRecipe(SecurityConstaintBuilder.class.getName());
+                final ObjectRecipe recipe = new ObjectRecipe(properties.getProperty(prop + ".class"));
                 for (final String nestedConfig : config.stringPropertyNames()) {
-                    if (nestedConfig.startsWith(prop)) {
+                    if (nestedConfig.startsWith(prop) && !prop.endsWith(".class")) {
                         recipe.setProperty(nestedConfig.substring(prop.length() + 1 /*dot*/), config.getProperty(nestedConfig));
                     }
                 }
