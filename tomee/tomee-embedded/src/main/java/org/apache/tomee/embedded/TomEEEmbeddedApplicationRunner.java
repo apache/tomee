@@ -193,7 +193,7 @@ public class TomEEEmbeddedApplicationRunner implements AutoCloseable {
                 urls.add(f.toURI().toURL());
             }
         } else {
-            urls = new DeploymentsResolver.ClasspathSearcher().loadUrls(Thread.currentThread().getContextClassLoader()).getUrls();
+            urls = null;
         }
 
         final WebResource resources = appClass.getAnnotation(WebResource.class);
@@ -218,7 +218,8 @@ public class TomEEEmbeddedApplicationRunner implements AutoCloseable {
         final Container container = new Container(configuration)
                 .deploy(new Container.DeploymentRequest(
                         context,
-                        urls,
+                        // call ClasspathSearcher that lazily since container needs to be started to not preload logging
+                        urls == null ? new DeploymentsResolver.ClasspathSearcher().loadUrls(Thread.currentThread().getContextClassLoader()).getUrls() : urls,
                         webResource != null ? new File(webResource) : null,
                         true,
                         null,

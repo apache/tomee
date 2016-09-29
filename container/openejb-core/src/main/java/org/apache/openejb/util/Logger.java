@@ -26,16 +26,16 @@ import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
-import java.util.Locale;
 
 public class Logger {
     private static final String SUFFIX = ".Messages";
     private static final String OPENEJB = "org.apache.tomee";
-    private static LogStreamFactory logStreamFactory;
+    private static LogStreamFactory logStreamFactory; // TODO: make it resettable
 
     // don't return the instance since it needs to stay private but export which one is used to allow integration with other libs (as tomcat ;))
     @SuppressWarnings("UnusedDeclaration")
@@ -44,6 +44,10 @@ public class Logger {
             throw new IllegalStateException("Call this method after having configured the logger");
         }
         return logStreamFactory.getClass().getName();
+    }
+
+    public static LogStreamFactory unsafeDelegateClass() {
+        return logStreamFactory;
     }
 
     public static synchronized void configure() {

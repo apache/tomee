@@ -35,13 +35,18 @@ public class TomEELog implements Log {
             try {
                 final ClassLoader tccl = thread.getContextClassLoader();
                 final Class<?> systemInstance = tccl.loadClass("org.apache.openejb.loader.SystemInstance");
-                if (!Boolean.class.cast(systemInstance.getMethod("isInitialized").invoke(null))) {
-                    return;
+                if (!Boolean.class.cast(systemInstance.getMethod("isInitialized").invoke(null))) { // check if Logger was forced
+                    final Class<?> logger = tccl.loadClass("org.apache.openejb.util.Logger");
+                    final Method m = logger.getDeclaredMethod("unsafeDelegateClass");
+                    loggerClazz = m.invoke(null).getClass().getName();
                 }
 
-                final Class<?> logger = tccl.loadClass("org.apache.openejb.util.Logger");
-                final Method m = logger.getDeclaredMethod("delegateClass");
-                loggerClazz = (String) m.invoke(null);
+                if (loggerClazz == null) {
+                    final Class<?> logger = tccl.loadClass("org.apache.openejb.util.Logger");
+                    final Method m = logger.getDeclaredMethod("delegateClass");
+                    loggerClazz = (String) m.invoke(null);
+                }
+
                 switch (loggerClazz) {
                     case "org.apache.openejb.util.Log4j2LogStreamFactory":
                     case "org.apache.openejb.util.Log4jLogStreamFactory":
