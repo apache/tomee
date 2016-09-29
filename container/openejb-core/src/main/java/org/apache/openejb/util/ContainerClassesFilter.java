@@ -58,6 +58,7 @@ public class ContainerClassesFilter implements Filter {
         excluded.add("com.sun.xml.bind");
         excluded.add("com.sun.xml.messaging.saaj");
         excluded.add("com.sun.xml.txw2");
+        excluded.add("io.jsonwebtoken");
         excluded.add("io.netty");
         excluded.add("io.swagger.annotations");
         excluded.add("io.swagger.config");
@@ -73,6 +74,7 @@ public class ContainerClassesFilter implements Filter {
         excluded.add("junit");
         excluded.add("net.sf.ehcache");
         excluded.add("net.shibboleth.utilities.java.support");
+        excluded.add("org.aeonbits.owner");
         excluded.add("org.apache.activemq");
         excluded.add("org.apache.bval");
         excluded.add("org.apache.camel");
@@ -121,6 +123,7 @@ public class ContainerClassesFilter implements Filter {
         excluded.add("org.jasypt");
         excluded.add("org.jboss.marshalling");
         excluded.add("org.joda.time");
+        excluded.add("org.jose4j");
         excluded.add("org.junit");
         excluded.add("org.jvnet.mimepull");
         excluded.add("org.metatype.sxc");
@@ -134,6 +137,7 @@ public class ContainerClassesFilter implements Filter {
         excluded.add("org.terracotta.entity");
         excluded.add("org.terracotta.modules.ehcache");
         excluded.add("org.terracotta.statistics");
+        excluded.add("org.yaml.snakeyaml");
         excluded.add("serp");
 
         final Set<String> included = new HashSet<>();
@@ -186,7 +190,7 @@ public class ContainerClassesFilter implements Filter {
                 }
                 dot = name.indexOf('.', dot + 1);
             }
-            return false;
+            return included.contains(name);
         }
     }
 }
