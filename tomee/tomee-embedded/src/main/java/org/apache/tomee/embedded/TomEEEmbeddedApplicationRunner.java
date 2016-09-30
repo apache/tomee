@@ -117,10 +117,20 @@ public class TomEEEmbeddedApplicationRunner implements AutoCloseable {
         final Configuration configuration = new Configuration();
         final ContainerProperties props = appClass.getAnnotation(ContainerProperties.class);
         if (props != null) {
+            final Properties runnerProperties = new Properties();
             for (final ContainerProperties.Property p : props.value()) {
-                configuration.property(p.name(), p.value());
+                final String name = p.name();
+                if (name.startsWith("tomee.embedded.application.runner.")) { // allow to tune the Configuration
+                    runnerProperties.setProperty(name.substring("tomee.embedded.application.runner.".length()), p.value());
+                } else {
+                    configuration.property(name, p.value());
+                }
+            }
+            if (!runnerProperties.isEmpty()) {
+                configuration.loadFromProperties(runnerProperties);
             }
         }
+        configuration.loadFromProperties(System.getProperties()); // overrides, note that some config are additive by design
 
         final List<Method> annotatedMethods = finder.findAnnotatedMethods(org.apache.openejb.testing.Configuration.class);
         if (annotatedMethods.size() > 1) {
