@@ -27,10 +27,16 @@ public class TomEEEmbeddedArgs {
         this.commandLine = commandLine;
     }
 
+    /**
+     * @return the args passed to the launcher.
+     */
     public String[] getArgs() {
         return args;
     }
 
+    /**
+     * @return the command like if used from tomee Main/FatApp, null otherwise.
+     */
     public CommandLine getCommandLine() {
         return commandLine;
     }

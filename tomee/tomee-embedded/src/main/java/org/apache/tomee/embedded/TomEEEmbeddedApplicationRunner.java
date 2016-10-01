@@ -17,6 +17,7 @@
 package org.apache.tomee.embedded;
 
 import org.apache.openejb.config.DeploymentsResolver;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.testing.Application;
 import org.apache.openejb.testing.ApplicationComposers;
 import org.apache.openejb.testing.Classes;
@@ -24,6 +25,7 @@ import org.apache.openejb.testing.ContainerProperties;
 import org.apache.openejb.testing.Jars;
 import org.apache.openejb.testing.RandomPort;
 import org.apache.openejb.testing.WebResource;
+import org.apache.tomee.embedded.component.TomEEEmbeddedArgs;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.inject.OWBInjector;
 import org.apache.xbean.finder.AnnotationFinder;
@@ -87,7 +89,7 @@ public class TomEEEmbeddedApplicationRunner implements AutoCloseable {
             }
         }
         try {
-            start(app.getClass(), overrides);
+            start(app.getClass(), overrides, args);
             return this;
         } catch (final Exception e) {
             throw new IllegalStateException(e);
@@ -102,7 +104,7 @@ public class TomEEEmbeddedApplicationRunner implements AutoCloseable {
         return app;
     }
 
-    public synchronized void start(final Class<?> marker, final Properties config) throws Exception {
+    public synchronized void start(final Class<?> marker, final Properties config, final String... args) throws Exception {
         if (started) {
             return;
         }
@@ -195,7 +197,7 @@ public class TomEEEmbeddedApplicationRunner implements AutoCloseable {
         }
 
         final Jars jars = appClass.getAnnotation(Jars.class);
-        List<URL> urls = null;
+        final List<URL> urls;
         if (jars != null) {
             final Collection<File> files = ApplicationComposers.findFiles(jars);
             urls = new ArrayList<>(files.size());
@@ -225,15 +227,16 @@ public class TomEEEmbeddedApplicationRunner implements AutoCloseable {
             configuration.loadFromProperties(config);
         }
 
-        final Container container = new Container(configuration)
-                .deploy(new Container.DeploymentRequest(
-                        context,
-                        // call ClasspathSearcher that lazily since container needs to be started to not preload logging
-                        urls == null ? new DeploymentsResolver.ClasspathSearcher().loadUrls(Thread.currentThread().getContextClassLoader()).getUrls() : urls,
-                        webResource != null ? new File(webResource) : null,
-                        true,
-                        null,
-                        archive));
+        final Container container = new Container(configuration);
+        SystemInstance.get().setComponent(TomEEEmbeddedArgs.class, new TomEEEmbeddedArgs(args, null));
+        container.deploy(new Container.DeploymentRequest(
+                context,
+                // call ClasspathSearcher that lazily since container needs to be started to not preload logging
+                urls == null ? new DeploymentsResolver.ClasspathSearcher().loadUrls(Thread.currentThread().getContextClassLoader()).getUrls() : urls,
+                webResource != null ? new File(webResource) : null,
+                true,
+                null,
+                archive));
 
         for (final Map.Entry<String, Field> f : ports.entrySet()) {
             switch (f.getKey()) {
