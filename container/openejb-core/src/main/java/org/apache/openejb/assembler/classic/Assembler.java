@@ -765,6 +765,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             final Map<String, Object> appBindings = appBuilder.buildBindings(JndiEncBuilder.JndiScope.app);
             final Context appJndiContext = appBuilder.build(appBindings);
 
+            final boolean cdiActive = shouldStartCdi(appInfo);
+
             try {
                 // Generate the cmp2/cmp1 concrete subclasses
                 final CmpJarBuilder cmpJarBuilder = new CmpJarBuilder(appInfo, classLoader);
@@ -861,7 +863,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 for (final PersistenceUnitInfo info : appInfo.persistenceUnits) {
                     final ReloadableEntityManagerFactory factory;
                     try {
-                        factory = persistenceBuilder.createEntityManagerFactory(info, classLoader, validatorFactoriesByConfig);
+                        factory = persistenceBuilder.createEntityManagerFactory(info, classLoader, validatorFactoriesByConfig, cdiActive);
                         containerSystem.getJNDIContext().bind(PERSISTENCE_UNIT_NAMING_CONTEXT + info.id, factory);
                         units.put(info.name, PERSISTENCE_UNIT_NAMING_CONTEXT + info.id);
                     } catch (final NameAlreadyBoundException e) {
@@ -907,7 +909,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     propagateApplicationExceptions(appInfo, classLoader, allDeployments);
                 }
 
-                if (shouldStartCdi(appInfo)) {
+                if (cdiActive) {
                     new CdiBuilder().build(appInfo, appContext, allDeployments);
                     ensureWebBeansContext(appContext);
                     appJndiContext.bind("app/BeanManager", appContext.getBeanManager());

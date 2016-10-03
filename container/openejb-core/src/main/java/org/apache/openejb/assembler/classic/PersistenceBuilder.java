@@ -25,7 +25,6 @@ import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
-import java.util.Map;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -35,6 +34,7 @@ import javax.persistence.spi.PersistenceUnitTransactionType;
 import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 import javax.validation.ValidatorFactory;
+import java.util.Map;
 
 public class PersistenceBuilder {
 
@@ -50,7 +50,8 @@ public class PersistenceBuilder {
     }
 
     public ReloadableEntityManagerFactory createEntityManagerFactory(final PersistenceUnitInfo info, final ClassLoader classLoader,
-                                                                     final Map<ComparableValidationConfig, ValidatorFactory> validators) throws Exception {
+                                                                     final Map<ComparableValidationConfig, ValidatorFactory> validators,
+                                                                     final boolean hasCdi) throws Exception {
         final PersistenceUnitInfoImpl unitInfo = new PersistenceUnitInfoImpl(persistenceClassLoaderHandler);
 
         // Persistence Unit Id
@@ -68,7 +69,7 @@ public class PersistenceBuilder {
         // Exclude Unlisted Classes
         unitInfo.setExcludeUnlistedClasses(info.excludeUnlistedClasses);
 
-        unitInfo.setLazilyInitialized(info.webappName != null);
+        unitInfo.setLazilyInitialized(info.webappName != null || "true".equalsIgnoreCase(info.properties.getProperty("tomee.jpa.factory.lazy", "false")));
 
         final Context context = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
 
@@ -151,7 +152,7 @@ public class PersistenceBuilder {
         final String persistenceProviderClassName = unitInfo.getPersistenceProviderClassName();
         unitInfo.setPersistenceProviderClassName(persistenceProviderClassName);
 
-        final EntityManagerFactoryCallable callable = new EntityManagerFactoryCallable(persistenceProviderClassName, unitInfo, classLoader, validators);
+        final EntityManagerFactoryCallable callable = new EntityManagerFactoryCallable(persistenceProviderClassName, unitInfo, classLoader, validators, hasCdi);
         return new ReloadableEntityManagerFactory(classLoader, callable, unitInfo);
     }
 
