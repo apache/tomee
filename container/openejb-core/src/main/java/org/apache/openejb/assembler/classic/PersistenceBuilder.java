@@ -69,7 +69,8 @@ public class PersistenceBuilder {
         // Exclude Unlisted Classes
         unitInfo.setExcludeUnlistedClasses(info.excludeUnlistedClasses);
 
-        unitInfo.setLazilyInitialized(info.webappName != null || "true".equalsIgnoreCase(info.properties.getProperty("tomee.jpa.factory.lazy", "false")));
+        unitInfo.setLazilyInitialized(info.webappName != null || "true".equalsIgnoreCase(info.properties.getProperty("tomee.jpa.factory.lazy",
+                SystemInstance.get().getProperty("tomee.jpa.factory.lazy", "false"))));
 
         final Context context = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
 
