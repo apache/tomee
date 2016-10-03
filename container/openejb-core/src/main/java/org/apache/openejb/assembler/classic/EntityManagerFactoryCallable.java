@@ -17,6 +17,7 @@
 
 package org.apache.openejb.assembler.classic;
 
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.persistence.PersistenceUnitInfoImpl;
 import org.apache.openejb.util.LogCategory;
@@ -28,6 +29,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.ValidationMode;
 import javax.persistence.spi.PersistenceProvider;
+import javax.transaction.Transaction;
 import javax.validation.ValidatorFactory;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
@@ -108,7 +110,21 @@ public class EntityManagerFactoryCallable implements Callable<EntityManagerFacto
 
             customizeProperties(properties);
 
-            final EntityManagerFactory emf = persistenceProvider.createContainerEntityManagerFactory(unitInfo, properties);
+            // ensure no tx is there cause a managed connection would fail if the provider setAutocCommit(true) and some hib* have this good idea
+            final Transaction transaction;
+            if (unitInfo.isLazilyInitialized()) {
+                transaction = OpenEJB.getTransactionManager().suspend();
+            } else {
+                transaction = null;
+            }
+            final EntityManagerFactory emf;
+            try {
+                emf = persistenceProvider.createContainerEntityManagerFactory(unitInfo, properties);
+            } finally {
+                if (unitInfo.isLazilyInitialized() && transaction != null) {
+                    OpenEJB.getTransactionManager().resume(transaction);
+                }
+            }
 
             if (unitInfo.getProperties() != null
                     && "true".equalsIgnoreCase(unitInfo.getProperties().getProperty(OPENEJB_JPA_INIT_ENTITYMANAGER))
