@@ -449,7 +449,7 @@ public class TomEEEmbeddedApplicationRunner implements AutoCloseable {
         void configure(Configuration configuration);
     }
 
-    public static class LifecycleTaskAccessor {
+    public static final class LifecycleTaskAccessor {
         private final Collection<org.apache.tomee.embedded.LifecycleTask> tasks;
 
         private LifecycleTaskAccessor(final Collection<org.apache.tomee.embedded.LifecycleTask> lifecycleTasks) {
