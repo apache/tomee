@@ -30,6 +30,7 @@ import org.junit.runner.RunWith;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
@@ -39,7 +40,6 @@ import static org.junit.Assert.assertTrue;
 
 // just a manual test to check it works, can't be executed with the rest of the suite,
 // we could use a different surefire execution if we want to add it to the default run
-//@Ignore("can't run with by test containers")
 @RunWith(TomEEEmbeddedSingleRunner.class)
 public class SingleInstanceRunnerTest {
     @Application // app can have several injections/helpers
@@ -58,6 +58,11 @@ public class SingleInstanceRunnerTest {
         assertNotEquals(8080, app.port);
         assertTrue(app.base.toExternalForm().endsWith("/app"));
         assertEquals(app.port, port);
+        assertNotNull(app.task);
+        assertNotNull(app.tasks);
+        assertEquals(1, app.tasks.size());
+        assertEquals(app.task, app.tasks.iterator().next());
+        assertEquals(app.task, MyTask.instance);
     }
 
     @Application
@@ -72,6 +77,12 @@ public class SingleInstanceRunnerTest {
         @RandomPort("http")
         private URL base;
 
+        @TomEEEmbeddedApplicationRunner.LifecycleTask
+        private MyTask task;
+
+        @TomEEEmbeddedApplicationRunner.LifecycleTask
+        private Collection<LifecycleTask> tasks;
+
         @org.apache.openejb.testing.Configuration
         public Properties add() {
             return new PropertiesBuilder().p("prog", "p").build();
@@ -79,8 +90,11 @@ public class SingleInstanceRunnerTest {
     }
 
     public static class MyTask implements LifecycleTask {
+        private static MyTask instance;
+
         @Override
         public Closeable beforeContainerStartup() {
+            instance = this;
             System.out.println(">>> start");
             System.setProperty("my.server.port", "128463");
             return new Closeable() {

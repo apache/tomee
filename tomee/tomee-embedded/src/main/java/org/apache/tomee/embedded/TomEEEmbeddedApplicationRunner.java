@@ -54,6 +54,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 
+import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import static org.apache.openejb.loader.JarLocation.jarLocation;
@@ -151,11 +152,14 @@ public class TomEEEmbeddedApplicationRunner implements AutoCloseable {
             }
         }
 
+        final Collection<org.apache.tomee.embedded.LifecycleTask> lifecycleTasks = new ArrayList<>();
         final Collection<Closeable> postTasks = new ArrayList<>();
         final LifecycleTasks tasks = appClass.getAnnotation(LifecycleTasks.class);
         if (tasks != null) {
             for (final Class<? extends org.apache.tomee.embedded.LifecycleTask> type : tasks.value()) {
-                postTasks.add(type.newInstance().beforeContainerStartup());
+                final org.apache.tomee.embedded.LifecycleTask lifecycleTask = type.newInstance();
+                lifecycleTasks.add(lifecycleTask);
+                postTasks.add(lifecycleTask.beforeContainerStartup());
             }
         }
 
@@ -229,6 +233,7 @@ public class TomEEEmbeddedApplicationRunner implements AutoCloseable {
 
         final Container container = new Container(configuration);
         SystemInstance.get().setComponent(TomEEEmbeddedArgs.class, new TomEEEmbeddedArgs(args, null));
+        SystemInstance.get().setComponent(LifecycleTaskAccessor.class, new LifecycleTaskAccessor(lifecycleTasks));
         container.deploy(new Container.DeploymentRequest(
                 context,
                 // call ClasspathSearcher that lazily since container needs to be started to not preload logging
@@ -281,9 +286,7 @@ public class TomEEEmbeddedApplicationRunner implements AutoCloseable {
                 }
 
                 try {
-                    if (container != null) {
-                        container.close();
-                    }
+                    container.close();
                 } catch (final Exception e) {
                     e.printStackTrace();
                 }
@@ -406,6 +409,14 @@ public class TomEEEmbeddedApplicationRunner implements AutoCloseable {
                     f.setAccessible(true);
                 }
                 f.set(target, app);
+            } else if (f.isAnnotationPresent(LifecycleTask.class)) {
+                if (!f.isAccessible()) {
+                    f.setAccessible(true);
+                }
+                final LifecycleTaskAccessor accessor = SystemInstance.get().getComponent(LifecycleTaskAccessor.class);
+                final Class type = f.getType();
+                final Object taskByType = accessor.getTaskByType(type);
+                f.set(target, taskByType);
             }
         }
         final Class<?> superclass = aClass.getSuperclass();
@@ -421,6 +432,11 @@ public class TomEEEmbeddedApplicationRunner implements AutoCloseable {
     }
 
     @Retention(RUNTIME)
+    @Target(FIELD)
+    public @interface LifecycleTask {
+    }
+
+    @Retention(RUNTIME)
     @Target(TYPE)
     public @interface Configurers {
         Class<? extends Configurer>[] value();
@@ -428,5 +444,29 @@ public class TomEEEmbeddedApplicationRunner implements AutoCloseable {
 
     public interface Configurer {
         void configure(Configuration configuration);
+    }
+
+    public static class LifecycleTaskAccessor {
+        private final Collection<org.apache.tomee.embedded.LifecycleTask> tasks;
+
+        private LifecycleTaskAccessor(final Collection<org.apache.tomee.embedded.LifecycleTask> lifecycleTasks) {
+            this.tasks = lifecycleTasks;
+        }
+
+        public Collection<org.apache.tomee.embedded.LifecycleTask> getTasks() {
+            return tasks;
+        }
+
+        public <T> T getTaskByType(final Class<T> type) {
+            for (final org.apache.tomee.embedded.LifecycleTask task : tasks) {
+                if (type == task.getClass()) {
+                    return (T) task;
+                }
+            }
+            if (Collection.class.isAssignableFrom(type)) {
+                return (T) tasks;
+            }
+            return null;
+        }
     }
 }
