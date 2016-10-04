@@ -387,43 +387,42 @@ public class TomEEEmbeddedApplicationRunner implements AutoCloseable {
             OWBInjector.inject(webBeansContext.getBeanManagerImpl(), target, null);
         }
 
-        final Class<?> aClass = target.getClass();
-        for (final Field f : aClass.getDeclaredFields()) {
-            final RandomPort randomPort = f.getAnnotation(RandomPort.class);
-            if (randomPort != null) {
-                for (final Field field : app.getClass().getDeclaredFields()) {
-                    final RandomPort appPort = field.getAnnotation(RandomPort.class);
-                    if (field.getType() == f.getType() && appPort != null && appPort.value().equals(randomPort.value())) {
-                        if (!field.isAccessible()) {
-                            field.setAccessible(true);
-                        }
-                        if (!f.isAccessible()) {
-                            f.setAccessible(true);
-                        }
+        Class<?> aClass = target.getClass();
+        while (aClass != null && aClass != Object.class) {
+            for (final Field f : aClass.getDeclaredFields()) {
+                final RandomPort randomPort = f.getAnnotation(RandomPort.class);
+                if (randomPort != null) {
+                    for (final Field field : app.getClass().getDeclaredFields()) {
+                        final RandomPort appPort = field.getAnnotation(RandomPort.class);
+                        if (field.getType() == f.getType() && appPort != null && appPort.value().equals(randomPort.value())) {
+                            if (!field.isAccessible()) {
+                                field.setAccessible(true);
+                            }
+                            if (!f.isAccessible()) {
+                                f.setAccessible(true);
+                            }
 
-                        final Object value = field.get(app);
-                        f.set(target, value);
-                        break;
+                            final Object value = field.get(app);
+                            f.set(target, value);
+                            break;
+                        }
                     }
+                } else if (f.isAnnotationPresent(Application.class)) {
+                    if (!f.isAccessible()) {
+                        f.setAccessible(true);
+                    }
+                    f.set(target, app);
+                } else if (f.isAnnotationPresent(LifecycleTask.class)) {
+                    if (!f.isAccessible()) {
+                        f.setAccessible(true);
+                    }
+                    final LifecycleTaskAccessor accessor = SystemInstance.get().getComponent(LifecycleTaskAccessor.class);
+                    final Class type = f.getType();
+                    final Object taskByType = accessor.getTaskByType(type);
+                    f.set(target, taskByType);
                 }
-            } else if (f.isAnnotationPresent(Application.class)) {
-                if (!f.isAccessible()) {
-                    f.setAccessible(true);
-                }
-                f.set(target, app);
-            } else if (f.isAnnotationPresent(LifecycleTask.class)) {
-                if (!f.isAccessible()) {
-                    f.setAccessible(true);
-                }
-                final LifecycleTaskAccessor accessor = SystemInstance.get().getComponent(LifecycleTaskAccessor.class);
-                final Class type = f.getType();
-                final Object taskByType = accessor.getTaskByType(type);
-                f.set(target, taskByType);
             }
-        }
-        final Class<?> superclass = aClass.getSuperclass();
-        if (superclass != Object.class) {
-            composerInject(superclass);
+            aClass = aClass.getSuperclass();
         }
 
         SystemInstance.get().fireEvent(new TomEEEmbeddedApplicationRunnerInjection(target));
