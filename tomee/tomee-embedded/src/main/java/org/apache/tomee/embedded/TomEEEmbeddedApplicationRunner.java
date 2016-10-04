@@ -26,6 +26,7 @@ import org.apache.openejb.testing.Jars;
 import org.apache.openejb.testing.RandomPort;
 import org.apache.openejb.testing.WebResource;
 import org.apache.tomee.embedded.component.TomEEEmbeddedArgs;
+import org.apache.tomee.embedded.event.TomEEEmbeddedApplicationRunnerInjection;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.inject.OWBInjector;
 import org.apache.xbean.finder.AnnotationFinder;
@@ -255,6 +256,7 @@ public class TomEEEmbeddedApplicationRunner implements AutoCloseable {
             }
         }
 
+        SystemInstance.get().addObserver(app);
         composerInject(app);
 
         final AnnotationFinder appFinder = new AnnotationFinder(new ClassesArchive(appClass));
@@ -423,6 +425,8 @@ public class TomEEEmbeddedApplicationRunner implements AutoCloseable {
         if (superclass != Object.class) {
             composerInject(superclass);
         }
+
+        SystemInstance.get().fireEvent(new TomEEEmbeddedApplicationRunnerInjection(target));
     }
 
     @Retention(RUNTIME)

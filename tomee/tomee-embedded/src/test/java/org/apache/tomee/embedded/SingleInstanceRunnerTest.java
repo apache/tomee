@@ -18,11 +18,13 @@ package org.apache.tomee.embedded;
 
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.observer.Observes;
 import org.apache.openejb.testing.Application;
 import org.apache.openejb.testing.Classes;
 import org.apache.openejb.testing.ContainerProperties;
 import org.apache.openejb.testing.RandomPort;
 import org.apache.openejb.testng.PropertiesBuilder;
+import org.apache.tomee.embedded.event.TomEEEmbeddedApplicationRunnerInjection;
 import org.apache.tomee.embedded.junit.TomEEEmbeddedSingleRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -63,12 +65,14 @@ public class SingleInstanceRunnerTest {
         assertEquals(1, app.tasks.size());
         assertEquals(app.task, app.tasks.iterator().next());
         assertEquals(app.task, MyTask.instance);
+        assertNotNull(app.custom);
     }
 
     @Application
     @Classes(context = "app")
     @ContainerProperties(@ContainerProperties.Property(name = "t", value = "set"))
-    @TomEEEmbeddedApplicationRunner.LifecycleTasks(MyTask.class) // can start a ftp/sftp/elasticsearch/mongo/... server before tomee
+    @TomEEEmbeddedApplicationRunner.LifecycleTasks(MyTask.class)
+    // can start a ftp/sftp/elasticsearch/mongo/... server before tomee
     @TomEEEmbeddedApplicationRunner.Configurers(SetMyProperty.class)
     public static class TheApp {
         @RandomPort("http")
@@ -87,6 +91,19 @@ public class SingleInstanceRunnerTest {
         public Properties add() {
             return new PropertiesBuilder().p("prog", "p").build();
         }
+
+        private Custom custom;
+
+        public void doInject(@Observes final TomEEEmbeddedApplicationRunnerInjection injector) {
+            injector.inject(Custom.class, new Custom())
+                    .inject(NotHere.class, new NotHere());
+        }
+    }
+
+    public static class NotHere {
+    }
+
+    public static class Custom {
     }
 
     public static class MyTask implements LifecycleTask {
