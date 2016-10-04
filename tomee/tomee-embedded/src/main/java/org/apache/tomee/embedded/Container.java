@@ -424,6 +424,7 @@ public class Container implements AutoCloseable {
         // create basic installation in setup to be able to handle anything the caller does between setup() and start()
         base = new File(getBaseDir());
         if (base.exists()) {
+            // TODO: get rid of Files which has its own shutdown hook which can mess up order if started/shutdown multiple times?
             Files.delete(base);
         }
 
@@ -1103,7 +1104,6 @@ public class Container implements AutoCloseable {
     }
 
     private static class TomcatWithFastSessionIDs extends InternalTomcat {
-
         @Override
         public void start() throws LifecycleException {
             // Use fast, insecure session ID generation for all tests

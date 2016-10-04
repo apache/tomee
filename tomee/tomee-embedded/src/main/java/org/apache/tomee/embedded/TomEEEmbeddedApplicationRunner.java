@@ -53,16 +53,38 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CountDownLatch;
+import java.util.logging.Logger;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import static java.util.logging.Level.SEVERE;
 import static org.apache.openejb.loader.JarLocation.jarLocation;
 import static org.apache.openejb.util.Classes.ancestors;
 
 @Vetoed
 public class TomEEEmbeddedApplicationRunner implements AutoCloseable {
+    private static final ConcurrentMap<Runnable, Runnable> SHUTDOWN_TASKS = new ConcurrentHashMap<>();
+
+    static { // to ensure we have an ordering for shutdown tasks, we typically want to avoid Files.delete() before stop()
+        Runtime.getRuntime().addShutdownHook(new Thread("TomEEEmbeddedApplicationRunner-shutdown") {
+            @Override
+            public void run() {
+                for (final Runnable task : SHUTDOWN_TASKS.keySet()) {
+                    try {
+                        task.run();
+                    } catch (final Exception e) {
+                        Logger.getLogger(TomEEEmbeddedApplicationRunner.class.getName()).log(SEVERE, e.getMessage(), e);
+                    }
+                }
+                SHUTDOWN_TASKS.clear();
+            }
+        });
+    }
+
     private volatile boolean started = false;
     private volatile Object app;
     private volatile Thread hook;
@@ -269,7 +291,7 @@ public class TomEEEmbeddedApplicationRunner implements AutoCloseable {
             }
         }
 
-        Runtime.getRuntime().addShutdownHook(hook = new Thread() {
+        hook = new Thread() {
             @Override
             public void run() { // ensure to log errors but not fail there
                 for (final Method mtd : appFinder.findAnnotatedMethods(PreDestroy.class)) {
@@ -302,12 +324,13 @@ public class TomEEEmbeddedApplicationRunner implements AutoCloseable {
                 postTasks.clear();
                 app = null;
                 try {
-                    Runtime.getRuntime().removeShutdownHook(this);
+                    SHUTDOWN_TASKS.remove(this);
                 } catch (final Exception e) {
                     // no-op: that's ok at that moment if not called manually
                 }
             }
-        });
+        };
+        SHUTDOWN_TASKS.put(hook, hook);
     }
 
     // if app is not set then we'll check if -Dtomee.application-composer.application is set otherwise
@@ -350,7 +373,7 @@ public class TomEEEmbeddedApplicationRunner implements AutoCloseable {
     public synchronized void close() {
         if (hook != null) {
             hook.run();
-            Runtime.getRuntime().removeShutdownHook(hook);
+            SHUTDOWN_TASKS.remove(hook);
             hook = null;
             app = null;
         }
