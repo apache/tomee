@@ -423,13 +423,12 @@ public class Container implements AutoCloseable {
 
         // create basic installation in setup to be able to handle anything the caller does between setup() and start()
         base = new File(getBaseDir());
-        if (base.exists()) {
-            // TODO: get rid of Files which has its own shutdown hook which can mess up order if started/shutdown multiple times?
+        if (base.exists() && configuration.isDeleteBaseOnStartup()) {
             Files.delete(base);
+        } else if (!base.exists()) {
+            Files.mkdirs(base);
+            Files.deleteOnExit(base);
         }
-
-        Files.mkdirs(base);
-        Files.deleteOnExit(base);
 
         final File conf = createDirectory(base, "conf");
         createDirectory(base, "lib");
@@ -842,10 +841,12 @@ public class Container implements AutoCloseable {
         } catch (final LifecycleException e) {
             e.printStackTrace();
         }
-        try {
-            deleteTree(base);
-        } catch (final Exception e) {
-            e.printStackTrace();
+        if (configuration.isDeleteBaseOnStartup()) {
+            try {
+                deleteTree(base);
+            } catch (final Exception e) {
+                e.printStackTrace();
+            }
         }
 
         OpenEJB.destroy();

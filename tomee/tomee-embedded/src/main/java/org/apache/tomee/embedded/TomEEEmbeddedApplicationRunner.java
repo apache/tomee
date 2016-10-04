@@ -16,6 +16,7 @@
  */
 package org.apache.tomee.embedded;
 
+import org.apache.commons.lang3.text.StrSubstitutor;
 import org.apache.openejb.config.DeploymentsResolver;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.testing.Application;
@@ -147,9 +148,10 @@ public class TomEEEmbeddedApplicationRunner implements AutoCloseable {
             for (final ContainerProperties.Property p : props.value()) {
                 final String name = p.name();
                 if (name.startsWith("tomee.embedded.application.runner.")) { // allow to tune the Configuration
+                    // no need to filter there since it is done in loadFromProperties()
                     runnerProperties.setProperty(name.substring("tomee.embedded.application.runner.".length()), p.value());
                 } else {
-                    configuration.property(name, p.value());
+                    configuration.property(name, StrSubstitutor.replaceSystemProperties(p.value()));
                 }
             }
             if (!runnerProperties.isEmpty()) {

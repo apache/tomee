@@ -18,6 +18,8 @@ package org.apache.tomee.embedded;
 
 import org.apache.catalina.Realm;
 import org.apache.catalina.connector.Connector;
+import org.apache.commons.lang3.text.StrLookup;
+import org.apache.commons.lang3.text.StrSubstitutor;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.util.NetworkUtil;
 import org.apache.xbean.finder.filter.Filter;
@@ -85,6 +87,7 @@ public class Configuration {
     private boolean webResourceCached = true;
 
     private String conf;
+    private boolean deleteBaseOnStartup = true;
 
     public Configuration loadFrom(final String resource) {
         try (final InputStream is = findStream(resource)) {
@@ -110,6 +113,26 @@ public class Configuration {
     }
 
     public void loadFromProperties(final Properties config) {
+        // filtering properties with system properties or themself
+        final StrSubstitutor strSubstitutor = new StrSubstitutor(new StrLookup<String>() {
+            @Override
+            public String lookup(final String key) {
+                final String property = System.getProperty(key);
+                return property == null ? config.getProperty(key) : null;
+            }
+        });
+        for (final String key : config.stringPropertyNames()) {
+            final String val = config.getProperty(key);
+            if (val == null || val.trim().isEmpty()) {
+                continue;
+            }
+            final String newVal = strSubstitutor.replace(config.getProperty(key));
+            if (!val.equals(newVal)) {
+                config.setProperty(key, newVal);
+            }
+        }
+
+
         final String http = config.getProperty("http");
         if (http != null) {
             setHttpPort(Integer.parseInt(http));
@@ -153,6 +176,10 @@ public class Configuration {
         final String http2 = config.getProperty("http2");
         if (http2 != null) {
             setHttp2(Boolean.parseBoolean(http2));
+        }
+        final String deleteBaseOnStartup = config.getProperty("deleteBaseOnStartup");
+        if (deleteBaseOnStartup != null) {
+            setDeleteBaseOnStartup(Boolean.parseBoolean(deleteBaseOnStartup));
         }
         final String webResourceCached = config.getProperty("webResourceCached");
         if (webResourceCached != null) {
@@ -574,6 +601,14 @@ public class Configuration {
 
     public Filter getClassesFilter() {
         return classesFilter;
+    }
+
+    public boolean isDeleteBaseOnStartup() {
+        return deleteBaseOnStartup;
+    }
+
+    public void setDeleteBaseOnStartup(final boolean deleteBaseOnStartup) {
+        this.deleteBaseOnStartup = deleteBaseOnStartup;
     }
 
     public interface ConfigurationCustomizer {

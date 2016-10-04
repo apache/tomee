@@ -53,6 +53,7 @@ public class SingleInstanceRunnerTest {
     @Test
     public void run() {
         assertNotNull(SystemInstance.get().getComponent(Assembler.class));
+        assertEquals("val", SystemInstance.get().getProperty("simple"));
         assertEquals("set", SystemInstance.get().getProperty("t"));
         assertEquals("p", SystemInstance.get().getProperty("prog"));
         assertEquals("128463", SystemInstance.get().getProperty("my.server.port"));
@@ -70,7 +71,11 @@ public class SingleInstanceRunnerTest {
 
     @Application
     @Classes(context = "app")
-    @ContainerProperties(@ContainerProperties.Property(name = "t", value = "set"))
+    @ContainerProperties({
+            @ContainerProperties.Property(name = "simple", value = "val"),
+            @ContainerProperties.Property(name = "tomee.embedded.application.runner.properties.t", value = "${t.value}"),
+            @ContainerProperties.Property(name = "tomee.embedded.application.runner.t.value", value = "set")
+    })
     @TomEEEmbeddedApplicationRunner.LifecycleTasks(MyTask.class)
     // can start a ftp/sftp/elasticsearch/mongo/... server before tomee
     @TomEEEmbeddedApplicationRunner.Configurers(SetMyProperty.class)
