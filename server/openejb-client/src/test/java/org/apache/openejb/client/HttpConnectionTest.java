@@ -32,6 +32,8 @@ import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import static org.junit.Assert.fail;
+
 public class HttpConnectionTest {
     private HttpServer server;
 
@@ -123,5 +125,34 @@ public class HttpConnectionTest {
 
             Assert.assertTrue("should contain", sb.toString().contains("secure pageBasic token"));
         }
+    }
+
+    @Test
+    public void complexURIAuthorization() throws IOException, URISyntaxException {
+        final String baseHttp = "http://localhost:" + server.getAddress().getPort() + "/e?authorization=";
+        final String uri = "failover:sticky+random:" + baseHttp + "Basic%20ABCD&" + baseHttp + "Basic%20EFG";
+        final Connection connection = ConnectionManager.getConnection(new URI(uri));
+        BufferedReader br = null;
+        final StringBuilder sb = new StringBuilder();
+        String line;
+        try {
+            br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+        } catch (final IOException e) {
+            fail(e.getMessage());
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            connection.close();
+        }
+        final String out = sb.toString();
+        Assert.assertTrue(out, out.contains("secure pageBasic ABCD"));
     }
 }
