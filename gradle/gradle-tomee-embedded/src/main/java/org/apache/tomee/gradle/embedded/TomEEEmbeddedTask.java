@@ -126,6 +126,10 @@ public class TomEEEmbeddedTask extends DefaultTask {
 
     @Optional
     @Input
+    private Collection<String> customWebResources;
+
+    @Optional
+    @Input
     private boolean webResourceCached = true;
 
     @Optional
@@ -711,5 +715,13 @@ public class TomEEEmbeddedTask extends DefaultTask {
 
     public void setSingleClassloader(final boolean singleClassloader) {
         this.singleClassloader = singleClassloader;
+    }
+
+    public Collection<String> getCustomWebResources() {
+        return customWebResources;
+    }
+
+    public void setCustomWebResources(final Collection<String> customWebResources) {
+        this.customWebResources = customWebResources;
     }
 }

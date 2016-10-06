@@ -213,6 +213,12 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
     protected List<File> modules;
 
     /**
+     * Additional web resources (directories).
+     */
+    @Parameter(property = "tomee-embedded-plugin.web-resources")
+    protected List<File> webResources;
+
+    /**
      * Where is docBase/web resources.
      */
     @Parameter(property = "tomee-embedded-plugin.docBase", defaultValue = "${project.basedir}/src/main/webapp")
@@ -661,6 +667,11 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
                 config.setProperties(new Properties());
             }
             config.getProperties().setProperty("tomee.force-reloadable", "true");
+        }
+        if (webResources != null && !webResources.isEmpty()) {
+            for (final File f : webResources) {
+                config.addCustomWebResources(f.getAbsolutePath());
+            }
         }
         return config;
     }

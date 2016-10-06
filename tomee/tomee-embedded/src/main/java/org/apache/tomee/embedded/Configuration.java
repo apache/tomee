@@ -37,6 +37,8 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Properties;
 
+import static java.util.Arrays.asList;
+
 /**
  * @version $Rev$ $Date$
  */
@@ -65,6 +67,7 @@ public class Configuration {
     private String webXml;
     private LoginConfigBuilder loginConfig;
     private Collection<SecurityConstaintBuilder> securityConstraints = new LinkedList<>();
+    private Collection<String> customWebResources = new LinkedList<>();
 
     private Realm realm;
 
@@ -224,6 +227,10 @@ public class Configuration {
         final String tempDir = config.getProperty("tempDir");
         if (tempDir != null) {
             setTempDir(tempDir);
+        }
+        final String customWebResources = config.getProperty("customWebResources");
+        if (customWebResources != null) {
+            setCustomWebResources(customWebResources);
         }
         final String classesFilterType = config.getProperty("classesFilter");
         if (classesFilterType != null) {
@@ -609,6 +616,18 @@ public class Configuration {
 
     public void setDeleteBaseOnStartup(final boolean deleteBaseOnStartup) {
         this.deleteBaseOnStartup = deleteBaseOnStartup;
+    }
+
+    public void setCustomWebResources(final String web) {
+        customWebResources.addAll(asList(web.split(",")));
+    }
+
+    public void addCustomWebResources(final String web) {
+        customWebResources.add(web);
+    }
+
+    public Collection<String> getCustomWebResources() {
+        return customWebResources;
     }
 
     public interface ConfigurationCustomizer {

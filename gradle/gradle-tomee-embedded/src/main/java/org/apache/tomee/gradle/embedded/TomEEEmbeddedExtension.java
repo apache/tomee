@@ -60,6 +60,7 @@ public class TomEEEmbeddedExtension {
     private String inlinedTomEEXml;
     private File workDir;
     private List<File> modules;
+    private List<String> customWebResources;
     private File docBase;
     private String dir;
     private String conf;
@@ -342,5 +343,13 @@ public class TomEEEmbeddedExtension {
 
     public void setConf(final String conf) {
         this.conf = conf;
+    }
+
+    public List<String> getCustomWebResources() {
+        return customWebResources;
+    }
+
+    public void setCustomWebResources(final List<String> customWebResources) {
+        this.customWebResources = customWebResources;
     }
 }

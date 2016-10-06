@@ -40,6 +40,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static java.lang.System.lineSeparator;
 import static java.lang.Thread.sleep;
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -86,33 +87,7 @@ public class TomEEEmbeddedMojoTest {
             }
         });
 
-        final CountDownLatch stopped = new CountDownLatch(1);
-
-        final AtomicReference<Exception> error = new AtomicReference<>();
-        final Thread mojoThread = new Thread() {
-            {
-                setName("Mojo-Starter");
-            }
-
-            @Override
-            public void run() {
-                try {
-                    mojo.execute();
-                } catch (final Exception e) {
-                    error.set(e);
-                } finally {
-                    stopped.countDown();
-                }
-            }
-        };
-        mojoThread.start();
-        try {
-            started.await(10, TimeUnit.MINUTES);
-        } catch (final InterruptedException e) {
-            Thread.interrupted();
-        }
-
-        assertNull("all started fine", error.get());
+        final CountDownLatch stopped = doStart(started, mojo);
         assertEquals("ok", IO.slurp(new URL("http://localhost:" + mojo.httpPort + "/endpoint/")).trim());
 
         long initTs = timestamp(mojo);
@@ -154,6 +129,82 @@ public class TomEEEmbeddedMojoTest {
         input.write("exit");
         stopped.await(5, TimeUnit.MINUTES);
         input.close();
+    }
+
+
+    @Test
+    public void customWebResource() throws Exception {
+        final File docBase = new File("target/TomEEEmbeddedMojoTest/customWebResource");
+        docBase.mkdirs();
+        try (final FileWriter w = new FileWriter(new File(docBase, "index.html"))) {
+            w.write("resource");
+        }
+
+        // we use a dynamic InputStream to be able to simulate commands without hacking System.in
+        final Input input = new Input();
+        final Semaphore reloaded = new Semaphore(0);
+        final CountDownLatch started = new CountDownLatch(1);
+        final TomEEEmbeddedMojo mojo = new TomEEEmbeddedMojo() {
+            @Override
+            protected Scanner newScanner() {
+                return new Scanner(input);
+            }
+        };
+        mojo.classpathAsWar = true;
+        mojo.httpPort = NetworkUtil.getNextAvailablePort();
+        mojo.ssl = false;
+        mojo.webResources = singletonList(docBase);
+        mojo.webResourceCached = false;
+        mojo.setLog(new SystemStreamLog() { // not the best solution but fine for now...
+            @Override
+            public void info(final CharSequence charSequence) {
+                final String string = charSequence.toString();
+                if (string.startsWith("TomEE embedded started on") || string.equals("can't start TomEE")) {
+                    started.countDown();
+                } else if (string.contains("Redeployed /")) {
+                    reloaded.release();
+                }
+                super.info(charSequence);
+            }
+        });
+
+        final CountDownLatch stopped = doStart(started, mojo);
+        assertEquals("resource", IO.slurp(new URL("http://localhost:" + mojo.httpPort + "/")).trim());
+
+        input.write("exit");
+        stopped.await(5, TimeUnit.MINUTES);
+        input.close();
+    }
+
+    private CountDownLatch doStart(final CountDownLatch started, final TomEEEmbeddedMojo mojo) {
+        final CountDownLatch stopped = new CountDownLatch(1);
+
+        final AtomicReference<Exception> error = new AtomicReference<>();
+        final Thread mojoThread = new Thread() {
+            {
+                setName("Mojo-Starter");
+            }
+
+            @Override
+            public void run() {
+                try {
+                    mojo.execute();
+                } catch (final Exception e) {
+                    error.set(e);
+                } finally {
+                    stopped.countDown();
+                }
+            }
+        };
+        mojoThread.start();
+        try {
+            started.await(10, TimeUnit.MINUTES);
+        } catch (final InterruptedException e) {
+            Thread.interrupted();
+        }
+
+        assertNull("all started fine", error.get());
+        return stopped;
     }
 
     private long timestamp(final TomEEEmbeddedMojo mojo) throws IOException {

@@ -37,8 +37,10 @@ import org.apache.tomee.embedded.SecurityConstaintBuilder;
 
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class StandardContextCustomizer {
     private final WebModule module;
@@ -94,6 +96,21 @@ public class StandardContextCustomizer {
                             resources.createWebResourceSet(WebResourceRoot.ResourceSetType.CLASSES_JAR, "/WEB-INF/lib", absolutePath, null, "/");
                             resources.createWebResourceSet(WebResourceRoot.ResourceSetType.RESOURCE_JAR, "/", url, "/META-INF/resources");
                         } // else endsWith .war => ignore
+                    }
+                }
+                if (config.getCustomWebResources() != null) {
+                    for (final String web : config.getCustomWebResources()) {
+                        final File file = new File(web);
+                        if (file.isDirectory()) {
+                            try {
+                                resources.createWebResourceSet(WebResourceRoot.ResourceSetType.RESOURCE_JAR, "/", file.toURI().toURL(), "/");
+                            } catch (final MalformedURLException e) {
+                                throw new IllegalArgumentException(e);
+                            }
+                        } else {
+                            Logger.getLogger(StandardContextCustomizer.class.getName())
+                                    .warning("'" + web + "' is not a directory, ignoring");
+                        }
                     }
                 }
 
