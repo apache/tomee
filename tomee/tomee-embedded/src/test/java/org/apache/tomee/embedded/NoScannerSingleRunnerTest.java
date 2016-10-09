@@ -37,8 +37,12 @@ public class NoScannerSingleRunnerTest {
     @Application // app can have several injections/helpers
     private ScanApp app;
 
+    @TomEEEmbeddedApplicationRunner.Args
+    private String[] args;
+
     @Test
     public void run() {
+        assertNotNull(app);
         app.check();
     }
 

@@ -445,6 +445,15 @@ public class TomEEEmbeddedApplicationRunner implements AutoCloseable {
                     final Class type = f.getType();
                     final Object taskByType = accessor.getTaskByType(type);
                     f.set(target, taskByType);
+                } else if (f.isAnnotationPresent(Args.class)) {
+                    if (String[].class != f.getType()) {
+                        throw new IllegalArgumentException("@Args can only be used for String[] field, not on " + f.getType());
+                    }
+                    if (!f.isAccessible()) {
+                        f.setAccessible(true);
+                    }
+                    final TomEEEmbeddedArgs args = SystemInstance.get().getComponent(TomEEEmbeddedArgs.class);
+                    f.set(target, args == null ? new String[0] : args.getArgs());
                 }
             }
             aClass = aClass.getSuperclass();
@@ -462,6 +471,11 @@ public class TomEEEmbeddedApplicationRunner implements AutoCloseable {
     @Retention(RUNTIME)
     @Target(FIELD)
     public @interface LifecycleTask {
+    }
+
+    @Retention(RUNTIME)
+    @Target(FIELD)
+    public @interface Args {
     }
 
     @Retention(RUNTIME)
