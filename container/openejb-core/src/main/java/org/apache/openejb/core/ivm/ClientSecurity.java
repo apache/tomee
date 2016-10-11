@@ -22,13 +22,13 @@ package org.apache.openejb.core.ivm;
  */
 public class ClientSecurity {
 
-    private static ThreadLocal<Object> clientIdentity = new ThreadLocal<Object>();
+    private static Object clientIdentity;
 
     public static Object getIdentity() {
-        return clientIdentity.get();
+        return clientIdentity;
     }
 
     public static void setIdentity(final Object clientIdentity) {
-        ClientSecurity.clientIdentity.set(clientIdentity);
+        ClientSecurity.clientIdentity = clientIdentity;
     }
 }
