@@ -49,8 +49,13 @@ import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.util.FileUtils;
 
 import javax.naming.NamingException;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import javax.script.SimpleBindings;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
@@ -332,6 +337,18 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
     @Parameter(property = "tomee-plugin.liveReload", defaultValue = "false")
     private boolean withLiveReload;
 
+    /**
+     * A list of js scripts executed before the container starts.
+     */
+    @Parameter
+    protected List<String> jsCustomizers;
+
+    /**
+     * A list of groovy scripts executed before the container starts. Needs to add groovy as dependency.
+     */
+    @Parameter
+    protected List<String> groovyCustomizers;
+
     private Map<String, Command> commands;
     private String deployedName;
 
@@ -385,6 +402,10 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
                         throw new TomEERuntimeException(e);
                     }
                 }
+
+                final String base = getBase().getAbsolutePath();
+                scriptCustomization(jsCustomizers, "js", base);
+                scriptCustomization(groovyCustomizers, "groovy", base);
             }
         };
         final Configuration config = getConfig();
@@ -475,6 +496,25 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
             }
             thread.setContextClassLoader(loader);
             System.setProperties(originalSystProp);
+        }
+    }
+
+    private void scriptCustomization(final List<String> customizers, final String ext, final String base) {
+        if (customizers == null || customizers.isEmpty()) {
+            return;
+        }
+        final ScriptEngine engine = new ScriptEngineManager().getEngineByExtension(ext);
+        if (engine == null) {
+            throw new IllegalStateException("No engine for " + ext + ". Maybe add the JSR223 implementation as plugin dependency.");
+        }
+        for (final String js : customizers) {
+            try {
+                final SimpleBindings bindings = new SimpleBindings();
+                bindings.put("catalinaBase", base);
+                engine.eval(new StringReader(js), bindings);
+            } catch (final ScriptException e) {
+                throw new IllegalStateException(e.getMessage(), e);
+            }
         }
     }
 

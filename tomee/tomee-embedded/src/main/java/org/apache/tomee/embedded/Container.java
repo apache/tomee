@@ -106,6 +106,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -356,6 +357,16 @@ public class Container implements AutoCloseable {
 
     private static void addCallersAsEjbModule(final ClassLoader loader, final AppModule app, final String... additionalCallers) {
         final Set<String> callers = new HashSet<>(NewLoaderLogic.callers(Filters.classes(Container.class.getName(), "org.apache.openejb.maven.plugins.TomEEEmbeddedMojo")));
+        // we don't care of these
+        callers.remove("org.apache.tomee.embedded.Container");
+        callers.remove("org.apache.tomee.gradle.embedded.TomEEEmbeddedTask");
+        final Iterator<String> callerIt = callers.iterator();
+        while (callerIt.hasNext()) { // TomEEEmbeddedMojo is also used with some anonymous classes (TomEEEmbeddedMojo$x)
+            if (callerIt.next().startsWith("org.apache.openejb.maven.plugins.TomEEEmbeddedMojo")) {
+                callerIt.remove();
+                // no break since we remove anonymous class+the mojo itself
+            }
+        }
         if (additionalCallers != null && additionalCallers.length > 0) {
             callers.addAll(asList(additionalCallers));
         }

@@ -21,15 +21,23 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.apache.openejb.config.DeploymentFilterable;
 import org.apache.openejb.loader.IO;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.NetworkUtil;
+import org.junit.Before;
 import org.junit.Test;
 
+import javax.management.InstanceNotFoundException;
+import javax.management.IntrospectionException;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+import javax.management.ReflectionException;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.management.ManagementFactory;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -42,11 +50,33 @@ import static java.lang.System.lineSeparator;
 import static java.lang.Thread.sleep;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class TomEEEmbeddedMojoTest {
+    @Before // there can be a small latency stopping/restarting tomcat so ensure we don't have conflicts between tests
+    public void ensureTomcatIsDown() throws MalformedObjectNameException, IntrospectionException, ReflectionException {
+        for (int i = 0; i < 10; i++) {
+            try {
+                assertFalse(SystemInstance.isInitialized());
+                try {
+                    assertNull(ManagementFactory.getPlatformMBeanServer().getMBeanInfo(new ObjectName("Tomcat:type=Server")));
+                } catch (final InstanceNotFoundException e) {
+                    // ok
+                }
+            } catch (final AssertionError ae) {
+                try {
+                    sleep(1000);
+                } catch (final InterruptedException e) {
+                    Thread.interrupted();
+                    fail();
+                }
+            }
+        }
+    }
+
     @Test
     public void run() throws MojoFailureException, MojoExecutionException, IOException, InterruptedException {
         final File docBase = new File("target/TomEEEmbeddedMojoTest/base");
@@ -131,7 +161,6 @@ public class TomEEEmbeddedMojoTest {
         input.close();
     }
 
-
     @Test
     public void customWebResource() throws Exception {
         final File docBase = new File("target/TomEEEmbeddedMojoTest/customWebResource");
@@ -174,6 +203,57 @@ public class TomEEEmbeddedMojoTest {
         input.write("exit");
         stopped.await(5, TimeUnit.MINUTES);
         input.close();
+    }
+
+    @Test
+    public void customScript() throws Exception {
+        // we use a dynamic InputStream to be able to simulate commands without hacking System.in
+        final Input input = new Input();
+        final Semaphore reloaded = new Semaphore(0);
+        final CountDownLatch started = new CountDownLatch(1);
+        final TomEEEmbeddedMojo mojo = new TomEEEmbeddedMojo() {
+            @Override
+            protected Scanner newScanner() {
+                return new Scanner(input);
+            }
+        };
+        mojo.classpathAsWar = true;
+        mojo.httpPort = NetworkUtil.getNextAvailablePort();
+        mojo.ssl = false;
+        mojo.webResourceCached = false;
+        mojo.jsCustomizers = singletonList(
+                "var File = Java.type('java.io.File');" +
+                        "var FileWriter = Java.type('java.io.FileWriter');" +
+                        "var out = new File(catalinaBase, 'conf/app.conf');" +
+                        "var writer = new FileWriter(out);" +
+                        "writer.write('test=ok');" +
+                        "writer.close();");
+        mojo.setLog(new SystemStreamLog() { // not the best solution but fine for now...
+            @Override
+            public void info(final CharSequence charSequence) {
+                final String string = charSequence.toString();
+                if (string.startsWith("TomEE embedded started on") || string.equals("can't start TomEE")) {
+                    started.countDown();
+                } else if (string.contains("Redeployed /")) {
+                    reloaded.release();
+                }
+                super.info(charSequence);
+            }
+        });
+
+        CountDownLatch stopped = null;
+        try {
+            stopped = doStart(started, mojo);
+            final File appConf = new File(System.getProperty("catalina.base"), "conf/app.conf");
+            assertTrue(appConf.exists());
+            assertEquals("ok", IO.readProperties(appConf).getProperty("test", "ko"));
+        } finally {
+            input.write("exit");
+            if (stopped != null) {
+                stopped.await(5, TimeUnit.MINUTES);
+            }
+            input.close();
+        }
     }
 
     private CountDownLatch doStart(final CountDownLatch started, final TomEEEmbeddedMojo mojo) {
