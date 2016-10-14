@@ -141,8 +141,7 @@ public class OpenEJBListener implements LifecycleListener {
 
     private static boolean isTomEEWar(final File file) {
         final String name = file.getName();
-        try {
-            final JarFile jarFile = new JarFile(file);
+        try (final JarFile jarFile = new JarFile(file)) {
             return jarFile.getEntry("lib") != null
                     && (name.startsWith("tomee") || name.startsWith("openejb")
                     && name.endsWith(".war"));

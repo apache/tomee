@@ -598,29 +598,24 @@ public class Installer implements InstallerInterface {
             // the core jar contains the config files
             return;
         }
-        final JarFile coreJar;
-        try {
-            coreJar = new JarFile(openejbCoreJar);
+        try (final JarFile coreJar = new JarFile(openejbCoreJar)) {
+            //
+            // conf/tomee.xml
+            //
+            final File openEjbXmlFile = new File(confDir, "tomee.xml");
+            if (!openEjbXmlFile.exists()) {
+                // read in the openejb.xml file from the openejb core jar
+                final String openEjbXml = Installers.readEntry(coreJar, "default.openejb.conf", alerts);
+                if (openEjbXml != null) {
+                    if (Installers.writeAll(openEjbXmlFile, openEjbXml.replace("<openejb>", "<tomee>").replace("</openejb>", "</tomee>"), alerts)) {
+                        alerts.addInfo("Copy tomee.xml to conf");
+                    }
+                }
+            }
         } catch (final IOException e) {
             return;
         }
 
-        //
-        // conf/tomee.xml
-        //
-        final File openEjbXmlFile = new File(confDir, "tomee.xml");
-        if (!openEjbXmlFile.exists()) {
-            // read in the openejb.xml file from the openejb core jar
-            final String openEjbXml = Installers.readEntry(coreJar, "default.openejb.conf", alerts);
-            if (openEjbXml != null) {
-                if (Installers.writeAll(openEjbXmlFile, openEjbXml.replace("<openejb>", "<tomee>").replace("</openejb>", "</tomee>"), alerts)) {
-                    alerts.addInfo("Copy tomee.xml to conf");
-                }
-            }
-        }
-
-
-        //
         // conf/logging.properties
         // now we are using tomcat one of jdk one by default
         //
@@ -809,16 +804,14 @@ public class Installer implements InstallerInterface {
         //
         // conf/web.xml
         //
-        final JarFile openejbTomcatCommonJar;
-        try {
-            openejbTomcatCommonJar = new JarFile(paths.geOpenEJBTomcatCommonJar());
+        try (final JarFile openejbTomcatCommonJar = new JarFile(paths.geOpenEJBTomcatCommonJar())) {
+            final File webXmlFile = new File(confDir, "web.xml");
+            final String webXml = Installers.readEntry(openejbTomcatCommonJar, "conf/web.xml", alerts);
+            if (Installers.writeAll(webXmlFile, webXml, alerts)) {
+                alerts.addInfo("Set jasper in production mode in TomEE web.xml");
+            }
         } catch (final IOException e) {
-            return;
-        }
-        final File webXmlFile = new File(confDir, "web.xml");
-        final String webXml = Installers.readEntry(openejbTomcatCommonJar, "conf/web.xml", alerts);
-        if (Installers.writeAll(webXmlFile, webXml, alerts)) {
-            alerts.addInfo("Set jasper in production mode in TomEE web.xml");
+            // no-op
         }
     }
 

@@ -471,10 +471,11 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                         logger.info("using context file " + cXml.getAbsolutePath());
                     }
                 } else { // war
-                    final JarFile warAsJar = new JarFile(war);
-                    final JarEntry entry = warAsJar.getJarEntry(Constants.ApplicationContextXml);
-                    if (entry != null) {
-                        contextXmlUrl = new URL("jar:" + war.getAbsoluteFile().toURI().toURL().toExternalForm() + "!/" + Constants.ApplicationContextXml);
+                    try (final JarFile warAsJar = new JarFile(war)) {
+                        final JarEntry entry = warAsJar.getJarEntry(Constants.ApplicationContextXml);
+                        if (entry != null) {
+                            contextXmlUrl = new URL("jar:" + war.getAbsoluteFile().toURI().toURL().toExternalForm() + "!/" + Constants.ApplicationContextXml);
+                        }
                     }
                 }
 
