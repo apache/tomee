@@ -23,6 +23,7 @@ import org.apache.openejb.config.DeploymentFilterable;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.NetworkUtil;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -207,6 +208,8 @@ public class TomEEEmbeddedMojoTest {
 
     @Test
     public void customScript() throws Exception {
+        Assume.assumeFalse(System.getProperty("java.version").startsWith("1.7"));
+
         // we use a dynamic InputStream to be able to simulate commands without hacking System.in
         final Input input = new Input();
         final Semaphore reloaded = new Semaphore(0);
