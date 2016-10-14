@@ -707,22 +707,6 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
-    <!--<repository>-->
-    <!--<id>apache-incubating-repository</id>-->
-    <!--<name>Apache Incubating Repository</name>-->
-    <!--<url>http://people.apache.org/repo/m2-incubating-repository</url>-->
-    <!--<releases>-->
-    <!--<enabled>true</enabled>-->
-    <!--</releases>-->
-    <!--<snapshots>-->
-    <!--<enabled>false</enabled>-->
-    <!--</snapshots>-->
-    <!--</repository>-->
-    <repository>
-      <id>terracotta</id>
-      <name>Terracotta</name>
-      <url>http://repo.terracotta.org/maven2/</url>
-    </repository>
   </repositories>
   <pluginRepositories>
     <pluginRepository>
