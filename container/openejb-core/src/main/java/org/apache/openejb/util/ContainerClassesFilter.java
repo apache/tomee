@@ -107,6 +107,7 @@ public class ContainerClassesFilter implements Filter {
         excluded.add("org.apache.tomcat");
         excluded.add("org.apache.tomee");
         excluded.add("org.apache.velocity");
+        excluded.add("org.apache.webbeans");
         excluded.add("org.apache.ws");
         excluded.add("org.apache.wss4j");
         excluded.add("org.apache.xbean");
