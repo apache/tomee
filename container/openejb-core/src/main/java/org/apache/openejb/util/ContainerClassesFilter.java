@@ -77,6 +77,7 @@ public class ContainerClassesFilter implements Filter {
         excluded.add("org.aeonbits.owner");
         excluded.add("org.apache.activemq");
         excluded.add("org.apache.bval");
+        excluded.add("org.apache.catalina");
         excluded.add("org.apache.camel");
         excluded.add("org.apache.commons.beanutils");
         excluded.add("org.apache.commons.cli");
