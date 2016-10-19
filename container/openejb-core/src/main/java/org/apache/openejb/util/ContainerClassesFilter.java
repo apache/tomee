@@ -89,6 +89,7 @@ public class ContainerClassesFilter implements Filter {
         excluded.add("org.apache.commons.lang3");
         excluded.add("org.apache.commons.logging");
         excluded.add("org.apache.commons.pool2");
+        excluded.add("org.apache.coyote");
         excluded.add("org.apache.cxf");
         excluded.add("org.apache.geronimo.javamail");
         excluded.add("org.apache.geronimo.mail");
