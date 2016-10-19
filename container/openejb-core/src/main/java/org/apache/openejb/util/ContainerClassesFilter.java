@@ -102,6 +102,7 @@ public class ContainerClassesFilter implements Filter {
         excluded.add("org.apache.logging.log4j.core");
         excluded.add("org.apache.logging.slf4j");
         excluded.add("org.apache.myfaces");
+        excluded.add("org.apache.naming");
         excluded.add("org.apache.neethi");
         excluded.add("org.apache.openejb");
         excluded.add("org.apache.oro");
