@@ -109,6 +109,7 @@ public class ContainerClassesFilter implements Filter {
         excluded.add("org.apache.velocity");
         excluded.add("org.apache.ws");
         excluded.add("org.apache.wss4j");
+        excluded.add("org.apache.xbean");
         excluded.add("org.apache.xml");
         excluded.add("org.apache.xml.resolver");
         excluded.add("org.bouncycastle");
