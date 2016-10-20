@@ -36,7 +36,7 @@ public class OpenEJBInitialContextFactory implements InitialContextFactory {
         return new LocalFallbackContextWrapper(SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext());
     }
 
-    private static class LocalFallbackContextWrapper extends ContextWrapper {
+    private static final class LocalFallbackContextWrapper extends ContextWrapper {
         private final ConcurrentMap<String, String> mapping = new ConcurrentHashMap<>();
 
         private LocalFallbackContextWrapper(final Context jndiContext) {
