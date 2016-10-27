@@ -17,7 +17,6 @@
 
 package org.apache.openejb.util.proxy;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -33,6 +32,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.SingularAttribute;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -43,6 +43,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static org.apache.commons.lang3.StringUtils.capitalize;
 
 public class QueryProxy implements InvocationHandler {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, QueryProxy.class);
@@ -242,17 +244,7 @@ public class QueryProxy implements InvocationHandler {
                 }
                 final String idName = id.getName();
 
-                final Object idValue;
-                try {
-                    idValue = BeanUtils.getProperty(entity, idName);
-                } catch (final InvocationTargetException e) {
-                    throw new IllegalArgumentException("can't invoke to get entity id");
-                } catch (final NoSuchMethodException e) {
-                    throw new IllegalArgumentException("can't find the method to get entity id");
-                } catch (final IllegalAccessException e) {
-                    throw new IllegalArgumentException("can't access field/method to get entity id");
-                }
-
+                final Object idValue = getProperty(entity, idName);
                 entity = em.getReference(et.getJavaType(), idValue);
                 if (entity == null) {
                     throw new IllegalArgumentException("entity " + entity + " is not managed and can't be found.");
@@ -261,6 +253,29 @@ public class QueryProxy implements InvocationHandler {
             em.remove(entity);
         } else {
             throw new IllegalArgumentException(REMOVE_NAME + " should have only one parameter and return void");
+        }
+    }
+
+    // can be optimized for runtime, since there are today nice alternative we probably don't need
+    private Object getProperty(final Object entity, final String idName) {
+        try {
+            final Method method = entity.getClass().getMethod("get" + capitalize(idName));
+            if (!method.isAccessible()) {
+                method.setAccessible(true);
+            }
+            return method.invoke(entity);
+        } catch (final NoSuchMethodException | IllegalAccessException e) {
+            try {
+                final Field declaredField = entity.getClass().getDeclaredField(idName);
+                if (!declaredField.isAccessible()) {
+                    declaredField.setAccessible(true);
+                }
+                return declaredField.get(entity);
+            } catch (final NoSuchFieldException | IllegalAccessException e1) {
+                throw new IllegalArgumentException("Bad id: " + idName + " for " + entity);
+            }
+        } catch (final InvocationTargetException e) {
+            throw new IllegalStateException(e.getCause());
         }
     }
 
