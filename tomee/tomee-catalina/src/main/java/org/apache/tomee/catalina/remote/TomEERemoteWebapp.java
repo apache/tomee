@@ -25,12 +25,17 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.httpd.ServerServlet;
 import org.apache.tomee.catalina.IgnoredStandardContext;
 import org.apache.tomee.catalina.OpenEJBValve;
+import org.apache.catalina.deploy.LoginConfig;
+import org.apache.catalina.deploy.SecurityCollection;
+import org.apache.catalina.deploy.SecurityConstraint;
 
 import java.beans.PropertyChangeListener;
 
 public class TomEERemoteWebapp extends IgnoredStandardContext {
     private static final String CONTEXT_NAME = SystemInstance.get().getProperty("tomee.remote.support.context", "/tomee");
     private static final String MAPPING = SystemInstance.get().getProperty("tomee.remote.support.mapping", "/ejb");
+    private static final String BASIC_AUTH_ROLE_NAME = SystemInstance.get().getProperty("tomee.remote.support.basicAuthRoleName", null);
+    
 
     public TomEERemoteWebapp() {
         setDocBase("");
@@ -39,6 +44,17 @@ public class TomEERemoteWebapp extends IgnoredStandardContext {
         setName(CONTEXT_NAME);
         setPath(CONTEXT_NAME);
         setLoader(new ServerClassLoaderLoader(this));
+        if (BASIC_AUTH_ROLE_NAME != null) {
+            LoginConfig config = new LoginConfig();
+            config.setAuthMethod("BASIC");
+            SecurityConstraint constraint = new SecurityConstraint();
+            SecurityCollection collection = new SecurityCollection();
+            collection.addPattern("/*");
+            constraint.addCollection(collection);
+            constraint.addAuthRole(BASIC_AUTH_ROLE_NAME);
+            addConstraint(constraint);
+            setLoginConfig(config);
+        }
         addValve(new OpenEJBValve()); // ensure security context is resetted (ThreadLocal) for each request
     }
 

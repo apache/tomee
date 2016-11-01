@@ -16,15 +16,7 @@
  */
 package org.apache.openejb.client;
 
-import org.apache.openejb.client.event.ClientVersion;
-import org.apache.openejb.client.event.ClusterMetaDataUpdated;
-import org.apache.openejb.client.event.ObserverAdded;
-import org.apache.openejb.client.event.RequestFailed;
-import org.apache.openejb.client.event.RetryConditionAdded;
-import org.apache.openejb.client.event.RetryConditionRemoved;
-import org.apache.openejb.client.event.RetryingRequest;
-import org.apache.openejb.client.event.ServerAdded;
-import org.apache.openejb.client.event.ServerRemoved;
+import static org.apache.openejb.client.Exceptions.newIOException;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -46,7 +38,16 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.apache.openejb.client.Exceptions.newIOException;
+import org.apache.openejb.client.HttpConnectionFactory.HttpConnection;
+import org.apache.openejb.client.event.ClientVersion;
+import org.apache.openejb.client.event.ClusterMetaDataUpdated;
+import org.apache.openejb.client.event.ObserverAdded;
+import org.apache.openejb.client.event.RequestFailed;
+import org.apache.openejb.client.event.RetryConditionAdded;
+import org.apache.openejb.client.event.RetryConditionRemoved;
+import org.apache.openejb.client.event.RetryingRequest;
+import org.apache.openejb.client.event.ServerAdded;
+import org.apache.openejb.client.event.ServerRemoved;
 
 public class Client {
 
@@ -137,14 +138,15 @@ public class Client {
     }
 
     public static Response request(final Request req, final Response res, final ServerMetaData server) throws RemoteException {
-        try {
-            return client.processRequest(req, res, server);
-        } finally {
-            failed.remove();
-        }
+        return request(req, res, server, null);
     }
 
     protected Response processRequest(final Request req, final Response res, final ServerMetaData server) throws RemoteException {
+        return processRequest(req, res, server, null);
+    }
+
+    protected Response processRequest(final Request req, final Response res, final ServerMetaData server,
+            JNDIContextAuth jndiContextAuth) throws RemoteException {
 
         if (server == null) {
             throw new IllegalArgumentException("Server instance cannot be null");
@@ -153,12 +155,11 @@ public class Client {
         final long start = System.nanoTime();
         final ClusterMetaData cluster = getClusterMetaData(server);
 
-        //Determine which protocol to use for request writes
+        // Determine which protocol to use for request writes
         final ProtocolMetaData protocolRequest = (null != COMPATIBLE_META_DATA ? COMPATIBLE_META_DATA : PROTOCOL_META_DATA);
 
         /*----------------------------*/
         /* Get a connection to server */
-        /*----------------------------*/
 
         final Connection conn;
         try {
@@ -167,11 +168,14 @@ public class Client {
             throw new RemoteException("Unable to connect", e);
         }
 
+        if (jndiContextAuth != null && conn instanceof HttpConnection) {
+            ((HttpConnection) conn).setAuthenticationHeader(jndiContextAuth);
+        }
+
         OutputStream out = null;
         InputStream in = null;
 
         try {
-
 
             /*----------------------------------*/
             /* Get output streams */
@@ -185,7 +189,7 @@ public class Client {
             }
 
             /*----------------------------------*/
-            /* Write the protocol magic         */
+            /* Write the protocol magic */
             /*----------------------------------*/
             try {
                 protocolRequest.writeExternal(out);
@@ -256,7 +260,7 @@ public class Client {
             }
 
             /*----------------------------------*/
-            /* Get input streams               */
+            /* Get input streams */
             /*----------------------------------*/
 
             try {
@@ -267,7 +271,7 @@ public class Client {
                 throw newIOException("Cannot open input stream to server: ", e);
             }
 
-            //Determine the server response protocol for reading
+            // Determine the server response protocol for reading
             final ProtocolMetaData protocolResponse = new ProtocolMetaData();
             try {
 
@@ -275,11 +279,14 @@ public class Client {
 
             } catch (final EOFException e) {
 
-                throw newIOException("Prematurely reached the end of the stream.  " + protocolResponse.getSpec() + " : " + e.getMessage(), e);
+                String message = "Prematurely reached the end of the stream.  " + protocolResponse.getSpec() + " : " + e.getMessage();
+                throw newIOException(message, e);
 
             } catch (final IOException e) {
 
-                throw newIOException("Cannot determine server protocol version: Received " + protocolResponse.getSpec() + " : " + e.getMessage(), e);
+                String message = "Cannot determine server protocol version: Received " + protocolResponse.getSpec() + " : "
+                        + e.getMessage();
+                throw newIOException(message, e);
             }
 
             final ObjectInput objectIn;
@@ -288,7 +295,8 @@ public class Client {
                 objectIn = new EjbObjectInputStream(in);
 
             } catch (final IOException e) {
-                throw newIOException("Cannot open object input stream to server (" + protocolResponse.getSpec() + ") : " + e.getMessage(), e);
+                String message = "Cannot open object input stream to server (" + protocolResponse.getSpec() + ") : " + e.getMessage();
+                throw newIOException(message, e);
             }
 
             /*----------------------------------*/
@@ -299,22 +307,26 @@ public class Client {
                 clusterResponse.setMetaData(protocolResponse);
                 clusterResponse.readExternal(objectIn);
                 switch (clusterResponse.getResponseCode()) {
-                    case UPDATE: {
-                        setClusterMetaData(server, clusterResponse.getUpdatedMetaData());
-                    }
+                case UPDATE: {
+                    setClusterMetaData(server, clusterResponse.getUpdatedMetaData());
+                }
                     break;
-                    case FAILURE: {
-                        throw clusterResponse.getFailure();
-                    }
+                case FAILURE: {
+                    throw clusterResponse.getFailure();
+                }
                 }
             } catch (final ClassNotFoundException e) {
-                throw new RemoteException("Cannot read the cluster response from the server.  The class for an object being returned is not located in this system:", e);
+                String message = "Cannot read the cluster response from the server.  The class for an object being returned is not located in this system:";
+                throw new RemoteException(message, e);
 
             } catch (final IOException e) {
-                throw newIOException("Cannot read the cluster response from the server (" + protocolResponse.getSpec() + ") : " + e.getMessage(), e);
+                String message = "Cannot read the cluster response from the server (" + protocolResponse.getSpec() + ") : "
+                        + e.getMessage();
+                throw newIOException(message, e);
 
             } catch (final Throwable e) {
-                throw new RemoteException("Error reading cluster response from server (" + protocolResponse.getSpec() + ") : " + e.getMessage(), e);
+                String message = "Error reading cluster response from server (" + protocolResponse.getSpec() + ") : " + e.getMessage();
+                throw new RemoteException(message, e);
             }
 
             /*----------------------------------*/
@@ -324,13 +336,16 @@ public class Client {
                 res.setMetaData(protocolResponse);
                 res.readExternal(objectIn);
             } catch (final ClassNotFoundException e) {
-                throw new RemoteException("Cannot read the response from the server.  The class for an object being returned is not located in this system:", e);
+                String message = "Cannot read the response from the server.  The class for an object being returned is not located in this system:";
+                throw new RemoteException(message, e);
 
             } catch (final IOException e) {
-                throw newIOException("Cannot read the response from the server (" + protocolResponse.getSpec() + ") : " + e.getMessage(), e);
+                String message = "Cannot read the response from the server (" + protocolResponse.getSpec() + ") : " + e.getMessage();
+                throw newIOException(message, e);
 
             } catch (final Throwable e) {
-                throw new RemoteException("Error reading response from server (" + protocolResponse.getSpec() + ") : " + e.getMessage(), e);
+                String message = "Error reading response from server (" + protocolResponse.getSpec() + ") : " + e.getMessage();
+                throw new RemoteException(message, e);
             }
 
             if (retryConditions.size() > 0) {
@@ -338,18 +353,19 @@ public class Client {
                     final EJBResponse ejbResponse = (EJBResponse) res;
                     if (ejbResponse.getResult() instanceof ThrowableArtifact) {
                         final ThrowableArtifact artifact = (ThrowableArtifact) ejbResponse.getResult();
-                        //noinspection ThrowableResultOfMethodCallIgnored
+                        // noinspection ThrowableResultOfMethodCallIgnored
                         if (retryConditions.contains(artifact.getThrowable().getClass())) {
 
                             throw new RetryException(res);
 
-                            //                            if (? < maxConditionRetry) {
-                            //                                throw new RetryException(res);
-                            //                            } else {
-                            //                                if (FINER) {
-                            //                                    logger.log(Level.FINER, "Giving up on " + artifact.getThrowable().getClass().getName().toString());
-                            //                                }
-                            //                            }
+                            // if (? < maxConditionRetry) {
+                            // throw new RetryException(res);
+                            // } else {
+                            // if (FINER) {
+                            // logger.log(Level.FINER, "Giving up on " +
+                            // artifact.getThrowable().getClass().getName().toString());
+                            // }
+                            // }
                         }
                     }
                 }
@@ -357,7 +373,8 @@ public class Client {
 
             if (FINEST) {
                 final long time = System.nanoTime() - start;
-                final String message = String.format("Invocation %sns - %s - Request(%s) - Response(%s)", time, conn.getURI(), req, res);
+                final String message = String.format("Invocation %sns - %s - Request(%s) - Response(%s)", time, conn.getURI(), req,
+                        res);
                 logger.log(Level.FINEST, message);
             }
 
@@ -380,7 +397,7 @@ public class Client {
 
                     Client.fireEvent(new RetryingRequest(req, server));
 
-                    processRequest(req, res, server);
+                    processRequest(req, res, server, jndiContextAuth);
                 } catch (final RemoteFailoverException re) {
                     throw re;
                 } catch (final RemoteException re) {
@@ -408,6 +425,15 @@ public class Client {
         return res;
     }
 
+    public static Response request(final Request req, final Response res, final ServerMetaData server, JNDIContextAuth jndiContextAuth)
+            throws RemoteException {
+        try {
+            return client.processRequest(req, res, server, jndiContextAuth);
+        } finally {
+            failed.remove();
+        }
+    }
+
     public static Set<URI> getFailed() {
         Set<URI> set = failed.get();
         if (set == null) {
@@ -426,7 +452,7 @@ public class Client {
         return getContext(server).getClusterMetaData();
     }
 
-    //openejb.client.connection.strategy
+    // openejb.client.connection.strategy
 
     private boolean getRetry() {
         return retry = Boolean.valueOf(System.getProperty("openejb.client.requestretry", retry + ""));
