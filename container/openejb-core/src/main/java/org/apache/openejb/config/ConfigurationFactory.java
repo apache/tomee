@@ -1778,8 +1778,9 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                         }
                     } else {
                         final String trim = String.valueOf(value).trim();
-                        if (ids.contains(trim)) {
-                            refs.add(trim);
+                        final String id = (trim.startsWith("@") || trim.startsWith("$")) && trim.length() > 1 ? trim.substring(1) : trim;
+                        if (ids.contains(id)) {
+                            refs.add(id);
                         }
                     }
                 }

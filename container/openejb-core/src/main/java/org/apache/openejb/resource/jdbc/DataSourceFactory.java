@@ -77,6 +77,8 @@ public class DataSourceFactory {
     public static final String GLOBAL_FLUSH_PROPERTY = "openejb.jdbc.flushable";
     public static final String POOL_PROPERTY = "openejb.datasource.pool";
     public static final String DATA_SOURCE_CREATOR_PROP = "DataSourceCreator";
+    public static final String XA_GLOBAL_FORCE_DIFFERENT = "openejb.datasource.xa.force-different-xaresource";
+    public static final String XA_FORCE_DIFFERENT = "XAForceDifferent";
     public static final String HANDLER_PROPERTY = "TomEEProxyHandler";
     public static final String GLOBAL_HANDLER_PROPERTY = "openejb.jdbc.handler";
 
@@ -105,6 +107,7 @@ public class DataSourceFactory {
         final String handler = SystemInstance.get().getOptions().get(GLOBAL_HANDLER_PROPERTY, (String) properties.remove(HANDLER_PROPERTY));
         boolean flushable = SystemInstance.get().getOptions().get(GLOBAL_FLUSH_PROPERTY,
             "true".equalsIgnoreCase((String) properties.remove(FLUSHABLE_PROPERTY)));
+        final String forceDifferent = SystemInstance.get().getOptions().get(XA_GLOBAL_FORCE_DIFFERENT, String.class.cast(properties.remove(XA_FORCE_DIFFERENT)));
 
         convert(properties, maxWaitTime, "maxWaitTime", "maxWait");
         convert(properties, timeBetweenEvictionRuns, "timeBetweenEvictionRuns", "timeBetweenEvictionRunsMillis");
@@ -175,8 +178,18 @@ public class DataSourceFactory {
                     recipe.setProperty("url", properties.getProperty("JdbcUrl"));
                 }
 
-                final CommonDataSource dataSource = (CommonDataSource) recipe.create();
+                CommonDataSource dataSource = (CommonDataSource) recipe.create();
                 final boolean isDs = DataSource.class.isInstance(dataSource);
+                if (!isDs && XADataSource.class.isInstance(dataSource) && forceDifferent != null) {
+                    try {
+                        dataSource = CommonDataSource.class.cast(Thread.currentThread().getContextClassLoader()
+                                        .loadClass("true".equals(forceDifferent) ? "org.apache.openejb.resource.jdbc.xa.IsDifferentXaDataSourceWrapper" : forceDifferent)
+                                        .getConstructor(XADataSource.class)
+                                        .newInstance(dataSource));
+                    } catch (InvocationTargetException | ClassNotFoundException | NoSuchMethodException e) {
+                        throw new IllegalArgumentException(e);
+                    }
+                }
 
                 if (managed) {
                     if (isDs && usePool(properties)) {
