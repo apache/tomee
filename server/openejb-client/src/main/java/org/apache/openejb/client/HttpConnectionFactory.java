@@ -15,7 +15,9 @@
  * limitations under the License.
  */
 package org.apache.openejb.client;
-import static javax.xml.bind.DatatypeConverter.printBase64Binary;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSocketFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -23,7 +25,6 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
@@ -31,9 +32,6 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
-
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLSocketFactory;
 
 /**
  * @version $Revision$ $Date$
@@ -51,7 +49,7 @@ public class HttpConnectionFactory implements ConnectionFactory {
         }
         try {
             return new HttpConnection(uri, socketFactoryMap, buffer);
-        } finally { // auto adjusting buffer caching, queue avoids leaks (!=ThreadLocal)
+        } finally { // auto adjusting buffer caching, queue avoids leaks (!= ThreadLocal)
             drainBuffers.add(buffer);
         }
     }
@@ -63,15 +61,14 @@ public class HttpConnectionFactory implements ConnectionFactory {
         private OutputStream outputStream;
         private final URI uri;
 
-        public HttpConnection(final URI uri, final ConcurrentMap<URI, SSLSocketFactory> socketFactoryMap, final byte[] buffer)
-                throws IOException {
+        public HttpConnection(final URI uri, final ConcurrentMap<URI, SSLSocketFactory> socketFactoryMap,
+                              final byte[] buffer) throws IOException {
             this.uri = uri;
             this.buffer = buffer;
             final URL url = uri.toURL();
 
             final Map<String, String> params;
             try {
-                // TODO username:password
                 params = MulticastConnectionFactory.URIs.parseParamters(uri);
             } catch (final URISyntaxException e) {
                 throw new IllegalArgumentException("Invalid uri " + uri.toString(), e);
@@ -91,12 +88,6 @@ public class HttpConnectionFactory implements ConnectionFactory {
 
             if (params.containsKey("readTimeout")) {
                 httpURLConnection.setReadTimeout(Integer.parseInt(params.get("readTimeout")));
-            }
-
-            if (uri.getUserInfo() != null) {
-                String authorization = "Basic "
-                        + printBase64Binary((url.getUserInfo()).getBytes(StandardCharsets.UTF_8));
-                httpURLConnection.setRequestProperty("Authorization", authorization);
             }
 
             if (params.containsKey("sslKeyStore") || params.containsKey("sslTrustStore")) {
@@ -127,7 +118,7 @@ public class HttpConnectionFactory implements ConnectionFactory {
             try {
                 close();
             } catch (final Exception e) {
-                // Ignore
+                //Ignore
             }
         }
 
@@ -141,8 +132,7 @@ public class HttpConnectionFactory implements ConnectionFactory {
             IOException exception = null;
             if (inputStream != null) {
                 // consume anything left in the buffer
-                try {// use a buffer cause it is faster, check
-                     // HttpInputStreamImpl
+                try {// use a buffer cause it is faster, check HttpInputStreamImpl
                     while (inputStream.read(buffer) > -1) {
                         // no-op
                     }
@@ -190,4 +180,5 @@ public class HttpConnectionFactory implements ConnectionFactory {
             return inputStream;
         }
     }
+
 }

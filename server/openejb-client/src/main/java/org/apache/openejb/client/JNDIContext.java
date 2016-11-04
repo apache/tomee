@@ -16,6 +16,28 @@
  */
 package org.apache.openejb.client;
 
+import org.apache.openejb.client.event.RemoteInitialContextCreated;
+import org.apache.openejb.client.serializer.EJBDSerializer;
+import org.omg.CORBA.ORB;
+
+import javax.naming.AuthenticationException;
+import javax.naming.Binding;
+import javax.naming.CompoundName;
+import javax.naming.ConfigurationException;
+import javax.naming.Context;
+import javax.naming.InvalidNameException;
+import javax.naming.Name;
+import javax.naming.NameClassPair;
+import javax.naming.NameNotFoundException;
+import javax.naming.NameParser;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.naming.OperationNotSupportedException;
+import javax.naming.Reference;
+import javax.naming.ServiceUnavailableException;
+import javax.naming.spi.InitialContextFactory;
+import javax.naming.spi.NamingManager;
+import javax.sql.DataSource;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.net.ConnectException;
@@ -39,29 +61,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.naming.AuthenticationException;
-import javax.naming.Binding;
-import javax.naming.CompoundName;
-import javax.naming.ConfigurationException;
-import javax.naming.Context;
-import javax.naming.InvalidNameException;
-import javax.naming.Name;
-import javax.naming.NameClassPair;
-import javax.naming.NameNotFoundException;
-import javax.naming.NameParser;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-import javax.naming.OperationNotSupportedException;
-import javax.naming.Reference;
-import javax.naming.ServiceUnavailableException;
-import javax.naming.spi.InitialContextFactory;
-import javax.naming.spi.NamingManager;
-import javax.sql.DataSource;
-
-import org.apache.openejb.client.event.RemoteInitialContextCreated;
-import org.apache.openejb.client.serializer.EJBDSerializer;
-import org.omg.CORBA.ORB;
-
 /**
  * @version $Rev$ $Date$
  */
@@ -77,7 +76,6 @@ public class JNDIContext implements InitialContextFactory, Context {
     public static final String POOL_THREAD_NUMBER = "openejb.client.invoker.threads";
     public static final String AUTHENTICATION_REALM_NAME = "openejb.authentication.realmName";
     public static final String IDENTITY_TIMEOUT = "tomee.authentication.identity.timeout";
-    public static final String HTTP_AUTH_DISABLE = "openejb.client.http.auth.disable";
 
     private final AtomicBoolean isShutdown = new AtomicBoolean(false);
     private String tail = "/";
@@ -86,8 +84,6 @@ public class JNDIContext implements InitialContextFactory, Context {
     private Hashtable env;
     private String moduleId;
     private ClientInstance clientIdentity;
-    // TODO read HTTP_AUTH_DISABLE on creation
-    private boolean disableHttpAuth = false;
 
     private static final ThreadPoolExecutor GLOBAL_CLIENT_POOL = newExecutor(10, null);
 
@@ -112,8 +108,7 @@ public class JNDIContext implements InitialContextFactory, Context {
 
     private AuthenticationInfo authenticationInfo = null;
 
-    // TODO figure out how to configure and manage the thread pool on the client
-    // side, this will do for now...
+    //TODO figure out how to configure and manage the thread pool on the client side, this will do for now...
     private transient int threads;
     private transient LinkedBlockingQueue<Runnable> blockingQueue;
 
@@ -141,21 +136,15 @@ public class JNDIContext implements InitialContextFactory, Context {
 
     public static ThreadPoolExecutor newExecutor(final int threads, final BlockingQueue<Runnable> blockingQueue) {
         /**
-         * This thread pool starts with 3 core threads and can grow to the limit
-         * defined by 'threads'. If a pool thread is idle for more than 1 minute
-         * it will be discarded, unless the core size is reached. It can accept
-         * up to the number of processes defined by 'queue'. If the queue is
-         * full then an attempt is made to add the process to the queue for 10
-         * seconds. Failure to add to the queue in this time will either result
-         * in a logged rejection, or if 'block' is true then a final attempt is
-         * made to run the process in the current thread (the service thread).
+         This thread pool starts with 3 core threads and can grow to the limit defined by 'threads'.
+         If a pool thread is idle for more than 1 minute it will be discarded, unless the core size is reached.
+         It can accept up to the number of processes defined by 'queue'.
+         If the queue is full then an attempt is made to add the process to the queue for 10 seconds.
+         Failure to add to the queue in this time will either result in a logged rejection, or if 'block'
+         is true then a final attempt is made to run the process in the current thread (the service thread).
          */
 
-        final ThreadPoolExecutor executorService = new ThreadPoolExecutor(3, (threads < 3 ? 3 : threads), 1,
-                TimeUnit.MINUTES,
-                blockingQueue == null
-                        ? new LinkedBlockingDeque<Runnable>(Integer.parseInt(getProperty(null, POOL_QUEUE_SIZE, "2")))
-                        : blockingQueue);
+        final ThreadPoolExecutor executorService = new ThreadPoolExecutor(3, (threads < 3 ? 3 : threads), 1, TimeUnit.MINUTES, blockingQueue == null ? new LinkedBlockingDeque<Runnable>(Integer.parseInt(getProperty(null, POOL_QUEUE_SIZE, "2"))) : blockingQueue);
         executorService.setThreadFactory(new ThreadFactory() {
 
             private final AtomicInteger i = new AtomicInteger(0);
@@ -167,8 +156,7 @@ public class JNDIContext implements InitialContextFactory, Context {
                 t.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
                     @Override
                     public void uncaughtException(final Thread t, final Throwable e) {
-                        Logger.getLogger(EJBObjectHandler.class.getName()).log(Level.SEVERE,
-                                "Uncaught error in: " + t.getName(), e);
+                        Logger.getLogger(EJBObjectHandler.class.getName()).log(Level.SEVERE, "Uncaught error in: " + t.getName(), e);
                     }
                 });
 
@@ -195,7 +183,7 @@ public class JNDIContext implements InitialContextFactory, Context {
                 try {
                     offer = tpe.getQueue().offer(r, 10, TimeUnit.SECONDS);
                 } catch (final InterruptedException e) {
-                    // Ignore
+                    //Ignore
                 }
 
                 if (!offer) {
@@ -232,7 +220,6 @@ public class JNDIContext implements InitialContextFactory, Context {
         return response;
     }
 
-
     protected AuthenticationResponse requestAuthorization(final AuthenticationRequest req) throws RemoteException {
         return (AuthenticationResponse) Client.request(req, new AuthenticationResponse(), server);
     }
@@ -245,11 +232,11 @@ public class JNDIContext implements InitialContextFactory, Context {
             env = (Hashtable) environment.clone();
         }
 
-
+        final String userID = (String) env.get(Context.SECURITY_PRINCIPAL);
+        final String psswrd = (String) env.get(Context.SECURITY_CREDENTIALS);
         String providerUrl = (String) env.get(Context.PROVIDER_URL);
 
-        final boolean authWithRequest = "true"
-                .equalsIgnoreCase(String.class.cast(env.get(AUTHENTICATE_WITH_THE_REQUEST)));
+        final boolean authWithRequest = "true".equalsIgnoreCase(String.class.cast(env.get(AUTHENTICATE_WITH_THE_REQUEST)));
         moduleId = (String) env.get("openejb.client.moduleId");
 
         final URI location;
@@ -257,16 +244,14 @@ public class JNDIContext implements InitialContextFactory, Context {
             providerUrl = addMissingParts(providerUrl);
             location = new URI(providerUrl);
         } catch (final URISyntaxException e) {
-            throw (ConfigurationException) new ConfigurationException(
-                    "Property value for " + Context.PROVIDER_URL + " invalid: " + providerUrl + " - " + e.getMessage())
-                            .initCause(e);
+            throw (ConfigurationException) new ConfigurationException("Property value for " +
+                    Context.PROVIDER_URL +
+                    " invalid: " +
+                    providerUrl +
+                    " - " +
+                    e.getMessage()).initCause(e);
         }
         this.server = new ServerMetaData(location);
-        String securityPrincipal = (String) env.get(Context.SECURITY_PRINCIPAL);
-        String securityCredentials = (String) env.get(Context.SECURITY_CREDENTIALS);
-        if (securityPrincipal != null) {
-            server = new ServerMetaData(server, securityPrincipal, securityCredentials);
-        }
 
         final Client.Context context = Client.getContext(this.server);
         context.getProperties().putAll(environment);
@@ -276,14 +261,12 @@ public class JNDIContext implements InitialContextFactory, Context {
 
         Client.fireEvent(new RemoteInitialContextCreated(location));
 
-        // TODO: Either aggressively initiate authentication or wait for the
-        // server to send us an authentication challenge.
-        if (securityPrincipal != null) {
+        //TODO: Either aggressively initiate authentication or wait for the server to send us an authentication challenge.
+        if (userID != null) {
             if (!authWithRequest) {
-                authenticate(securityPrincipal, securityCredentials, false);
+                authenticate(userID, psswrd, false);
             } else {
-                authenticationInfo = new AuthenticationInfo(String.class.cast(env.get(AUTHENTICATION_REALM_NAME)),
-                        securityPrincipal, securityCredentials.toCharArray(), getTimeout(env));
+                authenticationInfo = new AuthenticationInfo(String.class.cast(env.get(AUTHENTICATION_REALM_NAME)), userID, psswrd.toCharArray(), getTimeout(env));
             }
         }
         if (client == null) {
@@ -303,8 +286,7 @@ public class JNDIContext implements InitialContextFactory, Context {
         final String serializer = (String) env.get(SERIALIZER);
         if (serializer != null) {
             try {
-                client.setSerializer(EJBDSerializer.class
-                        .cast(Thread.currentThread().getContextClassLoader().loadClass(serializer).newInstance()));
+                client.setSerializer(EJBDSerializer.class.cast(Thread.currentThread().getContextClassLoader().loadClass(serializer).newInstance()));
             } catch (final Exception e) {
                 // no-op
             }
@@ -315,7 +297,7 @@ public class JNDIContext implements InitialContextFactory, Context {
         final Object o = env.get(IDENTITY_TIMEOUT);
         if (null != o) {
             final Long l = Long.class.cast(o);
-            // noinspection ConstantConditions
+            //noinspection ConstantConditions
             if (null != l) {
                 return l;
             }
@@ -335,11 +317,9 @@ public class JNDIContext implements InitialContextFactory, Context {
     /**
      * Add missing parts - expected only part of the required providerUrl
      * <p/>
-     * TODO: Move the check to a place where it really belongs -
-     * ConnectionManager, ConnectionFactory or such This method (class in
-     * general) doesn't really know what is required as far as connection
-     * details go Assuming that java.net.URI or java.net.URL are going to be
-     * used is overly stated
+     * TODO: Move the check to a place where it really belongs - ConnectionManager, ConnectionFactory or such
+     * This method (class in general) doesn't really know what is required as far as connection details go
+     * Assuming that java.net.URI or java.net.URL are going to be used is overly stated
      */
     String addMissingParts(String providerUrl) throws URISyntaxException {
 
@@ -352,8 +332,7 @@ public class JNDIContext implements InitialContextFactory, Context {
             final int colonIndex = providerUrl.indexOf(":");
             final int slashesIndex = providerUrl.indexOf("//");
 
-            if (colonIndex == -1 && slashesIndex == -1) { // hostname or ip
-                                                          // address only
+            if (colonIndex == -1 && slashesIndex == -1) {   // hostname or ip address only
                 providerUrl = "ejbd://" + providerUrl + ":" + port;
             } else if (colonIndex == -1) {
                 final URI providerUri = new URI(providerUrl);
@@ -368,11 +347,9 @@ public class JNDIContext implements InitialContextFactory, Context {
         return providerUrl;
     }
 
-    public void authenticate(final String userID, final String psswrd, final boolean logout)
-            throws AuthenticationException {
-//TODO needs http auth
-        final AuthenticationRequest req = new AuthenticationRequest(
-                String.class.cast(env.get(AUTHENTICATION_REALM_NAME)), userID, psswrd, getTimeout(env));
+    public void authenticate(final String userID, final String psswrd, final boolean logout) throws AuthenticationException {
+
+        final AuthenticationRequest req = new AuthenticationRequest(String.class.cast(env.get(AUTHENTICATION_REALM_NAME)), userID, psswrd, getTimeout(env));
 
         if (logout) {
             req.setLogoutIdentity(null != client ? client.getClientIdentity() : null);
@@ -386,24 +363,22 @@ public class JNDIContext implements InitialContextFactory, Context {
         }
 
         switch (res.getResponseCode()) {
-        case ResponseCodes.AUTH_GRANTED:
-            client = logout ? new ClientMetaData() : res.getIdentity();
-            break;
-        case ResponseCodes.AUTH_REDIRECT:
-            client = logout ? new ClientMetaData() : res.getIdentity();
-            server = res.getServer();
-            break;
-        case ResponseCodes.AUTH_DENIED:
-            throw (AuthenticationException) new AuthenticationException("This principle is not authorized.")
-                    .initCause(res.getDeniedCause());
+            case ResponseCodes.AUTH_GRANTED:
+                client = logout ? new ClientMetaData() : res.getIdentity();
+                break;
+            case ResponseCodes.AUTH_REDIRECT:
+                client = logout ? new ClientMetaData() : res.getIdentity();
+                server = res.getServer();
+                break;
+            case ResponseCodes.AUTH_DENIED:
+                throw (AuthenticationException) new AuthenticationException("This principle is not authorized.").initCause(res.getDeniedCause());
         }
 
         seedClientSerializer();
     }
 
     public EJBHomeProxy createEJBHomeProxy(final EJBMetaDataImpl ejbData) {
-        final EJBHomeHandler handler = EJBHomeHandler.createEJBHomeHandler(executor(), ejbData, server, client,
-                authenticationInfo);
+        final EJBHomeHandler handler = EJBHomeHandler.createEJBHomeHandler(executor(), ejbData, server, client, authenticationInfo);
         final EJBHomeProxy proxy = handler.createEJBHomeProxy();
         handler.ejb.ejbHomeProxy = proxy;
 
@@ -415,8 +390,7 @@ public class JNDIContext implements InitialContextFactory, Context {
         final EJBMetaDataImpl ejb = (EJBMetaDataImpl) result;
         final Object primaryKey = ejb.getPrimaryKey();
 
-        final EJBObjectHandler handler = EJBObjectHandler.createEJBObjectHandler(executor(), ejb, server, client,
-                primaryKey, authenticationInfo);
+        final EJBObjectHandler handler = EJBObjectHandler.createEJBObjectHandler(executor(), ejb, server, client, primaryKey, authenticationInfo);
         return handler.createEJBObjectProxy();
     }
 
@@ -456,74 +430,72 @@ public class JNDIContext implements InitialContextFactory, Context {
         } catch (Exception e) {
             if (e instanceof RemoteException && e.getCause() instanceof ConnectException) {
                 e = (Exception) e.getCause();
-                throw (ServiceUnavailableException) new ServiceUnavailableException("Cannot lookup '" + name + "'.")
-                        .initCause(e);
+                throw (ServiceUnavailableException) new ServiceUnavailableException("Cannot lookup '" + name + "'.").initCause(e);
             }
             throw (NamingException) new NamingException("Cannot lookup '" + name + "'.").initCause(e);
         }
 
         switch (res.getResponseCode()) {
-        case ResponseCodes.JNDI_EJBHOME:
-            return createEJBHomeProxy((EJBMetaDataImpl) res.getResult());
+            case ResponseCodes.JNDI_EJBHOME:
+                return createEJBHomeProxy((EJBMetaDataImpl) res.getResult());
 
-        case ResponseCodes.JNDI_BUSINESS_OBJECT:
-            return createBusinessObject(res.getResult());
+            case ResponseCodes.JNDI_BUSINESS_OBJECT:
+                return createBusinessObject(res.getResult());
 
-        case ResponseCodes.JNDI_OK:
-            return res.getResult();
+            case ResponseCodes.JNDI_OK:
+                return res.getResult();
 
-        case ResponseCodes.JNDI_INJECTIONS:
-            return res.getResult();
+            case ResponseCodes.JNDI_INJECTIONS:
+                return res.getResult();
 
-        case ResponseCodes.JNDI_CONTEXT:
-            final JNDIContext subCtx = new JNDIContext(this);
-            if (!name.endsWith("/")) {
-                name += '/';
-            }
-            subCtx.tail = name;
-            return subCtx;
+            case ResponseCodes.JNDI_CONTEXT:
+                final JNDIContext subCtx = new JNDIContext(this);
+                if (!name.endsWith("/")) {
+                    name += '/';
+                }
+                subCtx.tail = name;
+                return subCtx;
 
-        case ResponseCodes.JNDI_DATA_SOURCE:
-            return createDataSource((DataSourceMetaData) res.getResult());
+            case ResponseCodes.JNDI_DATA_SOURCE:
+                return createDataSource((DataSourceMetaData) res.getResult());
 
-        case ResponseCodes.JNDI_WEBSERVICE:
-            return createWebservice((WsMetaData) res.getResult());
+            case ResponseCodes.JNDI_WEBSERVICE:
+                return createWebservice((WsMetaData) res.getResult());
 
-        case ResponseCodes.JNDI_RESOURCE:
-            final String type = (String) res.getResult();
-            value = System.getProperty("Resource/" + type);
-            if (value == null) {
-                return null;
-            }
-            return parseEntry(prop, value);
+            case ResponseCodes.JNDI_RESOURCE:
+                final String type = (String) res.getResult();
+                value = System.getProperty("Resource/" + type);
+                if (value == null) {
+                    return null;
+                }
+                return parseEntry(prop, value);
 
-        case ResponseCodes.JNDI_REFERENCE:
-            final Reference ref = (Reference) res.getResult();
-            try {
-                return NamingManager.getObjectInstance(ref, getNameParser(name).parse(name), this, env);
-            } catch (final Exception e) {
-                throw (NamingException) new NamingException("Could not dereference " + ref).initCause(e);
-            }
+            case ResponseCodes.JNDI_REFERENCE:
+                final Reference ref = (Reference) res.getResult();
+                try {
+                    return NamingManager.getObjectInstance(ref, getNameParser(name).parse(name), this, env);
+                } catch (final Exception e) {
+                    throw (NamingException) new NamingException("Could not dereference " + ref).initCause(e);
+                }
 
-        case ResponseCodes.JNDI_NOT_FOUND:
-            throw new NameNotFoundException(
-                    name + " does not exist in the system.  Check that the app was successfully deployed.");
+            case ResponseCodes.JNDI_NOT_FOUND:
+                throw new NameNotFoundException(name + " does not exist in the system.  Check that the app was successfully deployed.");
 
-        case ResponseCodes.JNDI_NAMING_EXCEPTION:
-            final Throwable throwable = ((ThrowableArtifact) res.getResult()).getThrowable();
-            if (throwable instanceof NamingException) {
-                throw (NamingException) throwable;
-            }
-            throw (NamingException) new NamingException().initCause(throwable);
+            case ResponseCodes.JNDI_NAMING_EXCEPTION:
+                final Throwable throwable = ((ThrowableArtifact) res.getResult()).getThrowable();
+                if (throwable instanceof NamingException) {
+                    throw (NamingException) throwable;
+                }
+                throw (NamingException) new NamingException().initCause(throwable);
 
-        case ResponseCodes.JNDI_RUNTIME_EXCEPTION:
-            throw (RuntimeException) res.getResult();
+            case ResponseCodes.JNDI_RUNTIME_EXCEPTION:
+                throw (RuntimeException) res.getResult();
 
-        case ResponseCodes.JNDI_ERROR:
-            throw (Error) res.getResult();
+            case ResponseCodes.JNDI_ERROR:
+                throw (Error) res.getResult();
 
-        default:
-            throw new ClientRuntimeException("Invalid response from server: " + res.getResponseCode());
+            default:
+                throw new ClientRuntimeException("Invalid response from server: " + res.getResponseCode());
         }
     }
 
@@ -556,8 +528,7 @@ public class JNDIContext implements InitialContextFactory, Context {
                 throw new UnsupportedOperationException("Unsupported Naming URI scheme '" + scheme + "'");
             }
         } catch (final URISyntaxException e) {
-            throw (NamingException) new NamingException(
-                    "Unparsable jndi entry '" + name + "=" + value + "'.  Exception: " + e.getMessage()).initCause(e);
+            throw (NamingException) new NamingException("Unparsable jndi entry '" + name + "=" + value + "'.  Exception: " + e.getMessage()).initCause(e);
         }
     }
 
@@ -625,35 +596,34 @@ public class JNDIContext implements InitialContextFactory, Context {
         } catch (Exception e) {
             if (e instanceof RemoteException && e.getCause() instanceof ConnectException) {
                 e = (Exception) e.getCause();
-                throw (ServiceUnavailableException) new ServiceUnavailableException("Cannot list '" + name + "'.")
-                        .initCause(e);
+                throw (ServiceUnavailableException) new ServiceUnavailableException("Cannot list '" + name + "'.").initCause(e);
             }
             throw (NamingException) new NamingException("Cannot list '" + name + "'.").initCause(e);
         }
 
         switch (res.getResponseCode()) {
 
-        case ResponseCodes.JNDI_OK:
-            return null;
+            case ResponseCodes.JNDI_OK:
+                return null;
 
-        case ResponseCodes.JNDI_ENUMERATION:
-            return (NamingEnumeration) res.getResult();
+            case ResponseCodes.JNDI_ENUMERATION:
+                return (NamingEnumeration) res.getResult();
 
-        case ResponseCodes.JNDI_NOT_FOUND:
-            throw new NameNotFoundException(name);
+            case ResponseCodes.JNDI_NOT_FOUND:
+                throw new NameNotFoundException(name);
 
-        case ResponseCodes.JNDI_NAMING_EXCEPTION:
-            final Throwable throwable = ((ThrowableArtifact) res.getResult()).getThrowable();
-            if (throwable instanceof NamingException) {
-                throw (NamingException) throwable;
-            }
-            throw (NamingException) new NamingException().initCause(throwable);
+            case ResponseCodes.JNDI_NAMING_EXCEPTION:
+                final Throwable throwable = ((ThrowableArtifact) res.getResult()).getThrowable();
+                if (throwable instanceof NamingException) {
+                    throw (NamingException) throwable;
+                }
+                throw (NamingException) new NamingException().initCause(throwable);
 
-        case ResponseCodes.JNDI_ERROR:
-            throw (Error) res.getResult();
+            case ResponseCodes.JNDI_ERROR:
+                throw (Error) res.getResult();
 
-        default:
-            throw new ClientRuntimeException("Invalid response from server :" + res.getResponseCode());
+            default:
+                throw new ClientRuntimeException("Invalid response from server :" + res.getResponseCode());
         }
 
     }
@@ -705,8 +675,7 @@ public class JNDIContext implements InitialContextFactory, Context {
                 try {
                     super.setObject(context.lookup(getName()));
                 } catch (final NamingException e) {
-                    throw failed = new ClientRuntimeException("Failed to lazily fetch the binding '" + getName() + "'",
-                            e);
+                    throw failed = new ClientRuntimeException("Failed to lazily fetch the binding '" + getName() + "'", e);
                 }
             }
             return super.getObject();
@@ -792,7 +761,7 @@ public class JNDIContext implements InitialContextFactory, Context {
             try {
                 this.authenticate(userID, psswrd, logout);
             } catch (final Exception ignore) {
-                // no-op
+                //no-op
             }
         }
     }
@@ -935,3 +904,4 @@ public class JNDIContext implements InitialContextFactory, Context {
         }
     }
 }
+

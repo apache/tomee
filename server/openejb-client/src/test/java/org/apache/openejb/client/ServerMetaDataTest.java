@@ -29,4 +29,5 @@ public class ServerMetaDataTest extends TestCase {
         final ServerMetaData server2 = new ServerMetaData(uri2, uri1);
         assertEquals(server1.buildHash(), server2.buildHash());
     }
+
 }
