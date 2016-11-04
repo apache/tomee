@@ -47,6 +47,7 @@ public class TomEERemoteWebapp extends IgnoredStandardContext {
         if (BASIC_AUTH_ROLE_NAME != null) {
             LoginConfig config = new LoginConfig();
             config.setAuthMethod("BASIC");
+            config.setRealmName("TomEERemoteWebapp");
             SecurityConstraint constraint = new SecurityConstraint();
             SecurityCollection collection = new SecurityCollection();
             collection.addPattern("/*");

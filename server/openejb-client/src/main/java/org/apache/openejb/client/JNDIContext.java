@@ -88,7 +88,6 @@ public class JNDIContext implements InitialContextFactory, Context {
     private ClientInstance clientIdentity;
     // TODO read HTTP_AUTH_DISABLE on creation
     private boolean disableHttpAuth = false;
-    private JNDIContextAuth jndiContextAuth;
 
     private static final ThreadPoolExecutor GLOBAL_CLIENT_POOL = newExecutor(10, null);
 
@@ -226,19 +225,16 @@ public class JNDIContext implements InitialContextFactory, Context {
         req.setServerHash(server.buildHash());
 
         final JNDIResponse response = new JNDIResponse();
-        if (authenticationInfo != null && !disableHttpAuth){
-            Client.request(req, response, server, jndiContextAuth);
-        } else {
-            Client.request(req, response, server, null);
-        }
+        Client.request(req, response, server);
         if (null != response.getServer()) {
             server.merge(response.getServer());
         }
         return response;
     }
 
+
     protected AuthenticationResponse requestAuthorization(final AuthenticationRequest req) throws RemoteException {
-        return (AuthenticationResponse) Client.request(req, new AuthenticationResponse(), server, jndiContextAuth);
+        return (AuthenticationResponse) Client.request(req, new AuthenticationResponse(), server);
     }
 
     @Override
@@ -249,8 +245,7 @@ public class JNDIContext implements InitialContextFactory, Context {
             env = (Hashtable) environment.clone();
         }
 
-        jndiContextAuth = new JNDIContextAuth((String) env.get(Context.SECURITY_PRINCIPAL),
-                ((String) env.get(Context.SECURITY_CREDENTIALS)));
+
         String providerUrl = (String) env.get(Context.PROVIDER_URL);
 
         final boolean authWithRequest = "true"
@@ -267,6 +262,11 @@ public class JNDIContext implements InitialContextFactory, Context {
                             .initCause(e);
         }
         this.server = new ServerMetaData(location);
+        String securityPrincipal = (String) env.get(Context.SECURITY_PRINCIPAL);
+        String securityCredentials = (String) env.get(Context.SECURITY_CREDENTIALS);
+        if (securityPrincipal != null) {
+            server = new ServerMetaData(server, securityPrincipal, securityCredentials);
+        }
 
         final Client.Context context = Client.getContext(this.server);
         context.getProperties().putAll(environment);
@@ -278,12 +278,12 @@ public class JNDIContext implements InitialContextFactory, Context {
 
         // TODO: Either aggressively initiate authentication or wait for the
         // server to send us an authentication challenge.
-        if (jndiContextAuth.username != null) {
+        if (securityPrincipal != null) {
             if (!authWithRequest) {
-                authenticate(jndiContextAuth.username, String.valueOf(jndiContextAuth.password), false);
+                authenticate(securityPrincipal, securityCredentials, false);
             } else {
                 authenticationInfo = new AuthenticationInfo(String.class.cast(env.get(AUTHENTICATION_REALM_NAME)),
-                        jndiContextAuth.username, jndiContextAuth.password, getTimeout(env));
+                        securityPrincipal, securityCredentials.toCharArray(), getTimeout(env));
             }
         }
         if (client == null) {
@@ -370,7 +370,7 @@ public class JNDIContext implements InitialContextFactory, Context {
 
     public void authenticate(final String userID, final String psswrd, final boolean logout)
             throws AuthenticationException {
-
+//TODO needs http auth
         final AuthenticationRequest req = new AuthenticationRequest(
                 String.class.cast(env.get(AUTHENTICATION_REALM_NAME)), userID, psswrd, getTimeout(env));
 

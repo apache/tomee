@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 package org.apache.openejb.client;
-
+import static javax.xml.bind.DatatypeConverter.printBase64Binary;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -23,6 +23,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
@@ -90,6 +91,12 @@ public class HttpConnectionFactory implements ConnectionFactory {
 
             if (params.containsKey("readTimeout")) {
                 httpURLConnection.setReadTimeout(Integer.parseInt(params.get("readTimeout")));
+            }
+
+            if (uri.getUserInfo() != null) {
+                String authorization = "Basic "
+                        + printBase64Binary((url.getUserInfo()).getBytes(StandardCharsets.UTF_8));
+                httpURLConnection.setRequestProperty("Authorization", authorization);
             }
 
             if (params.containsKey("sslKeyStore") || params.containsKey("sslTrustStore")) {
@@ -181,10 +188,6 @@ public class HttpConnectionFactory implements ConnectionFactory {
                 inputStream = httpURLConnection.getInputStream();
             }
             return inputStream;
-        }
-
-        public void setAuthenticationHeader(JNDIContextAuth jndiContextAuth) {
-            jndiContextAuth.setAuthenticationHeader(httpURLConnection);
         }
     }
 }
