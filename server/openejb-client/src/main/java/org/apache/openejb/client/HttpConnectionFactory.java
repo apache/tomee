@@ -51,7 +51,7 @@ public class HttpConnectionFactory implements ConnectionFactory {
         }
         try {
             return new HttpConnection(uri, socketFactoryMap, buffer);
-        } finally { // auto adjusting buffer caching, queue avoids leaks (!=ThreadLocal)
+        } finally { // auto adjusting buffer caching, queue avoids leaks (!= ThreadLocal)
             drainBuffers.add(buffer);
         }
     }
@@ -63,15 +63,14 @@ public class HttpConnectionFactory implements ConnectionFactory {
         private OutputStream outputStream;
         private final URI uri;
 
-        public HttpConnection(final URI uri, final ConcurrentMap<URI, SSLSocketFactory> socketFactoryMap, final byte[] buffer)
-                throws IOException {
+        public HttpConnection(final URI uri, final ConcurrentMap<URI, SSLSocketFactory> socketFactoryMap,
+                final byte[] buffer) throws IOException {
             this.uri = uri;
             this.buffer = buffer;
             final URL url = uri.toURL();
 
             final Map<String, String> params;
             try {
-                // TODO username:password
                 params = MulticastConnectionFactory.URIs.parseParamters(uri);
             } catch (final URISyntaxException e) {
                 throw new IllegalArgumentException("Invalid uri " + uri.toString(), e);
@@ -127,7 +126,7 @@ public class HttpConnectionFactory implements ConnectionFactory {
             try {
                 close();
             } catch (final Exception e) {
-                // Ignore
+                //Ignore
             }
         }
 
@@ -141,8 +140,7 @@ public class HttpConnectionFactory implements ConnectionFactory {
             IOException exception = null;
             if (inputStream != null) {
                 // consume anything left in the buffer
-                try {// use a buffer cause it is faster, check
-                     // HttpInputStreamImpl
+                try {// use a buffer cause it is faster, check HttpInputStreamImpl
                     while (inputStream.read(buffer) > -1) {
                         // no-op
                     }

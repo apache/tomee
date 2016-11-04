@@ -234,8 +234,7 @@ public class JNDIContext implements InitialContextFactory, Context {
 
         String providerUrl = (String) env.get(Context.PROVIDER_URL);
 
-        final boolean authWithRequest = "true"
-                .equalsIgnoreCase(String.class.cast(env.get(AUTHENTICATE_WITH_THE_REQUEST)));
+        final boolean authWithRequest = "true".equalsIgnoreCase(String.class.cast(env.get(AUTHENTICATE_WITH_THE_REQUEST)));
         moduleId = (String) env.get("openejb.client.moduleId");
 
         final URI location;
@@ -268,8 +267,8 @@ public class JNDIContext implements InitialContextFactory, Context {
             if (!authWithRequest) {
                 authenticate(securityPrincipal, securityCredentials, false);
             } else {
-                authenticationInfo = new AuthenticationInfo(String.class.cast(env.get(AUTHENTICATION_REALM_NAME)),
-                        securityPrincipal, securityCredentials.toCharArray(), getTimeout(env));
+                authenticationInfo = new AuthenticationInfo(String.class.cast(env.get(AUTHENTICATION_REALM_NAME)), securityPrincipal,
+                        securityCredentials.toCharArray(), getTimeout(env));
             }
         }
         if (client == null) {
@@ -283,6 +282,17 @@ public class JNDIContext implements InitialContextFactory, Context {
         threads = Integer.parseInt(getProperty(env, "openejb.client.invoker.threads", "-1"));
 
         return this;
+    }
+
+    private void seedClientSerializer() {
+        final String serializer = (String) env.get(SERIALIZER);
+        if (serializer != null) {
+            try {
+                client.setSerializer(EJBDSerializer.class.cast(Thread.currentThread().getContextClassLoader().loadClass(serializer).newInstance()));
+            } catch (final Exception e) {
+                // no-op
+            }
+        }
     }
 
     private long getTimeout(final Hashtable env) {
