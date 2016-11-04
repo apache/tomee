@@ -35,7 +35,7 @@ public class ServerMetaData implements Externalizable {
     private transient URI[] locations;
     private transient URI location;
     private transient ProtocolMetaData metaData;
-    
+
     public ServerMetaData() {
     }
 

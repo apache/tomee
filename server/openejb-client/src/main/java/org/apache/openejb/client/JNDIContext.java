@@ -224,6 +224,7 @@ public class JNDIContext implements InitialContextFactory, Context {
         return (AuthenticationResponse) Client.request(req, new AuthenticationResponse(), server);
     }
 
+    @Override
     public Context getInitialContext(final Hashtable environment) throws NamingException {
         if (environment == null) {
             throw new NamingException("Invalid argument, hashtable cannot be null.");

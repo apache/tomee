@@ -64,7 +64,7 @@ public class HttpConnectionFactory implements ConnectionFactory {
         private final URI uri;
 
         public HttpConnection(final URI uri, final ConcurrentMap<URI, SSLSocketFactory> socketFactoryMap,
-                final byte[] buffer) throws IOException {
+                              final byte[] buffer) throws IOException {
             this.uri = uri;
             this.buffer = buffer;
             final URL url = uri.toURL();
