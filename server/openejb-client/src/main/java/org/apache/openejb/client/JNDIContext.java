@@ -224,7 +224,6 @@ public class JNDIContext implements InitialContextFactory, Context {
         return (AuthenticationResponse) Client.request(req, new AuthenticationResponse(), server);
     }
 
-    @Override
     public Context getInitialContext(final Hashtable environment) throws NamingException {
         if (environment == null) {
             throw new NamingException("Invalid argument, hashtable cannot be null.");
@@ -232,11 +231,11 @@ public class JNDIContext implements InitialContextFactory, Context {
             env = (Hashtable) environment.clone();
         }
 
-        final String userID = (String) env.get(Context.SECURITY_PRINCIPAL);
-        final String psswrd = (String) env.get(Context.SECURITY_CREDENTIALS);
+
         String providerUrl = (String) env.get(Context.PROVIDER_URL);
 
-        final boolean authWithRequest = "true".equalsIgnoreCase(String.class.cast(env.get(AUTHENTICATE_WITH_THE_REQUEST)));
+        final boolean authWithRequest = "true"
+                .equalsIgnoreCase(String.class.cast(env.get(AUTHENTICATE_WITH_THE_REQUEST)));
         moduleId = (String) env.get("openejb.client.moduleId");
 
         final URI location;
@@ -244,14 +243,16 @@ public class JNDIContext implements InitialContextFactory, Context {
             providerUrl = addMissingParts(providerUrl);
             location = new URI(providerUrl);
         } catch (final URISyntaxException e) {
-            throw (ConfigurationException) new ConfigurationException("Property value for " +
-                    Context.PROVIDER_URL +
-                    " invalid: " +
-                    providerUrl +
-                    " - " +
-                    e.getMessage()).initCause(e);
+            throw (ConfigurationException) new ConfigurationException(
+                    "Property value for " + Context.PROVIDER_URL + " invalid: " + providerUrl + " - " + e.getMessage())
+                            .initCause(e);
         }
         this.server = new ServerMetaData(location);
+        String securityPrincipal = (String) env.get(Context.SECURITY_PRINCIPAL);
+        String securityCredentials = (String) env.get(Context.SECURITY_CREDENTIALS);
+        if (securityPrincipal != null) {
+            server = new ServerMetaData(server, securityPrincipal, securityCredentials);
+        }
 
         final Client.Context context = Client.getContext(this.server);
         context.getProperties().putAll(environment);
@@ -261,12 +262,14 @@ public class JNDIContext implements InitialContextFactory, Context {
 
         Client.fireEvent(new RemoteInitialContextCreated(location));
 
-        //TODO: Either aggressively initiate authentication or wait for the server to send us an authentication challenge.
-        if (userID != null) {
+        // TODO: Either aggressively initiate authentication or wait for the
+        // server to send us an authentication challenge.
+        if (securityPrincipal != null) {
             if (!authWithRequest) {
-                authenticate(userID, psswrd, false);
+                authenticate(securityPrincipal, securityCredentials, false);
             } else {
-                authenticationInfo = new AuthenticationInfo(String.class.cast(env.get(AUTHENTICATION_REALM_NAME)), userID, psswrd.toCharArray(), getTimeout(env));
+                authenticationInfo = new AuthenticationInfo(String.class.cast(env.get(AUTHENTICATION_REALM_NAME)),
+                        securityPrincipal, securityCredentials.toCharArray(), getTimeout(env));
             }
         }
         if (client == null) {
@@ -280,17 +283,6 @@ public class JNDIContext implements InitialContextFactory, Context {
         threads = Integer.parseInt(getProperty(env, "openejb.client.invoker.threads", "-1"));
 
         return this;
-    }
-
-    private void seedClientSerializer() {
-        final String serializer = (String) env.get(SERIALIZER);
-        if (serializer != null) {
-            try {
-                client.setSerializer(EJBDSerializer.class.cast(Thread.currentThread().getContextClassLoader().loadClass(serializer).newInstance()));
-            } catch (final Exception e) {
-                // no-op
-            }
-        }
     }
 
     private long getTimeout(final Hashtable env) {
