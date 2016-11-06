@@ -17,13 +17,11 @@
     specific language governing permissions and limitations
     under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <artifactId>tomee</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>7.0.2-SNAPSHOT</version>
+    <version>7.0.2</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -41,13 +39,13 @@
     <dependency> <!-- openejb-core is not needed but parent import it so setting it as provided to avoid wrong packaging -->
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>${project.version}</version>
+      <version>7.0.2</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>tomee-catalina</artifactId>
-      <version>${project.version}</version>
+      <version>7.0.2</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

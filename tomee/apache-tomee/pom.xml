@@ -18,13 +18,12 @@
 
 <!-- $Rev: 600338 $ $Date: 2007-12-02 09:08:04 -0800 (Sun, 02 Dec 2007) $ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <parent>
     <artifactId>tomee</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>7.0.2-SNAPSHOT</version>
+    <version>7.0.2</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -73,21 +72,21 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>tomee-common</artifactId>
-      <version>${project.version}</version>
+      <version>7.0.2</version>
       <type>jar</type>
       <scope>provided</scope>
     </dependency>
     <dependency> <!-- to be sure to have it -->
       <groupId>${project.groupId}</groupId>
       <artifactId>tomee-plus-webapp</artifactId>
-      <version>${project.version}</version>
+      <version>7.0.2</version>
       <type>war</type>
       <scope>provided</scope>
     </dependency>
     <dependency> <!-- to be sure to have it -->
       <groupId>${project.groupId}</groupId>
       <artifactId>tomee-plume-webapp</artifactId>
-      <version>${project.version}</version>
+      <version>7.0.2</version>
       <type>war</type>
       <scope>provided</scope>
     </dependency>
@@ -96,17 +95,17 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>tomee-util</artifactId>
-      <version>${project.version}</version>
+      <version>7.0.2</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-client</artifactId>
-      <version>${project.version}</version>
+      <version>7.0.2</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>${project.version}</version>
+      <version>7.0.2</version>
       <type>jar</type>
     </dependency>
   </dependencies>
@@ -235,7 +234,7 @@
           <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>openejb-jpa-integration</artifactId>
-            <version>${project.version}</version>
+            <version>7.0.2</version>
           </dependency>
           <dependency>
             <groupId>org.apache.xbean</groupId>
@@ -324,7 +323,7 @@
               </descriptors>
               <attach>false</attach>
               <appendAssemblyId>false</appendAssemblyId>
-              <finalName>apache-tomee-webprofile-${project.version}</finalName>
+              <finalName>apache-tomee-webprofile-7.0.2</finalName>
             </configuration>
             <goals>
               <goal>single</goal>
@@ -339,7 +338,7 @@
               </descriptors>
               <attach>false</attach>
               <appendAssemblyId>false</appendAssemblyId>
-              <finalName>apache-tomee-plus-${project.version}</finalName>
+              <finalName>apache-tomee-plus-7.0.2</finalName>
             </configuration>
             <goals>
               <goal>single</goal>
@@ -354,7 +353,7 @@
               </descriptors>
               <attach>false</attach>
               <appendAssemblyId>false</appendAssemblyId>
-              <finalName>apache-tomee-plume-${project.version}</finalName>
+              <finalName>apache-tomee-plume-7.0.2</finalName>
             </configuration>
             <goals>
               <goal>single</goal>
@@ -376,32 +375,32 @@
             <configuration>
               <artifacts>
                 <artifact>
-                  <file>${project.build.directory}/apache-tomee-webprofile-${project.version}.zip</file>
+                  <file>${project.build.directory}/apache-tomee-webprofile-7.0.2.zip</file>
                   <type>zip</type>
                   <classifier>webprofile</classifier>
                 </artifact>
                 <artifact>
-                  <file>${project.build.directory}/apache-tomee-webprofile-${project.version}.tar.gz</file>
+                  <file>${project.build.directory}/apache-tomee-webprofile-7.0.2.tar.gz</file>
                   <type>tar.gz</type>
                   <classifier>webprofile</classifier>
                 </artifact>
                 <artifact>
-                  <file>${project.build.directory}/apache-tomee-plus-${project.version}.zip</file>
+                  <file>${project.build.directory}/apache-tomee-plus-7.0.2.zip</file>
                   <type>zip</type>
                   <classifier>plus</classifier>
                 </artifact>
                 <artifact>
-                  <file>${project.build.directory}/apache-tomee-plus-${project.version}.tar.gz</file>
+                  <file>${project.build.directory}/apache-tomee-plus-7.0.2.tar.gz</file>
                   <type>tar.gz</type>
                   <classifier>plus</classifier>
                 </artifact>
                 <artifact>
-                  <file>${project.build.directory}/apache-tomee-plume-${project.version}.zip</file>
+                  <file>${project.build.directory}/apache-tomee-plume-7.0.2.zip</file>
                   <type>zip</type>
                   <classifier>plume</classifier>
                 </artifact>
                 <artifact>
-                  <file>${project.build.directory}/apache-tomee-plume-${project.version}.tar.gz</file>
+                  <file>${project.build.directory}/apache-tomee-plume-7.0.2.tar.gz</file>
                   <type>tar.gz</type>
                   <classifier>plume</classifier>
                 </artifact>

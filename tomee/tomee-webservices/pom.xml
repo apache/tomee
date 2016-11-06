@@ -19,12 +19,11 @@
 
 <!-- $Rev: 600338 $ $Date: 2007-12-02 09:08:04 -0800 (Sun, 02 Dec 2007) $ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>tomee</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>7.0.2-SNAPSHOT</version>
+    <version>7.0.2</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>tomee-webservices</artifactId>
@@ -53,22 +52,22 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-webservices</artifactId>
-      <version>${project.version}</version>
+      <version>7.0.2</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-rest</artifactId>
-      <version>${project.version}</version>
+      <version>7.0.2</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-cxf-rs</artifactId>
-      <version>${project.version}</version>
+      <version>7.0.2</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-cxf</artifactId>
-      <version>${project.version}</version>
+      <version>7.0.2</version>
       <exclusions>
         <exclusion>
           <groupId>javax.xml.stream</groupId>
@@ -79,32 +78,32 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>tomee-common</artifactId>
-      <version>${project.version}</version>
+      <version>7.0.2</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>tomee-loader</artifactId>
-      <version>${project.version}</version>
+      <version>7.0.2</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>tomee-catalina</artifactId>
-      <version>${project.version}</version>
+      <version>7.0.2</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-server</artifactId>
-      <version>${project.version}</version>
+      <version>7.0.2</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-ejbd</artifactId>
-      <version>${project.version}</version>
+      <version>7.0.2</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-http</artifactId>
-      <version>${project.version}</version>
+      <version>7.0.2</version>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
@@ -115,7 +114,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>tomee-jaxrs</artifactId>
-      <version>${project.version}</version>
+      <version>7.0.2</version>
     </dependency>
   </dependencies>
 </project>

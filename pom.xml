@@ -18,8 +18,7 @@
 
 <!-- $Rev$ $Date$ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -33,7 +32,7 @@
   <groupId>org.apache.tomee</groupId>
   <artifactId>tomee-project</artifactId>
   <packaging>pom</packaging>
-  <version>7.0.2-SNAPSHOT</version>
+  <version>7.0.2</version>
 
   <name>Apache OpenEJB</name>
   <description>Apache OpenEJB is an open source, modular, configurable and extensible EJB Container System and EJB Server.</description>
@@ -88,10 +87,11 @@
     <connection>scm:git:https://git-wip-us.apache.org/repos/asf/tomee.git</connection>
     <developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/tomee.git</developerConnection>
     <url>http://git-wip-us.apache.org/repos/asf/tomee.git</url>
+    <tag>tomee-project-7.0.2</tag>
   </scm>
 
   <properties>
-    <tomee.version>${project.version}</tomee.version>
+    <tomee.version>7.0.2</tomee.version>
     
     <!-- to change easily the javaee api version -->
     <version.javaee-api>7.0-1</version.javaee-api>
@@ -108,16 +108,16 @@
     <xbeanVersion>4.5</xbeanVersion>
 
     <!-- OSGi bundles properties -->
-    <openejb.bundle.activator/>
+    <openejb.bundle.activator />
     <openejb.osgi.import.pkg>*</openejb.osgi.import.pkg>
     <openejb.osgi.import>${openejb.osgi.import.pkg}</openejb.osgi.import>
     <openejb.osgi.export.pkg>org.apache.tomee</openejb.osgi.export.pkg>
     <openejb.osgi.export>${openejb.osgi.export.pkg}*;version=${openejb.osgi.export.version}</openejb.osgi.export>
-    <openejb.osgi.fragment/>
-    <openejb.osgi.require/>
+    <openejb.osgi.fragment />
+    <openejb.osgi.require />
     <openejb.osgi.private.pkg>!*</openejb.osgi.private.pkg>
-    <openejb.osgi.dynamic.import.pkg/>
-    <openejb.osgi.export.version>${project.version}</openejb.osgi.export.version>
+    <openejb.osgi.dynamic.import.pkg />
+    <openejb.osgi.export.version>7.0.2</openejb.osgi.export.version>
     <openejb.osgi.dynamic.import>${openejb.osgi.dynamic.import.pkg}</openejb.osgi.dynamic.import>
     <openejb.osgi.symbolic.name>${project.groupId}.${project.artifactId}</openejb.osgi.symbolic.name>
 
@@ -337,7 +337,7 @@
           <!-- the following settings are important when working with git -->
           <localCheckout>true</localCheckout>
           <pushChanges>false</pushChanges>
-          <releaseProfiles></releaseProfiles>
+          <releaseProfiles />
         </configuration>
       </plugin>
 
@@ -379,7 +379,7 @@
             <DynamicImport-Package>${openejb.osgi.dynamic.import}</DynamicImport-Package>
             <Private-Package>${openejb.osgi.private.pkg}</Private-Package>
             <Implementation-Title>Apache OpenEJB</Implementation-Title>
-            <Implementation-Version>${project.version}</Implementation-Version>
+            <Implementation-Version>7.0.2</Implementation-Version>
             <Include-Resource>{maven-resources}</Include-Resource>
           </instructions>
           <failOnError>false</failOnError>
@@ -431,7 +431,7 @@
           <artifact>
             <groupId>${project.groupId}</groupId>
             <artifactId>tomee</artifactId>
-            <version>${project.version}</version>
+            <version>7.0.2</version>
           </artifact>
           <doapOptions>
             <programmingLanguage>Java</programmingLanguage>

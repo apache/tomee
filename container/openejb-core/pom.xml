@@ -20,14 +20,13 @@
 
 <!-- $Rev$ $Date$ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <artifactId>container</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>7.0.2-SNAPSHOT</version>
+    <version>7.0.2</version>
   </parent>
 
   <artifactId>openejb-core</artifactId>
@@ -275,7 +274,7 @@
                 <artifactItem>
                   <groupId>${project.groupId}</groupId>
                   <artifactId>openejb-javaagent</artifactId>
-                  <version>${project.version}</version>
+                  <version>7.0.2</version>
                   <outputDirectory>${project.build.directory}</outputDirectory>
                 </artifactItem>
               </artifactItems>
@@ -321,7 +320,7 @@
           <forkCount>2</forkCount>
           <testNGArtifactName>none:none</testNGArtifactName>
           <argLine>
-            -javaagent:${project.basedir}/target/openejb-javaagent-${project.version}.jar
+            -javaagent:${project.basedir}/target/openejb-javaagent-7.0.2.jar
             -Dopenejb.classloader.forced-skip=org.apache.openejb.jee.,org.apache.openejb.api.
             -Dopenejb.classloader.forced-load=org.apache.openejb
             -enableassertions
@@ -376,12 +375,10 @@
             <configuration>
               <target>
                 <tstamp>
-                  <format property="TSTAMP" pattern="hh:mm"/>
+                  <format property="TSTAMP" pattern="hh:mm" />
                 </tstamp>
-                <replace file="target/classes/openejb-version.properties"
-                         token="@DATE-REPLACED-BY-MAVEN@" value="${DSTAMP}"/>
-                <replace file="target/classes/openejb-version.properties"
-                         token="@TIME-REPLACED-BY-MAVEN@" value="${TSTAMP}"/>
+                <replace file="target/classes/openejb-version.properties" token="@DATE-REPLACED-BY-MAVEN@" value="${DSTAMP}" />
+                <replace file="target/classes/openejb-version.properties" token="@TIME-REPLACED-BY-MAVEN@" value="${TSTAMP}" />
               </target>
             </configuration>
           </execution>
@@ -397,7 +394,7 @@
               <!--<addClasspath>true</addClasspath>-->
             </manifest>
             <manifestEntries>
-              <Class-Path>openejb-loader-${project.version}.jar openejb-client-${project.version}.jar
+              <Class-Path>openejb-loader-7.0.2.jar openejb-client-7.0.2.jar
                 xbean-finder-shaded-${xbeanVersion}.jar xbean-asm5-shaded-${xbeanVersion}.jar
               </Class-Path>
               <J2EE-DeploymentFactory-Implementation-Class>
@@ -426,12 +423,12 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>mbean-annotation-api</artifactId>
-      <version>${project.version}</version>
+      <version>7.0.2</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-jpa-integration</artifactId>
-      <version>${project.version}</version>
+      <version>7.0.2</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -456,56 +453,56 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-api</artifactId>
-      <version>${project.version}</version>
+      <version>7.0.2</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-loader</artifactId>
-      <version>${project.version}</version>
+      <version>7.0.2</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-javaagent</artifactId>
-      <version>${project.version}</version>
+      <version>7.0.2</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-jee</artifactId>
-      <version>${project.version}</version>
+      <version>7.0.2</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-jee-accessors</artifactId>
-      <version>${project.version}</version>
+      <version>7.0.2</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-itests-app</artifactId>
-      <version>${project.version}</version>
+      <version>7.0.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.itests</groupId>
       <artifactId>failover-ejb</artifactId>
-      <version>${project.version}</version>
+      <version>7.0.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-itests-beans</artifactId>
-      <version>${project.version}</version>
+      <version>7.0.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-itests-interceptor-beans</artifactId>
-      <version>${project.version}</version>
+      <version>7.0.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-itests-client</artifactId>
-      <version>${project.version}</version>
+      <version>7.0.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -721,7 +718,7 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
               <!--<reuseForks>false</reuseForks>-->
-              <argLine>"-javaagent:${project.basedir}/target/openejb-javaagent-${project.version}.jar" -Xdebug
+              <argLine>"-javaagent:${project.basedir}/target/openejb-javaagent-7.0.2.jar" -Xdebug
                 -Xnoagent -Djava.compiler=NONE
                 -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005
                 -Xms512m -Xmx1024m -XX:PermSize=256m -XX:MaxPermSize=512m

@@ -12,13 +12,12 @@
 
 <!-- $Rev: 684173 $ $Date: 2008-08-08 20:13:24 -0700 (Fri, 08 Aug 2008) $ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.apache.tomee</groupId>
     <artifactId>arquillian</artifactId>
-    <version>7.0.2-SNAPSHOT</version>
+    <version>7.0.2</version>
   </parent>
   <artifactId>arquillian-tomee-moviefun-example</artifactId>
   <packaging>war</packaging>
@@ -252,7 +251,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>tomee-embedded</artifactId>
-      <version>${project.version}</version>
+      <version>7.0.2</version>
       <!--<classifier>uber</classifier>-->
       <scope>test</scope>
     </dependency>
@@ -287,7 +286,7 @@
         <dependency>
           <groupId>${project.groupId}</groupId>
           <artifactId>arquillian-tomee-embedded</artifactId>
-          <version>${project.version}</version>
+          <version>7.0.2</version>
           <scope>test</scope>
         </dependency>
       </dependencies>
@@ -298,7 +297,7 @@
         <dependency>
           <groupId>${project.groupId}</groupId>
           <artifactId>arquillian-tomee-remote</artifactId>
-          <version>${project.version}</version>
+          <version>7.0.2</version>
           <scope>test</scope>
         </dependency>
       </dependencies>

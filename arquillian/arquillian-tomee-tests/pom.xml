@@ -9,15 +9,14 @@
   License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS 
   OF ANY KIND, either express or implied. See the License for the specific 
   language governing permissions and limitations under the License. -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
          
   <modelVersion>4.0.0</modelVersion>
   
   <parent>
     <artifactId>arquillian</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>7.0.2-SNAPSHOT</version>
+    <version>7.0.2</version>
   </parent>
   
   <artifactId>arquillian-tomee-tests</artifactId>
@@ -63,7 +62,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>ziplock</artifactId>
-      <version>${project.version}</version>
+      <version>7.0.2</version>
     </dependency>
 
     <dependency>
@@ -104,29 +103,29 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>arquillian-tomee-embedded</artifactId>
-      <version>${project.version}</version>
+      <version>7.0.2</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>arquillian-tomee-remote</artifactId>
-      <version>${project.version}</version>
+      <version>7.0.2</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>arquillian-tomee-webapp-remote</artifactId>
-      <version>${project.version}</version>
+      <version>7.0.2</version>
     </dependency>
     <dependency> <!-- tomee-embedded needs it + dependencies but tomee-*-remote doesn't need dependencies so to avoid conflicts bringing it back here -->
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>${project.version}</version>
+      <version>7.0.2</version>
     </dependency>
 
     <!-- just to get it in the correct order -->
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>apache-tomee</artifactId>
-      <version>${project.version}</version>
+      <version>7.0.2</version>
       <classifier>webprofile</classifier>
       <type>zip</type>
     </dependency>
@@ -160,9 +159,9 @@
                 </goals>
                 <configuration>
                   <skip>${maven.test.skip}</skip>
-                  <argLine>-javaagent:${settings.localRepository}/org/apache/tomee/openejb-javaagent/${project.version}/openejb-javaagent-${project.version}.jar</argLine>
+                  <argLine>-javaagent:${settings.localRepository}/org/apache/tomee/openejb-javaagent/7.0.2/openejb-javaagent-7.0.2.jar</argLine>
                   <systemPropertyVariables>
-                    <tomee.version>${project.version}</tomee.version>
+                    <tomee.version>7.0.2</tomee.version>
                     <arquillian.launch>tomee-embedded</arquillian.launch>
                     <openejb.arquillian.adapter>tomee-embedded</openejb.arquillian.adapter>
                   </systemPropertyVariables>
@@ -197,9 +196,9 @@
                 <configuration>
                   <source>
                     // goal: manage the profile-under-test property
-                    // -> set to webprofile use all distributions
-                    // -> set to plus use only plus
-                    // -> set to plume use only plume
+                    // -&gt; set to webprofile use all distributions
+                    // -&gt; set to plus use only plus
+                    // -&gt; set to plume use only plume
                     def props = project.properties
 
                     def skip = props['maven.test.skip']
@@ -261,7 +260,7 @@
                   <skip>${skip.remote.webprofile}</skip>
                   <systemPropertyVariables>
                     <openejb.arquillian.debug>true</openejb.arquillian.debug>
-                    <tomee.version>${project.version}</tomee.version>
+                    <tomee.version>7.0.2</tomee.version>
                     <tomee.classifier>webprofile</tomee.classifier>
                     <arquillian.launch>tomee-remote</arquillian.launch>
                     <openejb.arquillian.adapter>tomee-remote</openejb.arquillian.adapter>
@@ -276,9 +275,9 @@
                 </goals>
                 <configuration>
                   <skip>${skip.embedded}</skip>
-                  <argLine>-javaagent:${settings.localRepository}/org/apache/tomee/openejb-javaagent/${project.version}/openejb-javaagent-${project.version}.jar -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=768M</argLine>
+                  <argLine>-javaagent:${settings.localRepository}/org/apache/tomee/openejb-javaagent/7.0.2/openejb-javaagent-7.0.2.jar -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=768M</argLine>
                   <systemPropertyVariables>
-                    <tomee.version>${project.version}</tomee.version>
+                    <tomee.version>7.0.2</tomee.version>
                     <arquillian.launch>tomee-embedded</arquillian.launch>
                     <openejb.arquillian.adapter>tomee-embedded</openejb.arquillian.adapter>
                   </systemPropertyVariables>
@@ -294,7 +293,7 @@
                   <skip>${skip.remote.plume}</skip>
                   <systemPropertyVariables>
                     <openejb.arquillian.debug>true</openejb.arquillian.debug>
-                    <tomee.version>${project.version}</tomee.version>
+                    <tomee.version>7.0.2</tomee.version>
                     <tomee.classifier>plume</tomee.classifier>
                     <arquillian.launch>tomee-remote</arquillian.launch>
                     <openejb.arquillian.adapter>tomee-remote</openejb.arquillian.adapter>
@@ -314,7 +313,7 @@
                   <skip>${skip.remote.plus}</skip>
                   <systemPropertyVariables>
                     <openejb.arquillian.debug>true</openejb.arquillian.debug>
-                    <tomee.version>${project.version}</tomee.version>
+                    <tomee.version>7.0.2</tomee.version>
                     <tomee.classifier>plus</tomee.classifier>
                     <arquillian.launch>tomee-remote</arquillian.launch>
                     <openejb.arquillian.adapter>tomee-remote</openejb.arquillian.adapter>
@@ -330,7 +329,7 @@
                 <configuration>
                   <skip>${skip.webapp.webprofile}</skip>
                   <systemPropertyVariables>
-                    <tomee.version>${project.version}</tomee.version>
+                    <tomee.version>7.0.2</tomee.version>
                     <tomee.tomcatVersion>${tomcat.version}</tomee.tomcatVersion>
                     <tomee.artifactId>tomee-webapp</tomee.artifactId>
                     <arquillian.launch>tomee-webapp</arquillian.launch>
@@ -347,7 +346,7 @@
                 <configuration>
                   <skip>${skip.webapp.plus}</skip>
                   <systemPropertyVariables>
-                    <tomee.version>${project.version}</tomee.version>
+                    <tomee.version>7.0.2</tomee.version>
                     <tomee.tomcatVersion>${tomcat.version}</tomee.tomcatVersion>
                     <tomee.artifactId>tomee-plus-webapp</tomee.artifactId>
                     <arquillian.launch>tomee-webapp</arquillian.launch>
@@ -364,7 +363,7 @@
                 <configuration>
                   <skip>${skip.webapp.plume}</skip>
                   <systemPropertyVariables>
-                    <tomee.version>${project.version}</tomee.version>
+                    <tomee.version>7.0.2</tomee.version>
                     <tomee.tomcatVersion>${tomcat.version}</tomee.tomcatVersion>
                     <tomee.artifactId>tomee-plume-webapp</tomee.artifactId>
                     <arquillian.launch>tomee-webapp</arquillian.launch>
@@ -395,38 +394,38 @@
         <dependency>
           <groupId>${project.groupId}</groupId>
           <artifactId>arquillian-tomee-embedded</artifactId>
-          <version>${project.version}</version>
+          <version>7.0.2</version>
         </dependency>
         <dependency>
           <groupId>${project.groupId}</groupId>
           <artifactId>arquillian-tomee-remote</artifactId>
-          <version>${project.version}</version>
+          <version>7.0.2</version>
         </dependency>
         <dependency>
           <groupId>${project.groupId}</groupId>
           <artifactId>arquillian-tomee-webapp-remote</artifactId>
-          <version>${project.version}</version>
+          <version>7.0.2</version>
         </dependency>
 
         <!-- just to get it in the correct order -->
         <dependency>
           <groupId>${project.groupId}</groupId>
           <artifactId>apache-tomee</artifactId>
-          <version>${project.version}</version>
+          <version>7.0.2</version>
           <classifier>webprofile</classifier>
           <type>zip</type>
         </dependency>
         <dependency>
           <groupId>${project.groupId}</groupId>
           <artifactId>apache-tomee</artifactId>
-          <version>${project.version}</version>
+          <version>7.0.2</version>
           <classifier>plus</classifier>
           <type>zip</type>
         </dependency>
         <dependency>
           <groupId>${project.groupId}</groupId>
           <artifactId>apache-tomee</artifactId>
-          <version>${project.version}</version>
+          <version>7.0.2</version>
           <classifier>plume</classifier>
           <type>zip</type>
         </dependency>
@@ -434,19 +433,19 @@
         <dependency>
           <groupId>${project.groupId}</groupId>
           <artifactId>tomee-webapp</artifactId>
-          <version>${project.version}</version>
+          <version>7.0.2</version>
           <type>war</type>
         </dependency>
         <dependency>
           <groupId>${project.groupId}</groupId>
           <artifactId>tomee-plus-webapp</artifactId>
-          <version>${project.version}</version>
+          <version>7.0.2</version>
           <type>war</type>
         </dependency>
         <dependency>
           <groupId>${project.groupId}</groupId>
           <artifactId>tomee-plume-webapp</artifactId>
-          <version>${project.version}</version>
+          <version>7.0.2</version>
           <type>war</type>
         </dependency>
         <dependency>
@@ -474,7 +473,7 @@
                   <skip>${maven.test.skip}</skip>
                   <argLine>-XX:MaxPermSize=768M</argLine>
                   <systemPropertyVariables>
-                    <tomee.version>${project.version}</tomee.version>
+                    <tomee.version>7.0.2</tomee.version>
                     <arquillian.launch>tomee-embedded</arquillian.launch>
                     <openejb.arquillian.adapter>tomee-embedded</openejb.arquillian.adapter>
                   </systemPropertyVariables>
@@ -493,7 +492,7 @@
                   <skip>${maven.test.skip}</skip>
                   <systemPropertyVariables>
                     <openejb.arquillian.debug>true</openejb.arquillian.debug>
-                    <tomee.version>${project.version}</tomee.version>
+                    <tomee.version>7.0.2</tomee.version>
                     <tomee.classifier>webprofile</tomee.classifier>
                     <arquillian.launch>tomee-remote</arquillian.launch>
                     <openejb.arquillian.adapter>tomee-remote</openejb.arquillian.adapter>
@@ -510,7 +509,7 @@
                   <skip>${maven.test.skip}</skip>
                   <systemPropertyVariables>
                     <openejb.arquillian.debug>true</openejb.arquillian.debug>
-                    <tomee.version>${project.version}</tomee.version>
+                    <tomee.version>7.0.2</tomee.version>
                     <tomee.classifier>plus</tomee.classifier>
                     <arquillian.launch>tomee-remote</arquillian.launch>
                     <openejb.arquillian.adapter>tomee-remote</openejb.arquillian.adapter>
@@ -527,7 +526,7 @@
                   <skip>${maven.test.skip}</skip>
                   <systemPropertyVariables>
                     <openejb.arquillian.debug>true</openejb.arquillian.debug>
-                    <tomee.version>${project.version}</tomee.version>
+                    <tomee.version>7.0.2</tomee.version>
                     <tomee.classifier>plume</tomee.classifier>
                     <arquillian.launch>tomee-remote</arquillian.launch>
                     <openejb.arquillian.adapter>tomee-remote</openejb.arquillian.adapter>
@@ -549,7 +548,7 @@
                 <configuration>
                   <skip>${maven.test.skip}</skip>
                   <systemPropertyVariables>
-                    <tomee.version>${project.version}</tomee.version>
+                    <tomee.version>7.0.2</tomee.version>
                     <tomee.tomcatVersion>${tomcat.version}</tomee.tomcatVersion>
                     <tomee.artifactId>tomee-webapp</tomee.artifactId>
                     <arquillian.launch>tomee-webapp</arquillian.launch>
@@ -566,7 +565,7 @@
                 <configuration>
                   <skip>${maven.test.skip}</skip>
                   <systemPropertyVariables>
-                    <tomee.version>${project.version}</tomee.version>
+                    <tomee.version>7.0.2</tomee.version>
                     <tomee.tomcatVersion>${tomcat.version}</tomee.tomcatVersion>
                     <tomee.artifactId>tomee-plus-webapp</tomee.artifactId>
                     <arquillian.launch>tomee-webapp</arquillian.launch>
@@ -583,7 +582,7 @@
                 <configuration>
                   <skip>${maven.test.skip}</skip>
                   <systemPropertyVariables>
-                    <tomee.version>${project.version}</tomee.version>
+                    <tomee.version>7.0.2</tomee.version>
                     <tomee.tomcatVersion>${tomcat.version}</tomee.tomcatVersion>
                     <tomee.artifactId>tomee-plume-webapp</tomee.artifactId>
                     <arquillian.launch>tomee-webapp</arquillian.launch>
