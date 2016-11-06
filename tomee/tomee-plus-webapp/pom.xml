@@ -54,7 +54,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-cxf-rs</artifactId>
-      <version>${tomee.version}</version>
+      <version>${project.version}</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
@@ -66,7 +66,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-cxf-transport</artifactId>
-      <version>${tomee.version}</version>
+      <version>${project.version}</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
@@ -78,7 +78,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-cxf</artifactId>
-      <version>${tomee.version}</version>
+      <version>${project.version}</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
@@ -90,7 +90,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-rest</artifactId>
-      <version>${tomee.version}</version>
+      <version>${project.version}</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
@@ -102,7 +102,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-webservices</artifactId>
-      <version>${tomee.version}</version>
+      <version>${project.version}</version>
       <exclusions>
         <exclusion>
           <groupId>${project.groupId}</groupId>
@@ -150,13 +150,13 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-provisionning</artifactId>
-      <version>${tomee.version}</version>
+      <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-ssh</artifactId>
-      <version>${tomee.version}</version>
+      <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     -->
