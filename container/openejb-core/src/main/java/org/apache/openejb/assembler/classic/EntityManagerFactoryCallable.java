@@ -31,6 +31,7 @@ import javax.persistence.ValidationMode;
 import javax.persistence.spi.PersistenceProvider;
 import javax.transaction.Transaction;
 import javax.validation.ValidatorFactory;
+import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -86,26 +87,8 @@ public class EntityManagerFactoryCallable implements Callable<EntityManagerFacto
             }
             if (cdi && "true".equalsIgnoreCase(unitInfo.getProperties().getProperty("tomee.jpa.cdi", "true"))
                     && "true".equalsIgnoreCase(SystemInstance.get().getProperty("tomee.jpa.cdi", "true"))) {
-                properties.put("javax.persistence.bean.manager", // TODO: impl a passthrough BM?
-                        Proxy.newProxyInstance(appClassLoader, new Class<?>[]{BeanManager.class}, new InvocationHandler() {
-                            private volatile BeanManager bm;
-
-                            @Override
-                            public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-                                try {
-                                    return method.invoke(findBm(), args);
-                                } catch (final InvocationTargetException ite) {
-                                    Logger.getInstance(LogCategory.OPENEJB_JPA, EntityManagerFactoryCallable.class)
-                                            .warning("Exception calling CDI, if a lifecycle issue you should maybe set tomee.jpa.factory.lazy=true", ite.getCause());
-                                    throw ite.getCause();
-                                }
-                            }
-
-                            private Object findBm() {
-                                return bm != null ? bm : (bm = new InjectableBeanManager(WebBeansContext.currentInstance().getBeanManagerImpl()));
-                            }
-                        })
-                );
+                properties.put("javax.persistence.bean.manager",
+                        Proxy.newProxyInstance(appClassLoader, new Class<?>[]{BeanManager.class}, new BmHandler()));
             }
 
             customizeProperties(properties);
@@ -160,5 +143,31 @@ public class EntityManagerFactoryCallable implements Callable<EntityManagerFacto
 
     public void overrideClassLoader(final ClassLoader loader) {
         appClassLoader = loader;
+    }
+
+    private static class BmHandler implements InvocationHandler, Serializable {
+        private transient volatile BeanManager bm;
+
+        @Override
+        public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+            try {
+                return method.invoke(findBm(), args);
+            } catch (final InvocationTargetException ite) {
+                Logger.getInstance(LogCategory.OPENEJB_JPA, EntityManagerFactoryCallable.class)
+                        .warning("Exception calling CDI, if a lifecycle issue you should maybe set tomee.jpa.factory.lazy=true", ite.getCause());
+                throw ite.getCause();
+            }
+        }
+
+        private Object findBm() {
+            if (bm == null) {
+                synchronized (this) {
+                    if (bm == null) {
+                        bm = new InjectableBeanManager(WebBeansContext.currentInstance().getBeanManagerImpl());
+                    }
+                }
+            }
+            return bm;
+        }
     }
 }
