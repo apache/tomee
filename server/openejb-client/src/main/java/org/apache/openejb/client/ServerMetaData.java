@@ -51,7 +51,7 @@ public class ServerMetaData implements Externalizable {
             locationList.add(uri);
         }
         locations = locationList.toArray(new URI[server.locations.length]);
-        location = addUserToURI(securityPrincipal, securityPrincipal, server.location);
+        location = addUserToURI(securityPrincipal, securityCredentials, server.location);
         this.metaData = server.metaData;
     }
 
