@@ -32,9 +32,7 @@ import org.junit.runner.RunWith;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import java.io.ByteArrayOutputStream;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 
@@ -87,14 +85,6 @@ public class TomEEEjbServletAuthorizationHeaderTest extends TestSetup  {
                 .authMethod("BASIC");
     }
 
-    public static void main(String[] args) throws Exception {
-        final Properties properties = new Properties();
-        properties.setProperty("tomee", "password");
-        final ByteArrayOutputStream os = new ByteArrayOutputStream();
-        properties.store(os, "");
-
-        System.out.print(new String(os.toByteArray(), StandardCharsets.UTF_8));
-    }
 }
 
 
