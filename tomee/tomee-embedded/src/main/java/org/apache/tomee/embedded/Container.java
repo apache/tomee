@@ -16,8 +16,6 @@
  */
 package org.apache.tomee.embedded;
 
-import org.apache.catalina.Engine;
-import org.apache.catalina.Host;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Server;
