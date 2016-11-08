@@ -1090,24 +1090,12 @@ public class Container implements AutoCloseable {
     }
 
     private static class InternalTomcat extends Tomcat {
+        private Connector connector;
+
         private void server(final Server s) {
             server = s;
-            if (service == null) {
-                final Service[] services = server.findServices();
-                if (services.length > 0) {
-                    service = services[0];
-                    if (service.getContainer() != null) {
-                        engine = Engine.class.cast(service.getContainer());
-                        final org.apache.catalina.Container[] hosts = engine.findChildren();
-                        if (hosts.length > 0) {
-                            host = Host.class.cast(hosts[0]);
-                        }
-                    }
-                }
-                if (service.findConnectors().length > 0) {
-                    connector = service.findConnectors()[0];
-                }
-            }
+            connector = server != null && server.findServices().length > 0 && server.findServices()[0].findConnectors().length > 0 ?
+                    server.findServices()[0].findConnectors()[0] : null;
         }
 
         public Connector getRawConnector() {
