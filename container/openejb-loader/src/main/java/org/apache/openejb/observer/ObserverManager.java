@@ -421,7 +421,7 @@ public class ObserverManager {
                     ObserverManager.logger().log(Level.SEVERE, "error invoking " + observer, t);
                 }
             } catch (final IllegalAccessException e) {
-                e.printStackTrace();
+                ObserverManager.logger().log(Level.SEVERE, method + " can't be invoked, check it is public");
             }
         }
 
