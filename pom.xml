@@ -356,7 +356,7 @@
         <module>maven</module>
         <module>container</module>
         <module>server</module>
-        <module>examples</module>
+        <!--<module>examples</module>-->
         <module>assembly</module>
         <module>tck</module>
         <module>arquillian</module>
@@ -513,6 +513,17 @@
     <!--</snapshots>-->
     <!--</repository>-->
     <!-- Apache snapshots -->
+    <repository>
+      <id>tomitribe-all</id>
+      <name>Tomitribe All</name>
+      <url>http://repository.tomitribe.com/content/groups/tomitribe/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </repository>
     <repository>
       <id>apache-snapshots</id>
       <name>Apache Snapshots Repository</name>
