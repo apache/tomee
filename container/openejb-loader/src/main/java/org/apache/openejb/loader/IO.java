@@ -59,7 +59,9 @@ public class IO {
     static {
         int timeout = 5000;
         try {
-            timeout = SystemInstance.get().getOptions().get("openejb.io.util.timeout", timeout);
+            timeout = SystemInstance.isInitialized() ?
+                    SystemInstance.get().getOptions().get("openejb.io.util.timeout", timeout) :
+                    Integer.getInteger("openejb.io.util.timeout", timeout);
         } catch (final Throwable th) {
             // no-op: see ExecMojo
         }
