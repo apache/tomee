@@ -23,5 +23,7 @@ public interface BusinessRemote {
 
     String echo(String input);
 
+    void forbidden();
+
     String getPrincipal();
 }

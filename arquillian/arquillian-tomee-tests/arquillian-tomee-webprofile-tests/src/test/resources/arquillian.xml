@@ -35,9 +35,11 @@
       </property>
       <property name="users">
         tomee=password
+        admin=admin
       </property>
       <property name="roles">
         tomee=tomee-admin
+        admin=tomee-admin
       </property>
     </configuration>
   </container>

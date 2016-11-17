@@ -17,6 +17,7 @@
 package org.apache.openejb.arquillian.tests.security;
 
 import javax.annotation.Resource;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.SessionContext;
@@ -31,15 +32,21 @@ public class BusinessBean implements BusinessRemote {
     private SessionContext ctx;
 
     @Override
+    @RolesAllowed("tomee-admin")
     public String echo(final String input) {
         return input;
+    }
+
+    @Override
+    @RolesAllowed("forbidden")
+    public void forbidden() {
     }
 
     @Override
     public String getPrincipal() {
         Principal callerPrincipal = ctx.getCallerPrincipal();
         if (callerPrincipal == null) {
-            return "null";
+            return "guest";
         }
 
         return callerPrincipal.getName();
