@@ -187,5 +187,9 @@ public class HttpConnectionFactory implements ConnectionFactory {
             }
             return inputStream;
         }
+
+        public int getResponseCode() throws IOException {
+            return httpURLConnection.getResponseCode();
+        }
     }
 }

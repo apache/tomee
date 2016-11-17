@@ -30,6 +30,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.naming.AuthenticationException;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import java.net.URL;
@@ -52,12 +53,26 @@ public class TomEEEjbServletAuthorizationHeaderTest extends TestSetup  {
         final Properties p = new Properties();
         p.setProperty(Context.INITIAL_CONTEXT_FACTORY, RemoteInitialContextFactory.class.getName());
         p.setProperty(Context.PROVIDER_URL, ejbUrl);
-        p.setProperty(Context.SECURITY_PRINCIPAL, "tomee");
-        p.setProperty(Context.SECURITY_CREDENTIALS, "password");
+        p.setProperty("tomee.ejb.authentication.basic.login", "tomee");
+        p.setProperty("tomee.ejb.authentication.basic.password", "password");
         final InitialContext context = new InitialContext(p);
 
         final BusinessRemote bean = (BusinessRemote) context.lookup("global/TomEEEjbServletAuthorizationHeaderTest/BusinessBean!org.apache.openejb.arquillian.tests.security.BusinessRemote");
         Assert.assertEquals("test", bean.echo("test"));
+    }
+
+    @Test(expected = AuthenticationException.class)
+    public void testFailedAuthentication() throws Exception {
+        final String ejbUrl = this.url.toExternalForm() + "ejb";
+
+        final Properties p = new Properties();
+        p.setProperty(Context.INITIAL_CONTEXT_FACTORY, RemoteInitialContextFactory.class.getName());
+        p.setProperty(Context.PROVIDER_URL, ejbUrl);
+        p.setProperty("tomee.ejb.authentication.basic.login", "tomee");
+        p.setProperty("tomee.ejb.authentication.basic.password", "wrong");
+        final InitialContext context = new InitialContext(p);
+
+        context.lookup("global/TomEEEjbServletAuthorizationHeaderTest/BusinessBean!org.apache.openejb.arquillian.tests.security.BusinessRemote");
     }
 
     @Deployment(testable = false)

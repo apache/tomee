@@ -26,6 +26,7 @@ import org.apache.openejb.client.event.RetryingRequest;
 import org.apache.openejb.client.event.ServerAdded;
 import org.apache.openejb.client.event.ServerRemoved;
 
+import javax.naming.AuthenticationException;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -260,6 +261,12 @@ public class Client {
             /*----------------------------------*/
 
             try {
+                if (conn instanceof HttpConnectionFactory.HttpConnection) {
+                    final HttpConnectionFactory.HttpConnection httpConn = (HttpConnectionFactory.HttpConnection) conn;
+                    if (httpConn.getResponseCode() == 401) {
+                        throw new AuthenticationException();
+                    }
+                }
 
                 in = conn.getInputStream();
 
