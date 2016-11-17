@@ -25,16 +25,12 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.httpd.ServerServlet;
 import org.apache.tomee.catalina.IgnoredStandardContext;
 import org.apache.tomee.catalina.OpenEJBValve;
-import org.apache.catalina.deploy.LoginConfig;
-import org.apache.catalina.deploy.SecurityCollection;
-import org.apache.catalina.deploy.SecurityConstraint;
 
 import java.beans.PropertyChangeListener;
 
 public class TomEERemoteWebapp extends IgnoredStandardContext {
     private static final String CONTEXT_NAME = SystemInstance.get().getProperty("tomee.remote.support.context", "/tomee");
     private static final String MAPPING = SystemInstance.get().getProperty("tomee.remote.support.mapping", "/ejb");
-    
 
     public TomEERemoteWebapp() {
         setDocBase("");
