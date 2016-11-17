@@ -25,7 +25,7 @@ import java.nio.charset.StandardCharsets;
 import static org.junit.Assert.assertNotNull;
 
 public class SimpleJSonParserTest {
-    @Test
+    @Test(expected = IllegalArgumentException.class/*not stackoverflow*/)
     public void avoidInfiniteLoop_TOMEE1970() throws IOException { // was throwing java.lang.OutOfMemoryError: Java heap space
         assertNotNull(SimpleJSonParser.read(new ByteArrayInputStream(("{\n" +
                 "  \"resources\":{\n" +
@@ -33,7 +33,7 @@ public class SimpleJSonParserTest {
                 "      \"type\":\"DataSource\",\n" +
                 "      \"classpath\":\"whatever\",\n" +
                 "      \"properties\":{\n" +
-                "        \"a\":\"b\n" +  // no closing quote is the TOMEE61970 issue
+                "        \"a\":\"b\n" +  // no closing quote is the TOMEE-1970 issue
                 "      }\n" +
                 "    }\n" +
                 "  }\n" +
