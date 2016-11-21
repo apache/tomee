@@ -23,7 +23,7 @@
   <parent>
     <artifactId>server</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.6.0.3-TT.4-SNAPSHOT</version>
+    <version>4.6.0.3-TT.4</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-client</artifactId>
@@ -112,12 +112,10 @@
             <configuration>
               <target>
                 <tstamp>
-                  <format property="TSTAMP" pattern="hh:mm"/>
+                  <format property="TSTAMP" pattern="hh:mm" />
                 </tstamp>
-                <replace file="target/classes/openejb-client-version.properties"
-                         token="@DATE-REPLACED-BY-MAVEN@" value="${DSTAMP}"/>
-                <replace file="target/classes/openejb-client-version.properties"
-                         token="@TIME-REPLACED-BY-MAVEN@" value="${TSTAMP}"/>
+                <replace file="target/classes/openejb-client-version.properties" token="@DATE-REPLACED-BY-MAVEN@" value="${DSTAMP}" />
+                <replace file="target/classes/openejb-client-version.properties" token="@TIME-REPLACED-BY-MAVEN@" value="${TSTAMP}" />
               </target>
             </configuration>
           </execution>
