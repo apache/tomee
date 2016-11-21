@@ -18,8 +18,7 @@
 
 <!-- $Rev$ $Date$ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -33,7 +32,7 @@
   <artifactId>openejb</artifactId>
   <packaging>pom</packaging>
 
-  <version>4.6.0.3-TT.4-SNAPSHOT</version>
+  <version>4.6.0.3-TT.4</version>
 
   <name>Apache OpenEJB</name>
   <description>Apache OpenEJB is an open source, modular, configurable and extendable EJB Container System and EJB
@@ -90,8 +89,8 @@
 
   <properties>
 
-    <openejb.version>4.6.0.3-TT.4-SNAPSHOT</openejb.version>
-    <tomee.version>1.6.0.3-TT.4-SNAPSHOT</tomee.version>
+    <openejb.version>4.6.0.3-TT.4</openejb.version>
+    <tomee.version>1.6.0.3-TT.4</tomee.version>
 
     <openjpa.version>2.3.0-nonfinal-1540826</openjpa.version>
     <org.apache.openwebbeans.version>1.2.1</org.apache.openwebbeans.version>
@@ -1759,12 +1758,21 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+
   <distributionManagement>
-    <site>
-      <id>openejb-website</id>
-      <url>scp://people.apache.org/www/openejb.apache.org/openejb/maven</url>
-    </site>
+    <repository>
+      <id>tomitribe.releases.https</id>
+      <name>Tomitribe Release Distribution Repository</name>
+      <url>http://repository.tomitribe.com/service/local/staging/deploy/maven2</url>
+    </repository>
+
+    <snapshotRepository>
+      <id>tomitribe.snapshots.https</id>
+      <name>Tomitribe Development Snapshot Repository</name>
+      <url>http://repository.tomitribe.com/content/repositories/snapshots-tomitribe</url>
+    </snapshotRepository>
   </distributionManagement>
+
   <reporting>
     <plugins>
       <plugin>

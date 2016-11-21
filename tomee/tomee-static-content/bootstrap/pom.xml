@@ -15,17 +15,15 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.apache.openejb.staticweb</groupId>
     <artifactId>tomee-static-content</artifactId>
-    <version>1.6.0.3-TT.4-SNAPSHOT</version>
+    <version>1.6.0.3-TT.4</version>
   </parent>
   <artifactId>static-tomee-bootstrap</artifactId>
-  <version>1.6.0.3-TT.4-SNAPSHOT</version>
+  <version>1.6.0.3-TT.4</version>
   <packaging>jar</packaging>
   <name>OpenEJB :: TomEE :: static-tomee-content :: bootstrap</name>
   <description>Contains bootstrap 2.3.2</description>
