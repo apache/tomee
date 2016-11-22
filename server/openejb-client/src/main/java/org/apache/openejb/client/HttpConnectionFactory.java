@@ -74,7 +74,10 @@ public class HttpConnectionFactory implements ConnectionFactory {
                 throw new IllegalArgumentException("Invalid uri " + uri.toString(), e);
             }
 
-            httpURLConnection = (HttpURLConnection) url.openConnection();
+            final String authorization = params.get("authorization");
+
+            httpURLConnection = (HttpURLConnection) (authorization == null ?
+                    url : new URL(stripQuery(url.toExternalForm(), "authorization"))).openConnection();
             httpURLConnection.setDoOutput(true);
 
             final int timeout;
@@ -89,8 +92,8 @@ public class HttpConnectionFactory implements ConnectionFactory {
             if (params.containsKey("readTimeout")) {
                 httpURLConnection.setReadTimeout(Integer.parseInt(params.get("readTimeout")));
             }
-            if (params.containsKey("authorization")) {
-                httpURLConnection.setRequestProperty("Authorization", params.get("authorization"));
+            if (authorization != null) {
+                httpURLConnection.setRequestProperty("Authorization", authorization);
             }
 
             if (params.containsKey("sslKeyStore") || params.containsKey("sslTrustStore")) {
@@ -115,6 +118,18 @@ public class HttpConnectionFactory implements ConnectionFactory {
             } catch (final IOException e) {
                 httpURLConnection.connect();
             }
+        }
+
+        private String stripQuery(final String url, final String param) {
+            String result = url;
+            do {
+                final int h = result.indexOf(param + '=');
+                final int end = result.indexOf('&', h);
+                if (h <= 0) {
+                    return result;
+                }
+                result = result.substring(0, h - 1) + (end < 0 ? "" : result.substring(end + 1, result.length()));
+            } while (true);
         }
 
         @Override

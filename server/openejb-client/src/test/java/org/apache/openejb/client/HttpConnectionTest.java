@@ -48,6 +48,10 @@ public class HttpConnectionTest {
 
                 final OutputStream responseBody = exchange.getResponseBody();
                 responseBody.write("secure page".getBytes());
+                final String query = exchange.getRequestURI().getQuery();
+                if (query != null) {
+                    responseBody.write(query.getBytes());
+                }
                 final String authorization = exchange.getRequestHeaders().getFirst("Authorization");
                 if (authorization != null) {
                     responseBody.write(authorization.getBytes("UTF-8"));
