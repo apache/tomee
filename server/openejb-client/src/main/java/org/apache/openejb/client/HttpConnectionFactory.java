@@ -23,7 +23,6 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
@@ -94,7 +93,7 @@ public class HttpConnectionFactory implements ConnectionFactory {
 
             if (uri.getUserInfo() != null) {
                 String authorization = "Basic "
-                        + printBase64Binary((url.getUserInfo()).getBytes(StandardCharsets.UTF_8));
+                        + printBase64Binary((url.getUserInfo()).getBytes("UTF-8"));
                 httpURLConnection.setRequestProperty("Authorization", authorization);
             }
 
