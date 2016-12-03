@@ -26,6 +26,7 @@ import org.apache.openejb.client.event.RetryingRequest;
 import org.apache.openejb.client.event.ServerAdded;
 import org.apache.openejb.client.event.ServerRemoved;
 
+import javax.naming.AuthenticationException;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,7 +57,7 @@ public class Client {
     private boolean FINEST = logger.isLoggable(Level.FINEST);
     private boolean FINER = logger.isLoggable(Level.FINER);
 
-    public static final ThreadLocal<Set<URI>> failed = new ThreadLocal<>();
+    public static final ThreadLocal<Set<URI>> failed = new ThreadLocal<Set<URI>>();
     private static final ProtocolMetaData PROTOCOL_META_DATA = new ProtocolMetaData();
 
     private static Client client = new Client();
@@ -67,7 +68,7 @@ public class Client {
         COMPATIBLE_META_DATA = (null != version ? new ProtocolMetaData(version) : null);
     }
 
-    private List<Class<? extends Throwable>> retryConditions = new CopyOnWriteArrayList<>();
+    private List<Class<? extends Throwable>> retryConditions = new CopyOnWriteArrayList<Class<? extends Throwable>>();
     private boolean retry = false;
 
     private final Observers observers = new Observers();
@@ -262,6 +263,9 @@ public class Client {
                 in = conn.getInputStream();
 
             } catch (final IOException e) {
+                if (AuthenticationException.class.isInstance(e.getCause())) {
+                    throw e.getCause();
+                }
                 throw newIOException("Cannot open input stream to server: ", e);
             }
 

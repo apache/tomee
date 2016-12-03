@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
  */
 public class EjbObjectInputStream extends ObjectInputStream {
     private static final AtomicReference<BlacklistClassResolver> RESOLVER_ATOMIC_REFERENCE =
-        new AtomicReference<>(new BlacklistClassResolver());
+        new AtomicReference<BlacklistClassResolver>(new BlacklistClassResolver());
 
     public static void reloadResolverConfig() {
         RESOLVER_ATOMIC_REFERENCE.set(new BlacklistClassResolver());

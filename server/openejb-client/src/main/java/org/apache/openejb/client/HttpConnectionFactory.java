@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.client;
 
+import javax.naming.AuthenticationException;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
 import java.io.IOException;
@@ -38,8 +39,8 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class HttpConnectionFactory implements ConnectionFactory {
     // this map only ensures JVM keep alive socket caching works properly
-    private final ConcurrentMap<URI, SSLSocketFactory> socketFactoryMap = new ConcurrentHashMap<>();
-    private final Queue<byte[]> drainBuffers = new ConcurrentLinkedQueue<>();
+    private final ConcurrentMap<URI, SSLSocketFactory> socketFactoryMap = new ConcurrentHashMap<URI, SSLSocketFactory>();
+    private final Queue<byte[]> drainBuffers = new ConcurrentLinkedQueue<byte[]>();
 
     @Override
     public Connection getConnection(final URI uri) throws IOException {
@@ -108,7 +109,9 @@ public class HttpConnectionFactory implements ConnectionFactory {
                     }
 
                     ((HttpsURLConnection) httpURLConnection).setSSLSocketFactory(sslSocketFactory);
-                } catch (final NoSuchAlgorithmException | KeyManagementException e) {
+                } catch (final KeyManagementException e) {
+                    throw new ClientRuntimeException(e.getMessage(), e);
+                } catch (final NoSuchAlgorithmException e) {
                     throw new ClientRuntimeException(e.getMessage(), e);
                 }
             }
@@ -194,6 +197,9 @@ public class HttpConnectionFactory implements ConnectionFactory {
         @Override
         public InputStream getInputStream() throws IOException {
             if (inputStream == null) {
+                if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                    throw new IOException(new AuthenticationException());
+                }
                 inputStream = httpURLConnection.getInputStream();
             }
             return inputStream;
