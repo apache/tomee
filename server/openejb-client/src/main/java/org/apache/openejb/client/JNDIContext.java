@@ -428,9 +428,13 @@ public class JNDIContext implements InitialContextFactory, Context {
         try {
             res = request(req);
         } catch (Exception e) {
-            if (e instanceof RemoteException && e.getCause() instanceof ConnectException) {
-                e = (Exception) e.getCause();
-                throw (ServiceUnavailableException) new ServiceUnavailableException("Cannot lookup '" + name + "'.").initCause(e);
+            if (e instanceof RemoteException) {
+                if (e.getCause() instanceof ConnectException) {
+                    e = (Exception) e.getCause();
+                    throw (ServiceUnavailableException) new ServiceUnavailableException("Cannot lookup '" + name + "'.").initCause(e);
+                } else if (AuthenticationException.class.isInstance(e.getCause())) {
+                    throw AuthenticationException.class.cast(e.getCause());
+                }
             }
             throw (NamingException) new NamingException("Cannot lookup '" + name + "'.").initCause(e);
         }
