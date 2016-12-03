@@ -1067,8 +1067,10 @@ public class ResourceFinder {
                         return resourceURL;
                     }
                 }
-            } catch (SecurityException | IOException e) {
+            } catch (final IOException e) {
                 // Keep iterating through the URL list
+            } catch (final SecurityException e) {
+                // no-op
             }
         }
         return null;

@@ -108,7 +108,7 @@ public class Jdk13ProxyFactory implements ProxyFactory {
             //noinspection RedundantArrayCreation
             return cons.newInstance(new Object[]{new Jdk13InvocationHandler()});
 
-        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+        } catch (final Exception e) {
             throw new InternalError(e.toString());
         }
     }

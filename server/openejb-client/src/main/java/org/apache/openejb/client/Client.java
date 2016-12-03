@@ -56,7 +56,7 @@ public class Client {
     private boolean FINEST = logger.isLoggable(Level.FINEST);
     private boolean FINER = logger.isLoggable(Level.FINER);
 
-    public static final ThreadLocal<Set<URI>> failed = new ThreadLocal<>();
+    public static final ThreadLocal<Set<URI>> failed = new ThreadLocal<Set<URI>>();
     private static final ProtocolMetaData PROTOCOL_META_DATA = new ProtocolMetaData();
 
     private static Client client = new Client();
@@ -67,7 +67,7 @@ public class Client {
         COMPATIBLE_META_DATA = (null != version ? new ProtocolMetaData(version) : null);
     }
 
-    private List<Class<? extends Throwable>> retryConditions = new CopyOnWriteArrayList<>();
+    private List<Class<? extends Throwable>> retryConditions = new CopyOnWriteArrayList<Class<? extends Throwable>>();
     private boolean retry = false;
 
     private final Observers observers = new Observers();
