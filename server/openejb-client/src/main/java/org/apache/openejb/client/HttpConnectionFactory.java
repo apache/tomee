@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.client;
 
+import javax.naming.AuthenticationException;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
 import java.io.IOException;
@@ -196,6 +197,9 @@ public class HttpConnectionFactory implements ConnectionFactory {
         @Override
         public InputStream getInputStream() throws IOException {
             if (inputStream == null) {
+                if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                    throw new IOException(new AuthenticationException());
+                }
                 inputStream = httpURLConnection.getInputStream();
             }
             return inputStream;
