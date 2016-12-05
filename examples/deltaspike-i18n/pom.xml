@@ -23,7 +23,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>deltaspike-i18n</artifactId>
   <packaging>jar</packaging>
-  <version>1.1.4-SNAPSHOT</version>
+  <version>1.1.4</version>
   <name>OpenEJB :: Examples :: DeltaSpike I18n</name>
 
   <properties>
@@ -81,13 +81,13 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>arquillian-openejb-embedded-4</artifactId>
-      <version>4.7.6-TT.8-SNAPSHOT</version>
+      <version>4.7.5-TT.8</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>ziplock</artifactId>
-      <version>1.7.6-TT.8-SNAPSHOT</version>
+      <version>1.7.5-TT.8</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
