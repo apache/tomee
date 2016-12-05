@@ -20,8 +20,28 @@ import org.apache.openejb.client.event.RemoteInitialContextCreated;
 import org.apache.openejb.client.serializer.EJBDSerializer;
 import org.omg.CORBA.ORB;
 
+import javax.naming.AuthenticationException;
+import javax.naming.Binding;
+import javax.naming.CompoundName;
+import javax.naming.ConfigurationException;
+import javax.naming.Context;
+import javax.naming.InvalidNameException;
+import javax.naming.Name;
+import javax.naming.NameClassPair;
+import javax.naming.NameNotFoundException;
+import javax.naming.NameParser;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.naming.OperationNotSupportedException;
+import javax.naming.Reference;
+import javax.naming.ServiceUnavailableException;
+import javax.naming.spi.InitialContextFactory;
+import javax.naming.spi.NamingManager;
+import javax.sql.DataSource;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.ConnectException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -41,24 +61,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.naming.AuthenticationException;
-import javax.naming.Binding;
-import javax.naming.CompoundName;
-import javax.naming.ConfigurationException;
-import javax.naming.Context;
-import javax.naming.InvalidNameException;
-import javax.naming.Name;
-import javax.naming.NameClassPair;
-import javax.naming.NameNotFoundException;
-import javax.naming.NameParser;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-import javax.naming.OperationNotSupportedException;
-import javax.naming.Reference;
-import javax.naming.ServiceUnavailableException;
-import javax.naming.spi.InitialContextFactory;
-import javax.naming.spi.NamingManager;
-import javax.sql.DataSource;
 
 /**
  * @version $Rev$ $Date$
@@ -73,6 +75,8 @@ public class JNDIContext implements InitialContextFactory, Context {
     public static final String POOL_QUEUE_SIZE = "openejb.client.invoker.queue";
     public static final String POOL_THREAD_NUMBER = "openejb.client.invoker.threads";
 
+    private static final Decipher DECIPHER;
+
     private String tail = "/";
     private ServerMetaData server;
     private ClientMetaData client;
@@ -85,11 +89,33 @@ public class JNDIContext implements InitialContextFactory, Context {
     static {
         ClassLoader classLoader = Client.class.getClassLoader();
         Class<?> container;
+        Decipher decipher;
         try {
             container = Class.forName("org.apache.openejb.OpenEJB", false, classLoader);
+            final Class<?> propertyPlaceHolderHelper  = Class.forName("org.apache.openejb.util.PropertyPlaceHolderHelper", false, classLoader);
+            final Method simpleValue = propertyPlaceHolderHelper.getMethod("simpleValue", String.class);
+            decipher = new Decipher() {
+                @Override
+                public String decipher(final String from) {
+                    try {
+                        return String.class.cast(simpleValue.invoke(null, from));
+                    } catch (final IllegalAccessException e) {
+                        throw new IllegalStateException(e);
+                    } catch (final InvocationTargetException e) {
+                        throw new IllegalStateException(e.getCause());
+                    }
+                }
+            };
         } catch (final Throwable e) {
             container = null;
+            decipher = new Decipher() {
+                @Override
+                public String decipher(final String from) {
+                    return from;
+                }
+            };
         }
+        DECIPHER = decipher;
         if (classLoader == ClassLoader.getSystemClassLoader() || Boolean.getBoolean("openejb.client.flus-tasks")
             || (container != null && container.getClassLoader() == classLoader)) {
             Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -224,7 +250,7 @@ public class JNDIContext implements InitialContextFactory, Context {
         if (environment == null) {
             throw new NamingException("Invalid argument, hashtable cannot be null.");
         } else {
-            env = (Hashtable) environment.clone();
+            env = decipher((Hashtable) environment.clone());
         }
 
         final String userID = (String) env.get(Context.SECURITY_PRINCIPAL);
@@ -282,6 +308,25 @@ public class JNDIContext implements InitialContextFactory, Context {
         threads = Integer.parseInt(getProperty(env, "openejb.client.invoker.threads", "-1"));
 
         return this;
+    }
+
+    private Hashtable decipher(final Hashtable clone) {
+        Decipher decipher = Decipher.class.cast(clone.get(Decipher.class.getName()));
+        if (decipher == null) {
+            decipher = DECIPHER;
+        }
+        for (final Object key : clone.keySet()) {
+            if (String.class.isInstance(key)) {
+                final Object value = clone.get(key);
+                if (String.class.isInstance(value)) {
+                    final String val = decipher.decipher(String.class.cast(value));
+                    if (!val.equals(value)) {
+                        clone.put(key, val);
+                    }
+                }
+            }
+        }
+        return clone;
     }
 
     private static String getProperty(final Hashtable env, final String key, final String defaultValue) {
@@ -862,6 +907,10 @@ public class JNDIContext implements InitialContextFactory, Context {
         public char[] getPassword() {
             return password;
         }
+    }
+
+    public interface Decipher {
+        String decipher(String from);
     }
 }
 
