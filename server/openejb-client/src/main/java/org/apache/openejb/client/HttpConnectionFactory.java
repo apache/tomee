@@ -26,6 +26,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
@@ -33,6 +34,8 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
+
+import static javax.xml.bind.DatatypeConverter.printBase64Binary;
 
 /**
  * @version $Revision$ $Date$
@@ -75,10 +78,26 @@ public class HttpConnectionFactory implements ConnectionFactory {
                 throw new IllegalArgumentException("Invalid uri " + uri.toString(), e);
             }
 
-            final String authorization = params.get("authorization");
+            final String basicUsername = params.get("basic.username");
+            final String basicPassword = params.get("basic.password");
+            final String authorizationHeader = params.get("authorizationHeader");
+            String authorization = params.get("authorization");
+            if (authorization != null && basicUsername != null) {
+                throw new IllegalArgumentException("You can't set basic.* properties AND authorization on the provider url");
+            }
+            if (authorization == null && basicUsername != null) {
+                authorization = "Basic " + printBase64Binary((basicUsername + (basicPassword != null ? ":" + basicPassword : "")).getBytes(StandardCharsets.UTF_8));
+            }
 
-            httpURLConnection = (HttpURLConnection) (authorization == null ?
-                    url : new URL(stripQuery(url.toExternalForm(), "authorization"))).openConnection();
+            final String newUrl =
+                    stripQuery(
+                        stripQuery(
+                            stripQuery(
+                                stripQuery(url.toExternalForm(), "authorization"),
+                        "basic.username"),
+                            "basic.password"),
+                "authorizationHeader");
+            httpURLConnection = (HttpURLConnection) (authorization == null ? url : new URL(newUrl)).openConnection();
             httpURLConnection.setDoOutput(true);
 
             final int timeout;
@@ -94,7 +113,7 @@ public class HttpConnectionFactory implements ConnectionFactory {
                 httpURLConnection.setReadTimeout(Integer.parseInt(params.get("readTimeout")));
             }
             if (authorization != null) {
-                httpURLConnection.setRequestProperty("Authorization", authorization);
+                httpURLConnection.setRequestProperty(authorizationHeader == null ? "Authorization" : authorizationHeader, authorization);
             }
 
             if (params.containsKey("sslKeyStore") || params.containsKey("sslTrustStore")) {
@@ -125,11 +144,15 @@ public class HttpConnectionFactory implements ConnectionFactory {
             String result = url;
             do {
                 final int h = result.indexOf(param + '=');
-                final int end = result.indexOf('&', h);
-                if (h <= 0) {
-                    return result;
+                int end = result.indexOf('&', h);
+                if (end < 0) {
+                    end = result.length();
                 }
-                result = result.substring(0, h - 1) + (end < 0 ? "" : result.substring(end + 1, result.length()));
+                if (h <= 0) {
+                    return result.endsWith("?") ? result.substring(0, result.length() - 1) : result;
+                }
+                result = result.substring(0, h) +
+                        (end < 0 || end == result.length() ? "" : result.substring(end + 1, result.length()));
             } while (true);
         }
 
