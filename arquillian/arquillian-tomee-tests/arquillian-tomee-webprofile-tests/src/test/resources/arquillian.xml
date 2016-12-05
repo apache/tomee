@@ -33,6 +33,14 @@
         openejb.ear.use-as-webcontext-base=true
         embedded = true
       </property>
+      <property name="users">
+        tomee=password
+        admin=admin
+      </property>
+      <property name="roles">
+        tomee=tomee-admin
+        admin=tomee-admin
+      </property>
     </configuration>
   </container>
   <container qualifier="tomee-remote">

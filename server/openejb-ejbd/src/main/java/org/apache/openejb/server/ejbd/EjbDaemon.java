@@ -28,6 +28,7 @@ import org.apache.openejb.client.RequestType;
 import org.apache.openejb.client.Response;
 import org.apache.openejb.client.ServerMetaData;
 import org.apache.openejb.client.serializer.EJBDSerializer;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.DiscoveryAgent;
 import org.apache.openejb.server.context.RequestInfos;
@@ -40,6 +41,8 @@ import org.apache.openejb.util.Logger;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -65,6 +68,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
     private ContainerSystem containerSystem;
     private boolean gzip;
     private boolean debugPayload;
+    private boolean bufferStream;
     private EJBDSerializer serializer = null;
 
     //Four hours
@@ -82,6 +86,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
         clusterHandler = new ClusterRequestHandler(this);
         gzip = "true".equalsIgnoreCase(props.getProperty("gzip", "false"));
         debugPayload = "true".equalsIgnoreCase(props.getProperty("debugPayload", "true"));
+        bufferStream = "true".equalsIgnoreCase(props.getProperty("bufferStream", "false"));
 
         try {
             this.timeout = Integer.parseInt(props.getProperty("timeout", "14400000"));
@@ -180,6 +185,16 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
 
             final RequestInfos.RequestInfo info = RequestInfos.info();
             info.setInputStream(debugPayload ? new CountingInputStream(rawIn) : rawIn);
+
+            if (bufferStream) {
+
+                // get entire buffer
+                final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                final InputStream is = info.getInputStream();
+                IO.copy(is, baos);
+                is.close();
+                info.setInputStream(new ByteArrayInputStream(baos.toByteArray()));
+            }
 
             // Read client Protocol Version
             final InputStream cis = info.getInputStream();

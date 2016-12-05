@@ -15,9 +15,7 @@
  * limitations under the License.
  */
 package org.apache.openejb.client;
-
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLSocketFactory;
+import static javax.xml.bind.DatatypeConverter.printBase64Binary;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -32,6 +30,9 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSocketFactory;
 
 /**
  * @version $Revision$ $Date$
@@ -88,6 +89,12 @@ public class HttpConnectionFactory implements ConnectionFactory {
 
             if (params.containsKey("readTimeout")) {
                 httpURLConnection.setReadTimeout(Integer.parseInt(params.get("readTimeout")));
+            }
+
+            if (uri.getUserInfo() != null) {
+                String authorization = "Basic "
+                        + printBase64Binary((url.getUserInfo()).getBytes("UTF-8"));
+                httpURLConnection.setRequestProperty("Authorization", authorization);
             }
 
             if (params.containsKey("sslKeyStore") || params.containsKey("sslTrustStore")) {
@@ -179,6 +186,9 @@ public class HttpConnectionFactory implements ConnectionFactory {
             }
             return inputStream;
         }
-    }
 
+        public int getResponseCode() throws IOException {
+            return httpURLConnection.getResponseCode();
+        }
+    }
 }
