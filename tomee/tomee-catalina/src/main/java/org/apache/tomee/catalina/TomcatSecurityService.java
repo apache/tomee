@@ -205,7 +205,7 @@ public class TomcatSecurityService extends AbstractSecurityService {
         }
     }
 
-    protected Subject getRunAsSubject(final BeanContext callingBeanContext) {
+    public Subject getRunAsSubject(final BeanContext callingBeanContext) {
         final Subject runAsSubject = super.getRunAsSubject(callingBeanContext);
         if (runAsSubject != null) {
             return runAsSubject;
