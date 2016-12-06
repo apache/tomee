@@ -17,58 +17,64 @@
 package org.apache.openejb.core.security;
 
 import org.apache.openejb.junit.ApplicationComposer;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.testing.Classes;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.annotation.Resource;
+import javax.annotation.security.RolesAllowed;
 import javax.annotation.security.RunAs;
 import javax.ejb.EJB;
-import javax.ejb.SessionContext;
+import javax.ejb.EJBContext;
 import javax.ejb.Singleton;
+import javax.security.auth.login.LoginException;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 @Classes(innerClassesAsBean = true)
 @RunWith(ApplicationComposer.class)
-public class RunAsTest {
+public class RoleAllowedAndRunAsTest {
     @EJB
-    private MyRunAsBean bean;
+    private DefaultRoles bean;
 
     @Test
-    public void runAs() {
-        assertTrue(bean.isInRole());
-        assertEquals("foo", bean.principal());
-    }
-
-    @RunAs("foo")
-    @Singleton
-    public static class MyRunAsBean {
-        @EJB
-        private Delegate delegate;
-
-        public String principal() {
-            return delegate.principal();
-        }
-
-        public boolean isInRole() {
-            return delegate.isInRole();
+    public void run() throws LoginException {
+        final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
+        final Object id = securityService.login("jonathan", "secret");
+        securityService.associate(id);
+        try {
+            assertEquals("jonathan > role1", bean.stack());
+        } finally {
+            securityService.disassociate();
+            securityService.logout(id);
         }
     }
 
-    @RunAs("foo")
     @Singleton
-    public static class Delegate {
+    public static class Identity {
         @Resource
-        private SessionContext ctx;
+        private EJBContext context;
 
-        public String principal() {
-            return ctx.getCallerPrincipal().getName();
+        @RolesAllowed("role1")
+        public String name() {
+            return context.getCallerPrincipal().getName();
         }
+    }
 
-        public boolean isInRole() {
-            return ctx.isCallerInRole("foo");
+    @Singleton
+    @RunAs("role1")
+    @RolesAllowed("committer")
+    public static class DefaultRoles {
+        @Resource
+        private EJBContext context;
+
+        @EJB
+        private Identity identity;
+
+        public String stack() {
+            return context.getCallerPrincipal().getName() + " > " + identity.name();
         }
     }
 }

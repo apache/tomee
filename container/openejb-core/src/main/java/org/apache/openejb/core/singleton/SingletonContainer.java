@@ -29,6 +29,7 @@ import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
+import org.apache.openejb.core.security.AbstractSecurityService;
 import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.core.webservices.AddressingSupport;
@@ -44,6 +45,7 @@ import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
 import javax.interceptor.AroundInvoke;
+import javax.security.auth.login.LoginException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -178,7 +180,14 @@ public class SingletonContainer implements RpcContainer {
         final ThreadContext callContext = new ThreadContext(beanContext, primKey);
         final ThreadContext oldCallContext = ThreadContext.enter(callContext);
         final CurrentCreationalContext currentCreationalContext = beanContext.get(CurrentCreationalContext.class);
+        Object runAs = null;
         try {
+            if (oldCallContext != null) {
+                final BeanContext oldBc = oldCallContext.getBeanContext();
+                if (oldBc.getRunAsUser() != null || oldBc.getRunAs() != null) {
+                    runAs = AbstractSecurityService.class.cast(securityService).overrideWithRunAsContext(callContext, beanContext, oldBc);
+                }
+            }
 
             final boolean authorized = type == InterfaceType.TIMEOUT || getSecurityService().isCallerAuthorized(callMethod, type);
 
@@ -212,6 +221,13 @@ public class SingletonContainer implements RpcContainer {
             return _invoke(callMethod, runMethod, args, instance, callContext, type);
 
         } finally {
+            if (runAs != null) {
+                try {
+                    securityService.associate(runAs);
+                } catch (final LoginException e) {
+                    // no-op
+                }
+            }
             ThreadContext.exit(oldCallContext);
             if (currentCreationalContext != null) {
                 currentCreationalContext.remove();

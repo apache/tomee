@@ -32,6 +32,7 @@ import java.util.Collection;
 import java.util.concurrent.Callable;
 
 public abstract class CUTask<T> extends ManagedTaskListenerTask implements Comparable<Object> {
+    // TODO: get rid of it as a static thing, make it owned by the executor probably
     private static final SecurityService SECURITY_SERVICE = SystemInstance.get().getComponent(SecurityService.class);
 
     // only updated in container startup phase, no concurrency possible, don't use it at runtime!
@@ -61,9 +62,16 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask implements Compa
             associate = false;
         }
         final ThreadContext threadContext = ThreadContext.getThreadContext();
-        initialContext = new Context(
-            associate, stateTmp, threadContext == null ? null : threadContext.get(AbstractSecurityService.SecurityContext.class),
-            threadContext, Thread.currentThread().getContextClassLoader(), null);
+        final AbstractSecurityService.SecurityContext sc = threadContext == null ? null : threadContext.get(AbstractSecurityService.SecurityContext.class);
+        if (threadContext != null && threadContext.getBeanContext() != null &&
+                (threadContext.getBeanContext().getRunAs() != null || threadContext.getBeanContext().getRunAsUser() != null)) {
+            initialContext = new Context(
+                    associate, stateTmp,
+                    new AbstractSecurityService.SecurityContext(AbstractSecurityService.class.cast(SECURITY_SERVICE).getRunAsSubject(threadContext.getBeanContext())),
+                    threadContext, Thread.currentThread().getContextClassLoader(), null);
+        } else {
+            initialContext = new Context(associate, stateTmp, sc, threadContext, Thread.currentThread().getContextClassLoader(), null);
+        }
         if (CONTAINER_LISTENERS.length > 0) {
             containerListenerStates = new Object[CONTAINER_LISTENERS.length];
             for (int i = 0; i < CONTAINER_LISTENERS.length; i++) {

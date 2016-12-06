@@ -151,34 +151,31 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
         final String moduleID = newContext.getBeanContext().getModuleID();
         PolicyContext.setContextID(moduleID);
 
-        Subject runAsSubject = getRunAsSubject(newContext.getBeanContext());
-        if (oldContext != null && runAsSubject == null) {
-            runAsSubject = getRunAsSubject(oldContext.getBeanContext());
-        }
-
         final ProvidedSecurityContext providedSecurityContext = newContext.get(ProvidedSecurityContext.class);
         SecurityContext securityContext = oldContext != null ? oldContext.get(SecurityContext.class) :
             (providedSecurityContext != null ? providedSecurityContext.context : null);
-        if (providedSecurityContext == null) {
-            if (runAsSubject != null) {
-
-                securityContext = new SecurityContext(runAsSubject);
-
-            } else if (securityContext == null) {
-
-                final Identity identity = clientIdentity.get();
-                if (identity != null) {
-                    securityContext = new SecurityContext(identity.subject);
-                } else {
-                    securityContext = defaultContext;
-                }
+        if (providedSecurityContext == null && (securityContext == null || securityContext == defaultContext)) {
+            final Identity identity = clientIdentity.get();
+            if (identity != null) {
+                securityContext = new SecurityContext(identity.subject);
+            } else {
+                securityContext = defaultContext;
             }
         }
 
         newContext.set(SecurityContext.class, securityContext);
     }
 
-    protected Subject getRunAsSubject(final BeanContext callingBeanContext) {
+    public UUID overrideWithRunAsContext(final ThreadContext ctx, final BeanContext newContext, final BeanContext oldContext) {
+        Subject runAsSubject = getRunAsSubject(newContext);
+        if (oldContext != null && runAsSubject == null) {
+            runAsSubject = getRunAsSubject(oldContext);
+        }
+        ctx.set(SecurityContext.class, new SecurityContext(runAsSubject));
+        return disassociate();
+    }
+
+    public Subject getRunAsSubject(final BeanContext callingBeanContext) {
         if (callingBeanContext == null) {
             return null;
         }
