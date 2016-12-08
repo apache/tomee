@@ -21,9 +21,6 @@ import org.apache.cxf.binding.BindingFactoryManager;
 import org.apache.cxf.jaxrs.JAXRSBindingFactory;
 import org.apache.cxf.transport.DestinationFactory;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
-import org.apache.johnzon.jaxrs.JohnzonProvider;
-import org.apache.johnzon.jaxrs.JsrProvider;
-import org.apache.johnzon.mapper.MapperBuilder;
 import org.apache.openejb.cdi.WebBeansContextBeforeDeploy;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.observer.Observes;
@@ -46,32 +43,24 @@ import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.PassivationCapable;
 import javax.enterprise.util.AnnotationLiteral;
-import javax.json.JsonStructure;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.Produces;
 import javax.ws.rs.container.ResourceContext;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.ContextResolver;
-import javax.ws.rs.ext.Provider;
 import javax.ws.rs.ext.Providers;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
-import java.io.Writer;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
@@ -80,6 +69,7 @@ import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -93,6 +83,7 @@ public class CxfRSService extends RESTService {
     private static final String NAME = "cxf-rs";
     private DestinationFactory destinationFactory;
     private boolean factoryByListener;
+    private Properties config;
 
     @Override
     public void service(final InputStream in, final OutputStream out) throws ServiceException, IOException {
@@ -171,6 +162,7 @@ public class CxfRSService extends RESTService {
     @Override
     public void init(final Properties properties) throws Exception {
         super.init(properties);
+        config = properties;
         factoryByListener = "true".equalsIgnoreCase(properties.getProperty("openejb.cxf-rs.factoryByListener", "false"));
 
         System.setProperty("org.apache.johnzon.max-string-length",
@@ -230,16 +222,27 @@ public class CxfRSService extends RESTService {
         if (bus.getProperty("org.apache.cxf.jaxrs.bus.providers") == null) {
             bus.setProperty("skip.default.json.provider.registration", "true"); // client jaxrs, we want johnzon not jettison
 
+            final Collection<Object> defaults = new ArrayList<>();
+            for (final String provider : asList(
+                    "org.apache.openejb.server.cxf.rs.johnzon.TomEEJohnzonProvider",
+                    "org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider")) {
+                if (!isActive(provider)) {
+                    continue;
+                }
+                try {
+                    defaults.add(Class.forName(provider, true, CxfRSService.class.getClassLoader()).newInstance());
+                } catch (final Exception e) {
+                    // no-op
+                }
+            }
+
             try {
                 final List<Object> all;
                 final String userProviders = SystemInstance.get().getProperty("openejb.jaxrs.client.providers");
                 if (userProviders == null) {
-                    (all = new ArrayList<>(2)).addAll(asList(
-                        new TomEEJohnzonProvider<>(),
-                        new TomEEJsonpProvider()
-                    ));
+                    (all = new ArrayList<>(defaults.size())).addAll(defaults);
                 } else {
-                    all = new ArrayList<>(4 /* blind guess */);
+                    all = new ArrayList<>(defaults.size() + 2 /* blind guess */);
                     for (String p : userProviders.split(" *, *")) {
                         p = p.trim();
                         if (p.isEmpty()) {
@@ -249,9 +252,8 @@ public class CxfRSService extends RESTService {
                         all.add(Thread.currentThread().getContextClassLoader().loadClass(p).newInstance());
                     }
 
-                    all.addAll(asList( // added after to be after in the list once sorted
-                        new TomEEJohnzonProvider<>(),
-                        new TomEEJsonpProvider()));
+                    // added after to be after in the list once sorted
+                    all.addAll(defaults);
                 }
                 bus.setProperty("org.apache.cxf.jaxrs.bus.providers", all);
             } catch (final Exception e) {
@@ -291,7 +293,12 @@ public class CxfRSService extends RESTService {
 
     @Override
     protected RsHttpListener createHttpListener() {
-        return new CxfRsHttpListener(!factoryByListener ? destinationFactory : new HTTPTransportFactory(), getWildcard());
+        return new CxfRsHttpListener(!factoryByListener ? destinationFactory : new HTTPTransportFactory(), getWildcard(), this);
+    }
+
+    public boolean isActive(final String name) {
+        final String key = name + ".activated";
+        return "true".equalsIgnoreCase(SystemInstance.get().getProperty(key, config.getProperty(key, "true")));
     }
 
     private static class ContextLiteral extends EmptyAnnotationLiteral<Context> implements Context {
@@ -391,41 +398,6 @@ public class CxfRSService extends RESTService {
             } catch (final InvocationTargetException ite) {
                 throw ite.getCause();
             }
-        }
-    }
-
-    @Provider
-    @Produces({"application/json", "application/*+json"})
-    @Consumes({"application/json", "application/*+json"})
-    public static class TomEEJohnzonProvider<T> extends JohnzonProvider<T> {
-        public TomEEJohnzonProvider() {
-            super(new MapperBuilder().setAccessModeName("both").build(), null);
-        }
-
-        @Override
-        public boolean isWriteable(final Class<?> rawType, final Type genericType,
-                                   final Annotation[] annotations, final MediaType mediaType) {
-            return super.isWriteable(rawType, genericType, annotations, mediaType)
-                && !OutputStream.class.isAssignableFrom(rawType)
-                && !StreamingOutput.class.isAssignableFrom(rawType)
-                && !Writer.class.isAssignableFrom(rawType)
-                && !Response.class.isAssignableFrom(rawType)
-                && !JsonStructure.class.isAssignableFrom(rawType);
-        }
-    }
-
-    @Provider
-    @Produces({"application/json", "application/*+json"})
-    @Consumes({"application/json", "application/*+json"})
-    public static class TomEEJsonpProvider extends JsrProvider {
-        @Override
-        public boolean isWriteable(final Class<?> rawType, final Type genericType,
-                                   final Annotation[] annotations, final MediaType mediaType) {
-            return super.isWriteable(rawType, genericType, annotations, mediaType)
-                && !OutputStream.class.isAssignableFrom(rawType)
-                && !StreamingOutput.class.isAssignableFrom(rawType)
-                && !Writer.class.isAssignableFrom(rawType)
-                && !Response.class.isAssignableFrom(rawType);
         }
     }
 }

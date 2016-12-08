@@ -164,6 +164,7 @@ public class CxfRsHttpListener implements RsHttpListener {
 
     private final DestinationFactory transportFactory;
     private final String wildcard;
+    private final CxfRSService service;
     private HttpDestination destination;
     private Server server;
     private String context = "";
@@ -191,9 +192,10 @@ public class CxfRsHttpListener implements RsHttpListener {
 
     private String pattern;
 
-    public CxfRsHttpListener(final DestinationFactory destinationFactory, final String star) {
+    public CxfRsHttpListener(final DestinationFactory destinationFactory, final String star, final CxfRSService cxfRSService) {
         transportFactory = destinationFactory;
         wildcard = star;
+        service = cxfRSService;
     }
 
     public void setUrlPattern(final String pattern) {
@@ -491,12 +493,11 @@ public class CxfRsHttpListener implements RsHttpListener {
         return false;
     }
 
-    private static boolean shouldSkipProvider(final String name) {
-        return "false".equalsIgnoreCase(SystemInstance.get().getProperty(name + ".activated", "true"))
-                || name.startsWith("org.apache.wink.common.internal.");
+    private boolean shouldSkipProvider(final String name) {
+        return !service.isActive(name) || name.startsWith("org.apache.wink.common.internal.");
     }
 
-    private static void addMandatoryProviders(final Collection<Object> instances, final ServiceConfiguration serviceConfiguration) {
+    private void addMandatoryProviders(final Collection<Object> instances, final ServiceConfiguration serviceConfiguration) {
         if (!shouldSkipProvider(WadlDocumentMessageBodyWriter.class.getName())) {
             instances.add(new WadlDocumentMessageBodyWriter());
         }
