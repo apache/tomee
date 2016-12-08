@@ -491,7 +491,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         return false;
     }
 
-    private static boolean shouldSkipProvider(final String name) {
+    static boolean shouldSkipProvider(final String name) {
         return "false".equalsIgnoreCase(SystemInstance.get().getProperty(name + ".activated", "true"))
                 || name.startsWith("org.apache.wink.common.internal.");
     }

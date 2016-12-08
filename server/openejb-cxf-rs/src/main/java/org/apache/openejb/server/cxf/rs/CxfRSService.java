@@ -21,6 +21,7 @@ import org.apache.cxf.binding.BindingFactoryManager;
 import org.apache.cxf.jaxrs.JAXRSBindingFactory;
 import org.apache.cxf.transport.DestinationFactory;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
+import org.apache.johnzon.jaxrs.DelegateProvider;
 import org.apache.johnzon.jaxrs.JohnzonProvider;
 import org.apache.johnzon.jaxrs.JsrProvider;
 import org.apache.johnzon.mapper.MapperBuilder;
@@ -234,10 +235,7 @@ public class CxfRSService extends RESTService {
                 final List<Object> all;
                 final String userProviders = SystemInstance.get().getProperty("openejb.jaxrs.client.providers");
                 if (userProviders == null) {
-                    (all = new ArrayList<>(2)).addAll(asList(
-                        new TomEEJohnzonProvider<>(),
-                        new TomEEJsonpProvider()
-                    ));
+                    (all = new ArrayList<>(2)).addAll(getBuiltinJsonProviders());
                 } else {
                     all = new ArrayList<>(4 /* blind guess */);
                     for (String p : userProviders.split(" *, *")) {
@@ -249,15 +247,24 @@ public class CxfRSService extends RESTService {
                         all.add(Thread.currentThread().getContextClassLoader().loadClass(p).newInstance());
                     }
 
-                    all.addAll(asList( // added after to be after in the list once sorted
-                        new TomEEJohnzonProvider<>(),
-                        new TomEEJsonpProvider()));
+                    all.addAll(getBuiltinJsonProviders());
                 }
                 bus.setProperty("org.apache.cxf.jaxrs.bus.providers", all);
             } catch (final Exception e) {
                 throw new IllegalStateException(e);
             }
         }
+    }
+
+    private List<DelegateProvider<?>> getBuiltinJsonProviders() {
+        List<DelegateProvider<?>> result = new ArrayList<>(2);
+        if (!CxfRsHttpListener.shouldSkipProvider(TomEEJohnzonProvider.class.getName())) {
+            result.add(new TomEEJohnzonProvider<>());
+        }
+        if (!CxfRsHttpListener.shouldSkipProvider(TomEEJsonpProvider.class.getName())) {
+            result.add(new TomEEJsonpProvider());
+        }
+        return result;
     }
 
     private void hacksOn() {
