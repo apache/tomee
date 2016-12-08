@@ -134,6 +134,9 @@ public class JMS2AMQTest {
                 try {
                     ready.countDown();
                     assertEquals(text, context.createConsumer(destination3).receiveBody(String.class, TimeUnit.MINUTES.toMillis(1)));
+
+                    // ensure we dont do a NPE if there is nothing to read
+                    assertNull(context.createConsumer(destination3).receiveBody(String.class, 100));
                 } catch (final Throwable t) {
                     error.set(t);
                 } finally {
