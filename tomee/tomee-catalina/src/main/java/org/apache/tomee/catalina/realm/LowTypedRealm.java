@@ -140,6 +140,11 @@ public class LowTypedRealm implements Realm {
     }
 
     @Override
+    public boolean isAvailable() {
+        return true;
+    }
+
+    @Override
     public Principal authenticate(final String s) {
         return (Principal) invoke(authenticateStringMethod, s);
     }

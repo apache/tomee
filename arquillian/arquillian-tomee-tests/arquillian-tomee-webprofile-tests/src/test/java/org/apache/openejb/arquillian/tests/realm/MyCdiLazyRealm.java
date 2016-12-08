@@ -128,4 +128,9 @@ public class MyCdiLazyRealm implements Realm {
     public String[] getRoles(final Principal principal) {
         return new String[0];
     }
+
+    @Override
+    public boolean isAvailable() {
+        return true;
+    }
 }
