@@ -30,6 +30,7 @@
     <relativePath><!--Resolve on repository--></relativePath>
   </parent>
 
+
   <groupId>org.apache.tomee</groupId>
   <artifactId>tomee-project</artifactId>
   <packaging>pom</packaging>

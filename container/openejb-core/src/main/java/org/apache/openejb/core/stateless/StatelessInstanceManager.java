@@ -58,7 +58,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -241,22 +240,6 @@ public class StatelessInstanceManager {
     private Instance createInstance(final ThreadContext callContext, final BeanContext beanContext) throws ApplicationException {
         try {
             final InstanceContext context = beanContext.newInstance();
-            if (context.getBean() instanceof SessionBean) {
-                final Operation originalOperation = callContext.getCurrentOperation();
-                try {
-                    callContext.setCurrentOperation(Operation.CREATE);
-                    final InterceptorStack ejbCreate = new InterceptorStack(
-                        context.getBean(),
-                        beanContext.getCreateMethod(),
-                        Operation.CREATE,
-                        new ArrayList<InterceptorData>(),
-                        new HashMap<String, Object>()
-                    );
-                    ejbCreate.invoke();
-                } finally {
-                    callContext.setCurrentOperation(originalOperation);
-                }
-            }
             return new Instance(context.getBean(), context.getInterceptors(), context.getCreationalContext());
 
         } catch (Throwable e) {
