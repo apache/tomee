@@ -100,7 +100,7 @@
     <openjpa.version>2.4.1</openjpa.version>
     <org.apache.openwebbeans.version>1.7.0</org.apache.openwebbeans.version>
     <jcs.version>2.0-beta-2</jcs.version>
-    <johnzon.version>0.9.5</johnzon.version>
+    <johnzon.version>1.0.0</johnzon.version>
 
     <!-- Maven module versions -->
     <maven-bundle-plugin.version>2.3.7</maven-bundle-plugin.version>
