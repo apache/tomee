@@ -1,0 +1,31 @@
+version: '2'
+
+services:
+    data:
+        image: "alpine:3.4"
+        command: ["echo", "'data ready'"]
+        volumes:
+            - /root/.m2
+
+    mvn:
+        image: "maven:3.3.9-jdk-8"
+        entrypoint: "mvn"
+        working_dir: /opt/project
+        environment:
+            - MAVEN_OPTS=-Xmx768m -XX:MaxPermSize=256M -XX:ReservedCodeCacheSize=64m -Xss2048k
+        volumes_from:
+            - data
+        volumes:
+            - .:/opt/project
+
+    quickbuild:
+        image: "maven:3.3.9-jdk-8"
+        command: ["mvn", "-Pquick", "-Dsurefire.useFile=false", "-DdisableXmlReport=true", "-DuniqueVersion=false", "-ff", "-Dassemble", "-DskipTests", "-DfailIfNoTests=false", "clean", "install"]
+        working_dir: /opt/project
+        environment:
+            - MAVEN_OPTS=-Xmx768m -XX:MaxPermSize=256M -XX:ReservedCodeCacheSize=64m -Xss2048k
+        volumes_from:
+            - data
+        volumes:
+            - .:/opt/project
+
