@@ -99,7 +99,7 @@
 
     <openjpa.version>2.4.1</openjpa.version>
     <org.apache.openwebbeans.version>1.7.0</org.apache.openwebbeans.version>
-    <jcs.version>2.0-beta-2</jcs.version>
+    <jcs.version>2.0</jcs.version>
     <johnzon.version>1.0.0</johnzon.version>
 
     <!-- Maven module versions -->
