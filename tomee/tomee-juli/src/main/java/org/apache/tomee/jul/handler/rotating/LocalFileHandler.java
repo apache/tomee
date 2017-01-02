@@ -634,10 +634,12 @@ public class LocalFileHandler extends Handler {
             date.setTime(record.getMillis());
 
             String source;
-            if (record.getSourceClassName() != null) {
-                source = record.getSourceClassName();
-                if (record.getSourceMethodName() != null) {
-                    source += " " + record.getSourceMethodName();
+            final String sourceClassName = record.getSourceClassName();
+            final String sourceMethodName = record.getSourceMethodName();
+            if (sourceClassName != null) {
+                source = sourceClassName;
+                if (sourceMethodName != null) {
+                    source += " " + sourceMethodName;
                 }
             } else {
                 source = record.getLoggerName();
@@ -661,7 +663,9 @@ public class LocalFileHandler extends Handler {
                     date, source,
                     record.getLoggerName(),
                     Locale.ENGLISH == locale ? record.getLevel().getName() : record.getLevel().getLocalizedName(),
-                    message, throwable);
+                    message, throwable,
+                    sourceClassName == null ? source : sourceClassName,
+                    sourceMethodName == null ? source : sourceMethodName);
         }
     }
 }

@@ -44,5 +44,10 @@ public class LocalFileHandlerPatternFormatterTest {
         assertEquals(
                 "test message\n",
                 new LocalFileHandler.PatternFormatter("%5$s%n", Locale.ENGLISH).format(record).replace("\r", ""));
+
+        // simple
+        assertEquals("1970-17-02 11:17:36 [FINER][my.class.Name] test message\n",
+                new LocalFileHandler.PatternFormatter(
+                        "%1$tY-%1$tM-%1$td %1$tT [%4$5s][%7$s] %5$s%6$s%n", Locale.ENGLISH).format(record).replace("\r", ""));
     }
 }
