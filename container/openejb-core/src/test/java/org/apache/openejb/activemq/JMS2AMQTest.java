@@ -17,8 +17,10 @@
 package org.apache.openejb.activemq;
 
 import org.apache.activemq.ActiveMQXAConnectionFactory;
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.junit.ApplicationComposer;
+import org.apache.openejb.testing.Classes;
 import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.Module;
 import org.apache.openejb.testing.SimpleLog;
@@ -33,6 +35,7 @@ import javax.annotation.Resource;
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSConnectionFactory;
@@ -45,6 +48,14 @@ import javax.jms.MessageListener;
 import javax.jms.Queue;
 import javax.jms.TextMessage;
 import javax.jms.XAConnectionFactory;
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.NotSupportedException;
+import javax.transaction.RollbackException;
+import javax.transaction.SystemException;
+import javax.transaction.TransactionScoped;
+import javax.transaction.UserTransaction;
+import java.io.Serializable;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -52,6 +63,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static java.lang.Thread.sleep;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -84,6 +96,7 @@ public class JMS2AMQTest {
     }
 
     @Module
+    @Classes(cdi = true, value = JustHereToCheckDeploymentIsOk.class)
     public MessageDrivenBean jar() {
         return new MessageDrivenBean(Listener.class);
     }
@@ -110,9 +123,23 @@ public class JMS2AMQTest {
     @Inject // just there to ensure the injection works and we don't require @JMSConnectionFactory
     private JMSContext defaultContext;
 
+    @Inject
+    private JustHereToCheckDeploymentIsOk session;
+
+    @Resource
+    private UserTransaction ut;
+
     @Before
     public void resetLatch() {
         Listener.reset();
+    }
+
+    @Test
+    public void serialize() throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
+        final JMSContext c = SerializationUtils.deserialize(SerializationUtils.serialize(Serializable.class.cast(context)));
+        ut.begin();
+        session.ok();
+        ut.commit();
     }
 
     @Test
@@ -370,6 +397,16 @@ public class JMS2AMQTest {
         public static boolean sync() throws InterruptedException {
             latch.await(1, TimeUnit.MINUTES);
             return ok;
+        }
+    }
+
+    @TransactionScoped
+    public static class JustHereToCheckDeploymentIsOk implements Serializable {
+        @Inject
+        private JMSContext context;
+
+        public void ok() {
+            assertNotNull(context);
         }
     }
 }

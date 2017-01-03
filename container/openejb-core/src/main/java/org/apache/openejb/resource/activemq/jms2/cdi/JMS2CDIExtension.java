@@ -149,7 +149,7 @@ public class JMS2CDIExtension implements Extension {
     public static class TransactionAutoContextDestruction extends AutoContextDestruction {
     }
 
-    public static class Key {
+    public static class Key implements Serializable {
         private volatile ConnectionFactory connectionFactoryInstance;
         private final String connectionFactory;
         private final String username;
@@ -222,7 +222,7 @@ public class JMS2CDIExtension implements Extension {
         }
     }
 
-    public static class InternalJMSContext implements JMSContext {
+    public static class InternalJMSContext implements JMSContext, Serializable {
         private final Key key;
         private final RequestAutoContextDestruction requestStorage;
         private final TransactionAutoContextDestruction transactionStorage;
