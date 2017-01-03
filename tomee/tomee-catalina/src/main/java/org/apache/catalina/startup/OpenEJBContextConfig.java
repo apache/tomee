@@ -565,8 +565,18 @@ public class OpenEJBContextConfig extends ContextConfig {
                 if (webInfClassesAnnotationsProcessed.contains(info.name)) {
                     continue;
                 }
+
                 try {
-                    if (file.getAbsolutePath().startsWith(URLs.toFile(new URL(info.name)).getAbsolutePath())) {
+                    boolean doProcess = isIncludedIn(info.name, file);
+                    if (!doProcess) { // for sym links we can need to check each file for an exact matching
+                        for (final String path : info.list) {
+                            if (isIncludedIn(path, file)) {
+                                doProcess = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (doProcess) {
                         webInfClassesAnnotationsProcessed.add(info.name);
                         internalProcessAnnotationsStream(info.list, fragment, false);
                     }
@@ -708,20 +718,19 @@ public class OpenEJBContextConfig extends ContextConfig {
         }
     }
 
-    private boolean isIncludedIn(final String filePath, final File classAsFile) throws MalformedURLException {
-        final File toFile = URLs.toFile(new URL(filePath));
+    private boolean isIncluded(final File root, final File clazz) {
         File file;
         try { // symb links
-            file = toFile.getCanonicalFile();
+            file = root.getCanonicalFile();
         } catch (final IOException e) {
-            file = toFile;
+            file = root;
         }
 
         File current;
         try { // symb links and windows long home names
-            current = classAsFile.getCanonicalFile();
+            current = clazz.getCanonicalFile();
         } catch (final IOException e) {
-            current = classAsFile;
+            current = clazz;
         }
         while (current != null && current.exists()) {
             if (current.equals(file)) {
@@ -734,6 +743,10 @@ public class OpenEJBContextConfig extends ContextConfig {
             }
         }
         return false;
+    }
+
+    private boolean isIncludedIn(final String filePath, final File classAsFile) throws MalformedURLException {
+        return isIncluded(URLs.toFile(new URL(filePath)), classAsFile);
     }
 
 }
