@@ -16,6 +16,7 @@
  */
 package org.apache.tomee.jul.handler.rotating;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Locale;
@@ -23,8 +24,22 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class LocalFileHandlerPatternFormatterTest {
+    private Locale locale;
+
+    @Before
+    public void setLocale() {
+        locale = Locale.getDefault();
+        Locale.setDefault(Locale.US);
+    }
+
+    @Before
+    public void resetLocale() {
+        Locale.setDefault(locale);
+    }
+
     @Test
     public void format() {
         final LogRecord record = new LogRecord(Level.FINE, "test message");
@@ -45,9 +60,9 @@ public class LocalFileHandlerPatternFormatterTest {
                 "test message\n",
                 new LocalFileHandler.PatternFormatter("%5$s%n", Locale.ENGLISH).format(record).replace("\r", ""));
 
-        // simple
-        assertEquals("1970-17-02 11:17:36 [FINER][my.class.Name] test message\n",
-                new LocalFileHandler.PatternFormatter(
-                        "%1$tY-%1$tM-%1$td %1$tT [%4$5s][%7$s] %5$s%6$s%n", Locale.ENGLISH).format(record).replace("\r", ""));
+        final String custom = new LocalFileHandler.PatternFormatter("%1$tY-%1$tM-%1$td %1$tT [%4$5s][%7$s] %5$s%6$s%n", Locale.ENGLISH)
+                .format(record).replace("\r", "");
+        assertTrue(custom
+                .matches("1970\\-17\\-02 \\p{Digit}+\\:17\\:36 \\[FINER\\]\\[my\\.class\\.Name\\] test message\\\n"));
     }
 }
