@@ -2671,7 +2671,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
         });
 
-        final Properties props = PropertyPlaceHolderHelper.holds(serviceInfo.properties);
+        final Properties props = PropertyPlaceHolderHelper.simpleHolds(serviceInfo.properties);
         if (serviceInfo.properties.containsKey("Definition")) {
             try { // we catch classcast etc..., if it fails it is not important
                 final InputStream is = new ByteArrayInputStream(serviceInfo.properties.getProperty("Definition").getBytes());
