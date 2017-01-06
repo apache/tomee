@@ -1388,7 +1388,7 @@
       <dependency>
         <artifactId>serp</artifactId>
         <groupId>net.sourceforge.serp</groupId>
-        <version>1.14.1</version>
+        <version>1.15.1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.sshd</groupId>
