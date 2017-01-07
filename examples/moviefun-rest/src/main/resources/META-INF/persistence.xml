@@ -25,6 +25,7 @@
     <class>org.superbiz.moviefun.Movie</class>
 
     <properties>
+      <property name="eclipselink.ddl-generation" value="drop-and-create-tables"/>
       <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
     </properties>
   </persistence-unit>

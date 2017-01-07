@@ -24,11 +24,6 @@
         return Backbone.Model.extend({
             urlRoot: window.ux.ROOT_URL + 'rest/movies',
             idAttribute: 'id',
-            toJSON: function () {
-                return {
-                    'movie': this.attributes
-                };
-            },
             defaults: {
                 rating: 5,
                 year: new Date().getFullYear()

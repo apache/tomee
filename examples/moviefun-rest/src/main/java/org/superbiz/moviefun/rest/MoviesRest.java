@@ -29,6 +29,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.List;
 
 @Path("movies")
@@ -73,8 +75,9 @@ public class MoviesRest {
 
     @GET
     @Path("count")
-    public int count(@QueryParam("field") String field, @QueryParam("searchTerm") String searchTerm) {
-        return service.count(field, searchTerm);
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response count(@QueryParam("field") String field, @QueryParam("searchTerm") String searchTerm) {
+        return Response.ok(service.count(field, searchTerm)).build();
     }
 
 }
