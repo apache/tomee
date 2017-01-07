@@ -42,7 +42,7 @@ public class OpenEJBBeanInfoService implements BeanArchiveService {
             throw new WebBeansConfigurationException("beans.xml with version 1.1 and higher must declare a bean-discovery-mode!");
         }
 
-        final DefaultBeanArchiveInformation information = new DefaultBeanArchiveInformation();
+        final DefaultBeanArchiveInformation information = new DefaultBeanArchiveInformation(bda.uri.toASCIIString());
         information.setVersion(info == null ? "1.1" : info.version);
         information.setBeanDiscoveryMode(BeanDiscoveryMode.valueOf(mode.trim().toUpperCase(Locale.ENGLISH)));
         information.setDecorators(bda.decorators);
