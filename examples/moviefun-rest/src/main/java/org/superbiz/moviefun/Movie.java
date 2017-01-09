@@ -31,9 +31,9 @@ public class Movie {
 
     private String director;
     private String title;
-    private int year;
+    private Integer year;
     private String genre;
-    private int rating;
+    private Integer rating;
 
     public Movie() {
     }
@@ -76,11 +76,11 @@ public class Movie {
         this.title = title;
     }
 
-    public int getYear() {
+    public Integer getYear() {
         return year;
     }
 
-    public void setYear(int year) {
+    public void setYear(Integer year) {
         this.year = year;
     }
 
@@ -92,11 +92,11 @@ public class Movie {
         this.genre = genre;
     }
 
-    public int getRating() {
+    public Integer getRating() {
         return rating;
     }
 
-    public void setRating(int rating) {
+    public void setRating(Integer rating) {
         this.rating = rating;
     }
 }

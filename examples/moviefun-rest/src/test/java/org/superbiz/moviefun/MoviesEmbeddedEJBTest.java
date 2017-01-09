@@ -67,9 +67,9 @@ public class MoviesEmbeddedEJBTest {
         assertEquals(1, moviesFound.size());
         assertEquals("Michael Bay", moviesFound.get(0).getDirector());
         assertEquals("Action", moviesFound.get(0).getGenre());
-        assertEquals(9, moviesFound.get(0).getRating());
+        assertEquals(new Integer(9), moviesFound.get(0).getRating());
         assertEquals("Bad Boys", moviesFound.get(0).getTitle());
-        assertEquals(1995, moviesFound.get(0).getYear());
+        assertEquals(new Integer(1995), moviesFound.get(0).getYear());
     }
 
 }
