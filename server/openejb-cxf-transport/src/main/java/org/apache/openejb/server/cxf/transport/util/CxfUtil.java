@@ -22,6 +22,7 @@ import org.apache.cxf.binding.BindingFactory;
 import org.apache.cxf.binding.BindingFactoryManager;
 import org.apache.cxf.bus.CXFBusFactory;
 import org.apache.cxf.common.logging.LogUtils;
+import org.apache.cxf.common.util.ClassUnwrapper;
 import org.apache.cxf.databinding.DataBinding;
 import org.apache.cxf.endpoint.AbstractEndpointFactory;
 import org.apache.cxf.feature.AbstractFeature;
@@ -108,6 +109,18 @@ public final class CxfUtil {
 
             // ensure client proxies can use app classes
             CXFBusFactory.setDefaultBus(Bus.class.cast(Proxy.newProxyInstance(CxfUtil.class.getClassLoader(), new Class<?>[]{Bus.class}, new ClientAwareBusHandler())));
+
+            bus.setProperty(ClassUnwrapper.class.getName(), new ClassUnwrapper() {
+                @Override
+                public Class<?> getRealClass(final Object o) {
+                    final Class<?> aClass = o.getClass();
+                    Class<?> c = aClass;
+                    while (c.getName().contains("$$")) {
+                        c = c.getSuperclass();
+                    }
+                    return c == Object.class ? aClass : c;
+                }
+            });
 
             SystemInstance.get().addObserver(new LifecycleManager());
 
