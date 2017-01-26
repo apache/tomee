@@ -107,7 +107,7 @@ public class NameNode implements Serializable {
         }
         if (myObject instanceof Federation) {
             name.reset(pos);
-            final String nameInContext = name.remaining().path();
+            final String nameInContext = compareResult != ParsedName.IS_EQUAL ? name.path() : name.remaining().path();
             Federation f = null;
             for (final Context c : (Federation) myObject) {
                 try {
