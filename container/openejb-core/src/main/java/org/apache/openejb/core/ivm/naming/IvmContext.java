@@ -47,6 +47,7 @@ import java.io.ObjectStreamException;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -531,21 +532,41 @@ public class IvmContext implements Context, Serializable {
                 vect.addElement(node);
             }
 
-            gatherNodes(node, vect);
+            gatherNodes(node, vect, new HashSet<NameNode>());
 
             buildEnumeration(vect);
         }
 
         protected abstract void buildEnumeration(Vector<NameNode> vect);
 
-        protected void gatherNodes(final NameNode node, final Vector vect) {
+        protected void gatherNodes(final NameNode node, final Vector vect, final Collection<NameNode> excluded) {
+            excluded.add(node);
             if (node.getLessTree() != null) {
                 vect.addElement(node.getLessTree());
-                gatherNodes(node.getLessTree(), vect);
+                gatherNodes(node.getLessTree(), vect, excluded);
             }
             if (node.getGrtrTree() != null) {
                 vect.addElement(node.getGrtrTree());
-                gatherNodes(node.getGrtrTree(), vect);
+                gatherNodes(node.getGrtrTree(), vect, excluded);
+            }
+            if (node.getSubTree() != null && ! excluded.contains(node.getSubTree())) {
+                vect.addElement(node.getSubTree());
+                excluded.add(node.getSubTree());
+            }
+
+            if (NameNode.Federation.class.isInstance(mynode.getObject())) {
+                for (final Context c : NameNode.Federation.class.cast(mynode.getObject())) {
+                    if (c == IvmContext.this || !IvmContext.class.isInstance(c)) {
+                        continue;
+                    }
+                    final IvmContext ctx = IvmContext.class.cast(c);
+                    if (ctx.mynode == mynode || excluded.contains(ctx.mynode)) {
+                        continue;
+                    }
+
+                    excluded.add(ctx.mynode);
+                    gatherNodes(ctx.mynode, vect, excluded);
+                }
             }
         }
 

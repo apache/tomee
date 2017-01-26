@@ -70,6 +70,10 @@ public class NameNode implements Serializable {
         }
     }
 
+    public Object getObject() {
+        return myObject;
+    }
+
     public Object resolve(final ParsedName name) throws NameNotFoundException {
         final int compareResult = name.compareTo(atomicHash);
         NameNotFoundException n = null;
@@ -406,8 +410,6 @@ public class NameNode implements Serializable {
             '}';
     }
 
-    private static class Federation extends ArrayList<Context> {
+    public static class Federation extends ArrayList<Context> {
     }
-
-    ;
 }
