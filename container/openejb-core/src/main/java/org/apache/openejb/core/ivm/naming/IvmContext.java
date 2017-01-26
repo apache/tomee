@@ -47,7 +47,6 @@ import java.io.ObjectStreamException;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.net.URL;
-import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -437,7 +436,7 @@ public class IvmContext implements Context, Serializable {
 
     public String composeName(final String name, final String prefix) throws NamingException {
         final Name result = composeName(new CompositeName(name),
-            new CompositeName(prefix));
+                new CompositeName(prefix));
         return result.toString();
     }
 
@@ -532,42 +531,59 @@ public class IvmContext implements Context, Serializable {
                 vect.addElement(node);
             }
 
-            gatherNodes(node, vect, new HashSet<NameNode>());
+            gatherNodes(node, vect);
 
             buildEnumeration(vect);
         }
 
         protected abstract void buildEnumeration(Vector<NameNode> vect);
 
-        protected void gatherNodes(final NameNode node, final Vector vect, final Collection<NameNode> excluded) {
-            excluded.add(node);
-            if (node.getLessTree() != null) {
-                vect.addElement(node.getLessTree());
-                gatherNodes(node.getLessTree(), vect, excluded);
-            }
-            if (node.getGrtrTree() != null) {
-                vect.addElement(node.getGrtrTree());
-                gatherNodes(node.getGrtrTree(), vect, excluded);
-            }
-            if (node.getSubTree() != null && ! excluded.contains(node.getSubTree())) {
-                vect.addElement(node.getSubTree());
-                excluded.add(node.getSubTree());
-            }
-
-            if (NameNode.Federation.class.isInstance(mynode.getObject())) {
+        protected void gatherNodes(final NameNode node, final Vector vect) {
+            addInListIfNeeded(mynode, node.getLessTree(), vect);
+            addInListIfNeeded(mynode, node.getGrtrTree(), vect);
+            addInListIfNeeded(mynode, node.getSubTree(), vect);
+            if (NameNode.Federation.class.isInstance(mynode.getObject())) { // tomcat mainly
                 for (final Context c : NameNode.Federation.class.cast(mynode.getObject())) {
                     if (c == IvmContext.this || !IvmContext.class.isInstance(c)) {
                         continue;
                     }
+
                     final IvmContext ctx = IvmContext.class.cast(c);
-                    if (ctx.mynode == mynode || excluded.contains(ctx.mynode)) {
+                    if (ctx.mynode == mynode || vect.contains(ctx.mynode)) {
                         continue;
                     }
 
-                    excluded.add(ctx.mynode);
-                    gatherNodes(ctx.mynode, vect, excluded);
+                    addInListIfNeeded(ctx.mynode, ctx.mynode.getGrtrTree(), vect);
+                    addInListIfNeeded(ctx.mynode, ctx.mynode.getLessTree(), vect);
+                    addInListIfNeeded(ctx.mynode, ctx.mynode.getSubTree(), vect);
                 }
             }
+        }
+
+        private void addInListIfNeeded(final NameNode parent, final NameNode node, final Vector vect) {
+            if (node == null || vect.contains(node) || !isMyChild(parent, node)) {
+                return;
+            }
+            vect.addElement(node);
+            gatherNodes(node, vect);
+        }
+
+        private boolean isMyChild(final NameNode parent, final NameNode node) {
+            if (node.getParent() == parent) {
+                return true;
+            }
+            if (node.getParentTree() == node.getParent()) { // no need to browse the tree
+                return false;
+            }
+
+            NameNode current = node.getParentTree();
+            while (current != null) {
+                if (current == parent) {
+                    return true;
+                }
+                current = current.getParentTree();
+            }
+            return false;
         }
 
         public void close() {
@@ -598,8 +614,8 @@ public class IvmContext implements Context, Serializable {
     @Override
     public String toString() {
         return "IvmContext{" +
-            "mynode=" + mynode.getAtomicName() +
-            '}';
+                "mynode=" + mynode.getAtomicName() +
+                '}';
     }
 
     protected Object writeReplace() throws ObjectStreamException {

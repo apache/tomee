@@ -393,6 +393,9 @@ public class NameNode implements Serializable {
         return parent;
     }
 
+    public NameNode getParentTree() {
+        return parentTree;
+    }
 
     @Override
     public String toString() {
