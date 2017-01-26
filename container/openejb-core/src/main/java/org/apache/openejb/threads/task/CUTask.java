@@ -155,9 +155,10 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask implements Compa
             this.associate = associate;
             this.securityServiceState = initialSecurityServiceState;
             this.securityContext = securityContext;
-            this.threadContext = initialThreadContext;
             this.loader = initialLoader;
             this.stack = stack;
+            // copy to ensure we have a thread safe data map
+            this.threadContext = initialThreadContext == null ? null : new ThreadContext(initialThreadContext);
 
             /* propagation of CDI context seems wrong
             final ContextsService genericContextsService = WebBeansContext.currentInstance().getContextsService();
