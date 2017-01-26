@@ -153,11 +153,6 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
     }
 
     @Override
-    public ProtocolDescription getDefaultProtocol() {
-        return new ProtocolDescription("Local");
-    }
-
-    @Override
     public ProtocolMetaData deploy(final Archive<?> archive) throws DeploymentException {
         try {
             /* don't do it since it should be configurable

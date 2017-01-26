@@ -53,6 +53,15 @@ public class TomEEConfiguration implements ContainerConfiguration {
     protected boolean keepServerXmlAsThis;
     protected boolean singleDumpByArchiveName;
     protected Collection<String> singleDeploymentByArchiveName = Collections.emptyList();
+    private String arquillianProtocol = "Servlet 2.5";
+
+    public String getArquillianProtocol() {
+        return arquillianProtocol;
+    }
+
+    public void setArquillianProtocol(final String arquillianProtocol) {
+        this.arquillianProtocol = arquillianProtocol;
+    }
 
     public boolean isUnsafeEjbd() {
         return unsafeEjbd;

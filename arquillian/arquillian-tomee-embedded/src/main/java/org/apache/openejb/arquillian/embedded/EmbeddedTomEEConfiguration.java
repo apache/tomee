@@ -49,6 +49,10 @@ public class EmbeddedTomEEConfiguration extends TomEEConfiguration {
     private String configurationCustomizers;
     private String classpathConfiguration;
 
+    public EmbeddedTomEEConfiguration() {
+        setArquillianProtocol("Local"); // keep this default cause it is way faster and anyway the one we had since 2011
+    }
+
     public String getClasspathConfiguration() {
         return classpathConfiguration;
     }
