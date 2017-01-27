@@ -49,6 +49,7 @@ public class EntityManagerFactoryCallable implements Callable<EntityManagerFacto
     private final Map<ComparableValidationConfig, ValidatorFactory> potentialValidators;
     private final boolean cdi;
     private ClassLoader appClassLoader;
+    private Class<?> provider;
 
     public EntityManagerFactoryCallable(final String persistenceProviderClassName, final PersistenceUnitInfoImpl unitInfo,
                                         final ClassLoader cl, final Map<ComparableValidationConfig, ValidatorFactory> validators,
@@ -61,10 +62,13 @@ public class EntityManagerFactoryCallable implements Callable<EntityManagerFacto
     }
 
     public Class<?> getProvider() {
+        if (provider != null) { // no need of thread safety
+            return provider;
+        }
         final ClassLoader old = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(appClassLoader);
         try {
-            return appClassLoader.loadClass(persistenceProviderClassName);
+            return (provider = appClassLoader.loadClass(persistenceProviderClassName));
         } catch (final ClassNotFoundException e) {
             throw new IllegalArgumentException(e);
         } finally {
