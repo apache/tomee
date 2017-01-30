@@ -212,6 +212,7 @@ import javax.jms.JMSDestinationDefinitions;
 import javax.jms.Queue;
 import javax.jws.HandlerChain;
 import javax.jws.WebService;
+import javax.persistence.Converter;
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -1945,6 +1946,7 @@ public class AnnotationDeployer implements DynamicDeployer {
         classes.addAll(finder.findAnnotatedClasses(Entity.class));
         classes.addAll(finder.findAnnotatedClasses(Embeddable.class));
         classes.addAll(finder.findAnnotatedClasses(MappedSuperclass.class));
+        classes.addAll(finder.findAnnotatedClasses(Converter.class));
         final List<String> existingClasses = pu.getClazz();
         for (final Class<?> clazz : classes) {
             final String name = clazz.getName();
