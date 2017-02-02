@@ -122,7 +122,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
         return ReloadableEntityManagerFactory.class.isInstance(entityManagerFactory) ?
                 hasMethod(
                         ReloadableEntityManagerFactory.class.cast(entityManagerFactory).getEntityManagerFactoryCallable().getProvider(),
-                        "createEntityManager", SynchronizationType.class)
+                        "generateSchema", String.class, Map.class)
                 : hasMethod(entityManagerFactory.getClass(), "createEntityManager", SynchronizationType.class);
     }
 
