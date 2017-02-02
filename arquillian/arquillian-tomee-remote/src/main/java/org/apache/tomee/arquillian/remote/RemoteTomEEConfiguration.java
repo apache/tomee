@@ -131,7 +131,8 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
 
     public String getArtifactName() {
 
-        final String format = (classifier == null || classifier.isEmpty()) ? "%s:%s:%s:%s" : "%s:%s:%s:%s:%s";
+        final String format = ((classifier == null || classifier.isEmpty()) || 
+            (classifier != null && classifier.trim().equalsIgnoreCase("ignore"))) ? "%s:%s:%s:%s" : "%s:%s:%s:%s:%s";
 
         return String.format(format, getGroupId(), getArtifactId(), getVersion(), getType(), getClassifier());
 
