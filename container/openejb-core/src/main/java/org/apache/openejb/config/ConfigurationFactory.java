@@ -86,6 +86,7 @@ import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.resource.jdbc.DataSourceFactory;
 import org.apache.openejb.resource.jdbc.pool.DataSourceCreator;
 import org.apache.openejb.resource.jdbc.pool.DefaultDataSourceCreator;
+import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
@@ -155,16 +156,13 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
     public ConfigurationFactory() {
         this(!shouldAutoDeploy());
-        System.setProperty("bval.in-container", "true");
     }
 
     private static boolean exists(final String s) {
         try {
             ConfigurationFactory.class.getClassLoader().loadClass(s);
             return true;
-        } catch (final ClassNotFoundException e) {
-            return false;
-        } catch (final NoClassDefFoundError e) {
+        } catch (final ClassNotFoundException | NoClassDefFoundError e) {
             return false;
         }
     }
@@ -180,6 +178,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     }
 
     public ConfigurationFactory(final boolean offline, final DynamicDeployer preAutoConfigDeployer) {
+        JavaSecurityManagers.setSystemProperty("bval.in-container", JavaSecurityManagers.getSystemProperty("bval.in-container","true"));
+
         this.offline = offline;
         this.serviceTypeIsAdjustable = SystemInstance.get().getOptions().get("openejb.service-type-adjustement", true);
         this.deploymentLoader = new DeploymentLoader();
@@ -494,7 +494,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             final String name = sp.getName();
             final String value = sp.getValue();
             SystemInstance.get().setProperty(name, value);
-            System.setProperty(name, value);
+            JavaSecurityManagers.setSystemProperty(name, value);
         }
 
         loadPropertiesDeclaredConfiguration(openejb);
@@ -728,7 +728,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
     public static void loadPropertiesDeclaredConfiguration(final Openejb openejb) {
 
-        final Properties sysProps = new Properties(System.getProperties());
+        final Properties sysProps = new Properties(JavaSecurityManagers.getSystemProperties());
         sysProps.putAll(SystemInstance.get().getProperties());
         fillOpenEjb(openejb, sysProps);
     }
@@ -1319,7 +1319,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                         continue;
                     }
                     types.add(type);
-                    sb.append(System.getProperty("line.separator"));
+                    sb.append(JavaSecurityManagers.getSystemProperty("line.separator"));
                     sb.append("  <").append(p.getService());
                     sb.append(" id=\"").append(service.getId()).append('"');
                     sb.append(" type=\"").append(type).append("\"/>");
@@ -1533,7 +1533,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
     protected static Properties getSystemProperties(final String serviceId, final String serviceType) {
         // Override with system properties
-        final Properties sysProps = new Properties(System.getProperties());
+        final Properties sysProps = new Properties(JavaSecurityManagers.getSystemProperties());
         sysProps.putAll(SystemInstance.get().getProperties());
 
         return getOverrides(sysProps, serviceId, serviceType);

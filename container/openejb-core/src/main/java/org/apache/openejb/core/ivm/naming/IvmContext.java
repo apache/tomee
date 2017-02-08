@@ -23,6 +23,7 @@ import org.apache.openejb.core.ivm.IntraVmProxy;
 import org.apache.openejb.core.ivm.naming.java.javaURLContextFactory;
 import org.apache.openejb.core.ivm.naming.openejb.openejbURLContextFactory;
 import org.apache.openejb.loader.IO;
+import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.xbean.naming.context.ContextUtil;
 
 import javax.naming.Binding;
@@ -237,7 +238,7 @@ public class IvmContext implements Context, Serializable {
 
     private static String getUrlPackagePrefixes() {
         // 1. System.getProperty
-        String urlPackagePrefixes = System.getProperty(Context.URL_PKG_PREFIXES);
+        String urlPackagePrefixes = JavaSecurityManagers.getSystemProperty(Context.URL_PKG_PREFIXES);
 
         // 2. Thread.currentThread().getContextClassLoader().getResources("jndi.properties")
         if (urlPackagePrefixes == null) {
@@ -260,7 +261,7 @@ public class IvmContext implements Context, Serializable {
 
         // 3. ${java.home}/lib/jndi.properties
         if (urlPackagePrefixes == null) {
-            final String javahome = System.getProperty("java.home");
+            final String javahome = JavaSecurityManagers.getSystemProperty("java.home");
             if (javahome != null) {
                 InputStream in = null;
                 try {

@@ -19,6 +19,7 @@ package org.apache.openejb.config.sys;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.openejb.util.SimpleJSonParser;
 import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.DefaultHandler;
@@ -28,9 +29,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Locale;
 
 public class JSonConfigReader {
     private static final String COMMENT_KEY = "__";
@@ -141,7 +142,7 @@ public class JSonConfigReader {
 
                 // set it for openejb AND the JVM since that's probably too late to let it be done automatically
                 SystemInstance.get().setProperty(key, str);
-                System.setProperty(key, str);
+                JavaSecurityManagers.setSystemProperty(key, str);
             } else {
                 setProperties(key + '.', map(value));
             }

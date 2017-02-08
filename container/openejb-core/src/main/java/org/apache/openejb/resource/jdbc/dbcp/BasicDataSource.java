@@ -27,6 +27,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.resource.jdbc.BasicDataSourceUtil;
 import org.apache.openejb.resource.jdbc.IsolationLevels;
 import org.apache.openejb.resource.jdbc.plugin.DataSourcePlugin;
+import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.openejb.util.reflection.Reflections;
 
 import javax.management.MBeanServer;
@@ -205,7 +206,7 @@ public class BasicDataSource extends org.apache.commons.dbcp2.BasicDataSource im
                 }
             } else {
                 // wrap super call with code that sets user.dir to openejb.base and then resets it
-                final Properties systemProperties = System.getProperties();
+                final Properties systemProperties = JavaSecurityManagers.getSystemProperties();
 
                 final String userDir = systemProperties.getProperty("user.dir");
                 try {

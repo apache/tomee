@@ -27,9 +27,10 @@ import org.apache.openejb.cli.SystemExitException;
 import org.apache.openejb.config.sys.JaxbOpenejb;
 import org.apache.openejb.config.sys.Openejb;
 import org.apache.openejb.config.sys.Resource;
+import org.apache.openejb.util.JavaSecurityManagers;
 
-import java.io.File;
 import javax.xml.bind.Marshaller;
+import java.io.File;
 
 import static java.util.Arrays.asList;
 
@@ -90,7 +91,9 @@ public final class EffectiveTomEEXml {
         } else {
             for(final String config : asList("tomee.xml", "openejb.xml")) {
                 xml = new File( // we shouldnt go to catalina.base, just a fallback
-                        System.getProperty("openejb.base", System.getProperty("openejb.home", System.getProperty("catalina.base", "missing"))),
+                        JavaSecurityManagers.getSystemProperty("openejb.base",
+                                JavaSecurityManagers.getSystemProperty("openejb.home",
+                                        JavaSecurityManagers.getSystemProperty("catalina.base", "missing"))),
                         config);
                 if (xml.isFile()) {
                     break;

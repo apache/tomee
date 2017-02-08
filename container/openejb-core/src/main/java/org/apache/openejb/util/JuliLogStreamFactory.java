@@ -49,9 +49,9 @@ public class JuliLogStreamFactory implements LogStreamFactory {
         final boolean embedded = is("org.apache.tomee.embedded.Container");
 
         // if embedded case enhance a bit logging if not set
-        final Options options = SystemInstance.isInitialized() ? SystemInstance.get().getOptions() : new Options(System.getProperties());
+        final Options options = SystemInstance.isInitialized() ? SystemInstance.get().getOptions() : new Options(JavaSecurityManagers.getSystemProperties());
         final boolean forceLogs = options.get("openejb.jul.forceReload", false);
-        if ((!tomee || embedded || forceLogs) && System.getProperty("java.util.logging.manager") == null) {
+        if ((!tomee || embedded || forceLogs) && JavaSecurityManagers.getSystemProperty("java.util.logging.manager") == null) {
             consoleHandlerClazz = options.get("openejb.jul.consoleHandlerClazz", (String) null);
             if (consoleHandlerClazz == null) {
                 if (options.get(OPENEJB_LOG_COLOR_PROP, false) && isNotIDE()) {
@@ -82,20 +82,20 @@ public class JuliLogStreamFactory implements LogStreamFactory {
                 }
             }
             // do it last since otherwise it can lock
-            System.setProperty("java.util.logging.manager", OpenEJBLogManager.class.getName());
+            JavaSecurityManagers.setSystemProperty("java.util.logging.manager", OpenEJBLogManager.class.getName());
         }
 
         try {
             if (options.get("openjpa.Log", (String) null) == null) {
                 JuliLogStreamFactory.class.getClassLoader().loadClass("org.apache.openjpa.lib.log.LogFactoryAdapter");
-                System.setProperty("openjpa.Log", "org.apache.openejb.openjpa.JULOpenJPALogFactory");
+                JavaSecurityManagers.setSystemProperty("openjpa.Log", "org.apache.openejb.openjpa.JULOpenJPALogFactory");
             }
         } catch (final Exception ignored) {
             // no-op: openjpa is not at the classpath so don't trigger it loading with our logger
         }
 
         try {
-            System.setProperty(WebBeansLoggerFacade.class.getName(), "org.apache.openejb.cdi.logging.ContainerJULLoggerFactory");
+            JavaSecurityManagers.setSystemProperty(WebBeansLoggerFacade.class.getName(), "org.apache.openejb.cdi.logging.ContainerJULLoggerFactory");
         } catch (final Throwable th) {
             // ignored, surely arquillian remote only so OWB is not here
         }
@@ -125,7 +125,7 @@ public class JuliLogStreamFactory implements LogStreamFactory {
     }
 
     public static boolean isNotIDE() {
-        return !System.getProperty("java.class.path").contains("idea_rt"); // TODO: eclipse, netbeans
+        return !JavaSecurityManagers.getSystemProperty("java.class.path").contains("idea_rt"); // TODO: eclipse, netbeans
     }
 
     // TODO: mange conf by classloader? see tomcat log manager
@@ -167,7 +167,7 @@ public class JuliLogStreamFactory implements LogStreamFactory {
             }
 
             // if it is one of ours loggers and no value is defined let set our nice logging style
-            if (OpenEJBLogManager.class.getName().equals(System.getProperty("java.util.logging.manager")) // custom logging
+            if (OpenEJBLogManager.class.getName().equals(JavaSecurityManagers.getSystemProperty("java.util.logging.manager")) // custom logging
                 && isOverridableLogger(name) // managed loggers
                 && parentValue == null) { // not already defined
                 if (name.endsWith(".handlers")) {

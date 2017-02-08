@@ -19,6 +19,7 @@ package org.apache.openejb.cli;
 
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemClassPath;
+import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.openejb.util.PropertyPlaceHolderHelper;
 import org.apache.openejb.util.URLs;
 
@@ -46,7 +47,7 @@ public class Bootstrap {
             }
         }
 
-        final String homeProperty = System.getProperty(OPENEJB_HOME_PROPERTY_NAME);
+        final String homeProperty = JavaSecurityManagers.getSystemProperty(OPENEJB_HOME_PROPERTY_NAME);
         if (homeProperty != null) {
             if (new File(homeProperty).exists()) {
                 return;
@@ -69,7 +70,7 @@ public class Bootstrap {
                     final File lib = jarFile.getParentFile();
                     final File home = lib.getParentFile().getCanonicalFile();
 
-                    System.setProperty(OPENEJB_HOME_PROPERTY_NAME, home.getAbsolutePath());
+                    JavaSecurityManagers.setSystemProperty(OPENEJB_HOME_PROPERTY_NAME, home.getAbsolutePath());
                 }
             }
         } catch (final Exception e) {
@@ -81,12 +82,12 @@ public class Bootstrap {
         final String prop = arg.substring(arg.indexOf("-D") + 2, arg.indexOf("="));
         final String val = arg.substring(arg.indexOf("=") + 1);
 
-        System.setProperty(prop, val);
+        JavaSecurityManagers.setSystemProperty(prop, val);
     }
 
     private static void setupClasspath() {
-        final String base = System.getProperty(OPENEJB_BASE_PROPERTY_NAME, "");
-        final String home = System.getProperty("catalina.home", System.getProperty(OPENEJB_HOME_PROPERTY_NAME, base));
+        final String base = JavaSecurityManagers.getSystemProperty(OPENEJB_BASE_PROPERTY_NAME, "");
+        final String home = JavaSecurityManagers.getSystemProperty("catalina.home", JavaSecurityManagers.getSystemProperty(OPENEJB_HOME_PROPERTY_NAME, base));
         try {
             final File lib = new File(home + File.separator + "lib");
             final SystemClassPath systemCP = new SystemClassPath();

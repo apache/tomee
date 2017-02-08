@@ -74,6 +74,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.rest.RESTResourceFinder;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.testing.rest.ContextProvider;
+import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.NetworkUtil;
 import org.apache.openejb.util.PropertyPlaceHolderHelper;
@@ -730,9 +731,9 @@ public class ApplicationComposers {
 
         enrich(inputTestInstance, context);
 
-        System.setProperty(Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
+        JavaSecurityManagers.setSystemProperty(Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
-        System.getProperties().put(OPENEJB_APPLICATION_COMPOSER_CONTEXT, appContext.getGlobalJndiContext());
+        JavaSecurityManagers.setSystemProperty(OPENEJB_APPLICATION_COMPOSER_CONTEXT, appContext.getGlobalJndiContext());
 
         final List<Field> fields = new ArrayList<>(testClassFinder.findAnnotatedFields(AppResource.class));
         fields.addAll(testClassFinder.findAnnotatedFields(org.apache.openejb.junit.AppResource.class));
@@ -1289,7 +1290,7 @@ public class ApplicationComposers {
     }
 
     public void startContainer(final Object instance) throws Exception {
-        originalProperties = (Properties) System.getProperties().clone();
+        originalProperties = (Properties) JavaSecurityManagers.getSystemProperties().clone();
         originalLoader = Thread.currentThread().getContextClassLoader();
         fixFakeClassFinder(instance);
 
@@ -1490,7 +1491,7 @@ public class ApplicationComposers {
             for (final String name : propertiesToSetAgain) {
                 final String value = PropertyPlaceHolderHelper.simpleValue(SystemInstance.get().getProperty(name));
                 configuration.put(name, value);
-                System.setProperty(name, value); // done lazily to support placeholders so container will not do it here
+                JavaSecurityManagers.setSystemProperty(name, value); // done lazily to support placeholders so container will not do it here
             }
             propertiesToSetAgain.clear();
         }

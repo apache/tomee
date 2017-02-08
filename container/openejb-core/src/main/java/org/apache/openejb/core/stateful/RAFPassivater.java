@@ -19,6 +19,7 @@ package org.apache.openejb.core.stateful;
 
 import org.apache.openejb.SystemException;
 import org.apache.openejb.spi.Serializer;
+import org.apache.openejb.util.JavaSecurityManagers;
 
 import java.io.File;
 import java.io.RandomAccessFile;
@@ -53,7 +54,8 @@ public class RAFPassivater implements PassivationStrategy {
     public synchronized void passivate(final Map stateTable)
         throws SystemException {
         try(final RandomAccessFile ras = new RandomAccessFile(
-                System.getProperty("java.io.tmpdir", File.separator + "tmp") + File.separator + "passivation" + fileID + ".ser", "rw")) {
+                JavaSecurityManagers.getSystemProperty("java.io.tmpdir", File.separator + "tmp") +
+                        File.separator + "passivation" + fileID + ".ser", "rw")) {
             fileID++;
 
             final Iterator iterator = stateTable.keySet().iterator();
@@ -88,7 +90,8 @@ public class RAFPassivater implements PassivationStrategy {
         }
 
         try (final RandomAccessFile ras =
-                     new RandomAccessFile(System.getProperty("java.io.tmpdir", File.separator + "tmp") + File.separator + "passivation" + pointer.fileid + ".ser", "r")) {
+                     new RandomAccessFile(JavaSecurityManagers.getSystemProperty("java.io.tmpdir", File.separator + "tmp") +
+                             File.separator + "passivation" + pointer.fileid + ".ser", "r")) {
             final byte[] bytes = new byte[pointer.bytesize];
             ras.seek(pointer.filepointer);
             ras.readFully(bytes);

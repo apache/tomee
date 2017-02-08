@@ -22,6 +22,7 @@ import org.apache.openejb.core.EnvProps;
 import org.apache.openejb.core.ObjectInputStreamFiltered;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
@@ -56,7 +57,7 @@ public class SimplePassivater implements PassivationStrategy {
             if (dir != null) {
                 sessionDirectory = SystemInstance.get().getBase().getDirectory(dir).getAbsoluteFile();
             } else {
-                sessionDirectory = new File(System.getProperty("java.io.tmpdir", File.separator + "tmp")).getAbsoluteFile();
+                sessionDirectory = new File(JavaSecurityManagers.getSystemProperty("java.io.tmpdir", File.separator + "tmp")).getAbsoluteFile();
             }
 
             if (!sessionDirectory.exists() && !sessionDirectory.mkdirs()) {

@@ -50,6 +50,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.sxc.ApplicationXml;
 import org.apache.openejb.util.AnnotationFinder;
 import org.apache.openejb.util.JarExtractor;
+import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URLs;
@@ -1117,7 +1118,8 @@ public class DeploymentLoader implements DeploymentFilterable {
                                         || name.endsWith("tomcat-websocket.jar")
                                         || name.startsWith("commons-jcs-")
                                         || name.startsWith("xx-arquillian-tomee")
-                                        || ("lib".equals(name) && file.isDirectory() && new File(System.getProperty("openejb.base", "-")).equals(file.getParentFile()))) {
+                                        || ("lib".equals(name) && file.isDirectory() &&
+                                            new File(JavaSecurityManagers.getSystemProperty("openejb.base", "-")).equals(file.getParentFile()))) {
                                     it.remove();
                                 }
                             }

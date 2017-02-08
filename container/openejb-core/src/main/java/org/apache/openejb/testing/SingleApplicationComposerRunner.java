@@ -17,6 +17,7 @@
 package org.apache.openejb.testing;
 
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.inject.OWBInjector;
 import org.apache.xbean.finder.AnnotationFinder;
@@ -112,7 +113,7 @@ public class SingleApplicationComposerRunner extends BlockJUnit4ClassRunner {
     private static void start(final Class<?> marker) throws Exception {
         if (APP.get() == null) {
             final Class<?> type;
-            final String typeStr = System.getProperty("tomee.application-composer.application");
+            final String typeStr = JavaSecurityManagers.getSystemProperty("tomee.application-composer.application");
             if (typeStr != null) {
                 try {
                     type = Thread.currentThread().getContextClassLoader().loadClass(typeStr);

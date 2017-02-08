@@ -22,6 +22,7 @@ import org.apache.openejb.core.TempClassLoader;
 import org.apache.openejb.javaagent.Agent;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.openejb.util.Saxs;
 import org.apache.xbean.finder.ClassLoaders;
 import org.apache.xbean.finder.UrlSet;
@@ -264,7 +265,7 @@ public class PersistenceBootstrap {
         if (SystemInstance.isInitialized()) {
             return SystemInstance.get().getOptions().get(property, (String) null);
         }
-        return System.getProperty(property);
+        return JavaSecurityManagers.getSystemProperty(property);
     }
 
     private static void debug(final String x) {

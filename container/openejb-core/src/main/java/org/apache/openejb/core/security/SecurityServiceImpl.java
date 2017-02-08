@@ -20,6 +20,7 @@ package org.apache.openejb.core.security;
 import org.apache.openejb.core.security.jaas.UsernamePasswordCallbackHandler;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.ConfUtils;
+import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.xbean.finder.archive.FileArchive;
 
 import javax.security.auth.Subject;
@@ -66,7 +67,7 @@ public class SecurityServiceImpl extends AbstractSecurityService {
         }
 
         final URL loginConfig = ConfUtils.getConfResource("login.config");
-        System.setProperty("java.security.auth.login.config", FileArchive.decode(loginConfig.toExternalForm()));
+        JavaSecurityManagers.setSystemProperty("java.security.auth.login.config", FileArchive.decode(loginConfig.toExternalForm()));
     }
 
     @Override

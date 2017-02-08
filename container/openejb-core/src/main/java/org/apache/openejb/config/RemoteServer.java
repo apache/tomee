@@ -20,6 +20,7 @@ package org.apache.openejb.config;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Options;
+import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.openejb.util.Join;
 
 import java.io.File;
@@ -51,7 +52,7 @@ import java.util.Locale;
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class RemoteServer {
 
-    private static final Options options = new Options(System.getProperties());
+    private static final Options options = new Options(JavaSecurityManagers.getSystemProperties());
     public static final String SERVER_DEBUG_PORT = "server.debug.port";
     public static final String SERVER_SHUTDOWN_PORT = "server.shutdown.port";
     public static final String SERVER_SHUTDOWN_HOST = "server.shutdown.host";
@@ -64,7 +65,7 @@ public class RemoteServer {
     private boolean debug = options.get(OPENEJB_SERVER_DEBUG, false);
     private final boolean profile = options.get("openejb.server.profile", false);
     private final boolean tomcat;
-    private final String javaOpts = System.getProperty("java.opts");
+    private final String javaOpts = JavaSecurityManagers.getSystemProperty("java.opts");
     private String additionalClasspath;
 
     /**
@@ -187,10 +188,11 @@ public class RemoteServer {
                 }
 
                 final File home = getHome();
-                final String javaVersion = System.getProperty("java.version");
+                final String javaVersion = JavaSecurityManagers.getSystemProperty("java.version");
                 if (verbose) {
                     System.out.println("OPENEJB_HOME = " + home.getAbsolutePath());
-                    final String systemInfo = "Java " + javaVersion + "; " + System.getProperty("os.name") + "/" + System.getProperty("os.version");
+                    final String systemInfo = "Java " + javaVersion + "; " +
+                            JavaSecurityManagers.getSystemProperty("os.name") + "/" + JavaSecurityManagers.getSystemProperty("os.version");
                     System.out.println("SYSTEM_INFO  = " + systemInfo);
                 }
 
@@ -212,12 +214,13 @@ public class RemoteServer {
                 //File openejbJar = new File(lib, "openejb-core-" + version + ".jar");
 
                 final String java;
-                final boolean isWindows = System.getProperty("os.name", "unknown").toLowerCase(Locale.ENGLISH).startsWith("windows");
+                final boolean isWindows = JavaSecurityManagers.getSystemProperty("os.name", "unknown")
+                        .toLowerCase(Locale.ENGLISH).startsWith("windows");
                 if (isWindows && START.equals(cmd) && options.get("server.windows.fork", false)) {
                     // run and forget
-                    java = new File(System.getProperty("java.home"), "bin/javaw").getAbsolutePath();
+                    java = new File(JavaSecurityManagers.getSystemProperty("java.home"), "bin/javaw").getAbsolutePath();
                 } else {
-                    java = new File(System.getProperty("java.home"), "bin/java").getAbsolutePath();
+                    java = new File(JavaSecurityManagers.getSystemProperty("java.home"), "bin/java").getAbsolutePath();
                 }
 
                 final List<String> argsList = new ArrayList<String>(20);
@@ -423,7 +426,7 @@ public class RemoteServer {
     }
 
     public void kill3UNIX() { // debug purpose only
-        if (System.getProperty("os.name", "unknown").toLowerCase(Locale.ENGLISH).startsWith("windows")) {
+        if (JavaSecurityManagers.getSystemProperty("os.name", "unknown").toLowerCase(Locale.ENGLISH).startsWith("windows")) {
             return;
         }
 
@@ -485,8 +488,9 @@ public class RemoteServer {
     }
 
     private void addIfSet(final List<String> argsList, final String key) {
-        if (System.getProperties().containsKey(key)) {
-            argsList.add("-D" + key + "=" + System.getProperty(key));
+        final String systemProperty = JavaSecurityManagers.getSystemProperty(key);
+        if (systemProperty != null) {
+            argsList.add("-D" + key + "=" + systemProperty);
         }
     }
 
@@ -495,7 +499,7 @@ public class RemoteServer {
             return home;
         }
 
-        final String openejbHome = System.getProperty("openejb.home");
+        final String openejbHome = JavaSecurityManagers.getSystemProperty("openejb.home");
 
         if (openejbHome != null) {
             home = new File(openejbHome);

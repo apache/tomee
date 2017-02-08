@@ -22,6 +22,7 @@ import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URLs;
 import org.apache.xbean.finder.UrlSet;
@@ -462,7 +463,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
                     }
                 }
 
-                final boolean isWindows = System.getProperty("os.name", "unknown").toLowerCase(Locale.ENGLISH).startsWith("windows");
+                final boolean isWindows = JavaSecurityManagers.getSystemProperty("os.name", "unknown").toLowerCase(Locale.ENGLISH).startsWith("windows");
                 if (!isWindows) {
                     urls = urlSet.getUrls();
                 } else {

@@ -124,6 +124,7 @@ import org.apache.openejb.util.Contexts;
 import org.apache.openejb.util.DaemonThreadFactory;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.ExecutorBuilder;
+import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -446,7 +447,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         l.lock();
 
         try {
-            final Properties systemProperties = System.getProperties();
+            final Properties systemProperties = JavaSecurityManagers.getSystemProperties();
 
             String str = systemProperties.getProperty(Context.URL_PKG_PREFIXES);
             if (str == null || clean) {

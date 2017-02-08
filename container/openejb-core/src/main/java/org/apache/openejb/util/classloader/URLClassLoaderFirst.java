@@ -19,6 +19,7 @@ package org.apache.openejb.util.classloader;
 
 import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.JavaSecurityManagers;
 
 import java.io.IOException;
 import java.net.URL;
@@ -75,7 +76,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
     private static boolean skipLib(final String includedClass) {
         try {
             URLClassLoaderFirst.class.getClassLoader().loadClass(includedClass);
-            return "true".equalsIgnoreCase(System.getProperty(includedClass + ".skip", "true"));
+            return "true".equalsIgnoreCase(JavaSecurityManagers.getSystemProperty(includedClass + ".skip", "true"));
         } catch (final ClassNotFoundException e) {
             return false;
         }

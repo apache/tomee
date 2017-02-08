@@ -28,6 +28,7 @@ import org.apache.openejb.core.security.jacc.BasicPolicyConfiguration;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.CallerPrincipal;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.JavaSecurityManagers;
 
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
@@ -73,7 +74,7 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
     }
 
     public AbstractSecurityService(final String jaccProvider) {
-        System.setProperty(JaccProvider.class.getName(), jaccProvider);
+        JavaSecurityManagers.setSystemProperty(JaccProvider.class.getName(), jaccProvider);
 
         installJacc();
 
@@ -340,8 +341,8 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
 
         final String providerKey = "javax.security.jacc.PolicyConfigurationFactory.provider";
         try {
-            if (System.getProperty(providerKey) == null) {
-                System.setProperty(providerKey, JaccProvider.Factory.class.getName());
+            if (JavaSecurityManagers.getSystemProperty(providerKey) == null) {
+                JavaSecurityManagers.setSystemProperty(providerKey, JaccProvider.Factory.class.getName());
                 final ClassLoader cl = JaccProvider.Factory.class.getClassLoader();
                 Thread.currentThread().setContextClassLoader(cl);
             }
@@ -351,7 +352,7 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
             // from the equivalent call in JaccPermissionsBuilder can be avoided.
             PolicyConfigurationFactory.getPolicyConfigurationFactory();
         } catch (final Exception e) {
-            throw new IllegalStateException("Could not install JACC Policy Configuration Factory: " + System.getProperty(providerKey), e);
+            throw new IllegalStateException("Could not install JACC Policy Configuration Factory: " + JavaSecurityManagers.getSystemProperty(providerKey), e);
         } finally {
             Thread.currentThread().setContextClassLoader(contextClassLoader);
         }

@@ -51,7 +51,7 @@ public class Logger {
     }
 
     public static synchronized void configure() {
-        configure(System.getProperties());
+        configure(SystemInstance.isInitialized() ? SystemInstance.get().getProperties() : JavaSecurityManagers.getSystemProperties());
     }
 
     public static synchronized void configure(final Properties config) {
@@ -93,12 +93,12 @@ public class Logger {
         final String[] specialKeys = new String[] { "openejb.jul.forceReload", "openejb.jul.consoleHandlerClazz", "openejb.logger.external" };
         final String[] originals = new String[specialKeys.length];
         for (int i = 0; i < specialKeys.length; i++) {
-            originals[i] = System.getProperty(specialKeys[i]);
+            originals[i] = JavaSecurityManagers.getSystemProperty(specialKeys[i]);
             final String property = config.getProperty(
                     specialKeys[i],
                     SystemInstance.isInitialized() ? SystemInstance.get().getOptions().get(specialKeys[i], (String) null) : null);
             if (property != null) {
-                System.setProperty(specialKeys[i], property);
+                JavaSecurityManagers.setSystemProperty(specialKeys[i], property);
             }
         }
 
@@ -121,9 +121,9 @@ public class Logger {
         } finally {
             for (int i = 0; i < specialKeys.length; i++) {
                 if (originals[i] == null) {
-                    System.clearProperty(specialKeys[i]);
+                    JavaSecurityManagers.removeSystemProperty(specialKeys[i]);
                 } else {
-                    System.setProperty(specialKeys[i], originals[i]);
+                    JavaSecurityManagers.setSystemProperty(specialKeys[i], originals[i]);
                 }
             }
         }
@@ -308,7 +308,7 @@ public class Logger {
         this.category = category;
         this.baseName = baseName;
         this.logStream = // tomcat is already async so abuse of it
-            ("true".equals(SystemInstance.get().getProperty("openejb.log.async", "true")) && System.getProperty("catalina.home") == null) ?
+            ("true".equals(SystemInstance.get().getProperty("openejb.log.async", "true")) && JavaSecurityManagers.getSystemProperty("catalina.home") == null) ?
                 new LogStreamAsync(logStream) : logStream;
     }
 
