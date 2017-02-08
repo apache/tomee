@@ -34,6 +34,7 @@ import org.apache.openejb.loader.LoaderRuntimeException;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.Zips;
 import org.apache.openejb.maven.plugin.runner.ExecRunner;
+import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.Pipe;
 import org.apache.tomee.util.QuickServerXmlParser;
@@ -196,8 +197,7 @@ public class ExecMojo extends BuildTomEEMojo {
                     RemoteServer.class, RemoteServer.CleanUpThread.class,
                     OpenEJBRuntimeException.class, Join.class, QuickServerXmlParser.class,
                     Options.class, Options.NullLog.class, Options.TomEEPropertyAdapter.class, Options.NullOptions.class,
-                    Options.Log.class
-                    )) {
+                    Options.Log.class, JavaSecurityManagers.class)) {
                 addToJar(os, clazz);
             }
         }
