@@ -28,7 +28,7 @@
   <name>OpenEJB :: Examples :: Simple CMP2 Entity</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <openejb.version>4.6.0.3-TT.6</openejb.version>
+    <openejb.version>4.6.0.3-TT.6-SNAPSHOT</openejb.version>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
@@ -48,7 +48,7 @@
         <version>2.13</version>
         <configuration>
           <forkMode>pertest</forkMode>
-          <argLine>-javaagent:${basedir}/target/openejb-javaagent-4.6.0.3-TT.6.jar</argLine>
+          <argLine>-javaagent:${basedir}/target/openejb-javaagent-${openejb.version}.jar</argLine>
           <workingDirectory>${basedir}/target</workingDirectory>
         </configuration>
       </plugin>
@@ -69,7 +69,7 @@
                 <artifactItem>
                   <groupId>org.apache.openejb</groupId>
                   <artifactId>openejb-javaagent</artifactId>
-                  <version>4.6.0.3-TT.6</version>
+                  <version>${openejb.version}</version>
                   <outputDirectory>${project.build.directory}</outputDirectory>
                 </artifactItem>
               </artifactItems>
@@ -107,7 +107,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>4.6.0.3-TT.6</version>
+      <version>4.6.0.3-TT.6-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
 

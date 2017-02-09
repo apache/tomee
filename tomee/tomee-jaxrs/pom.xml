@@ -21,7 +21,7 @@
   <parent>
     <artifactId>tomee</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>1.6.0.3-TT.6</version>
+    <version>1.6.0.3-TT.6-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -37,42 +37,42 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-rest</artifactId>
-      <version>4.6.0.3-TT.6</version>
+      <version>${openejb.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-cxf-rs</artifactId>
-      <version>4.6.0.3-TT.6</version>
+      <version>${openejb.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-common</artifactId>
-      <version>1.6.0.3-TT.6</version>
+      <version>${tomee.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-loader</artifactId>
-      <version>1.6.0.3-TT.6</version>
+      <version>${tomee.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-catalina</artifactId>
-      <version>1.6.0.3-TT.6</version>
+      <version>${tomee.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-server</artifactId>
-      <version>4.6.0.3-TT.6</version>
+      <version>${openejb.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-ejbd</artifactId>
-      <version>4.6.0.3-TT.6</version>
+      <version>${openejb.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-http</artifactId>
-      <version>4.6.0.3-TT.6</version>
+      <version>${openejb.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>

@@ -111,19 +111,19 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-embedded</artifactId>
-      <version>1.6.0.3-TT.6</version>
+      <version>${tomee.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-cxf-rs</artifactId>
-      <version>4.6.0.3-TT.6</version>
+      <version>4.6.0.3-TT.6-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-jaxrs</artifactId>
-      <version>1.6.0.3-TT.6</version>
+      <version>${tomee.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -135,42 +135,42 @@
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
       <artifactId>static-tomee-backbone</artifactId>
-      <version>1.6.0.3-TT.6</version>
+      <version>${tomee.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
       <artifactId>static-tomee-bootstrap</artifactId>
-      <version>1.6.0.3-TT.6</version>
+      <version>${tomee.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
       <artifactId>static-tomee-jquery</artifactId>
-      <version>1.6.0.3-TT.6</version>
+      <version>${tomee.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
       <artifactId>static-tomee-handlebars</artifactId>
-      <version>1.6.0.3-TT.6</version>
+      <version>${tomee.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
       <artifactId>static-tomee-json2</artifactId>
-      <version>1.6.0.3-TT.6</version>
+      <version>${tomee.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
       <artifactId>static-tomee-lessjs</artifactId>
-      <version>1.6.0.3-TT.6</version>
+      <version>${tomee.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
       <artifactId>static-tomee-requirejs</artifactId>
-      <version>1.6.0.3-TT.6</version>
+      <version>${tomee.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
       <artifactId>static-tomee-underscorejs</artifactId>
-      <version>1.6.0.3-TT.6</version>
+      <version>${tomee.version}</version>
     </dependency>
   </dependencies>
   <!-- This section allows you to configure where to publish libraries for

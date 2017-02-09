@@ -25,7 +25,7 @@
   <name>OpenEJB :: Web Examples :: REST Example</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <openejb.version>4.6.0.3-TT.6</openejb.version>
+    <openejb.version>4.6.0.3-TT.6-SNAPSHOT</openejb.version>
     <tomee.version>1.6.0.3-TT.3</tomee.version>
   </properties>
   <repositories>
@@ -72,7 +72,7 @@
         <artifactId>tomee-maven-plugin</artifactId>
         <version>1.6.0.3-TT.3</version>
         <configuration>
-          <tomeeVersion>1.6.0.3-TT.6</tomeeVersion>
+          <tomeeVersion>${tomee.version}</tomeeVersion>
           <tomeeClassifier>plus</tomeeClassifier>
         </configuration>
       </plugin>
@@ -100,7 +100,7 @@
             <webappArtifact>
               <groupId>org.apache.openejb</groupId>
               <artifactId>tomee-plus-webapp</artifactId>
-              <version>1.6.0.3-TT.6</version>
+              <version>${tomee.version}</version>
               <contextPath>openejb</contextPath>
             </webappArtifact>
           </webapps>
@@ -150,19 +150,19 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-embedded</artifactId>
-      <version>1.6.0.3-TT.6</version>
+      <version>${tomee.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-cxf-rs</artifactId>
-      <version>4.6.0.3-TT.6</version>
+      <version>${openejb.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-jaxrs</artifactId>
-      <version>1.6.0.3-TT.6</version>
+      <version>${tomee.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
