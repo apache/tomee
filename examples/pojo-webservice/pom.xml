@@ -64,7 +64,7 @@
         <artifactId>tomee-maven-plugin</artifactId>
         <version>1.6.0.3-TT.3</version>
         <configuration>
-          <tomeeVersion>${tomee.version}</tomeeVersion>
+          <tomeeVersion>1.6.0.3-TT.6</tomeeVersion>
           <tomeeClassifier>plus</tomeeClassifier>
         </configuration>
       </plugin>

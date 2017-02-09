@@ -23,7 +23,7 @@
   <parent>
     <artifactId>assembly</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.6.0.3-TT.6-SNAPSHOT</version>
+    <version>4.6.0.3-TT.6</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-standalone</artifactId>
@@ -254,13 +254,13 @@
                       <arg value="local" />
                     </java>
 
-                    <java jar="target/openejb-${openejb.version}-test.jar" fork="yes">
+                    <java jar="target/openejb-4.6.0.3-TT.6-test.jar" fork="yes">
                       <sysproperty key="openejb.home" value="${openejb.home}" />
                       <jvmarg value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=${openejb.debug.suspend},address=${openejb.debug.port}" />
                       <arg value="remote" />
                     </java>
 
-                    <java jar="target/openejb-${openejb.version}-test.jar" fork="yes">
+                    <java jar="target/openejb-4.6.0.3-TT.6-test.jar" fork="yes">
                       <sysproperty key="openejb.home" value="${openejb.home}" />
                       <jvmarg value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=${openejb.debug.suspend},address=${openejb.debug.port}" />
                       <arg value="http" />

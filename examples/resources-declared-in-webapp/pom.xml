@@ -26,7 +26,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <openejb.version>4.6.0.3-TT.6-SNAPSHOT</openejb.version>
+    <openejb.version>4.6.0.3-TT.6</openejb.version>
   </properties>
 
   <repositories>
@@ -80,7 +80,7 @@
             <webappArtifact>
               <groupId>org.apache.openejb</groupId>
               <artifactId>openejb-tomcat-plus-webapp</artifactId>
-              <version>${openejb.version}</version>
+              <version>4.6.0.3-TT.6</version>
               <contextPath>openejb</contextPath>
             </webappArtifact>
           </webapps>

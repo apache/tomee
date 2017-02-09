@@ -22,13 +22,13 @@
   <parent>
     <artifactId>arquillian</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>1.6.0.3-TT.6-SNAPSHOT</version>
+    <version>1.6.0.3-TT.6</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>arquillian-openejb-embedded-4</artifactId>
   <name>OpenEJB :: Arquillian Adaptors Parent :: OpenEJB Container</name>
-  <version>4.6.0.3-TT.6-SNAPSHOT</version>
+  <version>4.6.0.3-TT.6</version>
 
   <dependencies>
     <dependency>
@@ -120,13 +120,13 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>arquillian-common</artifactId>
-      <version>${tomee.version}</version>
+      <version>1.6.0.3-TT.6</version>
     </dependency>
 
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>arquillian-openejb-transaction-provider</artifactId>
-      <version>${tomee.version}</version>
+      <version>1.6.0.3-TT.6</version>
     </dependency>
 
     <dependency>
