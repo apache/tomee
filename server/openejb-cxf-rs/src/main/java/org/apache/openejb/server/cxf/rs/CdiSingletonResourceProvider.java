@@ -39,16 +39,6 @@ public class CdiSingletonResourceProvider extends CdiResourceProvider {
     }
 
     @Override
-    protected BeanCreator getDefaultBeanCreator(final Message m) {
-        return new CdiResourceProvider.DefaultBeanCreator(m, constructor);
-    }
-
-    @Override
-    protected BeanCreator getPseudoScopedCdiBeanCreator() {
-        return new CdiResourceProvider.PseudoScopedCdiBeanCreator();
-    }
-
-    @Override
     public boolean isSingleton() {
         return true;
     }

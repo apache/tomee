@@ -156,10 +156,10 @@ public abstract class CdiResourceProvider implements ResourceProvider {
             if (normalScopeCreator != null) {
                 creator = normalScopeCreator;
             } else {
-                creator = getPseudoScopedCdiBeanCreator();
+                creator = new PseudoScopedCdiBeanCreator();
             }
         } else {
-            creator = getDefaultBeanCreator(m);
+            creator = new DefaultBeanCreator(m, constructor);
         }
         m.put(BeanCreator.class, creator);
         m.put(CdiResourceProvider.class, this);
@@ -183,10 +183,6 @@ public abstract class CdiResourceProvider implements ResourceProvider {
 
         return instance;
     }
-
-    protected abstract BeanCreator getDefaultBeanCreator(Message m);
-
-    protected abstract BeanCreator getPseudoScopedCdiBeanCreator();
 
     @Override // this method is not linked to o to consider it stateless
     public void releaseInstance(final Message m, final Object o) {
@@ -286,12 +282,8 @@ public abstract class CdiResourceProvider implements ResourceProvider {
         @Override
         public Object create() {
             try {
-                if (null != bean) {
-                    toClean = bm.createCreationalContext(bean);
-                    return bm.getReference(bean, bean.getBeanClass(), toClean);
-                } else {
-                    throw new InjectionException("Bean is null for: " + clazz.getName());
-                }
+                toClean = bm.createCreationalContext(bean);
+                return bm.getReference(bean, bean.getBeanClass(), toClean);
             } catch (final InjectionException ie) {
                 final String msg = "Failed to instantiate: " + bean;
                 Logger.getInstance(LogCategory.OPENEJB_CDI, this.getClass()).error(msg, ie);
@@ -301,10 +293,8 @@ public abstract class CdiResourceProvider implements ResourceProvider {
 
         @Override
         public void release() {
-            if (null != toClean) {
-                toClean.release();
-                toClean = null;
-            }
+            toClean.release();
+            toClean = null;
         }
     }
 
