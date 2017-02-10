@@ -23,6 +23,8 @@ import org.apache.cxf.message.Message;
 import org.apache.openejb.Injection;
 import org.apache.openejb.InjectionProcessor;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.webbeans.component.InjectionTargetBean;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
@@ -254,7 +256,7 @@ public abstract class CdiResourceProvider implements ResourceProvider {
         }
     }
 
-    protected static interface BeanCreator {
+    protected interface BeanCreator {
         Object create();
 
         void release();
@@ -284,18 +286,25 @@ public abstract class CdiResourceProvider implements ResourceProvider {
         @Override
         public Object create() {
             try {
-                toClean = bm.createCreationalContext(bean);
-                return bm.getReference(bean, bean.getBeanClass(), toClean);
+                if (null != bean) {
+                    toClean = bm.createCreationalContext(bean);
+                    return bm.getReference(bean, bean.getBeanClass(), toClean);
+                } else {
+                    throw new InjectionException("Bean is null for: " + clazz.getName());
+                }
             } catch (final InjectionException ie) {
-                final String msg = bean + " can not be instantiated";
+                final String msg = "Failed to instantiate: " + bean;
+                Logger.getInstance(LogCategory.OPENEJB_CDI, this.getClass()).error(msg, ie);
                 throw new WebApplicationException(Response.serverError().entity(msg).build());
             }
         }
 
         @Override
         public void release() {
-            toClean.release();
-            toClean = null;
+            if (null != toClean) {
+                toClean.release();
+                toClean = null;
+            }
         }
     }
 
