@@ -245,7 +245,7 @@ public abstract class CdiResourceProvider implements ResourceProvider {
         }
     }
 
-    protected static interface BeanCreator {
+    protected interface BeanCreator {
         Object create();
 
         void release();
@@ -290,8 +290,10 @@ public abstract class CdiResourceProvider implements ResourceProvider {
 
         @Override
         public void release() {
-            toClean.release();
-            toClean = null;
+            if (null != toClean) {
+                toClean.release();
+                toClean = null;
+            }
         }
     }
 
