@@ -34,7 +34,6 @@ import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
 import javax.security.jacc.EJBMethodPermission;
 import javax.security.jacc.PolicyConfigurationFactory;
-import javax.security.jacc.PolicyContext;
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.lang.reflect.Method;
@@ -150,7 +149,7 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
     @Override
     public void contextEntered(final ThreadContext oldContext, final ThreadContext newContext) {
         final String moduleID = newContext.getBeanContext().getModuleID();
-        PolicyContext.setContextID(moduleID);
+        JavaSecurityManagers.setContextID(moduleID);
 
         final ProvidedSecurityContext providedSecurityContext = newContext.get(ProvidedSecurityContext.class);
         SecurityContext securityContext = oldContext != null ? oldContext.get(SecurityContext.class) :
@@ -190,9 +189,9 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
     @Override
     public void contextExited(final ThreadContext exitedContext, final ThreadContext reenteredContext) {
         if (reenteredContext == null) {
-            PolicyContext.setContextID(null);
+            JavaSecurityManagers.setContextID(null);
         } else {
-            PolicyContext.setContextID(reenteredContext.getBeanContext().getModuleID());
+            JavaSecurityManagers.setContextID(reenteredContext.getBeanContext().getModuleID());
         }
     }
 

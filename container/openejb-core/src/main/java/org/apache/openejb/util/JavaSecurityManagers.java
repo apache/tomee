@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.util;
 
+import javax.security.jacc.PolicyContext;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Properties;
@@ -91,6 +92,20 @@ public final class JavaSecurityManagers {
                     } else {
                         System.getProperties().put(key, value);
                     }
+                    return null;
+                }
+            });
+        }
+    }
+
+    public static void setContextID(final String moduleID) {
+        if (System.getSecurityManager() == null) {
+            PolicyContext.setContextID(moduleID);
+        } else {
+            AccessController.doPrivileged(new PrivilegedAction<String>() {
+                @Override
+                public String run() {
+                    PolicyContext.setContextID(moduleID);
                     return null;
                 }
             });
