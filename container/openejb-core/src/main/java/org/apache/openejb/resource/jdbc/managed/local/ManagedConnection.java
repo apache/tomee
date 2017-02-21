@@ -78,7 +78,8 @@ public class ManagedConnection implements InvocationHandler {
             return hashCode();
         }
         if ("equals".equals(mtdName)) {
-            return args[0] == this || (delegate != null && delegate.equals(unwrapIfNeeded(args[0])));
+            InvocationHandler handler;
+            return args[0] == this || ((handler = unwrapHandler(args[0])) == this) || (delegate != null && delegate.equals(unwrapDelegate(args[0], handler)));
         }
 
         // allow to get delegate if needed by the underlying program
@@ -181,12 +182,15 @@ public class ManagedConnection implements InvocationHandler {
         }
     }
 
-    private Object unwrapIfNeeded(final Object arg) {
+    private InvocationHandler unwrapHandler(final Object arg) {
         if (arg == null || !Proxy.isProxyClass(arg.getClass())) {
-            return arg;
+            return null;
         }
-        final InvocationHandler handler = Proxy.getInvocationHandler(arg);
-        return ManagedConnection.class.isInstance(handler) ? ManagedConnection.class.cast(handler).delegate : arg;
+        return Proxy.getInvocationHandler(arg);
+    }
+
+    private Object unwrapDelegate(final Object arg, final InvocationHandler handler) {
+        return handler != null && ManagedConnection.class.isInstance(handler) ? ManagedConnection.class.cast(handler).delegate : arg;
     }
 
     protected Object newConnection() throws SQLException {
@@ -222,10 +226,10 @@ public class ManagedConnection implements InvocationHandler {
     private Object invokeUnderTransaction(final Method method, final Object[] args) throws Exception {
         final String mtdName = method.getName();
         if ("setAutoCommit".equals(mtdName)
-            || "commit".equals(mtdName)
-            || "rollback".equals(mtdName)
-            || "setSavepoint".equals(mtdName)
-            || "setReadOnly".equals(mtdName)) {
+                || "commit".equals(mtdName)
+                || "rollback".equals(mtdName)
+                || "setSavepoint".equals(mtdName)
+                || "setReadOnly".equals(mtdName)) {
             throw forbiddenCall(mtdName);
         }
         if ("close".equals(mtdName)) {
