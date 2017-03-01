@@ -482,7 +482,7 @@
 
     # Specifies the activation spec class
 
-    ActivationSpecClass org.apache.activemq.ra.ActiveMQActivationSpec
+    ActivationSpecClass org.apache.openejb.resource.activemq.TomEEMessageActivationSpec
 
     # Specifies the maximum number of bean instances that are
     # allowed to exist for each MDB deployment.

@@ -216,6 +216,8 @@ public class MdbContainer implements RpcContainer {
             final Set<String> unusedProperties = new TreeSet<String>(objectRecipe.getUnsetProperties().keySet());
             unusedProperties.remove("destination");
             unusedProperties.remove("destinationType");
+            unusedProperties.remove("destinationLookup");
+            unusedProperties.remove("connectionFactoryLookup");
             unusedProperties.remove("beanClass");
             if (!unusedProperties.isEmpty()) {
                 final String text = "No setter found for the activation spec properties: " + unusedProperties;

@@ -17,20 +17,33 @@
 
 package org.apache.openejb.resource.activemq;
 
+import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.RedeliveryPolicy;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.ra.ActiveMQConnectionRequestInfo;
+import org.apache.activemq.ra.ActiveMQManagedConnection;
 import org.apache.activemq.ra.MessageActivationSpec;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.resource.AutoConnectionTracker;
 import org.apache.openejb.resource.activemq.jms2.TomEEConnectionFactory;
+import org.apache.openejb.resource.activemq.jms2.TomEEManagedConnectionProxy;
+import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URISupport;
 import org.apache.openejb.util.URLs;
+import org.apache.openejb.util.reflection.Reflections;
 
+import javax.jms.Connection;
+import javax.jms.JMSException;
+import javax.naming.NamingException;
 import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.ResourceAdapterInternalException;
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Iterator;
@@ -189,7 +202,68 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
     }
 
     @Override
+    public ActiveMQConnection makeConnection(final MessageActivationSpec activationSpec) throws JMSException {
+        if (TomEEMessageActivationSpec.class.isInstance(activationSpec)) {
+            final TomEEMessageActivationSpec s = TomEEMessageActivationSpec.class.cast(activationSpec);
+            if (s.getConnectionFactoryLookup() != null) {
+                try {
+                    final Object lookup = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext()
+                            .lookup("openejb:Resource/" + s.getConnectionFactoryLookup());
+                    if (!ActiveMQConnectionFactory.class.isInstance(lookup)) {
+                        final org.apache.activemq.ra.ActiveMQConnectionFactory connectionFactory = org.apache.activemq.ra.ActiveMQConnectionFactory.class.cast(lookup);
+                        Connection connection = connectionFactory.createConnection();
+                        if (Proxy.isProxyClass(connection.getClass())) { // not great, we should find a better want without bypassing ra layer
+                            final InvocationHandler invocationHandler = Proxy.getInvocationHandler(connection);
+                            if (AutoConnectionTracker.ConnectionInvocationHandler.class.isInstance(invocationHandler)) {
+                                final Object handle = Reflections.get(invocationHandler, "handle");
+                                if (TomEEManagedConnectionProxy.class.isInstance(handle)) {
+                                    final ActiveMQManagedConnection c = ActiveMQManagedConnection.class.cast(Reflections.get(handle, "connection"));
+                                    final ActiveMQConnection physicalConnection = ActiveMQConnection.class.cast(Reflections.get(c, "physicalConnection"));
+                                    final RedeliveryPolicy redeliveryPolicy = activationSpec.redeliveryPolicy();
+                                    if (redeliveryPolicy != null) {
+                                        physicalConnection.setRedeliveryPolicy(redeliveryPolicy);
+                                    }
+                                    return physicalConnection;
+                                }
+                            }
+                        }
+
+                        /*
+                        final RedeliveryPolicy redeliveryPolicy = activationSpec.redeliveryPolicy();
+                        if (redeliveryPolicy != null) {
+                            physicalConnection.setRedeliveryPolicy(redeliveryPolicy);
+                        }
+                        */
+                        return null;
+                    }
+                } catch (final ClassCastException cce) {
+                    throw new java.lang.IllegalStateException(cce);
+                } catch (final NamingException e) {
+                    throw new IllegalArgumentException(e);
+                }
+            }
+        }
+        return super.makeConnection(activationSpec);
+    }
+
+    @Override
     protected ActiveMQConnectionFactory createConnectionFactory(final ActiveMQConnectionRequestInfo connectionRequestInfo, final MessageActivationSpec activationSpec) {
+        if (TomEEMessageActivationSpec.class.isInstance(activationSpec)) {
+            final TomEEMessageActivationSpec s = TomEEMessageActivationSpec.class.cast(activationSpec);
+            if (s.getConnectionFactoryLookup() != null) {
+                try {
+                    final Object lookup = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext()
+                            .lookup("openejb:Resource/" + s.getConnectionFactoryLookup());
+                    if (ActiveMQConnectionFactory.class.isInstance(lookup)) {
+                        return ActiveMQConnectionFactory.class.cast(lookup);
+                    }
+                    return ActiveMQConnectionFactory.class.cast(lookup); // already handled
+                } catch (final NamingException e) {
+                    throw new IllegalArgumentException("");
+                }
+            }
+        }
+
         final ActiveMQConnectionFactory factory = new TomEEConnectionFactory();
         connectionRequestInfo.configure(factory, activationSpec);
         return factory;
