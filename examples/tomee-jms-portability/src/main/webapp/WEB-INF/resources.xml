@@ -1,0 +1,113 @@
+<resources>
+
+	<!-- Active MQ Resources -->
+	<Resource id="amq_ra" type="ActiveMQResourceAdapter">
+		BrokerXmlConfig =
+		ServerUrl = tcp://127.0.0.1:61616
+	</Resource>
+
+	<Resource id="amq_qcf" type="javax.jms.ConnectionFactory">
+		ResourceAdapter = amq_ra
+	</Resource>
+
+	<Container id="amq_container" ctype="MESSAGE">
+		ResourceAdapter = amq_ra
+	</Container>
+
+	<Resource id="AnswerQueue" type="javax.jms.Queue">
+		destination=AnswerQueue
+	</Resource>
+
+	<Resource id="ChatBean" type="javax.jms.Queue">
+		destination=ChatBean
+	</Resource>
+
+	<Resource id="amq.bar.pop" type="javax.jms.Queue">
+		destination=amq.bar.pop
+	</Resource>
+
+	<!-- -Damq.variable.destination=overridenValue -->
+	<Resource id="amq.variable" type="javax.jms.Queue">
+		destination=defaultValue
+	</Resource>
+
+
+	<!-- IBM MQ Resources -->
+
+	<Container id="imq_container" type="MESSAGE">
+		ResourceAdapter=imq_ra
+		MessageListenerInterface=javax.jms.MessageListener
+		ActivationSpecClass=com.ibm.mq.connector.inbound.ActivationSpecImpl
+	</Container>
+
+
+	<Resource id="imq_ra" type="com.ibm.mq.connector.ResourceAdapterImpl"
+		class-name="com.ibm.mq.connector.ResourceAdapterImpl">
+		connectionConcurrency=5
+		maxConnections=10
+		logWriterEnabled=false
+		reconnectionRetryCount=5
+		reconnectionRetryInterval=300000
+		traceEnabled=false
+		traceLevel=3
+	</Resource>
+
+
+	<Resource id="imq_qcf" type="javax.jms.ConnectionFactory"
+		class-name="com.ibm.mq.connector.outbound.ManagedConnectionFactoryImpl">
+		TransactionSupport=none
+		ResourceAdapter=imq_ra
+		HostName=10.123.45.678
+		Port=1414
+		QueueManager=XXXXXX
+		Channel=CLIENT.T.XXXXX
+		TransportType=CLIENT
+	</Resource>
+
+	<Resource id="imq_container-javax.jms.QueueConnectionFactory"
+		type="javax.jms.QueueConnectionFactory" class-name="com.ibm.mq.connector.outbound.ManagedQueueConnectionFactoryImpl">
+		TransactionSupport=xa
+		ResourceAdapter=imq_ra
+	</Resource>
+
+	<Resource id="imq_container-javax.jms.TopicConnectionFactory"
+		type="javax.jms.TopicConnectionFactory" class-name="com.ibm.mq.connector.outbound.ManagedTopicConnectionFactoryImpl">
+		TransactionSupport=xa
+		ResourceAdapter=imq_ra
+	</Resource>
+
+	<Resource id="imq.bar" type="javax.jms.Queue"
+		class-name="com.ibm.mq.connector.outbound.MQQueueProxy">
+		arbitraryProperties
+		baseQueueManagerName=XXXXXXXX
+		baseQueueName=QL.XXX.WW.XXXXXX.TEST
+		CCSID=1208
+		encoding=NATIVE
+		expiry=APP
+		failIfQuiesce=true
+		persistence=APP
+		priority=APP
+		readAheadClosePolicy=ALL
+		targetClient=MQ
+	</Resource>
+	
+	<Resource id="imq.foo" type="javax.jms.Topic"
+		class-name="com.ibm.mq.connector.outbound.MQTopicProxy">
+		arbitraryProperties
+		baseTopicName=WW.XXXXXXXX.XX.XXXXX
+		brokerCCDurSubQueue=SYSTEM.JMS.D.CC.SUBSCRIBER.QUEUE
+		brokerDurSubQueue=SYSTEM.JMS.D.SUBSCRIBER.QUEUE
+		brokerPubQueue
+		brokerPubQueueManager
+		brokerVersion=1
+		CCSID=1208
+		encoding=NATIVE
+		expiry=APP
+		failIfQuiesce=true
+		persistence=APP
+		priority=APP
+		readAheadClosePolicy=ALL
+		targetClient=MQ
+	</Resource>
+
+</resources>
