@@ -178,8 +178,8 @@ public class Pool<T> {
 
     private Executor createExecutor() {
         final ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(3, 10,
-            60L, TimeUnit.SECONDS,
-            new LinkedBlockingQueue<Runnable>(2), new DaemonThreadFactory("org.apache.openejb.util.Pool", hashCode()));
+                60L, SECONDS,
+                new LinkedBlockingQueue<Runnable>(2), new DaemonThreadFactory("org.apache.openejb.util.Pool", hashCode()));
 
         threadPoolExecutor.setRejectedExecutionHandler(new RejectedExecutionHandler() {
             @Override
@@ -190,9 +190,9 @@ public class Pool<T> {
                 }
 
                 try {
-                    if (!tpe.getQueue().offer(r, 20, TimeUnit.SECONDS)) {
+                    if (!tpe.getQueue().offer(r, 20, SECONDS)) {
                         org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources")
-                            .warning("Default pool executor failed to run asynchronous process: " + r);
+                                .warning("Default pool executor failed to run asynchronous process: " + r);
                     }
                 } catch (final InterruptedException e) {
                     //Ignore
@@ -559,8 +559,8 @@ public class Pool<T> {
             }
             final Instance instance = new Instance(obj);
             this.soft = garbageCollection ?
-                new SoftReference<Instance>(instance) :
-                new HardReference<Instance>(instance);
+                    new SoftReference<Instance>(instance) :
+                    new HardReference<Instance>(instance);
             this.version = poolVersion.get();
             this.active.set(instance);
             this.created = now() + offset;
@@ -600,11 +600,11 @@ public class Pool<T> {
         public String toString() {
             final long now = now();
             return "Entry{" +
-                "min=" + (hard.get() != null) +
-                ", age=" + (now - created) +
-                ", idle=" + (now - used) +
-                ", bean=" + soft.get() +
-                '}';
+                    "min=" + (hard.get() != null) +
+                    ", age=" + (now - created) +
+                    ", idle=" + (now - used) +
+                    ", bean=" + soft.get() +
+                    '}';
         }
 
         private class Discarded implements Runnable {
@@ -1117,7 +1117,7 @@ public class Pool<T> {
         private Duration maxAge = new Duration(0, MILLISECONDS);
         private double maxAgeOffset = -1;
         private Duration idleTimeout = new Duration(0, MILLISECONDS);
-        private Duration interval = new Duration(5 * 60, TimeUnit.SECONDS);
+        private Duration interval = new Duration(5 * 60, SECONDS);
         private Supplier<T> supplier;
         private Executor executor;
         private boolean replaceAged;
