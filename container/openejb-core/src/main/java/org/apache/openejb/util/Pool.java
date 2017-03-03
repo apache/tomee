@@ -469,37 +469,28 @@ public class Pool<T> {
 
         final ScheduledExecutorService ses = this.scheduler.getAndSet(null);
 
-        if (null != ses) {
-            try {
-                ses.shutdown();
-                if(!ses.awaitTermination(timeout, unit)){
-                    Logger.getLogger(Pool.class.getName()).log(Level.WARNING, "Pool scheduler termination timeout expired");
-                }
-            } catch (final Exception e) {
-                //no-op
-            }
-        }
-
-        // drain all keys so no new instances will be accepted into the pool
-        while (instances.tryAcquire()) {
-            Thread.yield();
-        }
-        while (minimum.tryAcquire()) {
-            Thread.yield();
-        }
-        instances.drainPermits();
-        minimum.drainPermits();
-
-        // flush and sweep
-        flush();
         try {
-            sweeper.run();
-        } catch (final RejectedExecutionException e) {
-            //Ignore
-        }
+            // drain all keys so no new instances will be accepted into the pool
+            while (instances.tryAcquire()) {
+                Thread.yield();
+            }
+            while (minimum.tryAcquire()) {
+                Thread.yield();
+            }
+            instances.drainPermits();
+            minimum.drainPermits();
 
-        // Stop the sweeper thread
-        stop();
+            // flush and sweep
+            flush();
+            try {
+                sweeper.run();
+            } catch (final RejectedExecutionException e) {
+                //Ignore
+            }
+        } finally {
+            // Stop the sweeper thread
+            stop();
+        }
 
         // Drain all leases
         if (!(available instanceof Overdraft)) {
