@@ -31,6 +31,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -43,6 +44,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
  * Any successful pop() call requires a corresponding push() or discard() call.
@@ -74,6 +76,7 @@ public class Pool<T> {
 
     private final Supplier<T> supplier;
     private final AtomicReference<ScheduledExecutorService> scheduler = new AtomicReference<ScheduledExecutorService>();
+    private final AtomicReference<ScheduledFuture<?>> future = new AtomicReference<ScheduledFuture<?>>();
     private final Sweeper sweeper;
 
     private final CountingLatch out = new CountingLatch();
@@ -127,21 +130,41 @@ public class Pool<T> {
     }
 
     public Pool start() {
-        final ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1, new SchedulerThreadFactory());
-
-        if (this.scheduler.compareAndSet(null, scheduledExecutorService)) {
-            this.scheduler.get().scheduleAtFixedRate(sweeper, 0, this.sweepInterval, MILLISECONDS);
+        ScheduledExecutorService scheduledExecutorService = this.scheduler.get();
+        boolean createdSES = scheduledExecutorService == null;
+        if (scheduledExecutorService == null) {
+            scheduledExecutorService = Executors.newScheduledThreadPool(1, new SchedulerThreadFactory());
+            if (!this.scheduler.compareAndSet(null, scheduledExecutorService)) {
+                scheduledExecutorService.shutdownNow();
+                scheduledExecutorService = this.scheduler.get();
+                createdSES = false;
+            }
+        }
+        final ScheduledFuture<?> scheduledFuture = scheduledExecutorService.scheduleAtFixedRate(sweeper, 0, this.sweepInterval, MILLISECONDS);
+        if (!this.future.compareAndSet(null, scheduledFuture)) {
+            scheduledFuture.cancel(true);
+        }
+        if (!createdSES) {
+            // we don't want to shutdown it, we'll just stop the task
+            this.scheduler.set(null);
         }
         return this;
     }
 
     public void stop() {
-        final ScheduledExecutorService scheduler = this.scheduler.get();
-        if (scheduler != null && this.scheduler.compareAndSet(scheduler, null)) {
+        final ScheduledFuture<?> future = this.future.getAndSet(null);
+        if (future != null
+                && !future.isDone() && !future.isCancelled()
+                && !future.cancel(false)) {
+            Logger.getLogger(Pool.class.getName()).log(Level.WARNING, "Pool scheduler task termination timeout expired");
+        }
+
+        final ScheduledExecutorService scheduler = this.scheduler.getAndSet(null);
+        if (scheduler != null) {
             scheduler.shutdown();
             try {
-                if (!scheduler.awaitTermination(10000, MILLISECONDS)) {
-                    Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Pool scheduler termination timeout expired");
+                if (!scheduler.awaitTermination(10, SECONDS)) { // should last something like 0s max since we killed the task
+                    Logger.getLogger(Pool.class.getName()).log(Level.WARNING, "Pool scheduler termination timeout expired");
                 }
             } catch (final InterruptedException e) {
                 //Ignore
@@ -150,7 +173,7 @@ public class Pool<T> {
     }
 
     public boolean running() {
-        return this.scheduler.get() != null;
+        return this.future.get() != null;
     }
 
     private Executor createExecutor() {
@@ -444,6 +467,9 @@ public class Pool<T> {
 
     public boolean close(final long timeout, final TimeUnit unit) throws InterruptedException {
 
+        // Stop the sweeper thread
+        stop();
+
         // drain all keys so no new instances will be accepted into the pool
         while (instances.tryAcquire()) {
             Thread.yield();
@@ -460,9 +486,6 @@ public class Pool<T> {
         } catch (final RejectedExecutionException e) {
             //Ignore
         }
-
-        // Stop the sweeper thread
-        stop();
 
         // Drain all leases
         if (!(available instanceof Overdraft)) {
@@ -659,7 +682,7 @@ public class Pool<T> {
                 while (true) {
                     final Entry entry = pop(0, MILLISECONDS, false);
                     if (entry == null) {
-                        push(entry, true);
+                        push(null, true);
                         break;
                     }
                     entries.add(entry);
@@ -771,7 +794,7 @@ public class Pool<T> {
             }
 
             for (int i = 0; i < replace.size(); i++) {
-                final long offset = maxAge > 0 ? (long) (maxAge / replace.size() * i * maxAgeOffset) % maxAge : 0l;
+                final long offset = maxAge > 0 ? (long) (maxAge / replace.size() * i * maxAgeOffset) % maxAge : 0L;
                 executor.execute(new Replace(replace.get(i).entry, offset));
             }
         }

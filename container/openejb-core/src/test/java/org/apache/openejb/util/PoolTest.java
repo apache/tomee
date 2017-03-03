@@ -321,6 +321,7 @@ public class PoolTest extends TestCase {
 
         final long start = System.currentTimeMillis();
         assertTrue(pool.close(10, TimeUnit.SECONDS));
+        assertFalse(pool.running());
         final long time = System.currentTimeMillis() - start;
 
         // All instances should have been removed
