@@ -467,6 +467,19 @@ public class Pool<T> {
 
     public boolean close(final long timeout, final TimeUnit unit) throws InterruptedException {
 
+        final ScheduledExecutorService ses = this.scheduler.getAndSet(null);
+
+        if (null != ses) {
+            try {
+                ses.shutdown();
+                if(!ses.awaitTermination(timeout, unit)){
+                    Logger.getLogger(Pool.class.getName()).log(Level.WARNING, "Pool scheduler termination timeout expired");
+                }
+            } catch (final Exception e) {
+                //no-op
+            }
+        }
+
         // drain all keys so no new instances will be accepted into the pool
         while (instances.tryAcquire()) {
             Thread.yield();
