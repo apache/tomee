@@ -556,7 +556,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             rIds.add(resourceInfo.id);
         }
         rIds.removeAll(reservedResourceIds);
-        postConstructResources(rIds, ParentClassLoaderFinder.Helper.get(), systemInstance.getComponent(ContainerSystem.class).getJNDIContext(), null);
+        final ContainerSystem containerSystem = systemInstance.getComponent(ContainerSystem.class);
+        if (containerSystem != null) {
+            postConstructResources(rIds, ParentClassLoaderFinder.Helper.get(), containerSystem.getJNDIContext(), null);
+        }else {
+            logger.error("ContainerSystem not initialized");
+        }
 
         // Containers
         for (final ContainerInfo serviceInfo : containerSystemInfo.containers) {
@@ -805,7 +810,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             if (start) {
                 final EjbResolver globalEjbResolver = systemInstance.getComponent(EjbResolver.class);
-                globalEjbResolver.addAll(appInfo.ejbJars);
+                if (globalEjbResolver != null) {
+                    globalEjbResolver.addAll(appInfo.ejbJars);
+                }
             }
 
             // bind all global values on global context
@@ -1777,11 +1784,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             try {
                 timeout = Integer.parseInt(SystemInstance.get().getProperty(TOMEE_DATASOURCE_DESTROY_TIMEOUT, "1000"));
-                if(timeout < 50){
+                if (timeout < 50) {
                     logger.warning(TOMEE_DATASOURCE_DESTROY_TIMEOUT + " must be at least 50");
                     timeout = 50;
                 }
-                if(timeout > 30000){
+                if (timeout > 30000) {
                     timeout = 30000;
                     logger.warning(TOMEE_DATASOURCE_DESTROY_TIMEOUT + " must not be greater than 30000");
                 }
@@ -1915,45 +1922,35 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             deployedApplications.remove(appInfo.path);
             logger.info("destroyApplication.start", appInfo.path);
 
-            final Context globalContext = containerSystem.getJNDIContext();
             final AppContext appContext = containerSystem.getAppContext(appInfo.appId);
-            final ClassLoader classLoader = appContext.getClassLoader();
-
-            SystemInstance.get().fireEvent(new AssemblerBeforeApplicationDestroyed(appInfo, appContext));
 
             if (null == appContext) {
                 logger.warning("Application id '" + appInfo.appId + "' not found in: " + Arrays.toString(containerSystem.getAppContextKeys()));
                 return;
-            } else {
-                final WebBeansContext webBeansContext = appContext.getWebBeansContext();
-                if (webBeansContext != null) {
-                    final ClassLoader old = Thread.currentThread().getContextClassLoader();
-                    Thread.currentThread().setContextClassLoader(classLoader);
-                    try {
-                        webBeansContext.getService(ContainerLifecycle.class).stopApplication(null);
-                    } finally {
-                        Thread.currentThread().setContextClassLoader(old);
-                    }
-                }
-                final Map<String, Object> cb = appContext.getBindings();
-                for (final Entry<String, Object> value : cb.entrySet()) {
-                    String path = value.getKey();
-                    if (path.startsWith("global")) {
-                        path = "java:" + path;
-                    }
-                    if (!path.startsWith("java:global")) {
-                        continue;
-                    }
-
-                    unbind(globalContext, path);
-                    unbind(globalContext, "openejb/global/" + path.substring("java:".length()));
-                    unbind(globalContext, path.substring("java:global".length()));
-                }
-                if (appInfo.appId != null && !appInfo.appId.isEmpty() && !"openejb".equals(appInfo.appId)) {
-                    unbind(globalContext, "global/" + appInfo.appId);
-                    unbind(globalContext, appInfo.appId);
-                }
             }
+
+            final Context globalContext = containerSystem.getJNDIContext();
+            SystemInstance.get().fireEvent(new AssemblerBeforeApplicationDestroyed(appInfo, appContext));
+
+            final Map<String, Object> cb = appContext.getBindings();
+            for (final Entry<String, Object> value : cb.entrySet()) {
+                String path = value.getKey();
+                if (path.startsWith("global")) {
+                    path = "java:" + path;
+                }
+                if (!path.startsWith("java:global")) {
+                    continue;
+                }
+
+                unbind(globalContext, path);
+                unbind(globalContext, "openejb/global/" + path.substring("java:".length()));
+                unbind(globalContext, path.substring("java:global".length()));
+            }
+            if (appInfo.appId != null && !appInfo.appId.isEmpty() && !"openejb".equals(appInfo.appId)) {
+                unbind(globalContext, "global/" + appInfo.appId);
+                unbind(globalContext, appInfo.appId);
+            }
+
 
             final EjbResolver globalResolver = new EjbResolver(null, EjbResolver.Scope.GLOBAL);
             for (final AppInfo info : deployedApplications.values()) {
@@ -2000,11 +1997,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             Collections.reverse(deployments);
 
             // Stop
-            for (final BeanContext deployment : deployments) {
-                final String deploymentID = String.valueOf(deployment.getDeploymentID());
+            for (final BeanContext bc : deployments) {
+                final String deploymentID = String.valueOf(bc.getDeploymentID());
                 try {
-                    final Container container = deployment.getContainer();
-                    container.stop(deployment);
+                    final Container container = bc.getContainer();
+                    container.stop(bc);
                 } catch (final Throwable t) {
                     undeployException.getCauses().add(new Exception("bean: " + deploymentID + ": " + t.getMessage(), t));
                 }
@@ -2047,6 +2044,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             for (final WebContext webContext : appContext.getWebContexts()) {
                 containerSystem.removeWebContext(webContext);
             }
+
+            final ClassLoader classLoader = appContext.getClassLoader();
             TldScanner.forceCompleteClean(classLoader);
 
             // Clear out naming for all components first
@@ -2214,6 +2213,17 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
             }
 
+            final WebBeansContext webBeansContext = appContext.getWebBeansContext();
+            if (webBeansContext != null) {
+                final ClassLoader old = Thread.currentThread().getContextClassLoader();
+                Thread.currentThread().setContextClassLoader(classLoader);
+                try {
+                    webBeansContext.getService(ContainerLifecycle.class).stopApplication(null);
+                } finally {
+                    Thread.currentThread().setContextClassLoader(old);
+                }
+            }
+
             containerSystem.removeAppContext(appInfo.appId);
 
             if (!appInfo.properties.containsKey("tomee.destroying")) { // destroy tomee classloader after resources cleanup
@@ -2264,26 +2274,26 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         // to be instantiated
         final String ctx = name.substring(0, name.lastIndexOf("/"));
         final String objName = name.substring(ctx.length() + 1);
-        
+
         final NamingEnumeration<Binding> bindings = globalContext.listBindings(ctx);
         while (bindings.hasMoreElements()) {
             final Binding binding = bindings.nextElement();
             if (!binding.getName().equals(objName)) {
                 continue;
             }
-            
+
             if (!LazyObjectReference.class.isInstance(binding.getObject())) {
                 continue;
             }
-            
+
             final LazyObjectReference<?> ref = LazyObjectReference.class.cast(binding.getObject());
-            if (! ref.isInitialized()) {
+            if (!ref.isInitialized()) {
                 globalContext.unbind(name);
                 removeResourceInfo(id);
                 return;
             }
         }
-        
+
         // otherwise, look the object up and remove it
         final Object object = globalContext.lookup(name);
         final String clazz;
@@ -2337,7 +2347,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 logger.warning("Failed to find open-jpa-integration jar");
             }
         }
-        jars.addAll(Arrays.asList(SystemInstance.get().getComponent(ClassLoaderEnricher.class).applicationEnrichment()));
+        final ClassLoaderEnricher component = SystemInstance.get().getComponent(ClassLoaderEnricher.class);
+        if (component != null) {
+            jars.addAll(Arrays.asList(component.applicationEnrichment()));
+        }
 
         // Create the class loader
         final ClassLoader parent = ParentClassLoaderFinder.Helper.get();
@@ -3168,7 +3181,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
 
             if (logger == null) {
-                logger = SystemInstance.get().getComponent(Assembler.class).logger;
+                final Assembler a = SystemInstance.get().getComponent(Assembler.class);
+                if (a != null) {
+                    logger = a.logger;
+                }
             }
             unusedProperty(info.id, logger, property);
         }
@@ -3254,7 +3270,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     transformers.add(classFileTransformer);
                 }
             } else if (!logged.getAndSet(true)) {
-                SystemInstance.get().getComponent(Assembler.class).getLogger().warning("assembler.noAgent");
+                final Assembler a = SystemInstance.get().getComponent(Assembler.class);
+                if (a != null) {
+                    a.getLogger().warning("assembler.noAgent");
+                }
             }
         }
 
@@ -3268,7 +3287,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                         instrumentation.removeTransformer(transformer);
                     }
                 } else {
-                    SystemInstance.get().getComponent(Assembler.class).getLogger().error("assembler.noAgent");
+                    final Assembler a = SystemInstance.get().getComponent(Assembler.class);
+                    if (a != null) {
+                        a.getLogger().error("assembler.noAgent");
+                    }
                 }
             }
         }
@@ -3357,10 +3379,15 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         protected Object readResolve() throws ObjectStreamException {
             try {
-                return SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext().lookup(jndi);
+                final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+                if (containerSystem != null) {
+                    return containerSystem.getJNDIContext().lookup(jndi);
+                }
             } catch (final Exception e) {
                 throw new InvalidObjectException("name not found: " + jndi);
             }
+
+            return null;
         }
     }
 
@@ -3406,7 +3433,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     }
                     m.invoke(o);
                 } catch (final Exception e) {
-                    SystemInstance.get().getComponent(Assembler.class).getLogger().error(e.getMessage(), e);
+                    final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
+                    if (assembler != null) {
+                        assembler.getLogger().error(e.getMessage(), e);
+                    }
                 }
             }
             try {
@@ -3422,10 +3452,15 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         // which is never serialized (IvmContext)
         Object readResolve() throws ObjectStreamException {
             try {
-                return SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext().lookup(name);
+                final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+                if (containerSystem != null) {
+                    return containerSystem.getJNDIContext().lookup(name);
+                }
             } catch (final NamingException e) {
                 throw new IllegalStateException(e);
             }
+
+            return null;
         }
     }
 }
