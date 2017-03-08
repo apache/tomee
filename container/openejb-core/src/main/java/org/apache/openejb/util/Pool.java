@@ -28,7 +28,6 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -481,10 +480,11 @@ public class Pool<T> {
 
         // flush and sweep
         flush();
+
         try {
             sweeper.run();
-        } catch (final RejectedExecutionException e) {
-            //Ignore
+        } catch (final Exception ignore) {
+            //no-op
         }
 
         // Drain all leases
