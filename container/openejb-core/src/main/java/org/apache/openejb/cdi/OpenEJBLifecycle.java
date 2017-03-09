@@ -204,12 +204,12 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
 
             final Collection<Class<?>> ejbs = new ArrayList<>(stuff.getBeanContexts().size());
             for (final BeanContext bc : stuff.getBeanContexts()) {
+                ejbs.add(bc.getManagedClass());
+
                 final CdiEjbBean cdiEjbBean = bc.get(CdiEjbBean.class);
                 if (cdiEjbBean == null) {
                     continue;
                 }
-
-                ejbs.add(bc.getManagedClass());
 
                 if (AbstractProducer.class.isInstance(cdiEjbBean)) {
                     AbstractProducer.class.cast(cdiEjbBean).defineInterceptorStack(cdiEjbBean, cdiEjbBean.getAnnotatedType(), cdiEjbBean.getWebBeansContext());
