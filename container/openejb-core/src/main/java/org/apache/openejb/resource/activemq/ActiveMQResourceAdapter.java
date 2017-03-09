@@ -408,7 +408,7 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
         }
     }
 
-    public static class MdbJmxControl implements DynamicMBean {
+    public static final class MdbJmxControl implements DynamicMBean {
         private static final AttributeList ATTRIBUTE_LIST = new AttributeList();
         private static final MBeanInfo INFO = new MBeanInfo(
                 "org.apache.openejb.resource.activemq.ActiveMQResourceAdapter.MdbJmxControl",
