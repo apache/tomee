@@ -1376,7 +1376,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     public static URI[] resolveClasspath(final String rawstring) throws IOException {
 
         final FileUtils base = SystemInstance.get().getBase();
-        final String[] strings = rawstring.split(File.pathSeparator);
+        final String[] strings = rawstring.contains("mvn:") ? rawstring.split(";") : rawstring.split(File.pathSeparator);
         final Collection<URI> classpath = new LinkedList<>();
 
         for (final String string : strings) {
