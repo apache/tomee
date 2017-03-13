@@ -72,7 +72,7 @@ import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleSyste
 public class MdbContainer implements RpcContainer {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
 
-    private static final ThreadLocal<BeanContext> CURRENT = new ThreadLocal<>();
+    private static final ThreadLocal<BeanContext> CURRENT = new ThreadLocal<BeanContext>();
 
     private static final Object[] NO_ARGS = new Object[0];
 

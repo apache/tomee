@@ -20,6 +20,7 @@ package org.apache.openejb.resource.activemq;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.ra.ActiveMQEndpointActivationKey;
 import org.apache.activemq.ra.ActiveMQEndpointWorker;
+import org.apache.activemq.ra.MessageActivationSpec;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.mdb.MdbContainer;
 import org.apache.openejb.monitoring.LocalMBeanServer;
@@ -29,6 +30,7 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URISupport;
 import org.apache.openejb.util.URLs;
+import org.apache.openejb.util.reflection.Reflections;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
@@ -69,7 +71,7 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
     private String useDatabaseLock;
     private String startupTimeout = "60000";
     private BootstrapContext bootstrapContext;
-    private final Map<BeanContext, ObjectName> mbeanNames = new ConcurrentHashMap<>();
+    private final Map<BeanContext, ObjectName> mbeanNames = new ConcurrentHashMap<BeanContext, ObjectName>();
 
     public String getDataSource() {
         return dataSource;
@@ -343,23 +345,22 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
 
         @Override
         public Object invoke(final String actionName, final Object[] params, final String[] signature) throws MBeanException, ReflectionException {
-            switch (actionName) {
-                case "stop":
-                    try {
-                        worker.stop();
-                    } catch (final InterruptedException e) {
-                        Thread.interrupted();
-                    }
-                    break;
-                case "start":
-                    try {
-                        worker.start();
-                    } catch (ResourceException e) {
-                        throw new MBeanException(new IllegalStateException(e.getMessage()));
-                    }
-                    break;
-                default:
-                    throw new MBeanException(new IllegalStateException("unsupported operation: " + actionName));
+            if (actionName.equals("stop")) {
+                try {
+                    worker.stop();
+                } catch (final InterruptedException e) {
+                    Thread.interrupted();
+                }
+
+            } else if (actionName.equals("start")) {
+                try {
+                    worker.start();
+                } catch (ResourceException e) {
+                    throw new MBeanException(new IllegalStateException(e.getMessage()));
+                }
+
+            } else {
+                throw new MBeanException(new IllegalStateException("unsupported operation: " + actionName));
             }
             return null;
         }
