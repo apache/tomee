@@ -88,7 +88,7 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
     /**
      * HTTP port.
      */
-    @Parameter(property = "tomee-embedded-plugin.http", defaultValue = "8080")
+    @Parameter(property = "tomee-embedded-plugin.httpPort", defaultValue = "8080")
     protected int httpPort;
 
     /**
