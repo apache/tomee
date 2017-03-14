@@ -49,7 +49,7 @@ public abstract class TimerData implements Serializable {
     private static final long serialVersionUID = 1L;
 
     public static final String OPEN_EJB_TIMEOUT_TRIGGER_NAME_PREFIX = "OPEN_EJB_TIMEOUT_TRIGGER_";
-    public static final String OPEN_EJB_TIMEOUT_TRIGGER_GROUP_NAME = "OPEN_EJB_TIMEOUT_TRIGGER_GROUP";
+    public static final String OPEN_EJB_TIMEOUT_TRIGGER_GROUP_PREFIX = "OPEN_EJB_TIMEOUT_TRIGGER_GROUP_";
 
     private static final Logger log = Logger.getInstance(LogCategory.TIMER, "org.apache.openejb.util.resources");
     private long id;
@@ -206,6 +206,10 @@ public abstract class TimerData implements Serializable {
         return id;
     }
 
+    void setId(long id) {
+        this.id=id;
+    }
+
     public String getDeploymentId() {
         return deploymentId;
     }
@@ -231,7 +235,7 @@ public abstract class TimerData implements Serializable {
         //Initialize the Quartz Trigger
         trigger = initializeTrigger();
         trigger.computeFirstFireTime(null);
-        trigger.setGroup(OPEN_EJB_TIMEOUT_TRIGGER_GROUP_NAME);
+        trigger.setGroup(OPEN_EJB_TIMEOUT_TRIGGER_GROUP_PREFIX+deploymentId);
         trigger.setName(OPEN_EJB_TIMEOUT_TRIGGER_NAME_PREFIX + deploymentId + "_" + id);
         newTimer = true;
         try {
@@ -250,7 +254,6 @@ public abstract class TimerData implements Serializable {
             return;
         }
 
-        timerService.cancelled(TimerData.this);
         if (trigger != null) {
             try {
                 final Scheduler s = timerService.getScheduler();
@@ -292,7 +295,6 @@ public abstract class TimerData implements Serializable {
             // if the tx was rolled back, reschedule the timer with the java.util.Timer
             if (!committed) {
                 cancelled = false;
-                timerService.addTimerData(TimerData.this);
                 timerService.schedule(TimerData.this);
             }
         }
@@ -332,6 +334,7 @@ public abstract class TimerData implements Serializable {
 
         @Override
         public void afterCompletion(final int status) {
+            log.info("Completed "+id);
             synchronizationRegistered = false;
             try {
                 transactionComplete(status == Status.STATUS_COMMITTED);

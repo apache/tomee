@@ -82,10 +82,8 @@ import org.apache.openejb.core.ivm.naming.LazyObjectReference;
 import org.apache.openejb.core.ivm.naming.Reference;
 import org.apache.openejb.core.security.SecurityContextHandler;
 import org.apache.openejb.core.timer.EjbTimerServiceImpl;
-import org.apache.openejb.core.timer.MemoryTimerStore;
 import org.apache.openejb.core.timer.NullEjbTimerServiceImpl;
 import org.apache.openejb.core.timer.ScheduleData;
-import org.apache.openejb.core.timer.TimerStore;
 import org.apache.openejb.core.transaction.JtaTransactionPolicyFactory;
 import org.apache.openejb.core.transaction.SimpleBootstrapContext;
 import org.apache.openejb.core.transaction.SimpleWorkManager;
@@ -1311,15 +1309,13 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
                     if (timerServiceRequired && "true".equalsIgnoreCase(appInfo.properties.getProperty(OPENEJB_TIMERS_ON, globalTimersOn))) {
                         // Create the timer
-                        final EjbTimerServiceImpl timerService = new EjbTimerServiceImpl(beanContext, newTimerStore(beanContext));
+                        final EjbTimerServiceImpl timerService = new EjbTimerServiceImpl(beanContext);
                         //Load auto-start timers
-                        final TimerStore timerStore = timerService.getTimerStore();
                         for (final Iterator<Map.Entry<Method, MethodContext>> it = beanContext.iteratorMethodContext(); it.hasNext(); ) {
                             final Map.Entry<Method, MethodContext> entry = it.next();
                             final MethodContext methodContext = entry.getValue();
                             for (final ScheduleData scheduleData : methodContext.getSchedules()) {
-                                timerStore.createCalendarTimer(timerService,
-                                        (String) beanContext.getDeploymentID(),
+                                timerService.scheduleCalendarTimer(
                                         null,
                                         entry.getKey(),
                                         scheduleData.getExpression(),
@@ -1377,29 +1373,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         final List<BeanContext> ejbs = sort(allDeployments);
         appContext.getBeanContexts().addAll(ejbs);
         return ejbs;
-    }
-
-    private TimerStore newTimerStore(final BeanContext beanContext) {
-        for (final DeploymentContext context : Arrays.asList(beanContext, beanContext.getModuleContext(), beanContext.getModuleContext().getAppContext())) {
-            final String timerStoreClass = context.getProperties().getProperty(TIMER_STORE_CLASS);
-            if (timerStoreClass != null) {
-                logger.info("Found timer class: " + timerStoreClass);
-
-                try {
-                    final Class<?> clazz = beanContext.getClassLoader().loadClass(timerStoreClass);
-                    try {
-                        final Constructor<?> constructor = clazz.getConstructor(TransactionManager.class);
-                        return TimerStore.class.cast(constructor.newInstance(EjbTimerServiceImpl.getDefaultTransactionManager()));
-                    } catch (final Exception ignored) {
-                        return TimerStore.class.cast(clazz.newInstance());
-                    }
-                } catch (final Exception e) {
-                    logger.error("Failed to instantiate " + timerStoreClass + ", using default memory timer store");
-                }
-            }
-        }
-
-        return new MemoryTimerStore(EjbTimerServiceImpl.getDefaultTransactionManager());
     }
 
     public void startEjbs(final boolean start, final List<BeanContext> allDeployments) throws OpenEJBException {
