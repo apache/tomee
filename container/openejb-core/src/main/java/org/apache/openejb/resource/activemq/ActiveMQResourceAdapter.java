@@ -219,7 +219,7 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
         }
         mbeanNames.put(current, jmxName);
 
-        final MBeanInfo info = new MBeanInfo(
+        new MBeanInfo(
                 "com.tomitribe.tomee.mdb.MdbControl",
                 "Allows to control a MDB listener",
                 new MBeanAttributeInfo[0],
@@ -324,7 +324,7 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
         }
     }
 
-    public static class MdbJmxControl implements DynamicMBean {
+    public static final class MdbJmxControl implements DynamicMBean {
         private static final AttributeList ATTRIBUTE_LIST = new AttributeList();
         private static final MBeanInfo INFO = new MBeanInfo(
                 "org.apache.openejb.resource.activemq.ActiveMQResourceAdapter.MdbJmxControl",
