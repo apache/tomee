@@ -219,17 +219,6 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
         }
         mbeanNames.put(current, jmxName);
 
-        new MBeanInfo(
-                "com.tomitribe.tomee.mdb.MdbControl",
-                "Allows to control a MDB listener",
-                new MBeanAttributeInfo[0],
-                new MBeanConstructorInfo[0],
-                new MBeanOperationInfo[]{
-                        new MBeanOperationInfo("start", "Ensure the listener is active.", new MBeanParameterInfo[0], "void", ACTION),
-                        new MBeanOperationInfo("stop", "Ensure the listener is not active.", new MBeanParameterInfo[0], "void", ACTION)
-                },
-                new MBeanNotificationInfo[0]
-        );
         LocalMBeanServer.registerSilently(new MdbJmxControl(worker), jmxName);
         log.info("Deployed MDB control for " + current.getDeploymentID() + " on " + jmxName);
     }
