@@ -49,11 +49,7 @@ public class MoviesArquillianHtmlUnitTest {
     @Deployment
     public static WebArchive createDeployment() {
 
-        Collection<String> dependencies = Arrays.asList(new String[]{
-                                                                        "javax.servlet:jstl",
-                                                                        "taglibs:standard",
-                                                                        "commons-lang:commons-lang"
-        });
+        Collection<String> dependencies = Arrays.asList("taglibs:standard", "commons-lang:commons-lang");
 
         File[] libs = Maven.resolver()
                            .loadPomFromFile(Basedir.basedir("pom.xml")).resolve(dependencies)

@@ -320,7 +320,7 @@ public class TldScanner {
 
         try {
             urlSet = URLs.cullSystemJars(urlSet);
-            urlSet = applyBuiltinExcludes(urlSet, Filters.tokens("openejb-jstl-1.2", "myfaces-impl", "javax.faces-2.", "spring-security-taglibs", "spring-webmvc"));
+            urlSet = applyBuiltinExcludes(urlSet, Filters.tokens("taglibs-standard-jstlel", "myfaces-impl", "javax.faces-2.", "spring-security-taglibs", "spring-webmvc"));
         } catch (final IOException e) {
             DeploymentLoader.logger.warning("Error scanning class loader for JSP tag libraries", e);
         }
