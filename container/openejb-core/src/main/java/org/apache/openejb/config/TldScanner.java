@@ -18,6 +18,7 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.DaemonThreadFactory;
 import org.apache.openejb.util.URLs;
 import org.apache.xbean.finder.UrlSet;
@@ -72,6 +73,10 @@ public class TldScanner {
     private static final Map<Integer, Set<URL>> cacheByhashCode = new WeakHashMap<Integer, Set<URL>>();
 
     public static Set<URL> scan(final ClassLoader classLoader) throws OpenEJBException {
+        if (skip()) {
+            return Collections.emptySet();
+        }
+
         if (classLoader == null) {
             return Collections.emptySet();
         }
@@ -87,7 +92,14 @@ public class TldScanner {
         return result;
     }
 
+    private static boolean skip() {
+        return !"true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.taglib.scan", "true"));
+    }
+
     public static Set<URL> scanClassLoaderForTagLibs(final ClassLoader classLoader) throws OpenEJBException {
+        if (skip()) {
+            return Collections.emptySet();
+        }
 
         final Set<URL> tldUrls = new HashSet<URL>();
 
