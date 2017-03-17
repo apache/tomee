@@ -27,17 +27,13 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
 import org.jboss.shrinkwrap.api.importer.ExplodedImporter;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.ejb.EJB;
-import java.io.File;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.Collection;
 
 import static org.junit.Assert.assertTrue;
 
@@ -48,17 +44,9 @@ public class MoviesArquillianHtmlUnitTest {
 
     @Deployment
     public static WebArchive createDeployment() {
-
-        Collection<String> dependencies = Arrays.asList("taglibs:standard", "commons-lang:commons-lang");
-
-        File[] libs = Maven.resolver()
-                .loadPomFromFile(Basedir.basedir("pom.xml")).resolve(dependencies)
-                .withTransitivity().asFile();
-
         WebArchive war = ShrinkWrap.create(WebArchive.class, "test.war")
                 .addClasses(Movie.class, MoviesBean.class, MoviesArquillianHtmlUnitTest.class, ActionServlet.class)
-                .addAsResource(new ClassLoaderAsset("META-INF/persistence.xml"), "META-INF/persistence.xml")
-                .addAsLibraries(libs);
+                .addAsResource(new ClassLoaderAsset("META-INF/persistence.xml"), "META-INF/persistence.xml");
 
         war.merge(ShrinkWrap.create(GenericArchive.class).as(ExplodedImporter.class)
                         .importDirectory(Basedir.basedir(WEBAPP_SRC)).as(GenericArchive.class),
