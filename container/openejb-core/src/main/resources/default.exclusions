@@ -172,7 +172,6 @@ openejb-javaagent
 openejb-jee
 openejb-jpa-integration
 openejb-jsf
-openejb-jstl
 openejb-loader
 openejb-openwebbeans
 openejb-provisionning
@@ -223,6 +222,7 @@ sunec.jar
 surefire-
 swizzle-
 sxc-
+taglibs-standard-
 testng-
 tomcat-annotations
 tomcat-api
