@@ -39,7 +39,7 @@ import static org.apache.openejb.loader.JarLocation.jarLocation;
 public class TomEETldScanner extends TldScanner {
     private static final Paths PATHS = new Paths(null);
     private static final URL MYFACES_URL = findJar("myfaces-impl", "org.apache.myfaces.webapp.AbstractFacesInitializer");
-    private static final URL JSTL_URL = findJar("taglibs-standard-jstlel", "javax.servlet.jsp.jstl.core.ConditionalTagSupport");
+    private static final URL JSTL_URL = findJar("taglibs-standard-impl", "javax.servlet.jsp.jstl.core.ConditionalTagSupport");
     private static final Map<String, TldResourcePath> URI_TLD_RESOURCE = new HashMap<>();
     private static final Map<TldResourcePath, TaglibXml> TLD_RESOURCE_TAG_LIB = new HashMap<>();
 
