@@ -135,7 +135,6 @@ import org.apache.tomee.common.UserTransactionFactory;
 import org.apache.tomee.loader.TomcatHelper;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.spi.ContextsService;
-import org.omg.CORBA.ORB;
 
 import javax.ejb.spi.HandleDelegate;
 import javax.naming.Context;
@@ -1724,8 +1723,13 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 }
             }
 
-            if (SystemInstance.get().getComponent(ORB.class) != null) {
-                safeBind(comp, "ORB", new SystemComponentReference(ORB.class));
+            try {
+                final Class<?> orb = TomcatWebAppBuilder.class.getClassLoader().loadClass("org.omg.CORBA.ORB");
+                if (SystemInstance.get().getComponent(orb) != null) {
+                    safeBind(comp, "ORB", new SystemComponentReference(orb));
+                }
+            } catch (final NoClassDefFoundError | ClassNotFoundException cnfe) {
+                // no-op
             }
             if (SystemInstance.get().getComponent(HandleDelegate.class) != null) {
                 safeBind(comp, "HandleDelegate", new SystemComponentReference(HandleDelegate.class));
