@@ -71,6 +71,9 @@ import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleSyste
 
 public class MdbContainer implements RpcContainer {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
+
+    private static final ThreadLocal<BeanContext> CURRENT = new ThreadLocal<BeanContext>();
+
     private static final Object[] NO_ARGS = new Object[0];
 
     private final Object containerID;
@@ -179,6 +182,7 @@ public class MdbContainer implements RpcContainer {
         }
 
         // activate the endpoint
+        CURRENT.set(beanContext);
         try {
             resourceAdapter.endpointActivation(endpointFactory, activationSpec);
         } catch (final ResourceException e) {
@@ -188,6 +192,8 @@ public class MdbContainer implements RpcContainer {
             deployments.remove(deploymentId);
 
             throw new OpenEJBException(e);
+        } finally {
+            CURRENT.remove();
         }
     }
 
@@ -264,7 +270,12 @@ public class MdbContainer implements RpcContainer {
         try {
             final EndpointFactory endpointFactory = (EndpointFactory) beanContext.getContainerData();
             if (endpointFactory != null) {
-                resourceAdapter.endpointDeactivation(endpointFactory, endpointFactory.getActivationSpec());
+                CURRENT.set(beanContext);
+                try {
+                    resourceAdapter.endpointDeactivation(endpointFactory, endpointFactory.getActivationSpec());
+                } finally {
+                    CURRENT.remove();
+                }
 
                 final MBeanServer server = LocalMBeanServer.get();
                 for (final ObjectName objectName : endpointFactory.jmxNames) {
@@ -470,6 +481,14 @@ public class MdbContainer implements RpcContainer {
                 ThreadContext.exit(callContext);
             }
         }
+    }
+
+    public static BeanContext current() {
+        final BeanContext beanContext = CURRENT.get();
+        if (beanContext == null) {
+            CURRENT.remove();
+        }
+        return beanContext;
     }
 
     private static class MdbCallContext {
