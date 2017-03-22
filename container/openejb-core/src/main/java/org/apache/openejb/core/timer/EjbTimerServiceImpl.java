@@ -17,6 +17,34 @@
 
 package org.apache.openejb.core.timer;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
+
+import javax.ejb.EJBContext;
+import javax.ejb.EJBException;
+import javax.ejb.ScheduleExpression;
+import javax.ejb.Timer;
+import javax.ejb.TimerConfig;
+import javax.transaction.Status;
+import javax.transaction.SystemException;
+import javax.transaction.TransactionManager;
+
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.InterfaceType;
@@ -47,33 +75,6 @@ import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.SetAccessible;
-
-import javax.ejb.EJBContext;
-import javax.ejb.EJBException;
-import javax.ejb.ScheduleExpression;
-import javax.ejb.Timer;
-import javax.ejb.TimerConfig;
-import javax.transaction.Status;
-import javax.transaction.SystemException;
-import javax.transaction.TransactionManager;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
 
@@ -504,13 +505,18 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                     (GroupMatcher.triggerGroupEquals(TimerData.OPEN_EJB_TIMEOUT_TRIGGER_GROUP_PREFIX+deploymentID));
             for (TriggerKey key:keys) {
                 Trigger t=scheduler.getTrigger(key);
-                if (t!=null) {
-                    JobDataMap map=t.getJobDataMap();
-                    TimerData td=(TimerData) map.get(EjbTimeoutJob.TIMER_DATA);
-                    if (td!=null && td.getNextTimeout().getTime()>System.currentTimeMillis()) {
-                        if (td.getId()>maxId) maxId=td.getId();
-                    }
+                if (t==null) continue;
+                JobDataMap map=t.getJobDataMap();
+                TimerData td=(TimerData) map.get(EjbTimeoutJob.TIMER_DATA);
+                if (td==null) continue;
+                if (!td.isPersistent()) {
+                    /* Non persistent timers may still be here, if the server did not shutdown gracefully last time.
+                     * TODO Use a second JobStore for non persistent timers or remove them before scheduler.start().
+                     */
+                    scheduler.unscheduleJob(key);
+                    continue;
                 }
+                if (td.getId()>maxId) maxId=td.getId();
             }
         } catch (SchedulerException se) {
             throw new TimerStoreException(se);
