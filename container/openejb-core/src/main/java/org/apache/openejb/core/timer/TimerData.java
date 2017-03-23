@@ -17,6 +17,22 @@
 
 package org.apache.openejb.core.timer;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.lang.reflect.Method;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Map;
+
+import javax.ejb.EJBException;
+import javax.ejb.Timer;
+import javax.ejb.TimerConfig;
+import javax.transaction.Status;
+import javax.transaction.Synchronization;
+import javax.transaction.Transaction;
+
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.MethodContext;
 import org.apache.openejb.loader.SystemInstance;
@@ -28,21 +44,6 @@ import org.apache.openejb.quartz.impl.triggers.AbstractTrigger;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-
-import javax.ejb.EJBException;
-import javax.ejb.Timer;
-import javax.ejb.TimerConfig;
-import javax.transaction.Status;
-import javax.transaction.Synchronization;
-import javax.transaction.Transaction;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.lang.reflect.Method;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Map;
 
 public abstract class TimerData implements Serializable {
 
@@ -334,7 +335,6 @@ public abstract class TimerData implements Serializable {
 
         @Override
         public void afterCompletion(final int status) {
-            log.info("Completed "+id);
             synchronizationRegistered = false;
             try {
                 transactionComplete(status == Status.STATUS_COMMITTED);
