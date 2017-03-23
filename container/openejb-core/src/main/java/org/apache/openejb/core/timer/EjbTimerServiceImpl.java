@@ -31,8 +31,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -89,6 +91,11 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
 
     public static final String EJB_TIMER_RETRY_ATTEMPTS = "EjbTimer.RetryAttempts";
     public static final String OPENEJB_QUARTZ_USE_TCCL = "openejb.quartz.use-TCCL";
+
+    /**
+     * Counts references to Schedulers (represented by its name).
+     */
+    private static final ConcurrentHashMap<String,AtomicInteger> SCHEDULERS=new ConcurrentHashMap<String,AtomicInteger>();
 
     private boolean transacted;
     private int retryAttempts;
@@ -176,7 +183,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                 final boolean useTccl = "true".equalsIgnoreCase(properties.getProperty(OPENEJB_QUARTZ_USE_TCCL, "false"));
 
                 defaultQuartzConfiguration(properties, deployment, newInstance, useTccl);
-
+                final String schedulerName;
                 try {
                     // start in container context to avoid thread leaks
                     final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
@@ -200,10 +207,17 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                         .requestRecovery(false)
                         .build();
                     thisScheduler.addJob(job, true);
+                    schedulerName=thisScheduler.getSchedulerName();
                 } catch (final SchedulerException e) {
                     throw new OpenEJBRuntimeException("Fail to initialize the default scheduler", e);
                 }
 
+                AtomicInteger refCount=SCHEDULERS.get(schedulerName);
+                if (refCount==null) {
+                    SCHEDULERS.put(schedulerName,new AtomicInteger(1));
+                } else {
+                    refCount.incrementAndGet();
+                }
                 if (!newInstance) {
                     systemInstance.setComponent(Scheduler.class, thisScheduler);
                 }
@@ -384,6 +398,12 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
             if (null != s && !s.isShutdown() && s.isStarted()) {
 
                 try {
+                    String schedulerName=s.getSchedulerName();
+                    AtomicInteger refCount=SCHEDULERS.get(schedulerName);
+                    if (refCount!=null) {
+                        if (refCount.decrementAndGet()>0) return; // Still referenced
+                        SCHEDULERS.remove(schedulerName);
+                    }
                     s.pauseAll();
                 } catch (final SchedulerException e) {
                     // no-op
