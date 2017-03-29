@@ -840,7 +840,7 @@ public class ReadDescriptors implements DynamicDeployer {
 
     public static TldTaglib readTldTaglib(final URL url) throws OpenEJBException {
         // TOMEE-164 Optimization on reading built-in tld files
-        if (url.getPath().contains("jstl-1.2.jar")) {
+        if (url.getPath().contains("jstl-1.2.jar") || (url.getPath().contains("taglibs-standard-") && url.getPath().contains(".jar!"))) {
             return SKIP_TAGLIB;
         }
         if (url.getPath().contains("myfaces-impl")) { // we should return SKIP_TAGLIB too
