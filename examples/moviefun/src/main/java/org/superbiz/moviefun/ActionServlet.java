@@ -23,6 +23,7 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
@@ -132,7 +133,12 @@ public class ActionServlet extends HttpServlet {
             request.setAttribute("field", field);
         }
 
-        request.getRequestDispatcher("WEB-INF/moviefun.jsp").forward(request, response);
+        request.getRequestDispatcher("WEB-INF/moviefun.jsp").forward(new HttpServletRequestWrapper(request) {
+            @Override // woraround tomcat 8.5.13
+            public String getPathInfo() {
+                return "";
+            }
+        }, response);
     }
 
 }
