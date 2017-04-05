@@ -181,15 +181,4 @@ public class ContextWrapper implements Context {
     public void unbind(final String name) throws NamingException {
         context.unbind(name);
     }
-
-    @Override
-    protected void finalize() throws Throwable {
-        try {
-            this.close();
-        } catch (final Exception e) {
-            //no-op
-        } finally {
-            super.finalize();
-        }
-    }
 }

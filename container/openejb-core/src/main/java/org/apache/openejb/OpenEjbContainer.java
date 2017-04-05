@@ -148,19 +148,6 @@ public final class OpenEjbContainer extends EJBContainer {
         }
     }
 
-    @Override
-    protected void finalize() throws Throwable {
-        try {
-            if (this.equals(instance)) {
-                this.close();
-            }
-        } catch (final Exception e) {
-            //no-op
-        } finally {
-            super.finalize();
-        }
-    }
-
     private static boolean isSingleClose() {
         return OPENEJB_EJBCONTAINER_CLOSE_SINGLE.equals(SystemInstance.get().getProperty(OPENEJB_EJBCONTAINER_CLOSE, "by-invocation"));
     }

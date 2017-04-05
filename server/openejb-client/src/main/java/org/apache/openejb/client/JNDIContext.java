@@ -845,15 +845,6 @@ public class JNDIContext implements InitialContextFactory, Context {
         return createSubcontext(name.toString());
     }
 
-    @Override
-    protected void finalize() throws Throwable {
-        try {
-            close();
-        } finally {
-            super.finalize();
-        }
-    }
-
     private static final class SimpleNameParser implements NameParser {
 
         private static final Properties PARSER_PROPERTIES = new Properties();

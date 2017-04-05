@@ -104,6 +104,7 @@ public class LocalInitialContextFactory implements InitialContextFactory {
 
         try {
             openejb = null;
+            bootedOpenEJB = false;
         } finally {
             l.unlock();
         }

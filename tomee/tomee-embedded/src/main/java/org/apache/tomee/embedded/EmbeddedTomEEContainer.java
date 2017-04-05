@@ -65,17 +65,6 @@ public final class EmbeddedTomEEContainer extends EJBContainer {
     }
 
     @Override
-    protected void finalize() throws Throwable {
-        try {
-            this.close();
-        } catch (final Exception e) {
-            //no-op
-        } finally {
-            super.finalize();
-        }
-    }
-
-    @Override
     public void close() {
 
         final ReentrantLock lock = LOCK;
