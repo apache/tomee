@@ -105,7 +105,7 @@ public class ActiveMQResourceAdapterControlTest {
         Mdb.awaiter.message = null;
         setControl("stop");
         // default would be wait 10s, but if machine is slow we compute it from the first msg stats
-        final long waitWithoutResponse = Math.max(10, 5 * (end - start) / 1000);
+        final long waitWithoutResponse = Math.max(10, 1+ 5 * (end - start) / 1000);
         System.out.println("We'll wait " + waitWithoutResponse + "s to get a message on a stopped listener");
         assertFalse(Mdb.awaiter.message, sendAndWait("Will be received after", waitWithoutResponse, TimeUnit.SECONDS));
         assertNull(Mdb.awaiter.message);
