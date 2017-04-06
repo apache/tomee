@@ -42,6 +42,7 @@ import javax.jms.Session;
 import javax.jms.TextMessage;
 import javax.management.ObjectName;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
@@ -91,32 +92,32 @@ public class ActiveMQResourceAdapterControlTest {
 
     @Test
     public void ensureControl() throws Exception {
-        assertFalse(Mdb.awaiter.message, sendAndWait("Will be received after", 10, TimeUnit.SECONDS));
+        Mdb.awaiter.messages.clear();
+
+        assertFalse(Mdb.awaiter.messages.poll(), sendAndWait("Will be received after", 10, TimeUnit.SECONDS));
 
         setControl("start");
         assertTrue(Mdb.awaiter.semaphore.tryAcquire(1, TimeUnit.MINUTES));
-        assertEquals("Will be received after", Mdb.awaiter.message);
+        assertEquals("Will be received after", Mdb.awaiter.messages.poll());
 
         final long start = System.currentTimeMillis();
         assertTrue(sendAndWait("First", 1, TimeUnit.MINUTES));
-        assertEquals("First", Mdb.awaiter.message);
+        assertEquals("First", Mdb.awaiter.messages.poll());
         final long end = System.currentTimeMillis();
 
-        Mdb.awaiter.message = null;
         setControl("stop");
         // default would be wait 10s, but if machine is slow we compute it from the first msg stats
-        final long waitWithoutResponse = Math.max(10, 1+ 5 * (end - start) / 1000);
+        final long waitWithoutResponse = Math.max(10, 5 * (end - start) / 1000);
         System.out.println("We'll wait " + waitWithoutResponse + "s to get a message on a stopped listener");
-        assertFalse(Mdb.awaiter.message, sendAndWait("Will be received after", waitWithoutResponse, TimeUnit.SECONDS));
-        assertNull(Mdb.awaiter.message);
+        assertFalse(Mdb.awaiter.messages.poll(), sendAndWait("Will be received after", waitWithoutResponse, TimeUnit.SECONDS));
+        assertNull(Mdb.awaiter.messages.poll());
 
         setControl("start");
         assertTrue(sendAndWait("Second", 1, TimeUnit.MINUTES));
-        assertEquals("Will be received after", Mdb.awaiter.message);
+        assertEquals("Will be received after", Mdb.awaiter.messages.poll());
 
-        Mdb.awaiter.message = null;
         assertTrue(Mdb.awaiter.semaphore.tryAcquire(1, TimeUnit.MINUTES));
-        assertEquals("Second", Mdb.awaiter.message);
+        assertEquals("Second", Mdb.awaiter.messages.poll());
     }
 
     private void setControl(final String action) throws Exception {
@@ -141,6 +142,7 @@ public class ActiveMQResourceAdapterControlTest {
         try {
             c = connectionFactory.createConnection();
             Session session = null;
+
             try {
                 session = c.createSession(false, Session.AUTO_ACKNOWLEDGE);
                 MessageProducer producer = null;
@@ -171,7 +173,7 @@ public class ActiveMQResourceAdapterControlTest {
         @Override
         public synchronized void onMessage(final Message message) {
             try {
-                awaiter.message = TextMessage.class.cast(message).getText();
+                awaiter.messages.add(TextMessage.class.cast(message).getText());
             } catch (final JMSException e) {
                 throw new IllegalStateException(e);
             } finally {
@@ -182,6 +184,6 @@ public class ActiveMQResourceAdapterControlTest {
 
     public static class MessageAwaiter {
         private final Semaphore semaphore = new Semaphore(0);
-        private volatile String message;
+        private ConcurrentLinkedQueue<String> messages = new ConcurrentLinkedQueue<String>();
     }
 }
