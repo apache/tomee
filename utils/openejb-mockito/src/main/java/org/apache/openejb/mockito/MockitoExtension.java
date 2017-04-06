@@ -16,161 +16,153 @@
  */
 package org.apache.openejb.mockito;
 
-import org.apache.openejb.injection.FallbackPropertyInjector;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.webbeans.annotation.AnyLiteral;
-import org.apache.webbeans.annotation.DefaultLiteral;
-import org.apache.webbeans.annotation.NamedLiteral;
-import org.mockito.cglib.proxy.Factory;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Field;
+import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.Typed;
 import javax.enterprise.inject.spi.AfterBeanDiscovery;
 import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeforeBeanDiscovery;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.InjectionPoint;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Proxy;
-import java.lang.reflect.Type;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.testing.TestInstance;
+import org.apache.webbeans.annotation.AnyLiteral;
+import org.apache.webbeans.annotation.DefaultLiteral;
+import org.apache.webbeans.annotation.NamedLiteral;
+import org.apache.webbeans.util.GenericsUtil;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 /**
- * This class is responsible to add mocks as CDI beans.
+ * This class is responsible to initialize mocks declared in the test class and register them as CDI beans.
  */
 public class MockitoExtension implements Extension {
-    private static final Annotation DEFAULT_ANNOTATION = new DefaultLiteral();
-    private static final Annotation ANY_ANNOTATION = new AnyLiteral();
 
-    public void addMocks(@Observes final BeforeBeanDiscovery bbd) {
-        // ensure it is init
-        SystemInstance.get().getComponent(FallbackPropertyInjector.class);
-    }
+	private static class MockBean implements Bean<Object> {
 
-    public void addMocks(@Observes final AfterBeanDiscovery abd) {
-        for (Map.Entry<Class<?>, Object> instance : MockRegistry.mocksByType().entrySet()) {
-            abd.addBean(new MockBean(instance.getKey(), instance.getValue()));
-        }
-        for (Map.Entry<String, Object> instance : MockRegistry.mocksByName().entrySet()) {
-            abd.addBean(new NamedMockBean(instance.getKey(), instance.getValue()));
-        }
-    }
+		private final Class<?> beanClass;
+		private final Object instance;
+		private final Set<Annotation> qualifiers;
+		private final Set<Type> types;
 
-    private static class MockBean<T> implements Bean<T> {
-        protected static final Set<Annotation> QUALIFIERS = new HashSet<Annotation>(2) {{
-            add(DEFAULT_ANNOTATION);
-            add(ANY_ANNOTATION);
-        }};
+		public MockBean(Class<?> beanClass, Object instance, Set<Type> types, Set<Annotation> qualifiers) {
+			this.beanClass = beanClass;
+			this.instance = instance;
+			this.types = types;
+			this.qualifiers = qualifiers;
+		}
 
-        protected final Class<T> clazz;
-        protected final Object instance;
-        protected final HashSet<Type> types;
+		public Object create(CreationalContext<Object> context) {
+			return instance;
+		}
 
-        public MockBean(final Class<T> key, final Object value) {
-            clazz = key;
-            instance = value;
+		public void destroy(Object instance, CreationalContext<Object> context) {
+		}
 
-            types = new HashSet<Type>();
-            Class<?> current = clazz;
-            if (clazz != null) {
-                if (!Proxy.isProxyClass(current)) {
-                    while (!Object.class.equals(current) && current != null) {
-                        types.add(current);
-                        current = current.getSuperclass();
-                    }
-                }
-                for (Class<?> itf : clazz.getInterfaces()) {
-                    if (Factory.class.isAssignableFrom(itf)) {
-                        continue;
-                    }
+		public Class<?> getBeanClass() {
+			return beanClass;
+		}
 
-                    types.add(itf);
-                }
-            }
-        }
+		public Set<InjectionPoint> getInjectionPoints() {
+			return Collections.emptySet();
+		}
 
-        public Set<Type> getTypes() {
-            return types;
-        }
+		public String getName() {
+			return null;
+		}
 
-        public Set<Annotation> getQualifiers() {
-            return QUALIFIERS;
-        }
+		public Set<Annotation> getQualifiers() {
+			return qualifiers;
+		}
 
-        public Class<? extends Annotation> getScope() {
-            return Dependent.class;
-        }
+		public Class<? extends Annotation> getScope() {
+			return Dependent.class; // otherwise will be proxied
+		}
 
-        public String getName() {
-            return null;
-        }
+		public Set<Class<? extends Annotation>> getStereotypes() {
+			return Collections.emptySet();
+		}
 
-        public boolean isNullable() {
-            return false;
-        }
+		public Set<Type> getTypes() {
+			return types;
+		}
 
-        public Set<InjectionPoint> getInjectionPoints() {
-            return Collections.emptySet();
-        }
+		public boolean isAlternative() {
+			return true;
+		}
 
-        public Class<?> getBeanClass() {
-            return clazz;
-        }
+		public boolean isNullable() {
+			return false;
+		}
+	}
+	
+	public void addMocks(@Observes AfterBeanDiscovery afterBeanDiscovery, BeanManager beanManager) {
+		TestInstance instance = SystemInstance.get().getComponent(TestInstance.class);
+		if (instance != null) {
+			MockitoAnnotations.initMocks(instance.getInstance());
+			for (Class<?> c = instance.getTestClass(); !c.equals(Object.class); c = c.getSuperclass()) {
+				for (Field f : c.getDeclaredFields()) {
+					if (f.isAnnotationPresent(Mock.class)) {
+						boolean a = f.isAccessible();
+						try {
+							f.setAccessible(true);
+							Object value = f.get(instance.getInstance());
+							afterBeanDiscovery.addBean(createBean(f, value, beanManager));
+						} catch (IllegalAccessException iae) {
+							return; // forget it
+						} finally {
+							f.setAccessible(a);
+						}
+					}
+				}
+			}
+		}
+	}
 
-        public Set<Class<? extends Annotation>> getStereotypes() {
-            return Collections.emptySet();
-        }
+	private void collectQualifiers(AnnotatedElement annotated, Collection<Annotation> qualifiers, BeanManager beanManager) {
+		for (Annotation annotation : annotated.getAnnotations()) {
+			if (beanManager.isQualifier(annotation.annotationType())) {
+				qualifiers.add(annotation);
+			} else if (beanManager.isStereotype(annotation.annotationType())) {
+				collectQualifiers(annotation.annotationType(), qualifiers, beanManager);
+			}
+		}
+	}
 
-        public boolean isAlternative() {
-            return true;
-        }
+	private Bean<?> createBean(Field field, Object instance, BeanManager beanManager) {
+		
+		Set<Type> types = new HashSet<>();
+		if (field.isAnnotationPresent(Typed.class)) {
+			types.addAll(Arrays.asList(field.getAnnotation(Typed.class).value()));
+		} else {
+			types.addAll(GenericsUtil.getTypeClosure(field.getGenericType()));
+		}
+		
+		Set<Annotation> qualifiers = new HashSet<>();
+		collectQualifiers(field, qualifiers, beanManager);
+		
+		Mock mock = field.getAnnotation(Mock.class);
+		if (!"".equals(mock.name())) {
+			qualifiers.add(new NamedLiteral(mock.name()));
+		}
 
-        public T create(final CreationalContext<T> context) {
-            return clazz.cast(instance);
-        }
+		if (qualifiers.isEmpty()) {
+			qualifiers.add(DefaultLiteral.INSTANCE);
+		}
+		qualifiers.add(AnyLiteral.INSTANCE);
 
-        public void destroy(final T instance, final CreationalContext<T> context) {
-            // no-op
-        }
-    }
-
-    private static class NamedMockBean<T> extends MockBean<T> {
-        private final String name;
-        private final Set<Annotation> qualifiers;
-
-        public NamedMockBean(final String named, final Object value) {
-            super((Class<T>) value.getClass(), value);
-
-            name = named;
-
-            // we need to pass value.getClass() to get interfaces
-            // but we don't want the proxy to be injectable
-            if (!clazz.isInterface()) {
-                types.remove(clazz);
-            }
-
-            qualifiers = new HashSet<Annotation>(2);
-            qualifiers.add(ANY_ANNOTATION);
-            qualifiers.add(new NamedLiteral(name));
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
-
-        @Override
-        public Set<Annotation> getQualifiers() {
-            return qualifiers;
-        }
-
-        @Override
-        public T create(final CreationalContext<T> context) {
-            return clazz.cast(instance);
-        }
-    }
+		return new MockBean(field.getType(), instance, types, qualifiers);
+	}
 }

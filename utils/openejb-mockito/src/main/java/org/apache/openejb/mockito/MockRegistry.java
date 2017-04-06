@@ -31,6 +31,7 @@ import java.util.Map;
  *
  * Note: only injected mocks are managed
  */
+@Deprecated
 public class MockRegistry {
     private static boolean initialized = false;
     private static final Map<Class<?>, Object> mockInstancesByType = new HashMap<Class<?>, Object>();

@@ -16,33 +16,32 @@
  */
 package org.apache.openejb.mockito;
 
+import javax.enterprise.inject.spi.CDI;
+
 import org.apache.openejb.Injection;
 import org.apache.openejb.injection.FallbackPropertyInjector;
-import org.apache.openejb.testing.TestInstance;
-import org.apache.openejb.loader.SystemInstance;
-import org.mockito.MockitoAnnotations;
+import org.apache.webbeans.annotation.DefaultLiteral;
+import org.apache.webbeans.annotation.NamedLiteral;
 
 /**
  * this class is instantiated when the FallbackPropertyInjector is set
  * it is generally when the container is started
- * it will reset mockito context (stored mocks) and do the mock injections in the test class
+ * it will resolve @EJB mock injections.
+ * You don't need it if you don't use any @EJB injection.
  */
 public class MockitoInjector implements FallbackPropertyInjector {
-    public MockitoInjector() {
-        final Object instance = SystemInstance.get().getComponent(TestInstance.class).getInstance();
-        if (instance != null) {
-            MockitoAnnotations.initMocks(instance);
-        }
-        MockRegistry.reset();
-    }
 
     @Override
-    public Object getValue(final Injection injection) {
-        try {
-            return MockRegistry.mocksByType()
-                        .get(injection.getTarget().getDeclaredField(injection.getName()).getType());
-        } catch (Exception e) {
-            return MockRegistry.mocksByName().get(injection.getName());
-        }
+    public Object getValue(Injection injection) {
+    	try {
+    		Class<?> targetType = injection.getTarget().getDeclaredField(injection.getName()).getType();
+    		try {
+    			return CDI.current().select(targetType, DefaultLiteral.INSTANCE).get();
+    		} catch (Exception e) {
+    			return CDI.current().select(targetType, new NamedLiteral(injection.getName())).get();
+    		}
+    	} catch (NoSuchFieldException noSuchFieldException) {
+    		return null;
+    	}
     }
 }
