@@ -101,7 +101,7 @@
     <tomee.version>1.7.5-SNAPSHOT</tomee.version>
 
     <openjpa.version>2.4.0</openjpa.version>
-    <org.apache.openwebbeans.version>1.2.7</org.apache.openwebbeans.version>
+    <org.apache.openwebbeans.version>1.2.8</org.apache.openwebbeans.version>
 
     <!-- Maven module versions -->
     <maven-bundle-plugin.version>2.3.7</maven-bundle-plugin.version>
