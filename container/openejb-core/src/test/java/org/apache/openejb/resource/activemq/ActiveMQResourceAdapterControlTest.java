@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.resource.activemq;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
@@ -45,6 +46,8 @@ import java.util.Properties;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -54,6 +57,9 @@ import static org.junit.Assert.fail;
 
 @RunWith(ApplicationComposer.class)
 public class ActiveMQResourceAdapterControlTest {
+    
+    private static final Logger logger = Logger.getLogger(ActiveMQResourceAdapterControlTest.class.getName());
+    
     @Resource(name = "ActiveMQResourceAdapterControlTest/test/ejb/Mdb")
     private Queue queue;
 
@@ -108,7 +114,7 @@ public class ActiveMQResourceAdapterControlTest {
         setControl("stop");
         // default would be wait 10s, but if machine is slow we compute it from the first msg stats
         final long waitWithoutResponse = Math.max(10, 5 * (end - start) / 1000);
-        System.out.println("We'll wait " + waitWithoutResponse + "s to get a message on a stopped listener");
+        logger.info("We'll wait " + waitWithoutResponse + "s to get a message on a stopped listener");
         assertFalse(Mdb.awaiter.messages.poll(), sendAndWait("Will be received after", waitWithoutResponse, TimeUnit.SECONDS));
         assertNull(Mdb.awaiter.messages.poll());
 
@@ -148,6 +154,7 @@ public class ActiveMQResourceAdapterControlTest {
                 MessageProducer producer = null;
                 try {
                     producer = session.createProducer(queue);
+                    logger.log(Level.INFO, "Sending Message {0}", txt);
                     producer.send(session.createTextMessage(txt));
                 } finally {
                     if (producer != null) {
@@ -173,7 +180,10 @@ public class ActiveMQResourceAdapterControlTest {
         @Override
         public synchronized void onMessage(final Message message) {
             try {
-                awaiter.messages.add(TextMessage.class.cast(message).getText());
+                String text = TextMessage.class.cast(message).getText();
+                logger.log(Level.INFO, "Got Messag: {0}", text);
+                awaiter.messages.add(text);
+                logger.log(Level.INFO, "Mssages on store: {0}", ArrayUtils.toString(awaiter.messages.toArray(new String[0])) );
             } catch (final JMSException e) {
                 throw new IllegalStateException(e);
             } finally {
