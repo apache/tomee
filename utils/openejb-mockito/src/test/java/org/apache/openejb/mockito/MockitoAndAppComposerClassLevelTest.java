@@ -37,10 +37,10 @@ public class MockitoAndAppComposerClassLevelTest {
     private Facade facade;
 
     @Mock
-    private Hello mock;
+    private Hello defaultHello;
 
     @Mock(name = "named")
-    private Hello named;
+    private Hello namedHello;
 
     @Module
     public Class<?>[] classes() {
@@ -50,9 +50,9 @@ public class MockitoAndAppComposerClassLevelTest {
     @Test
     public void testDefault() {
         // play with mocks
-        when(mock.hi())
+        when(defaultHello.hi())
             .thenReturn("openejb-mockito");
-        when(mock.id())
+        when(defaultHello.id())
                 .thenReturn(12345);
 
         // test
@@ -62,7 +62,7 @@ public class MockitoAndAppComposerClassLevelTest {
     @Test
     public void testName() {
         // play with mocks
-        when(named.hi())
+        when(namedHello.hi())
                 .thenReturn("named");
 
         // test

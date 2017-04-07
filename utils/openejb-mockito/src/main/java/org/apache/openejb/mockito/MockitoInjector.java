@@ -33,15 +33,10 @@ public class MockitoInjector implements FallbackPropertyInjector {
 
     @Override
     public Object getValue(Injection injection) {
-    	try {
-    		Class<?> targetType = injection.getTarget().getDeclaredField(injection.getName()).getType();
-    		try {
-    			return CDI.current().select(targetType, DefaultLiteral.INSTANCE).get();
-    		} catch (Exception e) {
-    			return CDI.current().select(targetType, new NamedLiteral(injection.getName())).get();
-    		}
-    	} catch (NoSuchFieldException noSuchFieldException) {
-    		return null;
-    	}
+		try {
+			return CDI.current().select(injection.getTarget().getDeclaredField(injection.getName()).getType(), DefaultLiteral.INSTANCE).get();
+		} catch (Exception e) {
+			return CDI.current().select(new NamedLiteral(injection.getName())).get();
+		}
     }
 }

@@ -34,10 +34,10 @@ public class MockitoAndAppComposerTest {
     private Facade facade;
 
     @Mock
-    private Hello mock;
+    private Hello defaultHello;
 
     @Mock(name = "named")
-    private Hello named;
+    private Hello namedHello;
 
     @MockInjector
     public Class<?> mockitoInjector() {
@@ -52,9 +52,9 @@ public class MockitoAndAppComposerTest {
     @Test
     public void testDefault() {
         // play with mocks
-        when(mock.hi())
+        when(defaultHello.hi())
             .thenReturn("openejb-mockito");
-        when(mock.id())
+        when(defaultHello.id())
                 .thenReturn(12345);
 
         // test
@@ -64,7 +64,7 @@ public class MockitoAndAppComposerTest {
     @Test
     public void testName() {
         // play with mocks
-        when(named.hi())
+        when(namedHello.hi())
                 .thenReturn("named");
 
         // test

@@ -27,7 +27,7 @@ import javax.inject.Named;
 @Lock(LockType.READ)
 public class Facade {
     @EJB
-    private Hello hello;
+    private Hello helloEjb;
 
     @Inject
     private Hello helloCdi;
@@ -37,10 +37,10 @@ public class Facade {
     private Hello helloNamed;
 
     public String hello() {
-        if (hello.id() != helloCdi.id()) {
+        if (helloEjb.id() != helloCdi.id()) {
             throw new IllegalArgumentException();
         }
-        return hello.hi();
+        return helloEjb.hi();
     }
 
     public String name() {
