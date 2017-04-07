@@ -30,6 +30,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.annotation.Resource;
+import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -68,6 +69,7 @@ public class ActiveMQResourceAdapterControlTest {
 
                 .p("mdb", "new://Container?type=MESSAGE")
                 .p("mdb.resourceAdapter", "ra")
+                .p("mdb.InstanceLimit", "1")
 
                 .p("cf", "new://Resource?type=javax.jms.ConnectionFactory")
                 .p("cf.resourceAdapter", "ra")
@@ -164,7 +166,10 @@ public class ActiveMQResourceAdapterControlTest {
         }
     }
 
-    @MessageDriven(name = "ejb/Mdb")
+    @MessageDriven(name = "ejb/Mdb", activationConfig = {
+            @ActivationConfigProperty(propertyName = "maxSessions", propertyValue = "1"),
+            @ActivationConfigProperty(propertyName = "maxMessagesPerBatch", propertyValue = "1")
+    })
     public static class Mdb implements MessageListener {
         static final MessageAwaiter awaiter = new MessageAwaiter();
 
