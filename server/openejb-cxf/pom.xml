@@ -33,7 +33,7 @@
   <name>OpenEJB :: Server :: CXF</name>
 
   <properties>
-    <wss4j.version>2.1.7</wss4j.version>
+    <wss4j.version>2.1.9</wss4j.version>
     <openejb.osgi.import.pkg>
       org.apache.xml.resolver*;resolution:=optional,
       *
@@ -157,7 +157,7 @@
     <dependency>
       <groupId>com.sun.xml.messaging.saaj</groupId>
       <artifactId>saaj-impl</artifactId>
-      <version>1.3.18</version>
+      <version>1.3.23</version>
     </dependency>
     <!-- This is required on IBM JDKs (and potentially others) because saaj-impl depends
          on Sun's internal copy of Xerces. See OPENEJB-1126. -->
