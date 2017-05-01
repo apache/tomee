@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,7 +18,6 @@ package org.apache.openejb.client;
 
 import org.apache.openejb.client.serializer.EJBDSerializer;
 import org.apache.openejb.client.serializer.SerializationWrapper;
-import org.omg.CORBA.ORB;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -28,6 +27,7 @@ import javax.rmi.PortableRemoteObject;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.rmi.Remote;
 import java.util.Arrays;
@@ -312,7 +312,7 @@ public class EJBRequest implements ClusterableRequest {
         private static final long serialVersionUID = -5364100745236348268L;
         private transient volatile String toString = null;
         private transient EJBMetaDataImpl ejb;
-        private transient ORB orb;
+        private transient Object orb;
         private transient Method methodInstance;
         private transient Class interfaceClass;
         private transient String methodName;
@@ -561,8 +561,15 @@ public class EJBRequest implements ClusterableRequest {
                         if (tie == null) {
                             throw new IOException("Unable to serialize PortableRemoteObject; object has not been exported: " + obj);
                         }
-                        final ORB orb = getORB();
-                        tie.orb(orb);
+                        final Object orb = getORB();
+                        try {
+                            tie.getClass().getMethod("orb", Thread.currentThread().getContextClassLoader().loadClass("org.omg.CORBA.ORB"))
+                                    .invoke(tie, orb);
+                        } catch (final ClassNotFoundException | IllegalAccessException | NoSuchMethodException e) {
+                            throw new IllegalStateException("No CORBA available", e);
+                        } catch (final InvocationTargetException e) {
+                            throw new IllegalStateException("No CORBA available", e.getCause());
+                        }
                         obj = PortableRemoteObject.toStub((Remote) obj);
                     }
                     out.write(OBJECT);
@@ -582,16 +589,16 @@ public class EJBRequest implements ClusterableRequest {
          * @return An ORB instance.
          * @throws java.io.IOException On error
          */
-        protected ORB getORB() throws IOException {
+        protected Object getORB() throws IOException {
             // first ORB request?  Check our various sources
             if (orb == null) {
                 try {
                     final Context initialContext = new InitialContext();
-                    orb = (ORB) initialContext.lookup("java:comp/ORB");
+                    orb = initialContext.lookup("java:comp/ORB");
                 } catch (final Throwable e) {
                     try {
                         // any orb will do if we can't get a context one.
-                        orb = ORB.init();
+                        orb = Thread.currentThread().getContextClassLoader().loadClass("org.omg.CORBA.ORB").getMethod("init").invoke(null);
                     } catch (final Throwable ex) {
                         throw new IOException("Unable to connect PortableRemoteObject stub to an ORB, no ORB bound to java:comp/ORB");
                     }
@@ -667,8 +674,15 @@ public class EJBRequest implements ClusterableRequest {
                         obj = in.readObject();
                         if (obj instanceof Stub) {
                             final Stub stub = (Stub) obj;
-                            final ORB orb = getORB();
-                            stub.connect(orb);
+                            final Object orb = getORB();
+                            try {
+                                stub.getClass().getMethod("connect", Thread.currentThread().getContextClassLoader().loadClass("org.omg.CORBA.ORB"))
+                                        .invoke(stub, orb);
+                            } catch (final ClassNotFoundException | IllegalAccessException | NoSuchMethodException e) {
+                                throw new IllegalStateException("No CORBA available", e);
+                            } catch (final InvocationTargetException e) {
+                                throw new IllegalStateException("No CORBA available", e.getCause());
+                            }
                         }
                         break;
                     default:
@@ -697,17 +711,17 @@ public class EJBRequest implements ClusterableRequest {
         public String toString() {
             if (null == toString) {
                 toString = "Body{" +
-                    "ejb=" + ejb +
-                    ", orb=" + orb +
-                    ", methodInstance=" + methodInstance +
-                    ", interfaceClass=" + interfaceClass +
-                    ", methodName='" + methodName + '\'' +
-                    ", methodParamTypes=" + (methodParamTypes == null ? null : Arrays.asList(methodParamTypes)) +
-                    ", methodParameters=" + (methodParameters == null ? null : Arrays.asList(methodParameters)) +
-                    ", primaryKey=" + primaryKey +
-                    ", requestId='" + requestId + '\'' +
-                    ", version=" + version +
-                    '}';
+                        "ejb=" + ejb +
+                        ", orb=" + orb +
+                        ", methodInstance=" + methodInstance +
+                        ", interfaceClass=" + interfaceClass +
+                        ", methodName='" + methodName + '\'' +
+                        ", methodParamTypes=" + (methodParamTypes == null ? null : Arrays.asList(methodParamTypes)) +
+                        ", methodParameters=" + (methodParameters == null ? null : Arrays.asList(methodParameters)) +
+                        ", primaryKey=" + primaryKey +
+                        ", requestId='" + requestId + '\'' +
+                        ", version=" + version +
+                        '}';
             }
 
             return toString;

@@ -23,6 +23,7 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.core.CoreUserTransaction;
 import org.apache.openejb.core.JndiFactory;
+import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.core.TransactionSynchronizationRegistryWrapper;
 import org.apache.openejb.core.ivm.naming.ClassReference;
 import org.apache.openejb.core.ivm.naming.CrossClassLoaderJndiReference;
@@ -50,7 +51,6 @@ import org.apache.openejb.util.IntrospectionSupport;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.WebBeansContext;
-import org.omg.CORBA.ORB;
 
 import javax.annotation.ManagedBean;
 import javax.ejb.EJBContext;
@@ -545,7 +545,11 @@ public class JndiEncBuilder {
         // bind TransactionSynchronizationRegistry
         bindings.put("comp/TransactionSynchronizationRegistry", new TransactionSynchronizationRegistryWrapper());
 
-        bindings.put("comp/ORB", new SystemComponentReference(ORB.class));
+        try {
+            bindings.put("comp/ORB", new SystemComponentReference(ParentClassLoaderFinder.Helper.get().loadClass("org.omg.CORBA.ORB")));
+        } catch (final NoClassDefFoundError | ClassNotFoundException e) {
+            // no corba, who does recall what it is today anyway :D
+        }
         bindings.put("comp/HandleDelegate", new SystemComponentReference(HandleDelegate.class));
 
         // bind bean validation objects
