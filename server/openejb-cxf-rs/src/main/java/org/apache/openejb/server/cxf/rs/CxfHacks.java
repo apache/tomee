@@ -18,7 +18,8 @@ package org.apache.openejb.server.cxf.rs;
 
 import org.apache.cxf.common.util.ClassHelper;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.server.cxf.transport.util.CxfUtil;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.reflection.Reflections;
 
 public final class CxfHacks {
@@ -26,7 +27,12 @@ public final class CxfHacks {
         if (!Boolean.parseBoolean(SystemInstance.get().getProperty("openejb.cxf.ClassHelper.patch", "true"))) {
             return;
         }
-        Reflections.set(ClassHelper.class, null, "HELPER", new OpenEJBClassHelper());
+        try {
+            Reflections.set(ClassHelper.class, null, "HELPER", new OpenEJBClassHelper());
+        } catch (final Throwable throwable) {
+            // no more a big deal normally since CXF uses our ClassUnwrapper
+            Logger.getInstance(LogCategory.CXF, CxfHacks.class).info("Can't set OpenEJBClassHelper.");
+        }
     }
 
     private CxfHacks() {
