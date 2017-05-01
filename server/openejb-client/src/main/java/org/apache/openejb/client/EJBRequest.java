@@ -16,20 +16,14 @@
  */
 package org.apache.openejb.client;
 
+import org.apache.openejb.client.corba.Corbas;
 import org.apache.openejb.client.serializer.EJBDSerializer;
 import org.apache.openejb.client.serializer.SerializationWrapper;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.rmi.CORBA.Stub;
-import javax.rmi.CORBA.Tie;
-import javax.rmi.PortableRemoteObject;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.rmi.Remote;
 import java.util.Arrays;
 
 public class EJBRequest implements ClusterableRequest {
@@ -556,22 +550,7 @@ public class EJBRequest implements ClusterableRequest {
                         throw new IOException("Unkown primitive type: " + clazz);
                     }
                 } else {
-                    if (obj instanceof PortableRemoteObject && obj instanceof Remote) {
-                        final Tie tie = javax.rmi.CORBA.Util.getTie((Remote) obj);
-                        if (tie == null) {
-                            throw new IOException("Unable to serialize PortableRemoteObject; object has not been exported: " + obj);
-                        }
-                        final Object orb = getORB();
-                        try {
-                            tie.getClass().getMethod("orb", Thread.currentThread().getContextClassLoader().loadClass("org.omg.CORBA.ORB"))
-                                    .invoke(tie, orb);
-                        } catch (final ClassNotFoundException | IllegalAccessException | NoSuchMethodException e) {
-                            throw new IllegalStateException("No CORBA available", e);
-                        } catch (final InvocationTargetException e) {
-                            throw new IllegalStateException("No CORBA available", e.getCause());
-                        }
-                        obj = PortableRemoteObject.toStub((Remote) obj);
-                    }
+                    obj = Corbas.toStub(obj);
                     out.write(OBJECT);
                     out.writeObject(clazz);
                     out.writeObject(obj);
@@ -581,31 +560,6 @@ public class EJBRequest implements ClusterableRequest {
 
         static final Class[] noArgsC = new Class[0];
         static final Object[] noArgsO = new Object[0];
-
-        /**
-         * Obtain an ORB instance for this request to activate remote
-         * arguments and return results.
-         *
-         * @return An ORB instance.
-         * @throws java.io.IOException On error
-         */
-        protected Object getORB() throws IOException {
-            // first ORB request?  Check our various sources
-            if (orb == null) {
-                try {
-                    final Context initialContext = new InitialContext();
-                    orb = initialContext.lookup("java:comp/ORB");
-                } catch (final Throwable e) {
-                    try {
-                        // any orb will do if we can't get a context one.
-                        orb = Thread.currentThread().getContextClassLoader().loadClass("org.omg.CORBA.ORB").getMethod("init").invoke(null);
-                    } catch (final Throwable ex) {
-                        throw new IOException("Unable to connect PortableRemoteObject stub to an ORB, no ORB bound to java:comp/ORB");
-                    }
-                }
-            }
-            return orb;
-        }
 
         /**
          * Changes to this method must observe the optional {@link #metaData} version
@@ -671,19 +625,7 @@ public class EJBRequest implements ClusterableRequest {
 
                     case OBJECT:
                         clazz = (Class) in.readObject();
-                        obj = in.readObject();
-                        if (obj instanceof Stub) {
-                            final Stub stub = (Stub) obj;
-                            final Object orb = getORB();
-                            try {
-                                stub.getClass().getMethod("connect", Thread.currentThread().getContextClassLoader().loadClass("org.omg.CORBA.ORB"))
-                                        .invoke(stub, orb);
-                            } catch (final ClassNotFoundException | IllegalAccessException | NoSuchMethodException e) {
-                                throw new IllegalStateException("No CORBA available", e);
-                            } catch (final InvocationTargetException e) {
-                                throw new IllegalStateException("No CORBA available", e.getCause());
-                            }
-                        }
+                        obj = Corbas.connect(in.readObject());
                         break;
                     default:
                         throw new IOException("Unkown data type: " + type);
