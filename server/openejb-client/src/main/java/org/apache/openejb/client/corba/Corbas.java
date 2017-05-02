@@ -31,16 +31,13 @@ public class Corbas {
     }
 
     public static Object toStub(final Object obj) throws IOException {
-        if (obj instanceof PortableRemoteObject && obj instanceof Remote) {
-            final Tie tie = javax.rmi.CORBA.Util.getTie((Remote) obj);
-            if (tie == null) {
-                throw new IOException("Unable to serialize PortableRemoteObject; object has not been exported: " + obj);
-            }
-            final ORB orb = getORB();
-            tie.orb(orb);
-            return PortableRemoteObject.toStub((Remote) obj);
+        final Tie tie = javax.rmi.CORBA.Util.getTie((Remote) obj);
+        if (tie == null) {
+            throw new IOException("Unable to serialize PortableRemoteObject; object has not been exported: " + obj);
         }
-        return obj;
+        final ORB orb = getORB();
+        tie.orb(orb);
+        return PortableRemoteObject.toStub((Remote) obj);
     }
 
     private static ORB getORB() throws IOException { // note: we can cache it if needed but needs to be contextual
