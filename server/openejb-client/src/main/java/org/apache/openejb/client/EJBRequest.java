@@ -17,13 +17,16 @@
 package org.apache.openejb.client;
 
 import org.apache.openejb.client.corba.Corbas;
+import org.apache.openejb.client.corba.InstanceOf;
 import org.apache.openejb.client.serializer.EJBDSerializer;
 import org.apache.openejb.client.serializer.SerializationWrapper;
 
+import javax.rmi.PortableRemoteObject;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.lang.reflect.Method;
+import java.rmi.Remote;
 import java.util.Arrays;
 
 public class EJBRequest implements ClusterableRequest {
@@ -550,7 +553,9 @@ public class EJBRequest implements ClusterableRequest {
                         throw new IOException("Unkown primitive type: " + clazz);
                     }
                 } else {
-                    obj = Corbas.toStub(obj);
+                    if (PortableRemoteObject.class.isInstance(obj) && Remote.class.isInstance(obj)) {
+                        obj = Corbas.toStub(obj);
+                    }
                     out.write(OBJECT);
                     out.writeObject(clazz);
                     out.writeObject(obj);
@@ -625,7 +630,12 @@ public class EJBRequest implements ClusterableRequest {
 
                     case OBJECT:
                         clazz = (Class) in.readObject();
-                        obj = Corbas.connect(in.readObject());
+                        final Object read = in.readObject();
+                        if (InstanceOf.isStub(read)) {
+                            obj = Corbas.connect(read);
+                        } else {
+                            obj = read;
+                        }
                         break;
                     default:
                         throw new IOException("Unkown data type: " + type);
