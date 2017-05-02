@@ -31,7 +31,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <scala.version>2.11</scala.version>
-    <scala.full-version>${scala.version}.6</scala.full-version>
+    <scala.full-version>${scala.version}.9</scala.full-version>
   </properties>
 
   <repositories>
@@ -63,7 +63,7 @@
       <plugin>
         <groupId>net.alchim31.maven</groupId>
         <artifactId>scala-maven-plugin</artifactId>
-        <version>3.1.6</version>
+        <version>3.2.2</version>
         <executions>
           <execution>
             <goals>
@@ -126,7 +126,7 @@
     <dependency>
       <groupId>org.scalatest</groupId>
       <artifactId>scalatest_${scala.version}</artifactId>
-      <version>2.2.0</version>
+      <version>3.0.3</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -164,4 +164,17 @@
       <url>file://${basedir}/target/snapshot-repo/</url>
     </snapshotRepository>
   </distributionManagement>
+
+  <profiles>
+    <profile>
+      <id>java9</id>
+      <activation>
+        <jdk>9</jdk>
+      </activation>
+      <properties>
+        <scala.version>2.12</scala.version>
+        <scala.full-version>${scala.version}.2</scala.full-version>
+      </properties>
+    </profile>
+  </profiles>
 </project>

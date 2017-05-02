@@ -61,6 +61,8 @@ import java.util.concurrent.Executor;
 public class ProviderWrapper extends Provider {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_WS, ProviderWrapper.class);
 
+    private static final String JAXWSPROVIDER_PROPERTY = Provider.class.getName();
+
     //
     // Magic to get our provider wrapper installed with the PortRefData
     //
@@ -77,7 +79,9 @@ public class ProviderWrapper extends Provider {
             JavaSecurityManagers.setSystemProperty(JAXWSPROVIDER_PROPERTY, ProviderWrapper.class.getName());
         }
 
-        JavaSecurityManagers.setSystemProperty(JAXWSPROVIDER_PROPERTY, ProviderWrapper.class.getName());
+        if (oldProperty == null || !oldProperty.equals(ProviderWrapper.class.getName())) {
+            JavaSecurityManagers.setSystemProperty(JAXWSPROVIDER_PROPERTY, ProviderWrapper.class.getName());
+        }
 
         final ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
         if (oldClassLoader != null) {

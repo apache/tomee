@@ -72,7 +72,7 @@
   </dependencies>
 
   <properties>
-    <jmh.version>1.10.5</jmh.version>
+    <jmh.version>1.18</jmh.version>
   </properties>
 
   <build>

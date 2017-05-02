@@ -53,7 +53,7 @@ public class TomcatClassPath extends BasicURLClassPath {
         try {
             addRepositoryMethod = getAddRepositoryMethod();
         } catch (final Exception e) {
-            throw new IllegalStateException("Ensure you use the right tomcat version");
+            throw new IllegalStateException("Ensure you use the right tomcat version (" + e.getMessage() + ")");
         }
 
         final ClassLoader serverLoader = getServerLoader(getContextClassLoader());
