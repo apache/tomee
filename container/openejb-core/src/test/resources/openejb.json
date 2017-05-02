@@ -43,10 +43,10 @@
             }
         },
         "placeholder": "${JSonConfigTest.foo}",
-        "properties-key" = "properties-value",
-        "object" = {
-            "attribute" = {
-                "#1" = "2"
+        "properties-key" : "properties-value",
+        "object" : {
+            "attribute" : {
+                "#1" : "2"
             }
         }
     }
