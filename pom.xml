@@ -182,7 +182,7 @@
     <version.xalan>2.7.1</version.xalan>
     <version.hibernate>4.2.18.Final</version.hibernate>
     <version.eclipselink>2.6.3</version.eclipselink>
-    <version.groovy>2.5.0-alpha-1</version.groovy>
+    <version.groovy>2.4.8</version.groovy>
 
     <!-- arquillian related -->
     <version.arquillian.bom>1.1.10.Final</version.arquillian.bom>
