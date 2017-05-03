@@ -33,7 +33,6 @@ import javax.transaction.SystemException;
 import javax.transaction.TransactionScoped;
 import java.io.Serializable;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 

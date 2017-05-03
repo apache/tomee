@@ -29,7 +29,6 @@ import org.apache.openejb.testing.SimpleLog;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Resource;
 import javax.naming.NamingException;
 import javax.resource.ResourceException;
 import javax.resource.cci.ConnectionFactory;
