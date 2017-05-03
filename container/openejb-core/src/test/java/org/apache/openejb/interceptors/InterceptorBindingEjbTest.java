@@ -81,7 +81,7 @@ public class InterceptorBindingEjbTest {
     @Interception
     @javax.interceptor.Interceptor
     public static class MarkedInterceptor {
-        public static final Collection<String> CLASSES = new ArrayList<String>();
+        public static final Collection<String> CLASSES = new ArrayList<>();
 
         @AroundInvoke
         public Object intercept(final InvocationContext invocationContext) throws Exception {

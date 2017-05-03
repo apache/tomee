@@ -124,8 +124,8 @@ public class AccessTimeoutTest extends TestCase {
     private void loadAttributes(final EjbJarInfo ejbJarInfo, final String deploymentId) {
         final ContainerSystem system = SystemInstance.get().getComponent(ContainerSystem.class);
         final BeanContext beanContext = system.getBeanContext(deploymentId);
-        final List<MethodConcurrencyInfo> lockInfos = new ArrayList<MethodConcurrencyInfo>();
-        final List<MethodConcurrencyInfo> accessTimeoutInfos = new ArrayList<MethodConcurrencyInfo>();
+        final List<MethodConcurrencyInfo> lockInfos = new ArrayList<>();
+        final List<MethodConcurrencyInfo> accessTimeoutInfos = new ArrayList<>();
         MethodConcurrencyBuilder.normalize(ejbJarInfo.methodConcurrency, lockInfos, accessTimeoutInfos);
         attributes = MethodInfoUtil.resolveAttributes(accessTimeoutInfos, beanContext);
     }

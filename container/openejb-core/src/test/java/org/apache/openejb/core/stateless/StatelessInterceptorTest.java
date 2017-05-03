@@ -263,7 +263,7 @@ public class StatelessInterceptorTest extends TestCase {
         return new EjbModule(ejbJar);
     }
 
-    public static List<Call> calls = new ArrayList<Call>();
+    public static List<Call> calls = new ArrayList<>();
 
     @Interceptors({ClassInterceptor.class})
     public static class TargetBean implements Target {

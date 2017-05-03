@@ -120,7 +120,7 @@ public class StatefulSecurityPermissionsTest extends TestCase {
 
     }
 
-    public static ThreadLocal<String> expected = new ThreadLocal<String>();
+    public static ThreadLocal<String> expected = new ThreadLocal<>();
 
     @LocalHome(ColorEjbLocalHome.class)
     @RemoteHome(ColorEjbHome.class)
@@ -228,7 +228,7 @@ public class StatefulSecurityPermissionsTest extends TestCase {
     }
 
 
-    private static final ThreadLocal<String> actual = new ThreadLocal<String>();
+    private static final ThreadLocal<String> actual = new ThreadLocal<>();
 
     public static class TestSecurityService extends AbstractSecurityService {
 
@@ -241,7 +241,7 @@ public class StatefulSecurityPermissionsTest extends TestCase {
         }
 
         public void login(final String user, final String... roles) throws LoginException {
-            final Set<Principal> set = new HashSet<Principal>();
+            final Set<Principal> set = new HashSet<>();
             set.add(new UserPrincipal(user));
             for (final String role : roles) {
                 set.add(new GroupPrincipal(role));

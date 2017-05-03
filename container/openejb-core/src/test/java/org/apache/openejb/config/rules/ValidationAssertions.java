@@ -43,7 +43,7 @@ public class ValidationAssertions {
     }
 
     private static void assertValidation(final List<String> expectedKeys, final ValidationException[] validations) {
-        final List<String> actualKeys = new ArrayList<String>();
+        final List<String> actualKeys = new ArrayList<>();
         for (final ValidationException validation : validations) {
             actualKeys.add(validation.getMessageKey());
         }

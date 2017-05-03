@@ -24,7 +24,7 @@ import java.net.URI;
 public class LinkResolverTest extends TestCase {
 
     public void test() throws Exception {
-        final LinkResolver<Thing> resolver = new LinkResolver<Thing>();
+        final LinkResolver<Thing> resolver = new LinkResolver<>();
 
         resolver.add("my/module.jar", "one", Thing.ONE);
         resolver.add("some/other.jar", "two", Thing.TWO);

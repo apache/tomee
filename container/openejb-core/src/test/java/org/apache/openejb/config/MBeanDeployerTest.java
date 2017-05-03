@@ -99,7 +99,7 @@ public class MBeanDeployerTest {
 
     @Test
     public void mbeans() throws Exception {
-        final Set<String> parsed = new HashSet<String>();
+        final Set<String> parsed = new HashSet<>();
         for (final Object name : appInfo.jmx.values()) {
             final ObjectName on = new ObjectName((String) name);
             final String cn = on.getCanonicalName();

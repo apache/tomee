@@ -249,7 +249,7 @@ public class StatefulContainerTest extends TestCase {
         WidgetBean.lifecycle.clear();
 
         expectedLifecycle = Arrays.asList(Lifecycle.values());
-        inTxExpectedLifecycle = new ArrayList<Lifecycle>();
+        inTxExpectedLifecycle = new ArrayList<>();
         for (final Lifecycle lifecycle : Lifecycle.values()) {
             if (!lifecycle.name().startsWith("PRE_PASSIVATE") &&
                 !lifecycle.name().startsWith("POST_ACTIVATE")) {
@@ -305,7 +305,7 @@ public class StatefulContainerTest extends TestCase {
         private int activates = 0;
         private int passivates = 0;
 
-        public static Stack<Object> lifecycle = new Stack<Object>();
+        public static Stack<Object> lifecycle = new Stack<>();
 
         public WidgetBean() {
             lifecycle.push(Lifecycle.CONSTRUCTOR);

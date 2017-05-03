@@ -58,7 +58,7 @@ import java.util.List;
  */
 public class StatefulSessionSynchronizationTest extends TestCase {
 
-    private static final List<Call> result = new ArrayList<Call>();
+    private static final List<Call> result = new ArrayList<>();
 
     @AfterClass
     public static void afterClass() throws Exception {

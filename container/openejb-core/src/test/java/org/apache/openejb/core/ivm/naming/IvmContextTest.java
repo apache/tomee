@@ -55,7 +55,7 @@ public class IvmContextTest extends TestCase {
             visit(context, name, new Visitor() {
                 public void visit(final Context context, final String name, final String parentName) throws NamingException {
 
-                    final Map<String, Object> expected = new TreeMap<String, Object>();
+                    final Map<String, Object> expected = new TreeMap<>();
 
                     for (final Map.Entry<String, Integer> entry : map.entrySet()) {
                         String key = entry.getKey();
@@ -74,7 +74,7 @@ public class IvmContextTest extends TestCase {
     }
 
     public void setUp() throws Exception {
-        map = new LinkedHashMap<String, Integer>();
+        map = new LinkedHashMap<>();
         map.put("color/orange", 1);
         map.put("color/blue", 2);
         map.put("color/red/scarlet", 3);

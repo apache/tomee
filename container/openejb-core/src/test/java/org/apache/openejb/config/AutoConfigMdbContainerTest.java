@@ -116,7 +116,7 @@ public class AutoConfigMdbContainerTest extends TestCase {
     public static class EmailResourceAdapter implements javax.resource.spi.ResourceAdapter {
         public boolean started;
 
-        private final Map<String, EmailConsumer> consumers = new HashMap<String, EmailConsumer>();
+        private final Map<String, EmailConsumer> consumers = new HashMap<>();
 
         public void start(final BootstrapContext bootstrapContext) throws ResourceAdapterInternalException {
         }

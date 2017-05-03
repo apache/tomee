@@ -88,7 +88,7 @@ public class DependenceValidationTest extends TestCase {
 
     private void assertNotDependentOn(final String referringPacakge, final String referredPackage, final String... exemptionsArray) {
         if (referringPacakge.equals(referredPackage)) return;
-        final List<String> exemptions = new ArrayList<String>(Arrays.asList(exemptionsArray));
+        final List<String> exemptions = new ArrayList<>(Arrays.asList(exemptionsArray));
         exemptions.add(referredPackage);
 
         for (final Map.Entry<String, Map<String, Integer>> entry : depsOfPackages.entrySet()) {

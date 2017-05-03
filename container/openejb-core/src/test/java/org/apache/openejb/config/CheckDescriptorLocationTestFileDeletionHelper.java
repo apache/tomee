@@ -36,7 +36,7 @@ public class CheckDescriptorLocationTestFileDeletionHelper {
         if (list != null) {
             asList = Arrays.asList(list);
         } else {
-            asList = new ArrayList<File>();
+            asList = new ArrayList<>();
         }
         deleteTestCreatedFiles(asList);
 

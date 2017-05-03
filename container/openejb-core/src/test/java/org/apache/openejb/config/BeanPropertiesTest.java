@@ -61,7 +61,7 @@ public class BeanPropertiesTest extends TestCase {
         }
 
         {
-            final Map<String, String> map = new HashMap<String, String>();
+            final Map<String, String> map = new HashMap<>();
             map.put("META-INF/openejb-jar.xml",
                 "<openejb-jar>\n" +
                     "  <ejb-deployment ejb-name=\"WidgetBean\">\n" +
@@ -93,7 +93,7 @@ public class BeanPropertiesTest extends TestCase {
         {
             SystemInstance.get().getProperties().put("WidgetBean.color", "orange");
 
-            final Map<String, String> map = new HashMap<String, String>();
+            final Map<String, String> map = new HashMap<>();
             final File app = Archives.fileArchive(map, WidgetBean.class);
 
             assembler.createApplication(config.configureApplication(app));
@@ -116,7 +116,7 @@ public class BeanPropertiesTest extends TestCase {
         {
             SystemInstance.get().getProperties().put("WidgetBean.color", "orange");
 
-            final Map<String, String> map = new HashMap<String, String>();
+            final Map<String, String> map = new HashMap<>();
             map.put("META-INF/openejb-jar.xml",
                 "<openejb-jar>\n" +
                     "  <ejb-deployment ejb-name=\"WidgetBean\">\n" +
@@ -145,7 +145,7 @@ public class BeanPropertiesTest extends TestCase {
         }
 
         {
-            final Map<String, String> map = new HashMap<String, String>();
+            final Map<String, String> map = new HashMap<>();
             map.put("META-INF/openejb-jar.xml",
                 "<openejb-jar>\n" +
                     "  <ejb-deployment ejb-name=\"WidgetBean\">\n" +
@@ -176,7 +176,7 @@ public class BeanPropertiesTest extends TestCase {
         }
 
         {
-            final Map<String, String> map = new HashMap<String, String>();
+            final Map<String, String> map = new HashMap<>();
             map.put("META-INF/openejb-jar.xml",
                 "<openejb-jar>\n" +
                     "  <ejb-deployment ejb-name=\"WidgetBean\">\n" +
@@ -207,7 +207,7 @@ public class BeanPropertiesTest extends TestCase {
         }
 
         {
-            final Map<String, String> map = new HashMap<String, String>();
+            final Map<String, String> map = new HashMap<>();
             map.put("META-INF/ejb-jar.xml", "<ejb-jar id=\"Foo\"/>");
             map.put("META-INF/openejb-jar.xml",
                 "<openejb-jar>\n" +

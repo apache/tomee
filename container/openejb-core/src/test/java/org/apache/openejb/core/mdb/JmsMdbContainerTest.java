@@ -142,7 +142,7 @@ public class JmsMdbContainerTest extends TestCase {
         public static Lock lock = new ReentrantLock();
         public static Condition messageRecieved = lock.newCondition();
 
-        private static final Stack<Lifecycle> lifecycle = new Stack<Lifecycle>();
+        private static final Stack<Lifecycle> lifecycle = new Stack<>();
 
         @Resource
         ConnectionFactory connectionFactory;

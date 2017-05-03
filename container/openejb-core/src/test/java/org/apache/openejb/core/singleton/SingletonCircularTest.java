@@ -78,7 +78,7 @@ public class SingletonCircularTest extends TestCase {
         assertTrue(two, actual.contains(two));
     }
 
-    private final static List<String> actual = new ArrayList<String>();
+    private final static List<String> actual = new ArrayList<>();
 
     @Singleton
     @Startup

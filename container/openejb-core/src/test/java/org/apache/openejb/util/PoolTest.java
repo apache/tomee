@@ -60,7 +60,7 @@ public class PoolTest extends TestCase {
         System.out.println("PoolTest.testEmptyPool");
         final int max = 4;
         final int min = 2;
-        final Pool<Bean> pool = new Pool<Bean>(max, min, true);
+        final Pool<Bean> pool = new Pool<>(max, min, true);
 
         final List<Pool<Bean>.Entry> entries = drain(pool);
 
@@ -167,7 +167,7 @@ public class PoolTest extends TestCase {
     private void exerciseStrictPool(final int max, final int min) throws InterruptedException {
         Bean.instances.set(0);
 
-        final Pool<String> pool = new Pool<String>(max, min, true);
+        final Pool<String> pool = new Pool<>(max, min, true);
 
         // Fill the pool
         for (int i = 0; i < max; i++) {
@@ -279,7 +279,7 @@ public class PoolTest extends TestCase {
         final int sweepInterval = 200;
         final int pause = 1000;
 
-        final List<Bean> discarded = new CopyOnWriteArrayList<Bean>();
+        final List<Bean> discarded = new CopyOnWriteArrayList<>();
         final CountDownLatch discard = new CountDownLatch(max);
         final Pool.Builder builder = new Pool.Builder();
         builder.setMinSize(min);
@@ -344,11 +344,11 @@ public class PoolTest extends TestCase {
         final int idleTimeout = 1000;
         final int sweepInterval = idleTimeout / 4;
 
-        final List<Bean> discarded = new CopyOnWriteArrayList<Bean>();
+        final List<Bean> discarded = new CopyOnWriteArrayList<>();
         final CountDownLatch discard = new CountDownLatch(max - min);
         final CountDownLatch hold = new CountDownLatch(1);
 
-        final Pool.Builder<Bean> builder = new Pool.Builder<Bean>();
+        final Pool.Builder<Bean> builder = new Pool.Builder<>();
         builder.setMinSize(min);
         builder.setMaxSize(max);
         builder.setExecutor(Executors.newFixedThreadPool(5));
@@ -431,7 +431,7 @@ public class PoolTest extends TestCase {
         final int max = 9;
         final int sweepInterval = 200;
 
-        final List<Bean> discarded = new CopyOnWriteArrayList<Bean>();
+        final List<Bean> discarded = new CopyOnWriteArrayList<>();
         final CountDownLatch discard = new CountDownLatch(max);
         final CountDownLatch created = new CountDownLatch(min);
         final CountDownLatch createInstances = new CountDownLatch(1);
@@ -566,7 +566,7 @@ public class PoolTest extends TestCase {
         final int maxAge = 1000;
         final int sweepInterval = maxAge / 4;
 
-        final List<Bean> discarded = new CopyOnWriteArrayList<Bean>();
+        final List<Bean> discarded = new CopyOnWriteArrayList<>();
         final CountDownLatch discard = new CountDownLatch(max);
         final CountDownLatch created = new CountDownLatch(min);
         final CountDownLatch createInstances = new CountDownLatch(1);
@@ -1329,7 +1329,7 @@ public class PoolTest extends TestCase {
     }
 
     private static <T> List<Pool<T>.Entry> getMin(final List<Pool<T>.Entry> entries) {
-        final List<Pool<T>.Entry> list = new ArrayList<Pool<T>.Entry>();
+        final List<Pool<T>.Entry> list = new ArrayList<>();
 
         for (final Pool<T>.Entry entry : entries) {
             if (entry != null && entry.hasHardReference()) list.add(entry);
@@ -1353,7 +1353,7 @@ public class PoolTest extends TestCase {
     }
 
     private static <T> List<Pool<T>.Entry> drain(final Pool<T> pool, final int timeout) throws InterruptedException {
-        final List<Pool<T>.Entry> entries = new ArrayList<Pool<T>.Entry>();
+        final List<Pool<T>.Entry> entries = new ArrayList<>();
         try {
             while (true) {
                 entries.add(pool.pop(timeout, MILLISECONDS));

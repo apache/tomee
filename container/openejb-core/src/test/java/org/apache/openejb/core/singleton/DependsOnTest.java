@@ -211,9 +211,9 @@ public class DependsOnTest extends TestCase {
         return Arrays.asList(strings);
     }
 
-    private final static List<String> actualConstruct = new ArrayList<String>();
+    private final static List<String> actualConstruct = new ArrayList<>();
 
-    private final static List<String> actualDestroy = new ArrayList<String>();
+    private final static List<String> actualDestroy = new ArrayList<>();
 
     public static interface Bean {
 

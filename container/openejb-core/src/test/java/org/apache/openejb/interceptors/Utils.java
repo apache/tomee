@@ -26,7 +26,7 @@ import java.util.List;
 public class Utils {
 
     public static List<String> addClassSimpleName(final InvocationContext ic, final String classSimpleName) throws Exception {
-        final List<String> list = new ArrayList<String>();
+        final List<String> list = new ArrayList<>();
         list.add(classSimpleName);
         final List<String> listOfStrings = (List<String>) ic.proceed();
         if (listOfStrings != null) {

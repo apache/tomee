@@ -140,7 +140,7 @@ public class DynamicDataSourceTest {
         final Context ctx = new InitialContext();
 
         // running persist on all "routed" databases
-        final List<String> databases = new ArrayList<String>();
+        final List<String> databases = new ArrayList<>();
         databases.add("database1");
         databases.add("database2");
         databases.add("database3");
@@ -247,7 +247,7 @@ public class DynamicDataSourceTest {
         private String dataSourceNames;
         private String defaultDataSourceName;
         private Map<String, DataSource> dataSources = null;
-        private final ThreadLocal<DataSource> currentDataSource = new ThreadLocal<DataSource>();
+        private final ThreadLocal<DataSource> currentDataSource = new ThreadLocal<>();
 
         /**
          * @param datasourceList datasource resource name, separator is a space
@@ -260,7 +260,7 @@ public class DynamicDataSourceTest {
          * lookup datasource in openejb resources
          */
         private void init() {
-            dataSources = new ConcurrentHashMap<String, DataSource>();
+            dataSources = new ConcurrentHashMap<>();
             for (final String ds : dataSourceNames.split(" ")) {
                 final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
 

@@ -172,12 +172,12 @@ public class StatelessInvocationStatsTest extends TestCase {
         * Invocation MBeanInfo
         *
         */
-        final List<MBeanAttributeInfo> expectedAttributes = new ArrayList<MBeanAttributeInfo>();
+        final List<MBeanAttributeInfo> expectedAttributes = new ArrayList<>();
         expectedAttributes.add(new MBeanAttributeInfo("InvocationCount", "long", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("InvocationTime", "long", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("MonitoredMethods", "long", "", true, false, false));
 
-        final Map<String, Object> expectedValues = new TreeMap<String, Object>();
+        final Map<String, Object> expectedValues = new TreeMap<>();
         expectedValues.put("InvocationCount", (long) 6);
         expectedValues.put("InvocationTime", (long) 0);
         expectedValues.put("MonitoredMethods", (long) 4);
@@ -229,8 +229,8 @@ public class StatelessInvocationStatsTest extends TestCase {
             expectedValues.put(s + ".Variance", 0.0);
         }
 
-        final List<MBeanAttributeInfo> actualAttributes = new ArrayList<MBeanAttributeInfo>();
-        final Map<String, Object> actualValues = new TreeMap<String, Object>();
+        final List<MBeanAttributeInfo> actualAttributes = new ArrayList<>();
+        final Map<String, Object> actualValues = new TreeMap<>();
         final MBeanInfo beanInfo = server.getMBeanInfo(invocationsName);
         for (final MBeanAttributeInfo info : beanInfo.getAttributes()) {
             actualAttributes.add(info);
@@ -262,7 +262,7 @@ public class StatelessInvocationStatsTest extends TestCase {
         final MBeanParameterInfo[] invocationParameters2 = {
             new MBeanParameterInfo("p1", "int", "")};
 
-        final List<MBeanOperationInfo> expectedOperations = new ArrayList<MBeanOperationInfo>();
+        final List<MBeanOperationInfo> expectedOperations = new ArrayList<>();
         expectedOperations.add(new MBeanOperationInfo(
             "FilterAttributes",
             "Filters the attributes that show up in the MBeanInfo.  The exclude is applied first, then any attributes that match the include are re-added.  It may be required to disconnect and reconnect the JMX console to force a refresh of the MBeanInfo",
@@ -274,7 +274,7 @@ public class StatelessInvocationStatsTest extends TestCase {
             expectedOperations.add(new MBeanOperationInfo(s + ".values", "", new MBeanParameterInfo[0], "[D", MBeanOperationInfo.UNKNOWN));
         }
 
-        final List<MBeanOperationInfo> actualOperations1 = new ArrayList<MBeanOperationInfo>();
+        final List<MBeanOperationInfo> actualOperations1 = new ArrayList<>();
         actualOperations1.addAll(Arrays.asList(beanInfo.getOperations()));
 
         //Verify invocation operation information and remove bean.

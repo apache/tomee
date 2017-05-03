@@ -84,7 +84,7 @@ public class LocalBeanProxyFactoryTest extends TestCase {
     private class TestInvocationHandler implements InvocationHandler {
 
         private final Object object;
-        private final List<Call> calls = new ArrayList<Call>();
+        private final List<Call> calls = new ArrayList<>();
 
         public TestInvocationHandler(final Object object) {
             super();
@@ -825,11 +825,11 @@ public class LocalBeanProxyFactoryTest extends TestCase {
 
     @Test
     public void testGenericCollections() throws Exception {
-        final List<ProxyTestObject> value = new ArrayList<ProxyTestObject>();
+        final List<ProxyTestObject> value = new ArrayList<>();
         value.add(new ProxyTestObject("test1"));
         value.add(new ProxyTestObject("test2"));
 
-        final List<ProxyTestObject> expectedResult = new ArrayList<ProxyTestObject>();
+        final List<ProxyTestObject> expectedResult = new ArrayList<>();
         expectedResult.add(new ProxyTestObject("test2"));
         expectedResult.add(new ProxyTestObject("test1"));
 

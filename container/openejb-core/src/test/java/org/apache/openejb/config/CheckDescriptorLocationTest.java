@@ -37,7 +37,7 @@ public class CheckDescriptorLocationTest {
 
     @Keys({@Key(value = "descriptor.incorrectLocation", type = KeyType.WARNING)})
     public AppModule testJar() throws Exception {
-        final Map<String, String> map = new HashMap<String, String>();
+        final Map<String, String> map = new HashMap<>();
         map.put("ejb-jar.xml", "<ejb-jar/>"); // Place the descriptor in
         // incorrect location (directly
         // under root)
@@ -52,7 +52,7 @@ public class CheckDescriptorLocationTest {
 
     @Keys({@Key(value = "descriptor.incorrectLocation", type = KeyType.WARNING, count = 1)})
     public AppModule testWarWithDescriptorInMetaInf() throws Exception {
-        final Map<String, String> map = new HashMap<String, String>();
+        final Map<String, String> map = new HashMap<>();
         map.put("META-INF/ejb-jar.xml", "<ejb-jar/>");
         map.put("WEB-INF/web.xml", "<web-app/>");
 
@@ -70,7 +70,7 @@ public class CheckDescriptorLocationTest {
 
     @Keys({@Key(value = "descriptor.incorrectLocation", type = KeyType.WARNING, count = 1)})
     public AppModule testWarWithDescriptorInRoot() throws Exception {
-        final Map<String, String> map = new HashMap<String, String>();
+        final Map<String, String> map = new HashMap<>();
         map.put("ejb-jar.xml", "<ejb-jar/>");
         map.put("WEB-INF/web.xml", "<web-app/>");
 
