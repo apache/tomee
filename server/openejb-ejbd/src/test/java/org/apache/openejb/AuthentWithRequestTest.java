@@ -112,6 +112,9 @@ public class AuthentWithRequestTest {
                 try {
                     client.call();
                 } catch (final EJBException e) {
+                    if (!LoginException.class.isInstance(e.getCause())) {
+                        e.printStackTrace();
+                    }
                     assertTrue(LoginException.class.isInstance(e.getCause()));
                 }
             }
@@ -157,7 +160,9 @@ public class AuthentWithRequestTest {
             } catch (final Exception e) {
                 throw new LoginException(e.getMessage());
             }
-            assertEquals("foo", nameCallback.getName());
+            if (!"foo".equals(nameCallback.getName())) {
+                throw new IllegalArgumentException("Not an Error/assert cause in java 9 jaas doesnt capture it anymore");
+            }
             RemoteWithSecurity.name.set(nameCallback.getName());
             return true;
         }

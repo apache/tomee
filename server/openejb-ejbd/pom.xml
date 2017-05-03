@@ -140,6 +140,17 @@
       <groupId>com.agical.rmock</groupId>
       <artifactId>rmock</artifactId>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>cglib</groupId>
+          <artifactId>cglib-nodep</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>cglib</groupId>
+      <artifactId>cglib</artifactId>
+      <version>3.2.5</version>
     </dependency>
   </dependencies>
 </project>
