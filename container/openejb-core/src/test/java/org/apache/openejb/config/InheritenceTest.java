@@ -784,9 +784,8 @@ public class InheritenceTest extends TestCase {
         if (a == null && b == null) return true;
         if (a == null || b == null) return false;
 
-        if (a.retainIfException != b.retainIfException) return false;
+        return a.retainIfException == b.retainIfException && equals(a.beanMethod, b.beanMethod);
 
-        return equals(a.beanMethod, b.beanMethod);
     }
 
     public static void assertInitMethodInfos(final String s, final List<InitMethodInfo> expected, final List<InitMethodInfo> actual) {
