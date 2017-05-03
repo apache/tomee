@@ -21,18 +21,12 @@ import org.apache.openejb.loader.event.ComponentRemoved;
 import org.apache.openejb.loader.provisining.ProvisioningResolver;
 import org.apache.openejb.observer.ObserverManager;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Method;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
-
-import static java.util.Arrays.asList;
 
 /**
  * This class aims to be the one and only static in the entire system
