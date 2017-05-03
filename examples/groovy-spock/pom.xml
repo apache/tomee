@@ -98,7 +98,7 @@
     <dependency>
       <groupId>com.sun.xml.bind</groupId>
       <artifactId>jaxb-impl</artifactId>
-      <version>2.2.11</version>
+      <version>2.1.13</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -133,7 +133,7 @@
     <dependency>
       <groupId>org.spockframework</groupId>
       <artifactId>spock-core</artifactId>
-      <version>1.1-groovy-2.4-rc-4</version>
+      <version>0.7-groovy-2.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
