@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.test.stateful;
 
-import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 
 public class StatefulPojoEjbLocalObjectTests extends BasicStatefulLocalTestClient {

@@ -29,7 +29,7 @@ public class StatelessRemoteIntfcTests extends BasicStatelessTestClient {
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/stateless/BasicStatelessHome");
-        ejbHome = (BasicStatelessHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicStatelessHome.class);
+        ejbHome = (BasicStatelessHome) obj;
         ejbObject = ejbHome.createObject();
     }
 

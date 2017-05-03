@@ -16,18 +16,16 @@
  */
 package org.apache.openejb.test.singleton;
 
-import java.util.Properties;
+import org.apache.openejb.test.TestManager;
+import org.apache.openejb.test.object.Account;
+import org.apache.openejb.test.object.Transaction;
 
 import javax.ejb.EJBMetaData;
 import javax.ejb.Handle;
 import javax.ejb.HomeHandle;
-import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.transaction.RollbackException;
-
-import org.apache.openejb.test.TestManager;
-import org.apache.openejb.test.object.Account;
-import org.apache.openejb.test.object.Transaction;
+import java.util.Properties;
 
 /**
  * [1] Should be run as the first test suite of the SingletonTestClients
@@ -64,7 +62,7 @@ public class SingletonBeanTxTests extends org.apache.openejb.test.NamedTestCase 
 
         /*[1] Get bean */
         final Object obj = initialContext.lookup(jndiEJBHomeEntry);
-        ejbHome = (BeanTxSingletonHome) javax.rmi.PortableRemoteObject.narrow(obj, BeanTxSingletonHome.class);
+        ejbHome = (BeanTxSingletonHome) obj;
         ejbObject = ejbHome.create();
 
         /*[2] Create database table */

@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.mbeans;
 
-import javax.management.MBean;
+import org.apache.openejb.api.jmx.MBean;
 
 @MBean
 public class Empty {

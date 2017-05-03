@@ -16,18 +16,16 @@
  */
 package org.apache.openejb.test.stateless;
 
-import java.util.Properties;
+import org.apache.openejb.test.TestManager;
+import org.apache.openejb.test.object.Account;
+import org.apache.openejb.test.object.Transaction;
 
 import javax.ejb.EJBMetaData;
 import javax.ejb.Handle;
 import javax.ejb.HomeHandle;
-import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.transaction.RollbackException;
-
-import org.apache.openejb.test.TestManager;
-import org.apache.openejb.test.object.Account;
-import org.apache.openejb.test.object.Transaction;
+import java.util.Properties;
 
 /**
  * [1] Should be run as the first test suite of the StatelessTestClients
@@ -64,7 +62,7 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase 
 
         /*[1] Get bean */
         final Object obj = initialContext.lookup(jndiEJBHomeEntry);
-        ejbHome = (BeanTxStatelessHome) javax.rmi.PortableRemoteObject.narrow(obj, BeanTxStatelessHome.class);
+        ejbHome = (BeanTxStatelessHome) obj;
         ejbObject = ejbHome.create();
 
         /*[2] Create database table */

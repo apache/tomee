@@ -16,20 +16,18 @@
  */
 package org.apache.openejb.test;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import org.apache.xbean.finder.ClassFinder;
 
 import javax.ejb.EJB;
 import javax.ejb.EJBMetaData;
 import javax.ejb.Handle;
 import javax.ejb.HomeHandle;
 import javax.naming.InitialContext;
-import javax.rmi.PortableRemoteObject;
-
-import org.apache.xbean.finder.ClassFinder;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public abstract class TestClient extends NamedTestCase {
 
@@ -50,7 +48,7 @@ public abstract class TestClient extends NamedTestCase {
     protected abstract void setUp() throws Exception;
 
     protected Object cast(final Object object, final Class type) {
-        return PortableRemoteObject.narrow(object, type);
+        return object;
     }
 
     protected final void processFieldInjections() {
@@ -66,7 +64,7 @@ public abstract class TestClient extends NamedTestCase {
             if ((ejbAnnotation.name() != null) && (ejbAnnotation.name() != "") && (ejbAnnotation.beanInterface() != null)) {
                 try {
                     home = initialContext.lookup(ejbAnnotation.name());
-                    // home = ejbAnnotation.beanInterface().cast(PortableRemoteObject.narrow(home, ejbAnnotation.beanInterface()));
+                    // home = ejbAnnotation.beanInterface().cast(home;
                     home = cast(home, ejbAnnotation.beanInterface());
                     field.setAccessible(true);
                     field.set(this, home);
@@ -91,7 +89,7 @@ public abstract class TestClient extends NamedTestCase {
             if ((ejbAnnotation.name() != null) && (ejbAnnotation.name() != "") && (ejbAnnotation.beanInterface() != null)) {
                 try {
                     home = initialContext.lookup(ejbAnnotation.name());
-                    // home = ejbAnnotation.beanInterface().cast(PortableRemoteObject.narrow(home, ejbAnnotation.beanInterface()));
+                    // home = ejbAnnotation.beanInterface().cast(home;
                     home = cast(home, ejbAnnotation.beanInterface());
                     method.setAccessible(true);
                     method.invoke(this, new Object[]{home});

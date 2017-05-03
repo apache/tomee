@@ -16,36 +16,34 @@
  */
 package org.apache.openejb.test.entity.bmp;
 
-import java.rmi.RemoteException;
+import junit.framework.AssertionFailedError;
+import org.apache.openejb.test.TestFailureException;
+import org.apache.openejb.test.stateful.BasicStatefulBusinessLocal;
+import org.apache.openejb.test.stateful.BasicStatefulBusinessRemote;
+import org.apache.openejb.test.stateful.BasicStatefulHome;
+import org.apache.openejb.test.stateful.BasicStatefulObject;
+import org.apache.openejb.test.stateless.BasicStatelessBusinessLocal;
+import org.apache.openejb.test.stateless.BasicStatelessBusinessRemote;
+import org.apache.openejb.test.stateless.BasicStatelessHome;
+import org.apache.openejb.test.stateless.BasicStatelessObject;
+import org.junit.Assert;
 
 import javax.ejb.EJBException;
 import javax.ejb.EntityContext;
 import javax.ejb.RemoveException;
-import javax.naming.InitialContext;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityManager;
-import javax.sql.DataSource;
-import javax.jms.ConnectionFactory;
 import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.JMSException;
+import javax.jms.MessageProducer;
+import javax.jms.QueueConnectionFactory;
 import javax.jms.Session;
 import javax.jms.Topic;
-import javax.jms.MessageProducer;
 import javax.jms.TopicConnectionFactory;
-import javax.jms.QueueConnectionFactory;
-import javax.jms.JMSException;
-
-import org.junit.Assert;
-import junit.framework.AssertionFailedError;
-
-import org.apache.openejb.test.TestFailureException;
-import org.apache.openejb.test.stateful.BasicStatefulHome;
-import org.apache.openejb.test.stateful.BasicStatefulObject;
-import org.apache.openejb.test.stateful.BasicStatefulBusinessLocal;
-import org.apache.openejb.test.stateful.BasicStatefulBusinessRemote;
-import org.apache.openejb.test.stateless.BasicStatelessHome;
-import org.apache.openejb.test.stateless.BasicStatelessObject;
-import org.apache.openejb.test.stateless.BasicStatelessBusinessLocal;
-import org.apache.openejb.test.stateless.BasicStatelessBusinessRemote;
+import javax.naming.InitialContext;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
+import java.rmi.RemoteException;
 
 public class EncBmpBean implements javax.ejb.EntityBean {
 
@@ -118,7 +116,7 @@ public class EncBmpBean implements javax.ejb.EntityBean {
                 final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
 
-                final BasicBmpHome home = (BasicBmpHome) javax.rmi.PortableRemoteObject.narrow(ctx.lookup("java:comp/env/entity/bmp/beanReferences/bmp_entity"), BasicBmpHome.class);
+                final BasicBmpHome home = (BasicBmpHome) ctx.lookup("java:comp/env/entity/bmp/beanReferences/bmp_entity");
                 Assert.assertNotNull("The EJBHome looked up is null", home);
 
                 final BasicBmpObject object = home.createObject("Enc Bean");
@@ -137,7 +135,7 @@ public class EncBmpBean implements javax.ejb.EntityBean {
                 final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
 
-                final BasicStatefulHome home = (BasicStatefulHome) javax.rmi.PortableRemoteObject.narrow(ctx.lookup("java:comp/env/entity/bmp/beanReferences/stateful"), BasicStatefulHome.class);
+                final BasicStatefulHome home = (BasicStatefulHome) ctx.lookup("java:comp/env/entity/bmp/beanReferences/stateful");
                 Assert.assertNotNull("The EJBHome looked up is null", home);
 
                 final BasicStatefulObject object = home.createObject("Enc Bean");
@@ -156,7 +154,7 @@ public class EncBmpBean implements javax.ejb.EntityBean {
                 final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
 
-                final BasicStatelessHome home = (BasicStatelessHome) javax.rmi.PortableRemoteObject.narrow(ctx.lookup("java:comp/env/entity/bmp/beanReferences/stateless"), BasicStatelessHome.class);
+                final BasicStatelessHome home = (BasicStatelessHome) ctx.lookup("java:comp/env/entity/bmp/beanReferences/stateless");
                 Assert.assertNotNull("The EJBHome looked up is null", home);
 
                 final BasicStatelessObject object = home.createObject();
@@ -193,7 +191,7 @@ public class EncBmpBean implements javax.ejb.EntityBean {
                 final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
 
-                final BasicStatelessBusinessRemote object = (BasicStatelessBusinessRemote) javax.rmi.PortableRemoteObject.narrow(ctx.lookup("java:comp/env/entity/bmp/beanReferences/stateless-business-remote"), BasicStatelessBusinessRemote.class);
+                final BasicStatelessBusinessRemote object = (BasicStatelessBusinessRemote) ctx.lookup("java:comp/env/entity/bmp/beanReferences/stateless-business-remote");
                 Assert.assertNotNull("The EJB BusinessRemote is null", object);
             } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
@@ -209,7 +207,7 @@ public class EncBmpBean implements javax.ejb.EntityBean {
                 final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
 
-                final BasicStatefulBusinessLocal object = (BasicStatefulBusinessLocal) javax.rmi.PortableRemoteObject.narrow(ctx.lookup("java:comp/env/entity/bmp/beanReferences/stateful-business-local"), BasicStatefulBusinessLocal.class);
+                final BasicStatefulBusinessLocal object = (BasicStatefulBusinessLocal) ctx.lookup("java:comp/env/entity/bmp/beanReferences/stateful-business-local");
                 Assert.assertNotNull("The EJB BusinessLocal is null", object);
             } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
@@ -225,7 +223,7 @@ public class EncBmpBean implements javax.ejb.EntityBean {
                 final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
 
-                final BasicStatefulBusinessRemote object = (BasicStatefulBusinessRemote) javax.rmi.PortableRemoteObject.narrow(ctx.lookup("java:comp/env/entity/bmp/beanReferences/stateful-business-remote"), BasicStatefulBusinessRemote.class);
+                final BasicStatefulBusinessRemote object = (BasicStatefulBusinessRemote) ctx.lookup("java:comp/env/entity/bmp/beanReferences/stateful-business-remote");
                 Assert.assertNotNull("The EJB BusinessRemote is null", object);
             } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());

@@ -28,7 +28,7 @@ public class BmpHomeIntfcTests extends BasicBmpTestClient {
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/entity/bmp/BasicBmpHome");
-        ejbHome = (BasicBmpHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicBmpHome.class);
+        ejbHome = (BasicBmpHome) obj;
     }
 
     //===============================
@@ -74,7 +74,7 @@ public class BmpHomeIntfcTests extends BasicBmpTestClient {
             assertEquals("The Collection is not the right size.", keys.length, objects.size());
             final Object[] objs = objects.toArray();
             for (int i = 0; i < objs.length; i++) {
-                ejbObject = (BasicBmpObject) javax.rmi.PortableRemoteObject.narrow(objs[i], BasicBmpObject.class);
+                ejbObject = (BasicBmpObject) objs[i];
                 // This could be problematic, it assumes the order of the collection.
                 assertEquals("The primary keys are not equal.", keys[i], ejbObject.getPrimaryKey());
             }

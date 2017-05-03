@@ -29,7 +29,7 @@ public class StatefulHomeIntfcTests extends BasicStatefulTestClient {
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/stateful/BasicStatefulHome");
-        ejbHome = (BasicStatefulHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicStatefulHome.class);
+        ejbHome = (BasicStatefulHome) obj;
     }
 
     //===============================

@@ -16,10 +16,8 @@
  */
 package org.apache.openejb.test.singleton;
 
-import java.rmi.RemoteException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import org.apache.openejb.test.object.Account;
+import org.apache.openejb.test.object.Transaction;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
@@ -28,9 +26,10 @@ import javax.naming.InitialContext;
 import javax.sql.DataSource;
 import javax.transaction.RollbackException;
 import javax.transaction.UserTransaction;
-
-import org.apache.openejb.test.object.Account;
-import org.apache.openejb.test.object.Transaction;
+import java.rmi.RemoteException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 public class BeanTxSingletonBean implements javax.ejb.SessionBean {
 
@@ -80,7 +79,7 @@ public class BeanTxSingletonBean implements javax.ejb.SessionBean {
     public void openAccount(final Account acct, final Boolean rollback) throws RemoteException, RollbackException {
 
         try {
-            final DataSource ds = (DataSource) javax.rmi.PortableRemoteObject.narrow(jndiContext.lookup("java:comp/env/database"), DataSource.class);
+            final DataSource ds = (DataSource) jndiContext.lookup("java:comp/env/database");
             final Connection con = ds.getConnection();
 
             try {
@@ -119,7 +118,7 @@ public class BeanTxSingletonBean implements javax.ejb.SessionBean {
     public Account retreiveAccount(final String ssn) throws RemoteException {
         final Account acct = new Account();
         try {
-            final DataSource ds = (DataSource) javax.rmi.PortableRemoteObject.narrow(jndiContext.lookup("java:comp/env/database"), DataSource.class);
+            final DataSource ds = (DataSource) jndiContext.lookup("java:comp/env/database");
             final Connection con = ds.getConnection();
 
             try {

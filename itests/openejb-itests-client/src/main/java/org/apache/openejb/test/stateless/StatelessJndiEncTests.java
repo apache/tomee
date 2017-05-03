@@ -36,7 +36,7 @@ public class StatelessJndiEncTests extends StatelessTestClient {
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/stateless/EncBean");
-        ejbHome = (EncStatelessHome) javax.rmi.PortableRemoteObject.narrow(obj, EncStatelessHome.class);
+        ejbHome = (EncStatelessHome) obj;
         ejbObject = ejbHome.create();
         
         /*[2] Create database table */

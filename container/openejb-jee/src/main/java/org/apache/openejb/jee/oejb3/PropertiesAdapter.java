@@ -17,9 +17,13 @@
 package org.apache.openejb.jee.oejb3;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
-import java.util.Properties;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.Comparator;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * @version $Rev$ $Date$
@@ -36,10 +40,27 @@ public class PropertiesAdapter extends XmlAdapter<String, Properties> {
         if (properties == null) return null;
 
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        properties.store(out, null);
+        new Properties() { // sort entries as before java 9
+            {
+                putAll(properties);
+            }
+
+            @Override
+            public Set<Map.Entry<Object, Object>> entrySet() {
+                final Set<Map.Entry<Object, Object>> entrySet = super.entrySet();
+                return new TreeSet<Map.Entry<Object, Object>>(new Comparator<Map.Entry<Object, Object>>() {
+                    @Override
+                    public int compare(final Map.Entry<Object, Object> o1, final Map.Entry<Object, Object> o2) {
+                        return String.valueOf(o1.getKey()).compareTo(String.valueOf(o2.getKey()));
+                    }
+                }) {{
+                    addAll(entrySet);
+                }};
+            }
+        }.store(out, null);
 
         // First comment is added by properties.store() 
         final String string = new String(out.toByteArray());
-        return string.replaceFirst("#.*?" + System.getProperty("line.separator"), "");
+        return string.replaceFirst("#.*?" + System.lineSeparator(), "");
     }
 }

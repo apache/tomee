@@ -16,9 +16,6 @@
  */
 package org.apache.openejb.test.stateless;
 
-import javax.ejb.EJB;
-
-
 /**
  * [2] Should be run as the second test suite of the BasicStatelessTestClients
  *

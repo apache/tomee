@@ -17,7 +17,6 @@
  */
 package org.apache.openejb.test.entity.cmp;
 
-import javax.rmi.PortableRemoteObject;
 import javax.ejb.EJBHome;
 
 /**
@@ -32,7 +31,7 @@ public class UnknownHomeHandleTests extends UnknownCmpTestClient {
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/entity/cmp/UnknownCmpHome");
-        ejbHome = (UnknownCmpHome) PortableRemoteObject.narrow(obj, UnknownCmpHome.class);
+        ejbHome = (UnknownCmpHome) obj;
         ejbHomeHandle = ejbHome.getHomeHandle();
     }
 

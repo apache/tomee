@@ -18,9 +18,9 @@ package org.apache.openejb.test.entity.cmr;
 
 import org.apache.openejb.test.entity.cmr.manytomany.GameLocal;
 import org.apache.openejb.test.entity.cmr.manytomany.GameLocalHome;
+import org.apache.openejb.test.entity.cmr.manytomany.GamePk;
 import org.apache.openejb.test.entity.cmr.manytomany.PlatformLocal;
 import org.apache.openejb.test.entity.cmr.manytomany.PlatformLocalHome;
-import org.apache.openejb.test.entity.cmr.manytomany.GamePk;
 import org.apache.openejb.test.entity.cmr.manytomany.PlatformPk;
 
 import javax.ejb.CreateException;
@@ -30,11 +30,11 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
+import java.util.ConcurrentModificationException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.Arrays;
-import java.util.ConcurrentModificationException;
 
 /**
  * @version $Revision$ $Date$

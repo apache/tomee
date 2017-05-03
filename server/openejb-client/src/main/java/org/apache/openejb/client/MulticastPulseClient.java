@@ -1,9 +1,8 @@
 package org.apache.openejb.client;
 
-import sun.net.util.IPAddressUtil;
-
 import java.io.IOException;
 import java.net.DatagramPacket;
+import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -247,12 +246,21 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                     //Sort by hostname, IPv4, IPv6
 
                     try {
-                        if (IPAddressUtil.isIPv4LiteralAddress(h1)) {
-                            if (IPAddressUtil.isIPv6LiteralAddress(h2.replace("[", "").replace("]", ""))) {
+                        InetAddress address1 = null;
+                        InetAddress address2 = null;
+                        try {
+                            address1 = InetAddress.getByName(h1);
+                            address2 = InetAddress.getByName(h2);
+                        } catch(final UnknownHostException e) {
+                            // no-op
+                        }
+
+                        if (isIPv4LiteralAddress(address1)) {
+                            if (isIPv6LiteralAddress(address2)) {
                                 return -1;
                             }
-                        } else if (IPAddressUtil.isIPv6LiteralAddress(h1.replace("[", "").replace("]", ""))) {
-                            if (IPAddressUtil.isIPv4LiteralAddress(h2)) {
+                        } else if (isIPv6LiteralAddress(address1)) {
+                            if (isIPv4LiteralAddress(address2)) {
                                 return 1;
                             }
                         } else if (0 != h1.compareTo(h2)) {
@@ -263,6 +271,14 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                     }
 
                     return h1.compareTo(h2);
+                }
+
+                private boolean isIPv4LiteralAddress(final InetAddress val) {
+                    return Inet4Address.class.isInstance(val);
+                }
+
+                private boolean isIPv6LiteralAddress(final InetAddress val) {
+                    return Inet6Address.class.isInstance(val);
                 }
             });
 

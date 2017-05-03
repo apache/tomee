@@ -16,10 +16,10 @@
  */
 package org.apache.openejb.test.singleton;
 
-import javax.ejb.EJBObject;
-
-import org.apache.openejb.test.object.OperationsPolicy;
 import org.apache.openejb.test.beans.TimerSync;
+import org.apache.openejb.test.object.OperationsPolicy;
+
+import javax.ejb.EJBObject;
 
 /**
  * [9] Should be run as the nineth test suite of the BasicSingletonTestClients
@@ -70,7 +70,7 @@ public class SingletonAllowedOperationsTests extends BasicSingletonTestClient {
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/singleton/BasicSingletonHome");
-        ejbHome = (BasicSingletonHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicSingletonHome.class);
+        ejbHome = (BasicSingletonHome) obj;
         ejbObject = ejbHome.createObject();
         ejbHandle = ejbObject.getHandle();
         timerSync = (TimerSync) initialContext.lookup("TimerSyncBeanBusinessRemote");

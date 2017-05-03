@@ -116,7 +116,7 @@ public class DerbyTestDatabase implements TestDatabase {
         try {
             /* Create database */
             obj = initialContext.lookup("client/tools/DatabaseHome");
-            databaseHome = (DatabaseHome) javax.rmi.PortableRemoteObject.narrow(obj, DatabaseHome.class);
+            databaseHome = (DatabaseHome) obj;
         } catch (final Exception e) {
             throw new IllegalStateException("Cannot find 'client/tools/DatabaseHome': " + e.getClass().getName() + " " + e.getMessage());
         }

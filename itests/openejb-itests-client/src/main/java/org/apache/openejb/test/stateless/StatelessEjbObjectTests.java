@@ -16,9 +16,8 @@
  */
 package org.apache.openejb.test.stateless;
 
-import java.rmi.RemoteException;
-
 import javax.ejb.EJBHome;
+import java.rmi.RemoteException;
 
 /**
  * [4] Should be run as the fourth test suite of the BasicStatelessTestClients
@@ -32,7 +31,7 @@ public class StatelessEjbObjectTests extends BasicStatelessTestClient {
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/stateless/BasicStatelessHome");
-        ejbHome = (BasicStatelessHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicStatelessHome.class);
+        ejbHome = (BasicStatelessHome) obj;
         ejbObject = ejbHome.createObject();
     }
 

@@ -18,15 +18,24 @@ package org.apache.openejb.client.corba;
 
 public final class InstanceOf {
     private static final Class<?> STUB;
+    private static final Class<?> PORTABLE_REMOTE_OBJECT;
+    private static final Class<?> REMOTE;
 
     static {
         Class<?> stub = null;
+        Class<?> pro = null;
+        Class<?> remote = null;
         try {
-            stub = Thread.currentThread().getContextClassLoader().loadClass("javax.rmi.CORBA.Stub");
-        } catch (ClassNotFoundException e) {
+            final ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            stub = loader.loadClass("javax.rmi.CORBA.Stub");
+            pro = loader.loadClass("javax.rmi.PortableRemoteObject");
+            remote = loader.loadClass("java.rmi.Remote");
+        } catch (final ClassNotFoundException e) {
             // no-op
         }
         STUB = stub;
+        PORTABLE_REMOTE_OBJECT = pro;
+        REMOTE = remote;
     }
 
     private InstanceOf() {
@@ -35,5 +44,9 @@ public final class InstanceOf {
 
     public static boolean isStub(final Object instance) {
         return STUB != null && STUB.isInstance(instance);
+    }
+
+    public static boolean isRemote(final Object obj) {
+        return REMOTE != null && PORTABLE_REMOTE_OBJECT != null && REMOTE.isInstance(obj) && PORTABLE_REMOTE_OBJECT.isInstance(obj);
     }
 }

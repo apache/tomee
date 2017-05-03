@@ -18,8 +18,6 @@ package org.apache.openejb.test.entity.bmp;
 
 import org.apache.openejb.test.object.OperationsPolicy;
 
-import javax.rmi.PortableRemoteObject;
-
 /**
  * [9] Should be run as the nineth test suite of the BasicBmpTestClients
  * <p/>
@@ -143,7 +141,7 @@ public class BmpAllowedOperationsTests extends BasicBmpTestClient {
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/entity/bmp/allowed_operations/EntityHome");
-        ejbHome = (BasicBmpHome) PortableRemoteObject.narrow(obj, BasicBmpHome.class);
+        ejbHome = (BasicBmpHome) obj;
         ejbObject = ejbHome.createObject("Fourth Bean");
         ejbHandle = ejbObject.getHandle();
         /* These tests will only work if the specified
@@ -177,7 +175,7 @@ public class BmpAllowedOperationsTests extends BasicBmpTestClient {
 
         ejbHome.sum(1, 2);
 
-        ejbObject = (BasicBmpObject) PortableRemoteObject.narrow(ejbHandle.getEJBObject(), BasicBmpObject.class);
+        ejbObject = (BasicBmpObject) ejbHandle.getEJBObject();
 
         ejbHome.findByPrimaryKey((Integer) ejbObject.getPrimaryKey());
         ejbHome.remove(ejbObject.getPrimaryKey());

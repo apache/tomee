@@ -17,7 +17,6 @@
  */
 package org.apache.openejb.test.entity.cmp;
 
-import javax.rmi.PortableRemoteObject;
 import javax.ejb.EJBHome;
 import javax.ejb.ObjectNotFoundException;
 
@@ -33,7 +32,7 @@ public class UnknownEjbObjectTests extends UnknownCmpTestClient {
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/entity/cmp/UnknownCmpHome");
-        ejbHome = (UnknownCmpHome) PortableRemoteObject.narrow(obj, UnknownCmpHome.class);
+        ejbHome = (UnknownCmpHome) obj;
         ejbObject = ejbHome.createObject("Third Bean");
     }
 

@@ -27,7 +27,7 @@ import java.security.PrivilegedAction;
 /*-------------------------------------------------------*/
 /* System ClassLoader Support */
 /*-------------------------------------------------------*/
-
+// TODO: we should get rid of it in favor of a custom root loader or flat classpath (ContextClassPath)
 public class SystemClassPath extends BasicURLClassPath {
 
     private URLClassLoader sysLoader;

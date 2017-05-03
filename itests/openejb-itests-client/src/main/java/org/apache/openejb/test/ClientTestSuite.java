@@ -17,15 +17,14 @@
 package org.apache.openejb.test;
 
 import junit.framework.TestSuite;
-
 import org.apache.openejb.test.entity.bmp.BmpTestSuite;
 import org.apache.openejb.test.entity.cmp.CmpTestSuite;
 import org.apache.openejb.test.entity.cmp2.Cmp2TestSuite;
-import org.apache.openejb.test.stateful.StatefulTestSuite;
-import org.apache.openejb.test.stateless.StatelessTestSuite;
 import org.apache.openejb.test.mdb.MdbTestSuite;
 import org.apache.openejb.test.servlet.ServletTestSuite;
 import org.apache.openejb.test.singleton.SingletonTestSuite;
+import org.apache.openejb.test.stateful.StatefulTestSuite;
+import org.apache.openejb.test.stateless.StatelessTestSuite;
 
 public class ClientTestSuite extends junit.framework.TestCase {
 

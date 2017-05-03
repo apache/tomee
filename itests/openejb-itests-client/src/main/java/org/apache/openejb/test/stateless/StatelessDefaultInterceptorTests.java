@@ -16,9 +16,6 @@
  */
 package org.apache.openejb.test.stateless;
 
-import java.util.ArrayList;
-import java.util.Map;
-
 // import javax.ejb.EJB;
 
 // public class StatelessInterceptorTests extends AnnotatedFieldInjectionStatelessLocalTestClient {

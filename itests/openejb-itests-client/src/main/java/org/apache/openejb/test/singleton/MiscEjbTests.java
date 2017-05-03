@@ -32,7 +32,7 @@ public class MiscEjbTests extends BasicSingletonTestClient {
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/singleton/BasicSingletonHome");
-        ejbHome = (BasicSingletonHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicSingletonHome.class);
+        ejbHome = (BasicSingletonHome) obj;
         ejbObject = ejbHome.createObject();
     }
 
@@ -56,7 +56,7 @@ public class MiscEjbTests extends BasicSingletonTestClient {
             EncSingletonObject ejbObject2 = null;
 
             final Object obj = initialContext.lookup(jndiName);
-            ejbHome2 = (EncSingletonHome) javax.rmi.PortableRemoteObject.narrow(obj, EncSingletonHome.class);
+            ejbHome2 = (EncSingletonHome) obj;
             ejbObject2 = ejbHome2.create();
 
             //System.out.println("_______________________________________________________");
@@ -77,7 +77,7 @@ public class MiscEjbTests extends BasicSingletonTestClient {
             EncStatefulObject ejbObject2 = null;
 
             final Object obj = initialContext.lookup(jndiName);
-            ejbHome2 = (EncStatefulHome) javax.rmi.PortableRemoteObject.narrow(obj, EncStatefulHome.class);
+            ejbHome2 = (EncStatefulHome) obj;
             ejbObject2 = ejbHome2.create("isIdentical test");
 
             //System.out.println("_______________________________________________________");
@@ -98,7 +98,7 @@ public class MiscEjbTests extends BasicSingletonTestClient {
             EncBmpObject ejbObject2 = null;
 
             final Object obj = initialContext.lookup(jndiName);
-            ejbHome2 = (EncBmpHome) javax.rmi.PortableRemoteObject.narrow(obj, EncBmpHome.class);
+            ejbHome2 = (EncBmpHome) obj;
             ejbObject2 = ejbHome2.create("isIdentical test");
 
             //System.out.println("_______________________________________________________");
@@ -121,7 +121,7 @@ public class MiscEjbTests extends BasicSingletonTestClient {
             EncCmpObject ejbObject2 = null;
 
             final Object obj = initialContext.lookup(jndiName);
-            ejbHome2 = (EncCmpHome) javax.rmi.PortableRemoteObject.narrow(obj, EncCmpHome.class);
+            ejbHome2 = (EncCmpHome) obj;
             ejbObject2 = ejbHome2.create("isIdentical test");
 
             //System.out.println("_______________________________________________________");

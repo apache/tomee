@@ -24,7 +24,7 @@ import org.apache.openejb.log.SingleLineFormatter;
 import org.apache.openejb.util.reflection.Reflections;
 import org.apache.webbeans.logger.WebBeansLoggerFacade;
 
-import java.io.OutputStreamWriter;
+import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.LogManager;
@@ -204,8 +204,11 @@ public class JuliLogStreamFactory implements LogStreamFactory {
     public static class OpenEJBSimpleLayoutHandler extends ConsoleHandler {
         public OpenEJBSimpleLayoutHandler() {
             setFormatter(new SingleLineFormatter());
-            //setOutputStream(System.out); // don't do it otherwise you'll lost exception etc in the console
-            Reflections.set(this, "writer", new OutputStreamWriter(System.out));
+        }
+
+        @Override
+        protected synchronized void setOutputStream(final OutputStream out) throws SecurityException {
+            super.setOutputStream(System.out);
         }
     }
 

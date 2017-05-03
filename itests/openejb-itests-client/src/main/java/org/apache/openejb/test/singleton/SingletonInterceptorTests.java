@@ -18,7 +18,6 @@ package org.apache.openejb.test.singleton;
 
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Arrays;
 
 /**
  * @version $Rev: 607077 $ $Date: 2007-12-27 06:55:23 -0800 (Thu, 27 Dec 2007) $
@@ -38,8 +37,7 @@ public class SingletonInterceptorTests extends BasicSingletonLocalTestClient {
         super.setUp();
         final Object obj = initialContext.lookup("BasicSingletonInterceptedBusinessRemote");
         assertNotNull("The BasicSingletonInterceptedBusinessRemote object is null", obj);
-        remoteInterceptor = (BasicSingletonInterceptedRemote) javax.rmi.PortableRemoteObject.narrow(obj,
-            BasicSingletonInterceptedRemote.class);
+        remoteInterceptor = (BasicSingletonInterceptedRemote) obj;
         assertNotNull("Remote interceptor is null", remoteInterceptor);
     }
 
