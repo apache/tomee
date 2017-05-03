@@ -120,7 +120,7 @@
 
     <jaxb.version>2.2.6</jaxb.version>
 
-    <tomcat.version>7.0.75</tomcat.version>
+    <tomcat.version>7.0.77</tomcat.version>
 
     <!-- used mainly by jetty modules -->
     <cxf.version>2.6.16-TT.1</cxf.version>
@@ -515,7 +515,7 @@
     <repository>
       <id>tomitribe-all</id>
       <name>Tomitribe All</name>
-      <url>http://repository.tomitribe.com/content/groups/tomitribe/</url>
+      <url>https://repository.tomitribe.com/content/groups/tomitribe/</url>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
@@ -1763,13 +1763,13 @@
     <repository>
       <id>tomitribe.releases.https</id>
       <name>Tomitribe Release Distribution Repository</name>
-      <url>http://repository.tomitribe.com/service/local/staging/deploy/maven2</url>
+      <url>https://repository.tomitribe.com/service/local/staging/deploy/maven2</url>
     </repository>
 
     <snapshotRepository>
       <id>tomitribe.snapshots.https</id>
       <name>Tomitribe Development Snapshot Repository</name>
-      <url>http://repository.tomitribe.com/content/repositories/snapshots-tomitribe</url>
+      <url>https://repository.tomitribe.com/content/repositories/snapshots-tomitribe</url>
     </snapshotRepository>
   </distributionManagement>
 
