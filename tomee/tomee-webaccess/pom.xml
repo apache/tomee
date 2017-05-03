@@ -28,6 +28,15 @@
   </properties>
   <profiles>
     <profile>
+      <id>java9</id>
+      <activation>
+        <jdk>9</jdk>
+      </activation>
+      <properties>
+        <version.groovy>2.5.0-alpha-1</version.groovy>
+      </properties>
+    </profile>
+    <profile>
       <id>tomee</id>
       <activation>
         <activeByDefault>true</activeByDefault>
