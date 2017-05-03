@@ -369,8 +369,8 @@ public class DependencyVisitor extends EmptyVisitor {
     private void addMethodDesc(final String desc) {
         addType(Type.getReturnType(desc));
         final Type[] types = Type.getArgumentTypes(desc);
-        for (int i = 0; i < types.length; i++) {
-            addType(types[i]);
+        for (Type type : types) {
+            addType(type);
         }
     }
 
