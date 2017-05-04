@@ -98,7 +98,7 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
         hashCode = construct();
         setJavaseClassLoader(getSystemClassLoader());
         containerClassLoader = ParentClassLoaderFinder.Helper.get();
-        isEar = getParent() != null && !getParent().equals(containerClassLoader) && defaultEarBehavior();
+        isEar = getInternalParent() != null && !getInternalParent().equals(containerClassLoader) && defaultEarBehavior();
         originalDelegate = getDelegate();
     }
 
@@ -107,8 +107,12 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
         hashCode = construct();
         setJavaseClassLoader(getSystemClassLoader());
         containerClassLoader = ParentClassLoaderFinder.Helper.get();
-        isEar = getParent() != null && !getParent().equals(containerClassLoader) && defaultEarBehavior();
+        isEar = getInternalParent() != null && !getInternalParent().equals(containerClassLoader) && defaultEarBehavior();
         originalDelegate = getDelegate();
+    }
+
+    public ClassLoader getInternalParent() {
+        return getParent();
     }
 
     private int construct() {
@@ -187,8 +191,8 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
                 final boolean filter = filter(name, true);
                 filterTempCache.put(name, filter); // will be called again by super.loadClass() so cache it
                 if (!filter) {
-                    if (URLClassLoaderFirst.class.isInstance(getParent())) { // true
-                        final URLClassLoaderFirst urlClassLoaderFirst = URLClassLoaderFirst.class.cast(getParent());
+                    if (URLClassLoaderFirst.class.isInstance(getInternalParent())) { // true
+                        final URLClassLoaderFirst urlClassLoaderFirst = URLClassLoaderFirst.class.cast(getInternalParent());
                         Class<?> c = urlClassLoaderFirst.findAlreadyLoadedClass(name);
                         if (c != null) {
                             return c;
@@ -499,7 +503,7 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
 
     @Override
     public TomEEWebappClassLoader copyWithoutTransformers() {
-        final TomEEWebappClassLoader result = new TomEEWebappClassLoader(getParent());
+        final TomEEWebappClassLoader result = new TomEEWebappClassLoader(getInternalParent());
         result.additionalRepos = additionalRepos;
         result.configurer = configurer;
         super.copyStateWithoutTransformers(result);

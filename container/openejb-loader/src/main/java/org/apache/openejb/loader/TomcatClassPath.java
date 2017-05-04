@@ -42,7 +42,7 @@ public class TomcatClassPath extends BasicURLClassPath {
     private final ClassLoader commonLoader;
     private final ClassLoader serverLoader;
 
-    private final Method addRepositoryMethod;
+    private Method addRepositoryMethod;
 
     public TomcatClassPath() {
         this(getCommonLoader(getContextClassLoader()));
@@ -50,11 +50,6 @@ public class TomcatClassPath extends BasicURLClassPath {
 
     public TomcatClassPath(final ClassLoader classLoader) {
         this.commonLoader = classLoader;
-        try {
-            addRepositoryMethod = getAddRepositoryMethod();
-        } catch (final Exception e) {
-            throw new IllegalStateException("Ensure you use the right tomcat version (" + e.getMessage() + ")");
-        }
 
         final ClassLoader serverLoader = getServerLoader(getContextClassLoader());
         if (serverLoader != null && serverLoader != commonLoader) {
@@ -137,7 +132,7 @@ public class TomcatClassPath extends BasicURLClassPath {
             classLoader = serverLoader;
         }
 
-        addRepositoryMethod.invoke(classLoader, jar);
+        getAddRepositoryMethod().invoke(classLoader, jar);
     }
 
     private boolean useServerClassLoader(final URL jar) {
@@ -211,20 +206,27 @@ public class TomcatClassPath extends BasicURLClassPath {
     }
 
     private Method getAddRepositoryMethod() throws Exception {
-        return AccessController.doPrivileged(new PrivilegedAction<Method>() {
-            @Override
-            public Method run() {
-                try {
-                    final Method method = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-                    if (!method.isAccessible()) {
-                        method.setAccessible(true);
+        if (addRepositoryMethod == null) {
+            try {
+                addRepositoryMethod = AccessController.doPrivileged(new PrivilegedAction<Method>() {
+                    @Override
+                    public Method run() {
+                        try {
+                            final Method method = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+                            if (!method.isAccessible()) {
+                                method.setAccessible(true);
+                            }
+                            return method;
+                        } catch (final Exception e2) {
+                            throw (IllegalStateException) new IllegalStateException("Unable to find or access the addRepository method in StandardClassLoader").initCause(e2);
+                        }
                     }
-                    return method;
-                } catch (final Exception e2) {
-                    throw (IllegalStateException) new IllegalStateException("Unable to find or access the addRepository method in StandardClassLoader").initCause(e2);
-                }
+                });
+            } catch (final Exception e) {
+                throw new IllegalStateException("Ensure you use the right tomcat version (" + e.getMessage() + ")", e);
             }
-        });
+        }
+        return addRepositoryMethod;
     }
 
     private static boolean isDirectory(final URL url) {

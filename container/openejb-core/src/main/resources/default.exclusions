@@ -35,6 +35,7 @@ bcprov-
 bootstrap.jar
 bval-core
 bval-jsr
+byte-buddy
 c3p0-
 cassandra-driver-core
 catalina-
@@ -157,6 +158,7 @@ mysql-connector-java-
 neethi-
 nekohtml-
 netty-
+objenesis
 openejb-api
 openejb-client
 openejb-core

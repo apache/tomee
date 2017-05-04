@@ -17,11 +17,29 @@
 package org.apache.tomee.embedded;
 
 import org.apache.openejb.loader.Files;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.X509v1CertificateBuilder;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.cert.jcajce.JcaX509v1CertificateBuilder;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.junit.Assert;
 import org.junit.Test;
 
 import javax.management.ObjectName;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.lang.management.ManagementFactory;
+import java.math.BigInteger;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.KeyStore;
+import java.security.Security;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -36,28 +54,45 @@ public class SslTomEETest {
                 Files.delete(keystore);
             }
 
-            Class<?> keyToolClass;
-            try {
-                keyToolClass = Class.forName("sun.security.tools.KeyTool");
-            } catch (final ClassNotFoundException e) {
-                try {
-                    // in jdk8, the tool changed ...
-                    keyToolClass = Class.forName("sun.security.tools.keytool.Main");
-                } catch (final ClassNotFoundException cnfe) {
-                    keyToolClass = Class.forName("com.ibm.crypto.tools.KeyTool");
-                }
-            }
+            keystore.getParentFile().mkdirs();
+            try (final FileOutputStream fos = new FileOutputStream(keystore)) {
+                final KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance("RSA");
+                keyGenerator.initialize(1024);
 
-            final String[] args = {
-                    "-genkey",
-                    "-alias", "serveralias",
-                    "-keypass", "changeit",
-                    "-keystore", keystore.getAbsolutePath(),
-                    "-storepass", "changeit",
-                    "-dname", "cn=serveralias",
-                    "-keyalg", "RSA"
-            };
-            keyToolClass.getMethod("main", String[].class).invoke(null, new Object[]{args});
+                final KeyPair pair = keyGenerator.generateKeyPair();
+
+                final boolean addBc = Security.getProvider("BC") == null;
+                if (addBc) {
+                    Security.addProvider(new BouncyCastleProvider());
+                }
+                try {
+
+                    final X509v1CertificateBuilder x509v1CertificateBuilder = new JcaX509v1CertificateBuilder(
+                            new X500Name("cn=serveralias"),
+                            BigInteger.valueOf(1),
+                            new Date(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1)),
+                            new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1)),
+                            new X500Name("cn=serveralias"),
+                            pair.getPublic());
+
+                    final X509CertificateHolder certHldr = x509v1CertificateBuilder
+                            .build(new JcaContentSignerBuilder("SHA1WithRSA")
+                                    .setProvider("BC").build(pair.getPrivate()));
+
+                    final X509Certificate cert = new JcaX509CertificateConverter().setProvider("BC").getCertificate(certHldr);
+
+                    final KeyStore ks = KeyStore.getInstance("JKS");
+                    ks.load(null, "changeit".toCharArray());
+                    ks.setKeyEntry("serveralias", pair.getPrivate(), "changeit".toCharArray(), new Certificate[]{cert});
+                    ks.store(fos, "changeit".toCharArray());
+                } finally {
+                    if (addBc) {
+                        Security.removeProvider("BC");
+                    }
+                }
+            } catch (final Exception e) {
+                Assert.fail(e.getMessage());
+            }
         }
 
         final Configuration configuration = new Configuration();

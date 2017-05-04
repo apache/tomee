@@ -50,7 +50,7 @@ public final class XmlFormatter {
                 final StringWriter stringWriter = new StringWriter();
                 lsOutput.setCharacterStream(stringWriter);
                 serializer.write(document, lsOutput);
-                return stringWriter.toString();
+                return stringWriter.toString().replace("\"UTF-8\"?><", "\"UTF-8\"?>\n<");
             }
 
             return in;

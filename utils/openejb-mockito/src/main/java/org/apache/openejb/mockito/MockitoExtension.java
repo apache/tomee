@@ -21,7 +21,6 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.webbeans.annotation.AnyLiteral;
 import org.apache.webbeans.annotation.DefaultLiteral;
 import org.apache.webbeans.annotation.NamedLiteral;
-import org.mockito.cglib.proxy.Factory;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.context.spi.CreationalContext;
@@ -84,7 +83,7 @@ public class MockitoExtension implements Extension {
                     }
                 }
                 for (Class<?> itf : clazz.getInterfaces()) {
-                    if (Factory.class.isAssignableFrom(itf)) {
+                    if (itf.getName().startsWith("org.mockito")) {
                         continue;
                     }
 
