@@ -166,8 +166,14 @@
 
     <dependency>
       <groupId>org.apache.sirona</groupId>
-      <artifactId>sirona-web</artifactId>
-      <version>0.2-incubating</version>
+      <artifactId>sirona-api</artifactId>
+      <version>0.3-incubating</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.github.testdriven</groupId>
+      <artifactId>cfgagent</artifactId>
+      <version>1.0.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

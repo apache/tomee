@@ -26,6 +26,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.lang.management.ManagementFactory;
+import java.util.List;
 
 import static org.junit.Assert.fail;
 
@@ -33,16 +34,18 @@ import static org.junit.Assert.fail;
 public class JavaagentTest {
     @Deployment
     public static Archive<?> empty() {
-        return ShrinkWrap.create(WebArchive.class, "javaagent.war").addAsResource(EmptyAsset.INSTANCE, "foo");
+        return ShrinkWrap.create(WebArchive.class, "javaagent.war")
+                .addAsResource(EmptyAsset.INSTANCE, "foo");
     }
 
     @Test
     public void checkAgent() {
-        for (final String arg : ManagementFactory.getRuntimeMXBean().getInputArguments()) {
-            if (arg.startsWith("-javaagent") && arg.endsWith("sirona-javaagent-0.2-incubating-shaded.jar")) {
+        final List<String> inputArguments = ManagementFactory.getRuntimeMXBean().getInputArguments();
+        for (final String arg : inputArguments) {
+            if (arg.startsWith("-javaagent") && arg.endsWith("cfgagent-1.0.0.jar")) {
                 return;
             }
         }
-        fail("didnt find sirona as javaagent");
+        fail("didnt find sirona as javaagent: " + inputArguments.toString());
     }
 }
