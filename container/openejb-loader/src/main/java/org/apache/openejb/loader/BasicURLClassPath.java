@@ -37,11 +37,15 @@ public abstract class BasicURLClassPath implements ClassPath {
     }
 
     private Field ucpField;
+    private boolean ucpFieldErrorLogged;
 
     protected void addJarToPath(final URL jar, final URLClassLoader loader) throws Exception {
         final Object cp = getURLClassPath(loader);
-        final Method addURLMethod = getAddURLMethod(loader);
-        addURLMethod.invoke(cp, jar);
+        if (cp == null && CustomizableURLClassLoader.class.isInstance(loader)) {
+            CustomizableURLClassLoader.class.cast(loader).add(jar);
+        } else {
+            getAddURLMethod(loader).invoke(cp, jar);
+        }
     }
 
     private Method getAddURLMethod(final URLClassLoader loader) {
@@ -54,7 +58,7 @@ public abstract class BasicURLClassPath implements ClassPath {
                     final Class<?> clazz = cp.getClass();
                     return clazz.getDeclaredMethod("addURL", URL.class);
                 } catch (final Exception e) {
-                    e.printStackTrace();
+                    System.err.println("Can't access addURL from URLClassPath");
                 }
 
                 return null;
@@ -89,14 +93,30 @@ public abstract class BasicURLClassPath implements ClassPath {
         }
 
         final Object cp = getURLClassPath(loader);
-        final Method addURLMethod = getAddURLMethod(loader);
-        for (final URL jar : jars) {
-            addURLMethod.invoke(cp, jar);
+        if (cp == null && CustomizableURLClassLoader.class.isInstance(loader)) {
+            final CustomizableURLClassLoader customizableURLClassLoader = CustomizableURLClassLoader.class.cast(loader);
+            for (final URL jar : jars) {
+                customizableURLClassLoader.add(jar);
+            }
+        } else if (cp == null && loader != null && CustomizableURLClassLoader.class.getName().equals(loader.getClass().getName())) {
+            final Method add = loader.getClass().getMethod("add", URL.class);
+            for (final URL jar : jars) {
+                add.invoke(loader, jar);
+            }
+        } else {
+            final Method addURLMethod = getAddURLMethod(loader);
+            for (final URL jar : jars) {
+                addURLMethod.invoke(cp, jar);
+            }
         }
     }
 
     protected Object getURLClassPath(final URLClassLoader loader) throws Exception {
-        return this.getUcpField().get(loader);
+        final Field ucpField = this.getUcpField();
+        if (ucpField == null) {
+            return null;
+        }
+        return ucpField.get(loader);
     }
 
     private Field getUcpField() throws Exception {
@@ -109,7 +129,10 @@ public abstract class BasicURLClassPath implements ClassPath {
                         ucp.setAccessible(true);
                         return ucp;
                     } catch (final Exception e2) {
-                        e2.printStackTrace();
+                        if (!ucpFieldErrorLogged) {
+                            System.err.println("Can't get ucp field of URLClassLoader");
+                            ucpFieldErrorLogged = true;
+                        }
                     }
                     return null;
                 }
@@ -119,4 +142,84 @@ public abstract class BasicURLClassPath implements ClassPath {
         return ucpField;
     }
 
+    protected static class CustomizableURLClassLoader extends URLClassLoader {
+        static {
+            ClassLoader.registerAsParallelCapable();
+        }
+
+        protected CustomizableURLClassLoader(final ClassLoader parent) {
+            super(new URL[0], parent);
+        }
+
+        public void add(final URL url) {
+            super.addURL(url);
+        }
+
+        @Override
+        protected Class<?> loadClass(final String name, final boolean resolve) throws ClassNotFoundException {
+            synchronized (getClassLoadingLock(name)) {
+                Class<?> clazz = findLoadedClass(name);
+                if (clazz != null) {
+                    if (resolve) {
+                        resolveClass(clazz);
+                    }
+                    return clazz;
+                }
+
+                if (name != null && !name.startsWith("org.apache.openejb")) {
+                    try {
+                        return getSystemClassLoader().loadClass(name);
+                    } catch (final ClassNotFoundException ignored) {
+                        // no-op
+                    }
+                }
+
+                clazz = loadInternal(name, resolve);
+                if (clazz != null) {
+                    return clazz;
+                }
+
+                clazz = loadFromParent(name, resolve);
+                if (clazz != null) {
+                    return clazz;
+                }
+
+                throw new ClassNotFoundException(name);
+            }
+        }
+
+        private Class<?> loadFromParent(final String name, final boolean resolve) {
+            ClassLoader parent = getParent();
+            if (parent == null) {
+                parent = getSystemClassLoader();
+            }
+            try {
+                final Class<?> clazz = Class.forName(name, false, parent);
+                if (clazz != null) {
+                    if (resolve) {
+                        resolveClass(clazz);
+                    }
+                    return clazz;
+                }
+            } catch (final ClassNotFoundException ignored) {
+                // no-op
+            }
+            return null;
+        }
+
+        private Class<?> loadInternal(final String name, final boolean resolve) {
+            try {
+                final Class<?> clazz = findClass(name);
+                if (clazz != null) {
+                    if (resolve) {
+                        resolveClass(clazz);
+                    }
+                    return clazz;
+                }
+            } catch (final ClassNotFoundException ignored) {
+                // no-op
+            }
+            return null;
+        }
+    }
 }

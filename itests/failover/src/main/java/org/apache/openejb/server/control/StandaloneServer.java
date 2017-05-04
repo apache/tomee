@@ -50,6 +50,7 @@ public class StandaloneServer {
     private final File java;
     private final File openejbJar;
     private boolean debug;
+    private int debugPort = 5005;
     private boolean profile;
     private volatile Process process;
     private final List<String> jvmOpts = new ArrayList<String>();
@@ -198,6 +199,14 @@ public class StandaloneServer {
         this.debug = debug;
     }
 
+    public int getDebugPort() {
+        return debugPort;
+    }
+
+    public void setDebugPort(final int debugPort) {
+        this.debugPort = debugPort;
+    }
+
     public boolean isProfile() {
         return profile;
     }
@@ -261,6 +270,9 @@ public class StandaloneServer {
             args.addAll(jvmOpts);
             final Set<Map.Entry<Object, Object>> collection = properties.entrySet();
             args.addAll(Join.strings(collection, new SystemPropertiesCallback()));
+            if (debug) {
+                args.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=" + debugPort);
+            }
 
             args.add("-jar");
             args.add(openejbJar.getAbsolutePath());
