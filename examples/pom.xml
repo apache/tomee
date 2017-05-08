@@ -129,6 +129,7 @@
     <module>simple-mdb-and-cdi</module>
     <module>simple-mdb</module>
     <module>simple-mdb-with-descriptor</module>
+    <module>simple-remote-tomcatusers</module>
     <module>simple-rest</module>
     <module>simple-singleton</module>
     <module>simple-stateful</module>
