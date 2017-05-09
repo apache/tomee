@@ -176,6 +176,12 @@
       <version>1.0.0</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
+      <version>10.10.1.1</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
