@@ -42,8 +42,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 @EnableServices("jaxrs")
@@ -64,19 +66,21 @@ public class SuspendedTest {
         private ManagedExecutorService es;
 
         @GET
-        public String async(@Suspended final AsyncResponse response) {
+        public void async(@Suspended final AsyncResponse response) {
             if (current == null) {
-                asyncPath = es.submit(new Callable<String>() {
-                    @Override
-                    public String call() throws Exception {
-                        final String path = info.getPath();
-                        assertNotNull(path);
-                        return path;
-                    }
-                });
-                current = response;
-                LATCH.countDown();
-                return "ignored";
+                try {
+                    asyncPath = es.submit(new Callable<String>() {
+                        @Override
+                        public String call() throws Exception {
+                            final String path = info.getPath();
+                            assertNotNull(path);
+                            return path;
+                        }
+                    });
+                    current = response;
+                } finally {
+                    LATCH.countDown();
+                }
             } else {
                 throw new IllegalStateException("we shouldnt go here back since");
             }
@@ -111,11 +115,14 @@ public class SuspendedTest {
         new Thread() {
             @Override
             public void run() {
-                response.set(WebClient.create(url.toExternalForm() + "openejb/touch").get());
-                end.countDown();
+                try {
+                    response.set(WebClient.create(url.toExternalForm() + "openejb/touch").get());
+                } finally {
+                    end.countDown();
+                }
             }
         }.start();
-        Endpoint.LATCH.await();
+        assertTrue(Endpoint.LATCH.await(1, MINUTES));
         WebClient.create(url.toExternalForm() + "openejb/touch").path("answer").post("hello");
         end.await();
         assertEquals("hello", response.get().readEntity(String.class));

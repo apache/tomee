@@ -29,7 +29,7 @@ public class BmpRemoteIntfcTests extends BasicBmpTestClient {
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/entity/bmp/BasicBmpHome");
-        ejbHome = (BasicBmpHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicBmpHome.class);
+        ejbHome = (BasicBmpHome) obj;
         ejbObject = ejbHome.createObject("Forth Bean");
     }
 

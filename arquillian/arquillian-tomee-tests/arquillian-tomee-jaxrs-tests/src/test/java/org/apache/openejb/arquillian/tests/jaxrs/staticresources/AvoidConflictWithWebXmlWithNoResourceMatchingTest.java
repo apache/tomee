@@ -74,12 +74,12 @@ public class AvoidConflictWithWebXmlWithNoResourceMatchingTest {
     // but it would be not deterministic otherwise so not better
     @Test(expected = FileNotFoundException.class)
     public void jsp() throws IOException {
-        assertEquals("JSP 5", IO.slurp(new URL(url + "index.jsp")).trim());
+        IO.slurp(new URL(url + "index.jsp"));
     }
 
     @Test(expected = FileNotFoundException.class) // same as for jsp()
     public void home() throws IOException {
-        assertEquals("JSP 5", IO.slurp(url).trim());
+        IO.slurp(url);
     }
 
     @Test

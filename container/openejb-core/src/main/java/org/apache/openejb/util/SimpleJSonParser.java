@@ -50,9 +50,9 @@ public final class SimpleJSonParser {
                     current = (char) read;
 
                     b.append(current);
-                } while (current != -1 && current != '\"');
+                } while (read != -1 && current != '\"');
 
-                if (current == -1) {
+                if (read == -1) {
                     throw new IllegalArgumentException("String should be between \"");
                 }
 
@@ -67,7 +67,7 @@ public final class SimpleJSonParser {
                     current = (char) read;
 
                     b.append(current);
-                } while (current != -1 && !isWhiteSpace(current) && current != ',');
+                } while (read != -1 && !isWhiteSpace(current) && current != ',');
 
                 final String value = PropertyPlaceHolderHelper.simpleValue(b.substring(0, b.length() - 1)); // remove last character
                 if (valueRead(is, json, array, value)) {
@@ -86,7 +86,7 @@ public final class SimpleJSonParser {
         do {
             read = is.read();
             c = (char) read;
-        } while (c != -1 && c != ':' && c != '=' && (c == ',' || c == '\n' || c == '\r'));
+        } while (read != -1 && c != ':' && c != '=' && (c == ',' || c == '\n' || c == '\r'));
 
         if (json != null) {
             json.put(value, read(is));

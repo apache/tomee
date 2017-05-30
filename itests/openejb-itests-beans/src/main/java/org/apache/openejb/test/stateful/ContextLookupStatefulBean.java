@@ -308,7 +308,7 @@ public class ContextLookupStatefulBean implements javax.ejb.SessionBean, Session
     public void lookupBooleanEntry() throws TestFailureException {
         try {
             try {
-                final Boolean expected = new Boolean(true);
+                final Boolean expected = Boolean.TRUE;
                 final Boolean actual = (Boolean) ejbContext.lookup("stateful/references/Boolean");
 
                 Assert.assertNotNull("The Boolean looked up is null", actual);

@@ -16,10 +16,8 @@
  */
 package org.apache.openejb.threads;
 
-import org.apache.openejb.jee.EnterpriseBean;
-import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Module;
+import org.apache.openejb.testing.Classes;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -33,28 +31,35 @@ import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.security.Principal;
+import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
+@Classes(innerClassesAsBean = true)
 @RunWith(ApplicationComposer.class)
 public class SecurityPropagationTest {
-    @Module
-    public EnterpriseBean bean() {
-        return new StatelessBean(ExecutorBean.class).localBean();
-    }
-
     @EJB
     private ExecutorBean bean;
 
     @Test
     public void checkItIsTrue() throws Exception {
-        bean.submit(new RunnableTest()).get();
+        assertEquals("tomee", bean.submit(new RunnableTest()).get());
     }
 
     @Stateless
     @RunAs("tomee")
     public static class ExecutorBean {
+        @EJB
+        private Delegate delegate;
+
+        public Future<?> submit(final RunnableTest task) throws NamingException {
+            return delegate.submit(task);
+        }
+    }
+
+    @Stateless
+    public static class Delegate {
         @Resource
         private ManagedExecutorService executorService;
 
@@ -68,7 +73,7 @@ public class SecurityPropagationTest {
         }
     }
 
-    public static class RunnableTest implements Runnable {
+    public static class RunnableTest implements Callable<String> {
         private Principal expectedPrincipal;
 
         public void setExpectedPrincipal(final Principal expectedPrincipal) {
@@ -76,7 +81,7 @@ public class SecurityPropagationTest {
         }
 
         @Override
-        public void run() {
+        public String call() throws Exception {
             try {
                 Thread.sleep(200);
             } catch (final InterruptedException e) {
@@ -106,6 +111,8 @@ public class SecurityPropagationTest {
                     throw new IllegalStateException("the caller principal " + callerPrincipal + " is not the expected " + expectedPrincipal);
                 }
             }
+
+            return callerPrincipal.getName();
         }
 
     }

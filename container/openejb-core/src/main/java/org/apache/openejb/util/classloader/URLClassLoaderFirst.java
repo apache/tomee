@@ -19,6 +19,7 @@ package org.apache.openejb.util.classloader;
 
 import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.JavaSecurityManagers;
 
 import java.io.IOException;
 import java.net.URL;
@@ -57,6 +58,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
     private static final URL SLF4J_CONTAINER = URLClassLoaderFirst.class.getClassLoader().getResource(SLF4J_BINDER_CLASS);
     private static final String CLASS_EXT = ".class";
     public static final ClassLoader SYSTEM_CLASS_LOADER = ClassLoader.getSystemClassLoader();
+    private static final boolean ALLOW_OPEN_EJB_SYSTEM_LOADING = !Boolean.getBoolean("openejb.classloader.first.disallow-system-loading");
 
     public static void reloadConfig() {
         list(FORCED_SKIP, "openejb.classloader.forced-skip");
@@ -75,7 +77,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
     private static boolean skipLib(final String includedClass) {
         try {
             URLClassLoaderFirst.class.getClassLoader().loadClass(includedClass);
-            return "true".equalsIgnoreCase(System.getProperty(includedClass + ".skip", "true"));
+            return "true".equalsIgnoreCase(JavaSecurityManagers.getSystemProperty(includedClass + ".skip", "true"));
         } catch (final ClassNotFoundException e) {
             return false;
         }
@@ -110,7 +112,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
                         }
                         return clazz;
                     }
-                } catch (final ClassNotFoundException ignored) {
+                } catch (final NoClassDefFoundError | ClassNotFoundException ignored) {
                     // no-op
                 }
             }
@@ -186,7 +188,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
     // we skip webapp enrichment jars since we want to load them from the webapp or lib
     // Note: this is not a real limitation since it is first fail it will be done later
     public static boolean canBeLoadedFromSystem(final String name) {
-        return !name.startsWith("org.apache.openejb.") || !isWebAppEnrichment(name.substring("org.apache.openejb.".length()));
+        return ALLOW_OPEN_EJB_SYSTEM_LOADING && (!name.startsWith("org.apache.openejb.") || !isWebAppEnrichment(name.substring("org.apache.openejb.".length())));
     }
 
     // making all these call inline if far more costly than factorizing packages
@@ -309,6 +311,9 @@ public class URLClassLoaderFirst extends URLClassLoader {
                     if (commons.startsWith("dbcp.")) {
                         return true;
                     }
+                    if (commons.startsWith("dbcp2.")) {
+                        return true;
+                    }
                     if (commons.startsWith("digester.")) {
                         return true;
                     }
@@ -325,6 +330,9 @@ public class URLClassLoaderFirst extends URLClassLoader {
                         return false;
                     }
                     if (commons.startsWith("pool.")) {
+                        return true;
+                    }
+                    if (commons.startsWith("pool2.")) {
                         return true;
                     }
                     if (commons.startsWith("net.") && SKIP_COMMONS_NET) {
@@ -482,9 +490,19 @@ public class URLClassLoaderFirst extends URLClassLoader {
         }
 
         // other packages
-        if (name.startsWith("com.sun.")) {
-            return isInJvm(name);
+        if (name.startsWith("com.")) {
+            final String sub = name.substring("com.".length());
+            if (sub.startsWith("sun.")) {
+                return !name.startsWith("sun.mail.") && isInJvm(name);
+            }
+            if (sub.startsWith("oracle.")) {
+                return true;
+            }
         }
+        if (name.startsWith("jdk.")) {
+            return true;
+        }
+
         if (name.startsWith("serp.bytecode.")) {
             return true;
         }
@@ -549,10 +567,21 @@ public class URLClassLoaderFirst extends URLClassLoader {
     public static boolean isFilterableResource(final String name) {
         // currently bean validation, Slf4j, myfaces (because of enrichment)
         return name != null
-            && ("META-INF/services/javax.validation.spi.ValidationProvider".equals(name)
+            && (
+                // bval
+                "META-INF/services/javax.validation.spi.ValidationProvider".equals(name)
+                // jaxrs 2
             || "META-INF/services/javax.ws.rs.client.ClientBuilder".equals(name)
+                // jcache
             || "META-INF/services/javax.cache.spi.CachingProvider".equals(name)
+                // javamail
+            || "META-INF/javamail.default.providers".equals(name)
+            || "META-INF/javamail.default.address.map".equals(name)
+            || "META-INF/javamail.charset.map".equals(name)
+            || "META-INF/mailcap".equals(name)
+                // myfaces
             || name.startsWith("META-INF/services/org.apache.myfaces.spi")
+                // slf4j
             || SLF4J_BINDER_CLASS.equals(name));
     }
 

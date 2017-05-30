@@ -220,7 +220,6 @@ public class NewLoaderLogic {
     public static UrlSet applyBuiltinExcludes(final UrlSet urlSet, final Filter includeFilter, final Filter excludeFilter) throws MalformedURLException {
         getExclusions(); // force init
 
-        //filter = Filters.optimize(filter, new PatternFilter(".*/openejb-.*"));
         final List<URL> urls = urlSet.getUrls();
         final Iterator<URL> iterator = urls.iterator();
         while (iterator.hasNext()) {
@@ -233,6 +232,7 @@ public class NewLoaderLogic {
         return new UrlSet(urls);
     }
 
+    @Deprecated
     public static void setExclusions(final String[] exclusionArray) {
         exclusions = exclusionArray;
 
@@ -241,6 +241,49 @@ public class NewLoaderLogic {
         getFilter();
 
         logExclusions(exclusionArray);
+    }
+
+    /**
+     * @param excluded a filter returning true for filtered jars.
+     * @param included a filter returning true for included jars.
+     */
+    public static void addAdditionalCustomFilter(final Filter excluded, final Filter included) {
+        getExclusions();
+
+        // reinit the filter, we synchronized for consistency but there it should be thread safe anyway
+        if (excluded != null && included != null) {
+            synchronized (NewLoaderLogic.class) {
+                final Filter builtIn = new OptimizedExclusionFilter(getExclusions());
+                NewLoaderLogic.filter = new Filter() {
+                    @Override
+                    public boolean accept(final String name) {
+                        return !included.accept(name) && (builtIn.accept(name) || excluded.accept(name));
+                    }
+                };
+            }
+        } else if (excluded != null) {
+            synchronized (NewLoaderLogic.class) {
+                final Filter builtIn = new OptimizedExclusionFilter(getExclusions());
+                NewLoaderLogic.filter = new Filter() {
+                    @Override
+                    public boolean accept(final String name) {
+                        return builtIn.accept(name) || excluded.accept(name);
+                    }
+                };
+            }
+        } else if (included != null) {
+            synchronized (NewLoaderLogic.class) {
+                final Filter builtIn = new OptimizedExclusionFilter(getExclusions());
+                NewLoaderLogic.filter = new Filter() {
+                    @Override
+                    public boolean accept(final String name) {
+                        return !included.accept(name) && builtIn.accept(name);
+                    }
+                };
+            }
+        }
+
+        logExclusions(exclusions);
     }
 
     private static void logExclusions(final String[] exclusionArray) {

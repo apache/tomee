@@ -37,8 +37,7 @@ public class StatefulInterceptorTests extends BasicStatefulLocalTestClient {
         super.setUp();
         final Object obj = initialContext.lookup("BasicStatefulInterceptedBusinessRemote");
         assertNotNull("The object is null", obj);
-        remoteInterceptor = (BasicStatefulInterceptedRemote) javax.rmi.PortableRemoteObject.narrow(obj,
-            BasicStatefulInterceptedRemote.class);
+        remoteInterceptor = (BasicStatefulInterceptedRemote) obj;
         assertNotNull("Remote interceptor is null", remoteInterceptor);
     }
 

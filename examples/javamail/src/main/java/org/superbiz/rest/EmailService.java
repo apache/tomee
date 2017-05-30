@@ -55,7 +55,7 @@ public class EmailService {
             //Create a message
             final MimeMessage msg = new MimeMessage(session);
             msg.setFrom(new InternetAddress("your@email.address"));
-            final InternetAddress[] address = {new InternetAddress("general@tomitribe.com")};
+            final InternetAddress[] address = {new InternetAddress("user@provider.com")};
             msg.setRecipients(Message.RecipientType.TO, address);
             msg.setSubject("JavaMail API test");
             msg.setSentDate(new Date());

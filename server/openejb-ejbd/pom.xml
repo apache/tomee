@@ -27,7 +27,7 @@
   <parent>
     <artifactId>server</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>7.0.0-SNAPSHOT</version>
+    <version>7.0.4-SNAPSHOT</version>
   </parent>
 
   <artifactId>openejb-ejbd</artifactId>
@@ -140,6 +140,17 @@
       <groupId>com.agical.rmock</groupId>
       <artifactId>rmock</artifactId>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>cglib</groupId>
+          <artifactId>cglib-nodep</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>cglib</groupId>
+      <artifactId>cglib</artifactId>
+      <version>3.2.5</version>
     </dependency>
   </dependencies>
 </project>

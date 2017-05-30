@@ -16,13 +16,12 @@
  */
 package org.apache.openejb.test.stateful;
 
+import org.apache.openejb.test.object.ObjectGraph;
+
 import javax.ejb.EJBHome;
 import javax.ejb.EJBMetaData;
 import javax.ejb.EJBObject;
 import javax.ejb.Handle;
-
-import org.apache.openejb.test.object.ObjectGraph;
-
 import java.rmi.RemoteException;
 
 public class StatefulRmiIiopTests extends StatefulTestClient {
@@ -37,7 +36,7 @@ public class StatefulRmiIiopTests extends StatefulTestClient {
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/stateful/RMI-over-IIOP/EJBHome");
-        ejbHome = (RmiIiopStatefulHome) javax.rmi.PortableRemoteObject.narrow(obj, RmiIiopStatefulHome.class);
+        ejbHome = (RmiIiopStatefulHome) obj;
         ejbObject = ejbHome.create("RMI-IIOP TestBean");
     }
 
@@ -132,7 +131,7 @@ public class StatefulRmiIiopTests extends StatefulTestClient {
 
     public void test07_returnBooleanObject() {
         try {
-            final Boolean expected = new Boolean(true);
+            final Boolean expected = Boolean.TRUE;
             final Boolean actual = ejbObject.returnBooleanObject(expected);
             assertEquals(expected, actual);
         } catch (final Exception e) {
@@ -152,7 +151,7 @@ public class StatefulRmiIiopTests extends StatefulTestClient {
 
     public void test09_returnBooleanObjectArray() {
         try {
-            final Boolean[] expected = {new Boolean(true), new Boolean(false), new Boolean(true)};
+            final Boolean[] expected = {Boolean.TRUE, Boolean.FALSE, Boolean.TRUE};
             final Boolean[] actual = ejbObject.returnBooleanObjectArray(expected);
 
             assertNotNull("The array returned is null", actual);
@@ -518,10 +517,10 @@ public class StatefulRmiIiopTests extends StatefulTestClient {
     public void test35_returnEJBHome() {
         try {
             final Object obj = initialContext.lookup("client/tests/stateful/EncBean");
-            final EncStatefulHome expected = (EncStatefulHome) javax.rmi.PortableRemoteObject.narrow(obj, EncStatefulHome.class);
+            final EncStatefulHome expected = (EncStatefulHome) obj;
             assertNotNull("The EJBHome returned from JNDI is null", expected);
 
-            final EncStatefulHome actual = (EncStatefulHome) javax.rmi.PortableRemoteObject.narrow(ejbObject.returnEJBHome(expected), EncStatefulHome.class);
+            final EncStatefulHome actual = (EncStatefulHome) ejbObject.returnEJBHome(expected);
             assertNotNull("The EJBHome returned is null", actual);
 
         } catch (final Exception e) {
@@ -531,7 +530,7 @@ public class StatefulRmiIiopTests extends StatefulTestClient {
 
     public void test36_returnEJBHome2() {
         try {
-            final EncStatefulHome actual = (EncStatefulHome) javax.rmi.PortableRemoteObject.narrow(ejbObject.returnEJBHome(), EncStatefulHome.class);
+            final EncStatefulHome actual = (EncStatefulHome) ejbObject.returnEJBHome();
             assertNotNull("The EJBHome returned is null", actual);
 
         } catch (final Exception e) {
@@ -542,13 +541,13 @@ public class StatefulRmiIiopTests extends StatefulTestClient {
     public void test37_returnNestedEJBHome() {
         try {
             final Object obj = initialContext.lookup("client/tests/stateful/EncBean");
-            final EncStatefulHome expected = (EncStatefulHome) javax.rmi.PortableRemoteObject.narrow(obj, EncStatefulHome.class);
+            final EncStatefulHome expected = (EncStatefulHome) obj;
             assertNotNull("The EJBHome returned from JNDI is null", expected);
 
             final ObjectGraph graph = ejbObject.returnObjectGraph(new ObjectGraph(expected));
             assertNotNull("The ObjectGraph is null", graph);
 
-            final EncStatefulHome actual = (EncStatefulHome) javax.rmi.PortableRemoteObject.narrow(graph.getObject(), EncStatefulHome.class);
+            final EncStatefulHome actual = (EncStatefulHome) graph.getObject();
             assertNotNull("The EJBHome returned is null", actual);
         } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
@@ -560,7 +559,7 @@ public class StatefulRmiIiopTests extends StatefulTestClient {
             final ObjectGraph graph = ejbObject.returnNestedEJBHome();
             assertNotNull("The ObjectGraph is null", graph);
 
-            final EncStatefulHome actual = (EncStatefulHome) javax.rmi.PortableRemoteObject.narrow(graph.getObject(), EncStatefulHome.class);
+            final EncStatefulHome actual = (EncStatefulHome) graph.getObject();
             assertNotNull("The EJBHome returned is null", actual);
         } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
@@ -573,7 +572,7 @@ public class StatefulRmiIiopTests extends StatefulTestClient {
             final EncStatefulHome[] expected = new EncStatefulHome[3];
             for (int i = 0; i < expected.length; i++) {
                 final Object obj = initialContext.lookup("client/tests/stateful/EncBean");
-                expected[i] = (EncStatefulHome) javax.rmi.PortableRemoteObject.narrow(obj, EncStatefulHome.class);
+                expected[i] = (EncStatefulHome) obj;
                 assertNotNull("The EJBHome returned from JNDI is null", expected[i]);
             }
 
@@ -594,13 +593,13 @@ public class StatefulRmiIiopTests extends StatefulTestClient {
     public void test40_returnEJBObject() {
         try {
             final Object obj = initialContext.lookup("client/tests/stateful/EncBean");
-            final EncStatefulHome home = (EncStatefulHome) javax.rmi.PortableRemoteObject.narrow(obj, EncStatefulHome.class);
+            final EncStatefulHome home = (EncStatefulHome) obj;
             assertNotNull("The EJBHome returned from JNDI is null", home);
 
             final EncStatefulObject expected = home.create("test_40 StatefulBean");
             assertNotNull("The EJBObject created is null", expected);
 
-            final EncStatefulObject actual = (EncStatefulObject) javax.rmi.PortableRemoteObject.narrow(ejbObject.returnEJBObject(expected), EncStatefulObject.class);
+            final EncStatefulObject actual = (EncStatefulObject) ejbObject.returnEJBObject(expected);
             assertNotNull("The EJBObject returned is null", actual);
 
             assertTrue("The EJBObejcts are not identical", expected.isIdentical(actual));
@@ -611,7 +610,7 @@ public class StatefulRmiIiopTests extends StatefulTestClient {
 
     public void test41_returnEJBObject2() {
         try {
-            final EncStatefulObject actual = (EncStatefulObject) javax.rmi.PortableRemoteObject.narrow(ejbObject.returnEJBObject(), EncStatefulObject.class);
+            final EncStatefulObject actual = (EncStatefulObject) ejbObject.returnEJBObject();
             assertNotNull("The EJBObject returned is null", actual);
 
         } catch (final Exception e) {
@@ -622,7 +621,7 @@ public class StatefulRmiIiopTests extends StatefulTestClient {
     public void test42_returnNestedEJBObject() {
         try {
             final Object obj = initialContext.lookup("client/tests/stateful/EncBean");
-            final EncStatefulHome home = (EncStatefulHome) javax.rmi.PortableRemoteObject.narrow(obj, EncStatefulHome.class);
+            final EncStatefulHome home = (EncStatefulHome) obj;
             assertNotNull("The EJBHome returned from JNDI is null", home);
 
             final EncStatefulObject expected = home.create("test_42 StatefulBean");
@@ -631,7 +630,7 @@ public class StatefulRmiIiopTests extends StatefulTestClient {
             final ObjectGraph graph = ejbObject.returnObjectGraph(new ObjectGraph(expected));
             assertNotNull("The ObjectGraph is null", graph);
 
-            final EncStatefulObject actual = (EncStatefulObject) javax.rmi.PortableRemoteObject.narrow(graph.getObject(), EncStatefulObject.class);
+            final EncStatefulObject actual = (EncStatefulObject) graph.getObject();
             assertNotNull("The EJBObject returned is null", actual);
 
             assertTrue("The EJBObejcts are not identical", expected.isIdentical(actual));
@@ -645,7 +644,7 @@ public class StatefulRmiIiopTests extends StatefulTestClient {
             final ObjectGraph graph = ejbObject.returnNestedEJBObject();
             assertNotNull("The ObjectGraph is null", graph);
 
-            final EncStatefulObject actual = (EncStatefulObject) javax.rmi.PortableRemoteObject.narrow(graph.getObject(), EncStatefulObject.class);
+            final EncStatefulObject actual = (EncStatefulObject) graph.getObject();
             assertNotNull("The EJBHome returned is null", actual);
         } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
@@ -655,7 +654,7 @@ public class StatefulRmiIiopTests extends StatefulTestClient {
     public void test44_returnEJBObjectArray() {
         try {
             final Object obj = initialContext.lookup("client/tests/stateful/EncBean");
-            final EncStatefulHome home = (EncStatefulHome) javax.rmi.PortableRemoteObject.narrow(obj, EncStatefulHome.class);
+            final EncStatefulHome home = (EncStatefulHome) obj;
             assertNotNull("The EJBHome returned from JNDI is null", home);
 
             final EncStatefulObject[] expected = new EncStatefulObject[3];
@@ -684,7 +683,7 @@ public class StatefulRmiIiopTests extends StatefulTestClient {
     public void test45_returnEJBMetaData() {
         try {
             final Object obj = initialContext.lookup("client/tests/stateful/EncBean");
-            final EncStatefulHome home = (EncStatefulHome) javax.rmi.PortableRemoteObject.narrow(obj, EncStatefulHome.class);
+            final EncStatefulHome home = (EncStatefulHome) obj;
             assertNotNull("The EJBHome returned from JNDI is null", home);
 
             final EJBMetaData expected = home.getEJBMetaData();
@@ -713,7 +712,7 @@ public class StatefulRmiIiopTests extends StatefulTestClient {
     public void test47_returnNestedEJBMetaData() {
         try {
             final Object obj = initialContext.lookup("client/tests/stateful/EncBean");
-            final EncStatefulHome home = (EncStatefulHome) javax.rmi.PortableRemoteObject.narrow(obj, EncStatefulHome.class);
+            final EncStatefulHome home = (EncStatefulHome) obj;
             assertNotNull("The EJBHome returned from JNDI is null", home);
 
             final EJBMetaData expected = home.getEJBMetaData();
@@ -749,7 +748,7 @@ public class StatefulRmiIiopTests extends StatefulTestClient {
         try {
 
             final Object obj = initialContext.lookup("client/tests/stateful/EncBean");
-            final EncStatefulHome home = (EncStatefulHome) javax.rmi.PortableRemoteObject.narrow(obj, EncStatefulHome.class);
+            final EncStatefulHome home = (EncStatefulHome) obj;
             assertNotNull("The EJBHome returned from JNDI is null", home);
 
             final EJBMetaData[] expected = new EJBMetaData[3];
@@ -780,7 +779,7 @@ public class StatefulRmiIiopTests extends StatefulTestClient {
     public void test50_returnHandle() {
         try {
             final Object obj = initialContext.lookup("client/tests/stateful/EncBean");
-            final EncStatefulHome home = (EncStatefulHome) javax.rmi.PortableRemoteObject.narrow(obj, EncStatefulHome.class);
+            final EncStatefulHome home = (EncStatefulHome) obj;
             assertNotNull("The EJBHome returned from JNDI is null", home);
 
             final EncStatefulObject object = home.create("test_50 StatefulBean");
@@ -817,7 +816,7 @@ public class StatefulRmiIiopTests extends StatefulTestClient {
     public void test52_returnNestedHandle() {
         try {
             final Object obj = initialContext.lookup("client/tests/stateful/EncBean");
-            final EncStatefulHome home = (EncStatefulHome) javax.rmi.PortableRemoteObject.narrow(obj, EncStatefulHome.class);
+            final EncStatefulHome home = (EncStatefulHome) obj;
             assertNotNull("The EJBHome returned from JNDI is null", home);
 
             final EncStatefulObject object = home.create("test_52 StatefulBean");
@@ -860,7 +859,7 @@ public class StatefulRmiIiopTests extends StatefulTestClient {
     public void test54_returnHandleArray() {
         try {
             final Object obj = initialContext.lookup("client/tests/stateful/EncBean");
-            final EncStatefulHome home = (EncStatefulHome) javax.rmi.PortableRemoteObject.narrow(obj, EncStatefulHome.class);
+            final EncStatefulHome home = (EncStatefulHome) obj;
             assertNotNull("The EJBHome returned from JNDI is null", home);
 
             final EncStatefulObject object = home.create("test_54 StatefulBean");

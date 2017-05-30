@@ -21,11 +21,11 @@ import org.apache.openejb.test.entity.cmp.ComplexCmpHome;
 
 import javax.ejb.EJBObject;
 import javax.ejb.Handle;
-import java.rmi.MarshalledObject;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectOutputStream;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.rmi.MarshalledObject;
 
 /**
  * [7] Should be run as the seventh test suite of the BasicCmpTestClients
@@ -38,7 +38,7 @@ public class Complex2HandleTests extends ComplexCmp2TestClient {
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/entity/cmp2/ComplexCmpHome");
-        ejbHome = (ComplexCmpHome) javax.rmi.PortableRemoteObject.narrow(obj, ComplexCmpHome.class);
+        ejbHome = (ComplexCmpHome) obj;
         ejbObject = ejbHome.createObject("Fifth Bean");
         ejbHandle = ejbObject.getHandle();
     }

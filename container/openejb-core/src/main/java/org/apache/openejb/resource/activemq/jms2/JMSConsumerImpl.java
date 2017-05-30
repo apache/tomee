@@ -131,6 +131,9 @@ public class JMSConsumerImpl implements JMSConsumer {
     }
 
     private static Message wrap(final Message message) {
+        if (message == null) {
+            return null;
+        }
         final Message wrapped = JMS2.wrap(message);
         try {
             wrapped.setJMSDeliveryTime(System.currentTimeMillis());

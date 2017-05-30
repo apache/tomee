@@ -20,6 +20,7 @@ package org.apache.openejb.config;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Options;
+import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.openejb.util.Join;
 
 import java.io.File;
@@ -41,6 +42,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.Locale;
 
 /**
  * NOTE: Do not add inner or anonymous classes or a dependency without updating ExecMojo
@@ -50,7 +52,7 @@ import java.util.logging.Logger;
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class RemoteServer {
 
-    private static final Options options = new Options(System.getProperties());
+    private static final Options options = new Options(JavaSecurityManagers.getSystemProperties());
     public static final String SERVER_DEBUG_PORT = "server.debug.port";
     public static final String SERVER_SHUTDOWN_PORT = "server.shutdown.port";
     public static final String SERVER_SHUTDOWN_HOST = "server.shutdown.host";
@@ -60,10 +62,10 @@ public class RemoteServer {
     public static final String START = "start";
     public static final String STOP = "stop";
 
-    private final boolean debug = options.get(OPENEJB_SERVER_DEBUG, false);
+    private boolean debug = options.get(OPENEJB_SERVER_DEBUG, false);
     private final boolean profile = options.get("openejb.server.profile", false);
     private final boolean tomcat;
-    private final String javaOpts = System.getProperty("java.opts");
+    private final String javaOpts = JavaSecurityManagers.getSystemProperty("java.opts");
     private String additionalClasspath;
 
     /**
@@ -182,14 +184,15 @@ public class RemoteServer {
         if (ok) {
             try {
                 if (verbose) {
-                    System.out.println("[] " + cmd.toUpperCase() + " SERVER");
+                    System.out.println("[] " + cmd.toUpperCase(Locale.ENGLISH) + " SERVER");
                 }
 
                 final File home = getHome();
-                final String javaVersion = System.getProperty("java.version");
+                final String javaVersion = JavaSecurityManagers.getSystemProperty("java.version");
                 if (verbose) {
                     System.out.println("OPENEJB_HOME = " + home.getAbsolutePath());
-                    final String systemInfo = "Java " + javaVersion + "; " + System.getProperty("os.name") + "/" + System.getProperty("os.version");
+                    final String systemInfo = "Java " + javaVersion + "; " +
+                            JavaSecurityManagers.getSystemProperty("os.name") + "/" + JavaSecurityManagers.getSystemProperty("os.version");
                     System.out.println("SYSTEM_INFO  = " + systemInfo);
                 }
 
@@ -211,12 +214,13 @@ public class RemoteServer {
                 //File openejbJar = new File(lib, "openejb-core-" + version + ".jar");
 
                 final String java;
-                final boolean isWindows = System.getProperty("os.name", "unknown").toLowerCase().startsWith("windows");
+                final boolean isWindows = JavaSecurityManagers.getSystemProperty("os.name", "unknown")
+                        .toLowerCase(Locale.ENGLISH).startsWith("windows");
                 if (isWindows && START.equals(cmd) && options.get("server.windows.fork", false)) {
                     // run and forget
-                    java = new File(System.getProperty("java.home"), "bin/javaw").getAbsolutePath();
+                    java = new File(JavaSecurityManagers.getSystemProperty("java.home"), "bin/javaw").getAbsolutePath();
                 } else {
-                    java = new File(System.getProperty("java.home"), "bin/java").getAbsolutePath();
+                    java = new File(JavaSecurityManagers.getSystemProperty("java.home"), "bin/java").getAbsolutePath();
                 }
 
                 final List<String> argsList = new ArrayList<String>(20);
@@ -240,7 +244,7 @@ public class RemoteServer {
                 }
 
                 if (javaOpts != null) {
-                    argsList.addAll(parse(javaOpts));
+                    argsList.addAll(parse(javaOpts.replace("${openejb.base}", home.getAbsolutePath())));
                 }
 
                 final Map<String, String> addedArgs = new HashMap<String, String>();
@@ -250,9 +254,9 @@ public class RemoteServer {
                         if (equal < 0) {
                             addedArgs.put(arg, "null");
                         } else {
-                            addedArgs.put(arg.substring(0, equal), arg.substring(equal + 1));
+                            addedArgs.put(arg.substring(0, equal), arg.substring(equal + 1).replace("${openejb.base}", home.getAbsolutePath()));
                         }
-                        argsList.add(arg);
+                        argsList.add(arg.replace("${openejb.base}", home.getAbsolutePath()));
                     }
                 }
 
@@ -273,7 +277,7 @@ public class RemoteServer {
                     final File openejbJar = lib("openejb-core", lib, webapplib);
                     final StringBuilder cp = new StringBuilder(openejbJar.getAbsolutePath());
                     if (additionalClasspath != null) {
-                        cp.append(ps).append(additionalClasspath);
+                        cp.append(ps).append(additionalClasspath.replace("${openejb.base}", home.getAbsolutePath()));
                     }
 
                     argsList.add("-cp");
@@ -298,7 +302,8 @@ public class RemoteServer {
                     if (!addedArgs.containsKey("-Djava.io.tmpdir")) {
                         argsList.add("-Djava.io.tmpdir=" + temp.getAbsolutePath());
                     }
-                    if (!javaVersion.startsWith("1.9") && !addedArgs.containsKey("-Djava.endorsed.dirs")) {
+                    if ((javaVersion.startsWith("1.7") || javaVersion.startsWith("1.8")) && // java 9 dropped endorsed folder
+                            !addedArgs.containsKey("-Djava.endorsed.dirs") && endorsed.exists()) {
                         argsList.add("-Djava.endorsed.dirs=" + endorsed.getAbsolutePath());
                     }
                     if (!addedArgs.containsKey("-Dcatalina.base")) {
@@ -332,7 +337,7 @@ public class RemoteServer {
                         cp.append(ps).append(commonsLoggingJar.getAbsolutePath());
                     }
                     if (additionalClasspath != null) {
-                        cp.append(ps).append(additionalClasspath);
+                        cp.append(ps).append(additionalClasspath.replace("${openejb.base}", home.getAbsolutePath()));
                     }
                     argsList.add(cp.toString());
 
@@ -397,28 +402,32 @@ public class RemoteServer {
             public void run() {
                 try {
                     p.waitFor();
+                    synchronized (kill) {
+                        kill.remove(p);
+                    }
                 } catch (final InterruptedException e) {
-                    //Ignore
+                    Thread.interrupted();
+                } finally {
+                    latch.countDown();
                 }
-
-                latch.countDown();
             }
         }, "process-waitFor");
 
         t.start();
 
         try {
-            if (!latch.await(10, TimeUnit.SECONDS)) {
+            if (!latch.await(Integer.getInteger("openejb.server.waitFor.seconds", 10), TimeUnit.SECONDS)) {
                 killOnExit(p);
                 throw new RuntimeException("Timeout waiting for process");
             }
         } catch (final InterruptedException e) {
+            Thread.interrupted();
             killOnExit(p);
         }
     }
 
     public void kill3UNIX() { // debug purpose only
-        if (System.getProperty("os.name", "unknown").toLowerCase().startsWith("windows")) {
+        if (JavaSecurityManagers.getSystemProperty("os.name", "unknown").toLowerCase(Locale.ENGLISH).startsWith("windows")) {
             return;
         }
 
@@ -480,8 +489,9 @@ public class RemoteServer {
     }
 
     private void addIfSet(final List<String> argsList, final String key) {
-        if (System.getProperties().containsKey(key)) {
-            argsList.add("-D" + key + "=" + System.getProperty(key));
+        final String systemProperty = JavaSecurityManagers.getSystemProperty(key);
+        if (systemProperty != null) {
+            argsList.add("-D" + key + "=" + systemProperty);
         }
     }
 
@@ -490,7 +500,7 @@ public class RemoteServer {
             return home;
         }
 
-        final String openejbHome = System.getProperty("openejb.home");
+        final String openejbHome = JavaSecurityManagers.getSystemProperty("openejb.home");
 
         if (openejbHome != null) {
             home = new File(openejbHome);
@@ -685,7 +695,9 @@ public class RemoteServer {
     }
 
     private static void killOnExit(final Process p) {
-        kill.add(p);
+        synchronized (kill) {
+            kill.add(p);
+        }
     }
 
     // Shutdown hook for processes
@@ -693,6 +705,10 @@ public class RemoteServer {
 
     static {
         Runtime.getRuntime().addShutdownHook(new CleanUpThread());
+    }
+
+    public void setDebug(final boolean debug) {
+        this.debug = debug;
     }
 
     public static class CleanUpThread extends Thread {

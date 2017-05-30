@@ -30,6 +30,7 @@ import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
+import org.apache.openejb.core.security.AbstractSecurityService;
 import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.core.webservices.AddressingSupport;
@@ -51,6 +52,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 import javax.interceptor.AroundInvoke;
+import javax.security.auth.login.LoginException;
 
 import static org.apache.openejb.core.transaction.EjbTransactionUtil.afterInvoke;
 import static org.apache.openejb.core.transaction.EjbTransactionUtil.createTransactionPolicy;
@@ -171,7 +173,14 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Dest
         Instance bean = null;
         final CurrentCreationalContext currentCreationalContext = beanContext.get(CurrentCreationalContext.class);
 
+        Object runAs = null;
         try {
+            if (oldCallContext != null) {
+                final BeanContext oldBc = oldCallContext.getBeanContext();
+                if (oldBc.getRunAsUser() != null || oldBc.getRunAs() != null) {
+                    runAs = AbstractSecurityService.class.cast(securityService).overrideWithRunAsContext(callContext, beanContext, oldBc);
+                }
+            }
 
             //Check auth before overriding context
             final boolean authorized = type == InterfaceType.TIMEOUT || this.securityService.isCallerAuthorized(callMethod, type);
@@ -202,6 +211,13 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Dest
             }
             return _invoke(callMethod, runMethod, args, bean, callContext, type);
         } finally {
+            if (runAs != null) {
+                try {
+                    securityService.associate(runAs);
+                } catch (final LoginException e) {
+                    // no-op
+                }
+            }
             if (bean != null) {
                 if (callContext.isDiscardInstance()) {
                     this.instanceManager.discardInstance(callContext, bean);

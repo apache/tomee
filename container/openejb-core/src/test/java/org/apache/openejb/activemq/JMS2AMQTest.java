@@ -17,8 +17,10 @@
 package org.apache.openejb.activemq;
 
 import org.apache.activemq.ActiveMQXAConnectionFactory;
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.junit.ApplicationComposer;
+import org.apache.openejb.testing.Classes;
 import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.Module;
 import org.apache.openejb.testing.SimpleLog;
@@ -33,6 +35,7 @@ import javax.annotation.Resource;
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSConnectionFactory;
@@ -45,6 +48,14 @@ import javax.jms.MessageListener;
 import javax.jms.Queue;
 import javax.jms.TextMessage;
 import javax.jms.XAConnectionFactory;
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.NotSupportedException;
+import javax.transaction.RollbackException;
+import javax.transaction.SystemException;
+import javax.transaction.TransactionScoped;
+import javax.transaction.UserTransaction;
+import java.io.Serializable;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -52,6 +63,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static java.lang.Thread.sleep;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -65,25 +77,26 @@ public class JMS2AMQTest {
     public Properties config() {
         return new PropertiesBuilder()
 
-            .p("amq", "new://Resource?type=ActiveMQResourceAdapter")
-            .p("amq.DataSource", "")
-            .p("amq.BrokerXmlConfig", "broker:(vm://localhost)")
+                .p("amq", "new://Resource?type=ActiveMQResourceAdapter")
+                .p("amq.DataSource", "")
+                .p("amq.BrokerXmlConfig", "broker:(vm://localhost)")
 
-            .p("target", "new://Resource?type=Queue")
+                .p("target", "new://Resource?type=Queue")
 
-            .p("mdbs", "new://Container?type=MESSAGE")
-            .p("mdbs.ResourceAdapter", "amq")
+                .p("mdbs", "new://Container?type=MESSAGE")
+                .p("mdbs.ResourceAdapter", "amq")
 
-            .p("cf", "new://Resource?type=" + ConnectionFactory.class.getName())
-            .p("cf.ResourceAdapter", "amq")
+                .p("cf", "new://Resource?type=" + ConnectionFactory.class.getName())
+                .p("cf.ResourceAdapter", "amq")
 
-            .p("xaCf", "new://Resource?class-name=" + ActiveMQXAConnectionFactory.class.getName())
-            .p("xaCf.BrokerURL", "vm://localhost")
+                .p("xaCf", "new://Resource?class-name=" + ActiveMQXAConnectionFactory.class.getName())
+                .p("xaCf.BrokerURL", "vm://localhost")
 
-            .build();
+                .build();
     }
 
     @Module
+    @Classes(cdi = true, value = JustHereToCheckDeploymentIsOk.class)
     public MessageDrivenBean jar() {
         return new MessageDrivenBean(Listener.class);
     }
@@ -110,9 +123,23 @@ public class JMS2AMQTest {
     @Inject // just there to ensure the injection works and we don't require @JMSConnectionFactory
     private JMSContext defaultContext;
 
+    @Inject
+    private JustHereToCheckDeploymentIsOk session;
+
+    @Resource
+    private UserTransaction ut;
+
     @Before
     public void resetLatch() {
         Listener.reset();
+    }
+
+    @Test
+    public void serialize() throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
+        final JMSContext c = SerializationUtils.deserialize(SerializationUtils.serialize(Serializable.class.cast(context)));
+        ut.begin();
+        session.ok();
+        ut.commit();
     }
 
     @Test
@@ -134,6 +161,9 @@ public class JMS2AMQTest {
                 try {
                     ready.countDown();
                     assertEquals(text, context.createConsumer(destination3).receiveBody(String.class, TimeUnit.MINUTES.toMillis(1)));
+
+                    // ensure we dont do a NPE if there is nothing to read
+                    assertNull(context.createConsumer(destination3).receiveBody(String.class, 100));
                 } catch (final Throwable t) {
                     error.set(t);
                 } finally {
@@ -289,9 +319,56 @@ public class JMS2AMQTest {
         assertNull(exception == null ? "ok" : exception.getMessage(), exception);
     }
 
+    @Test
+    public void receiveGetBody() throws InterruptedException {
+        final String text = TEXT + "2";
+        final AtomicReference<Throwable> error = new AtomicReference<>();
+        final CountDownLatch ready = new CountDownLatch(1);
+        final CountDownLatch over = new CountDownLatch(1);
+        new Thread() {
+            @Override
+            public void run() {
+                {
+                    setName(JMS2AMQTest.class.getName() + ".receiveGetBody#receiver");
+                }
+
+                try (final JMSContext context = cf.createContext()) {
+                    try (final JMSConsumer consumer = context.createConsumer(destination2)) {
+                        ready.countDown();
+                        final Message receive = consumer.receive(TimeUnit.MINUTES.toMillis(1));
+                        assertEquals(text, receive.getBody(String.class));
+                    }
+                } catch (final Throwable ex) {
+                    error.set(ex);
+                } finally {
+                    over.countDown();
+                }
+            }
+        }.start();
+
+        ready.await(1, TimeUnit.MINUTES);
+        sleep(150); // just to ensure we called receive already
+
+        // now send the message
+        try (final JMSContext context = cf.createContext()) {
+            context.createProducer().send(destination2, text);
+        } catch (final JMSRuntimeException ex) {
+            fail(ex.getMessage());
+        }
+
+        over.await(1, TimeUnit.MINUTES);
+
+        // ensure we got the message and no exception
+        final Throwable exception = error.get();
+        if (exception != null) {
+            exception.printStackTrace();
+        }
+        assertNull(exception == null ? "ok" : exception.getMessage(), exception);
+    }
+
     @MessageDriven(activationConfig = {
-        @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
-        @ActivationConfigProperty(propertyName = "destination", propertyValue = "target")
+            @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
+            @ActivationConfigProperty(propertyName = "destination", propertyValue = "target")
     })
     public static class Listener implements MessageListener {
         public static volatile CountDownLatch latch;
@@ -301,7 +378,9 @@ public class JMS2AMQTest {
         public void onMessage(final Message message) {
             try {
                 try {
-                    ok = TextMessage.class.isInstance(message) && TEXT.equals(TextMessage.class.cast(message).getText());
+                    ok = TextMessage.class.isInstance(message)
+                            && TEXT.equals(TextMessage.class.cast(message).getText())
+                            && TEXT.equals(message.getBody(String.class));
                 } catch (final JMSException e) {
                     // no-op
                 }
@@ -318,6 +397,16 @@ public class JMS2AMQTest {
         public static boolean sync() throws InterruptedException {
             latch.await(1, TimeUnit.MINUTES);
             return ok;
+        }
+    }
+
+    @TransactionScoped
+    public static class JustHereToCheckDeploymentIsOk implements Serializable {
+        @Inject
+        private JMSContext context;
+
+        public void ok() {
+            assertNotNull(context);
         }
     }
 }

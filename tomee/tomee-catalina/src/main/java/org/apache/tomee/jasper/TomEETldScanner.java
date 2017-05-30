@@ -39,7 +39,7 @@ import static org.apache.openejb.loader.JarLocation.jarLocation;
 public class TomEETldScanner extends TldScanner {
     private static final Paths PATHS = new Paths(null);
     private static final URL MYFACES_URL = findJar("myfaces-impl", "org.apache.myfaces.webapp.AbstractFacesInitializer");
-    private static final URL JSTL_URL = findJar("openejb-jstl", "javax.servlet.jsp.jstl.core.ConditionalTagSupport");
+    private static final URL JSTL_URL = findJar("taglibs-standard-impl", "javax.servlet.jsp.jstl.core.ConditionalTagSupport");
     private static final Map<String, TldResourcePath> URI_TLD_RESOURCE = new HashMap<>();
     private static final Map<TldResourcePath, TaglibXml> TLD_RESOURCE_TAG_LIB = new HashMap<>();
 
@@ -7215,7 +7215,7 @@ public class TomEETldScanner extends TldScanner {
             System.out.println("{");
             System.out.println("final TldResourcePath path = new TldResourcePath("
                 + (entry.getValue().getUrl().toExternalForm().contains("myfaces")? "MYFACES_URL" :
-                (entry.getValue().getUrl().toExternalForm().contains("openejb-jstl")? "JSTL_URL" : "???"))
+                (entry.getValue().getUrl().toExternalForm().contains("taglibs-standard-jstlel")? "JSTL_URL" : "???"))
                 + ", null, \"" + entry.getValue().getEntryName() + "\");");
             System.out.println("URI_TLD_RESOURCE.put(\"" + entry.getKey() + "\", path);");
 

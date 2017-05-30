@@ -16,6 +16,10 @@
  */
 package org.apache.openejb.loader;
 
+import java.net.URLClassLoader;
+
+import static java.lang.ClassLoader.getSystemClassLoader;
+
 public class ClassPathFactory {
     @SuppressWarnings("checkstyle:needbraces")
     public static ClassPath createClassPath(final String name) {
@@ -23,10 +27,14 @@ public class ClassPathFactory {
         if (name.equalsIgnoreCase("tomcat-common")) return new TomcatClassPath();
         if (name.equalsIgnoreCase("tomcat-system")) return new TomcatClassPath();
         if (name.equalsIgnoreCase("tomcat-webapp")) return new WebAppClassPath();
-        if (name.equalsIgnoreCase("bootstrap")) return new SystemClassPath();
-        if (name.equalsIgnoreCase("system")) return new SystemClassPath();
+        if (name.equalsIgnoreCase("bootstrap") && isSystemSupported()) return new SystemClassPath();
+        if (name.equalsIgnoreCase("system") && isSystemSupported()) return new SystemClassPath();
         if (name.equalsIgnoreCase("thread")) return new ContextClassPath();
         if (name.equalsIgnoreCase("context")) return new ContextClassPath();
         return new ContextClassPath();
+    }
+
+    private static boolean isSystemSupported() {
+        return URLClassLoader.class.isInstance(getSystemClassLoader());
     }
 }

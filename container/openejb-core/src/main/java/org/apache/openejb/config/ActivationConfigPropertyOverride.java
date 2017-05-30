@@ -26,6 +26,7 @@ import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.PropertyPlaceHolderHelper;
@@ -47,7 +48,7 @@ public class ActivationConfigPropertyOverride implements DynamicDeployer {
         final Properties system = new Properties();
         system.putAll(SystemInstance.get().getProperties());
         system.putAll(appModule.getProperties());
-        system.putAll(System.getProperties());
+        system.putAll(JavaSecurityManagers.getSystemProperties());
 
         for (final EjbModule ejbModule : appModule.getEjbModules()) {
             final EjbJar ejbJar = ejbModule.getEjbJar();

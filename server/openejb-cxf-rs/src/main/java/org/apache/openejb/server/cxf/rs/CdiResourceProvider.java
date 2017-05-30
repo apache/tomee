@@ -23,6 +23,8 @@ import org.apache.cxf.message.Message;
 import org.apache.openejb.Injection;
 import org.apache.openejb.InjectionProcessor;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.webbeans.component.InjectionTargetBean;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
@@ -51,6 +53,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public abstract class CdiResourceProvider implements ResourceProvider {
+    public static final String INSTANCE_KEY = CdiResourceProvider.class.getName() + ".instance";
+
     protected final Collection<Injection> injections;
     protected final Context context;
     protected final WebBeansContext webbeansContext;
@@ -140,6 +144,11 @@ public abstract class CdiResourceProvider implements ResourceProvider {
 
     @Override
     public Object getInstance(final Message m) {
+        final Object existing = m.getExchange().get(INSTANCE_KEY);
+        if (existing != null) {
+            return existing;
+        }
+
         Contexts.bind(m.getExchange(), contextTypes);
 
         BeanCreator creator;
@@ -147,10 +156,10 @@ public abstract class CdiResourceProvider implements ResourceProvider {
             if (normalScopeCreator != null) {
                 creator = normalScopeCreator;
             } else {
-                creator = getPseudoScopedCdiBeanCreator();
+                creator = new PseudoScopedCdiBeanCreator();
             }
         } else {
-            creator = getDefaultBeanCreator(m);
+            creator = new DefaultBeanCreator(m, constructor);
         }
         m.put(BeanCreator.class, creator);
         m.put(CdiResourceProvider.class, this);
@@ -159,20 +168,21 @@ public abstract class CdiResourceProvider implements ResourceProvider {
         final Thread thread = Thread.currentThread();
         final ClassLoader oldLoader = thread.getContextClassLoader();
         thread.setContextClassLoader(classLoader);
+        Object instance;
         try {
-            return creator.create();
+            instance = creator.create();
         } catch (final NoBeanFoundException nbfe) {
             creator = new DefaultBeanCreator(m, constructor);
             m.put(BeanCreator.class, creator);
-            return creator.create();
+            instance = creator.create();
         } finally {
             thread.setContextClassLoader(oldLoader);
         }
+
+        m.getExchange().put(INSTANCE_KEY, instance);
+
+        return instance;
     }
-
-    protected abstract BeanCreator getDefaultBeanCreator(Message m);
-
-    protected abstract BeanCreator getPseudoScopedCdiBeanCreator();
 
     @Override // this method is not linked to o to consider it stateless
     public void releaseInstance(final Message m, final Object o) {
@@ -242,7 +252,7 @@ public abstract class CdiResourceProvider implements ResourceProvider {
         }
     }
 
-    protected static interface BeanCreator {
+    protected interface BeanCreator {
         Object create();
 
         void release();
@@ -275,7 +285,8 @@ public abstract class CdiResourceProvider implements ResourceProvider {
                 toClean = bm.createCreationalContext(bean);
                 return bm.getReference(bean, bean.getBeanClass(), toClean);
             } catch (final InjectionException ie) {
-                final String msg = bean + " can not be instantiated";
+                final String msg = "Failed to instantiate: " + bean;
+                Logger.getInstance(LogCategory.OPENEJB_CDI, this.getClass()).error(msg, ie);
                 throw new WebApplicationException(Response.serverError().entity(msg).build());
             }
         }

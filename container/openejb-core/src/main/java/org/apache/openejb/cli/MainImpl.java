@@ -24,6 +24,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.openejb.util.OpenEjbVersion;
 import org.apache.openejb.util.OptionsLog;
 import org.apache.xbean.finder.ResourceFinder;
@@ -69,8 +70,8 @@ public class MainImpl implements Main {
 
         // create the Options
         final Options options = new Options();
-        options.addOption(null, "version", false, "");
-        options.addOption("h", "help", false, "");
+        options.addOption(null, "version", false, "Display version");
+        options.addOption("h", "help", false, "Display help");
         options.addOption("e", "errors", false, "Produce execution error messages");
 
         CommandLine line = null;
@@ -168,7 +169,7 @@ public class MainImpl implements Main {
                 final String prop = arg.substring(arg.indexOf("-D") + 2, arg.indexOf("="));
                 final String val = arg.substring(arg.indexOf("=") + 1);
 
-                System.setProperty(prop, val);
+                JavaSecurityManagers.setSystemProperty(prop, val);
             }
         }
 
@@ -192,7 +193,7 @@ public class MainImpl implements Main {
                 final String prop = arg.substring(idx + 2, eq);
                 final String val = arg.substring(eq + 1);
 
-                System.setProperty(prop, val);
+                JavaSecurityManagers.setSystemProperty(prop, val);
                 systemInstance.setProperty(prop, val);
             } else {
                 argsList.add(arg);
@@ -241,6 +242,7 @@ public class MainImpl implements Main {
             final String footer = "\n" +
                 "Try 'openejb <command> --help' for help on a specific command.\n" +
                 "For example 'openejb deploy --help'.\n" +
+                "Important: to display exceptions while running commands, add -e option.\n" +
                 "\n" +
                 "Apache OpenEJB -- EJB Container System and Server.\n" +
                 "For additional information, see http://tomee.apache.org\n" +

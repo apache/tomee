@@ -299,7 +299,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
             homeLocalBean = null;
             home = null;
             remote = null;
-        } else if (beanContext.isLocalbean()) {
+        } else if (beanContext.isLocalbean() || (noLocalInterface && beanContext.getBusinessRemoteInterfaces().isEmpty() /*EJB2*/)) {
             homeLocalBean = beanContext.getBusinessLocalBeanHome();
             home = null;
             remote = null;
@@ -451,6 +451,15 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
             if (!isDynamicBean(bean)) {
                 super.defineLifecycleInterceptors(bean, annotatedType, webBeansContext);
             }
+        }
+
+        @Override
+        public void defineInterceptorStack(final Bean<T> bean, final AnnotatedType<T> annotatedType, final WebBeansContext webBeansContext) {
+            super.defineInterceptorStack(bean,
+                    isDynamicBean(bean) ?
+                            (AnnotatedType<T>) webBeansContext.getAnnotatedElementFactory()
+                                    .newAnnotatedType(CdiEjbBean.class.cast(bean).getBeanContext().getManagedClass()) : annotatedType,
+                    webBeansContext);
         }
 
         @Override

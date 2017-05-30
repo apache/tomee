@@ -22,7 +22,6 @@ import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.cdi.transactional.TransactionContext;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.AppFinder;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -33,6 +32,7 @@ import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.corespi.se.DefaultApplicationBoundaryService;
 import org.apache.webbeans.intercept.ApplicationScopedBeanInterceptorHandler;
 import org.apache.webbeans.intercept.NormalScopedBeanInterceptorHandler;
+import org.apache.webbeans.intercept.RequestScopedBeanInterceptorHandler;
 import org.apache.webbeans.intercept.SessionScopedBeanInterceptorHandler;
 import org.apache.webbeans.spi.ApplicationBoundaryService;
 import org.apache.webbeans.spi.BeanArchiveService;
@@ -46,17 +46,13 @@ import org.apache.webbeans.spi.ScannerService;
 import org.apache.webbeans.spi.SecurityService;
 import org.apache.webbeans.spi.TransactionService;
 import org.apache.webbeans.spi.adaptor.ELAdaptor;
-import org.apache.webbeans.intercept.RequestScopedBeanInterceptorHandler;
 
-import java.util.Collections;
-import java.util.Comparator;
+import javax.enterprise.inject.spi.DeploymentException;
+import javax.transaction.Transactional;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
-import javax.enterprise.inject.spi.DeploymentException;
-import javax.transaction.Transactional;
 
 /**
  * @version $Rev:$ $Date:$
@@ -149,7 +145,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         if (!properties.containsKey(LoaderService.class.getName())) {
             final LoaderService loaderService = SystemInstance.get().getComponent(LoaderService.class);
             if (loaderService == null && !properties.containsKey(LoaderService.class.getName())) {
-                services.put(LoaderService.class, new OptimizedLoaderService());
+                services.put(LoaderService.class, new OptimizedLoaderService(appContext.getProperties()));
             } else if (loaderService != null) {
                 services.put(LoaderService.class, loaderService);
             }
@@ -213,16 +209,22 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
 
     private void setConfiguration(final OpenWebBeansConfiguration configuration) {
         //from CDI builder
-        configuration.setProperty(SecurityService.class.getName(), ManagedSecurityService.class.getName());
-        configuration.setProperty(OpenWebBeansConfiguration.INTERCEPTOR_FORCE_NO_CHECKED_EXCEPTIONS, "false");
+        setProperty(configuration, SecurityService.class.getName(), ManagedSecurityService.class.getName());
+        setProperty(configuration, OpenWebBeansConfiguration.INTERCEPTOR_FORCE_NO_CHECKED_EXCEPTIONS, "false");
         // configuration.setProperty(OpenWebBeansConfiguration.APPLICATION_IS_JSP, "true");
 
-        configuration.setProperty(OpenWebBeansConfiguration.CONTAINER_LIFECYCLE, OpenEJBLifecycle.class.getName());
-        configuration.setProperty(OpenWebBeansConfiguration.TRANSACTION_SERVICE, OpenEJBTransactionService.class.getName());
-        configuration.setProperty(OpenWebBeansConfiguration.SCANNER_SERVICE, CdiScanner.class.getName());
-        configuration.setProperty(OpenWebBeansConfiguration.CONTEXTS_SERVICE, CdiAppContextsService.class.getName());
-        configuration.setProperty(OpenWebBeansConfiguration.VALIDATOR_SERVICE, OpenEJBValidatorService.class.getName());
-        configuration.setProperty(ResourceInjectionService.class.getName(), CdiResourceInjectionService.class.getName());
+        setProperty(configuration, OpenWebBeansConfiguration.CONTAINER_LIFECYCLE, OpenEJBLifecycle.class.getName());
+        setProperty(configuration, OpenWebBeansConfiguration.TRANSACTION_SERVICE, OpenEJBTransactionService.class.getName());
+        setProperty(configuration, OpenWebBeansConfiguration.SCANNER_SERVICE, CdiScanner.class.getName());
+        setProperty(configuration, OpenWebBeansConfiguration.CONTEXTS_SERVICE, CdiAppContextsService.class.getName());
+        setProperty(configuration, OpenWebBeansConfiguration.VALIDATOR_SERVICE, OpenEJBValidatorService.class.getName());
+        setProperty(configuration, ResourceInjectionService.class.getName(), CdiResourceInjectionService.class.getName());
+    }
+
+    private void setProperty(final OpenWebBeansConfiguration configuration, final String name, final String value) {
+        if (configuration.getProperty(name) == null) {
+            configuration.setProperty(name, value);
+        }
     }
 
     @Override
@@ -281,14 +283,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         context = AppFinder.findAppContextOrWeb(cl, AppFinder.WebBeansContextTransformer.INSTANCE);
         if (context == null) {
             context = contexts.get();
-            if (context == null) {
-                // Fallback strategy is to just grab the first AppContext and assume it is the right one
-                // This kind of algorithm could be greatly improved
-                final List<AppContext> appContexts = SystemInstance.get().getComponent(ContainerSystem.class).getAppContexts();
-                if (appContexts.size() > 0) {
-                    return getWebBeansContext(appContexts);
-                }
-
+            if (context == null) { // any "guess" algortithm there would break prod apps cause AppFinder failed already, let's try to not try to be more clever than we can
                 throw new IllegalStateException("On a thread without an initialized context nor a classloader mapping a deployed app");
             }
         } else { // some cache to avoid to browse each app each time
@@ -296,24 +291,6 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         }
 
         return context;
-    }
-
-    private static WebBeansContext getWebBeansContext(final List<AppContext> appContexts) {
-        Collections.sort(appContexts, new Comparator<AppContext>() {
-            @Override
-            public int compare(final AppContext appContext, final AppContext appContext1) {
-                return cdiSize(appContext1) - cdiSize(appContext);
-            }
-        });
-        return appContexts.get(0).getWebBeansContext();
-    }
-
-    private static int cdiSize(final AppContext ctx) {
-        final WebBeansContext wbc = ctx.getWebBeansContext();
-        if (wbc == null) {
-            return 0;
-        }
-        return wbc.getBeanManagerImpl().getBeans().size();
     }
 
     @Override

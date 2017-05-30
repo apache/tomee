@@ -35,6 +35,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.cxf.CxfEndpoint;
 import org.apache.openejb.server.cxf.CxfServiceConfiguration;
 import org.apache.openejb.server.cxf.JaxWsImplementorInfoImpl;
+import org.apache.openejb.util.AppFinder;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.webbeans.component.AbstractOwbBean;
@@ -106,9 +107,10 @@ public class PojoEndpoint extends CxfEndpoint {
         final ClassLoader old = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(loader);
         try {
-            final WebBeansContext webBeansContext = WebBeansContext.currentInstance();
-            final BeanManagerImpl bm = webBeansContext.getBeanManagerImpl();
-            if (bm.isInUse()) { // try cdi bean
+            final WebBeansContext webBeansContext = AppFinder.findAppContextOrWeb(
+                    Thread.currentThread().getContextClassLoader(), AppFinder.WebBeansContextTransformer.INSTANCE);
+            final BeanManagerImpl bm = webBeansContext == null ? null : webBeansContext.getBeanManagerImpl();
+            if (bm != null && bm.isInUse()) { // try cdi bean
                 if (JAXWS_AS_CDI_BEANS) {
                     try {
                         final Set<Bean<?>> beans = bm.getBeans(instance);
@@ -152,7 +154,7 @@ public class PojoEndpoint extends CxfEndpoint {
                 injectionProcessor.createInstance();
                 implementor = injectionProcessor.getInstance();
                 injector = injectCxfResources(implementor);
-                if (!JAXWS_AS_CDI_BEANS && bm.isInUse()) {
+                if (!JAXWS_AS_CDI_BEANS && bm != null && bm.isInUse()) {
                     final CreationalContextImpl creationalContext = bm.createCreationalContext(null);
                     OWBInjector.inject(bm, implementor, null);
                     toClean = creationalContext;

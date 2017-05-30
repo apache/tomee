@@ -28,6 +28,7 @@ import org.apache.commons.cli.PosixParser;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.OpenEjbVersion;
 import org.apache.openejb.util.SuperProperties;
@@ -143,7 +144,7 @@ public class Info2Properties {
     }
 
     public static void printConfig(final OpenEjbConfiguration configuration) {
-        printConfig(configuration, System.out, System.getProperty("line.separator"));
+        printConfig(configuration, System.out, JavaSecurityManagers.getSystemProperty("line.separator"));
     }
 
     public static void printConfig(final OpenEjbConfiguration configuration, final PrintStream out, final String cr) {
@@ -205,12 +206,12 @@ public class Info2Properties {
             p.setSpaceBetweenProperties(false);
             p.setKeyValueSeparator(" = ");
             p.setLineSeparator(cr);
-            copyOpenEjbProperties(System.getProperties(), p);
+            copyOpenEjbProperties(JavaSecurityManagers.getSystemProperties(), p);
             copyOpenEjbProperties(SystemInstance.get().getProperties(), p);
             p.store(out, null);
 
 
-            final Properties p2 = System.getProperties();
+            final Properties p2 = JavaSecurityManagers.getSystemProperties();
             final String[] misc = {"os.version", "os.name", "os.arch", "java.version", "java.vendor"};
             for (final String prop : misc) {
                 comment(out, cr, prop + "=" + p2.get(prop));

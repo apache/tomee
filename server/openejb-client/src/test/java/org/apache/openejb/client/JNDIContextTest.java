@@ -20,6 +20,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import javax.naming.Context;
+import javax.naming.NamingException;
 import java.util.Hashtable;
 
 /**
@@ -27,6 +28,20 @@ import java.util.Hashtable;
  */
 @SuppressWarnings("UseOfObsoleteCollectionType")
 public class JNDIContextTest {
+    @Test
+    public void customCipher() throws NamingException {
+        final JNDIContext jndiContext = new JNDIContext();
+        final Hashtable<String, Object> env = new Hashtable<>();
+        env.put(JNDIContext.Decipher.class.getName(), new JNDIContext.Decipher() {
+            @Override
+            public String decipher(final String from) {
+                return "ejbd://localhost:1234";
+            }
+        });
+        env.put(Context.PROVIDER_URL, "replaced");
+        jndiContext.getInitialContext(env);
+        Assert.assertEquals("ejbd://localhost:1234", jndiContext.getEnvironment().get(Context.PROVIDER_URL).toString());
+    }
 
     @Test
     public void testGetInitialContext() throws Exception {

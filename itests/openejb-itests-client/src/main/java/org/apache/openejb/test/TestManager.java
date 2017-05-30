@@ -18,9 +18,9 @@ package org.apache.openejb.test;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.Properties;
-import java.security.PrivilegedAction;
 import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.util.Properties;
 
 /**
  * @version $Rev$ $Date$

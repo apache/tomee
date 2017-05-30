@@ -37,9 +37,16 @@ import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.loader.provisining.ProvisioningResolver;
+import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
+import javax.ejb.Lock;
+import javax.ejb.Remote;
+import javax.ejb.Singleton;
+import javax.ejb.TransactionManagement;
+import javax.enterprise.inject.Alternative;
+import javax.validation.ValidationException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,12 +58,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
-import javax.ejb.Lock;
-import javax.ejb.Remote;
-import javax.ejb.Singleton;
-import javax.ejb.TransactionManagement;
-import javax.enterprise.inject.Alternative;
-import javax.validation.ValidationException;
 
 import static javax.ejb.LockType.READ;
 import static javax.ejb.TransactionManagementType.BEAN;
@@ -90,7 +91,7 @@ public class DeployerEjb implements Deployer {
 
     static {
         final String uniqueName = "OpenEJB-" + new BigInteger(128, new SecureRandom()).toString(Character.MAX_RADIX);
-        final String tempDir = System.getProperty("java.io.tmpdir");
+        final String tempDir = JavaSecurityManagers.getSystemProperty("java.io.tmpdir");
         File unique;
         try {
             unique = new File(tempDir, uniqueName).getCanonicalFile();
@@ -417,9 +418,12 @@ public class DeployerEjb implements Deployer {
             }
         }
         if (appInfo != null) {
-            assembler.destroyApplication(appInfo);
-            if (appInfo.properties.containsKey("save-deployment")) {
-                saveDeployment(new File(moduleId), false);
+            try {
+                assembler.destroyApplication(appInfo);
+            } finally {
+                if (appInfo.properties.containsKey("save-deployment")) {
+                    saveDeployment(new File(moduleId), false);
+                }
             }
         } else {
             throw new NoSuchApplicationException(moduleId);

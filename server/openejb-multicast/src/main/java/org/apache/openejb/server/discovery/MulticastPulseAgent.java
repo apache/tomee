@@ -10,12 +10,13 @@ import org.apache.openejb.util.DaemonThreadFactory;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.OptionsLog;
-import sun.net.util.IPAddressUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.DatagramPacket;
+import java.net.Inet4Address;
+import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.MulticastSocket;
@@ -631,6 +632,13 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
     private static String getHosts(final Set<String> ignore) {
 
         final Set<String> hosts = new TreeSet<String>(new Comparator<String>() {
+            private boolean isIPv4LiteralAddress(final InetAddress val) {
+                return Inet4Address.class.isInstance(val);
+            }
+
+            private boolean isIPv6LiteralAddress(final InetAddress val) {
+                return Inet6Address.class.isInstance(val);
+            }
 
             @Override
             public int compare(final String h1, final String h2) {
@@ -638,12 +646,21 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
                 //Sort by hostname, IPv4, IPv6
 
                 try {
-                    if (IPAddressUtil.isIPv4LiteralAddress(h1)) {
-                        if (IPAddressUtil.isIPv6LiteralAddress(h2.replace("[", "").replace("]", ""))) {
+                    InetAddress address1 = null;
+                    InetAddress address2 = null;
+                    try {
+                        address1 = InetAddress.getByName(h1);
+                        address2 = InetAddress.getByName(h2);
+                    } catch(final UnknownHostException e) {
+                        // no-op
+                    }
+
+                    if (isIPv4LiteralAddress(address1)) {
+                        if (isIPv6LiteralAddress(address2)) {
                             return -1;
                         }
-                    } else if (IPAddressUtil.isIPv6LiteralAddress(h1.replace("[", "").replace("]", ""))) {
-                        if (IPAddressUtil.isIPv4LiteralAddress(h2)) {
+                    } else if (isIPv6LiteralAddress(address1)) {
+                        if (isIPv4LiteralAddress(address2)) {
                             return 1;
                         }
                     } else if (0 != h1.compareTo(h2)) {

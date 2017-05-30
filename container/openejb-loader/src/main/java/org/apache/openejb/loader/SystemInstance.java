@@ -21,18 +21,12 @@ import org.apache.openejb.loader.event.ComponentRemoved;
 import org.apache.openejb.loader.provisining.ProvisioningResolver;
 import org.apache.openejb.observer.ObserverManager;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Method;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
-
-import static java.util.Arrays.asList;
 
 /**
  * This class aims to be the one and only static in the entire system
@@ -46,83 +40,6 @@ import static java.util.Arrays.asList;
  * @org.apache.xbean.XBean element="system"
  */
 public final class SystemInstance {
-    static { // preload API to not fall into module hell on JVM >= 9
-        final String version = System.getProperty("java.version", "-");
-        final boolean j9hacks = (!version.startsWith("1.") || version.startsWith("1.9.")) && !Boolean.getBoolean("openejb.java9.skip-hacks");
-        System.setProperty("openejb.java9.hack", Boolean.toString(j9hacks));
-        if (j9hacks) {
-            ClassLoader loader = Thread.currentThread().getContextClassLoader();
-            if (loader == null) {
-                loader = ClassLoader.getSystemClassLoader();
-            }
-            Method defineClass = null;
-            for (final String clazz : asList(
-                    // JTA - rt.jar API
-                    "javax.transaction.HeuristicCommitException",
-                    "javax.transaction.HeuristicMixedException",
-                    "javax.transaction.HeuristicRollbackException",
-                    "javax.transaction.NotSupportedException",
-                    "javax.transaction.RollbackException",
-                    "javax.transaction.Status",
-                    "javax.transaction.Synchronization",
-                    "javax.transaction.SystemException",
-                    "javax.transaction.Transaction",
-                    "javax.transaction.Transactional",
-                    "javax.transaction.TransactionalException",
-                    "javax.transaction.TransactionManager",
-                    "javax.transaction.TransactionScoped",
-                    "javax.transaction.TransactionSynchronizationRegistry",
-                    "javax.transaction.UserTransaction",
-                    // javax.annotation - rt.jar
-                    "javax.annotation.security.DeclareRoles",
-                    "javax.annotation.security.DenyAll",
-                    "javax.annotation.security.PermitAll",
-                    "javax.annotation.security.RolesAllowed",
-                    "javax.annotation.security.RunAs",
-                    "javax.annotation.sql.DataSourceDefinition",
-                    "javax.annotation.sql.DataSourceDefinitions",
-                    "javax.annotation.ManagedBean",
-                    "javax.annotation.Priority"
-            )) {
-                try {
-                    loader.loadClass(clazz);
-                } catch (final ClassNotFoundException e) {
-                    // DONT CALL LOGGER THERE
-                    final URL url = loader.getResource(clazz.replace('.', '/') + ".class");
-                    if (url == null) {
-                        e.printStackTrace();
-                        continue;
-                    }
-                    try {
-                        if (defineClass == null) {
-                            Class<?> type = loader.getClass();
-                            do {
-                                try {
-                                    defineClass = type.getDeclaredMethod("defineClass", String.class, byte[].class, int.class, int.class);
-                                } catch (final NoSuchMethodException ignore) {
-                                    // do nothing, we need to search the superclass
-                                }
-                                type = type.getSuperclass();
-                            } while (defineClass == null && type != Object.class);
-                            defineClass.setAccessible(true);
-                        }
-                        try (final InputStream is = url.openStream()) {
-                            final ByteArrayOutputStream out = new ByteArrayOutputStream();
-                            IO.copy(is, out);
-
-                            final byte[] bytes = out.toByteArray();
-                            defineClass.invoke(loader, clazz, bytes, 0, bytes.length);
-
-                            loader.loadClass(clazz);
-                        }
-                    } catch (final Throwable oops) {
-                        e.printStackTrace(); // no logger!
-                    }
-                }
-            }
-        }
-    }
-
     private static final String PROFILE_PROP = "openejb.profile";
     private static final String DEFAULT_PROFILE = "development";
 

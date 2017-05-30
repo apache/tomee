@@ -34,6 +34,7 @@ import org.apache.openejb.config.QuickJarsTxtParser;
 import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.AppFinder;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URLs;
@@ -50,6 +51,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -69,6 +71,7 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
     private static final ThreadLocal<Context> CONTEXT = new ThreadLocal<>();
 
     public static final String TOMEE_WEBAPP_FIRST = "tomee.webapp-first";
+    public static final String TOMEE_EAR_DEFAULT = "tomee.ear.webapp-first";
 
     static {
         boolean result = ClassLoader.registerAsParallelCapable();
@@ -95,7 +98,7 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
         hashCode = construct();
         setJavaseClassLoader(getSystemClassLoader());
         containerClassLoader = ParentClassLoaderFinder.Helper.get();
-        isEar = getParent() != null && !getParent().equals(containerClassLoader);
+        isEar = getInternalParent() != null && !getInternalParent().equals(containerClassLoader) && defaultEarBehavior();
         originalDelegate = getDelegate();
     }
 
@@ -104,8 +107,12 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
         hashCode = construct();
         setJavaseClassLoader(getSystemClassLoader());
         containerClassLoader = ParentClassLoaderFinder.Helper.get();
-        isEar = getParent() != null && !getParent().equals(containerClassLoader);
+        isEar = getInternalParent() != null && !getInternalParent().equals(containerClassLoader) && defaultEarBehavior();
         originalDelegate = getDelegate();
+    }
+
+    public ClassLoader getInternalParent() {
+        return getParent();
     }
 
     private int construct() {
@@ -181,11 +188,11 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
         }
         synchronized (this) { // TODO: rework it to avoid it and get aligned on Java 7 classloaders (but not a big issue)
             if (isEar) {
-                final boolean filter = filter(name);
+                final boolean filter = filter(name, true);
                 filterTempCache.put(name, filter); // will be called again by super.loadClass() so cache it
                 if (!filter) {
-                    if (URLClassLoaderFirst.class.isInstance(getParent())) { // true
-                        final URLClassLoaderFirst urlClassLoaderFirst = URLClassLoaderFirst.class.cast(getParent());
+                    if (URLClassLoaderFirst.class.isInstance(getInternalParent())) { // true
+                        final URLClassLoaderFirst urlClassLoaderFirst = URLClassLoaderFirst.class.cast(getInternalParent());
                         Class<?> c = urlClassLoaderFirst.findAlreadyLoadedClass(name);
                         if (c != null) {
                             return c;
@@ -403,7 +410,11 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
         return true;
     }
 
-    public static boolean isDelegate() {
+    protected boolean defaultEarBehavior() {
+        return !SystemInstance.get().getOptions().get(TOMEE_EAR_DEFAULT, false /*bck compat*/);
+    }
+
+    private static boolean isDelegate() {
         return !SystemInstance.get().getOptions().get(TOMEE_WEBAPP_FIRST, true);
     }
 
@@ -415,7 +426,7 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
         try {
             return super.getResourceAsStream(name);
         } catch (final NullPointerException npe) {
-            // workaround cause of a bug in tomcat 8.5.0
+            // workaround cause of a bug in tomcat 8.5.0, keeping it even if we upgraded until we don't support 8.5.0 anymore
             final URL url = super.getResource(name);
             if (url != null) {
                 try {
@@ -456,10 +467,26 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
                     it.remove();
                 }
             }
-            if (list.size() == 1) {
-                return Collections.enumeration(list);
-            }
             return Collections.enumeration(list);
+        }
+        if ("META-INF/faces-config.xml".equals(name)) { // mojarra workaround
+            try {
+                if (AppFinder.findAppContextOrWeb(
+                        Thread.currentThread().getContextClassLoader(), AppFinder.WebBeansContextTransformer.INSTANCE) == null
+                        && Boolean.parseBoolean(SystemInstance.get().getProperty("tomee.jsf.ignore-owb", "true"))) {
+                    final Collection<URL> list = new HashSet<>(Collections.list(super.getResources(name)));
+                    final Iterator<URL> it = list.iterator();
+                    while (it.hasNext()) {
+                        final String fileName = Files.toFile(it.next()).getName();
+                        if (fileName.startsWith("openwebbeans-"/*jsf|el22*/) && fileName.endsWith(".jar")) {
+                            it.remove();
+                        }
+                    }
+                    return Collections.enumeration(list);
+                }
+            } catch (final Throwable th) {
+                // no-op
+            }
         }
         return URLClassLoaderFirst.filterResources(name, super.getResources(name));
     }
@@ -476,7 +503,7 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
 
     @Override
     public TomEEWebappClassLoader copyWithoutTransformers() {
-        final TomEEWebappClassLoader result = new TomEEWebappClassLoader(getParent());
+        final TomEEWebappClassLoader result = new TomEEWebappClassLoader(getInternalParent());
         result.additionalRepos = additionalRepos;
         result.configurer = configurer;
         super.copyStateWithoutTransformers(result);

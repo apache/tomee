@@ -29,6 +29,12 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.OptionsLog;
 
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -37,15 +43,11 @@ import java.io.StringWriter;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.URI;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 
 /**
  * This is the main class for the web administration.  It takes care of the
@@ -60,6 +62,7 @@ public class OpenEJBHttpServer implements HttpServer {
     private HttpListener listener;
     private Set<Output> print;
     private boolean indent;
+    private boolean countStreams;
 
     public OpenEJBHttpServer() {
         this(null);
@@ -83,9 +86,17 @@ public class OpenEJBHttpServer implements HttpServer {
                 listener == null ? getHttpListenerRegistry() : listener, ParentClassLoaderFinder.Helper.get());
     }
 
-    public static boolean isTextXml(final Map<String, String> headers) {
-        final String contentType = headers.get("Content-Type");
-        return contentType != null && contentType.contains("text/xml");
+    public static boolean isTextXml(final Map<String, List<String>> headers) {
+        final Collection<String> contentType = headers.get("Content-Type");
+        if (contentType == null) {
+            return false;
+        }
+        for (final String current : contentType) {
+            if (current.contains("text/xml")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -108,8 +119,13 @@ public class OpenEJBHttpServer implements HttpServer {
         try {
             RequestInfos.initRequestInfo(socket);
 
-            in = new CountingInputStream(socket.getInputStream());
-            out = new CountingOutputStream(socket.getOutputStream());
+            if (countStreams) {
+                in = new CountingInputStream(socket.getInputStream());
+                out = new CountingOutputStream(socket.getOutputStream());
+            } else {
+                in = socket.getInputStream();
+                out = socket.getOutputStream();
+            }
 
             //TODO: if ssl change to https
             final URI socketURI = new URI("http://" + socket.getLocalAddress().getHostAddress() + ":" + socket.getLocalPort());
@@ -162,7 +178,7 @@ public class OpenEJBHttpServer implements HttpServer {
         indent = print.size() > 0 && options.get("" +
             "" +
             ".xml", false);
-
+        countStreams = options.get("stream.count", false);
     }
 
     public static enum Output {
@@ -209,7 +225,8 @@ public class OpenEJBHttpServer implements HttpServer {
         try {
             response = process(socket, socketURI, in);
             return response != null;
-        } catch (Throwable t) {
+        } catch (final Throwable t) {
+            log.error(t.getMessage(), t);
             response = HttpResponseImpl.createError(t.getMessage(), t);
             return true;
         } finally {
@@ -220,7 +237,7 @@ public class OpenEJBHttpServer implements HttpServer {
                         response.writeMessage(new LoggerOutputStream(log, "debug"), indent);
                     }
                 }
-            } catch (Throwable t2) {
+            } catch (final Throwable t2) {
 
                 if (log.isDebugEnabled()) {
                     log.debug("Could not write response", t2);

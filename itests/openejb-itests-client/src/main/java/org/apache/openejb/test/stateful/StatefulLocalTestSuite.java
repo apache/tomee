@@ -18,8 +18,8 @@ package org.apache.openejb.test.stateful;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.apache.openejb.test.stateless.AnnotatedSetterInjectionStatelessPojoLocalHomeIntfcTests;
 import org.apache.openejb.test.FilteredTestSuite;
+import org.apache.openejb.test.stateless.AnnotatedSetterInjectionStatelessPojoLocalHomeIntfcTests;
 
 /**
  * @version $Rev$ $Date$

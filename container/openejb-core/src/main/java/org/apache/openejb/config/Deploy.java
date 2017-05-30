@@ -41,6 +41,7 @@ import org.apache.openejb.cli.SystemExitException;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.JarExtractor;
+import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.OpenEjbVersion;
 
@@ -139,7 +140,7 @@ public class Deploy {
             String serverUrl = line.getOptionValue("server-url", defaultServerUrl);
             if ("auto".equalsIgnoreCase(serverUrl.trim())) {
                 try {
-                    final File sXml = new File(System.getProperty("openejb.base", "conf/server.xml"));
+                    final File sXml = new File(JavaSecurityManagers.getSystemProperty("openejb.base", "conf/server.xml"));
                     if (sXml.exists()) {
                         final QuickServerXmlParser result = QuickServerXmlParser.parse(sXml);
                         serverUrl = "http://" + result.host() + ":" + result.http() + "/tomee/ejb";

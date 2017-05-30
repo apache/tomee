@@ -20,6 +20,7 @@ package org.apache.openejb.core.webservices;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.util.Base64;
+import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.openejb.util.URLs;
 
 import java.io.File;
@@ -112,17 +113,17 @@ public class UriResolver {
             try {
                 final HttpURLConnection huc = (HttpURLConnection) url.openConnection();
 
-                final String host = System.getProperty("http.proxyHost");
+                final String host = JavaSecurityManagers.getSystemProperty("http.proxyHost");
                 if (host != null) {
                     //comment out unused port to pass pmd check
-                    /*String ports = System.getProperty("http.proxyPort");
+                    /*String ports = JavaSecurityManagers.getSystemProperty("http.proxyPort");
                     int port = 80;
                     if (ports != null) {
                         port = Integer.parseInt(ports);
                     }*/
 
-                    final String username = System.getProperty("http.proxy.user");
-                    final String password = System.getProperty("http.proxy.password");
+                    final String username = JavaSecurityManagers.getSystemProperty("http.proxy.user");
+                    final String password = JavaSecurityManagers.getSystemProperty("http.proxy.password");
 
                     if (username != null && password != null) {
                         final String encoded = new String(Base64.encodeBase64((username + ":" + password).getBytes()));

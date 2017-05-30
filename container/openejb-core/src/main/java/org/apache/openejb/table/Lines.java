@@ -17,6 +17,8 @@
 
 package org.apache.openejb.table;
 
+import org.apache.openejb.util.JavaSecurityManagers;
+
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -27,7 +29,7 @@ public class Lines {
     private final String cr;
 
     public Lines() {
-        this(System.getProperty("line.separator"));
+        this(JavaSecurityManagers.getSystemProperty("line.separator"));
     }
 
     public Lines(final String cr) {

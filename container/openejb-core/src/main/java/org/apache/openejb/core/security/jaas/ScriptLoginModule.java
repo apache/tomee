@@ -17,6 +17,7 @@
 
 package org.apache.openejb.core.security.jaas;
 
+import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URLs;
@@ -104,7 +105,7 @@ public class ScriptLoginModule implements LoginModule {
 
     private File getScriptFile(final String path) {
         if (path == null || "".equals(path)) {
-            final File result = new File(System.getProperty("openejb.home"), "conf/loginscript.js");
+            final File result = new File(JavaSecurityManagers.getSystemProperty("openejb.home"), "conf/loginscript.js");
             if (result.exists()) {
                 return result;
             } else {
@@ -130,7 +131,7 @@ public class ScriptLoginModule implements LoginModule {
         }
 
         {
-            final File openEjbConf = new File(System.getProperty("openejb.home"), "conf");
+            final File openEjbConf = new File(JavaSecurityManagers.getSystemProperty("openejb.home"), "conf");
             final File result = new File(openEjbConf, path);
             if (result.exists()) {
                 return result;
@@ -144,7 +145,7 @@ public class ScriptLoginModule implements LoginModule {
     public boolean login() throws LoginException {
         File script = getScriptFile((String) this.options.get("scriptURI"));
         if (script == null) {
-            script = getScriptFile(System.getProperty("openejb.ScriptLoginModule.scriptURI"));
+            script = getScriptFile(JavaSecurityManagers.getSystemProperty("openejb.ScriptLoginModule.scriptURI"));
             if (script == null) {
                 script = getScriptFile(null);
             }

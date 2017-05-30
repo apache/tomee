@@ -24,7 +24,7 @@
   <parent>
     <artifactId>tomee</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>7.0.0-SNAPSHOT</version>
+    <version>7.0.4-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>tomee-webservices</artifactId>
@@ -53,22 +53,22 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-webservices</artifactId>
-      <version>${tomee.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-rest</artifactId>
-      <version>${tomee.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-cxf-rs</artifactId>
-      <version>${tomee.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-cxf</artifactId>
-      <version>${tomee.version}</version>
+      <version>${project.version}</version>
       <exclusions>
         <exclusion>
           <groupId>javax.xml.stream</groupId>
@@ -94,17 +94,17 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-server</artifactId>
-      <version>${tomee.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-ejbd</artifactId>
-      <version>${tomee.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-http</artifactId>
-      <version>${tomee.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>

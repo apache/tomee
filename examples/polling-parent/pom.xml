@@ -30,7 +30,7 @@
   <properties>
     <xbean.version>4.4</xbean.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>7.0.0-SNAPSHOT</tomee.version>
+    <tomee.version>7.0.4-SNAPSHOT</tomee.version>
   </properties>
 
   <build>
@@ -39,7 +39,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.2</version>
+        <version>3.5.1</version>
         <configuration>
           <source>1.7</source>
           <target>1.7</target>

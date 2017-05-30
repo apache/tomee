@@ -111,6 +111,7 @@ public class CounterCallbacksTest implements ExecutionObserver {
         }
         container.close();
 
+        Assert.assertEquals(this.received.toString(),2, this.received.size());
         Assert.assertEquals("preDestroy", this.received.remove(0));
         Assert.assertEquals("preDestroy", this.received.remove(0));
 

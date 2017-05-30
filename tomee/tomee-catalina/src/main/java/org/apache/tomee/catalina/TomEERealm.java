@@ -16,6 +16,7 @@
  */
 package org.apache.tomee.catalina;
 
+import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Realm;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.Request;
@@ -32,6 +33,16 @@ import java.security.Principal;
 import java.security.cert.X509Certificate;
 
 public class TomEERealm extends CombinedRealm {
+    public static final String SECURITY_NOTE = TomEERealm.class.getName() + ".securityContext";
+
+    private TomcatSecurityService securityService;
+
+    @Override
+    protected void startInternal() throws LifecycleException {
+        super.startInternal();
+        this.securityService = (TomcatSecurityService) SystemInstance.get().getComponent(SecurityService.class);
+    }
+
     @Override
     public Principal authenticate(final String username, final String password) {
         return logInTomEE(super.authenticate(username, password));
@@ -86,32 +97,33 @@ public class TomEERealm extends CombinedRealm {
         if (pcp == null) {
             return null;
         }
+        if (securityService == null) { // tomee-embedded get it later than startInternals so we need it this way
+            securityService = (TomcatSecurityService) SystemInstance.get().getComponent(SecurityService.class);
+        }
 
-        final TomcatSecurityService ss = (TomcatSecurityService) SystemInstance.get().getComponent(SecurityService.class);
-        if (ss != null) {
-            // normally we don't care about oldstate because the listener already contains one
-            // which is the previous one
-            // so no need to clean twice here
-            final Request request = OpenEJBSecurityListener.requests.get();
-            if (request != null) {
-                ss.enterWebApp(this, pcp, OpenEJBSecurityListener.requests.get().getWrapper().getRunAs());
-            } else {
-                final CUTask.Context context = CUTask.Context.CURRENT.get();
-                if (context != null) {
-                    final Object state = ss.enterWebApp(this, pcp, null);
-                    context.pushExitTask(new Runnable() {
-                        @Override
-                        public void run() {
-                            ss.exitWebApp(state);
-                        }
-                    });
-                } else {
-                    final Logger instance = Logger.getInstance(LogCategory.OPENEJB_SECURITY, TomEERealm.class);
-                    if (instance.isDebugEnabled()) {
-                        instance.debug(
-                            "No request or concurrency-utilities context so skipping login context propagation, " +
-                            "thread=" + Thread.currentThread().getName());
+        // normally we don't care about oldstate because the listener already contains one
+        // which is the previous one
+        // so no need to clean twice here
+        final Request request = OpenEJBSecurityListener.requests.get();
+        if (request != null) {
+            final Object securityContext = securityService.enterWebApp(this, pcp, OpenEJBSecurityListener.requests.get().getWrapper().getRunAs());
+            request.setNote(SECURITY_NOTE, securityContext);
+        } else {
+            final CUTask.Context context = CUTask.Context.CURRENT.get();
+            if (context != null) {
+                final Object state = securityService.enterWebApp(this, pcp, null);
+                context.pushExitTask(new Runnable() {
+                    @Override
+                    public void run() {
+                        securityService.exitWebApp(state);
                     }
+                });
+            } else {
+                final Logger instance = Logger.getInstance(LogCategory.OPENEJB_SECURITY, TomEERealm.class);
+                if (instance.isDebugEnabled()) {
+                    instance.debug(
+                        "No request or concurrency-utilities context so skipping login context propagation, " +
+                        "thread=" + Thread.currentThread().getName());
                 }
             }
         }

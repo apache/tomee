@@ -18,6 +18,13 @@ public class TomEEXAConnection extends ActiveMQXAConnection {
     }
 
     @Override
+    public Session createSession(final boolean transacted, final int acknowledgeMode) throws JMSException {
+        checkClosedOrFailed();
+        ensureConnectionInfoSent();
+        return new TomEEXASession(this, getNextSessionId(), getXaAckMode() > 0 ? getXaAckMode() : Session.SESSION_TRANSACTED, isDispatchAsync());
+    }
+
+    @Override
     public Session createSession(final int sessionMode) throws JMSException {
         return super.createSession(sessionMode == Session.SESSION_TRANSACTED, sessionMode);
     }

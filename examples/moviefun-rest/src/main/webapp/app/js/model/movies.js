@@ -25,7 +25,7 @@
             model: Movie,
             url: window.ux.ROOT_URL + 'rest/movies',
             parse: function (response) {
-                return response.movie;
+                return response;
             }
         });
         return new Cls();

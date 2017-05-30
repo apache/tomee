@@ -20,8 +20,11 @@ package org.apache.openejb.core.mdb;
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.SystemException;
+import org.apache.openejb.resource.activemq.jms2.DelegateMessage;
+import org.apache.openejb.resource.activemq.jms2.JMS2;
 
 import javax.ejb.EJBException;
+import javax.jms.Message;
 import javax.resource.spi.ApplicationServerInternalException;
 import javax.resource.spi.UnavailableException;
 import javax.resource.spi.endpoint.MessageEndpoint;
@@ -31,6 +34,8 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 public class EndpointHandler implements InvocationHandler, MessageEndpoint {
+    private volatile Boolean isAmq;
+
     private static enum State {
         /**
          * The handler has been initialized and is ready for invoation
@@ -225,7 +230,7 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
         Object value = null;
         try {
             // deliver the message
-            value = container.invoke(instance, method, null, args);
+            value = container.invoke(instance, method, null, wrapMessageForAmq5(args));
         } catch (final SystemException se) {
             throwable = se.getRootCause() != null ? se.getRootCause() : se;
             state = State.SYSTEM_EXCEPTION;
@@ -253,6 +258,25 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
             }
         }
         return value;
+    }
+
+    // workaround for AMQ 5/JMS 2 support
+    private Object[] wrapMessageForAmq5(final Object[] args) {
+        if (args == null || args.length != 1 || DelegateMessage.class.isInstance(args[0])) {
+            return args;
+        }
+
+        if (isAmq == null) {
+            synchronized (this) {
+                if (isAmq == null) {
+                    isAmq = args[0].getClass().getName().startsWith("org.apache.activemq.");
+                }
+            }
+        }
+        if (isAmq) {
+            args[0] = JMS2.wrap(Message.class.cast(args[0]));
+        }
+        return args;
     }
 
     public void afterDelivery() throws ApplicationServerInternalException, UnavailableException {

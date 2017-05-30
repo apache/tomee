@@ -23,7 +23,7 @@
   -->
   <test name="CDI TCK for developers (debugging)">
     <classes>
-      <class name="org.jboss.cdi.tck.tests.context.session.event.SessionScopeEventTest" />
+      <class name="org.jboss.cdi.tck.tests.context.application.async.ApplicationContextAsyncListenerTest" />
     </classes>
   </test>
 </suite>

@@ -20,6 +20,7 @@ import org.apache.openejb.cdi.CdiAppContextsService;
 import org.apache.openejb.cdi.OpenEJBLifecycle;
 import org.apache.openejb.cdi.ThreadSingletonServiceImpl;
 import org.apache.openejb.cdi.WebappWebBeansContext;
+import org.apache.openejb.core.WebContext;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.OWBLogConst;
@@ -193,6 +194,10 @@ public class BeginWebBeansListener implements ServletContextListener, ServletReq
     @Override
     public void contextDestroyed(final ServletContextEvent servletContextEvent) {
         WebBeansListenerHelper.destroyFakedRequest(this);
+        final WebContext wc = WebContext.class.cast(servletContextEvent.getServletContext().getAttribute("openejb.web.context"));
+        if (wc != null) {
+            wc.release();
+        }
     }
 
 }

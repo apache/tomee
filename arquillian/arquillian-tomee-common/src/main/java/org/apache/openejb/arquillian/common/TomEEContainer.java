@@ -45,6 +45,9 @@ import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -56,9 +59,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 
 public abstract class TomEEContainer<Configuration extends TomEEConfiguration> implements DeployableContainer<Configuration> {
     protected static final Logger LOGGER = Logger.getLogger(TomEEContainer.class.getName());
@@ -72,6 +72,8 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
 
     @Inject
     protected Instance<DeploymentDescription> deployment;
+
+    private ProtocolDescription defaultProtocol;
 
     protected TomEEContainer() {
         this.options = new Options(System.getProperties());
@@ -128,6 +130,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
     @Override
     public void setup(final Configuration configuration) {
         this.configuration = configuration;
+        this.defaultProtocol = new ProtocolDescription(configuration.getArquillianProtocol());
 
         handlePrefix();
 
@@ -257,7 +260,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
 
     @Override
     public ProtocolDescription getDefaultProtocol() {
-        return new ProtocolDescription("Servlet 2.5");
+        return defaultProtocol;
     }
 
     public void addServlets(final HTTPContext httpContext, final AppInfo appInfo) {

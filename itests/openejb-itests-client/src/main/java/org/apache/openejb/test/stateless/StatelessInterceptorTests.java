@@ -18,7 +18,6 @@ package org.apache.openejb.test.stateless;
 
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Arrays;
 
 /**
  * @version $Rev$ $Date$
@@ -38,8 +37,7 @@ public class StatelessInterceptorTests extends BasicStatelessLocalTestClient {
         super.setUp();
         final Object obj = initialContext.lookup("BasicStatelessInterceptedBusinessRemote");
         assertNotNull("The BasicStatelessInterceptedBusinessRemote object is null", obj);
-        remoteInterceptor = (BasicStatelessInterceptedRemote) javax.rmi.PortableRemoteObject.narrow(obj,
-            BasicStatelessInterceptedRemote.class);
+        remoteInterceptor = (BasicStatelessInterceptedRemote) obj;
         assertNotNull("Remote interceptor is null", remoteInterceptor);
     }
 

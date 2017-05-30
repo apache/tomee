@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
+import java.util.Locale;
 
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
@@ -114,7 +115,7 @@ public class JaxbJavaee {
         unmarshaller.setEventHandler(new ValidationEventHandler() {
             public boolean handleEvent(final ValidationEvent validationEvent) {
                 final String verbose = System.getProperty("openejb.validation.output.level");
-                if (verbose != null && "VERBOSE".equals(verbose.toUpperCase())) {
+                if (verbose != null && "VERBOSE".equals(verbose.toUpperCase(Locale.ENGLISH))) {
                     System.err.println(validationEvent);
                 }
                 return false;

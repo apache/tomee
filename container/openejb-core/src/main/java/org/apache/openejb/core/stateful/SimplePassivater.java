@@ -22,14 +22,17 @@ import org.apache.openejb.core.EnvProps;
 import org.apache.openejb.core.ivm.EjbObjectInputStream;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.util.Map;
 import java.util.Properties;
 
@@ -54,7 +57,7 @@ public class SimplePassivater implements PassivationStrategy {
             if (dir != null) {
                 sessionDirectory = SystemInstance.get().getBase().getDirectory(dir);
             } else {
-                sessionDirectory = new File(System.getProperty("java.io.tmpdir", File.separator + "tmp"));
+                sessionDirectory = new File(JavaSecurityManagers.getSystemProperty("java.io.tmpdir", File.separator + "tmp"));
             }
 
             if (!sessionDirectory.exists() && !sessionDirectory.mkdirs()) {
@@ -80,12 +83,11 @@ public class SimplePassivater implements PassivationStrategy {
 
             logger.info("Passivating to file " + sessionFile);
 
-            final ObjectOutputStream oos = new ObjectOutputStream(IO.write(sessionFile));
-            try {
+            try (final OutputStream os = IO.write(sessionFile);
+                 final ObjectOutputStream oos = new ObjectOutputStream(os)) {
                 oos.writeObject(state);// passivate just the bean instance
             } finally {
                 sessionFile.deleteOnExit();
-                IO.close(oos);
             }
 
         } catch (final NotSerializableException nse) {
@@ -114,11 +116,10 @@ public class SimplePassivater implements PassivationStrategy {
             if (sessionFile.exists()) {
                 logger.info("Activating from file " + sessionFile);
 
-                final ObjectInputStream ois = new EjbObjectInputStream(IO.read(sessionFile));
-                try {
+                try (final InputStream source = IO.read(sessionFile);
+                     final ObjectInputStream ois = new EjbObjectInputStream(source)) {
                     return ois.readObject();
                 } finally {
-                    IO.close(ois);
                     if (!sessionFile.delete()) {
                         sessionFile.deleteOnExit();
                     }

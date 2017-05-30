@@ -23,6 +23,7 @@ import org.apache.openejb.core.ivm.IntraVmProxy;
 import org.apache.openejb.core.ivm.naming.java.javaURLContextFactory;
 import org.apache.openejb.core.ivm.naming.openejb.openejbURLContextFactory;
 import org.apache.openejb.loader.IO;
+import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.xbean.naming.context.ContextUtil;
 
 import javax.naming.Binding;
@@ -237,7 +238,7 @@ public class IvmContext implements Context, Serializable {
 
     private static String getUrlPackagePrefixes() {
         // 1. System.getProperty
-        String urlPackagePrefixes = System.getProperty(Context.URL_PKG_PREFIXES);
+        String urlPackagePrefixes = JavaSecurityManagers.getSystemProperty(Context.URL_PKG_PREFIXES);
 
         // 2. Thread.currentThread().getContextClassLoader().getResources("jndi.properties")
         if (urlPackagePrefixes == null) {
@@ -260,7 +261,7 @@ public class IvmContext implements Context, Serializable {
 
         // 3. ${java.home}/lib/jndi.properties
         if (urlPackagePrefixes == null) {
-            final String javahome = System.getProperty("java.home");
+            final String javahome = JavaSecurityManagers.getSystemProperty("java.home");
             if (javahome != null) {
                 InputStream in = null;
                 try {
@@ -436,7 +437,7 @@ public class IvmContext implements Context, Serializable {
 
     public String composeName(final String name, final String prefix) throws NamingException {
         final Name result = composeName(new CompositeName(name),
-            new CompositeName(prefix));
+                new CompositeName(prefix));
         return result.toString();
     }
 
@@ -539,14 +540,51 @@ public class IvmContext implements Context, Serializable {
         protected abstract void buildEnumeration(Vector<NameNode> vect);
 
         protected void gatherNodes(final NameNode node, final Vector vect) {
-            if (node.getLessTree() != null) {
-                vect.addElement(node.getLessTree());
-                gatherNodes(node.getLessTree(), vect);
+            addInListIfNeeded(mynode, node.getLessTree(), vect);
+            addInListIfNeeded(mynode, node.getGrtrTree(), vect);
+            addInListIfNeeded(mynode, node.getSubTree(), vect);
+            if (NameNode.Federation.class.isInstance(mynode.getObject())) { // tomcat mainly
+                for (final Context c : NameNode.Federation.class.cast(mynode.getObject())) {
+                    if (c == IvmContext.this || !IvmContext.class.isInstance(c)) {
+                        continue;
+                    }
+
+                    final IvmContext ctx = IvmContext.class.cast(c);
+                    if (ctx.mynode == mynode || vect.contains(ctx.mynode)) {
+                        continue;
+                    }
+
+                    addInListIfNeeded(ctx.mynode, ctx.mynode.getGrtrTree(), vect);
+                    addInListIfNeeded(ctx.mynode, ctx.mynode.getLessTree(), vect);
+                    addInListIfNeeded(ctx.mynode, ctx.mynode.getSubTree(), vect);
+                }
             }
-            if (node.getGrtrTree() != null) {
-                vect.addElement(node.getGrtrTree());
-                gatherNodes(node.getGrtrTree(), vect);
+        }
+
+        private void addInListIfNeeded(final NameNode parent, final NameNode node, final Vector vect) {
+            if (node == null || vect.contains(node) || !isMyChild(parent, node)) {
+                return;
             }
+            vect.addElement(node);
+            gatherNodes(node, vect);
+        }
+
+        private boolean isMyChild(final NameNode parent, final NameNode node) {
+            if (node.getParent() == parent) {
+                return true;
+            }
+            if (node.getParentTree() == node.getParent()) { // no need to browse the tree
+                return false;
+            }
+
+            NameNode current = node.getParentTree();
+            while (current != null) {
+                if (current == parent) {
+                    return true;
+                }
+                current = current.getParentTree();
+            }
+            return false;
         }
 
         public void close() {
@@ -577,8 +615,8 @@ public class IvmContext implements Context, Serializable {
     @Override
     public String toString() {
         return "IvmContext{" +
-            "mynode=" + mynode.getAtomicName() +
-            '}';
+                "mynode=" + mynode.getAtomicName() +
+                '}';
     }
 
     protected Object writeReplace() throws ObjectStreamException {

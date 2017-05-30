@@ -69,6 +69,7 @@ import org.apache.openejb.jee.InterceptorBinding;
 import org.apache.openejb.jee.Invokable;
 import org.apache.openejb.jee.IsolationLevel;
 import org.apache.openejb.jee.JMSConnectionFactory;
+import org.apache.openejb.jee.JMSDestination;
 import org.apache.openejb.jee.JndiConsumer;
 import org.apache.openejb.jee.JndiReference;
 import org.apache.openejb.jee.License;
@@ -200,14 +201,18 @@ import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.Stereotype;
 import javax.enterprise.inject.spi.DefinitionException;
 import javax.enterprise.inject.spi.Extension;
+import javax.inject.Inject;
 import javax.interceptor.ExcludeClassInterceptors;
 import javax.interceptor.ExcludeDefaultInterceptors;
 import javax.interceptor.Interceptors;
 import javax.jms.JMSConnectionFactoryDefinition;
 import javax.jms.JMSConnectionFactoryDefinitions;
+import javax.jms.JMSDestinationDefinition;
+import javax.jms.JMSDestinationDefinitions;
 import javax.jms.Queue;
 import javax.jws.HandlerChain;
 import javax.jws.WebService;
+import javax.persistence.Converter;
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -246,6 +251,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -856,18 +862,22 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
 
                     if (!containsConfigProperty(configProperties, name)) {
-                        if (type != null) {
-                            final ConfigProperty configProperty = new ConfigProperty();
-                            configProperties.add(configProperty);
+                        final ConfigProperty configProperty = new ConfigProperty();
+                        configProperties.add(configProperty);
 
-                            Object value = null;
+                        Object value = null;
+                        if (propertyDescriptor.getReadMethod() != null) {
                             try {
                                 value = propertyDescriptor.getReadMethod().invoke(o);
                             } catch (final Exception e) {
                                 // no-op
                             }
+                        }
 
-                            javax.resource.spi.ConfigProperty annotation = propertyDescriptor.getWriteMethod().getAnnotation(javax.resource.spi.ConfigProperty.class);
+                        final Method write = propertyDescriptor.getWriteMethod();
+                        javax.resource.spi.ConfigProperty annotation = null;
+                        if (write != null) {
+                            annotation = write.getAnnotation(javax.resource.spi.ConfigProperty.class);
                             if (annotation == null) {
                                 try {
                                     // if there's no annotation on the setter, we'll try and scrape one off the field itself (assuming the same name)
@@ -876,22 +886,22 @@ public class AnnotationDeployer implements DynamicDeployer {
                                     // no-op : getDeclaredField() throws exceptions and does not return null
                                 }
                             }
+                        }
 
-                            configProperty.setConfigPropertyName(name);
-                            configProperty.setConfigPropertyType(getConfigPropertyType(annotation, type));
-                            if (value != null) {
-                                configProperty.setConfigPropertyValue(value.toString());
-                            }
+                        configProperty.setConfigPropertyName(name);
+                        configProperty.setConfigPropertyType(getConfigPropertyType(annotation, type));
+                        if (value != null) {
+                            configProperty.setConfigPropertyValue(value.toString());
+                        }
 
-                            if (annotation != null) {
-                                if (annotation.defaultValue() != null && annotation.defaultValue().length() > 0) {
-                                    configProperty.setConfigPropertyValue(annotation.defaultValue());
-                                }
-                                configProperty.setConfigPropertyConfidential(annotation.confidential());
-                                configProperty.setConfigPropertyIgnore(annotation.ignore());
-                                configProperty.setConfigPropertySupportsDynamicUpdates(annotation.supportsDynamicUpdates());
-                                configProperty.setDescriptions(stringsToTexts(annotation.description()));
+                        if (annotation != null) {
+                            if (annotation.defaultValue() != null && annotation.defaultValue().length() > 0) {
+                                configProperty.setConfigPropertyValue(annotation.defaultValue());
                             }
+                            configProperty.setConfigPropertyConfidential(annotation.confidential());
+                            configProperty.setConfigPropertyIgnore(annotation.ignore());
+                            configProperty.setConfigPropertySupportsDynamicUpdates(annotation.supportsDynamicUpdates());
+                            configProperty.setDescriptions(stringsToTexts(annotation.description()));
                         }
                     }
                 }
@@ -1279,7 +1289,6 @@ public class AnnotationDeployer implements DynamicDeployer {
                 return ejbModule;
             }
 
-
             try {
                 if (ejbModule.getFinder() == null) {
                     ejbModule.setFinder(FinderFactory.createFinder(ejbModule));
@@ -1293,43 +1302,6 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             final IAnnotationFinder finder = ejbModule.getFinder();
-
-
-            final Map<URL, List<String>> managedClasses;
-            {
-                final Beans beans = ejbModule.getBeans();
-
-                if (beans != null) {
-                    managedClasses = beans.getManagedClasses();
-                    getBeanClasses(beans.getUri(), finder, managedClasses, beans.getNotManagedClasses(), ejbModule.getAltDDs());
-
-                    // passing jar location to be able to manage maven classes/test-classes which have the same moduleId
-                    String id = ejbModule.getModuleId();
-                    if (ejbModule.getJarLocation() != null &&
-                            (ejbModule.getJarLocation().contains(ejbModule.getModuleId() + "/target/test-classes".replace("/", File.separator)) ||
-                            ejbModule.getJarLocation().contains(ejbModule.getModuleId() + "/build/classes/test".replace("/", File.separator)))) {
-                        // with maven/gradle if both src/main/java and src/test/java are deployed
-                        // moduleId.Comp exists twice so it fails
-                        // here we simply modify the test comp bean name to avoid it
-                        id += "_test";
-                    }
-                    final String name = BeanContext.Comp.openejbCompName(id);
-                    final org.apache.openejb.jee.ManagedBean managedBean = new CompManagedBean(name, BeanContext.Comp.class);
-                    managedBean.setTransactionType(TransactionType.BEAN);
-                    ejbModule.getEjbJar().addEnterpriseBean(managedBean);
-
-                    if ("true".equals(SystemInstance.get().getProperty("openejb.cdi.support.@Startup", "true"))) {
-                        final List<Annotated<Class<?>>> forceStart = finder.findMetaAnnotatedClasses(Startup.class);
-                        final List<String> startupBeans = beans.getStartupBeans();
-                        for (final Annotated<Class<?>> clazz : forceStart) {
-                            startupBeans.add(clazz.get().getName());
-                        }
-                    }
-                } else {
-                    managedClasses = new HashMap<>();
-                }
-            }
-
 
             // Fill in default sessionType for xml declared EJBs
             for (final EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
@@ -1530,6 +1502,63 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
 
+            { // after having found EJB for auto CDI activation
+                final Map<URL, List<String>> managedClasses;
+                Beans beans = ejbModule.getBeans();
+
+                final boolean deployComp;
+                if (beans == null && !ejbJar.getEnterpriseBeansByEjbName().isEmpty()
+                        && isActivateCdiForEjbOnlyModules(ejbModule)) {
+                    logger.info("Activating CDI in ACTIVATED mode in module '" + ejbModule.getModuleUri() + "' cause EJB were found\n" +
+                            "  add openejb.cdi.activated=false in application.properties to switch it off or\n" +
+                            "  openejb.cdi.activated-on-ejb=false in conf/system.properties" +
+                            "  to switch it off");
+                    beans = new Beans();
+                    beans.setBeanDiscoveryMode("ANNOTATED");
+                    beans.setVersion("1.1");
+                    try {
+                        ejbModule.getModuleUri().toURL();
+                        beans.setUri(ejbModule.getModuleUri().toASCIIString());
+                    } catch (final MalformedURLException | IllegalArgumentException iae) { // test? fake a URI
+                        beans.setUri(URI.create("jar:file://!/" + ejbModule.getModuleUri().toASCIIString() + "/META-INF/beans.xml").toASCIIString());
+                    }
+                    ejbModule.setBeans(beans);
+                    deployComp = false; // no need normally since mainly only EJB will be injectable
+                } else {
+                    deployComp = true;
+                }
+
+                if (beans != null) {
+                    managedClasses = beans.getManagedClasses();
+                    getBeanClasses(beans.getUri(), finder, managedClasses, beans.getNotManagedClasses(), ejbModule.getAltDDs());
+
+                    if (deployComp) {
+                        // passing jar location to be able to manage maven classes/test-classes which have the same moduleId
+                        String id = ejbModule.getModuleId();
+                        if (ejbModule.getJarLocation() != null &&
+                                (ejbModule.getJarLocation().contains(ejbModule.getModuleId() + "/target/test-classes".replace("/", File.separator)) ||
+                                        ejbModule.getJarLocation().contains(ejbModule.getModuleId() + "/build/classes/test".replace("/", File.separator)))) {
+                            // with maven/gradle if both src/main/java and src/test/java are deployed
+                            // moduleId.Comp exists twice so it fails
+                            // here we simply modify the test comp bean name to avoid it
+                            id += "_test";
+                        }
+                        final String name = BeanContext.Comp.openejbCompName(id);
+                        final org.apache.openejb.jee.ManagedBean managedBean = new CompManagedBean(name, BeanContext.Comp.class);
+                        managedBean.setTransactionType(TransactionType.BEAN);
+                        ejbModule.getEjbJar().addEnterpriseBean(managedBean);
+
+                        if ("true".equals(SystemInstance.get().getProperty("openejb.cdi.support.@Startup", "true"))) {
+                            final List<Annotated<Class<?>>> forceStart = finder.findMetaAnnotatedClasses(Startup.class);
+                            final List<String> startupBeans = beans.getStartupBeans();
+                            for (final Annotated<Class<?>> clazz : forceStart) {
+                                startupBeans.add(clazz.get().getName());
+                            }
+                        }
+                    }
+                }
+            }
+
             // ejb can be rest bean and only then in standalone so scan providers here too
             // adding them to app since they should be in the app classloader
             if (ejbModule.getAppModule() != null) {
@@ -1539,6 +1568,22 @@ public class AnnotationDeployer implements DynamicDeployer {
             autoJpa(ejbModule);
 
             return ejbModule;
+        }
+
+        private boolean isActivateCdiForEjbOnlyModules(final EjbModule ejbModule) {
+            final String activated = ejbModule.getProperties().getProperty("openejb.cdi.activated");
+            final String globalConfig = SystemInstance.get().getProperty("openejb.cdi.activated-on-ejb"); // spec should be true but mem + bck compat
+            return (globalConfig == null || Boolean.parseBoolean(globalConfig)) &&
+                    ((activated == null && hasAtInject(ejbModule)) || (activated != null && Boolean.parseBoolean(activated)));
+        }
+
+        // quick heuristic to guess if cdi is needed, avoid to need more mem when useless
+        private boolean hasAtInject(final EjbModule ejbModule) {
+            final IAnnotationFinder finder = ejbModule.getFinder();
+            return finder != null &&
+                    (!finder.findAnnotatedFields(Inject.class).isEmpty()
+                    || !finder.findAnnotatedConstructors(Inject.class).isEmpty()
+                    || !finder.findAnnotatedMethods(Inject.class).isEmpty());
         }
 
         private SessionType getSessionType(final Class<?> clazz) {
@@ -1614,8 +1659,11 @@ public class AnnotationDeployer implements DynamicDeployer {
             // force cast otherwise we would be broken
             final IAnnotationFinder delegate = FinderFactory.ModuleLimitedFinder.class.isInstance(finder) ?
                     FinderFactory.ModuleLimitedFinder.class.cast(finder).getDelegate() : finder;
-            final AnnotationFinder annotationFinder = AnnotationFinder.class.cast(delegate);
+            if (!AnnotationFinder.class.isInstance(delegate)) {
+                return; // only few tests
+            }
 
+            final AnnotationFinder annotationFinder = AnnotationFinder.class.cast(delegate);
             final Archive archive = annotationFinder.getArchive();
 
             if (!WebappAggregatedArchive.class.isInstance(archive)) {
@@ -1898,6 +1946,7 @@ public class AnnotationDeployer implements DynamicDeployer {
         classes.addAll(finder.findAnnotatedClasses(Entity.class));
         classes.addAll(finder.findAnnotatedClasses(Embeddable.class));
         classes.addAll(finder.findAnnotatedClasses(MappedSuperclass.class));
+        classes.addAll(finder.findAnnotatedClasses(Converter.class));
         final List<String> existingClasses = pu.getClazz();
         for (final Class<?> clazz : classes) {
             final String name = clazz.getName();
@@ -4021,6 +4070,20 @@ public class AnnotationDeployer implements DynamicDeployer {
                 final JMSConnectionFactoryDefinition definition = annotated.getAnnotation(JMSConnectionFactoryDefinition.class);
                 buildConnectionFactoryDefinition(consumer, definition);
             }
+
+            //
+            // @JMSDestinationDefinition
+            //
+            for (final Annotated<Class<?>> annotated : annotationFinder.findMetaAnnotatedClasses(JMSDestinationDefinitions.class)) {
+                final JMSDestinationDefinitions defs = annotated.getAnnotation(JMSDestinationDefinitions.class);
+                for (final JMSDestinationDefinition definition : defs.value()) {
+                    buildDestinationDefinition(consumer, definition);
+                }
+            }
+
+            for (final Annotated<Class<?>> annotated : annotationFinder.findMetaAnnotatedClasses(JMSDestinationDefinition.class)) {
+                buildDestinationDefinition(consumer, annotated.getAnnotation(JMSDestinationDefinition.class));
+            }
         }
 
         private void buildContext(final JndiConsumer consumer, final Member member) {
@@ -4670,6 +4733,38 @@ public class AnnotationDeployer implements DynamicDeployer {
                     persistenceContextRef.getInjectionTarget().add(target);
                 }
             }
+        }
+
+        private void buildDestinationDefinition(final JndiConsumer consumer, final JMSDestinationDefinition definition) {
+            final JMSDestination destination = new JMSDestination();
+            destination.setName(definition.name());
+            destination.setClassName(definition.className());
+            destination.setInterfaceName(definition.interfaceName());
+            destination.setResourceAdapter(definition.resourceAdapter());
+            destination.setDestinationName(definition.destinationName());
+
+            for (final String s : definition.properties()) {
+                final int equal = s.indexOf('=');
+                if (equal < s.length() - 1) {
+                    final SuperProperties props = new SuperProperties();
+                    try {
+                        props.load(new ByteArrayInputStream(s.getBytes()));
+                        for (final String key : props.stringPropertyNames()) {
+                            if (!key.isEmpty()) {
+                                destination.property(key, props.getProperty(key));
+                            }
+                        }
+                    } catch (final IOException e) {
+                        final String key = s.substring(0, equal).trim();
+                        final String value = s.substring(equal + 1).trim();
+                        destination.property(key, value);
+                    }
+                } else {
+                    destination.property(s.trim(), "");
+                }
+            }
+
+            consumer.getJMSDestination().add(destination);
         }
 
         private void buildConnectionFactoryDefinition(final JndiConsumer consumer, final JMSConnectionFactoryDefinition definition) {

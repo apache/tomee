@@ -16,14 +16,12 @@
  */
 package org.apache.openejb.test.singleton;
 
+import org.apache.openejb.test.object.ObjectGraph;
+
 import javax.ejb.EJBHome;
 import javax.ejb.EJBMetaData;
 import javax.ejb.EJBObject;
 import javax.ejb.Handle;
-import javax.rmi.PortableRemoteObject;
-
-import org.apache.openejb.test.object.ObjectGraph;
-
 import java.rmi.RemoteException;
 
 public class SingletonRmiIiopTests extends SingletonTestClient {
@@ -38,7 +36,7 @@ public class SingletonRmiIiopTests extends SingletonTestClient {
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/singleton/RMI-over-IIOP/EJBHome");
-        ejbHome = (RmiIiopSingletonHome) javax.rmi.PortableRemoteObject.narrow(obj, RmiIiopSingletonHome.class);
+        ejbHome = (RmiIiopSingletonHome) obj;
         ejbObject = ejbHome.create();
     }
 
@@ -132,7 +130,7 @@ public class SingletonRmiIiopTests extends SingletonTestClient {
 
     public void test07_returnBooleanObject() {
         try {
-            final Boolean expected = new Boolean(true);
+            final Boolean expected = Boolean.TRUE;
             final Boolean actual = ejbObject.returnBooleanObject(expected);
             assertEquals(expected, actual);
         } catch (final Exception e) {
@@ -152,7 +150,7 @@ public class SingletonRmiIiopTests extends SingletonTestClient {
 
     public void test09_returnBooleanObjectArray() {
         try {
-            final Boolean[] expected = {new Boolean(true), new Boolean(false), new Boolean(true)};
+            final Boolean[] expected = {Boolean.TRUE, Boolean.FALSE, Boolean.TRUE};
             final Boolean[] actual = ejbObject.returnBooleanObjectArray(expected);
 
             assertNotNull("The array returned is null", actual);
@@ -518,10 +516,10 @@ public class SingletonRmiIiopTests extends SingletonTestClient {
     public void test35_returnEJBHome() {
         try {
             final Object obj = initialContext.lookup("client/tests/singleton/EncBean");
-            final EncSingletonHome expected = (EncSingletonHome) javax.rmi.PortableRemoteObject.narrow(obj, EncSingletonHome.class);
+            final EncSingletonHome expected = (EncSingletonHome) obj;
             assertNotNull("The EJBHome returned from JNDI is null", expected);
 
-            final EncSingletonHome actual = (EncSingletonHome) PortableRemoteObject.narrow(ejbObject.returnEJBHome(expected), EncSingletonHome.class);
+            final EncSingletonHome actual = (EncSingletonHome) ejbObject.returnEJBHome(expected);
             assertNotNull("The EJBHome returned is null", actual);
 
         } catch (final Exception e) {
@@ -531,7 +529,7 @@ public class SingletonRmiIiopTests extends SingletonTestClient {
 
     public void test36_returnEJBHome2() {
         try {
-            final EncSingletonHome actual = (EncSingletonHome) PortableRemoteObject.narrow(ejbObject.returnEJBHome(), EncSingletonHome.class);
+            final EncSingletonHome actual = (EncSingletonHome) ejbObject.returnEJBHome();
             assertNotNull("The EJBHome returned is null", actual);
 
         } catch (final Exception e) {
@@ -542,13 +540,13 @@ public class SingletonRmiIiopTests extends SingletonTestClient {
     public void test37_returnNestedEJBHome() {
         try {
             final Object obj = initialContext.lookup("client/tests/singleton/EncBean");
-            final EncSingletonHome expected = (EncSingletonHome) javax.rmi.PortableRemoteObject.narrow(obj, EncSingletonHome.class);
+            final EncSingletonHome expected = (EncSingletonHome) obj;
             assertNotNull("The EJBHome returned from JNDI is null", expected);
 
             final ObjectGraph graph = ejbObject.returnObjectGraph(new ObjectGraph(expected));
             assertNotNull("The ObjectGraph is null", graph);
 
-            final EncSingletonHome actual = (EncSingletonHome) PortableRemoteObject.narrow(graph.getObject(), EncSingletonHome.class);
+            final EncSingletonHome actual = (EncSingletonHome) graph.getObject();
             assertNotNull("The EJBHome returned is null", actual);
         } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
@@ -560,7 +558,7 @@ public class SingletonRmiIiopTests extends SingletonTestClient {
             final ObjectGraph graph = ejbObject.returnNestedEJBHome();
             assertNotNull("The ObjectGraph is null", graph);
 
-            final EncSingletonHome actual = (EncSingletonHome) PortableRemoteObject.narrow(graph.getObject(), EncSingletonHome.class);
+            final EncSingletonHome actual = (EncSingletonHome) graph.getObject();
             assertNotNull("The EJBHome returned is null", actual);
         } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
@@ -573,7 +571,7 @@ public class SingletonRmiIiopTests extends SingletonTestClient {
             final EncSingletonHome[] expected = new EncSingletonHome[3];
             for (int i = 0; i < expected.length; i++) {
                 final Object obj = initialContext.lookup("client/tests/singleton/EncBean");
-                expected[i] = (EncSingletonHome) javax.rmi.PortableRemoteObject.narrow(obj, EncSingletonHome.class);
+                expected[i] = (EncSingletonHome) obj;
                 assertNotNull("The EJBHome returned from JNDI is null", expected[i]);
             }
 
@@ -594,13 +592,13 @@ public class SingletonRmiIiopTests extends SingletonTestClient {
     public void test40_returnEJBObject() {
         try {
             final Object obj = initialContext.lookup("client/tests/singleton/EncBean");
-            final EncSingletonHome home = (EncSingletonHome) javax.rmi.PortableRemoteObject.narrow(obj, EncSingletonHome.class);
+            final EncSingletonHome home = (EncSingletonHome) obj;
             assertNotNull("The EJBHome returned from JNDI is null", home);
 
             final EncSingletonObject expected = home.create();
             assertNotNull("The EJBObject created is null", expected);
 
-            final EncSingletonObject actual = (EncSingletonObject) PortableRemoteObject.narrow(ejbObject.returnEJBObject(expected), EncSingletonObject.class);
+            final EncSingletonObject actual = (EncSingletonObject) ejbObject.returnEJBObject(expected);
             assertNotNull("The EJBObject returned is null", actual);
 
             assertTrue("The EJBObejcts are not identical", expected.isIdentical(actual));
@@ -611,7 +609,7 @@ public class SingletonRmiIiopTests extends SingletonTestClient {
 
     public void test41_returnEJBObject2() {
         try {
-            final EncSingletonObject actual = (EncSingletonObject) PortableRemoteObject.narrow(ejbObject.returnEJBObject(), EncSingletonObject.class);
+            final EncSingletonObject actual = (EncSingletonObject) ejbObject.returnEJBObject();
             assertNotNull("The EJBObject returned is null", actual);
 
         } catch (final Exception e) {
@@ -622,7 +620,7 @@ public class SingletonRmiIiopTests extends SingletonTestClient {
     public void test42_returnNestedEJBObject() {
         try {
             final Object obj = initialContext.lookup("client/tests/singleton/EncBean");
-            final EncSingletonHome home = (EncSingletonHome) javax.rmi.PortableRemoteObject.narrow(obj, EncSingletonHome.class);
+            final EncSingletonHome home = (EncSingletonHome) obj;
             assertNotNull("The EJBHome returned from JNDI is null", home);
 
             final EncSingletonObject expected = home.create();
@@ -631,7 +629,7 @@ public class SingletonRmiIiopTests extends SingletonTestClient {
             final ObjectGraph graph = ejbObject.returnObjectGraph(new ObjectGraph(expected));
             assertNotNull("The ObjectGraph is null", graph);
 
-            final EncSingletonObject actual = (EncSingletonObject) PortableRemoteObject.narrow(graph.getObject(), EncSingletonObject.class);
+            final EncSingletonObject actual = (EncSingletonObject) graph.getObject();
             assertNotNull("The EJBObject returned is null", actual);
 
             assertTrue("The EJBObejcts are not identical", expected.isIdentical(actual));
@@ -645,7 +643,7 @@ public class SingletonRmiIiopTests extends SingletonTestClient {
             final ObjectGraph graph = ejbObject.returnNestedEJBObject();
             assertNotNull("The ObjectGraph is null", graph);
 
-            final EncSingletonObject actual = (EncSingletonObject) PortableRemoteObject.narrow(graph.getObject(), EncSingletonObject.class);
+            final EncSingletonObject actual = (EncSingletonObject) graph.getObject();
             assertNotNull("The EJBHome returned is null", actual);
         } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());
@@ -655,7 +653,7 @@ public class SingletonRmiIiopTests extends SingletonTestClient {
     public void test44_returnEJBObjectArray() {
         try {
             final Object obj = initialContext.lookup("client/tests/singleton/EncBean");
-            final EncSingletonHome home = (EncSingletonHome) javax.rmi.PortableRemoteObject.narrow(obj, EncSingletonHome.class);
+            final EncSingletonHome home = (EncSingletonHome) obj;
             assertNotNull("The EJBHome returned from JNDI is null", home);
 
             final EncSingletonObject[] expected = new EncSingletonObject[3];
@@ -684,7 +682,7 @@ public class SingletonRmiIiopTests extends SingletonTestClient {
     public void test45_returnEJBMetaData() {
         try {
             final Object obj = initialContext.lookup("client/tests/singleton/EncBean");
-            final EncSingletonHome home = (EncSingletonHome) javax.rmi.PortableRemoteObject.narrow(obj, EncSingletonHome.class);
+            final EncSingletonHome home = (EncSingletonHome) obj;
             assertNotNull("The EJBHome returned from JNDI is null", home);
 
             final EJBMetaData expected = home.getEJBMetaData();
@@ -713,7 +711,7 @@ public class SingletonRmiIiopTests extends SingletonTestClient {
     public void test47_returnNestedEJBMetaData() {
         try {
             final Object obj = initialContext.lookup("client/tests/singleton/EncBean");
-            final EncSingletonHome home = (EncSingletonHome) javax.rmi.PortableRemoteObject.narrow(obj, EncSingletonHome.class);
+            final EncSingletonHome home = (EncSingletonHome) obj;
             assertNotNull("The EJBHome returned from JNDI is null", home);
 
             final EJBMetaData expected = home.getEJBMetaData();
@@ -749,7 +747,7 @@ public class SingletonRmiIiopTests extends SingletonTestClient {
         try {
 
             final Object obj = initialContext.lookup("client/tests/singleton/EncBean");
-            final EncSingletonHome home = (EncSingletonHome) javax.rmi.PortableRemoteObject.narrow(obj, EncSingletonHome.class);
+            final EncSingletonHome home = (EncSingletonHome) obj;
             assertNotNull("The EJBHome returned from JNDI is null", home);
 
             final EJBMetaData[] expected = new EJBMetaData[3];
@@ -780,7 +778,7 @@ public class SingletonRmiIiopTests extends SingletonTestClient {
     public void test50_returnHandle() {
         try {
             final Object obj = initialContext.lookup("client/tests/singleton/EncBean");
-            final EncSingletonHome home = (EncSingletonHome) javax.rmi.PortableRemoteObject.narrow(obj, EncSingletonHome.class);
+            final EncSingletonHome home = (EncSingletonHome) obj;
             assertNotNull("The EJBHome returned from JNDI is null", home);
 
             final EncSingletonObject object = home.create();
@@ -817,7 +815,7 @@ public class SingletonRmiIiopTests extends SingletonTestClient {
     public void test52_returnNestedHandle() {
         try {
             final Object obj = initialContext.lookup("client/tests/singleton/EncBean");
-            final EncSingletonHome home = (EncSingletonHome) javax.rmi.PortableRemoteObject.narrow(obj, EncSingletonHome.class);
+            final EncSingletonHome home = (EncSingletonHome) obj;
             assertNotNull("The EJBHome returned from JNDI is null", home);
 
             final EncSingletonObject object = home.create();
@@ -860,7 +858,7 @@ public class SingletonRmiIiopTests extends SingletonTestClient {
     public void test54_returnHandleArray() {
         try {
             final Object obj = initialContext.lookup("client/tests/singleton/EncBean");
-            final EncSingletonHome home = (EncSingletonHome) javax.rmi.PortableRemoteObject.narrow(obj, EncSingletonHome.class);
+            final EncSingletonHome home = (EncSingletonHome) obj;
             assertNotNull("The EJBHome returned from JNDI is null", home);
 
             final EncSingletonObject object = home.create();

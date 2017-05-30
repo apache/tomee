@@ -28,7 +28,6 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class PersistJavaagentTest {
@@ -40,6 +39,7 @@ public class PersistJavaagentTest {
 
     @Config
     private final boolean persistJavaagents = true;
+
     @Config
     private final File catalinaBase = new File("target/tomee-agent");
 
@@ -51,7 +51,7 @@ public class PersistJavaagentTest {
         assertEquals(1, new File(catalinaBase, "javaagent").listFiles(new FilenameFilter() {
             @Override
             public boolean accept(final File dir, final String name) {
-                return name.startsWith("sirona-") && name.endsWith("-shaded.jar");
+                return name.equals("sirona-javaagent-0.2-incubating-shaded.jar");
             }
         }).length);
 

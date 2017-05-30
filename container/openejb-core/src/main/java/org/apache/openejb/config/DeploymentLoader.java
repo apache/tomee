@@ -50,6 +50,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.sxc.ApplicationXml;
 import org.apache.openejb.util.AnnotationFinder;
 import org.apache.openejb.util.JarExtractor;
+import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URLs;
@@ -89,6 +90,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
+import java.util.Locale;
 
 import static java.util.Arrays.asList;
 
@@ -319,24 +321,25 @@ public class DeploymentLoader implements DeploymentFilterable {
             try {
                 final File file = URLs.toFile(url);
                 if (file.getName().endsWith(".jar")) {
-                    final JarFile jarFile = new JarFile(file);
+                    try (JarFile jarFile = new JarFile(file)) {
 
-                    // TODO: better management of altdd
-                    String name = (ALTDD != null ? ALTDD + "." : "") + "ra.xml";
+                        // TODO: better management of altdd
+                        String name = (ALTDD != null ? ALTDD + "." : "") + "ra.xml";
 
-                    JarEntry entry = jarFile.getJarEntry(name);
-                    if (entry == null) {
-                        name = "META-INF/" + name;
-                        entry = jarFile.getJarEntry(name);
-                    }
-                    if (entry == null) {
-                        continue;
-                    }
+                        JarEntry entry = jarFile.getJarEntry(name);
+                        if (entry == null) {
+                            name = "META-INF/" + name;
+                            entry = jarFile.getJarEntry(name);
+                        }
+                        if (entry == null) {
+                            continue;
+                        }
 
-                    final String jarLocation = file.getAbsolutePath();
-                    final ConnectorModule connectorModule = createConnectorModule(jarLocation, jarLocation, webModule.getClassLoader(), null);
-                    if (connectorModule != null) {
-                        appModule.getConnectorModules().add(connectorModule);
+                        final String jarLocation = file.getAbsolutePath();
+                        final ConnectorModule connectorModule = createConnectorModule(jarLocation, jarLocation, webModule.getClassLoader(), null);
+                        if (connectorModule != null) {
+                            appModule.getConnectorModules().add(connectorModule);
+                        }
                     }
                 }
             } catch (final Exception e) {
@@ -1004,7 +1007,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         // context.xml can define some additional libraries
         if (config != null) { // we don't test all !=null inline to show that config will get extra params in the future and that it is hierarchic
-            if (config.getClasspath() != null) {
+            if (config.getClasspath() != null && config.getClasspath().length > 0) {
                 final Set<URL> contextXmlUrls = new LinkedHashSet<>();
                 for (final String location : config.getClasspath()) {
                     try {
@@ -1034,7 +1037,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         final ClassLoader warClassLoader = ClassLoaderUtil.createTempClassLoader(appId, webUrlsArray, parentClassLoader);
 
         // create web module
-        final List<URL> scannableUrls = filterWebappUrls(webUrlsArray, descriptors.get(NewLoaderLogic.EXCLUSION_FILE));
+        final List<URL> scannableUrls = filterWebappUrls(webUrlsArray, config == null ? null : config.customerFilter, descriptors.get(NewLoaderLogic.EXCLUSION_FILE));
         // executable war will add war in scannable urls, we don't want it since it will surely contain tomee, cxf, ...
         if (Boolean.parseBoolean(systemInstance.getProperty("openejb.core.skip-war-in-loader", "true"))) {
             File archive = warFile;
@@ -1115,7 +1118,8 @@ public class DeploymentLoader implements DeploymentFilterable {
                                         || name.endsWith("tomcat-websocket.jar")
                                         || name.startsWith("commons-jcs-")
                                         || name.startsWith("xx-arquillian-tomee")
-                                        || ("lib".equals(name) && file.isDirectory() && new File(System.getProperty("openejb.base", "-")).equals(file.getParentFile()))) {
+                                        || ("lib".equals(name) && file.isDirectory() &&
+                                            new File(JavaSecurityManagers.getSystemProperty("openejb.base", "-")).equals(file.getParentFile()))) {
                                     it.remove();
                                 }
                             }
@@ -1130,7 +1134,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         }
     }
 
-    public static List<URL> filterWebappUrls(final URL[] webUrls, final URL exclusions) {
+    public static List<URL> filterWebappUrls(final URL[] webUrls, final Filter filter, final URL exclusions) {
         Filter excludeFilter = null;
         if (exclusions != null) {
             try {
@@ -1143,7 +1147,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         UrlSet urls = new UrlSet(webUrls);
         try {
-            urls = NewLoaderLogic.applyBuiltinExcludes(urls, null, excludeFilter);
+            urls = NewLoaderLogic.applyBuiltinExcludes(urls, filter, excludeFilter);
         } catch (final MalformedURLException e) {
             return Arrays.asList(webUrls);
         }
@@ -1775,8 +1779,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         if (warFile.isFile()) { // only to discover module type so xml file filtering is enough
             final URL jarURL = new URL("jar", "", -1, warFile.toURI().toURL() + "!/");
-            try {
-                final JarFile jarFile = new JarFile(warFile);
+            try (JarFile jarFile = new JarFile(warFile)) {
                 for (final JarEntry entry : Collections.list(jarFile.entries())) {
                     final String entryName = entry.getName();
                     if (!entry.isDirectory() && entryName.startsWith("WEB-INF/")
@@ -2003,7 +2006,7 @@ public class DeploymentLoader implements DeploymentFilterable {
     private static boolean containsWebAssets(final File[] files) {
         if (files != null) {
             for (final File file : files) {
-                final String fn = file.getName().toLowerCase();
+                final String fn = file.getName().toLowerCase(Locale.ENGLISH);
                 if (fn.endsWith(".jsp")) {
                     return true;
                 }
@@ -2018,7 +2021,7 @@ public class DeploymentLoader implements DeploymentFilterable {
     private static boolean containsEarAssets(final File[] files) {
         if (files != null) {
             for (final File file : files) {
-                final String fn = file.getName().toLowerCase();
+                final String fn = file.getName().toLowerCase(Locale.ENGLISH);
                 if (fn.endsWith(".jar")) {
                     return true;
                 }
@@ -2086,12 +2089,15 @@ public class DeploymentLoader implements DeploymentFilterable {
                 cls = EjbModule.class;
                 // if it is a war just throw an error
                 try {
-                    final File ar = URLs.toFile(urls);
-                    if (!ar.isDirectory() && !ar.getName().endsWith("ar")) { // guess no archive extension, check it is not a hidden war
-                        final JarFile war = new JarFile(ar);
-                        final ZipEntry entry = war.getEntry("WEB-INF/");
-                        if (entry != null) {
-                            logger.warning("you deployed " + urls.toExternalForm() + ", it seems it is a war with no extension, please rename it");
+                    if(logger.isWarningEnabled()) {
+                        final File ar = URLs.toFile(urls);
+                        if (!ar.isDirectory() && !ar.getName().endsWith("ar")) { // guess no archive extension, check it is not a hidden war
+                            try (JarFile war = new JarFile(ar)) {
+                                final ZipEntry entry = war.getEntry("WEB-INF/");
+                                if (entry != null) {
+                                    logger.warning("you deployed " + urls.toExternalForm() + ", it seems it is a war with no extension, please rename it");
+                                }
+                            }
                         }
                     }
                 } catch (final Exception ignored) {
@@ -2142,9 +2148,15 @@ public class DeploymentLoader implements DeploymentFilterable {
 
     public static class ExternalConfiguration {
         private final String[] classpath;
+        private final Filter customerFilter;
 
-        public ExternalConfiguration(final String[] classpath) {
+        public ExternalConfiguration(final String[] classpath, final Filter customerFilter) {
             this.classpath = classpath;
+            this.customerFilter = customerFilter;
+        }
+
+        public Filter getCustomerFilter() {
+            return customerFilter;
         }
 
         public String[] getClasspath() {

@@ -29,6 +29,7 @@ import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.InfoObject;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.loader.IO;
+import org.apache.openejb.util.JavaSecurityManagers;
 
 import javax.enterprise.deploy.model.DeployableObject;
 import javax.enterprise.deploy.shared.ActionType;
@@ -84,7 +85,7 @@ public class VmDeploymentManager implements DeploymentManager {
     private boolean deployerLocal;
 
     public VmDeploymentManager() {
-        final String openejbHome = System.getProperty("openejb.home");
+        final String openejbHome = JavaSecurityManagers.getSystemProperty("openejb.home");
         final File openejbHomeDir = new File(openejbHome);
         if (!openejbHomeDir.exists()) {
             throw new IllegalArgumentException("OpenEJB home dir does not exist: " + openejbHomeDir);
@@ -93,7 +94,7 @@ public class VmDeploymentManager implements DeploymentManager {
             throw new IllegalArgumentException("OpenEJB home dir is not a directory: " + openejbHomeDir);
         }
 
-        String openejbUri = System.getProperty("openejb.server.uri");
+        String openejbUri = JavaSecurityManagers.getSystemProperty("openejb.server.uri");
         if (openejbUri == null) {
             try {
                 openejbUri = new URI("ejbd", null, "localhost", 4201, null, null, null).toString();
@@ -106,7 +107,7 @@ public class VmDeploymentManager implements DeploymentManager {
     }
 
     private Deployer getDeployer() {
-        final String deployerJndi = System.getProperty("openejb.deployer.jndiname", "openejb/DeployerBusinessRemote");
+        final String deployerJndi = JavaSecurityManagers.getSystemProperty("openejb.deployer.jndiname", "openejb/DeployerBusinessRemote");
 
         if (deployer == null) {
             try {
@@ -354,7 +355,7 @@ public class VmDeploymentManager implements DeploymentManager {
 
             return new ProgressObjectImpl(CommandType.DISTRIBUTE, Collections.singleton(targetModuleId));
         } catch (ValidationFailedException e) {
-            final String s = System.getProperty(ReportValidationResults.VALIDATION_LEVEL, "3");
+            final String s = JavaSecurityManagers.getSystemProperty(ReportValidationResults.VALIDATION_LEVEL, "3");
             final int level = Integer.parseInt(s);
 
             final ByteArrayOutputStream baos = new ByteArrayOutputStream();

@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.test.stateless;
 
-import org.apache.openejb.test.object.OperationsPolicy;
 import org.apache.openejb.test.beans.TimerSync;
+import org.apache.openejb.test.object.OperationsPolicy;
 
 /**
  * [10] Should be run as the nineth test suite of the BasicStatelessTestClients
@@ -68,7 +68,7 @@ public class BMTStatelessAllowedOperationsTests extends BasicStatelessTestClient
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/stateless/BeanManagedBasicStatelessHome");
-        ejbHome = (BasicStatelessHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicStatelessHome.class);
+        ejbHome = (BasicStatelessHome) obj;
         ejbObject = ejbHome.createObject();
         ejbHandle = ejbObject.getHandle();
         timerSync = (TimerSync) initialContext.lookup("TimerSyncBeanBusinessRemote");

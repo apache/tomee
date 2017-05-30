@@ -27,25 +27,26 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.resource.jdbc.BasicDataSourceUtil;
 import org.apache.openejb.resource.jdbc.IsolationLevels;
 import org.apache.openejb.resource.jdbc.plugin.DataSourcePlugin;
+import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.openejb.util.reflection.Reflections;
 
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import javax.sql.CommonDataSource;
+import javax.sql.DataSource;
+import javax.sql.XADataSource;
 import java.io.File;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
-import javax.sql.CommonDataSource;
-import javax.sql.DataSource;
-import javax.sql.XADataSource;
 
 @SuppressWarnings({"UnusedDeclaration"})
 public class BasicDataSource extends org.apache.commons.dbcp2.BasicDataSource implements Serializable {
-    private final ReentrantLock lock = new ReentrantLock();
-
-    private Logger logger;
+    private volatile Logger logger;
+    private volatile DataSource dsRef = null;
 
     /**
      * The password codec to be used to retrieve the plain text password from a
@@ -105,14 +106,8 @@ public class BasicDataSource extends org.apache.commons.dbcp2.BasicDataSource im
      *
      * @return the password codec class
      */
-    public String getPasswordCipher() {
-        final ReentrantLock l = lock;
-        l.lock();
-        try {
-            return this.passwordCipher;
-        } finally {
-            l.unlock();
-        }
+    public synchronized String getPasswordCipher() {
+        return this.passwordCipher;
     }
 
     /**
@@ -122,121 +117,61 @@ public class BasicDataSource extends org.apache.commons.dbcp2.BasicDataSource im
      *
      * @param passwordCipher password codec value
      */
-    public void setPasswordCipher(final String passwordCipher) {
-        final ReentrantLock l = lock;
-        l.lock();
-        try {
-            this.passwordCipher = passwordCipher;
-        } finally {
-            l.unlock();
-        }
+    public synchronized void setPasswordCipher(final String passwordCipher) {
+        this.passwordCipher = passwordCipher;
     }
 
     @Override
-    public void setPassword(final String password) {
-        final ReentrantLock l = lock;
-        l.lock();
-        try {
-            // keep the encrypted value if it's encrypted
-            this.initialPassword = password;
-            super.setPassword(password);
-        } finally {
-            l.unlock();
-        }
+    public synchronized void setPassword(final String password) {
+        // keep the encrypted value if it's encrypted
+        this.initialPassword = password;
+        super.setPassword(password);
     }
 
-    public String getUserName() {
-        final ReentrantLock l = lock;
-        l.lock();
-        try {
-            return super.getUsername();
-        } finally {
-            l.unlock();
-        }
+    public synchronized String getUserName() {
+        return super.getUsername();
     }
 
-    public void setUserName(final String string) {
-        final ReentrantLock l = lock;
-        l.lock();
-        try {
-            super.setUsername(string);
-        } finally {
-            l.unlock();
-        }
+    public synchronized void setUserName(final String string) {
+        super.setUsername(string);
     }
 
-    public String getJdbcDriver() {
-        final ReentrantLock l = lock;
-        l.lock();
-        try {
-            return super.getDriverClassName();
-        } finally {
-            l.unlock();
-        }
+    public synchronized String getJdbcDriver() {
+        return super.getDriverClassName();
     }
 
-    public void setJdbcDriver(final String string) {
-        final ReentrantLock l = lock;
-        l.lock();
-        try {
-            super.setDriverClassName(string);
-        } finally {
-            l.unlock();
-        }
+    public synchronized void setJdbcDriver(final String string) {
+        super.setDriverClassName(string);
     }
 
-    public String getJdbcUrl() {
-        final ReentrantLock l = lock;
-        l.lock();
-        try {
-            return super.getUrl();
-        } finally {
-            l.unlock();
-        }
+    public synchronized String getJdbcUrl() {
+        return super.getUrl();
     }
 
     public void setJdbcUrl(final String string) {
-        final ReentrantLock l = lock;
-        l.lock();
-        try {
-            super.setUrl(string);
-        } finally {
-            l.unlock();
-        }
+        super.setUrl(string);
     }
 
-    public void setDefaultTransactionIsolation(final String s) {
-        final ReentrantLock l = lock;
-        l.lock();
-        try {
-            if (s == null || s.equals("")) {
-                return;
-            }
-            final int level = IsolationLevels.getIsolationLevel(s);
-            super.setDefaultTransactionIsolation(level);
-        } finally {
-            l.unlock();
+    public synchronized void setDefaultTransactionIsolation(final String s) {
+        if (s == null || s.equals("")) {
+            return;
         }
+        final int level = IsolationLevels.getIsolationLevel(s);
+        super.setDefaultTransactionIsolation(level);
     }
 
-    public void setMaxWait(final int maxWait) {
-        final ReentrantLock l = lock;
-        l.lock();
-        try {
-            super.setMaxWaitMillis((long) maxWait);
-        } finally {
-            l.unlock();
-        }
+    public synchronized void setMaxWait(final int maxWait) {
+        super.setMaxWaitMillis((long) maxWait);
     }
 
     @Override
     protected DataSource createDataSource() throws SQLException {
-        final ReentrantLock l = lock;
-        l.lock();
-        try {
-            final Object dataSource = Reflections.get(this, "dataSource");
-            if (dataSource != null) {
-                return DataSource.class.cast(dataSource);
+        if (dsRef != null) {
+            return dsRef;
+        }
+        synchronized (this) {
+            if (dsRef != null) {
+                return dsRef;
             }
 
             // check password codec if available
@@ -265,30 +200,28 @@ public class BasicDataSource extends org.apache.commons.dbcp2.BasicDataSource im
             // create the data source
             if (helper == null || !helper.enableUserDirHack()) {
                 try {
-                    return super.createDataSource();
+                    super.createDataSource();
                 } catch (final Throwable e) {
                     throw toSQLException(e);
                 }
             } else {
                 // wrap super call with code that sets user.dir to openejb.base and then resets it
-                final Properties systemProperties = System.getProperties();
+                final Properties systemProperties = JavaSecurityManagers.getSystemProperties();
 
                 final String userDir = systemProperties.getProperty("user.dir");
                 try {
                     final File base = SystemInstance.get().getBase().getDirectory();
                     systemProperties.setProperty("user.dir", base.getAbsolutePath());
                     try {
-                        return super.createDataSource();
+                        super.createDataSource();
                     } catch (final Throwable e) {
                         throw toSQLException(e);
                     }
                 } finally {
                     systemProperties.setProperty("user.dir", userDir);
                 }
-
             }
-        } finally {
-            l.unlock();
+            return dsRef = DataSource.class.cast(Reflections.get(this, "dataSource"));
         }
     }
 
@@ -299,21 +232,17 @@ public class BasicDataSource extends org.apache.commons.dbcp2.BasicDataSource im
         return new SQLException("Failed to create DataSource", e);
     }
 
-    public void close() throws SQLException {
-        //TODO - Prevent unuathorized call
-        final ReentrantLock l = lock;
-        l.lock();
+    @Override
+    public synchronized void close() throws SQLException {
         try {
-            try {
-                unregisterMBean();
-            } catch (final Exception ignored) {
-                // no-op
-            }
-
-            super.close();
-        } finally {
-            l.unlock();
+            unregisterMBean();
+        } catch (final Exception ignored) {
+            // no-op
         }
+
+        super.close();
+        dsRef = null;
+        logger = null;
     }
 
     private void unregisterMBean() {
@@ -322,26 +251,30 @@ public class BasicDataSource extends org.apache.commons.dbcp2.BasicDataSource im
         }
     }
 
+    @Override
     public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-        final ReentrantLock l = lock;
-        l.lock();
         try {
-
             if (null == this.logger) {
-                this.logger = (Logger) Reflections.invokeByReflection(createDataSource(), "getParentLogger", new Class<?>[0], null);
+                synchronized (this) {
+                    if (null == this.logger) {
+                        this.logger = (Logger) Reflections.invokeByReflection(createDataSource(), "getParentLogger", new Class<?>[0], null);
+                    }
+                }
             }
-
             return this.logger;
         } catch (final Throwable e) {
             throw new SQLFeatureNotSupportedException();
-        } finally {
-            l.unlock();
         }
     }
 
     public void setName(final String name) {
         registerAsMbean(name);
         this.name = name;
+    }
+
+    @Override
+    public ObjectName preRegister(final MBeanServer server, final ObjectName name) {
+        return name;
     }
 
     Object writeReplace() throws ObjectStreamException {

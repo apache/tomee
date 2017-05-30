@@ -21,7 +21,10 @@ import org.apache.juli.AsyncFileHandler;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.logging.ConsoleHandler;
+import java.util.logging.Filter;
 import java.util.logging.Formatter;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
 
 public class AsyncConsoleHandler extends AsyncFileHandler {
@@ -31,6 +34,62 @@ public class AsyncConsoleHandler extends AsyncFileHandler {
 
     protected void publishInternal(final LogRecord record) {
         delegate.publish(record);
+    }
+
+    public AsyncConsoleHandler() {
+        LogManager manager = LogManager.getLogManager();
+        String cname = getClass().getName();
+
+        final String lvl = manager.getProperty(cname + ".level");
+        if (lvl != null) {
+            delegate.setLevel(Level.parse(lvl));
+        }
+        final String filter = manager.getProperty(cname + ".filter");
+        if (filter != null) {
+            try {
+                delegate.setFilter(Filter.class.cast(ClassLoader.getSystemClassLoader().loadClass(filter).newInstance()));
+            } catch (final InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+                // no-op like delegate
+            }
+        }
+        final String formatter = manager.getProperty(cname + ".formatter");
+        if (formatter != null) {
+            try {
+                delegate.setFormatter(Formatter.class.cast(ClassLoader.getSystemClassLoader().loadClass(formatter).newInstance()));
+            } catch (final InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+                // no-op like delegate
+            }
+        }
+        try {
+            delegate.setEncoding(manager.getProperty(cname +".encoding"));
+        } catch (final Exception ex) {
+            // no-op
+        }
+    }
+
+    @Override
+    public void close() {
+        delegate.close();
+    }
+
+    @Override
+    public void flush() {
+        delegate.flush();
+    }
+
+    @Override
+    protected void open() {
+        // no-op
+    }
+
+    @Override
+    protected void closeWriter() {
+        // no-op
+    }
+
+    @Override
+    protected void openWriter() {
+        // no-op
     }
 
     // copy cause of classloading

@@ -33,10 +33,10 @@ import org.junit.runner.RunWith;
 import java.io.IOException;
 import java.net.URL;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeFalse;
 
-@RunWith(Arquillian.class)
+@RunWith(Arquillian.class) // TODO: move it and EarWebAppFirstClassLoaderTest to webprofile?
 public class EarClassLoaderTest {
     @Deployment(testable = false)
     public static Archive<?> ear() {
@@ -59,7 +59,10 @@ public class EarClassLoaderTest {
     private URL url;
 
     @Test
-    public void checkIfWasCorretlyLoaded() throws IOException { // when writing this test we ship joda-time 2.2
-        assertTrue(IO.slurp(new URL(url.toExternalForm() + (url.getPath().isEmpty() ? "/broken-web/" : "") + "joda")).endsWith("joda-time-2.5.jar"));
+    public void checkIfWasCorretlyLoaded() throws IOException {
+        // embedded case uses the classpath for a lot of reasons
+        assumeFalse(System.getProperty("openejb.arquillian.adapter", "embedded").contains("embedded"));
+        final String slurp = IO.slurp(new URL(url.toExternalForm() + (url.getPath().isEmpty() ? "/broken-web/" : "") + "joda"));
+        assertTrue(slurp.endsWith("broken-web/WEB-INF/lib/joda-time-2.5.jar"));
     }
 }

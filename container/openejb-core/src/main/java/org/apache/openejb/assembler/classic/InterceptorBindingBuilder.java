@@ -99,14 +99,15 @@ public class InterceptorBindingBuilder {
         if (beanInfo instanceof StatelessBeanInfo || beanInfo instanceof MessageDrivenBeanInfo) {
             /*
              * 4.3.10.2 and 4.5.8
-             * If the stateless session bean or MDB instance has an ejbCreate method, 
+             * If the stateless session bean or MDB instance has an ejbCreate method,
              * the container treats the ejbCreate method as the instance’s PostConstruct method,
              *  and, in this case, the PostConstruct annotation (or deployment descriptor metadata)
              *  can only be applied to the bean’s ejbCreate method.
              */
             final NamedMethodInfo info = new NamedMethodInfo();
             info.className = clazz.getName();
-            info.methodName = "ejbCreate";
+            final Method createMethod = beanContext.getCreateMethod();
+            info.methodName = (createMethod != null) ? createMethod.getName(): "ejbCreate";
             info.methodParams = new ArrayList<String>();
 
             try {
@@ -114,7 +115,7 @@ public class InterceptorBindingBuilder {
                 if (ejbcreate != null) {
                     final CallbackInfo ejbcreateAsPostConstruct = new CallbackInfo();
                     ejbcreateAsPostConstruct.className = ejbcreate.getDeclaringClass().getName();
-                    ejbcreateAsPostConstruct.method = "ejbCreate";
+                    ejbcreateAsPostConstruct.method = ejbcreate.getName();
                     beanInfo.postConstruct.add(ejbcreateAsPostConstruct);
                 }
             } catch (final IllegalStateException e) {

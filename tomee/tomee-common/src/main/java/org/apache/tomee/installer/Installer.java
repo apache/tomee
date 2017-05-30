@@ -97,7 +97,7 @@ public class Installer implements InstallerInterface {
         addTomEEJuli();
 
         addTomEEAdminConfInTomcatUsers();
-        addTomEELinkToTomcatHome();
+        // addTomEELinkToTomcatHome(); // we don't provide tomee GUI anymore
 
         workaroundOnBat();
 
@@ -152,14 +152,14 @@ public class Installer implements InstallerInterface {
         final String content;
         if (!securityActivated) {
             content =
-                    "  <!-- Activate those lines to get access to TomEE GUI -->\n" +
+                    "  <!-- Activate those lines to get access to TomEE GUI if added (tomee-webaccess) -->\n" +
                             "  <!--\n" +
                             roleUserTags +
                             "  -->\n" +
                             "</tomcat-users>\n";
         } else {
             content =
-                    "  <!-- Activate those lines to get access to TomEE GUI\n -->" +
+                    "  <!-- Activate those lines to get access to TomEE GUI if added (tomee-webaccess)\n -->" +
                             roleUserTags +
                             "</tomcat-users>\n";
 
@@ -185,7 +185,7 @@ public class Installer implements InstallerInterface {
         moveLibs();
 
         addTomEEAdminConfInTomcatUsers();
-        addTomEELinkToTomcatHome();
+        // addTomEELinkToTomcatHome(); // we don't provide it anymore
 
         workaroundOnBat();
 
@@ -233,6 +233,7 @@ public class Installer implements InstallerInterface {
         }
     }
 
+    /*
     private void addTomEELinkToTomcatHome() {
         final File home = paths.getHome();
         if(!home.exists()) {
@@ -255,6 +256,7 @@ public class Installer implements InstallerInterface {
                         "                    </div>");
         Installers.writeAll(home, newIndeJsp, alerts);
     }
+*/
 
     private void moveLibs() {
         final File libs = paths.getCatalinaLibDir();
@@ -596,29 +598,24 @@ public class Installer implements InstallerInterface {
             // the core jar contains the config files
             return;
         }
-        final JarFile coreJar;
-        try {
-            coreJar = new JarFile(openejbCoreJar);
+        try (final JarFile coreJar = new JarFile(openejbCoreJar)) {
+            //
+            // conf/tomee.xml
+            //
+            final File openEjbXmlFile = new File(confDir, "tomee.xml");
+            if (!openEjbXmlFile.exists()) {
+                // read in the openejb.xml file from the openejb core jar
+                final String openEjbXml = Installers.readEntry(coreJar, "default.openejb.conf", alerts);
+                if (openEjbXml != null) {
+                    if (Installers.writeAll(openEjbXmlFile, openEjbXml.replace("<openejb>", "<tomee>").replace("</openejb>", "</tomee>"), alerts)) {
+                        alerts.addInfo("Copy tomee.xml to conf");
+                    }
+                }
+            }
         } catch (final IOException e) {
             return;
         }
 
-        //
-        // conf/tomee.xml
-        //
-        final File openEjbXmlFile = new File(confDir, "tomee.xml");
-        if (!openEjbXmlFile.exists()) {
-            // read in the openejb.xml file from the openejb core jar
-            final String openEjbXml = Installers.readEntry(coreJar, "default.openejb.conf", alerts);
-            if (openEjbXml != null) {
-                if (Installers.writeAll(openEjbXmlFile, openEjbXml.replace("<openejb>", "<tomee>").replace("</openejb>", "</tomee>"), alerts)) {
-                    alerts.addInfo("Copy tomee.xml to conf");
-                }
-            }
-        }
-
-
-        //
         // conf/logging.properties
         // now we are using tomcat one of jdk one by default
         //
@@ -711,6 +708,18 @@ public class Installer implements InstallerInterface {
                 systemPropertiesWriter.write("tomee.serialization.class.blacklist = *\n");
                 systemPropertiesWriter.write("# tomee.serialization.class.whitelist = my.package\n");
 
+                systemPropertiesWriter.write("# Johnzon prevents too big string to be unserialized by default\n");
+                systemPropertiesWriter.write("# You can either configure it by Mapper/Parser instance or globally\n");
+                systemPropertiesWriter.write("# With this property:\n");
+                systemPropertiesWriter.write("# org.apache.johnzon.max-string-length = 8192\n");
+
+
+                systemPropertiesWriter.write("\n");
+                systemPropertiesWriter.write("# Should a jar with at least one EJB activate CDI for this module?\n");
+                systemPropertiesWriter.write("# Spec says so but this can imply more (permgen) memory usage\n");
+                systemPropertiesWriter.write("# openejb.cdi.activated-on-ejb = true\n");
+
+
                 systemPropertiesWriter.write("\n");
                 systemPropertiesWriter.write("# openejb.check.classloader = false\n");
                 systemPropertiesWriter.write("# openejb.check.classloader.verbose = false\n");
@@ -795,16 +804,14 @@ public class Installer implements InstallerInterface {
         //
         // conf/web.xml
         //
-        final JarFile openejbTomcatCommonJar;
-        try {
-            openejbTomcatCommonJar = new JarFile(paths.geOpenEJBTomcatCommonJar());
+        try (final JarFile openejbTomcatCommonJar = new JarFile(paths.geOpenEJBTomcatCommonJar())) {
+            final File webXmlFile = new File(confDir, "web.xml");
+            final String webXml = Installers.readEntry(openejbTomcatCommonJar, "conf/web.xml", alerts);
+            if (Installers.writeAll(webXmlFile, webXml, alerts)) {
+                alerts.addInfo("Set jasper in production mode in TomEE web.xml");
+            }
         } catch (final IOException e) {
-            return;
-        }
-        final File webXmlFile = new File(confDir, "web.xml");
-        final String webXml = Installers.readEntry(openejbTomcatCommonJar, "conf/web.xml", alerts);
-        if (Installers.writeAll(webXmlFile, webXml, alerts)) {
-            alerts.addInfo("Set jasper in production mode in TomEE web.xml");
+            // no-op
         }
     }
 

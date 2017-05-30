@@ -16,11 +16,13 @@
  */
 package org.apache.openejb.server.cxf.transport.util;
 
+import org.apache.openejb.util.classloader.Unwrappable;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
 
-public class CxfContainerClassLoader extends ClassLoader {
+public class CxfContainerClassLoader extends ClassLoader implements Unwrappable {
     private static final ClassLoader CONTAINER_LOADER = CxfUtil.class.getClassLoader();
     public static final String CXF_PACKAGE = "org.apache.cxf.";
 
@@ -128,5 +130,10 @@ public class CxfContainerClassLoader extends ClassLoader {
             return CONTAINER_LOADER.hashCode();
         }
         return classLoader.hashCode();
+    }
+
+    @Override
+    public ClassLoader unwrap() {
+        return tccl();
     }
 }

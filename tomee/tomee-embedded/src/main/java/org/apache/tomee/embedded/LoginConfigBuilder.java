@@ -23,22 +23,38 @@ import org.apache.tomcat.util.descriptor.web.LoginConfig;
 public class LoginConfigBuilder {
     private final LoginConfig loginConfig = new LoginConfig();
 
-    public LoginConfigBuilder setErrorPage(final String errorPage) {
+    public void setErrorPage(final String errorPage) {
+        loginConfig.setErrorPage(errorPage);
+    }
+
+    public void setLoginPage(final String loginPage) {
+        loginConfig.setLoginPage(loginPage);
+    }
+
+    public void setRealmName(final String realmName) {
+        loginConfig.setRealmName(realmName);
+    }
+
+    public void setAuthMethod(final String authMethod) {
+        loginConfig.setAuthMethod(authMethod);
+    }
+
+    public LoginConfigBuilder errorPage(final String errorPage) {
         loginConfig.setErrorPage(errorPage);
         return this;
     }
 
-    public LoginConfigBuilder setLoginPage(final String loginPage) {
+    public LoginConfigBuilder loginPage(final String loginPage) {
         loginConfig.setLoginPage(loginPage);
         return this;
     }
 
-    public LoginConfigBuilder setRealmName(final String realmName) {
+    public LoginConfigBuilder realmName(final String realmName) {
         loginConfig.setRealmName(realmName);
         return this;
     }
 
-    public LoginConfigBuilder setAuthMethod(final String authMethod) {
+    public LoginConfigBuilder authMethod(final String authMethod) {
         loginConfig.setAuthMethod(authMethod);
         return this;
     }
@@ -48,18 +64,18 @@ public class LoginConfigBuilder {
     }
 
     public LoginConfigBuilder basic() {
-        return setAuthMethod("BASIC");
+        return authMethod("BASIC");
     }
 
     public LoginConfigBuilder digest() {
-        return setAuthMethod("DIGEST");
+        return authMethod("DIGEST");
     }
 
     public LoginConfigBuilder clientCert() {
-        return setAuthMethod("CLIENT-CERT");
+        return authMethod("CLIENT-CERT");
     }
 
     public LoginConfigBuilder form() {
-        return setAuthMethod("FORM");
+        return authMethod("FORM");
     }
 }

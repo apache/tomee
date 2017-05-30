@@ -16,11 +16,10 @@
  */
 package org.apache.openejb.test;
 
-import java.util.Properties;
-import java.util.Random;
-
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import java.util.Properties;
+import java.util.Random;
 
 /**
  * @version $Rev$ $Date$

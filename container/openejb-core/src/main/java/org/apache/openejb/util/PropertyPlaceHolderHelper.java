@@ -38,7 +38,7 @@ public final class PropertyPlaceHolderHelper {
 
     static {
         SUBSTITUTOR.setEnableSubstitutionInVariables(true);
-        SUBSTITUTOR.setValueDelimiter(System.getProperty("openejb.placehodler.delimiter", ":-")); // default one of [lang3]
+        SUBSTITUTOR.setValueDelimiter(JavaSecurityManagers.getSystemProperty("openejb.placehodler.delimiter", ":-")); // default one of [lang3]
     }
 
     public static final String CIPHER_PREFIX = "cipher:";

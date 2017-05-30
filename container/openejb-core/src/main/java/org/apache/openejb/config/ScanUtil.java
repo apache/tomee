@@ -49,6 +49,7 @@ public final class ScanUtil {
         private final Set<String> classes = new HashSet<String>();
         private final Set<String> packages = new HashSet<String>();
         private Set<String> current;
+        private boolean optimized = true;
 
         @Override
         public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
@@ -56,6 +57,9 @@ public final class ScanUtil {
                 current = classes;
             } else if (qName.equals("package")) {
                 current = packages;
+            } else if (qName.equals("scan")) {
+                final String optimized = attributes.getValue("optimized");
+                this.optimized = optimized == null || Boolean.parseBoolean(optimized);
             }
         }
 
@@ -69,6 +73,10 @@ public final class ScanUtil {
         @Override
         public void endElement(final String uri, final String localName, final String qName) throws SAXException {
             current = null;
+        }
+
+        public boolean isOptimized() {
+            return optimized;
         }
 
         public Set<String> getPackages() {

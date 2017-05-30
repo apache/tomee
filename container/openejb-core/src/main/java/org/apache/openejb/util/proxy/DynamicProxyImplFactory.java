@@ -60,8 +60,12 @@ public class DynamicProxyImplFactory {
             QueryProxy.class.cast(invocationHandler).setEntityManager(em);
         }
 
+        return newProxy(context.getBeanClass(), invocationHandler);
+    }
+
+    public static Object newProxy(final Class<?> type, final InvocationHandler invocationHandler) {
         try {
-            return ProxyManager.newProxyInstance(context.getBeanClass(), new Handler(invocationHandler));
+            return ProxyManager.newProxyInstance(type, new Handler(invocationHandler));
         } catch (final IllegalAccessException e) {
             throw new OpenEJBRuntimeException("illegal access", e);
         }

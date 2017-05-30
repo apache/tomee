@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.server.cxf.rs;
 
-import org.apache.cxf.message.Message;
 import org.apache.openejb.Injection;
 import org.apache.webbeans.config.WebBeansContext;
 
@@ -26,15 +25,5 @@ import java.util.Collection;
 public class OpenEJBPerRequestPojoResourceProvider extends CdiResourceProvider {
     public OpenEJBPerRequestPojoResourceProvider(final ClassLoader loader, final Class<?> clazz, final Collection<Injection> injectionCollection, final Context initialContext, final WebBeansContext owbCtx) {
         super(loader, clazz, injectionCollection, initialContext, owbCtx);
-    }
-
-    @Override
-    protected BeanCreator getDefaultBeanCreator(final Message m) {
-        return new DefaultBeanCreator(m, constructor);
-    }
-
-    @Override
-    protected BeanCreator getPseudoScopedCdiBeanCreator() {
-        return new PseudoScopedCdiBeanCreator();
     }
 }

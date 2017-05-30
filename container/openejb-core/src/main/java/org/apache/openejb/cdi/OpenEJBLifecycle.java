@@ -145,16 +145,16 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         try {
             Thread.currentThread().setContextClassLoader(stuff.getClassLoader());
 
+            final AppContext appContext = stuff.getAppContext();
+            if (stuff.getWebContext() == null) { // do it before any other things to keep our singleton finder working
+                appContext.setWebBeansContext(webBeansContext);
+            }
+
             //Load all plugins
             webBeansContext.getPluginLoader().startUp();
 
             //Get Plugin
             final CdiPlugin cdiPlugin = (CdiPlugin) webBeansContext.getPluginLoader().getEjbPlugin();
-
-            final AppContext appContext = stuff.getAppContext();
-            if (stuff.getWebContext() == null) {
-                appContext.setWebBeansContext(webBeansContext);
-            }
 
             cdiPlugin.setClassLoader(stuff.getClassLoader());
             cdiPlugin.setWebBeansContext(webBeansContext);
@@ -204,12 +204,12 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
 
             final Collection<Class<?>> ejbs = new ArrayList<>(stuff.getBeanContexts().size());
             for (final BeanContext bc : stuff.getBeanContexts()) {
+                ejbs.add(bc.getManagedClass());
+
                 final CdiEjbBean cdiEjbBean = bc.get(CdiEjbBean.class);
                 if (cdiEjbBean == null) {
                     continue;
                 }
-
-                ejbs.add(bc.getManagedClass());
 
                 if (AbstractProducer.class.isInstance(cdiEjbBean)) {
                     AbstractProducer.class.cast(cdiEjbBean).defineInterceptorStack(cdiEjbBean, cdiEjbBean.getAnnotatedType(), cdiEjbBean.getWebBeansContext());
@@ -401,7 +401,11 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         {
             try
             {
-                Class.forName("org.apache.jasper.compiler.JspRuntimeContext");
+                try {
+                    Class.forName("org.apache.jasper.servlet.JasperInitializer");
+                } catch (final Throwable th) {
+                    Class.forName("org.apache.jasper.compiler.JspRuntimeContext");
+                }
                 factory = JspFactory.getDefaultFactory();
             }
             catch (Exception e)

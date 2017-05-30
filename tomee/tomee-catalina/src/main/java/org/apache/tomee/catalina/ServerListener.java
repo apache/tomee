@@ -199,7 +199,7 @@ public class ServerListener implements LifecycleListener {
             field.setAccessible(true);
             final String tomeeVersion = OpenEjbVersion.get().getVersion();
             final int modifiers = field.getModifiers();
-            if (Modifier.isFinal(modifiers)) {
+            if (Modifier.isFinal(modifiers)) { // this is a bit fragile, we can surely drop this feature at some point
                 final Field modifiersField = Field.class.getDeclaredField("modifiers");
                 modifiersField.setAccessible(true);
                 modifiersField.setInt(field, modifiers & ~Modifier.FINAL);

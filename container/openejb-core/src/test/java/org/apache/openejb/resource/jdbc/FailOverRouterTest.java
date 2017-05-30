@@ -67,8 +67,8 @@ public class FailOverRouterTest {
     }
 
     private void rotate() {
-        final Iterator<DataSource> it = router.getDataSources().iterator();
-        final DataSource ds1 = it.next();
+        final Iterator<FailOverRouter.DataSourceHolder> it = router.getDataSources().iterator();
+        final FailOverRouter.DataSourceHolder ds1 = it.next();
         router.updateDataSources(Arrays.asList(it.next(), it.next(), ds1));
     }
 

@@ -61,7 +61,7 @@ public final class LogCategory {
     public static final LogCategory OPENEJB_SQL = OPENEJB.createChild("sql");
 
     private LogCategory(final String name) {
-        this.name = name;
+        this.name = name == null ? "" : name;
     }
 
     public String getName() {
@@ -80,4 +80,13 @@ public final class LogCategory {
         return new LogCategory(this.name + "." + child);
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        return this == o || !(o == null || getClass() != o.getClass()) && name.equals(LogCategory.class.cast(o).name);
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
 }

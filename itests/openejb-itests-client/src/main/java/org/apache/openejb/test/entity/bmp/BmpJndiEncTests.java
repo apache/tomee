@@ -33,7 +33,7 @@ public class BmpJndiEncTests extends BmpTestClient {
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/entity/bmp/EncBean");
-        ejbHome = (EncBmpHome) javax.rmi.PortableRemoteObject.narrow(obj, EncBmpHome.class);
+        ejbHome = (EncBmpHome) obj;
         ejbObject = ejbHome.create("Enc Bean");
     }
 

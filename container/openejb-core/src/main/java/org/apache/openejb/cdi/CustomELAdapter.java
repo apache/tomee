@@ -18,6 +18,7 @@
 package org.apache.openejb.cdi;
 
 import org.apache.openejb.AppContext;
+import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.el22.WebBeansELResolver;
 import org.apache.webbeans.el22.WrappedExpressionFactory;
 import org.apache.webbeans.spi.adaptor.ELAdaptor;
@@ -38,7 +39,21 @@ public class CustomELAdapter implements ELAdaptor {
 
     @Override
     public ELResolver getOwbELResolver() {
-        return new WebBeansELResolver();
+        WebBeansContext old = null;
+        boolean exit = false;
+        try { // just some safety around this but should be very very rare
+            WebBeansContext.currentInstance();
+        } catch (final IllegalStateException ise) {
+            old = ThreadSingletonServiceImpl.enter(appContext.getWebBeansContext());
+            exit = true;
+        }
+        try {
+            return new WebBeansELResolver();
+        } finally {
+            if (exit) {
+                ThreadSingletonServiceImpl.exit(old);
+            }
+        }
     }
 
     @Override

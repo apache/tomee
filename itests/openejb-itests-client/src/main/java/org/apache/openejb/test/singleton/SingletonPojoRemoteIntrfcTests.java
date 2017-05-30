@@ -25,7 +25,7 @@ public class SingletonPojoRemoteIntrfcTests extends BasicSingletonTestClient {
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/singleton/BasicSingletonPojoHome");
-        ejbHome = (BasicSingletonHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicSingletonHome.class);
+        ejbHome = (BasicSingletonHome) obj;
         ejbObject = ejbHome.createObject();
     }
 

@@ -30,6 +30,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -77,6 +78,7 @@ public class CdiConstructorInjectionTest {
         assertEquals("GET", WebClient.create("http://localhost:" + port + "/app").path("/bar").get(String.class));
     }
 
+    @Dependent
     public static class Service {
         public String bar() {
             return "service";

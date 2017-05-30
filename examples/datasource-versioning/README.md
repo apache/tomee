@@ -272,7 +272,6 @@ Both examples demonstrate the same, in that two driver versions can be loaded an
     INFO - Existing thread singleton service in SystemInstance(): org.apache.openejb.cdi.ThreadSingletonServiceImpl@22c2e2dd
     INFO - OpenWebBeans Container is starting...
     INFO - Adding OpenWebBeansPlugin : [CdiPlugin]
-    INFO - Adding OpenWebBeansPlugin : [OpenWebBeansJsfPlugin]
     INFO - All injection points were validated successfully.
     INFO - OpenWebBeans Container has started, it took 203 ms.
     INFO - Created Ejb(deployment-id=DataSourceTester, ejb-name=DataSourceTester, container=Default Stateless Container)

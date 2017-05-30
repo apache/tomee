@@ -127,7 +127,6 @@ if you don't use workarounds like https://github.com/rmannibucau/persistence-wit
     INFOS - Existing thread singleton service in SystemInstance(): org.apache.openejb.cdi.ThreadSingletonServiceImpl@13158bbd
     INFOS - OpenWebBeans Container is starting...
     INFOS - Adding OpenWebBeansPlugin : [CdiPlugin]
-    INFOS - Adding OpenWebBeansPlugin : [OpenWebBeansJsfPlugin]
     INFOS - All injection points were validated successfully.
     INFOS - OpenWebBeans Container has started, it took 224 ms.
     INFOS - Deployed Application(path=/home/rmannibucau/dev/Apache/tomee-trunk/examples/arquillian-jpa/target/arquillian-test-working-dir/0/UserPersistenceTest)

@@ -19,6 +19,7 @@ package org.apache.tomee;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.util.NetworkUtil;
+import org.junit.After;
 import org.junit.Test;
 
 import javax.ejb.embeddable.EJBContainer;
@@ -33,7 +34,20 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 public class RemoteTomEEEJBContainerIT {
-    @Test
+    private EJBContainer container;
+
+    @After
+    public void close() {
+        try {
+            if (container != null) {
+                container.close();
+            }
+        } catch (final RuntimeException re) {
+            // no-op
+        }
+    }
+
+    @Test(timeout = 300000)
     public void run() throws IOException {
         final File app = new File("target/mock/webapp");
         Files.mkdirs(app);
@@ -77,18 +91,21 @@ public class RemoteTomEEEJBContainerIT {
             "</Server>\n");
         serverXml.close();
 
-        EJBContainer container = null;
+        container = null;
         try {
             container = EJBContainer.createEJBContainer(new HashMap<Object, Object>() {{
                 put(EJBContainer.PROVIDER, "tomee-remote");
                 put(EJBContainer.MODULES, app.getAbsolutePath());
                 put("openejb.home", tomee.getAbsolutePath());
+                put("retries", "120");
+                put("debug", System.getProperty("RemoteTomEEEJBContainerIT.debug", "false"));
             }});
             final URL url = new URL("http://localhost:" + http + "/webapp/index.html");
             assertEquals("Hello", IO.slurp(url));
         } finally {
             if (container != null) {
                 container.close();
+                container = null;
             }
         }
     }

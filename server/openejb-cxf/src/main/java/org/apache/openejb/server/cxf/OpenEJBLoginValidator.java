@@ -55,8 +55,7 @@ public class OpenEJBLoginValidator extends UsernameTokenValidator {
             if (AbstractSecurityService.class.isInstance(securityService) && AbstractSecurityService.class.cast(securityService).currentState() == null) {
                 securityService.associate(token);
             }
-
-        } catch (LoginException e) {
+        } catch (final LoginException e) {
             throw new SecurityException("cannot log user " + user, e);
         }
     }

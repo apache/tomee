@@ -126,7 +126,7 @@ public final class SystemAppInfo {
     // simplified logic compared to AutoConfig
     private static String findSingletonContainer(final ConfigurationFactory configFactory) throws OpenEJBException {
         for (final ContainerInfo containerInfo : configFactory.getContainerInfos()) {
-            if (SingletonSessionContainerInfo.class.isInstance(configFactory)) {
+            if (SingletonSessionContainerInfo.class.isInstance(containerInfo)) {
                 return containerInfo.id;
             }
         }

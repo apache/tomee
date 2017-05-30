@@ -23,7 +23,6 @@ import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.startup.Bootstrap;
 import org.apache.catalina.startup.Catalina;
-import org.apache.catalina.startup.CatalinaProperties;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.WebAppDeployer;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
@@ -44,22 +43,21 @@ import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.ServiceManager;
 import org.apache.openejb.server.ejbd.EjbServer;
 import org.apache.openejb.spi.Service;
-import org.apache.openejb.util.Join;
 import org.apache.openejb.util.OptionsLog;
-import org.apache.tomcat.util.scan.Constants;
+import org.apache.openejb.util.reflection.Reflections;
+import org.apache.tomcat.util.file.Matcher;
 import org.apache.tomee.catalina.deployment.TomcatWebappDeployer;
 import org.apache.tomee.installer.Installer;
 import org.apache.tomee.installer.Paths;
 import org.apache.tomee.installer.Status;
 import org.apache.tomee.loader.TomcatHelper;
+import org.apache.xbean.finder.filter.Filter;
 
 import java.io.File;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.security.Security;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -199,31 +197,14 @@ public class TomcatLoader implements Loader {
 
         // set ignorable libraries from a tomee property instead of using the standard openejb one
         // don't ignore standard openejb exclusions file
-        final Set<String> exclusions = new HashSet<String>(Arrays.asList(NewLoaderLogic.getExclusions()));
-        {
-            final String jarToSkipProp = CatalinaProperties.getProperty("tomcat.util.scan.DefaultJarScanner.jarsToSkip");
-            if (jarToSkipProp != null && !jarToSkipProp.isEmpty()) {
-                for (final String s : jarToSkipProp.split(",")) {
-                    final String sanitize = NewLoaderLogic.sanitize(s.trim());
-                    if (!sanitize.isEmpty()) {
-                        exclusions.add(sanitize);
-                    }
-                }
-            }
-        }
-        {
-            final String jarToSkipProp = CatalinaProperties.getProperty("org.apache.catalina.startup.ContextConfig.jarsToSkip");
-            if (jarToSkipProp != null && !jarToSkipProp.isEmpty()) {
-                for (final String s : jarToSkipProp.split(",")) {
-                    final String sanitize = NewLoaderLogic.sanitize(s.trim());
-                    if (!sanitize.isEmpty()) {
-                        exclusions.add(sanitize);
-                    }
-                }
-            }
-        }
-        NewLoaderLogic.setExclusions(exclusions.toArray(new String[exclusions.size()]));
-        System.setProperty(Constants.SKIP_JARS_PROPERTY, Join.join(",", exclusions)); // not sure we need it actually since we hook our scanner by default
+        final Class<?> scanner = Class.forName("org.apache.tomcat.util.scan.StandardJarScanFilter", true, TomcatLoader.class.getClassLoader());
+        final Set<String> forcedScanJar = Set.class.cast(Reflections.get(scanner, null, "defaultScanSet"));
+        final Set<String> forcedSkipJar = Set.class.cast(Reflections.get(scanner, null, "defaultSkipSet"));
+        NewLoaderLogic.addAdditionalCustomFilter(
+                forcedSkipJar.isEmpty() ? null : new TomcatToXbeanFilter(forcedSkipJar),
+                forcedScanJar.isEmpty() ? null : new TomcatToXbeanFilter(forcedScanJar));
+        // now we use the default tomcat filter so no need to do it
+        // System.setProperty(Constants.SKIP_JARS_PROPERTY, Join.join(",", exclusions));
 
         // Install tomcat war builder
         TomcatWebAppBuilder tomcatWebAppBuilder = (TomcatWebAppBuilder) SystemInstance.get().getComponent(WebAppBuilder.class);
@@ -465,6 +446,19 @@ public class TomcatLoader implements Loader {
             if (Security.getProperty("authconfigprovider.factory") == null) { // the API we use doesn't have the right default
                 Security.setProperty("authconfigprovider.factory", "org.apache.catalina.authenticator.jaspic.AuthConfigFactoryImpl");
             }
+        }
+    }
+
+    private static final class TomcatToXbeanFilter implements Filter {
+        private final Set<String> entries;
+
+        private TomcatToXbeanFilter(final Set<String> entries) {
+            this.entries = entries;
+        }
+
+        @Override
+        public boolean accept(final String name) {
+            return Matcher.matchName(entries, name);
         }
     }
 }

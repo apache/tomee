@@ -35,6 +35,15 @@ public class TomEEWebappConfiguration extends TomEEConfiguration {
     private boolean removeUnusedWebapps = true;
     private boolean useInstallerServlet;
     private int ajpPort = 8009;
+    private String providerUrlPattern = "%s";
+
+    public String getProviderUrlPattern() {
+        return providerUrlPattern;
+    }
+
+    public void setProviderUrlPattern(String providerUrlPattern) {
+        this.providerUrlPattern = providerUrlPattern;
+    }
 
     public String getGroupId() {
         return groupId;

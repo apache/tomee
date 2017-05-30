@@ -34,6 +34,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * @version $Rev$ $Date$
  */
 @SuppressWarnings("UseOfObsoleteCollectionType")
+@Deprecated // use org.apache.openejb.core.OpenEJBInitialContextFactory
 public class LocalInitialContextFactory implements InitialContextFactory {
 
     private static final ReentrantLock lock = new ReentrantLock();

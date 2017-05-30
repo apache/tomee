@@ -21,11 +21,11 @@ import org.apache.openejb.test.entity.cmp.UnknownCmpHome;
 
 import javax.ejb.EJBObject;
 import javax.ejb.Handle;
-import java.rmi.MarshalledObject;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectOutputStream;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.rmi.MarshalledObject;
 
 /**
  * [7] Should be run as the seventh test suite of the BasicCmpTestClients
@@ -38,7 +38,7 @@ public class Unknown2HandleTests extends UnknownCmp2TestClient {
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/entity/cmp2/UnknownCmpHome");
-        ejbHome = (UnknownCmpHome) javax.rmi.PortableRemoteObject.narrow(obj, UnknownCmpHome.class);
+        ejbHome = (UnknownCmpHome) obj;
         ejbObject = ejbHome.createObject("Fifth Bean");
         ejbHandle = ejbObject.getHandle();
     }

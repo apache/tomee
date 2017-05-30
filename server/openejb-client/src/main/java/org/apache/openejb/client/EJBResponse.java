@@ -110,6 +110,9 @@ public class EJBResponse implements ClusterableResponse {
             case ResponseCodes.EJB_SYS_EXCEPTION:
                 s = new StringBuffer("EJB_SYS_EXCEPTION");
                 break;
+            case ResponseCodes.AUTH_DENIED:
+                s = new StringBuffer("AUTH_DENIED");
+                break;
             default:
                 s = new StringBuffer("UNKNOWN_RESPONSE");
         }

@@ -24,6 +24,8 @@ import org.apache.catalina.Wrapper;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardServer;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.tomcat.JarScanFilter;
+import org.apache.tomcat.JarScanner;
 import org.apache.tomcat.util.scan.StandardJarScanner;
 
 import javax.management.MBeanServer;
@@ -156,9 +158,10 @@ public class TomcatHelper {
 
     public static void configureJarScanner(final Context standardContext) {
         try { // override only if default
+            final JarScanner originalJarScanner = standardContext.getJarScanner();
             if ("true".equalsIgnoreCase(SystemInstance.get().getProperty("tomee.tomcat.override.jar-scanner", "true"))
-                    && !TomEEJarScanner.class.isInstance(standardContext.getJarScanner())
-                    && StandardJarScanner.class.isInstance(standardContext.getJarScanner())) {
+                    && !TomEEJarScanner.class.isInstance(originalJarScanner)
+                    && StandardJarScanner.class.isInstance(originalJarScanner)) {
                 final TomEEJarScanner jarScanner = new TomEEJarScanner();
 
                 final Properties properties = SystemInstance.get().getProperties();
@@ -170,7 +173,10 @@ public class TomcatHelper {
                 if (scanBootstrap != null) {
                     jarScanner.setScanBootstrapClassPath(Boolean.parseBoolean(scanBootstrap));
                 }
-
+                final JarScanFilter jarScanFilter = originalJarScanner.getJarScanFilter();
+                if (jarScanFilter != null && Boolean.parseBoolean(properties.getProperty(TomEEJarScanner.class.getName() + ".useOriginalJarScannerFilter", "true"))) {
+                    jarScanner.setJarScanFilter(jarScanFilter);
+                }
                 standardContext.setJarScanner(jarScanner);
             }
         } catch (final Exception e) {

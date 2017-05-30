@@ -49,6 +49,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Collections;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -58,6 +59,7 @@ public class ReloadingLoaderTest {
     private AppInfo info;
     private AppContext context;
     private TomEEWebappClassLoader loader;
+    private AtomicReference<ClassLoader> parentInstance;
 
     @BeforeClass
     @AfterClass
@@ -81,7 +83,13 @@ public class ReloadingLoaderTest {
             }
         });
 
-        loader = new TomEEWebappClassLoader(ParentClassLoaderFinder.Helper.get()) {
+        parentInstance = new AtomicReference<>(ParentClassLoaderFinder.Helper.get());
+        loader = new TomEEWebappClassLoader(parentInstance.get()) {
+            @Override
+            public ClassLoader getInternalParent() {
+                return parentInstance.get();
+            }
+
             @Override
             protected void clearReferences() {
                 // no-op: this test should be reworked to support it but in real life a loader is not stopped/started
@@ -168,7 +176,8 @@ public class ReloadingLoaderTest {
             resources.start();
             loader.start();
             // TomcatWebAppBuilder ill catch start event from StandardContext and force a classloader
-            Reflections.set(loader, "parent", ParentClassLoaderFinder.Helper.get());
+            // Reflections.set(loader, "parent", ParentClassLoaderFinder.Helper.get());
+            parentInstance.set(ParentClassLoaderFinder.Helper.get());
 
             server.afterApplicationCreated(new AssemblerAfterApplicationCreated(info, context, Collections.<BeanContext>emptyList()));
 

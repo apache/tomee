@@ -32,10 +32,15 @@ public final class CdiPasswordCipher implements PasswordCipher {
     @Override
     public String decrypt(final char[] encryptedPassword) {
         final String string = new String(encryptedPassword);
-        final WebBeansContext wbc = WebBeansContext.currentInstance();
-        final BeanManagerImpl mgr = wbc.getBeanManagerImpl();
-        if (!mgr.isInUse()) { // not yet the time to use CDI, container is not started
-            // would be cool to log a warning here but would pollute the logs with false positives
+        final BeanManagerImpl mgr;
+        try {
+            final WebBeansContext wbc = WebBeansContext.currentInstance();
+            mgr = wbc.getBeanManagerImpl();
+            if (!mgr.isInUse()) { // not yet the time to use CDI, container is not started
+                // would be cool to log a warning here but would pollute the logs with false positives
+                return "cipher:cdi:" + string;
+            }
+        } catch (final IllegalStateException ise) { // no cdi
             return "cipher:cdi:" + string;
         }
 

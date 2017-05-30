@@ -52,6 +52,16 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
     private boolean simpleLog;
     private String deployerProperties = "";
 
+    private String providerUrlPattern = "%s";
+
+    public String getProviderUrlPattern() {
+        return providerUrlPattern;
+    }
+
+    public void setProviderUrlPattern(String providerUrlPattern) {
+        this.providerUrlPattern = providerUrlPattern;
+    }
+
     public String getGroupId() {
         return groupId;
     }

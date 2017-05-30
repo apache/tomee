@@ -35,6 +35,7 @@ import org.apache.tomee.catalina.environment.Hosts;
 import org.apache.tomee.catalina.registration.Registrations;
 import org.apache.tomee.loader.TomcatHelper;
 
+import javax.servlet.DispatcherType;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,14 +43,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import javax.servlet.DispatcherType;
 
 public class TomcatRsRegistry implements RsRegistry {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_STARTUP, TomcatRsRegistry.class);
     private final Hosts hosts;
 
     private List<Connector> connectors;
-    private final Map<String, HttpListener> listeners = new TreeMap<>();
+    private final Map<Key, HttpListener> listeners = new TreeMap<>();
 
     public TomcatRsRegistry() {
         for (final Service service : TomcatHelper.getServer().findServices()) {
@@ -138,7 +138,7 @@ public class TomcatRsRegistry implements RsRegistry {
 
         path = address(connectors, host.getName(), webContext);
         final String key = address(connectors, host.getName(), completePath);
-        listeners.put(key, listener);
+        listeners.put(new Key(appId, key), listener);
 
         return new AddressInfo(path, key);
     }
@@ -188,7 +188,7 @@ public class TomcatRsRegistry implements RsRegistry {
     }
 
     @Override
-    public HttpListener removeListener(final String completePath) {
+    public HttpListener removeListener(final String appId, final String completePath) {
         if(completePath != null) {
             String path = completePath;
             // assure context root with a leading slash
@@ -197,10 +197,54 @@ public class TomcatRsRegistry implements RsRegistry {
             } else {
                 path = completePath;
             }
-            if (listeners.containsKey(path)) {
-                return listeners.remove(path);
+
+            final Key key = new Key(appId, path);
+            if (listeners.containsKey(key)) {
+                return listeners.remove(key);
             }
         }
         return null;
+    }
+
+    private static final class Key implements Comparable<Key> {
+        private final String appId; // can be versionned so context is not enough
+        private final String path;
+        private final int hash; // hashmap key so compute only once the hash for perf
+
+        private Key(final String appId, final String path) {
+            this.appId = appId;
+            this.path = path;
+            this.hash = 31 * (appId != null ? appId.hashCode() : 0) + (path != null ? path.hashCode() : 0);
+        }
+
+        @Override
+        public boolean equals(final Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            final Key key = Key.class.cast(o);
+            return appId != null ? appId.equals(key.appId) : key.appId == null && (path != null ? path.equals(key.path) : key.path == null);
+
+        }
+
+        @Override
+        public int hashCode() {
+            return hash;
+        }
+
+        @Override
+        public int compareTo(final Key o) {
+            if ((appId != null && !appId.equals(o.appId)) || o.appId != null) {
+                final int appCompare = (appId == null ? "" : appId).compareTo(o.appId == null ? "" : o.appId);
+                if (appCompare != 0) {
+                    return appCompare;
+                }
+            }
+            return path.compareTo(o.path);
+        }
     }
 }

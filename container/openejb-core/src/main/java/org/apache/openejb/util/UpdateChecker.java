@@ -64,22 +64,22 @@ public class UpdateChecker {
                 final URL proxyUrl = new URL(checkerProxy);
                 proxyProtocol = proxyUrl.getProtocol();
 
-                originalProxyHost = System.getProperty(proxyProtocol + ".proxyHost");
-                originalProxyPort = System.getProperty(proxyProtocol + ".proxyPort");
-                originalProxyUser = System.getProperty(proxyProtocol + ".proxyUser");
-                originalProxyPwd = System.getProperty(proxyProtocol + ".proxyPassword");
+                originalProxyHost = JavaSecurityManagers.getSystemProperty(proxyProtocol + ".proxyHost");
+                originalProxyPort = JavaSecurityManagers.getSystemProperty(proxyProtocol + ".proxyPort");
+                originalProxyUser = JavaSecurityManagers.getSystemProperty(proxyProtocol + ".proxyUser");
+                originalProxyPwd = JavaSecurityManagers.getSystemProperty(proxyProtocol + ".proxyPassword");
 
-                System.setProperty(proxyProtocol + ".proxyHost", proxyUrl.getHost());
-                System.setProperty(proxyProtocol + ".proxyPort", Integer.toString(proxyUrl.getPort()));
+                JavaSecurityManagers.setSystemProperty(proxyProtocol + ".proxyHost", proxyUrl.getHost());
+                JavaSecurityManagers.setSystemProperty(proxyProtocol + ".proxyPort", Integer.toString(proxyUrl.getPort()));
 
                 final String userInfo = proxyUrl.getUserInfo();
                 if (userInfo != null) {
                     final int sep = userInfo.indexOf(":");
                     if (sep >= 0) {
-                        System.setProperty(proxyProtocol + ".proxyUser", userInfo.substring(0, sep));
-                        System.setProperty(proxyProtocol + ".proxyPassword", userInfo.substring(sep + 1));
+                        JavaSecurityManagers.setSystemProperty(proxyProtocol + ".proxyUser", userInfo.substring(0, sep));
+                        JavaSecurityManagers.setSystemProperty(proxyProtocol + ".proxyPassword", userInfo.substring(sep + 1));
                     } else {
-                        System.setProperty(proxyProtocol + ".proxyUser", userInfo);
+                        JavaSecurityManagers.setSystemProperty(proxyProtocol + ".proxyUser", userInfo);
                     }
                 }
             } catch (final MalformedURLException e) {
@@ -124,7 +124,7 @@ public class UpdateChecker {
         if (value == null) {
             System.clearProperty(key);
         } else {
-            System.setProperty(key, value);
+            JavaSecurityManagers.setSystemProperty(key, value);
         }
     }
 
@@ -149,15 +149,14 @@ public class UpdateChecker {
 
     public boolean usesLatest() {
         if (artifact().contains(TOMEE_ARTIFACT)) {
-            final InputStream is = getClass().getClassLoader().getResourceAsStream("META-INF/maven/org.apache.openejb/tomee-catalina/pom.properties");
-            if (is != null) {
-                final Properties prop = new Properties();
-                try {
+            try (final InputStream is = getClass().getClassLoader().getResourceAsStream("META-INF/maven/org.apache.openejb/tomee-catalina/pom.properties")) {
+                if (is != null) {
+                    final Properties prop = new Properties();
                     prop.load(is);
                     current = prop.getProperty("version");
-                } catch (final IOException e) {
-                    LOGGER.error("can't get tomee version, will use openejb one");
                 }
+            } catch (IOException e) {
+                LOGGER.error("can't get tomee version, will use openejb one");
             }
         }
 
@@ -177,9 +176,9 @@ public class UpdateChecker {
         if (current.equals(latest)) {
             return "running on the latest version";
         }
-        return new StringBuilder("you are using the version ").append(current)
-            .append(", our latest stable version ").append(latest)
-            .append(" is available on ").append(repoUrl).toString();
+        return "you are using the version " + current +
+                ", our latest stable version " + latest +
+                " is available on " + repoUrl;
     }
 
     public void setRepoUrl(final String repoUrl) {

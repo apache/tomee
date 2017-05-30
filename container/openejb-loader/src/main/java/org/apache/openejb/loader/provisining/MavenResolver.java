@@ -135,7 +135,7 @@ public class MavenResolver implements ArchiveResolver, ProvisioningResolverAware
         if (f.exists()) {
             home = f.getAbsolutePath();
         } else {
-            f = new File(properties.getProperty("openejb.m2.home", System.getProperty("user.home") + "/.m2/settings.xml"));
+            f = new File(properties.getProperty("openejb.m2.settings", System.getProperty("user.home") + "/.m2/settings.xml"));
             if (f.exists()) {
                 try {
                     final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

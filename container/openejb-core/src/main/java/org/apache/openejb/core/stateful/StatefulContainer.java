@@ -35,6 +35,7 @@ import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
+import org.apache.openejb.core.security.AbstractSecurityService;
 import org.apache.openejb.core.stateful.Cache.CacheFilter;
 import org.apache.openejb.core.stateful.Cache.CacheListener;
 import org.apache.openejb.core.transaction.BeanTransactionPolicy;
@@ -74,6 +75,7 @@ import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.SynchronizationType;
+import javax.security.auth.login.LoginException;
 import javax.transaction.Transaction;
 import java.io.Serializable;
 import java.lang.reflect.Method;
@@ -392,7 +394,15 @@ public class StatefulContainer implements RpcContainer {
 
         final ThreadContext createContext = new ThreadContext(beanContext, primaryKey);
         final ThreadContext oldCallContext = ThreadContext.enter(createContext);
+        Object runAs = null;
         try {
+            if (oldCallContext != null) {
+                final BeanContext oldBc = oldCallContext.getBeanContext();
+                if (oldBc.getRunAsUser() != null || oldBc.getRunAs() != null) {
+                    runAs = AbstractSecurityService.class.cast(securityService).overrideWithRunAsContext(createContext, beanContext, oldBc);
+                }
+            }
+
             // Security check
             checkAuthorization(callMethod, interfaceType);
 
@@ -471,6 +481,13 @@ public class StatefulContainer implements RpcContainer {
 
             return new ProxyInfo(beanContext, primaryKey);
         } finally {
+            if (runAs != null) {
+                try {
+                    securityService.associate(runAs);
+                } catch (final LoginException e) {
+                    // no-op
+                }
+            }
             ThreadContext.exit(oldCallContext);
         }
     }
@@ -496,7 +513,14 @@ public class StatefulContainer implements RpcContainer {
 
         final ThreadContext callContext = new ThreadContext(beanContext, primKey);
         final ThreadContext oldCallContext = ThreadContext.enter(callContext);
+        Object runAs = null;
         try {
+            if (oldCallContext != null) {
+                final BeanContext oldBc = oldCallContext.getBeanContext();
+                if (oldBc.getRunAsUser() != null || oldBc.getRunAs() != null) {
+                    runAs = AbstractSecurityService.class.cast(securityService).overrideWithRunAsContext(callContext, beanContext, oldBc);
+                }
+            }
             // Security check
             if (!internalRemove) {
                 checkAuthorization(callMethod, interfaceType);
@@ -592,6 +616,13 @@ public class StatefulContainer implements RpcContainer {
                     }
                 }
             } finally {
+                if (runAs != null) {
+                    try {
+                        securityService.associate(runAs);
+                    } catch (final LoginException e) {
+                        // no-op
+                    }
+                }
                 if (!retain) {
                     try {
                         callContext.setCurrentOperation(Operation.PRE_DESTROY);
@@ -642,7 +673,15 @@ public class StatefulContainer implements RpcContainer {
         final ThreadContext callContext = new ThreadContext(beanContext, primKey);
         final ThreadContext oldCallContext = ThreadContext.enter(callContext);
         final CurrentCreationalContext currentCreationalContext = beanContext.get(CurrentCreationalContext.class);
+        Object runAs = null;
         try {
+            if (oldCallContext != null) {
+                final BeanContext oldBc = oldCallContext.getBeanContext();
+                if (oldBc.getRunAsUser() != null || oldBc.getRunAs() != null) {
+                    runAs = AbstractSecurityService.class.cast(securityService).overrideWithRunAsContext(callContext, beanContext, oldBc);
+                }
+            }
+
             // Security check
             checkAuthorization(callMethod, interfaceType);
 
@@ -699,6 +738,13 @@ public class StatefulContainer implements RpcContainer {
             }
             return returnValue;
         } finally {
+            if (runAs != null) {
+                try {
+                    securityService.associate(runAs);
+                } catch (final LoginException e) {
+                    // no-op
+                }
+            }
             ThreadContext.exit(oldCallContext);
             if (currentCreationalContext != null) {
                 currentCreationalContext.remove();
@@ -732,7 +778,7 @@ public class StatefulContainer implements RpcContainer {
                     throw new InvalidateReferenceException(new NoSuchObjectException("Not Found"));
                 }
 
-                // remember instance until it is returned to the cache                
+                // remember instance until it is returned to the cache
                 checkedOutInstances.put(primaryKey, instance);
             }
         }
@@ -749,7 +795,7 @@ public class StatefulContainer implements RpcContainer {
             // concurrent calls are not allowed, lock only once
             lockAcquired = currLock.tryLock();
         } else {
-            // try to get a lock within the specified period. 
+            // try to get a lock within the specified period.
             try {
                 lockAcquired = currLock.tryLock(accessTimeout.getTime(), accessTimeout.getUnit());
             } catch (final InterruptedException e) {

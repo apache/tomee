@@ -24,6 +24,7 @@ import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ClassListInfo;
+import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.FilterInfo;
 import org.apache.openejb.assembler.classic.InjectionBuilder;
 import org.apache.openejb.assembler.classic.JndiEncBuilder;
@@ -173,7 +174,7 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
             appContext.getWebContexts().add(webContext);
             cs.addWebContext(webContext);
 
-            if (!appInfo.webAppAlone) {
+            if (!appInfo.webAppAlone && hasCdi(appInfo)) {
                 final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
                 new CdiBuilder().build(appInfo, appContext, beanContexts, webContext);
                 assembler.startEjbs(true, beanContexts);
@@ -229,8 +230,15 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
             deployedWebObjects.webContext = webContext;
             servletDeploymentInfo.put(webAppInfo, deployedWebObjects);
 
-            if (webContext.getWebBeansContext() != null) {
-                OpenEJBLifecycle.class.cast(webContext.getWebBeansContext().getService(ContainerLifecycle.class)).startServletContext(sce.getServletContext());
+            if (webContext.getWebBeansContext() != null && webContext.getWebBeansContext().getBeanManagerImpl().isInUse()) {
+                final Thread thread = Thread.currentThread();
+                final ClassLoader old = thread.getContextClassLoader();
+                thread.setContextClassLoader(webContext.getClassLoader());
+                try {
+                    OpenEJBLifecycle.class.cast(webContext.getWebBeansContext().getService(ContainerLifecycle.class)).startServletContext(sce.getServletContext());
+                } finally {
+                    thread.setContextClassLoader(old);
+                }
             }
 
             if (addServletMethod == null) { // can't manage filter/servlets
@@ -367,6 +375,15 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
                 deployedWebObjects.mappings.add("*\\.jsp");
             }
         }
+    }
+
+    private boolean hasCdi(final AppInfo appInfo) {
+        for (final EjbJarInfo jar : appInfo.ejbJars) {
+            if (jar.beans != null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // not thread safe but fine in embedded mode which is the only mode of this builder

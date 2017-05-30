@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.itest.failover;
 
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.loader.provisining.ProvisioningResolver;
 import org.apache.openejb.util.Join;
 

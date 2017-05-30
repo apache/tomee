@@ -183,6 +183,9 @@ public class StackHandler extends DefaultHandler {
             if (attributes.getValue("classpath") != null) {
                 service.setClasspath(attributes.getValue("classpath"));
             }
+            if (attributes.getValue("classpath-api") != null) {
+                service.setClasspathAPI(attributes.getValue("classpath-api"));
+            }
 
             checkAttributes(attributes, getAttributes());
         }
@@ -224,6 +227,7 @@ public class StackHandler extends DefaultHandler {
             service.setJndi(attributes.getValue("jndi"));
             service.setPostConstruct(attributes.getValue("post-construct"));
             service.setPreDestroy(attributes.getValue("pre-destroy"));
+            service.setTemplate(attributes.getValue("template"));
             service.setPropertiesProvider(attributes.getValue("property-provider"));
             if (service.getPropertiesProvider() == null) {
                 service.setPropertiesProvider(attributes.getValue("properties-provider"));
@@ -232,6 +236,10 @@ public class StackHandler extends DefaultHandler {
             final String aliases = attributes.getValue("aliases");
             if (aliases != null) {
                 service.getAliases().addAll(Arrays.asList(aliases.split(",")));
+            }
+            final String dependsOn = attributes.getValue("depends-on");
+            if (dependsOn != null) {
+                service.getDependsOn().addAll(Arrays.asList(dependsOn.split(",")));
             }
         }
 
@@ -247,6 +255,8 @@ public class StackHandler extends DefaultHandler {
             attributes.add("jndi");
             attributes.add("aliases");
             attributes.add("properties-provider");
+            attributes.add("property-provider");
+            attributes.add("depends-on");
             return attributes;
         }
     }

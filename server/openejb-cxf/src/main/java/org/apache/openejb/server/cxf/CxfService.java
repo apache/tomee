@@ -19,7 +19,6 @@ package org.apache.openejb.server.cxf;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.binding.soap.SoapTransportFactory;
-import org.apache.cxf.transport.DestinationFactory;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
 import org.apache.openejb.core.ivm.naming.JaxWsServiceReference;
@@ -49,6 +48,7 @@ public class CxfService extends WsService {
     private final Map<String, CxfWsContainer> wsContainers = new TreeMap<String, CxfWsContainer>();
 
     private SoapTransportFactory transportFactory;
+    private boolean factoryByListener;
 
     public String getName() {
         return "cxf";
@@ -60,6 +60,7 @@ public class CxfService extends WsService {
         CxfUtil.configureBus();
         SaajInterceptor.registerInterceptors();
 
+        factoryByListener = "true".equalsIgnoreCase(props.getProperty("openejb.cxf.factoryByListener", "false"));
         transportFactory = new SoapTransportFactory();
 
         if (SystemInstance.get().getComponent(JaxWsServiceReference.WebServiceClientCustomizer.class) == null) {
@@ -80,6 +81,10 @@ public class CxfService extends WsService {
         }
     }
 
+    private SoapTransportFactory newTransportFactory() {
+        return !factoryByListener ? transportFactory : new SoapTransportFactory();
+    }
+
     protected HttpListener createEjbWsContainer(URL moduleBaseUrl, PortData port, BeanContext beanContext, ServiceConfiguration config) {
         final Bus bus = CxfUtil.getBus();
 
@@ -88,7 +93,7 @@ public class CxfService extends WsService {
         try {
             CxfCatalogUtils.loadOASISCatalog(bus, moduleBaseUrl, "META-INF/jax-ws-catalog.xml");
 
-            final EjbWsContainer container = new EjbWsContainer(bus, transportFactory, port, beanContext, config);
+            final EjbWsContainer container = new EjbWsContainer(bus, newTransportFactory(), port, beanContext, config);
             container.start();
             wsContainers.put(beanContext.getDeploymentID().toString(), container);
             SystemInstance.get().fireEvent(new ServerCreated(
@@ -110,7 +115,7 @@ public class CxfService extends WsService {
         try {
             CxfCatalogUtils.loadOASISCatalog(bus, moduleBaseUrl, "META-INF/jax-ws-catalog.xml");
 
-            PojoWsContainer container = new PojoWsContainer(loader, transportFactory, bus, port, context, target, bdgs, services);
+            PojoWsContainer container = new PojoWsContainer(loader, newTransportFactory(), bus, port, context, target, bdgs, services);
             container.start();
             wsContainers.put(serviceId, container);
             SystemInstance.get().fireEvent(new ServerCreated(

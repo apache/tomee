@@ -52,6 +52,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.jar.JarFile;
 import java.util.zip.ZipFile;
 
@@ -64,6 +65,7 @@ public class ClassLoaderUtil {
     private static final Map<String, List<ClassLoader>> classLoadersByApp = new HashMap<String, List<ClassLoader>>();
     private static final Map<ClassLoader, Set<String>> appsByClassLoader = new HashMap<ClassLoader, Set<String>>();
     private static final UrlCache localUrlCache = new UrlCache();
+    private static final AtomicBoolean skipClearSunJarFile = new AtomicBoolean();
 
     public static void destroyClassLoader(final String appId, final String appPath) {
         destroyClassLoader(appId);
@@ -374,6 +376,9 @@ public class ClassLoaderUtil {
      */
     @SuppressWarnings({"unchecked"})
     private static synchronized void clearSunJarFileFactoryCacheImpl(final String jarLocation, final int attempt) {
+        if (skipClearSunJarFile.get()) {
+            return;
+        }
         logger.debug("Clearing Sun JarFileFactory cache for directory " + jarLocation);
 
         try {
@@ -460,7 +465,6 @@ public class ClassLoaderUtil {
                 }
 
             }
-
         } catch (final ConcurrentModificationException e) {
             if (attempt > 0) {
                 clearSunJarFileFactoryCacheImpl(jarLocation, attempt - 1);
@@ -469,6 +473,12 @@ public class ClassLoaderUtil {
             }
         } catch (final ClassNotFoundException | NoSuchFieldException e) {
             // not a sun vm
+        } catch (final RuntimeException re) {
+            if ("java.lang.reflect.InaccessibleObjectException".equals(re.getClass().getName())) {
+                skipClearSunJarFile.compareAndSet(false, true);
+                return;
+            }
+            throw re;
         } catch (final Throwable e) {
             if (Boolean.getBoolean("openejb.java9.hack")) {
                 return; // reflection fails cause internals are not exported, close() is called and should be fine

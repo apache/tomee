@@ -25,14 +25,14 @@
   <parent>
     <artifactId>tomee</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>7.0.0-SNAPSHOT</version>
+    <version>7.0.4-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
   <artifactId>tomee-embedded</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: TomEE :: TomEE Embedded</name>
-  <version>7.0.0-SNAPSHOT</version>
+  <version>7.0.4-SNAPSHOT</version>
 
   <build>
     <plugins>
@@ -56,44 +56,192 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
         <executions>
-          <execution>
+          <execution> <!-- real tomee-embedded (typically webprofile + AMQ) -->
+            <id>uber-shade</id>
             <phase>package</phase>
             <goals>
               <goal>shade</goal>
             </goals>
             <configuration>
-              <useBaseVersion>true</useBaseVersion>
-              <createDependencyReducedPom>false</createDependencyReducedPom>
-              <shadedArtifactAttached>true</shadedArtifactAttached>
               <shadedClassifierName>uber</shadedClassifierName>
-              <transformers>
-                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                  <mainClass>org.apache.tomee.embedded.Main</mainClass>
-                </transformer>
-                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
-                  <resource>META-INF/cxf/bus-extensions.txt</resource>
-                </transformer>
-                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
-                  <resource>META-INF/openwebbeans/openwebbeans.properties</resource>
-                </transformer>
-              </transformers>
-              <filters>
-                <filter>
-                  <artifact>*:*</artifact>
-                  <excludes>
-                    <exclude>META-INF/ejb-jar.xml</exclude>
-                    <exclude>META-INF/openejb-jar.xml</exclude>
-                    <exclude>META-INF/web-fragment.xml</exclude>
-                    <!--
-                    NOTE:
-                    we shouldn't exclude faces-config.xml while we didn't impl the feature in another manner
-                    but it breaks all apps not using JSF.
-                    Solution would be to handle it more deeply in our myfaces integration
-                    -->
-                    <exclude>META-INF/faces-config.xml</exclude>
-                  </excludes>
-                </filter>
-              </filters>
+              <artifactSet>
+                <excludes>
+                  <exclude>junit:junit</exclude>
+                  <exclude>*:jaxb-api</exclude>
+                  <exclude>*:jaxb-impl</exclude>
+                </excludes>
+              </artifactSet>
+            </configuration>
+          </execution>
+          <execution> <!-- kind of webprofile minus JSF -->
+            <id>jaxrs-shade</id>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <shadedClassifierName>jaxrs</shadedClassifierName>
+              <artifactSet>
+                <excludes>
+                  <exclude>junit:junit</exclude>
+                  <exclude>*:jaxb-api</exclude>
+                  <exclude>*:jaxb-impl</exclude>
+                  <exclude>org.apache.activemq:*</exclude>
+                  <exclude>org.apache.activemq.protobuf:*</exclude>
+                  <exclude>org.fusesource.hawtbuf:hawtbuf</exclude>
+                  <exclude>org.apache.myfaces.core:*</exclude>
+                  <!-- jaxws -->
+                  <exclude>joda-time:joda-time</exclude>
+                  <exclude> commons-codec:commons-codec</exclude>
+                  <exclude>${project.groupId}:tomee-webservices</exclude>
+                  <exclude>${project.groupId}:openejb-webservices</exclude>
+                  <exclude>${project.groupId}:openejb-cxf</exclude>
+                  <exclude>org.apache.wss4j:*</exclude>
+                  <exclude>org.apache.santuario:xmlsec</exclude>
+                  <exclude>org.opensaml:*</exclude>
+                  <exclude>org.jasypt:*</exclude>
+                  <exclude>net.shibboleth.utilities:java-support</exclude>
+                  <exclude>org.cryptacular:cryptacular</exclude>
+                  <exclude>org.bouncycastle:bcprov-jdk15on</exclude>
+                  <exclude>org.apache.neethi:neethi</exclude>
+                  <exclude>org.apache.cxf:cxf-rt-frontend-jaxws</exclude>
+                  <exclude>org.apache.cxf:cxf-rt-bindings-soap</exclude>
+                  <exclude>org.apache.cxf:cxf-rt-bindings-xml</exclude>
+                  <exclude>org.apache.cxf:cxf-rt-frontend-simple</exclude>
+                  <exclude>org.apache.cxf:cxf-rt-wsdl</exclude>
+                  <exclude>org.apache.cxf:cxf-rt-databinding-jaxb</exclude>
+                  <exclude>org.apache.cxf:cxf-rt-ws-addr</exclude>
+                  <exclude>org.apache.cxf:cxf-rt-ws-security</exclude>
+                  <exclude>org.apache.cxf:cxf-rt-ws-policy</exclude>
+                  <exclude>org.apache.cxf:cxf-rt-security-saml</exclude>
+                  <exclude>org.apache.ws.xmlschema:xmlschema-core</exclude>
+                  <exclude>xml-resolver:xml-resolver</exclude>
+                  <exclude>com.sun.xml.messaging.saaj:saaj-impl</exclude>
+                  <exclude>org.jvnet.mimepull:mimepull</exclude>
+                  <exclude>wsdl4j:wsdl4j</exclude>
+                </excludes>
+              </artifactSet>
+            </configuration>
+          </execution>
+          <execution> <!-- kind of webprofile plus JAX-WS minus JSF -->
+            <id>jaxws-shade</id>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <shadedClassifierName>jaxws</shadedClassifierName>
+              <artifactSet>
+                <excludes>
+                  <exclude>junit:junit</exclude>
+                  <exclude>*:jaxb-api</exclude>
+                  <exclude>*:jaxb-impl</exclude>
+                  <exclude>org.apache.activemq:*</exclude>
+                  <exclude>org.apache.activemq.protobuf:*</exclude>
+                  <exclude>org.fusesource.hawtbuf:hawtbuf</exclude>
+                  <exclude>org.apache.myfaces.core:*</exclude>
+                  <!-- jaxrs -->
+                  <exclude>${project.groupId}:tomee-jaxrs</exclude>
+                  <exclude>${project.groupId}:openejb-rest</exclude>
+                  <exclude>${project.groupId}:openejb-cxf-rs</exclude>
+                  <exclude>org.apache.cxf:cxf-rt-rs-service-description</exclude>
+                  <exclude>org.apache.cxf:cxf-rt-rs-client</exclude>
+                  <exclude>org.apache.cxf:cxf-rt-frontend-jaxrs</exclude>
+                  <exclude>org.apache.cxf:cxf-rt-rs-extension-search</exclude>
+                  <exclude>org.apache.cxf:cxf-rt-rs-json-basic</exclude>
+                  <exclude>org.apache.cxf:cxf-rt-rs-security-cors</exclude>
+                  <exclude>org.apache.cxf:cxf-rt-rs-security-oauth2</exclude>
+                  <exclude>org.apache.cxf:cxf-rt-rs-security-jose-jaxrs</exclude>
+                  <exclude>org.apache.cxf:cxf-rt-rs-security-jose</exclude>
+                  <exclude>org.apache.cxf:cxf-rt-rs-extension-providers</exclude>
+                  <exclude>org.apache.johnzon:johnzon-jaxrs</exclude>
+                  <exclude>org.apache.johnzon:johnzon-mapper</exclude>
+                </excludes>
+              </artifactSet>
+            </configuration>
+          </execution>
+        </executions>
+        <configuration>
+          <useBaseVersion>true</useBaseVersion>
+          <createDependencyReducedPom>false</createDependencyReducedPom>
+          <shadedArtifactAttached>true</shadedArtifactAttached>
+          <transformers>
+            <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+              <mainClass>org.apache.tomee.embedded.Main</mainClass>
+            </transformer>
+            <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+              <resource>META-INF/cxf/bus-extensions.txt</resource>
+            </transformer>
+            <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+              <resource>META-INF/openwebbeans/openwebbeans.properties</resource>
+            </transformer>
+          </transformers>
+          <filters>
+            <filter>
+              <artifact>*:*</artifact>
+              <excludes>
+                <exclude>META-INF/ejb-jar.xml</exclude>
+                <exclude>META-INF/openejb-jar.xml</exclude>
+                <exclude>META-INF/web-fragment.xml</exclude>
+                <!--
+                NOTE:
+                we shouldn't exclude faces-config.xml while we didn't impl the feature in another manner
+                but it breaks all apps not using JSF.
+                Solution would be to handle it more deeply in our myfaces integration
+                -->
+                <exclude>META-INF/faces-config.xml</exclude>
+
+                <!-- to avoid to not be able to run the shade -->
+                <exclude>META-INF/*.SF</exclude>
+                <exclude>META-INF/*.DSA</exclude>
+                <exclude>META-INF/*.RSA</exclude>
+              </excludes>
+            </filter>
+          </filters>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>default-test</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <excludes>
+                <exclude>**/SingleInstanceRunnerTest*</exclude>
+                <exclude>**/NoScannerSingleRunnerTest*</exclude>
+              </excludes>
+            </configuration>
+          </execution>
+          <execution>
+            <id>single-server-default-scanning</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <includes>
+                <include>**/SingleInstanceRunnerTest*</include>
+              </includes>
+              <systemPropertyVariables>
+                <tomee.application-composer.application>org.apache.tomee.embedded.SingleInstanceRunnerTest$TheApp</tomee.application-composer.application>
+              </systemPropertyVariables>
+            </configuration>
+          </execution>
+          <execution>
+            <id>single-server-custom-scanning</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <includes>
+                <include>**/NoScannerSingleRunnerTest*</include>
+              </includes>
+              <systemPropertyVariables>
+                <tomee.application-composer.application>org.apache.tomee.embedded.NoScannerSingleRunnerTest$ScanApp</tomee.application-composer.application>
+              </systemPropertyVariables>
             </configuration>
           </execution>
         </executions>
@@ -182,9 +330,9 @@
       <groupId>commons-beanutils</groupId>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb.patch</groupId>
-      <artifactId>openejb-jstl</artifactId>
-      <version>1.2</version>
+      <groupId>org.apache.taglibs</groupId>
+      <artifactId>taglibs-standard-jstlel</artifactId>
+      <version>1.2.5</version>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
@@ -296,9 +444,20 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>tomee-webservices</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-websocket</artifactId>
       <version>${tomcat.version}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>tomcat-juli</artifactId>
+          <groupId>org.apache.tomcat</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>commons-io</groupId>
@@ -309,6 +468,12 @@
       <groupId>org.jboss.shrinkwrap</groupId>
       <artifactId>shrinkwrap-impl-base</artifactId>
       <version>${version.shrinkwrap.shrinkwrap}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcmail-jdk15on</artifactId>
+      <version>1.54</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

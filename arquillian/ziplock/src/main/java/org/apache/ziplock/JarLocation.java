@@ -41,7 +41,11 @@ public class JarLocation {
         try {
             final Set<URL> urls = ClassLoaders.findUrls(Thread.currentThread().getContextClassLoader());
             for (final URL url : urls) {
-                final File f = new File(decode(url.getFile()));
+                final String decode = decode(url.getFile());
+                File f = new File(decode.replaceFirst("file:", ""));
+                if (!f.exists() && f.getPath().endsWith("!")) {
+                    f = new File(f.getPath().substring(0, f.getPath().length() - 1));
+                }
                 if (f.exists() && pattern.matcher(f.getName()).matches()) {
                     return f;
                 }

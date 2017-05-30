@@ -17,7 +17,7 @@
 package org.apache.openejb.core.security;
 
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Module;
+import org.apache.openejb.testing.Classes;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -30,13 +30,9 @@ import javax.ejb.Singleton;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+@Classes(innerClassesAsBean = true)
 @RunWith(ApplicationComposer.class)
 public class RunAsTest {
-    @Module
-    public Class<?>[] beans() {
-        return new Class<?>[]{MyRunAsBean.class};
-    }
-
     @EJB
     private MyRunAsBean bean;
 
@@ -49,6 +45,21 @@ public class RunAsTest {
     @RunAs("foo")
     @Singleton
     public static class MyRunAsBean {
+        @EJB
+        private Delegate delegate;
+
+        public String principal() {
+            return delegate.principal();
+        }
+
+        public boolean isInRole() {
+            return delegate.isInRole();
+        }
+    }
+
+    @RunAs("foo")
+    @Singleton
+    public static class Delegate {
         @Resource
         private SessionContext ctx;
 

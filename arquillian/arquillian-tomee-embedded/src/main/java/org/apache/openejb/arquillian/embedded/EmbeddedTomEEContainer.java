@@ -30,7 +30,6 @@ import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.web.lifecycle.test.MockHttpSession;
 import org.jboss.arquillian.container.spi.client.container.DeploymentException;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
-import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.Servlet;
@@ -101,6 +100,10 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
 
         configuration.setWebResourceCached(tomeeConfiguration.isWebResourcesCached());
 
+        if (tomeeConfiguration.getClasspathConfiguration() != null) {
+            configuration.loadFrom(tomeeConfiguration.getClasspathConfiguration());
+        }
+
         if (tomeeConfiguration.getConfigurationCustomizers() != null) {
             for (final String s : tomeeConfiguration.getConfigurationCustomizers().split(",")) {
                 final String trim = s.trim();
@@ -146,11 +149,6 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
         } finally {
             resetSerialization();
         }
-    }
-
-    @Override
-    public ProtocolDescription getDefaultProtocol() {
-        return new ProtocolDescription("Local");
     }
 
     @Override

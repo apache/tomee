@@ -21,6 +21,7 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
@@ -46,7 +47,7 @@ import static org.apache.openejb.assembler.classic.MethodInfoUtil.resolveAttribu
 public class JaccPermissionsBuilder {
 
     static {
-        System.setProperty("org.apache.security.jacc.EJBMethodPermission.methodInterfaces", "BusinessLocalHome,BusinessRemoteHome,BusinessRemote,BusinessLocal");
+        JavaSecurityManagers.setSystemProperty("org.apache.security.jacc.EJBMethodPermission.methodInterfaces", "BusinessLocalHome,BusinessRemoteHome,BusinessRemote,BusinessLocal");
     }
 
     public void install(final PolicyContext policyContext) throws OpenEJBException {

@@ -19,6 +19,7 @@ package org.apache.openejb.config.sys;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.openejb.util.SimpleJSonParser;
 import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.DefaultHandler;
@@ -28,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
@@ -76,9 +78,9 @@ public class JSonConfigReader {
             for (final String root : roots) {
                 final String currentRoot;
                 if (root.endsWith("s")) {
-                    currentRoot = root.toLowerCase();
+                    currentRoot = root.toLowerCase(Locale.ENGLISH);
                 } else {
-                    currentRoot = root.toLowerCase() + "s";
+                    currentRoot = root.toLowerCase(Locale.ENGLISH) + "s";
                 }
 
                 final Map<String, Map<String, Map<String, String>>> resources = map(jsConfig.get(currentRoot));
@@ -140,7 +142,7 @@ public class JSonConfigReader {
 
                 // set it for openejb AND the JVM since that's probably too late to let it be done automatically
                 SystemInstance.get().setProperty(key, str);
-                System.setProperty(key, str);
+                JavaSecurityManagers.setSystemProperty(key, str);
             } else {
                 setProperties(key + '.', map(value));
             }

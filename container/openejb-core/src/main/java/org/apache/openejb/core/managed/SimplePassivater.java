@@ -22,14 +22,17 @@ import org.apache.openejb.core.EnvProps;
 import org.apache.openejb.core.ObjectInputStreamFiltered;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.util.Map;
 import java.util.Properties;
 
@@ -54,7 +57,7 @@ public class SimplePassivater implements PassivationStrategy {
             if (dir != null) {
                 sessionDirectory = SystemInstance.get().getBase().getDirectory(dir).getAbsoluteFile();
             } else {
-                sessionDirectory = new File(System.getProperty("java.io.tmpdir", File.separator + "tmp")).getAbsoluteFile();
+                sessionDirectory = new File(JavaSecurityManagers.getSystemProperty("java.io.tmpdir", File.separator + "tmp")).getAbsoluteFile();
             }
 
             if (!sessionDirectory.exists() && !sessionDirectory.mkdirs()) {
@@ -77,11 +80,12 @@ public class SimplePassivater implements PassivationStrategy {
             }
 
             logger.info("Passivating to file " + sessionFile);
-            final ObjectOutputStream oos = new ObjectOutputStream(IO.write(sessionFile));
-
-            oos.writeObject(state);// passivate just the bean instance
-            oos.close();
-            sessionFile.deleteOnExit();
+            try (final OutputStream os = IO.write(sessionFile);
+                 final ObjectOutputStream oos = new ObjectOutputStream(os)) {
+                oos.writeObject(state);// passivate just the bean instance
+            } finally {
+                sessionFile.deleteOnExit();
+            }
         } catch (final NotSerializableException nse) {
             logger.error("Passivation failed ", nse);
             throw (SystemException) new SystemException("The type " + nse.getMessage() + " is not serializable as mandated by the EJB specification.").initCause(nse);
@@ -108,13 +112,14 @@ public class SimplePassivater implements PassivationStrategy {
             if (sessionFile.exists()) {
                 logger.info("Activating from file " + sessionFile);
 
-                final ObjectInputStream ois = new ObjectInputStreamFiltered(IO.read(sessionFile));
-                final Object state = ois.readObject();
-                ois.close();
-                if (!sessionFile.delete()) {
-                    sessionFile.deleteOnExit();
+                try (final InputStream source = IO.read(sessionFile);
+                     final ObjectInputStream ois = new ObjectInputStreamFiltered(source)) {
+                    final Object state = ois.readObject();
+                    if (!sessionFile.delete()) {
+                        sessionFile.deleteOnExit();
+                    }
+                    return state;
                 }
-                return state;
             } else {
                 logger.info("Activation failed: file not found " + sessionFile);
                 return null;

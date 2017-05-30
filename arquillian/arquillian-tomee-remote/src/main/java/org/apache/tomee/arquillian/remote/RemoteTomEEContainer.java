@@ -71,6 +71,11 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
     }
 
     @Override
+    protected String providerUrl() {
+        return String.format(configuration.getProviderUrlPattern(), super.providerUrl());
+    }
+
+    @Override
     public void start() throws LifecycleException {
         // see if TomEE is already running by checking the http port
         final int httpPort = configuration.getHttpPort();

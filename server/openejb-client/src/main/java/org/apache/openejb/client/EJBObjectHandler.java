@@ -307,6 +307,11 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
                 throw new ApplicationException((ThrowableArtifact) getResult(res));
             case ResponseCodes.EJB_OK:
                 return getResult(res);
+            case ResponseCodes.AUTH_DENIED:
+                final Object result = res.getResult();
+                if (ThrowableArtifact.class.isInstance(result)) {
+                    throw ThrowableArtifact.class.cast(result).getThrowable();
+                } // else it be a remote exception
             default:
                 throw new RemoteException("Received invalid response code from server: " + res.getResponseCode());
         }

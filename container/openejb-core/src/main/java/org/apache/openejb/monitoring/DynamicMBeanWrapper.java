@@ -63,11 +63,11 @@ public class DynamicMBeanWrapper implements DynamicMBean, MBeanRegistration {
 
     private static final Map<Class<?>, CacheInfo> CACHE = new HashMap<Class<?>, CacheInfo>();
 
-    private static final Map<Class<?>, Class<? extends Annotation>> OPENEJB_API_TO_JAVAX = new HashMap<Class<?>, Class<? extends Annotation>>();
+    private static final Map<Class<?>, Class<? extends Annotation>> OPENEJB_API_TO_JAVAX = new HashMap<>();
 
     static {
         final ClassLoader loader = DynamicMBeanWrapper.class.getClassLoader();
-        try {
+        try { // all these dont work on java 9 cause of java.management module
             OPENEJB_API_TO_JAVAX.put(MBean.class, (Class<? extends Annotation>) loader.loadClass("javax.management.MBean"));
             OPENEJB_API_TO_JAVAX.put(Description.class, (Class<? extends Annotation>) loader.loadClass("javax.management.Description"));
             OPENEJB_API_TO_JAVAX.put(ManagedOperation.class, (Class<? extends Annotation>) loader.loadClass("javax.management.ManagedOperation"));

@@ -100,17 +100,18 @@ public final class Reflections {
     }
 
     public static Object get(final Object instance, final String field) {
-        Class<?> clazz = instance.getClass();
+        return get(instance.getClass(), instance, field);
+    }
+
+    public static Object get(final Class<?> aClass, final Object instance, final String field) {
+        Class<?> clazz = aClass;
         while (clazz != null) {
             try {
                 final Field f = clazz.getDeclaredField(field);
-                final boolean acc = f.isAccessible();
-                f.setAccessible(true);
-                try {
-                    return f.get(instance);
-                } finally {
-                    f.setAccessible(acc);
+                if (!f.isAccessible()) {
+                    f.setAccessible(true);
                 }
+                return f.get(instance);
             } catch (final NoSuchFieldException nsfe) {
                 // no-op
             } catch (final Exception e) {

@@ -79,6 +79,7 @@ import org.apache.openejb.jpa.integration.MakeTxLookup;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.persistence.PersistenceBootstrap;
 import org.apache.openejb.util.CircularReferencesException;
+import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
@@ -962,7 +963,7 @@ class AppInfoBuilder {
         private static void override(final Properties appProperties, final PersistenceUnitInfo info, final String prefix) {
             final Properties propertiesToCheckForOverridings = new Properties();
             propertiesToCheckForOverridings.putAll(appProperties);
-            propertiesToCheckForOverridings.putAll(System.getProperties());
+            propertiesToCheckForOverridings.putAll(JavaSecurityManagers.getSystemProperties());
             propertiesToCheckForOverridings.putAll(SystemInstance.get().getProperties());
             final Properties overrides = ConfigurationFactory.getOverrides(propertiesToCheckForOverridings, prefix, "PersistenceUnit");
 

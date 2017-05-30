@@ -47,6 +47,19 @@ public class EmbeddedTomEEConfiguration extends TomEEConfiguration {
     private boolean webResourcesCached = true;
     private boolean http2;
     private String configurationCustomizers;
+    private String classpathConfiguration;
+
+    public EmbeddedTomEEConfiguration() {
+        setArquillianProtocol("Local"); // keep this default cause it is way faster and anyway the one we had since 2011
+    }
+
+    public String getClasspathConfiguration() {
+        return classpathConfiguration;
+    }
+
+    public void setClasspathConfiguration(final String classpathConfiguration) {
+        this.classpathConfiguration = classpathConfiguration;
+    }
 
     public boolean isHttp2() {
         return http2;

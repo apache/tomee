@@ -33,6 +33,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import javax.ejb.EJBException;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.naming.Context;
@@ -49,6 +50,7 @@ import java.util.Properties;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class AuthentWithRequestTest {
 
@@ -82,19 +84,40 @@ public class AuthentWithRequestTest {
         assembler.createApplication(config.configureApplication(ejbJar));
 
         try {
+            { // ok case
+                final Context context = new InitialContext(new PropertiesBuilder()
+                        .p(Context.INITIAL_CONTEXT_FACTORY, RemoteInitialContextFactory.class.getName())
+                        .p(Context.PROVIDER_URL, "ejbd://127.0.0.1:" + port)
+                        .p(JNDIContext.AUTHENTICATE_WITH_THE_REQUEST, "true")
+                        .p("java.naming.security.principal", "foo")
+                        .p("java.naming.security.credentials", "bar")
+                        .p("openejb.authentication.realmName", "LM")
+                        .build());
+                final AnInterfaceRemote client = AnInterfaceRemote.class.cast(context.lookup("RemoteWithSecurityRemote"));
+                assertNotNull(client);
 
-            final Context context = new InitialContext(new PropertiesBuilder()
-                .p(Context.INITIAL_CONTEXT_FACTORY, RemoteInitialContextFactory.class.getName())
-                .p(Context.PROVIDER_URL, "ejbd://127.0.0.1:" + port)
-                .p(JNDIContext.AUTHENTICATE_WITH_THE_REQUEST, "true")
-                .p("java.naming.security.principal", "foo")
-                .p("java.naming.security.credentials", "bar")
-                .p("openejb.authentication.realmName", "LM")
-                .build());
-            final AnInterfaceRemote client = AnInterfaceRemote.class.cast(context.lookup("RemoteWithSecurityRemote"));
-            assertNotNull(client);
+                assertEquals("foo", client.call());
+            }
 
-            assertEquals("foo", client.call());
+            {// now the failing case
+                final Context context = new InitialContext(new PropertiesBuilder()
+                        .p(Context.INITIAL_CONTEXT_FACTORY, RemoteInitialContextFactory.class.getName())
+                        .p(Context.PROVIDER_URL, "ejbd://127.0.0.1:" + port)
+                        .p(JNDIContext.AUTHENTICATE_WITH_THE_REQUEST, "true")
+                        .p("java.naming.security.principal", "wrong")
+                        .p("java.naming.security.credentials", "wrong")
+                        .p("openejb.authentication.realmName", "LM")
+                        .build());
+                final AnInterfaceRemote client = AnInterfaceRemote.class.cast(context.lookup("RemoteWithSecurityRemote"));
+                try {
+                    client.call();
+                } catch (final EJBException e) {
+                    if (!LoginException.class.isInstance(e.getCause())) {
+                        e.printStackTrace();
+                    }
+                    assertTrue(LoginException.class.isInstance(e.getCause()));
+                }
+            }
         } finally {
             serviceDaemon.stop();
             OpenEJB.destroy();
@@ -137,7 +160,9 @@ public class AuthentWithRequestTest {
             } catch (final Exception e) {
                 throw new LoginException(e.getMessage());
             }
-            assertEquals("foo", nameCallback.getName());
+            if (!"foo".equals(nameCallback.getName())) {
+                throw new IllegalArgumentException("Not an Error/assert cause in java 9 jaas doesnt capture it anymore");
+            }
             RemoteWithSecurity.name.set(nameCallback.getName());
             return true;
         }

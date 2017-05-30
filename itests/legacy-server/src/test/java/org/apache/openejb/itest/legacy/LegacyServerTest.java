@@ -50,6 +50,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static org.apache.openejb.util.NetworkUtil.getNextAvailablePort;
+import static org.junit.Assume.assumeTrue;
 
 public class LegacyServerTest {
 
@@ -67,6 +68,8 @@ public class LegacyServerTest {
 
     @Test
     public void test() throws Exception {
+        final String jv = System.getProperty("java.version");
+        assumeTrue(jv.startsWith("1.7") || jv.startsWith("1.8"));
 
         //        To run in an IDE, uncomment and update this line
         //        System.setProperty("version", OpenEjbVersion.get().getVersion());

@@ -29,8 +29,7 @@ public class SingletonPojoEjbLocalObjectTests extends BasicSingletonLocalTestCli
         super.setUp();
         final Object obj = initialContext
             .lookup("client/tests/singleton/BasicSingletonPojoHomeLocal");
-        ejbLocalHome = (BasicSingletonLocalHome) javax.rmi.PortableRemoteObject
-            .narrow(obj, BasicSingletonLocalHome.class);
+        ejbLocalHome = (BasicSingletonLocalHome) obj;
         ejbLocalObject = ejbLocalHome.create();
     }
 

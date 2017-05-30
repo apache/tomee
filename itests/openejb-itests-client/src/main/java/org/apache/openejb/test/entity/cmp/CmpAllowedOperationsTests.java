@@ -18,8 +18,6 @@ package org.apache.openejb.test.entity.cmp;
 
 import org.apache.openejb.test.object.OperationsPolicy;
 
-import javax.rmi.PortableRemoteObject;
-
 /**
  * [9] Should be run as the nineth test suite of the BasicCmpTestClients
  * <p/>
@@ -143,7 +141,7 @@ public class CmpAllowedOperationsTests extends BasicCmpTestClient {
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/entity/cmp/allowed_operations/EntityHome");
-        ejbHome = (BasicCmpHome) PortableRemoteObject.narrow(obj, BasicCmpHome.class);
+        ejbHome = (BasicCmpHome) obj;
         ejbObject = ejbHome.createObject("Fourth Bean");
         ejbHandle = ejbObject.getHandle();
         /* These tests will only work if the specified

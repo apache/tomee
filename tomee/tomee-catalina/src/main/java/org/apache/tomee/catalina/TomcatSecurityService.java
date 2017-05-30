@@ -20,6 +20,7 @@ import org.apache.catalina.Engine;
 import org.apache.catalina.Realm;
 import org.apache.catalina.Server;
 import org.apache.catalina.Service;
+import org.apache.catalina.connector.Request;
 import org.apache.catalina.realm.GenericPrincipal;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.security.AbstractSecurityService;
@@ -30,6 +31,7 @@ import org.apache.tomee.loader.TomcatHelper;
 import javax.security.auth.Subject;
 import javax.security.auth.login.CredentialNotFoundException;
 import javax.security.auth.login.LoginException;
+import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.security.Principal;
 import java.util.HashSet;
@@ -178,6 +180,16 @@ public class TomcatSecurityService extends AbstractSecurityService {
         return webAppState;
     }
 
+    public void onLogout(final HttpServletRequest request) {
+        final Request state = OpenEJBSecurityListener.requests.get();
+        final Object webappState = state == null ? null : state.getNote(TomEERealm.SECURITY_NOTE);
+        if (webappState != null) {
+            exitWebApp(webappState);
+        } else {
+            super.onLogout(request);
+        }
+    }
+
     public void exitWebApp(final Object state) {
         if (state instanceof WebAppState) {
             final WebAppState webAppState = (WebAppState) state;
@@ -193,7 +205,7 @@ public class TomcatSecurityService extends AbstractSecurityService {
         }
     }
 
-    protected Subject getRunAsSubject(final BeanContext callingBeanContext) {
+    public Subject getRunAsSubject(final BeanContext callingBeanContext) {
         final Subject runAsSubject = super.getRunAsSubject(callingBeanContext);
         if (runAsSubject != null) {
             return runAsSubject;

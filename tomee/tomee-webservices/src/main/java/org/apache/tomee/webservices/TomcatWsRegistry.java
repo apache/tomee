@@ -360,7 +360,7 @@ public class TomcatWsRegistry implements WsRegistry {
 
         // add servlet to context
         context.addChild(wrapper);
-        context.addServletMapping(mapping, wrapper.getName());
+        context.addServletMappingDecoded(mapping, wrapper.getName());
 
         final String webServicecontainerID = wrapper.getName() + WsServlet.WEBSERVICE_CONTAINER + httpListener.hashCode();
         wrapper.addInitParameter(WsServlet.WEBSERVICE_CONTAINER, webServicecontainerID);

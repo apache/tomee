@@ -289,8 +289,8 @@ public class ServicePool extends ServerServiceFilter {
         }
 
         @Managed
-        public long getKeepAliveTime(final TimeUnit unit) {
-            return getThreadPool().getKeepAliveTime(unit);
+        public long getKeepAliveTime() {
+            return getThreadPool().getKeepAliveTime(TimeUnit.NANOSECONDS);
         }
 
         @Managed

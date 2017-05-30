@@ -23,7 +23,7 @@
   <parent>
     <artifactId>arquillian-tomee-tests</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>7.0.0-SNAPSHOT</version>
+    <version>7.0.4-SNAPSHOT</version>
   </parent>
 
   <artifactId>arquillian-tomee-jaxws-tests</artifactId>
@@ -36,15 +36,37 @@
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
-    <dependency> <!-- org.apache.openejb.arquillian.tests.jaxws.EarClassLoaderTest -->
-      <groupId>joda-time</groupId>
-      <artifactId>joda-time</artifactId>
-      <version>2.5</version>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
   <properties>
     <profile-under-test>plus</profile-under-test>
   </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.10</version>
+        <executions>
+          <execution>
+            <id>get-joda</id>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>joda-time</groupId>
+                  <artifactId>joda-time</artifactId>
+                  <version>2.5</version>
+                  <outputDirectory>${project.build.directory}/placeholder-dep</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>
